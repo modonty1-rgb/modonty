@@ -1,0 +1,476 @@
+---
+description: Comprehensive best practices for Next.js/React monorepo - consolidated documentation
+alwaysApply: true
+---
+
+# Best Practices - Consolidated Rules
+
+## 🚨 FOCUSED TASK RULES - MANDATORY COMPLIANCE
+
+### PRIMARY RULE: FOCUS ON TASK ONLY
+
+- Make ONLY the requested changes
+- Preserve existing functionality exactly
+- Never modify unrelated code sections
+- Never change styling of other components
+- Never touch code outside the specific task
+
+### FORBIDDEN BEHAVIORS
+
+- ❌ Modify unrelated code sections
+- ❌ Change styling of other components
+- ❌ Touch code outside specific task
+- ❌ Make "improvements" not requested
+- ❌ Refactor existing working code
+- ❌ Assume user wants cleanup
+- ❌ Add features not requested
+
+### REQUIRED PROTOCOL
+
+**Before Changes:**
+
+- Identify exactly what needs to change
+- Locate only specific code section
+- Plan minimal change required
+- Verify no other code affected
+
+**During Changes:**
+
+- Make only requested modification
+- Preserve all existing styling
+- Preserve all existing functionality
+- Don't improve or cleanup other code
+
+**After Changes:**
+
+- Verify specific task works
+- Confirm other components unchanged
+- Test existing functionality preserved
+- Report only what was changed
+
+### VERIFICATION CHECKLIST
+
+- [ ] Only requested feature modified
+- [ ] No unrelated code touched
+- [ ] Existing styling preserved
+- [ ] Other components work as before
+- [ ] No unintended side effects
+
+### EMERGENCY STOP
+
+If about to:
+
+- Modify unrelated code
+- Change existing styling
+- Touch working functionality
+- Make unrequested improvements
+
+Then:
+
+- STOP immediately
+- Ask for clarification
+- Confirm exact scope
+- Make only requested change
+
+### EXAMPLES
+
+✅ CORRECT: "Make cancel reason full width" → Only modify cancel reason container
+❌ WRONG: "Make cancel reason full width" → Modify cancel reason AND change driver styling
+
+**This rule is MANDATORY. No exceptions. No side effects. Only requested task.**
+
+---
+
+## 📁 FOLDER STRUCTURE RULE
+
+### Route-Based Organization Principle
+
+**Key Rule**: Each route can have its own `components/`, `actions/`, and `helpers/` folders for route-specific code. Shared code goes in root-level folders.
+
+### Standard Folder Organization
+
+- **Route-specific code** → Inside route folder (`app/[route]/components/`, `app/[route]/actions/`, `app/[route]/helpers/`)
+- **Shared code** → Root level (`app/components/`, `app/actions/`, `app/helpers/`)
+- **Core libraries** → Always in `lib/` (Prisma, auth, utils, validations)
+
+### Visual Folder Structure
+
+```
+📦 app/                          # Your Next.js app directory
+│
+├── 📁 [route]/                  # 🎯 ROUTE-SPECIFIC CODE
+│   ├── page.tsx                 # Route page
+│   ├── loading.tsx              # Loading UI
+│   ├── error.tsx                # Error UI
+│   │
+│   ├── 📁 components/           # Route-only components
+│   │   ├── route-card.tsx
+│   │   └── route-form.tsx
+│   │
+│   ├── 📁 actions/              # Route-only actions
+│   │   └── route-actions.ts
+│   │
+│   └── 📁 helpers/              # Route-only helpers
+│       ├── hooks/
+│       │   └── use-route-data.ts
+│       └── utils/
+│           └── route-utils.ts
+│
+├── 📁 dashboard/                # Example: Dashboard route
+│   ├── page.tsx
+│   ├── loading.tsx
+│   ├── components/              # Dashboard-only components
+│   │   ├── stats-card.tsx
+│   │   └── chart.tsx
+│   ├── actions/                 # Dashboard-only actions
+│   │   └── dashboard-actions.ts
+│   └── helpers/                 # Dashboard-only helpers
+│       └── hooks/use-dashboard.ts
+│
+├── 📁 auth/                     # Example: Auth route
+│   ├── login/
+│   │   ├── page.tsx
+│   │   ├── components/          # Login-only components
+│   │   │   └── login-form.tsx
+│   │   └── actions/             # Login-only actions
+│   │       └── login-actions.ts
+│   └── signup/
+│       ├── page.tsx
+│       └── components/
+│           └── signup-form.tsx
+│
+├── 📁 components/               # 🌐 SHARED COMPONENTS (used by multiple routes)
+│   ├── 📁 ui/                   # shadcn/ui base components
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   ├── dialog.tsx
+│   │   └── card.tsx
+│   │
+│   └── 📁 shared/               # Shared UI components
+│       ├── header.tsx
+│       ├── footer.tsx
+│       └── navigation.tsx
+│
+├── 📁 actions/                   # 🌐 SHARED ACTIONS (used by multiple routes)
+│   ├── auth-actions.ts          # Shared auth logic
+│   ├── user-actions.ts          # Shared user operations
+│   └── common-actions.ts        # Common operations
+│
+├── 📁 helpers/                   # 🌐 SHARED HELPERS (used by multiple routes)
+│   ├── 📁 hooks/                # Shared custom hooks
+│   │   ├── use-auth.ts
+│   │   ├── use-local-storage.ts
+│   │   └── use-debounce.ts
+│   │
+│   ├── 📁 utils/                # Shared utility functions
+│   │   ├── format-date.ts
+│   │   ├── validate-email.ts
+│   │   └── format-currency.ts
+│   │
+│   └── 📁 constants/            # Shared constants
+│       ├── routes.ts
+│       └── api-endpoints.ts
+│
+└── 📁 lib/                       # 📚 CORE LIBRARIES (always shared)
+    ├── prisma.ts                # Prisma client instance
+    ├── auth.ts                  # Auth configuration
+    ├── utils.ts                 # Core utilities
+    └── validations.ts           # Zod schemas
+```
+
+### What Goes Where?
+
+| Location                  | Purpose                    | When to Use                            |
+| ------------------------- | -------------------------- | -------------------------------------- |
+| `app/[route]/components/` | **Route-specific UI**      | Components used ONLY in this route     |
+| `app/[route]/actions/`    | **Route-specific actions** | Server actions used ONLY in this route |
+| `app/[route]/helpers/`    | **Route-specific helpers** | Hooks/utils used ONLY in this route    |
+| `app/components/`         | **Shared UI**              | Components used by 2+ routes           |
+| `app/actions/`            | **Shared actions**         | Server actions used by 2+ routes       |
+| `app/helpers/`            | **Shared helpers**         | Hooks/utils used by 2+ routes          |
+| `app/lib/`                | **Core libraries**         | Always shared (Prisma, auth, etc.)     |
+
+### Decision Tree
+
+```
+Is the code used in only ONE route?
+├── YES → Put it in app/[route]/components|actions|helpers/
+└── NO → Put it in app/components|actions|helpers/
+```
+
+### Folder Creation Rules
+
+- ✅ If route folder doesn't exist → Create it with `page.tsx`
+- ✅ If route-specific folder needed → Create `components/`, `actions/`, or `helpers/` inside route
+- ✅ If shared folder doesn't exist → Create it at root + add `README.md`
+- ✅ Always check: Is this used by multiple routes? → Move to shared folder
+
+### ❌ Avoid These Folder Names
+
+- `misc/`, `temp/`, `old/` - Use proper feature-based organization
+- `hooks/` - Use `helpers/hooks/` instead
+- `utils/` - Use `helpers/utils/` instead
+
+### ✅ Real-World Examples
+
+**Route-Specific (Dashboard):**
+
+```
+app/dashboard/
+├── page.tsx
+├── loading.tsx
+├── components/
+│   └── dashboard-stats.tsx      ✅ Only used in dashboard
+├── actions/
+│   └── fetch-dashboard-data.ts  ✅ Only used in dashboard
+└── helpers/
+    └── hooks/use-dashboard.ts   ✅ Only used in dashboard
+```
+
+**Shared (Used by Multiple Routes):**
+
+```
+app/
+├── components/
+│   ├── ui/button.tsx            ✅ Used everywhere
+│   └── shared/header.tsx        ✅ Used in multiple routes
+│
+├── actions/
+│   └── auth-actions.ts          ✅ Used in login, signup, profile
+│
+└── helpers/
+    └── hooks/use-auth.ts        ✅ Used in multiple routes
+```
+
+This keeps the project organized, scalable, and easy to understand!
+
+---
+
+## 📦 COMPONENT SIZE RULE
+
+### File Organization
+
+- Keep file count low
+- Each file should have a single specific job
+- Avoid having too many files
+
+### Component Guidelines
+
+- **Maximum Lines**: 200 lines per component
+- **Maximum Functions**: 5 functions per component
+- **Single Responsibility**: Each component should do one thing well
+
+### When to Split
+
+- Component exceeds 200 lines → Split into smaller components
+- Component has more than 5 functions → Extract logic to helpers/hooks
+- Component handles multiple concerns → Separate into focused components
+
+---
+
+## 🎨 UI COLORS RULE
+
+### Color Usage
+
+- ❌ **NEVER** use hardcoded color values in the codebase
+- ✅ **ALWAYS** use theme tokens or CSS variables for all colors
+- ✅ **ALWAYS** use Tailwind utility classes (bg-, text-, border-, etc.)
+
+### Examples
+
+❌ **WRONG:**
+
+```tsx
+<div style={{ color: '#0073b1' }}>Text</div>
+<div className="text-[#0073b1]">Text</div>
+```
+
+✅ **CORRECT:**
+
+```tsx
+<div className="text-primary">Text</div>
+<div className="bg-background text-foreground">Text</div>
+```
+
+### Theme Tokens
+
+Use semantic color tokens from your design system:
+
+- `bg-background`, `text-foreground`
+- `bg-primary`, `text-primary`
+- `bg-secondary`, `text-secondary`
+- `bg-muted`, `text-muted`
+- etc.
+
+---
+
+## 🏗️ STATE MANAGEMENT RULE
+
+### Preferred Approach
+
+- **Prefer Zustand** for state management over React Context to avoid extra renders
+- Use React Context only for theme, auth, or other app-wide concerns
+- Use local state (`useState`, `useReducer`) for component-specific state
+
+### When to Use What
+
+- **Zustand**: Global state that needs frequent updates
+- **React Context**: Theme, language, auth (rarely changing)
+- **Local State**: Component-specific UI state
+- **Server State**: Use React Query/SWR for server data
+
+---
+
+## 💎 SOLID PRINCIPLES & CODE SIMPLICITY
+
+### SOLID Principles
+
+#### S - Single Responsibility Principle (SRP)
+
+- Each component should have a single responsibility
+- Each function should do one thing well
+- Avoid complex logic in components - extract to helpers or hooks
+- One class/component = one reason to change
+
+#### O - Open/Closed Principle (OCP)
+
+- Components should be open for extension, closed for modification
+- Use composition and props to extend functionality
+- Avoid modifying existing components - create new ones or use wrappers
+- Prefer extending through props, hooks, or higher-order components
+
+#### L - Liskov Substitution Principle (LSP)
+
+- Derived components should be substitutable for their base components
+- Components should honor their contracts (props, behavior)
+- Don't break parent component expectations when extending
+- Maintain consistent interfaces across component hierarchies
+
+#### I - Interface Segregation Principle (ISP)
+
+- Don't force components to depend on props they don't use
+- Split large prop interfaces into smaller, focused ones
+- Create specific interfaces for specific use cases
+- Prefer many small, focused props over one large prop object
+
+#### D - Dependency Inversion Principle (DIP)
+
+- Depend on abstractions, not concretions
+- Use dependency injection for services and utilities
+- Components should depend on interfaces/types, not implementations
+- Inject dependencies through props, context, or hooks
+
+### KISS Principle (Keep It Simple, Stupid)
+
+- **Simplicity First**: Prefer simple solutions over complex ones
+- **Avoid Over-Engineering**: Don't add complexity until it's needed
+- **Clear and Readable**: Code should be easy to understand at first glance
+- **Minimal Abstraction**: Only abstract when it provides clear value
+- **Straightforward Logic**: Use direct approaches over clever tricks
+- **Be careful and accurate, avoid errors**
+- **Use short comments (only when necessary)**
+- **Always check the codebase before responding or planning**
+
+### DRY Principle (Don't Repeat Yourself)
+
+- **Extract Common Logic**: Move repeated code to shared functions/hooks
+- **Reusable Components**: Create shared components for repeated UI patterns
+- **Single Source of Truth**: Define constants, types, and configs once
+- **Avoid Duplication**: If you write the same code twice, extract it
+- **Shared Utilities**: Put common functions in `helpers/utils/`
+- **Shared Hooks**: Put reusable logic in `helpers/hooks/`
+- **Shared Actions**: Put common server actions in `app/actions/`
+
+### Best Practices
+
+- Keep functions small and focused (max 200 lines, max 5 functions)
+- Extract complex logic to helper functions
+- Use meaningful variable and function names
+- Prefer composition over inheritance
+- Write self-documenting code
+- Remove code duplication immediately
+- Choose the simplest solution that works
+
+---
+
+## 🧹 CLEANUP CHECKLIST
+
+### Before Merging/Committing
+
+Remove all of the following:
+
+- [ ] **TODO comments** - `// TODO` or `// FIXME`
+- [ ] **Console logs** - `console.log()`, `console.error()`, etc.
+- [ ] **Debugger statements** - `debugger`
+- [ ] **Old code** - Unused imports, dead code, commented-out code
+- [ ] **Var declarations** - Use `let` or `const` instead of `var`
+
+### Code Quality
+
+- [ ] No `any` types - Use proper TypeScript types
+- [ ] No `require()` - Use ES6 `import` syntax
+- [ ] All logic in functions/variables - Not in global scope
+- [ ] Proper error handling - Try/catch for error-prone code
+
+---
+
+## ✅ GENERAL BEST PRACTICES
+
+### Code Quality
+
+- Be careful and accurate, avoid errors
+- Use short comments (only when necessary)
+- Avoid complex code
+- Always check the codebase before responding or planning
+
+### TypeScript
+
+- Avoid `any` type - Use proper types
+- Define Props interfaces/types for components
+- Use strict TypeScript configuration
+
+### Performance
+
+- Use `key` prop when rendering lists
+- Avoid excessive inline styles
+- Use `useEffect` for localStorage access (not in render)
+- Consider `React.memo` for pure components
+
+### Security
+
+- Never use `eval()`
+- Avoid `dangerouslySetInnerHTML` (use sanitization if needed)
+- Avoid direct `innerHTML` manipulation
+- Use secure methods for cookies
+
+### Forms
+
+- Use React Hook Form for all forms
+- Use Zod for validation schemas
+- Use `zodResolver` with React Hook Form
+- Show validation errors using `formState.errors`
+- Use consistent form field components
+
+### SEO
+
+- All pages must have `<title>` or `generateMetadata`
+- All pages should have meta description
+- All pages should have main heading (`<h1>`)
+
+### Error Handling
+
+- Use try/catch for error-prone code
+- Handle errors in catch blocks
+- Use Error objects when throwing (not strings)
+
+---
+
+## 📝 TODO LIST RULE
+
+- Always update the TODO list after each check
+- Remove TODO comments before merging
+- Track progress and mark tasks as complete
+
+---
+
+**Remember**: These rules ensure code quality, maintainability, and production safety. Follow them consistently across the entire monorepo.

@@ -1,0 +1,70 @@
+Category,Industries,Tags,Authors
+
+
+@adobe/structured-data-validator
+
+
+
+على سبيل المثال، عند بناء الصفحة في Next.js، يمكنك ببساطة نسخ الـ URL الخاص بالمعاينة ووضعه في أداة Google Rich Results Test أو Schema.org Validator للتحقق من صحة البيانات المهيكلة.
+
+بالتأكيد. من أفضل الـ Chrome extensions التي يمكنك استخدامها للتحقق من الـ SEO والبيانات المهيكلة هي إضافة تُسمى "SEO Meta in 1 Click". هذه الإضافة تسمح لك بعرض كل البيانات المهمة لصفحة الويب بنقرة واحدة، بما في ذلك الـ meta tags، والعناوين، والـ structured data إذا كانت موجودة.
+
+كذلك هناك إضافة أخرى شهيرة هي "Lighthouse" وهي مدمجة أصلاً في أدوات المطوّرين في متصفح كروم. يمكنك تشغيل تقرير Lighthouse لأي صفحة محلية أو منشورة، وسوف يعطيك تقييماً شاملاً لأداء الصفحة، بما في ذلك الـ SEO والبيانات المهيكلة.
+
+باستخدام هذه الإضافات، يمكنك بسرعة وسهولة التحقق من أن صفحتك في Next.js متوافقة مع معايير الـ SEO مباشرةً من متصفحك.
+
+
+
+
+أريد منك توليد بيانات تجريبية (seed data) شاملة لجميع الجداول في قاعدة البيانات الخاصة بالتطبيق. يشمل ذلك 200 مقال موزعة بين draft وpublished، وموزعة على فئات (categories) مختلفة، ومربوطة مع عملاء (clients) مختلفين.
+
+أريد أن تكون هذه المقالات موزعة من حيث الطول (قصيرة، متوسطة، وطويلة)، وأن تكون كل مقال مستنداً إلى معلومات حقيقية يتم الحصول عليها من الإنترنت، على أن تكون هذه المقالات ذات صلة بمواضيع تحسين محركات البحث (SEO).
+
+بالإضافة إلى ذلك، أرجو ملء جميع الجداول الأخرى ببيانات مترابطة وكاملة، مع التأكيد على عدم توليد أي بيانات تخص المستخدمين (users). الهدف هو الحصول على مجموعة بيانات متكاملة لاختبار التطبيق بشكل شامل.
+
+------------------------------
+
+أريد منك القيام بالتالي: سأعطيك ملفاً رئيسياً (سواءً كان .ts أو .tsx) لتقسيمه إلى ملفات أصغر. بعد التقسيم، ضع كل الملفات الصغيرة في مجلد يحمل اسم الملف الرئيسي. ولا تقم بحذف الملف الرئيسي الأصلي، بل أعد تسميته ليصبح [اسمه].old.txt، بحيث نحتفظ بنسخة نصية منه. بهذه الطريقة نضمن أن كل شيء يبقى سليماً ومنظماً. التزم بمبادئ SOLID وKISS، واجعل الأسماء واضحة والمتغيرات سهلة القراءة. وأي تعديلات في الكود قم بها دون أي تأثير جانبي. في النهاية، أريد النتيجة النهائية منظمة، مع بقاء نسخة من الملف الرئيسي باسم [اسمه].old.txt للتأكد.
+
+----------------------
+اعتبر نفسك مختبر ضمان جودة (QA). في البداية، قم بإغلاق المتصفح تماماً ثم أعد تشغيله وادخل إلى نظام إدارة العملاء. بعد ذلك:
+
+جرّب إضافة عميل جديد وتأكد من أن البيانات تحفظ بشكل صحيح.
+
+جرّب تعديل بيانات العميل الذي أضفته وتحقق من ظهور التعديلات.
+
+أخيراً، جرّب حذف العميل وتأكد أن عملية الحذف تتم بسلاسة."
+
+
+
+
+
+Absolutely! Here’s a quick list of some APIs that can provide Arabic-language articles:
+
+1. **NewsAPI**: It supports filtering by language, including Arabic (`ar`). You can use it to get articles from various Arabic news sources.
+
+2. **Mediastack**: This API also allows you to select Arabic as a language and pulls news from the Middle East and North Africa region.
+
+3. **GNews**: Another aggregator that can fetch Arabic-language articles from a variety of sources.
+
+4. **The Guardian API**: While mostly English, it does have some content in other languages, including Arabic.
+
+5. **Al Jazeera API** (if you have access): Al Jazeera offers its own feeds and might have an API to pull Arabic articles directly.
+
+These should give you a solid starting point for seeding your data in Arabic.
+
+
+fully semantic optmized (content-relationship-entity)
+
+
+
+
+#0e065a الكحلى
+#3030ff الازرق
+#00d8d8 اللون الثالث الاخضر
+
+
+Commit: 7e30639
+
+
+bd761c3 - 1.6.0 test perf-01 (dreamtoapp, 7 minutes

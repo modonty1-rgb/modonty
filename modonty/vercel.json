@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm --filter @modonty/modonty build",
+  "installCommand": "pnpm install",
+  "framework": "nextjs"
+}

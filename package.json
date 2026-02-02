@@ -1,0 +1,30 @@
+{
+  "name": "@modonty/monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.12.3",
+  "scripts": {
+    "dev:admin": "pnpm --filter @modonty/admin dev",
+    "dev:modonty": "pnpm --filter @modonty/modonty dev",
+    "dev:console": "pnpm --filter @modonty/console dev",
+    "build:admin": "pnpm --filter @modonty/admin build",
+    "build:modonty": "pnpm --filter @modonty/modonty build",
+    "build:console": "pnpm --filter @modonty/console build",
+    "build:all": "pnpm build:admin && pnpm build:modonty && pnpm build:console",
+    "lint": "pnpm --filter \"@modonty/*\" lint",
+    "format": "prettier --write .",
+    "prisma:generate": "pnpm --filter @modonty/database prisma:generate",
+    "prisma:push": "pnpm --filter @modonty/database prisma:push",
+    "prisma:dedupe-push": "pnpm --filter @modonty/database dedupe-before-push && pnpm prisma:push",
+    "prisma:studio": "pnpm --filter @modonty/database prisma:studio",
+    "prisma:format": "pnpm --filter @modonty/database prisma:format",
+    "prisma:validate": "pnpm --filter @modonty/database prisma:validate",
+    "seed": "pnpm --filter @modonty/database seed",
+    "seed:clear": "pnpm --filter @modonty/database seed:clear"
+  },
+  "devDependencies": {
+    "dotenv": "^16.6.1",
+    "eslint": "^8.0.0",
+    "prettier": "^2.8.0"
+  }
+}

@@ -1,0 +1,1902 @@
+// Main Prisma schema file for Modonty Blog Platform
+// MongoDB provider for multi-client blog platform with 100% SEO optimization
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  EDITOR
+}
+
+enum ArticleStatus {
+  WRITING
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum TrafficSource {
+  ORGANIC
+  DIRECT
+  REFERRAL
+  SOCIAL
+  EMAIL
+  PAID
+}
+
+enum SubscriptionTier {
+  BASIC
+  STANDARD
+  PRO
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  OVERDUE
+}
+
+enum MediaType {
+  LOGO
+  POST
+  OGIMAGE
+  TWITTER_IMAGE
+  GENERAL
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DELETED
+}
+
+enum ConversionType {
+  SIGNUP
+  CONTACT_FORM
+  DOWNLOAD
+  NEWSLETTER
+  PURCHASE
+  TRIAL_START
+  DEMO_REQUEST
+  PHONE_CLICK
+  EMAIL_CLICK
+  DIRECTORY_VIEW
+}
+
+enum CTAType {
+  BUTTON
+  LINK
+  FORM
+  BANNER
+  POPUP
+}
+
+enum SharePlatform {
+  FACEBOOK
+  TWITTER
+  LINKEDIN
+  WHATSAPP
+  EMAIL
+  COPY_LINK
+  PRINT
+  OTHER
+}
+
+enum CampaignType {
+  EMAIL
+  SOCIAL
+  PAID_ADS
+  SEO
+  AFFILIATE
+  INFLUENCER
+  CONTENT
+}
+
+enum LinkType {
+  INTERNAL
+  EXTERNAL
+  AFFILIATE
+  CITATION
+  SOCIAL
+  EMAIL
+  PHONE
+  DOWNLOAD
+}
+
+// ============================================
+// AUTHENTICATION MODELS
+// ============================================
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // NextAuth.js required fields
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? // Email verification timestamp
+  image         String? // NextAuth standard field (profile image URL)
+
+  // Custom fields
+  password              String?   // Hashed password (optional for OAuth users)
+  passwordResetToken    String?   // SHA-256 hash of token
+  passwordResetExpires  DateTime? // typically 1h from request
+  role                  UserRole @default(EDITOR)
+  avatar   String? // Keep for compatibility, prefer using 'image'
+
+  // Links to clients (for client users)
+  clientAccess String[] @db.ObjectId // Array of client IDs this user can access
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // NextAuth.js relations
+  accounts Account[]
+  sessions Session[]
+
+  // Interaction relations
+  comments              Comment[]
+  clientComments        ClientComment[]
+  articleLikes          ArticleLike[]
+  articleDislikes       ArticleDislike[]
+  articleFavorites      ArticleFavorite[]
+  clientLikes           ClientLike[]
+  clientDislikes        ClientDislike[]
+  clientFavorites       ClientFavorite[]
+  commentLikes          CommentLike[]
+  commentDislikes       CommentDislike[]
+  clientCommentLikes    ClientCommentLike[]
+  clientCommentDislikes ClientCommentDislike[]
+  articleViews          ArticleView[]
+  clientViews           ClientView[]
+  shares                Share[]
+  conversions           Conversion[]
+  ctaClicks             CTAClick[]
+  linkClicks            ArticleLinkClick[]
+  campaignTracking      CampaignTracking[]
+  leadScoring           LeadScoring[]
+  engagementDuration    EngagementDuration[]
+  faqFeedbacks         FAQFeedback[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model Account {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String @db.ObjectId
+  type              String // OAuth or email
+  provider          String // google, facebook, credentials, etc.
+  providerAccountId String // Provider's unique user ID
+
+  // OAuth tokens (optional, for OAuth providers)
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String // Email address or other identifier
+  token      String   @unique
+  expires    DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// CLIENT/ORGANIZATION MODELS
+// ============================================
+
+model Client {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // wiil use as unique for gtm integration
+  name      String
+  slug      String  @unique
+  legalName String? // Schema.org Organization
+  url       String? // Organization website
+
+  // Centralized primary media relations (no @unique: MongoDB treats multiple nulls as duplicate)
+  logoMediaId         String? @db.ObjectId
+  logoMedia           Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ogImageMediaId      String? @db.ObjectId
+  ogImageMedia        Media?  @relation("ClientOGMedia", fields: [ogImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  twitterImageMediaId String? @db.ObjectId
+  twitterImageMedia   Media?  @relation("ClientTwitterMedia", fields: [twitterImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Schema.org Organization - Social profiles
+  sameAs String[] // LinkedIn, Twitter, Facebook URLs
+
+  // Contact
+  email String
+  phone String?
+
+  // Security
+  password String? // Hashed password for client authentication
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  description    String? // Schema.org Organization description (separate from seoDescription)
+  metaRobots     String? // index, noindex, follow, nofollow
+
+  // Business Information
+  businessBrief     String? // Business description for content writers
+  industryId        String?   @db.ObjectId // Industry/category
+  industry          Industry? @relation(fields: [industryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  targetAudience    String? // Target audience description
+  contentPriorities String[] // Key topics/priorities
+
+  // Contact Point (Schema.org)
+  contactType String? // customer service, technical support, sales, etc.
+
+  // Address (for Local SEO)
+  addressStreet     String?
+  addressCity       String?
+  addressCountry    String?
+  addressPostalCode String?
+
+  // Saudi Arabia & Gulf Identifiers (CRITICAL)
+  commercialRegistrationNumber String? // CR Number - CRITICAL
+  vatID                        String? // VAT registration number (ZATCA)
+  taxID                        String? // Tax identification number (ZATCA/Zakat)
+  legalForm                    String? // Entity type: LLC, JSC, Sole Proprietorship, Partnership, etc.
+
+  // Address Enhancement (National Address Format)
+  addressRegion                String? // Province/region (Saudi has 13 regions)
+  addressNeighborhood          String? // Neighborhood/district (National Address)
+  addressBuildingNumber        String? // Building number (National Address)
+  addressAdditionalNumber      String? // Additional number (National Address)
+  addressLatitude              Float?  // Geographic latitude for GeoCoordinates
+  addressLongitude             Float?  // Geographic longitude for GeoCoordinates
+
+  // Classification & Business Info
+  businessActivityCode         String? // Local business activity classification code
+  isicV4                       String? // International Standard Industrial Classification (V4)
+  numberOfEmployees            String? // Employee count (QuantitativeValue as string)
+  licenseNumber                String? // License number (for regulated sectors)
+  licenseAuthority             String? // Regulatory authority
+
+  // Additional Properties
+  alternateName                String? // Alternative names (Arabic name, trade name, etc.)
+  slogan                       String? // Company slogan/motto
+  keywords                     String[] // Keywords for classification
+  knowsLanguage                String[] // Languages: ["Arabic", "English"]
+  organizationType             String? // Subtype: Organization, Corporation, LocalBusiness, NonProfit, etc.
+
+  // Organization Relationships
+  parentOrganizationId         String? @db.ObjectId // Parent company reference
+
+  // Twitter Cards
+  twitterCard        String? // summary_large_image, summary
+  twitterTitle       String?
+  twitterDescription String?
+  twitterSite        String? // @username
+
+  // Canonical URL
+  canonicalUrl String?
+
+  // GTM Integration
+  gtmId String? // Google Tag Manager ID
+
+  // Subscription Management
+  subscriptionTier      SubscriptionTier
+  subscriptionTierConfigId String? @db.ObjectId // Reference to tier config
+  subscriptionTierConfig SubscriptionTierConfig? @relation("ClientTierConfig", fields: [subscriptionTierConfigId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subscriptionStartDate DateTime?
+  subscriptionEndDate   DateTime?
+  articlesPerMonth      Int? // Calculated from tier (can be overridden manually)
+  subscriptionStatus    SubscriptionStatus @default(PENDING)
+  paymentStatus         PaymentStatus      @default(PENDING)
+
+  // Metadata
+  foundingDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // ============================================
+  // JSON-LD Knowledge Graph
+  // ============================================
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string (source of truth)
+  jsonLdLastGenerated    DateTime? // When JSON-LD was last generated
+  jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
+  
+  // Complete Meta Tags Object
+  metaTags Json? // Complete meta tags object (standard SEO, Open Graph, Twitter Cards, etc.)
+
+  // Relationships
+  articles          Article[]
+  subscribers       Subscriber[]
+  media             Media[]      @relation("ClientMedia")
+  parentOrganization Client?     @relation("ClientParent", fields: [parentOrganizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subOrganizations  Client[]     @relation("ClientParent")
+
+  // Interaction relations
+  comments        ClientComment[]
+  likes           ClientLike[]
+  dislikes        ClientDislike[]
+  favorites       ClientFavorite[]
+  views           ClientView[]
+  shares          Share[]
+  conversions       Conversion[]
+  ctaClicks         CTAClick[]
+  leadScoring       LeadScoring[]
+  campaignTracking  CampaignTracking[]
+  engagementDuration EngagementDuration[]
+  contactMessages  ContactMessage[]
+
+  @@index([industryId])
+  @@map("clients")
+}
+
+// ============================================
+// SUBSCRIPTION TIER CONFIG
+// ============================================
+
+model SubscriptionTierConfig {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  tier            SubscriptionTier @unique
+  name            String          // "Basic", "Standard", "Pro", "Premium"
+  articlesPerMonth Int            // 2, 4, 8, 12
+  price           Float           // 2499, 3999, 6999, 9999 (store as number, format in UI)
+  isActive        Boolean         @default(true)
+  isPopular       Boolean         @default(false) // For "Most Popular" badge
+  description     String?         // Optional tier description
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  clients         Client[]        @relation("ClientTierConfig")
+
+  @@map("subscription_tier_configs")
+  @@index([isActive])
+}
+
+// ============================================
+// AUTHOR MODELS
+// ============================================
+
+model Author {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String // Schema.org Person
+  slug String @unique
+
+  // Schema.org Person - Name fields
+  firstName String? // Schema.org givenName
+  lastName  String? // Schema.org familyName
+
+  // Schema.org Person - E-E-A-T fields
+  jobTitle String? // WorksFor job title
+  worksFor String? @db.ObjectId // Organization/Client reference
+  bio      String?
+  image    String? // Profile image
+  imageAlt String? // Alt text for profile image (accessibility + SEO)
+  url      String? // Author page URL
+  email    String? // Schema.org email - Contact email (optional, privacy-sensitive)
+
+  // Social profiles for verification (sameAs)
+  linkedIn String?
+  twitter  String?
+  facebook String?
+  sameAs   String[] // Additional social profiles
+
+  // E-E-A-T Signals
+  credentials        String[] // Degrees, certifications
+  qualifications     String[] // Professional qualifications
+  expertiseAreas     String[] // Topics of specialization (knowsAbout)
+  experienceYears    Int?
+  verificationStatus Boolean  @default(false)
+  memberOf          String[] // Schema.org memberOf - Professional organizations (E-E-A-T authoritativeness)
+
+  // Education (optional structured data)
+  education Json? // Array of education objects
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles Article[]
+
+  @@map("authors")
+}
+
+// ============================================
+// CONTENT MODELS
+// ============================================
+
+model Category {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+  parentId    String? @db.ObjectId // Hierarchical categories
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles Article[]
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Category[] @relation("CategoryHierarchy")
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Tag {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model Industry {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String  @unique
+  description String?
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  socialImage    String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt String? // Alt text
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  canonicalUrl   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  clients Client[]
+
+  @@map("industries")
+}
+
+model Article {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Basic content
+  title         String // Schema.org Article headline
+  slug          String
+  excerpt       String?
+  content String // Article body (markdown/HTML)
+
+  // Relationships
+  clientId   String    @db.ObjectId
+  client     Client    @relation(fields: [clientId], references: [id])
+  categoryId String?   @db.ObjectId
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  authorId   String    @db.ObjectId
+  author     Author    @relation(fields: [authorId], references: [id])
+
+  // Status & workflow
+  status      ArticleStatus @default(WRITING)
+  scheduledAt DateTime?
+  featured    Boolean       @default(false)
+
+  // Schema.org Article - Required fields
+  datePublished    DateTime? // ISO 8601
+  dateModified     DateTime  @updatedAt
+  lastReviewed     DateTime? // Content freshness signal
+  mainEntityOfPage String? // Canonical URL
+
+  // Schema.org Article - Extended fields
+  wordCount          Int? // Auto-calculated content depth
+  readingTimeMinutes Int? // Auto-calculated (~200-250 words/min)
+  contentDepth       String? // short, medium, long
+
+  // Meta tags
+  seoTitle       String?
+  seoDescription String? // 155-160 chars optimal
+
+  // Open Graph (Complete)
+  ogArticleAuthor        String?
+  ogArticlePublishedTime DateTime?
+  ogArticleModifiedTime  DateTime?
+
+  // Technical SEO
+  canonicalUrl String?
+
+  // Breadcrumb support
+  breadcrumbPath Json? // Array for BreadcrumbList schema
+
+  // Featured media
+  featuredImageId String? @db.ObjectId
+  featuredImage   Media?  @relation("ArticleFeaturedImage", fields: [featuredImageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // ============================================
+  // JSON-LD Knowledge Graph (Phase 1)
+  // ============================================
+
+  // JSON-LD Cache & Validation
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string (source of truth)
+  jsonLdLastGenerated    DateTime? // When JSON-LD was last generated
+  jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
+
+  // Content for structured data
+  articleBodyText String? // Plain text extracted from content (for schema.org articleBody)
+
+  // Optional semantic enhancement (for AI crawlers)
+  semanticKeywords Json? // Array of {name, wikidataId?, url?} for entity disambiguation
+
+  // E-E-A-T enhancement
+  citations String[] // External authoritative source URLs (isBasedOn/citation)
+
+  // SEO keywords the article is based on (reference)
+  seoKeywords String[] @default([])
+
+  // Schema versioning (safe rollback)
+  jsonLdVersion     Int      @default(1) // Increment on major changes
+  jsonLdHistory     Json? // Array of previous versions [{version, data, timestamp}]
+  jsonLdDiffSummary String? // Human-readable change log
+
+  // Performance tracking
+  jsonLdGenerationTimeMs Int? // Time to generate JSON-LD in milliseconds
+  performanceBudgetMet   Boolean @default(true) // Performance budget compliance
+
+  // ============================================
+  // Next.js Metadata Cache
+  // ============================================
+  nextjsMetadata Json? // Cached Next.js Metadata object
+  nextjsMetadataLastGenerated DateTime? // When metadata was last generated
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  tags        ArticleTag[]
+  versions    ArticleVersion[]
+  analytics   Analytics[]
+  relatedFrom RelatedArticle[] @relation("ArticleRelatedFrom")
+  relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
+  faqs        ArticleFAQ[]
+  gallery     ArticleMedia[] // Image gallery for article
+
+  // Interaction relations
+  comments    Comment[]
+  likes       ArticleLike[]
+  dislikes    ArticleDislike[]
+  favorites   ArticleFavorite[]
+  views       ArticleView[]
+  shares      Share[]
+  conversions Conversion[]
+  ctaClicks         CTAClick[]
+  linkClicks        ArticleLinkClick[]
+  campaignTracking  CampaignTracking[]
+  engagementDuration EngagementDuration[]
+
+  @@unique([clientId, slug]) // Slug unique per client
+  @@index([clientId, status, datePublished])
+  @@index([status, datePublished])
+  @@index([categoryId, status, datePublished])
+  @@index([authorId, status, datePublished])
+  @@index([dateModified])
+  @@index([datePublished])
+  @@map("articles")
+}
+
+model ArticleVersion {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Snapshot of article data
+  title          String
+  content        String
+  excerpt        String?
+  seoTitle       String?
+  seoDescription String?
+
+  // Audit trail
+  createdBy String?  @db.ObjectId // User ID
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@map("article_versions")
+}
+
+model ArticleTag {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  tagId     String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([articleId, tagId])
+  @@index([articleId])
+  @@index([tagId])
+  @@map("article_tags")
+}
+
+// ============================================
+// ARTICLE MEDIA GALLERY (Phase 1 - JSON-LD)
+// ============================================
+
+model ArticleMedia {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String @db.ObjectId
+  mediaId   String @db.ObjectId
+
+  // Gallery metadata
+  position Int     @default(0) // Display order in gallery (drag & drop)
+  caption  String? // Per-article caption override (differs from Media.caption)
+  altText  String? // Per-article alt text override (for SEO customization)
+
+  // Relationships
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([articleId, mediaId])
+  @@index([articleId, position])
+  @@index([mediaId])
+  @@map("article_media")
+}
+
+// ============================================
+// MEDIA MODELS
+// ============================================
+
+model Media {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // File info
+  filename String
+  url      String // CDN/Storage URL
+  mimeType String
+  fileSize Int? // Bytes
+
+  // Schema.org ImageObject
+  width           Int?
+  height          Int?
+  encodingFormat  String? // image/jpeg, image/png, etc.
+  contentUrl      String?
+  thumbnailUrl    String?
+  copyrightHolder String?
+
+  // SEO (Critical)
+  altText     String? // Required for accessibility and SEO
+  caption     String?
+  credit      String?
+  title       String?
+  description String?
+  license     String? // License type (CC0, CC-BY, CC-BY-SA, CC-BY-NC, Commercial, All Rights Reserved, Public Domain)
+  creator     String? // Creator/Author name
+  dateCreated DateTime? // Date when the image was created (from EXIF or manual)
+
+  // Schema.org Enhancement
+  geoLatitude     Float? // Geographic latitude
+  geoLongitude    Float? // Geographic longitude
+  geoLocationName String? // Human-readable location name
+  contentLocation String? // Content location (where the image was taken/shows)
+  exifData        Json? // Full EXIF metadata stored as JSON
+
+  // Cloudinary Integration
+  cloudinaryPublicId  String? // Cloudinary public ID
+  cloudinaryVersion   String? // Cloudinary version
+  cloudinarySignature String? // Cloudinary signature
+
+  // Client association (REQUIRED after migration)
+  // Temporarily optional to allow querying existing media without clientId
+  clientId String? @db.ObjectId
+  client   Client? @relation("ClientMedia", fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Media type classification
+  type MediaType @default(GENERAL)
+
+  // Primary client media roles (centralized; many clients can share same media)
+  logoClients         Client[] @relation("ClientLogoMedia")
+  ogImageClients      Client[] @relation("ClientOGMedia")
+  twitterImageClients Client[] @relation("ClientTwitterMedia")
+
+  // Relationships
+  featuredArticles Article[]      @relation("ArticleFeaturedImage")
+  articleGallery   ArticleMedia[] // Gallery appearances in articles
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([clientId, createdAt])
+  @@index([clientId, type])
+  @@index([filename])
+  @@map("media")
+}
+
+// ============================================
+// ANALYTICS MODELS
+// ============================================
+
+model Analytics {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clientId  String? @db.ObjectId
+
+  // User/Session tracking (for unique visitor calculation)
+  sessionId String? // Browser session ID (cookie-based)
+  userId    String? @db.ObjectId // User ID if logged in
+
+  // Core Web Vitals (2025 Standard) - per view
+  lcp  Float? // Largest Contentful Paint (target < 2.5s)
+  cls  Float? // Cumulative Layout Shift (target < 0.1)
+  inp  Float? // Interaction to Next Paint (target < 200ms) - replaced FID in 2024
+  fid  Float? // First Input Delay (legacy, target < 100ms)
+  ttfb Float? // Time to First Byte (target < 800ms)
+  tbt  Float? // Total Blocking Time (target < 200ms)
+
+  // Engagement metrics - per view
+  timeOnPage       Float? // Seconds spent on page for THIS view
+  scrollDepth      Float? // Percentage scrolled (0-100) for THIS view
+  bounced          Boolean @default(false) // Did user leave immediately? (bounce)
+  clickThroughRate Float? // CTR for THIS view (if applicable)
+
+  // Traffic sources - per view
+  source         TrafficSource @default(ORGANIC)
+  searchEngine   String? // Google, Bing, etc.
+  referrerDomain String?
+  userAgent      String? // Browser user agent
+  ipAddress      String? // IP address (for geo-location if needed)
+
+  timestamp DateTime @default(now())
+
+  @@index([articleId, timestamp])
+  @@index([clientId, timestamp])
+  @@index([timestamp])
+  @@index([sessionId])
+  @@index([userId])
+  @@map("analytics")
+}
+
+// ============================================
+// NEWSLETTER MODELS
+// ============================================
+
+model Subscriber {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  email    String
+  name     String?
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id])
+
+  // GDPR compliance
+  subscribed     Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  consentGiven   Boolean   @default(false)
+  consentDate    DateTime?
+
+  // Preferences
+  preferences Json? // Notification preferences
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, clientId])
+  @@index([clientId])
+  @@map("subscribers")
+}
+
+// ============================================
+// RELATION MODELS
+// ============================================
+
+model ArticleFAQ {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  question String // Schema.org Question
+  answer   String // Schema.org Answer
+  position Int // Order in FAQ list
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId, position])
+  @@map("faqs")
+}
+
+model RelatedArticle {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String  @db.ObjectId
+  relatedId String  @db.ObjectId
+  article   Article @relation("ArticleRelatedFrom", fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  related   Article @relation("ArticleRelatedTo", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  relationshipType String? @default("related") // related, similar, recommended
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, relatedId])
+  @@index([articleId])
+  @@index([relatedId])
+  @@map("related_articles")
+}
+
+// ============================================
+// INTERACTION MODELS
+// ============================================
+
+model Comment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Content
+  content String // Comment text
+
+  // Relationships
+  articleId String @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId // Optional - allow anonymous comments
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Reply support (nested comments)
+  parentId String? @db.ObjectId // If null, it's a top-level comment
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  Comment[] @relation("CommentReplies")
+
+  // Status & Moderation
+  status   CommentStatus @default(PENDING) // PENDING, APPROVED, REJECTED, DELETED
+  isEdited Boolean       @default(false)
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime? // When comment was last edited
+
+  // Relationships for interactions
+  likes    CommentLike[]
+  dislikes CommentDislike[]
+
+  @@index([articleId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("comments")
+}
+
+model ArticleLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Optional - allow anonymous likes
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Optional: session-based tracking for anonymous users
+  sessionId String? // Browser session ID for anonymous likes
+
+  createdAt DateTime @default(now())
+
+  // Ensure one like per user per article
+  @@unique([articleId, userId])
+  @@unique([articleId, sessionId]) // For anonymous users
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_likes")
+}
+
+model ArticleDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId])
+  @@unique([articleId, sessionId])
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_dislikes")
+}
+
+model ArticleFavorite {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String @db.ObjectId // Required - favorites need user account
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId])
+  @@index([articleId])
+  @@index([userId])
+  @@map("article_favorites")
+}
+
+model CommentLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String  @db.ObjectId
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_likes")
+}
+
+model CommentDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String  @db.ObjectId
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_dislikes")
+}
+
+model ArticleView {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId // Optional - logged in users
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Anonymous tracking
+  sessionId String? // Browser session ID
+  ipAddress String? // IP address for unique visitor tracking
+
+  // Metadata
+  userAgent String? // Browser user agent
+  referrer  String? // Where user came from
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("article_views")
+}
+
+model ClientView {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Anonymous tracking
+  sessionId String?
+  ipAddress String?
+
+  // Metadata
+  userAgent String?
+  referrer  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("client_views")
+}
+
+model ClientComment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Content
+  content String // Comment text
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  authorId String? @db.ObjectId // Optional - allow anonymous comments
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // Reply support (nested comments)
+  parentId String? @db.ObjectId // If null, it's a top-level comment
+  parent   ClientComment? @relation("ClientCommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  ClientComment[] @relation("ClientCommentReplies")
+
+  // Status & Moderation
+  status   CommentStatus @default(PENDING)
+  isEdited Boolean       @default(false)
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  // Relationships for interactions
+  likes    ClientCommentLike[]
+  dislikes ClientCommentDislike[]
+
+  @@index([clientId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+  @@map("client_comments")
+}
+
+model ClientLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@unique([clientId, sessionId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_likes")
+}
+
+model ClientDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@unique([clientId, sessionId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_dislikes")
+}
+
+model ClientFavorite {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String @db.ObjectId // Required - favorites need user account
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, userId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("client_favorites")
+}
+
+model ClientCommentLike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String       @db.ObjectId
+  comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("client_comment_likes")
+}
+
+model ClientCommentDislike {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  commentId String       @db.ObjectId
+  comment   ClientComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String? // For anonymous users
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@unique([commentId, sessionId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("client_comment_dislikes")
+}
+
+// ============================================
+// MARKETING METRICS MODELS
+// ============================================
+
+model Share {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships - can share articles OR clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Share details
+  platform  SharePlatform // Where it was shared
+  sessionId String? // Anonymous tracking
+
+  // Metadata
+  referrer  String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([platform, createdAt])
+  @@index([userId])
+  @@map("shares")
+}
+
+model Conversion {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships - conversions can happen on articles OR clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Conversion details
+  type     ConversionType // What type of conversion
+  value    Float? // Monetary value (for purchases)
+  currency String? @default("USD")
+
+  // Campaign tracking
+  campaignId  String? // Campaign identifier
+  utmSource   String? // UTM source
+  utmMedium   String? // UTM medium
+  utmCampaign String? // UTM campaign
+  utmTerm     String? // UTM term
+  utmContent  String? // UTM content
+
+  // Attribution
+  sessionId   String? // Session ID for anonymous conversions
+  firstTouch  Boolean @default(false) // First touch attribution
+  lastTouch   Boolean @default(true) // Last touch attribution
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([type, createdAt])
+  @@index([userId])
+  @@index([campaignId])
+  @@index([utmCampaign, createdAt])
+  @@map("conversions")
+}
+
+model CTAClick {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // CTA details
+  type     CTAType // What type of CTA
+  label    String? // CTA button/link label
+  targetUrl String? // Where CTA leads to
+
+  // Engagement context
+  sessionId   String?
+  timeOnPage  Float? // Seconds on page before clicking
+  scrollDepth Float? // Scroll depth before clicking
+
+  // Campaign tracking
+  campaignId  String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([type, createdAt])
+  @@index([userId])
+  @@map("cta_clicks")
+}
+
+model CampaignTracking {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Campaign identification
+  campaignId   String // Unique campaign identifier
+  campaignName String
+  type         CampaignType
+
+  // Relationships - track campaign performance on articles/clients
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // UTM parameters (industry standard)
+  utmSource   String? // Traffic source (google, facebook, email)
+  utmMedium   String? // Marketing medium (cpc, email, social)
+  utmCampaign String? // Campaign name
+  utmTerm     String? // Paid search keyword
+  utmContent  String? // Ad variation/content
+
+  // Performance metrics
+  cost        Float? // Campaign cost
+  currency    String? @default("USD")
+  impressions Int? // Ad impressions
+  clicks      Int? // Ad clicks
+  conversions Int? // Conversions from this touchpoint
+
+  // Attribution
+  sessionId            String?
+  firstVisit           Boolean @default(true) // First visit from campaign
+  conversionAttributed Boolean @default(false) // Did this touchpoint lead to conversion?
+
+  // Metadata
+  referrer  String?
+  userAgent String?
+  ipAddress String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([campaignId, sessionId]) // Prevent duplicate tracking
+  @@index([campaignId, createdAt])
+  @@index([utmCampaign, createdAt])
+  @@index([type, createdAt])
+  @@index([articleId])
+  @@index([clientId])
+  @@index([userId])
+  @@map("campaign_tracking")
+}
+
+model LeadScoring {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  userId String? @db.ObjectId // Known user
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId // Which client this lead is for
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Anonymous lead tracking
+  sessionId String?
+  email     String? // Captured email (if available)
+  phone     String? // Captured phone (if available)
+
+  // Engagement scoring (0-100)
+  engagementScore Int @default(0) // Overall engagement score
+
+  // Score components
+  viewScore        Int @default(0) // Based on page views
+  timeScore        Int @default(0) // Based on time spent
+  interactionScore Int @default(0) // Based on likes, comments, shares
+  conversionScore  Int @default(0) // Based on conversions
+
+  // Behavior tracking
+  pagesViewed    Int    @default(0)
+  totalTimeSpent Float  @default(0) // Total seconds
+  interactions   Int    @default(0) // Total interactions (likes, comments, shares)
+  conversions    Int    @default(0)
+
+  // Qualification
+  isQualified        Boolean  @default(false) // Meets qualification threshold
+  qualificationLevel String? // HOT, WARM, COLD
+
+  // Last activity
+  lastActivityAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([clientId, engagementScore])
+  @@index([isQualified, engagementScore])
+  @@index([sessionId])
+  @@unique([userId, clientId])
+  @@unique([sessionId, clientId])
+  @@map("lead_scoring")
+}
+
+model EngagementDuration {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String?  @db.ObjectId
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Engagement metrics
+  sessionId     String?
+  timeOnPage    Float // Total seconds on page
+  activeTime    Float? // Active engagement time (user actively scrolling/interacting)
+  scrollDepth   Float // Percentage scrolled (0-100)
+  maxScrollDepth Float // Maximum scroll depth reached
+
+  // Reading behavior
+  readingTime    Float? // Estimated reading time (content length based)
+  completionRate Float? // How much of content was read (0-100)
+
+  // Interaction timing
+  firstInteractionAt DateTime? // When user first interacted (click, scroll)
+  lastInteractionAt  DateTime? // Last interaction timestamp
+  timeToFirstClick   Float? // Seconds until first click/interaction
+
+  // Bounce detection
+  bounced        Boolean @default(false) // Left within 30 seconds
+  engagedSession Boolean @default(false) // Spent > 2 minutes or scrolled > 75%
+
+  // Metadata
+  pageLoadTime Float? // Page load performance
+  referrer     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([bounced, timeOnPage])
+  @@map("engagement_duration")
+}
+
+model ArticleLinkClick {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Link details
+  linkUrl    String // The URL that was clicked
+  linkText   String? // Anchor text of the link
+  linkType   LinkType // INTERNAL, EXTERNAL, AFFILIATE, CITATION, SOCIAL
+  isExternal Boolean @default(true) // Whether link goes to external domain
+
+  // Context
+  linkPosition   Int? // Position of link in article (0-indexed)
+  sectionContext String? // Which section/paragraph the link is in
+  linkDomain     String? // Extracted domain for grouping (e.g., "example.com")
+
+  // Engagement context
+  sessionId   String?
+  timeOnPage  Float? // Seconds on page before clicking link
+  scrollDepth Float? // Scroll depth when link was clicked (0-100%)
+
+  // Campaign/Attribution
+  campaignId  String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  // Metadata
+  userAgent String?
+  referrer  String?
+  ipAddress String?
+
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+  @@index([linkUrl, createdAt])
+  @@index([linkType, createdAt])
+  @@index([linkDomain, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([isExternal])
+  @@map("article_link_clicks")
+}
+
+// ============================================
+// SETTINGS MODEL (Singleton Pattern)
+// ============================================
+
+model Settings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // SEO Title Settings
+  seoTitleMin      Int     @default(30)
+  seoTitleMax      Int     @default(60)
+  seoTitleRestrict Boolean @default(false) // false = allow max (warn), true = restrict (block)
+
+  // SEO Description Settings
+  seoDescriptionMin      Int     @default(120)
+  seoDescriptionMax      Int     @default(160)
+  seoDescriptionRestrict Boolean @default(false) // false = allow max (warn), true = restrict (block)
+
+  // Twitter Title Settings
+  twitterTitleMax      Int     @default(70)
+  twitterTitleRestrict Boolean @default(true) // true = hard limit (Twitter display limit)
+
+  // Twitter Description Settings
+  twitterDescriptionMax      Int     @default(200)
+  twitterDescriptionRestrict Boolean @default(true) // true = hard limit (Twitter display limit)
+
+  // OG Title Settings
+  ogTitleMax      Int     @default(60)
+  ogTitleRestrict Boolean @default(false)
+
+  // OG Description Settings
+  ogDescriptionMax      Int     @default(200)
+  ogDescriptionRestrict Boolean @default(false)
+
+  // GTM (Google Tag Manager) Settings
+  gtmContainerId String?
+  gtmEnabled     Boolean @default(false)
+
+  // HOTjar Settings
+  hotjarSiteId  String?
+  hotjarEnabled Boolean @default(false)
+
+  // Social Media Links (Platform-wide)
+  facebookUrl  String?
+  twitterUrl   String?
+  linkedInUrl  String?
+  instagramUrl String?
+  youtubeUrl   String?
+  tiktokUrl    String?
+  pinterestUrl String?
+  snapchatUrl  String?
+
+  // Site & Organization (from .env defaults, editable in Settings UI)
+  siteUrl             String?
+  siteName            String?
+  brandDescription    String?
+  siteAuthor          String?
+  themeColor          String?
+  inLanguage            String?  // Default language code (e.g., "ar", "en") for hreflang
+  defaultMetaRobots     String?  // Default meta robots (e.g. "index, follow")
+  defaultGooglebot      String?  // Default meta googlebot (e.g. "index, follow")
+  defaultOgType         String?  // Default og:type (e.g. "website")
+  defaultOgLocale       String?  // Default og:locale (e.g. "ar_SA")
+  defaultOgDeterminer   String?  // Default og:determiner (e.g. "auto")
+  defaultTwitterCard    String?  // Default twitter:card (e.g. "summary_large_image")
+  defaultSitemapPriority Float?  // Default sitemap priority (0.5)
+  defaultSitemapChangeFreq String? // Default sitemap changefreq (e.g. "monthly")
+  articleDefaultSitemapChangeFreq String? // Default sitemap changefreq for articles (e.g. "weekly")
+  articleDefaultSitemapPriority  Float?  // Default sitemap priority for articles (e.g. 0.5)
+  defaultLicense                 String? // Default license URL for articles (e.g. CC-BY)
+  defaultIsAccessibleForFree     Boolean  @default(true) // Default for articles: free to access (structured data)
+  defaultAlternateLanguages     Json?    // Default for articles: array of {hreflang, url} for hreflang
+  defaultContentFormat         String?  // Default for articles: "markdown" | "html" | "rich_text"
+  defaultCharset         String?  // Meta charset (e.g. "UTF-8")
+  defaultViewport        String?  // Meta viewport (e.g. "width=device-width, initial-scale=1")
+  defaultOgImageType     String?  // og:image type (e.g. "image/jpeg")
+  defaultOgImageWidth    Int?     // og:image width (e.g. 1200)
+  defaultOgImageHeight   Int?     // og:image height (e.g. 630)
+  defaultHreflang        String?  // hreflang default (e.g. "x-default")
+  defaultPathname        String?  // URL pathname fallback (e.g. "/")
+  defaultTruncationSuffix String? // Suffix when truncating title/description (e.g. "...")
+  defaultReferrerPolicy  String?  // Referrer policy (e.g. "strict-origin-when-cross-origin")
+  defaultNotranslate     Boolean? // Prevent Chrome translate prompt for Arabic
+  twitterSite            String?
+  twitterCreator      String?
+  twitterSiteId       String?
+  twitterCreatorId    String?
+  orgContactType             String?
+  orgContactEmail            String?
+  orgContactTelephone        String?
+  orgContactAvailableLanguage String?  // ContactPoint.availableLanguage (e.g. "ar"); falls back to inLanguage
+  orgContactOption           String?   // ContactPoint.contactOption (e.g. toll-free)
+  orgContactHoursAvailable   String?   // ContactPoint.hoursAvailable (e.g. "Mo-Fr 09:00-17:00")
+  orgAreaServed              String?
+  orgStreetAddress    String?
+  orgAddressLocality  String?
+  orgAddressRegion    String?
+  orgAddressCountry   String?
+  orgPostalCode       String?
+  orgGeoLatitude      Float?
+  orgGeoLongitude     Float?
+  orgSearchUrlTemplate String?
+  orgLogoUrl          String?
+
+  // Media Settings (Cloudinary URLs)
+  logoUrl    String?
+  ogImageUrl String?
+  altImage   String?  // Default alt text for logo/OG image when none set
+
+  // Modonty app defaults (fallback when page has no SEO title/description)
+  modontySeoTitle       String?
+  modontySeoDescription  String?
+
+  // List pages defaults (fallback when generating meta/JSON-LD)
+  clientsSeoTitle       String?
+  clientsSeoDescription String?
+  categoriesSeoTitle    String?
+  categoriesSeoDescription String?
+  trendingSeoTitle      String?
+  trendingSeoDescription  String?
+
+  // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
+  jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
+  jsonLdLastGenerated   DateTime?
+  jsonLdValidationReport Json?     // { adobe, custom, richResults }
+
+  // Home page meta (PRD: generate once, store, read from DB)
+  homeMetaTags Json?
+
+  // Clients list page meta + JSON-LD
+  clientsPageMetaTags              Json?
+  clientsPageJsonLdStructuredData  String?   @db.String
+  clientsPageJsonLdLastGenerated   DateTime?
+  clientsPageJsonLdValidationReport Json?
+
+  // Categories list page meta + JSON-LD
+  categoriesPageMetaTags              Json?
+  categoriesPageJsonLdStructuredData  String?   @db.String
+  categoriesPageJsonLdLastGenerated   DateTime?
+  categoriesPageJsonLdValidationReport Json?
+
+  // Trending list page meta + JSON-LD
+  trendingPageMetaTags              Json?
+  trendingPageJsonLdStructuredData  String?   @db.String
+  trendingPageJsonLdLastGenerated   DateTime?
+  trendingPageJsonLdValidationReport Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+// ============================================
+// MODONTY PAGE MODELS
+// ============================================
+
+model Modonty {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Page identification
+  slug String @unique // e.g., "about", "terms", "privacy-policy"
+  title String // Page title
+  
+  // Content (TipTap HTML format)
+  content String // Rich text content from TipTap editor
+  
+  // Hero Image (for page display)
+  heroImage                String? // Cloudinary URL
+  heroImageAlt             String? // Alt text
+  heroImageCloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  
+  // ============================================
+  // SEO FIELDS (Following codebase pattern)
+  // ============================================
+  
+  // Basic SEO (Category/Tag/Industry/Author pattern)
+  seoTitle       String?
+  seoDescription String? // 155-160 chars optimal
+  metaRobots     String? // index, noindex, follow, nofollow
+  
+  // Social Images (Category/Tag/Industry pattern)
+  socialImage        String? // Cloudinary URL (w_1200,h_630,c_fill,q_auto,f_auto)
+  socialImageAlt     String? // Alt text
+  cloudinaryPublicId String? // Cloudinary public_id for direct deletion
+  
+  // Open Graph (Article pattern)
+  ogTitle       String?
+  ogDescription String?
+  ogType        String?   @default("website")
+  ogUrl         String?
+  ogSiteName    String?
+  ogLocale      String?
+  ogImage       String? // Open Graph image URL
+  
+  // Twitter Cards (Client/Article pattern)
+  twitterCard        String? // summary_large_image, summary
+  twitterTitle       String?
+  twitterDescription String?
+  twitterSite        String? // @username
+  twitterCreator     String?
+  
+  // Technical SEO
+  canonicalUrl       String?
+  alternateLanguages Json? // Array of {hreflang, url} objects
+  sitemapPriority    Float?  @default(0.5) // 0.0 to 1.0
+  sitemapChangeFreq  String? @default("monthly") // always, hourly, daily, weekly, monthly, yearly, never
+  
+  // Language
+  inLanguage String @default("ar") // For hreflang
+  
+  // Cached SEO (meta tags + JSON-LD, generated on save)
+  metaTags              Json?    // Client-shaped meta object
+  jsonLdStructuredData  String?  // WebPage @graph JSON-LD string
+  jsonLdLastGenerated   DateTime?
+  jsonLdValidationReport Json?   // { adobe, ajv, custom }
+  
+  // ============================================
+  // METADATA
+  // ============================================
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lastModifiedBy String?  @db.ObjectId // User ID who last edited
+  
+  @@map("modonty")
+}
+
+// ============================================
+// CONTACT MODELS
+// ============================================
+
+model ContactMessage {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Contact information
+  name    String
+  email   String
+  subject String
+  message String
+
+  // Status tracking
+  status String @default("new") // new, read, replied, archived
+
+  // Optional client association (if contact form is client-specific)
+  clientId String? @db.ObjectId
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  readAt    DateTime? // When message was read
+  repliedAt DateTime? // When reply was sent
+
+  @@index([email])
+  @@index([status])
+  @@index([clientId])
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+// ============================================
+// FAQ MODELS
+// ============================================
+
+model FAQ {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Basic content
+  question String // The question text
+  answer   String // The answer text (can be HTML/rich text)
+  position Int    @default(0) // For ordering
+  isActive Boolean @default(true) // To show/hide FAQs
+
+  // SEO Fields (following Schema.org FAQPage best practices)
+  seoTitle       String? // SEO-optimized title for the question (for meta tags, 50-60 chars optimal)
+  seoDescription String? // SEO description/preview text (155-160 chars optimal)
+  lastReviewed   DateTime? // When this FAQ was last reviewed/updated (Schema.org lastReviewed)
+  reviewedBy     String? @db.ObjectId // User ID who last reviewed (Schema.org reviewedBy)
+  author         String? @db.ObjectId // Author/creator of this FAQ (Schema.org author - Person/Organization)
+  upvoteCount    Int? @default(0) // Community upvotes (Schema.org upvoteCount)
+  downvoteCount  Int? @default(0) // Track "not helpful" feedback
+  answerCount    Int? // Number of alternative answers (if multiple answers supported)
+  dateCreated    DateTime? // Original creation date (Schema.org dateCreated)
+  datePublished  DateTime? // Publication date (Schema.org datePublished)
+  inLanguage     String  @default("ar") // Language code (for hreflang)
+
+  // Structured Data Enhancement
+  speakable Json? // Speakable content for voice search (Schema.org SpeakableSpecification)
+  // Format: { "@type": "SpeakableSpecification", "cssSelector": ["#question-1", "#answer-1"] }
+  mainEntity Json? // Additional structured data context
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?  @db.ObjectId // User who created
+  updatedBy String?  @db.ObjectId // User who last updated
+
+  // Relations
+  feedbacks FAQFeedback[]
+
+  @@index([position])
+  @@index([isActive, position])
+  @@index([lastReviewed])
+  @@index([upvoteCount])
+  @@index([downvoteCount])
+  @@map("general_faqs")
+}
+
+model FAQFeedback {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Relationships
+  faqId String @db.ObjectId
+  faq   FAQ    @relation(fields: [faqId], references: [id], onDelete: Cascade)
+
+  // User/Session tracking
+  userId    String? @db.ObjectId // User ID if logged in
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId String?  // Browser session ID for anonymous users
+
+  // Feedback data
+  isHelpful Boolean // true = helpful, false = not helpful
+
+  // Metadata
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@unique([faqId, sessionId]) // Prevent duplicate feedback from same session
+  @@unique([faqId, userId])    // Prevent duplicate feedback from same user
+  @@index([faqId, createdAt])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([isHelpful])
+  @@map("faq_feedback")
+}

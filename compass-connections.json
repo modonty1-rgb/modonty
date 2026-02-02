@@ -1,0 +1,34 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "b4a43210-ad5f-46fe-9216-69ed4370bc70",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/"
+      },
+      "savedConnectionType": "recent"
+    },
+    {
+      "id": "f94e5f32-ec84-49ad-8d39-f7252067b49a",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1767119397767"
+        }
+      },
+      "favorite": {
+        "name": "workShop",
+        "color": "color1"
+      },
+      "savedConnectionType": "favorite",
+      "connectionOptions": {
+        "connectionString": "mongodb+srv://devnadish:Leno_1972123@cluster0.blravpl.mongodb.net/workshop?retryWrites=true&w=majority",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjoxLCJzdGF0ZSI6W119"
+        }
+      }
+    }
+  ]
+}

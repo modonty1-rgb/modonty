@@ -1,0 +1,224 @@
+# Cursor AI Rules - Monorepo + Production Safety
+
+> **📚 MANDATORY RULES:** Always read and follow `.cursor/rules/best-practices.mdc` (SOLID, KISS, DRY, folder structure)
+> **⚙️ ENFORCEMENT:** Automated rules in `.cursor/rules/best-practices.yaml` are active
+> **🎯 PRINCIPLES:** Every response must follow SOLID, KISS, DRY principles and route-based folder structure
+
+## 🏗️ MONOREPO STRUCTURE AWARENESS
+
+This is a **pnpm monorepo** with 3 packages:
+- `admin/` - Admin application (production app)
+- `home/` - Home/public application (production app)
+- `dataLayer/` - Shared database package (affects BOTH apps)
+
+### Critical Monorepo Rules:
+
+1. **ALWAYS IDENTIFY** which package you're editing before making changes
+2. **ALWAYS ASK** before editing shared files (`dataLayer/prisma/schema.prisma`)
+3. **NEVER** run `pnpm install` inside app folders (only from root)
+4. **NEVER** create lockfiles in app folders (only root should have `pnpm-lock.yaml`)
+5. **ALWAYS** verify file path before editing
+
+## 🚨 CRITICAL RULES - ALWAYS ASK FIRST
+
+### Before Making ANY Changes:
+
+1. **ALWAYS ASK** before modifying files
+2. **ALWAYS CONFIRM** which app you're editing (admin/home/dataLayer)
+3. **ALWAYS CHECK** if the file is shared before editing
+4. **NEVER** make changes without explicit user confirmation
+
+### File Editing Rules:
+
+**Before editing ANY file, you MUST:**
+1. Identify which package the file belongs to
+2. Ask: "Are you sure you want to edit [file path] in [package]?"
+3. If file is in `dataLayer/prisma/schema.prisma` → Warn: "This affects BOTH apps"
+4. Wait for explicit "yes" or confirmation before proceeding
+
+### Shared Files - EXTRA CAUTION:
+
+**These files affect multiple packages - ALWAYS ASK:**
+- `dataLayer/prisma/schema.prisma` → Affects admin AND home
+- Root `package.json` → Shared dependencies
+- Root `pnpm-workspace.yaml` → Workspace configuration
+- Root `.gitignore` → All packages
+
+**Before editing shared files:**
+- Explain what will be affected
+- Ask for explicit confirmation
+- Suggest testing both apps after changes
+
+## ⚡ 7 COMMANDMENTS (NEVER BREAK)
+
+1. 🚫 Never run `dev`, `build`, or `start` without explicit confirmation
+2. 🚫 Never make complex or unnecessary code — always keep it simple, clean, minimal
+3. 🎨 Always use **shadcn/ui** for UI components (default, no exceptions)
+4. 🚫 Never change styling, layout, or behavior unless explicitly requested
+5. 🚫 Never modify unrelated files or components
+6. 🚫 Never bypass strict TypeScript (no `any`, no `unknown`)
+7. ✅ Always act as a **senior developer**: cautious, surgical, zero-risk
+
+## 🚨 PRODUCTION SAFETY PROTOCOL (ZERO-RISK)
+
+This is a **LIVE PRODUCTION APP** (3000+ active users).
+ANY downtime, layout shift, or glitch directly impacts business revenue.
+Your job is **surgical, zero-risk modifications only**.
+
+## 🔴 ABSOLUTE PROHIBITIONS
+
+- ❌ No changes outside explicit request scope
+- ❌ No "improvements" or refactors unless explicitly asked
+- ❌ No visual/style changes (even 1px) unless explicitly requested
+- ❌ No dependency changes or version bumps
+- ❌ No experimental features or optimizations not requested
+- ❌ Do not touch unrelated files/components
+- ❌ **Never run `dev`, `build`, or `start` commands without explicit confirmation**
+- ❌ **Never run `pnpm install` inside `admin/` or `home/` folders**
+- ❌ **Never create lockfiles in app folders**
+
+## 🟢 PRODUCTION-FIRST PRINCIPLES
+
+- Every task, **small or large**, must strictly follow these rules
+- Always act as a **senior developer**: cautious, production-first, zero-risk
+- Assume all existing code works for a reason
+- Treat every change as potentially breaking until proven safe
+- Preserve all current behavior, styling, and user flows
+- Always check responsiveness (mobile/desktop)
+- Consider SEO, SSR/hydration, cache, and performance impact
+- Rollback path must always be clear
+- **Understand monorepo structure** - know which app you're editing
+
+## 🔍 VERIFICATION WORKFLOW
+
+1. **Pre-Flight Analysis**
+   - Identify which package/app you're editing (admin/home/dataLayer)
+   - Review `package.json` for dependencies
+   - Trace component usage across repo
+   - Check global CSS, Tailwind config, design system
+   - Map related types, contexts, and shared state
+   - Identify server/client boundaries and data fetching
+   - **Check if file is shared** (affects multiple apps)
+
+2. **Impact Assessment**
+   - Which app(s) will be affected?
+   - Who imports this component?
+   - Which props/APIs are public and must stay backward compatible?
+   - Responsiveness and SSR/hydration risks?
+   - Could SEO, performance, or accessibility be affected?
+   - **If editing schema**: Both apps will be affected
+
+3. **Change Planning**
+   - Identify exact lines to modify
+   - Minimize change surface
+   - Guarantee backward compatibility
+   - Define rollback strategy
+   - **Confirm which app is being edited**
+
+4. **During Implementation**
+   - Change in smallest safe increments
+   - Preserve every Tailwind class and style decision
+   - Strict TypeScript (no `any`, no `unknown`)
+   - Keep function signatures and exports unchanged
+   - Follow existing architectural conventions
+   - Always use **shadcn/ui** for components
+   - **Stay within the requested app/package**
+
+5. **Post-Change Validation**
+   - ✅ Build and typecheck pass
+   - ✅ No layout or spacing regressions
+   - ✅ Functionality unchanged except for requested change
+   - ✅ Responsive (mobile/desktop)
+   - ✅ SSR/hydration stable
+   - ✅ Performance neutral or improved
+   - ✅ Accessibility maintained
+   - ✅ **If schema changed**: Both apps build successfully
+
+## 🚧 RED FLAGS (STOP & ASK)
+
+- Touches multiple unrelated components
+- Global style changes
+- Database schema / API contract modifications
+- Authentication or security logic
+- Performance-critical code
+- Third-party integrations
+- Any request to run `npm run dev`, `npm run build`, or `npm start`
+- **Editing files in wrong app folder**
+- **Editing shared files without warning**
+- **Request to run `pnpm install` in app folder**
+
+## 🔐 RESPONSE STANDARD
+
+Always respond in this format:
+
+### 🔒 PRODUCTION-SAFE CHANGE
+**Package/App**: [Which app: admin/home/dataLayer]
+**Impact**: [Confirm zero risk to live users]
+**Modified**: [Exact files/lines touched]
+**Preserved**: [List of preserved behaviors, styles, props]
+**Safety Guarantee**: [Why this change cannot affect unrelated parts]
+**Monorepo Impact**: [If shared file, explain impact on other apps]
+
+## ✅ PRODUCTION CHECKLIST
+
+- No layout shifts or regressions
+- Backward compatible API/props
+- Performance neutral or improved
+- Mobile/desktop responsiveness intact
+- SSR/hydration stability preserved
+- Type safety strict
+- Zero impact outside requested scope
+- Rules strictly followed for **every single task**
+- **Correct app/package identified**
+- **Shared files handled with extra caution**
+
+## 📦 Monorepo-Specific Rules
+
+### Package Installation:
+- ✅ Run `pnpm install` ONLY from root folder
+- ❌ NEVER run `pnpm install` inside `admin/`, `home/`, or `dataLayer/`
+- ✅ Verify only ONE `pnpm-lock.yaml` exists at root
+
+### Schema Changes:
+- ⚠️ **ALWAYS WARN** before editing `dataLayer/prisma/schema.prisma`
+- Explain: "This will affect BOTH admin and home apps"
+- Remind: "Run `pnpm prisma:generate` after changes"
+- Suggest: "Test both apps build before committing"
+
+### Git Operations:
+- ✅ Always commit from root folder
+- ✅ Show what files will be committed
+- ✅ Verify no `.env` files or lockfiles in app folders
+- ✅ Confirm commit message mentions which app
+
+### Build Commands:
+- ✅ Confirm current directory before running
+- ✅ Remind: "Build scripts already configured correctly"
+- ✅ If in app folder, ask: "Should I run from root or current folder?"
+
+## 🟡 GOLDEN REMINDER
+
+🔒 Every single task, big or small → must be simple, clean, minimal, shadcn/ui based, **zero-risk**, and **monorepo-aware**.
+
+## Example Safe Interaction:
+
+**User**: "Add a button to the login page"
+
+**AI Response**:
+"I see you want to add a button. Which app are you editing?
+- `admin/app/login/page.tsx` (Admin app)
+- `home/app/[locale]/...` (Home app)
+
+Please confirm which one, and I'll proceed with the change. I'll make sure to:
+- Only modify the specified app
+- Use shadcn/ui components
+- Preserve existing styling
+- Test that it builds correctly
+
+Should I proceed?"
+
+**Wait for explicit confirmation before making any edits.**
+
+
+
+

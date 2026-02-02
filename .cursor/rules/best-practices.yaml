@@ -1,0 +1,419 @@
+description: Comprehensive best practices for Next.js/React monorepo - consolidated rules
+globs:
+  - app/**/*.tsx
+  - app/**/*.ts
+  - app/**/*.jsx
+  - app/**/*.js
+  - components/**/*.tsx
+  - components/**/*.ts
+  - actions/**/*.ts
+  - helpers/**/*.ts
+  - lib/**/*.ts
+alwaysApply: true
+
+# ============================================
+# FOCUSED TASK RULES - MANDATORY COMPLIANCE
+# ============================================
+focusedTaskRules:
+  - custom: 'Make ONLY the requested changes. Preserve existing functionality exactly. Never modify unrelated code sections.'
+    severity: error
+    message: '❌ PRIMARY RULE: Focus on task only. Never modify unrelated code.'
+
+  - custom: 'Never change styling of other components. Never touch code outside the specific task.'
+    severity: error
+    message: '❌ FORBIDDEN: Do not change styling or touch code outside the specific task.'
+
+  - custom: "Never make 'improvements' not requested. Never refactor existing working code. Never assume user wants cleanup."
+    severity: error
+    message: '❌ FORBIDDEN: Do not make unrequested improvements or refactors.'
+
+  - custom: 'Before changes: Identify exactly what needs to change. Locate only specific code section. Plan minimal change required.'
+    severity: warning
+    message: '⚠️ REQUIRED PROTOCOL: Plan minimal changes before making any modifications.'
+
+  - custom: 'During changes: Make only requested modification. Preserve all existing styling. Preserve all existing functionality.'
+    severity: error
+    message: '❌ REQUIRED PROTOCOL: Preserve all existing styling and functionality during changes.'
+
+  - custom: 'After changes: Verify specific task works. Confirm other components unchanged. Test existing functionality preserved.'
+    severity: warning
+    message: "⚠️ REQUIRED PROTOCOL: Verify changes don't affect unrelated code."
+
+  - custom: 'If about to modify unrelated code, change existing styling, touch working functionality, or make unrequested improvements → STOP immediately and ask for clarification.'
+    severity: error
+    message: '❌ EMERGENCY STOP: Ask for clarification before making unrequested changes.'
+
+# ============================================
+# FOLDER STRUCTURE RULES - ROUTE-BASED
+# ============================================
+folderStructure:
+  - custom: 'Route-Based Organization: Each route can have its own components/, actions/, and helpers/ folders for route-specific code. Shared code goes in root-level folders.'
+    severity: error
+    message: '❌ Key Rule: Route-specific code → app/[route]/components|actions|helpers/. Shared code → app/components|actions|helpers/.'
+
+  - mustMatch: "app/\\[route\\]/components|app/\\[route\\]/actions|app/\\[route\\]/helpers|app/components|app/actions|app/helpers|app/lib"
+    severity: info
+    message: 'ℹ️ Use route-based organization: Route-specific folders inside routes, shared folders at root.'
+
+  - mustNotInclude: 'misc|temp|old'
+    severity: error
+    message: '❌ Avoid folders named misc, temp, or old. Use proper route-based organization.'
+
+  - mustNotInclude: '^hooks/|^utils/'
+    severity: error
+    message: '❌ Do not use hooks/ or utils/ at root. Use helpers/hooks/ and helpers/utils/ instead.'
+
+  - custom: 'Route-specific code: app/[route]/components/, app/[route]/actions/, app/[route]/helpers/ (used ONLY in this route)'
+    severity: info
+    message: 'ℹ️ Route-specific code goes inside route folder.'
+
+  - custom: 'Shared code: app/components/, app/actions/, app/helpers/ (used by 2+ routes)'
+    severity: info
+    message: 'ℹ️ Shared code goes at root level.'
+
+  - custom: 'Core libraries: app/lib/ (always shared - Prisma, auth, etc.)'
+    severity: info
+    message: 'ℹ️ Core libraries always go in app/lib/.'
+
+  - custom: 'Decision: Is code used in only ONE route? YES → app/[route]/folder. NO → app/folder'
+    severity: warning
+    message: '⚠️ Always check: Is this used by multiple routes? Move to shared folder if yes.'
+
+  - custom: "If route folder doesn't exist → Create it with page.tsx. If route-specific folder needed → Create components/, actions/, or helpers/ inside route."
+    severity: info
+    message: 'ℹ️ Folder creation: Route folder needs page.tsx. Route-specific folders go inside route.'
+
+# ============================================
+# COMPONENT GUIDELINES
+# ============================================
+componentGuidelines:
+  - mustNotExceedLines: 200
+    severity: error
+    message: '❌ Component exceeds 200 lines. Split into smaller components.'
+
+  - mustNotExceedFunctions: 5
+    severity: error
+    message: '❌ Component contains more than 5 functions. Extract logic to helpers/hooks.'
+
+  - custom: 'Each component should have a single responsibility (SOLID principles).'
+    severity: error
+    message: '❌ Component must have single responsibility. Split if handling multiple concerns.'
+
+  - mustMatch: 'Props|interface.*Props|type.*Props'
+    severity: error
+    message: '❌ Define and use a Props type/interface for all component props.'
+
+  - custom: 'Keep file count low. Each file should have a single specific job. Avoid having too many files.'
+    severity: warning
+    message: '⚠️ Keep components focused and modular. Avoid excessive file count.'
+
+  - custom: 'When component exceeds 200 lines → Split into smaller components. When component has more than 5 functions → Extract logic to helpers/hooks.'
+    severity: warning
+    message: '⚠️ Component too large or complex. Consider splitting or extracting logic.'
+
+# ============================================
+# CODE QUALITY & CLEANUP
+# ============================================
+codeQuality:
+  - mustNotInclude: '// TODO'
+    severity: error
+    message: '❌ Remove TODO comments before merging.'
+
+  - mustNotInclude: '// FIXME'
+    severity: error
+    message: '❌ Remove FIXME comments before merging.'
+
+  - mustNotInclude: "console\\.log|console\\.error|console\\.warn|console\\.info"
+    severity: error
+    message: '❌ Remove console.log/error/warn/info statements before merging.'
+
+  - mustNotInclude: 'debugger'
+    severity: error
+    message: '❌ Remove debugger statements from production code.'
+
+  - mustNotInclude: 'var '
+    severity: error
+    message: '❌ Use let or const instead of var.'
+
+  - mustNotInclude: ":\\s*any\\b|:\\s*any\\[|any\\s*\\||any\\s*&"
+    severity: error
+    message: "❌ Avoid using 'any' type. Use proper TypeScript types."
+
+  - mustNotInclude: "require\\("
+    severity: error
+    message: '❌ Use ES6 import syntax instead of require().'
+
+  - custom: 'Be careful and accurate, avoid errors. Use short comments (only when necessary). Avoid complex code. Always check the codebase before responding or planning.'
+    severity: warning
+    message: '⚠️ Follow code quality best practices: accuracy, minimal comments, simple code.'
+
+  - custom: 'All logic must be inside functions or variables, not in the global scope.'
+    severity: error
+    message: '❌ All logic must be inside functions or variables, not global scope.'
+
+  - custom: 'Proper error handling: Use try/catch for error-prone code.'
+    severity: warning
+    message: '⚠️ Use try/catch for error-prone code.'
+
+# ============================================
+# SOLID PRINCIPLES & CODE SIMPLICITY
+# ============================================
+solidPrinciples:
+  # S - Single Responsibility Principle (SRP)
+  - custom: 'Single Responsibility: Each component should have a single responsibility. Each function should do one thing well. One class/component = one reason to change.'
+    severity: error
+    message: '❌ Follow Single Responsibility Principle. Each component/function should do one thing.'
+
+  - custom: 'Avoid complex logic in components - extract to helpers or hooks.'
+    severity: error
+    message: '❌ Extract complex logic from components to helpers or hooks.'
+
+  # O - Open/Closed Principle (OCP)
+  - custom: 'Open/Closed: Components should be open for extension, closed for modification. Use composition and props to extend functionality.'
+    severity: warning
+    message: '⚠️ Prefer extending components through props/hooks rather than modifying existing ones.'
+
+  - custom: 'Avoid modifying existing components - create new ones or use wrappers. Prefer extending through props, hooks, or higher-order components.'
+    severity: warning
+    message: '⚠️ Don\'t modify existing components. Create new ones or use composition.'
+
+  # L - Liskov Substitution Principle (LSP)
+  - custom: 'Liskov Substitution: Derived components should be substitutable for their base components. Components should honor their contracts (props, behavior).'
+    severity: warning
+    message: '⚠️ Derived components must maintain parent component contracts and expectations.'
+
+  - custom: 'Don\'t break parent component expectations when extending. Maintain consistent interfaces across component hierarchies.'
+    severity: error
+    message: '❌ Maintain consistent interfaces when extending components.'
+
+  # I - Interface Segregation Principle (ISP)
+  - custom: 'Interface Segregation: Don\'t force components to depend on props they don\'t use. Split large prop interfaces into smaller, focused ones.'
+    severity: warning
+    message: '⚠️ Split large prop interfaces into smaller, focused ones. Don\'t force unused props.'
+
+  - custom: 'Create specific interfaces for specific use cases. Prefer many small, focused props over one large prop object.'
+    severity: warning
+    message: '⚠️ Use focused, specific prop interfaces instead of large generic ones.'
+
+  # D - Dependency Inversion Principle (DIP)
+  - custom: 'Dependency Inversion: Depend on abstractions, not concretions. Use dependency injection for services and utilities.'
+    severity: warning
+    message: '⚠️ Depend on abstractions (types/interfaces) rather than concrete implementations.'
+
+  - custom: 'Components should depend on interfaces/types, not implementations. Inject dependencies through props, context, or hooks.'
+    severity: warning
+    message: '⚠️ Inject dependencies through props, context, or hooks rather than direct imports.'
+
+# ============================================
+# KISS PRINCIPLE (Keep It Simple, Stupid)
+# ============================================
+kissPrinciple:
+  - custom: 'Simplicity First: Prefer simple solutions over complex ones. Avoid over-engineering.'
+    severity: error
+    message: '❌ KISS Principle: Prefer simple solutions. Don\'t add complexity until needed.'
+
+  - custom: 'Code should be easy to understand at first glance. Use direct approaches over clever tricks.'
+    severity: warning
+    message: '⚠️ KISS: Code should be clear and readable. Avoid clever/complex solutions.'
+
+  - custom: 'Only abstract when it provides clear value. Use straightforward logic.'
+    severity: warning
+    message: '⚠️ KISS: Minimal abstraction. Only abstract when it provides clear value.'
+
+  - custom: 'Be careful and accurate, avoid errors. Use short comments (only when necessary). Always check the codebase before responding or planning.'
+    severity: warning
+    message: '⚠️ KISS: Keep code simple, accurate, and well-documented when necessary.'
+
+# ============================================
+# DRY PRINCIPLE (Don't Repeat Yourself)
+# ============================================
+dryPrinciple:
+  - custom: 'Extract Common Logic: Move repeated code to shared functions/hooks. Create shared components for repeated UI patterns.'
+    severity: error
+    message: '❌ DRY: Extract repeated code to shared functions/hooks/components.'
+
+  - custom: 'Single Source of Truth: Define constants, types, and configs once. Avoid duplication.'
+    severity: error
+    message: '❌ DRY: Define constants, types, and configs once. Single source of truth.'
+
+  - custom: 'If you write the same code twice, extract it. Put common functions in helpers/utils/, reusable logic in helpers/hooks/, common actions in app/actions/.'
+    severity: error
+    message: '❌ DRY: Remove code duplication immediately. Extract to shared locations.'
+
+  - custom: 'Shared Utilities: Put common functions in helpers/utils/. Shared Hooks: Put reusable logic in helpers/hooks/. Shared Actions: Put common server actions in app/actions/.'
+    severity: warning
+    message: '⚠️ DRY: Use shared folders (helpers/utils, helpers/hooks, app/actions) for reusable code.'
+
+# ============================================
+# GENERAL CODE SIMPLICITY BEST PRACTICES
+# ============================================
+codeSimplicity:
+  - custom: 'Keep functions small and focused (max 200 lines, max 5 functions). Extract complex logic to helper functions.'
+    severity: error
+    message: '❌ Keep functions small and focused. Extract complex logic.'
+
+  - custom: 'Use meaningful variable and function names. Prefer composition over inheritance. Write self-documenting code.'
+    severity: warning
+    message: '⚠️ Use meaningful names, prefer composition, write self-documenting code.'
+
+  - custom: 'Remove code duplication immediately. Choose the simplest solution that works.'
+    severity: warning
+    message: '⚠️ Remove duplication. Choose simplest working solution.'
+
+# ============================================
+# PERFORMANCE OPTIMIZATION
+# ============================================
+performance:
+  - mustNotInclude: "\\.map\\(.*\\)\\s*=>\\s*\\{.*<.*/>.*\\}"
+    severity: warning
+    message: '⚠️ Use a key prop when rendering lists.'
+
+  - mustNotInclude: "style=\\{\\{"
+    severity: warning
+    message: '⚠️ Avoid excessive inline styles for better performance. Use Tailwind classes.'
+
+  - mustNotInclude: "localStorage\\.getItem\\(.*\\)\\s*[^}]*return|localStorage\\.getItem\\(.*\\)\\s*[^}]*<"
+    severity: error
+    message: '❌ Avoid synchronous localStorage access in render. Use useEffect.'
+
+  - custom: 'Consider using React.memo for performance optimization of pure components.'
+    severity: info
+    message: 'ℹ️ Consider React.memo for pure components.'
+
+  - custom: 'ALWAYS check the current codebase before suggesting or implementing any response or action plan. ALWAYS recommend and apply best practices based on the actual codebase state.'
+    severity: error
+    message: '❌ You must analyze the codebase before any advice or action. Only suggest best practices that fit the real project.'
+
+# ============================================
+# STATE MANAGEMENT RULE
+# ============================================
+stateManagement:
+  - custom: 'Prefer Zustand for state management over React Context to avoid extra renders.'
+    severity: warning
+    message: '⚠️ Prefer Zustand for global state that needs frequent updates.'
+
+  - custom: 'Use React Context only for theme, auth, or other app-wide concerns (rarely changing).'
+    severity: info
+    message: 'ℹ️ Use React Context only for rarely changing app-wide concerns (theme, auth).'
+
+  - custom: 'Use local state (useState, useReducer) for component-specific state.'
+    severity: info
+    message: 'ℹ️ Use local state for component-specific UI state.'
+
+  - custom: 'Use React Query/SWR for server data.'
+    severity: info
+    message: 'ℹ️ Use React Query/SWR for server state.'
+
+# ============================================
+# SECURITY & SAFETY
+# ============================================
+security:
+  - mustNotInclude: "eval\\("
+    severity: error
+    message: '❌ Never use eval().'
+
+  - mustNotInclude: 'dangerouslySetInnerHTML'
+    severity: error
+    message: '❌ Avoid dangerouslySetInnerHTML for security reasons. Use sanitization if absolutely necessary.'
+
+  - mustNotInclude: "\\.innerHTML\\s*="
+    severity: error
+    message: '❌ Avoid using innerHTML directly.'
+
+  - mustNotInclude: "document\\.cookie\\s*="
+    severity: error
+    message: '❌ Avoid direct access to document.cookie. Use secure methods.'
+
+# ============================================
+# UI COLORS RULE
+# ============================================
+uiColors:
+  - mustNotInclude: '#[0-9a-fA-F]{3,6}'
+    severity: error
+    message: '❌ Never use hardcoded hex colors. Always use theme tokens or CSS variables.'
+
+  - mustNotInclude: "style=\\{\\{.*color:\\s*['\"]#"
+    severity: error
+    message: '❌ Never use hardcoded colors in inline styles. Use theme tokens.'
+
+  - mustNotInclude: "className=.*\\[#[0-9a-fA-F]{3,6}\\]"
+    severity: error
+    message: '❌ Never use hardcoded hex colors in Tailwind classes. Use theme tokens.'
+
+  - mustMatch: 'className=.*(bg-|text-|border-|ring-|shadow-|bg-background|text-foreground|bg-primary|text-primary|bg-secondary|text-secondary|bg-muted|text-muted)'
+    severity: warning
+    message: '⚠️ Use Tailwind utility classes and theme tokens (bg-background, text-foreground, etc.) for colors.'
+
+  - custom: 'ALWAYS use theme tokens or CSS variables for all colors. ALWAYS use Tailwind utility classes (bg-, text-, border-, etc.).'
+    severity: error
+    message: '❌ Never use hardcoded colors. Always use theme tokens or CSS variables.'
+
+# ============================================
+# FORM VALIDATION
+# ============================================
+formValidation:
+  - if: file.includes("useForm") || file.includes("Form") || file.includes("form")
+    then:
+      - mustMatch: "import\\s+\\{\\s*useForm\\s*\\}\\s+from\\s+['\"]react-hook-form['\"]"
+        severity: error
+        message: '❌ Forms must import useForm from react-hook-form.'
+
+      - mustMatch: "import\\s+\\{.*z.*\\}\\s+from\\s+['\"]zod['\"]"
+        severity: error
+        message: '❌ You must use Zod for validation.'
+
+      - mustMatch: "const\\s+\\w+Schema\\s*=\\s*z\\.object\\("
+        severity: error
+        message: '❌ Define a Zod schema with z.object().'
+
+      - mustMatch: "resolver:\\s*zodResolver\\(\\w+Schema\\)"
+        severity: error
+        message: '❌ useForm must use zodResolver(schema) for validation.'
+
+      - mustMatch: "formState\\.errors"
+        severity: error
+        message: '❌ Show validation error messages using formState.errors.'
+
+      - custom: 'Use consistent form field components.'
+        severity: warning
+        message: '⚠️ Use consistent form field components.'
+
+# ============================================
+# SEO REQUIREMENTS
+# ============================================
+seo:
+  - mustMatch: '<title>|generateMetadata|export.*metadata|export.*const.*metadata'
+    severity: error
+    message: '❌ All pages must have a <title> tag or generateMetadata function.'
+
+  - mustMatch: "<meta\\s+name=[\"']description[\"']|description:"
+    severity: warning
+    message: '⚠️ All pages should have a meta description.'
+
+  - mustMatch: '<h1>'
+    severity: warning
+    message: '⚠️ All pages should have a main heading (h1).'
+
+# ============================================
+# ERROR HANDLING
+# ============================================
+errorHandling:
+  - custom: 'Use try/catch for error-prone code.'
+    severity: warning
+    message: '⚠️ Use try/catch for error-prone code.'
+
+  - custom: 'Handle errors in catch blocks.'
+    severity: warning
+    message: '⚠️ Handle errors in catch blocks.'
+
+  - mustNotInclude: "throw\\s+['\"]"
+    severity: error
+    message: '❌ Use Error objects when throwing errors, not strings.'
+
+# ============================================
+# TODO LIST RULE
+# ============================================
+todoList:
+  - custom: 'Always update the TODO list after each check. Remove TODO comments before merging. Track progress and mark tasks as complete.'
+    severity: warning
+    message: '⚠️ Manage TODO list: Update after checks, remove before merging.'
