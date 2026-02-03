@@ -28,10 +28,16 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
   const settingsArticleDefaults = getArticleDefaultsFromSettings(settings);
   const initialData = { ...transformedData, ...settingsArticleDefaults };
 
+  const dbMetaAndJsonLd = {
+    nextjsMetadata: (article.nextjsMetadata ?? null) as Record<string, unknown> | null,
+    jsonLdStructuredData: article.jsonLdStructuredData ?? null,
+  };
+
   return (
     <ArticleFormProvider
       initialData={initialData}
       settingsArticleDefaults={settingsArticleDefaults}
+      dbMetaAndJsonLd={dbMetaAndJsonLd}
       onSubmit={createArticle}
       clients={clients}
       categories={categories}

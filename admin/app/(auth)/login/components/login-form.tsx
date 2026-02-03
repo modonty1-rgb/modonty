@@ -11,6 +11,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Eye, EyeOff } from "lucide-react";
 
+const AUTH_ERROR_MESSAGES = {
+  CredentialsSignin: "Invalid email or password.",
+  NO_PASSWORD_SET:
+    'This admin account does not have a password yet. Use "Forgot password?" to create one or contact your super admin.',
+} as const;
+
+const isKnownAuthError = (
+  code: string
+): code is keyof typeof AUTH_ERROR_MESSAGES =>
+  Object.prototype.hasOwnProperty.call(AUTH_ERROR_MESSAGES, code);
+
+const getAuthErrorMessage = (code?: string) => {
+  if (!code) {
+    return "Login failed. Please try again.";
+  }
+
+  return isKnownAuthError(code) ? AUTH_ERROR_MESSAGES[code] : code;
+};
+
 export function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -44,12 +63,13 @@ export function LoginForm() {
         console.log("[Login] signIn result:", result);
 
         if (result?.error) {
-          console.error("[Login] Auth error:", result.error);
-          if (result.error === "CredentialsSignin") {
-            setError("Invalid email or password");
+          if (isKnownAuthError(result.error)) {
+            console.warn("[Login] Auth warning:", result.error);
           } else {
-            setError(result.error);
+            console.error("[Login] Auth error:", result.error);
           }
+
+          setError(getAuthErrorMessage(result.error));
           setLoading(false);
           return;
         }
@@ -108,7 +128,7 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
+        <CardTitle className="text-2xl text-center">Modonty Admin</CardTitle>
         <CardDescription className="text-center">
           Sign in to access the admin dashboard
         </CardDescription>

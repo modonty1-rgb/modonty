@@ -5,7 +5,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useArticleForm } from '../article-form-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Code, Copy, ScanSearch } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { AlertCircle, Code, Copy, ScanSearch, Database, GitCompare, ChevronDown } from 'lucide-react';
 import { JsonLdValidationButton } from '@/components/shared/jsonld-validation-button';
 import { useToast } from '@/hooks/use-toast';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
@@ -22,7 +28,7 @@ interface FeaturedMedia {
 export function MetaTagPreviewStep() {
   const router = useRouter();
   const pathname = usePathname();
-  const { formData, clients, categories, authors, tags } = useArticleForm();
+  const { formData, clients, categories, authors, tags, dbMetaAndJsonLd } = useArticleForm();
   const { toast } = useToast();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
 
@@ -361,6 +367,186 @@ export function MetaTagPreviewStep() {
     return { '@context': 'https://schema.org', '@graph': graph };
   }, [formData, effectiveTitle, effectiveDescription, effectiveCanonical, selectedClient, selectedCategory, selectedAuthor, selectedTagNames, featuredMedia, siteUrl]);
 
+  const dbJsonLdParsed = useMemo(() => {
+    if (!dbMetaAndJsonLd?.jsonLdStructuredData) return null;
+    try {
+      return JSON.parse(dbMetaAndJsonLd.jsonLdStructuredData) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }, [dbMetaAndJsonLd?.jsonLdStructuredData]);
+
+  type DiffLine = { type: 'added' | 'removed' | 'unchanged'; line: string };
+  const computeLineDiff = (formStr: string, dbStr: string): DiffLine[] => {
+    const formLines = formStr.split('\n');
+    const dbLines = dbStr.split('\n');
+    const out: DiffLine[] = [];
+    const n = formLines.length;
+    const m = dbLines.length;
+    const lcs: number[][] = Array(n + 1).fill(null).map(() => Array(m + 1).fill(0));
+    for (let i = 1; i <= n; i++) {
+      for (let j = 1; j <= m; j++) {
+        lcs[i][j] = formLines[i - 1] === dbLines[j - 1]
+          ? lcs[i - 1][j - 1] + 1
+          : Math.max(lcs[i - 1][j], lcs[i][j - 1]);
+      }
+    }
+    let i = n, j = m;
+    const rev: DiffLine[] = [];
+    while (i > 0 || j > 0) {
+      if (i > 0 && j > 0 && formLines[i - 1] === dbLines[j - 1]) {
+        rev.push({ type: 'unchanged', line: formLines[i - 1] });
+        i--; j--;
+      } else if (j > 0 && (i === 0 || lcs[i][j - 1] >= lcs[i - 1][j])) {
+        rev.push({ type: 'removed', line: dbLines[j - 1] });
+        j--;
+      } else {
+        rev.push({ type: 'added', line: formLines[i - 1] });
+        i--;
+      }
+    }
+    return rev.reverse();
+  };
+
+  const diffSummary = useMemo(() => {
+    const metaForm = nextjsMetadataObject ?? {};
+    const metaDb = dbMetaAndJsonLd?.nextjsMetadata ?? null;
+    const metaFormStr = JSON.stringify(metaForm, null, 2);
+    const metaDbStr = metaDb ? JSON.stringify(metaDb, null, 2) : "";
+    const jsonLdForm = jsonLdPreview ?? {};
+    const jsonLdDb = dbJsonLdParsed ?? null;
+    const jsonLdFormStr = JSON.stringify(jsonLdForm, null, 2);
+    const jsonLdDbStr = jsonLdDb ? JSON.stringify(jsonLdDb, null, 2) : "";
+
+    const buildComparableMetadata = (meta: unknown): Record<string, unknown> | null => {
+      if (!meta || typeof meta !== "object" || Array.isArray(meta)) return null;
+      const m = meta as Record<string, any>;
+      const og = (m.openGraph ?? {}) as Record<string, any>;
+      const twitter = (m.twitter ?? {}) as Record<string, any>;
+      const robots = (m.robots ?? {}) as Record<string, any>;
+
+      const normalizeStringArray = (value: unknown): string[] | null => {
+        if (!value) return null;
+        if (Array.isArray(value)) return value.map(String).sort();
+        if (typeof value === "string") {
+          return value
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean)
+            .sort();
+        }
+        return null;
+      };
+
+      return {
+        title: m.title ?? "",
+        description: m.description ?? "",
+        canonical: m.alternates?.canonical ?? "",
+        ogTitle: og.title ?? "",
+        ogDescription: og.description ?? "",
+        ogUrl: og.url ?? "",
+        ogSection: og.section ?? "",
+        ogTags: normalizeStringArray(og.tags),
+        ogAuthors: normalizeStringArray(og.authors),
+        twitterCard: twitter.card ?? "",
+        twitterTitle: twitter.title ?? "",
+        twitterDescription: twitter.description ?? "",
+        twitterSite: twitter.site ?? "",
+        twitterCreator: twitter.creator ?? "",
+        robotsIndex: robots.index ?? true,
+        robotsFollow: robots.follow ?? true,
+        robotsGoogleBotIndex: robots.googleBot?.index ?? true,
+        robotsGoogleBotFollow: robots.googleBot?.follow ?? true,
+      };
+    };
+
+    const buildComparableArticleJsonLd = (root: unknown): Record<string, unknown> | null => {
+      if (!root || typeof root !== "object" || Array.isArray(root)) return null;
+      const r = root as Record<string, any>;
+      const graph = Array.isArray(r["@graph"]) ? (r["@graph"] as Array<Record<string, any>>) : [];
+      const articleNode =
+        graph.find((node) => node["@type"] === "Article") ??
+        (r["@type"] === "Article" ? (r as Record<string, any>) : null);
+      if (!articleNode) return null;
+
+      const normalizeKeywords = (value: unknown): string[] | null => {
+        if (!value) return null;
+        if (Array.isArray(value)) return value.map(String).sort();
+        if (typeof value === "string") {
+          return value
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean)
+            .sort();
+        }
+        return null;
+      };
+
+      return {
+        headline: articleNode.headline ?? "",
+        description: articleNode.description ?? "",
+        articleSection: articleNode.articleSection ?? "",
+        keywords: normalizeKeywords(articleNode.keywords),
+        hasImage: !!articleNode.image,
+        wordCount: articleNode.wordCount ?? null,
+        articleBody: articleNode.articleBody ?? "",
+        datePublished: articleNode.datePublished ?? null,
+      };
+    };
+
+    const getDifferingKeys = (a: Record<string, unknown>, b: Record<string, unknown>): string[] => {
+      const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+      const diff: string[] = [];
+      for (const k of keys) {
+        if (JSON.stringify(a[k]) !== JSON.stringify(b[k])) diff.push(k);
+      }
+      return diff.sort();
+    };
+
+    const comparableMetaForm = buildComparableMetadata(metaForm);
+    const comparableMetaDb = buildComparableMetadata(metaDb);
+    const comparableJsonLdForm = buildComparableArticleJsonLd(jsonLdForm);
+    const comparableJsonLdDb = buildComparableArticleJsonLd(jsonLdDb);
+
+    const metadataSame =
+      !!comparableMetaForm &&
+      !!comparableMetaDb &&
+      JSON.stringify(comparableMetaForm) === JSON.stringify(comparableMetaDb);
+
+    const jsonLdSame =
+      !!comparableJsonLdForm &&
+      !!comparableJsonLdDb &&
+      JSON.stringify(comparableJsonLdForm) === JSON.stringify(comparableJsonLdDb);
+
+    const metadataDiffKeys =
+      comparableMetaForm && comparableMetaDb
+        ? getDifferingKeys(comparableMetaForm, comparableMetaDb)
+        : [];
+
+    const jsonLdDiffKeys =
+      comparableJsonLdForm && comparableJsonLdDb
+        ? getDifferingKeys(comparableJsonLdForm, comparableJsonLdDb)
+        : [];
+
+    const metadataLineDiff = metaDbStr ? computeLineDiff(metaFormStr, metaDbStr) : [];
+    const jsonLdLineDiff = jsonLdDbStr ? computeLineDiff(jsonLdFormStr, jsonLdDbStr) : [];
+
+    return {
+      metadataSame,
+      jsonLdSame,
+      hasDbMeta: !!dbMetaAndJsonLd?.nextjsMetadata,
+      hasDbJsonLd: !!dbMetaAndJsonLd?.jsonLdStructuredData,
+      metadataDiffKeys,
+      jsonLdDiffKeys,
+      metaFormStr,
+      metaDbStr,
+      jsonLdFormStr,
+      jsonLdDbStr,
+      metadataLineDiff,
+      jsonLdLineDiff,
+    };
+  }, [nextjsMetadataObject, jsonLdPreview, dbMetaAndJsonLd?.nextjsMetadata, dbJsonLdParsed]);
+
   // Hints to guide the editor to 100% MetaTag coverage for article pages
   const perfectionHints = useMemo(() => {
     const hints: string[] = [];
@@ -590,6 +776,214 @@ export function MetaTagPreviewStep() {
                   </div>
                 )}
               </div>
+
+              {(dbMetaAndJsonLd?.nextjsMetadata != null || dbMetaAndJsonLd?.jsonLdStructuredData != null) && (
+                <>
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      <Database className="h-4 w-4" />
+                      Metadata from DB (last saved)
+                    </h4>
+                    {dbMetaAndJsonLd?.nextjsMetadata != null ? (
+                      <>
+                        <div className="flex justify-end mb-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              copyToClipboard(
+                                JSON.stringify(dbMetaAndJsonLd.nextjsMetadata, null, 2),
+                                "Metadata from DB"
+                              )
+                            }
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <pre className="p-3 bg-muted rounded-md overflow-auto max-h-96 text-xs">
+                          <code>{JSON.stringify(dbMetaAndJsonLd.nextjsMetadata, null, 2)}</code>
+                        </pre>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No cached metadata in DB.</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      <Database className="h-4 w-4" />
+                      JSON-LD from DB (last saved)
+                    </h4>
+                    {dbJsonLdParsed != null ? (
+                      <>
+                        <div className="flex justify-end mb-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              copyToClipboard(
+                                JSON.stringify(dbJsonLdParsed, null, 2),
+                                "JSON-LD from DB"
+                              )
+                            }
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <pre className="p-3 bg-muted rounded-md overflow-auto max-h-64 text-xs">
+                          <code>{JSON.stringify(dbJsonLdParsed, null, 2)}</code>
+                        </pre>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No cached JSON-LD in DB.</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                        <GitCompare className="h-4 w-4" />
+                        Diff: Form vs DB
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-3">
+                        <span><strong className="text-foreground">Form</strong> = current preview (not saved)</span>
+                        <span aria-hidden>·</span>
+                        <span><strong className="text-foreground">DB</strong> = last saved in database</span>
+                        <span aria-hidden>·</span>
+                        <span>Save article to write Form → DB</span>
+                      </div>
+                    </div>
+
+                    {diffSummary.hasDbMeta && (
+                      <div className="rounded-lg border bg-card">
+                        <div className="flex items-center justify-between gap-2 p-3 border-b">
+                          <span className="text-sm font-medium">Metadata</span>
+                          {diffSummary.metadataSame ? (
+                            <Badge variant="secondary" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Same</Badge>
+                          ) : (
+                            <Badge variant="secondary" className="bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                              Different — {diffSummary.metadataDiffKeys.length ? diffSummary.metadataDiffKeys.join(", ") : "content"}
+                            </Badge>
+                          )}
+                        </div>
+                        {!diffSummary.metadataSame && (
+                          <Collapsible defaultOpen>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="ghost" size="sm" className="w-full justify-start gap-2 rounded-none border-b text-muted-foreground hover:text-foreground">
+                                <ChevronDown className="h-4 w-4" />
+                                Show what changed (side-by-side + line diff)
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b">
+                                <div className="p-2 border-r bg-muted/30">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">Form (unsaved)</p>
+                                  <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono"><code>{diffSummary.metaFormStr}</code></pre>
+                                </div>
+                                <div className="p-2">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">DB (saved)</p>
+                                  <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono"><code>{diffSummary.metaDbStr}</code></pre>
+                                </div>
+                              </div>
+                              <div className="p-2">
+                                <p className="text-xs font-semibold text-muted-foreground mb-1">Line diff</p>
+                                <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono leading-relaxed">
+                                  {diffSummary.metadataLineDiff.map((d, i) => (
+                                    <div
+                                      key={i}
+                                      className={
+                                        d.type === 'added'
+                                          ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-200'
+                                          : d.type === 'removed'
+                                            ? 'bg-red-500/20 text-red-800 dark:text-red-200'
+                                            : 'text-muted-foreground'
+                                      }
+                                    >
+                                      {d.type === 'added' && <span className="select-none">+ </span>}
+                                      {d.type === 'removed' && <span className="select-none">− </span>}
+                                      {d.type === 'unchanged' && <span className="select-none">  </span>}
+                                      <span className="whitespace-pre">{d.line || ' '}</span>
+                                    </div>
+                                  ))}
+                                </pre>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        )}
+                      </div>
+                    )}
+                    {!diffSummary.hasDbMeta && (
+                      <p className="text-xs text-muted-foreground">Metadata: no saved data in DB.</p>
+                    )}
+
+                    {diffSummary.hasDbJsonLd && (
+                      <div className="rounded-lg border bg-card">
+                        <div className="flex items-center justify-between gap-2 p-3 border-b">
+                          <span className="text-sm font-medium">JSON-LD</span>
+                          {diffSummary.jsonLdSame ? (
+                            <Badge variant="secondary" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Same</Badge>
+                          ) : (
+                            <Badge variant="secondary" className="bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                              Different — {diffSummary.jsonLdDiffKeys.length ? diffSummary.jsonLdDiffKeys.join(", ") : "content"}
+                            </Badge>
+                          )}
+                        </div>
+                        {!diffSummary.jsonLdSame && (
+                          <Collapsible defaultOpen>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="ghost" size="sm" className="w-full justify-start gap-2 rounded-none border-b text-muted-foreground hover:text-foreground">
+                                <ChevronDown className="h-4 w-4" />
+                                Show what changed (side-by-side + line diff)
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b">
+                                <div className="p-2 border-r bg-muted/30">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">Form (unsaved)</p>
+                                  <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono"><code>{diffSummary.jsonLdFormStr}</code></pre>
+                                </div>
+                                <div className="p-2">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">DB (saved)</p>
+                                  <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono"><code>{diffSummary.jsonLdDbStr}</code></pre>
+                                </div>
+                              </div>
+                              <div className="p-2">
+                                <p className="text-xs font-semibold text-muted-foreground mb-1">Line diff</p>
+                                <pre className="p-2 rounded bg-background overflow-auto max-h-64 text-xs font-mono leading-relaxed">
+                                  {diffSummary.jsonLdLineDiff.map((d, i) => (
+                                    <div
+                                      key={i}
+                                      className={
+                                        d.type === 'added'
+                                          ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-200'
+                                          : d.type === 'removed'
+                                            ? 'bg-red-500/20 text-red-800 dark:text-red-200'
+                                            : 'text-muted-foreground'
+                                      }
+                                    >
+                                      {d.type === 'added' && <span className="select-none">+ </span>}
+                                      {d.type === 'removed' && <span className="select-none">− </span>}
+                                      {d.type === 'unchanged' && <span className="select-none">  </span>}
+                                      <span className="whitespace-pre">{d.line || ' '}</span>
+                                    </div>
+                                  ))}
+                                </pre>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        )}
+                      </div>
+                    )}
+                    {!diffSummary.hasDbJsonLd && (
+                      <p className="text-xs text-muted-foreground">JSON-LD: no saved data in DB.</p>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </CardContent>

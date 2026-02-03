@@ -76,6 +76,9 @@ interface ArticleFormContextType {
   getStepValidation: (stepNumber: number) => StepValidation;
   overallProgress: number;
   seoScore: number;
+
+  // DB snapshot for MetaTag & JSON-LD tab (edit only)
+  dbMetaAndJsonLd: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
 }
 
 const ArticleFormContext = createContext<ArticleFormContextType | undefined>(undefined);
@@ -99,6 +102,7 @@ interface ArticleFormProviderProps {
   authors: Array<{ id: string; name: string }>;
   tags: Array<{ id: string; name: string; slug: string }>;
   articleId?: string;
+  dbMetaAndJsonLd?: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
 }
 
 const initialFormData: ArticleFormData = {
@@ -202,6 +206,7 @@ export function ArticleFormProvider({
   children,
   initialData,
   settingsArticleDefaults,
+  dbMetaAndJsonLd: dbMetaAndJsonLdProp,
   onSubmit,
   clients,
   categories,
@@ -209,6 +214,7 @@ export function ArticleFormProvider({
   tags,
   articleId,
 }: ArticleFormProviderProps) {
+  const dbMetaAndJsonLd = dbMetaAndJsonLdProp ?? { nextjsMetadata: null, jsonLdStructuredData: null };
   const mode: 'new' | 'edit' = articleId ? 'edit' : 'new';
   const [formData, setFormData] = useState<ArticleFormData>(() => {
     const initial = {
@@ -477,6 +483,7 @@ export function ArticleFormProvider({
     getStepValidation,
     overallProgress,
     seoScore,
+    dbMetaAndJsonLd,
   };
 
   return <ArticleFormContext.Provider value={value}>{children}</ArticleFormContext.Provider>;

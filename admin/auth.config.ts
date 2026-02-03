@@ -3,6 +3,10 @@ import Credentials from "next-auth/providers/credentials";
 import { db } from "./lib/db";
 import bcrypt from "bcryptjs";
 
+const AUTH_ERROR_CODES = {
+  missingPassword: "NO_PASSWORD_SET",
+} as const;
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -42,7 +46,7 @@ export const authConfig = {
 
           if (!user.password) {
             console.error("[Auth] Login failed: User has no password set");
-            return null;
+            throw new Error(AUTH_ERROR_CODES.missingPassword);
           }
 
           const isPasswordValid = await bcrypt.compare(
@@ -69,6 +73,13 @@ export const authConfig = {
             name: user.name,
           };
         } catch (error) {
+          if (
+            error instanceof Error &&
+            error.message === AUTH_ERROR_CODES.missingPassword
+          ) {
+            throw error;
+          }
+
           console.error("[Auth] Database error:", error);
           return null;
         }
