@@ -51,7 +51,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
             creator?: string;
           };
           canonical?: string;
-          themeColor?: string;
         };
 
         // Build Next.js Metadata object from stored metaTags

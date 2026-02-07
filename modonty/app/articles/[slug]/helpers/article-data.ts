@@ -1,6 +1,62 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, CommentStatus } from "@prisma/client";
 
+/** Minimal article data for chat/RAG. */
+export async function getArticleForChat(slug: string) {
+  return db.article.findFirst({
+    where: {
+      slug,
+      status: ArticleStatus.PUBLISHED,
+      OR: [
+        { datePublished: null },
+        { datePublished: { lte: new Date() } },
+      ],
+    },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      content: true,
+      excerpt: true,
+      categoryId: true,
+      category: { select: { id: true, name: true, slug: true } },
+      client: { select: { id: true, name: true, slug: true } },
+    },
+  });
+}
+
+/** Articles from other categories for out-of-scope redirect. */
+export async function getArticlesForOutOfScopeSearch(
+  excludeCategoryId: string | null,
+  limit: number
+) {
+  const where: Record<string, unknown> = {
+    status: ArticleStatus.PUBLISHED,
+    OR: [
+      { datePublished: null },
+      { datePublished: { lte: new Date() } },
+    ],
+  };
+  if (excludeCategoryId) {
+    where.categoryId = { not: excludeCategoryId };
+  }
+
+  return db.article.findMany({
+    where,
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      excerpt: true,
+      content: true,
+      client: { select: { name: true, slug: true } },
+      category: { select: { name: true, slug: true } },
+    },
+    orderBy: [{ datePublished: "desc" }, { createdAt: "desc" }],
+    take: limit,
+  });
+}
+
 export async function getArticleBySlug(slug: string) {
   const article = await db.article.findFirst({
     where: {

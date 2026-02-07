@@ -48,37 +48,8 @@ export function PostCard({ post, priority = false }: PostCardProps) {
     .join("")
     .slice(0, 2);
 
-
-  const articleStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt || post.content,
-    image: post.image,
-    datePublished: post.publishedAt.toISOString(),
-    author: {
-      "@type": "Person",
-      name: post.author?.name || "Modonty",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: post.clientName,
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/articles/${post.slug}`,
-    },
-  };
-
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleStructuredData),
-        }}
-      />
-      <article itemScope itemType="https://schema.org/Article">
+    <article itemScope itemType="https://schema.org/Article">
         <Card className="bg-white border border-border shadow-sm">
           <CardHeader className="pb-3">
             <header className="flex items-start justify-between">
@@ -179,7 +150,6 @@ export function PostCard({ post, priority = false }: PostCardProps) {
       </CardContent>
     </Card>
     </article>
-    </>
   );
 }
 

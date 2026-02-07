@@ -19,7 +19,6 @@ export default async function ModontySettingsPage() {
     twitterSite: settings.twitterSite ?? "",
     twitterCreator: settings.twitterCreator ?? "",
     orgLogoUrl: settings.orgLogoUrl ?? settings.logoUrl ?? "",
-    themeColor: settings.themeColor ?? "#3030FF",
     defaultMetaRobots: settings.defaultMetaRobots ?? "index, follow",
     defaultGooglebot: settings.defaultGooglebot ?? "index, follow",
     defaultOgType: settings.defaultOgType ?? "website",

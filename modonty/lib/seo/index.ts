@@ -59,16 +59,13 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
   if (!url) {
     canonicalUrl = siteUrl;
   } else if (/^https?:\/\//.test(url)) {
-    // Treat fully-qualified URLs as the final canonical
     canonicalUrl = url;
   } else {
-    // Treat as path relative to siteUrl
     canonicalUrl = `${siteUrl}${url}`;
   }
   const ogImage = image || `${siteUrl}/og-image.jpg`;
   const imageAltResolved = imageAlt || title || siteName;
 
-  // Parse robots directive
   const robotsDirective = options?.robots || "index,follow";
   const shouldIndex = !robotsDirective.includes("noindex");
   const shouldFollow = !robotsDirective.includes("nofollow");
@@ -115,9 +112,6 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     }
   }
 
-  // Note: OpenGraph metadata doesn't support firstName/lastName directly
-  // These are handled via structured data instead
-
   const twitter: Metadata["twitter"] = {
     card: "summary_large_image",
     title: fullTitle,
@@ -125,9 +119,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     images: [{ url: ogImage, alt: imageAltResolved }],
   };
 
-  // Add twitter:creator if provided
   if (twitterCreator) {
-    // Remove @ if present, Twitter Cards expects just the username
     const creatorHandle = twitterCreator.replace(/^@/, "");
     twitter.creator = `@${creatorHandle}`;
   }
@@ -335,7 +327,6 @@ export function generateOrganizationStructuredData(client: any) {
     ...(Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0 && { knowsLanguage: client.knowsLanguage }),
   };
 
-  // Saudi Arabia & Gulf Identifiers
   const identifiers: any[] = [];
   if (client.commercialRegistrationNumber) {
     identifiers.push({
@@ -354,7 +345,6 @@ export function generateOrganizationStructuredData(client: any) {
     structuredData.taxID = client.taxID;
   }
 
-  // ContactPoint structure (array support)
   const contactPoints: any[] = [];
   if (client.email || client.phone) {
     const contactPoint: any = {
@@ -381,7 +371,6 @@ export function generateOrganizationStructuredData(client: any) {
     structuredData.contactPoint = contactPoints.length === 1 ? contactPoints[0] : contactPoints;
   }
 
-  // Enhanced Address structure (National Address Format)
   if (
     client.addressStreet ||
     client.addressCity ||
@@ -402,12 +391,10 @@ export function generateOrganizationStructuredData(client: any) {
     structuredData.address = address;
   }
 
-  // Classification
   if (client.isicV4) {
     structuredData.isicV4 = client.isicV4;
   }
 
-  // Number of employees as QuantitativeValue
   if (client.numberOfEmployees) {
     const empValue = client.numberOfEmployees;
     if (typeof empValue === "string" && empValue.includes("-")) {
@@ -435,7 +422,6 @@ export function generateOrganizationStructuredData(client: any) {
     }
   }
 
-  // Parent organization relationship
   if (client.parentOrganization) {
     structuredData.parentOrganization = {
       "@type": "Organization",
@@ -445,7 +431,6 @@ export function generateOrganizationStructuredData(client: any) {
     };
   }
 
-  // Social profiles
   if (client.sameAs && client.sameAs.length > 0) {
     structuredData.sameAs = client.sameAs;
   }
@@ -471,7 +456,6 @@ export function generateFAQPageStructuredData(faqs: any[]) {
         },
       };
 
-      // Add optional Schema.org fields
       if (faq.dateCreated) {
         question.dateCreated = new Date(faq.dateCreated).toISOString();
       }
@@ -500,7 +484,6 @@ export function generateFAQPageStructuredData(faqs: any[]) {
     }),
   };
 
-  // Add lastReviewed if available
   const lastReviewedDates = faqs
     .map((f) => f.lastReviewed)
     .filter((d) => d !== null && d !== undefined)
@@ -511,7 +494,6 @@ export function generateFAQPageStructuredData(faqs: any[]) {
     structuredData.lastReviewed = lastReviewedDates[0].toISOString();
   }
 
-  // Add speakable structured data for voice search
   const speakableSelectors: string[] = [];
   faqs.forEach((faq, index) => {
     if (faq.speakable && typeof faq.speakable === "object") {
@@ -520,7 +502,6 @@ export function generateFAQPageStructuredData(faqs: any[]) {
         speakableSelectors.push(...speakable.cssSelector);
       }
     } else {
-      // Default speakable selectors
       speakableSelectors.push(`#faq-question-${index + 1}`, `#faq-answer-${index + 1}`);
     }
   });
@@ -534,3 +515,4 @@ export function generateFAQPageStructuredData(faqs: any[]) {
 
   return structuredData;
 }
+

@@ -96,7 +96,6 @@ export interface SiteOrgSettings {
   siteName: string | null;
   brandDescription: string | null;
   siteAuthor: string | null;
-  themeColor: string | null;
   inLanguage: string | null;
   defaultMetaRobots: string | null;
   defaultGooglebot: string | null;
@@ -113,7 +112,6 @@ export interface SiteOrgSettings {
   defaultAlternateLanguages: unknown;
   defaultContentFormat: string | null;
   defaultCharset: string | null;
-  defaultViewport: string | null;
   defaultOgImageType: string | null;
   defaultOgImageWidth: number | null;
   defaultOgImageHeight: number | null;
@@ -186,7 +184,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   siteName: null,
   brandDescription: null,
   siteAuthor: null,
-  themeColor: null,
   inLanguage: null,
   defaultMetaRobots: null,
   defaultGooglebot: null,
@@ -203,7 +200,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   defaultAlternateLanguages: null,
   defaultContentFormat: null,
   defaultCharset: null,
-  defaultViewport: null,
   defaultOgImageType: null,
   defaultOgImageWidth: null,
   defaultOgImageHeight: null,
@@ -340,7 +336,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         siteName: newSettings.siteName,
         brandDescription: newSettings.brandDescription,
         siteAuthor: newSettings.siteAuthor,
-        themeColor: newSettings.themeColor,
         inLanguage: newSettings.inLanguage,
         defaultMetaRobots: newSettings.defaultMetaRobots,
         defaultGooglebot: newSettings.defaultGooglebot,
@@ -357,7 +352,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         defaultAlternateLanguages: (newSettings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
         defaultContentFormat: (newSettings as { defaultContentFormat?: string | null }).defaultContentFormat ?? null,
         defaultCharset: newSettings.defaultCharset,
-        defaultViewport: newSettings.defaultViewport,
         defaultOgImageType: newSettings.defaultOgImageType,
         defaultOgImageWidth: newSettings.defaultOgImageWidth,
         defaultOgImageHeight: newSettings.defaultOgImageHeight,
@@ -447,7 +441,6 @@ export async function getAllSettings(): Promise<AllSettings> {
       siteName: settings.siteName,
       brandDescription: settings.brandDescription,
       siteAuthor: settings.siteAuthor,
-      themeColor: settings.themeColor,
       inLanguage: settings.inLanguage,
       defaultMetaRobots: settings.defaultMetaRobots,
       defaultGooglebot: settings.defaultGooglebot,
@@ -464,7 +457,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         defaultAlternateLanguages: (settings as { defaultAlternateLanguages?: unknown }).defaultAlternateLanguages ?? null,
         defaultContentFormat: (settings as { defaultContentFormat?: string | null }).defaultContentFormat ?? null,
         defaultCharset: settings.defaultCharset,
-      defaultViewport: settings.defaultViewport,
       defaultOgImageType: settings.defaultOgImageType,
       defaultOgImageWidth: settings.defaultOgImageWidth,
       defaultOgImageHeight: settings.defaultOgImageHeight,
@@ -564,7 +556,7 @@ export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ suc
   }
 }
 
-export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "themeColor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultViewport" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
+export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
   try {
     const id = await ensureSettingsExists();
     await db.settings.update({
@@ -574,7 +566,6 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
         siteName: data.siteName,
         brandDescription: data.brandDescription,
         siteAuthor: data.siteAuthor,
-        themeColor: data.themeColor,
         inLanguage: data.inLanguage,
         defaultMetaRobots: data.defaultMetaRobots,
         defaultGooglebot: data.defaultGooglebot,
@@ -588,7 +579,6 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
         articleDefaultSitemapPriority: data.articleDefaultSitemapPriority,
         defaultLicense: data.defaultLicense,
         defaultCharset: data.defaultCharset,
-        defaultViewport: data.defaultViewport,
         defaultOgImageType: data.defaultOgImageType,
         defaultOgImageWidth: data.defaultOgImageWidth,
         defaultOgImageHeight: data.defaultOgImageHeight,
@@ -611,7 +601,7 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
   }
 }
 
-export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "themeColor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultViewport" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
+export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
   try {
     const id = await ensureSettingsExists();
     await db.settings.update({
@@ -778,7 +768,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           siteName: data.siteName,
           brandDescription: data.brandDescription,
           siteAuthor: data.siteAuthor,
-          themeColor: data.themeColor,
           inLanguage: data.inLanguage,
           defaultMetaRobots: data.defaultMetaRobots,
           defaultGooglebot: data.defaultGooglebot,
@@ -792,7 +781,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           articleDefaultSitemapPriority: data.articleDefaultSitemapPriority,
           defaultLicense: data.defaultLicense,
           defaultCharset: data.defaultCharset,
-          defaultViewport: data.defaultViewport,
           defaultOgImageType: data.defaultOgImageType,
           defaultOgImageWidth: data.defaultOgImageWidth,
           defaultOgImageHeight: data.defaultOgImageHeight,
@@ -885,7 +873,6 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
     siteName: process.env.NEXT_PUBLIC_SITE_NAME?.trim() || null,
     brandDescription: process.env.NEXT_PUBLIC_BRAND_DESCRIPTION?.trim() || null,
     siteAuthor: process.env.NEXT_PUBLIC_SITE_AUTHOR?.trim() || null,
-    themeColor: process.env.NEXT_PUBLIC_THEME_COLOR?.trim() || null,
     inLanguage: process.env.NEXT_PUBLIC_IN_LANGUAGE?.trim() || null,
     defaultMetaRobots: process.env.NEXT_PUBLIC_DEFAULT_META_ROBOTS?.trim() || null,
     defaultGooglebot: process.env.NEXT_PUBLIC_DEFAULT_GOOGLEBOT?.trim() || null,
@@ -899,7 +886,6 @@ function siteOrgFromEnv(): Partial<SiteOrgSettings> {
     articleDefaultSitemapPriority: process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY != null && process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY !== "" ? Number(process.env.NEXT_PUBLIC_ARTICLE_DEFAULT_SITEMAP_PRIORITY) : null,
     defaultLicense: process.env.NEXT_PUBLIC_DEFAULT_LICENSE?.trim() || null,
     defaultCharset: process.env.NEXT_PUBLIC_DEFAULT_CHARSET?.trim() || null,
-    defaultViewport: process.env.NEXT_PUBLIC_DEFAULT_VIEWPORT?.trim() || null,
     defaultOgImageType: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_TYPE?.trim() || null,
     defaultOgImageWidth: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH != null && process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_WIDTH) : null,
     defaultOgImageHeight: process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT != null && process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT !== "" ? Number(process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE_HEIGHT) : null,

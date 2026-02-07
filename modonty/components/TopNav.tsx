@@ -10,6 +10,7 @@ import { LoginButton } from "@/components/auth/LoginButton";
 import { MobileMenu } from "@/components/MobileMenu";
 import { MobileSearch } from "@/components/MobileSearch";
 import { Logo } from "@/components/Logo";
+import { ChatTrigger } from "@/components/chatbot/ChatTrigger";
 
 export function TopNav() {
   const pathname = usePathname();
@@ -37,7 +38,7 @@ export function TopNav() {
         {/* Desktop 3-Column Layout: 15-70-15 */}
         <div className="hidden md:grid md:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
           {/* Column 1: Logo (~15%) */}
-          <div className="flex items-center gap-3 flex-1 h-10 ">
+          <div className="flex items-center gap-2 flex-1 h-10">
             <Logo size="header" />
           </div>
 
@@ -61,13 +62,14 @@ export function TopNav() {
             </nav>
           </div>
 
-          {/* Column 3: Avatar/User Menu (~15%) */}
-          <div className="flex items-center justify-end">
+          {/* Column 3: Avatar/User Menu + Chat (~15%) - Chat on left */}
+          <div className="flex items-center justify-end gap-2">
             {session?.user ? (
               <UserMenu />
             ) : (
               <LoginButton />
             )}
+            <ChatTrigger variant="pill" />
           </div>
         </div>
       </div>

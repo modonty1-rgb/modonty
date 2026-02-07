@@ -652,16 +652,6 @@ export function SettingsForm() {
                     onChange={(e) => setSettings({ ...settings, siteAuthor: e.target.value || null })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="themeColor">Theme Color</Label>
-                  <Input
-                    id="themeColor"
-                    type="text"
-                    placeholder="#3030FF"
-                    value={settings.themeColor || ""}
-                    onChange={(e) => setSettings({ ...settings, themeColor: e.target.value || null })}
-                  />
-                </div>
               </div>
 
               <Separator />
@@ -1284,29 +1274,6 @@ export function SettingsForm() {
                         <SelectItem value="ISO-8859-1">ISO-8859-1 (Latin-1)</SelectItem>
                         <SelectItem value="ISO-8859-15">ISO-8859-15</SelectItem>
                         <SelectItem value="Windows-1252">Windows-1252</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label>Viewport</Label>
-                    <Select
-                      value={settings.defaultViewport ?? "__none__"}
-                      onValueChange={(v) =>
-                        setSettings({ ...settings, defaultViewport: v === "__none__" ? null : v })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Not set" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__none__">Not set</SelectItem>
-                        <SelectItem value="width=device-width, initial-scale=1">
-                          width=device-width, initial-scale=1 (recommended)
-                        </SelectItem>
-                        <SelectItem value="width=device-width">width=device-width</SelectItem>
-                        <SelectItem value="width=device-width, initial-scale=1.0">
-                          width=device-width, initial-scale=1.0
-                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

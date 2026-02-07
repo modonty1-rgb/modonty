@@ -68,3 +68,34 @@ Commit: 7e30639
 
 
 bd761c3 - 1.6.0 test perf-01 (dreamtoapp, 7 minutes
+
+
+
+
+
+معك حق، دعني ألخص لك القائمة بوضوح:
+
+المؤلف (author) بنوع Person.
+
+الناشر أو العميل (publisher) بنوع Organization.
+
+التقييمات (AggregateRating).
+
+التعليقات (Comment).
+
+الأسئلة والأجوبة (Q&A) إن وجدت.
+
+الإعجابات وعدم الإعجاب (InteractionCounter) مع LikeAction وDislikeAction.
+
+تاريخ النشر والتعديل.
+
+صورة المقال (Image).
+
+الكلمات المفتاحية (keywords).
+
+هذه العناصر كلها تشكل بيانات غنية للمقال في الـJSON-LD.
+
+
+
+
+https://www.screamingfrog.co.uk/seo-spider/pricing/?wmc-currency=USD

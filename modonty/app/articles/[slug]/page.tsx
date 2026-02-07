@@ -13,7 +13,7 @@ import {
   getRelatedArticlesByClient,
   getUserArticleInteractions,
 } from "./helpers/article-data";
-import { getArticleDefaultsFromSettings } from "@/lib/get-article-defaults-from-settings";
+import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -472,6 +472,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </aside>
             </div>
           </main>
+
         </>
       </>
     );

@@ -4,6 +4,7 @@ import Link from "@/components/link";
 import { usePathname } from "next/navigation";
 import { Home, Tags, Building2, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ChatTrigger } from "@/components/chatbot/ChatTrigger";
 
 const navItems = [
   { icon: Home, label: "الرئيسية", href: "/" },
@@ -41,6 +42,7 @@ export function MobileFooter() {
             </Link>
           );
         })}
+        <ChatTrigger variant="nav" />
       </nav>
     </footer>
   );

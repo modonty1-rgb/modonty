@@ -47,7 +47,6 @@ interface SEOTabProps {
       author: string;
       language: string;
       charset: string;
-      viewport: string;
       openGraph: {
         title: string;
         description: string;
@@ -74,7 +73,6 @@ interface SEOTabProps {
         creator?: string;
       };
       canonical: string;
-      themeColor: string;
       formatDetection: {
         telephone: boolean;
         email: boolean;

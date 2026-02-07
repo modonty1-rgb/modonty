@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 import { TrendingArticles } from "@/components/TrendingArticles";
 import { getTrendingArticles } from "@/app/api/helpers/article-queries";
-import { getSettingsSeoForRoute } from "@/lib/get-settings-seo";
 import type { ArticleResponse } from "@/app/api/helpers/types";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
+import { getTrendingPageSeo } from "@/lib/seo/trending-page-seo";
 
 interface TrendingPageProps {
   searchParams: Promise<{ period?: string }>;
@@ -13,25 +13,10 @@ interface TrendingPageProps {
 // ISR: Revalidate every 60 seconds (same as homepage)
 export const revalidate = 60;
 
-// Dynamic metadata for SEO
-export async function generateMetadata({ searchParams }: TrendingPageProps): Promise<Metadata> {
-  const { metadata } = await getSettingsSeoForRoute("trending");
-  if (metadata?.title ?? metadata?.description) return metadata;
-  const params = await searchParams;
-  const period = parseInt(params.period || "7");
-  const days = [7, 14, 30].includes(period) ? period : 7;
-  const periodText = days === 7 ? "السبعة" : days === 14 ? "الأربعة عشر" : "الثلاثين";
-  return {
-    title: "المقالات الرائجة | Modonty",
-    description: `استكشف أكثر المقالات رواجاً والأكثر قراءة خلال الأيام ${periodText} الماضية. محتوى شائع ومميز في التقنية والتصميم والتسويق`,
-    keywords: ["مقالات رائجة", "trending", "شائع", "الأكثر قراءة", "popular"],
-    openGraph: {
-      title: "المقالات الرائجة",
-      description: `أكثر المقالات رواجاً خلال آخر ${days} ${days === 7 ? "أيام" : "يوم"}`,
-      locale: "ar_SA",
-      type: "website",
-    },
-  };
+// Metadata from Settings cache
+export async function generateMetadata(): Promise<Metadata> {
+  const { metadata } = await getTrendingPageSeo();
+  return metadata ?? {};
 }
 
 // Fully server-rendered page component
@@ -42,7 +27,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
   
   // Server-side data fetching
   const trendingArticles = await getTrendingArticles(12, days);
-  const { jsonLd: storedJsonLd } = await getSettingsSeoForRoute("trending");
+  const { jsonLd: storedJsonLd } = await getTrendingPageSeo();
 
   // Helper function for period text
   const getPeriodText = (days: number) => {
@@ -74,24 +59,16 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
     readingTimeMinutes: article.readingTimeMinutes,
   }));
 
-  const periodTextAr = days === 7 ? 'السبعة' : days === 14 ? 'الأربعة عشر' : 'الثلاثين';
-
-  const structuredDataFallback = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "المقالات الرائجة",
-    description: `مجموعة من أكثر المقالات رواجاً خلال الأيام ${periodTextAr} الماضية`,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/trending`,
-    inLanguage: "ar-SA",
-  };
-  const jsonLdToRender = storedJsonLd?.trim() || JSON.stringify(structuredDataFallback);
+  const jsonLdToRender = storedJsonLd?.trim() || "";
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdToRender }}
-      />
+      {jsonLdToRender && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdToRender }}
+        />
+      )}
       
       <>
         <Breadcrumb

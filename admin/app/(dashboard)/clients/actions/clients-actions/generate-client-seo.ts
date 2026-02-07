@@ -14,7 +14,6 @@ interface MetaTagsObject {
   author: string;
   language: string;
   charset: string;
-  viewport: string;
   openGraph: {
     title: string;
     description: string;
@@ -42,7 +41,6 @@ interface MetaTagsObject {
     creator?: string;
   };
   canonical: string;
-  themeColor: string;
   formatDetection: {
     telephone: boolean;
     email: boolean;
@@ -197,7 +195,6 @@ export async function generateClientSEO(clientId: string) {
         description: client.twitterDescription || description,
       },
       canonical: canonicalUrl,
-      themeColor: "#ffffff",
       formatDetection: {
         telephone: !!client.phone,
         email: !!client.email,

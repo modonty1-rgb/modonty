@@ -123,7 +123,6 @@ interface ClientTabsProps {
       author: string;
       language: string;
       charset: string;
-      viewport: string;
       openGraph: {
         title: string;
         description: string;
@@ -150,7 +149,6 @@ interface ClientTabsProps {
         creator?: string;
       };
       canonical: string;
-      themeColor: string;
       formatDetection: {
         telephone: boolean;
         email: boolean;

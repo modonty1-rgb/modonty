@@ -20,6 +20,7 @@
     "create-test-comment": "tsx ../scripts/create-test-comment.ts"
   },
   "dependencies": {
+    "cohere-ai": "^7.20.0",
     "@auth/prisma-adapter": "^2.7.2",
     "@hookform/resolvers": "^3.9.1",
     "@modonty/database": "workspace:*",

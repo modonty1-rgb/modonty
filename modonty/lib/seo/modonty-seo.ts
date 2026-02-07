@@ -1,12 +1,5 @@
-/**
- * Get stored meta + JSON-LD from Settings for a route (home, clients, categories, trending).
- * Used by modonty pages to read generated SEO from DB (PRD Phase 7).
- */
-
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
-
-export type RouteForSeo = "home" | "clients" | "categories" | "trending";
 
 interface StoredMeta {
   title?: string;
@@ -82,39 +75,38 @@ function storedMetaToMetadata(meta: StoredMeta | null | undefined): Metadata | n
   return metadata;
 }
 
-export interface SettingsSeoForRoute {
+export interface ModontyPageSeo {
   metadata: Metadata | null;
   jsonLd: string | null;
 }
 
-export async function getSettingsSeoForRoute(
-  route: RouteForSeo
-): Promise<SettingsSeoForRoute> {
-  try {
-    const settings = await db.settings.findFirst();
-    if (!settings) return { metadata: null, jsonLd: null };
+// Read cached metaTags + JSON-LD for a Modonty page by slug.
+// Does not build or mutate SEO – it only reads what admin flows cached.
+export async function getModontyPageSeo(slug: string): Promise<ModontyPageSeo> {
+  const page = await db.modonty.findUnique({
+    where: { slug },
+    select: {
+      metaTags: true,
+      jsonLdStructuredData: true,
+    },
+  });
 
-    const s = settings as Record<string, unknown>;
-    let meta: StoredMeta | null = null;
-    let jsonLd: string | null = null;
-
-    if (route === "home") {
-      meta = (s.homeMetaTags as StoredMeta) ?? null;
-      jsonLd = typeof s.jsonLdStructuredData === "string" ? s.jsonLdStructuredData : null;
-    } else if (route === "clients") {
-      meta = (s.clientsPageMetaTags as StoredMeta) ?? null;
-      jsonLd = typeof s.clientsPageJsonLdStructuredData === "string" ? s.clientsPageJsonLdStructuredData : null;
-    } else if (route === "categories") {
-      meta = (s.categoriesPageMetaTags as StoredMeta) ?? null;
-      jsonLd = typeof s.categoriesPageJsonLdStructuredData === "string" ? s.categoriesPageJsonLdStructuredData : null;
-    } else if (route === "trending") {
-      meta = (s.trendingPageMetaTags as StoredMeta) ?? null;
-      jsonLd = typeof s.trendingPageJsonLdStructuredData === "string" ? s.trendingPageJsonLdStructuredData : null;
-    }
-
-    const metadata = storedMetaToMetadata(meta);
-    return { metadata: metadata ?? null, jsonLd };
-  } catch {
+  if (!page) {
     return { metadata: null, jsonLd: null };
   }
+
+  const storedMeta = (page.metaTags || null) as StoredMeta | null;
+  const metadata = storedMetaToMetadata(storedMeta);
+
+  const rawJsonLd = page.jsonLdStructuredData;
+  const jsonLd =
+    typeof rawJsonLd === "string" && rawJsonLd.trim().length > 0
+      ? rawJsonLd
+      : null;
+
+  return {
+    metadata: metadata ?? null,
+    jsonLd,
+  };
 }
+

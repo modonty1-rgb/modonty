@@ -1,8 +1,3 @@
-/**
- * Article defaults from Settings (SOT). Used when Article no longer stores the 12 fields.
- * Matches admin getArticleDefaultsFromSettings shape.
- */
-
 import { db } from "@/lib/db";
 
 export type ArticleDefaultsFromSettings = {
@@ -21,6 +16,8 @@ export type ArticleDefaultsFromSettings = {
   contentFormat: string;
 };
 
+// Article defaults from Settings (SOT). Used when Article no longer stores the 12 fields.
+// Matches admin getArticleDefaultsFromSettings shape.
 export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsFromSettings> {
   const settings = await db.settings.findFirst();
   if (!settings) {
@@ -56,3 +53,4 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
     contentFormat: settings.defaultContentFormat?.trim() || "rich_text",
   };
 }
+

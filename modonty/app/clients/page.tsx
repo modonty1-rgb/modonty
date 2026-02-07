@@ -2,10 +2,9 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getClientsWithCounts, getClientPageStats } from "@/app/api/helpers/client-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
-import { generateMetadataFromSEO } from "@/lib/seo";
-import { getSettingsSeoForRoute } from "@/lib/get-settings-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientsHero } from "./components/clients-hero";
+import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
 
 // Dynamic imports for client components (code splitting + SSR where possible)
 const FeaturedClients = dynamic(
@@ -19,22 +18,15 @@ const ClientsContent = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getSettingsSeoForRoute("clients");
-  if (metadata?.title ?? metadata?.description) return metadata;
-  return generateMetadataFromSEO({
-    title: "العملاء - دليل الشركات والمؤسسات",
-    description: "استكشف دليل شامل للشركات والمؤسسات الرائدة. ابحث وتصفح حسب الصناعة والمجال",
-    keywords: ["عملاء", "شركات", "منظمات", "مقالات", "دليل الشركات"],
-    url: "/clients",
-    type: "website",
-  });
+  const { metadata } = await getClientsPageSeo();
+  return metadata ?? {};
 }
 
 export const revalidate = 60; // ISR: Revalidate every 60 seconds (optimized)
 
 export default async function ClientsPage() {
   const [{ jsonLd: storedJsonLd }, clients, stats, industries] = await Promise.all([
-    getSettingsSeoForRoute("clients"),
+    getClientsPageSeo(),
     getClientsWithCounts(),
     getClientPageStats(),
     getIndustriesWithCounts(),

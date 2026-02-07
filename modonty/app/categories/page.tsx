@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { getCategoriesEnhanced } from "@/app/api/helpers/category-queries";
-import { generateMetadataFromSEO } from "@/lib/seo";
-import { getSettingsSeoForRoute } from "@/lib/get-settings-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { CategoriesHero } from "./components/categories-hero";
 import { FeaturedCategories } from "./components/featured-categories";
@@ -14,19 +12,13 @@ import { EmptyState } from "./components/empty-state";
 import { CategoriesSkeleton } from "./components/categories-skeleton";
 import { parseCategorySearchParams } from "./helpers/category-utils";
 import type { CategoryPageParams, CategoryResponse } from "@/app/api/helpers/types";
+import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
 
 export const revalidate = 60; // ISR: Revalidate every 60 seconds (optimized)
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { metadata } = await getSettingsSeoForRoute("categories");
-  if (metadata?.title ?? metadata?.description) return metadata;
-  return generateMetadataFromSEO({
-    title: "الفئات",
-    description: "استكشف المقالات حسب الفئة - تصفح جميع فئات المحتوى المتاحة",
-    keywords: ["فئات", "تصنيفات", "مقالات", "محتوى"],
-    url: "/categories",
-    type: "website",
-  });
+  const { metadata } = await getCategoriesPageSeo();
+  return metadata ?? {};
 }
 
 export default async function CategoriesPage({ searchParams }: CategoryPageParams) {
@@ -34,7 +26,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   const { search, sort, view, featured } = parseCategorySearchParams(params);
 
   const [seo, categories] = await Promise.all([
-    getSettingsSeoForRoute("categories"),
+    getCategoriesPageSeo(),
     getCategoriesEnhanced({
       search,
       sortBy: sort || "articles",
@@ -50,35 +42,16 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
     0
   );
 
-  const collectionPageStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "الفئات",
-    description: "استكشف المقالات حسب الفئة - تصفح جميع فئات المحتوى المتاحة",
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/categories`,
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: categories.map((category: CategoryResponse, index: number) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "Thing",
-          name: category.name,
-          description: category.description,
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/categories/${category.slug}`,
-        },
-      })),
-    },
-  };
-
-  const jsonLdToRender = storedJsonLd?.trim() || JSON.stringify(collectionPageStructuredData);
+  const jsonLdToRender = storedJsonLd?.trim() || "";
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdToRender }}
-      />
+      {jsonLdToRender && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdToRender }}
+        />
+      )}
       <>
         <Breadcrumb
           items={[

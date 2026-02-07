@@ -107,8 +107,7 @@ export function InfiniteArticleList({ initialPosts }: InfiniteArticleListProps) 
         posts.map((post, index) => (
           <div
             key={post.id}
-            className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-            style={{ animationDelay: `${index % 10 * 50}ms` }}
+            className="animate-in fade-in duration-300"
           >
             <PostCard post={post} priority={index === 0} />
           </div>

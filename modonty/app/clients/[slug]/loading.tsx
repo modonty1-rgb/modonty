@@ -40,6 +40,10 @@ export default function ClientDetailLoading() {
       </div>
 
       <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+        <div className="flex items-center justify-end mb-6">
+          <Skeleton className="h-10 w-32" />
+        </div>
+
         <div className="flex items-center gap-4 mb-8 border-b">
           <Skeleton className="h-10 w-24" />
           <Skeleton className="h-10 w-24" />

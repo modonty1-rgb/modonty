@@ -20,7 +20,6 @@ export const pageSchema = z.object({
   seoDescription: z.string().optional(),
   metaRobots: z.union([metaRobotsEnum, z.literal("")]).optional(),
   googlebot: z.string().optional(),
-  themeColor: z.string().optional(),
   author: z.string().optional(),
   socialImage: z.string().optional(),
   socialImageAlt: z.string().optional(),

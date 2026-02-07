@@ -1616,7 +1616,6 @@ model Settings {
   siteName            String?
   brandDescription    String?
   siteAuthor          String?
-  themeColor          String?
   inLanguage            String?  // Default language code (e.g., "ar", "en") for hreflang
   defaultMetaRobots     String?  // Default meta robots (e.g. "index, follow")
   defaultGooglebot      String?  // Default meta googlebot (e.g. "index, follow")
@@ -1633,7 +1632,6 @@ model Settings {
   defaultAlternateLanguages     Json?    // Default for articles: array of {hreflang, url} for hreflang
   defaultContentFormat         String?  // Default for articles: "markdown" | "html" | "rich_text"
   defaultCharset         String?  // Meta charset (e.g. "UTF-8")
-  defaultViewport        String?  // Meta viewport (e.g. "width=device-width, initial-scale=1")
   defaultOgImageType     String?  // og:image type (e.g. "image/jpeg")
   defaultOgImageWidth    Int?     // og:image width (e.g. 1200)
   defaultOgImageHeight   Int?     // og:image height (e.g. 630)

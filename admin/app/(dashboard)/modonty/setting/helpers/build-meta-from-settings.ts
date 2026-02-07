@@ -25,13 +25,11 @@ export interface SettingsForMeta {
   defaultOgDeterminer?: string | null;
   defaultTwitterCard?: string | null;
   defaultCharset?: string | null;
-  defaultViewport?: string | null;
   defaultOgImageType?: string | null;
   defaultOgImageWidth?: number | null;
   defaultOgImageHeight?: number | null;
   defaultHreflang?: string | null;
   defaultPathname?: string | null;
-  themeColor?: string | null;
   defaultSitemapPriority?: number | null;
   defaultSitemapChangeFreq?: string | null;
   twitterSite?: string | null;
@@ -61,9 +59,7 @@ const FALLBACK_OG_DETERMINER = "auto";
 const FALLBACK_TWITTER_CARD = "summary_large_image";
 const FALLBACK_SITEMAP_PRIORITY = 0.5;
 const FALLBACK_SITEMAP_CHANGE_FREQ = "monthly";
-const FALLBACK_THEME_COLOR = "#3030FF";
 const FALLBACK_CHARSET = "UTF-8";
-const FALLBACK_VIEWPORT = "width=device-width, initial-scale=1";
 const FALLBACK_OG_IMAGE_TYPE = "image/jpeg";
 const FALLBACK_OG_IMAGE_WIDTH = 1200;
 const FALLBACK_OG_IMAGE_HEIGHT = 630;
@@ -139,13 +135,11 @@ export function buildMetaFromSettings(
 
   const built: Record<string, unknown> = {
     charset: settings.defaultCharset?.trim() || FALLBACK_CHARSET,
-    viewport: settings.defaultViewport?.trim() || FALLBACK_VIEWPORT,
     title,
     description,
     robots,
     googlebot,
     notranslate,
-    themeColor: settings.themeColor?.trim() || FALLBACK_THEME_COLOR,
     canonical: canonicalUrl,
     author: settings.siteAuthor?.trim() ?? "",
     hreflang,
@@ -158,7 +152,6 @@ export function buildMetaFromSettings(
   if (settings.defaultReferrerPolicy?.trim()) {
     built.referrerPolicy = settings.defaultReferrerPolicy.trim();
   }
-  built.msapplicationTileColor = settings.themeColor?.trim() || FALLBACK_THEME_COLOR;
 
   return built;
 }

@@ -83,7 +83,6 @@ export interface SettingsDefaults {
   twitterSite: string;
   twitterCreator: string;
   orgLogoUrl: string;
-  themeColor: string;
   defaultMetaRobots: string;
   defaultGooglebot: string;
   defaultOgType: string;
@@ -108,7 +107,6 @@ interface PageFormProps {
     seoDescription?: string | null;
     metaRobots?: string | null;
     googlebot?: string | null;
-    themeColor?: string | null;
     author?: string | null;
     socialImage?: string | null;
     socialImageAlt?: string | null;
@@ -165,7 +163,6 @@ export function PageForm({ slug, initialData, onRegenerated, settingsDefaults }:
     seoDescription: initialData?.seoDescription || undefined,
     metaRobots: (initialData?.metaRobots as PageFormData["metaRobots"]) ?? (settingsDefaults.defaultMetaRobots as PageFormData["metaRobots"]),
     googlebot: initialData?.googlebot ?? settingsDefaults.defaultGooglebot,
-    themeColor: initialData?.themeColor ?? settingsDefaults.themeColor,
     author: initialData?.author || undefined,
     socialImage: initialData?.socialImage || undefined,
     socialImageAlt: initialData?.socialImageAlt || undefined,
@@ -218,7 +215,6 @@ export function PageForm({ slug, initialData, onRegenerated, settingsDefaults }:
       seoDescription: initialData?.seoDescription || undefined,
       metaRobots: (initialData?.metaRobots as PageFormData["metaRobots"]) ?? (settingsDefaults.defaultMetaRobots as PageFormData["metaRobots"]),
       googlebot: initialData?.googlebot ?? settingsDefaults.defaultGooglebot,
-      themeColor: initialData?.themeColor ?? settingsDefaults.themeColor,
       author: initialData?.author || undefined,
       socialImage: initialData?.socialImage || undefined,
       socialImageAlt: initialData?.socialImageAlt || undefined,

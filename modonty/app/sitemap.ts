@@ -1,7 +1,14 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { getArticleDefaultsFromSettings } from "@/lib/get-article-defaults-from-settings";
+import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
+
+type SitemapArticle = {
+  slug: string;
+  datePublished: Date | null;
+  dateModified: Date | null;
+  featured: boolean;
+};
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
@@ -40,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   });
 
-  const articleUrls: MetadataRoute.Sitemap = articles.map((article) => ({
+  const articleUrls: MetadataRoute.Sitemap = articles.map((article: SitemapArticle) => ({
     url: `${baseUrl}/articles/${article.slug}`,
     lastModified: article.dateModified || article.datePublished || new Date(),
     changeFrequency: (defaults.sitemapChangeFreq || "weekly") as "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never",

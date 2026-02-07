@@ -19,7 +19,6 @@ const SEO_DEFAULTS = {
   defaultSitemapPriority: 0.5,
   defaultSitemapChangeFreq: "monthly",
   defaultCharset: "UTF-8",
-  defaultViewport: "width=device-width, initial-scale=1",
   defaultOgImageType: "image/jpeg",
   defaultOgImageWidth: 1200,
   defaultOgImageHeight: 630,

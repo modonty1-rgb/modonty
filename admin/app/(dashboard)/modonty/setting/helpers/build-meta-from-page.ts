@@ -153,7 +153,6 @@ export interface BuildMetaOptions {
   existingMeta?: Record<string, unknown>;
   author?: string;
   ogLocaleAlternateStr?: string | null;
-  themeColor?: string;
   twitterSite?: string;
   twitterCreator?: string;
   twitterSiteId?: string;
@@ -168,7 +167,6 @@ export interface BuildMetaOptions {
   defaultSitemapPriority?: number;
   defaultSitemapChangeFreq?: string;
   defaultCharset?: string;
-  defaultViewport?: string;
   defaultOgImageType?: string;
   defaultOgImageWidth?: number;
   defaultOgImageHeight?: number;
@@ -190,9 +188,7 @@ const FALLBACK_OG_DETERMINER = "auto";
 const FALLBACK_TWITTER_CARD = "summary_large_image";
 const FALLBACK_SITEMAP_PRIORITY = 0.5;
 const FALLBACK_SITEMAP_CHANGE_FREQ = "monthly";
-const FALLBACK_THEME_COLOR = "#3030FF";
 const FALLBACK_CHARSET = "UTF-8";
-const FALLBACK_VIEWPORT = "width=device-width, initial-scale=1";
 const FALLBACK_OG_IMAGE_TYPE = "image/jpeg";
 const FALLBACK_OG_IMAGE_WIDTH = 1200;
 const FALLBACK_OG_IMAGE_HEIGHT = 630;
@@ -205,7 +201,6 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
     existingMeta = {},
     author: authorOverride,
     ogLocaleAlternateStr,
-    themeColor: themeColorOverride,
     twitterSite: twitterSiteOverride,
     twitterCreator: twitterCreatorOverride,
     twitterSiteId: twitterSiteIdOverride,
@@ -220,7 +215,6 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
     defaultSitemapPriority,
     defaultSitemapChangeFreq,
     defaultCharset,
-    defaultViewport,
     defaultOgImageType,
     defaultOgImageWidth,
     defaultOgImageHeight,
@@ -238,7 +232,6 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
   const ogImageWidth = defaultOgImageWidth ?? FALLBACK_OG_IMAGE_WIDTH;
   const ogImageHeight = defaultOgImageHeight ?? FALLBACK_OG_IMAGE_HEIGHT;
   const charsetValue = defaultCharset?.trim() || FALLBACK_CHARSET;
-  const viewportValue = defaultViewport?.trim() || FALLBACK_VIEWPORT;
 
   const canonicalUrl = ensureAbsoluteUrl(pageLike.canonicalUrl, siteUrl) || `${siteUrl}/${pageLike.slug}`;
   const ogUrlResolved = pageLike.ogUrl?.trim() ? ensureAbsoluteUrl(pageLike.ogUrl, siteUrl) : null;
@@ -283,12 +276,10 @@ export function buildMetaFromPageLike(pageLike: PageLikeForMeta, options: BuildM
 
   const built: Record<string, unknown> = {
     charset: charsetValue,
-    viewport: viewportValue,
     title: title.length > titleMax ? title.slice(0, titleMax - truncationSuffix.length) + truncationSuffix : title,
     description: description.length > descMax ? description.slice(0, descMax - truncationSuffix.length) + truncationSuffix : description,
     robots,
     googlebot: (existingMeta.googlebot as string)?.trim() || googlebotDefault,
-    themeColor: themeColorOverride?.trim() || FALLBACK_THEME_COLOR,
     openGraph: {
       title: pageLike.ogTitle || title,
       description: pageLike.ogDescription || description,
