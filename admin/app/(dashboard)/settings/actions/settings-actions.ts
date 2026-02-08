@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { Prisma } from "@prisma/client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -549,6 +550,7 @@ export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ suc
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save SEO settings";
@@ -594,6 +596,7 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Site settings";
@@ -623,6 +626,7 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Organization settings";
@@ -643,6 +647,7 @@ export async function saveTrackingSettings(data: Partial<GTMSettings & HOTjarSet
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Tracking settings";
@@ -667,6 +672,7 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Social Media settings";
@@ -686,6 +692,7 @@ export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Media settings";
@@ -710,6 +717,7 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
       },
     });
     revalidatePath("/settings");
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Modonty settings";
@@ -856,6 +864,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
     }
 
     revalidatePath("/settings");
+    await revalidateModontyTag("settings", settings?.siteUrl);
     return { success: true, settings };
   } catch (error) {
     console.error("Error updating settings:", error);

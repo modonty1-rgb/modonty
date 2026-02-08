@@ -69,6 +69,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
     category,
     client,
     featured,
+    search,
     status = ArticleStatus.PUBLISHED,
   } = filters;
 
@@ -89,6 +90,16 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
       OR: [
         { datePublished: null },
         { datePublished: { lte: new Date() } },
+      ],
+    }),
+    ...(search?.trim() && {
+      AND: [
+        {
+          OR: [
+            { title: { contains: search.trim(), mode: "insensitive" } },
+            { excerpt: { contains: search.trim(), mode: "insensitive" } },
+          ],
+        },
       ],
     }),
   };

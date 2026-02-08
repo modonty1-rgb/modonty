@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { ArticleFormData, FormSubmitResult } from "@/lib/types/form-types";
 import { createArticle } from "../articles-actions";
@@ -108,6 +109,7 @@ export async function publishArticle(
     revalidatePath("/articles");
     revalidatePath(`/articles/${publishedArticle.id}`);
     revalidatePath(`/articles/${publishedArticle.slug}`);
+    await revalidateModontyTag("articles");
 
     return {
       success: true,

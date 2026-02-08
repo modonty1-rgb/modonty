@@ -178,6 +178,7 @@ model User {
   leadScoring           LeadScoring[]
   engagementDuration    EngagementDuration[]
   faqFeedbacks         FAQFeedback[]
+  chatbotMessages      ChatbotMessage[]
 
   @@index([role])
   @@map("users")
@@ -237,6 +238,29 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model ChatbotMessage {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
+  user              User     @relation(fields: [userId], references: [id])
+  userQuery         String
+  assistantResponse String
+  scopeType         String // "article" | "category"
+  articleSlug       String?
+  categorySlug      String?
+  articleId         String?  @db.ObjectId
+  categoryId        String?  @db.ObjectId
+  outcome           String // "outOfScope" | "redirect" | "stream" | "error"
+  source            String? // "web" | "db" | null
+  webSources        Json? // [{title, link}] for web search results
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+  @@index([articleSlug])
+  @@index([categorySlug])
+  @@index([createdAt])
+  @@map("chatbot_messages")
 }
 
 // ============================================

@@ -15,6 +15,7 @@ import {
 import { ArticleFormData, FAQItem } from "@/lib/types";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function createArticle(data: ArticleFormData) {
   try {
@@ -220,6 +221,7 @@ export async function createArticle(data: ArticleFormData) {
     }
 
     revalidatePath("/articles");
+    await revalidateModontyTag("articles");
     return { success: true, article };
   } catch (error) {
     console.error("Error creating article:", error);

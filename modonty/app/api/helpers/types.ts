@@ -153,5 +153,6 @@ export interface ArticleFilters {
   category?: string;
   client?: string;
   featured?: boolean;
+  search?: string;
   status?: "PUBLISHED" | "DRAFT" | "SCHEDULED";
 }

@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function bulkUpdateArticleStatus(
   articleIds: string[],
@@ -20,6 +21,7 @@ export async function bulkUpdateArticleStatus(
     });
 
     revalidatePath("/articles");
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch (error) {
     console.error("Error bulk updating article status:", error);

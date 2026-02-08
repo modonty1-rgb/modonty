@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function deleteArticle(id: string) {
   try {
@@ -22,6 +23,7 @@ export async function deleteArticle(id: string) {
     });
 
     revalidatePath("/articles");
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch (error) {
     console.error("Error deleting article:", error);

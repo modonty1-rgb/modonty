@@ -44,16 +44,15 @@ export function TopNav() {
 
           {/* Column 2: Search + Navigation (~70%) */}
           <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-xs">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="بحث"
-                className="h-10 w-full rounded-md border border-input bg-background pr-10 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                style={{ caretColor: 'transparent' }}
-                suppressHydrationWarning
-              />
-            </div>
+            <Link
+              href="/search"
+              role="search"
+              aria-label="بحث المقالات"
+              className="relative flex h-10 w-full max-w-xs items-center rounded-md border border-input bg-background pr-10 pl-4 text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
+            >
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden />
+              <span>ابحث...</span>
+            </Link>
             <nav aria-label="التنقل الرئيسي" className="flex items-center gap-0.5 flex-shrink-0">
               <NavItem icon={Home} label="الرئيسية" href="/" active={pathname === "/"} />
               <NavItem icon={TrendingUp} label="الرائجة" href="/trending" active={pathname === "/trending"} />

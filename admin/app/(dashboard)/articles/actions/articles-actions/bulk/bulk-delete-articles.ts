@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function bulkDeleteArticles(articleIds: string[]) {
   try {
@@ -27,6 +28,7 @@ export async function bulkDeleteArticles(articleIds: string[]) {
     });
 
     revalidatePath("/articles");
+    await revalidateModontyTag("articles");
     return { success: true };
   } catch (error) {
     console.error("Error bulk deleting articles:", error);

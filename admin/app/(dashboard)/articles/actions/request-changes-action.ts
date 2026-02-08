@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { FormSubmitResult } from "@/lib/types/form-types";
 
@@ -27,6 +28,7 @@ export async function requestChanges(articleId: string): Promise<FormSubmitResul
 
     revalidatePath("/articles");
     revalidatePath(`/articles/${article.slug}`);
+    await revalidateModontyTag("articles");
 
     return {
       success: true,
