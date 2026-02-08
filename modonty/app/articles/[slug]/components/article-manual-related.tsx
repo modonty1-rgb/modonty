@@ -1,7 +1,7 @@
 import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 
 interface ArticleManualRelatedProps {
   relatedArticles: Array<{
@@ -59,11 +59,10 @@ export function ArticleManualRelated({ relatedArticles }: ArticleManualRelatedPr
                 )}
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{related.related.client.name}</span>
-                  <time suppressHydrationWarning>
-                    {related.related.datePublished
-                      ? formatRelativeTime(related.related.datePublished)
-                      : formatRelativeTime(related.related.createdAt)}
-                  </time>
+                  <RelativeTime
+                    date={related.related.datePublished ?? related.related.createdAt}
+                    dateTime={(related.related.datePublished ?? related.related.createdAt).toISOString()}
+                  />
                 </div>
               </CardContent>
             </Card>

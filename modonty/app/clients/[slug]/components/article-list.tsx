@@ -5,6 +5,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FormattedDate } from "@/components/FormattedDate";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,20 +43,17 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
 
   const sortedArticles = useMemo(() => {
     const sorted = [...articles];
-    
+    const toTime = (d: Date | string | null | undefined) => {
+      if (!d) return 0;
+      if (typeof d === "string") return Date.parse(d);
+      return (d as Date).getTime();
+    };
+
     switch (sortBy) {
       case "newest":
-        return sorted.sort((a, b) => {
-          if (!a.datePublished) return 1;
-          if (!b.datePublished) return -1;
-          return new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime();
-        });
+        return sorted.sort((a, b) => toTime(b.datePublished) - toTime(a.datePublished));
       case "oldest":
-        return sorted.sort((a, b) => {
-          if (!a.datePublished) return 1;
-          if (!b.datePublished) return -1;
-          return new Date(a.datePublished).getTime() - new Date(b.datePublished).getTime();
-        });
+        return sorted.sort((a, b) => toTime(a.datePublished) - toTime(b.datePublished));
       case "title":
         return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
       default:
@@ -158,7 +156,7 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
                   )}
                   {article.datePublished && (
                     <span>
-                      {new Date(article.datePublished).toLocaleDateString("ar-SA")}
+                      <FormattedDate date={article.datePublished} options={{ year: "numeric", month: "short", day: "numeric" }} />
                     </span>
                   )}
                 </div>

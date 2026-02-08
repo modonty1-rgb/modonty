@@ -1,7 +1,8 @@
+import "server-only";
 import { embed } from "@/lib/cohere";
 
-/** Relevance threshold: below this = out-of-scope (query not about this article). */
-const OUT_OF_SCOPE_THRESHOLD = 0.35;
+/** Relevance threshold: below this = out-of-scope (query not about this category). */
+const OUT_OF_SCOPE_THRESHOLD = 0.42;
 
 /** Greetings/short pleasantries - never treat as out-of-scope. */
 const GREETING_PATTERNS = [
@@ -37,8 +38,9 @@ function isGreetingOrShortPleasantry(text: string): boolean {
 
 /**
  * Check if user message is out of scope (asking about a different topic/article).
- * Uses Cohere embed: compare query to article context (title + category + excerpt).
- * Greetings and short pleasantries are never out-of-scope.
+ * Uses Cohere embed: compare query to scope. Per Cohere semantic-search docs,
+ * we compare to multiple scope texts and use max similarity so related
+ * sub-topics (e.g. Core Web Vitals in Content SEO) match the category.
  * Returns true if out-of-scope.
  */
 export async function isOutOfScope(
@@ -57,17 +59,38 @@ export async function isOutOfScope(
   const parts: string[] = [];
   if (scopeContext.articleTitle) parts.push(scopeContext.articleTitle);
   if (scopeContext.categoryName) parts.push(scopeContext.categoryName);
-  if (scopeContext.articleExcerpt) parts.push(scopeContext.articleExcerpt.slice(0, 300));
+  if (scopeContext.articleExcerpt) parts.push(scopeContext.articleExcerpt.slice(0, 500));
   const scopeText = parts.join(" ").trim();
   if (!scopeText) return false;
 
-  const [queryEmb, docEmb] = await Promise.all([
+  const textsToCompare: string[] = [scopeText];
+  if (scopeContext.categoryName && scopeText !== scopeContext.categoryName) {
+    textsToCompare.push(scopeContext.categoryName);
+  }
+
+  const [queryEmb, docEmbs] = await Promise.all([
     embed([userMessage], "search_query"),
-    embed([scopeText], "search_document"),
+    embed(textsToCompare, "search_document"),
   ]);
 
-  if (!queryEmb?.[0] || !docEmb?.[0]) return false;
+  if (!queryEmb?.[0] || !docEmbs?.length) return false;
 
-  const sim = cosineSimilarity(queryEmb[0], docEmb[0]);
-  return sim < OUT_OF_SCOPE_THRESHOLD;
+  const simScores = docEmbs.map((doc, i) => ({
+    text: textsToCompare[i]?.slice(0, 80) ?? "",
+    sim: cosineSimilarity(queryEmb[0], doc),
+  }));
+  const sim = Math.max(...simScores.map((s) => s.sim));
+  const out = sim < OUT_OF_SCOPE_THRESHOLD;
+
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[scope]", {
+      query: userMessage.slice(0, 80),
+      threshold: OUT_OF_SCOPE_THRESHOLD,
+      simScores,
+      maxSim: sim,
+      outOfScope: out,
+    });
+  }
+
+  return out;
 }

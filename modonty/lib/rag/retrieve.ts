@@ -1,3 +1,4 @@
+import "server-only";
 import { embed, rerank, type DocumentForChat } from "@/lib/cohere";
 
 const RETRIEVE_TOP_K = 10;
@@ -25,9 +26,9 @@ function cosineSimilarity(a: number[], b: number[]): number {
 export async function retrieveFromChunks(
   query: string,
   chunks: string[]
-): Promise<{ docs: DocumentForChat[]; topScore: number }> {
+): Promise<{ docs: DocumentForChat[]; topScore: number; topRerankScore: number }> {
   if (chunks.length === 0) {
-    return { docs: [], topScore: 0 };
+    return { docs: [], topScore: 0, topRerankScore: 0 };
   }
 
   const [queryEmb, chunkEmbs] = await Promise.all([
@@ -36,7 +37,7 @@ export async function retrieveFromChunks(
   ]);
 
   if (!queryEmb?.[0] || !chunkEmbs?.length) {
-    return { docs: [], topScore: 0 };
+    return { docs: [], topScore: 0, topRerankScore: 0 };
   }
 
   const scored = chunks
@@ -49,16 +50,19 @@ export async function retrieveFromChunks(
 
   const topScore = scored[0]?.score ?? 0;
   if (topScore < RELEVANCE_THRESHOLD) {
-    return { docs: [], topScore };
+    return { docs: [], topScore, topRerankScore: 0 };
   }
 
   const toRerank = scored.map((s) => s.chunk);
   const reranked = await rerank(query, toRerank, Math.min(RERANK_TOP_N, toRerank.length));
+
+  const first = reranked[0] as { relevanceScore?: number; relevance_score?: number } | undefined;
+  const topRerankScore = first?.relevanceScore ?? first?.relevance_score ?? topScore;
 
   const docs: DocumentForChat[] = reranked.map((r, i) => ({
     id: `doc-${i}`,
     text: toRerank[r.index] ?? "",
   }));
 
-  return { docs, topScore };
+  return { docs, topScore, topRerankScore };
 }

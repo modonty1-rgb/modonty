@@ -38,7 +38,7 @@ export function TopNav() {
         {/* Desktop 3-Column Layout: 15-70-15 */}
         <div className="hidden md:grid md:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
           {/* Column 1: Logo (~15%) */}
-          <div className="flex items-center gap-2 flex-1 h-10">
+          <div className="flex items-center gap-2 flex-1">
             <Logo size="header" />
           </div>
 

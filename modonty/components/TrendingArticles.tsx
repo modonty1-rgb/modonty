@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 import { TrendingUp, Eye, Heart, MessageCircle } from "lucide-react";
 
 interface TrendingArticle {
@@ -131,9 +131,10 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                         <span>•</span>
                       </>
                     )}
-                    <time dateTime={article.publishedAt}>
-                      {formatRelativeTime(new Date(article.publishedAt))}
-                    </time>
+                    <RelativeTime
+                      date={article.publishedAt}
+                      dateTime={article.publishedAt}
+                    />
                   </div>
                 </div>
               </CardContent>

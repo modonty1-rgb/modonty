@@ -3,8 +3,6 @@ import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { db } from "@/lib/db";
 
-export const revalidate = 3600; // Revalidate every hour
-
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const page = await db.modonty.findUnique({

@@ -1,8 +1,8 @@
 import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightSidebar } from "@/components/RightSidebar";
 import { InfiniteArticleList } from "@/components/InfiniteArticleList";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { BackToTop } from "@/components/BackToTop";
+import { FirstArticleCard } from "@/components/FirstArticleCard";
+import { FeedDeferredUI } from "@/components/FeedDeferredUI";
 
 interface Post {
   id: string;
@@ -36,7 +36,7 @@ interface FeedContainerProps {
 export function FeedContainer({ posts }: FeedContainerProps) {
   return (
     <>
-      <ScrollProgress />
+      <FeedDeferredUI />
       <h1 className="sr-only">أحدث المقالات والمدونات - مودونتي</h1>
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -46,13 +46,13 @@ export function FeedContainer({ posts }: FeedContainerProps) {
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>
-              <InfiniteArticleList initialPosts={posts} />
+              {posts.length > 0 && <FirstArticleCard post={posts[0]} />}
+              <InfiniteArticleList initialPosts={posts.length > 1 ? posts.slice(1) : []} />
             </section>
           </div>
           <RightSidebar />
         </div>
       </div>
-      <BackToTop />
     </>
   );
 }

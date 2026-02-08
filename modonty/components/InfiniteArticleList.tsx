@@ -109,7 +109,7 @@ export function InfiniteArticleList({ initialPosts }: InfiniteArticleListProps) 
             key={post.id}
             className="animate-in fade-in duration-300"
           >
-            <PostCard post={post} priority={index === 0} />
+            <PostCard post={post} />
           </div>
         ))
       ) : (

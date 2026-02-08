@@ -1,8 +1,9 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useChatSheet } from "./ChatSheetProvider";
 import { cn } from "@/lib/utils";
+import { getOptimizedCharacterUrl } from "@/lib/image-utils";
 
 export function ChatTrigger({ variant = "pill", className }: { variant?: "pill" | "nav"; className?: string }) {
   const { open, setOpen } = useChatSheet();
@@ -13,14 +14,27 @@ export function ChatTrigger({ variant = "pill", className }: { variant?: "pill" 
       type="button"
       onClick={() => setOpen(true)}
       className={cn(
-        "inline-flex rounded-full p-[2px] bg-gradient-to-r from-purple-500 to-cyan-500",
-        open && "ring-2 ring-primary/30 ring-offset-2",
+        "inline-flex shrink-0 items-center justify-center rounded-lg transition-all duration-300 ease-out",
+        "hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/15 focus:ring-offset-2",
+        open && "ring-2 ring-primary/15 ring-offset-2",
         className
       )}
       aria-label="فتح المحادثة"
     >
-      <span className={cn("flex items-center justify-center rounded-full bg-background text-foreground hover:bg-muted/50", size)}>
-        <Sparkles className="h-5 w-5 shrink-0" strokeWidth={2} />
+      <span
+        className={cn(
+          "relative flex shrink-0 overflow-hidden rounded-lg border border-muted/25",
+          "shadow-[0_1px_3px_rgba(0,0,0,0.06)]",
+          size
+        )}
+      >
+        <Image
+          src={getOptimizedCharacterUrl(96)}
+          alt="مدونتي الذكية"
+          fill
+          className="object-cover"
+          sizes="44px"
+        />
       </span>
     </button>
   );

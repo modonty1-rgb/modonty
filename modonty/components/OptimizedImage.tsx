@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 
 interface OptimizedImageProps {
@@ -17,35 +15,30 @@ interface OptimizedImageProps {
   fetchPriority?: 'high' | 'low' | 'auto';
 }
 
-function optimizeCloudinaryUrl(url: string): string {
+function optimizeCloudinaryUrl(url: string, forLcp?: boolean): string {
   if (!url.includes('res.cloudinary.com')) {
     return url;
   }
 
-  // Skip SVGs
   if (url.toLowerCase().endsWith('.svg')) {
     return url;
   }
 
-  // Check if URL already has transformations
   if (url.includes('/f_auto') || url.includes('/q_auto')) {
     return url;
   }
 
   try {
-    // Add Cloudinary optimizations
-    // f_auto: Auto format (WebP/AVIF)
-    // q_auto: Auto quality
-    // d_: Default fallback image for missing/broken images
-    // Removed w_auto to prevent client-side delay (LCP optimization)
     const uploadIndex = url.indexOf('/upload/');
     if (uploadIndex === -1) return url;
 
     const beforeUpload = url.substring(0, uploadIndex + 8);
     const afterUpload = url.substring(uploadIndex + 8);
-    
-    // Add default_image fallback for missing/broken images
-    return `${beforeUpload}f_auto,q_auto,d_article-placeholder-default/${afterUpload}`;
+    const transforms = forLcp
+      ? 'f_auto,q_auto,w_1200,c_limit,d_article-placeholder-default'
+      : 'f_auto,q_auto,d_article-placeholder-default';
+
+    return `${beforeUpload}${transforms}/${afterUpload}`;
   } catch (error) {
     return url;
   }
@@ -69,12 +62,8 @@ export function OptimizedImage({
     return null;
   }
 
-  // Optimize Cloudinary URLs with transformations
-  const optimizedSrc = optimizeCloudinaryUrl(src);
-  
-  // Auto-set fetchPriority="high" for priority images (LCP optimization)
-  const effectiveFetchPriority = priority ? 'high' : (fetchPriority || undefined);
-  
+  const optimizedSrc = optimizeCloudinaryUrl(src, priority);
+
   return (
     <Image
       src={optimizedSrc}
@@ -83,12 +72,12 @@ export function OptimizedImage({
       width={!fill ? width : undefined}
       height={!fill ? height : undefined}
       className={className}
-      priority={priority}
-      loading={priority ? undefined : (loading || 'lazy')}
+      preload={priority}
+      loading={priority ? undefined : (loading || "lazy")}
       sizes={sizes}
-      quality={quality === 'auto' ? 75 : quality}
+      quality={quality === 'auto' ? (priority ? 65 : 75) : quality}
       {...(itemProp && { itemProp })}
-      {...(effectiveFetchPriority && { fetchPriority: effectiveFetchPriority })}
+      fetchPriority={priority ? "high" : fetchPriority}
     />
   );
 }

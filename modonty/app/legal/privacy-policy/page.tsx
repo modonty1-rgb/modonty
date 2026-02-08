@@ -1,37 +1,14 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { db } from "@/lib/db";
-
-export const revalidate = 3600; // Revalidate every hour
+import { FormattedDate } from "@/components/FormattedDate";
+import { getPrivacyPolicyPageForMetadata } from "./helpers/privacy-policy-metadata";
+import { getPrivacyPolicyPageContent } from "./helpers/privacy-policy-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const page = await db.modonty.findUnique({
-      where: { slug: "privacy-policy" },
-      select: {
-        title: true,
-        seoTitle: true,
-        seoDescription: true,
-        metaRobots: true,
-        socialImage: true,
-        socialImageAlt: true,
-        ogTitle: true,
-        ogDescription: true,
-        ogType: true,
-        ogUrl: true,
-        ogSiteName: true,
-        ogLocale: true,
-        ogImage: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
-        twitterCreator: true,
-        canonicalUrl: true,
-        inLanguage: true,
-      },
-    });
+    const page = await getPrivacyPolicyPageForMetadata();
 
     if (!page) {
       // Fallback to default metadata
@@ -122,20 +99,25 @@ function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
-export default async function PrivacyPolicyPage() {
+function PrivacyPolicyFallback() {
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="h-8 w-48 bg-muted animate-pulse rounded mb-6" />
+      <div className="h-10 w-full bg-muted animate-pulse rounded mb-6" />
+      <div className="space-y-4">
+        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+      </div>
+    </div>
+  );
+}
+
+async function PrivacyPolicyContent() {
   let page;
   let hasContent = false;
 
   try {
-    page = await db.modonty.findUnique({
-      where: { slug: "privacy-policy" },
-      select: {
-        title: true,
-        content: true,
-        updatedAt: true,
-      },
-    });
-
+    page = await getPrivacyPolicyPageContent();
     if (page && page.content) {
       hasContent = true;
     }
@@ -205,11 +187,10 @@ export default async function PrivacyPolicyPage() {
           <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
           {page?.updatedAt && (
             <p className="text-sm text-muted-foreground mb-6">
-              آخر تحديث: {new Date(page.updatedAt).toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              آخر تحديث:{" "}
+              <Suspense fallback={<span>...</span>}>
+                <FormattedDate date={page.updatedAt} />
+              </Suspense>
             </p>
           )}
           <div
@@ -219,5 +200,13 @@ export default async function PrivacyPolicyPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function PrivacyPolicyPage() {
+  return (
+    <Suspense fallback={<PrivacyPolicyFallback />}>
+      <PrivacyPolicyContent />
+    </Suspense>
   );
 }

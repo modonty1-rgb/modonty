@@ -22,8 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata ?? {};
 }
 
-export const revalidate = 60; // ISR: Revalidate every 60 seconds (optimized)
-
 export default async function ClientsPage() {
   const [{ jsonLd: storedJsonLd }, clients, stats, industries] = await Promise.all([
     getClientsPageSeo(),

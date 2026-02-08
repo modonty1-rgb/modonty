@@ -1,40 +1,16 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { db } from "@/lib/db";
-
-export const revalidate = 3600; // Revalidate every hour
+import { FormattedDate } from "@/components/FormattedDate";
+import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
+import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const page = await db.modonty.findUnique({
-      where: { slug: "user-agreement" },
-      select: {
-        title: true,
-        seoTitle: true,
-        seoDescription: true,
-        metaRobots: true,
-        socialImage: true,
-        socialImageAlt: true,
-        ogTitle: true,
-        ogDescription: true,
-        ogType: true,
-        ogUrl: true,
-        ogSiteName: true,
-        ogLocale: true,
-        ogImage: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
-        twitterCreator: true,
-        canonicalUrl: true,
-        inLanguage: true,
-      },
-    });
+    const page = await getUserAgreementPageForMetadata();
 
     if (!page) {
-      // Fallback to default metadata
       return {
         title: "اتفاقية المستخدم - مودونتي",
         description: "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
@@ -49,7 +25,6 @@ export async function generateMetadata(): Promise<Metadata> {
     const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
-    // Parse robots directive
     const robotsDirective = page.metaRobots || "index,follow";
     const shouldIndex = !robotsDirective.includes("noindex");
     const shouldFollow = !robotsDirective.includes("nofollow");
@@ -91,9 +66,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: `${title} - ${siteName}`,
       description: description,
-      alternates: {
-        canonical: canonicalUrl,
-      },
+      alternates: { canonical: canonicalUrl },
       openGraph,
       twitter,
       robots: {
@@ -110,7 +83,6 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Error generating metadata for user agreement page:", error);
-    // Fallback to default metadata
     return {
       title: "اتفاقية المستخدم - مودونتي",
       description: "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
@@ -122,20 +94,25 @@ function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
-export default async function UserAgreementPage() {
+function UserAgreementFallback() {
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="h-8 w-48 bg-muted animate-pulse rounded mb-6" />
+      <div className="h-10 w-full bg-muted animate-pulse rounded mb-6" />
+      <div className="space-y-4">
+        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+      </div>
+    </div>
+  );
+}
+
+async function UserAgreementContent() {
   let page;
   let hasContent = false;
 
   try {
-    page = await db.modonty.findUnique({
-      where: { slug: "user-agreement" },
-      select: {
-        title: true,
-        content: true,
-        updatedAt: true,
-      },
-    });
-
+    page = await getUserAgreementPageContent();
     if (page && page.content) {
       hasContent = true;
     }
@@ -204,11 +181,10 @@ export default async function UserAgreementPage() {
           <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
           {page?.updatedAt && (
             <p className="text-sm text-muted-foreground mb-6">
-              آخر تحديث: {new Date(page.updatedAt).toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              آخر تحديث:{" "}
+              <Suspense fallback={<span>...</span>}>
+                <FormattedDate date={page.updatedAt} />
+              </Suspense>
             </p>
           )}
           <div
@@ -218,5 +194,13 @@ export default async function UserAgreementPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function UserAgreementPage() {
+  return (
+    <Suspense fallback={<UserAgreementFallback />}>
+      <UserAgreementContent />
+    </Suspense>
   );
 }

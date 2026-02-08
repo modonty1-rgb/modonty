@@ -13,8 +13,6 @@ export const metadata: Metadata = generateMetadataFromSEO({
   type: "website",
 });
 
-export const revalidate = 3600;
-
 export default function HelpPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">

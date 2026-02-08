@@ -3,12 +3,17 @@ import { FeedContainer } from "@/components/FeedContainer";
 import { getArticles } from "@/app/api/helpers/article-queries";
 import type { ArticleResponse } from "@/app/api/helpers/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
-
-export const revalidate = 60; // ISR: Revalidate every 60 seconds
+import { getLcpOptimizedImageUrl } from "@/lib/image-utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getHomePageSeo();
   return metadata ?? {};
+}
+
+function buildLcpPreloadHref(imageUrl: string): string {
+  const optimized = getLcpOptimizedImageUrl(imageUrl);
+  if (!optimized) return "";
+  return `/_next/image?url=${encodeURIComponent(optimized)}&w=1200&q=65`;
 }
 
 export default async function HomePage() {
@@ -44,9 +49,13 @@ export default async function HomePage() {
   }));
 
   const jsonLdToRender = jsonLd?.trim() || "";
+  const lcpPreloadHref = posts[0]?.image ? buildLcpPreloadHref(posts[0].image) : "";
 
   return (
     <>
+      {lcpPreloadHref && (
+        <link rel="preload" as="image" href={lcpPreloadHref} />
+      )}
       {jsonLdToRender && (
         <script
           type="application/ld+json"

@@ -1,3 +1,4 @@
+import "server-only";
 import { CohereClientV2 } from "cohere-ai";
 
 function getCohereClient() {

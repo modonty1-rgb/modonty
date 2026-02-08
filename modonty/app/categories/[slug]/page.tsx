@@ -16,9 +16,6 @@ import { ArticleSkeleton } from "./components/article-skeleton";
 import { parseArticleSearchParams, getTrendingScore } from "./helpers/article-utils";
 import type { CategoryDetailPageParams } from "@/app/api/helpers/types";
 
-export const dynamic = 'force-static';
-export const revalidate = 1800;
-
 export async function generateStaticParams() {
   try {
     const categories = await db.category.findMany({

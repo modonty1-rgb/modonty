@@ -1,4 +1,4 @@
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 import { ArticleEngagementMetrics } from "./article-engagement-metrics";
 import { ArticleInteractionButtons } from "./article-interaction-buttons";
 import { ArticleUtilities } from "./article-utilities";
@@ -63,11 +63,10 @@ export function ArticleHeader({
         <div className="flex items-center gap-2">
           <span>{author.name}</span>
         </div>
-        <time dateTime={datePublished?.toISOString()} suppressHydrationWarning>
-          {datePublished
-            ? formatRelativeTime(datePublished)
-            : formatRelativeTime(createdAt)}
-        </time>
+        <RelativeTime
+          date={datePublished ?? createdAt}
+          dateTime={datePublished?.toISOString() ?? createdAt.toISOString()}
+        />
         {readingTimeMinutes && (
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}

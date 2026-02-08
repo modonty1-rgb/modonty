@@ -1,5 +1,7 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { generateMetadataFromSEO } from "@/lib/seo";
@@ -13,10 +15,8 @@ import {
   getRelatedArticlesByClient,
   getUserArticleInteractions,
 } from "./helpers/article-data";
+import { getArticleForMetadata } from "./helpers/article-metadata";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
-
-export const revalidate = 300;
-export const dynamicParams = true;
 import { ArticleHeader } from "./components/article-header";
 import { ArticleTags } from "./components/article-tags";
 import { ArticleFeaturedImage } from "./components/article-featured-image";
@@ -31,6 +31,7 @@ import { MoreFromAuthor } from "./components/more-from-author";
 import { MoreFromClient } from "./components/more-from-client";
 import { RelatedArticles } from "./components/related-articles";
 import { auth } from "@/lib/auth";
+import ArticleLoading from "./loading";
 
 // Components that need client-side hydration but should SSR:
 const ArticleShareButtons = dynamic(
@@ -58,20 +59,26 @@ interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
+async function getArticleSlugsForStaticParams() {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours");
+  return db.article.findMany({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [
+        { datePublished: null },
+        { datePublished: { lte: new Date() } },
+      ],
+    },
+    select: { slug: true },
+    take: 100,
+  });
+}
+
 export async function generateStaticParams() {
   try {
-    const articles = await db.article.findMany({
-      where: {
-        status: ArticleStatus.PUBLISHED,
-        OR: [
-          { datePublished: null },
-          { datePublished: { lte: new Date() } },
-        ],
-      },
-      select: { slug: true },
-      take: 100,
-    });
-
+    const articles = await getArticleSlugsForStaticParams();
     return articles.map((article: { slug: string }) => ({
       slug: article.slug,
     }));
@@ -85,25 +92,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
 
-    // First: Try to use stored metadata
-    const article = await db.article.findFirst({
-      where: {
-        slug,
-        status: ArticleStatus.PUBLISHED,
-      },
-      select: {
-        nextjsMetadata: true,
-        nextjsMetadataLastGenerated: true,
-        // Minimal fields for fallback
-        seoTitle: true,
-        title: true,
-        seoDescription: true,
-        excerpt: true,
-        canonicalUrl: true,
-        featuredImageId: true,
-        clientId: true,
-      },
-    });
+    const article = await getArticleForMetadata(slug);
 
     if (!article) {
       return {
@@ -111,106 +100,16 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       };
     }
 
-    // Use stored metadata if available
     if (article.nextjsMetadata) {
       try {
-        // Validate it's a valid Metadata object
         const stored = article.nextjsMetadata as Metadata;
-        // Basic validation (has title)
-        if (stored.title) {
-          return stored;
-        }
+        if (stored.title) return stored;
       } catch {
-        // Invalid JSON, fall through to generation
+        // fall through to generation
       }
     }
 
-    // Fallback: Generate on-the-fly (current behavior)
-    const articleForGenerationRaw = await db.article.findFirst({
-      where: { slug, status: ArticleStatus.PUBLISHED },
-      include: {
-        client: {
-          select: {
-            name: true,
-            logoMedia: {
-              select: {
-                url: true,
-              },
-            },
-            ogImageMedia: {
-              select: {
-                url: true,
-              },
-            },
-          },
-        },
-        author: {
-          select: {
-            name: true,
-          },
-        },
-        category: {
-          select: {
-            name: true,
-          },
-        },
-        tags: {
-          include: {
-            tag: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
-        featuredImage: {
-          select: {
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-      },
-    });
-
-    if (!articleForGenerationRaw) {
-      return { title: "مقال غير موجود - مودونتي" };
-    }
-
-    interface ArticleForGeneration {
-      seoTitle: string | null;
-      title: string;
-      seoDescription: string | null;
-      excerpt: string | null;
-      canonicalUrl: string | null;
-      featuredImage: {
-        url: string | null;
-        altText: string | null;
-      } | null;
-      client: {
-        name: string;
-        logoMedia: { url: string | null } | null;
-        ogImageMedia: { url: string | null } | null;
-      };
-      author: {
-        name: string | null;
-      } | null;
-      category: {
-        name: string | null;
-      } | null;
-      tags:
-        | {
-            tag: {
-              name: string;
-            };
-          }[]
-        | null;
-      datePublished: Date | null;
-      updatedAt: Date;
-    }
-
-    const articleForGeneration = articleForGenerationRaw as ArticleForGeneration;
+    const articleForGeneration = article;
 
     const articleDefaults = await getArticleDefaultsFromSettings();
 
@@ -290,7 +189,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+async function ArticlePageContent({ params }: ArticlePageProps) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
 
@@ -479,4 +378,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   } catch {
     notFound();
   }
+}
+
+export default function ArticlePage(props: ArticlePageProps) {
+  return (
+    <Suspense fallback={<ArticleLoading />}>
+      <ArticlePageContent {...props} />
+    </Suspense>
+  );
 }

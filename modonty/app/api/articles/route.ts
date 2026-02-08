@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { connection } from "next/server";
 import { getArticles } from "../helpers/article-queries";
 import type { ApiResponse, ArticleResponse } from "../helpers/types";
 
 export async function GET(request: NextRequest) {
   try {
+    try {
+      await connection();
+    } catch {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+      } as ApiResponse<ArticleResponse[]>);
+    }
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);

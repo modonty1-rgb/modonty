@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "@/components/link";
 import { useState, useEffect } from "react";
+import { getOptimizedLogoUrl } from "@/lib/image-utils";
 
 interface LogoProps {
-  size?: "header" | "footer";
+  size?: "header" | "footer" | "sidebar";
   showLink?: boolean;
   className?: string;
   forceMobile?: boolean;
@@ -34,21 +35,23 @@ export function Logo({ size = "header", showLink = true, className = "", forceMo
   // Logo dimensions with increased width and auto height
   const dimensions = {
     header: {
-      mobile: { width: 120, height: 68 },
-      desktop: { width: 160, height: 90 }
+      mobile: { width: 120, height: 44 },
+      desktop: { width: 150, height: 52 }
     },
     footer: {
       mobile: { width: 96, height: 54 },
       desktop: { width: 120, height: 68 }
+    },
+    sidebar: {
+      mobile: { width: 110, height: 62 },
+      desktop: { width: 110, height: 62 }
     }
   };
 
-  const { width, height } = useMobileLogo
-    ? dimensions[size].mobile
-    : dimensions[size].desktop;
+  const dims = dimensions[size as keyof typeof dimensions] ?? dimensions.footer;
+  const { width, height } = useMobileLogo ? dims.mobile : dims.desktop;
 
-  const desktopLogo = "https://res.cloudinary.com/dfegnpgwx/image/upload/v1768807772/modontyLogo_j3k01h.svg";
-  const logoSrc = desktopLogo;
+  const logoSrc = getOptimizedLogoUrl();
 
   const image = (
     <Image
@@ -57,9 +60,8 @@ export function Logo({ size = "header", showLink = true, className = "", forceMo
       width={width}
       height={height}
       priority={isHeader}
-      quality={100}
-      unoptimized={false}
-      className={`h-auto object-contain ${className}`}
+      quality={90}
+      className={`object-contain ${className}`}
     />
   );
 

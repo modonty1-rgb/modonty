@@ -1,7 +1,8 @@
+import { connection } from "next/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
@@ -19,6 +20,7 @@ export async function RelatedArticles({
   limit = 3,
 }: RelatedArticlesProps) {
   try {
+    await connection();
     // Build where clause for related articles
     const whereConditions: any = {
       id: { not: currentArticleId },
@@ -218,14 +220,10 @@ export async function RelatedArticles({
                 <CardContent>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{article.client.name}</span>
-                    <time
-                      dateTime={article.datePublished?.toISOString()}
-                      suppressHydrationWarning
-                    >
-                      {article.datePublished
-                        ? formatRelativeTime(article.datePublished)
-                        : formatRelativeTime(article.createdAt)}
-                    </time>
+                    <RelativeTime
+                      date={article.datePublished ?? article.createdAt}
+                      dateTime={(article.datePublished ?? article.createdAt).toISOString()}
+                    />
                   </div>
                 </CardContent>
               </Card>

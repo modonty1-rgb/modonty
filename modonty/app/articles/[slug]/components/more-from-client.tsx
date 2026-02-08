@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 
 interface Article {
   id: string;
@@ -65,14 +65,10 @@ export function MoreFromClient({ articles, clientName }: MoreFromClientProps) {
                       {article.category.name}
                     </span>
                   )}
-                  <time
-                    dateTime={article.datePublished?.toISOString()}
-                    suppressHydrationWarning
-                  >
-                    {article.datePublished
-                      ? formatRelativeTime(article.datePublished)
-                      : formatRelativeTime(article.createdAt)}
-                  </time>
+                  <RelativeTime
+                    date={article.datePublished ?? article.createdAt}
+                    dateTime={(article.datePublished ?? article.createdAt).toISOString()}
+                  />
                 </div>
               </CardContent>
             </Card>

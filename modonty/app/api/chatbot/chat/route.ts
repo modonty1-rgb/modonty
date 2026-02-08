@@ -3,12 +3,12 @@ import { z } from "zod";
 import { ArticleStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getArticlesForOutOfScopeSearch } from "@/app/articles/[slug]/helpers/article-data";
 import { chunkArticleContent } from "@/lib/rag/chunk";
 import { retrieveFromChunks } from "@/lib/rag/retrieve";
 import { isOutOfScope } from "@/lib/rag/scope";
-import { chatStream, rerank, type ChatMessage } from "@/lib/cohere";
+import { chatStream, type ChatMessage } from "@/lib/cohere";
 import { searchSerper } from "@/lib/serper";
+import { saveChatbotMessage } from "@/lib/chat/save-chatbot-message";
 import type { ApiResponse } from "@/app/api/helpers/types";
 
 const bodySchema = z.object({
@@ -22,7 +22,8 @@ const bodySchema = z.object({
   stream: z.boolean().optional().default(true),
 });
 
-const RELEVANCE_THRESHOLD = 0.28;
+/** Rerank relevance threshold: use rerank score for redirect. Cohere: 0–1, higher = more relevant. */
+const RERANK_REDIRECT_THRESHOLD = 0.6;
 
 export async function POST(request: NextRequest) {
   try {
@@ -73,10 +74,56 @@ export async function POST(request: NextRequest) {
           { datePublished: { lte: new Date() } },
         ],
       },
-      select: { id: true, title: true, slug: true, excerpt: true, content: true },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        content: true,
+        client: { select: { name: true, slug: true } },
+      },
       orderBy: [{ datePublished: "desc" }, { createdAt: "desc" }],
       take: 30,
     });
+
+    const scopeParts = scopeArticles
+      .slice(0, 5)
+      .flatMap((a) => [a.title, a.excerpt ?? a.content?.slice(0, 150) ?? ""].filter(Boolean));
+    const scopeExcerpt = scopeParts.join(" ").slice(0, 600);
+
+    if (process.env.NODE_ENV === "development") {
+      console.debug("[chatbot-scope]", {
+        categorySlug,
+        categoryName: category.name,
+        scopeExcerptLen: scopeExcerpt.length,
+        scopeExcerptSample: scopeExcerpt.slice(0, 200),
+        query: lastUserMsg.content.slice(0, 80),
+      });
+    }
+
+    const outOfScope = await isOutOfScope(lastUserMsg.content, {
+      categoryName: category.name,
+      articleExcerpt: scopeExcerpt || undefined,
+    });
+
+    if (outOfScope) {
+      if (process.env.NODE_ENV === "development") {
+        console.debug("[chatbot] outOfScope=true, returning early");
+      }
+      saveChatbotMessage({
+        userId: session.user.id,
+        userQuery: lastUserMsg.content,
+        assistantResponse: "سؤالك خارج نطاق هذا الموضوع. يمكنك اختيار موضوع آخر.",
+        scopeType: "category",
+        categorySlug,
+        categoryId: category.id,
+        outcome: "outOfScope",
+      }).catch(() => {});
+      return NextResponse.json({
+        type: "outOfScope",
+        message: "سؤالك خارج نطاق هذا الموضوع. يمكنك اختيار موضوع آخر.",
+      });
+    }
 
     const allChunks: string[] = [];
     for (const a of scopeArticles) {
@@ -86,59 +133,87 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let { docs, topScore } = await retrieveFromChunks(lastUserMsg.content, allChunks);
+    let { docs, topScore, topRerankScore } = await retrieveFromChunks(
+      lastUserMsg.content,
+      allChunks
+    );
 
-    if (docs.length === 0 || topScore < RELEVANCE_THRESHOLD) {
-      const scopeExcerpt = scopeArticles
-        .slice(0, 3)
-        .map((a) => a.excerpt ?? a.content?.slice(0, 200) ?? "")
-        .filter(Boolean)
-        .join(" ")
-        .slice(0, 500);
-      const outOfScope = await isOutOfScope(lastUserMsg.content, {
-        categoryName: category.name,
-        articleExcerpt: scopeExcerpt || undefined,
+    if (process.env.NODE_ENV === "development") {
+      console.debug("[chatbot-rag]", {
+        source: "DB",
+        topScore,
+        topRerankScore,
+        docsCount: docs.length,
+        threshold: RERANK_REDIRECT_THRESHOLD,
+        dbMatch: docs.length > 0 && topRerankScore >= RERANK_REDIRECT_THRESHOLD,
+        query: lastUserMsg.content.slice(0, 60),
       });
+    }
 
-      if (outOfScope) {
-        const otherArticles = await getArticlesForOutOfScopeSearch(category.id, 20);
-        const docStrings = otherArticles.map(
-          (a) => `${a.title}\n${a.excerpt ?? a.content?.slice(0, 500) ?? ""}`
-        );
-        if (docStrings.length > 0) {
-          const reranked = await rerank(lastUserMsg.content, docStrings, 5);
-          const articles = reranked
-            .map((r) => {
-              const a = otherArticles[r.index];
-              return a
-                ? {
-                    id: a.id,
-                    title: a.title,
-                    slug: a.slug,
-                    excerpt: a.excerpt ?? null,
-                    client: a.client,
-                  }
-                : null;
-            })
-            .filter(Boolean);
-
-          return NextResponse.json({
-            type: "redirect",
-            articles,
-            message: "لم نجد إجابة في مقالات هذا الموضوع. جرّب هذه المقالات من مواضيع أخرى",
+    if (docs.length > 0 && topRerankScore >= RERANK_REDIRECT_THRESHOLD) {
+      const titleToArticle = new Map(scopeArticles.map((a) => [a.title, a]));
+      const matchedArticles: { id: string; title: string; slug: string; excerpt: string | null; client: { name: string; slug: string } }[] = [];
+      const seen = new Set<string>();
+      for (const d of docs) {
+        const firstLine = d.text.split("\n\n")[0]?.trim();
+        const article = firstLine ? titleToArticle.get(firstLine) : undefined;
+        if (article && !seen.has(article.id)) {
+          seen.add(article.id);
+          matchedArticles.push({
+            id: article.id,
+            title: article.title,
+            slug: article.slug,
+            excerpt: article.excerpt ?? null,
+            client: article.client,
           });
         }
       }
+      if (matchedArticles.length > 0) {
+        if (process.env.NODE_ENV === "development") {
+          console.debug("[chatbot-flow] source=DB, outcome=redirect", { articlesCount: matchedArticles.length });
+        }
+        saveChatbotMessage({
+          userId: session.user.id,
+          userQuery: lastUserMsg.content,
+          assistantResponse: "",
+          scopeType: "category",
+          categorySlug,
+          categoryId: category.id,
+          outcome: "redirect",
+        }).catch(() => {});
+        return NextResponse.json({
+          type: "redirect",
+          articles: matchedArticles,
+          message: "عثرنا على مقالات ذات صلة في موضوعك",
+        });
+      }
+    }
 
+    let serperSources: { title: string; link: string }[] = [];
+    if (docs.length === 0 || topRerankScore < RERANK_REDIRECT_THRESHOLD) {
       try {
-        const serperResults = await searchSerper(lastUserMsg.content, 8);
+        const serperQuery = `${lastUserMsg.content} ${category.name}`.trim();
+        const serperResults = await searchSerper(serperQuery, 8);
+        serperSources = serperResults.map((r) => ({ title: r.title, link: r.link }));
         docs = serperResults.map((r, i) => ({
           id: `doc-web-${i}`,
           text: `${r.title}\n${r.snippet}\n${r.link}`,
         }));
+        if (process.env.NODE_ENV === "development") {
+          console.debug("[chatbot-flow] source=Serper, outcome=stream", {
+            serperCount: docs.length,
+            sourcesCount: serperSources.length,
+            query: serperQuery.slice(0, 60),
+          });
+        }
       } catch (serperErr) {
         docs = [];
+        if (process.env.NODE_ENV === "development") {
+          console.debug("[chatbot-flow] source=Serper, outcome=error", { error: String(serperErr) });
+        }
       }
+    } else if (process.env.NODE_ENV === "development") {
+      console.debug("[chatbot-flow] source=DB, outcome=stream", { docsCount: docs.length });
     }
 
     const systemPrompt = docs.some((d) => d.id.startsWith("doc-web-"))
@@ -155,19 +230,52 @@ export async function POST(request: NextRequest) {
       const response = await chat(chatMessages, docs.length > 0 ? docs : undefined);
       const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
       const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";
+      const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
+      saveChatbotMessage({
+        userId: session.user.id,
+        userQuery: lastUserMsg.content,
+        assistantResponse: text,
+        scopeType: "category",
+        categorySlug,
+        categoryId: category.id,
+        outcome: "stream",
+        source: usedWebSource ? "web" : "db",
+        webSources: usedWebSource ? serperSources : undefined,
+      }).catch(() => {});
       return NextResponse.json({ type: "message", text });
     }
 
+    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
+        let fullText = "";
         try {
           for await (const chunk of chatStream(chatMessages, docs.length > 0 ? docs : undefined)) {
+            fullText += chunk;
             controller.enqueue(
               encoder.encode(JSON.stringify({ type: "delta", text: chunk }) + "\n")
             );
           }
-          controller.enqueue(encoder.encode(JSON.stringify({ type: "done" }) + "\n"));
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({
+                type: "done",
+                ...(usedWebSource && { source: "web", sources: serperSources }),
+              }) + "\n"
+            )
+          );
+          saveChatbotMessage({
+            userId: session.user.id,
+            userQuery: lastUserMsg.content,
+            assistantResponse: fullText,
+            scopeType: "category",
+            categorySlug,
+            categoryId: category.id,
+            outcome: "stream",
+            source: usedWebSource ? "web" : "db",
+            webSources: usedWebSource ? serperSources : undefined,
+          }).catch(() => {});
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : "حدث خطأ. حاول مرة أخرى.";
           console.error("Chat stream error:", err);

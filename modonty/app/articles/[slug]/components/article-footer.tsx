@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 
 interface ArticleFooterProps {
   client: {
@@ -33,19 +33,13 @@ export function ArticleFooter({
             </Link>
           </p>
           {dateModified && (
-            <p
-              className="text-xs text-muted-foreground mt-1"
-              suppressHydrationWarning
-            >
-              آخر تحديث: {formatRelativeTime(dateModified)}
+            <p className="text-xs text-muted-foreground mt-1">
+              آخر تحديث: <RelativeTime date={dateModified} />
             </p>
           )}
           {lastReviewed && (
-            <p
-              className="text-xs text-muted-foreground mt-1"
-              suppressHydrationWarning
-            >
-              آخر مراجعة: {formatRelativeTime(lastReviewed)}
+            <p className="text-xs text-muted-foreground mt-1">
+              آخر مراجعة: <RelativeTime date={lastReviewed} />
             </p>
           )}
           {contentDepth && (

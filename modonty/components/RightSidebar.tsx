@@ -13,8 +13,8 @@ export async function RightSidebar() {
       <div className="space-y-4">
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center gap-2 h-10">
-            <Logo size="footer" showLink={false} forceMobile={true} />
+          <div className="flex items-center gap-2 min-h-10">
+            <Logo size="sidebar" showLink={false} />
             <h2 className="text-sm font-semibold">أخبار مودونتي</h2>
           </div>
         </CardHeader>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, MessageCircle, Heart } from "lucide-react";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 import { PostCardTextToSpeech } from "@/components/PostCardTextToSpeech";
 
 const PostCardActions = dynamic(() => import("@/components/PostCardActions").then(mod => ({ default: mod.PostCardActions })));
@@ -70,13 +70,15 @@ export function PostCard({ post, priority = false }: PostCardProps) {
                     </span>
                   </Link>
                   <div className="flex items-center gap-2 mt-1">
-                    <time
+                    <span
                       itemProp="datePublished"
-                      dateTime={post.publishedAt.toISOString()}
                       className="text-xs text-muted-foreground"
                     >
-                      {formatRelativeTime(post.publishedAt)}
-                    </time>
+                      <RelativeTime
+                        date={post.publishedAt}
+                        dateTime={post.publishedAt.toISOString()}
+                      />
+                    </span>
                     {post.readingTimeMinutes && (
                       <>
                         <span className="text-xs text-muted-foreground">•</span>

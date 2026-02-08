@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
 
@@ -6,9 +7,11 @@ export interface HomePageSeo {
   jsonLd: string | null;
 }
 
-// Read cached Metadata + JSON-LD for the home page from Settings (SOT).
-// Does not build or mutate SEO – it only reads what admin flows cached.
 export async function getHomePageSeo(): Promise<HomePageSeo> {
+  "use cache";
+  cacheTag("settings");
+  cacheLife("hours");
+
   const settings = await db.settings.findFirst({
     select: {
       homeMetaTags: true,

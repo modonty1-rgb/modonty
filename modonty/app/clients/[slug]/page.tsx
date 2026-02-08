@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import dynamicImport from "next/dynamic";
 import { db } from "@/lib/db";
@@ -7,6 +8,7 @@ import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStru
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientHero } from "./components/client-hero";
 import { getClientStats, getRelatedClients } from "./helpers/client-stats";
+import { getClientForMetadata } from "./helpers/client-metadata";
 
 // Dynamic imports for client components (code splitting + SSR where possible)
 const GTMClientTracker = dynamicImport(
@@ -21,6 +23,7 @@ const ClientContact = dynamicImport(
 
 import { ShareClientButtonWrapper } from "./components/share-client-button-wrapper";
 import { ClientTabsContainer } from "./components/client-tabs-container";
+import ClientLoading from "./loading";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -40,37 +43,11 @@ export async function generateStaticParams() {
   }
 }
 
-export const revalidate = 3600;
-
 export async function generateMetadata({ params }: ClientPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    const client = await db.client.findUnique({
-      where: { slug: decodedSlug },
-      include: {
-        logoMedia: {
-          select: {
-            url: true,
-          },
-        },
-        ogImageMedia: {
-          select: {
-            url: true,
-          },
-        },
-        twitterImageMedia: {
-          select: {
-            url: true,
-          },
-        },
-        industry: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
+    const client = await getClientForMetadata(decodedSlug);
 
     if (!client) {
       return {
@@ -92,7 +69,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
   }
 }
 
-export default async function ClientPage({ params }: ClientPageProps) {
+async function ClientPageContent({ params }: ClientPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
@@ -241,12 +218,14 @@ export default async function ClientPage({ params }: ClientPageProps) {
               />
             </div>
 
+            <Suspense fallback={<div className="h-64 bg-muted rounded-md animate-pulse" />}>
             <ClientTabsContainer
               articles={client.articles}
               articlesCount={client._count.articles}
               client={client}
               relatedClients={relatedClients}
             />
+            </Suspense>
           </main>
         </>
       </>
@@ -254,4 +233,12 @@ export default async function ClientPage({ params }: ClientPageProps) {
   } catch (error) {
     notFound();
   }
+}
+
+export default function ClientPage(props: ClientPageProps) {
+  return (
+    <Suspense fallback={<ClientLoading />}>
+      <ClientPageContent {...props} />
+    </Suspense>
+  );
 }

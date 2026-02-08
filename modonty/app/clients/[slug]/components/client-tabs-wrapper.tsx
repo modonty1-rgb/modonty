@@ -8,6 +8,7 @@ import { ArticleList } from "./article-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import Link from "@/components/link";
+import { FormattedDate } from "@/components/FormattedDate";
 
 interface ClientTabsWrapperProps {
   articles: any[];
@@ -79,7 +80,7 @@ export function ClientTabsWrapper({
                         {article.category && <span>{article.category.name}</span>}
                         {article.datePublished && (
                           <span>
-                            {new Date(article.datePublished).toLocaleDateString("ar-SA")}
+                            <FormattedDate date={article.datePublished} options={{ year: "numeric", month: "short", day: "numeric" }} />
                           </span>
                         )}
                       </div>

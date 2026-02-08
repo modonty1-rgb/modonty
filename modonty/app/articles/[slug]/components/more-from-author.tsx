@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 
 interface Article {
   id: string;
@@ -62,14 +62,10 @@ export function MoreFromAuthor({ articles, authorName }: MoreFromAuthorProps) {
               <CardContent>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{article.client.name}</span>
-                  <time
-                    dateTime={article.datePublished?.toISOString()}
-                    suppressHydrationWarning
-                  >
-                    {article.datePublished
-                      ? formatRelativeTime(article.datePublished)
-                      : formatRelativeTime(article.createdAt)}
-                  </time>
+                  <RelativeTime
+                    date={article.datePublished ?? article.createdAt}
+                    dateTime={(article.datePublished ?? article.createdAt).toISOString()}
+                  />
                 </div>
               </CardContent>
             </Card>

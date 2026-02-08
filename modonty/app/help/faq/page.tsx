@@ -18,8 +18,6 @@ export const metadata: Metadata = generateMetadataFromSEO({
   type: "website",
 });
 
-export const revalidate = 3600;
-
 function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }

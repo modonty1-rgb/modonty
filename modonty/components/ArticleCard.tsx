@@ -1,7 +1,7 @@
 import Link from "@/components/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatRelativeTime } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
 import { cn } from "@/lib/utils";
 
 interface Article {
@@ -44,7 +44,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
               {article.clientName}
             </Badge>
             <span className="text-xs text-muted-foreground">
-              {formatRelativeTime(article.publishedAt)}
+              <RelativeTime date={article.publishedAt} dateTime={article.publishedAt.toISOString()} />
             </span>
           </div>
         </CardContent>

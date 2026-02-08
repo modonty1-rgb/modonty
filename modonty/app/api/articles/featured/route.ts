@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { connection } from "next/server";
 import { getFeaturedArticles } from "../../helpers/article-queries";
 import type { ApiResponse, ArticleResponse } from "../../helpers/types";
 
 export async function GET(request: NextRequest) {
   try {
+    try {
+      await connection();
+    } catch {
+      return NextResponse.json({ success: true, data: [] } as ApiResponse<ArticleResponse[]>);
+    }
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 

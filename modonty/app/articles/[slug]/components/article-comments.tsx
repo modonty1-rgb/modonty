@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { formatRelativeTime, cn } from "@/lib/utils";
+import { RelativeTime } from "@/components/RelativeTime";
+import { cn } from "@/lib/utils";
 import { MessageCircle, Reply, LogIn, ThumbsUp, ThumbsDown, User, AlertCircle } from "lucide-react";
 import { CommentForm } from "./comment-form";
 import Link from "@/components/link";
@@ -241,9 +242,9 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
                   Orphaned
                 </span>
               )}
-              <time className="text-xs text-muted-foreground" suppressHydrationWarning>
-                {formatRelativeTime(comment.createdAt)}
-              </time>
+              <span className="text-xs text-muted-foreground">
+                <RelativeTime date={comment.createdAt} dateTime={comment.createdAt.toISOString()} />
+              </span>
             </div>
             
             {/* Comment content */}

@@ -3,6 +3,7 @@
  * Used by API routes and Server Components
  */
 
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus, CommentStatus } from "@prisma/client";
 import type { ClientResponse } from "./types";
@@ -45,6 +46,9 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
 }>;
 
 export async function getClientsWithCounts(): Promise<ClientResponse[]> {
+  "use cache";
+  cacheTag("clients");
+  cacheLife("hours");
   const clients = await db.client.findMany({
     include: {
       logoMedia: {

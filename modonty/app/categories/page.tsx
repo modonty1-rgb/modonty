@@ -14,8 +14,6 @@ import { parseCategorySearchParams } from "./helpers/category-utils";
 import type { CategoryPageParams, CategoryResponse } from "@/app/api/helpers/types";
 import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
 
-export const revalidate = 60; // ISR: Revalidate every 60 seconds (optimized)
-
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getCategoriesPageSeo();
   return metadata ?? {};

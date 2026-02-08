@@ -5,7 +5,7 @@
 
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import { unstable_cache } from "next/cache";
+import { unstable_cache, cacheTag, cacheLife } from "next/cache";
 import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "./types";
 
 type CategoryWithArticles = Prisma.CategoryGetPayload<{
@@ -85,6 +85,9 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
 }>;
 
 export async function getCategoriesWithCounts(): Promise<CategoryResponse[]> {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
   const categories = await db.category.findMany({
     include: {
       _count: {
@@ -185,6 +188,9 @@ export async function getCategoryBySlug(slug: string) {
 }
 
 export async function getCategoryAnalytics(categoryId: string): Promise<CategoryAnalytics> {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
   const articles = await db.article.findMany({
     where: {
       categoryId,

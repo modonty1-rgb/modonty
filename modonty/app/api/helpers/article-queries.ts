@@ -4,6 +4,7 @@
  */
 
 import { cache } from 'react';
+import { cacheTag, cacheLife } from 'next/cache';
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ArticleResponse, ArticleFilters, InteractionCounts } from "./types";
@@ -57,7 +58,11 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
   };
 }>;
 
-export const getArticles = cache(async (filters: ArticleFilters = {}) => {
+async function getArticlesCached(filters: ArticleFilters = {}) {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("minutes");
+
   const {
     page = 1,
     limit = 20,
@@ -80,7 +85,6 @@ export const getArticles = cache(async (filters: ArticleFilters = {}) => {
         slug: client,
       },
     }),
-    // For published articles, only show if datePublished is null or in the past
     ...(status === ArticleStatus.PUBLISHED && {
       OR: [
         { datePublished: null },
@@ -156,6 +160,10 @@ export const getArticles = cache(async (filters: ArticleFilters = {}) => {
       totalPages: Math.ceil(total / limit),
     },
   };
+}
+
+export const getArticles = cache(async (filters: ArticleFilters = {}) => {
+  return getArticlesCached(filters);
 });
 
 export const getArticleBySlug = cache(async (slug: string) => {
@@ -285,6 +293,9 @@ export async function getFeaturedArticles(limit: number = 10) {
 }
 
 export async function getRecentArticles(limit: number = 10, excludeArticleId?: string) {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("minutes");
   const articles = await db.article.findMany({
     where: {
       status: ArticleStatus.PUBLISHED,

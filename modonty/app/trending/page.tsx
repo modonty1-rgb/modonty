@@ -10,9 +10,6 @@ interface TrendingPageProps {
   searchParams: Promise<{ period?: string }>;
 }
 
-// ISR: Revalidate every 60 seconds (same as homepage)
-export const revalidate = 60;
-
 // Metadata from Settings cache
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getTrendingPageSeo();
