@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getArticleInteractions } from "../../../helpers/interaction-queries";
-import type { ApiResponse, InteractionCounts } from "../../../helpers/types";
+import type { ApiResponse, InteractionCounts } from "@/lib/types";
 
 export async function GET(
   request: NextRequest,

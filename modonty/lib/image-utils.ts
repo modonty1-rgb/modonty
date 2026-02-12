@@ -30,22 +30,6 @@ export function getOptimizedLogoUrl(): string {
   return `${beforeUpload}f_auto,q_auto,w_300,c_limit/${afterUpload}`;
 }
 
-export function getLcpOptimizedImageUrl(url: string | null | undefined): string | null {
-  if (!url || !url.includes("res.cloudinary.com")) return url || null;
-  if (url.toLowerCase().endsWith(".svg")) return url;
-  if (url.includes("/f_auto") || url.includes("/q_auto")) return url;
-
-  try {
-    const uploadIndex = url.indexOf("/upload/");
-    if (uploadIndex === -1) return url;
-    const beforeUpload = url.substring(0, uploadIndex + 8);
-    const afterUpload = url.substring(uploadIndex + 8);
-    return `${beforeUpload}f_auto,q_auto,w_1200,c_limit,d_article-placeholder-default/${afterUpload}`;
-  } catch {
-    return url;
-  }
-}
-
 export function getOptimizedThumbnailUrl(url: string | null | undefined, width = 80): string | null {
   if (!url || !url.includes("res.cloudinary.com")) return url || null;
   if (url.toLowerCase().endsWith(".svg")) return url;

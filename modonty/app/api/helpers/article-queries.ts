@@ -7,7 +7,7 @@ import { cache } from 'react';
 import { cacheTag, cacheLife } from 'next/cache';
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
-import type { ArticleResponse, ArticleFilters, InteractionCounts } from "./types";
+import type { ArticleResponse, ArticleFilters, InteractionCounts } from "@/lib/types";
 import { calculateTrendingScore, getTrendingTimeRange } from "@/lib/trending";
 
 type ArticleWithRelations = Prisma.ArticleGetPayload<{

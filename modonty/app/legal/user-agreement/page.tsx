@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { FormattedDate } from "@/components/FormattedDate";
+import { FormattedDate } from "@/components/date/FormattedDate";
 import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
 import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
 

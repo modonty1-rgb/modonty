@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import type { ApiResponse } from "@/app/api/helpers/types";
+import type { ApiResponse } from "@/lib/types";
 
 interface FollowedClient {
   id: string;

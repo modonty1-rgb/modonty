@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import bcrypt from "bcryptjs";
-import type { ApiResponse } from "../../../../helpers/types";
+import type { ApiResponse } from "@/lib/types";
 
 export async function POST(
   req: NextRequest,

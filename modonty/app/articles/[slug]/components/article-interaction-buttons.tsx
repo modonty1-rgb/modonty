@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, Bookmark, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, dislikeArticle, favoriteArticle } from "../actions/article-interactions";
 
 interface ArticleInteractionButtonsProps {

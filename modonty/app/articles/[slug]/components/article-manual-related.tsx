@@ -1,7 +1,7 @@
 import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { RelativeTime } from "@/components/RelativeTime";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { RelativeTime } from "@/components/date/RelativeTime";
 
 interface ArticleManualRelatedProps {
   relatedArticles: Array<{

@@ -23,6 +23,7 @@
     "seed:clear": "pnpm --filter @modonty/database seed:clear"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "dotenv": "^16.6.1",
     "eslint": "^9",
     "prettier": "^2.8.0"

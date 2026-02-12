@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Lock } from "lucide-react";
 import { updatePrivacySettings } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import type { PrivacyFormData } from "../helpers/schemas/settings-schemas";
 
 export function PrivacySettings() {

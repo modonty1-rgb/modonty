@@ -1,0 +1,94 @@
+Step 1 – Confirm where TBT is coming from (DevTools)
+In Chrome DevTools on mobile emulation:
+Open Performance panel.
+Check “Screenshots”; record a performance profile with reload.
+After it finishes:
+In the Summary tab you’ll see TBT and “Long tasks” markers on the main thread.
+Click each long task (bars with red/little triangle) between FCP and TTI.
+In the Bottom-Up and Call Tree views:
+Sort by Self time.
+Look for your functions / file names, not just React internals – e.g. things from:
+TopNav.tsx
+ChatSheet.tsx / ChatSheetContainer
+RelativeTime.tsx, FormattedDate.tsx
+Home feed components (article/list cards)
+Note: which long tasks are > 100ms, and what JS (bundle/chunk) they’re in.
+Goal: Produce a list like:
+Long task #1 (~400ms) – Hydration of TopNav and header components.
+Long task #2 (~300ms) – Home feed list rendering & hydration.
+Long task #3 (~250ms) – Chatbot code / observers / history logic.
+We need this before changing anything.
+Step 2 – Map long tasks to modules in the bundle
+Still in DevTools:
+In Lighthouse → click View Treemap.
+Sort by JavaScript size and identify the biggest app bundles:
+E.g. app/page.tsx chunk, chatbot chunk, any heavy dependency.
+Match those bundle paths against the long tasks you saw in Step 1.
+This tells you which parts of your code are responsible for the majority of TBT.
+Step 3 – Classify work as critical vs non‑critical
+For each heavy area from Steps 1–2, decide:
+Critical for first paint / UX?
+TopNav basic layout → yes.
+Chatbot panel, history list, advanced profile widgets → no (user can wait).
+Can be delayed until user interacts?
+Chatbot, TTS, some profile analytics.
+Can be done on server instead of client?
+Data formatting, date computations, mapping arrays to static markup.
+Make a small table for yourself:
+Area	Importance for first screen	Current type	Target
+TopNav basic structure	High	Client	Keep client, but slim
+Chatbot UI & logic	Low	Client	load on click (dynamic import, no SSR)
+Relative time/date formatting	Medium/Low	Client	move to server or simplify
+Home feed interactions (like/fav buttons)	Medium	Client	hydrate only per-card controls
+Step 4 – Read official guidance for each class of problem
+Match what you see with docs:
+Too much client JS / hydration:
+Next.js: “Reduce Client Components; prefer Server Components, dynamic imports for interactivity.”
+Docs: https://nextjs.org/docs/app/building-your-application/optimizing/performance#reduce-client-side-javascript
+Non‑critical widgets loaded early (chatbot, etc.):
+Use next/dynamic with ssr: false and only import on interaction/viewport.
+Docs: https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#nextdynamic
+Heavy list rendering:
+Consider:
+Rendering fewer items initially (e.g. first 5 above the fold).
+Virtualization (if the list is long).
+Doing as much work as possible on the server and hydrating only the minimal interactive parts.
+Legacy JavaScript / polyfills:
+Lighthouse says 13KB – small, but you can:
+Ensure you’re not shipping unnecessary polyfills.
+Keep dependencies modern (no huge legacy bundles).
+Step 5 – Decide targeted experiments
+Once you have the above mapping, we can design small, focused experiments to reduce TBT:
+Experiment A – Defer chatbot entirely
+Goal: verify how much TBT drops if all chatbot UI/logic is loaded only after clicking the floating button.
+Experiment B – Slim TopNav
+Remove/defers parts of TopNav that are not required for the first interaction (e.g., chat trigger, heavy hooks) and measure TBT again.
+Experiment C – Reduce feed work
+Temporarily render fewer posts or a skeleton to see TBT impact.
+Each experiment: run Lighthouse (mobile) again and compare TBT specifically.
+4. What I can do next (once you’re ready)
+Right now you asked for a plan, not code changes, so I’ve stayed in analysis mode only.
+If you want, next step I can:
+Use this plan to propose concrete code changes in your repo:
+Identify exactly which components should be converted to Server Components.
+Where to introduce next/dynamic for chatbot and other non‑critical JS.
+How to restructure the homepage so that only minimal client logic runs before LCP.
+Then we’d implement them step‑by‑step and measure the TBT delta after each change.
+
+
+
+
+
+
+------------------
+What this implies for the code (summary)
+To bring TBT down we must:
+Ship less JS on first paint:
+Convert as many components as possible from "use client" to Server Components.
+Especially global ones: TopNav, layout‑level features, big lists.
+Defer non‑critical features:
+Chatbot (ChatSheet, history, article chat, etc.) – load only when the user clicks the button via next/dynamic with ssr: false.
+Heavy widgets in profile/settings pages – lazy‑load on tab open / scroll.
+Hydrate less per card:
+For article lists, keep most of the card static HTML; hydrate only small interactive bits (like/fav buttons).
+If you’d like, next I can write a concrete change plan per file (e.g. exactly how to refactor TopNav, chatbot, and the home feed) so we can start implementing TBT reductions step by step.

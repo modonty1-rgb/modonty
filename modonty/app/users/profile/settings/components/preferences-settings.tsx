@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2, Palette } from "lucide-react";
 import { updatePreferences } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import type { PreferencesFormData } from "../helpers/schemas/settings-schemas";
 
 export function PreferencesSettings() {

@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import Link from "@/components/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -103,12 +103,12 @@ export function ClientHero({ client, stats, initialIsFollowing = false }: Client
               {/* CTA Buttons - Desktop */}
               <div className="hidden md:flex items-center gap-3">
                 {client.url && (
-                  <a href={client.url} target="_blank" rel="noopener noreferrer">
+                  <Link href={client.url} target="_blank" rel="noopener noreferrer">
                     <Button size="default" className="gap-2">
                       <Globe className="h-4 w-4" />
                       زيارة الموقع
                     </Button>
-                  </a>
+                  </Link>
                 )}
                 <ClientFollowButton
                   clientSlug={client.slug}
@@ -143,7 +143,7 @@ export function ClientHero({ client, stats, initialIsFollowing = false }: Client
             {socialLinks.length > 0 && (
               <div className="mt-3 flex items-center gap-4">
                 {socialLinks.map((link, index) => (
-                  <a
+                  <Link
                     key={index}
                     href={link.url}
                     target="_blank"
@@ -152,7 +152,7 @@ export function ClientHero({ client, stats, initialIsFollowing = false }: Client
                     aria-label={link.platform!.name}
                   >
                     {link.platform!.icon}
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}
@@ -160,12 +160,12 @@ export function ClientHero({ client, stats, initialIsFollowing = false }: Client
             {/* CTA Buttons - Mobile */}
             <div className="flex md:hidden items-center gap-3 mt-4">
               {client.url && (
-                <a href={client.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Link href={client.url} target="_blank" rel="noopener noreferrer" className="flex-1">
                   <Button size="default" className="gap-2 w-full">
                     <Globe className="h-4 w-4" />
                     زيارة الموقع
                   </Button>
-                </a>
+                </Link>
               )}
               <ClientFollowButton
                 clientSlug={client.slug}

@@ -286,14 +286,14 @@ export function ArticleChatbotContent({
                   <ul className="text-xs space-y-0.5">
                     {m.sources.slice(0, 5).map((s, i) => (
                       <li key={i}>
-                        <a
+                        <Link
                           href={s.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline truncate block max-w-full"
                         >
                           {s.title}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>

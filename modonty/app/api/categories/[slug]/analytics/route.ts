@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCategoryAnalytics } from "../../../helpers/category-queries";
-import type { ApiResponse, CategoryAnalytics } from "../../../helpers/types";
+import type { ApiResponse, CategoryAnalytics } from "@/lib/types";
 
 export async function GET(
   request: NextRequest,

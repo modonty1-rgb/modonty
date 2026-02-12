@@ -1,5 +1,5 @@
 import { EnhancedCategoryCard } from "./enhanced-category-card";
-import type { CategoryResponse } from "@/app/api/helpers/types";
+import type { CategoryResponse } from "@/lib/types";
 
 interface FeaturedCategoriesProps {
   categories: CategoryResponse[];

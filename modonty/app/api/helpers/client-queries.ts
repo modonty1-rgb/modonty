@@ -6,7 +6,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus, CommentStatus } from "@prisma/client";
-import type { ClientResponse } from "./types";
+import type { ClientResponse } from "@/lib/types";
 
 type ClientWithArticles = Prisma.ClientGetPayload<{
   include: {

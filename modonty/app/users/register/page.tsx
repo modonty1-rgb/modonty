@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { RegisterForm } from "./components/register-form";

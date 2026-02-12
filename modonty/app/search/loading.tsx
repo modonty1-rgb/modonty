@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { PostCardSkeleton } from "@/components/PostCardSkeleton";
+import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 
 export default function SearchLoading() {
   return (
@@ -18,7 +18,7 @@ export default function SearchLoading() {
             <Skeleton className="h-12 w-20 rounded-md" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <PostCardSkeleton count={6} />
+            <InfiniteFeedSkeleton count={6} />
           </div>
         </section>
       </main>

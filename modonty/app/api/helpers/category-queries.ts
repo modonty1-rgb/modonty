@@ -6,7 +6,7 @@
 import { db } from "@/lib/db";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { unstable_cache, cacheTag, cacheLife } from "next/cache";
-import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "./types";
+import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "@/lib/types";
 
 type CategoryWithArticles = Prisma.CategoryGetPayload<{
   include: {
@@ -202,21 +202,124 @@ export async function getCategoryAnalytics(categoryId: string): Promise<Category
         select: {
           likes: true,
           comments: true,
+          dislikes: true,
+          favorites: true,
+          views: true,
         },
       },
     },
   });
 
   const totalBlogs = articles.length;
-  const totalReactions = articles.reduce((sum, article) => {
-    return sum + (article._count?.likes || 0) + (article._count?.comments || 0);
-  }, 0);
+
+  let totalLikes = 0;
+  let totalComments = 0;
+  let totalDislikes = 0;
+  let totalFavorites = 0;
+  let totalViews = 0;
+  let engagedBlogs = 0;
+
+  for (const article of articles) {
+    const likes = article._count?.likes || 0;
+    const comments = article._count?.comments || 0;
+    const dislikes = article._count?.dislikes || 0;
+    const favorites = article._count?.favorites || 0;
+    const views = article._count?.views || 0;
+
+    totalLikes += likes;
+    totalComments += comments;
+    totalDislikes += dislikes;
+    totalFavorites += favorites;
+    totalViews += views;
+
+    if (likes + comments + dislikes + favorites + views > 0) {
+      engagedBlogs += 1;
+    }
+  }
+
+  const totalReactions = totalLikes + totalComments;
   const averageEngagement = totalBlogs > 0 ? Math.round(totalReactions / totalBlogs) : 0;
+  const averageCommentsPerBlog = totalBlogs > 0 ? Math.round(totalComments / totalBlogs) : 0;
 
   return {
     totalBlogs,
     totalReactions,
     averageEngagement,
+    totalLikes,
+    totalComments,
+    totalDislikes,
+    totalFavorites,
+    totalViews,
+    averageCommentsPerBlog,
+    engagedBlogs,
+  };
+}
+
+export async function getOverallCategoryAnalytics(): Promise<CategoryAnalytics> {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
+
+  const articles = await db.article.findMany({
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      datePublished: { lte: new Date() },
+    },
+    include: {
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+          dislikes: true,
+          favorites: true,
+          views: true,
+        },
+      },
+    },
+  });
+
+  const totalBlogs = articles.length;
+
+  let totalLikes = 0;
+  let totalComments = 0;
+  let totalDislikes = 0;
+  let totalFavorites = 0;
+  let totalViews = 0;
+  let engagedBlogs = 0;
+
+  for (const article of articles) {
+    const likes = article._count?.likes || 0;
+    const comments = article._count?.comments || 0;
+    const dislikes = article._count?.dislikes || 0;
+    const favorites = article._count?.favorites || 0;
+    const views = article._count?.views || 0;
+
+    totalLikes += likes;
+    totalComments += comments;
+    totalDislikes += dislikes;
+    totalFavorites += favorites;
+    totalViews += views;
+
+    if (likes + comments + dislikes + favorites + views > 0) {
+      engagedBlogs += 1;
+    }
+  }
+
+  const totalReactions = totalLikes + totalComments;
+  const averageEngagement = totalBlogs > 0 ? Math.round(totalReactions / totalBlogs) : 0;
+  const averageCommentsPerBlog = totalBlogs > 0 ? Math.round(totalComments / totalBlogs) : 0;
+
+  return {
+    totalBlogs,
+    totalReactions,
+    averageEngagement,
+    totalLikes,
+    totalComments,
+    totalDislikes,
+    totalFavorites,
+    totalViews,
+    averageCommentsPerBlog,
+    engagedBlogs,
   };
 }
 

@@ -1,8 +1,8 @@
 import { connection } from "next/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/OptimizedImage";
-import { RelativeTime } from "@/components/RelativeTime";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
+import { RelativeTime } from "@/components/date/RelativeTime";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 

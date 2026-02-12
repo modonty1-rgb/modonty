@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Shield, Lock, Eye, EyeOff } from "lucide-react";
 import { createPasswordSchema, type CreatePasswordFormData } from "../helpers/schemas/settings-schemas";
 import { createPassword } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 
 export function CreatePasswordPrompt() {
   const router = useRouter();

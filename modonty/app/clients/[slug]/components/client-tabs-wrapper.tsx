@@ -6,9 +6,9 @@ import { ClientContact } from "./client-contact";
 import { RelatedClients } from "./related-clients";
 import { ArticleList } from "./article-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import Link from "@/components/link";
-import { FormattedDate } from "@/components/FormattedDate";
+import { FormattedDate } from "@/components/date/FormattedDate";
 
 interface ClientTabsWrapperProps {
   articles: any[];

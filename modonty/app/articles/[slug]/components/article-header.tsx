@@ -1,7 +1,7 @@
-import { RelativeTime } from "@/components/RelativeTime";
+import { RelativeTime } from "@/components/date/RelativeTime";
 import { ArticleEngagementMetrics } from "./article-engagement-metrics";
 import { ArticleInteractionButtons } from "./article-interaction-buttons";
-import { ArticleUtilities } from "./article-utilities";
+import { ArticleUtilities } from "./client-only-utilities";
 import { ArticleShareButtons } from "./article-share-buttons";
 
 interface ArticleHeaderProps {

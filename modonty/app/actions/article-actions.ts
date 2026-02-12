@@ -1,46 +1,22 @@
 "use server";
 
 import { getArticles } from "@/app/api/helpers/article-queries";
-import type { ArticleResponse } from "@/app/api/helpers/types";
+import type { ArticleResponse, FeedPost } from "@/lib/types";
 
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  image?: string;
-  slug: string;
-  publishedAt: Date;
-  clientName: string;
-  clientSlug: string;
-  clientLogo?: string;
-  author: {
-    id: string;
-    name: string;
-    title: string;
-    company: string;
-    avatar: string;
-  };
-  likes: number;
-  dislikes: number;
-  comments: number;
-  favorites: number;
-  status: "published" | "draft";
-}
-
-interface LoadMoreArticlesResult {
-  articles: Post[];
+export interface LoadMoreArticlesResult {
+  articles: FeedPost[];
   hasMore: boolean;
 }
 
-export async function loadMoreArticles(page: number): Promise<LoadMoreArticlesResult> {
+export async function loadMoreArticles(page: number, categorySlug?: string): Promise<LoadMoreArticlesResult> {
   try {
     const { articles, pagination } = await getArticles({
       page,
       limit: 10,
+      ...(categorySlug && { category: categorySlug }),
     });
 
-    const posts = articles.map((article: ArticleResponse) => ({
+    const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({
       id: article.id,
       title: article.title,
       content: article.excerpt || "",
@@ -51,6 +27,7 @@ export async function loadMoreArticles(page: number): Promise<LoadMoreArticlesRe
       clientName: article.client.name,
       clientSlug: article.client.slug,
       clientLogo: article.client.logo,
+      readingTimeMinutes: article.readingTimeMinutes,
       author: {
         id: article.author.id,
         name: article.author.name || "Modonty",
@@ -62,6 +39,7 @@ export async function loadMoreArticles(page: number): Promise<LoadMoreArticlesRe
       dislikes: article.interactions.dislikes,
       comments: article.interactions.comments,
       favorites: article.interactions.favorites,
+      views: article.interactions.views,
       status: "published" as const,
     }));
 

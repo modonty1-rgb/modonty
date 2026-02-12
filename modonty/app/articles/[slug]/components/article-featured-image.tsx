@@ -1,4 +1,4 @@
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 
 interface ArticleFeaturedImageProps {
   image: {

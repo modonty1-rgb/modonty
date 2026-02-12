@@ -4,7 +4,7 @@
  */
 
 import { db } from "@/lib/db";
-import type { InteractionCounts } from "./types";
+import type { InteractionCounts } from "@/lib/types";
 
 export async function getArticleInteractions(articleId: string): Promise<InteractionCounts> {
   const counts = await db.article.findUnique({

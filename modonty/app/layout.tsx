@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
-import { SessionWrapper } from "@/components/providers/SessionWrapper";
-import { ChatSheetProvider } from "@/components/chatbot/ChatSheetProvider";
+import { SessionProviderWrapper } from "@/components/providers/SessionProviderWrapper";
 import { GTMContainer } from "@/components/gtm/GTMContainer";
-import { TopNav } from "@/components/TopNav";
-import { Footer } from "@/components/Footer";
-import { MobileFooter } from "@/components/MobileFooter";
+import { TopNav } from "@/components/navigatore/TopNav";
+import { Footer } from "@/components/layout/Footer";
+import { MobileFooter } from "@/components/navigatore/MobileFooter";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -32,28 +31,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://static.hotjar.com" />
+        <link rel="dns-prefetch" href="https://script.hotjar.com" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+         
+      </head>
       <body className="bg-background">
-        <Suspense fallback={null}>
+        {/* <Suspense fallback={null}>
           <GTMContainer />
-        </Suspense>
-        <Suspense
-          fallback={
+        </Suspense> */}
+        <Suspense fallback={null}>
+          <SessionProviderWrapper>
             <div className="min-h-screen flex flex-col">
-              <header className="h-14 border-b bg-white" />
-              <main className="flex-1" />
+              {/* <Suspense fallback={<header className="h-14 border-b bg-white" />}> */}
+              <TopNav activeSection="home" />
+              {/* </Suspense> */}
+              <main className="flex-1">{children}</main>
+              <Footer />
+              {/* <Suspense fallback={<footer className="h-16 md:hidden border-t" />}> */}
+              <MobileFooter activeSection="home" />
+              {/* </Suspense> */}
             </div>
-          }
-        >
-          <SessionWrapper>
-            <ChatSheetProvider>
-              <div className="min-h-screen flex flex-col">
-                <TopNav />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <MobileFooter />
-              </div>
-            </ChatSheetProvider>
-          </SessionWrapper>
+          </SessionProviderWrapper>
         </Suspense>
       </body>
     </html>

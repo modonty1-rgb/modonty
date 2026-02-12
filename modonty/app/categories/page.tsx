@@ -11,7 +11,7 @@ import { CategoryListItem } from "./components/category-list-item";
 import { EmptyState } from "./components/empty-state";
 import { CategoriesSkeleton } from "./components/categories-skeleton";
 import { parseCategorySearchParams } from "./helpers/category-utils";
-import type { CategoryPageParams, CategoryResponse } from "@/app/api/helpers/types";
+import type { CategoryPageParams, CategoryResponse } from "@/lib/types";
 import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -76,10 +76,12 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
             <h2 id="all-categories-heading" className="sr-only">
               جميع الفئات
             </h2>
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <CategorySearchForm defaultValue={search} />
-            <CategoryFilters currentSort={sort} currentView={view} />
-          </div>
+            <Suspense fallback={<div className="flex flex-col sm:flex-row gap-4 mb-8 h-14 animate-pulse bg-muted/50 rounded-lg" />}>
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <CategorySearchForm defaultValue={search} />
+                <CategoryFilters currentSort={sort} currentView={view} />
+              </div>
+            </Suspense>
 
           {categories.length === 0 ? (
             <EmptyState searchTerm={search} />

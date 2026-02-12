@@ -1,7 +1,7 @@
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { BackToTop } from "@/components/BackToTop";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { BackToTop } from "@/components/layout/BackToTop";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PostCardSkeleton } from "@/components/PostCardSkeleton";
+import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function HomeLoading() {
@@ -89,7 +89,7 @@ function MainFeedSkeleton() {
         <h2 id="loading-articles-heading" className="sr-only">
           جاري تحميل آخر المقالات
         </h2>
-        <PostCardSkeleton count={10} />
+        <InfiniteFeedSkeleton count={10} />
       </section>
     </main>
   );

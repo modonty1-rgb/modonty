@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { RelativeTime } from "@/components/RelativeTime";
+import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
 import { MessageCircle, Reply, LogIn, ThumbsUp, ThumbsDown, User, AlertCircle } from "lucide-react";
 import { CommentForm } from "./comment-form";

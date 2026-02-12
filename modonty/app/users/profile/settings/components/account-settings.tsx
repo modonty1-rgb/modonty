@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Trash2, Download, AlertTriangle } from "lucide-react";
 import { exportUserData, deleteAccount } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 
 export function AccountSettings() {

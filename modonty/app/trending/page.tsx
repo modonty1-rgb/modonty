@@ -1,7 +1,7 @@
 import { Metadata } from "next";
-import { TrendingArticles } from "@/components/TrendingArticles";
+import { TrendingArticles } from "@/components/feed/TrendingArticles";
 import { getTrendingArticles } from "@/app/api/helpers/article-queries";
-import type { ArticleResponse } from "@/app/api/helpers/types";
+import type { ArticleResponse } from "@/lib/types";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
 import { getTrendingPageSeo } from "@/lib/seo/trending-page-seo";

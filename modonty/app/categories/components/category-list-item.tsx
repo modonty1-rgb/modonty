@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 import { 
@@ -9,7 +9,7 @@ import {
   optimizeCloudinaryImage,
   generateBlurDataURL
 } from "../helpers/category-utils";
-import type { CategoryResponse } from "@/app/api/helpers/types";
+import type { CategoryResponse } from "@/lib/types";
 
 interface CategoryListItemProps {
   category: CategoryResponse;

@@ -77,7 +77,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
               )}
               <div className="flex items-center gap-3 mt-4">
                 {author.linkedIn && (
-                  <a
+                  <Link
                     href={author.linkedIn}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -85,10 +85,10 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
                     aria-label="LinkedIn Profile"
                   >
                     <Linkedin className="h-5 w-5" />
-                  </a>
+                  </Link>
                 )}
                 {author.twitter && (
-                  <a
+                  <Link
                     href={author.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -96,10 +96,10 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
                     aria-label="Twitter Profile"
                   >
                     <Twitter className="h-5 w-5" />
-                  </a>
+                  </Link>
                 )}
                 {author.facebook && (
-                  <a
+                  <Link
                     href={author.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -107,7 +107,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
                     aria-label="Facebook Profile"
                   >
                     <Facebook className="h-5 w-5" />
-                  </a>
+                  </Link>
                 )}
               </div>
             </div>

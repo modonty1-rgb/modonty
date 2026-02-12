@@ -1,3 +1,4 @@
+import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 
@@ -16,7 +17,7 @@ export function ArticleCitations({ citations }: ArticleCitationsProps) {
           <ul className="space-y-2">
             {citations.map((citation, idx) => (
               <li key={idx}>
-                <a
+                <Link
                   href={citation}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -24,7 +25,7 @@ export function ArticleCitations({ citations }: ArticleCitationsProps) {
                 >
                   <span>{citation}</span>
                   <ExternalLink className="h-3 w-3" />
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

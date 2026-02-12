@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connection } from "next/server";
 import { getRecentArticles } from "../../helpers/article-queries";
-import type { ApiResponse, ArticleResponse } from "../../helpers/types";
+import type { ApiResponse, ArticleResponse } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   try {

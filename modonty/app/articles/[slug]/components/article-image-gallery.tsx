@@ -1,4 +1,4 @@
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ArticleImageGalleryProps {

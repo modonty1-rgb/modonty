@@ -1,4 +1,4 @@
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { FileText, TrendingUp, Clock } from "lucide-react";
 import { generateCategoryGradient, getCategoryIcon } from "../../helpers/category-utils";
 

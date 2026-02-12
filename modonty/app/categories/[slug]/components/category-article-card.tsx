@@ -1,11 +1,11 @@
 import Link from "@/components/link";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Bookmark, Clock, Eye } from "lucide-react";
 import { optimizeCloudinaryImage, generateBlurDataURL } from "../../helpers/category-utils";
 import { formatReadingTime, formatPublishDate, formatEngagementCount } from "../helpers/article-utils";
-import type { ArticleResponse } from "@/app/api/helpers/types";
+import type { ArticleResponse } from "@/lib/types";
 
 interface CategoryArticleCardProps {
   article: ArticleResponse;

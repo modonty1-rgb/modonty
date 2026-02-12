@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import type { ApiResponse } from "@/app/api/helpers/types";
+import type { ApiResponse } from "@/lib/types";
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
 export async function GET(request: NextRequest) {
+  await connection();
   try {
     const session = await auth();
     if (!session?.user?.id) {

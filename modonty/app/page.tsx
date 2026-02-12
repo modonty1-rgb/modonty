@@ -1,28 +1,30 @@
 import { Metadata } from "next";
-import { FeedContainer } from "@/components/FeedContainer";
+import { FeedContainer } from "@/components/feed/FeedContainer";
 import { getArticles } from "@/app/api/helpers/article-queries";
-import type { ArticleResponse } from "@/app/api/helpers/types";
+import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
-import { getLcpOptimizedImageUrl } from "@/lib/image-utils";
+
+interface HomePageProps {
+  searchParams: Promise<{
+    category?: string;
+  }>;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getHomePageSeo();
   return metadata ?? {};
 }
 
-function buildLcpPreloadHref(imageUrl: string): string {
-  const optimized = getLcpOptimizedImageUrl(imageUrl);
-  if (!optimized) return "";
-  return `/_next/image?url=${encodeURIComponent(optimized)}&w=1200&q=65`;
-}
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = await searchParams;
+  const currentCategorySlug = resolvedSearchParams.category || undefined;
 
-export default async function HomePage() {
   const [{ jsonLd }, { articles }] = await Promise.all([
     getHomePageSeo(),
-    getArticles({ limit: 8 }),
+    getArticles({ limit: 4, category: currentCategorySlug }),
   ]);
 
-  const posts = articles.map((article: ArticleResponse) => ({
+  const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({
     id: article.id,
     title: article.title,
     content: article.excerpt || "",
@@ -45,17 +47,14 @@ export default async function HomePage() {
     dislikes: article.interactions.dislikes,
     comments: article.interactions.comments,
     favorites: article.interactions.favorites,
+    views: article.interactions.views,
     status: "published" as const,
   }));
 
   const jsonLdToRender = jsonLd?.trim() || "";
-  const lcpPreloadHref = posts[0]?.image ? buildLcpPreloadHref(posts[0].image) : "";
 
   return (
     <>
-      {lcpPreloadHref && (
-        <link rel="preload" as="image" href={lcpPreloadHref} />
-      )}
       {jsonLdToRender && (
         <script
           type="application/ld+json"
@@ -64,7 +63,7 @@ export default async function HomePage() {
           }}
         />
       )}
-      <FeedContainer posts={posts} />
+      <FeedContainer posts={posts} currentCategorySlug={currentCategorySlug} />
     </>
   );
 }

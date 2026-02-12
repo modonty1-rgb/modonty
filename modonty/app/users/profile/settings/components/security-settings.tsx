@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Shield, Eye, EyeOff, Link2, Link2Off } from "lucide-react";
 import { passwordSchema, type PasswordFormData } from "../helpers/schemas/settings-schemas";
 import { changePassword, disconnectOAuthProvider } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 
 export function SecuritySettings() {
   const { data: session } = useSession();

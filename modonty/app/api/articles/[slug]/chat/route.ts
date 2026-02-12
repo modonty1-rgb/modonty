@@ -10,7 +10,7 @@ import { isOutOfScope } from "@/lib/rag/scope";
 import { chatStream, rerank, type ChatMessage } from "@/lib/cohere";
 import { searchSerper } from "@/lib/serper";
 import { saveChatbotMessage } from "@/lib/chat/save-chatbot-message";
-import type { ApiResponse } from "@/app/api/helpers/types";
+import type { ApiResponse } from "@/lib/types";
 
 const bodySchema = z.object({
   messages: z.array(

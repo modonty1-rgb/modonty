@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Bell } from "lucide-react";
 import { updateNotificationSettings } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 import type { NotificationFormData } from "../helpers/schemas/settings-schemas";
 
 export function NotificationsSettings() {

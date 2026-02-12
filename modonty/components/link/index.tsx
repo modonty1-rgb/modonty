@@ -1,8 +1,8 @@
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
-import { FC, HTMLAttributes } from 'react';
+import { FC } from 'react';
 
-type CustomLinkProps = NextLinkProps & 
-  HTMLAttributes<HTMLAnchorElement> & {
+type CustomLinkProps = NextLinkProps &
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & {
     children: React.ReactNode;
   };
 

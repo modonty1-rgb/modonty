@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { RelativeTime } from "@/components/RelativeTime";
+import { RelativeTime } from "@/components/date/RelativeTime";
 
 interface ArticleFooterProps {
   client: {

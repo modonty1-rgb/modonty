@@ -1,10 +1,19 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getArticles } from "@/app/api/helpers/article-queries";
-import type { ArticleResponse } from "@/app/api/helpers/types";
+import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { generateMetadataFromSEO } from "@/lib/seo";
-import { SearchInput } from "./components/SearchInput";
-import { SearchResults } from "./components/SearchResults";
+
+const SearchInput = dynamic(
+  () => import("./components/SearchInput").then((m) => ({ default: m.SearchInput })),
+  { ssr: true }
+);
+
+const SearchResults = dynamic(
+  () => import("./components/SearchResults").then((m) => ({ default: m.SearchResults })),
+  { ssr: true }
+);
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string }>;
@@ -38,7 +47,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     ? await getArticles({ search: q, limit: 20 })
     : { articles: [] };
 
-  const posts = articles.map((article: ArticleResponse) => ({
+  const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({
     id: article.id,
     title: article.title,
     content: article.excerpt || "",
@@ -61,6 +70,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     dislikes: article.interactions.dislikes,
     comments: article.interactions.comments,
     favorites: article.interactions.favorites,
+    views: article.interactions.views,
     status: "published" as const,
   }));
 

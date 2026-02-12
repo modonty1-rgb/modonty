@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getClientsWithCounts } from "../helpers/client-queries";
-import type { ApiResponse, ClientResponse } from "../helpers/types";
+import type { ApiResponse, ClientResponse } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   try {

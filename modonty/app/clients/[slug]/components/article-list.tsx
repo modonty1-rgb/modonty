@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { OptimizedImage } from "@/components/media/OptimizedImage";
 import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FormattedDate } from "@/components/FormattedDate";
+import { FormattedDate } from "@/components/date/FormattedDate";
 import {
   DropdownMenu,
   DropdownMenuContent,

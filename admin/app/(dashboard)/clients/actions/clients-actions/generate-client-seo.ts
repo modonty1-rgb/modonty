@@ -180,7 +180,6 @@ export async function generateClientSEO(clientId: string) {
       author: client.name,
       language: "ar",
       charset: "UTF-8",
-      viewport: "width=device-width, initial-scale=1.0",
       openGraph: {
         title: title,
         description: description,

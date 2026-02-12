@@ -50,10 +50,8 @@ const NewsletterCTA = dynamic(
 );
 
 // Components that can skip SSR (browser-only features):
-// These are wrapped in client components to allow ssr: false
 import { ReadingProgressBar } from "./components/client-only-reading-progress";
 import { ArticleTableOfContents } from "./components/client-only-table-of-contents";
-import { ArticleUtilities } from "./components/client-only-utilities";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;

@@ -14,7 +14,7 @@ import { CategoryEmptyState } from "./components/category-empty-state";
 import { RelatedCategories } from "./components/related-categories";
 import { ArticleSkeleton } from "./components/article-skeleton";
 import { parseArticleSearchParams, getTrendingScore } from "./helpers/article-utils";
-import type { CategoryDetailPageParams } from "@/app/api/helpers/types";
+import type { CategoryDetailPageParams } from "@/lib/types";
 
 export async function generateStaticParams() {
   try {

@@ -11,7 +11,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Loader2, Upload, User } from "lucide-react";
 import { profileSchema, type ProfileFormData } from "../helpers/schemas/settings-schemas";
 import { updateProfile } from "../actions/settings-actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/components/providers/SessionContext";
 
 export function ProfileSettings() {
   const { data: session } = useSession();

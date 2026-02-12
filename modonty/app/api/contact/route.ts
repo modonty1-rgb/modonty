@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { submitContactMessage } from "@/app/contact/actions/contact-actions";
-import type { ApiResponse } from "../helpers/types";
+import type { ApiResponse } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {

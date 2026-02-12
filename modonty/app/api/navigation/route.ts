@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { ApiResponse, NavigationItem } from "../helpers/types";
+import type { ApiResponse, NavigationItem } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   try {
