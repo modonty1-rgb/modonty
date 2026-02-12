@@ -5,7 +5,7 @@ import { ChatTriggerButton } from "@/components/chatbot/ChatTriggerButton";
 
 export function DesktopUserAreaClient() {
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className="flex items-center justify-end gap-3">
       <UserMenu />
       <ChatTriggerButton variant="pill" />
     </div>
