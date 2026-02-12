@@ -17,7 +17,7 @@ interface InfiniteArticleListProps {
 
 export function InfiniteArticleList({
   initialPosts,
-  initialStartIndex = 1,
+  initialStartIndex = 0,
   categorySlug,
 }: InfiniteArticleListProps) {
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
@@ -26,17 +26,29 @@ export function InfiniteArticleList({
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const ignoredRef = useRef(false);
+
+  const totalSeen = initialStartIndex + posts.length;
+
+  useEffect(() => {
+    ignoredRef.current = false;
+    return () => {
+      ignoredRef.current = true;
+    };
+  }, []);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
 
     setLoading(true);
     setError(false);
-    try {
-      const nextPage = page + 1;
-      const result = await loadMoreArticles(nextPage, categorySlug);
+    const nextPage = page + 1;
+    const requestCategory = categorySlug;
 
+    try {
+      const result = await loadMoreArticles(nextPage, requestCategory);
+      if (ignoredRef.current) return;
+      if (requestCategory !== categorySlug) return;
       if (result.articles.length > 0) {
         setPosts((prev) => [...prev, ...result.articles]);
         setPage(nextPage);
@@ -44,62 +56,61 @@ export function InfiniteArticleList({
       } else {
         setHasMore(false);
       }
-    } catch (err) {
-      setError(true);
+    } catch {
+      if (!ignoredRef.current) setError(true);
     } finally {
-      setLoading(false);
+      if (!ignoredRef.current) setLoading(false);
     }
   }, [loading, hasMore, page, categorySlug]);
+
+  const loadMoreRef = useRef(loadMore);
+  loadMoreRef.current = loadMore;
+
+  useEffect(() => {
+    ignoredRef.current = false;
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    setError(false);
+  }, [categorySlug]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        loadMoreRef.current();
+      },
+      { root: null, rootMargin: "100px", threshold: 0.1 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   const handleRetry = () => {
     setError(false);
     loadMore();
   };
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && hasMore && !loading) {
-          loadMore();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.1,
-      }
-    );
-
-    observerRef.current.observe(sentinel);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [hasMore, loading, loadMore]);
+  const showEmptyState = posts.length === 0 && initialStartIndex === 0;
 
   return (
     <>
       {posts.length > 0 ? (
-        posts.map((post, index) => (
-          <div
-            key={post.id}
-            className="animate-in fade-in duration-300"
-          >
+        <div className="space-y-4">
+          {posts.map((post, index) => (
             <PostCard
+              key={post.id}
               post={post}
-              index={index}
-              priority={index < 5}
-              isLcp={false}
+              index={initialStartIndex + index}
+              className="animate-in fade-in duration-300"
             />
-          </div>
-        ))
-      ) : (
+          ))}
+        </div>
+      ) : showEmptyState ? (
         <div className="text-center py-16 px-4">
           <div className="max-w-md mx-auto space-y-6">
             <div className="flex justify-center">
@@ -129,7 +140,7 @@ export function InfiniteArticleList({
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
       <div ref={sentinelRef} className="w-full py-8">
         {loading && (
@@ -137,7 +148,7 @@ export function InfiniteArticleList({
             <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
               <Loader2 className="h-5 w-5 animate-spin" />
               <span className="text-sm">
-                جاري تحميل المزيد... (شاهدت {posts.length} مقالة)
+                جاري تحميل المزيد... (شاهدت {totalSeen} مقالة)
               </span>
             </div>
             <InfiniteFeedSkeleton count={3} />
@@ -167,7 +178,7 @@ export function InfiniteArticleList({
               🎉 لقد وصلت إلى النهاية!
             </p>
             <p className="text-xs text-muted-foreground">
-              شاهدت جميع الـ {posts.length} مقالة المتاحة
+              شاهدت جميع الـ {totalSeen} مقالة المتاحة
             </p>
           </div>
         )}

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { FeedContainer } from "@/components/feed/FeedContainer";
 import { getArticles } from "@/app/api/helpers/article-queries";
+import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
 
@@ -21,7 +22,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const [{ jsonLd }, { articles }] = await Promise.all([
     getHomePageSeo(),
-    getArticles({ limit: 4, category: currentCategorySlug }),
+    getArticles({ page: 1, limit: FEED_PAGE_SIZE, category: currentCategorySlug }),
   ]);
 
   const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({

@@ -24,7 +24,7 @@ export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps
             <LeftSidebar className="order-1 lg:order-1" currentCategorySlug={currentCategorySlug} />
           </Suspense>
           <div className="w-full lg:flex-1 lg:max-w-[600px] order-2 lg:order-2 space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
-            <section aria-labelledby="articles-feed-heading">
+            <section aria-labelledby="articles-feed-heading" className="space-y-4">
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>

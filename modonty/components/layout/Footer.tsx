@@ -1,7 +1,6 @@
 import Link from "@/components/link";
 import Image from "next/image";
 import { getOptimizedLogoUrl } from "@/lib/image-utils";
-import { navLinksConfig } from "@/components/navigatore/nav-links-config";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
 import pkg from "../../package.json";
 
@@ -9,79 +8,56 @@ const YEAR = 2025;
 
 export function Footer() {
   const logoSrc = getOptimizedLogoUrl();
+
   return (
     <footer className="border-t bg-card mt-12">
-      <div className="container mx-auto max-w-[1128px] px-4 py-6">
-        {/* Top Section: Logo + Copyright */}
-        <div className="flex items-center justify-between mb-6 h-11">
-          <Image
-            src={logoSrc}
-            alt="مودونتي"
-            width={120}
-            height={68}
-            className="object-contain"
-          />
-          <div className="text-sm text-muted-foreground">
+      <div className="container mx-auto max-w-[1128px] px-4 py-4">
+        <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Image
+              src={logoSrc}
+              alt="مودونتي"
+              width={90}
+              height={50}
+              className="object-contain"
+            />
             <FooterCopyright appVersion={pkg.version} year={YEAR} />
           </div>
-        </div>
-
-        {/* Link Sections Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {/* Company Section */}
-          <section>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">مدونتي</h3>
-            <nav className="flex flex-col gap-y-1" aria-label="روابط مدونتي">
-              {navLinksConfig.company.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors block py-1 hover:underline"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </section>
-
-          {/* Support Section */}
-          <section>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">الدعم</h3>
-            <nav className="flex flex-col gap-y-1" aria-label="روابط الدعم">
-              {navLinksConfig.support.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors block py-1 hover:underline"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </section>
-
-          {/* Legal Section */}
-          <section>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">قانوني</h3>
-            <nav className="flex flex-col gap-y-1" aria-label="روابط قانونية">
-              {navLinksConfig.legal.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors block py-1 hover:underline"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </section>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="border-t border-border pt-4 mt-4">
-          <p className="text-xs text-muted-foreground text-center">
-            © {YEAR} Modonty. جميع الحقوق محفوظة.
-          </p>
+          <nav
+            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
+            aria-label="روابط الفوتر"
+          >
+            <Link
+              href="/legal/user-agreement"
+              className="hover:text-primary transition-colors"
+            >
+              اتفاقية المستخدم
+            </Link>
+            <Link
+              href="/legal/privacy-policy"
+              className="hover:text-primary transition-colors"
+            >
+              سياسة الخصوصية
+            </Link>
+            <Link
+              href="/legal/cookie-policy"
+              className="hover:text-primary transition-colors"
+            >
+              سياسة ملفات تعريف الارتباط
+            </Link>
+            <Link
+              href="/legal/copyright-policy"
+              className="hover:text-primary transition-colors"
+            >
+              سياسة حقوق النشر
+            </Link>
+            <Link
+              href="/help/feedback"
+              className="hover:text-primary transition-colors"
+            >
+              إرسال ملاحظات
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

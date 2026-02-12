@@ -1,6 +1,7 @@
 "use server";
 
 import { getArticles } from "@/app/api/helpers/article-queries";
+import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 
 export interface LoadMoreArticlesResult {
@@ -12,7 +13,7 @@ export async function loadMoreArticles(page: number, categorySlug?: string): Pro
   try {
     const { articles, pagination } = await getArticles({
       page,
-      limit: 10,
+      limit: FEED_PAGE_SIZE,
       ...(categorySlug && { category: categorySlug }),
     });
 
