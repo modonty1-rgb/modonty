@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 
-interface ScrollProgressProps {
-  /** Override top position (e.g. when below a sticky nav). Default: top-14 */
-  className?: string;
-}
-
-export function ScrollProgress({ className }: ScrollProgressProps) {
+/**
+ * Inline scroll progress bar for client page. Renders inside the sticky tabs nav,
+ * at the bottom, with no gap. Reuses the same visual style as ScrollProgress.
+ */
+export function ClientScrollProgress() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -33,11 +31,9 @@ export function ScrollProgress({ className }: ScrollProgressProps) {
   }, []);
 
   return (
-    <div
-      className={cn("fixed left-0 right-0 top-14 z-40 h-1 bg-muted", className)}
-    >
+    <div className="relative -mx-4 h-1 bg-muted z-40">
       <div
-        className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-150 ease-out"
+        className="h-full bg-accent from-primary via-accent to-primary transition-all duration-150 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

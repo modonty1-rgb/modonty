@@ -4,7 +4,7 @@ import { PostCardHeader } from "./PostCardHeader";
 import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";
 
-export function PostCard({ className, index, priority, isLcp, ...rest }: PostCardProps) {
+export function PostCard({ className, index, priority, isLcp, hideClient, ...rest }: PostCardProps) {
   // Caller controls priority & isLcp; defaults are just safety.
   const effectivePriority = priority ?? false;
   const effectiveIsLcp = isLcp ?? false;
@@ -25,6 +25,7 @@ export function PostCard({ className, index, priority, isLcp, ...rest }: PostCar
           priority={effectivePriority}
           isLcp={effectiveIsLcp}
           index={index}
+          hideClient={hideClient}
         />
       </header>
       <div className="p-6 pt-0 space-y-4">

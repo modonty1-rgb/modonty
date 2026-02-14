@@ -1,8 +1,8 @@
 import Link from "@/components/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Building2, FileText } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 interface RelatedClient {
   id: string;
@@ -25,13 +25,10 @@ export function RelatedClients({ clients }: RelatedClientsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="h-5 w-5" />
-          عملاء مشابهون
-        </CardTitle>
+        <CardTitleWithIcon title="عملاء مشابهون" icon={Building2} />
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-2">
           {clients.map((client) => {
             const initials = client.name
               .split(" ")
@@ -43,29 +40,21 @@ export function RelatedClients({ clients }: RelatedClientsProps) {
             return (
               <Link
                 key={client.id}
-                href={`/clients/${client.slug}`}
+                href={`/clients/${encodeURIComponent(client.slug)}`}
                 className="group"
               >
-                <div className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
-                  <Avatar className="h-12 w-12 flex-shrink-0">
+                <div className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
+                  <Avatar className="h-9 w-9 flex-shrink-0">
                     <AvatarImage src={client.logoMedia?.url || undefined} alt={client.name} />
-                    <AvatarFallback className="text-sm font-medium">{initials}</AvatarFallback>
+                    <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm group-hover:text-primary transition-colors truncate">
+                  <div className="flex-1 min-w-0 flex items-center gap-2">
+                    <h3 className="font-medium text-sm group-hover:text-primary transition-colors truncate">
                       {client.name}
                     </h3>
-                    {client.legalName && client.legalName !== client.name && (
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
-                        {client.legalName}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-1.5 mt-1.5">
-                      <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">
-                        {client._count.articles} مقال
-                      </span>
-                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {client._count.articles} مقال
+                    </span>
                   </div>
                 </div>
               </Link>

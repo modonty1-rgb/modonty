@@ -24,7 +24,7 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
   
   return (
     <Link 
-      href={`/clients/${props.slug}`}
+      href={`/clients/${encodeURIComponent(props.slug)}`}
       className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
     >
       <div className="relative h-[280px] rounded-xl overflow-hidden">

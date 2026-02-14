@@ -46,7 +46,7 @@ export function ClientCard(props: ClientCardProps) {
   
   return (
     <Link 
-      href={`/clients/${props.slug}`}
+      href={`/clients/${encodeURIComponent(props.slug)}`}
       className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
     >
       <Card 

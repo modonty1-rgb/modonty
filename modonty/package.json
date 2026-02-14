@@ -14,6 +14,7 @@
     "postinstall": "npx prisma generate",
     "seed": "cd ../dataLayer && pnpm seed",
     "seed:clear": "cd ../dataLayer && pnpm seed:clear",
+    "seed:client1": "tsx app/clients/[slug]/helpers/seed-client1-test-data.ts",
     "create-test-user": "tsx scripts/create-test-user.ts",
     "diagnose-comments": "tsx ../scripts/diagnose-comments.ts",
     "diagnose-article-comments": "tsx ../scripts/diagnose-article-comments.ts",

@@ -50,29 +50,94 @@ export default function ClientDetailLoading() {
           <Skeleton className="h-10 w-24" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="overflow-hidden">
-              <Skeleton className="aspect-video w-full" />
-              <CardHeader className="pb-3">
-                <Skeleton className="h-4 w-32 mb-2" />
-                <Skeleton className="h-6 w-full mb-2" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Left sidebar */}
+          <div className="w-full lg:w-[280px] shrink-0 space-y-4">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-4 w-24" />
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-3">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-20" />
-                </div>
-                <div className="flex gap-4 pt-3 border-t">
-                  <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-4 w-12" />
-                </div>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-[83%]" />
+                <Skeleton className="h-3 w-2/3" />
               </CardContent>
             </Card>
-          ))}
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-4 w-32" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-3/4" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-4 w-28" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0" />
+                    <div className="flex-1 space-y-1">
+                      <Skeleton className="h-3 w-16" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+          {/* Center feed */}
+          <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardHeader className="pb-3">
+                  <Skeleton className="h-4 w-32 mb-2" />
+                  <Skeleton className="h-6 w-full mb-2" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="aspect-video w-full rounded-lg mb-4" />
+                  <div className="flex gap-4 pt-3 border-t">
+                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          {/* Right sidebar */}
+          <div className="w-full lg:w-[280px] shrink-0 space-y-6">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-64 w-full rounded-lg" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-4 w-32" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex gap-3">
+                    <Skeleton className="h-12 w-12 rounded-full shrink-0" />
+                    <div className="flex-1 space-y-1">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-3 w-12" />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 
