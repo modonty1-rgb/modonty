@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   serverExternalPackages: ["cohere-ai"],
   images: {
-    formats: ["image/avif", "image/webp"], // modern formats
     remotePatterns: [
       {
         protocol: "https",
@@ -17,9 +16,10 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+    formats: ["image/avif", "image/webp"], // modern formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    qualities: [75, 85, 90],
+    qualities: [25, 50, 75, 100],
     minimumCacheTTL: 2678400, // 31 days
   },
   compiler: {
@@ -45,7 +45,3 @@ const nextConfig: NextConfig = {
 };
 
 export default withBundleAnalyzer(nextConfig);
-
-
-
-

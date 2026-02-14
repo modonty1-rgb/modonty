@@ -43,7 +43,7 @@ export function PostCardHeroImage({ post, index }: PostCardProps) {
           preload={isTopFive}
           loading={isTopFive ? "eager" : "lazy"}
           fetchPriority={isLCP ? "high" : undefined}
-          quality={isLCP ? 85 : 75}
+          quality={75}
           decoding="async"
         />
       </div>

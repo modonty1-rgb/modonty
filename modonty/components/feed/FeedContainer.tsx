@@ -13,7 +13,6 @@ interface FeedContainerProps {
 }
 
 export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps) {
-
   return (
     <>
       <FeedDeferredUI />
@@ -21,10 +20,10 @@ export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <Suspense fallback={<LeftSidebarSkeleton />}>
-            <LeftSidebar className="order-1 lg:order-1" currentCategorySlug={currentCategorySlug} />
+            <LeftSidebar currentCategorySlug={currentCategorySlug} />
           </Suspense>
-          <div className="w-full lg:flex-1 lg:max-w-[600px] order-2 lg:order-2 space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
-            <section aria-labelledby="articles-feed-heading" className="space-y-4">
+          <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
+            <section aria-labelledby="articles-feed-heading" className="space-y-4 [&>*:nth-child(2)]:!mt-0">
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>
@@ -40,15 +39,17 @@ export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps
                   ))}
                 </div>
               )}
-              <InfiniteArticleListOnView initialStartIndex={posts.length} categorySlug={currentCategorySlug} />
+              <InfiniteArticleListOnView
+                initialStartIndex={posts.length}
+                categorySlug={currentCategorySlug}
+              />
             </section>
           </div>
           <Suspense fallback={<RightSidebarSkeleton />}>
-            <RightSidebar className="order-3 lg:order-3" />
+            <RightSidebar />
           </Suspense>
         </div>
       </div>
     </>
   );
 }
-

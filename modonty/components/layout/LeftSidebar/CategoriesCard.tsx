@@ -31,7 +31,7 @@ export function CategoriesCard({ categories, currentCategorySlug, totalArticlesA
             <span className="text-[10px] text-muted-foreground">{totalArticlesAll}</span>
           </Link>
         </div>
-        <div className="space-y-2 flex-1 min-h-0 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+        <div className=" flex-1 min-h-0 overflow-y-auto py-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {categories.map((category) => (
             <CategoryLink
               key={category.id}

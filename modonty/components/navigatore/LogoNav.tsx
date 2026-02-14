@@ -18,6 +18,7 @@ export function LogoNav({ className }: LogoNavProps) {
         height={52}
         priority
         className={`object-contain h-7 w-auto md:h-[52px] ${className ?? ""}`}
+        style={{ height: "auto" }}
       />
     </Link>
   );

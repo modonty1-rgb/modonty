@@ -6,14 +6,12 @@ interface HeroNameRowProps {
 
 export function HeroNameRow({ clientName }: HeroNameRowProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
-        {clientName}
-      </h1>
+    <h1 className="flex items-center gap-2 flex-wrap text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+      {clientName}
       <CheckCircle2
         className="h-5 w-5 md:h-6 md:w-6 text-blue-500 flex-shrink-0"
         aria-label="موثق"
       />
-    </div>
+    </h1>
   );
 }

@@ -53,7 +53,6 @@ export default function RootLayout({
               {/* </Suspense> */}
               <main className="flex-1">{children}</main>
               <Footer />
-              {/* <Suspense fallback={<footer className="h-16 md:hidden border-t" />}> */}
               <MobileFooter activeSection="home" />
               {/* </Suspense> */}
             </div>

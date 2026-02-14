@@ -6,6 +6,11 @@ export async function SessionProviderWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch {
+    // e.g. no matching decryption secret (missing/changed AUTH_SECRET); render without session so deploy doesn't crash
+  }
   return <SessionProvider session={session}>{children}</SessionProvider>;
 }
