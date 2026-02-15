@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import { useState } from "react";
 
 interface NewsletterCTAProps {
@@ -39,29 +39,29 @@ export function NewsletterCTA({ clientId }: NewsletterCTAProps) {
   };
 
   return (
-    <Card className="mt-12 mb-8 hover:shadow-md transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold flex items-center gap-2">
-          <Mail className="h-5 w-5" />
-          اشترك في النشرة الإخبارية
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Card className="min-w-0 hover:shadow-md transition-shadow">
+      <CardContent className="p-4 flex flex-col gap-4">
+        <div className="flex items-center gap-2">
+          <Newspaper className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            اشترك في النشرة الإخبارية
+          </span>
+        </div>
         {subscribed ? (
           <p className="text-sm text-muted-foreground">
             شكراً لك! تم الاشتراك بنجاح.
           </p>
         ) : (
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
             <Input
               type="email"
               placeholder="البريد الإلكتروني"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1"
+              className="h-9 text-sm"
             />
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" size="sm" disabled={loading} className="w-full">
               {loading ? "جاري..." : "اشترك"}
             </Button>
           </form>

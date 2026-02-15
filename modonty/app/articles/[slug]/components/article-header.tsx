@@ -1,8 +1,4 @@
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { ArticleEngagementMetrics } from "./article-engagement-metrics";
-import { ArticleInteractionButtons } from "./article-interaction-buttons";
-import { ArticleUtilities } from "./client-only-utilities";
-import { ArticleShareButtons } from "./article-share-buttons";
 
 interface ArticleHeaderProps {
   title: string;
@@ -14,17 +10,6 @@ interface ArticleHeaderProps {
   createdAt: Date;
   readingTimeMinutes: number | null;
   wordCount: number | null;
-  commentsCount: number;
-  views: number;
-  userId?: string | null;
-  articleId: string;
-  articleSlug: string;
-  likes: number;
-  dislikes: number;
-  favorites: number;
-  userLiked: boolean;
-  userDisliked: boolean;
-  userFavorited: boolean;
 }
 
 export function ArticleHeader({
@@ -35,17 +20,6 @@ export function ArticleHeader({
   createdAt,
   readingTimeMinutes,
   wordCount,
-  commentsCount,
-  views,
-  userId,
-  articleId,
-  articleSlug,
-  likes,
-  dislikes,
-  favorites,
-  userLiked,
-  userDisliked,
-  userFavorited,
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
@@ -73,40 +47,6 @@ export function ArticleHeader({
         {wordCount && <span>📝 {wordCount} كلمة</span>}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 mb-4 flex-wrap">
-        <ArticleEngagementMetrics
-          comments={commentsCount}
-          views={views}
-        />
-        {userId && (
-          <ArticleInteractionButtons
-            articleId={articleId}
-            articleSlug={articleSlug}
-            initialLikes={likes}
-            initialDislikes={dislikes}
-            initialFavorites={favorites}
-            initialUserLiked={userLiked}
-            initialUserDisliked={userDisliked}
-            initialUserFavorited={userFavorited}
-          />
-        )}
-        <div className="sm:mr-auto">
-          <ArticleUtilities articleUrl="" />
-        </div>
-      </div>
-
-      <section aria-labelledby="share-article-heading">
-        <h2 id="share-article-heading" className="sr-only">شارك المقال</h2>
-        <div className="mb-6 flex items-center gap-3 flex-wrap">
-          <span className="text-sm font-semibold text-muted-foreground">شارك المقال:</span>
-          <ArticleShareButtons
-            title={title}
-            url=""
-            articleId={articleId}
-            hideCopyLink={true}
-          />
-        </div>
-      </section>
     </header>
   );
 }

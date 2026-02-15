@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, Bookmark, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, dislikeArticle, favoriteArticle } from "../actions/article-interactions";
 
@@ -15,6 +15,8 @@ interface ArticleInteractionButtonsProps {
   initialUserLiked?: boolean;
   initialUserDisliked?: boolean;
   initialUserFavorited?: boolean;
+  /** Compact layout: one line, icon-only smaller buttons */
+  compact?: boolean;
 }
 
 export function ArticleInteractionButtons({
@@ -26,8 +28,10 @@ export function ArticleInteractionButtons({
   initialUserLiked = false,
   initialUserDisliked = false,
   initialUserFavorited = false,
+  compact = false,
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -35,6 +39,8 @@ export function ArticleInteractionButtons({
   const [userDisliked, setUserDisliked] = useState(initialUserDisliked);
   const [userFavorited, setUserFavorited] = useState(initialUserFavorited);
   const [loading, setLoading] = useState<string | null>(null);
+
+  useEffect(() => setMounted(true), []);
 
   const handleLike = async () => {
     if (!session?.user || loading) return;
@@ -147,56 +153,67 @@ export function ArticleInteractionButtons({
     }
   };
 
+  const containerClass = `flex items-center ${compact ? "gap-1 flex-nowrap" : "gap-2 md:gap-3 flex-wrap"}`;
+
+  if (!mounted) {
+    return <div className={containerClass} aria-hidden />;
+  }
+
   if (!session?.user) {
     return null;
   }
 
+  const iconClass = compact ? "h-3.5 w-3.5 shrink-0" : "h-4 w-4 ml-2";
+  const btnClass = compact
+    ? "h-8 px-1.5 gap-0.5 text-xs shrink-0"
+    : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0";
+
   return (
-    <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+    <div className={containerClass}>
       <Button
         variant={userLiked ? "default" : "outline"}
-        size="sm"
+        size={compact ? "sm" : "sm"}
         onClick={handleLike}
         disabled={loading === "like"}
-        className="text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
+        className={btnClass}
         aria-label={loading === "like" ? "جاري التحديث..." : "إعجاب"}
       >
         {loading === "like" ? (
-          <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+          <Loader2 className={`${iconClass} animate-spin`} />
         ) : (
-          <ThumbsUp className={`h-4 w-4 ml-2 ${userLiked ? "fill-current" : ""}`} />
+          <ThumbsUp className={`${iconClass} ${userLiked ? "fill-current" : ""}`} />
         )}
-        {likes > 0 && <span className="ml-1">{likes}</span>}
+        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
       </Button>
       <Button
         variant={userDisliked ? "default" : "outline"}
-        size="sm"
+        size={compact ? "sm" : "sm"}
         onClick={handleDislike}
         disabled={loading === "dislike"}
-        className="text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
+        className={btnClass}
         aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
       >
         {loading === "dislike" ? (
-          <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+          <Loader2 className={`${iconClass} animate-spin`} />
         ) : (
-          <ThumbsDown className={`h-4 w-4 ml-2 ${userDisliked ? "fill-current" : ""}`} />
+          <ThumbsDown className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
         )}
-        {dislikes > 0 && <span className="ml-1">{dislikes}</span>}
+        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
       </Button>
       <Button
         variant={userFavorited ? "default" : "outline"}
-        size="sm"
+        size={compact ? "sm" : "sm"}
         onClick={handleFavorite}
         disabled={loading === "favorite"}
-        className="text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
+        className={btnClass}
         aria-label={loading === "favorite" ? "جاري التحديث..." : "حفظ"}
       >
         {loading === "favorite" ? (
-          <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+          <Loader2 className={`${iconClass} animate-spin`} />
         ) : (
-          <Bookmark className={`h-4 w-4 ml-2 ${userFavorited ? "fill-current" : ""}`} />
+          <Bookmark className={`${iconClass} ${userFavorited ? "fill-current" : ""}`} />
         )}
-        {favorites > 0 && <span className="ml-1">{favorites}</span>}
+        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{favorites}</span>
       </Button>
     </div>
   );

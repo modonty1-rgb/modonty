@@ -72,6 +72,11 @@ enum CommentStatus {
   DELETED
 }
 
+enum ArticleFAQStatus {
+  PENDING
+  PUBLISHED
+}
+
 enum ConversionType {
   SIGNUP
   CONTACT_FORM
@@ -916,13 +921,18 @@ model ArticleFAQ {
   article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   question String // Schema.org Question
-  answer   String // Schema.org Answer
+  answer   String? // Optional until client answers (reader submissions)
   position Int // Order in FAQ list
+  status   ArticleFAQStatus @default(PENDING) // PENDING until client answers, then PUBLISHED
+
+  submittedByName  String? // Set for reader submissions
+  submittedByEmail String? // Set for reader submissions
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([articleId, position])
+  @@index([articleId, status])
   @@map("faqs")
 }
 

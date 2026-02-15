@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "@/components/link";
 import { cn } from "@/lib/utils";
 
 interface Heading {

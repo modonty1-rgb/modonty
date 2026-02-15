@@ -83,7 +83,7 @@ export function ArticleShareButtons({ title, url, articleId, hideCopyLink = fals
   };
 
   return (
-    <div className="flex items-center gap-2 md:gap-3">
+    <div className="flex items-center gap-2 flex-wrap">
       <Button
         variant="outline"
         size="sm"

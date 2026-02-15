@@ -1,15 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
-import { MessageCircle, Reply, LogIn, ThumbsUp, ThumbsDown, User, AlertCircle } from "lucide-react";
-import { CommentForm } from "./comment-form";
-import Link from "@/components/link";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Reply, ThumbsUp, ThumbsDown, User, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { CommentForm } from "../comment-form";
 import { useRouter } from "next/navigation";
-import { submitComment, submitReply, likeComment, dislikeComment, approveComment, approveAllCommentsForArticle } from "../actions/comment-actions";
+import { submitComment, submitReply, likeComment, dislikeComment, approveComment, approveAllCommentsForArticle } from "../../actions/comment-actions";
 
 interface Comment {
   id: string;
@@ -42,7 +47,16 @@ interface ArticleCommentsProps {
 export function ArticleComments({ comments: initialComments, articleId, articleSlug, userId }: ArticleCommentsProps) {
   const [comments, setComments] = useState(initialComments);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const router = useRouter(); 
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const router = useRouter();
+
+  const uniqueCommenters = useMemo(() => {
+    const seen = new Set<string>();
+    return comments
+      .filter((c) => c.author?.id && !seen.has(c.author.id) && seen.add(c.author.id))
+      .map((c) => c.author!)
+      .slice(0, 5);
+  }, [comments]); 
 
 
   const handleCommentSubmit = async (content: string) => {
@@ -323,59 +337,82 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
   };
 
   return (
-    <section id="article-comments" className="my-8 md:my-12">
-      <div className="flex items-center justify-between gap-2 mb-6">
-        <div className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          <h2 className="text-xl font-semibold">التعليقات ({comments.length})</h2>
-        </div>
-        
-        {process.env.NODE_ENV === 'development' && (
-          <Button
-            onClick={handleApproveAll}
-            variant="outline"
-            size="sm"
-            className="gap-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
-          >
-            <span className="text-xs">✓ Approve All (Dev)</span>
-          </Button>
-        )}
-      </div>
-
-      {/* Comment Form - Show if user is authenticated */}
-      {userId ? (
-        <div className="mb-8">
-          <CommentForm
-            onSubmit={handleCommentSubmit}
-            onSuccess={handleSuccess}
-            placeholder="اكتب تعليقك هنا..."
-            submitLabel="إرسال التعليق"
-          />
-        </div>
-      ) : (
-        <div className="mb-8 rounded-lg bg-muted/30 p-6 text-center">
-          <LogIn className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground mb-4">
-            يرجى تسجيل الدخول لإضافة تعليق
-          </p>
-          <Button variant="default">
-            <Link href="/users/login">تسجيل الدخول</Link>
-          </Button>
-        </div>
-      )}
-
-      {/* Comments List */}
-      {comments.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">لا توجد تعليقات بعد. كن أول من يعلق!</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {comments.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
-          ))}
-        </div>
-      )}
+    <section id="article-comments" className="my-2 md:my-3">
+      <Card className="min-w-0">
+        <CardContent className="p-4 flex flex-col gap-4">
+          <Collapsible open={commentsOpen} onOpenChange={setCommentsOpen}>
+            <CollapsibleTrigger asChild>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-2 rounded-md hover:bg-muted/50 p-2 -m-2 transition-colors text-right"
+                aria-expanded={commentsOpen}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-end">
+                    <h2 className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
+                      التعليقات ({comments.length.toLocaleString("ar-SA")})
+                    </h2>
+                    <span className="text-xs text-muted-foreground">
+                      {commentsOpen ? "انقر للإخفاء" : "انقر لعرض التعليقات"}
+                    </span>
+                  </div>
+                  {uniqueCommenters.length > 0 && (
+                    <div className="flex shrink-0 [&>*]:ring-2 [&>*]:ring-background [&>*]:rounded-full" dir="ltr">
+                      {uniqueCommenters.map((author) => (
+                        <Avatar
+                          key={author.id}
+                          className={cn("h-6 w-6 -ml-2 first:ml-0 border-0")}
+                        >
+                          {author.image ? (
+                            <>
+                              <AvatarImage src={author.image} alt={author.name ?? undefined} />
+                              <AvatarFallback className="text-[10px]">
+                                {author.name?.charAt(0) ?? <User className="h-3 w-3" />}
+                              </AvatarFallback>
+                            </>
+                          ) : (
+                            <AvatarFallback className="text-[10px]">
+                              {author.name?.charAt(0) ?? <User className="h-3 w-3" />}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <span className="shrink-0 text-muted-foreground" aria-hidden>
+                  {commentsOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </span>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mb-4">
+                  <Button
+                    onClick={handleApproveAll}
+                    variant="outline"
+                    size="sm"
+                    className="gap-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
+                  >
+                    <span className="text-xs">✓ Approve All (Dev)</span>
+                  </Button>
+                </div>
+              )}
+              {comments.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground">لا توجد تعليقات بعد. كن أول من يعلق!</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {comments.map((comment) => (
+                    <CommentItem key={comment.id} comment={comment} />
+                  ))}
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        </CardContent>
+      </Card>
     </section>
   );
 }

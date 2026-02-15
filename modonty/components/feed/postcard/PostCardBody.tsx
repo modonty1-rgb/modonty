@@ -1,6 +1,7 @@
 import Link from "@/components/link";
 import type { PostCardProps } from "./PostCard.types";
 import { PostCardHeroImage } from "./PostCardHeroImage";
+import { ChevronLeft } from "lucide-react";
 
 export function PostCardBody({ post, priority, isLcp, index }: PostCardProps) {
   return (
@@ -28,6 +29,16 @@ export function PostCardBody({ post, priority, isLcp, index }: PostCardProps) {
         isLcp={isLcp}
         index={index}
       />
+      <div className="flex items-center justify-end">
+        <Link
+          href={`/articles/${post.slug}`}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary  hover:underline "
+        >
+          اقرأ المزيد
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+        </Link>
+      </div>
+      
     </>
   );
 }

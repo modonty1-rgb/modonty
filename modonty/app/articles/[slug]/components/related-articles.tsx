@@ -1,238 +1,104 @@
-import { connection } from "next/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { Card } from "@/components/ui/card";
+import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { db } from "@/lib/db";
-import { ArticleStatus } from "@prisma/client";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  MessageCircle,
+  HelpCircle,
+  Sparkles,
+} from "lucide-react";
 
-interface RelatedArticlesProps {
-  currentArticleId: string;
-  categoryId: string | null;
-  tagIds?: string[];
-  limit?: number;
+interface RelatedArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  datePublished: Date | null;
+  createdAt: Date;
+  featuredImage?: { url: string; altText: string | null } | null;
+  client: { name: string; slug: string };
+  likesCount: number;
+  dislikesCount: number;
+  commentsCount: number;
+  questionsCount: number;
 }
 
-export async function RelatedArticles({
-  currentArticleId,
-  categoryId,
-  tagIds = [],
-  limit = 3,
-}: RelatedArticlesProps) {
-  try {
-    await connection();
-    // Build where clause for related articles
-    const whereConditions: any = {
-      id: { not: currentArticleId },
-      status: ArticleStatus.PUBLISHED,
-      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-    };
+interface RelatedArticlesProps {
+  relatedArticles: RelatedArticle[];
+}
 
-    // Try to find articles with same tags first (if tags exist)
-    let relatedArticles: any[] = [];
-    
-    if (tagIds.length > 0) {
-      relatedArticles = await db.article.findMany({
-        where: {
-          ...whereConditions,
-          tags: {
-            some: {
-              tagId: { in: tagIds },
-            },
-          },
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          excerpt: true,
-          datePublished: true,
-          createdAt: true,
-          featuredImage: {
-            select: {
-              url: true,
-              altText: true,
-            },
-          },
-          client: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          category: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          _count: {
-            select: {
-              views: true,
-            },
-          },
-        },
-        orderBy: [
-          { datePublished: "desc" },
-          { createdAt: "desc" },
-        ],
-        take: limit,
-      });
-    }
+export function RelatedArticles({ relatedArticles }: RelatedArticlesProps) {
+  if (relatedArticles.length === 0) return null;
 
-    // If not enough articles with tags, fill with same category
-    if (relatedArticles.length < limit && categoryId) {
-      const additionalArticles = await db.article.findMany({
-        where: {
-          ...whereConditions,
-          categoryId,
-          id: {
-            not: currentArticleId,
-            notIn: relatedArticles.map((a) => a.id),
-          },
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          excerpt: true,
-          datePublished: true,
-          createdAt: true,
-          featuredImage: {
-            select: {
-              url: true,
-              altText: true,
-            },
-          },
-          client: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          category: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          _count: {
-            select: {
-              views: true,
-            },
-          },
-        },
-        orderBy: [
-          { datePublished: "desc" },
-          { createdAt: "desc" },
-        ],
-        take: limit - relatedArticles.length,
-      });
-
-      relatedArticles = [...relatedArticles, ...additionalArticles];
-    }
-
-    // If still not enough, get most recent articles
-    if (relatedArticles.length < limit) {
-      const additionalArticles = await db.article.findMany({
-        where: {
-          ...whereConditions,
-          id: {
-            not: currentArticleId,
-            notIn: relatedArticles.map((a) => a.id),
-          },
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          excerpt: true,
-          datePublished: true,
-          createdAt: true,
-          featuredImage: {
-            select: {
-              url: true,
-              altText: true,
-            },
-          },
-          client: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          category: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-          _count: {
-            select: {
-              views: true,
-            },
-          },
-        },
-        orderBy: [
-          { datePublished: "desc" },
-          { createdAt: "desc" },
-        ],
-        take: limit - relatedArticles.length,
-      });
-
-      relatedArticles = [...relatedArticles, ...additionalArticles];
-    }
-
-    if (relatedArticles.length === 0) {
-      return null;
-    }
-
-    return (
-      <section className="my-8 md:my-12" aria-labelledby="related-articles-heading">
-        <h2 id="related-articles-heading" className="text-xl font-semibold mb-6">
-          مقالات قد تهمك
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {relatedArticles.map((article) => (
-            <Link key={article.id} href={`/articles/${article.slug}`}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                {article.featuredImage && (
-                  <div className="aspect-video w-full overflow-hidden rounded-t-lg relative">
-                    <OptimizedImage
-                      src={article.featuredImage.url}
-                      alt={article.featuredImage.altText || article.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  </div>
+  return (
+    <ArticleSectionCollapsible
+      title="مقالات قد تهمك"
+      headingId="related-articles-heading"
+      icon={Sparkles}
+    >
+      {relatedArticles.map((article) => (
+        <Link key={article.id} href={`/articles/${article.slug}`} className="h-full block">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
+            <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">
+                  في {article.client.name}
+                </p>
+                <h3 className="font-semibold text-foreground text-base leading-snug line-clamp-1">
+                  {article.title}
+                </h3>
+                {article.excerpt && (
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                    {article.excerpt}
+                  </p>
                 )}
-                <CardHeader>
-                  <CardTitle className="line-clamp-2 text-base font-semibold">
-                    {article.title}
-                  </CardTitle>
-                  {article.excerpt && (
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
-                      {article.excerpt}
-                    </p>
-                  )}
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{article.client.name}</span>
-                    <RelativeTime
-                      date={article.datePublished ?? article.createdAt}
-                      dateTime={(article.datePublished ?? article.createdAt).toISOString()}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-    );
-  } catch (error) {
-    return null;
-  }
+              </div>
+              <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mt-2 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="flex items-center gap-1" aria-label="الإعجابات">
+                    <ThumbsUp className="h-3.5 w-3.5 shrink-0" />
+                    <span className="tabular-nums">{article.likesCount.toLocaleString("ar-SA")}</span>
+                  </span>
+                  <span className="flex items-center gap-1" aria-label="عدم الإعجاب">
+                    <ThumbsDown className="h-3.5 w-3.5 shrink-0" />
+                    <span className="tabular-nums">{article.dislikesCount.toLocaleString("ar-SA")}</span>
+                  </span>
+                  <span className="flex items-center gap-1" aria-label="التعليقات">
+                    <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+                    <span className="tabular-nums">{article.commentsCount.toLocaleString("ar-SA")}</span>
+                  </span>
+                  <span className="flex items-center gap-1" aria-label="الأسئلة">
+                    <HelpCircle className="h-3.5 w-3.5 shrink-0" />
+                    <span className="tabular-nums">{article.questionsCount.toLocaleString("ar-SA")}</span>
+                  </span>
+                </div>
+                <RelativeTime
+                  date={article.datePublished ?? article.createdAt}
+                  dateTime={(article.datePublished ?? article.createdAt).toISOString()}
+                />
+              </div>
+            </div>
+            {article.featuredImage ? (
+              <div className="flex-[0_0_20%] aspect-square relative overflow-hidden bg-muted">
+                <OptimizedImage
+                  src={article.featuredImage.url}
+                  alt={article.featuredImage.altText || article.title}
+                  fill
+                  className="object-cover"
+                  sizes="20vw"
+                />
+              </div>
+            ) : (
+              <div className="flex-[0_0_20%] aspect-square bg-muted" />
+            )}
+          </Card>
+        </Link>
+      ))}
+    </ArticleSectionCollapsible>
+  );
 }

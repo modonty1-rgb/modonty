@@ -39,7 +39,10 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
       )}
       {tags.map((articleTag) => (
         <Link key={articleTag.tag.id} href={`/tags/${articleTag.tag.slug}`}>
-          <Badge variant="outline" className="text-sm flex items-center gap-1.5">
+          <Badge
+            variant="outline"
+            className="text-sm flex items-center gap-1.5 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 transition-colors"
+          >
             <Tag className="h-3.5 w-3.5" />
             {articleTag.tag.name}
           </Badge>

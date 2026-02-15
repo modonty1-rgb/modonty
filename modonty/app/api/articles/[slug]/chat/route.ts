@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ArticleStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getArticleForChat, getArticlesForOutOfScopeSearch } from "@/app/articles/[slug]/helpers/article-data";
+import { getArticleForChat, getArticlesForOutOfScopeSearch } from "@/app/articles/[slug]/actions/article-data";
 import { chunkArticleContent } from "@/lib/rag/chunk";
 import { retrieveFromChunks } from "@/lib/rag/retrieve";
 import { isOutOfScope } from "@/lib/rag/scope";

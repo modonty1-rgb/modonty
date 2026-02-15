@@ -1,77 +1,51 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { cacheTag, cacheLife } from "next/cache";
-import { db } from "@/lib/db";
-import { ArticleStatus } from "@prisma/client";
+import dynamic from "next/dynamic";
+import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO } from "@/lib/seo";
+import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
 import { GTMClientTracker } from "@/components/gtm/GTMClientTracker";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import dynamic from "next/dynamic";
+
 import {
+  getArticleSlugsForStaticParams,
   getArticleBySlug,
-  getArticleComments,
   getRelatedArticlesByAuthor,
   getRelatedArticlesByClient,
-  getUserArticleInteractions,
-} from "./helpers/article-data";
-import { getArticleForMetadata } from "./helpers/article-metadata";
-import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
-import { ArticleHeader } from "./components/article-header";
-import { ArticleTags } from "./components/article-tags";
-import { ArticleFeaturedImage } from "./components/article-featured-image";
-import { ArticleAuthorBio } from "./components/article-author-bio";
-import { ArticleImageGallery } from "./components/article-image-gallery";
-import { ArticleFaq } from "./components/article-faq";
-import { ArticleCitations } from "./components/article-citations";
-import { ArticleManualRelated } from "./components/article-manual-related";
-import { ArticleFooter } from "./components/article-footer";
-import { ArticleComments } from "./components/article-comments";
-import { MoreFromAuthor } from "./components/more-from-author";
-import { MoreFromClient } from "./components/more-from-client";
-import { RelatedArticles } from "./components/related-articles";
-import { auth } from "@/lib/auth";
+  getRelatedArticlesByCategoryTags,
+  getArticleForMetadata,
+  getPendingFaqsForCurrentUser,
+} from "./actions";
+import {
+  ArticleHeader,
+  ArticleTags,
+  ArticleFeaturedImage,
+  ArticleAuthorBio,
+  ArticleImageGallery,
+  ArticleFaq,
+  ArticleCitations,
+  ArticleManualRelated,
+  ArticleFooter,
+  ArticleComments,
+  MoreFromAuthor,
+  MoreFromClient,
+  RelatedArticles,
+  ReadingProgressBar,
+  ArticleTableOfContents,
+  ArticleSidebarEngagement,
+  ArticleClientCard,
+  CommentFormDialog,
+} from "./components";
 import ArticleLoading from "./loading";
 
-// Components that need client-side hydration but should SSR:
-const ArticleShareButtons = dynamic(
-  () => import("./components/article-share-buttons").then((mod) => ({ default: mod.ArticleShareButtons })),
-  { ssr: true }
-);
-
-const ArticleInteractionButtons = dynamic(
-  () => import("./components/article-interaction-buttons").then((mod) => ({ default: mod.ArticleInteractionButtons })),
-  { ssr: true }
-);
-
 const NewsletterCTA = dynamic(
-  () => import("./components/newsletter-cta").then((mod) => ({ default: mod.NewsletterCTA })),
+  () => import("./components/sidebar/newsletter-cta").then((mod) => ({ default: mod.NewsletterCTA })),
   { ssr: true }
 );
-
-// Components that can skip SSR (browser-only features):
-import { ReadingProgressBar } from "./components/client-only-reading-progress";
-import { ArticleTableOfContents } from "./components/client-only-table-of-contents";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
-}
-
-async function getArticleSlugsForStaticParams() {
-  "use cache";
-  cacheTag("articles");
-  cacheLife("hours");
-  return db.article.findMany({
-    where: {
-      status: ArticleStatus.PUBLISHED,
-      OR: [
-        { datePublished: null },
-        { datePublished: { lte: new Date() } },
-      ],
-    },
-    select: { slug: true },
-    take: 100,
-  });
 }
 
 export async function generateStaticParams() {
@@ -90,7 +64,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
 
-    const article = await getArticleForMetadata(slug);
+    const [article, articleDefaults] = await Promise.all([
+      getArticleForMetadata(slug),
+      getArticleDefaultsFromSettings(),
+    ]);
 
     if (!article) {
       return {
@@ -108,8 +85,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     }
 
     const articleForGeneration = article;
-
-    const articleDefaults = await getArticleDefaultsFromSettings();
 
     const title = articleForGeneration.seoTitle || articleForGeneration.title;
     const description = articleForGeneration.seoDescription || articleForGeneration.excerpt || "";
@@ -191,37 +166,32 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
 
-  const session = await auth();
-  const userId = session?.user?.id;
-
   try {
-    const [articleRaw, articleDefaults] = await Promise.all([
-      getArticleBySlug(slug),
+    const [session, articleDefaults] = await Promise.all([
+      auth(),
       getArticleDefaultsFromSettings(),
     ]);
+    const userId = session?.user?.id;
 
+    const articleRaw = await getArticleBySlug(slug, userId);
     if (!articleRaw) {
       notFound();
     }
     const article = { ...articleRaw, ...articleDefaults };
 
-    const [comments, moreFromAuthor, moreFromClient] = await Promise.all([
-      getArticleComments(article.id),
+    const [moreFromAuthor, moreFromClient, relatedArticlesData, pendingFaqs] = await Promise.all([
       getRelatedArticlesByAuthor(article.authorId, article.id),
       getRelatedArticlesByClient(article.clientId, article.id),
+      getRelatedArticlesByCategoryTags(
+        article.id,
+        article.categoryId,
+        (article.tags ?? []).map((t: { tagId: string }) => t.tagId),
+        3
+      ),
+      session?.user?.email
+        ? getPendingFaqsForCurrentUser(article.id).catch(() => [])
+        : Promise.resolve([]),
     ]);
-
-    let userLiked = false;
-    let userDisliked = false;
-    let userFavorited = false;
-
-    if (userId) {
-      const interactions = await getUserArticleInteractions(article.id, userId);
-      userLiked = interactions.liked;
-      userDisliked = interactions.disliked;
-      userFavorited = interactions.favorited;
-    }
-
 
     // Get cached JSON-LD from database (Phase 6)
     let jsonLdGraph: object | null = null;
@@ -268,8 +238,42 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             ]}
           />
           <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
-            <div className="flex flex-col lg:flex-row lg:justify-center lg:items-start gap-6 md:gap-8">
-              <div className="w-full">
+            <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
+              {/* Left sidebar – مشاركة وتفاعل + العميل */}
+              <aside className="hidden lg:flex w-[240px] min-w-0 shrink-0 flex-col gap-6" role="complementary" aria-label="مشاركة وتفاعل">
+                <div className="sticky top-[3.5rem] flex flex-col gap-6">
+                  {article.client ? (
+                    <ArticleClientCard
+                      client={article.client}
+                      askClientProps={{
+                        articleId: article.id,
+                        clientId: article.clientId,
+                        articleTitle: article.title,
+                        user: session?.user
+                          ? { name: session.user.name ?? null, email: session.user.email ?? null }
+                          : null,
+                        pendingFaqs,
+                      }}
+                    />
+                  ) : null}
+                  <ArticleSidebarEngagement
+                    title={article.title}
+                    articleId={article.id}
+                    articleSlug={article.slug}
+                    commentsCount={article.comments.length}
+                    views={article._count.views}
+                    questionsCount={article.faqs.length}
+                    userId={userId}
+                    likes={article._count.likes}
+                    dislikes={article._count.dislikes}
+                    favorites={article._count.favorites}
+                    userLiked={article.userLiked}
+                    userDisliked={article.userDisliked}
+                    userFavorited={article.userFavorited}
+                  />
+                </div>
+              </aside>
+              <div className="w-full min-w-0">
 
                 {/* Article content - JSON-LD is source of truth (no Microdata) */}
                 <article>
@@ -281,17 +285,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     createdAt={article.createdAt}
                     readingTimeMinutes={article.readingTimeMinutes}
                     wordCount={article.wordCount}
-                    commentsCount={comments.length}
-                    views={article._count.views}
-                    userId={userId}
-                    articleId={article.id}
-                    articleSlug={article.slug}
-                    likes={article._count.likes}
-                    dislikes={article._count.dislikes}
-                    favorites={article._count.favorites}
-                    userLiked={userLiked}
-                    userDisliked={userDisliked}
-                    userFavorited={userFavorited}
                   />
 
                   {article.featuredImage && (
@@ -314,24 +307,17 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     dangerouslySetInnerHTML={{ __html: article.content }}
                   />
 
-                  <ArticleAuthorBio author={article.author} />
-
                   <ArticleImageGallery gallery={article.gallery} />
 
-                  <ArticleFaq faqs={article.faqs} />
-
-                  <ArticleCitations citations={article.citations} />
+                  <ArticleFaq faqs={article.faqs} pendingFaqs={pendingFaqs} />
 
                   {/* Comments Section */}
                   <ArticleComments
-                    comments={comments}
+                    comments={article.comments}
                     articleId={article.id}
                     articleSlug={article.slug}
                     userId={userId}
                   />
-
-                  {/* Newsletter CTA */}
-                  <NewsletterCTA clientId={article.clientId} />
 
                   {/* More from Author */}
                   {moreFromAuthor.length > 0 && (
@@ -346,12 +332,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <ArticleManualRelated relatedArticles={article.relatedTo} />
 
                   {/* Automatic Related Articles (based on category/tags) */}
-                  <RelatedArticles
-                    currentArticleId={article.id}
-                    categoryId={article.categoryId}
-                    tagIds={article.tags.map((t: any) => t.tagId)}
-                    limit={3}
-                  />
+                  <RelatedArticles relatedArticles={relatedArticlesData} />
 
                   <ArticleFooter
                     client={article.client}
@@ -363,8 +344,24 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 </article>
               </div>
 
-              {/* Sidebar - Table of Contents */}
-              <aside className="hidden lg:block lg:max-w-[280px]" role="complementary" aria-label="جدول المحتويات">
+              {/* Right sidebar – author, TOC, etc. */}
+              <aside className="hidden lg:flex min-w-0 flex-col gap-6" role="complementary" aria-label="جدول المحتويات">
+                <div className="[&_section]:my-0">
+                  <ArticleAuthorBio author={article.author} />
+                </div>
+                {article.citations?.length ? (
+                  <div className="[&_section]:my-0">
+                    <ArticleCitations citations={article.citations} />
+                  </div>
+                ) : null}
+                <div className="[&>div]:mt-0 [&>div]:mb-0">
+                  <NewsletterCTA clientId={article.clientId} />
+                </div>
+                <CommentFormDialog
+                  articleId={article.id}
+                  articleSlug={article.slug}
+                  userId={userId}
+                />
                 <ArticleTableOfContents content={article.content} />
               </aside>
             </div>
