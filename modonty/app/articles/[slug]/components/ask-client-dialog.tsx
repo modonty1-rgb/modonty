@@ -19,8 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { askClientSchema, type AskClientFormData } from "../helpers/schemas/ask-client-schema";
-import { submitAskClient } from "../actions/ask-client-actions";
+import { submitAskClient, fetchPendingFaqsForArticle } from "../actions/ask-client-actions";
 import { Badge } from "@/components/ui/badge";
 
 interface PendingFaq {
@@ -44,7 +45,7 @@ export function AskClientDialog({
   clientId,
   articleTitle,
   user,
-  pendingFaqs = [],
+  pendingFaqs: pendingFaqsProp,
   embedInCard = false,
 }: AskClientDialogProps) {
   const router = useRouter();
@@ -52,6 +53,31 @@ export function AskClientDialog({
   const [pendingOpen, setPendingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pendingFaqsLocal, setPendingFaqsLocal] = useState<PendingFaq[] | null>(null);
+  const [pendingLoading, setPendingLoading] = useState(false);
+  const [pendingError, setPendingError] = useState<string | null>(null);
+
+  const pendingFaqs = pendingFaqsProp ?? pendingFaqsLocal ?? [];
+  const useLazyPending = pendingFaqsProp === undefined;
+
+  useEffect(() => {
+    if (!pendingOpen || !useLazyPending || !user?.email) return;
+    setPendingLoading(true);
+    setPendingError(null);
+    fetchPendingFaqsForArticle(articleId)
+      .then(setPendingFaqsLocal)
+      .catch(() => setPendingError("فشل تحميل الأسئلة المعلقة"))
+      .finally(() => setPendingLoading(false));
+  }, [pendingOpen, useLazyPending, articleId, user?.email]);
+
+  const retryPending = () => {
+    setPendingError(null);
+    setPendingLoading(true);
+    fetchPendingFaqsForArticle(articleId)
+      .then(setPendingFaqsLocal)
+      .catch(() => setPendingError("فشل تحميل الأسئلة المعلقة"))
+      .finally(() => setPendingLoading(false));
+  };
 
   const isLoggedIn = Boolean(user?.email);
 
@@ -88,12 +114,16 @@ export function AskClientDialog({
     }
     reset();
     setOpen(false);
+    if (useLazyPending) {
+      const next = await fetchPendingFaqsForArticle(articleId);
+      setPendingFaqsLocal(Array.isArray(next) ? next : []);
+    }
     router.refresh();
   };
 
   const content = (
     <>
-      {pendingFaqs.length > 0 && (
+      {isLoggedIn && (
         <Dialog open={pendingOpen} onOpenChange={setPendingOpen}>
           <Button
             variant="ghost"
@@ -102,25 +132,40 @@ export function AskClientDialog({
             type="button"
             onClick={() => setPendingOpen(true)}
           >
-            أسئلتك المعلقة ({pendingFaqs.length})
+            أسئلتك المعلقة{pendingFaqs.length > 0 ? ` (${pendingFaqs.length})` : ""}
           </Button>
           <DialogContent className="sm:max-w-md" dir="rtl">
             <DialogHeader>
               <DialogTitle>أسئلتك المعلقة</DialogTitle>
               <DialogDescription>الأسئلة التي أرسلتها وتنتظر الرد.</DialogDescription>
             </DialogHeader>
-            <ul className="space-y-2 max-h-[60vh] overflow-y-auto">
-              {pendingFaqs.map((faq) => (
-                <li key={faq.id}>
-                  <Card className="p-3">
-                    <p className="text-sm text-foreground">{faq.question}</p>
-                    <Badge variant="secondary" className="mt-2 text-xs">
-                      قيد المراجعة
-                    </Badge>
-                  </Card>
-                </li>
-              ))}
-            </ul>
+            {pendingLoading ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-16 w-full rounded-md" />
+                ))}
+              </div>
+            ) : pendingError ? (
+              <div className="py-4 text-center">
+                <p className="text-sm text-destructive mb-2">{pendingError}</p>
+                <Button variant="outline" size="sm" onClick={retryPending}>إعادة المحاولة</Button>
+              </div>
+            ) : pendingFaqs.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-2">لا توجد أسئلة معلقة</p>
+            ) : (
+              <ul className="space-y-2 max-h-[60vh] overflow-y-auto">
+                {pendingFaqs.map((faq) => (
+                  <li key={faq.id}>
+                    <Card className="p-3">
+                      <p className="text-sm text-foreground">{faq.question}</p>
+                      <Badge variant="secondary" className="mt-2 text-xs">
+                        قيد المراجعة
+                      </Badge>
+                    </Card>
+                  </li>
+                ))}
+              </ul>
+            )}
           </DialogContent>
         </Dialog>
       )}

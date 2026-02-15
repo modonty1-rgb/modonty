@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { cn } from "@/lib/utils";
 import {
@@ -15,6 +16,7 @@ import { Reply, ThumbsUp, ThumbsDown, User, AlertCircle, ChevronDown, ChevronUp 
 import { CommentForm } from "../comment-form";
 import { useRouter } from "next/navigation";
 import { submitComment, submitReply, likeComment, dislikeComment, approveComment, approveAllCommentsForArticle } from "../../actions/comment-actions";
+import { fetchArticleComments } from "../../actions/article-lazy-actions";
 
 interface Comment {
   id: string;
@@ -39,16 +41,34 @@ interface Comment {
 
 interface ArticleCommentsProps {
   comments: Comment[];
+  commentsCount: number;
   articleId: string;
   articleSlug: string;
   userId?: string | null;
 }
 
-export function ArticleComments({ comments: initialComments, articleId, articleSlug, userId }: ArticleCommentsProps) {
+export function ArticleComments({ comments: initialComments, commentsCount, articleId, articleSlug, userId }: ArticleCommentsProps) {
   const [comments, setComments] = useState(initialComments);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fetched, setFetched] = useState(initialComments.length > 0);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!commentsOpen || fetched) return;
+    setLoading(true);
+    setError(null);
+    fetchArticleComments(articleId, userId ?? undefined)
+      .then((data) => {
+        setComments(Array.isArray(data) ? data : []);
+        setFetched(true);
+      })
+      .catch(() => setError("فشل تحميل التعليقات"))
+      .finally(() => setLoading(false));
+  }, [commentsOpen, fetched, articleId, userId]);
+
+  const retryComments = () => { setFetched(false); setError(null); };
 
   const uniqueCommenters = useMemo(() => {
     const seen = new Set<string>();
@@ -125,7 +145,8 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
       }
 
     } catch (error) {
-      setComments(initialComments);
+      const data = await fetchArticleComments(articleId, userId ?? undefined);
+      setComments(Array.isArray(data) ? data : []);
     }
   };
 
@@ -180,7 +201,8 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
       }
 
     } catch (error) {
-      setComments(initialComments);
+      const data = await fetchArticleComments(articleId, userId ?? undefined);
+      setComments(Array.isArray(data) ? data : []);
     }
   };
 
@@ -350,7 +372,7 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-end">
                     <h2 className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
-                      التعليقات ({comments.length.toLocaleString("ar-SA")})
+                      التعليقات ({(fetched ? comments.length : commentsCount).toLocaleString("ar-SA")})
                     </h2>
                     <span className="text-xs text-muted-foreground">
                       {commentsOpen ? "انقر للإخفاء" : "انقر لعرض التعليقات"}
@@ -398,7 +420,27 @@ export function ArticleComments({ comments: initialComments, articleId, articleS
                   </Button>
                 </div>
               )}
-              {comments.length === 0 ? (
+              {loading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="rounded-lg border bg-card p-3">
+                      <div className="flex items-start gap-2">
+                        <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : error ? (
+                <div className="py-6 text-center">
+                  <p className="text-sm text-destructive mb-2">{error}</p>
+                  <Button variant="outline" size="sm" onClick={retryComments}>إعادة المحاولة</Button>
+                </div>
+              ) : comments.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-sm text-muted-foreground">لا توجد تعليقات بعد. كن أول من يعلق!</p>
                 </div>

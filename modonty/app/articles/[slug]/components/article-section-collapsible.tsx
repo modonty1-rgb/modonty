@@ -16,6 +16,8 @@ interface ArticleSectionCollapsibleProps {
   icon: LucideIcon;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function ArticleSectionCollapsible({
@@ -23,9 +25,14 @@ export function ArticleSectionCollapsible({
   headingId,
   icon: Icon,
   children,
-  defaultOpen = true,
+  defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: ArticleSectionCollapsibleProps) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const isControlled = controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
   return (
     <section className="my-2 md:my-3" aria-labelledby={headingId}>

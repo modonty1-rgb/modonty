@@ -91,3 +91,8 @@ export async function getPendingFaqsForCurrentUser(
   });
   return list;
 }
+
+/** For lazy-load: fetch pending FAQs for the current user on this article. */
+export async function fetchPendingFaqsForArticle(articleId: string) {
+  return getPendingFaqsForCurrentUser(articleId);
+}

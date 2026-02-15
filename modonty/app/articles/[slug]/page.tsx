@@ -10,12 +10,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
 import {
   getArticleSlugsForStaticParams,
-  getArticleBySlug,
-  getRelatedArticlesByAuthor,
-  getRelatedArticlesByClient,
-  getRelatedArticlesByCategoryTags,
+  getArticleBySlugMinimal,
   getArticleForMetadata,
-  getPendingFaqsForCurrentUser,
 } from "./actions";
 import {
   ArticleHeader,
@@ -173,25 +169,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     ]);
     const userId = session?.user?.id;
 
-    const articleRaw = await getArticleBySlug(slug, userId);
+    const articleRaw = await getArticleBySlugMinimal(slug, userId);
     if (!articleRaw) {
       notFound();
     }
     const article = { ...articleRaw, ...articleDefaults };
-
-    const [moreFromAuthor, moreFromClient, relatedArticlesData, pendingFaqs] = await Promise.all([
-      getRelatedArticlesByAuthor(article.authorId, article.id),
-      getRelatedArticlesByClient(article.clientId, article.id),
-      getRelatedArticlesByCategoryTags(
-        article.id,
-        article.categoryId,
-        (article.tags ?? []).map((t: { tagId: string }) => t.tagId),
-        3
-      ),
-      session?.user?.email
-        ? getPendingFaqsForCurrentUser(article.id).catch(() => [])
-        : Promise.resolve([]),
-    ]);
 
     // Get cached JSON-LD from database (Phase 6)
     let jsonLdGraph: object | null = null;
@@ -252,7 +234,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                         user: session?.user
                           ? { name: session.user.name ?? null, email: session.user.email ?? null }
                           : null,
-                        pendingFaqs,
                       }}
                     />
                   ) : null}
@@ -260,9 +241,9 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     title={article.title}
                     articleId={article.id}
                     articleSlug={article.slug}
-                    commentsCount={article.comments.length}
+                    commentsCount={article._count.comments}
                     views={article._count.views}
-                    questionsCount={article.faqs.length}
+                    questionsCount={article._count.faqs}
                     userId={userId}
                     likes={article._count.likes}
                     dislikes={article._count.dislikes}
@@ -309,30 +290,42 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
                   <ArticleImageGallery gallery={article.gallery} />
 
-                  <ArticleFaq faqs={article.faqs} pendingFaqs={pendingFaqs} />
+                  <ArticleFaq
+                    articleId={article.id}
+                    faqsCount={article._count.faqs}
+                  />
 
-                  {/* Comments Section */}
+                  {/* Comments (lazy-loaded on open) */}
                   <ArticleComments
                     comments={article.comments}
+                    commentsCount={article._count.comments}
                     articleId={article.id}
                     articleSlug={article.slug}
                     userId={userId}
                   />
 
-                  {/* More from Author */}
-                  {moreFromAuthor.length > 0 && (
-                    <MoreFromAuthor articles={moreFromAuthor} authorName={article.author.name} />
+                  {/* More from Author (lazy-loaded on open) */}
+                  {article.author && (
+                    <MoreFromAuthor
+                      authorId={article.authorId}
+                      articleId={article.id}
+                      authorName={article.author.name}
+                    />
                   )}
 
-                  {/* More from Client */}
-                  {moreFromClient.length > 0 && (
-                    <MoreFromClient articles={moreFromClient} clientName={article.client.name} />
+                  {/* More from Client (lazy-loaded on open) */}
+                  {article.client && (
+                    <MoreFromClient
+                      clientId={article.clientId}
+                      articleId={article.id}
+                      clientName={article.client.name}
+                    />
                   )}
 
                   <ArticleManualRelated relatedArticles={article.relatedTo} />
 
-                  {/* Automatic Related Articles (based on category/tags) */}
-                  <RelatedArticles relatedArticles={relatedArticlesData} />
+                  {/* Related Articles (lazy-loaded on open) */}
+                  <RelatedArticles articleId={article.id} />
 
                   <ArticleFooter
                     client={article.client}

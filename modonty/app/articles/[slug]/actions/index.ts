@@ -1,6 +1,7 @@
 export {
   getArticleSlugsForStaticParams,
   getArticleBySlug,
+  getArticleBySlugMinimal,
   getRelatedArticlesByAuthor,
   getRelatedArticlesByClient,
   getRelatedArticlesByCategoryTags,
@@ -8,4 +9,11 @@ export {
   getArticlesForOutOfScopeSearch,
 } from "./article-data";
 export { getArticleForMetadata } from "./article-metadata";
-export { submitAskClient, getPendingFaqsForCurrentUser } from "./ask-client-actions";
+export {
+  fetchArticleFaqs,
+  fetchArticleComments,
+  fetchMoreFromAuthor,
+  fetchMoreFromClient,
+  fetchRelatedArticlesByCategoryTags,
+} from "./article-lazy-actions";
+export { submitAskClient, getPendingFaqsForCurrentUser, fetchPendingFaqsForArticle } from "./ask-client-actions";

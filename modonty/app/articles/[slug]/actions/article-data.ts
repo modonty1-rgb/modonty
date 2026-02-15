@@ -265,6 +265,114 @@ export async function getArticleBySlug(slug: string, userId?: string) {
   };
 }
 
+/** Minimal article for initial load: no comments or faqs arrays; use _count for section headers. */
+export async function getArticleBySlugMinimal(slug: string, userId?: string) {
+  const article = await db.article.findFirst({
+    where: {
+      slug,
+      status: ArticleStatus.PUBLISHED,
+    },
+    include: {
+      ...(userId && {
+        likes: { where: { userId }, take: 1, select: { id: true } },
+        dislikes: { where: { userId }, take: 1, select: { id: true } },
+        favorites: { where: { userId }, take: 1, select: { id: true } },
+      }),
+      client: {
+        include: {
+          logoMedia: { select: { url: true } },
+          ogImageMedia: { select: { url: true } },
+        },
+      },
+      author: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          bio: true,
+          image: true,
+          url: true,
+          jobTitle: true,
+          linkedIn: true,
+          twitter: true,
+          facebook: true,
+          sameAs: true,
+          expertiseAreas: true,
+          credentials: true,
+        },
+      },
+      category: { select: { id: true, name: true, slug: true } },
+      featuredImage: {
+        select: { url: true, altText: true, width: true, height: true },
+      },
+      tags: {
+        include: {
+          tag: { select: { id: true, name: true, slug: true } },
+        },
+      },
+      gallery: {
+        include: {
+          media: {
+            select: {
+              id: true,
+              url: true,
+              altText: true,
+              caption: true,
+              width: true,
+              height: true,
+              filename: true,
+            },
+          },
+        },
+        orderBy: { position: "asc" as const },
+      },
+      relatedTo: {
+        include: {
+          related: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              excerpt: true,
+              datePublished: true,
+              createdAt: true,
+              featuredImage: { select: { url: true, altText: true } },
+              client: { select: { name: true, slug: true } },
+              _count: { select: { likes: true, dislikes: true, comments: true, faqs: true } },
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
+          dislikes: true,
+          favorites: true,
+          comments: true,
+          views: true,
+          faqs: true,
+        },
+      },
+    },
+  });
+
+  if (!article) return null;
+
+  const userLiked = (article.likes?.length ?? 0) > 0;
+  const userDisliked = (article.dislikes?.length ?? 0) > 0;
+  const userFavorited = (article.favorites?.length ?? 0) > 0;
+  const { likes, dislikes, favorites, ...rest } = article;
+
+  return {
+    ...rest,
+    faqs: [],
+    comments: [],
+    userLiked,
+    userDisliked,
+    userFavorited,
+  };
+}
+
 function flattenCommentsWithContext(comments: any[]): any[] {
   const commentMap = new Map();
 
@@ -526,4 +634,55 @@ export async function getRelatedArticlesByCategoryTags(
   }
 
   return relatedArticles;
+}
+
+/** Related articles by category/tags for lazy-load; fetches article context by id. */
+export async function getRelatedArticlesByArticleId(articleId: string): Promise<RelatedArticleItem[]> {
+  const article = await db.article.findFirst({
+    where: { id: articleId, status: ArticleStatus.PUBLISHED },
+    select: {
+      categoryId: true,
+      tags: { select: { tagId: true } },
+    },
+  });
+  if (!article) return [];
+  const tagIds = article.tags.map((t) => t.tagId);
+  return getRelatedArticlesByCategoryTags(articleId, article.categoryId, tagIds, 3);
+}
+
+/** Comments for an article (same shape as article.comments). For lazy-load. */
+export async function getArticleComments(articleId: string, userId?: string) {
+  const isDev = process.env.NODE_ENV === "development";
+  const article = await db.article.findFirst({
+    where: { id: articleId, status: ArticleStatus.PUBLISHED },
+    select: {
+      comments: {
+        where: isDev ? {} : { status: CommentStatus.APPROVED },
+        orderBy: { createdAt: "asc" as const },
+        select: commentSelect,
+      },
+    },
+  });
+  if (!article) return null;
+  return flattenCommentsWithContext(article.comments ?? []);
+}
+
+/** Published FAQs for an article (same shape as article.faqs). For lazy-load. */
+export async function getArticleFaqs(articleId: string) {
+  const faqs = await db.articleFAQ.findMany({
+    where: {
+      articleId,
+      AND: [{ answer: { not: null } }, { answer: { not: "" } }],
+    },
+    orderBy: { position: "asc" },
+    select: {
+      id: true,
+      question: true,
+      answer: true,
+      position: true,
+    },
+  });
+  return faqs.filter(
+    (f): f is typeof f & { answer: string } => typeof f.answer === "string" && f.answer.length > 0
+  );
 }

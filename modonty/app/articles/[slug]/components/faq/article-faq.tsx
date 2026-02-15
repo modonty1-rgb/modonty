@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { fetchArticleFaqs } from "../../actions/article-lazy-actions";
+import { fetchPendingFaqsForArticle } from "../../actions/ask-client-actions";
 
 interface PendingFaq {
   id: string;
@@ -11,18 +15,60 @@ interface PendingFaq {
   createdAt: Date;
 }
 
-interface ArticleFaqProps {
-  faqs: Array<{
-    id: string;
-    question: string;
-    answer: string;
-  }>;
-  pendingFaqs?: PendingFaq[];
+interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
 }
 
-export function ArticleFaq({ faqs, pendingFaqs = [] }: ArticleFaqProps) {
+interface ArticleFaqProps {
+  articleId: string;
+  faqsCount: number;
+}
+
+function FaqSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map((i) => (
+        <Card key={i}>
+          <CardHeader className="p-4 pb-0">
+            <Skeleton className="h-5 w-4/5" />
+          </CardHeader>
+          <CardContent className="p-4 pt-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4 mt-2" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+export function ArticleFaq({ articleId, faqsCount }: ArticleFaqProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const totalCount = (faqs?.length ?? 0) + pendingFaqs.length;
+  const [faqs, setFaqs] = useState<FaqItem[] | null>(null);
+  const [pendingFaqs, setPendingFaqs] = useState<PendingFaq[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [fetched, setFetched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isCollapsed || fetched) return;
+    setLoading(true);
+    setError(null);
+    Promise.all([fetchArticleFaqs(articleId), fetchPendingFaqsForArticle(articleId)])
+      .then(([faqsData, pendingData]) => {
+        setFaqs(faqsData ?? []);
+        setPendingFaqs(Array.isArray(pendingData) ? pendingData : []);
+        setFetched(true);
+      })
+      .catch(() => setError("فشل تحميل الأسئلة"))
+      .finally(() => setLoading(false));
+  }, [isCollapsed, fetched, articleId]);
+
+  const retry = () => { setFetched(false); setError(null); };
+
+  const totalCount = fetched ? (faqs?.length ?? 0) + pendingFaqs.length : faqsCount;
   if (totalCount === 0) return null;
 
   return (
@@ -49,35 +95,46 @@ export function ArticleFaq({ faqs, pendingFaqs = [] }: ArticleFaqProps) {
           </button>
           {!isCollapsed && (
             <div className="space-y-4">
-              {(faqs ?? []).map((faq) => (
-                <Card key={faq.id}>
-                  <CardHeader className="p-4 pb-0">
-                    <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-2">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-              {pendingFaqs.length > 0 && (
+              {loading && <FaqSkeleton />}
+              {!loading && error && (
+                <div className="py-4 text-center">
+                  <p className="text-sm text-destructive mb-2">{error}</p>
+                  <Button variant="outline" size="sm" onClick={retry}>إعادة المحاولة</Button>
+                </div>
+              )}
+              {!loading && !error && faqs !== null && (
                 <>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase pt-2">
-                    أسئلتك المعلقة
-                  </p>
-                  {pendingFaqs.map((faq) => (
+                  {faqs.map((faq) => (
                     <Card key={faq.id}>
                       <CardHeader className="p-4 pb-0">
                         <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
                       </CardHeader>
                       <CardContent className="p-4 pt-2">
-                        <Badge variant="secondary" className="text-xs">
-                          قيد المراجعة
-                        </Badge>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {faq.answer}
+                        </p>
                       </CardContent>
                     </Card>
                   ))}
+                  {pendingFaqs.length > 0 && (
+                    <>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase pt-2">
+                        أسئلتك المعلقة
+                      </p>
+                      {pendingFaqs.map((faq) => (
+                        <Card key={faq.id}>
+                          <CardHeader className="p-4 pb-0">
+                            <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-4 pt-2">
+                            <Badge variant="secondary" className="text-xs">
+                              قيد المراجعة
+                            </Badge>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </>
+                  )}
                 </>
               )}
             </div>
