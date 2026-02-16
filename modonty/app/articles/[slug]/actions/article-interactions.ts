@@ -32,19 +32,24 @@ export async function likeArticle(articleId: string, articleSlug: string) {
         },
       });
     } else {
-      await db.articleLike.create({
-        data: {
-          articleId,
-          userId,
-        },
-      });
-
       await db.articleDislike.deleteMany({
         where: {
           articleId,
           userId,
         },
       });
+      try {
+        await db.articleLike.create({
+          data: {
+            articleId,
+            userId,
+          },
+        });
+      } catch (e: unknown) {
+        const err = e as { code?: string; message?: string };
+        const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+        if (!isUniqueViolation) throw e;
+      }
     }
 
     const [likes, dislikes] = await Promise.all([
@@ -91,19 +96,24 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
         },
       });
     } else {
-      await db.articleDislike.create({
-        data: {
-          articleId,
-          userId,
-        },
-      });
-
       await db.articleLike.deleteMany({
         where: {
           articleId,
           userId,
         },
       });
+      try {
+        await db.articleDislike.create({
+          data: {
+            articleId,
+            userId,
+          },
+        });
+      } catch (e: unknown) {
+        const err = e as { code?: string; message?: string };
+        const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+        if (!isUniqueViolation) throw e;
+      }
     }
 
     const [likes, dislikes] = await Promise.all([

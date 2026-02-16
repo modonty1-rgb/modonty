@@ -54,13 +54,28 @@ export async function POST(
       },
     });
 
-    // Create like
-    await db.articleLike.create({
-      data: {
-        articleId: article.id,
-        userId: session.user.id,
-      },
-    });
+    try {
+      await db.articleLike.create({
+        data: {
+          articleId: article.id,
+          userId: session.user.id,
+        },
+      });
+    } catch (e: unknown) {
+      const err = e as { code?: string; message?: string };
+      const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+      if (isUniqueViolation) {
+        const [likes, dislikes] = await Promise.all([
+          db.articleLike.count({ where: { articleId: article.id } }),
+          db.articleDislike.count({ where: { articleId: article.id } }),
+        ]);
+        return NextResponse.json({
+          success: true,
+          data: { likes, dislikes },
+        } as ApiResponse<{ likes: number; dislikes: number }>);
+      }
+      throw e;
+    }
 
     // Get updated counts
     const counts = await db.article.findUnique({
