@@ -7,7 +7,7 @@ export const ReadingProgressBar = dynamic(
   { 
     ssr: false,
     loading: () => (
-      <div className="fixed top-0 left-0 right-0 h-1 bg-background z-50" aria-hidden="true">
+      <div className="fixed top-14 left-0 right-0 h-1 bg-background z-40" aria-hidden="true">
         <div className="h-full bg-primary" style={{ width: "0%" }} />
       </div>
     )

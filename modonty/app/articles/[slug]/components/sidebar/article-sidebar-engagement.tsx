@@ -61,7 +61,7 @@ export function ArticleSidebarEngagement({
         </div>
         <div className="flex flex-col gap-2 border-t border-border pt-4">
           <span className="text-xs font-semibold text-muted-foreground">شارك المقال</span>
-          <ArticleShareButtons title={title} url="" articleId={articleId} hideCopyLink />
+          <ArticleShareButtons title={title} url="" articleSlug={articleSlug} hideCopyLink />
         </div>
       </CardContent>
     </Card>

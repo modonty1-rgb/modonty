@@ -16,6 +16,7 @@ import {
 import {
   ArticleHeader,
   ArticleTags,
+  ArticleEngagementMetrics,
   ArticleFeaturedImage,
   ArticleAuthorBio,
   ArticleImageGallery,
@@ -32,6 +33,7 @@ import {
   ArticleSidebarEngagement,
   ArticleClientCard,
   CommentFormDialog,
+  ArticleMobileLayout,
 } from "./components";
 import ArticleLoading from "./loading";
 
@@ -219,7 +221,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               { label: article.title },
             ]}
           />
-          <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
+          <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
             <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
               {/* Left sidebar – مشاركة وتفاعل + العميل */}
               <aside className="hidden lg:flex w-[240px] min-w-0 shrink-0 flex-col gap-6" role="complementary" aria-label="مشاركة وتفاعل">
@@ -280,6 +282,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     category={article.category}
                     tags={article.tags}
                   />
+
+                  <div className="lg:hidden mb-4">
+                    <ArticleEngagementMetrics
+                      comments={article._count.comments}
+                      views={article._count.views}
+                      questions={article._count.faqs}
+                    />
+                  </div>
 
                   <div
                     id="article-content"
@@ -358,6 +368,44 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 <ArticleTableOfContents content={article.content} />
               </aside>
             </div>
+
+            <ArticleMobileLayout
+              barProps={{
+                title: article.title,
+                articleId: article.id,
+                articleSlug: article.slug,
+                userId,
+                likes: article._count.likes,
+                dislikes: article._count.dislikes,
+                favorites: article._count.favorites,
+                userLiked: article.userLiked,
+                userDisliked: article.userDisliked,
+                userFavorited: article.userFavorited,
+              }}
+              sheetProps={{
+                client: article.client,
+                askClientProps: article.client
+                  ? {
+                      articleId: article.id,
+                      clientId: article.clientId,
+                      articleTitle: article.title,
+                      user: session?.user
+                        ? {
+                            name: session.user.name ?? null,
+                            email: session.user.email ?? null,
+                          }
+                        : null,
+                    }
+                  : null,
+                author: article.author,
+                content: article.content,
+                citations: article.citations,
+                clientId: article.clientId,
+                articleId: article.id,
+                articleSlug: article.slug,
+                userId,
+              }}
+            />
           </main>
 
         </>

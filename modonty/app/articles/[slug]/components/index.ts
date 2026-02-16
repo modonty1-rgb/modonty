@@ -16,9 +16,13 @@ export {
   ArticleAuthorBio,
   ArticleCitations,
   ArticleClientCard,
+  ArticleEngagementMetrics,
   ArticleSidebarEngagement,
   NewsletterCTA,
   ArticleTableOfContents,
 } from "./sidebar";
 export { AskClientDialog } from "./ask-client-dialog";
 export { CommentFormDialog } from "./comment-form-dialog";
+export { ArticleMobileEngagementBar } from "./article-mobile-engagement-bar";
+export { ArticleMobileLayout } from "./article-mobile-layout";
+export { ArticleMobileSidebarSheet } from "./article-mobile-sidebar-sheet";

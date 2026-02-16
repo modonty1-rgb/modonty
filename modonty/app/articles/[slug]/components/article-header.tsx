@@ -33,7 +33,7 @@ export function ArticleHeader({
         </p>
       )}
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground mb-4">
+      <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-4 text-sm text-muted-foreground mb-4">
         <div className="flex items-center gap-2">
           <span>{author.name}</span>
         </div>
