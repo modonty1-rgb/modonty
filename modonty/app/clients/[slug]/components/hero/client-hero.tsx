@@ -24,20 +24,22 @@ export function ClientHero({ client, stats, initialIsFollowing = false }: Client
   return (
     <div className="relative w-full">
       <HeroCover clientName={client.name} coverImage={coverImage} />
-      <div className="container mx-auto max-w-[1128px] relative -mt-4 md:-mt-6 px-8 md:px-10 py-3 md:py-4 bg-background border border-border rounded-lg shadow-sm flex flex-col md:flex-row md:items-end md:justify-between gap-4 translate-y-4 md:translate-y-6">
-        <div className="flex items-end gap-4 min-w-0">
+      <div className="container mx-auto max-w-[1128px] relative -mt-3 sm:-mt-4 md:-mt-6 px-4 sm:px-6 md:px-10 py-3 sm:py-4 rounded-lg shadow-sm bg-background border border-border flex flex-col md:flex-row md:items-end md:justify-between gap-3 sm:gap-4 translate-y-3 sm:translate-y-4 md:translate-y-6">
+        <div className="flex items-end gap-2 sm:gap-4 min-w-0 flex-1">
           <HeroAvatar client={client} initials={initials} />
-          <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex flex-col gap-1 min-w-0 overflow-hidden">
             <HeroNameRow clientName={client.name} />
             <HeroMeta client={client} stats={stats} tagline={tagline} />
           </div>
         </div>
-        <HeroCta
-          client={client}
-          stats={stats}
-          socialLinks={socialLinks}
-          initialIsFollowing={initialIsFollowing}
-        />
+        <div className="w-full min-w-0 md:w-auto md:flex-shrink-0">
+          <HeroCta
+            client={client}
+            stats={stats}
+            socialLinks={socialLinks}
+            initialIsFollowing={initialIsFollowing}
+          />
+        </div>
       </div>
     </div>
   );

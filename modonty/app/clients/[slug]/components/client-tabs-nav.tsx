@@ -58,15 +58,17 @@ function useStickySentinel() {
 function StickyClientName({ name, className }: { name: string; className?: string }) {
   return (
     <div
-      className={cn("flex items-center gap-2 flex-shrink-0 max-w-[220px]", className)}
+      className={cn(
+        "flex items-center gap-1.5 sm:gap-2 flex-shrink-0 min-w-0 max-w-[120px] sm:max-w-[220px]",
+        className
+      )}
       title={name}
     >
-     
-      <span className=" text-base font-bold text-foreground">
+      <span className="text-sm sm:text-base font-bold text-foreground truncate">
         {name}
       </span>
       <CheckCircle2
-        className="h-5 w-5 text-blue-500 flex-shrink-0"
+        className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0"
         aria-label="موثق"
       />
     </div>
@@ -78,17 +80,18 @@ interface TabNavLinkProps {
   label: string;
   href: string;
   isActive: boolean;
+  activeRef?: React.RefObject<HTMLLIElement | null>;
 }
 
-function TabNavLink({ label, href, isActive }: TabNavLinkProps) {
+function TabNavLink({ label, href, isActive, activeRef }: TabNavLinkProps) {
   return (
-    <li>
+    <li ref={isActive ? activeRef : undefined}>
       <Link
         href={href}
         scroll={false}
         aria-current={isActive ? "page" : undefined}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap",
+          "inline-flex items-center justify-center rounded-lg px-3 sm:px-4 py-2 sm:py-2.5 min-h-10 sm:min-h-11 min-w-[44px] text-sm font-medium whitespace-nowrap",
           "transition-colors duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           isActive
@@ -106,14 +109,15 @@ interface TabsNavListProps {
   items: { segment: string | null; label: string }[];
   basePath: string;
   activeSegment: string | null;
+  activeLinkRef?: React.RefObject<HTMLLIElement | null>;
 }
 
-function TabsNavList({ items, basePath, activeSegment }: TabsNavListProps) {
+function TabsNavList({ items, basePath, activeSegment, activeLinkRef }: TabsNavListProps) {
   return (
     <ul
       className={cn(
-        "flex flex-nowrap gap-1 overflow-x-auto overflow-y-hidden min-w-0",
-        "py-1.5 px-1 min-h-[2.75rem] items-center",
+        "flex flex-nowrap gap-0 sm:gap-1 overflow-x-auto overflow-y-hidden min-w-0",
+        "py-1 sm:py-1.5 px-1 min-h-10 sm:min-h-11 items-center",
         "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted",
         "scroll-smooth"
       )}
@@ -132,6 +136,7 @@ function TabsNavList({ items, basePath, activeSegment }: TabsNavListProps) {
             label={label}
             href={href}
             isActive={isActive}
+            activeRef={activeLinkRef}
           />
         );
       })}
@@ -153,6 +158,16 @@ export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: 
   const basePath = `/clients/${encodeURIComponent(clientSlug)}`;
   const internalSticky = useStickySentinel();
   const isStuck = isStuckProp ?? internalSticky.isStuck;
+  const activeLinkRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    const el = activeLinkRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [segment]);
 
   return (
     <>
@@ -161,17 +176,25 @@ export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: 
       )}
       <nav
         className={cn(
-          "sticky top-14 z-40 -mx-4 px-4 pt-2 -mt-2 mb-8 transition-all duration-200",
+          "sticky top-14 z-40 -mx-4 px-3 sm:px-4 pt-1.5 sm:pt-2 -mt-1.5 sm:-mt-2 mb-8 transition-all duration-200",
           isStuck ? "bg-background/80 backdrop-blur-md shadow-sm" : "border-b border-border bg-background"
         )}
         aria-label="أقسام صفحة العميل"
       >
-        <div className="relative -mx-1 -mb-px flex items-center gap-3 justify-between">
-          <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} />
-          {isStuck && (
-            <StickyClientName name={clientName} className="animate-in fade-in slide-in-from-top-2 duration-200" />
-          )}
-        </div>
+        {isStuck ? (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+            <div className="relative -mx-1 -mb-px min-w-0 w-full sm:flex-1">
+              <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} />
+            </div>
+            <div className="hidden sm:flex justify-start py-0.5 sm:py-0 flex-shrink-0">
+              <StickyClientName name={clientName} className="animate-in fade-in slide-in-from-top-2 duration-200" />
+            </div>
+          </div>
+        ) : (
+          <div className="relative -mx-1 -mb-px flex items-center gap-3">
+            <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} />
+          </div>
+        )}
         {isStuck && <ClientScrollProgress />}
       </nav>
     </>

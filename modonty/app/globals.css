@@ -121,7 +121,8 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
+    width: 6px;   /* vertical scrollbar thickness */
+    height: 4px;  /* horizontal scrollbar thickness */
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
