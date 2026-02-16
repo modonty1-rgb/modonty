@@ -35,7 +35,7 @@ export interface Article {
   category: { id: string; name: string } | null;
   author: { id: string; name: string } | null;
   tags?: { tag: { id: string; name: string } }[];
-  faqs?: { id: string; question: string; answer: string }[];
+  faqs?: { id: string; question: string; answer: string | null }[];
   gallery?: {
     id: string;
     media: {

@@ -111,9 +111,9 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     tags: article.tags?.map((t: { tag: { id: string } }) => t.tag.id) || [],
     faqs:
       article.faqs?.map(
-        (faq: { question: string; answer: string; position: number }): FAQItem => ({
+        (faq: { question: string; answer: string | null; position: number }): FAQItem => ({
           question: faq.question,
-          answer: faq.answer,
+          answer: faq.answer ?? "",
           position: faq.position,
         })
       ) || [],

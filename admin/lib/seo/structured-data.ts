@@ -55,7 +55,7 @@ export function generateArticleStructuredData(article: ArticleWithRelations): Ar
         name: faq.question,
         acceptedAnswer: {
           "@type": "Answer",
-          text: faq.answer,
+          text: faq.answer ?? "",
         },
       })),
     };
@@ -285,7 +285,7 @@ export function generateFAQPageStructuredData(faqs: ArticleFAQ[]) {
       name: faq.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.answer,
+        text: faq.answer ?? "",
       },
     })),
   };
