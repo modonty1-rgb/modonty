@@ -158,7 +158,7 @@ export function AskClientDialog({
                   <li key={faq.id}>
                     <Card className="p-3">
                       <p className="text-sm text-foreground">{faq.question}</p>
-                      <Badge variant="secondary" className="mt-2 text-xs">
+                      <Badge className="mt-2 text-xs bg-accent text-accent-foreground">
                         قيد المراجعة
                       </Badge>
                     </Card>

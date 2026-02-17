@@ -76,12 +76,13 @@ export function ProfileTabs() {
                 type="button"
                 variant="ghost"
                 className={cn(
-                  "w-full gap-2 justify-start",
-                  isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                  "w-full gap-2 justify-center",
+                  isActive && "bg-primary text-accent hover:bg-primary hover:text-primary-foreground",
+                  !isActive && "text-foreground hover:bg-muted-foreground/10 hover:text-foreground"
                 )}
               >
                 <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="inline">{tab.label}</span>
               </Button>
             </Link>
           );

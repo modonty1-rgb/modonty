@@ -68,8 +68,7 @@ export function ArticleFaq({ articleId, faqsCount }: ArticleFaqProps) {
 
   const retry = () => { setFetched(false); setError(null); };
 
-  const totalCount = fetched ? (faqs?.length ?? 0) + pendingFaqs.length : faqsCount;
-  if (totalCount === 0) return null;
+  if (faqsCount === 0) return null;
 
   return (
     <section id="article-faq" className="my-2 md:my-3" aria-labelledby="faq-heading">
@@ -83,7 +82,7 @@ export function ArticleFaq({ articleId, faqsCount }: ArticleFaqProps) {
           >
             <div className="flex flex-col items-end">
               <h2 id="faq-heading" className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
-                الأسئلة الشائعة ({totalCount})
+                الأسئلة الشائعة ({faqsCount})
               </h2>
               <span className="text-xs text-muted-foreground">
                 {isCollapsed ? "انقر لعرض الأسئلة" : "انقر للإخفاء"}
@@ -127,7 +126,7 @@ export function ArticleFaq({ articleId, faqsCount }: ArticleFaqProps) {
                             <CardTitle className="text-base font-semibold">{faq.question}</CardTitle>
                           </CardHeader>
                           <CardContent className="p-4 pt-2">
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge className="text-xs bg-accent text-accent-foreground">
                               قيد المراجعة
                             </Badge>
                           </CardContent>

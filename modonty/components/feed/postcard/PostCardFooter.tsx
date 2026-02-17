@@ -5,7 +5,11 @@ import type { PostCardProps } from "./PostCard.types";
 export function PostCardFooter({ post }: PostCardProps) {
   return (
     <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-      <div className="flex items-center gap-2">
+      <Link
+        href={`/articles/${post.slug}`}
+        className="flex items-center gap-2 hover:text-foreground transition-colors"
+        aria-label="عرض المقال"
+      >
         <span className="inline-flex items-center gap-1">
           <ThumbsUp className="h-3 w-3" />
           {post.likes}
@@ -26,7 +30,7 @@ export function PostCardFooter({ post }: PostCardProps) {
           <Eye className="h-3 w-3" />
           {post.views}
         </span>
-      </div>
+      </Link>
       <Link
         href={`/articles/${post.slug}`}
         aria-label="مشاركة المقال"

@@ -116,16 +116,16 @@ export default function ProfilePage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20">
+            <div className="flex items-center gap-4 min-w-0">
+              <Avatar className="h-20 w-20 shrink-0">
                 <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
                 <AvatarFallback className="text-2xl">
                   {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <h2 className="text-xl font-semibold">{session.user.name || "مستخدم"}</h2>
-                <p className="text-muted-foreground">{session.user.email}</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl font-semibold truncate">{session.user.name || "مستخدم"}</h2>
+                <p className="text-muted-foreground truncate" title={session.user.email ?? undefined}>{session.user.email}</p>
               </div>
             </div>
 

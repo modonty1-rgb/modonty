@@ -20,7 +20,7 @@ export function PostCardHeroImage({ post, index }: PostCardProps) {
   return (
     <Link 
       href={`/articles/${post.slug}`} 
-      className="block group"
+      className="block"
       prefetch={isTopFive}
     >
       <div
@@ -34,7 +34,7 @@ export function PostCardHeroImage({ post, index }: PostCardProps) {
           src={optimizedSrc}
           alt={post.title || "صورة المقال"}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover"
           sizes={
             isTopFive
               ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

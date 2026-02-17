@@ -10,15 +10,14 @@ export function LogoNav({ className }: LogoNavProps) {
   const logoSrc = getOptimizedLogoUrl();
 
   return (
-    <Link href="/" className="inline-block">
+    <Link href="/" className="inline-block shrink-0">
       <Image
         src={logoSrc}
         alt="مودونتي"
-        width={150}
-        height={52}
+        width={120}
+        height={40}
         priority
-        className={`object-contain h-7 w-auto md:h-[52px] ${className ?? ""}`}
-        style={{ height: "auto" }}
+        className={`object-contain h-10 w-[120px] min-h-10 min-w-[120px] ${className ?? ""}`}
       />
     </Link>
   );
