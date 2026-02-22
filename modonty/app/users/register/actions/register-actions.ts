@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import type { RegisterFormData } from "../helpers/schemas/register-schema";
+import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { ConversionType } from "@prisma/client";
 
 export async function registerUser(data: RegisterFormData) {
   try {
@@ -20,13 +22,20 @@ export async function registerUser(data: RegisterFormData) {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    await db.user.create({
+    const user = await db.user.create({
       data: {
         name: data.name,
         email: data.email,
         password: hashedPassword,
         role: "EDITOR",
       },
+    });
+
+    const sessionId = await getOrCreateSessionId();
+    await createConversion({
+      type: ConversionType.SIGNUP,
+      userId: user.id,
+      sessionId,
     });
 
     return { success: true as const };

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import {
   Card,
@@ -32,23 +33,23 @@ export default async function ContentPage() {
 
   const quota = client.articlesPerMonth ?? 0;
   const quotaUsed = monthlyPublished;
-  const quotaLabel = quota > 0 ? `${quotaUsed} / ${quota}` : `${quotaUsed} this month`;
+  const quotaLabel = quota > 0 ? `${quotaUsed} / ${quota}` : `${quotaUsed} ${ar.content.thisMonth}`;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Content
+          {ar.nav.content}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Articles and monthly delivery progress
+          {ar.content.articlesProgress}
         </p>
       </div>
 
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-lg">Monthly quota</CardTitle>
-          <CardDescription>Published articles this month</CardDescription>
+          <CardTitle className="text-lg">{ar.content.monthlyQuota}</CardTitle>
+          <CardDescription>{ar.content.publishedThisMonth}</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm font-medium text-foreground">{quotaLabel}</p>
@@ -67,12 +68,12 @@ export default async function ContentPage() {
 
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-lg">Recent articles</CardTitle>
-          <CardDescription>Your content library</CardDescription>
+          <CardTitle className="text-lg">{ar.content.recentArticles}</CardTitle>
+          <CardDescription>{ar.content.yourContentLibrary}</CardDescription>
         </CardHeader>
         <CardContent>
           {articles.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No articles yet.</p>
+            <p className="text-sm text-muted-foreground">{ar.dashboard.noArticles}</p>
           ) : (
             <ul className="space-y-3">
               {articles.map((a) => (

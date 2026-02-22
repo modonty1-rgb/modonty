@@ -23,6 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { askClientSchema, type AskClientFormData } from "../helpers/schemas/ask-client-schema";
 import { submitAskClient, fetchPendingFaqsForArticle } from "../actions/ask-client-actions";
 import { Badge } from "@/components/ui/badge";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface PendingFaq {
   id: string;
@@ -169,7 +170,21 @@ export function AskClientDialog({
           </DialogContent>
         </Dialog>
       )}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          if (next) {
+            trackCtaClick({
+              type: "FORM",
+              label: "اسأل العميل",
+              targetUrl: "#",
+              articleId,
+              clientId,
+            });
+          }
+          setOpen(next);
+        }}
+      >
         <DialogTrigger asChild>
           <Button
             variant="outline"

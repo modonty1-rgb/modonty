@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LeadWithDetails } from "../helpers/lead-queries";
@@ -9,22 +10,31 @@ interface LeadsTableProps {
   leads: LeadWithDetails[];
 }
 
+function levelLabel(level: string | null): string {
+  const l = ar.leads;
+  if (level === "HOT") return l.hot;
+  if (level === "WARM") return l.warm;
+  if (level === "COLD") return l.cold;
+  return l.unqualified;
+}
+
 export function LeadsTable({ leads }: LeadsTableProps) {
+  const l = ar.leads;
   const [filter, setFilter] = useState<string>("all");
 
   const filteredLeads =
     filter === "all"
       ? leads
-      : leads.filter((l) => l.qualificationLevel?.toLowerCase() === filter);
+      : leads.filter((lead) => lead.qualificationLevel?.toLowerCase() === filter);
 
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg">Leads Overview</CardTitle>
+            <CardTitle className="text-lg">{l.leadsOverview}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {filteredLeads.length} leads
+              {filteredLeads.length} {l.leadsCount}
             </p>
           </div>
           <div className="flex gap-2">
@@ -33,28 +43,28 @@ export function LeadsTable({ leads }: LeadsTableProps) {
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All
+              {l.all}
             </Button>
             <Button
               variant={filter === "hot" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("hot")}
             >
-              Hot
+              {l.hot}
             </Button>
             <Button
               variant={filter === "warm" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("warm")}
             >
-              Warm
+              {l.warm}
             </Button>
             <Button
               variant={filter === "cold" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("cold")}
             >
-              Cold
+              {l.cold}
             </Button>
           </div>
         </div>
@@ -62,36 +72,36 @@ export function LeadsTable({ leads }: LeadsTableProps) {
       <CardContent>
         {filteredLeads.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">
-            No leads found
+            {l.noLeadsFound}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Contact
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {l.contact}
                   </th>
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Level
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {l.level}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Score
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {l.score}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Pages
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {l.pages}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Time (min)
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {l.timeMin}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Interactions
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {l.interactions}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Conversions
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {l.conversions}
                   </th>
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Last Active
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {l.lastActive}
                   </th>
                 </tr>
               </thead>
@@ -104,10 +114,10 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                     <td className="py-3 px-2">
                       <div>
                         <p className="text-sm font-medium text-foreground">
-                          {lead.user?.name || lead.email || "Anonymous"}
+                          {lead.user?.name || lead.email || l.anonymous}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {lead.user?.email || lead.email || lead.phone || "No contact"}
+                          {lead.user?.email || lead.email || lead.phone || l.noContact}
                         </p>
                       </div>
                     </td>
@@ -115,36 +125,36 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                       <span
                         className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                           lead.qualificationLevel === "HOT"
-                            ? "bg-red-100 text-red-800"
+                            ? "bg-destructive/10 text-destructive"
                             : lead.qualificationLevel === "WARM"
-                            ? "bg-orange-100 text-orange-800"
-                            : "bg-blue-100 text-blue-800"
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
-                        {lead.qualificationLevel || "UNQUALIFIED"}
+                        {levelLabel(lead.qualificationLevel)}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-right">
+                    <td className="py-3 px-2 text-end">
                       <span className="font-medium text-foreground">
                         {lead.engagementScore}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {lead.pagesViewed}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {(lead.totalTimeSpent / 60).toFixed(1)}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {lead.interactions}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {lead.conversions}
                     </td>
                     <td className="py-3 px-2 text-xs text-muted-foreground">
                       {lead.lastActivityAt
-                        ? new Date(lead.lastActivityAt).toLocaleDateString()
-                        : "Never"}
+                        ? new Date(lead.lastActivityAt).toLocaleDateString("ar-SA")
+                        : l.never}
                     </td>
                   </tr>
                 ))}

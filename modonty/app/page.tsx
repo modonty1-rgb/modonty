@@ -35,6 +35,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     publishedAt: new Date(article.publishedAt),
     clientName: article.client.name,
     clientSlug: article.client.slug,
+    clientId: article.client.id,
     clientLogo: article.client.logo,
     readingTimeMinutes: article.readingTimeMinutes,
     author: {

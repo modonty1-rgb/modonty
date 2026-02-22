@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import "./globals.css";
 import { SessionProviderWrapper } from "@/components/providers/SessionProviderWrapper";
 import { GTMContainer } from "@/components/gtm/GTMContainer";
-import { TopNav } from "@/components/navigatore/TopNav";
 import { Footer } from "@/components/layout/Footer";
-import { MobileFooter } from "@/components/navigatore/MobileFooter";
+import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
+import { MobileFooterWithFavorites } from "@/components/navigatore/MobileFooterWithFavorites";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -42,19 +42,17 @@ export default function RootLayout({
          
       </head>
       <body className="bg-background">
-        {/* <Suspense fallback={null}>
-          <GTMContainer />
-        </Suspense> */}
         <Suspense fallback={null}>
           <SessionProviderWrapper>
             <div className="min-h-screen flex flex-col">
-              {/* <Suspense fallback={<header className="h-14 border-b bg-white" />}> */}
-              <TopNav activeSection="home" />
-              {/* </Suspense> */}
+              <Suspense fallback={<header className="h-14 border-b bg-white" />}>
+                <TopNavWithFavorites />
+              </Suspense>
               <main className="flex-1">{children}</main>
               <Footer />
-              <MobileFooter activeSection="home" />
-              {/* </Suspense> */}
+              <Suspense fallback={<footer className="md:hidden h-16 border-t bg-white" />}>
+                <MobileFooterWithFavorites />
+              </Suspense>
             </div>
           </SessionProviderWrapper>
         </Suspense>

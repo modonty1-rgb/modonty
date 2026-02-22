@@ -1,19 +1,36 @@
 "use client";
 
 import { ShareButtons } from "@/components/shared";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface ArticleShareButtonsProps {
   title: string;
   url: string;
   articleSlug: string;
   hideCopyLink?: boolean;
+  articleId?: string;
+  clientId?: string;
 }
 
 /** Article share UI; sends analytics POST after ShareButtons performs the share (fire-and-forget). */
-export function ArticleShareButtons({ title, url, articleSlug, hideCopyLink = false }: ArticleShareButtonsProps) {
-  // Fired after user shares; POSTs to backend for per-article/platform counts. Silent on failure.
+export function ArticleShareButtons({
+  title,
+  url,
+  articleSlug,
+  hideCopyLink = false,
+  articleId,
+  clientId,
+}: ArticleShareButtonsProps) {
   const onShare = async (platform: string) => {
     const bodyPlatform = platform === "copy" ? "COPY_LINK" : platform.toUpperCase();
+    const label = platform === "copy" ? "نسخ الرابط" : `مشاركة ${platform}`;
+    trackCtaClick({
+      type: "LINK",
+      label,
+      targetUrl: typeof window !== "undefined" ? window.location.pathname : "",
+      articleId,
+      clientId,
+    });
     try {
       await fetch(`/api/articles/${encodeURIComponent(articleSlug)}/share`, {
         method: "POST",

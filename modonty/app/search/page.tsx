@@ -57,6 +57,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     publishedAt: new Date(article.publishedAt),
     clientName: article.client.name,
     clientSlug: article.client.slug,
+    clientId: article.client.id,
     clientLogo: article.client.logo,
     readingTimeMinutes: article.readingTimeMinutes,
     author: {

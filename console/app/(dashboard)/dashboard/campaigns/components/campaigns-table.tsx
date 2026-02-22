@@ -1,5 +1,6 @@
 "use client";
 
+import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CampaignSummary } from "../helpers/campaign-queries";
 
@@ -8,50 +9,51 @@ interface CampaignsTableProps {
 }
 
 export function CampaignsTable({ campaigns }: CampaignsTableProps) {
+  const c = ar.campaigns;
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Campaign Performance</CardTitle>
+        <CardTitle className="text-lg">{c.campaignPerformance}</CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
-          Detailed metrics for each campaign
+          {c.detailedMetrics}
         </p>
       </CardHeader>
       <CardContent>
         {campaigns.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">
-            No campaign data available
+            {c.noCampaignData}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Campaign
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {c.campaign}
                   </th>
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Type
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {c.type}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Impressions
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.impressions}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Clicks
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.clicks}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    CTR
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.ctr}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Conversions
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.conversions}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    CVR
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.cvr}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Cost
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.cost}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    ROI
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.roi}
                   </th>
                 </tr>
               </thead>
@@ -76,26 +78,26 @@ export function CampaignsTable({ campaigns }: CampaignsTableProps) {
                         {campaign.type.toLowerCase()}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.impressions.toLocaleString()}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.clicks.toLocaleString()}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.ctr.toFixed(2)}%
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.conversions}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.conversionRate.toFixed(2)}%
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {campaign.cost.toLocaleString()} SAR
                     </td>
                     <td
-                      className={`py-3 px-2 text-right font-medium ${
+                      className={`py-3 px-2 text-end font-medium ${
                         campaign.roi > 0 ? "text-green-600" : "text-red-600"
                       }`}
                     >

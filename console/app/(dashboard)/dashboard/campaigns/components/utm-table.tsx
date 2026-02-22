@@ -1,5 +1,6 @@
 "use client";
 
+import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UTMPerformance } from "../helpers/campaign-queries";
 
@@ -8,41 +9,42 @@ interface UTMTableProps {
 }
 
 export function UTMTable({ utmData }: UTMTableProps) {
+  const c = ar.campaigns;
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">UTM Parameters Analysis</CardTitle>
+        <CardTitle className="text-lg">{c.utmAnalysis}</CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
-          Track performance by source, medium, and campaign
+          {c.trackBySource}
         </p>
       </CardHeader>
       <CardContent>
         {utmData.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">
-            No UTM tracking data available
+            {c.noUtmData}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Source
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {c.source}
                   </th>
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Medium
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {c.medium}
                   </th>
-                  <th className="text-left py-3 px-2 font-medium text-foreground">
-                    Campaign
+                  <th className="text-start py-3 px-2 font-medium text-foreground">
+                    {c.campaign}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Visits
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.visits}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Conversions
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.conversions}
                   </th>
-                  <th className="text-right py-3 px-2 font-medium text-foreground">
-                    Conversion Rate
+                  <th className="text-end py-3 px-2 font-medium text-foreground">
+                    {c.conversionRate}
                   </th>
                 </tr>
               </thead>
@@ -57,13 +59,13 @@ export function UTMTable({ utmData }: UTMTableProps) {
                     <td className="py-3 px-2 text-foreground">
                       {utm.utmCampaign}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {utm.visits.toLocaleString()}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {utm.conversions}
                     </td>
-                    <td className="py-3 px-2 text-right text-foreground">
+                    <td className="py-3 px-2 text-end text-foreground">
                       {utm.conversionRate.toFixed(2)}%
                     </td>
                   </tr>

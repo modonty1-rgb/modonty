@@ -4,20 +4,41 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Newspaper } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSession } from "@/components/providers/SessionContext";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface NewsletterCTAProps {
   clientId: string;
+  articleId?: string;
 }
 
-export function NewsletterCTA({ clientId }: NewsletterCTAProps) {
+export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const hasSetEmailFromSession = useRef(false);
+
+  useEffect(() => {
+    if (session?.user?.email && !hasSetEmailFromSession.current) {
+      hasSetEmailFromSession.current = true;
+      setEmail(session.user.email);
+    }
+  }, [session?.user?.email]);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) return;
+
+    trackCtaClick({
+      type: "BUTTON",
+      label: "اشترك",
+      targetUrl: typeof window !== "undefined" ? window.location.pathname : "",
+      clientId,
+      articleId,
+    });
 
     setLoading(true);
     try {
@@ -26,9 +47,11 @@ export function NewsletterCTA({ clientId }: NewsletterCTAProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, clientId }),
       });
+      const json = await response.json().catch(() => ({}));
 
       if (response.ok) {
         setSubscribed(true);
+        setAlreadySubscribed(json?.data?.message === "Already subscribed to this client");
         setEmail("");
       }
     } catch {
@@ -49,7 +72,7 @@ export function NewsletterCTA({ clientId }: NewsletterCTAProps) {
         </div>
         {subscribed ? (
           <p className="text-sm text-muted-foreground">
-            شكراً لك! تم الاشتراك بنجاح.
+            {alreadySubscribed ? "أنت مشترك مسبقاً في هذه النشرة." : "شكراً لك! تم الاشتراك بنجاح."}
           </p>
         ) : (
           <form onSubmit={handleSubscribe} className="flex flex-col gap-2">

@@ -43,6 +43,7 @@ export async function likeArticle(articleId: string, articleSlug: string) {
           data: {
             articleId,
             userId,
+            sessionId: `user:${userId}`,
           },
         });
       } catch (e: unknown) {
@@ -107,6 +108,7 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
           data: {
             articleId,
             userId,
+            sessionId: `user:${userId}`,
           },
         });
       } catch (e: unknown) {

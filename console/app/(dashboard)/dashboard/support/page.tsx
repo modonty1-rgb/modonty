@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
 import { getContactMessages, getMessageStats } from "./helpers/support-queries-enhanced";
 import { MessagesList } from "./components/messages-list";
@@ -20,14 +21,16 @@ export default async function SupportPage() {
     getMessageStats(clientId),
   ]);
 
+  const s = ar.support;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Support Messages
+          {s.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage and respond to contact form submissions
+          {s.manageContact}
         </p>
       </div>
 
@@ -36,13 +39,13 @@ export default async function SupportPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">New</CardTitle>
+              <CardTitle className="text-base font-medium">{s.new}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">{stats.new}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Unread messages
+              {s.unreadMessages}
             </p>
           </CardContent>
         </Card>
@@ -51,13 +54,13 @@ export default async function SupportPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <MailOpen className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Read</CardTitle>
+              <CardTitle className="text-base font-medium">{s.read}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">{stats.read}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Messages read
+              {s.messagesRead}
             </p>
           </CardContent>
         </Card>
@@ -66,7 +69,7 @@ export default async function SupportPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <CheckCheck className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Replied</CardTitle>
+              <CardTitle className="text-base font-medium">{s.replied}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -74,7 +77,7 @@ export default async function SupportPage() {
               {stats.replied}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Messages replied
+              {s.messagesReplied}
             </p>
           </CardContent>
         </Card>
@@ -83,13 +86,13 @@ export default async function SupportPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Archive className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total</CardTitle>
+              <CardTitle className="text-base font-medium">{s.total}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              All messages
+              {s.allMessages}
             </p>
           </CardContent>
         </Card>

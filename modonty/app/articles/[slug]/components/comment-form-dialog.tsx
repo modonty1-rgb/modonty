@@ -12,18 +12,19 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/link";
-import { LogIn } from "lucide-react";
 import { CommentForm } from "./comment-form";
 import { submitComment } from "../actions/comment-actions";
 import { useRouter } from "next/navigation";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface CommentFormDialogProps {
   articleId: string;
   articleSlug: string;
   userId?: string | null;
+  clientId?: string;
 }
 
-export function CommentFormDialog({ articleId, articleSlug, userId }: CommentFormDialogProps) {
+export function CommentFormDialog({ articleId, articleSlug, userId, clientId }: CommentFormDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -42,7 +43,21 @@ export function CommentFormDialog({ articleId, articleSlug, userId }: CommentFor
         <h2 className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
           أضف تعليق
         </h2>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog
+          open={open}
+          onOpenChange={(next) => {
+            if (next) {
+              trackCtaClick({
+                type: "FORM",
+                label: "أضف تعليق",
+                targetUrl: "#",
+                articleId,
+                clientId,
+              });
+            }
+            setOpen(next);
+          }}
+        >
           <DialogTrigger asChild>
             <Button
               variant="outline"

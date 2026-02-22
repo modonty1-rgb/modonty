@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -27,7 +28,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const isPending = article.status === "DRAFT";
 
   const handleApprove = async () => {
-    if (!confirm("Are you sure you want to approve this article?")) return;
+    if (!confirm(ar.articles.approveConfirm)) return;
 
     setLoading(true);
     try {
@@ -35,10 +36,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
       if (result.success) {
         router.refresh();
       } else {
-        alert(result.error || "Failed to approve article");
+        alert(result.error || ar.articles.approveFailed);
       }
     } catch (error) {
-      alert("An error occurred");
+      alert(ar.articles.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -52,10 +53,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
         setShowFeedback(false);
         router.refresh();
       } else {
-        alert(result.error || "Failed to request changes");
+        alert(result.error || ar.articles.requestFailed);
       }
     } catch (error) {
-      alert("An error occurred");
+      alert(ar.articles.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -69,7 +70,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             <div className="min-w-0 flex-1">
               <CardTitle className="text-lg leading-tight">{article.title}</CardTitle>
               <CardDescription className="mt-1">
-                {article.category?.name ?? "—"} · Created{" "}
+                {article.category?.name ?? "—"} · {ar.articles.created}{" "}
                 {new Date(article.createdAt).toLocaleDateString()}
               </CardDescription>
             </div>
@@ -80,7 +81,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
                   : "bg-green-500/10 text-green-600 dark:text-green-400"
               }`}
             >
-              {isPending ? "Pending Approval" : "Published"}
+              {isPending ? ar.articles.pendingApprovalStatus : ar.articles.published}
             </span>
           </div>
         </CardHeader>
@@ -93,14 +94,14 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
           <div className="flex flex-wrap gap-2 mb-4 text-xs text-muted-foreground">
             {article.wordCount && (
-              <span>{article.wordCount.toLocaleString()} words</span>
+              <span>{article.wordCount.toLocaleString()} {ar.articles.words}</span>
             )}
             {article.readingTimeMinutes && (
-              <span>· {article.readingTimeMinutes} min read</span>
+              <span>· {article.readingTimeMinutes} {ar.articles.minRead}</span>
             )}
             {article.tags.length > 0 && (
               <span>
-                · {article.tags.length} tag{article.tags.length > 1 ? "s" : ""}
+                · {article.tags.length} {article.tags.length > 1 ? ar.articles.tags : ar.articles.tag}
               </span>
             )}
           </div>
@@ -118,8 +119,8 @@ export function ArticleCard({ article }: ArticleCardProps) {
           <div className="flex flex-wrap gap-2">
             <Link href={`/dashboard/articles/${article.id}/preview`}>
               <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                Preview
+                <Eye className="h-4 w-4 me-2" />
+                {ar.articles.preview}
               </Button>
             </Link>
 
@@ -131,8 +132,8 @@ export function ArticleCard({ article }: ArticleCardProps) {
                   onClick={handleApprove}
                   disabled={loading}
                 >
-                  <Check className="h-4 w-4 mr-2" />
-                  Approve
+                  <Check className="h-4 w-4 me-2" />
+                  {ar.articles.approve}
                 </Button>
                 <Button
                   variant="outline"
@@ -140,8 +141,8 @@ export function ArticleCard({ article }: ArticleCardProps) {
                   onClick={() => setShowFeedback(true)}
                   disabled={loading}
                 >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Request Changes
+                  <MessageSquare className="h-4 w-4 me-2" />
+                  {ar.articles.requestChanges}
                 </Button>
               </>
             )}
@@ -149,7 +150,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
             {!isPending && article.datePublished && (
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                Published {new Date(article.datePublished).toLocaleDateString()}
+                {ar.articles.publishedOn} {new Date(article.datePublished).toLocaleDateString()}
               </span>
             )}
           </div>

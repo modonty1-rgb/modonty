@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X, Trash2, ThumbsUp, ThumbsDown } from "lucide-react";
@@ -19,7 +20,16 @@ interface CommentsTableProps {
   clientId: string;
 }
 
+function statusLabel(status: string): string {
+  const c = ar.comments;
+  if (status === "PENDING") return c.pending;
+  if (status === "APPROVED") return c.approved;
+  if (status === "REJECTED") return c.rejected;
+  return status;
+}
+
 export function CommentsTable({ comments, clientId }: CommentsTableProps) {
+  const c = ar.comments;
   const [filter, setFilter] = useState<string>("all");
   const [selectedComments, setSelectedComments] = useState<Set<string>>(
     new Set()
@@ -29,13 +39,13 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
   const filteredComments =
     filter === "all"
       ? comments
-      : comments.filter((c) => c.status.toLowerCase() === filter);
+      : comments.filter((co) => co.status.toLowerCase() === filter);
 
   const handleApprove = async (commentId: string) => {
     setUpdating(commentId);
     const result = await approveComment(commentId, clientId);
     if (!result.success) {
-      alert(result.error || "Failed to approve comment");
+      alert(result.error || c.approveFailed);
     }
     setUpdating(null);
   };
@@ -44,25 +54,25 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
     setUpdating(commentId);
     const result = await rejectComment(commentId, clientId);
     if (!result.success) {
-      alert(result.error || "Failed to reject comment");
+      alert(result.error || c.rejectFailed);
     }
     setUpdating(null);
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
+    if (!confirm(c.deleteConfirm)) return;
 
     setUpdating(commentId);
     const result = await deleteComment(commentId, clientId);
     if (!result.success) {
-      alert(result.error || "Failed to delete comment");
+      alert(result.error || c.deleteFailed);
     }
     setUpdating(null);
   };
 
   const handleBulkApprove = async () => {
     if (selectedComments.size === 0) return;
-    
+
     const result = await bulkApproveComments(
       Array.from(selectedComments),
       clientId
@@ -70,13 +80,13 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
     if (result.success) {
       setSelectedComments(new Set());
     } else {
-      alert(result.error || "Failed to bulk approve");
+      alert(result.error || c.bulkApproveFailed);
     }
   };
 
   const handleBulkReject = async () => {
     if (selectedComments.size === 0) return;
-    
+
     const result = await bulkRejectComments(
       Array.from(selectedComments),
       clientId
@@ -84,7 +94,7 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
     if (result.success) {
       setSelectedComments(new Set());
     } else {
-      alert(result.error || "Failed to bulk reject");
+      alert(result.error || c.bulkRejectFailed);
     }
   };
 
@@ -103,9 +113,9 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg">Comments</CardTitle>
+            <CardTitle className="text-lg">{c.title}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {filteredComments.length} comments
+              {filteredComments.length} {c.commentsCount}
             </p>
           </div>
           <div className="flex gap-2">
@@ -114,40 +124,40 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All
+              {c.all}
             </Button>
             <Button
               variant={filter === "pending" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("pending")}
             >
-              Pending
+              {c.pending}
             </Button>
             <Button
               variant={filter === "approved" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("approved")}
             >
-              Approved
+              {c.approved}
             </Button>
             <Button
               variant={filter === "rejected" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("rejected")}
             >
-              Rejected
+              {c.rejected}
             </Button>
           </div>
         </div>
         {selectedComments.size > 0 && (
           <div className="flex gap-2 mt-4">
             <Button size="sm" onClick={handleBulkApprove}>
-              <Check className="h-3 w-3 mr-2" />
-              Approve Selected ({selectedComments.size})
+              <Check className="h-3 w-3 me-2" />
+              {c.approveSelected} ({selectedComments.size})
             </Button>
             <Button size="sm" variant="destructive" onClick={handleBulkReject}>
-              <X className="h-3 w-3 mr-2" />
-              Reject Selected ({selectedComments.size})
+              <X className="h-3 w-3 me-2" />
+              {c.rejectSelected} ({selectedComments.size})
             </Button>
           </div>
         )}
@@ -155,7 +165,7 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
       <CardContent>
         {filteredComments.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">
-            No comments found
+            {c.noCommentsFound}
           </p>
         ) : (
           <div className="space-y-4">
@@ -175,10 +185,10 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-foreground">
-                          {comment.author?.name || "Anonymous"}
+                          {comment.author?.name || c.anonymous}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {comment.author?.email || "No email"}
+                          {comment.author?.email || c.noEmail}
                         </p>
                         <Link
                           href={`/dashboard/articles`}
@@ -196,8 +206,9 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                             updating === comment.id ||
                             comment.status === "APPROVED"
                           }
+                          title={c.approveComment}
                         >
-                          <Check className="h-3 w-3 text-green-600" />
+                          <Check className="h-3 w-3 text-primary" />
                         </Button>
                         <Button
                           size="sm"
@@ -207,14 +218,16 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                             updating === comment.id ||
                             comment.status === "REJECTED"
                           }
+                          title={c.rejectComment}
                         >
-                          <X className="h-3 w-3 text-red-600" />
+                          <X className="h-3 w-3 text-destructive" />
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(comment.id)}
                           disabled={updating === comment.id}
+                          title={c.deleteComment}
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -229,13 +242,13 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                       <span
                         className={`text-xs px-2 py-1 rounded-full ${
                           comment.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
+                            ? "bg-muted text-muted-foreground"
                             : comment.status === "APPROVED"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-primary/10 text-primary"
+                            : "bg-destructive/10 text-destructive"
                         }`}
                       >
-                        {comment.status}
+                        {statusLabel(comment.status)}
                       </span>
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <ThumbsUp className="h-3 w-3" />
@@ -246,17 +259,17 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                         {comment._count.dislikes}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {comment._count.replies} replies
+                        {comment._count.replies} {c.replies}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(comment.createdAt).toLocaleString()}
+                        {new Date(comment.createdAt).toLocaleString("ar-SA")}
                       </span>
                     </div>
 
                     {comment.parent && (
-                      <div className="mt-2 pl-4 border-l-2 border-muted">
+                      <div className="mt-2 ps-4 border-s-2 border-muted">
                         <p className="text-xs text-muted-foreground">
-                          Reply to:
+                          {c.replyTo}
                         </p>
                         <p className="text-xs text-muted-foreground italic">
                           {comment.parent.content.substring(0, 100)}...

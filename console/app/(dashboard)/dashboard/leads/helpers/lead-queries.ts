@@ -52,6 +52,12 @@ export async function getLeads(
   return leads as LeadWithDetails[];
 }
 
+export async function getLeadsCount(clientId: string): Promise<number> {
+  return db.leadScoring.count({
+    where: { clientId },
+  });
+}
+
 export async function getLeadStats(clientId: string) {
   const [total, qualified, hot, warm, cold, avgScore] = await Promise.all([
     db.leadScoring.count({

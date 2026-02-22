@@ -71,6 +71,7 @@ export interface FeedPost {
   publishedAt: Date;
   clientName: string;
   clientSlug: string;
+  clientId?: string;
   clientLogo?: string;
   readingTimeMinutes?: number;
   author: {

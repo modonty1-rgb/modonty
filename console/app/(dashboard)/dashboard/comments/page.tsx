@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
 import { getClientComments, getCommentStats } from "./helpers/comment-queries";
 import { CommentsTable } from "./components/comments-table";
@@ -20,14 +21,16 @@ export default async function CommentsPage() {
     getCommentStats(clientId),
   ]);
 
+  const c = ar.comments;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Comment Moderation
+          {c.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Review and moderate article comments
+          {c.reviewModerate}
         </p>
       </div>
 
@@ -36,7 +39,7 @@ export default async function CommentsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Pending</CardTitle>
+              <CardTitle className="text-base font-medium">{c.pending}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -44,7 +47,7 @@ export default async function CommentsPage() {
               {stats.pending}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Awaiting review
+              {c.awaitingReview}
             </p>
           </CardContent>
         </Card>
@@ -52,8 +55,8 @@ export default async function CommentsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <CardTitle className="text-base font-medium">Approved</CardTitle>
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <CardTitle className="text-base font-medium">{c.approved}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -61,7 +64,7 @@ export default async function CommentsPage() {
               {stats.approved}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Published comments
+              {c.publishedComments}
             </p>
           </CardContent>
         </Card>
@@ -69,8 +72,8 @@ export default async function CommentsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-red-600" />
-              <CardTitle className="text-base font-medium">Rejected</CardTitle>
+              <XCircle className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-base font-medium">{c.rejected}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -78,7 +81,7 @@ export default async function CommentsPage() {
               {stats.rejected}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Rejected comments
+              {c.rejectedComments}
             </p>
           </CardContent>
         </Card>
@@ -87,7 +90,7 @@ export default async function CommentsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total</CardTitle>
+              <CardTitle className="text-base font-medium">{c.total}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -95,7 +98,7 @@ export default async function CommentsPage() {
               {stats.total}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              All comments
+              {c.allComments}
             </p>
           </CardContent>
         </Card>

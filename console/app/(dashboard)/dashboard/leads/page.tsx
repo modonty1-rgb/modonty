@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
 import { getLeads, getLeadStats } from "./helpers/lead-queries";
 import { LeadsTable } from "./components/leads-table";
+import { RefreshLeadScoresButton } from "./components/refresh-lead-scores-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Flame, TrendingUp, Snowflake, Award } from "lucide-react";
 
@@ -20,29 +22,34 @@ export default async function LeadsPage() {
     getLeadStats(clientId),
   ]);
 
+  const l = ar.leads;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Lead Scoring
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Track and qualify high-engagement visitors
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold leading-tight text-foreground">
+            {l.title}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {l.trackQualify}
+          </p>
+        </div>
+        <RefreshLeadScoresButton />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-red-600" />
-              <CardTitle className="text-base font-medium">Hot Leads</CardTitle>
+              <Flame className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-base font-medium">{l.hotLeads}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">{stats.hot}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              High engagement
+              {l.highEngagement}
             </p>
           </CardContent>
         </Card>
@@ -50,8 +57,8 @@ export default async function LeadsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-orange-600" />
-              <CardTitle className="text-base font-medium">Warm Leads</CardTitle>
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <CardTitle className="text-base font-medium">{l.warmLeads}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -59,7 +66,7 @@ export default async function LeadsPage() {
               {stats.warm}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Moderate engagement
+              {l.moderateEngagement}
             </p>
           </CardContent>
         </Card>
@@ -67,8 +74,8 @@ export default async function LeadsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Snowflake className="h-4 w-4 text-blue-600" />
-              <CardTitle className="text-base font-medium">Cold Leads</CardTitle>
+              <Snowflake className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-base font-medium">{l.coldLeads}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -76,7 +83,7 @@ export default async function LeadsPage() {
               {stats.cold}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Low engagement
+              {l.lowEngagement}
             </p>
           </CardContent>
         </Card>
@@ -85,7 +92,7 @@ export default async function LeadsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Award className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Qualified</CardTitle>
+              <CardTitle className="text-base font-medium">{l.qualified}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -93,7 +100,7 @@ export default async function LeadsPage() {
               {stats.qualified}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Ready for outreach
+              {l.readyForOutreach}
             </p>
           </CardContent>
         </Card>
@@ -102,7 +109,7 @@ export default async function LeadsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Avg Score</CardTitle>
+              <CardTitle className="text-base font-medium">{l.avgScore}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -110,7 +117,7 @@ export default async function LeadsPage() {
               {stats.avgScore}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Out of 100
+              {l.outOf100}
             </p>
           </CardContent>
         </Card>

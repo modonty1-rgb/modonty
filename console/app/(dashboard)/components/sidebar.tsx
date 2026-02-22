@@ -3,20 +3,19 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { ar } from "@/lib/ar";
 import {
-  LayoutDashboard,
   FileText,
   FileEdit,
-  BarChart3,
-  Settings,
   HelpCircle,
   Image,
   TrendingUp,
-  MessageSquare,
   Users,
   Target,
   ChevronLeft,
   LogOut,
+  Building2,
+  ClipboardList,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -25,16 +24,35 @@ import { cn } from "@/lib/utils";
 interface SidebarProps {
   clientName: string;
   pendingArticlesCount: number;
-  pendingCommentsCount: number;
+  subscribersCount: number;
+  leadsCount: number;
+  isCollapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
-export function Sidebar({ clientName, pendingArticlesCount, pendingCommentsCount }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export function Sidebar({
+  clientName,
+  pendingArticlesCount,
+  subscribersCount,
+  leadsCount,
+  isCollapsed: isCollapsedProp,
+  onCollapsedChange,
+}: SidebarProps) {
+  const [isCollapsedInternal, setIsCollapsedInternal] = useState(false);
+  const isCollapsed = onCollapsedChange ? (isCollapsedProp ?? false) : isCollapsedInternal;
+
+  function setCollapsed(value: boolean) {
+    if (onCollapsedChange) {
+      onCollapsedChange(value);
+    } else {
+      setIsCollapsedInternal(value);
+    }
+  }
 
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen border-r border-border bg-card transition-all duration-300",
+        "fixed start-0 top-0 z-40 h-screen border-e border-border bg-card transition-all duration-300",
         "hidden lg:flex lg:flex-col",
         isCollapsed ? "w-16" : "w-64"
       )}
@@ -52,14 +70,14 @@ export function Sidebar({ clientName, pendingArticlesCount, pendingCommentsCount
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={() => setCollapsed(!isCollapsed)}
           className="h-8 w-8"
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={isCollapsed ? ar.nav.expandSidebar : ar.nav.collapseSidebar}
         >
           <ChevronLeft
             className={cn(
-              "h-4 w-4 transition-transform",
-              isCollapsed && "rotate-180"
+              "h-4 w-4 transition-transform rtl:rotate-180",
+              isCollapsed && "rotate-180 rtl:rotate-0"
             )}
           />
         </Button>
@@ -67,71 +85,61 @@ export function Sidebar({ clientName, pendingArticlesCount, pendingCommentsCount
 
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         <SidebarNavItem
-          href="/dashboard"
-          icon={LayoutDashboard}
-          label="Dashboard"
+          href="/dashboard/profile"
+          icon={Building2}
+          label={ar.nav.profile}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/seo"
+          icon={ClipboardList}
+          label={ar.nav.seo}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/articles"
           icon={FileText}
-          label="Articles"
+          label={ar.nav.articles}
           badge={pendingArticlesCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/content"
           icon={FileEdit}
-          label="Content"
+          label={ar.nav.content}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/media"
           icon={Image}
-          label="Media"
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/analytics"
-          icon={BarChart3}
-          label="Analytics"
+          label={ar.nav.media}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/campaigns"
           icon={TrendingUp}
-          label="Campaigns"
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/comments"
-          icon={MessageSquare}
-          label="Comments"
-          badge={pendingCommentsCount}
+          label={ar.nav.campaigns}
+          badgeLabel={ar.campaigns.beta}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/subscribers"
           icon={Users}
-          label="Subscribers"
+          label={ar.nav.subscribers}
+          badge={subscribersCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/leads"
           icon={Target}
-          label="Leads"
-          isCollapsed={isCollapsed}
-        />
-        <SidebarNavItem
-          href="/dashboard/settings"
-          icon={Settings}
-          label="Settings"
+          label={ar.nav.leads}
+          badge={leadsCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/support"
           icon={HelpCircle}
-          label="Support"
+          label={ar.nav.support}
           isCollapsed={isCollapsed}
         />
       </nav>
@@ -166,7 +174,7 @@ export function Sidebar({ clientName, pendingArticlesCount, pendingCommentsCount
           )}
         >
           <LogOut className="h-4 w-4" />
-          {!isCollapsed && <span className="ml-2">Sign out</span>}
+          {!isCollapsed && <span className="ms-2">{ar.nav.signOut}</span>}
         </Button>
       </div>
     </aside>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, Bookmark, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -31,6 +33,7 @@ export function ArticleInteractionButtons({
   compact = false,
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
@@ -41,6 +44,15 @@ export function ArticleInteractionButtons({
   const [loading, setLoading] = useState<string | null>(null);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    setLikes(initialLikes);
+    setDislikes(initialDislikes);
+    setFavorites(initialFavorites);
+    setUserLiked(initialUserLiked);
+    setUserDisliked(initialUserDisliked);
+    setUserFavorited(initialUserFavorited);
+  }, [initialLikes, initialDislikes, initialFavorites, initialUserLiked, initialUserDisliked, initialUserFavorited]);
 
   const handleLike = async () => {
     if (!session?.user || loading) return;
@@ -153,28 +165,40 @@ export function ArticleInteractionButtons({
     }
   };
 
-  const containerClass = `flex items-center ${compact ? "gap-1 flex-nowrap" : "gap-2 md:gap-3 flex-wrap"}`;
-
-  if (!mounted) {
-    return <div className={containerClass} aria-hidden />;
-  }
-
-  if (!session?.user) {
-    return null;
-  }
-
+  const containerClass = `flex items-center ${compact ? "gap-2 flex-nowrap" : "gap-2 md:gap-3 flex-wrap"}`;
+  const isLoggedIn = Boolean(session?.user);
   const iconClass = compact ? "h-3.5 w-3.5 shrink-0" : "h-4 w-4 ml-2";
   const btnClass = compact
     ? "h-8 px-1.5 gap-0.5 text-xs shrink-0"
     : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0";
 
+  if (!mounted) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className={containerClass} aria-hidden />
+      </div>
+    );
+  }
+
   return (
+    <div className="flex flex-col gap-2 min-w-0">
+    {!isLoggedIn && (
+      <p className="text-xs text-muted-foreground min-w-0 break-words leading-relaxed" role="status">
+        <Link
+          href={pathname ? `/users/login?callbackUrl=${encodeURIComponent(pathname)}` : "/users/login"}
+          className="text-primary underline-offset-4 hover:underline"
+        >
+          سجّل الدخول
+        </Link>
+        {" للإعجاب أو حفظ المقال"}
+      </p>
+    )}
     <div className={containerClass}>
       <Button
         variant={userLiked ? "default" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleLike}
-        disabled={loading === "like"}
+        disabled={!isLoggedIn || loading === "like"}
         className={btnClass}
         aria-label={loading === "like" ? "جاري التحديث..." : "إعجاب"}
       >
@@ -189,7 +213,7 @@ export function ArticleInteractionButtons({
         variant={userDisliked ? "default" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleDislike}
-        disabled={loading === "dislike"}
+        disabled={!isLoggedIn || loading === "dislike"}
         className={btnClass}
         aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
       >
@@ -204,9 +228,9 @@ export function ArticleInteractionButtons({
         variant={userFavorited ? "default" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleFavorite}
-        disabled={loading === "favorite"}
+        disabled={!isLoggedIn || loading === "favorite"}
         className={btnClass}
-        aria-label={loading === "favorite" ? "جاري التحديث..." : "حفظ"}
+        aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "تسجيل الدخول للحفظ"}
       >
         {loading === "favorite" ? (
           <Loader2 className={`${iconClass} animate-spin`} />
@@ -215,6 +239,7 @@ export function ArticleInteractionButtons({
         )}
         <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{favorites}</span>
       </Button>
+    </div>
     </div>
   );
 }

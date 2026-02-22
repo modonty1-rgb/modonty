@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -55,7 +56,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         router.refresh();
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(ar.login.somethingWrong);
     } finally {
       setLoading(false);
     }
@@ -83,14 +84,14 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
       )}
       <div className="space-y-2">
         <Label htmlFor={ID_IDENTIFIER} className="text-foreground">
-          Email or client slug
+          {ar.login.emailOrSlug}
         </Label>
         <Input
           id={ID_IDENTIFIER}
           type="text"
           inputMode="text"
           autoComplete="username"
-          placeholder="you@example.com or my-client-slug"
+          placeholder={ar.login.placeholderIdentifier}
           value={identifier}
           onChange={(e) => {
             setIdentifier(e.target.value);
@@ -104,7 +105,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
       </div>
       <div className="space-y-2">
         <Label htmlFor={ID_PASSWORD} className="text-foreground">
-          Password
+          {ar.login.password}
         </Label>
         <Input
           id={ID_PASSWORD}
@@ -129,7 +130,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         className="w-full transition-colors hover:bg-primary/90"
       >
         <LogIn className="h-4 w-4 shrink-0" aria-hidden />
-        <span>{loading ? "Signing in…" : "Sign in"}</span>
+        <span>{loading ? ar.login.signingIn : ar.login.signIn}</span>
       </Button>
     </form>
   );
@@ -146,11 +147,11 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
               <Lock className="h-4 w-4" />
             </div>
             <CardTitle className="text-lg font-semibold leading-snug text-foreground">
-              Sign in
+              {ar.login.signIn}
             </CardTitle>
           </div>
           <CardDescription className="text-sm text-muted-foreground">
-            Use your email or client slug and password to access your account.
+            {ar.login.useEmailOrSlug}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">{form}</CardContent>
@@ -162,10 +163,10 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
     <Card className="w-full max-w-md border-border bg-card shadow-sm transition-shadow hover:shadow-md">
       <CardHeader className="space-y-1.5 text-center">
         <CardTitle className="text-2xl font-semibold leading-tight tracking-tight text-foreground">
-          Client Portal
+          {ar.login.clientPortal}
         </CardTitle>
         <CardDescription className="text-sm text-muted-foreground">
-          Sign in with your email or client slug and password.
+          {ar.login.useEmailOrSlug}
         </CardDescription>
       </CardHeader>
       <CardContent>{form}</CardContent>

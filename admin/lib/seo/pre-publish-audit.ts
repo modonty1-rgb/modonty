@@ -38,10 +38,32 @@ interface ArticleForAudit extends Omit<Article, "jsonLdValidationReport"> {
   } | null;
 }
 
+export interface ClientForCompliance {
+  forbiddenKeywords?: string[];
+  forbiddenClaims?: string[];
+}
+
+function scanForbidden(
+  text: string,
+  list: string[]
+): string[] {
+  if (!text?.trim() || !list?.length) return [];
+  const found: string[] = [];
+  const lower = text.toLowerCase();
+  for (const item of list) {
+    if (!item?.trim()) continue;
+    if (lower.includes(item.toLowerCase())) found.push(item);
+  }
+  return found;
+}
+
 /**
  * Run comprehensive pre-publish audit
  */
-export function auditBeforePublish(article: ArticleForAudit): AuditResult {
+export function auditBeforePublish(
+  article: ArticleForAudit,
+  client?: ClientForCompliance | null
+): AuditResult {
   const blocking: AuditIssue[] = [];
   const warnings: AuditIssue[] = [];
   const suggestions: AuditIssue[] = [];
@@ -266,6 +288,45 @@ export function auditBeforePublish(article: ArticleForAudit): AuditResult {
     });
   }
 
+  // === COMPLIANCE CHECKS (client forbidden keywords/claims) ===
+  if (client?.forbiddenKeywords?.length) {
+    const texts = [
+      article.title ?? "",
+      article.content ?? "",
+      article.seoTitle ?? "",
+      article.seoDescription ?? "",
+      article.excerpt ?? "",
+    ].join(" ");
+    const found = scanForbidden(texts, client.forbiddenKeywords);
+    for (const kw of found) {
+      blocking.push({
+        code: "FORBIDDEN_KEYWORD",
+        category: "content",
+        message: `المحتوى يحتوي على كلمة ممنوعة: "${kw}"`,
+        fix: "أزل الكلمة الممنوعة أو استبدلها",
+      });
+    }
+  }
+
+  if (client?.forbiddenClaims?.length) {
+    const texts = [
+      article.title ?? "",
+      article.content ?? "",
+      article.seoTitle ?? "",
+      article.seoDescription ?? "",
+      article.excerpt ?? "",
+    ].join(" ");
+    const found = scanForbidden(texts, client.forbiddenClaims);
+    for (const claim of found) {
+      blocking.push({
+        code: "FORBIDDEN_CLAIM",
+        category: "content",
+        message: `المحتوى يحتوي على ادعاء ممنوع: "${claim}"`,
+        fix: "أزل الادعاء الممنوع أو استبدله",
+      });
+    }
+  }
+
   // === CALCULATE SCORE ===
   let score = 100;
   score -= blocking.length * 20;
@@ -281,6 +342,58 @@ export function auditBeforePublish(article: ArticleForAudit): AuditResult {
     suggestions,
     timestamp: new Date().toISOString(),
   };
+}
+
+/**
+ * Compliance-only check for forbidden keywords/claims.
+ * Use before publishing when you have form data but not a full article.
+ */
+export function checkCompliance(
+  data: {
+    title?: string | null;
+    content?: string | null;
+    seoTitle?: string | null;
+    seoDescription?: string | null;
+    excerpt?: string | null;
+  },
+  client: ClientForCompliance | null | undefined
+): { blocked: boolean; issues: AuditIssue[] } {
+  const issues: AuditIssue[] = [];
+  if (!client) return { blocked: false, issues };
+
+  const texts = [
+    data.title ?? "",
+    data.content ?? "",
+    data.seoTitle ?? "",
+    data.seoDescription ?? "",
+    data.excerpt ?? "",
+  ].join(" ");
+
+  if (client.forbiddenKeywords?.length) {
+    const found = scanForbidden(texts, client.forbiddenKeywords);
+    for (const kw of found) {
+      issues.push({
+        code: "FORBIDDEN_KEYWORD",
+        category: "content",
+        message: `المحتوى يحتوي على كلمة ممنوعة: "${kw}"`,
+        fix: "أزل الكلمة الممنوعة أو استبدلها",
+      });
+    }
+  }
+
+  if (client.forbiddenClaims?.length) {
+    const found = scanForbidden(texts, client.forbiddenClaims);
+    for (const claim of found) {
+      issues.push({
+        code: "FORBIDDEN_CLAIM",
+        category: "content",
+        message: `المحتوى يحتوي على ادعاء ممنوع: "${claim}"`,
+        fix: "أزل الادعاء الممنوع أو استبدله",
+      });
+    }
+  }
+
+  return { blocked: issues.length > 0, issues };
 }
 
 /**

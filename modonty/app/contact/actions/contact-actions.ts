@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { ConversionType } from "@prisma/client";
 
 interface ContactMessageData {
   name: string;
@@ -25,6 +27,15 @@ export async function submitContactMessage(data: ContactMessageData) {
         userAgent: data.userAgent,
         referrer: data.referrer,
       },
+    });
+
+    const sessionId = await getOrCreateSessionId();
+    await createConversion({
+      type: ConversionType.CONTACT_FORM,
+      sessionId,
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent,
+      referrer: data.referrer,
     });
 
     return { success: true, message: "تم إرسال الرسالة بنجاح" };

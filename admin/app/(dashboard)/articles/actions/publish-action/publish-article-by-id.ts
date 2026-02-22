@@ -6,6 +6,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { FormSubmitResult } from "@/lib/types/form-types";
 import { validateFullPage } from "@/lib/seo/page-validator";
+import { checkCompliance } from "@/lib/seo/pre-publish-audit";
 
 export async function publishArticleById(
   articleId: string
@@ -43,6 +44,29 @@ export async function publishArticleById(
       }
     } catch (error) {
       console.warn("Could not run full page validation:", error);
+    }
+
+    if (article.clientId) {
+      const client = await db.client.findUnique({
+        where: { id: article.clientId },
+        select: { forbiddenKeywords: true, forbiddenClaims: true },
+      });
+      const compliance = checkCompliance(
+        {
+          title: article.title,
+          content: article.content,
+          seoTitle: article.seoTitle,
+          seoDescription: article.seoDescription,
+          excerpt: article.excerpt,
+        },
+        client
+      );
+      if (compliance.blocked) {
+        return {
+          success: false,
+          error: compliance.issues.map((i) => i.message).join(". "),
+        };
+      }
     }
 
     const now = new Date();

@@ -387,6 +387,22 @@ model Client {
   // Complete Meta Tags Object
   metaTags Json? // Complete meta tags object (standard SEO, Open Graph, Twitter Cards, etc.)
 
+  // Client Notification Preferences
+  notificationPreferences Json? // { articlePublished, articleApproved, digest, commentsNew, supportReplies }
+
+  // SEO Intake & Strategy (static/config - dynamic data in related tables)
+  technicalProfile           Json?   // { platform?, stagingUrl?, hreflang?, cacheType? }
+  seoGoals                   Json?   // { primaryGoal?, kpis?, successMetrics?, timeline? }
+  seoMetrics                 Json?   // { domainAuthority?, backlinkCount?, lastUpdated? }
+  linkBuildingPolicy         String?
+  brandGuidelines            Json?   // { tone?, voice?, colors?, dosAndDonts? }
+  contentTone                String?
+  complianceConstraints      Json?   // { industry?, restrictedClaims?, needsReview? }
+  googleBusinessProfileUrl   String?
+  forbiddenKeywords          String[]
+  forbiddenClaims            String[]
+  competitiveMentionsAllowed Boolean?
+
   // Relationships
   articles          Article[]
   subscribers       Subscriber[]
@@ -408,8 +424,55 @@ model Client {
   engagementDuration EngagementDuration[]
   contactMessages  ContactMessage[]
 
+  // SEO Intake relations
+  seoIntakes     SeoIntake[]
+  competitors    ClientCompetitor[]
+  targetKeywords ClientKeyword[]
+
   @@index([industryId])
   @@map("clients")
+}
+
+// ============================================
+// SEO INTAKE MODELS
+// ============================================
+
+model SeoIntake {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String   @db.ObjectId
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  answers     Json     // Full questionnaire answers by section
+  collectedAt DateTime @default(now())
+  collectedBy String?  // User/system who collected
+
+  @@index([clientId])
+  @@map("seo_intakes")
+}
+
+model ClientCompetitor {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name     String
+  url      String?
+  notes    String?
+  order    Int     @default(0)  // Display/priority order
+
+  @@index([clientId])
+  @@map("client_competitors")
+}
+
+model ClientKeyword {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String  @db.ObjectId
+  client   Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  keyword  String
+  intent   String? // transactional | informational | commercial
+  priority Int     @default(0)
+  reason   String?
+
+  @@index([clientId])
+  @@map("client_keywords")
 }
 
 // ============================================
@@ -1372,36 +1435,37 @@ model Conversion {
   @@map("conversions")
 }
 
+/// CTA (call-to-action) click tracking: one row per button/link click for CTR and which CTAs perform best.
 model CTAClick {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  // Relationships
-  articleId String?  @db.ObjectId
+  // Relationships — from page context or API when recording the click
+  articleId String?  @db.ObjectId // Article page where CTA was clicked; from current route or payload
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  clientId String? @db.ObjectId
+  clientId String? @db.ObjectId // Client (brand) context; from page or payload
   client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  userId String? @db.ObjectId
+  userId String? @db.ObjectId // Logged-in user; from auth() when recording (null if anonymous)
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  // CTA details
-  type     CTAType // What type of CTA
-  label    String? // CTA button/link label
-  targetUrl String? // Where CTA leads to
+  // CTA details — from the clicked element or tracking payload
+  type     CTAType // Enum: e.g. READ_MORE, SUBSCRIBE, CONTACT; set by frontend when sending click
+  label    String? // Visible text of button/link (e.g. "اقرأ المزيد"); from element or payload
+  targetUrl String? // href or destination URL; from element.getAttribute("href") or payload
 
-  // Engagement context
-  sessionId   String?
-  timeOnPage  Float? // Seconds on page before clicking
-  scrollDepth Float? // Scroll depth before clicking
+  // Engagement context — calculated on client at click time
+  sessionId   String? // Same cookie as view tracking (modonty_view_sid); from API via cookies()
+  timeOnPage  Float?  // Seconds from page load to click: (Date.now() - pageLoadedAt) / 1000
+  scrollDepth Float?  // Scroll % when clicked: (window.scrollY / (docHeight - viewportHeight)) * 100
 
-  // Campaign tracking
-  campaignId  String?
-  utmSource   String?
-  utmMedium   String?
-  utmCampaign String?
+  // Campaign tracking — from URL query params at click time (optional)
+  campaignId  String? // From ?campaign_id= or payload
+  utmSource   String? // From ?utm_source= or new URL(url).searchParams
+  utmMedium   String? // From ?utm_medium=
+  utmCampaign String? // From ?utm_campaign=
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) // Server time when row is inserted
 
   @@index([articleId, createdAt])
   @@index([clientId, createdAt])

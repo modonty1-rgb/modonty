@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, MailOpen, CheckCheck, Archive, Trash2 } from "lucide-react";
@@ -12,7 +13,17 @@ interface MessagesListProps {
   clientId: string;
 }
 
+function statusLabel(status: string): string {
+  const s = ar.support;
+  if (status === "new") return s.new;
+  if (status === "read") return s.read;
+  if (status === "replied") return s.replied;
+  if (status === "archived") return s.archived;
+  return status;
+}
+
 export function MessagesList({ messages, clientId }: MessagesListProps) {
+  const s = ar.support;
   const [filter, setFilter] = useState<string>("all");
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
@@ -29,18 +40,18 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
     setUpdating(messageId);
     const result = await updateMessageStatus(messageId, clientId, status);
     if (!result.success) {
-      alert(result.error || "Failed to update message");
+      alert(result.error || s.updateFailed);
     }
     setUpdating(null);
   };
 
   const handleDelete = async (messageId: string) => {
-    if (!confirm("Are you sure you want to delete this message?")) return;
+    if (!confirm(s.deleteConfirm)) return;
 
     setUpdating(messageId);
     const result = await deleteMessage(messageId, clientId);
     if (!result.success) {
-      alert(result.error || "Failed to delete message");
+      alert(result.error || s.deleteFailed);
     }
     setUpdating(null);
   };
@@ -52,7 +63,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
       <Card className="lg:col-span-1 shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Messages</CardTitle>
+            <CardTitle className="text-lg">{s.messages}</CardTitle>
             <span className="text-sm text-muted-foreground">
               {filteredMessages.length}
             </span>
@@ -63,28 +74,28 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All
+              {s.all}
             </Button>
             <Button
               variant={filter === "new" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("new")}
             >
-              New
+              {s.new}
             </Button>
             <Button
               variant={filter === "read" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("read")}
             >
-              Read
+              {s.read}
             </Button>
             <Button
               variant={filter === "replied" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("replied")}
             >
-              Replied
+              {s.replied}
             </Button>
           </div>
         </CardHeader>
@@ -92,7 +103,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
           <div className="space-y-2">
             {filteredMessages.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-8">
-                No messages found
+                {s.noMessagesFound}
               </p>
             ) : (
               filteredMessages.map((message) => (
@@ -128,11 +139,11 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                           : "bg-muted text-muted-foreground"
                       }`}
                     >
-                      {message.status}
+                      {statusLabel(message.status)}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(message.createdAt).toLocaleDateString()}
+                    {new Date(message.createdAt).toLocaleDateString("ar-SA")}
                   </p>
                 </div>
               ))
@@ -143,34 +154,34 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
 
       <Card className="lg:col-span-2 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-lg">Message Details</CardTitle>
+          <CardTitle className="text-lg">{s.messageDetails}</CardTitle>
         </CardHeader>
         <CardContent>
           {!selectedMsg ? (
             <p className="text-center text-sm text-muted-foreground py-12">
-              Select a message to view details
+              {s.selectToView}
             </p>
           ) : (
             <div className="space-y-4">
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">From</p>
+                    <p className="text-sm text-muted-foreground">{s.from}</p>
                     <p className="font-medium text-foreground">{selectedMsg.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {selectedMsg.email}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Subject</p>
+                    <p className="text-sm text-muted-foreground">{s.subject}</p>
                     <p className="font-medium text-foreground">
                       {selectedMsg.subject}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Received</p>
+                    <p className="text-sm text-muted-foreground">{s.received}</p>
                     <p className="text-sm text-foreground">
-                      {new Date(selectedMsg.createdAt).toLocaleString()}
+                      {new Date(selectedMsg.createdAt).toLocaleString("ar-SA")}
                     </p>
                   </div>
                 </div>
@@ -217,7 +228,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
               </div>
 
               <div className="border-t border-border pt-4">
-                <p className="text-sm text-muted-foreground mb-2">Message</p>
+                <p className="text-sm text-muted-foreground mb-2">{s.message}</p>
                 <div className="p-4 rounded-lg bg-muted">
                   <p className="text-sm text-foreground whitespace-pre-wrap">
                     {selectedMsg.message}
@@ -227,7 +238,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
 
               {selectedMsg.referrer && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Referrer</p>
+                  <p className="text-sm text-muted-foreground">{s.referrer}</p>
                   <p className="text-xs text-muted-foreground break-all">
                     {selectedMsg.referrer}
                   </p>

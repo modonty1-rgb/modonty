@@ -13,6 +13,7 @@ import { getArticles } from "@/app/api/helpers/article-queries";
 import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { FeedPost } from "@/lib/types";
 import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/client-page";
+import { ClientViewTracker } from "./components/client-view-tracker";
 import ClientLoading from "./loading";
 
 interface ClientPageProps {
@@ -119,6 +120,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
         />
+        <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
           <ClientPageLeft client={client} />

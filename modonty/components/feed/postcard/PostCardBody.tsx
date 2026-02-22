@@ -1,4 +1,5 @@
 import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import type { PostCardProps } from "./PostCard.types";
 import { PostCardHeroImage } from "./PostCardHeroImage";
 import { ChevronLeft } from "lucide-react";
@@ -30,13 +31,17 @@ export function PostCardBody({ post, priority, isLcp, index }: PostCardProps) {
         index={index}
       />
       <div className="flex items-center justify-end">
-        <Link
+        <CtaTrackedLink
           href={`/articles/${post.slug}`}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary  hover:underline "
+          label="اقرأ المزيد"
+          type="LINK"
+          articleId={post.id}
+          clientId={post.clientId}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
         >
           اقرأ المزيد
           <ChevronLeft className="h-4 w-4" aria-hidden />
-        </Link>
+        </CtaTrackedLink>
       </div>
       
     </>

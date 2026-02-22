@@ -35,6 +35,8 @@ import {
   CommentFormDialog,
   ArticleMobileLayout,
 } from "./components";
+import { ArticleViewTracker } from "./components/article-view-tracker";
+import { ArticleBodyLinkTracker } from "./components/article-body-link-tracker";
 import ArticleLoading from "./loading";
 
 const NewsletterCTA = dynamic(
@@ -211,6 +213,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           />
         )}
 
+        <ArticleViewTracker articleSlug={article.slug} />
+
         <>
           <ReadingProgressBar />
           <Breadcrumb
@@ -243,6 +247,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     title={article.title}
                     articleId={article.id}
                     articleSlug={article.slug}
+                    clientId={article.clientId ?? undefined}
                     commentsCount={article._count.comments}
                     views={article._count.views}
                     questionsCount={article._count.faqs}
@@ -297,6 +302,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     style={{ lineHeight: '1.6' }}
                     dangerouslySetInnerHTML={{ __html: article.content }}
                   />
+                  <ArticleBodyLinkTracker articleId={article.id} />
 
                   <ArticleImageGallery gallery={article.gallery} />
 
@@ -332,10 +338,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     />
                   )}
 
-                  <ArticleManualRelated relatedArticles={article.relatedTo} />
+                  <ArticleManualRelated
+                    articleId={article.id}
+                    clientId={article.clientId ?? undefined}
+                    relatedArticles={article.relatedTo}
+                  />
 
                   {/* Related Articles (lazy-loaded on open) */}
-                  <RelatedArticles articleId={article.id} />
+                  <RelatedArticles articleId={article.id} clientId={article.clientId ?? undefined} />
 
                   <ArticleFooter
                     client={article.client}
@@ -358,12 +368,13 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   </div>
                 ) : null}
                 <div className="[&>div]:mt-0 [&>div]:mb-0">
-                  <NewsletterCTA clientId={article.clientId} />
+                  <NewsletterCTA clientId={article.clientId} articleId={article.id} />
                 </div>
                 <CommentFormDialog
                   articleId={article.id}
                   articleSlug={article.slug}
                   userId={userId}
+                  clientId={article.clientId ?? undefined}
                 />
                 <ArticleTableOfContents content={article.content} />
               </aside>
@@ -374,6 +385,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 title: article.title,
                 articleId: article.id,
                 articleSlug: article.slug,
+                clientId: article.clientId ?? undefined,
                 userId,
                 likes: article._count.likes,
                 dislikes: article._count.dislikes,

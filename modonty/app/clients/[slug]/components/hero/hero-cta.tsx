@@ -1,9 +1,12 @@
+import dynamic from "next/dynamic";
 import Link from "@/components/link";
-import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
 import { ClientFollowButton } from "../client-follow-button";
 import { ShareClientButtonWrapper } from "../share-client-button-wrapper";
 import type { ClientHeroClient, ClientHeroStats, ClientHeroSocialLink } from "./types";
+
+const CtaVisitWebsite = dynamic(() =>
+  import("./hero-cta-visit-website").then((m) => ({ default: m.CtaVisitWebsite }))
+);
 
 function CtaSocialLinks({ socialLinks }: { socialLinks: ClientHeroSocialLink[] }) {
   return (
@@ -21,17 +24,6 @@ function CtaSocialLinks({ socialLinks }: { socialLinks: ClientHeroSocialLink[] }
         </Link>
       ))}
     </div>
-  );
-}
-
-function CtaVisitWebsite({ url }: { url: string }) {
-  return (
-    <Link href={url} target="_blank" rel="noopener noreferrer" className="flex-1 md:flex-none">
-      <Button size="default" className="gap-2 w-full md:w-auto">
-        <Globe className="h-4 w-4" />
-        زيارة الموقع
-      </Button>
-    </Link>
   );
 }
 
@@ -74,7 +66,7 @@ export function HeroCta({ client, stats, socialLinks, initialIsFollowing }: Hero
     <div className="flex flex-col items-end gap-4 md:gap-5 md:pl-4 md:border-s md:border-border">
       <CtaSocialLinks socialLinks={socialLinks} />
       <div className="flex items-center gap-3 md:gap-2">
-        {client.url && <CtaVisitWebsite url={client.url} />}
+        {client.url && <CtaVisitWebsite url={client.url} clientId={client.id} />}
         <CtaShareAndFollow
           client={client}
           stats={stats}

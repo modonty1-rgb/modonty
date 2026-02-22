@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
 import { getSubscribers, getSubscriberStats } from "./helpers/subscriber-queries";
 import { SubscribersTable } from "./components/subscribers-table";
@@ -20,14 +21,16 @@ export default async function SubscribersPage() {
     getSubscriberStats(clientId),
   ]);
 
+  const s = ar.subscribers;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Subscriber Management
+          {s.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your newsletter subscribers and GDPR compliance
+          {s.manageNewsletter}
         </p>
       </div>
 
@@ -36,7 +39,7 @@ export default async function SubscribersPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Active</CardTitle>
+              <CardTitle className="text-base font-medium">{s.active}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -44,7 +47,7 @@ export default async function SubscribersPage() {
               {stats.active}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Subscribed users
+              {s.subscribedUsers}
             </p>
           </CardContent>
         </Card>
@@ -54,7 +57,7 @@ export default async function SubscribersPage() {
             <div className="flex items-center gap-2">
               <UserX className="h-4 w-4 text-muted-foreground" />
               <CardTitle className="text-base font-medium">
-                Unsubscribed
+                {s.unsubscribed}
               </CardTitle>
             </div>
           </CardHeader>
@@ -62,16 +65,16 @@ export default async function SubscribersPage() {
             <p className="text-2xl font-semibold text-foreground">
               {stats.unsubscribed}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Left the list</p>
+            <p className="text-xs text-muted-foreground mt-1">{s.leftTheList}</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-green-600" />
+              <Shield className="h-4 w-4 text-primary" />
               <CardTitle className="text-base font-medium">
-                GDPR Consent
+                {s.gdprConsent}
               </CardTitle>
             </div>
           </CardHeader>
@@ -80,7 +83,7 @@ export default async function SubscribersPage() {
               {stats.withConsent}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              With consent
+              {s.withConsent}
             </p>
           </CardContent>
         </Card>
@@ -89,14 +92,14 @@ export default async function SubscribersPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">This Month</CardTitle>
+              <CardTitle className="text-base font-medium">{s.thisMonth}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">
               {stats.thisMonth}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">New subscribers</p>
+            <p className="text-xs text-muted-foreground mt-1">{s.newSubscribers}</p>
           </CardContent>
         </Card>
 
@@ -104,14 +107,14 @@ export default async function SubscribersPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total</CardTitle>
+              <CardTitle className="text-base font-medium">{s.total}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">
               {stats.total}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">All subscribers</p>
+            <p className="text-xs text-muted-foreground mt-1">{s.allSubscribers}</p>
           </CardContent>
         </Card>
       </div>

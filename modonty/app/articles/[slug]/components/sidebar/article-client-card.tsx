@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card } from "@/components/ui/card";
 import { Building2, ChevronLeft } from "lucide-react";
 import Image from "next/image";
@@ -85,13 +85,17 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
       {/* Heading, description */}
       <div className={`p-4 flex flex-col gap-2 ${!askClientProps ? "pb-4" : ""}`}>
         <h2 className="font-semibold text-base leading-tight">
-          <Link
+          <CtaTrackedLink
             href={`/clients/${client.slug}`}
+            label={client.name}
+            type="LINK"
+            articleId={askClientProps?.articleId}
+            clientId={client.id}
             className="inline-flex items-center gap-1 text-foreground hover:text-primary transition-colors"
           >
             {client.name}
             <ChevronLeft className="h-4 w-4 shrink-0 ltr:rotate-180" aria-hidden />
-          </Link>
+          </CtaTrackedLink>
         </h2>
         {hasDescription && (
           <p className="text-sm text-muted-foreground leading-relaxed">

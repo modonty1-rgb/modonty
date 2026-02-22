@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,9 @@ import Link from "@/components/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawCallback = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl = rawCallback.startsWith("/") ? rawCallback : "/";
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +22,7 @@ export default function LoginPage() {
   const handleOAuthSignIn = async (provider: "google") => {
     setLoading(provider);
     try {
-      await signIn(provider, { callbackUrl: "/" });
+      await signIn(provider, { callbackUrl });
     } catch (error) {
       console.error("Sign in error:", error);
     } finally {
@@ -37,7 +40,7 @@ export default function LoginPage() {
         redirect: false,
       });
       if (result?.ok) {
-        router.push("/");
+        router.push(callbackUrl);
         router.refresh();
       }
     } catch (error) {

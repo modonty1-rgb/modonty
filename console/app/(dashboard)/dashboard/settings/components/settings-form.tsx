@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -10,22 +11,24 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateClientSettings } from "../actions/settings-actions";
+import type { NotificationPreferences } from "../actions/settings-actions";
 
 interface SettingsFormProps {
   clientId: string;
-  initial: { email?: string | null; phone?: string | null; gtmId?: string | null };
+  initial: {
+    notificationPreferences?: NotificationPreferences | null;
+  };
 }
 
 export function SettingsForm({ clientId, initial }: SettingsFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState(initial.email ?? "");
-  const [phone, setPhone] = useState(initial.phone ?? "");
-  const [gtmId, setGtmId] = useState(initial.gtmId ?? "");
+  const [prefs, setPrefs] = useState<NotificationPreferences>(
+    initial.notificationPreferences ?? {}
+  );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,17 +36,15 @@ export function SettingsForm({ clientId, initial }: SettingsFormProps) {
     setError(null);
     try {
       const res = await updateClientSettings(clientId, {
-        email: email.trim() || null,
-        phone: phone.trim() || null,
-        gtmId: gtmId.trim() || null,
+        notificationPreferences: prefs,
       });
       if (res.success) {
         router.refresh();
       } else {
-        setError(res.error ?? "Update failed");
+        setError(res.error ?? ar.settings.updateFailed);
       }
     } catch {
-      setError("Something went wrong.");
+      setError(ar.settings.somethingWrong);
     } finally {
       setLoading(false);
     }
@@ -52,8 +53,8 @@ export function SettingsForm({ clientId, initial }: SettingsFormProps) {
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardHeader>
-        <CardTitle className="text-lg">Profile & settings</CardTitle>
-        <CardDescription>Contact and GTM (optional)</CardDescription>
+        <CardTitle className="text-lg">{ar.settings.notifications}</CardTitle>
+        <CardDescription>{ar.settings.notificationsDesc}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -62,41 +63,88 @@ export function SettingsForm({ clientId, initial }: SettingsFormProps) {
               {error}
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="contact@example.com"
-              disabled={loading}
-            />
+          <div className="space-y-4">
+            <div>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!prefs.articlePublished}
+                    onChange={(e) =>
+                      setPrefs((p) => ({
+                        ...p,
+                        articlePublished: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-input"
+                  />
+                  <span className="text-sm">{ar.settings.articlePublished}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!prefs.articleApproved}
+                    onChange={(e) =>
+                      setPrefs((p) => ({
+                        ...p,
+                        articleApproved: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-input"
+                  />
+                  <span className="text-sm">{ar.settings.articleApproved}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!prefs.commentsNew}
+                    onChange={(e) =>
+                      setPrefs((p) => ({
+                        ...p,
+                        commentsNew: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-input"
+                  />
+                  <span className="text-sm">{ar.settings.commentsNew}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!prefs.supportReplies}
+                    onChange={(e) =>
+                      setPrefs((p) => ({
+                        ...p,
+                        supportReplies: e.target.checked,
+                      }))
+                    }
+                    className="rounded border-input"
+                  />
+                  <span className="text-sm">{ar.settings.supportReplies}</span>
+                </label>
+                <div className="space-y-2">
+                  <Label className="text-sm">{ar.settings.digest}</Label>
+                  <select
+                    value={prefs.digest ?? "none"}
+                    onChange={(e) =>
+                      setPrefs((p) => ({
+                        ...p,
+                        digest: e.target.value as "none" | "weekly" | "monthly",
+                      }))
+                    }
+                    className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                  >
+                    <option value="none">{ar.settings.digestNone}</option>
+                    <option value="weekly">{ar.settings.digestWeekly}</option>
+                    <option value="monthly">{ar.settings.digestMonthly}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input
-              id="phone"
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+966..."
-              disabled={loading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="gtmId">GTM container ID</Label>
-            <Input
-              id="gtmId"
-              type="text"
-              value={gtmId}
-              onChange={(e) => setGtmId(e.target.value)}
-              placeholder="GTM-XXXXXXX"
-              disabled={loading}
-            />
-          </div>
+
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving…" : "Save"}
+            {loading ? ar.settings.saving : ar.settings.save}
           </Button>
         </form>
       </CardContent>

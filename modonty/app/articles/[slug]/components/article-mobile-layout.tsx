@@ -9,6 +9,7 @@ interface ArticleMobileLayoutProps {
     title: string;
     articleId: string;
     articleSlug: string;
+    clientId?: string;
     userId?: string | null;
     likes: number;
     dislikes: number;

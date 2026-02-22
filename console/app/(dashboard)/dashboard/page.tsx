@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -11,11 +12,15 @@ import {
   getDashboardStats,
   getTopArticles,
   getTrafficSources,
+  getViewsOverTime,
   getRecentActivity,
 } from "./helpers/dashboard-queries";
 import { getPendingArticlesCount } from "./articles/helpers/article-queries";
 import { getPendingCommentsCount } from "./comments/helpers/comment-queries";
-import { BarChart3, TrendingUp, Users, Share2, MessageSquare, Target, FileText, Image as ImageIcon, Mail } from "lucide-react";
+import { BarChart3, TrendingUp, Users, Share2, MessageSquare, Target, FileText, Mail } from "lucide-react";
+import { TrafficChart } from "./components/traffic-chart";
+import { ViewsChart } from "./components/views-chart";
+import { TopArticlesChart } from "./components/top-articles-chart";
 
 export const dynamic = "force-dynamic";
 
@@ -24,89 +29,41 @@ export default async function DashboardPage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) return null;
 
-  const [stats, topByViews, topByEngagement, topByConversions, trafficSources, recentActivity, pendingCount, pendingCommentsCount] =
+  const [stats, topByViews, topByEngagement, topByConversions, trafficSources, viewsOverTime, recentActivity, pendingCount, pendingCommentsCount] =
     await Promise.all([
       getDashboardStats(clientId),
       getTopArticles(clientId, "views", 5),
       getTopArticles(clientId, "engagement", 5),
       getTopArticles(clientId, "conversions", 5),
       getTrafficSources(clientId, 30),
+      getViewsOverTime(clientId, 7),
       getRecentActivity(clientId, 10),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
     ]);
 
-  const quotaProgress =
-    stats.content.monthlyQuota > 0
-      ? (stats.content.monthlyPublished / stats.content.monthlyQuota) * 100
-      : 0;
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Dashboard
+          {ar.nav.dashboard}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Welcome back. Here's your performance overview.
+          {ar.dashboard.welcome}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">Subscription</CardTitle>
-            <CardDescription className="text-xs">Current plan</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg font-semibold text-foreground">{stats.subscription.tierName}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.subscription.status} · {stats.subscription.paymentStatus}
-            </p>
-            {stats.subscription.price && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {stats.subscription.price.toLocaleString()} SAR/year
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Link href="/dashboard/content">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Content</CardTitle>
-              <CardDescription className="text-xs">Articles this month</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                {stats.content.monthlyPublished}
-                {stats.content.monthlyQuota > 0 && ` / ${stats.content.monthlyQuota}`}
-              </p>
-              {stats.content.monthlyQuota > 0 && (
-                <div className="mt-2 h-2 w-full rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all"
-                    style={{ width: `${Math.min(100, quotaProgress)}%` }}
-                  />
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground mt-2 underline underline-offset-4">
-                View content →
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">Subscribers</CardTitle>
-            <CardDescription className="text-xs">Newsletter list</CardDescription>
+            <CardTitle className="text-base font-medium">{ar.dashboard.subscribers}</CardTitle>
+            <CardDescription className="text-xs">{ar.dashboard.newsletterList}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-lg font-semibold text-foreground">
               {stats.content.totalSubscribers}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Total subscribers</p>
+            <p className="text-xs text-muted-foreground mt-1">{ar.dashboard.totalSubscribers}</p>
           </CardContent>
         </Card>
 
@@ -115,22 +72,22 @@ export default async function DashboardPage() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">Articles</CardTitle>
+                <CardTitle className="text-base font-medium">{ar.dashboard.articles}</CardTitle>
               </div>
-              <CardDescription className="text-xs">Manage & approve</CardDescription>
+              <CardDescription className="text-xs">{ar.dashboard.manageApprove}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-lg font-semibold text-foreground">
                 {pendingCount > 0 ? (
                   <>
-                    {pendingCount} pending approval
+                    {pendingCount} {ar.dashboard.pendingApproval}
                   </>
                 ) : (
-                  "All approved"
+                  ar.dashboard.allApproved
                 )}
               </p>
               <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                Manage articles →
+                {ar.dashboard.manageApprove} →
               </p>
             </CardContent>
           </Card>
@@ -139,15 +96,15 @@ export default async function DashboardPage() {
         <Link href="/dashboard/analytics">
           <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Analytics</CardTitle>
-              <CardDescription className="text-xs">Views & engagement</CardDescription>
+              <CardTitle className="text-base font-medium">{ar.dashboard.analytics}</CardTitle>
+              <CardDescription className="text-xs">{ar.dashboard.viewsEngagement}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-lg font-semibold text-foreground">
-                {stats.analytics.views7d.toLocaleString()} views (7d)
+                {stats.analytics.views7d.toLocaleString()} {ar.dashboard.views} ({ar.analytics.views7d})
               </p>
               <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                View analytics →
+                {ar.dashboard.viewAnalytics} →
               </p>
             </CardContent>
           </Card>
@@ -158,42 +115,22 @@ export default async function DashboardPage() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">Comments</CardTitle>
+                <CardTitle className="text-base font-medium">{ar.dashboard.comments}</CardTitle>
               </div>
-              <CardDescription className="text-xs">Moderation queue</CardDescription>
+              <CardDescription className="text-xs">{ar.dashboard.moderationQueue}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-lg font-semibold text-foreground">
                 {pendingCommentsCount > 0 ? (
                   <>
-                    {pendingCommentsCount} pending review
+                    {pendingCommentsCount} {ar.dashboard.pendingReview}
                   </>
                 ) : (
-                  "All reviewed"
+                  ar.dashboard.allReviewed
                 )}
               </p>
               <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                Moderate comments →
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/dashboard/media">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">Media</CardTitle>
-              </div>
-              <CardDescription className="text-xs">Assets & branding</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                Manage library
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                View media →
+                {ar.dashboard.moderateComments} →
               </p>
             </CardContent>
           </Card>
@@ -204,16 +141,16 @@ export default async function DashboardPage() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">Support</CardTitle>
+                <CardTitle className="text-base font-medium">{ar.dashboard.support}</CardTitle>
               </div>
-              <CardDescription className="text-xs">Contact messages</CardDescription>
+              <CardDescription className="text-xs">{ar.dashboard.contactMessages}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-lg font-semibold text-foreground">
-                View messages
+                {ar.dashboard.viewMessages}
               </p>
               <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                Manage support →
+                {ar.dashboard.manageSupport} →
               </p>
             </CardContent>
           </Card>
@@ -225,7 +162,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Engagement Score</CardTitle>
+              <CardTitle className="text-base font-medium">{ar.dashboard.engagementScore}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -243,7 +180,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Active Users</CardTitle>
+              <CardTitle className="text-base font-medium">{ar.dashboard.activeUsers}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -263,7 +200,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Share2 className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Interactions</CardTitle>
+              <CardTitle className="text-base font-medium">{ar.dashboard.interactions}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -271,11 +208,11 @@ export default async function DashboardPage() {
               {stats.interactions.totalLikes + stats.interactions.totalShares + stats.interactions.totalComments}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.interactions.totalLikes} likes · {stats.interactions.totalShares} shares ·{" "}
-              {stats.interactions.totalComments} comments
+              {stats.interactions.totalLikes} {ar.dashboard.likes} · {stats.interactions.totalShares} {ar.dashboard.shares} ·{" "}
+              {stats.interactions.totalComments} {ar.dashboard.commentsLabel}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Rate: {stats.interactions.interactionRate.toFixed(1)}%
+              {ar.dashboard.rate}: {stats.interactions.interactionRate.toFixed(1)}%
             </p>
           </CardContent>
         </Card>
@@ -284,7 +221,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Conversions</CardTitle>
+              <CardTitle className="text-base font-medium">{ar.dashboard.conversions}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -292,10 +229,10 @@ export default async function DashboardPage() {
               {stats.conversions.total}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Rate: {stats.conversions.rate.toFixed(2)}%
+              {ar.dashboard.rate}: {stats.conversions.rate.toFixed(2)}%
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Bounce: {stats.analytics.bounceRate.toFixed(1)}%
+              {ar.dashboard.bounce}: {stats.analytics.bounceRate.toFixed(1)}%
             </p>
           </CardContent>
         </Card>
@@ -304,98 +241,29 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Top Performing Articles</CardTitle>
-            <CardDescription>By views, engagement, and conversions</CardDescription>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              {ar.dashboard.byViews}
+            </CardTitle>
+            <CardDescription>{ar.dashboard.topPerforming}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  By Views
-                </h4>
-                <ul className="space-y-2">
-                  {topByViews.length > 0 ? (
-                    topByViews.map((article) => (
-                      <li
-                        key={article.id}
-                        className="flex items-center justify-between gap-4 py-2 border-b border-border last:border-0"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {article.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {article.category ?? "—"} · {article.views.toLocaleString()} views
-                          </p>
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No articles yet.</p>
-                  )}
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  By Engagement
-                </h4>
-                <ul className="space-y-2">
-                  {topByEngagement.length > 0 ? (
-                    topByEngagement.map((article) => (
-                      <li
-                        key={article.id}
-                        className="flex items-center justify-between gap-4 py-2 border-b border-border last:border-0"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {article.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Score: {article.engagementScore} · {article.views.toLocaleString()} views
-                          </p>
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No articles yet.</p>
-                  )}
-                </ul>
-              </div>
-            </div>
+            <TopArticlesChart data={topByViews} metricLabel={ar.dashboard.views} />
+            {topByViews.length === 0 && (
+              <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noArticles}</p>
+            )}
           </CardContent>
         </Card>
 
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Traffic Sources</CardTitle>
-            <CardDescription>Last 30 days</CardDescription>
+            <CardTitle className="text-lg">{ar.dashboard.trafficSources}</CardTitle>
+            <CardDescription>{ar.dashboard.last30Days}</CardDescription>
           </CardHeader>
           <CardContent>
-            {trafficSources.length > 0 ? (
-              <div className="space-y-3">
-                {trafficSources.map((source) => (
-                  <div key={source.source} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-foreground capitalize">
-                        {source.source.toLowerCase()}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {source.count.toLocaleString()} ({source.percentage.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${source.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No traffic data yet.</p>
+            <TrafficChart data={trafficSources} />
+            {trafficSources.length === 0 && (
+              <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noTraffic}</p>
             )}
           </CardContent>
         </Card>
@@ -403,8 +271,56 @@ export default async function DashboardPage() {
 
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-lg">Recent Activity</CardTitle>
-          <CardDescription>Latest updates and events</CardDescription>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            {ar.dashboard.views} (7 أيام)
+          </CardTitle>
+          <CardDescription>{ar.dashboard.viewsEngagement}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ViewsChart data={viewsOverTime} />
+          {viewsOverTime.length === 0 && (
+            <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noTraffic}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              {ar.dashboard.byEngagement}
+            </CardTitle>
+            <CardDescription>{ar.dashboard.score}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {topByEngagement.length > 0 ? (
+                topByEngagement.map((article) => (
+                  <li
+                    key={article.id}
+                    className="flex items-center justify-between gap-4 py-2 border-b border-border last:border-0"
+                  >
+                    <p className="text-sm font-medium text-foreground truncate flex-1 min-w-0">
+                      {article.title}
+                    </p>
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {ar.dashboard.score}: {article.engagementScore}
+                    </span>
+                  </li>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">{ar.dashboard.noArticles}</p>
+              )}
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">{ar.dashboard.recentActivity}</CardTitle>
+          <CardDescription>{ar.dashboard.latestUpdates}</CardDescription>
         </CardHeader>
         <CardContent>
           {recentActivity.length > 0 ? (
@@ -435,10 +351,11 @@ export default async function DashboardPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">No recent activity.</p>
+            <p className="text-sm text-muted-foreground">{ar.dashboard.noActivity}</p>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -10,6 +10,7 @@ interface SidebarNavItemProps {
   icon: LucideIcon;
   label: string;
   badge?: number;
+  badgeLabel?: string;
   isCollapsed?: boolean;
 }
 
@@ -18,6 +19,7 @@ export function SidebarNavItem({
   icon: Icon,
   label,
   badge,
+  badgeLabel,
   isCollapsed = false,
 }: SidebarNavItemProps) {
   const pathname = usePathname();
@@ -40,15 +42,38 @@ export function SidebarNavItem({
       {!isCollapsed && (
         <>
           <span className="flex-1">{label}</span>
-          {badge !== undefined && badge > 0 && (
-            <span className="px-1.5 py-0.5 text-xs font-semibold rounded-full bg-primary text-primary-foreground min-w-[1.25rem] text-center">
+          {badgeLabel && (
+            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary/10 text-primary border border-primary/20">
+              {badgeLabel}
+            </span>
+          )}
+          {badge !== undefined && (
+            <span
+              className={cn(
+                "px-1.5 py-0.5 text-xs font-semibold rounded-full min-w-[1.25rem] text-center",
+                badge > 0
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              )}
+            >
               {badge > 9 ? "9+" : badge}
             </span>
           )}
         </>
       )}
-      {isCollapsed && badge !== undefined && badge > 0 && (
-        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary" />
+      {isCollapsed && badgeLabel && (
+        <span
+          className="absolute top-1 end-1 h-2 w-2 rounded-full bg-primary/80"
+          title={badgeLabel}
+        />
+      )}
+      {isCollapsed && badge !== undefined && !badgeLabel && (
+        <span
+          className={cn(
+            "absolute top-1 end-1 h-2 w-2 rounded-full",
+            badge > 0 ? "bg-primary" : "bg-muted"
+          )}
+        />
       )}
     </Link>
   );

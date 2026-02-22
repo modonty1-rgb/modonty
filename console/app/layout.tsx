@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { GTMContainer } from "@/components/gtm/GTMContainer";
 import { Providers } from "@/app/components/providers/providers";
+import { ar } from "@/lib/ar";
 
 export const metadata: Metadata = {
-  title: "Client Portal - Modonty",
-  description: "Modonty client portal. Sign in to access your dashboard.",
+  title: ar.meta.title,
+  description: ar.meta.description,
 };
 
 export default function RootLayout({
@@ -14,7 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="bg-background">
         <GTMContainer />
         <Providers>{children}</Providers>

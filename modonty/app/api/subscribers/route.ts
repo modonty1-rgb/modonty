@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
+import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { ConversionType } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,6 +48,13 @@ export async function POST(request: NextRequest) {
         consentGiven: true,
         consentDate: new Date(),
       },
+    });
+
+    const sessionId = await getOrCreateSessionId();
+    await createConversion({
+      type: ConversionType.NEWSLETTER,
+      clientId,
+      sessionId,
     });
 
     return NextResponse.json({

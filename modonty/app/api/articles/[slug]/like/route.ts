@@ -59,6 +59,7 @@ export async function POST(
         data: {
           articleId: article.id,
           userId: session.user.id,
+          sessionId: `user:${session.user.id}`,
         },
       });
     } catch (e: unknown) {

@@ -91,12 +91,13 @@ export function ArticleMobileSidebarSheet({
             {author && <ArticleAuthorBio author={author} />}
             <ArticleTableOfContents content={content} />
             <div className="[&>div]:mt-0 [&>div]:mb-0">
-              <NewsletterCTA clientId={clientId} />
+              <NewsletterCTA clientId={clientId} articleId={articleId} />
             </div>
             <CommentFormDialog
               articleId={articleId}
               articleSlug={articleSlug}
               userId={userId}
+              clientId={clientId}
             />
             {citations.length > 0 && (
               <ArticleCitations citations={citations} />

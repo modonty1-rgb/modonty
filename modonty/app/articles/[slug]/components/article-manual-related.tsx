@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card } from "@/components/ui/card";
 import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 
 interface ArticleManualRelatedProps {
+  articleId?: string;
+  clientId?: string;
   relatedArticles: Array<{
     id: string;
     related: {
@@ -41,7 +43,7 @@ interface ArticleManualRelatedProps {
   }>;
 }
 
-export function ArticleManualRelated({ relatedArticles }: ArticleManualRelatedProps) {
+export function ArticleManualRelated({ articleId, clientId, relatedArticles }: ArticleManualRelatedProps) {
   if (!relatedArticles || relatedArticles.length === 0) return null;
 
   return (
@@ -51,7 +53,15 @@ export function ArticleManualRelated({ relatedArticles }: ArticleManualRelatedPr
       icon={Link2}
     >
       {relatedArticles.map(({ id, related }) => (
-        <Link key={id} href={`/articles/${related.slug}`} className="h-full block">
+        <CtaTrackedLink
+          key={id}
+          href={`/articles/${related.slug}`}
+          label={related.title}
+          type="LINK"
+          articleId={articleId}
+          clientId={clientId}
+          className="h-full block"
+        >
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
             <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
               <div>
@@ -106,7 +116,7 @@ export function ArticleManualRelated({ relatedArticles }: ArticleManualRelatedPr
               <div className="flex-[0_0_20%] aspect-square bg-muted" />
             )}
           </Card>
-        </Link>
+        </CtaTrackedLink>
       ))}
     </ArticleSectionCollapsible>
   );

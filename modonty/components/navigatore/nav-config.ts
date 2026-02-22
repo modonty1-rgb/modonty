@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { Home, Tags, Building2, TrendingUp } from "lucide-react";
+import { Home, Tags, Building2, TrendingUp, Bookmark } from "lucide-react";
 import type { NavSection } from "@/components/navigatore/TopNav";
 
 export interface MainNavItem {
@@ -14,5 +14,6 @@ export const mainNavItems: MainNavItem[] = [
   { icon: TrendingUp, label: "الرائجة", href: "/trending", section: "trending" },
   { icon: Tags, label: "الفئات", href: "/categories", section: "categories" },
   { icon: Building2, label: "العملاء", href: "/clients", section: "clients" },
+  { icon: Bookmark, label: "المحفوظات", href: "/users/profile/favorites", section: "none" },
 ];
 

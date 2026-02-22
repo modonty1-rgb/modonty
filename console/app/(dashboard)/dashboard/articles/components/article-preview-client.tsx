@@ -16,6 +16,7 @@ import { approveArticle, requestChanges } from "../actions/article-actions";
 import { FeedbackForm } from "./feedback-form";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 import Image from "next/image";
+import { ar } from "@/lib/ar";
 
 interface ArticlePreviewClientProps {
   article: ArticleWithAllData;
@@ -40,8 +41,9 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
     setExpandedSections(newExpanded);
   };
 
+  const a = ar.articles;
   const handleApprove = async () => {
-    if (!confirm("Are you sure you want to approve this article?")) return;
+    if (!confirm(a.approveConfirm)) return;
 
     setLoading(true);
     try {
@@ -50,10 +52,10 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         router.push("/dashboard/articles");
         router.refresh();
       } else {
-        alert(result.error || "Failed to approve article");
+        alert(result.error || a.approveFailed);
       }
     } catch (error) {
-      alert("An error occurred");
+      alert(a.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -68,10 +70,10 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         router.push("/dashboard/articles");
         router.refresh();
       } else {
-        alert(result.error || "Failed to request changes");
+        alert(result.error || a.requestFailed);
       }
     } catch (error) {
-      alert("An error occurred");
+      alert(a.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -92,7 +94,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         onClick={() => toggleSection(id)}
         className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
       >
-        <div className="text-left">
+        <div className="text-start">
           <h3 className="font-semibold text-foreground">{title}</h3>
           {description && (
             <p className="text-sm text-muted-foreground mt-1">{description}</p>
@@ -109,7 +111,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6" dir="rtl" lang="ar">
         <div className="flex items-center justify-between">
           <div>
             <Link
@@ -117,13 +119,13 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
               className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mb-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Articles
+              {a.backToArticles}
             </Link>
             <h1 className="text-2xl font-semibold leading-tight text-foreground">
-              Article Preview
+              {a.articlePreviewTitle}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Review all article details before approval
+              {a.reviewBeforeApproval}
             </p>
           </div>
           {article.status === "DRAFT" && (
@@ -133,12 +135,12 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                 onClick={() => setShowFeedback(true)}
                 disabled={loading}
               >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Request Changes
+                <MessageSquare className="h-4 w-4 me-2" />
+                {a.requestChanges}
               </Button>
               <Button onClick={handleApprove} disabled={loading}>
-                <Check className="h-4 w-4 mr-2" />
-                {loading ? "Approving..." : "Approve Article"}
+                <Check className="h-4 w-4 me-2" />
+                {loading ? a.approving : a.approveArticle}
               </Button>
             </div>
           )}
@@ -147,33 +149,29 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="basic"
-            title="Basic Content"
-            description="Title, slug, excerpt, and metadata"
+            title={a.basicContent}
+            description={a.titleSlugExcerpt}
           />
           {expandedSections.has("basic") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Title</label>
+                <label className="text-sm font-medium text-muted-foreground">{a.title}</label>
                 <p className="text-foreground mt-1">{article.title}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Slug</label>
+                <label className="text-sm font-medium text-muted-foreground">{a.slug}</label>
                 <p className="text-foreground mt-1 font-mono text-sm">{article.slug}</p>
               </div>
               {article.excerpt && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Excerpt
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.excerpt}</label>
                   <p className="text-foreground mt-1">{article.excerpt}</p>
                 </div>
               )}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {article.wordCount && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Word Count
-                    </label>
+                    <label className="text-sm font-medium text-muted-foreground">{a.wordCount}</label>
                     <p className="text-foreground mt-1">
                       {article.wordCount.toLocaleString()}
                     </p>
@@ -181,28 +179,22 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                 )}
                 {article.readingTimeMinutes && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Reading Time
-                    </label>
+                    <label className="text-sm font-medium text-muted-foreground">{a.readingTime}</label>
                     <p className="text-foreground mt-1">
-                      {article.readingTimeMinutes} min
+                      {article.readingTimeMinutes} {a.min}
                     </p>
                   </div>
                 )}
                 {article.contentDepth && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Content Depth
-                    </label>
+                    <label className="text-sm font-medium text-muted-foreground">{a.contentDepth}</label>
                     <p className="text-foreground mt-1 capitalize">
                       {article.contentDepth}
                     </p>
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Language
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.inLanguage}</label>
                   <p className="text-foreground mt-1 uppercase">{article.inLanguage}</p>
                 </div>
               </div>
@@ -213,15 +205,15 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="content"
-            title="Article Content"
-            description={`Full article body (${article.contentFormat || "rich_text"})`}
+            title={a.articleContent}
+            description={`${a.fullArticleBody} (${article.contentFormat || "rich_text"})`}
           />
           {expandedSections.has("content") && (
             <CardContent className="pt-0">
               <div className="mb-2 text-xs text-muted-foreground">
-                Format: {article.contentFormat || "rich_text"} ·{" "}
-                {article.wordCount?.toLocaleString() || "—"} words ·{" "}
-                {article.readingTimeMinutes || "—"} min read
+                {a.format}: {article.contentFormat || "rich_text"} ·{" "}
+                {article.wordCount?.toLocaleString() || "—"} {a.words} ·{" "}
+                {article.readingTimeMinutes || "—"} {a.min}
               </div>
               <div
                 className={`
@@ -230,9 +222,9 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                   [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3
                   [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2
                   [&_p]:mb-4 [&_p]:leading-relaxed
-                  [&_ul]:list-disc [&_ul]:mr-6 [&_ul]:mb-4
-                  [&_ol]:list-decimal [&_ol]:mr-6 [&_ol]:mb-4
-                  [&_blockquote]:border-r-4 [&_blockquote]:border-primary [&_blockquote]:pr-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_blockquote]:my-4
+                  [&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4
+                  [&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4
+                  [&_blockquote]:border-e-4 [&_blockquote]:border-primary [&_blockquote]:pe-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_blockquote]:my-4
                   [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono
                   [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_pre]:my-4
                   [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80
@@ -249,25 +241,23 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="relationships"
-            title="Relationships"
-            description="Client, category, author, and tags"
+            title={a.relationships}
+            description={a.clientCategoryAuthor}
           />
           {expandedSections.has("relationships") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Client</label>
+                <label className="text-sm font-medium text-muted-foreground">{a.client}</label>
                 <p className="text-foreground mt-1">{article.client.name}</p>
               </div>
               {article.category && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Category
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.category}</label>
                   <p className="text-foreground mt-1">{article.category.name}</p>
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Author</label>
+                <label className="text-sm font-medium text-muted-foreground">{a.author}</label>
                 <div className="mt-1">
                   <p className="text-foreground">{article.author.name}</p>
                   {article.author.bio && (
@@ -277,14 +267,14 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                   )}
                   {article.author.credentials.length > 0 && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      Credentials: {article.author.credentials.join(", ")}
+                      {a.credentials}: {article.author.credentials.join(", ")}
                     </p>
                   )}
                 </div>
               </div>
               {article.tags.length > 0 && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Tags</label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.tags}</label>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {article.tags.map(({ tag }) => (
                       <span
@@ -305,8 +295,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="featured-image"
-              title="Featured Image"
-              description="Main article image"
+              title={a.featuredImage}
+              description={a.mainArticleImage}
             />
             {expandedSections.has("featured-image") && (
               <CardContent className="pt-0">
@@ -320,12 +310,12 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                 </div>
                 {article.featuredImage.altText && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Alt text: {article.featuredImage.altText}
+                    {a.altText}: {article.featuredImage.altText}
                   </p>
                 )}
                 {article.featuredImage.caption && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    Caption: {article.featuredImage.caption}
+                    {a.caption}: {article.featuredImage.caption}
                   </p>
                 )}
               </CardContent>
@@ -337,8 +327,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="gallery"
-              title="Image Gallery"
-              description={`${article.gallery.length} image(s)`}
+              title={a.imageGallery}
+              description={`${article.gallery.length} ${a.imagesCount}`}
             />
             {expandedSections.has("gallery") && (
               <CardContent className="pt-0">
@@ -350,7 +340,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                     >
                       <Image
                         src={item.media.url}
-                        alt={item.altText || item.media.altText || "Gallery image"}
+                        alt={item.altText || item.media.altText || a.galleryImage}
                         fill
                         className="object-cover"
                       />
@@ -365,38 +355,30 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="seo"
-            title="SEO Meta Tags"
-            description="Search engine optimization"
+            title={a.seoMeta}
+            description={a.searchEngineOpt}
           />
           {expandedSections.has("seo") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  SEO Title
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.seoTitleLabel}</label>
                 <p className="text-foreground mt-1">{article.seoTitle || "—"}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  SEO Description
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.seoDescriptionLabel}</label>
                 <p className="text-foreground mt-1">{article.seoDescription || "—"}</p>
                 {article.seoDescription && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    {article.seoDescription.length} characters
+                    {article.seoDescription.length} {a.characters}
                   </p>
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Meta Robots
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.metaRobots}</label>
                 <p className="text-foreground mt-1">{article.metaRobots || "—"}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Canonical URL
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.canonicalUrl}</label>
                 <p className="text-foreground mt-1 font-mono text-sm">
                   {article.canonicalUrl || "—"}
                 </p>
@@ -408,28 +390,24 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="og"
-            title="Open Graph"
-            description="Social media sharing"
+            title={a.openGraph}
+            description={a.socialSharing}
           />
           {expandedSections.has("og") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">OG Type</label>
+                <label className="text-sm font-medium text-muted-foreground">{a.ogType}</label>
                 <p className="text-foreground mt-1">{article.ogType || "—"}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  OG Article Author
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.ogArticleAuthor}</label>
                 <p className="text-foreground mt-1">{article.ogArticleAuthor || "—"}</p>
               </div>
               {article.ogArticlePublishedTime && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    OG Published Time
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.ogPublishedTime}</label>
                   <p className="text-foreground mt-1">
-                    {new Date(article.ogArticlePublishedTime).toLocaleString()}
+                    {new Date(article.ogArticlePublishedTime).toLocaleString("ar-SA")}
                   </p>
                 </div>
               )}
@@ -440,27 +418,21 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="twitter"
-            title="Twitter Cards"
-            description="Twitter sharing metadata"
+            title={a.twitterCards}
+            description={a.twitterSharingDesc}
           />
           {expandedSections.has("twitter") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Twitter Card Type
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.twitterCardType}</label>
                 <p className="text-foreground mt-1">{article.twitterCard || "—"}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Twitter Site
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.twitterSite}</label>
                 <p className="text-foreground mt-1">{article.twitterSite || "—"}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Twitter Creator
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.twitterCreator}</label>
                 <p className="text-foreground mt-1">{article.twitterCreator || "—"}</p>
               </div>
             </CardContent>
@@ -471,8 +443,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="faqs"
-              title="FAQs"
-              description={`${article.faqs.length} question(s)`}
+              title={a.faqs}
+              description={`${article.faqs.length} ${a.questionsCount}`}
             />
             {expandedSections.has("faqs") && (
               <CardContent className="pt-0 space-y-4">
@@ -491,8 +463,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="related"
-              title="Related Articles"
-              description={`${article.relatedTo.length} article(s)`}
+              title={a.relatedArticles}
+              description={`${article.relatedTo.length} ${a.articlesCount}`}
             />
             {expandedSections.has("related") && (
               <CardContent className="pt-0">
@@ -501,7 +473,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                     <li key={rel.id} className="text-sm">
                       <span className="text-foreground">{rel.related.title}</span>
                       {rel.relationshipType && (
-                        <span className="text-muted-foreground ml-2">
+                        <span className="text-muted-foreground ms-2">
                           ({rel.relationshipType})
                         </span>
                       )}
@@ -516,32 +488,26 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
         <Card>
           <SectionHeader
             id="technical"
-            title="Technical SEO"
-            description="Sitemap and technical settings"
+            title={a.technicalSeo}
+            description={a.sitemapSettings}
           />
           {expandedSections.has("technical") && (
             <CardContent className="pt-0 space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Sitemap Priority
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.sitemapPriority}</label>
                 <p className="text-foreground mt-1">
                   {article.sitemapPriority ?? "—"}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Sitemap Change Frequency
-                </label>
+                <label className="text-sm font-medium text-muted-foreground">{a.sitemapChangeFreq}</label>
                 <p className="text-foreground mt-1">
                   {article.sitemapChangeFreq || "—"}
                 </p>
               </div>
               {article.breadcrumbPath && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Breadcrumb Path
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">{a.breadcrumbPath}</label>
                   <pre className="text-xs bg-muted p-2 rounded mt-1 overflow-auto">
                     {JSON.stringify(article.breadcrumbPath, null, 2)}
                   </pre>
@@ -555,8 +521,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="jsonld"
-              title="JSON-LD Structured Data"
-              description="Schema.org markup"
+              title={a.jsonld}
+              description={a.schemaOrg}
             />
             {expandedSections.has("jsonld") && (
               <CardContent className="pt-0">
@@ -565,8 +531,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                 </pre>
                 {article.jsonLdLastGenerated && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    Last generated:{" "}
-                    {new Date(article.jsonLdLastGenerated).toLocaleString()}
+                    {a.lastGenerated}:{" "}
+                    {new Date(article.jsonLdLastGenerated).toLocaleString("ar-SA")}
                   </p>
                 )}
               </CardContent>
@@ -578,8 +544,8 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
           <Card>
             <SectionHeader
               id="citations"
-              title="Citations"
-              description={`${article.citations?.length ?? 0} source(s)`}
+              title={a.citations}
+              description={`${article.citations?.length ?? 0} ${a.sourcesCount}`}
             />
             {expandedSections.has("citations") && (
               <CardContent className="pt-0">

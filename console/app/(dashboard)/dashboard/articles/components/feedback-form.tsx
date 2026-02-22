@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
+import { ar } from "@/lib/ar";
 
 interface FeedbackFormProps {
   articleTitle: string;
@@ -22,10 +23,11 @@ export function FeedbackForm({ articleTitle, onSubmit, onCancel }: FeedbackFormP
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const a = ar.articles;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!feedback.trim()) {
-      alert("Please provide feedback");
+      alert(a.pleaseProvideFeedback);
       return;
     }
 
@@ -38,11 +40,11 @@ export function FeedbackForm({ articleTitle, onSubmit, onCancel }: FeedbackFormP
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" dir="rtl" lang="ar">
       <Card className="w-full max-w-2xl shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Request Changes</CardTitle>
+            <CardTitle>{a.requestChangesTitle}</CardTitle>
             <Button
               variant="ghost"
               size="sm"
@@ -53,16 +55,16 @@ export function FeedbackForm({ articleTitle, onSubmit, onCancel }: FeedbackFormP
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
-            Article: {articleTitle}
+            {a.articleLabel} {articleTitle}
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="feedback">Feedback / Changes Requested</Label>
+              <Label htmlFor="feedback">{a.feedbackLabel}</Label>
               <Textarea
                 id="feedback"
-                placeholder="Please describe what changes you'd like to see in this article..."
+                placeholder={a.feedbackPlaceholder}
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 rows={6}
@@ -71,7 +73,7 @@ export function FeedbackForm({ articleTitle, onSubmit, onCancel }: FeedbackFormP
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                Your feedback will be sent to the content team for review.
+                {a.feedbackSent}
               </p>
             </div>
             <div className="flex justify-end gap-2">
@@ -81,10 +83,10 @@ export function FeedbackForm({ articleTitle, onSubmit, onCancel }: FeedbackFormP
                 onClick={onCancel}
                 disabled={loading}
               >
-                Cancel
+                {a.cancel}
               </Button>
               <Button type="submit" disabled={loading || !feedback.trim()}>
-                {loading ? "Sending..." : "Send Feedback"}
+                {loading ? a.sending : a.sendFeedback}
               </Button>
             </div>
           </form>

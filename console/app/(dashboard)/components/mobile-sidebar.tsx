@@ -3,19 +3,18 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { ar } from "@/lib/ar";
 import {
-  LayoutDashboard,
   FileText,
   FileEdit,
-  BarChart3,
-  Settings,
   HelpCircle,
   Image,
   TrendingUp,
-  MessageSquare,
   Users,
   Target,
   LogOut,
+  Building2,
+  ClipboardList,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,8 @@ import {
 interface MobileSidebarProps {
   clientName: string;
   pendingArticlesCount: number;
-  pendingCommentsCount: number;
+  subscribersCount: number;
+  leadsCount: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -37,7 +37,8 @@ interface MobileSidebarProps {
 export function MobileSidebar({
   clientName,
   pendingArticlesCount,
-  pendingCommentsCount,
+  subscribersCount,
+  leadsCount,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -49,80 +50,70 @@ export function MobileSidebar({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-64 p-0">
+      <SheetContent side="right" className="w-64 p-0">
         <SheetHeader className="border-b border-border p-4">
-          <SheetTitle className="text-left font-semibold text-foreground">
+          <SheetTitle className="text-start font-semibold text-foreground">
             Modonty
           </SheetTitle>
         </SheetHeader>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           <SidebarNavItem
-            href="/dashboard"
-            icon={LayoutDashboard}
-            label="Dashboard"
+            href="/dashboard/profile"
+            icon={Building2}
+            label={ar.nav.profile}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/seo"
+            icon={ClipboardList}
+            label={ar.nav.seo}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/articles"
             icon={FileText}
-            label="Articles"
+            label={ar.nav.articles}
             badge={pendingArticlesCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/content"
             icon={FileEdit}
-            label="Content"
+            label={ar.nav.content}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/media"
             icon={Image}
-            label="Media"
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/analytics"
-            icon={BarChart3}
-            label="Analytics"
+            label={ar.nav.media}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/campaigns"
             icon={TrendingUp}
-            label="Campaigns"
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/comments"
-            icon={MessageSquare}
-            label="Comments"
-            badge={pendingCommentsCount}
+            label={ar.nav.campaigns}
+            badgeLabel={ar.campaigns.beta}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/subscribers"
             icon={Users}
-            label="Subscribers"
+            label={ar.nav.subscribers}
+            badge={subscribersCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/leads"
             icon={Target}
-            label="Leads"
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/settings"
-            icon={Settings}
-            label="Settings"
+            label={ar.nav.leads}
+            badge={leadsCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/support"
             icon={HelpCircle}
-            label="Support"
+            label={ar.nav.support}
             isCollapsed={false}
           />
         </nav>
@@ -147,7 +138,7 @@ export function MobileSidebar({
             className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <LogOut className="h-4 w-4" />
-            <span className="ml-2">Sign out</span>
+            <span className="ms-2">{ar.nav.signOut}</span>
           </Button>
         </div>
       </SheetContent>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -34,20 +35,20 @@ export function ArticlesPageClient({
   const tabs = [
     {
       id: "pending",
-      label: "Pending Approval",
+      label: ar.articles.pendingApprovalTab,
       count: pendingCount,
       icon: FileText,
       articles: pendingArticles,
     },
     {
       id: "published",
-      label: "Published",
+      label: ar.articles.published,
       icon: CheckCircle,
       articles: publishedArticles,
     },
     {
       id: "all",
-      label: "All Articles",
+      label: ar.articles.allArticles,
       icon: List,
       articles: allArticles,
     },
@@ -59,10 +60,10 @@ export function ArticlesPageClient({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Articles
+          {ar.nav.articles}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage and approve your articles
+          {ar.articles.manageApproveArticles}
         </p>
       </div>
 
@@ -98,10 +99,10 @@ export function ArticlesPageClient({
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
                 {activeTab === "pending"
-                  ? "No articles pending approval."
+                  ? ar.articles.noPending
                   : activeTab === "published"
-                    ? "No published articles yet."
-                    : "No articles yet."}
+                    ? ar.articles.noPublished
+                    : ar.articles.noArticlesYet}
               </p>
             </CardContent>
           </Card>

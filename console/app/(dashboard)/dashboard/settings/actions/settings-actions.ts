@@ -3,10 +3,16 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
+export type NotificationPreferences = {
+  articlePublished?: boolean;
+  articleApproved?: boolean;
+  digest?: "none" | "weekly" | "monthly";
+  commentsNew?: boolean;
+  supportReplies?: boolean;
+};
+
 type SettingsUpdate = {
-  email?: string | null;
-  phone?: string | null;
-  gtmId?: string | null;
+  notificationPreferences?: NotificationPreferences | null;
 };
 
 export async function updateClientSettings(
@@ -23,9 +29,9 @@ export async function updateClientSettings(
     await db.client.update({
       where: { id: clientId },
       data: {
-        ...(data.email !== undefined && data.email !== null && { email: data.email }),
-        ...(data.phone !== undefined && data.phone !== null && { phone: data.phone }),
-        ...(data.gtmId !== undefined && data.gtmId !== null && { gtmId: data.gtmId }),
+        ...(data.notificationPreferences !== undefined && {
+          notificationPreferences: data.notificationPreferences as object | null,
+        }),
       },
     });
 

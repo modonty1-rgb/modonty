@@ -9,9 +9,10 @@ export type NavSection = "home" | "trending" | "categories" | "clients" | "none"
 
 interface TopNavProps {
   activeSection: NavSection;
+  favoritesCount?: number;
 }
 
-export function TopNav({ activeSection }: TopNavProps) {
+export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
       <div className="container mx-auto max-w-[1128px]">
@@ -26,7 +27,7 @@ export function TopNav({ activeSection }: TopNavProps) {
         </div>
 
         {/* Desktop Layout */}
-        <TopNavDesktop activeSection={activeSection} />
+        <TopNavDesktop activeSection={activeSection} favoritesCount={favoritesCount} />
       </div>
       <ChatSheetContainer />
     </header>

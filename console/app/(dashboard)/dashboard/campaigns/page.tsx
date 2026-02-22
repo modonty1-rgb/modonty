@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
 import { getCampaignsList, getUTMPerformance, getCampaignStats } from "./helpers/campaign-queries";
 import { CampaignsTable } from "./components/campaigns-table";
 import { UTMTable } from "./components/utm-table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, MousePointer, Target, DollarSign } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -31,14 +32,21 @@ export default async function CampaignsPage() {
       ? ((stats.totalConversions / stats.totalClicks) * 100).toFixed(2)
       : "0";
 
+  const c = ar.campaigns;
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Campaign Analytics
-        </h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h1 className="text-2xl font-semibold leading-tight text-foreground">
+            {c.title}
+          </h1>
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+            {c.beta}
+          </span>
+        </div>
         <p className="text-muted-foreground mt-1">
-          Track your marketing campaigns and UTM performance
+          {c.trackCampaigns}
         </p>
       </div>
 
@@ -47,7 +55,7 @@ export default async function CampaignsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total Campaigns</CardTitle>
+              <CardTitle className="text-base font-medium">{c.totalCampaigns}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -55,7 +63,7 @@ export default async function CampaignsPage() {
               {stats.totalCampaigns}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Active in last 30 days
+              {c.activeLast30Days}
             </p>
           </CardContent>
         </Card>
@@ -64,7 +72,7 @@ export default async function CampaignsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <MousePointer className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total Clicks</CardTitle>
+              <CardTitle className="text-base font-medium">{c.totalClicks}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -72,7 +80,7 @@ export default async function CampaignsPage() {
               {stats.totalClicks.toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              CTR: {avgCTR}%
+              {c.ctr}: {avgCTR}%
             </p>
           </CardContent>
         </Card>
@@ -81,7 +89,7 @@ export default async function CampaignsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Conversions</CardTitle>
+              <CardTitle className="text-base font-medium">{c.conversions}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -89,7 +97,7 @@ export default async function CampaignsPage() {
               {stats.totalConversions}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Rate: {avgConversionRate}%
+              {c.rate}: {avgConversionRate}%
             </p>
           </CardContent>
         </Card>
@@ -98,7 +106,7 @@ export default async function CampaignsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Total Cost</CardTitle>
+              <CardTitle className="text-base font-medium">{c.totalCost}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -106,14 +114,13 @@ export default async function CampaignsPage() {
               {stats.totalCost.toLocaleString()} SAR
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Campaign spend
+              {c.campaignSpend}
             </p>
           </CardContent>
         </Card>
       </div>
 
       <CampaignsTable campaigns={campaigns} />
-      
       <UTMTable utmData={utmData} />
     </div>
   );

@@ -16,6 +16,7 @@ import { ArticleFormData, FAQItem } from "@/lib/types";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { checkCompliance } from "@/lib/seo/pre-publish-audit";
 
 export async function updateArticle(articleId: string, data: ArticleFormData) {
   try {
@@ -61,8 +62,32 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const client = await db.client.findUnique({
       where: { id: data.clientId },
-      select: { name: true, slug: true },
+      select: {
+        name: true,
+        slug: true,
+        forbiddenKeywords: true,
+        forbiddenClaims: true,
+      },
     });
+
+    if (data.status === ArticleStatus.PUBLISHED && client) {
+      const compliance = checkCompliance(
+        {
+          title: data.title,
+          content: data.content,
+          seoTitle: data.seoTitle,
+          seoDescription: data.seoDescription,
+          excerpt: data.excerpt,
+        },
+        client
+      );
+      if (compliance.blocked) {
+        return {
+          success: false,
+          error: compliance.issues.map((i) => i.message).join(". "),
+        };
+      }
+    }
 
     const category = data.categoryId
       ? await db.category.findUnique({

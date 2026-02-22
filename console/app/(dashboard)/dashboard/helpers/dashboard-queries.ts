@@ -460,6 +460,37 @@ export async function getTrafficSources(
   }));
 }
 
+export interface ViewsOverTimeItem {
+  date: string;
+  views: number;
+}
+
+export async function getViewsOverTime(
+  clientId: string,
+  days: 7 | 30 = 7
+): Promise<ViewsOverTimeItem[]> {
+  const result: ViewsOverTimeItem[] = [];
+  const now = new Date();
+  for (let d = days - 1; d >= 0; d--) {
+    const day = new Date(now);
+    day.setDate(day.getDate() - d);
+    day.setHours(0, 0, 0, 0);
+    const nextDay = new Date(day);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const count = await db.articleView.count({
+      where: {
+        article: { clientId },
+        createdAt: { gte: day, lt: nextDay },
+      },
+    });
+    result.push({
+      date: day.toISOString().slice(0, 10),
+      views: count,
+    });
+  }
+  return result;
+}
+
 export async function getRecentActivity(
   clientId: string,
   limit: number = 10

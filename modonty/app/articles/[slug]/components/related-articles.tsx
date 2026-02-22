@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArticleSectionCollapsible } from "./article-section-collapsible";
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
@@ -34,6 +34,7 @@ interface RelatedArticle {
 
 interface RelatedArticlesProps {
   articleId: string;
+  clientId?: string;
 }
 
 function RelatedArticlesSkeleton() {
@@ -60,7 +61,7 @@ function RelatedArticlesSkeleton() {
   );
 }
 
-export function RelatedArticles({ articleId }: RelatedArticlesProps) {
+export function RelatedArticles({ articleId, clientId }: RelatedArticlesProps) {
   const [open, setOpen] = useState(false);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,7 +95,15 @@ export function RelatedArticles({ articleId }: RelatedArticlesProps) {
       {!loading && !error && relatedArticles && relatedArticles.length > 0 && (
         <>
           {relatedArticles.map((article) => (
-            <Link key={article.id} href={`/articles/${article.slug}`} className="h-full block">
+            <CtaTrackedLink
+              key={article.id}
+              href={`/articles/${article.slug}`}
+              label={article.title}
+              type="LINK"
+              articleId={articleId}
+              clientId={clientId}
+              className="h-full block"
+            >
               <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-row overflow-hidden">
                 <div className="flex-[0_0_80%] flex flex-col min-w-0 min-h-[7.5rem] p-4 text-right justify-between">
                   <div>
@@ -149,7 +158,7 @@ export function RelatedArticles({ articleId }: RelatedArticlesProps) {
                   <div className="flex-[0_0_20%] aspect-square bg-muted" />
                 )}
               </Card>
-            </Link>
+            </CtaTrackedLink>
           ))}
         </>
       )}

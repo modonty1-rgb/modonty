@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
@@ -17,7 +18,7 @@ import {
 } from "./helpers/enhanced-analytics-queries";
 import { getTopClickedLinks, getLinkClickStats } from "./helpers/link-clicks-queries";
 import { getClientViewsAnalytics } from "./helpers/client-views-queries";
-import { Activity, TrendingUp, Users, Target, Zap, Globe, Link as LinkIcon, Eye } from "lucide-react";
+import { Users, Target, Link as LinkIcon, Eye } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,6 @@ export default async function AnalyticsPage() {
     campaigns,
     topArticles,
     topLinks,
-    linkStats,
     clientViewsData,
   ] = await Promise.all([
     getClientViewCounts(clientId, 7),
@@ -48,48 +48,49 @@ export default async function AnalyticsPage() {
     getCampaignPerformance(clientId, 30),
     getArticlePerformance(clientId, 30, 10),
     getTopClickedLinks(clientId, 30, 10),
-    getLinkClickStats(clientId, 30),
     getClientViewsAnalytics(clientId, 30),
   ]);
+
+  const a = ar.analytics;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          Analytics
+          {a.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Comprehensive analytics and performance insights
+          {a.comprehensiveAnalytics}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">Views (7d)</CardTitle>
-            <CardDescription className="text-xs">Total page views</CardDescription>
+            <CardTitle className="text-base font-medium">{a.views7d}</CardTitle>
+            <CardDescription className="text-xs">{a.totalPageViews}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">
               {last7.totalViews.toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Articles: {last7.articleViews} · Client: {last7.clientViews}
+              {a.articles}: {last7.articleViews} · {a.client}: {last7.clientViews}
             </p>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">Views (30d)</CardTitle>
-            <CardDescription className="text-xs">Total page views</CardDescription>
+            <CardTitle className="text-base font-medium">{a.views30d}</CardTitle>
+            <CardDescription className="text-xs">{a.totalPageViews}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">
               {last30.totalViews.toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Articles: {last30.articleViews} · Client: {last30.clientViews}
+              {a.articles}: {last30.articleViews} · {a.client}: {last30.clientViews}
             </p>
           </CardContent>
         </Card>
@@ -98,7 +99,7 @@ export default async function AnalyticsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Engagement Rate</CardTitle>
+              <CardTitle className="text-base font-medium">{a.engagementRate}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -106,7 +107,7 @@ export default async function AnalyticsPage() {
               {engagement.engagementRate.toFixed(1)}%
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Engaged: {engagement.engagedSessions} · Bounced: {engagement.bouncedSessions}
+              {a.engaged}: {engagement.engagedSessions} · {a.bounced}: {engagement.bouncedSessions}
             </p>
           </CardContent>
         </Card>
@@ -115,7 +116,7 @@ export default async function AnalyticsPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">Conversion Rate</CardTitle>
+              <CardTitle className="text-base font-medium">{a.conversionRate}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -123,7 +124,7 @@ export default async function AnalyticsPage() {
               {conversions.rate.toFixed(2)}%
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {conversions.total} total conversions
+              {conversions.total} {a.totalConversions}
             </p>
           </CardContent>
         </Card>
@@ -132,8 +133,8 @@ export default async function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Traffic Sources</CardTitle>
-            <CardDescription>Last 30 days</CardDescription>
+            <CardTitle className="text-lg">{a.trafficSources}</CardTitle>
+            <CardDescription>{a.last30d}</CardDescription>
           </CardHeader>
           <CardContent>
             {trafficSources.length > 0 ? (
@@ -158,44 +159,44 @@ export default async function AnalyticsPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No traffic data yet.</p>
+              <p className="text-sm text-muted-foreground">{a.noTraffic}</p>
             )}
           </CardContent>
         </Card>
 
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Core Web Vitals</CardTitle>
-            <CardDescription>Performance metrics (30d average)</CardDescription>
+            <CardTitle className="text-lg">{a.coreWebVitals}</CardTitle>
+            <CardDescription>{a.performanceMetrics}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">LCP (Largest Contentful Paint)</span>
+                <span className="text-sm text-foreground">{a.lcp}</span>
                 <span className="text-sm font-medium text-foreground">
                   {webVitals.lcp ? `${webVitals.lcp.toFixed(2)}s` : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">CLS (Cumulative Layout Shift)</span>
+                <span className="text-sm text-foreground">{a.cls}</span>
                 <span className="text-sm font-medium text-foreground">
                   {webVitals.cls ? webVitals.cls.toFixed(3) : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">INP (Interaction to Next Paint)</span>
+                <span className="text-sm text-foreground">{a.inp}</span>
                 <span className="text-sm font-medium text-foreground">
                   {webVitals.inp ? `${webVitals.inp.toFixed(0)}ms` : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">TTFB (Time to First Byte)</span>
+                <span className="text-sm text-foreground">{a.ttfb}</span>
                 <span className="text-sm font-medium text-foreground">
                   {webVitals.ttfb ? `${webVitals.ttfb.toFixed(0)}ms` : "—"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">TBT (Total Blocking Time)</span>
+                <span className="text-sm text-foreground">{a.tbt}</span>
                 <span className="text-sm font-medium text-foreground">
                   {webVitals.tbt ? `${webVitals.tbt.toFixed(0)}ms` : "—"}
                 </span>
@@ -208,39 +209,39 @@ export default async function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Engagement Metrics</CardTitle>
-            <CardDescription>User behavior and engagement</CardDescription>
+            <CardTitle className="text-lg">{a.engagementMetrics}</CardTitle>
+            <CardDescription>{a.userBehavior}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Time on Page</span>
+                  <span className="text-sm font-medium text-foreground">{a.timeOnPage}</span>
                   <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgTimeOnPage)}s avg
+                    {Math.round(engagement.avgTimeOnPage)}s {a.sAvg}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Scroll Depth</span>
+                  <span className="text-sm font-medium text-foreground">{a.scrollDepth}</span>
                   <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgScrollDepth)}% avg
+                    {Math.round(engagement.avgScrollDepth)}% {a.percentAvg}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Completion Rate</span>
+                  <span className="text-sm font-medium text-foreground">{a.completionRate}</span>
                   <span className="text-sm text-muted-foreground">
                     {engagement.avgCompletionRate.toFixed(1)}%
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Reading Time</span>
+                  <span className="text-sm font-medium text-foreground">{a.readingTime}</span>
                   <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgReadingTime)}s avg
+                    {Math.round(engagement.avgReadingTime)}s {a.sAvg}
                   </span>
                 </div>
               </div>
               <div className="pt-3 border-t border-border">
-                <p className="text-sm font-medium text-foreground mb-2">Scroll Depth Distribution</p>
+                <p className="text-sm font-medium text-foreground mb-2">{a.scrollDepthDist}</p>
                 <div className="space-y-2">
                   {Object.entries(engagement.scrollDepthDistribution).map(([range, percentage]) => (
                     <div key={range} className="flex items-center justify-between text-xs">
@@ -262,8 +263,8 @@ export default async function AnalyticsPage() {
 
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Conversions</CardTitle>
-            <CardDescription>Conversion types and performance</CardDescription>
+            <CardTitle className="text-lg">{a.conversions}</CardTitle>
+            <CardDescription>{a.conversionTypes}</CardDescription>
           </CardHeader>
           <CardContent>
             {conversions.conversions.length > 0 ? (
@@ -288,7 +289,7 @@ export default async function AnalyticsPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No conversions yet.</p>
+              <p className="text-sm text-muted-foreground">{a.noConversions}</p>
             )}
           </CardContent>
         </Card>
@@ -297,8 +298,8 @@ export default async function AnalyticsPage() {
       {campaigns.length > 0 && (
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="text-lg">Campaign Performance</CardTitle>
-            <CardDescription>Active campaigns and their performance</CardDescription>
+            <CardTitle className="text-lg">{a.campaignPerformance}</CardTitle>
+            <CardDescription>{a.activeCampaigns}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -320,17 +321,17 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Impressions</p>
+                      <p className="text-muted-foreground">{a.impressions}</p>
                       <p className="font-medium text-foreground">
                         {campaign.impressions.toLocaleString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Clicks</p>
+                      <p className="text-muted-foreground">{a.clicks}</p>
                       <p className="font-medium text-foreground">{campaign.clicks.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Conversions</p>
+                      <p className="text-muted-foreground">{a.conversions}</p>
                       <p className="font-medium text-foreground">
                         {campaign.conversions.toLocaleString()}
                       </p>
@@ -345,8 +346,8 @@ export default async function AnalyticsPage() {
 
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-lg">Top Performing Articles</CardTitle>
-          <CardDescription>Articles ranked by views (30d)</CardDescription>
+          <CardTitle className="text-lg">{a.topPerformingArticles}</CardTitle>
+          <CardDescription>{a.articlesRankedByViews}</CardDescription>
         </CardHeader>
         <CardContent>
           {topArticles.length > 0 ? (
@@ -359,20 +360,19 @@ export default async function AnalyticsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground truncate">{article.title}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {article.category ?? "—"} · {article.views.toLocaleString()} views ·{" "}
-                      {Math.round(article.avgTimeOnPage)}s avg · {Math.round(article.avgScrollDepth)}%
-                      scroll
+                      {article.category ?? "—"} · {article.views.toLocaleString()} {a.views} ·{" "}
+                      {Math.round(article.avgTimeOnPage)}s {a.sAvg} · {Math.round(article.avgScrollDepth)}% {a.scroll}
                     </p>
                   </div>
-                  <div className="text-right shrink-0">
+                  <div className="text-end shrink-0">
                     <p className="text-sm font-medium text-foreground">{article.conversions}</p>
-                    <p className="text-xs text-muted-foreground">conversions</p>
+                    <p className="text-xs text-muted-foreground">{a.conversions}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No articles yet.</p>
+            <p className="text-sm text-muted-foreground">{a.noArticles}</p>
           )}
         </CardContent>
       </Card>
@@ -382,9 +382,9 @@ export default async function AnalyticsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <LinkIcon className="h-4 w-4 text-primary" />
-              <CardTitle className="text-lg">Top Clicked Links</CardTitle>
+              <CardTitle className="text-lg">{a.topClickedLinks}</CardTitle>
             </div>
-            <CardDescription>Most clicked links in articles (30d)</CardDescription>
+            <CardDescription>{a.mostClickedLinks}</CardDescription>
           </CardHeader>
           <CardContent>
             {topLinks.length > 0 ? (
@@ -403,12 +403,12 @@ export default async function AnalyticsPage() {
                           {link.linkDomain} · {link.linkType}
                         </p>
                       </div>
-                      <div className="text-right shrink-0">
+                      <div className="text-end shrink-0">
                         <p className="text-sm font-medium text-foreground">
                           {link.clicks}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {link.uniqueUsers} users
+                          {link.uniqueUsers} {a.users}
                         </p>
                       </div>
                     </div>
@@ -416,7 +416,7 @@ export default async function AnalyticsPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No link click data yet.</p>
+              <p className="text-sm text-muted-foreground">{a.noLinkClickData}</p>
             )}
           </CardContent>
         </Card>
@@ -425,26 +425,26 @@ export default async function AnalyticsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Eye className="h-4 w-4 text-primary" />
-              <CardTitle className="text-lg">Client Page Views</CardTitle>
+              <CardTitle className="text-lg">{a.clientPageViews}</CardTitle>
             </div>
-            <CardDescription>Brand page and profile analytics (30d)</CardDescription>
+            <CardDescription>{a.brandPageAnalytics}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">Total Client Page Views</span>
+                <span className="text-sm font-medium text-foreground">{a.totalClientViews}</span>
                 <span className="text-2xl font-semibold text-foreground">
                   {clientViewsData.totalViews.toLocaleString()}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">Unique Visitors</span>
+                <span className="text-sm font-medium text-foreground">{a.uniqueVisitors}</span>
                 <span className="text-lg font-semibold text-foreground">
                   {clientViewsData.uniqueVisitors.toLocaleString()}
                 </span>
               </div>
               <div className="pt-3 border-t border-border">
-                <p className="text-sm font-medium text-foreground mb-3">Top Referrers</p>
+                <p className="text-sm font-medium text-foreground mb-3">{a.topReferrers}</p>
                 <div className="space-y-2">
                   {clientViewsData.topReferrers.length > 0 ? (
                     clientViewsData.topReferrers.map((ref, index) => (
@@ -452,13 +452,13 @@ export default async function AnalyticsPage() {
                         <span className="text-muted-foreground truncate flex-1">
                           {ref.referrer}
                         </span>
-                        <span className="text-foreground font-medium ml-2">
+                        <span className="text-foreground font-medium ms-2">
                           {ref.views}
                         </span>
                       </div>
                     ))
                   ) : (
-                    <p className="text-xs text-muted-foreground">No referrer data</p>
+                    <p className="text-xs text-muted-foreground">{a.noReferrerData}</p>
                   )}
                 </div>
               </div>

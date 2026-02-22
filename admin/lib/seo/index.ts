@@ -112,10 +112,12 @@ export {
 // ============================================
 export {
   auditBeforePublish,
+  checkCompliance,
   getAuditSummary,
   groupIssuesByCategory,
   type AuditResult,
   type AuditIssue,
+  type ClientForCompliance,
 } from "./pre-publish-audit";
 
 // ============================================
