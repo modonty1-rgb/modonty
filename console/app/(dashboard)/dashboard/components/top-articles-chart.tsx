@@ -27,7 +27,7 @@ export function TopArticlesChart({ data, metricLabel }: TopArticlesChartProps) {
 
   const gridStroke = "hsl(var(--border))";
   const tickStyle = { fontSize: 11, fill: "hsl(var(--muted-foreground))" };
-  const barFill = "hsl(221 39% 32%)";
+  const barFill = "hsl(var(--primary))";
 
   return (
     <div className="h-[220px] w-full">
@@ -46,7 +46,7 @@ export function TopArticlesChart({ data, metricLabel }: TopArticlesChartProps) {
               border: "1px solid hsl(var(--border))",
               borderRadius: "var(--radius)",
             }}
-            formatter={(value: number | undefined) => [(value ?? 0).toLocaleString(), metricLabel]}
+            formatter={(value: number | string) => [(Number(value) ?? 0).toLocaleString(), metricLabel]}
             labelFormatter={(_, payload) => payload?.[0]?.payload?.fullTitle ?? ""}
           />
           <Bar dataKey="value" fill={barFill} radius={[0, 4, 4, 0]} />

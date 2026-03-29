@@ -7,7 +7,6 @@ import { ar } from "@/lib/ar";
 import {
   FileText,
   FileEdit,
-  HelpCircle,
   Image,
   TrendingUp,
   Users,
@@ -108,12 +107,6 @@ export function MobileSidebar({
             icon={Target}
             label={ar.nav.leads}
             badge={leadsCount}
-            isCollapsed={false}
-          />
-          <SidebarNavItem
-            href="/dashboard/support"
-            icon={HelpCircle}
-            label={ar.nav.support}
             isCollapsed={false}
           />
         </nav>

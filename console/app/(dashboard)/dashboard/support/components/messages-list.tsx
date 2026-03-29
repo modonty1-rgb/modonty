@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ar } from "@/lib/ar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mail, MailOpen, CheckCheck, Archive, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, MailOpen, CheckCheck, Archive, Trash2, Send } from "lucide-react";
 import { ContactMessageWithDetails } from "../helpers/support-queries-enhanced";
-import { updateMessageStatus, deleteMessage } from "../actions/support-actions";
+import { updateMessageStatus, deleteMessage, sendReply } from "../actions/support-actions";
 
 interface MessagesListProps {
   messages: ContactMessageWithDetails[];
@@ -22,11 +26,23 @@ function statusLabel(status: string): string {
   return status;
 }
 
+function decodeReferrerUrl(url: string): string {
+  try {
+    return decodeURIComponent(url);
+  } catch {
+    return url;
+  }
+}
+
 export function MessagesList({ messages, clientId }: MessagesListProps) {
+  const router = useRouter();
   const s = ar.support;
   const [filter, setFilter] = useState<string>("all");
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
+  const [replyViaEmail, setReplyViaEmail] = useState(true);
+  const [sendingReply, setSendingReply] = useState(false);
 
   const filteredMessages =
     filter === "all"
@@ -54,6 +70,24 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
       alert(result.error || s.deleteFailed);
     }
     setUpdating(null);
+  };
+
+  const handleSendReply = async () => {
+    if (!selectedMsg) return;
+    setSendingReply(true);
+    const result = await sendReply(selectedMsg.id, clientId, replyBody, replyViaEmail);
+    setSendingReply(false);
+    if (result.success) {
+      setReplyBody("");
+      if (result.emailFailed) {
+        alert(s.replySavedEmailFailed);
+      } else {
+        alert(s.replySuccess);
+      }
+      router.refresh();
+    } else {
+      alert(result.error ?? s.replyFailed);
+    }
   };
 
   const selectedMsg = messages.find((m) => m.id === selectedMessage);
@@ -185,7 +219,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button
                     size="sm"
                     variant="outline"
@@ -193,8 +227,10 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                       handleStatusUpdate(selectedMsg.id, "read")
                     }
                     disabled={updating === selectedMsg.id}
+                    title={s.markRead}
                   >
                     <MailOpen className="h-3 w-3" />
+                    <span className="ms-1.5 hidden sm:inline">{s.markRead}</span>
                   </Button>
                   <Button
                     size="sm"
@@ -203,8 +239,10 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                       handleStatusUpdate(selectedMsg.id, "replied")
                     }
                     disabled={updating === selectedMsg.id}
+                    title={s.markReplied}
                   >
                     <CheckCheck className="h-3 w-3" />
+                    <span className="ms-1.5 hidden sm:inline">{s.markReplied}</span>
                   </Button>
                   <Button
                     size="sm"
@@ -213,16 +251,20 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                       handleStatusUpdate(selectedMsg.id, "archived")
                     }
                     disabled={updating === selectedMsg.id}
+                    title={s.markArchived}
                   >
                     <Archive className="h-3 w-3" />
+                    <span className="ms-1.5 hidden sm:inline">{s.markArchived}</span>
                   </Button>
                   <Button
                     size="sm"
                     variant="destructive"
                     onClick={() => handleDelete(selectedMsg.id)}
                     disabled={updating === selectedMsg.id}
+                    title={s.delete}
                   >
                     <Trash2 className="h-3 w-3" />
+                    <span className="ms-1.5 hidden sm:inline">{s.delete}</span>
                   </Button>
                 </div>
               </div>
@@ -236,11 +278,51 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
                 </div>
               </div>
 
+              {selectedMsg.replyBody && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-sm text-muted-foreground mb-2">{s.yourReply}</p>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-sm text-foreground whitespace-pre-wrap">
+                      {selectedMsg.replyBody}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="border-t border-border pt-4 space-y-3">
+                <Label className="text-sm font-medium">{s.reply}</Label>
+                <Textarea
+                  placeholder={s.message}
+                  value={replyBody}
+                  onChange={(e) => setReplyBody(e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="reply-via-email"
+                    checked={replyViaEmail}
+                    onCheckedChange={(v) => setReplyViaEmail(v === true)}
+                  />
+                  <Label htmlFor="reply-via-email" className="text-sm font-normal cursor-pointer">
+                    {s.replyViaEmail}
+                  </Label>
+                </div>
+                <Button
+                  onClick={handleSendReply}
+                  disabled={sendingReply || !replyBody.trim()}
+                  size="sm"
+                >
+                  <Send className="h-3 w-3 me-1.5" />
+                  {sendingReply ? "…" : s.sendReply}
+                </Button>
+              </div>
+
               {selectedMsg.referrer && (
                 <div>
                   <p className="text-sm text-muted-foreground">{s.referrer}</p>
-                  <p className="text-xs text-muted-foreground break-all">
-                    {selectedMsg.referrer}
+                  <p className="text-xs text-muted-foreground break-all text-left" dir="ltr">
+                    {decodeReferrerUrl(selectedMsg.referrer)}
                   </p>
                 </div>
               )}

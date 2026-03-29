@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare } from "lucide-react";
+import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, Bell } from "lucide-react";
 import { ar } from "@/lib/ar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ interface DashboardHeaderProps {
   onMenuClick: () => void;
   pendingCommentsCount?: number;
   pendingQuestionsCount?: number;
+  pendingSupportCount?: number;
 }
 
 const routeLabels: Record<string, string> = {
@@ -39,12 +40,14 @@ export function DashboardHeader({
   onMenuClick,
   pendingCommentsCount = 0,
   pendingQuestionsCount = 0,
+  pendingSupportCount = 0,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const navTitle = getNavTitle(pathname);
   const isAnalytics = pathname === "/dashboard/analytics";
   const isComments = pathname === "/dashboard/comments";
   const isQuestions = pathname === "/dashboard/questions";
+  const isSupport = pathname === "/dashboard/support";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
@@ -116,7 +119,7 @@ export function DashboardHeader({
               <MessageSquare className="h-4 w-4" />
             </Button>
             {pendingCommentsCount > 0 && (
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
                 {pendingCommentsCount > 9 ? "9+" : pendingCommentsCount}
               </span>
             )}
@@ -135,8 +138,27 @@ export function DashboardHeader({
               <HelpCircle className="h-4 w-4" />
             </Button>
             {pendingQuestionsCount > 0 && (
-              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
                 {pendingQuestionsCount > 9 ? "9+" : pendingQuestionsCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            href="/dashboard/support"
+            title={ar.nav.support}
+            className="relative inline-flex"
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn("h-9 w-9", isSupport && "bg-primary/10 text-primary")}
+            >
+              <Bell className="h-4 w-4" />
+            </Button>
+            {pendingSupportCount > 0 && (
+              <span className="absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground tabular-nums">
+                {pendingSupportCount > 9 ? "9+" : pendingSupportCount}
               </span>
             )}
           </Link>

@@ -45,12 +45,12 @@ Each item below is **live**: when the visitor does the action, Modonty sends dat
 
 ### Share
 
-- **What it is:** A count (or row) when someone uses the share action for an article.
-- **When it fires:** When the user clicks a share button (e.g. share to a social platform or copy link).
-- **What we store:** Article id, share context (e.g. platform).
+- **What it is:** A count (or row) when someone uses the share action for an article **or a client profile**.
+- **When it fires:** When the user clicks a share button (e.g. share to a social platform or copy link) on an article page or on a client profile.
+- **What we store:** Article id or client id, share context (e.g. platform), session id.
 - **What we ignore for now:** Nothing; each share action is recorded.
-- **Where it lives:** `modonty/app/api/articles/[slug]/share/route.ts`.
-- **How to test:** On an article page, click a share button (or “copy link”). Check the share API or related table for the new record.
+- **Where it lives:** Article: `modonty/app/api/articles/[slug]/share/route.ts`. Client profile: `modonty/app/api/clients/[slug]/share/route.ts` (Share row with `clientId`).
+- **How to test:** On an article page, click a share button (or “copy link”). Check the share API or related table for the new record. On a client profile, click the hero share button and pick a platform or copy link → check `shares` for a row with that `clientId` and `cta_clicks` for “Share client”.
 
 ---
 
@@ -142,14 +142,15 @@ Each item below is **live**: when the visitor does the action, Modonty sends dat
 
 ---
 
-### CTAClick (all 8 CTAs)
+### CTAClick (client page + article + global CTAs)
 
-- **What it is:** One row each time a visitor clicks one of the **tracked** call-to-action buttons or links (e.g. “Read more”, “Subscribe”, “Visit client”, “Ask client”, “Comment”, “Share”, “More/Related articles”, “Visit website”).
+- **What it is:** One row each time a visitor clicks one of the **tracked** call-to-action buttons or links.
 - **When it fires:** On click of that CTA, before or as the user navigates. A small script sends the click to the API (fire-and-forget so it doesn’t block the page).
 - **What we store:** CTA type, label, target URL, optional article/client, session, optional user, optional time-on-page/scroll at click.
 - **What we ignore for now:** Like/dislike and favorite are **not** counted as CTAs here; they have their own tables (ArticleLike, etc.).
-- **Where it lives:** API: `modonty/app/api/track/cta-click/route.ts`. Helper: `modonty/lib/cta-tracking.ts` (`trackCtaClick`). Shared link: `modonty/components/cta-tracked-link.tsx`. The 8 CTAs are: اقرأ المزيد (PostCardBody), اشترك (newsletter sidebar), Visit client page (article-client-card), اسأل العميل (ask-client-dialog open), أضف تعليق (comment-form-dialog open), مشاركة (article-share-buttons), More/Related (more-from-client, related-articles, article-manual-related), زيارة الموقع (hero-cta-visit-website on client profile).
-- **How to test:** Click each of the 8 CTAs in the UI (e.g. “Read more” on a card, “Subscribe” in sidebar, “Visit website” on client page, open comment dialog, share, etc.). Check `cta_clicks` (or console CTA report) for new rows with the right type/label.
+- **Where it lives:** API: `modonty/app/api/track/cta-click/route.ts`. Helper: `modonty/lib/cta-tracking.ts` (`trackCtaClick`). Shared link: `modonty/components/cta-tracked-link.tsx`.
+- **CTAs (20+):** **Article / global:** اقرأ المزيد (PostCardBody), اشترك (newsletter sidebar), Visit client page (article-client-card), Visit client from notification (notification detail), اسأل العميل (ask-client-dialog), أضف تعليق (comment-form-dialog), مشاركة (article-share-buttons), More/Related (more-from-client, related-articles, article-manual-related), زيارة الموقع (hero-cta-visit-website). **Client page (full coverage):** Share client (hero share menu), Social (LinkedIn|Twitter|Facebook), Tab – [tab label], Contact – website|email|phone|WhatsApp|copy url|email|phone, View followers / View followers – all / View follower profile, View likes, View reviews / View reviews – all / View review article, View photo article, Visit client from related, Feed card – عرض المقال / Feed card – مشاركة, Empty state – تصفح العملاء المشابهين|تصفح العملاء|الرئيسية, Article list – sort newest|oldest|title, Article list – article, View reel article.
+- **How to test:** Click each CTA in the UI. Check `cta_clicks` (or console CTA report) for new rows with the right type/label. For client profile, see [CLIENT_PAGE_TRACKING_AUDIT.md](./CLIENT_PAGE_TRACKING_AUDIT.md).
 
 ---
 
@@ -225,7 +226,7 @@ Use this as a checklist. For each item, do the action on the Modonty site, then 
 - **ArticleView:** Open an article → check article views (DB or console).
 - **ClientView:** Open a client profile → check client views.
 - **ArticleLike / Dislike / Favorite:** Click like, dislike, or favorite on an article → check the corresponding table.
-- **Share:** Click share on an article → check share API/table.
+- **Share:** Click share on an article → check share API/table. On a client profile, click hero share and pick platform or copy link → check `shares` (clientId) and `cta_clicks` (Share client).
 - **Comment / CommentLike / CommentDislike:** Post a comment; like/dislike a comment → check comments and comment reactions.
 - **ArticleFAQ (Ask client):** Submit “Ask the client” on an article → check ask-client/FAQ submissions.
 - **Subscriber:** Submit client newsletter form → check `subscribers`.
@@ -234,7 +235,7 @@ Use this as a checklist. For each item, do the action on the Modonty site, then 
 - **User:** Register a new user → check `users`.
 - **NewsSubscriber:** Submit global news subscribe form → check news subscribers.
 - **FAQFeedback:** Submit FAQ feedback on help page → check FAQ feedback table.
-- **CTAClick:** Click each of the 8 CTAs (read more, subscribe, visit client, ask client, comment, share, more/related, visit website) → check `cta_clicks` with correct type/label.
+- **CTAClick:** Click each CTA (read more, subscribe, visit client, visit client from notification, ask client, comment, share, more/related, visit website; on client profile: share client, social links, tabs, contact links/copy, sidebar links, feed card footer, empty state, article list sort/row, sub-route links) → check `cta_clicks` with correct type/label.
 - **ArticleLinkClick:** Open an article, click a link inside the article body → check `article_link_clicks`.
 - **Conversion:** Submit contact form; register; subscribe to client newsletter; subscribe to global news → check `conversions` for CONTACT_FORM, SIGNUP, NEWSLETTER (with and without clientId).
 - **Analytics:** Open an article, stay 10+ seconds, scroll, then leave → check `analytics` for one row with timeOnPage, scrollDepth, bounced and source/referrer set.
@@ -243,9 +244,10 @@ Use this as a checklist. For each item, do the action on the Modonty site, then 
 
 ## Part 4 — Summary
 
-- **Implemented (20):** ArticleView, ClientView; ArticleLike, ArticleDislike, ArticleFavorite; ArticleFAQ; Share; Comment, CommentLike, CommentDislike; Subscriber; ContactMessage; ClientLike; User; NewsSubscriber; FAQFeedback; CTAClick (8 CTAs); ArticleLinkClick; Conversion; Analytics (article view + leave).
+- **Implemented (20):** ArticleView, ClientView; ArticleLike, ArticleDislike, ArticleFavorite; ArticleFAQ; Share (article + **client profile**); Comment, CommentLike, CommentDislike; Subscriber; ContactMessage; ClientLike; User; NewsSubscriber; FAQFeedback; **CTAClick (20+ CTAs, including full client page coverage);** ArticleLinkClick; Conversion; Analytics (article view + leave).
 - **Deferred:** EngagementDuration (overlap with Analytics); CampaignTracking (add when using UTM links).
 - **LeadScoring:** Filled by the console “Refresh scores” button (on-demand job), not by Modonty directly.
+- **Client page tracking:** Full CTA coverage on `/clients/[slug]` and sub-routes per [CLIENT_PAGE_TRACKING_AUDIT.md](./CLIENT_PAGE_TRACKING_AUDIT.md).
 
 ---
 
@@ -257,7 +259,8 @@ With these updates, Modonty has moved to a **higher level** of analytics maturit
 
 **After (current level):**
 
-- **Structured event tracking:** ArticleView, ClientView, CTAClick (8 CTAs), ArticleLinkClick, Conversion, and Analytics are all defined and implemented.
+- **Structured event tracking:** ArticleView, ClientView, CTAClick (20+ CTAs, including full client page), ArticleLinkClick, Conversion, and Analytics are all defined and implemented.
+- **Client page:** Every interactive element on `/clients/[slug]` and its sub-routes (share, social, tabs, contact, sidebar, feed footer, empty state, article list, followers/reviews/reels/photos links) is tracked via CTAClick or Share; see [CLIENT_PAGE_TRACKING_AUDIT.md](./CLIENT_PAGE_TRACKING_AUDIT.md).
 - **Attribution:** You know traffic source and referrer (Analytics), and which CTAs and in-article links get clicked.
 - **Conversion funnel:** Conversions are recorded for contact, signup, and newsletter (client + global), so you can measure conversion rate and types.
 - **Engagement quality:** Time on page, scroll depth, and bounce are stored per article view (Analytics), so you can see engagement quality, not just counts.

@@ -184,6 +184,9 @@ model User {
   engagementDuration    EngagementDuration[]
   faqFeedbacks         FAQFeedback[]
   chatbotMessages      ChatbotMessage[]
+  contactMessages      ContactMessage[]
+  notifications        Notification[]
+  ownedClients         Client[]         @relation("ClientOwner")
 
   @@index([role])
   @@map("users")
@@ -377,6 +380,10 @@ model Client {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  // Modonty user who owns/manages this client (for notifications e.g. contact reply)
+  userId String? @db.ObjectId
+  user   User?   @relation("ClientOwner", fields: [userId], references: [id], onDelete: SetNull)
+
   // ============================================
   // JSON-LD Knowledge Graph
   // ============================================
@@ -423,6 +430,7 @@ model Client {
   campaignTracking  CampaignTracking[]
   engagementDuration EngagementDuration[]
   contactMessages  ContactMessage[]
+  notifications    Notification[]
 
   // SEO Intake relations
   seoIntakes     SeoIntake[]
@@ -430,6 +438,7 @@ model Client {
   targetKeywords ClientKeyword[]
 
   @@index([industryId])
+  @@index([userId])
   @@map("clients")
 }
 
@@ -1917,6 +1926,13 @@ model ContactMessage {
   clientId String? @db.ObjectId
   client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
+  // Optional user (when contact form submitted by logged-in modonty user)
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Reply from client (console)
+  replyBody String?
+
   // Metadata
   ipAddress String?
   userAgent String?
@@ -1931,8 +1947,28 @@ model ContactMessage {
   @@index([email])
   @@index([status])
   @@index([clientId])
+  @@index([userId])
   @@index([createdAt])
   @@map("contact_messages")
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId  String?  @db.ObjectId
+  client    Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  type      String   // e.g. "contact_reply"
+  title     String
+  body      String
+  readAt    DateTime?
+  relatedId String?  @db.ObjectId // e.g. ContactMessage id
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([readAt])
+  @@map("notifications")
 }
 
 // ============================================

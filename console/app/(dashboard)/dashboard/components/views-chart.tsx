@@ -30,7 +30,7 @@ export function ViewsChart({ data }: ViewsChartProps) {
 
   const gridStroke = "hsl(var(--border))";
   const tickStyle = { fontSize: 11, fill: "hsl(var(--muted-foreground))" };
-  const strokeColor = "hsl(221 39% 32%)";
+  const strokeColor = "hsl(var(--primary))";
 
   return (
     <div className="h-[200px] w-full">
@@ -51,7 +51,7 @@ export function ViewsChart({ data }: ViewsChartProps) {
               border: "1px solid hsl(var(--border))",
               borderRadius: "var(--radius)",
             }}
-            formatter={(value: number | undefined) => [(value ?? 0).toLocaleString(), "مشاهدات"]}
+            formatter={(value: number | string) => [(Number(value) ?? 0).toLocaleString(), "مشاهدات"]}
             labelFormatter={(label) => typeof label === "string" ? formatDateLabel(label) : label}
           />
           <Area

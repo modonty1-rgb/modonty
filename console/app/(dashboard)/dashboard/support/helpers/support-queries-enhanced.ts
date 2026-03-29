@@ -7,6 +7,7 @@ export interface ContactMessageWithDetails {
   subject: string;
   message: string;
   status: string;
+  replyBody: string | null;
   ipAddress: string | null;
   userAgent: string | null;
   referrer: string | null;
@@ -29,6 +30,12 @@ export async function getContactMessages(
       createdAt: "desc",
     },
   }) as Promise<ContactMessageWithDetails[]>;
+}
+
+export async function getNewSupportMessagesCount(clientId: string): Promise<number> {
+  return db.contactMessage.count({
+    where: { clientId, status: "new" },
+  });
 }
 
 export async function getMessageStats(clientId: string) {

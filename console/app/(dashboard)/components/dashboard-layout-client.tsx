@@ -13,6 +13,7 @@ interface DashboardLayoutClientProps {
   pendingQuestionsCount: number;
   subscribersCount: number;
   leadsCount: number;
+  pendingSupportCount: number;
   children: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function DashboardLayoutClient({
   pendingQuestionsCount,
   subscribersCount,
   leadsCount,
+  pendingSupportCount,
   children,
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -57,6 +59,7 @@ export function DashboardLayoutClient({
             onMenuClick={() => setIsMobileOpen(true)}
             pendingCommentsCount={pendingCommentsCount}
             pendingQuestionsCount={pendingQuestionsCount}
+            pendingSupportCount={pendingSupportCount}
           />
         </header>
         <main className="flex-1 min-h-0 overflow-y-auto container mx-auto max-w-[1128px] px-4 py-8">

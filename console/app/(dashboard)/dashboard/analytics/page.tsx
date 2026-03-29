@@ -16,9 +16,11 @@ import {
   getCampaignPerformance,
   getArticlePerformance,
 } from "./helpers/enhanced-analytics-queries";
-import { getTopClickedLinks, getLinkClickStats } from "./helpers/link-clicks-queries";
+import { getTopClickedLinks } from "./helpers/link-clicks-queries";
 import { getClientViewsAnalytics } from "./helpers/client-views-queries";
-import { Users, Target, Link as LinkIcon, Eye } from "lucide-react";
+import { Users, Target, Link as LinkIcon, Eye, BarChart3, Gauge, Activity } from "lucide-react";
+import { AnalyticsStatCard } from "./components/analytics-stat-card";
+import { AnalyticsProgressList } from "./components/analytics-progress-list";
 
 export const dynamic = "force-dynamic";
 
@@ -54,418 +56,349 @@ export default async function AnalyticsPage() {
   const a = ar.analytics;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          {a.title}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          {a.comprehensiveAnalytics}
-        </p>
-      </div>
+    <div className="space-y-8">
+      <section aria-labelledby="analytics-heading">
+        <div className="mb-6">
+          <h1 id="analytics-heading" className="text-2xl font-semibold leading-tight text-foreground">
+            {a.title}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {a.comprehensiveAnalytics}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">{a.views7d}</CardTitle>
-            <CardDescription className="text-xs">{a.totalPageViews}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {last7.totalViews.toLocaleString()}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {a.articles}: {last7.articleViews} · {a.client}: {last7.clientViews}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <AnalyticsStatCard
+            icon={BarChart3}
+            title={a.views7d}
+            description={a.totalPageViews}
+            value={last7.totalViews.toLocaleString()}
+            subLines={[`${a.articles}: ${last7.articleViews} · ${a.client}: ${last7.clientViews}`]}
+          />
+          <AnalyticsStatCard
+            icon={BarChart3}
+            title={a.views30d}
+            description={a.totalPageViews}
+            value={last30.totalViews.toLocaleString()}
+            subLines={[`${a.articles}: ${last30.articleViews} · ${a.client}: ${last30.clientViews}`]}
+          />
+          <AnalyticsStatCard
+            icon={Users}
+            title={a.engagementRate}
+            value={`${engagement.engagementRate.toFixed(1)}%`}
+            subLines={[`${a.engaged}: ${engagement.engagedSessions} · ${a.bounced}: ${engagement.bouncedSessions}`]}
+          />
+          <AnalyticsStatCard
+            icon={Target}
+            title={a.conversionRate}
+            value={`${conversions.rate.toFixed(2)}%`}
+            subLines={[`${conversions.total} ${a.totalConversions}`]}
+          />
+        </div>
+      </section>
 
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">{a.views30d}</CardTitle>
-            <CardDescription className="text-xs">{a.totalPageViews}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {last30.totalViews.toLocaleString()}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {a.articles}: {last30.articleViews} · {a.client}: {last30.clientViews}
-            </p>
-          </CardContent>
-        </Card>
+      <section aria-labelledby="traffic-performance-heading" className="space-y-6">
+        <h2 id="traffic-performance-heading" className="sr-only">
+          {a.trafficSources} · {a.coreWebVitals}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                {a.trafficSources}
+              </CardTitle>
+              <CardDescription>{a.last30d}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AnalyticsProgressList
+                items={trafficSources.map((s) => ({
+                  label: s.source,
+                  count: s.count,
+                  percentage: s.percentage,
+                }))}
+                emptyMessage={a.noTraffic}
+              />
+            </CardContent>
+          </Card>
 
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{a.engagementRate}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {engagement.engagementRate.toFixed(1)}%
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {a.engaged}: {engagement.engagedSessions} · {a.bounced}: {engagement.bouncedSessions}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{a.conversionRate}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {conversions.rate.toFixed(2)}%
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {conversions.total} {a.totalConversions}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{a.trafficSources}</CardTitle>
-            <CardDescription>{a.last30d}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {trafficSources.length > 0 ? (
-              <div className="space-y-3">
-                {trafficSources.map((source) => (
-                  <div key={source.source} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-foreground capitalize">
-                        {source.source.toLowerCase()}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {source.count.toLocaleString()} ({source.percentage.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${source.percentage}%` }}
-                      />
-                    </div>
-                  </div>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Gauge className="h-4 w-4 text-primary" />
+                {a.coreWebVitals}
+              </CardTitle>
+              <CardDescription>{a.performanceMetrics}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                {[
+                  { key: "lcp", label: a.lcp, value: webVitals.lcp, fmt: (v: number) => `${v.toFixed(2)}s` },
+                  { key: "cls", label: a.cls, value: webVitals.cls, fmt: (v: number) => v.toFixed(3) },
+                  { key: "inp", label: a.inp, value: webVitals.inp, fmt: (v: number) => `${v.toFixed(0)}ms` },
+                  { key: "ttfb", label: a.ttfb, value: webVitals.ttfb, fmt: (v: number) => `${v.toFixed(0)}ms` },
+                  { key: "tbt", label: a.tbt, value: webVitals.tbt, fmt: (v: number) => `${v.toFixed(0)}ms` },
+                ].map(({ key, label, value, fmt }) => (
+                  <li key={key} className="flex items-center justify-between py-3 first:pt-0">
+                    <span className="text-sm text-foreground">{label}</span>
+                    <span className="text-sm font-medium text-foreground tabular-nums">
+                      {value != null ? fmt(value) : "—"}
+                    </span>
+                  </li>
                 ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">{a.noTraffic}</p>
-            )}
-          </CardContent>
-        </Card>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
 
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{a.coreWebVitals}</CardTitle>
-            <CardDescription>{a.performanceMetrics}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">{a.lcp}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {webVitals.lcp ? `${webVitals.lcp.toFixed(2)}s` : "—"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">{a.cls}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {webVitals.cls ? webVitals.cls.toFixed(3) : "—"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">{a.inp}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {webVitals.inp ? `${webVitals.inp.toFixed(0)}ms` : "—"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">{a.ttfb}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {webVitals.ttfb ? `${webVitals.ttfb.toFixed(0)}ms` : "—"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-foreground">{a.tbt}</span>
-                <span className="text-sm font-medium text-foreground">
-                  {webVitals.tbt ? `${webVitals.tbt.toFixed(0)}ms` : "—"}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{a.engagementMetrics}</CardTitle>
-            <CardDescription>{a.userBehavior}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">{a.timeOnPage}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgTimeOnPage)}s {a.sAvg}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">{a.scrollDepth}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgScrollDepth)}% {a.percentAvg}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">{a.completionRate}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {engagement.avgCompletionRate.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">{a.readingTime}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {Math.round(engagement.avgReadingTime)}s {a.sAvg}
-                  </span>
-                </div>
-              </div>
-              <div className="pt-3 border-t border-border">
-                <p className="text-sm font-medium text-foreground mb-2">{a.scrollDepthDist}</p>
-                <div className="space-y-2">
+      <section aria-labelledby="engagement-conversions-heading" className="space-y-6">
+        <h2 id="engagement-conversions-heading" className="sr-only">
+          {a.engagementMetrics} · {a.conversions}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-4 w-4 text-primary" />
+                {a.engagementMetrics}
+              </CardTitle>
+              <CardDescription>{a.userBehavior}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                {[
+                  { label: a.timeOnPage, value: `${Math.round(engagement.avgTimeOnPage)}s ${a.sAvg}` },
+                  { label: a.scrollDepth, value: `${Math.round(engagement.avgScrollDepth)}% ${a.percentAvg}` },
+                  { label: a.completionRate, value: `${engagement.avgCompletionRate.toFixed(1)}%` },
+                  { label: a.readingTime, value: `${Math.round(engagement.avgReadingTime)}s ${a.sAvg}` },
+                ].map(({ label, value }) => (
+                  <li key={label} className="flex items-center justify-between py-3 first:pt-0">
+                    <span className="text-sm font-medium text-foreground">{label}</span>
+                    <span className="text-sm text-muted-foreground tabular-nums">{value}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-4 mt-4 border-t border-border">
+                <p className="text-sm font-medium text-foreground mb-3">{a.scrollDepthDist}</p>
+                <ul className="space-y-2" role="list">
                   {Object.entries(engagement.scrollDepthDistribution).map(([range, percentage]) => (
-                    <div key={range} className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">{range}%</span>
-                      <div className="flex-1 mx-2 h-2 rounded-full bg-muted overflow-hidden">
+                    <li key={range} className="flex items-center justify-between text-xs gap-2">
+                      <span className="text-muted-foreground shrink-0">{range}%</span>
+                      <div className="flex-1 min-w-0 h-2 rounded-full bg-muted overflow-hidden">
                         <div
-                          className="h-full bg-primary rounded-full"
+                          className="h-full bg-primary rounded-full transition-all"
                           style={{ width: `${percentage}%` }}
+                          role="presentation"
                         />
                       </div>
-                      <span className="text-muted-foreground">{percentage.toFixed(1)}%</span>
-                    </div>
+                      <span className="text-muted-foreground tabular-nums shrink-0">{percentage.toFixed(1)}%</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{a.conversions}</CardTitle>
-            <CardDescription>{a.conversionTypes}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {conversions.conversions.length > 0 ? (
-              <div className="space-y-3">
-                {conversions.conversions.map((conv) => (
-                  <div key={conv.type} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-foreground capitalize">
-                        {conv.type.replace(/_/g, " ").toLowerCase()}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {conv.count} ({conv.percentage.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${conv.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">{a.noConversions}</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                {a.conversions}
+              </CardTitle>
+              <CardDescription>{a.conversionTypes}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AnalyticsProgressList
+                items={conversions.conversions.map((c) => ({
+                  label: c.type,
+                  count: c.count,
+                  percentage: c.percentage,
+                }))}
+                emptyMessage={a.noConversions}
+                formatLabel={(l) => l.replace(/_/g, " ").toLowerCase()}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
 
       {campaigns.length > 0 && (
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{a.campaignPerformance}</CardTitle>
-            <CardDescription>{a.activeCampaigns}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {campaigns.map((campaign) => (
-                <div
-                  key={campaign.campaignId}
-                  className="p-3 border border-border rounded-lg space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-foreground">{campaign.campaignName}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{campaign.type}</p>
+        <section aria-labelledby="campaigns-heading">
+          <h2 id="campaigns-heading" className="sr-only">{a.campaignPerformance}</h2>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                {a.campaignPerformance}
+              </CardTitle>
+              <CardDescription>{a.activeCampaigns}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-4" role="list">
+                {campaigns.map((campaign) => (
+                  <li
+                    key={campaign.campaignId}
+                    className="p-4 border border-border rounded-lg space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">{campaign.campaignName}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{campaign.type}</p>
+                      </div>
+                      {campaign.cost != null && (
+                        <p className="text-sm font-medium text-foreground tabular-nums">
+                          {campaign.cost.toLocaleString()} SAR
+                        </p>
+                      )}
                     </div>
-                    {campaign.cost && (
-                      <p className="text-sm font-medium text-foreground">
-                        {campaign.cost.toLocaleString()} SAR
-                      </p>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">{a.impressions}</p>
-                      <p className="font-medium text-foreground">
-                        {campaign.impressions.toLocaleString()}
-                      </p>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">{a.impressions}</p>
+                        <p className="font-medium text-foreground tabular-nums">
+                          {campaign.impressions.toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{a.clicks}</p>
+                        <p className="font-medium text-foreground tabular-nums">
+                          {campaign.clicks.toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{a.conversions}</p>
+                        <p className="font-medium text-foreground tabular-nums">
+                          {campaign.conversions.toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-muted-foreground">{a.clicks}</p>
-                      <p className="font-medium text-foreground">{campaign.clicks.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">{a.conversions}</p>
-                      <p className="font-medium text-foreground">
-                        {campaign.conversions.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </section>
       )}
 
-      <Card className="shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="text-lg">{a.topPerformingArticles}</CardTitle>
-          <CardDescription>{a.articlesRankedByViews}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {topArticles.length > 0 ? (
-            <div className="space-y-3">
-              {topArticles.map((article) => (
-                <div
-                  key={article.articleId}
-                  className="flex items-center justify-between gap-4 py-3 border-b border-border last:border-0"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground truncate">{article.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {article.category ?? "—"} · {article.views.toLocaleString()} {a.views} ·{" "}
-                      {Math.round(article.avgTimeOnPage)}s {a.sAvg} · {Math.round(article.avgScrollDepth)}% {a.scroll}
-                    </p>
-                  </div>
-                  <div className="text-end shrink-0">
-                    <p className="text-sm font-medium text-foreground">{article.conversions}</p>
-                    <p className="text-xs text-muted-foreground">{a.conversions}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{a.noArticles}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <section aria-labelledby="content-performance-heading" className="space-y-6">
+        <h2 id="content-performance-heading" className="sr-only">
+          {a.topPerformingArticles} · {a.topClickedLinks} · {a.clientPageViews}
+        </h2>
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-4 w-4 text-primary" />
-              <CardTitle className="text-lg">{a.topClickedLinks}</CardTitle>
-            </div>
-            <CardDescription>{a.mostClickedLinks}</CardDescription>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              {a.topPerformingArticles}
+            </CardTitle>
+            <CardDescription>{a.articlesRankedByViews}</CardDescription>
           </CardHeader>
           <CardContent>
-            {topLinks.length > 0 ? (
-              <div className="space-y-3">
-                {topLinks.map((link, index) => (
-                  <div
-                    key={index}
-                    className="py-3 border-b border-border last:border-0"
+            {topArticles.length > 0 ? (
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                {topArticles.map((article) => (
+                  <li
+                    key={article.articleId}
+                    className="flex items-center justify-between gap-4 py-3 first:pt-0"
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-foreground break-all">
-                          {link.linkText || link.linkUrl}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {link.linkDomain} · {link.linkType}
-                        </p>
-                      </div>
-                      <div className="text-end shrink-0">
-                        <p className="text-sm font-medium text-foreground">
-                          {link.clicks}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {link.uniqueUsers} {a.users}
-                        </p>
-                      </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground truncate">{article.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {article.category ?? "—"} · {article.views.toLocaleString()} {a.views} ·{" "}
+                        {Math.round(article.avgTimeOnPage)}s {a.sAvg} · {Math.round(article.avgScrollDepth)}% {a.scroll}
+                      </p>
                     </div>
-                  </div>
+                    <div className="text-end shrink-0">
+                      <p className="text-sm font-medium text-foreground tabular-nums">{article.conversions}</p>
+                      <p className="text-xs text-muted-foreground">{a.conversions}</p>
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">{a.noLinkClickData}</p>
+              <p className="text-sm text-muted-foreground">{a.noArticles}</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-primary" />
-              <CardTitle className="text-lg">{a.clientPageViews}</CardTitle>
-            </div>
-            <CardDescription>{a.brandPageAnalytics}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">{a.totalClientViews}</span>
-                <span className="text-2xl font-semibold text-foreground">
-                  {clientViewsData.totalViews.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">{a.uniqueVisitors}</span>
-                <span className="text-lg font-semibold text-foreground">
-                  {clientViewsData.uniqueVisitors.toLocaleString()}
-                </span>
-              </div>
-              <div className="pt-3 border-t border-border">
-                <p className="text-sm font-medium text-foreground mb-3">{a.topReferrers}</p>
-                <div className="space-y-2">
-                  {clientViewsData.topReferrers.length > 0 ? (
-                    clientViewsData.topReferrers.map((ref, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground truncate flex-1">
-                          {ref.referrer}
-                        </span>
-                        <span className="text-foreground font-medium ms-2">
-                          {ref.views}
-                        </span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-primary" />
+                {a.topClickedLinks}
+              </CardTitle>
+              <CardDescription>{a.mostClickedLinks}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {topLinks.length > 0 ? (
+                <ul className="space-y-0 divide-y divide-border" role="list">
+                  {topLinks.map((link, index) => (
+                    <li key={index} className="py-3 first:pt-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-foreground break-all">
+                            {link.linkText || link.linkUrl}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {link.linkDomain} · {link.linkType}
+                          </p>
+                        </div>
+                        <div className="text-end shrink-0">
+                          <p className="text-sm font-medium text-foreground tabular-nums">{link.clicks}</p>
+                          <p className="text-xs text-muted-foreground">{link.uniqueUsers} {a.users}</p>
+                        </div>
                       </div>
-                    ))
-                  ) : (
-                    <p className="text-xs text-muted-foreground">{a.noReferrerData}</p>
-                  )}
-                </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">{a.noLinkClickData}</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Eye className="h-4 w-4 text-primary" />
+                {a.clientPageViews}
+              </CardTitle>
+              <CardDescription>{a.brandPageAnalytics}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                <li className="flex items-center justify-between py-3 first:pt-0">
+                  <span className="text-sm font-medium text-foreground">{a.totalClientViews}</span>
+                  <span className="text-2xl font-semibold text-foreground tabular-nums">
+                    {clientViewsData.totalViews.toLocaleString()}
+                  </span>
+                </li>
+                <li className="flex items-center justify-between py-3">
+                  <span className="text-sm font-medium text-foreground">{a.uniqueVisitors}</span>
+                  <span className="text-lg font-semibold text-foreground tabular-nums">
+                    {clientViewsData.uniqueVisitors.toLocaleString()}
+                  </span>
+                </li>
+              </ul>
+              <div className="pt-4 mt-4 border-t border-border">
+                <p className="text-sm font-medium text-foreground mb-3">{a.topReferrers}</p>
+                {clientViewsData.topReferrers.length > 0 ? (
+                  <ul className="space-y-2" role="list">
+                    {clientViewsData.topReferrers.map((ref, index) => (
+                      <li key={index} className="flex items-center justify-between gap-2 text-sm">
+                        <span className="text-muted-foreground truncate min-w-0">{ref.referrer}</span>
+                        <span className="text-foreground font-medium tabular-nums shrink-0">{ref.views}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-muted-foreground">{a.noReferrerData}</p>
+                )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 }

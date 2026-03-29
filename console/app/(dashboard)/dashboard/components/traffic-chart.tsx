@@ -26,7 +26,7 @@ export function TrafficChart({ data }: TrafficChartProps) {
 
   const gridStroke = "hsl(var(--border))";
   const tickStyle = { fontSize: 12, fill: "hsl(var(--muted-foreground))" };
-  const barFill = "hsl(221 39% 32%)";
+  const barFill = "hsl(var(--primary))";
 
   return (
     <div className="h-[240px] w-full">
@@ -41,7 +41,7 @@ export function TrafficChart({ data }: TrafficChartProps) {
               border: "1px solid hsl(var(--border))",
               borderRadius: "var(--radius)",
             }}
-            formatter={(value: number | undefined) => [(value ?? 0).toLocaleString(), ""]}
+            formatter={(value: number | string) => [(Number(value) ?? 0).toLocaleString(), ""]}
           />
           <Bar dataKey="count" fill={barFill} radius={[4, 4, 0, 0]} />
         </BarChart>

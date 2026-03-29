@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import {
@@ -21,6 +20,8 @@ import { BarChart3, TrendingUp, Users, Share2, MessageSquare, Target, FileText, 
 import { TrafficChart } from "./components/traffic-chart";
 import { ViewsChart } from "./components/views-chart";
 import { TopArticlesChart } from "./components/top-articles-chart";
+import { DashboardStatCard } from "./components/dashboard-stat-card";
+import { DashboardActionCard } from "./components/dashboard-action-card";
 
 export const dynamic = "force-dynamic";
 
@@ -43,275 +44,209 @@ export default async function DashboardPage() {
     ]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          {ar.nav.dashboard}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          {ar.dashboard.welcome}
-        </p>
-      </div>
+    <div className="space-y-8">
+      <section aria-labelledby="dashboard-heading">
+        <div className="mb-6">
+          <h1 id="dashboard-heading" className="text-2xl font-semibold leading-tight text-foreground">
+            {ar.nav.dashboard}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {ar.dashboard.welcome}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium">{ar.dashboard.subscribers}</CardTitle>
-            <CardDescription className="text-xs">{ar.dashboard.newsletterList}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg font-semibold text-foreground">
-              {stats.content.totalSubscribers}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">{ar.dashboard.totalSubscribers}</p>
-          </CardContent>
-        </Card>
+        <div className="flex flex-wrap gap-3">
+          <div className="w-[180px] shrink-0">
+            <DashboardStatCard
+              icon={Users}
+              title={ar.dashboard.subscribers}
+              description={ar.dashboard.newsletterList}
+              value={stats.content.totalSubscribers}
+              subLines={[ar.dashboard.totalSubscribers]}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardActionCard
+              href="/dashboard/articles"
+              icon={FileText}
+              title={ar.dashboard.articles}
+              description={ar.dashboard.manageApprove}
+              value={
+                pendingCount > 0
+                  ? `${pendingCount} ${ar.dashboard.pendingApproval}`
+                  : ar.dashboard.allApproved
+              }
+              ctaLabel={ar.dashboard.manageApprove}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardActionCard
+              href="/dashboard/analytics"
+              icon={BarChart3}
+              title={ar.dashboard.analytics}
+              description={ar.dashboard.viewsEngagement}
+              value={`${stats.analytics.views7d.toLocaleString()} ${ar.dashboard.views}`}
+              ctaLabel={ar.dashboard.viewAnalytics}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardActionCard
+              href="/dashboard/comments"
+              icon={MessageSquare}
+              title={ar.dashboard.comments}
+              description={ar.dashboard.moderationQueue}
+              value={
+                pendingCommentsCount > 0
+                  ? `${pendingCommentsCount} ${ar.dashboard.pendingReview}`
+                  : ar.dashboard.allReviewed
+              }
+              ctaLabel={ar.dashboard.moderateComments}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardActionCard
+              href="/dashboard/support"
+              icon={Mail}
+              title={ar.dashboard.support}
+              description={ar.dashboard.contactMessages}
+              value={ar.dashboard.viewMessages}
+              ctaLabel={ar.dashboard.manageSupport}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardStatCard
+              icon={BarChart3}
+              title={ar.dashboard.engagementScore}
+              value={stats.analytics.engagementScore}
+              subLines={[
+                `Avg time: ${Math.round(stats.analytics.avgTimeOnPage)}s · Scroll: ${Math.round(stats.analytics.avgScrollDepth)}%`,
+              ]}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardStatCard
+              icon={Users}
+              title={ar.dashboard.activeUsers}
+              value={stats.engagement.activeUsers7d.toLocaleString()}
+              subLines={[
+                `7d · ${stats.engagement.activeUsers30d.toLocaleString()} (30d)`,
+                `Return rate: ${stats.engagement.returnVisitorRate.toFixed(1)}%`,
+              ]}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardStatCard
+              icon={Share2}
+              title={ar.dashboard.interactions}
+              value={
+                stats.interactions.totalLikes +
+                stats.interactions.totalShares +
+                stats.interactions.totalComments
+              }
+              subLines={[
+                `${stats.interactions.totalLikes} ${ar.dashboard.likes} · ${stats.interactions.totalShares} ${ar.dashboard.shares} · ${stats.interactions.totalComments} ${ar.dashboard.commentsLabel}`,
+                `${ar.dashboard.rate}: ${stats.interactions.interactionRate.toFixed(1)}%`,
+              ]}
+            />
+          </div>
+          <div className="w-[180px] shrink-0">
+            <DashboardStatCard
+              icon={Target}
+              title={ar.dashboard.conversions}
+              value={stats.conversions.total}
+              subLines={[
+                `${ar.dashboard.rate}: ${stats.conversions.rate.toFixed(2)}%`,
+                `${ar.dashboard.bounce}: ${stats.analytics.bounceRate.toFixed(1)}%`,
+              ]}
+            />
+          </div>
+        </div>
+      </section>
 
-        <Link href="/dashboard/articles">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">{ar.dashboard.articles}</CardTitle>
-              </div>
-              <CardDescription className="text-xs">{ar.dashboard.manageApprove}</CardDescription>
+      <section aria-labelledby="performance-heading" className="space-y-6">
+        <h2 id="performance-heading" className="sr-only">
+          {ar.dashboard.viewsEngagement}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                {ar.dashboard.byViews}
+              </CardTitle>
+              <CardDescription>{ar.dashboard.topPerforming}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                {pendingCount > 0 ? (
-                  <>
-                    {pendingCount} {ar.dashboard.pendingApproval}
-                  </>
-                ) : (
-                  ar.dashboard.allApproved
-                )}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                {ar.dashboard.manageApprove} →
-              </p>
+              <TopArticlesChart data={topByViews} metricLabel={ar.dashboard.views} />
+              {topByViews.length === 0 && (
+                <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noArticles}</p>
+              )}
             </CardContent>
           </Card>
-        </Link>
 
-        <Link href="/dashboard/analytics">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">{ar.dashboard.analytics}</CardTitle>
-              <CardDescription className="text-xs">{ar.dashboard.viewsEngagement}</CardDescription>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="text-lg">{ar.dashboard.trafficSources}</CardTitle>
+              <CardDescription>{ar.dashboard.last30Days}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                {stats.analytics.views7d.toLocaleString()} {ar.dashboard.views} ({ar.analytics.views7d})
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                {ar.dashboard.viewAnalytics} →
-              </p>
+              <TrafficChart data={trafficSources} />
+              {trafficSources.length === 0 && (
+                <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noTraffic}</p>
+              )}
             </CardContent>
           </Card>
-        </Link>
+        </div>
 
-        <Link href="/dashboard/comments">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">{ar.dashboard.comments}</CardTitle>
-              </div>
-              <CardDescription className="text-xs">{ar.dashboard.moderationQueue}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                {pendingCommentsCount > 0 ? (
-                  <>
-                    {pendingCommentsCount} {ar.dashboard.pendingReview}
-                  </>
-                ) : (
-                  ar.dashboard.allReviewed
-                )}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                {ar.dashboard.moderateComments} →
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/dashboard/support">
-          <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary" />
-                <CardTitle className="text-base font-medium">{ar.dashboard.support}</CardTitle>
-              </div>
-              <CardDescription className="text-xs">{ar.dashboard.contactMessages}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg font-semibold text-foreground">
-                {ar.dashboard.viewMessages}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 underline underline-offset-4">
-                {ar.dashboard.manageSupport} →
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{ar.dashboard.engagementScore}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.analytics.engagementScore}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Avg time: {Math.round(stats.analytics.avgTimeOnPage)}s · Scroll:{" "}
-              {Math.round(stats.analytics.avgScrollDepth)}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{ar.dashboard.activeUsers}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.engagement.activeUsers7d.toLocaleString()}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              7d · {stats.engagement.activeUsers30d.toLocaleString()} (30d)
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Return rate: {stats.engagement.returnVisitorRate.toFixed(1)}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Share2 className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{ar.dashboard.interactions}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg font-semibold text-foreground">
-              {stats.interactions.totalLikes + stats.interactions.totalShares + stats.interactions.totalComments}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.interactions.totalLikes} {ar.dashboard.likes} · {stats.interactions.totalShares} {ar.dashboard.shares} ·{" "}
-              {stats.interactions.totalComments} {ar.dashboard.commentsLabel}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {ar.dashboard.rate}: {stats.interactions.interactionRate.toFixed(1)}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{ar.dashboard.conversions}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.conversions.total}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {ar.dashboard.rate}: {stats.conversions.rate.toFixed(2)}%
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {ar.dashboard.bounce}: {stats.analytics.bounceRate.toFixed(1)}%
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              {ar.dashboard.byViews}
+              <BarChart3 className="h-4 w-4 text-primary" />
+              {ar.analytics.views7d}
             </CardTitle>
-            <CardDescription>{ar.dashboard.topPerforming}</CardDescription>
+            <CardDescription>{ar.dashboard.viewsEngagement}</CardDescription>
           </CardHeader>
           <CardContent>
-            <TopArticlesChart data={topByViews} metricLabel={ar.dashboard.views} />
-            {topByViews.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noArticles}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">{ar.dashboard.trafficSources}</CardTitle>
-            <CardDescription>{ar.dashboard.last30Days}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <TrafficChart data={trafficSources} />
-            {trafficSources.length === 0 && (
+            <ViewsChart data={viewsOverTime} />
+            {viewsOverTime.length === 0 && (
               <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noTraffic}</p>
             )}
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <Card className="shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            {ar.dashboard.views} (7 أيام)
-          </CardTitle>
-          <CardDescription>{ar.dashboard.viewsEngagement}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ViewsChart data={viewsOverTime} />
-          {viewsOverTime.length === 0 && (
-            <p className="text-sm text-muted-foreground py-4">{ar.dashboard.noTraffic}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <section aria-labelledby="activity-heading" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <h2 id="activity-heading" className="sr-only">
+          {ar.dashboard.recentActivity}
+        </h2>
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-4 w-4 text-primary" />
               {ar.dashboard.byEngagement}
             </CardTitle>
             <CardDescription>{ar.dashboard.score}</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <ul className="space-y-0 divide-y divide-border">
               {topByEngagement.length > 0 ? (
                 topByEngagement.map((article) => (
                   <li
                     key={article.id}
-                    className="flex items-center justify-between gap-4 py-2 border-b border-border last:border-0"
+                    className="flex items-center justify-between gap-4 py-3 first:pt-0"
                   >
                     <p className="text-sm font-medium text-foreground truncate flex-1 min-w-0">
                       {article.title}
                     </p>
-                    <span className="text-xs text-muted-foreground shrink-0">
+                    <span className="text-xs text-muted-foreground tabular-nums shrink-0">
                       {ar.dashboard.score}: {article.engagementScore}
                     </span>
                   </li>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">{ar.dashboard.noArticles}</p>
+                <li>
+                  <p className="text-sm text-muted-foreground py-2">{ar.dashboard.noArticles}</p>
+                </li>
               )}
             </ul>
           </CardContent>
@@ -320,42 +255,42 @@ export default async function DashboardPage() {
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-lg">{ar.dashboard.recentActivity}</CardTitle>
-          <CardDescription>{ar.dashboard.latestUpdates}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {recentActivity.length > 0 ? (
-            <ul className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <li
-                  key={index}
-                  className="flex items-start gap-3 py-2 border-b border-border last:border-0"
-                >
-                  <div className="mt-0.5">
-                    {activity.type === "article" && <BarChart3 className="h-4 w-4 text-primary" />}
-                    {activity.type === "conversion" && <Target className="h-4 w-4 text-primary" />}
-                    {activity.type === "comment" && <MessageSquare className="h-4 w-4 text-primary" />}
-                    {activity.type === "subscriber" && <Users className="h-4 w-4 text-primary" />}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{activity.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{activity.description}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(activity.timestamp).toLocaleDateString()}{" "}
-                      {new Date(activity.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">{ar.dashboard.noActivity}</p>
-          )}
-        </CardContent>
+            <CardDescription>{ar.dashboard.latestUpdates}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentActivity.length > 0 ? (
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                {recentActivity.map((activity, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start gap-3 py-3 first:pt-0"
+                  >
+                    <span className="mt-0.5 shrink-0 text-primary" aria-hidden>
+                      {activity.type === "article" && <BarChart3 className="h-4 w-4" />}
+                      {activity.type === "conversion" && <Target className="h-4 w-4" />}
+                      {activity.type === "comment" && <MessageSquare className="h-4 w-4" />}
+                      {activity.type === "subscriber" && <Users className="h-4 w-4" />}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground">{activity.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {new Date(activity.timestamp).toLocaleDateString()}{" "}
+                        {new Date(activity.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground py-2">{ar.dashboard.noActivity}</p>
+            )}
+          </CardContent>
         </Card>
-      </div>
+      </section>
     </div>
   );
 }
