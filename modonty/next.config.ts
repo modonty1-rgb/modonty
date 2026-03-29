@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   serverExternalPackages: ["cohere-ai"],
   images: {
-    loader: "custom",
-    loaderFile: "./lib/cloudinary-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
