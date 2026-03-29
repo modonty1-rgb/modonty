@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Button } from "@/components/ui/button";
-import { Globe, Mail, Phone, Copy } from "lucide-react";
+import { IconWebsite, IconEmail, IconPhone, IconCopy } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 const CONTACT_TYPE_LABELS: Record<string, string> = {
   "customer service": "خدمة العملاء",
@@ -22,17 +23,24 @@ interface ClientContactProps {
     email?: string | null;
     phone?: string | null;
     contactType?: string | null;
+    id?: string;
   };
 }
 
 export function ClientContact({ client }: ClientContactProps) {
   const [copiedField, setCopiedField] = useState<"email" | "phone" | "url" | null>(null);
+  const clientId = client.id;
 
   const hasContactInfo = client.url || client.email || client.phone;
 
   if (!hasContactInfo) return null;
 
   const handleCopy = (text: string, field: "email" | "phone" | "url") => {
+    if (clientId) {
+      const label =
+        field === "url" ? "Contact – copy url" : field === "email" ? "Contact – copy email" : "Contact – copy phone";
+      trackCtaClick({ type: "BUTTON", label, targetUrl: "", clientId });
+    }
     navigator.clipboard.writeText(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
@@ -53,7 +61,7 @@ export function ClientContact({ client }: ClientContactProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="معلومات الاتصال" icon={Phone} />
+        <CardTitleWithIcon title="معلومات الاتصال" icon={IconPhone} />
         {contactTypeLabel && (
           <p className="text-sm text-muted-foreground font-normal mt-1">
             {contactTypeLabel}
@@ -63,17 +71,20 @@ export function ClientContact({ client }: ClientContactProps) {
       <CardContent className="space-y-4">
         {client.url && (
           <div className="flex items-start gap-3">
-            <Globe className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <IconWebsite className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <Link
+                <CtaTrackedLink
                   href={client.url}
+                  label="Contact – website"
+                  type="LINK"
+                  clientId={clientId}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
                   الموقع الإلكتروني
-                </Link>
+                </CtaTrackedLink>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -84,7 +95,7 @@ export function ClientContact({ client }: ClientContactProps) {
                   {copiedField === "url" ? (
                     <span className="flex items-center gap-1.5 text-xs text-primary">تم النسخ</span>
                   ) : (
-                    <Copy className="h-3.5 w-3.5" />
+                    <IconCopy className="h-3.5 w-3.5" />
                   )}
                 </Button>
               </div>
@@ -94,15 +105,18 @@ export function ClientContact({ client }: ClientContactProps) {
 
         {client.email && (
           <div className="flex items-start gap-3">
-            <Mail className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <IconEmail className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <Link
+                <CtaTrackedLink
                   href={`mailto:${client.email}`}
+                  label="Contact – email"
+                  type="LINK"
+                  clientId={clientId}
                   className="text-primary hover:underline"
                 >
                   البريد الإلكتروني
-                </Link>
+                </CtaTrackedLink>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -113,7 +127,7 @@ export function ClientContact({ client }: ClientContactProps) {
                   {copiedField === "email" ? (
                     <span className="flex items-center gap-1.5 text-xs text-primary">تم النسخ</span>
                   ) : (
-                    <Copy className="h-3.5 w-3.5" />
+                    <IconCopy className="h-3.5 w-3.5" />
                   )}
                 </Button>
               </div>
@@ -124,15 +138,18 @@ export function ClientContact({ client }: ClientContactProps) {
         {client.phone && (
           <>
             <div className="flex items-start gap-3">
-              <Phone className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconPhone className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Link
+                  <div className="flex items-center gap-2 flex-wrap">
+                  <CtaTrackedLink
                     href={`tel:${client.phone}`}
+                    label="Contact – phone"
+                    type="LINK"
+                    clientId={clientId}
                     className="text-primary hover:underline"
                   >
                     رقم الهاتف
-                  </Link>
+                  </CtaTrackedLink>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -143,7 +160,7 @@ export function ClientContact({ client }: ClientContactProps) {
                     {copiedField === "phone" ? (
                       <span className="flex items-center gap-1.5 text-xs text-primary">تم النسخ</span>
                     ) : (
-                      <Copy className="h-3.5 w-3.5" />
+                      <IconCopy className="h-3.5 w-3.5" />
                     )}
                   </Button>
                 </div>
@@ -152,14 +169,17 @@ export function ClientContact({ client }: ClientContactProps) {
             <div className="flex items-start gap-3">
               <WhatsAppIcon size={20} className="text-muted-foreground mt-0.5" />
               <div className="flex-1">
-                <Link
+                <CtaTrackedLink
                   href={`https://wa.me/${getWhatsAppNumber(client.phone)}`}
+                  label="Contact – WhatsApp"
+                  type="LINK"
+                  clientId={clientId}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
                   واتساب
-                </Link>
+                </CtaTrackedLink>
               </div>
             </div>
           </>

@@ -19,7 +19,7 @@ export function PostCardAvatar({
   clientSlug,
   clientName,
   clientLogo,
-  index,
+  index: _index,
 }: PostCardAvatarProps) {
   const initials = clientName
     .split(" ")
@@ -32,10 +32,11 @@ export function PostCardAvatar({
       ? getOptimizedThumbnailUrl(clientLogo, 96) ?? clientLogo
       : null;
 
-  const isFirst = index === 0;
-
   return (
-    <Link href={`/clients/${clientSlug}`}>
+    <Link
+      href={`/clients/${clientSlug}`}
+      aria-label={`زيارة صفحة ${clientName}`}
+    >
       <div className="h-10 w-10 rounded-full bg-muted overflow-hidden flex items-center justify-center text-xs font-semibold text-foreground">
         {optimizedLogo ? (
           <Image
@@ -43,8 +44,7 @@ export function PostCardAvatar({
             alt={clientName}
             width={40}
             height={40}
-            loading={isFirst ? "eager" : "lazy"}
-            fetchPriority="auto"
+            sizes="40px"
             className="h-full w-full object-cover"
           />
         ) : (

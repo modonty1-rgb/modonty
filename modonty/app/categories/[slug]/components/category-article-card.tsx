@@ -2,17 +2,17 @@ import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Bookmark, Clock, Eye } from "lucide-react";
+import { IconLike, IconComment, IconSaved, IconClock, IconViews } from "@/lib/icons";
 import { optimizeCloudinaryImage, generateBlurDataURL } from "../../helpers/category-utils";
 import { formatReadingTime, formatPublishDate, formatEngagementCount } from "../helpers/article-utils";
 import type { ArticleResponse } from "@/lib/types";
 
 interface CategoryArticleCardProps {
   article: ArticleResponse;
-  priority?: boolean;
+  preload?: boolean;
 }
 
-export function CategoryArticleCard({ article, priority = false }: CategoryArticleCardProps) {
+export function CategoryArticleCard({ article, preload = false }: CategoryArticleCardProps) {
   const optimizedImageUrl = article.featuredImage?.url
     ? optimizeCloudinaryImage(article.featuredImage.url, {
         width: 600,
@@ -31,7 +31,7 @@ export function CategoryArticleCard({ article, priority = false }: CategoryArtic
               src={optimizedImageUrl}
               alt={article.featuredImage?.altText || article.title}
               fill
-              priority={priority}
+              preload={preload}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
@@ -60,7 +60,7 @@ export function CategoryArticleCard({ article, priority = false }: CategoryArtic
               <>
                 <span className="text-xs text-muted-foreground">•</span>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-                  <Clock className="h-3 w-3" />
+                  <IconClock className="h-3 w-3" />
                   <span>{formatReadingTime(article.readingTimeMinutes)}</span>
                 </div>
               </>
@@ -102,19 +102,19 @@ export function CategoryArticleCard({ article, priority = false }: CategoryArtic
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3 sm:gap-4 flex-1">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[3rem]">
-                <Eye className="h-4 w-4 shrink-0" />
+                <IconViews className="h-4 w-4 shrink-0" />
                 <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.views)}</span>
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[3rem]">
-                <Heart className="h-4 w-4 shrink-0" />
+                <IconLike className="h-4 w-4 shrink-0" />
                 <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.likes)}</span>
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[3rem]">
-                <MessageCircle className="h-4 w-4 shrink-0" />
+                <IconComment className="h-4 w-4 shrink-0" />
                 <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.comments)}</span>
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[3rem]">
-                <Bookmark className="h-4 w-4 shrink-0" />
+                <IconSaved className="h-4 w-4 shrink-0" />
                 <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.favorites)}</span>
               </div>
             </div>

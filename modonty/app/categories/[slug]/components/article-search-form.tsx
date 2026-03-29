@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { IconSearch, IconClose } from "@/lib/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -49,7 +49,7 @@ export function ArticleSearchForm({ defaultValue = "", categorySlug }: ArticleSe
   return (
     <form onSubmit={handleSubmit} className="relative flex-1 max-w-md">
       <div className="relative">
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <IconSearch className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
           placeholder="ابحث في المقالات..."
@@ -67,7 +67,7 @@ export function ArticleSearchForm({ defaultValue = "", categorySlug }: ArticleSe
             className="absolute left-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
             disabled={isPending}
           >
-            <X className="h-4 w-4" />
+            <IconClose className="h-4 w-4" />
           </Button>
         )}
       </div>

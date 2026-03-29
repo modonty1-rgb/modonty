@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle } from "lucide-react";
+import { IconComment, IconChevronLeft, IconChevronRight } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { CommentCard } from "../components/comment-card";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface UserComment {
   id: string;
@@ -139,7 +138,7 @@ export default function CommentsPage() {
               <div className="text-center py-8 text-destructive">{error}</div>
             ) : comments.length === 0 ? (
               <EmptyState
-                icon={MessageCircle}
+                icon={IconComment}
                 title="لا توجد تعليقات"
                 description="لم تكتب أي تعليقات بعد. ابدأ بقراءة المقالات وشارك برأيك!"
                 actionLabel="استكشف المقالات"
@@ -166,7 +165,7 @@ export default function CommentsPage() {
                       onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
                     >
-                      <ChevronRight className="h-4 w-4 ml-2" />
+                      <IconChevronRight className="h-4 w-4 ml-2" />
                       السابق
                     </Button>
                     
@@ -181,7 +180,7 @@ export default function CommentsPage() {
                       disabled={currentPage === pagination.totalPages}
                     >
                       التالي
-                      <ChevronLeft className="h-4 w-4 mr-2" />
+                      <IconChevronLeft className="h-4 w-4 mr-2" />
                     </Button>
                   </div>
                 )}

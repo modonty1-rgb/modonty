@@ -76,7 +76,7 @@ export function SocialCard() {
       role="complementary"
       aria-label="تابعنا على وسائل التواصل"
       className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm flex-none min-h-0 overflow-hidden p-3 flex flex-col gap-2"
+        "rounded-lg border border-border bg-card p-3 text-card-foreground shadow-sm flex-none min-h-0 overflow-hidden flex flex-col gap-2"
       )}
     >
       <nav

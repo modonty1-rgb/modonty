@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ActivityItem } from "./activity-item";
-import { Activity, ChevronLeft, ChevronRight } from "lucide-react";
+import { IconActivity, IconChevronLeft, IconChevronRight } from "@/lib/icons";
 
 interface Activity {
   type: "comment" | "like_comment" | "favorite_article" | "follow_client";
@@ -72,7 +72,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <IconActivity className="h-5 w-5" />
             النشاط الأخير
           </CardTitle>
         </CardHeader>
@@ -96,7 +96,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <IconActivity className="h-5 w-5" />
             النشاط الأخير
           </CardTitle>
         </CardHeader>
@@ -112,7 +112,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
+            <IconActivity className="h-5 w-5" />
             النشاط الأخير
           </CardTitle>
         </CardHeader>
@@ -129,7 +129,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5" />
+          <IconActivity className="h-5 w-5" />
           النشاط الأخير ({pagination?.total || activities.length})
         </CardTitle>
       </CardHeader>
@@ -148,7 +148,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
             >
-              <ChevronRight className="h-4 w-4 ml-2" />
+              <IconChevronRight className="h-4 w-4 ml-2" />
               السابق
             </Button>
             
@@ -163,7 +163,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
               disabled={currentPage === pagination.totalPages}
             >
               التالي
-              <ChevronLeft className="h-4 w-4 mr-2" />
+              <IconChevronLeft className="h-4 w-4 mr-2" />
             </Button>
           </div>
         )}

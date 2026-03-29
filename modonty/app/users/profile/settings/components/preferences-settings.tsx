@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Palette } from "lucide-react";
+import { IconLoading, IconTheme } from "@/lib/icons";
 import { updatePreferences } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
 import type { PreferencesFormData } from "../helpers/schemas/settings-schemas";
 
 export function PreferencesSettings() {
+  const { setTheme } = useTheme();
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -68,7 +70,7 @@ export function PreferencesSettings() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Palette className="h-5 w-5" />
+          <IconTheme className="h-5 w-5" />
           التفضيلات
         </CardTitle>
         <CardDescription>
@@ -81,12 +83,14 @@ export function PreferencesSettings() {
             <Label>المظهر</Label>
             <select
               value={preferences.theme}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value as "light" | "dark" | "system";
+                setTheme(value);
                 setPreferences({
                   ...preferences,
-                  theme: e.target.value as "light" | "dark" | "system",
-                })
-              }
+                  theme: value,
+                });
+              }}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="light">فاتح</option>
@@ -218,7 +222,7 @@ export function PreferencesSettings() {
         <Button onClick={handleSave} disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <IconLoading className="h-4 w-4 mr-2 animate-spin" />
               جاري الحفظ...
             </>
           ) : (

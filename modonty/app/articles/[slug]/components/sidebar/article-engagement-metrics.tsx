@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, Eye, HelpCircle } from "lucide-react";
+import { IconComment, IconViews, IconHelp } from "@/lib/icons";
 
 interface ArticleEngagementMetricsProps {
   comments: number;
@@ -31,7 +31,7 @@ export function ArticleEngagementMetrics({
     <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
       {views > 0 && (
         <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4 shrink-0" />
+          <IconViews className="h-4 w-4 shrink-0" />
           <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>
         </div>
       )}
@@ -42,7 +42,7 @@ export function ArticleEngagementMetrics({
           className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
           aria-label="انتقل إلى الأسئلة الشائعة"
         >
-          <HelpCircle className="h-4 w-4 shrink-0" />
+          <IconHelp className="h-4 w-4 shrink-0" />
           <span className="tabular-nums">{questions.toLocaleString('ar-SA')}</span>
         </button>
       )}
@@ -52,7 +52,7 @@ export function ArticleEngagementMetrics({
           className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
           aria-label="انتقل إلى قسم التعليقات"
         >
-          <MessageCircle className="h-4 w-4 shrink-0" />
+          <IconComment className="h-4 w-4 shrink-0" />
           <span className="tabular-nums">{comments.toLocaleString('ar-SA')}</span>
         </button>
       )}

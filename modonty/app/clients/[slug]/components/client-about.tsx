@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { MapPin } from "lucide-react";
+import { IconMapPin } from "@/lib/icons";
 
 interface ClientAboutProps {
   client: {
@@ -16,7 +16,7 @@ export function ClientAbout({ client }: ClientAboutProps) {
       {client.addressLatitude != null && client.addressLongitude != null && (
         <Card>
           <CardHeader>
-            <CardTitleWithIcon title="خريطة الموقع" icon={MapPin} />
+            <CardTitleWithIcon title="خريطة الموقع" icon={IconMapPin} />
           </CardHeader>
           <CardContent>
             <div className="w-full h-64 md:h-72 rounded-lg overflow-hidden border border-border">

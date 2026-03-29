@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Trash2, Download, AlertTriangle } from "lucide-react";
+import {
+  IconLoading,
+  IconDelete,
+  IconDownload,
+  IconAlertTriangle,
+} from "@/lib/icons";
 import { exportUserData, deleteAccount } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
@@ -87,7 +92,7 @@ export function AccountSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
+            <IconDownload className="h-5 w-5" />
             تصدير البيانات
           </CardTitle>
           <CardDescription>
@@ -101,12 +106,12 @@ export function AccountSettings() {
           <Button onClick={handleExport} disabled={isExporting} variant="outline">
             {isExporting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <IconLoading className="h-4 w-4 mr-2 animate-spin" />
                 جاري التصدير...
               </>
             ) : (
               <>
-                <Download className="h-4 w-4 mr-2" />
+                <IconDownload className="h-4 w-4 mr-2" />
                 تصدير البيانات
               </>
             )}
@@ -117,7 +122,7 @@ export function AccountSettings() {
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <Trash2 className="h-5 w-5" />
+            <IconDelete className="h-5 w-5" />
             حذف الحساب
           </CardTitle>
           <CardDescription>
@@ -127,7 +132,7 @@ export function AccountSettings() {
         <CardContent className="space-y-4">
           <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
+              <IconAlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
               <div className="space-y-2">
                 <p className="text-sm font-medium text-destructive">
                   تحذير: هذا الإجراء لا يمكن التراجع عنه
@@ -147,7 +152,7 @@ export function AccountSettings() {
           <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
+                <IconDelete className="h-4 w-4 mr-2" />
                 حذف الحساب
               </Button>
             </DialogTrigger>
@@ -194,7 +199,7 @@ export function AccountSettings() {
                 >
                   {isDeleting ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <IconLoading className="h-4 w-4 mr-2 animate-spin" />
                       جاري الحذف...
                     </>
                   ) : (

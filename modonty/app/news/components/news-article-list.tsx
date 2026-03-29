@@ -1,6 +1,6 @@
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import { Clock, ArrowLeft } from "lucide-react";
+import { IconClock, IconForward } from "@/lib/icons";
 import { formatReadingTime, formatPublishDate } from "../helpers/format";
 import type { ArticleResponse } from "@/lib/types";
 
@@ -57,7 +57,7 @@ export function NewsArticleList({ articles }: NewsArticleListProps) {
                       <>
                         <span>•</span>
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                          <IconClock className="h-3 w-3" />
                           {formatReadingTime(article.readingTimeMinutes)}
                         </span>
                       </>
@@ -77,7 +77,7 @@ export function NewsArticleList({ articles }: NewsArticleListProps) {
                   )}
                   <span className="inline-flex items-center gap-1 mt-2 text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                     قراءة المزيد
-                    <ArrowLeft className="h-4 w-4" />
+                    <IconForward className="h-4 w-4" />
                   </span>
                 </div>
               </div>

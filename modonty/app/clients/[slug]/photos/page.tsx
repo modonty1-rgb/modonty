@@ -25,7 +25,7 @@ export default async function ClientPhotosPage({ params }: ClientPhotosPageProps
       >
         الصور
       </h2>
-      <ClientPhotosPreview articles={client.articles} showEmptyState />
+      <ClientPhotosPreview articles={client.articles} clientId={client.id} showEmptyState />
     </section>
   );
 }

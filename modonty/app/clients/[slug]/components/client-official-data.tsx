@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Badge } from "@/components/ui/badge";
-import { FileCheck, Scale, Building2, Hash, Briefcase, Languages } from "lucide-react";
+import {
+  IconFileCheck,
+  IconScale,
+  IconClients,
+  IconHash,
+  IconBriefcase,
+  IconLanguages,
+} from "@/lib/icons";
 
 interface ClientOfficialDataProps {
   client: {
@@ -75,30 +82,30 @@ export function ClientOfficialData({ client }: ClientOfficialDataProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="البيانات الرسمية" icon={FileCheck} />
+        <CardTitleWithIcon title="البيانات الرسمية" icon={IconFileCheck} />
       </CardHeader>
       <CardContent className="space-y-4">
         {client.commercialRegistrationNumber && (
           <OfficialRow
-            icon={FileCheck}
+            icon={IconFileCheck}
             label="رقم السجل التجاري"
             value={client.commercialRegistrationNumber}
             dir="ltr"
           />
         )}
         {client.legalForm && (
-          <OfficialRow icon={Scale} label="النوع القانوني" value={client.legalForm} />
+          <OfficialRow icon={IconScale} label="النوع القانوني" value={client.legalForm} />
         )}
         {client.organizationType && (
           <OfficialRow
-            icon={Briefcase}
+            icon={IconBriefcase}
             label="نوع المنظمة"
             value={client.organizationType}
           />
         )}
         {client.knowsLanguage && client.knowsLanguage.length > 0 && (
           <div className="flex items-start gap-3">
-            <Languages className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <IconLanguages className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-muted-foreground mb-1.5">اللغات</p>
               <div className="flex flex-wrap gap-1">
@@ -112,21 +119,21 @@ export function ClientOfficialData({ client }: ClientOfficialDataProps) {
           </div>
         )}
         {client.vatID && (
-          <OfficialRow icon={Hash} label="الرقم الضريبي" value={client.vatID} dir="ltr" />
+          <OfficialRow icon={IconHash} label="الرقم الضريبي" value={client.vatID} dir="ltr" />
         )}
         {client.taxID && (
-          <OfficialRow icon={Hash} label="الرقم الضريبي / الزكاة" value={client.taxID} dir="ltr" />
+          <OfficialRow icon={IconHash} label="الرقم الضريبي / الزكاة" value={client.taxID} dir="ltr" />
         )}
         {addressParts.length > 0 && (
           <OfficialRow
-            icon={Building2}
+            icon={IconClients}
             label="العنوان"
             value={addressParts.join("، ")}
           />
         )}
         {client.licenseNumber && (
           <OfficialRow
-            icon={FileCheck}
+            icon={IconFileCheck}
             label="رقم الترخيص"
             value={
               client.licenseAuthority

@@ -191,4 +191,5 @@ export interface ArticleFilters {
   featured?: boolean;
   search?: string;
   status?: "PUBLISHED" | "DRAFT" | "SCHEDULED";
+  sortBy?: "newest" | "oldest" | "title";
 }

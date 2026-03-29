@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsDown, Building2, FileText, MessageSquare } from "lucide-react";
+import { IconLike, IconClients, IconArticle, IconMessage } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -150,7 +150,8 @@ export default function DislikedPage() {
               <div className="text-center py-8 text-destructive">{error}</div>
             ) : items.length === 0 ? (
               <EmptyState
-                icon={ThumbsDown}
+                icon={IconLike}
+                iconWrapperClassName="hidden"
                 title="لا توجد عناصر غير معجبة"
                 description="لم تعبر عن عدم إعجابك بأي محتوى بعد. ابدأ بالتفاعل مع العملاء والمقالات والتعليقات!"
                 actionLabel="استكشف المحتوى"
@@ -189,17 +190,17 @@ export default function DislikedPage() {
 function TypeBadge({ type }: { type: "client" | "article" | "comment" }) {
   const config = {
     client: {
-      icon: Building2,
+      icon: IconClients,
       label: "عميل",
       color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
     },
     article: {
-      icon: FileText,
+      icon: IconArticle,
       label: "مقالة",
       color: "bg-green-500/10 text-green-500 border-green-500/20",
     },
     comment: {
-      icon: MessageSquare,
+      icon: IconMessage,
       label: "تعليق",
       color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
     },
@@ -231,7 +232,7 @@ function ClientDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl">
+                <AvatarFallback className="text-xl font-semibold bg-primary text-primary-foreground">
                   {item.item.name?.charAt(0) || "C"}
                 </AvatarFallback>
               </Avatar>
@@ -241,7 +242,6 @@ function ClientDislikeCard({ item }: { item: DislikedItem }) {
                 <h4 className="font-semibold text-lg">{item.item.name}</h4>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
-                  <ThumbsDown className="h-5 w-5 text-red-500 fill-red-500" />
                 </div>
               </div>
               {item.item.description && (
@@ -276,8 +276,8 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
-                <AvatarFallback className="text-xl">
-                  <FileText className="h-8 w-8" />
+                <AvatarFallback className="text-xl font-semibold bg-primary text-primary-foreground">
+                  <IconArticle className="h-8 w-8" />
                 </AvatarFallback>
               </Avatar>
             )}
@@ -293,7 +293,6 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
-                  <ThumbsDown className="h-5 w-5 text-red-500 fill-red-500" />
                 </div>
               </div>
               {item.item.excerpt && (
@@ -328,7 +327,7 @@ function CommentDislikeCard({ item }: { item: DislikedItem }) {
               />
             ) : (
               <Avatar className="h-10 w-10 flex-shrink-0">
-                <AvatarFallback>
+                <AvatarFallback className="font-semibold bg-primary text-primary-foreground">
                   {item.item.author?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -347,7 +346,6 @@ function CommentDislikeCard({ item }: { item: DislikedItem }) {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
-                  <ThumbsDown className="h-5 w-5 text-red-500 fill-red-500" />
                 </div>
               </div>
               {item.item.content && (

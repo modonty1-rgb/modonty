@@ -1,11 +1,13 @@
 import * as React from "react";
+import type { ComponentType } from "react";
 import { CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+
+type TitleIcon = ComponentType<{ className?: string }>;
 
 interface CardTitleWithIconProps {
   title: React.ReactNode;
-  icon?: LucideIcon;
+  icon?: TitleIcon;
   className?: string;
 }
 

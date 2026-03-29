@@ -67,6 +67,7 @@ export default function SettingsPage() {
         return <PrivacySettings />;
       case "notifications":
         return <NotificationsSettings />;
+      case "appearance":
       case "preferences":
         return <PreferencesSettings />;
       case "account":

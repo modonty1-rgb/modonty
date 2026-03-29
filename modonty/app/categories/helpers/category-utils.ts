@@ -3,11 +3,23 @@
  * Pure functions that can run on server or client
  */
 
+import type { ComponentType } from "react";
 import {
-  Tag, Sparkles, Code, Briefcase, TrendingUp, Users,
-  Lightbulb, Zap, Rocket, Target, MessageSquare, Heart,
-  type LucideIcon
-} from "lucide-react";
+  IconCategory,
+  IconAi,
+  IconCode,
+  IconBriefcase,
+  IconTrending,
+  IconUsers,
+  IconLightbulb,
+  IconZap,
+  IconRocket,
+  IconTarget,
+  IconMessage,
+  IconLike,
+} from "@/lib/icons";
+
+export type CategoryIconComponent = ComponentType<{ className?: string }>;
 
 export function generateCategoryGradient(name: string): string {
   const hash = name.split('').reduce((acc, char) => {
@@ -31,44 +43,44 @@ export function generateCategoryGradient(name: string): string {
   return gradients[index];
 }
 
-export function getCategoryIcon(name: string): LucideIcon {
+export function getCategoryIcon(name: string): CategoryIconComponent {
   const nameLower = name.toLowerCase();
 
   if (nameLower.includes('تقنية') || nameLower.includes('برمجة') || nameLower.includes('tech')) {
-    return Code;
+    return IconCode;
   }
   if (nameLower.includes('أعمال') || nameLower.includes('business') || nameLower.includes('إدارة')) {
-    return Briefcase;
+    return IconBriefcase;
   }
   if (nameLower.includes('تسويق') || nameLower.includes('marketing')) {
-    return TrendingUp;
+    return IconTrending;
   }
   if (nameLower.includes('تصميم') || nameLower.includes('design')) {
-    return Sparkles;
+    return IconAi;
   }
   if (nameLower.includes('مجتمع') || nameLower.includes('community') || nameLower.includes('اجتماعي')) {
-    return Users;
+    return IconUsers;
   }
   if (nameLower.includes('ابتكار') || nameLower.includes('innovation')) {
-    return Lightbulb;
+    return IconLightbulb;
   }
   if (nameLower.includes('إنتاجية') || nameLower.includes('productivity')) {
-    return Zap;
+    return IconZap;
   }
   if (nameLower.includes('ريادة') || nameLower.includes('startup')) {
-    return Rocket;
+    return IconRocket;
   }
   if (nameLower.includes('استراتيجية') || nameLower.includes('strategy')) {
-    return Target;
+    return IconTarget;
   }
   if (nameLower.includes('محتوى') || nameLower.includes('content')) {
-    return MessageSquare;
+    return IconMessage;
   }
   if (nameLower.includes('علاقات') || nameLower.includes('relationship')) {
-    return Heart;
+    return IconLike;
   }
 
-  return Tag;
+  return IconCategory;
 }
 
 export function formatCategoryStats(count: number): string {

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Lock } from "lucide-react";
+import { IconLoading, IconLock } from "@/lib/icons";
 import { updatePrivacySettings } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
 import type { PrivacyFormData } from "../helpers/schemas/settings-schemas";
@@ -69,7 +69,7 @@ export function PrivacySettings() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Lock className="h-5 w-5" />
+          <IconLock className="h-5 w-5" />
           إعدادات الخصوصية
         </CardTitle>
         <CardDescription>
@@ -214,7 +214,7 @@ export function PrivacySettings() {
         <Button onClick={handleSave} disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <IconLoading className="h-4 w-4 mr-2 animate-spin" />
               جاري الحفظ...
             </>
           ) : (

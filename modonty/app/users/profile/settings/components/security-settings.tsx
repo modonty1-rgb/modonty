@@ -7,7 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Shield, Eye, EyeOff, Link2, Link2Off } from "lucide-react";
+import {
+  IconLoading,
+  IconShield,
+  IconViews,
+  IconEyeOff,
+  IconLink,
+  IconLinkOff,
+} from "@/lib/icons";
 import { passwordSchema, type PasswordFormData } from "../helpers/schemas/settings-schemas";
 import { changePassword, disconnectOAuthProvider } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
@@ -105,7 +112,7 @@ export function SecuritySettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+            <IconShield className="h-5 w-5" />
             كلمة المرور
           </CardTitle>
           <CardDescription>
@@ -134,9 +141,9 @@ export function SecuritySettings() {
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <IconEyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <IconViews className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
@@ -163,9 +170,9 @@ export function SecuritySettings() {
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
                   {showNewPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <IconEyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <IconViews className="h-4 w-4" />
                   )}
                 </Button>
               </div>
@@ -194,9 +201,9 @@ export function SecuritySettings() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <IconEyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <IconViews className="h-4 w-4" />
                   )}
                 </Button>
               </div>
@@ -220,7 +227,7 @@ export function SecuritySettings() {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <IconLoading className="h-4 w-4 mr-2 animate-spin" />
                   جاري الحفظ...
                 </>
               ) : (
@@ -234,7 +241,7 @@ export function SecuritySettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Link2 className="h-5 w-5" />
+            <IconLink className="h-5 w-5" />
             الحسابات المتصلة
           </CardTitle>
           <CardDescription>
@@ -253,7 +260,7 @@ export function SecuritySettings() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Link2 className="h-5 w-5 text-primary" />
+                      <IconLink className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium">{getProviderName(account.provider)}</p>
@@ -266,7 +273,7 @@ export function SecuritySettings() {
                       size="sm"
                       onClick={() => handleDisconnect(account.id, account.provider)}
                     >
-                      <Link2Off className="h-4 w-4 mr-2" />
+                      <IconLinkOff className="h-4 w-4 mr-2" />
                       قطع الاتصال
                     </Button>
                   ) : (

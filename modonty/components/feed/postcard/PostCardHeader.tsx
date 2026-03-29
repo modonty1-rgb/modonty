@@ -1,6 +1,6 @@
 import Link from "@/components/link";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { CheckCircle2 } from "lucide-react";
+import { IconCheckCircle } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 import { PostCardAvatar } from "./PostCardAvatar";
 
@@ -60,8 +60,8 @@ export function PostCardHeader({ post, index, hideClient }: PostCardProps) {
           )}
         </div>
       </div>
-      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-        <CheckCircle2 className="h-3 w-3" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+        <IconCheckCircle className="h-3 w-3" />
         <span>نسخة صوتية</span>
       </span>
     </header>

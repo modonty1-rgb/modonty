@@ -6,6 +6,8 @@ import { ShareClientButton } from "./share-client-button";
 interface ShareClientButtonWrapperProps {
   clientName: string;
   clientUrl: string;
+  clientId: string;
+  clientSlug: string;
 }
 
 export function ShareClientButtonWrapper(props: ShareClientButtonWrapperProps) {

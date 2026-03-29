@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
+import { IconTrending } from "@/lib/icons";
 import { 
   generateCategoryGradient, 
   getCategoryIcon, 
@@ -14,10 +14,10 @@ import type { CategoryResponse } from "@/lib/types";
 
 interface EnhancedCategoryCardProps {
   category: CategoryResponse;
-  priority?: boolean;
+  preload?: boolean;
 }
 
-export function EnhancedCategoryCard({ category, priority = false }: EnhancedCategoryCardProps) {
+export function EnhancedCategoryCard({ category, preload = false }: EnhancedCategoryCardProps) {
   const Icon = getCategoryIcon(category.name);
   const gradient = generateCategoryGradient(category.name);
   const showTrending = (category.recentArticleCount || 0) > 0;
@@ -48,7 +48,7 @@ export function EnhancedCategoryCard({ category, priority = false }: EnhancedCat
               src={optimizedImageUrl}
               alt={category.socialImageAlt || category.name}
               fill
-              priority={priority}
+              preload={preload}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
@@ -67,7 +67,7 @@ export function EnhancedCategoryCard({ category, priority = false }: EnhancedCat
             </CardTitle>
             {showTrending && (
               <Badge variant="secondary" className="shrink-0 gap-1">
-                <TrendingUp className="h-3 w-3" />
+                <IconTrending className="h-3 w-3" />
                 <span className="text-xs">رائج</span>
               </Badge>
             )}

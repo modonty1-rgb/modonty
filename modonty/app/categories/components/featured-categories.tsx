@@ -22,7 +22,7 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           <EnhancedCategoryCard 
             key={category.id} 
             category={category}
-            priority={index < 2}
+            preload={index === 0}
           />
         ))}
       </div>

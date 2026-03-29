@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { IconLoading, IconCheckCircle } from "@/lib/icons";
 
 export function NewsletterSubscribeForm() {
   const [email, setEmail] = useState("");
@@ -41,7 +41,7 @@ export function NewsletterSubscribeForm() {
   if (success) {
     return (
       <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-foreground">
-        <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+        <IconCheckCircle className="h-4 w-4 shrink-0 text-primary" />
         <span>شكراً، تم تسجيل بريدك بنجاح.</span>
       </div>
     );
@@ -64,7 +64,7 @@ export function NewsletterSubscribeForm() {
       <Button type="submit" className="w-full h-9 text-sm" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+            <IconLoading className="h-3.5 w-3.5 animate-spin shrink-0" />
             <span className="mr-1.5">جاري الاشتراك...</span>
           </>
         ) : (

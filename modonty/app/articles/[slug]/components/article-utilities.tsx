@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
+import { IconCopy, IconCheck } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 
 interface ArticleUtilitiesProps {
@@ -56,9 +56,9 @@ export function ArticleUtilities({ articleUrl, compact = false }: ArticleUtiliti
         aria-label={copied ? "تم النسخ" : "نسخ الرابط"}
       >
         {copied ? (
-          <Check className={compact ? "h-3.5 w-3.5" : "h-4 w-4 ml-2"} />
+          <IconCheck className={compact ? "h-3.5 w-3.5" : "h-4 w-4 ml-2"} />
         ) : (
-          <Copy className={compact ? "h-3.5 w-3.5" : "h-4 w-4 ml-2"} />
+          <IconCopy className={compact ? "h-3.5 w-3.5" : "h-4 w-4 ml-2"} />
         )}
         {!compact && (
           <>

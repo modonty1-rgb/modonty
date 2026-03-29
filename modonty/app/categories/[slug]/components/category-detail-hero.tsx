@@ -1,6 +1,6 @@
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import { FileText, TrendingUp, Clock } from "lucide-react";
-import { generateCategoryGradient, getCategoryIcon } from "../../helpers/category-utils";
+import { IconArticle, IconTrending, IconClock } from "@/lib/icons";
+import { getCategoryIcon } from "../../helpers/category-utils";
 
 interface CategoryDetailHeroProps {
   category: {
@@ -18,11 +18,14 @@ interface CategoryDetailHeroProps {
 
 export function CategoryDetailHero({ category, stats }: CategoryDetailHeroProps) {
   const Icon = getCategoryIcon(category.name);
-  const gradient = generateCategoryGradient(category.name);
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background border-b">
-      <div className="container mx-auto max-w-[1128px] px-4 py-12 md:py-16">
+    <div className="relative overflow-hidden border-b border-border bg-primary/5">
+      <div
+        className="pointer-events-none absolute right-0 top-0 bottom-0 w-1 bg-accent"
+        aria-hidden
+      />
+      <div className="relative z-10 container mx-auto max-w-[1128px] px-4 py-12 md:py-16">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {category.socialImage ? (
             <div className="relative w-full md:w-48 aspect-video md:aspect-square shrink-0 overflow-hidden rounded-xl shadow-lg">
@@ -30,14 +33,18 @@ export function CategoryDetailHero({ category, stats }: CategoryDetailHeroProps)
                 src={category.socialImage}
                 alt={category.socialImageAlt || category.name}
                 fill
-                priority
+                preload
+                loading="eager"
+                fetchPriority="high"
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 192px"
+                sizes="100vw"
               />
             </div>
           ) : (
-            <div className={`relative w-full md:w-48 aspect-video md:aspect-square shrink-0 overflow-hidden rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg`}>
-              <Icon className="h-20 w-20 text-white/90" />
+            <div className="relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-background shadow-lg aspect-video md:aspect-square md:w-48">
+              <div className="rounded-xl bg-primary/10 p-3 text-primary">
+                <Icon className="h-20 w-20" />
+              </div>
             </div>
           )}
 
@@ -54,18 +61,20 @@ export function CategoryDetailHero({ category, stats }: CategoryDetailHeroProps)
             <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-primary" />
+                  <IconArticle className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{stats.totalArticles}</p>
-                  <p className="text-sm text-muted-foreground">مقال</p>
+                  <span className="inline-block rounded-full bg-accent/15 px-3 py-1 text-sm font-medium text-foreground">
+                    {stats.totalArticles}
+                  </span>
+                  <p className="mt-1 text-sm text-muted-foreground">مقال</p>
                 </div>
               </div>
               
               {stats.recentArticles > 0 && (
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-primary" />
+                    <IconClock className="h-6 w-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.recentArticles}</p>
@@ -77,7 +86,7 @@ export function CategoryDetailHero({ category, stats }: CategoryDetailHeroProps)
               {stats.totalEngagement > 0 && (
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-primary" />
+                    <IconTrending className="h-6 w-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.totalEngagement}</p>
@@ -88,11 +97,6 @@ export function CategoryDetailHero({ category, stats }: CategoryDetailHeroProps)
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-        <div className="absolute top-10 right-20 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-20 w-40 h-40 bg-primary rounded-full blur-3xl"></div>
       </div>
     </div>
   );

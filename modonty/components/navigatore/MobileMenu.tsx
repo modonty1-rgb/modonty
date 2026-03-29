@@ -9,7 +9,15 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { X, Info, Mail, Bell, HelpCircle, MessageCircleQuestion } from "lucide-react";
+import type { ComponentType } from "react";
+import {
+  IconClose,
+  IconInfo,
+  IconEmail,
+  IconNotifications,
+  IconHelpCircle,
+  IconFaqQuestion,
+} from "@/lib/icons";
 import { NavLink } from "@/components/navigatore/nav-link";
 import { navLinksConfig } from "@/components/navigatore/nav-links-config";
 
@@ -29,7 +37,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             size="icon"
             className="absolute left-4 top-4 z-50 h-8 w-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
           >
-            <X className="h-4 w-4" />
+            <IconClose className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </Button>
         </SheetClose>
@@ -45,10 +53,10 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             </h2>
             <nav className="flex flex-col gap-2" aria-label="روابط مدونتي">
               {navLinksConfig.company.map((link) => {
-                const iconMap: Record<string, typeof Info> = {
-                  "/about": Info,
-                  "/contact": Mail,
-                  "/subscribe": Bell,
+                const iconMap: Record<string, ComponentType<{ className?: string }>> = {
+                  "/about": IconInfo,
+                  "/contact": IconEmail,
+                  "/subscribe": IconNotifications,
                 };
                 const Icon = iconMap[link.href];
                 return (
@@ -76,9 +84,9 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
               {navLinksConfig.support
                 .filter((link) => link.href !== "/help/feedback")
                 .map((link) => {
-                  const iconMap: Record<string, typeof HelpCircle> = {
-                    "/help": HelpCircle,
-                    "/help/faq": MessageCircleQuestion,
+                  const iconMap: Record<string, ComponentType<{ className?: string }>> = {
+                    "/help": IconHelpCircle,
+                    "/help/faq": IconFaqQuestion,
                   };
                   const Icon = iconMap[link.href];
                   return (

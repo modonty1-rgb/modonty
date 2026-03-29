@@ -25,7 +25,7 @@ export default function ArticleLoading() {
           >
             <div className="sticky top-[3.5rem] flex flex-col gap-6">
               <Card className="min-w-0 overflow-hidden">
-                <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                <Skeleton className="aspect-video w-full rounded-none" />
                 <CardContent className="p-4 space-y-3">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-4 w-full" />
@@ -68,7 +68,9 @@ export default function ArticleLoading() {
                 </div>
               </header>
 
-              <Skeleton className="aspect-video w-full rounded-lg mb-6" />
+              <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6">
+                <Skeleton className="h-full w-full rounded-none" />
+              </div>
 
               <div className="flex flex-wrap gap-2 mb-6">
                 <Skeleton className="h-7 w-20 rounded-md" />

@@ -4,7 +4,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getArticles } from "@/app/api/helpers/article-queries";
-import { Mail, CheckCircle2, ArrowLeft } from "lucide-react";
+import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 
 export const metadata: Metadata = {
   title: "أخبار مودونتي",
@@ -33,7 +33,7 @@ export default async function NewsPage() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
+              <IconEmail className="h-5 w-5" />
               النشرة الإخبارية لأخبار مودونتي
             </CardTitle>
             <CardDescription>
@@ -48,7 +48,7 @@ export default async function NewsPage() {
                 "لا بريد مزعج — يمكنك الإلغاء في أي وقت.",
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 mt-0.5 text-primary" />
+                  <IconCheckCircle className="h-4 w-4 mt-0.5 text-primary" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -57,7 +57,7 @@ export default async function NewsPage() {
             <Button asChild className="w-full sm:w-auto">
               <Link href="/news/subscribe" className="inline-flex items-center gap-2">
                 اشترك في النشرة الآن
-                <ArrowLeft className="h-4 w-4" />
+                <IconForward className="h-4 w-4" />
               </Link>
             </Button>
 
@@ -80,7 +80,7 @@ export default async function NewsPage() {
                     className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
                   >
                     <span>{a.title}</span>
-                    <ArrowLeft className="h-3.5 w-3.5" />
+                    <IconForward className="h-3.5 w-3.5" />
                   </Link>
                 </li>
               ))}

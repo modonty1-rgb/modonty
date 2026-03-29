@@ -30,16 +30,18 @@ interface ClientPageRightProps {
 export function ClientPageRight({ client, relatedClients, reviews, followers, engagement }: ClientPageRightProps) {
   return (
     <div className="w-full min-w-0 order-3 space-y-6 pt-4">
-      <ClientPhotosPreview articles={client.articles ?? []} />
+      <ClientPhotosPreview articles={client.articles ?? []} clientId={client.id} />
       <ClientFollowersPreview
         followers={followers}
         clientSlug={client.slug}
+        clientId={client.id}
         showEmptyState
       />
       <ClientReviewsPreview
         reviews={reviews}
         clientSlug={client.slug}
         clientName={client.name}
+        clientId={client.id}
         showEmptyState
       />
       <ClientLikesPreview
@@ -48,13 +50,14 @@ export function ClientPageRight({ client, relatedClients, reviews, followers, en
         articleLikesCount={engagement.articleLikesCount}
         clientSlug={client.slug}
         clientName={client.name}
+        clientId={client.id}
         showEmptyState
       />
       <section aria-labelledby="client-related-heading">
         <h2 id="client-related-heading" className="sr-only">
           عملاء مشابهون
         </h2>
-        <RelatedClients clients={relatedClients} />
+        <RelatedClients clients={relatedClients} clientId={client.id} />
       </section>
     </div>
   );

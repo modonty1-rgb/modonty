@@ -1,6 +1,6 @@
 'use client';
 
-import { X } from "lucide-react";
+import { IconClose } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ClientFilters } from "../helpers/use-client-filters";
@@ -39,7 +39,7 @@ export function ActiveFilters({
       {activeFilters.map(filter => (
         <Badge key={filter.key} variant="secondary" className="gap-1">
           {filter.label}
-          <X 
+          <IconClose 
             className="h-3 w-3 cursor-pointer hover:text-destructive" 
             onClick={filter.onRemove}
           />

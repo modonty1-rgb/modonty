@@ -1,66 +1,126 @@
+import type { ComponentType, ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { BarChart3, Heart, MessageCircle, FileText, ThumbsUp, ThumbsDown, Eye, Sigma } from "lucide-react";
+import {
+  IconAnalytics,
+  IconActivity,
+  IconArticle,
+  IconTotal,
+  IconLike,
+  IconComment,
+  IconViews,
+} from "@/lib/icons";
 import type { CategoryAnalytics } from "@/lib/types";
 
 interface AnalyticsCardProps {
   stats: CategoryAnalytics;
 }
 
-export function AnalyticsCard({ stats }: AnalyticsCardProps) {
+function AnalyticsStatRow({
+  icon: Icon,
+  label,
+  formattedValue,
+  barValue,
+  maxValue,
+  valueClassName = "text-sm font-semibold text-foreground w-10 text-start tabular-nums shrink-0",
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  formattedValue: ReactNode;
+  barValue: number;
+  maxValue: number;
+  valueClassName?: string;
+}) {
+  const pct = Math.round((barValue / maxValue) * 100);
   return (
-    <Card className="flex-none basis-[28%] min-h-0">
+    <div className="flex w-full items-center gap-2 py-1">
+      <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+      <span className="flex-1 truncate text-sm text-muted-foreground">{label}</span>
+      <div className="h-1 w-[56px] shrink-0 overflow-hidden rounded-full bg-primary/10">
+        <div
+          className="h-full rounded-full bg-primary transition-all duration-500"
+          style={{ width: `${pct}%` }}
+          aria-hidden
+        />
+      </div>
+      <span className={valueClassName}>{formattedValue}</span>
+    </div>
+  );
+}
+
+export function AnalyticsCard({ stats }: AnalyticsCardProps) {
+  const maxValue = Math.max(
+    stats.totalBlogs,
+    stats.totalReactions,
+    stats.averageCommentsPerBlog,
+    stats.totalLikes,
+    stats.totalComments,
+    stats.totalViews,
+    1
+  );
+
+  return (
+    <Card className="flex-none">
       <CardContent className="p-3">
         <div className="mb-2 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 shrink-0 text-primary" />
+          <IconAnalytics className="h-4 w-4 shrink-0 text-primary" />
           <h2 className="text-xs font-semibold text-foreground">تحليلات</h2>
         </div>
 
-        <div className="space-y-2 text-[11px] text-muted-foreground">
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              المقالات
-            </span>
-            <span className="text-sm font-bold text-foreground">{stats.totalBlogs}</span>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5">
-              <BarChart3 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              التفاعلات الكلية
-            </span>
-            <span className="text-sm font-bold text-foreground">{stats.totalReactions.toLocaleString("ar-SA")}</span>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5">
-              <Sigma className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              متوسط لكل مقال
-            </span>
-            <span className="text-sm font-bold text-primary">{stats.averageCommentsPerBlog}</span>
-          </div>
+        <div className="space-y-0 divide-y divide-border">
+          <AnalyticsStatRow
+            icon={IconArticle}
+            label="المقالات"
+            barValue={stats.totalBlogs}
+            maxValue={maxValue}
+            formattedValue={stats.totalBlogs}
+          />
+          <AnalyticsStatRow
+            icon={IconActivity}
+            label="التفاعلات الكلية"
+            barValue={stats.totalReactions}
+            maxValue={maxValue}
+            formattedValue={stats.totalReactions.toLocaleString("ar-SA")}
+          />
+          <AnalyticsStatRow
+            icon={IconTotal}
+            label="متوسط لكل مقال"
+            barValue={stats.averageCommentsPerBlog}
+            maxValue={maxValue}
+            formattedValue={stats.averageCommentsPerBlog}
+            valueClassName="text-sm font-semibold text-primary w-10 text-start tabular-nums shrink-0"
+          />
         </div>
 
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-2 border-t border-border pt-2 text-[10px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1" title="إعجابات">
-            <ThumbsUp className="h-3 w-3" />
-            {stats.totalLikes.toLocaleString("ar-SA")}
-          </span>
-          <span className="inline-flex items-center gap-1" title="مفضلة">
-            <Heart className="h-3 w-3" />
-            {stats.totalFavorites.toLocaleString("ar-SA")}
-          </span>
-          <span className="inline-flex items-center gap-1" title="تعليقات">
-            <MessageCircle className="h-3 w-3" />
-            {stats.totalComments.toLocaleString("ar-SA")}
-          </span>
-          <span className="inline-flex items-center gap-1" title="مشاهدات">
-            <Eye className="h-3 w-3" />
-            {stats.totalViews.toLocaleString("ar-SA")}
-          </span>
-          <span className="inline-flex items-center gap-1" title="عدم إعجاب">
-            <ThumbsDown className="h-3 w-3" />
-            {stats.totalDislikes.toLocaleString("ar-SA")}
-          </span>
+        <div className="mt-2 space-y-0 divide-y divide-border border-t border-border pt-2">
+          <AnalyticsStatRow
+            icon={IconLike}
+            label="إعجابات"
+            barValue={stats.totalLikes}
+            maxValue={maxValue}
+            formattedValue={stats.totalLikes.toLocaleString("ar-SA")}
+          />
+          <AnalyticsStatRow
+            icon={IconComment}
+            label="تعليقات"
+            barValue={stats.totalComments}
+            maxValue={maxValue}
+            formattedValue={stats.totalComments.toLocaleString("ar-SA")}
+          />
+          <AnalyticsStatRow
+            icon={IconViews}
+            label="مشاهدات"
+            barValue={stats.totalViews}
+            maxValue={maxValue}
+            formattedValue={stats.totalViews.toLocaleString("ar-SA")}
+          />
         </div>
+
+        <span className="inline-flex items-center gap-1 hidden" title="مفضلة" aria-hidden>
+          {stats.totalFavorites.toLocaleString("ar-SA")}
+        </span>
+        <span className="inline-flex items-center gap-1 hidden" title="عدم إعجاب" aria-hidden>
+          {stats.totalDislikes.toLocaleString("ar-SA")}
+        </span>
       </CardContent>
     </Card>
   );

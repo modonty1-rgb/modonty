@@ -1,8 +1,8 @@
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
+import { IconUsers } from "@/lib/icons";
 
 interface Follower {
   id: string;
@@ -14,32 +14,39 @@ interface Follower {
 interface ClientFollowersPreviewProps {
   followers: Follower[];
   clientSlug: string;
+  clientId?: string;
   showEmptyState?: boolean;
 }
 
 export function ClientFollowersPreview({
   followers,
   clientSlug,
+  clientId,
   showEmptyState = false,
 }: ClientFollowersPreviewProps) {
+  const followersUrl = `/clients/${encodeURIComponent(clientSlug)}/followers`;
+
   if (followers.length === 0) {
     if (!showEmptyState) return null;
 
     return (
       <Card>
         <CardHeader>
-          <CardTitleWithIcon title="المتابعون" icon={Users} />
+          <CardTitleWithIcon title="المتابعون" icon={IconUsers} />
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
             لا يوجد متابعون بعد. عند بدء متابعة هذا العميل، ستظهر الحسابات هنا.
           </p>
-          <Link
-            href={`/clients/${encodeURIComponent(clientSlug)}/followers`}
+          <CtaTrackedLink
+            href={followersUrl}
+            label="View followers"
+            type="LINK"
+            clientId={clientId}
             className="inline-block mt-3 text-sm text-primary hover:underline"
           >
             عرض المتابعين
-          </Link>
+          </CtaTrackedLink>
         </CardContent>
       </Card>
     );
@@ -52,7 +59,7 @@ export function ClientFollowersPreview({
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="المتابعون" icon={Users} />
+        <CardTitleWithIcon title="المتابعون" icon={IconUsers} />
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap items-center gap-3">
@@ -68,20 +75,23 @@ export function ClientFollowersPreview({
               const avatarEl = (
                 <Avatar className="h-9 w-9 border-2 border-background ring-2 ring-background">
                   <AvatarImage src={follower.image || undefined} alt={follower.name} />
-                  <AvatarFallback className="text-xs font-medium bg-muted">
+                  <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
               );
 
               return follower.userId ? (
-                <Link
+                <CtaTrackedLink
                   key={follower.id}
                   href={`/users/profile/${follower.userId}`}
+                  label="View follower profile"
+                  type="LINK"
+                  clientId={clientId}
                   className="hover:z-10 transition-transform hover:scale-110"
                 >
                   {avatarEl}
-                </Link>
+                </CtaTrackedLink>
               ) : (
                 <span key={follower.id} className="hover:z-10">
                   {avatarEl}
@@ -89,20 +99,26 @@ export function ClientFollowersPreview({
               );
             })}
             {remainingCount > 0 && (
-              <Link
-                href={`/clients/${encodeURIComponent(clientSlug)}/followers`}
+              <CtaTrackedLink
+                href={followersUrl}
+                label="View followers – all"
+                type="LINK"
+                clientId={clientId}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-background bg-muted text-xs font-medium ring-2 ring-background hover:bg-muted/80 hover:z-10"
               >
                 +{remainingCount}
-              </Link>
+              </CtaTrackedLink>
             )}
           </div>
-          <Link
-            href={`/clients/${encodeURIComponent(clientSlug)}/followers`}
+          <CtaTrackedLink
+            href={followersUrl}
+            label="View followers – all"
+            type="LINK"
+            clientId={clientId}
             className="text-sm text-primary hover:underline"
           >
             عرض كل المتابعين
-          </Link>
+          </CtaTrackedLink>
         </div>
       </CardContent>
     </Card>

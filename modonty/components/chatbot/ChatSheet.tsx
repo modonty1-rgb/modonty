@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useChatSheetStore } from "@/components/chatbot/chat-sheet-store";
 import Image from "next/image";
-import { Sparkles, LogIn, MessageSquare, History } from "lucide-react";
+import { IconAi, IconLogin, IconMessage, IconHistory } from "@/lib/icons";
 import { getOptimizedCharacterUrl } from "@/lib/image-utils";
 import { getCategoryIcon } from "@/app/categories/helpers/category-utils";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ function ChatLoginPrompt() {
   return (
     <div dir="rtl" className="flex flex-col h-full items-center justify-center p-8 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-6">
-        <Sparkles className="h-8 w-8 text-primary" strokeWidth={1.5} />
+        <IconAi className="h-8 w-8 text-primary" strokeWidth={1.5} />
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center justify-center gap-2">
         مدونتي الذكية بانتظارك
@@ -46,7 +46,7 @@ function ChatLoginPrompt() {
         سجّل دخولك للاستفادة من محادثات ذكية حول مقالاتك المفضلة
       </p>
       <Button onClick={() => signIn()} className="gap-2" size="lg">
-        <LogIn className="h-4 w-4" />
+        <IconLogin className="h-4 w-4" />
         تسجيل الدخول
       </Button>
     </div>
@@ -141,7 +141,6 @@ export function ChatSheet() {
                 fill
                 className="object-cover"
                 sizes="32px"
-                priority
               />
             </div>
             <SheetTitle className="flex-1 min-w-0 text-base font-semibold text-foreground shrink-0">
@@ -169,7 +168,7 @@ export function ChatSheet() {
                     : "border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20"
                 )}
               >
-                <MessageSquare className="h-4 w-4 shrink-0" aria-hidden />
+                <IconMessage className="h-4 w-4 shrink-0" aria-hidden />
                 جديد
               </button>
               <button
@@ -187,7 +186,7 @@ export function ChatSheet() {
                     : "border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20"
                 )}
               >
-                <History className="h-4 w-4 shrink-0" aria-hidden />
+                <IconHistory className="h-4 w-4 shrink-0" aria-hidden />
                 سجل
               </button>
             </nav>

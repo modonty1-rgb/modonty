@@ -1,5 +1,16 @@
 import Link from "@/components/link";
-import { FileText, CheckCircle2, Eye, Users, MessageCircle, ThumbsUp, ThumbsDown, Star, TrendingUp } from "lucide-react";
+import { highlightQuery } from "@/lib/highlight-query";
+import {
+  IconArticle,
+  IconCheckCircle,
+  IconViews,
+  IconUsers,
+  IconComment,
+  IconLike,
+  IconSaved,
+  IconFeatured,
+  IconTrending,
+} from "@/lib/icons";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -27,12 +38,18 @@ interface ClientCardProps {
   subscriptionTier?: string;
   isVerified: boolean;
   url?: string;
+  /** When set, highlights this query in name, legalName, and description (e.g. search results). */
+  highlightQuery?: string;
 }
 
 export function ClientCard(props: ClientCardProps) {
   const initials = props.name.split(" ").map(n => n[0]).join("").slice(0, 2);
   const isPremium = props.subscriptionTier === 'PREMIUM';
   const isPro = props.subscriptionTier === 'PRO';
+  const q = props.highlightQuery;
+  const nameContent = q ? highlightQuery(props.name, q) : props.name;
+  const legalNameContent = props.legalName != null && props.legalName !== "" ? (q ? highlightQuery(props.legalName, q) : props.legalName) : null;
+  const descriptionContent = props.description != null && props.description !== "" ? (q ? highlightQuery(props.description, q) : props.description) : null;
   
   const engagementScore = calculateEngagementScore({
     views: props.viewsCount,
@@ -62,7 +79,7 @@ export function ClientCard(props: ClientCardProps) {
           <div className="flex items-start justify-between">
             <Avatar className="h-20 w-20 ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20">
               <AvatarImage src={props.logo} alt={props.name} />
-              <AvatarFallback className="text-2xl font-bold text-primary">
+              <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -74,12 +91,12 @@ export function ClientCard(props: ClientCardProps) {
                     variant="secondary" 
                     className="gap-1 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400"
                   >
-                    <CheckCircle2 className="h-3 w-3" />
+                    <IconCheckCircle className="h-3 w-3" />
                     بريميوم
                   </Badge>
                 ) : (
                   <div className="bg-green-100 dark:bg-green-900/30 p-1.5 rounded-full">
-                    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
+                    <IconCheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
                   </div>
                 )}
               </>
@@ -88,11 +105,11 @@ export function ClientCard(props: ClientCardProps) {
 
           <div className="space-y-2">
             <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors line-clamp-2">
-              {props.name}
+              {nameContent}
             </h3>
-            {props.legalName && (
+            {legalNameContent != null && (
               <p className="text-sm text-muted-foreground line-clamp-1">
-                {props.legalName}
+                {legalNameContent}
               </p>
             )}
           </div>
@@ -111,9 +128,9 @@ export function ClientCard(props: ClientCardProps) {
         </CardHeader>
 
         <CardContent className="space-y-4 flex-1 flex flex-col">
-          {props.description && (
+          {descriptionContent != null && (
             <p className="text-sm text-muted-foreground line-clamp-2">
-              {props.description}
+              {descriptionContent}
             </p>
           )}
 
@@ -121,7 +138,7 @@ export function ClientCard(props: ClientCardProps) {
             <div className="grid grid-cols-2 gap-3 pt-4 border-t">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <FileText className="h-3.5 w-3.5" />
+                  <IconArticle className="h-3.5 w-3.5" />
                   <span>مقالات</span>
                 </div>
                 <p className="text-lg font-semibold text-foreground">
@@ -131,7 +148,7 @@ export function ClientCard(props: ClientCardProps) {
               
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Eye className="h-3.5 w-3.5" />
+                  <IconViews className="h-3.5 w-3.5" />
                   <span>مشاهدات</span>
                 </div>
                 <p className="text-lg font-semibold text-foreground">
@@ -145,7 +162,7 @@ export function ClientCard(props: ClientCardProps) {
               
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Users className="h-3.5 w-3.5" />
+                  <IconUsers className="h-3.5 w-3.5" />
                   <span>مشتركون</span>
                 </div>
                 <p className="text-lg font-semibold text-foreground">
@@ -155,7 +172,7 @@ export function ClientCard(props: ClientCardProps) {
               
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <TrendingUp className="h-3.5 w-3.5" />
+                  <IconTrending className="h-3.5 w-3.5" />
                   <span>التفاعل</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -169,10 +186,12 @@ export function ClientCard(props: ClientCardProps) {
 
             <div className="hidden sm:block pt-3 border-t border-dashed">
               <div className="grid grid-cols-4 gap-2 text-xs">
-                <MetricChip icon={MessageCircle} value={props.commentsCount} label="تعليقات" />
-                <MetricChip icon={ThumbsUp} value={props.likesCount} label="إعجاب" color="text-green-600" />
-                <MetricChip icon={ThumbsDown} value={props.dislikesCount} label="رفض" color="text-red-600" />
-                <MetricChip icon={Star} value={props.favoritesCount} label="مفضلة" color="text-yellow-600" />
+                <MetricChip icon={IconComment} value={props.commentsCount} label="تعليقات" />
+                <MetricChip icon={IconLike} value={props.likesCount} label="إعجاب" color="text-green-600" />
+                <div className="hidden" aria-hidden>
+                  <MetricChip icon={IconLike} value={props.dislikesCount} label="رفض" color="text-red-600" />
+                </div>
+                <MetricChip icon={IconFeatured} value={props.favoritesCount} label="مفضلة" color="text-yellow-600" />
               </div>
             </div>
 

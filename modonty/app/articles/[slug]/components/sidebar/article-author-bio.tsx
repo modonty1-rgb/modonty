@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { IconChevronLeft } from "@/lib/icons";
 import { SocialFacebookOutline } from "@/components/icons/facebook";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Youtube } from "@/components/icons/youtube";
@@ -50,7 +50,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
 
   return (
     <section className="my-8 md:my-12" aria-labelledby="author-heading">
-      <Card className="overflow-hidden border-t-4 border-t-primary hover:shadow-md transition-shadow">
+      <Card className="overflow-hidden border border-border hover:shadow-md transition-shadow">
         <CardContent className="p-6 flex flex-col items-center text-center gap-4">
           <h2 id="author-heading" className="sr-only">
             عن الكاتب
@@ -58,7 +58,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
           <div className="-mt-2">
             <Avatar className="h-20 w-20 ring-2 ring-primary/30 shadow-md">
               <AvatarImage src={author.image ?? undefined} alt={author.name} />
-              <AvatarFallback className="text-lg bg-primary/10 text-primary">
+              <AvatarFallback className="text-lg bg-primary text-primary-foreground font-semibold">
                 {author.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
@@ -113,7 +113,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
               className="inline-flex items-center justify-center gap-1"
             >
               صفحة الكاتب
-              <ChevronLeft className="h-4 w-4 ltr:rotate-180" aria-hidden />
+              <IconChevronLeft className="h-4 w-4 ltr:rotate-180" aria-hidden />
             </Link>
           </Button>
         </CardContent>

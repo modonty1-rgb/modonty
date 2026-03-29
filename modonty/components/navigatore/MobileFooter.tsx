@@ -13,7 +13,7 @@ interface MobileFooterProps {
 
 export function MobileFooter({ activeSection, favoritesCount }: MobileFooterProps) {
   return (
-    <footer className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-white shadow-lg">
+    <footer className="md:hidden fixed bottom-0 left-0 right-0 z-50 w-full max-w-full border-t bg-card shadow-lg">
       <nav className="flex items-center justify-around h-16 px-2">
         {mainNavItems.map((item) => {
           const Icon = item.icon;

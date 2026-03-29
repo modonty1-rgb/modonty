@@ -1,4 +1,4 @@
-import { TrendingUp, FolderOpen } from "lucide-react";
+import { IconTrending, IconFolder } from "@/lib/icons";
 
 interface CategoriesHeroProps {
   totalCategories: number;
@@ -7,42 +7,45 @@ interface CategoriesHeroProps {
 
 export function CategoriesHero({ totalCategories, totalArticles }: CategoriesHeroProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background border-b">
-      <div className="container mx-auto max-w-[1128px] px-4 py-12 md:py-16">
-        <div className="relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+    <div className="relative overflow-hidden border-b bg-primary">
+      <div
+        className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(circle,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:18px_18px]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute left-0 top-0 z-0 h-32 w-32 rounded-full bg-accent/20 blur-2xl"
+        aria-hidden
+      />
+      <div className="relative z-10 container mx-auto max-w-[1128px] px-4 py-12 md:py-16">
+        <div className="relative">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             استكشف الفئات
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+          <p className="text-lg text-white/90 max-w-2xl mb-8">
             تصفح مجموعة متنوعة من الفئات والمواضيع. اكتشف المحتوى الذي يهمك واستكشف مقالات جديدة.
           </p>
-          
+
           <div className="flex flex-wrap gap-6">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <FolderOpen className="h-6 w-6 text-primary" />
+              <div className="h-12 w-12 rounded-lg bg-white/10 flex items-center justify-center">
+                <IconFolder className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{totalCategories}</p>
-                <p className="text-sm text-muted-foreground">فئة متاحة</p>
+                <p className="text-2xl font-bold text-white">{totalCategories}</p>
+                <p className="text-sm text-white/70">فئة متاحة</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-primary" />
+              <div className="h-12 w-12 rounded-lg bg-white/10 flex items-center justify-center">
+                <IconTrending className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{totalArticles}</p>
-                <p className="text-sm text-muted-foreground">مقال منشور</p>
+                <p className="text-2xl font-bold text-white">{totalArticles}</p>
+                <p className="text-sm text-white/70">مقال منشور</p>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="absolute top-0 left-0 w-full h-full opacity-5">
-          <div className="absolute top-10 right-20 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 left-20 w-40 h-40 bg-primary rounded-full blur-3xl"></div>
         </div>
       </div>
     </div>

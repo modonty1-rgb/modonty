@@ -1,9 +1,9 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 import { cn } from "@/lib/utils";
 import { formatMetric } from "../helpers/format-metrics";
 
 interface MetricChipProps {
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   value: number;
   label: string;
   color?: string;

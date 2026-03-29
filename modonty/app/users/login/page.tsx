@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Chrome, Mail } from "lucide-react";
+import { IconChrome, IconEmail } from "@/lib/icons";
 import Link from "@/components/link";
 
 export default function LoginPage() {
@@ -66,7 +66,7 @@ export default function LoginPage() {
             className="w-full h-12"
             variant="outline"
           >
-            <Chrome className="h-5 w-5 mr-2" />
+            <IconChrome className="h-5 w-5 mr-2" />
             {loading === "google" ? "جاري تسجيل الدخول..." : "تسجيل الدخول بـ Google"}
           </Button>
 
@@ -108,7 +108,7 @@ export default function LoginPage() {
               className="w-full h-12"
               variant="default"
             >
-              <Mail className="h-5 w-5 mr-2" />
+              <IconEmail className="h-5 w-5 mr-2" />
               {loading === "credentials" ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
             </Button>
           </form>

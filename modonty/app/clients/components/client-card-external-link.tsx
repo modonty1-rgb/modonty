@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { IconExternal } from "@/lib/icons";
 
 interface ClientCardExternalLinkProps {
   url: string;
@@ -18,7 +18,7 @@ export function ClientCardExternalLink({ url }: ClientCardExternalLinkProps) {
         window.open(url, '_blank', 'noopener,noreferrer');
       }}
     >
-      <ExternalLink className="h-4 w-4" />
+      <IconExternal className="h-4 w-4" />
     </Button>
   );
 }

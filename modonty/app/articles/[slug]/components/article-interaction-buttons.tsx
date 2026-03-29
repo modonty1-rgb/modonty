@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown, Bookmark, Loader2 } from "lucide-react";
+import { IconLike, IconSaved, IconLoading } from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, dislikeArticle, favoriteArticle } from "../actions/article-interactions";
@@ -169,8 +169,8 @@ export function ArticleInteractionButtons({
   const isLoggedIn = Boolean(session?.user);
   const iconClass = compact ? "h-3.5 w-3.5 shrink-0" : "h-4 w-4 ml-2";
   const btnClass = compact
-    ? "h-8 px-1.5 gap-0.5 text-xs shrink-0"
-    : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0";
+    ? "h-8 px-1.5 gap-0.5 text-xs shrink-0 active:scale-95 transition-transform duration-100"
+    : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 active:scale-95 transition-transform duration-100";
 
   if (!mounted) {
     return (
@@ -203,27 +203,29 @@ export function ArticleInteractionButtons({
         aria-label={loading === "like" ? "جاري التحديث..." : "إعجاب"}
       >
         {loading === "like" ? (
-          <Loader2 className={`${iconClass} animate-spin`} />
+          <IconLoading className={`${iconClass} animate-spin`} />
         ) : (
-          <ThumbsUp className={`${iconClass} ${userLiked ? "fill-current" : ""}`} />
+          <IconLike className={`${iconClass} ${userLiked ? "fill-current" : ""}`} />
         )}
         <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
       </Button>
-      <Button
-        variant={userDisliked ? "default" : "outline"}
-        size={compact ? "sm" : "sm"}
-        onClick={handleDislike}
-        disabled={!isLoggedIn || loading === "dislike"}
-        className={btnClass}
-        aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
-      >
-        {loading === "dislike" ? (
-          <Loader2 className={`${iconClass} animate-spin`} />
-        ) : (
-          <ThumbsDown className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
-        )}
-        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
-      </Button>
+      <div className="hidden">
+        <Button
+          variant={userDisliked ? "default" : "outline"}
+          size={compact ? "sm" : "sm"}
+          onClick={handleDislike}
+          disabled={!isLoggedIn || loading === "dislike"}
+          className={btnClass}
+          aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
+        >
+          {loading === "dislike" ? (
+            <IconLoading className={`${iconClass} animate-spin`} />
+          ) : (
+            <IconLike className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
+          )}
+          <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
+        </Button>
+      </div>
       <Button
         variant={userFavorited ? "default" : "outline"}
         size={compact ? "sm" : "sm"}
@@ -233,9 +235,9 @@ export function ArticleInteractionButtons({
         aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "تسجيل الدخول للحفظ"}
       >
         {loading === "favorite" ? (
-          <Loader2 className={`${iconClass} animate-spin`} />
+          <IconLoading className={`${iconClass} animate-spin`} />
         ) : (
-          <Bookmark className={`${iconClass} ${userFavorited ? "fill-current" : ""}`} />
+          <IconSaved className={`${iconClass} ${userFavorited ? "fill-current" : ""}`} />
         )}
         <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{favorites}</span>
       </Button>

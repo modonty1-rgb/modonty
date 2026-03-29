@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { IconChevronDown, IconChevronUp } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { fetchArticleFaqs } from "../../actions/article-lazy-actions";
 import { fetchPendingFaqsForArticle } from "../../actions/ask-client-actions";
@@ -89,7 +89,7 @@ export function ArticleFaq({ articleId, faqsCount }: ArticleFaqProps) {
               </span>
             </div>
             <span className="shrink-0 text-muted-foreground" aria-hidden>
-              {isCollapsed ? <ChevronDown className="h-5 w-5" /> : <ChevronUp className="h-5 w-5" />}
+              {isCollapsed ? <IconChevronDown className="h-5 w-5" /> : <IconChevronUp className="h-5 w-5" />}
             </span>
           </button>
           {!isCollapsed && (

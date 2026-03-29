@@ -1,6 +1,5 @@
 import Link from "@/components/link";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
-import { FileText } from "lucide-react";
 import pkg from "../../package.json";
 
 const YEAR = 2025;

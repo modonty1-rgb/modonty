@@ -5,7 +5,7 @@ interface HeroCoverProps {
   coverImage: string | undefined;
 }
 
-const PAGE_COVER_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 2400px";
+const PAGE_COVER_SIZES = "100vw";
 
 export function HeroCover({ clientName, coverImage }: HeroCoverProps) {
   return (
@@ -25,6 +25,9 @@ export function HeroCover({ clientName, coverImage }: HeroCoverProps) {
               fill
               className="object-cover"
               sizes={PAGE_COVER_SIZES}
+              preload
+              loading="eager"
+              fetchPriority="high"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />

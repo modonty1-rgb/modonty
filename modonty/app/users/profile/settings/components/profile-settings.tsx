@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Upload, User } from "lucide-react";
+import { IconLoading, IconUpload, IconUser } from "@/lib/icons";
 import { profileSchema, type ProfileFormData } from "../helpers/schemas/settings-schemas";
 import { updateProfile } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
@@ -84,7 +84,7 @@ export function ProfileSettings() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5" />
+          <IconUser className="h-5 w-5" />
           الملف الشخصي
         </CardTitle>
       </CardHeader>
@@ -93,7 +93,7 @@ export function ProfileSettings() {
           <div className="flex flex-col items-center gap-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={imagePreview || imageUrl || undefined} alt={session?.user?.name || ""} />
-              <AvatarFallback className="text-2xl">
+              <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
                 {session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
@@ -101,7 +101,7 @@ export function ProfileSettings() {
               <Label htmlFor="image-upload" className="cursor-pointer">
                 <Button type="button" variant="outline" size="sm" asChild>
                   <span>
-                    <Upload className="h-4 w-4 mr-2" />
+                    <IconUpload className="h-4 w-4 mr-2" />
                     تغيير الصورة
                   </span>
                 </Button>
@@ -174,7 +174,7 @@ export function ProfileSettings() {
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <IconLoading className="h-4 w-4 mr-2 animate-spin" />
                 جاري الحفظ...
               </>
             ) : (

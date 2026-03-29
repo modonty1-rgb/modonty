@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { IconLike, IconDislike, IconLoading } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 import { submitFAQFeedback, checkExistingFeedback } from "../faq/actions/faq-feedback-actions";
 
@@ -110,14 +110,14 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                 </span>
                 <div className="flex items-center gap-3 text-xs shrink-0">
                   <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/5 border border-primary/10">
-                    <ThumbsUp className="h-3.5 w-3.5 text-primary" />
+                    <IconLike className="h-3.5 w-3.5 text-primary" />
                     <span className="font-semibold text-primary tabular-nums">
                       {upvoteCount}
                     </span>
                     <span className="text-muted-foreground hidden sm:inline">مفيد</span>
                   </div>
                   <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-destructive/5 border border-destructive/10">
-                    <ThumbsDown className="h-3.5 w-3.5 text-destructive" />
+                    <IconDislike className="h-3.5 w-3.5 text-destructive" />
                     <span className="font-semibold text-destructive tabular-nums">
                       {downvoteCount}
                     </span>
@@ -150,9 +150,9 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     }
                   >
                     {isSubmittingHelpful ? (
-                      <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                      <IconLoading className="h-4 w-4 ml-2 animate-spin" />
                     ) : (
-                      <ThumbsUp className="h-4 w-4 ml-2" />
+                      <IconLike className="h-4 w-4 ml-2" />
                     )}
                     <span className="font-medium">مفيد</span>
                   </Button>
@@ -168,9 +168,9 @@ export function FAQAccordion({ items }: FAQAccordionProps) {
                     }
                   >
                     {isSubmittingNotHelpful ? (
-                      <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                      <IconLoading className="h-4 w-4 ml-2 animate-spin" />
                     ) : (
-                      <ThumbsDown className="h-4 w-4 ml-2" />
+                      <IconDislike className="h-4 w-4 ml-2" />
                     )}
                     <span className="font-medium">غير مفيد</span>
                   </Button>

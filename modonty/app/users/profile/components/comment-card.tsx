@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
+import { IconLike, IconComment } from "@/lib/icons";
 import Link from "@/components/link";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -85,19 +85,19 @@ export function CommentCard({ comment, showAuthor = false, showLikedAt = false }
               <div className="flex items-center gap-3">
                 {typeof comment.likesCount === "number" && (
                   <span className="flex items-center gap-1">
-                    <ThumbsUp className="h-3 w-3" />
+                    <IconLike className="h-3 w-3" />
                     {comment.likesCount}
                   </span>
                 )}
                 {typeof comment.dislikesCount === "number" && (
-                  <span className="flex items-center gap-1">
-                    <ThumbsDown className="h-3 w-3" />
+                  <span className="hidden">
+                    <IconLike className="h-3 w-3" />
                     {comment.dislikesCount}
                   </span>
                 )}
                 {typeof comment.repliesCount === "number" && (
                   <span className="flex items-center gap-1">
-                    <MessageCircle className="h-3 w-3" />
+                    <IconComment className="h-3 w-3" />
                     {comment.repliesCount}
                   </span>
                 )}

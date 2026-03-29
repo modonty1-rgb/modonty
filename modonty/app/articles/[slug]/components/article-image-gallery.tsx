@@ -21,12 +21,12 @@ export function ArticleImageGallery({ gallery }: ArticleImageGalleryProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {gallery.map((galleryItem) => (
           <Card key={galleryItem.id} className="hover:shadow-md transition-shadow overflow-hidden">
-            <div className="relative w-full aspect-video">
+            <div className="relative w-full aspect-video overflow-hidden rounded-lg">
               <OptimizedImage
                 src={galleryItem.media.url}
                 alt={galleryItem.media.altText || galleryItem.media.caption || ""}
                 fill
-                className="object-cover"
+                className="object-cover h-full w-full"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             </div>

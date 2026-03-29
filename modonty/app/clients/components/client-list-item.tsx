@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { CheckCircle2, FileText, Eye, Users, TrendingUp } from "lucide-react";
+import { IconCheckCircle, IconArticle, IconViews, IconUsers, IconTrending } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +56,7 @@ export function ClientListItem(props: ClientListItemProps) {
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 flex-shrink-0 bg-gradient-to-br from-primary/10 to-primary/20">
               <AvatarImage src={props.logo} alt={props.name} />
-              <AvatarFallback className="text-lg font-semibold text-primary">{initials}</AvatarFallback>
+              <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">{initials}</AvatarFallback>
             </Avatar>
 
             <div className="flex-1 min-w-0 space-y-1">
@@ -69,12 +69,12 @@ export function ClientListItem(props: ClientListItemProps) {
                         variant="secondary"
                         className="gap-1 text-xs bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400"
                       >
-                        <CheckCircle2 className="h-3 w-3" />
+                        <IconCheckCircle className="h-3 w-3" />
                         بريميوم
                       </Badge>
                     ) : (
                       <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full flex-shrink-0">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
+                        <IconCheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
                       </div>
                     )}
                   </>
@@ -96,7 +96,7 @@ export function ClientListItem(props: ClientListItemProps) {
             <div className="hidden md:flex items-center gap-6 flex-shrink-0">
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <FileText className="h-3.5 w-3.5" />
+                  <IconArticle className="h-3.5 w-3.5" />
                   <span>مقالات</span>
                 </div>
                 <span className="text-sm font-semibold">{formatMetric(props.articleCount)}</span>
@@ -104,7 +104,7 @@ export function ClientListItem(props: ClientListItemProps) {
               
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Eye className="h-3.5 w-3.5" />
+                  <IconViews className="h-3.5 w-3.5" />
                   <span>مشاهدات</span>
                 </div>
                 <span className="text-sm font-semibold">
@@ -118,7 +118,7 @@ export function ClientListItem(props: ClientListItemProps) {
               
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Users className="h-3.5 w-3.5" />
+                  <IconUsers className="h-3.5 w-3.5" />
                   <span>مشتركون</span>
                 </div>
                 <span className="text-sm font-semibold">{formatMetric(props.subscribersCount)}</span>
@@ -126,7 +126,7 @@ export function ClientListItem(props: ClientListItemProps) {
               
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <TrendingUp className="h-3.5 w-3.5" />
+                  <IconTrending className="h-3.5 w-3.5" />
                   <span>التفاعل</span>
                 </div>
                 <div className="flex items-center gap-1">

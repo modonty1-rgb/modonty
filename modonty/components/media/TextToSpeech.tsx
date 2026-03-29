@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Pause, Play } from "lucide-react";
+import { IconVolume2, IconVolumeX, IconPause, IconPlay } from "@/lib/icons";
 
 export interface TextToSpeechProps {
   text: string;
@@ -92,11 +92,11 @@ export function TextToSpeech({ text, lang = "ar-SA", className }: TextToSpeechPr
         aria-label={isPlaying ? "إيقاف مؤقت" : isPaused ? "متابعة" : "استمع"}
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4 text-primary" />
+          <IconPause className="h-4 w-4 text-primary" />
         ) : isPaused ? (
-          <Play className="h-4 w-4 text-primary" />
+          <IconPlay className="h-4 w-4 text-primary" />
         ) : (
-          <Volume2 className="h-4 w-4" />
+          <IconVolume2 className="h-4 w-4" />
         )}
       </Button>
       {isPlaying && (
@@ -107,7 +107,7 @@ export function TextToSpeech({ text, lang = "ar-SA", className }: TextToSpeechPr
           onClick={handleStop}
           aria-label="إيقاف"
         >
-          <VolumeX className="h-4 w-4 text-muted-foreground" />
+          <IconVolumeX className="h-4 w-4 text-muted-foreground" />
         </Button>
       )}
     </div>

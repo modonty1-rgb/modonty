@@ -3,8 +3,9 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "@/components/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { IconCheckCircle } from "@/lib/icons";
 import { cn } from "@/lib/utils";
+import { trackCtaClick } from "@/lib/cta-tracking";
 import { ClientScrollProgress } from "./client-scroll-progress";
 
 // -----------------------------------------------------------------------------
@@ -14,6 +15,7 @@ import { ClientScrollProgress } from "./client-scroll-progress";
 interface ClientTabsNavProps {
   clientSlug: string;
   clientName: string;
+  clientId?: string;
   /** When provided (e.g. from ClientStickyProvider), sentinel is not rendered here */
   isStuck?: boolean;
 }
@@ -21,6 +23,7 @@ interface ClientTabsNavProps {
 const ITEMS: { segment: string | null; label: string }[] = [
   { segment: null, label: "الكل" },
   { segment: "about", label: "حول" },
+  { segment: "contact", label: "تواصل مع الشركة" },
   { segment: "photos", label: "الصور" },
   { segment: "followers", label: "المتابعون" },
   { segment: "reviews", label: "التقييمات" },
@@ -67,7 +70,7 @@ function StickyClientName({ name, className }: { name: string; className?: strin
       <span className="text-sm sm:text-base font-bold text-foreground truncate">
         {name}
       </span>
-      <CheckCircle2
+      <IconCheckCircle
         className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0"
         aria-label="موثق"
       />
@@ -81,9 +84,16 @@ interface TabNavLinkProps {
   href: string;
   isActive: boolean;
   activeRef?: React.RefObject<HTMLLIElement | null>;
+  clientId?: string;
 }
 
-function TabNavLink({ label, href, isActive, activeRef }: TabNavLinkProps) {
+function TabNavLink({ label, href, isActive, activeRef, clientId }: TabNavLinkProps) {
+  const handleClick = () => {
+    if (clientId) {
+      trackCtaClick({ type: "LINK", label: `Tab – ${label}`, targetUrl: href, clientId });
+    }
+  };
+
   return (
     <li ref={isActive ? activeRef : undefined}>
       <Link
@@ -98,6 +108,7 @@ function TabNavLink({ label, href, isActive, activeRef }: TabNavLinkProps) {
             ? "bg-accent text-primary shadow-sm font-bold"
             : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
         )}
+        onClick={handleClick}
       >
         {label}
       </Link>
@@ -110,9 +121,10 @@ interface TabsNavListProps {
   basePath: string;
   activeSegment: string | null;
   activeLinkRef?: React.RefObject<HTMLLIElement | null>;
+  clientId?: string;
 }
 
-function TabsNavList({ items, basePath, activeSegment, activeLinkRef }: TabsNavListProps) {
+function TabsNavList({ items, basePath, activeSegment, activeLinkRef, clientId }: TabsNavListProps) {
   return (
     <ul
       className={cn(
@@ -137,6 +149,7 @@ function TabsNavList({ items, basePath, activeSegment, activeLinkRef }: TabsNavL
             href={href}
             isActive={isActive}
             activeRef={activeLinkRef}
+            clientId={clientId}
           />
         );
       })}
@@ -153,7 +166,7 @@ function TabsNavList({ items, basePath, activeSegment, activeLinkRef }: TabsNavL
  * so the active tab updates on client-side navigation.
  * @see https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment
  */
-export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: ClientTabsNavProps) {
+export function ClientTabsNav({ clientSlug, clientName, clientId, isStuck: isStuckProp }: ClientTabsNavProps) {
   const segment = useSelectedLayoutSegment();
   const basePath = `/clients/${encodeURIComponent(clientSlug)}`;
   const internalSticky = useStickySentinel();
@@ -184,7 +197,7 @@ export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: 
         {isStuck ? (
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
             <div className="relative -mx-1 -mb-px min-w-0 w-full sm:flex-1">
-              <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} />
+              <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} clientId={clientId} />
             </div>
             <div className="hidden sm:flex justify-start py-0.5 sm:py-0 flex-shrink-0">
               <StickyClientName name={clientName} className="animate-in fade-in slide-in-from-top-2 duration-200" />
@@ -192,7 +205,7 @@ export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: 
           </div>
         ) : (
           <div className="relative -mx-1 -mb-px flex items-center gap-3">
-            <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} />
+            <TabsNavList items={ITEMS} basePath={basePath} activeSegment={segment} activeLinkRef={activeLinkRef} clientId={clientId} />
           </div>
         )}
         {isStuck && <ClientScrollProgress />}
@@ -208,17 +221,18 @@ export function ClientTabsNav({ clientSlug, clientName, isStuck: isStuckProp }: 
 interface ClientStickyProviderProps {
   clientSlug: string;
   clientName: string;
+  clientId?: string;
   children: React.ReactNode;
 }
 
 /** Wraps client main content: shared sticky sentinel, tabs nav (with inline scroll progress when stuck). */
-export function ClientStickyProvider({ clientSlug, clientName, children }: ClientStickyProviderProps) {
+export function ClientStickyProvider({ clientSlug, clientName, clientId, children }: ClientStickyProviderProps) {
   const { sentinelRef, isStuck } = useStickySentinel();
 
   return (
     <>
       <div ref={sentinelRef} className="h-0 w-full" aria-hidden />
-      <ClientTabsNav clientSlug={clientSlug} clientName={clientName} isStuck={isStuck} />
+      <ClientTabsNav clientSlug={clientSlug} clientName={clientName} clientId={clientId} isStuck={isStuck} />
       {children}
     </>
   );

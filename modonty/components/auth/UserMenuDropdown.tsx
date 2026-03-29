@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings } from "lucide-react";
+import { IconUser, IconLogout, IconSettings } from "@/lib/icons";
 import { handleLogout } from "@/lib/logout";
 import { UserAvatarButton } from "@/components/auth/UserAvatarButton";
 
@@ -36,13 +36,13 @@ export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/users/profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <IconUser className="h-4 w-4" />
             الملف الشخصي
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/users/profile/settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
+            <IconSettings className="h-4 w-4" />
             الإعدادات
           </Link>
         </DropdownMenuItem>
@@ -51,7 +51,7 @@ export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
           onClick={() => handleLogout()}
           className="text-destructive focus:text-destructive"
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <IconLogout className="h-4 w-4 mr-2" />
           تسجيل الخروج
         </DropdownMenuItem>
       </DropdownMenuContent>

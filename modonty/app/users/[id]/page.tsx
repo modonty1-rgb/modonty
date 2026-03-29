@@ -6,7 +6,7 @@ import { generateMetadataFromSEO, generateStructuredData, generateAuthorStructur
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import Link from "@/components/link";
-import { User, Mail, Calendar } from "lucide-react";
+import { IconUser, IconEmail, IconCalendar } from "@/lib/icons";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
 interface UserPageProps {
@@ -212,7 +212,7 @@ export default async function UserPage({ params }: UserPageProps) {
                         src={author?.image || user?.image || undefined}
                         alt={author?.name || user?.name || "مستخدم"}
                       />
-                      <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
+                      <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                       <h1 id="profile-heading" className="text-2xl mb-2">
@@ -231,13 +231,13 @@ export default async function UserPage({ params }: UserPageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {user?.email && (
                     <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <IconEmail className="h-4 w-4 text-muted-foreground" />
                       <span>{user.email}</span>
                     </div>
                   )}
                   {(user?.createdAt || author?.createdAt) && (
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <IconCalendar className="h-4 w-4 text-muted-foreground" />
                       <span>
                         انضم في{" "}
                         {new Date(
@@ -248,7 +248,7 @@ export default async function UserPage({ params }: UserPageProps) {
                   )}
                   {articles.length > 0 && (
                     <div className="flex items-center gap-2 text-sm">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      <IconUser className="h-4 w-4 text-muted-foreground" />
                       <span>{articles.length} مقال</span>
                     </div>
                   )}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Bell } from "lucide-react";
+import { IconLoading, IconBell } from "@/lib/icons";
 import { updateNotificationSettings } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
 import type { NotificationFormData } from "../helpers/schemas/settings-schemas";
@@ -70,7 +70,7 @@ export function NotificationsSettings() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bell className="h-5 w-5" />
+          <IconBell className="h-5 w-5" />
           إعدادات الإشعارات
         </CardTitle>
         <CardDescription>
@@ -221,7 +221,7 @@ export function NotificationsSettings() {
         <Button onClick={handleSave} disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <IconLoading className="h-4 w-4 mr-2 animate-spin" />
               جاري الحفظ...
             </>
           ) : (

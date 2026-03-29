@@ -3,7 +3,7 @@ import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { TrendingUp, Eye, Heart, MessageCircle } from "lucide-react";
+import { IconTrending, IconViews, IconComment } from "@/lib/icons";
 
 interface TrendingArticle {
   id: string;
@@ -43,7 +43,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
     <section className="my-8 md:my-12" aria-labelledby="trending-heading">
       {showTitle && (
         <div className="flex items-center gap-2 mb-6">
-          <TrendingUp className="h-6 w-6 text-primary" />
+          <IconTrending className="h-6 w-6 text-primary" />
           <h2 id="trending-heading" className="text-2xl font-bold">
             المقالات الرائجة
           </h2>
@@ -60,7 +60,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
               {/* Trending Badge */}
               <div className="absolute top-2 right-2 z-10">
                 <Badge className="bg-primary text-primary-foreground flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
+                  <IconTrending className="h-3 w-3" />
                   <span>#{index + 1}</span>
                 </Badge>
               </div>
@@ -74,7 +74,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    priority={index < 3}
+                    preload={index === 0}
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -111,15 +111,14 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
-                      <Eye className="h-3.5 w-3.5" />
+                      <IconViews className="h-3.5 w-3.5" />
                       <span>{article.interactions.views}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Heart className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1 hidden" aria-hidden>
                       <span>{article.interactions.likes}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <MessageCircle className="h-3.5 w-3.5" />
+                      <IconComment className="h-3.5 w-3.5" />
                       <span>{article.interactions.comments}</span>
                     </div>
                   </div>

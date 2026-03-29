@@ -58,7 +58,7 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
       />
 
       <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-        <ClientStickyProvider clientSlug={client.slug} clientName={client.name}>
+        <ClientStickyProvider clientSlug={client.slug} clientName={client.name} clientId={client.id}>
           <Suspense fallback={<div className="h-64 bg-muted rounded-md animate-pulse" />}>
             {children}
           </Suspense>

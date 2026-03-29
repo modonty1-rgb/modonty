@@ -1,20 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ComponentType, type ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { IconChevronDown, IconChevronUp } from "@/lib/icons";
+
+type SectionIcon = ComponentType<{ className?: string }>;
 
 interface ArticleSectionCollapsibleProps {
   title: string;
   headingId: string;
-  icon: LucideIcon;
-  children: React.ReactNode;
+  icon: SectionIcon;
+  children: ReactNode;
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -60,7 +61,7 @@ export function ArticleSectionCollapsible({
                   </span>
                 </div>
                 <span className="shrink-0 text-muted-foreground" aria-hidden>
-                  {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  {open ? <IconChevronUp className="h-5 w-5" /> : <IconChevronDown className="h-5 w-5" />}
                 </span>
               </button>
             </CollapsibleTrigger>

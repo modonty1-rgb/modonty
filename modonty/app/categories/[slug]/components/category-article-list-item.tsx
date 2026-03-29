@@ -1,16 +1,16 @@
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import { Heart, MessageCircle, Bookmark, Clock, Eye, ArrowLeft } from "lucide-react";
+import { IconLike, IconComment, IconSaved, IconClock, IconViews, IconForward } from "@/lib/icons";
 import { optimizeCloudinaryImage, generateBlurDataURL } from "../../helpers/category-utils";
 import { formatReadingTime, formatPublishDate, formatEngagementCount } from "../helpers/article-utils";
 import type { ArticleResponse } from "@/lib/types";
 
 interface CategoryArticleListItemProps {
   article: ArticleResponse;
-  priority?: boolean;
+  preload?: boolean;
 }
 
-export function CategoryArticleListItem({ article, priority = false }: CategoryArticleListItemProps) {
+export function CategoryArticleListItem({ article, preload = false }: CategoryArticleListItemProps) {
   const optimizedImageUrl = article.featuredImage?.url
     ? optimizeCloudinaryImage(article.featuredImage.url, {
         width: 256,
@@ -30,7 +30,7 @@ export function CategoryArticleListItem({ article, priority = false }: CategoryA
                 src={optimizedImageUrl}
                 alt={article.featuredImage?.altText || article.title}
                 fill
-                priority={priority}
+                preload={preload}
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                 sizes="128px"
               />
@@ -60,7 +60,7 @@ export function CategoryArticleListItem({ article, priority = false }: CategoryA
                   <>
                     <span className="text-xs text-muted-foreground">•</span>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
+                      <IconClock className="h-3 w-3" />
                       <span>{formatReadingTime(article.readingTimeMinutes)}</span>
                     </div>
                   </>
@@ -99,19 +99,19 @@ export function CategoryArticleListItem({ article, priority = false }: CategoryA
 
                 <div className="flex items-center gap-3 px-3 py-1.5 bg-muted/50 rounded-full">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[2.5rem]">
-                    <Eye className="h-3.5 w-3.5 shrink-0" />
+                    <IconViews className="h-3.5 w-3.5 shrink-0" />
                     <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.views)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[2.5rem]">
-                    <Heart className="h-3.5 w-3.5 shrink-0" />
+                    <IconLike className="h-3.5 w-3.5 shrink-0" />
                     <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.likes)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[2.5rem]">
-                    <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+                    <IconComment className="h-3.5 w-3.5 shrink-0" />
                     <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.comments)}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer min-w-[2.5rem]">
-                    <Bookmark className="h-3.5 w-3.5 shrink-0" />
+                    <IconSaved className="h-3.5 w-3.5 shrink-0" />
                     <span className="font-medium tabular-nums">{formatEngagementCount(article.interactions.favorites)}</span>
                   </div>
                 </div>
@@ -119,7 +119,7 @@ export function CategoryArticleListItem({ article, priority = false }: CategoryA
 
               <div className="flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-sm font-medium hidden sm:inline">قراءة المزيد</span>
-                <ArrowLeft className="h-4 w-4" />
+                <IconForward className="h-4 w-4" />
               </div>
             </div>
           </div>

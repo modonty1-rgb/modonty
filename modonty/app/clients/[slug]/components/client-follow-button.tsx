@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Users, Loader2, Check } from "lucide-react";
+import { IconUsers, IconLoading, IconCheck } from "@/lib/icons";
 
 interface ClientFollowButtonProps {
   clientSlug: string;
@@ -101,11 +101,11 @@ export function ClientFollowButton({
       className={`gap-2 ${className}`}
     >
       {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <IconLoading className="h-4 w-4 animate-spin" />
       ) : isFollowing ? (
-        <Check className="h-4 w-4" />
+        <IconCheck className="h-4 w-4" />
       ) : (
-        <Users className="h-4 w-4" />
+        <IconUsers className="h-4 w-4" />
       )}
       {isFollowing ? "متابع" : "متابعة"}
     </Button>

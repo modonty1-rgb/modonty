@@ -19,7 +19,7 @@ export function NewClientItem({ title, client, clientLogo, slug }: NewClientItem
           loading="lazy"
           decoding="async"
         />
-        <AvatarFallback className="rounded-full text-[10px] font-medium text-muted-foreground bg-muted">
+        <AvatarFallback className="rounded-full text-[10px] font-medium bg-primary text-primary-foreground">
           {client?.slice(0, 1) ?? "?"}
         </AvatarFallback>
       </Avatar>

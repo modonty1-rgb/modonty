@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "@/components/link";
-import { ChevronLeft, Home, MoreHorizontal } from "lucide-react";
+import { IconChevronLeft, IconHome, IconMoreHorizontal } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -16,7 +16,7 @@ export interface BreadcrumbProps {
 }
 
 const BreadcrumbSeparator = () => (
-  <ChevronLeft className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" aria-hidden="true" />
+  <IconChevronLeft className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" aria-hidden="true" />
 );
 
 export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbProps) {
@@ -33,7 +33,7 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
 
     return [
       items[0],
-      { label: "...", href: undefined, icon: <MoreHorizontal className="h-4 w-4" /> },
+      { label: "...", href: undefined, icon: <IconMoreHorizontal className="h-4 w-4" /> },
       items[items.length - 1],
     ];
   }, [items, shouldCollapse]);
@@ -56,7 +56,7 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
           return (
             <li
               key={`${item.label}-${index}`}
-              className="flex items-center gap-2"
+              className="flex min-w-0 items-center gap-2"
               itemProp={isEllipsis ? undefined : "itemListElement"}
               itemScope={isEllipsis ? undefined : true}
               itemType={isEllipsis ? undefined : "https://schema.org/ListItem"}
@@ -69,22 +69,25 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
                 </span>
               ) : isLast ? (
                 <span
-                  className="flex items-center gap-1.5 font-semibold text-foreground"
+                  className="flex min-w-0 max-w-[250px] sm:max-w-[min(100%,420px)] md:max-w-[480px] items-center gap-1.5 font-semibold text-foreground"
                   aria-current="page"
                   itemProp="name"
                 >
                   {item.icon}
-                  <span className="truncate max-w-[200px] sm:max-w-[300px]">{item.label}</span>
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
                 </span>
               ) : (
                 <>
                   <Link
                     href={item.href!}
-                    className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex min-w-0 max-w-[min(100%,280px)] items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground md:max-w-none"
                     itemProp="item"
                   >
                     {item.icon}
-                    <span itemProp="name" className="hover:underline">
+                    <span
+                      itemProp="name"
+                      className="min-w-0 flex-1 truncate hover:underline md:max-w-none"
+                    >
                       {item.label}
                     </span>
                   </Link>
@@ -100,5 +103,5 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
 }
 
 export function BreadcrumbHome() {
-  return <Home className="h-4 w-4" aria-label="الرئيسية" />;
+  return <IconHome className="h-4 w-4" aria-label="الرئيسية" />;
 }

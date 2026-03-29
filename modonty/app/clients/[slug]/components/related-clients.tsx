@@ -1,8 +1,8 @@
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Building2 } from "lucide-react";
+import { IconClients } from "@/lib/icons";
 
 interface RelatedClient {
   id: string;
@@ -17,15 +17,16 @@ interface RelatedClient {
 
 interface RelatedClientsProps {
   clients: RelatedClient[];
+  clientId?: string;
 }
 
-export function RelatedClients({ clients }: RelatedClientsProps) {
+export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
   if (clients.length === 0) return null;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="عملاء مشابهون" icon={Building2} />
+        <CardTitleWithIcon title="عملاء مشابهون" icon={IconClients} />
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
@@ -36,17 +37,21 @@ export function RelatedClients({ clients }: RelatedClientsProps) {
               .join("")
               .slice(0, 2)
               .toUpperCase();
+            const href = `/clients/${encodeURIComponent(client.slug)}`;
 
             return (
-              <Link
+              <CtaTrackedLink
                 key={client.id}
-                href={`/clients/${encodeURIComponent(client.slug)}`}
+                href={href}
+                label="Visit client from related"
+                type="LINK"
+                clientId={clientId}
                 className="group"
               >
                 <div className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-border hover:border-primary/50 hover:bg-accent/50 transition-all duration-300">
                   <Avatar className="h-9 w-9 flex-shrink-0">
                     <AvatarImage src={client.logoMedia?.url || undefined} alt={client.name} />
-                    <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
+                    <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0 flex items-center gap-2">
                     <h3 className="font-medium text-sm group-hover:text-primary transition-colors truncate">
@@ -57,7 +62,7 @@ export function RelatedClients({ clients }: RelatedClientsProps) {
                     </span>
                   </div>
                 </div>
-              </Link>
+              </CtaTrackedLink>
             );
           })}
         </div>

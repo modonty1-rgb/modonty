@@ -1,7 +1,7 @@
 import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileQuestion, Home, FolderOpen, Building2 } from "lucide-react";
+import { IconFileQuestion, IconHome, IconFolder, IconClients } from "@/lib/icons";
 
 export default function GlobalNotFound() {
   return (
@@ -9,7 +9,7 @@ export default function GlobalNotFound() {
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <FileQuestion className="h-16 w-16 text-muted-foreground" />
+              <IconFileQuestion className="h-16 w-16 text-muted-foreground" />
             </div>
             <CardTitle className="text-3xl">الصفحة غير موجودة</CardTitle>
           </CardHeader>
@@ -23,19 +23,19 @@ export default function GlobalNotFound() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link href="/">
                 <Button variant="default" className="gap-2">
-                  <Home className="h-4 w-4" />
+                  <IconHome className="h-4 w-4" />
                   الصفحة الرئيسية
                 </Button>
               </Link>
               <Link href="/categories">
                 <Button variant="outline" className="gap-2">
-                  <FolderOpen className="h-4 w-4" />
+                  <IconFolder className="h-4 w-4" />
                   الفئات
                 </Button>
               </Link>
               <Link href="/clients">
                 <Button variant="ghost" className="gap-2">
-                  <Building2 className="h-4 w-4" />
+                  <IconClients className="h-4 w-4" />
                   العملاء
                 </Button>
               </Link>

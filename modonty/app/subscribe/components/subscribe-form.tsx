@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Bell, CheckCircle2 } from "lucide-react";
+import { IconLoading, IconBell, IconCheckCircle } from "@/lib/icons";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
@@ -51,7 +51,7 @@ export function SubscribeForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bell className="h-5 w-5" />
+          <IconBell className="h-5 w-5" />
           اشترك في النشرة الإخبارية
         </CardTitle>
         <CardDescription>
@@ -61,7 +61,7 @@ export function SubscribeForm() {
       <CardContent>
         {success ? (
           <div className="flex flex-col items-center gap-3 py-4">
-            <CheckCircle2 className="h-12 w-12 text-green-600" />
+            <IconCheckCircle className="h-12 w-12 text-green-600" />
             <p className="text-center text-muted-foreground">
               شكراً لك! تم الاشتراك بنجاح. تحقق من بريدك الإلكتروني لتأكيد الاشتراك.
             </p>
@@ -90,7 +90,7 @@ export function SubscribeForm() {
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <IconLoading className="mr-2 h-4 w-4 animate-spin" />
                   جاري الاشتراك...
                 </>
               ) : (

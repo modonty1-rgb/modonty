@@ -8,12 +8,11 @@ import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  HelpCircle,
-  LayoutList,
-} from "lucide-react";
+  IconLike,
+  IconComment,
+  IconHelp,
+  IconArticleList,
+} from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { fetchMoreFromAuthor } from "../actions/article-lazy-actions";
 
@@ -94,7 +93,7 @@ export function MoreFromAuthor({ authorId, articleId, authorName }: MoreFromAuth
     <ArticleSectionCollapsible
       title={`المزيد من ${authorName}`}
       headingId="more-from-author-heading"
-      icon={LayoutList}
+      icon={IconArticleList}
       open={open}
       onOpenChange={setOpen}
     >
@@ -121,19 +120,19 @@ export function MoreFromAuthor({ authorId, articleId, authorName }: MoreFromAuth
                   <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mt-2 flex-wrap">
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="flex items-center gap-1" aria-label="الإعجابات">
-                        <ThumbsUp className="h-3.5 w-3.5 shrink-0" />
+                        <IconLike className="h-3.5 w-3.5 shrink-0" />
                         <span className="tabular-nums">{article.likesCount.toLocaleString("ar-SA")}</span>
                       </span>
-                      <span className="flex items-center gap-1" aria-label="عدم الإعجاب">
-                        <ThumbsDown className="h-3.5 w-3.5 shrink-0" />
+                      <span className="flex items-center gap-1 hidden" aria-label="عدم الإعجاب" aria-hidden>
+                        <IconLike className="h-3.5 w-3.5 shrink-0" />
                         <span className="tabular-nums">{article.dislikesCount.toLocaleString("ar-SA")}</span>
                       </span>
                       <span className="flex items-center gap-1" aria-label="التعليقات">
-                        <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+                        <IconComment className="h-3.5 w-3.5 shrink-0" />
                         <span className="tabular-nums">{article.commentsCount.toLocaleString("ar-SA")}</span>
                       </span>
                       <span className="flex items-center gap-1" aria-label="الأسئلة">
-                        <HelpCircle className="h-3.5 w-3.5 shrink-0" />
+                        <IconHelp className="h-3.5 w-3.5 shrink-0" />
                         <span className="tabular-nums">{article.questionsCount.toLocaleString("ar-SA")}</span>
                       </span>
                     </div>

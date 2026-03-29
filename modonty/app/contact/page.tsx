@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { generateMetadataFromSEO, generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "./components/contact-form";
+import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = generateMetadataFromSEO({
   title: "اتصل بنا",
@@ -15,7 +16,10 @@ function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const session = await auth();
+  const defaultName = session?.user?.name ?? null;
+  const defaultEmail = session?.user?.email ?? null;
   const structuredData = generateStructuredData({
     type: "ContactPage",
     name: "اتصل بنا - مودونتي",
@@ -40,7 +44,7 @@ export default function ContactPage() {
         <p className="text-muted-foreground mb-8">
           نرحب بأسئلتك وملاحظاتك. يرجى ملء النموذج أدناه وسنقوم بالرد عليك في أقرب وقت ممكن.
         </p>
-        <ContactForm />
+        <ContactForm defaultName={defaultName} defaultEmail={defaultEmail} />
       </div>
     </>
   );

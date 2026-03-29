@@ -3,7 +3,7 @@ import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { HelpCircle, MessageCircleQuestion, Mail } from "lucide-react";
+import { IconHelpCircle, IconFaqQuestion, IconEmail } from "@/lib/icons";
 
 export const metadata: Metadata = generateMetadataFromSEO({
   title: "مركز المساعدة",
@@ -32,7 +32,7 @@ export default function HelpPage() {
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <MessageCircleQuestion className="h-5 w-5" />
+                <IconFaqQuestion className="h-5 w-5" />
                 الأسئلة الشائعة
               </CardTitle>
               <CardDescription>
@@ -46,7 +46,7 @@ export default function HelpPage() {
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
+                <IconEmail className="h-5 w-5" />
                 إرسال ملاحظات
               </CardTitle>
               <CardDescription>
@@ -60,7 +60,7 @@ export default function HelpPage() {
           <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <HelpCircle className="h-5 w-5" />
+                <IconHelpCircle className="h-5 w-5" />
                 اتصل بنا
               </CardTitle>
               <CardDescription>

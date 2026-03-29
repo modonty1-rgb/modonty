@@ -1,10 +1,10 @@
 import Link from "@/components/link";
-import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { ComponentType } from "react";
 
 interface NavLinkProps {
   href: string;
-  icon?: LucideIcon;
+  icon?: ComponentType<{ className?: string }>;
   label: string;
   onClick?: () => void;
   className?: string;
@@ -17,8 +17,10 @@ export function NavLink({ href, icon: Icon, label, onClick, className, active }:
       href={href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 transition-colors",
-        active ? "text-primary" : "text-muted-foreground hover:text-primary",
+        "flex items-center gap-3 transition-colors border-b-2",
+        active
+          ? "text-primary border-primary transition-colors duration-150"
+          : "text-muted-foreground hover:text-primary border-transparent transition-colors duration-150",
         className
       )}
     >

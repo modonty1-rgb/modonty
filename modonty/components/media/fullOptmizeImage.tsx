@@ -10,7 +10,7 @@
  * ✅ LCP Optimization - Proper preload & fetchPriority handling
  * ✅ Responsive by Default - All device sizes supported
  * ✅ Production Battle-Tested - Error handling & validation
- * ✅ Next.js 16 Compliant - Uses 'preload' instead of deprecated 'priority'
+ * ✅ Next.js 16 Compliant - Uses `preload` on next/image
  * ✅ Security Hardened - Follows latest Next.js security guidelines
  * ═══════════════════════════════════════════════════════════════════════════
  */
@@ -63,7 +63,7 @@ interface BaseOptimizedImageProps {
   // ────────────────────────────────────────────────────────────────────────
   
   /**
-   * 🆕 NEW IN NEXT.JS 16: Replaces deprecated 'priority' prop
+   * 🆕 NEW IN NEXT.JS 16: Use `preload` on Image
    * Preloads the image in <head> for LCP optimization
    * 
    * ⚡ USE FOR: Above-the-fold hero images, LCP candidates
@@ -83,7 +83,7 @@ interface BaseOptimizedImageProps {
   loading?: 'lazy' | 'eager';
   
   /**
-   * Browser fetch priority hint
+   * Browser fetchPriority attribute
    * - 'high': Critical resources (LCP images)
    * - 'low': Non-critical resources
    * - 'auto': Let browser decide (default)
@@ -250,7 +250,7 @@ type OptimizedImageProps = BaseOptimizedImageProps & (
  * - q_auto: Auto-optimize quality
  * - c_fill: Smart crop to dimensions
  * - g_auto: Auto-detect focal point
- * - w_1200: Set max width for high-priority images (LCP)
+ * - w_1200: Set max width for LCP / preload images
  * 
  * @param url - Cloudinary image URL
  * @param isHighPriority - If true, applies LCP optimizations
@@ -288,7 +288,7 @@ export function optimizeCloudinaryUrl(
     // Base transformations for all images
     const baseTransforms = 'f_auto,q_auto,c_fill,g_auto';
     
-    // High-priority images (LCP) get larger initial size
+    // Preload / LCP images get larger initial size
     const transforms = isHighPriority
       ? `${baseTransforms},w_1200,d_article-placeholder-default`
       : `${baseTransforms},d_article-placeholder-default`;

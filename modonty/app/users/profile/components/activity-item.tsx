@@ -2,7 +2,7 @@
 
 import Link from "@/components/link";
 import { formatRelativeTime } from "@/lib/utils";
-import { MessageCircle, ThumbsUp, Bookmark, Users } from "lucide-react";
+import { IconComment, IconLike, IconSaved, IconUsers } from "@/lib/icons";
 
 interface ActivityItemProps {
   type: "comment" | "like_comment" | "favorite_article" | "follow_client";
@@ -13,10 +13,10 @@ interface ActivityItemProps {
 
 export function ActivityItem({ type, content, link, timestamp }: ActivityItemProps) {
   const icons = {
-    comment: <MessageCircle className="h-5 w-5 text-blue-500" />,
-    like_comment: <ThumbsUp className="h-5 w-5 text-green-500" />,
-    favorite_article: <Bookmark className="h-5 w-5 text-yellow-500" />,
-    follow_client: <Users className="h-5 w-5 text-purple-500" />,
+    comment: <IconComment className="h-5 w-5 text-blue-500" />,
+    like_comment: <IconLike className="h-5 w-5 text-green-500" />,
+    favorite_article: <IconSaved className="h-5 w-5 text-yellow-500" />,
+    follow_client: <IconUsers className="h-5 w-5 text-purple-500" />,
   };
 
   const icon = icons[type];

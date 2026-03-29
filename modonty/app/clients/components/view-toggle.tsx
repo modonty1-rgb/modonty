@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, List } from "lucide-react";
+import { IconGrid, IconList } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 
 export type ViewMode = 'grid' | 'list';
@@ -20,7 +20,7 @@ export function ViewToggle({ value, onChange }: ViewToggleProps) {
         onClick={() => onChange('grid')}
         aria-label="عرض شبكي"
       >
-        <LayoutGrid className="h-4 w-4" />
+        <IconGrid className="h-4 w-4" />
       </Button>
       <Button
         variant={value === 'list' ? 'secondary' : 'ghost'}
@@ -29,7 +29,7 @@ export function ViewToggle({ value, onChange }: ViewToggleProps) {
         onClick={() => onChange('list')}
         aria-label="عرض قائمة"
       >
-        <List className="h-4 w-4" />
+        <IconList className="h-4 w-4" />
       </Button>
     </div>
   );

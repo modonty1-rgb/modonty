@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { FileText, ArrowRight } from "lucide-react";
+import { IconArticle, IconBack } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -13,8 +13,8 @@ export function CategoryEmptyState({ categoryName, searchTerm }: CategoryEmptySt
     <Card className="border-dashed">
       <CardContent className="py-16 text-center">
         <div className="flex justify-center mb-4">
-          <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
-            <FileText className="h-10 w-10 text-muted-foreground" />
+          <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+            <IconArticle className="h-12 w-12" />
           </div>
         </div>
         
@@ -35,7 +35,7 @@ export function CategoryEmptyState({ categoryName, searchTerm }: CategoryEmptySt
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/categories">
             <Button variant="outline" className="gap-2">
-              <ArrowRight className="h-4 w-4" />
+              <IconBack className="h-4 w-4" />
               تصفح جميع الفئات
             </Button>
           </Link>

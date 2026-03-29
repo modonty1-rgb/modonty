@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bookmark } from "lucide-react";
+import { IconSaved } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -139,7 +139,7 @@ export default function FavoritesPage() {
               <div className="text-center py-8 text-destructive">{error}</div>
             ) : favorites.length === 0 ? (
               <EmptyState
-                icon={Bookmark}
+                icon={IconSaved}
                 title="لا توجد مقالات محفوظة"
                 description="لم تقم بحفظ أي مقالات بعد. ابدأ باستكشاف المقالات واحفظ ما تريد قراءته لاحقاً!"
                 actionLabel="استكشف المقالات"

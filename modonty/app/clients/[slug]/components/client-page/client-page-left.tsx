@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { ClientAbout } from "../client-about";
 import { ClientContact } from "../client-contact";
-import { Briefcase, BookOpen, Building2, Calendar, Users as UsersIcon } from "lucide-react";
+import { IconBriefcase, IconRead, IconClients, IconCalendar, IconUsers } from "@/lib/icons";
 import type { ClientPageClient } from "./types";
 
 interface ClientPageLeftProps {
@@ -15,7 +15,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
       {client.businessBrief && (
         <Card>
           <CardHeader>
-            <CardTitleWithIcon title="ملخص الأعمال" icon={Briefcase} />
+            <CardTitleWithIcon title="ملخص الأعمال" icon={IconBriefcase} />
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed text-sm">
@@ -28,7 +28,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
       {(client.description || client.seoDescription) && (
         <Card>
           <CardHeader>
-            <CardTitleWithIcon title={`نبذة عن ${client.name}`} icon={BookOpen} />
+            <CardTitleWithIcon title={`نبذة عن ${client.name}`} icon={IconRead} />
           </CardHeader>
           <CardContent>
             {client.slogan && (
@@ -45,12 +45,12 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
 
       <Card>
         <CardHeader>
-          <CardTitleWithIcon title="معلومات الشركة" icon={Building2} />
+          <CardTitleWithIcon title="معلومات الشركة" icon={IconClients} />
         </CardHeader>
         <CardContent className="space-y-3">
           {client.legalName && client.legalName !== client.name && (
             <div className="flex items-start gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconClients className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">الاسم القانوني</p>
                 <p className="text-sm font-medium">{client.legalName}</p>
@@ -59,7 +59,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
           )}
           {client.alternateName && (
             <div className="flex items-start gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconClients className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">الاسم التجاري / البديل</p>
                 <p className="text-sm font-medium">{client.alternateName}</p>
@@ -68,7 +68,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
           )}
           {client.industry && (
             <div className="flex items-start gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconClients className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">الصناعة</p>
                 <p className="text-sm font-medium">{client.industry.name}</p>
@@ -77,7 +77,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
           )}
           {client.foundingDate && (
             <div className="flex items-start gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconCalendar className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">تاريخ التأسيس</p>
                 <p className="text-sm font-medium">
@@ -92,7 +92,7 @@ export function ClientPageLeft({ client }: ClientPageLeftProps) {
           )}
           {client.numberOfEmployees && (
             <div className="flex items-start gap-2">
-              <UsersIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <IconUsers className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">حجم الشركة</p>
                 <p className="text-sm font-medium">{client.numberOfEmployees} موظف</p>

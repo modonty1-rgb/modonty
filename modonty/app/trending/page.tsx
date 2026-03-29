@@ -76,12 +76,32 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
         />
 
         <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-          <h1 className="text-3xl font-bold mb-2">المقالات الرائجة</h1>
-          <p className="text-muted-foreground mb-4">
-            أكثر المقالات قراءة وتفاعلاً خلال {getPeriodText(days)}
-          </p>
+          <div className="relative -mx-4 mb-6 overflow-hidden bg-gradient-to-br from-[#0e065a] to-primary px-4 pb-8 pt-6">
+            <div
+              className="pointer-events-none absolute bottom-4 left-8 flex items-end gap-1 opacity-30"
+              aria-hidden
+            >
+              <span className="h-4 w-1.5 rounded-sm bg-white" />
+              <span className="h-6 w-1.5 rounded-sm bg-white" />
+              <span className="h-3 w-1.5 rounded-sm bg-white" />
+              <span className="h-8 w-1.5 rounded-sm bg-accent" />
+              <span className="h-5 w-1.5 rounded-sm bg-white" />
+            </div>
+            <div className="relative z-10">
+              <h1 className="mb-2 text-3xl font-bold text-white">
+                المقالات الرائجة
+              </h1>
+              <p className="mb-4 text-white/70">
+                أكثر المقالات قراءة وتفاعلاً خلال {getPeriodText(days)}
+              </p>
 
-          <TimePeriodFilter currentPeriod={days} />
+              <div
+                className="[&>div]:mb-0 [&_svg]:text-white/70 [&_div.flex]:border-white/20 [&_button.bg-primary]:!bg-white/20 [&_button.bg-primary]:!text-white [&_button.bg-primary:hover]:!bg-white/30 [&_button:not(.bg-primary)]:!bg-transparent [&_button:not(.bg-primary)]:!text-white/60 [&_button:not(.bg-primary):hover]:!bg-white/10 [&_button:not(.bg-primary):hover]:!text-white"
+              >
+                <TimePeriodFilter currentPeriod={days} />
+              </div>
+            </div>
+          </div>
 
           {/* Server-rendered trending articles */}
           <TrendingArticles articles={trending} showTitle={false} />

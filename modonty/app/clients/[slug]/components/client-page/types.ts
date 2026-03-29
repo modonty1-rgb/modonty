@@ -3,6 +3,7 @@
  * The page passes the full client from getClientPageData.
  */
 export interface ClientPageClient {
+  id: string;
   name: string;
   slug: string;
   businessBrief?: string | null;

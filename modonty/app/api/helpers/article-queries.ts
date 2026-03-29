@@ -71,7 +71,15 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
     featured,
     search,
     status = ArticleStatus.PUBLISHED,
+    sortBy = "newest",
   } = filters;
+
+  const orderBy =
+    sortBy === "oldest"
+      ? [{ featured: "desc" as const }, { datePublished: "asc" as const }]
+      : sortBy === "title"
+        ? [{ title: "asc" as const }]
+        : [{ featured: "desc" as const }, { datePublished: "desc" as const }];
 
   const where: Prisma.ArticleWhereInput = {
     status,
@@ -98,6 +106,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
           OR: [
             { title: { contains: search.trim(), mode: "insensitive" } },
             { excerpt: { contains: search.trim(), mode: "insensitive" } },
+            { content: { contains: search.trim(), mode: "insensitive" } },
           ],
         },
       ],
@@ -152,10 +161,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
           },
         },
       },
-      orderBy: [
-        { featured: "desc" },
-        { datePublished: "desc" },
-      ],
+      orderBy,
       skip: (page - 1) * limit,
       take: limit,
     }),

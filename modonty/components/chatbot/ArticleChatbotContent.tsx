@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles } from "lucide-react";
+import { IconSend, IconAi } from "@/lib/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { getOptimizedCharacterUrl, getOptimizedThumbnailUrl } from "@/lib/image-utils";
@@ -183,7 +183,7 @@ export function ArticleChatbotContent({
             <Avatar className="h-14 w-14 mb-5 ring-2 ring-primary/10">
               <AvatarImage src={userImage ?? undefined} alt={userName ?? ""} />
               <AvatarFallback className="bg-gradient-to-br from-primary/15 to-primary/5">
-                <Sparkles className="h-7 w-7 text-primary" strokeWidth={1.5} />
+                <IconAi className="h-7 w-7 text-primary" strokeWidth={1.5} />
               </AvatarFallback>
             </Avatar>
             <h3 className="text-lg font-medium text-foreground mb-1">
@@ -236,10 +236,11 @@ export function ArticleChatbotContent({
                                 alt={t.socialImageAlt ?? t.categoryName}
                                 width={36}
                                 height={36}
+                                sizes="36px"
                                 className="h-full w-full object-cover"
                               />
                             ) : (
-                              <Sparkles className="h-4 w-4 text-primary" />
+                              <IconAi className="h-4 w-4 text-primary" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -262,7 +263,7 @@ export function ArticleChatbotContent({
                 <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
                   <AvatarImage src={getOptimizedCharacterUrl(64)} alt="مدونتي الذكية" />
                   <AvatarFallback className="bg-primary/10">
-                    <Sparkles className="h-4 w-4 text-primary" />
+                    <IconAi className="h-4 w-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
               )}
@@ -307,7 +308,7 @@ export function ArticleChatbotContent({
             <Avatar className="h-8 w-8 shrink-0 ring-1 ring-primary/10">
               <AvatarImage src={getOptimizedCharacterUrl(64)} alt="مدونتي الذكية" />
               <AvatarFallback className="bg-primary/10">
-                <Sparkles className="h-4 w-4 text-primary" />
+                <IconAi className="h-4 w-4 text-primary" />
               </AvatarFallback>
             </Avatar>
             <div className="rounded-lg bg-muted p-4 inline-flex">
@@ -381,7 +382,7 @@ export function ArticleChatbotContent({
             aria-label="رسالة المحادثة"
           />
           <Button type="submit" size="icon" disabled={loading || !input.trim()} aria-label="إرسال">
-            <Send className="h-4 w-4" />
+            <IconSend className="h-4 w-4" />
           </Button>
         </form>
       )}

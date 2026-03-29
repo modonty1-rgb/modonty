@@ -12,7 +12,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Reply, ThumbsUp, ThumbsDown, User, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  IconReply,
+  IconLike,
+  IconUser,
+  IconError,
+  IconChevronDown,
+  IconChevronUp,
+} from "@/lib/icons";
 import { CommentForm } from "../comment-form";
 import { useRouter } from "next/navigation";
 import { submitComment, submitReply, likeComment, dislikeComment, approveComment, approveAllCommentsForArticle } from "../../actions/comment-actions";
@@ -243,7 +250,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
         {/* Reply indicator */}
         {comment.replyingTo && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-            <Reply className="h-3 w-3" />
+            <IconReply className="h-3 w-3" />
             <span>Replying to</span>
             <span className="font-medium text-foreground">
               @{comment.replyingTo.authorName}
@@ -257,11 +264,13 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
             {comment.author?.image ? (
               <>
                 <AvatarImage src={comment.author.image} alt={comment.author.name ?? undefined} />
-                <AvatarFallback>{comment.author.name?.charAt(0) ?? <User className="h-4 w-4" />}</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                  {comment.author.name?.charAt(0) ?? <IconUser className="h-4 w-4" />}
+                </AvatarFallback>
               </>
             ) : (
-              <AvatarFallback>
-                {comment.author?.name ? comment.author.name.charAt(0) : <User className="h-4 w-4" />}
+              <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                {comment.author?.name ? comment.author.name.charAt(0) : <IconUser className="h-4 w-4" />}
               </AvatarFallback>
             )}
           </Avatar>
@@ -274,7 +283,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
               </span>
               {comment.isOrphaned && (
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                  <AlertCircle className="h-3 w-3" />
+                  <IconError className="h-3 w-3" />
                   Orphaned
                 </span>
               )}
@@ -295,7 +304,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   onClick={() => setShowReplyForm(!showReplyForm)}
                   className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
                 >
-                  <Reply className="h-3 w-3" />
+                  <IconReply className="h-3 w-3" />
                   رد
                 </button>
               )}
@@ -309,18 +318,21 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                       userLiked ? "text-primary" : "text-muted-foreground"
                     )}
                   >
-                    <ThumbsUp className={cn("h-3 w-3", userLiked && "fill-current")} />
+                    <IconLike className={cn("h-3 w-3", userLiked && "fill-current")} />
                     {likesCount > 0 && <span>{likesCount}</span>}
                   </button>
                   
                   <button
+                    type="button"
                     onClick={() => handleDislike(comment.id)}
                     className={cn(
+                      "hidden",
                       "text-xs hover:text-foreground flex items-center gap-1 transition-colors",
                       userDisliked ? "text-destructive" : "text-muted-foreground"
                     )}
+                    aria-hidden
                   >
-                    <ThumbsDown className={cn("h-3 w-3", userDisliked && "fill-current")} />
+                    <IconLike className={cn("h-3 w-3", userDisliked && "fill-current")} />
                     {dislikesCount > 0 && <span>{dislikesCount}</span>}
                   </button>
                 </div>
@@ -388,13 +400,13 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                           {author.image ? (
                             <>
                               <AvatarImage src={author.image} alt={author.name ?? undefined} />
-                              <AvatarFallback className="text-[10px]">
-                                {author.name?.charAt(0) ?? <User className="h-3 w-3" />}
+                              <AvatarFallback className="text-[10px] bg-primary text-primary-foreground font-semibold">
+                                {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                               </AvatarFallback>
                             </>
                           ) : (
-                            <AvatarFallback className="text-[10px]">
-                              {author.name?.charAt(0) ?? <User className="h-3 w-3" />}
+                            <AvatarFallback className="text-[10px] bg-primary text-primary-foreground font-semibold">
+                              {author.name?.charAt(0) ?? <IconUser className="h-3 w-3" />}
                             </AvatarFallback>
                           )}
                         </Avatar>
@@ -403,7 +415,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   )}
                 </div>
                 <span className="shrink-0 text-muted-foreground" aria-hidden>
-                  {commentsOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  {commentsOpen ? <IconChevronUp className="h-5 w-5" /> : <IconChevronDown className="h-5 w-5" />}
                 </span>
               </button>
             </CollapsibleTrigger>

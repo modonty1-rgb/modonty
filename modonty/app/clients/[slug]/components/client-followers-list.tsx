@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
-import Link from "@/components/link";
+import { IconUsers } from "@/lib/icons";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 interface ClientFollowersListProps {
   clientSlug: string;
+  clientId?: string;
 }
 
 interface Follower {
@@ -19,7 +20,7 @@ interface Follower {
   followedAt: string;
 }
 
-export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
+export function ClientFollowersList({ clientSlug, clientId }: ClientFollowersListProps) {
   const [followers, setFollowers] = useState<Follower[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +62,7 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <IconUsers className="h-4 w-4" />
             المتابعون
           </CardTitle>
         </CardHeader>
@@ -79,7 +80,7 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <IconUsers className="h-4 w-4" />
             المتابعون
           </CardTitle>
         </CardHeader>
@@ -95,7 +96,7 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <IconUsers className="h-4 w-4" />
             المتابعون
           </CardTitle>
         </CardHeader>
@@ -113,7 +114,7 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <IconUsers className="h-4 w-4" />
             المتابعون
           </span>
           <span className="text-xs text-muted-foreground">
@@ -132,7 +133,7 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
                 {follower.image ? (
                   <AvatarImage src={follower.image} alt={follower.name} />
                 ) : (
-                  <AvatarFallback>
+                  <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">
                     {follower.name.charAt(0)}
                   </AvatarFallback>
                 )}
@@ -147,12 +148,15 @@ export function ClientFollowersList({ clientSlug }: ClientFollowersListProps) {
               </div>
             </div>
             {follower.userId && (
-              <Link
+              <CtaTrackedLink
                 href={`/users/profile/${follower.userId}`}
+                label="View follower profile"
+                type="LINK"
+                clientId={clientId}
                 className="text-xs text-primary hover:underline whitespace-nowrap"
               >
                 عرض الملف
-              </Link>
+              </CtaTrackedLink>
             )}
           </div>
         ))}

@@ -1,16 +1,17 @@
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
+import { IconArticle } from "@/lib/icons";
 import type { FeedPost } from "@/lib/types";
 
 interface ClientPageFeedProps {
   posts: FeedPost[];
   clientName: string;
+  clientId?: string;
   relatedClientsCount?: number;
 }
 
-export function ClientPageFeed({ posts, clientName, relatedClientsCount = 0 }: ClientPageFeedProps) {
+export function ClientPageFeed({ posts, clientName, clientId, relatedClientsCount = 0 }: ClientPageFeedProps) {
   return (
     <div className="w-full min-w-0 lg:max-w-[600px] order-1 lg:order-2 space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
       <section aria-labelledby="client-articles-heading" className="space-y-4">
@@ -31,8 +32,8 @@ export function ClientPageFeed({ posts, clientName, relatedClientsCount = 0 }: C
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-            <div className="rounded-full bg-muted p-4 mb-4">
-              <FileText className="h-10 w-10 text-muted-foreground" />
+            <div className="rounded-full bg-muted p-4 mb-4 text-muted-foreground">
+              <IconArticle className="h-12 w-12" />
             </div>
             <h3 className="font-semibold text-lg text-foreground mb-2">
               لا توجد مقالات حتى الآن
@@ -42,22 +43,32 @@ export function ClientPageFeed({ posts, clientName, relatedClientsCount = 0 }: C
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               {relatedClientsCount > 0 && (
-                <Link href="#client-related-heading">
+                <CtaTrackedLink
+                  href="#client-related-heading"
+                  label="Empty state – تصفح العملاء المشابهين"
+                  type="LINK"
+                  clientId={clientId}
+                >
                   <Button variant="outline" size="sm">
                     تصفح العملاء المشابهين
                   </Button>
-                </Link>
+                </CtaTrackedLink>
               )}
-              <Link href="/clients">
+              <CtaTrackedLink
+                href="/clients"
+                label="Empty state – تصفح العملاء"
+                type="LINK"
+                clientId={clientId}
+              >
                 <Button variant="outline" size="sm">
                   تصفح العملاء
                 </Button>
-              </Link>
-              <Link href="/">
+              </CtaTrackedLink>
+              <CtaTrackedLink href="/" label="Empty state – الرئيسية" type="LINK" clientId={clientId}>
                 <Button variant="ghost" size="sm">
                   الرئيسية
                 </Button>
-              </Link>
+              </CtaTrackedLink>
             </div>
           </div>
         )}

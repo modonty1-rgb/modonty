@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown } from "lucide-react";
+import { IconChevronDown } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface AccordionContextValue {
@@ -77,7 +77,7 @@ function AccordionTrigger({ className, children }: AccordionTriggerProps) {
       aria-expanded={isOpen}
     >
       {children}
-      <ChevronDown
+      <IconChevronDown
         className={cn(
           "h-4 w-4 shrink-0 transition-transform duration-200",
           isOpen && "rotate-180"

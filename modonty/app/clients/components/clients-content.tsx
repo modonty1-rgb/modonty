@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { IconFilters } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -88,7 +88,7 @@ export function ClientsContent({ initialClients, industries }: ClientsContentPro
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="md:hidden">
-                  <SlidersHorizontal className="h-4 w-4" />
+                  <IconFilters className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">

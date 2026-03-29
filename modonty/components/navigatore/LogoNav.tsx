@@ -10,13 +10,19 @@ export function LogoNav({ className }: LogoNavProps) {
   const logoSrc = getOptimizedLogoUrl();
 
   return (
-    <Link href="/" className="inline-block shrink-0">
+    <Link
+      href="/"
+      className="inline-block shrink-0"
+      aria-label="مودونتي - الصفحة الرئيسية"
+    >
       <Image
         src={logoSrc}
         alt="مودونتي"
         width={120}
         height={40}
-        priority
+        loading="eager"
+        fetchPriority="high"
+        sizes="120px"
         className={`object-contain h-10 w-[120px] min-h-10 min-w-[120px] ${className ?? ""}`}
       />
     </Link>

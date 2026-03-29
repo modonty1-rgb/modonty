@@ -15,7 +15,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         ref={ref}
-        style={{ caretColor: 'transparent', ...style }}
+        style={style}
         suppressHydrationWarning
         {...props}
       />

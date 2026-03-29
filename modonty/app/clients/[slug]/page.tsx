@@ -124,7 +124,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
           <ClientPageLeft client={client} />
-          <ClientPageFeed posts={posts} clientName={client.name} relatedClientsCount={relatedClients.length} />
+          <ClientPageFeed posts={posts} clientName={client.name} clientId={client.id} relatedClientsCount={relatedClients.length} />
           <ClientPageRight
           client={client}
           relatedClients={relatedClients}

@@ -4,7 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 import { loadMoreArticles } from "@/app/actions/article-actions";
-import { Loader2, AlertCircle, RefreshCw, Search, Tag, Rss } from "lucide-react";
+import {
+  IconLoading,
+  IconError,
+  IconRefresh,
+  IconSearch,
+  IconCategory,
+  IconFeed,
+} from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/link";
 import type { FeedPost } from "@/lib/types";
@@ -106,6 +113,7 @@ export function InfiniteArticleList({
               key={post.id}
               post={post}
               index={initialStartIndex + index}
+              isLcp={initialStartIndex + index === 0}
               className="animate-in fade-in duration-300"
             />
           ))}
@@ -114,8 +122,8 @@ export function InfiniteArticleList({
         <div className="text-center py-16 px-4">
           <div className="max-w-md mx-auto space-y-6">
             <div className="flex justify-center">
-              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
-                <Search className="h-10 w-10 text-muted-foreground" />
+              <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                <IconSearch className="h-12 w-12" />
               </div>
             </div>
             <div className="space-y-2">
@@ -127,13 +135,13 @@ export function InfiniteArticleList({
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild variant="default" className="gap-2">
                 <Link href="/categories">
-                  <Tag className="h-4 w-4" />
+                  <IconCategory className="h-4 w-4" />
                   تصفح الفئات
                 </Link>
               </Button>
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/clients">
-                  <Rss className="h-4 w-4" />
+                  <IconFeed className="h-4 w-4" />
                   استكشف العملاء
                 </Link>
               </Button>
@@ -146,7 +154,7 @@ export function InfiniteArticleList({
         {loading && (
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <IconLoading className="h-5 w-5 animate-spin" />
               <span className="text-sm">
                 جاري تحميل المزيد... (شاهدت {totalSeen} مقالة)
               </span>
@@ -158,7 +166,7 @@ export function InfiniteArticleList({
         {error && (
           <div className="flex flex-col items-center gap-4 py-8 animate-in fade-in duration-300">
             <div className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
+              <IconError className="h-5 w-5" />
               <p className="font-medium">حدث خطأ في تحميل المقالات</p>
             </div>
             <Button
@@ -166,7 +174,7 @@ export function InfiniteArticleList({
               variant="outline"
               className="gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <IconRefresh className="h-4 w-4" />
               إعادة المحاولة
             </Button>
           </div>

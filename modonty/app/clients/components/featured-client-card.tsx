@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { FileText, Eye, Users, MapPin, CheckCircle2, Sparkles } from "lucide-react";
+import { IconArticle, IconViews, IconUsers, IconCheckCircle, IconAi } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatMetric } from "../helpers/format-metrics";
@@ -53,7 +53,7 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
                       "text-white border-0 shadow-lg"
                     )}
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
+                    <IconAi className="h-3.5 w-3.5" />
                     بريميوم
                   </Badge>
                 ) : (
@@ -62,7 +62,7 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
                       "gap-1.5 bg-emerald-500 text-white border-0 shadow-lg"
                     )}
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <IconCheckCircle className="h-3.5 w-3.5" />
                     موثق
                   </Badge>
                 )}
@@ -85,7 +85,7 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
                   </p>
                 )}
                 {props.industry && (
-                  <Badge variant="secondary" className="bg-white/10 text-white border-white/20 backdrop-blur-sm">
+                  <Badge variant="secondary" className="bg-white/10 dark:bg-card/10 text-white border-white/20 dark:border-border backdrop-blur-sm">
                     {props.industry.name}
                   </Badge>
                 )}
@@ -95,19 +95,19 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
             {/* Stats */}
             <div className="flex items-center gap-6 text-white/90">
               <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
+                <IconArticle className="h-4 w-4" />
                 <span className="text-sm font-medium">{formatMetric(props.articleCount)} مقالات</span>
               </div>
               
               <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4" />
+                <IconViews className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   {props.viewsCount === 0 ? 'لا توجد' : formatMetric(props.viewsCount)}
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
+                <IconUsers className="h-4 w-4" />
                 <span className="text-sm font-medium">{formatMetric(props.subscribersCount)}</span>
               </div>
             </div>

@@ -6,7 +6,14 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, Mail, Bookmark, Users, MessageCircle, ThumbsUp, ThumbsDown } from "lucide-react";
+import {
+  IconUser,
+  IconEmail,
+  IconSaved,
+  IconUsers,
+  IconComment,
+  IconLike,
+} from "@/lib/icons";
 import { ProfileTabs } from "./components/profile-tabs";
 import { ActivityFeed } from "./components/activity-feed";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -68,7 +75,7 @@ export default function ProfilePage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="-mt-16 min-h-screen bg-background">
         <div className="container mx-auto max-w-[1128px] px-4 py-8">
           <Card>
             <CardHeader>
@@ -77,7 +84,9 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
-                <Skeleton className="h-20 w-20 rounded-full" />
+                <div className="relative -mt-12 ms-6">
+                  <Skeleton className="h-20 w-20 rounded-full" />
+                </div>
                 <div className="flex-1">
                   <Skeleton className="h-6 w-48 mb-2" />
                   <Skeleton className="h-4 w-64" />
@@ -100,7 +109,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <>
+    <div className="-mt-16">
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -117,12 +126,14 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
             <div className="flex items-center gap-4 min-w-0">
-              <Avatar className="h-20 w-20 shrink-0">
-                <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
-                <AvatarFallback className="text-2xl">
-                  {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative -mt-12 ms-6">
+                <Avatar className="h-20 w-20 shrink-0">
+                  <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
+                  <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
+                    {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <div className="min-w-0 flex-1">
                 <h2 className="text-xl font-semibold truncate">{session.user.name || "مستخدم"}</h2>
                 <p className="text-muted-foreground truncate" title={session.user.email ?? undefined}>{session.user.email}</p>
@@ -131,7 +142,7 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3 p-4 border rounded-md">
-                <User className="h-5 w-5 text-muted-foreground" />
+                <IconUser className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">الاسم</p>
                   <p className="font-medium">{session.user.name || "غير محدد"}</p>
@@ -139,7 +150,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3 p-4 border rounded-md">
-                <Mail className="h-5 w-5 text-muted-foreground" />
+                <IconEmail className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">البريد الإلكتروني</p>
                   <p className="font-medium">{session.user.email || "غير محدد"}</p>
@@ -155,7 +166,7 @@ export default function ProfilePage() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-blue-500/10 p-3">
-                          <MessageCircle className="h-5 w-5 text-blue-500" />
+                          <IconComment className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">التعليقات</p>
@@ -175,7 +186,7 @@ export default function ProfilePage() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-green-500/10 p-3">
-                          <ThumbsUp className="h-5 w-5 text-green-500" />
+                          <IconLike className="h-5 w-5 text-green-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">الإعجابات</p>
@@ -195,7 +206,7 @@ export default function ProfilePage() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-blue-500/10 p-3">
-                          <ThumbsUp className="h-5 w-5 text-blue-500" />
+                          <IconLike className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">إعجابات المقالات</p>
@@ -210,12 +221,12 @@ export default function ProfilePage() {
                   </Card>
                 </Link>
 
-                <Link href="/users/profile/disliked">
+                <Link href="/users/profile/disliked" className="hidden">
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-red-500/10 p-3">
-                          <ThumbsDown className="h-5 w-5 text-red-500" />
+                          <IconLike className="h-5 w-5 text-red-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">عدم الإعجاب</p>
@@ -235,7 +246,7 @@ export default function ProfilePage() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-yellow-500/10 p-3">
-                          <Bookmark className="h-5 w-5 text-yellow-500" />
+                          <IconSaved className="h-5 w-5 text-yellow-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">المقالات المحفوظة</p>
@@ -255,7 +266,7 @@ export default function ProfilePage() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="rounded-full bg-purple-500/10 p-3">
-                          <Users className="h-5 w-5 text-purple-500" />
+                          <IconUsers className="h-5 w-5 text-purple-500" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">العملاء المتابعون</p>
@@ -282,6 +293,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

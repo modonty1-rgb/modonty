@@ -18,7 +18,7 @@ export default async function ClientFollowersPage({ params }: ClientFollowersPag
   const { client } = data;
 
   return (
-    <ClientFollowersList clientSlug={client.slug} />
+    <ClientFollowersList clientSlug={client.slug} clientId={client.id} />
   );
 }
 

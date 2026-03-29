@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { IconLoading } from '@/lib/icons';
 
 interface CommentFormProps {
   onSubmit: (content: string) => Promise<{ success: boolean; error?: string; message?: string }>;
@@ -156,7 +156,7 @@ export function CommentForm({
         >
           {isSubmitting ? (
             <>
-              <Loader2 className={cn("animate-spin", compact ? "h-3 w-3" : "h-4 w-4")} />
+              <IconLoading className={cn("animate-spin", compact ? "h-3 w-3" : "h-4 w-4")} />
               {compact ? "..." : "جاري الإرسال..."}
             </>
           ) : (

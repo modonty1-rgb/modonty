@@ -7,7 +7,7 @@ import { FAQAccordion } from "../components/faq-accordion";
 import { FAQSearch } from "../components/faq-search";
 import { getActiveFAQs } from "./actions/faq-actions";
 import Link from "@/components/link";
-import { ArrowRight, Mail, HelpCircle } from "lucide-react";
+import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { FAQPageContent } from "./components/faq-page-content";
 
 export const metadata: Metadata = generateMetadataFromSEO({
@@ -68,13 +68,13 @@ export default async function FAQPage() {
         <div className="flex flex-wrap gap-3 mb-6">
           <Button asChild variant="outline" size="sm">
             <Link href="/help">
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <IconArrowRight className="h-4 w-4 ml-2" />
               العودة إلى مركز المساعدة
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">
             <Link href="/contact">
-              <Mail className="h-4 w-4 ml-2" />
+              <IconEmail className="h-4 w-4 ml-2" />
               اتصل بنا
             </Link>
           </Button>
@@ -83,7 +83,7 @@ export default async function FAQPage() {
         {faqs.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
-              <HelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <IconHelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">
                 لا توجد أسئلة شائعة متاحة
               </h3>

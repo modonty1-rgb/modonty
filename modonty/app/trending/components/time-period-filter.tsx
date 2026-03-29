@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "lucide-react";
+import { IconCalendar } from "@/lib/icons";
 
 interface TimePeriodFilterProps {
   currentPeriod: number;
@@ -35,7 +35,7 @@ export function TimePeriodFilter({ currentPeriod }: TimePeriodFilterProps) {
 
   return (
     <div className="flex gap-2 items-center mb-6">
-      <Calendar className="h-4 w-4 text-muted-foreground" />
+      <IconCalendar className="h-4 w-4 text-muted-foreground" />
       <div className="flex border rounded-lg overflow-hidden">
         {periods.map((period) => (
           <Button

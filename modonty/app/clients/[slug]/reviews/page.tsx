@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { getClientReviewsBySlug } from "../helpers/client-reviews";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "@/components/link";
-import { MessageSquare } from "lucide-react";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { IconMessage } from "@/lib/icons";
 
 interface ClientReviewsPageProps {
   params: Promise<{ slug: string }>;
@@ -25,7 +25,7 @@ export default async function ClientReviewsPage({ params }: ClientReviewsPagePro
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
+            <IconMessage className="h-4 w-4" />
             التقييمات
           </CardTitle>
         </CardHeader>
@@ -42,7 +42,7 @@ export default async function ClientReviewsPage({ params }: ClientReviewsPagePro
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-4 w-4" />
+          <IconMessage className="h-4 w-4" />
           التقييمات
         </CardTitle>
       </CardHeader>
@@ -64,7 +64,7 @@ export default async function ClientReviewsPage({ params }: ClientReviewsPagePro
                 {review.author?.image ? (
                   <AvatarImage src={review.author.image} alt={review.author.name ?? "مراجع"} />
                 ) : (
-                  <AvatarFallback>{initials}</AvatarFallback>
+                  <AvatarFallback className="text-xs font-medium bg-primary text-primary-foreground">{initials}</AvatarFallback>
                 )}
               </Avatar>
               <div className="flex-1 min-w-0">
@@ -73,12 +73,16 @@ export default async function ClientReviewsPage({ params }: ClientReviewsPagePro
                     <span className="text-sm font-medium">
                       {review.author?.name || "مستخدم مجهول"}
                     </span>
-                    <Link
+                    <CtaTrackedLink
                       href={`/articles/${review.article.slug}`}
+                      label="View review article"
+                      type="LINK"
+                      clientId={client.id}
+                      articleId={review.article.id}
                       className="text-xs text-primary hover:underline"
                     >
                       على مقال: {review.article.title}
-                    </Link>
+                    </CtaTrackedLink>
                   </div>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-foreground">

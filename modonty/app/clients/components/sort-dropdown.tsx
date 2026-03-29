@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpDown } from "lucide-react";
+import { IconSort } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -38,7 +38,7 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <ArrowUpDown className="h-4 w-4" />
+          <IconSort className="h-4 w-4" />
           <span className="hidden md:inline">{selectedOption?.label || 'ترتيب'}</span>
         </Button>
       </DropdownMenuTrigger>

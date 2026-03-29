@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FormattedDate } from "@/components/date/FormattedDate";
@@ -12,7 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Building2, ArrowUpDown, Calendar, TrendingUp } from "lucide-react";
+import { IconClients, IconSort, IconCalendar, IconArticle } from "@/lib/icons";
+import { trackCtaClick } from "@/lib/cta-tracking";
 
 interface Article {
   id: string;
@@ -34,12 +35,25 @@ interface Article {
 interface ArticleListProps {
   articles: Article[];
   clientName: string;
+  clientId?: string;
 }
 
 type SortOption = "newest" | "oldest" | "title";
 
-export function ArticleList({ articles, clientName }: ArticleListProps) {
+export function ArticleList({ articles, clientName, clientId }: ArticleListProps) {
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+
+  const handleSort = (option: SortOption) => {
+    if (clientId) {
+      trackCtaClick({
+        type: "BUTTON",
+        label: `Article list – sort ${option}`,
+        targetUrl: "",
+        clientId,
+      });
+    }
+    setSortBy(option);
+  };
 
   const sortedArticles = useMemo(() => {
     const sorted = [...articles];
@@ -76,7 +90,7 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <IconClients className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-lg font-medium mb-2">لا توجد مقالات بعد</p>
           <p className="text-muted-foreground">لم يتم نشر أي مقالات من {clientName} حتى الآن.</p>
         </CardContent>
@@ -94,30 +108,30 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2">
-              <ArrowUpDown className="h-4 w-4" />
+              <IconSort className="h-4 w-4" />
               {getSortLabel(sortBy)}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => setSortBy("newest")}
+              onClick={() => handleSort("newest")}
               className="gap-2 cursor-pointer"
             >
-              <Calendar className="h-4 w-4" />
+              <IconCalendar className="h-4 w-4" />
               الأحدث أولاً
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setSortBy("oldest")}
+              onClick={() => handleSort("oldest")}
               className="gap-2 cursor-pointer"
             >
-              <Calendar className="h-4 w-4" />
+              <IconCalendar className="h-4 w-4" />
               الأقدم أولاً
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setSortBy("title")}
+              onClick={() => handleSort("title")}
               className="gap-2 cursor-pointer"
             >
-              <TrendingUp className="h-4 w-4" />
+              <IconArticle className="h-4 w-4" />
               الترتيب الأبجدي
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -127,7 +141,14 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
       {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedArticles.map((article) => (
-          <Link key={article.id} href={`/articles/${article.slug}`}>
+          <CtaTrackedLink
+            key={article.id}
+            href={`/articles/${article.slug}`}
+            label="Article list – article"
+            type="LINK"
+            clientId={clientId}
+            articleId={article.id}
+          >
             <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full">
               {article.featuredImage && (
                 <div className="aspect-video w-full overflow-hidden rounded-t-lg relative">
@@ -162,7 +183,7 @@ export function ArticleList({ articles, clientName }: ArticleListProps) {
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </CtaTrackedLink>
         ))}
       </div>
     </div>

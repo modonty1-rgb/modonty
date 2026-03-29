@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp } from "lucide-react";
+import { IconScrollTop } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 
 export function BackToTop() {
@@ -30,16 +30,18 @@ export function BackToTop() {
     });
   };
 
-  if (!isVisible) return null;
-
   return (
     <Button
       onClick={scrollToTop}
       size="icon"
-      className="fixed bottom-20 md:bottom-8 left-4 z-40 h-12 w-12 rounded-full shadow-lg animate-in fade-in slide-in-from-bottom-5 duration-300"
+      className={
+        isVisible
+          ? "fixed bottom-20 md:bottom-8 left-4 z-40 h-12 w-12 rounded-full shadow-lg transition-all duration-200 ease-out opacity-100 translate-y-0 pointer-events-auto"
+          : "fixed bottom-20 md:bottom-8 left-4 z-40 h-12 w-12 rounded-full shadow-lg transition-all duration-200 ease-out opacity-0 translate-y-2 pointer-events-none"
+      }
       aria-label="العودة للأعلى"
     >
-      <ArrowUp className="h-5 w-5" />
+      <IconScrollTop className="h-5 w-5" />
     </Button>
   );
 }

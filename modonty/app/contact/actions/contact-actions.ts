@@ -12,10 +12,34 @@ interface ContactMessageData {
   ipAddress?: string;
   userAgent?: string;
   referrer?: string | null;
+  clientId?: string | null;
+  userId?: string | null;
 }
 
 export async function submitContactMessage(data: ContactMessageData) {
   try {
+    const resolvedClientId = data.clientId?.trim() || null;
+    if (resolvedClientId) {
+      const client = await db.client.findUnique({
+        where: { id: resolvedClientId },
+        select: { id: true },
+      });
+      if (!client) {
+        return { success: false, error: "العميل غير موجود" };
+      }
+    }
+
+    const resolvedUserId = data.userId?.trim() || null;
+    if (resolvedUserId) {
+      const user = await db.user.findUnique({
+        where: { id: resolvedUserId },
+        select: { id: true },
+      });
+      if (!user) {
+        return { success: false, error: "المستخدم غير موجود" };
+      }
+    }
+
     await db.contactMessage.create({
       data: {
         name: data.name,
@@ -26,6 +50,8 @@ export async function submitContactMessage(data: ContactMessageData) {
         ipAddress: data.ipAddress,
         userAgent: data.userAgent,
         referrer: data.referrer,
+        ...(resolvedClientId && { clientId: resolvedClientId }),
+        ...(resolvedUserId && { userId: resolvedUserId }),
       },
     });
 

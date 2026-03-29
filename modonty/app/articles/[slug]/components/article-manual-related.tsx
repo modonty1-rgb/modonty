@@ -6,12 +6,11 @@ import { ArticleSectionCollapsible } from "./article-section-collapsible";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import {
-  ThumbsUp,
-  ThumbsDown,
-  MessageCircle,
-  HelpCircle,
-  Link2,
-} from "lucide-react";
+  IconLike,
+  IconComment,
+  IconHelp,
+  IconLink,
+} from "@/lib/icons";
 
 interface ArticleManualRelatedProps {
   articleId?: string;
@@ -50,7 +49,7 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
     <ArticleSectionCollapsible
       title="مقالات ذات صلة"
       headingId="manual-related-articles-heading"
-      icon={Link2}
+      icon={IconLink}
     >
       {relatedArticles.map(({ id, related }) => (
         <CtaTrackedLink
@@ -80,19 +79,19 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
               <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mt-2 flex-wrap">
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="flex items-center gap-1" aria-label="الإعجابات">
-                    <ThumbsUp className="h-3.5 w-3.5 shrink-0" />
+                    <IconLike className="h-3.5 w-3.5 shrink-0" />
                     <span className="tabular-nums">{related._count.likes.toLocaleString("ar-SA")}</span>
                   </span>
-                  <span className="flex items-center gap-1" aria-label="عدم الإعجاب">
-                    <ThumbsDown className="h-3.5 w-3.5 shrink-0" />
+                  <span className="flex items-center gap-1 hidden" aria-label="عدم الإعجاب" aria-hidden>
+                    <IconLike className="h-3.5 w-3.5 shrink-0" />
                     <span className="tabular-nums">{related._count.dislikes.toLocaleString("ar-SA")}</span>
                   </span>
                   <span className="flex items-center gap-1" aria-label="التعليقات">
-                    <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+                    <IconComment className="h-3.5 w-3.5 shrink-0" />
                     <span className="tabular-nums">{related._count.comments.toLocaleString("ar-SA")}</span>
                   </span>
                   <span className="flex items-center gap-1" aria-label="الأسئلة">
-                    <HelpCircle className="h-3.5 w-3.5 shrink-0" />
+                    <IconHelp className="h-3.5 w-3.5 shrink-0" />
                     <span className="tabular-nums">{related._count.faqs.toLocaleString("ar-SA")}</span>
                   </span>
                 </div>

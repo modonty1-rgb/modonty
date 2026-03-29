@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
+import { IconLogin } from "@/lib/icons";
 
 export function LoginButton() {
   return (
@@ -13,7 +13,7 @@ export function LoginButton() {
       className="h-10 w-10"
       aria-label="تسجيل الدخول"
     >
-      <LogIn className="h-4 w-4" />
+      <IconLogin className="h-4 w-4" />
     </Button>
   );
 }

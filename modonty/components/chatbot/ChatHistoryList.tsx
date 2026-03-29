@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "@/components/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import { History, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import {
+  IconHistory,
+  IconChevronDown,
+  IconChevronUp,
+  IconExternal,
+} from "@/lib/icons";
 
 type WebSource = { title: string; link: string };
 
@@ -90,7 +95,7 @@ export function ChatHistoryList() {
   if (items.length === 0) {
     return (
       <div dir="rtl" className="flex flex-col h-full items-center justify-center p-8 text-center">
-        <History className="h-12 w-12 text-muted-foreground mb-4" />
+        <IconHistory className="h-12 w-12 text-muted-foreground mb-4" />
         <p className="text-sm text-muted-foreground mb-1">لا توجد محادثات سابقة</p>
         <p className="text-xs text-muted-foreground">ابدأ محادثة جديدة من تبويب جديد</p>
       </div>
@@ -136,9 +141,9 @@ export function ChatHistoryList() {
                     {formatRelativeDate(item.createdAt)}
                   </span>
                   {isExpanded ? (
-                    <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <IconChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <IconChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
                   )}
                 </div>
               </button>
@@ -183,7 +188,7 @@ export function ChatHistoryList() {
                       className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <IconExternal className="h-3.5 w-3.5" />
                       {item.articleSlug ? "فتح المقال" : "فتح الموضوع"}
                     </Link>
                   )}

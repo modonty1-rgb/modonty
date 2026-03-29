@@ -51,7 +51,7 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
         className
       )}
     >
-      <div className="flex h-full flex-col space-y-4">
+      <div className="flex flex-col space-y-4">
         <AnalyticsCard stats={stats} />
         <CategoriesCard
           categories={categories}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
+import { IconSearch, IconClose } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 
 interface FAQSearchProps {
@@ -27,7 +27,7 @@ export function FAQSearch({ onSearchChange, resultCount, totalCount }: FAQSearch
   return (
     <div className="relative mb-6">
       <div className="relative">
-        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <IconSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
           placeholder="ابحث في الأسئلة الشائعة..."
@@ -44,7 +44,7 @@ export function FAQSearch({ onSearchChange, resultCount, totalCount }: FAQSearch
             onClick={clearSearch}
             aria-label="مسح البحث"
           >
-            <X className="h-4 w-4" />
+            <IconClose className="h-4 w-4" />
           </Button>
         )}
       </div>

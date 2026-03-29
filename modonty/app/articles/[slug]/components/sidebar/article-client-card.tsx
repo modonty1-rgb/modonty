@@ -1,6 +1,6 @@
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card } from "@/components/ui/card";
-import { Building2, ChevronLeft } from "lucide-react";
+import { IconClients, IconChevronLeft } from "@/lib/icons";
 import Image from "next/image";
 import { AskClientDialog } from "../ask-client-dialog";
 
@@ -39,7 +39,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
   return (
     <Card className="min-w-0 overflow-hidden">
       {/* Media: hero with logo in bottom-right (circle); or logo/placeholder centered */}
-      <div className="aspect-[4/3] w-full bg-muted flex items-center justify-center shrink-0 relative overflow-hidden">
+      <div className="aspect-video w-full bg-muted flex items-center justify-center shrink-0 relative overflow-hidden">
         {heroUrl && (
           <>
             <div className="absolute inset-0">
@@ -79,7 +79,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
             </div>
           )
         ) : !heroUrl ? (
-          <Building2 className="h-12 w-12 text-muted-foreground relative z-10" />
+          <IconClients className="h-12 w-12 text-muted-foreground relative z-10" />
         ) : null}
       </div>
       {/* Heading, description */}
@@ -94,7 +94,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
             className="inline-flex items-center gap-1 text-foreground hover:text-primary transition-colors"
           >
             {client.name}
-            <ChevronLeft className="h-4 w-4 shrink-0 ltr:rotate-180" aria-hidden />
+            <IconChevronLeft className="h-4 w-4 shrink-0 ltr:rotate-180" aria-hidden />
           </CtaTrackedLink>
         </h2>
         {hasDescription && (

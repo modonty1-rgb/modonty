@@ -2,6 +2,7 @@ import { LogoNav } from "@/components/navigatore/LogoNav";
 import type { NavSection } from "@/components/navigatore/TopNav";
 import { DesktopUserAreaClient } from "@/components/navigatore/DesktopUserAreaClient";
 import { DesktopNavLinks } from "@/components/navigatore/NavLinksClient";
+import { NotificationsBell } from "@/components/notifications/NotificationsBell";
 
 interface TopNavDesktopProps {
   activeSection: NavSection;
@@ -15,7 +16,10 @@ export function TopNavDesktop({ activeSection, favoritesCount }: TopNavDesktopPr
         <LogoNav />
       </div>
       <DesktopNavLinks activeSection={activeSection} favoritesCount={favoritesCount} />
-      <DesktopUserAreaClient />
+      <div className="flex items-center justify-end gap-3">
+        <NotificationsBell />
+        <DesktopUserAreaClient />
+      </div>
     </div>
   );
 }

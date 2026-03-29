@@ -3,7 +3,7 @@
 import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, RefreshCcw, Home } from "lucide-react";
+import { IconError, IconRefresh, IconHome } from "@/lib/icons";
 
 export default function GlobalError({
   error,
@@ -17,7 +17,7 @@ export default function GlobalError({
         <Card className="max-w-2xl mx-auto border-destructive/50">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <AlertCircle className="h-16 w-16 text-destructive" />
+              <IconError className="h-16 w-16 text-destructive" />
             </div>
             <CardTitle className="text-3xl text-destructive">
               حدث خطأ غير متوقع
@@ -43,12 +43,12 @@ export default function GlobalError({
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button onClick={reset} variant="default" className="gap-2">
-                <RefreshCcw className="h-4 w-4" />
+                <IconRefresh className="h-4 w-4" />
                 حاول مرة أخرى
               </Button>
               <Link href="/">
                 <Button variant="outline" className="gap-2">
-                  <Home className="h-4 w-4" />
+                  <IconHome className="h-4 w-4" />
                   الصفحة الرئيسية
                 </Button>
               </Link>

@@ -13,5 +13,13 @@ export default function ProfileLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <div
+        className="relative h-24 w-full bg-gradient-to-r from-[#0e065a] to-[#3030ff] md:h-40"
+        aria-hidden
+      />
+      {children}
+    </>
+  );
 }

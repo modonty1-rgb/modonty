@@ -8,7 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, Shield, Lock, Eye, EyeOff } from "lucide-react";
+import {
+  IconLoading,
+  IconShield,
+  IconLock,
+  IconViews,
+  IconEyeOff,
+} from "@/lib/icons";
 import { createPasswordSchema, type CreatePasswordFormData } from "../helpers/schemas/settings-schemas";
 import { createPassword } from "../actions/settings-actions";
 import { useSession } from "@/components/providers/SessionContext";
@@ -63,7 +69,7 @@ export function CreatePasswordPrompt() {
           <div className="text-center space-y-4">
             <div className="flex justify-center">
               <div className="rounded-full bg-green-100 p-3">
-                <Shield className="h-6 w-6 text-green-600" />
+                <IconShield className="h-6 w-6 text-green-600" />
               </div>
             </div>
             <div>
@@ -85,7 +91,7 @@ export function CreatePasswordPrompt() {
       <CardHeader>
         <div className="flex items-center gap-3">
           <div className="rounded-full bg-primary/10 p-2">
-            <Lock className="h-5 w-5 text-primary" />
+            <IconLock className="h-5 w-5 text-primary" />
           </div>
           <div>
             <CardTitle>إنشاء كلمة مرور</CardTitle>
@@ -121,9 +127,9 @@ export function CreatePasswordPrompt() {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <IconEyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <IconViews className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -150,9 +156,9 @@ export function CreatePasswordPrompt() {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <IconEyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <IconViews className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -166,12 +172,12 @@ export function CreatePasswordPrompt() {
           <Button type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <IconLoading className="h-4 w-4 mr-2 animate-spin" />
                 جاري إنشاء كلمة المرور...
               </>
             ) : (
               <>
-                <Shield className="h-4 w-4 mr-2" />
+                <IconShield className="h-4 w-4 mr-2" />
                 إنشاء كلمة المرور
               </>
             )}

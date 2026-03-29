@@ -1,7 +1,7 @@
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, ArrowLeft } from "lucide-react";
+import { IconTrending, IconForward } from "@/lib/icons";
 import { 
   generateCategoryGradient, 
   getCategoryIcon, 
@@ -13,10 +13,10 @@ import type { CategoryResponse } from "@/lib/types";
 
 interface CategoryListItemProps {
   category: CategoryResponse;
-  priority?: boolean;
+  preload?: boolean;
 }
 
-export function CategoryListItem({ category, priority = false }: CategoryListItemProps) {
+export function CategoryListItem({ category, preload = false }: CategoryListItemProps) {
   const Icon = getCategoryIcon(category.name);
   const gradient = generateCategoryGradient(category.name);
   const showTrending = (category.recentArticleCount || 0) > 0;
@@ -46,7 +46,7 @@ export function CategoryListItem({ category, priority = false }: CategoryListIte
                 src={optimizedImageUrl}
                 alt={category.socialImageAlt || category.name}
                 fill
-                priority={priority}
+                preload={preload}
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                 sizes="128px"
               />
@@ -66,7 +66,7 @@ export function CategoryListItem({ category, priority = false }: CategoryListIte
                 </h3>
                 {showTrending && (
                   <Badge variant="secondary" className="shrink-0 gap-1">
-                    <TrendingUp className="h-3 w-3" />
+                    <IconTrending className="h-3 w-3" />
                     <span className="text-xs">رائج</span>
                   </Badge>
                 )}
@@ -98,7 +98,7 @@ export function CategoryListItem({ category, priority = false }: CategoryListIte
 
               <div className="flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-sm font-medium">عرض المقالات</span>
-                <ArrowLeft className="h-4 w-4" />
+                <IconForward className="h-4 w-4" />
               </div>
             </div>
           </div>

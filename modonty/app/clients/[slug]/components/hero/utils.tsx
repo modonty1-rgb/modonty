@@ -1,11 +1,11 @@
 import { type ReactElement } from "react";
-import { Linkedin, Twitter, Facebook } from "lucide-react";
+import { IconLinkedin, IconTwitter, IconFacebook } from "@/lib/icons";
 
 export function getSocialPlatform(url: string): { name: string; icon: ReactElement } | null {
   const lowerUrl = url.toLowerCase();
-  if (lowerUrl.includes("linkedin.com")) return { name: "LinkedIn", icon: <Linkedin className="h-5 w-5" /> };
-  if (lowerUrl.includes("twitter.com") || lowerUrl.includes("x.com")) return { name: "Twitter", icon: <Twitter className="h-5 w-5" /> };
-  if (lowerUrl.includes("facebook.com")) return { name: "Facebook", icon: <Facebook className="h-5 w-5" /> };
+  if (lowerUrl.includes("linkedin.com")) return { name: "LinkedIn", icon: <IconLinkedin className="h-5 w-5" /> };
+  if (lowerUrl.includes("twitter.com") || lowerUrl.includes("x.com")) return { name: "Twitter", icon: <IconTwitter className="h-5 w-5" /> };
+  if (lowerUrl.includes("facebook.com")) return { name: "Facebook", icon: <IconFacebook className="h-5 w-5" /> };
   return null;
 }
 

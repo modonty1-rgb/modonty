@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Share2, Copy, Check, Mail } from "lucide-react";
+import { IconShare, IconCopy, IconCheck, IconEmail } from "@/lib/icons";
 import { SocialFacebookOutline } from "@/components/icons/facebook";
 import { Twitter } from "@/components/icons/twitter";
 import { Linkedin } from "@/components/icons/linkedin";
@@ -97,8 +97,8 @@ export function ShareButtons({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size={size} className={cn("min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 p-2", className)} aria-label="مشاركة">
-          <Share2 className="h-4 w-4" />
+        <Button variant="outline" size={size} className={cn("min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2", className)} aria-label="مشاركة">
+          <IconShare className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -128,13 +128,13 @@ export function ShareButtons({
         )}
         {platforms.includes("email") && (
           <DropdownMenuItem onClick={() => handlePlatform("email")} className="gap-2 cursor-pointer">
-            <Mail className="h-4 w-4" />
+            <IconEmail className="h-4 w-4" />
             <span>بريد إلكتروني</span>
           </DropdownMenuItem>
         )}
         {showCopyLink && (
           <DropdownMenuItem onClick={handleCopy} className="gap-2 cursor-pointer">
-            {copied ? <><Check className="h-4 w-4 text-green-500" /> <span className="text-green-500">تم النسخ!</span></> : <><Copy className="h-4 w-4" /> <span>نسخ الرابط</span></>}
+            {copied ? <><IconCheck className="h-4 w-4 text-green-500" /> <span className="text-green-500">تم النسخ!</span></> : <><IconCopy className="h-4 w-4" /> <span>نسخ الرابط</span></>}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

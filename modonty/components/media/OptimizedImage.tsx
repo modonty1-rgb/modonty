@@ -17,8 +17,6 @@ interface BaseOptimizedImageProps {
   alt: string;
   className?: string;
   style?: CSSProperties;
-  /** @deprecated Use preload. Kept for backward compat: sets preload + fetchPriority high */
-  priority?: boolean;
   preload?: boolean;
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'high' | 'low' | 'auto';
@@ -70,8 +68,7 @@ export function OptimizedImage({
   height,
   className,
   style,
-  priority = false,
-  preload,
+  preload = false,
   loading,
   fetchPriority,
   quality = 'auto',
@@ -88,7 +85,7 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   if (!src?.trim()) return null;
 
-  const shouldPreload = preload ?? priority;
+  const shouldPreload = preload;
   const isHighPriority = shouldPreload;
   const resolvedQuality: number =
     quality === 'auto'
@@ -107,6 +104,10 @@ export function OptimizedImage({
     );
   }
 
+  const resolvedSizes =
+    sizes ??
+    (fill ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" : undefined);
+
   return (
     <Image
       src={optimizeCloudinaryUrl(src, isHighPriority)}
@@ -117,10 +118,10 @@ export function OptimizedImage({
       className={className}
       style={style}
       preload={shouldPreload}
-      loading={shouldPreload ? undefined : (loading ?? 'lazy')}
-      fetchPriority={isHighPriority ? 'high' : fetchPriority ?? 'auto'}
+      loading={shouldPreload ? "eager" : (loading ?? "lazy")}
+      fetchPriority={isHighPriority ? "high" : fetchPriority ?? "auto"}
       quality={resolvedQuality}
-      sizes={sizes}
+      sizes={resolvedSizes}
       placeholder={placeholder}
       blurDataURL={blurDataURL}
       unoptimized={unoptimized}

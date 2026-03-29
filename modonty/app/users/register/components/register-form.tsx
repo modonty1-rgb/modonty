@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, UserPlus } from "lucide-react";
+import { IconLoading, IconRegister } from "@/lib/icons";
 import { registerSchema, type RegisterFormData } from "../helpers/schemas/register-schema";
 import { registerUser } from "../actions/register-actions";
 import Link from "@/components/link";
@@ -143,12 +143,12 @@ export function RegisterForm() {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  <IconLoading className="h-5 w-5 mr-2 animate-spin" />
                   جاري إنشاء الحساب...
                 </>
               ) : (
                 <>
-                  <UserPlus className="h-5 w-5 mr-2" />
+                  <IconRegister className="h-5 w-5 mr-2" />
                   إنشاء حساب
                 </>
               )}

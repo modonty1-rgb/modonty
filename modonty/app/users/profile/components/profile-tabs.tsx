@@ -3,7 +3,13 @@
 import Link from "@/components/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { User, Bookmark, Users, MessageCircle, ThumbsUp, ThumbsDown, Settings } from "lucide-react";
+import {
+  IconUser,
+  IconSaved,
+  IconUsers,
+  IconComment,
+  IconLike,
+} from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 export function ProfileTabs() {
@@ -14,37 +20,37 @@ export function ProfileTabs() {
       value: "overview",
       label: "نظرة عامة",
       href: "/users/profile",
-      icon: User,
+      icon: IconUser,
     },
     {
       value: "comments",
       label: "تعليقاتي",
       href: "/users/profile/comments",
-      icon: MessageCircle,
+      icon: IconComment,
     },
     {
       value: "liked",
       label: "الإعجابات",
       href: "/users/profile/liked",
-      icon: ThumbsUp,
+      icon: IconLike,
     },
     {
       value: "disliked",
       label: "غير المعجبة",
       href: "/users/profile/disliked",
-      icon: ThumbsDown,
+      icon: IconLike,
     },
     {
       value: "favorites",
       label: "المحفوظات",
       href: "/users/profile/favorites",
-      icon: Bookmark,
+      icon: IconSaved,
     },
     {
       value: "following",
       label: "المتابعون",
       href: "/users/profile/following",
-      icon: Users,
+      icon: IconUsers,
     },
   ];
 
@@ -66,19 +72,24 @@ export function ProfileTabs() {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-md">
+      <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;
           return (
-            <Link key={tab.value} href={tab.href} className="flex-1">
+            <Link
+              key={tab.value}
+              href={tab.href}
+              className={cn("flex-1", tab.value === "disliked" && "hidden")}
+            >
               <Button
                 type="button"
                 variant="ghost"
                 className={cn(
-                  "w-full gap-2 justify-center",
+                  "w-full gap-2 justify-center transition-colors",
                   isActive && "bg-primary text-accent hover:bg-primary hover:text-primary-foreground",
-                  !isActive && "text-foreground hover:bg-muted-foreground/10 hover:text-foreground"
+                  !isActive &&
+                    "text-muted-foreground hover:bg-background hover:text-foreground"
                 )}
               >
                 <Icon className="h-4 w-4" />

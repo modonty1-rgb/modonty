@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getClientEngagementBySlug } from "../helpers/client-engagement";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, FileText } from "lucide-react";
+import { IconLike, IconUsers, IconArticle } from "@/lib/icons";
 
 interface ClientLikesPageProps {
   params: Promise<{ slug: string }>;
@@ -25,7 +25,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-red-500" />
+            <IconLike className="h-4 w-4 text-red-500" />
             الإعجابات
           </CardTitle>
         </CardHeader>
@@ -43,7 +43,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Users className="h-4 w-4 text-primary" />
+            <IconUsers className="h-4 w-4 text-primary" />
             متابعو الصفحة
           </CardTitle>
         </CardHeader>
@@ -60,7 +60,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Heart className="h-4 w-4 text-red-500" />
+            <IconLike className="h-4 w-4 text-red-500" />
             المفضّلة
           </CardTitle>
         </CardHeader>
@@ -77,7 +77,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <FileText className="h-4 w-4 text-primary" />
+            <IconArticle className="h-4 w-4 text-primary" />
             إعجابات المقالات
           </CardTitle>
         </CardHeader>

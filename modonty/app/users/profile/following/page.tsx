@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Building2 } from "lucide-react";
+import { IconUsers, IconClients } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -130,7 +130,7 @@ export default function FollowingPage() {
               <div className="text-center py-8 text-destructive">{error}</div>
             ) : following.length === 0 ? (
               <EmptyState
-                icon={Users}
+                icon={IconUsers}
                 title="لا تتابع أحداً"
                 description="تابع العملاء للحصول على توصيات محتوى مخصصة والبقاء على اطلاع بأحدث مقالاتهم."
                 actionLabel="تصفح العملاء"
@@ -159,7 +159,7 @@ export default function FollowingPage() {
                               </div>
                             ) : (
                               <div className="w-16 h-16 rounded bg-muted flex items-center justify-center">
-                                <Building2 className="h-8 w-8 text-muted-foreground" />
+                                <IconClients className="h-8 w-8 text-muted-foreground" />
                               </div>
                             )}
                           </Link>

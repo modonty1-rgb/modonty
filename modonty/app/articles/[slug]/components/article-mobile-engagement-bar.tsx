@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { IconMenu } from "@/lib/icons";
 import { ArticleInteractionButtons } from "./article-interaction-buttons";
 import { ArticleUtilities } from "./client-only-utilities";
 import { ArticleShareButtons } from "./article-share-buttons";
@@ -66,7 +66,7 @@ export function ArticleMobileEngagementBar({
               aria-label="المزيد"
               onClick={onOpenSidebar}
             >
-              <Menu className="h-5 w-5" />
+              <IconMenu className="h-5 w-5" />
             </Button>
           )}
         </div>

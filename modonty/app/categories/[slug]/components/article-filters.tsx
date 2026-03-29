@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowUpDown, LayoutGrid, List, AlignJustify } from "lucide-react";
+import { IconSort, IconGrid, IconList, IconAlignJustify } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -58,7 +58,7 @@ export function ArticleFilters({ currentSort = 'latest', currentView = 'grid', c
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="gap-2" disabled={isPending}>
-            <ArrowUpDown className="h-4 w-4" />
+            <IconSort className="h-4 w-4" />
             <span className="hidden sm:inline">{currentSortLabel}</span>
             <span className="sm:hidden">ترتيب</span>
           </Button>
@@ -85,7 +85,7 @@ export function ArticleFilters({ currentSort = 'latest', currentView = 'grid', c
           className="rounded-none px-3"
           title="عرض شبكي"
         >
-          <LayoutGrid className="h-4 w-4" />
+          <IconGrid className="h-4 w-4" />
         </Button>
         <Button
           variant={currentView === 'list' ? 'default' : 'ghost'}
@@ -95,7 +95,7 @@ export function ArticleFilters({ currentSort = 'latest', currentView = 'grid', c
           className="rounded-none px-3"
           title="عرض قائمة"
         >
-          <List className="h-4 w-4" />
+          <IconList className="h-4 w-4" />
         </Button>
         <Button
           variant={currentView === 'compact' ? 'default' : 'ghost'}
@@ -105,7 +105,7 @@ export function ArticleFilters({ currentSort = 'latest', currentView = 'grid', c
           className="rounded-none px-3"
           title="عرض مضغوط"
         >
-          <AlignJustify className="h-4 w-4" />
+          <IconAlignJustify className="h-4 w-4" />
         </Button>
       </div>
     </div>

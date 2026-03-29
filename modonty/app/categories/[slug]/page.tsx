@@ -202,7 +202,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
                   <CategoryArticleListItem 
                     key={article.id} 
                     article={article}
-                    priority={index < 3}
+                    preload={index === 0}
                   />
                 ))}
               </div>
@@ -212,7 +212,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
                   <CategoryArticleListItem 
                     key={article.id} 
                     article={article}
-                    priority={index < 5}
+                    preload={index === 0}
                   />
                 ))}
               </div>
@@ -222,7 +222,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
                   <CategoryArticleCard 
                     key={article.id} 
                     article={article}
-                    priority={index < 3}
+                    preload={index === 0}
                   />
                 ))}
               </div>

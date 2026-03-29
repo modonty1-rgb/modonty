@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical } from "lucide-react";
+import { IconMoreVertical } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 
 interface MobileMenuTriggerProps {
@@ -16,7 +16,7 @@ export function MobileMenuTrigger({ onClick }: MobileMenuTriggerProps) {
       aria-label="Open menu"
       onClick={onClick}
     >
-      <MoreVertical className="h-5 w-5" />
+      <IconMoreVertical className="h-5 w-5" />
     </Button>
   );
 }

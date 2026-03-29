@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
-import { Image } from "lucide-react";
+import { IconImage } from "@/lib/icons";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 interface ClientPhotosPreviewProps {
   articles: {
@@ -11,10 +11,11 @@ interface ClientPhotosPreviewProps {
     title?: string;
     featuredImage?: { url: string; altText?: string | null } | null;
   }[];
+  clientId?: string;
   showEmptyState?: boolean;
 }
 
-export function ClientPhotosPreview({ articles, showEmptyState = false }: ClientPhotosPreviewProps) {
+export function ClientPhotosPreview({ articles, clientId, showEmptyState = false }: ClientPhotosPreviewProps) {
   const photoArticles = articles.filter((article) => article.featuredImage?.url).slice(0, 6);
 
   if (photoArticles.length === 0) {
@@ -25,7 +26,7 @@ export function ClientPhotosPreview({ articles, showEmptyState = false }: Client
     return (
       <Card>
         <CardHeader>
-          <CardTitleWithIcon title="الصور" icon={Image} />
+          <CardTitleWithIcon title="الصور" icon={IconImage} />
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
@@ -39,14 +40,18 @@ export function ClientPhotosPreview({ articles, showEmptyState = false }: Client
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="الصور" icon={Image} />
+        <CardTitleWithIcon title="الصور" icon={IconImage} />
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-1.5">
           {photoArticles.map((article) => (
-            <Link
+            <CtaTrackedLink
               key={article.id}
               href={`/articles/${article.slug}`}
+              label="View photo article"
+              type="LINK"
+              clientId={clientId}
+              articleId={article.id}
               className="relative block aspect-square overflow-hidden rounded-md bg-muted"
               aria-label={article.title ?? "مقال"}
             >
@@ -58,7 +63,7 @@ export function ClientPhotosPreview({ articles, showEmptyState = false }: Client
                 sizes="(max-width: 768px) 33vw, (max-width: 1024px) 15vw, 120px"
                 loading="lazy"
               />
-            </Link>
+            </CtaTrackedLink>
           ))}
         </div>
       </CardContent>

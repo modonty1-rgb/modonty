@@ -6,15 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Mail } from "lucide-react";
+import { IconLoading, IconEmail } from "@/lib/icons";
 
-export function ContactForm() {
+interface ContactFormProps {
+  clientId?: string | null;
+  defaultName?: string | null;
+  defaultEmail?: string | null;
+}
+
+export function ContactForm({ clientId, defaultName, defaultEmail }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    name: defaultName ?? "",
+    email: defaultEmail ?? "",
     subject: "",
     message: "",
   });
@@ -29,7 +35,10 @@ export function ContactForm() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          ...(clientId ? { clientId } : {}),
+        }),
       });
 
       const result = await response.json();
@@ -51,7 +60,7 @@ export function ContactForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
+          <IconEmail className="h-5 w-5" />
           تواصل معنا
         </CardTitle>
         <CardDescription>
@@ -123,7 +132,7 @@ export function ContactForm() {
           <Button type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <IconLoading className="mr-2 h-4 w-4 animate-spin" />
                 جاري الإرسال...
               </>
             ) : (
