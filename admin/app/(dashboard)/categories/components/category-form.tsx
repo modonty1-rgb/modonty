@@ -57,6 +57,13 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
                 required
               />
               <input type="hidden" name="slug" value={formData.slug} />
+              {!!categoryId && (
+                <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md border">
+                  <span className="text-xs text-muted-foreground">Slug:</span>
+                  <code className="text-xs font-mono text-foreground">{formData.slug}</code>
+                  <span className="text-xs text-yellow-600 mr-auto">⚠️ لا يتغير بعد النشر</span>
+                </div>
+              )}
               <div>
                 <FormTextarea
                   label="Description"
@@ -69,7 +76,7 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
                 <div className="mt-1">
                   <CharacterCounter
                     current={formData.description.length}
-                    min={50}
+                    min={0}
                     className="ml-1"
                   />
                 </div>
@@ -93,11 +100,9 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
           <SEOFields
             seoTitle={formData.seoTitle}
             seoDescription={formData.seoDescription}
-            canonicalUrl={formData.canonicalUrl}
             onSeoTitleChange={(value) => updateSEOField("seoTitle", value)}
             onSeoDescriptionChange={(value) => updateSEOField("seoDescription", value)}
-            onCanonicalUrlChange={(value) => updateSEOField("canonicalUrl", value)}
-            canonicalPlaceholder="https://example.com/categories/category-slug"
+            showCanonical={false}
           />
 
           <Card>
@@ -110,21 +115,29 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
               </p>
               <DeferredImageUpload
                 categorySlug={formData.slug}
-                onImageSelected={setImageUploadData}
+                onImageSelected={(imageData) => {
+                  if (imageData && !imageData.altText) {
+                    imageData.altText = formData.name || formData.slug;
+                  }
+                  setImageUploadData(imageData);
+                }}
                 onImageRemoved={() => setImageRemoved(true)}
                 initialImageUrl={initialData?.socialImage || undefined}
-                initialAltText={initialData?.socialImageAlt || undefined}
+                initialAltText={initialData?.socialImageAlt || formData.name || undefined}
+                autoAltText={formData.name}
               />
             </CardContent>
           </Card>
 
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              Cancel
-            </Button>
+            {categoryId ? (
+              <Button type="button" variant="outline" onClick={() => router.back()}>
+                Cancel
+              </Button>
+            ) : null}
             <Button type="submit" disabled={loading}>
-              {loading ? "Saving & Generating SEO..." : initialData ? "Update Category" : "Create Category"}
+              {loading ? "Saving & Generating SEO..." : categoryId ? "Update Category" : "Create Category"}
             </Button>
           </div>
         </div>

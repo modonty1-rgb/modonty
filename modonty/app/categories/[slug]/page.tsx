@@ -42,6 +42,7 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
         seoTitle: true,
         seoDescription: true,
         socialImage: true,
+        nextjsMetadata: true,
       },
     });
 
@@ -49,6 +50,12 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
       return {
         title: "فئة غير موجودة - مودونتي",
       };
+    }
+
+    // DB cache first
+    if (category.nextjsMetadata) {
+      const stored = category.nextjsMetadata as Metadata;
+      if (stored.title) return stored;
     }
 
     return generateMetadataFromSEO({
@@ -83,6 +90,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
         seoDescription: true,
         socialImage: true,
         socialImageAlt: true,
+        jsonLdStructuredData: true,
       },
     });
 
@@ -157,14 +165,23 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
 
     return (
       <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleCollectionData) }}
-        />
+        {category.jsonLdStructuredData ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: category.jsonLdStructuredData }}
+          />
+        ) : (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(articleCollectionData) }}
+            />
+          </>
+        )}
 
         <>
           <Breadcrumb

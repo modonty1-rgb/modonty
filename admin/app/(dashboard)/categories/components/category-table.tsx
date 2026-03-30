@@ -5,10 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { CategoryRowActions } from "./category-row-actions";
 import { SortableValue } from "@/lib/types";
 
@@ -36,7 +34,6 @@ interface CategoryTableProps {
 type SortDirection = "asc" | "desc" | null;
 
 export function CategoryTable({ categories, onSelectionChange }: CategoryTableProps) {
-  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
@@ -44,14 +41,7 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
   const pageSize = 10;
 
   const filteredData = useMemo(() => {
-    let result = categories.filter((category) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        category.name.toLowerCase().includes(searchTerm) ||
-        category.slug.toLowerCase().includes(searchTerm) ||
-        (category.parent?.name && category.parent.name.toLowerCase().includes(searchTerm))
-      );
-    });
+    let result = [...categories];
 
     if (sortKey && sortDirection) {
       result = [...result].sort((a, b) => {
@@ -96,7 +86,7 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
     }
 
     return result;
-  }, [categories, search, sortKey, sortDirection]);
+  }, [categories, sortKey, sortDirection]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -155,21 +145,6 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search categories..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
       <div className="border rounded-lg">
         <Table>
           <TableHeader>

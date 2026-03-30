@@ -23,15 +23,16 @@ interface DeferredImageUploadProps {
   categorySlug?: string;
   initialImageUrl?: string;
   initialAltText?: string;
+  autoAltText?: string;
   onImageSelected?: (imageData: ImageUploadData | null) => void;
   onImageRemoved?: () => void; // Called when user explicitly removes image
   className?: string;
 }
 
 export function DeferredImageUpload({
-
   initialImageUrl,
   initialAltText,
+  autoAltText,
   onImageSelected,
   onImageRemoved,
   className,
@@ -137,7 +138,7 @@ export function DeferredImageUpload({
       setIsRemoved(false); // Reset removed state when new image is selected
 
       // Preserve existing altText or use initialAltText as fallback
-      const preservedAltText = altText || initialAltText || "";
+      const preservedAltText = autoAltText || altText || initialAltText || "";
 
       const imageData: ImageUploadData = {
         file: selectedFile,
@@ -150,7 +151,7 @@ export function DeferredImageUpload({
 
       onImageSelected?.(imageData);
     },
-    [altText, initialAltText, previewUrl, onImageSelected, toast]
+    [altText, initialAltText, autoAltText, previewUrl, onImageSelected, toast]
   );
 
   const handleDrop = useCallback(
@@ -243,22 +244,6 @@ export function DeferredImageUpload({
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-            <div>
-              <Label htmlFor="alt-text">
-                Alt Text <span className="text-destructive">*</span>
-              </Label>
-              <Textarea
-                id="alt-text"
-                value={altText}
-                onChange={(e) => handleAltTextChange(e.target.value)}
-                placeholder="Describe the image for SEO and accessibility..."
-                rows={3}
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Required. Describe what the image shows for search engines and screen readers.
-              </p>
             </div>
           </div>
         ) : (

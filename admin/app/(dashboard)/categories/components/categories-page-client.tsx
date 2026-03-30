@@ -40,7 +40,7 @@ export function CategoriesPageClient({ categories }: CategoriesPageClientProps) 
   };
 
   return (
-    <>
+    <div className="space-y-4">
       <BulkActionsToolbar
         selectedIds={selectedIds}
         onClearSelection={() => setSelectedIds([])}
@@ -60,6 +60,6 @@ export function CategoriesPageClient({ categories }: CategoriesPageClientProps) 
         </div>
       )}
       <CategoryTable categories={categories} onSelectionChange={setSelectedIds} />
-    </>
+    </div>
   );
 }

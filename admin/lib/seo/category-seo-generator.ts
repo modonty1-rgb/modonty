@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
 export async function buildCategoryMetadata(category: {
   name: string;
@@ -10,8 +11,7 @@ export async function buildCategoryMetadata(category: {
   seoDescription?: string | null;
   canonicalUrl?: string | null;
   socialImage?: string | null;
-}) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+}, siteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com") {
   const pageUrl = category.canonicalUrl || `${siteUrl}/categories/${category.slug}`;
   const title = category.seoTitle || category.name;
   const description = category.seoDescription || `تصفح مقالات ${category.name}`;
@@ -35,6 +35,9 @@ export async function buildCategoryMetadata(category: {
       card: category.socialImage ? "summary_large_image" : "summary",
       title,
       description,
+      ...(category.socialImage && {
+        images: [category.socialImage],
+      }),
     },
   };
 }
@@ -46,8 +49,7 @@ export async function buildCategoryJsonLd(category: {
   seoTitle?: string | null;
   seoDescription?: string | null;
   canonicalUrl?: string | null;
-}) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+}, siteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com") {
   const pageUrl = category.canonicalUrl || `${siteUrl}/categories/${category.slug}`;
   const title = category.seoTitle || category.name;
   const description = category.seoDescription || category.description || `تصفح مقالات ${category.name}`;
@@ -76,8 +78,12 @@ export async function generateAndSaveCategorySeo(categoryId: string): Promise<{ 
       select: { id: true, name: true, slug: true, description: true, seoTitle: true, seoDescription: true, canonicalUrl: true, socialImage: true },
     });
     if (!category) return { success: false, error: "Category not found" };
-    const metadata = await buildCategoryMetadata(category);
-    const jsonLd = await buildCategoryJsonLd(category);
+
+    const settings = await getAllSettings();
+    const siteUrl = (settings as any)?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+
+    const metadata = await buildCategoryMetadata(category, siteUrl);
+    const jsonLd = await buildCategoryJsonLd(category, siteUrl);
     await db.category.update({
       where: { id: categoryId },
       data: {
