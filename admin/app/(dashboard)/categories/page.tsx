@@ -50,11 +50,6 @@ export default async function CategoriesPage({
           <p className="text-muted-foreground mt-1">{getDescription()}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/categories/tree">
-            <Button variant="outline" size="sm">
-              Tree View
-            </Button>
-          </Link>
           <Link href="/categories/new">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -63,7 +58,10 @@ export default async function CategoriesPage({
           </Link>
         </div>
       </div>
-      <CategoriesStats stats={stats} />
+      <CategoriesStats
+        stats={stats}
+        missingSeoCount={categories.filter((c: any) => !c.jsonLdLastGenerated).length}
+      />
       <CategoriesFilters />
       <CategoriesPageClient categories={categories} />
     </div>

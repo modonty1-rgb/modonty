@@ -7,11 +7,9 @@ import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown, Stethoscope } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CategoryRowActions } from "./category-row-actions";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
-import { categorySEOConfig } from "../helpers/category-seo-config";
 import { SortableValue } from "@/lib/types";
 
 interface Category {
@@ -25,6 +23,8 @@ interface Category {
   };
   seoTitle?: string | null;
   seoDescription?: string | null;
+  jsonLdLastGenerated?: Date | null;
+  nextjsMetadata?: unknown;
   [key: string]: unknown;
 }
 
@@ -185,9 +185,6 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
                   className="h-4 w-4 rounded border-gray-300"
                 />
               </TableHead>
-              <TableHead className="w-[70px]">
-                <Stethoscope className="h-4 w-4 text-primary" />
-              </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("name")}
@@ -195,15 +192,6 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
                 <div className="flex items-center">
                   Name
                   {getSortIcon("name")}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("slug")}
-              >
-                <div className="flex items-center">
-                  Slug
-                  {getSortIcon("slug")}
                 </div>
               </TableHead>
               <TableHead
@@ -224,6 +212,7 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
                   {getSortIcon("articles")}
                 </div>
               </TableHead>
+              <TableHead>SEO Cache</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("createdAt")}
@@ -239,7 +228,7 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No categories found</p>
                     <p className="text-xs">Try adjusting your filters or search terms</p>
@@ -266,9 +255,6 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
                       className="h-4 w-4 rounded border-gray-300"
                     />
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <SEOHealthGauge data={category} config={categorySEOConfig} size="xs" />
-                  </TableCell>
                   <TableCell>
                     <Link
                       href={`/categories/${category.id}`}
@@ -278,12 +264,20 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
                       {category.name}
                     </Link>
                   </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm">{category.slug}</span>
-                  </TableCell>
                   <TableCell>{category.parent?.name || "-"}</TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <Badge variant="secondary">{category._count.articles}</Badge>
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    {category.jsonLdLastGenerated ? (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
+                        ✅ Generated
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs text-yellow-600 font-medium">
+                        ⚠️ Pending
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>{format(new Date(category.createdAt), "MMM d, yyyy")}</TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
