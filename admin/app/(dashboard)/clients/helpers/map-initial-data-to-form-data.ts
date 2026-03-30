@@ -52,9 +52,6 @@ export function mapInitialDataToFormData(
     alternateName: "",
     slogan: "",
     canonicalUrl: "",
-    twitterTitle: "",
-    twitterDescription: "",
-    twitterSite: "",
   };
 
   if (!initialData) {
@@ -86,7 +83,6 @@ export function mapInitialDataToFormData(
     seoTitle: initialData.seoTitle || "",
     seoDescription: initialData.seoDescription || "",
     description: initialData.description || null,
-    metaRobots: initialData.metaRobots || null,
     canonicalUrl: initialData.canonicalUrl || "",
 
     // Business Information
@@ -132,12 +128,6 @@ export function mapInitialDataToFormData(
 
     // Relationships
     parentOrganizationId: initialData.parentOrganizationId || null,
-
-    // Twitter Cards
-    twitterCard: initialData.twitterCard || null,
-    twitterTitle: initialData.twitterTitle || null,
-    twitterDescription: initialData.twitterDescription || null,
-    twitterSite: initialData.twitterSite || null,
 
     // GTM Integration
     gtmId: initialData.gtmId || "",

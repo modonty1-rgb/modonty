@@ -110,51 +110,8 @@ interface ClientTabsProps {
     addressBuildingNumber: string | null;
     addressAdditionalNumber: string | null;
     canonicalUrl: string | null;
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
     gtmId: string | null;
-    metaRobots: string | null;
-    metaTags: {
-      title: string;
-      description: string;
-      robots: string;
-      author: string;
-      language: string;
-      charset: string;
-      openGraph: {
-        title: string;
-        description: string;
-        type: string;
-        url: string;
-        siteName: string;
-        locale: string;
-        images?: Array<{
-          url: string;
-          secure_url: string;
-          type: string;
-          width: number;
-          height: number;
-          alt: string;
-        }>;
-      };
-      twitter: {
-        card: string;
-        title: string;
-        description: string;
-        image?: string;
-        imageAlt?: string;
-        site?: string;
-        creator?: string;
-      };
-      canonical: string;
-      formatDetection: {
-        telephone: boolean;
-        email: boolean;
-        address: boolean;
-      };
-    } | null;
+    nextjsMetadata: unknown;
     jsonLdStructuredData: string | null;
     jsonLdLastGenerated: Date | null;
     jsonLdValidationReport: {
@@ -240,7 +197,7 @@ export function ClientTabs({
   analytics,
   media,
 }: ClientTabsProps) {
-  const isSeoCritical = !client.metaRobots || !client.jsonLdStructuredData;
+  const isSeoCritical = !client.jsonLdStructuredData;
 
   return (
     <Tabs defaultValue="required" className="w-full">

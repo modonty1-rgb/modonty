@@ -30,10 +30,6 @@ interface ClientHeaderProps {
     addressCity: string | null;
     addressCountry: string | null;
     addressPostalCode: string | null;
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
     canonicalUrl: string | null;
     ogImageMedia: {
       url: string;

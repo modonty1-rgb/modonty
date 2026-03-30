@@ -17,9 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     }
 
     // Use stored metaTags if available
-    if (client.metaTags) {
+    if (client.nextjsMetadata) {
       try {
-        const metaTags = client.metaTags as {
+        const metaTags = client.nextjsMetadata as {
           title: string;
           description: string;
           robots?: string;

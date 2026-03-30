@@ -79,12 +79,7 @@ export async function generateClientSEO(clientId: string) {
         addressLatitude: true,
         addressLongitude: true,
         sameAs: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
         canonicalUrl: true,
-        metaRobots: true,
         foundingDate: true,
         createdAt: true,
         updatedAt: true,
@@ -168,7 +163,7 @@ export async function generateClientSEO(clientId: string) {
 
     const title = client.seoTitle || client.name;
     const description = client.seoDescription || client.description || "";
-    const effectiveMetaRobots = client.metaRobots?.trim() || "index, follow";
+    const effectiveMetaRobots = "index, follow";
 
     // Validate and ensure absolute canonical URL
     const canonicalUrl = ensureAbsoluteUrl(clientPageUrl) || clientPageUrl;
@@ -189,9 +184,9 @@ export async function generateClientSEO(clientId: string) {
         locale: "ar_SA",
       },
       twitter: {
-        card: client.twitterCard || (client.twitterImageMedia?.url ? "summary_large_image" : "summary"),
-        title: client.twitterTitle || title,
-        description: client.twitterDescription || description,
+        card: client.twitterImageMedia?.url ? "summary_large_image" : "summary",
+        title: title,
+        description: description,
       },
       canonical: canonicalUrl,
       formatDetection: {
@@ -259,7 +254,7 @@ export async function generateClientSEO(clientId: string) {
     const ogImageUrl = metaTags.openGraph.images?.[0]?.secure_url || metaTags.openGraph.images?.[0]?.url;
     const ogImageAlt = metaTags.openGraph.images?.[0]?.alt;
     const hasAnyImage = !!(client.twitterImageMedia?.url || ogImageUrl);
-    metaTags.twitter.card = client.twitterCard || (hasAnyImage ? "summary_large_image" : "summary");
+    metaTags.twitter.card = hasAnyImage ? "summary_large_image" : "summary";
 
     if (client.twitterImageMedia?.url) {
       const twitterImageUrl = ensureAbsoluteUrl(client.twitterImageMedia.url) || client.twitterImageMedia.url;
@@ -268,11 +263,6 @@ export async function generateClientSEO(clientId: string) {
     } else if (metaTags.twitter.card === "summary_large_image" && ogImageUrl) {
       metaTags.twitter.image = ogImageUrl;
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
-    }
-
-    if (client.twitterSite) {
-      metaTags.twitter.site = client.twitterSite;
-      metaTags.twitter.creator = client.twitterSite;
     }
 
     const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl);
@@ -298,8 +288,8 @@ export async function generateClientSEO(clientId: string) {
     await db.client.update({
       where: { id: clientId },
       data: {
-        metaRobots: effectiveMetaRobots,
-        metaTags: metaTagsJson as any,
+        nextjsMetadata: metaTagsJson as any,
+        nextjsMetadataLastGenerated: new Date(),
         jsonLdStructuredData: jsonLdString,
         jsonLdLastGenerated: new Date(),
         jsonLdValidationReport: JSON.parse(

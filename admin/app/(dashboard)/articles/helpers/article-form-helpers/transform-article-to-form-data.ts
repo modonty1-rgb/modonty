@@ -102,11 +102,6 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     // SEO keywords the article is based on (reference)
     seoKeywords: article.seoKeywords ?? [],
 
-    // Schema Versioning
-    jsonLdVersion: article.jsonLdVersion || undefined,
-    jsonLdHistory: article.jsonLdHistory || undefined,
-    jsonLdDiffSummary: article.jsonLdDiffSummary || undefined,
-
     // Tags & FAQs
     tags: article.tags?.map((t: { tag: { id: string } }) => t.tag.id) || [],
     faqs:

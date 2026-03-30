@@ -118,11 +118,11 @@ function getJsonLdIssues(client: ClientForList): string[] {
  * Checks if metaTags are valid/correct using critical SEO rules
  */
 function isMetaTagsValid(client: ClientForList): boolean {
-  if (!client.metaTags) {
+  if (!client.nextjsMetadata) {
     return false;
   }
 
-  const metaTags = client.metaTags as Record<string, any>;
+  const metaTags = client.nextjsMetadata as Record<string, any>;
   if (typeof metaTags !== "object" || metaTags === null) {
     return false;
   }
@@ -205,10 +205,10 @@ function isJsonLdValid(client: ClientForList): boolean {
 function getCriticalItems(client: ClientForList): string[] {
   const items: string[] = [];
 
-  if (!client.metaTags || typeof client.metaTags !== "object") {
+  if (!client.nextjsMetadata || typeof client.nextjsMetadata !== "object") {
     items.push("Meta tags missing");
   } else {
-    const metaIssues = getMetaTagsIssues(client.metaTags as Record<string, any>);
+    const metaIssues = getMetaTagsIssues(client.nextjsMetadata as Record<string, any>);
     items.push(...metaIssues);
   }
 

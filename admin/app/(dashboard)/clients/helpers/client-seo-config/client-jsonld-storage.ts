@@ -59,10 +59,6 @@ export interface ClientWithFullRelations {
   addressLatitude: number | null;
   addressLongitude: number | null;
   sameAs: string[];
-  twitterCard: string | null;
-  twitterTitle: string | null;
-  twitterDescription: string | null;
-  twitterSite: string | null;
   canonicalUrl: string | null;
   foundingDate: Date | null;
   createdAt: Date;
@@ -146,10 +142,6 @@ export async function fetchClientForJsonLd(
       addressLatitude: true,
       addressLongitude: true,
       sameAs: true,
-      twitterCard: true,
-      twitterTitle: true,
-      twitterDescription: true,
-      twitterSite: true,
       canonicalUrl: true,
       foundingDate: true,
       createdAt: true,

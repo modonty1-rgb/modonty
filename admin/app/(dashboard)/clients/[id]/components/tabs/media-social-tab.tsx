@@ -32,25 +32,7 @@ import {
 import type { MediaType } from "@prisma/client";
 
 interface MediaSocialTabProps {
-  client: {
-    logoMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    twitterImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    sameAs: string[];
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
-  };
+  client: any;
   media: Array<{
     id: string;
     filename: string;
@@ -240,7 +222,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
           <CardContent>
             {client.sameAs && client.sameAs.length > 0 ? (
               <div className="flex flex-col gap-3">
-                {client.sameAs.map((url, index) => {
+                {client.sameAs.map((url: string, index: number) => {
                   const platform = detectPlatform(url);
                   const platformName = getPlatformName(platform);
 
