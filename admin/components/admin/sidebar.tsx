@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
+import pkg from "@/package.json";
 
 const menuItems = [
   { icon: Folder, label: "Categories", href: "/categories" },
@@ -98,6 +99,14 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <div className="mt-auto border-t p-4">
+        <p className={cn(
+          "text-muted-foreground/50 text-center",
+          collapsed ? "text-[10px]" : "text-xs"
+        )}>
+          {collapsed ? `v${pkg.version}` : `Modonty v${pkg.version}`}
+        </p>
+      </div>
     </aside>
   );
 }

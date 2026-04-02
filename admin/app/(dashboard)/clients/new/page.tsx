@@ -1,4 +1,3 @@
-import { createClient } from "../actions/clients-actions";
 import { getIndustries } from "../../industries/actions/industries-actions";
 import { getClientsForSelect } from "../actions/clients-actions/get-clients-for-select";
 import { ClientForm } from "../components/client-form";
@@ -16,7 +15,7 @@ export default async function NewClientPage() {
         title="Create Client"
       >
         <div className="py-6">
-          <ClientForm industries={industries} clients={clients} onSubmit={createClient} />
+          <ClientForm industries={industries} clients={clients} />
         </div>
       </ClientFormHeaderWrapper>
     </div>

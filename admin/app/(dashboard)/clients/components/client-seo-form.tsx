@@ -15,7 +15,7 @@ import { SelectItem } from "@/components/ui/select";
 import { FormInput, FormSelect, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import { useClientForm } from "../helpers/hooks/use-client-form";
-import type { ClientFormData, ClientWithRelations, FormSubmitResult } from "@/lib/types";
+import type { ClientWithRelations } from "@/lib/types";
 import { getAllSettings, getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createOrganizationSEOConfig, createOrganizationSEOConfigFull } from "../helpers/client-seo-config";
@@ -38,7 +38,6 @@ type OpeningHoursDay = {
 interface ClientSeoFormProps {
   initialData?: Partial<ClientWithRelations>;
   clientId: string;
-  onSubmit: (data: ClientFormData) => Promise<FormSubmitResult>;
 }
 
 const DAYS: Array<{ key: string; label: string }> = [
@@ -81,10 +80,9 @@ function getIssueCounts(items: ClientSEOGroupAnalysis["meta"]["items"]) {
   return { error, warning, good };
 }
 
-export function ClientSeoForm({ initialData, clientId, onSubmit }: ClientSeoFormProps) {
+export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
   const { form, handleSubmit, loading, error, isEditMode } = useClientForm({
     initialData,
-    onSubmit,
     clientId,
   });
 

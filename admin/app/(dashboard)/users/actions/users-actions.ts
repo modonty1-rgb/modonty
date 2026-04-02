@@ -3,24 +3,50 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@prisma/client";
+
+function optimizeAvatarUrl(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const match = url.match(
+    /^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)((?:v\d+\/)?.+)$/
+  );
+  if (!match) return url;
+  const [, base, path] = match;
+  const cleanPath = path.replace(/\/?(f_\w+|q_\w+|w_\d+|h_\d+|c_\w+|g_\w+),?/g, "");
+  return `${base}f_auto,q_auto,w_200,h_200,c_fill,g_face/${cleanPath}`;
+}
 
 export async function getUsers() {
   try {
     const users = await db.user.findMany({
+      where: { role: "ADMIN" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: "desc" },
     });
     return users;
-  } catch (error) {
-    console.error("Error fetching users:", error);
+  } catch {
     return [];
   }
 }
 
 export async function getUserById(id: string) {
   try {
-    return await db.user.findUnique({ where: { id } });
-  } catch (error) {
+    return await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        createdAt: true,
+      },
+    });
+  } catch {
     return null;
   }
 }
@@ -29,30 +55,32 @@ export async function createUser(data: {
   name?: string;
   email?: string;
   password?: string;
-  role?: UserRole;
-  clientAccess?: string[];
   image?: string;
 }) {
   try {
-    if (!data.name || !data.email || !data.password || !data.role) {
-      return { success: false, error: "Name, email, password, and role are required" };
+    if (!data.name || !data.email || !data.password) {
+      return { success: false, error: "Name, email, and password are required" };
     }
+
+    const existing = await db.user.findUnique({ where: { email: data.email } });
+    if (existing) {
+      return { success: false, error: "This email is already registered" };
+    }
+
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const user = await db.user.create({
+    await db.user.create({
       data: {
         name: data.name,
         email: data.email,
         password: hashedPassword,
-        role: data.role,
-        clientAccess: data.clientAccess || [],
-        image: data.image,
+        role: "ADMIN",
+        image: optimizeAvatarUrl(data.image),
       },
     });
     revalidatePath("/users");
-    return { success: true, user };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create user";
-    return { success: false, error: message };
+    return { success: true };
+  } catch {
+    return { success: false, error: "Could not create the account. Please try again." };
   }
 }
 
@@ -62,58 +90,54 @@ export async function updateUser(
     name?: string;
     email?: string;
     password?: string;
-    role?: UserRole;
-    clientAccess?: string[];
     image?: string;
   }
 ) {
   try {
+    if (data.email) {
+      const existing = await db.user.findUnique({ where: { email: data.email } });
+      if (existing && existing.id !== id) {
+        return { success: false, error: "This email is already used by another account" };
+      }
+    }
+
     const updateData: {
       name?: string;
       email?: string;
-      role?: UserRole;
-      clientAccess?: string[];
-      image?: string;
+      image?: string | null;
       password?: string;
     } = {
       name: data.name,
       email: data.email,
-      role: data.role,
-      clientAccess: data.clientAccess || [],
-      image: data.image,
+      image: optimizeAvatarUrl(data.image),
     };
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
     }
 
-    const user = await db.user.update({
+    await db.user.update({
       where: { id },
       data: updateData,
     });
     revalidatePath("/users");
-    return { success: true, user };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update user";
-    return { success: false, error: message };
+    return { success: true };
+  } catch {
+    return { success: false, error: "Could not update the account. Please try again." };
   }
 }
 
 export async function deleteUser(id: string) {
   try {
+    const adminCount = await db.user.count({ where: { role: "ADMIN" } });
+    if (adminCount <= 1) {
+      return { success: false, error: "Cannot remove the last admin. At least one admin must exist." };
+    }
+
     await db.user.delete({ where: { id } });
     revalidatePath("/users");
     return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to delete user";
-    return { success: false, error: message };
-  }
-}
-
-export async function getClients() {
-  try {
-    return await db.client.findMany({ orderBy: { name: "asc" } });
-  } catch (error) {
-    return [];
+  } catch {
+    return { success: false, error: "Could not remove the account. Please try again." };
   }
 }

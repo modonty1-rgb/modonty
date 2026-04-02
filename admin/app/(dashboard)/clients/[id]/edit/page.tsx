@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getClientById, createClient } from "../../actions/clients-actions";
+import { getClientById } from "../../actions/clients-actions";
 import { getIndustries } from "../../../industries/actions/industries-actions";
 import { getClientsForSelect } from "../../actions/clients-actions/get-clients-for-select";
 import { ClientForm } from "../../components/client-form";
@@ -22,7 +22,7 @@ export default async function EditClientPage({ params }: { params: Promise<{ id:
       <ClientFormHeaderWrapper
         title="Edit Client"
       >
-        <ClientForm initialData={client} industries={industries} clients={clients} onSubmit={createClient} clientId={id} />
+        <ClientForm initialData={client} industries={industries} clients={clients} clientId={id} />
       </ClientFormHeaderWrapper>
     </div>
   );

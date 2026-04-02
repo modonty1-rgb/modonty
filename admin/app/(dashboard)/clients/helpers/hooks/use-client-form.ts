@@ -6,19 +6,18 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { clientFormSchema, type ClientFormSchemaType } from "../client-form-schema";
 import { mapInitialDataToFormData } from "../map-initial-data-to-form-data";
-import type { ClientFormData, ClientWithRelations, FormSubmitResult } from "@/lib/types";
+import type { ClientFormData, ClientWithRelations } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { updateClient } from "../../actions/clients-actions";
+import { updateClient, createClient } from "../../actions/clients-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { getActiveTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 
 interface UseClientFormOptions {
   initialData?: Partial<ClientWithRelations>;
-  onSubmit: (data: ClientFormData) => Promise<FormSubmitResult>;
   clientId?: string;
 }
 
-export function useClientForm({ initialData, onSubmit, clientId }: UseClientFormOptions) {
+export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -214,7 +213,7 @@ export function useClientForm({ initialData, onSubmit, clientId }: UseClientForm
 
       const result = clientId
         ? await updateClient(clientId, submitData)
-        : await onSubmit(submitData);
+        : await createClient(submitData);
 
       if (result.success) {
         const clientName = data.name || "Client";

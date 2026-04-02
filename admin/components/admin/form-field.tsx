@@ -59,6 +59,7 @@ interface FormInputProps {
   readOnly?: boolean;
   hint?: string;
   step?: string | number;
+  autoComplete?: string;
 }
 
 export function FormInput({
@@ -74,6 +75,7 @@ export function FormInput({
   readOnly,
   hint,
   step,
+  autoComplete,
 }: FormInputProps) {
   return (
     <FormField label={label} name={name} error={error} required={required} hint={hint}>
@@ -87,6 +89,7 @@ export function FormInput({
         disabled={disabled}
         readOnly={readOnly}
         step={step}
+        autoComplete={autoComplete}
         className={error ? "border-destructive" : ""}
       />
     </FormField>

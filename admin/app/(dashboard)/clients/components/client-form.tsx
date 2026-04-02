@@ -31,18 +31,17 @@ import {
   createClientSEOGroupAnalysis,
   type ClientSEOGroupAnalysis,
 } from "../helpers/client-seo-group-scores";
-import type { ClientFormData, ClientWithRelations, FormSubmitResult } from "@/lib/types";
+import type { ClientWithRelations } from "@/lib/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
   industries?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
-  onSubmit: (data: ClientFormData) => Promise<FormSubmitResult>;
   clientId?: string;
 }
 
-export function ClientForm({ initialData, industries = [], clients = [], onSubmit, clientId }: ClientFormProps) {
+export function ClientForm({ initialData, industries = [], clients = [], clientId }: ClientFormProps) {
   const headerRef = useHeaderRef();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -50,7 +49,6 @@ export function ClientForm({ initialData, industries = [], clients = [], onSubmi
 
   const { form, handleSubmit, loading, error, setError, tierConfigs, isEditMode } = useClientForm({
     initialData,
-    onSubmit,
     clientId,
   });
 

@@ -1,69 +1,57 @@
 "use client";
 
 import { DataTable } from "@/components/admin/data-table";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import Link from "next/link";
-import { UserRole } from "@prisma/client";
 
-interface User {
+interface AdminUser {
   id: string;
   name: string | null;
   email: string | null;
-  role: UserRole;
+  image: string | null;
   createdAt: Date;
-  clientAccess: string[];
 }
 
 interface UserTableProps {
-  users: User[];
+  users: AdminUser[];
 }
 
 export function UserTable({ users }: UserTableProps) {
-  const getRoleBadge = (role: UserRole) => {
-    const variants: Record<UserRole, "default" | "secondary" | "destructive"> = {
-      ADMIN: "destructive",
-      CLIENT: "default",
-      EDITOR: "secondary",
-    };
-    return <Badge variant={variants[role]}>{role}</Badge>;
-  };
-
   return (
     <DataTable
       data={users}
       columns={[
         {
           key: "name",
-          header: "Name",
+          header: "Admin",
           render: (user) => (
-            <Link href={`/users/${user.id}`} className="font-medium hover:text-primary">
-              {user.name || "-"}
+            <Link href={`/users/${user.id}`} className="flex items-center gap-3 hover:text-primary">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user.image || undefined} alt={user.name || ""} />
+                <AvatarFallback className="text-xs">
+                  {(user.name || "A").slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-medium">{user.name || "—"}</p>
+                <p className="text-xs text-muted-foreground">{user.email || "—"}</p>
+              </div>
             </Link>
           ),
         },
         {
-          key: "email",
-          header: "Email",
-          render: (user) => user.email || "-",
-        },
-        {
-          key: "role",
-          header: "Role",
-          render: (user) => getRoleBadge(user.role),
-        },
-        {
-          key: "clientAccess",
-          header: "Client Access",
-          render: (user) => (user.clientAccess.length > 0 ? `${user.clientAccess.length} clients` : "All"),
-        },
-        {
           key: "createdAt",
-          header: "Created",
-          render: (user) => format(new Date(user.createdAt), "MMM d, yyyy"),
+          header: "Added",
+          render: (user) => (
+            <span className="text-muted-foreground text-sm">
+              {format(new Date(user.createdAt), "MMM d, yyyy")}
+            </span>
+          ),
         },
       ]}
       searchKey="email"
+      searchPlaceholder="Search by email..."
       onRowClick={(user) => {
         window.location.href = `/users/${user.id}`;
       }}

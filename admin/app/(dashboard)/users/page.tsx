@@ -8,9 +8,9 @@ export default async function UsersPage() {
   return (
     <div className="container mx-auto max-w-[1128px]">
       <PageHeader
-        title="Users"
-        description="Manage all users in the system"
-        actionLabel="New User"
+        title="Admins"
+        description={`${users.length} admin${users.length !== 1 ? "s" : ""} managing the dashboard`}
+        actionLabel="Add Admin"
         actionHref="/users/new"
       />
       <UserTable users={users} />
