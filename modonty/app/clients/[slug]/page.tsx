@@ -16,6 +16,30 @@ import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/cl
 import { ClientViewTracker } from "./components/client-view-tracker";
 import ClientLoading from "./loading";
 
+/** Fixes malformed JSON-LD from admin cache: renames bare "id" and "type" keys
+ *  to "@id" and "@type" at every level of the @graph array.
+ *  Only renames keys that are exactly "id" or "type" (not "contactType", etc.)
+ */
+function sanitizeJsonLd(raw: string): string {
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed?.["@graph"] && Array.isArray(parsed["@graph"])) {
+      parsed["@graph"] = parsed["@graph"].map((node: Record<string, unknown>) => {
+        const fixed: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(node)) {
+          if (k === "id") fixed["@id"] = v;
+          else if (k === "type") fixed["@type"] = v;
+          else fixed[k] = v;
+        }
+        return fixed;
+      });
+    }
+    return JSON.stringify(parsed);
+  } catch {
+    return raw;
+  }
+}
+
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -26,11 +50,18 @@ export async function generateStaticParams() {
       select: { slug: true },
     });
 
+    if (!clients || clients.length === 0) {
+      // Next.js with Cache Components requires at least one result during build-time.
+      // Return a placeholder so the build can complete; the page will render `notFound()` later.
+      return [{ slug: "__no_clients__" }];
+    }
+
     return clients.map((client) => ({
       slug: client.slug,
     }));
   } catch {
-    return [];
+    // Same reasoning as above: ensure we always return at least one param for build-time validation.
+    return [{ slug: "__no_clients__" }];
   }
 }
 
@@ -45,13 +76,48 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         title: "عميل غير موجود - مودونتي",
       };
     }
+    // DB cache first
+    const [cached, settings] = await Promise.all([
+      db.client.findUnique({
+        where: { slug: decodedSlug },
+        select: { nextjsMetadata: true },
+      }),
+      db.settings.findFirst({
+        select: { siteUrl: true },
+      }),
+    ]);
+    const siteUrl = (settings?.siteUrl || "https://www.modonty.com").replace(/\/$/, "");
+    const canonicalUrl = `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`;
 
+    if (cached?.nextjsMetadata) {
+      const stored = cached.nextjsMetadata as Metadata;
+      if (stored.title) {
+        return {
+          ...stored,
+          openGraph: {
+            ...(stored.openGraph as object | undefined),
+            url: canonicalUrl,
+          },
+          alternates: {
+            canonical: canonicalUrl,
+            languages: {
+              ar: canonicalUrl,
+              "x-default": canonicalUrl,
+            },
+          },
+        };
+      }
+    }
     return generateMetadataFromSEO({
       title: client.seoTitle || client.name,
       description: client.seoDescription || `استكشف مقالات ${client.name}`,
       image: client.ogImageMedia?.url || client.logoMedia?.url || undefined,
-      url: `/clients/${encodeURIComponent(slug)}`,
+      url: `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`,
       type: "website",
+      languages: {
+        ar: canonicalUrl,
+        "x-default": canonicalUrl,
+      },
     });
   } catch {
     return {
@@ -65,12 +131,16 @@ async function ClientPageContent({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, articlesResult, reviewsData, followers, engagementData] = await Promise.all([
+    const [data, articlesResult, reviewsData, followers, engagementData, cachedSeo] = await Promise.all([
       getClientPageData(slug),
       getArticles({ page: 1, limit: FEED_PAGE_SIZE, client: decodedSlug }),
       getClientReviewsBySlug(slug),
       getClientFollowers(slug),
       getClientEngagementBySlug(slug),
+      db.client.findUnique({
+        where: { slug: decodedSlug },
+        select: { jsonLdStructuredData: true },
+      }),
     ]);
 
     if (!data) {
@@ -112,14 +182,23 @@ async function ClientPageContent({ params }: ClientPageProps) {
 
     return (
       <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-        />
+        {cachedSeo?.jsonLdStructuredData ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(cachedSeo.jsonLdStructuredData) }}
+          />
+        ) : (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+            />
+          </>
+        )}
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">

@@ -361,6 +361,21 @@ model Client {
   // GTM Integration
   gtmId String? // Google Tag Manager ID
 
+  // Analytics
+  ga4PropertyId    String?
+  ga4MeasurementId String?
+
+  // GBP
+  gbpProfileUrl String?
+  gbpPlaceId    String?
+  gbpAccountId  String?
+  gbpLocationId String?
+  gbpCategory   String?
+
+  // Business Details
+  priceRange                String?
+  openingHoursSpecification Json?
+
   // Subscription Management
   subscriptionTier      SubscriptionTier
   subscriptionTierConfigId String? @db.ObjectId // Reference to tier config

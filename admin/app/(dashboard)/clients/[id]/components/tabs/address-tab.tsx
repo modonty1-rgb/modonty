@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 
 interface AddressTabProps {
@@ -18,11 +17,13 @@ interface AddressTabProps {
 
 export function AddressTab({ client }: AddressTabProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Address</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="border rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+        <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+          Address
+        </span>
+      </div>
+      <div className="p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-2">
@@ -74,7 +75,7 @@ export function AddressTab({ client }: AddressTabProps) {
             </p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

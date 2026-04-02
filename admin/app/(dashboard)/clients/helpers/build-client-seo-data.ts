@@ -23,6 +23,10 @@ type ClientSeoOverrides = {
   twitterDescription?: string | null;
   twitterSite?: string | null;
   contactType?: string | null;
+  priceRange?: string | null;
+  openingHoursSpecification?: unknown | null;
+  gbpPlaceId?: string | null;
+  gbpProfileUrl?: string | null;
   addressStreet?: string | null;
   addressBuildingNumber?: string | null;
   addressAdditionalNumber?: string | null;
@@ -105,6 +109,10 @@ export function buildClientSeoData(
     twitterDescription: (pick("twitterDescription") as string | null) ?? "",
     twitterSite: (pick("twitterSite") as string | null) ?? "",
     contactType: (pick("contactType") as string | null) ?? "",
+    priceRange: (pick("priceRange") as string | null | undefined) ?? null,
+    openingHoursSpecification: pick("openingHoursSpecification") ?? null,
+    gbpPlaceId: (pick("gbpPlaceId") as string | null | undefined) ?? null,
+    gbpProfileUrl: (pick("gbpProfileUrl") as string | null | undefined) ?? null,
     addressStreet: (pick("addressStreet") as string | null) ?? "",
     addressBuildingNumber: (pick("addressBuildingNumber") as string | null) ?? "",
     addressAdditionalNumber: (pick("addressAdditionalNumber") as string | null) ?? "",

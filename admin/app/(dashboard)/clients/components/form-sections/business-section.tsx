@@ -9,19 +9,55 @@ import { AlertCircle } from "lucide-react";
 interface BusinessSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
   industries?: Array<{ id: string; name: string }>;
+  clients?: Array<{ id: string; name: string }>;
 }
 
 export function BusinessSection({
   form,
   industries = [],
+  clients = [],
 }: BusinessSectionProps) {
-  const { watch, setValue, formState: { errors } } = form;
+  const {
+    watch,
+    setValue,
+    formState: { errors },
+  } = form;
   const hasAudienceErrors = Boolean(errors.targetAudience || errors.contentPriorities);
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Organization Type moved to Additional tab */}
+        <FormSelect
+          label="Contact Type"
+          name="contactType"
+          value={watch("contactType") || undefined}
+          onValueChange={(value) =>
+            setValue("contactType", value ? (value as string) : null, { shouldValidate: true })
+          }
+          error={errors.contactType?.message}
+          placeholder="Select contact type"
+        >
+          <SelectItem value="Customer Service">Customer Service</SelectItem>
+          <SelectItem value="Sales">Sales</SelectItem>
+          <SelectItem value="Technical Support">Technical Support</SelectItem>
+        </FormSelect>
+
+        <FormNativeSelect
+          label="Parent Organization"
+          name="parentOrganizationId"
+          value={watch("parentOrganizationId") || ""}
+          onChange={(e) =>
+            setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })
+          }
+          error={errors.parentOrganizationId?.message}
+        >
+          <option value="">None</option>
+          {clients.map((client) => (
+            <option key={client.id} value={client.id}>
+              {client.name}
+            </option>
+          ))}
+        </FormNativeSelect>
       </div>
 
       <div className="space-y-3">

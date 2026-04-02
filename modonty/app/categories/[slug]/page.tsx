@@ -22,11 +22,18 @@ export async function generateStaticParams() {
       select: { slug: true },
     });
 
+    if (!categories || categories.length === 0) {
+      // Next.js with Cache Components requires at least one result during build-time.
+      // Return a placeholder so the build can complete; the page will render `notFound()` later.
+      return [{ slug: "__no_categories__" }];
+    }
+
     return categories.map((category) => ({
       slug: category.slug,
     }));
   } catch {
-    return [];
+    // Same reasoning as above: ensure we always return at least one param for build-time validation.
+    return [{ slug: "__no_categories__" }];
   }
 }
 

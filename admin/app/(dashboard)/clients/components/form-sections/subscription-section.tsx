@@ -4,6 +4,8 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormSelect, FormInput } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { SubscriptionTierCards } from "../subscription-tier-cards";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import { SubscriptionTier } from "@prisma/client";
@@ -31,6 +33,7 @@ export function SubscriptionSection({
   const subscriptionTier = watch("subscriptionTier");
   const subscriptionStartDate = watch("subscriptionStartDate");
   const subscriptionEndDate = watch("subscriptionEndDate");
+  const articlesPerMonth = watch("articlesPerMonth");
 
   const selectedTierConfig = tierConfigs.find((config) => config.tier === subscriptionTier);
 
@@ -102,7 +105,15 @@ export function SubscriptionSection({
           </div>
           <SubscriptionTierCards
             selectedTier={subscriptionTier || ""}
-            onSelect={(tier) => setValue("subscriptionTier", tier as SubscriptionTier, { shouldValidate: true })}
+            onSelect={(tier) => {
+              const selectedTier = tier as SubscriptionTier;
+              const tierMap: Record<string, number> = { BASIC: 8, PROFESSIONAL: 16, ENTERPRISE: 30 };
+
+              setValue("subscriptionTier", selectedTier, { shouldValidate: true });
+              if (tierMap[selectedTier]) {
+                setValue("articlesPerMonth", tierMap[selectedTier], { shouldValidate: true });
+              }
+            }}
             tiers={tierConfigs.map((config) => ({
               value: config.tier,
               name: config.name,
@@ -111,6 +122,27 @@ export function SubscriptionSection({
               popular: config.isPopular,
             }))}
           />
+          <div className="mt-2 space-y-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="articlesPerMonth" className="cursor-default text-sm font-medium text-foreground">
+                Articles / Month
+              </Label>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                من الباقة
+              </span>
+            </div>
+            <Input
+              id="articlesPerMonth"
+              name="articlesPerMonth"
+              type="number"
+              value={articlesPerMonth ?? ""}
+              readOnly
+              className={errors.articlesPerMonth ? "border-destructive" : ""}
+            />
+            {errors.articlesPerMonth && (
+              <p className="text-xs text-destructive mt-1">{errors.articlesPerMonth.message}</p>
+            )}
+          </div>
           {errors.subscriptionTier && (
             <p className="text-xs text-destructive mt-1">{errors.subscriptionTier.message}</p>
           )}

@@ -24,18 +24,17 @@ export const ClientFormHeader = forwardRef<ClientFormHeaderRef, ClientFormHeader
     }));
 
     return (
-      <div className="sticky top-0 z-40 bg-background border-b pb-6 mb-6 pt-6 -mx-6 px-6">
-        <div className="grid grid-cols-4 gap-6">
-          {/* Title - 25% (1 column) */}
-          <div className="col-span-1">
-            <h1 className="text-2xl font-semibold leading-tight">{title}</h1>
-            {description && <p className="text-muted-foreground mt-1">{description}</p>}
-          </div>
-          
-          {/* SEO Doctor - 75% (3 columns) */}
-          <div className="col-span-3 relative">
+      <div className="sticky top-0 z-40 bg-background border-b -mx-6 px-6">
+        <div className="flex items-center gap-4 h-12">
+          <h1 className="text-base font-semibold leading-tight shrink-0">{title}</h1>
+          <div className="flex-1 relative">
             {seoDoctor}
           </div>
+          {actionButtons && (
+            <div className="flex items-center gap-3 shrink-0">
+              {actionButtons}
+            </div>
+          )}
         </div>
       </div>
     );

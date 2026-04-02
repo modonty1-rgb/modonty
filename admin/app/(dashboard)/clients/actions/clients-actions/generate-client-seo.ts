@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { generateCompleteOrganizationJsonLd } from "@/lib/seo/generate-complete-organization-jsonld";
-import { normalizeJsonLd } from "@/lib/seo/jsonld-processor";
 import { validateClientJsonLdComplete } from "../../helpers/client-seo-config/client-jsonld-validator";
 import type { Prisma } from "@prisma/client";
 
@@ -266,12 +265,9 @@ export async function generateClientSEO(clientId: string) {
     }
 
     const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl);
-    
-    // Normalize JSON-LD structure (ensures consistency)
-    const normalizedGraph = await normalizeJsonLd(jsonLdGraph);
 
     // Validate (Adobe + Ajv + business rules)
-    const validationReport = await validateClientJsonLdComplete(normalizedGraph, {
+    const validationReport = await validateClientJsonLdComplete(jsonLdGraph, {
       requireLogo: true, // Require logo for Organization rich results
       requireAddress: false, // Address optional but validated if present
       requireContactPoint: false, // ContactPoint optional but validated if present
@@ -279,8 +275,8 @@ export async function generateClientSEO(clientId: string) {
       maxNameLength: 100,
     });
 
-    // Stringify normalized graph for storage
-    const jsonLdString = JSON.stringify(normalizedGraph, null, 2);
+    // Stringify graph for storage
+    const jsonLdString = JSON.stringify(jsonLdGraph, null, 2);
 
     // Ensure metaTags is properly serialized as JSON to avoid MongoDB pipeline issues
     const metaTagsJson = JSON.parse(JSON.stringify(metaTags)) as Record<string, unknown>;

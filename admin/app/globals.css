@@ -41,7 +41,7 @@
     --card: 222.2 84% 6%; /* Slightly lighter dark for cards - creates visual depth */
     --popover: 222.2 84% 6%; /* Dark popovers */
     --border: 217.2 32.6% 17.5%; /* Subtle dark borders */
-    --input: 217.2 32.6% 17.5%; /* Input borders in dark mode */
+    --input: 217 19% 27%; /* Input borders in dark mode */
 
     /* Text Colors */
     --foreground: 210 40% 98%; /* Light text for readability */

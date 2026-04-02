@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, Code } from "lucide-react";
 
@@ -15,11 +14,13 @@ interface SettingsTabProps {
 export function SettingsTab({ client }: SettingsTabProps) {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Subscription & Billing</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="border rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+          <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+            Subscription & Billing
+          </span>
+        </div>
+        <div className="p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -56,15 +57,17 @@ export function SettingsTab({ client }: SettingsTabProps) {
               </Badge>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {client.gtmId && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Tracking</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+            <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+              Tracking
+            </span>
+          </div>
+          <div className="p-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Code className="h-4 w-4 text-muted-foreground" />
@@ -74,8 +77,8 @@ export function SettingsTab({ client }: SettingsTabProps) {
                 {client.gtmId}
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

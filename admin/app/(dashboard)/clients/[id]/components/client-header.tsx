@@ -2,72 +2,129 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
-import { organizationSEOConfig } from "../../helpers/client-seo-config";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { DeleteClientButton } from "./delete-client-button";
 
 interface ClientHeaderProps {
   client: {
     id: string;
     name: string;
+    slug: string;
     logoMedia: {
       url: string;
       altText: string | null;
     } | null;
-    seoTitle: string | null;
-    seoDescription: string | null;
-    legalName: string | null;
-    url: string | null;
-    email: string;
-    phone: string | null;
-    description: string | null;
-    sameAs: string[];
-    businessBrief: string | null;
-    gtmId: string | null;
-    foundingDate: Date | null;
-    contactType: string | null;
-    addressStreet: string | null;
-    addressCity: string | null;
-    addressCountry: string | null;
-    addressPostalCode: string | null;
-    canonicalUrl: string | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    twitterImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
+    subscriptionStatus: string;
+    paymentStatus: string;
+    subscriptionTier: string | null;
   };
+  seoScore?: number;
 }
 
-export function ClientHeader({ client }: ClientHeaderProps) {
+export function ClientHeader({ client, seoScore }: ClientHeaderProps) {
+  const tierLabel = client.subscriptionTier
+    ? client.subscriptionTier.charAt(0) +
+      client.subscriptionTier.slice(1).toLowerCase()
+    : null;
+
   return (
-    <div className="flex items-center justify-between gap-4 pb-6 border-b">
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        {client.logoMedia?.url && (
+    <div className="sticky top-0 z-10 flex items-center justify-between gap-4 py-3 border-b bg-background mb-4">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        {client.logoMedia?.url ? (
           <img
             src={client.logoMedia.url}
             alt={client.logoMedia.altText || client.name}
-            className="h-16 w-16 rounded-lg object-contain flex-shrink-0"
+            className="h-10 w-10 rounded-lg object-contain flex-shrink-0 border"
           />
+        ) : (
+          <div className="h-10 w-10 rounded-lg border bg-muted flex items-center justify-center flex-shrink-0 text-muted-foreground text-lg">
+            🏢
+          </div>
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-semibold truncate">{client.name}</h1>
+          <h1 className="text-lg font-semibold truncate">{client.name}</h1>
+          <p className="text-xs text-muted-foreground font-mono truncate">
+            {client.slug}
+          </p>
+        </div>
+        <div className="flex gap-2 items-center flex-wrap">
+          {client.subscriptionStatus === "ACTIVE" && (
+            <Badge
+              variant="outline"
+              className="text-xs text-green-500 border-green-500/40 bg-green-500/10"
+            >
+              Active
+            </Badge>
+          )}
+          {client.subscriptionStatus === "EXPIRED" && (
+            <Badge
+              variant="outline"
+              className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
+            >
+              Expired
+            </Badge>
+          )}
+          {client.paymentStatus === "PAID" && (
+            <Badge
+              variant="outline"
+              className="text-xs text-green-500 border-green-500/40 bg-green-500/10"
+            >
+              Paid
+            </Badge>
+          )}
+          {client.paymentStatus === "OVERDUE" && (
+            <Badge
+              variant="outline"
+              className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
+            >
+              Overdue
+            </Badge>
+          )}
+          {tierLabel && (
+            <Badge variant="secondary" className="text-xs">
+              {tierLabel}
+            </Badge>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-4 flex-shrink-0">
-        <SEOHealthGauge data={client} config={organizationSEOConfig} size="md" />
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/clients">Back</Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/clients/${client.id}/edit`}>Edit</Link>
-          </Button>
-          <DeleteClientButton clientId={client.id} />
-        </div>
+      <div className="flex gap-2 items-center flex-shrink-0">
+        {seoScore !== undefined && (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border bg-muted/30 min-w-[110px]">
+            <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  seoScore >= 80
+                    ? "bg-green-500"
+                    : seoScore >= 60
+                      ? "bg-amber-500"
+                      : "bg-red-400",
+                )}
+                style={{ width: `${seoScore}%` }}
+              />
+            </div>
+            <span
+              className={cn(
+                "text-xs font-semibold tabular-nums",
+                seoScore >= 80
+                  ? "text-green-500"
+                  : seoScore >= 60
+                    ? "text-amber-500"
+                    : "text-red-400",
+              )}
+            >
+              {seoScore}%
+            </span>
+          </div>
+        )}
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/clients">← Back</Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/clients/${client.id}/edit`}>✎ Edit</Link>
+        </Button>
+        <DeleteClientButton clientId={client.id} />
       </div>
     </div>
   );

@@ -1,7 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 interface LegalTabProps {
   client: {
     commercialRegistrationNumber: string | null;
@@ -15,11 +13,13 @@ interface LegalTabProps {
 
 export function LegalTab({ client }: LegalTabProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Saudi Arabia Legal & Registration</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="border rounded-lg overflow-hidden">
+      <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+        <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+          Saudi Arabia Legal & Registration
+        </span>
+      </div>
+      <div className="p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-muted-foreground mb-1">Commercial Registration Number (CR)</p>
@@ -58,7 +58,7 @@ export function LegalTab({ client }: LegalTabProps) {
             </p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
