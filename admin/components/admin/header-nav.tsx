@@ -26,7 +26,7 @@ export function HeaderNav() {
 
   return (
     <nav className="hidden md:flex items-center gap-4" aria-label="Main navigation">
-      <Link href="/modonty/setting" className="flex items-center gap-2 shrink-0">
+      <Link href="/" className="flex items-center gap-2 shrink-0">
         <div className="h-8 w-8 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border">
           <Image
             src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1768807772/modontyIcon_svukux.svg"
@@ -59,6 +59,7 @@ export function HeaderNav() {
                     )}
                   >
                     <Icon className="h-4 w-4" />
+                    <span className="hidden lg:inline text-xs">{item.label}</span>
                     {item.showBadge && <ContactMessagesBadge />}
                   </Button>
                 </Link>

@@ -27,7 +27,7 @@ const menuItems = [
   { icon: Tag, label: "Tags", href: "/tags" },
   { icon: User, label: "Authors", href: "/authors" },
   { icon: Download, label: "Export Data", href: "/export-data" },
-  { icon: Users, label: "Users", href: "/users" },
+  { icon: Users, label: "Admins", href: "/users" },
   { icon: Mail, label: "Subscribers", href: "/subscribers" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: CreditCard, label: "Subscription Tiers", href: "/subscription-tiers" },
@@ -41,7 +41,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "border-r bg-card h-screen sticky top-0 transition-all duration-300",
+        "border-r bg-card h-screen sticky top-0 transition-all duration-300 flex flex-col",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -66,7 +66,7 @@ export function Sidebar() {
           </Button>
         </div>
       </div>
-      <nav className="p-4 space-y-1">
+      <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
         {!collapsed && (
           <div className="px-3 py-2 mb-2">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
