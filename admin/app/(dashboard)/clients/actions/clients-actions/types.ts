@@ -25,7 +25,7 @@ export type ClientForList = {
   paymentStatus: PaymentStatus;
   subscriptionEndDate: Date | null;
   articlesPerMonth: number | null;
-  metaTags: unknown;
+  nextjsMetadata: unknown;
   jsonLdStructuredData: string | null;
   jsonLdValidationReport: unknown;
   seoTitle: string | null;
@@ -38,10 +38,6 @@ export type ClientForList = {
   sameAs: string[];
   foundingDate: Date | null;
   gtmId: string | null;
-  twitterCard: string | null;
-  twitterTitle: string | null;
-  twitterDescription: string | null;
-  twitterSite: string | null;
   contactType: string | null;
   addressStreet: string | null;
   addressCity: string | null;

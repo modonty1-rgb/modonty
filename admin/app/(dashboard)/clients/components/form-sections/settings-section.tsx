@@ -1,7 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { FormSelect } from "@/components/admin/form-field";
+import { FormSelect, FormInput } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
@@ -60,6 +60,35 @@ export function SettingsSection({ form }: SettingsSectionProps) {
         <SelectItem value="PAID">Paid</SelectItem>
         <SelectItem value="OVERDUE">Overdue</SelectItem>
       </FormSelect>
+
+      <div className="space-y-1 pt-2">
+        <h3 className="text-xs font-semibold text-foreground">Analytics</h3>
+        <p className="text-xs text-muted-foreground">
+          Google Analytics 4 identifiers used for tracking setup.
+        </p>
+      </div>
+
+      <FormInput
+        label="GA4 Property ID"
+        name="ga4PropertyId"
+        value={String(watch("ga4PropertyId" as any) ?? "")}
+        onChange={(e) =>
+          setValue("ga4PropertyId" as any, e.target.value || null, { shouldValidate: true })
+        }
+        error={(errors as any).ga4PropertyId?.message}
+        placeholder="123456789"
+      />
+
+      <FormInput
+        label="GA4 Measurement ID"
+        name="ga4MeasurementId"
+        value={String(watch("ga4MeasurementId" as any) ?? "")}
+        onChange={(e) =>
+          setValue("ga4MeasurementId" as any, e.target.value || null, { shouldValidate: true })
+        }
+        error={(errors as any).ga4MeasurementId?.message}
+        placeholder="G-XXXXXXXXXX"
+      />
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { generateCompleteOrganizationJsonLd } from "@/lib/seo/generate-complete-organization-jsonld";
-import { normalizeJsonLd } from "@/lib/seo/jsonld-processor";
 import { validateClientJsonLdComplete } from "../../helpers/client-seo-config/client-jsonld-validator";
 import type { Prisma } from "@prisma/client";
 
@@ -79,12 +78,7 @@ export async function generateClientSEO(clientId: string) {
         addressLatitude: true,
         addressLongitude: true,
         sameAs: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
         canonicalUrl: true,
-        metaRobots: true,
         foundingDate: true,
         createdAt: true,
         updatedAt: true,
@@ -168,7 +162,7 @@ export async function generateClientSEO(clientId: string) {
 
     const title = client.seoTitle || client.name;
     const description = client.seoDescription || client.description || "";
-    const effectiveMetaRobots = client.metaRobots?.trim() || "index, follow";
+    const effectiveMetaRobots = "index, follow";
 
     // Validate and ensure absolute canonical URL
     const canonicalUrl = ensureAbsoluteUrl(clientPageUrl) || clientPageUrl;
@@ -189,9 +183,9 @@ export async function generateClientSEO(clientId: string) {
         locale: "ar_SA",
       },
       twitter: {
-        card: client.twitterCard || (client.twitterImageMedia?.url ? "summary_large_image" : "summary"),
-        title: client.twitterTitle || title,
-        description: client.twitterDescription || description,
+        card: client.twitterImageMedia?.url ? "summary_large_image" : "summary",
+        title: title,
+        description: description,
       },
       canonical: canonicalUrl,
       formatDetection: {
@@ -259,7 +253,7 @@ export async function generateClientSEO(clientId: string) {
     const ogImageUrl = metaTags.openGraph.images?.[0]?.secure_url || metaTags.openGraph.images?.[0]?.url;
     const ogImageAlt = metaTags.openGraph.images?.[0]?.alt;
     const hasAnyImage = !!(client.twitterImageMedia?.url || ogImageUrl);
-    metaTags.twitter.card = client.twitterCard || (hasAnyImage ? "summary_large_image" : "summary");
+    metaTags.twitter.card = hasAnyImage ? "summary_large_image" : "summary";
 
     if (client.twitterImageMedia?.url) {
       const twitterImageUrl = ensureAbsoluteUrl(client.twitterImageMedia.url) || client.twitterImageMedia.url;
@@ -270,18 +264,10 @@ export async function generateClientSEO(clientId: string) {
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
     }
 
-    if (client.twitterSite) {
-      metaTags.twitter.site = client.twitterSite;
-      metaTags.twitter.creator = client.twitterSite;
-    }
-
     const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl);
-    
-    // Normalize JSON-LD structure (ensures consistency)
-    const normalizedGraph = await normalizeJsonLd(jsonLdGraph);
 
     // Validate (Adobe + Ajv + business rules)
-    const validationReport = await validateClientJsonLdComplete(normalizedGraph, {
+    const validationReport = await validateClientJsonLdComplete(jsonLdGraph, {
       requireLogo: true, // Require logo for Organization rich results
       requireAddress: false, // Address optional but validated if present
       requireContactPoint: false, // ContactPoint optional but validated if present
@@ -289,8 +275,8 @@ export async function generateClientSEO(clientId: string) {
       maxNameLength: 100,
     });
 
-    // Stringify normalized graph for storage
-    const jsonLdString = JSON.stringify(normalizedGraph, null, 2);
+    // Stringify graph for storage
+    const jsonLdString = JSON.stringify(jsonLdGraph, null, 2);
 
     // Ensure metaTags is properly serialized as JSON to avoid MongoDB pipeline issues
     const metaTagsJson = JSON.parse(JSON.stringify(metaTags)) as Record<string, unknown>;
@@ -298,8 +284,8 @@ export async function generateClientSEO(clientId: string) {
     await db.client.update({
       where: { id: clientId },
       data: {
-        metaRobots: effectiveMetaRobots,
-        metaTags: metaTagsJson as any,
+        nextjsMetadata: metaTagsJson as any,
+        nextjsMetadataLastGenerated: new Date(),
         jsonLdStructuredData: jsonLdString,
         jsonLdLastGenerated: new Date(),
         jsonLdValidationReport: JSON.parse(

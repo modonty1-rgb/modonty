@@ -71,8 +71,6 @@ export function SEOSection({
   const keywordsValue = watch("keywords");
   const knowsLanguageValue = watch("knowsLanguage");
   const organizationTypeValue = watch("organizationType");
-  const businessActivityCodeValue = watch("businessActivityCode");
-  const isicV4Value = watch("isicV4");
 
   const hasMetaBasicsErrors = Boolean(
     errors.seoTitle ||
@@ -90,8 +88,6 @@ export function SEOSection({
   );
   const hasOrganizationErrors = Boolean(
     errors.parentOrganizationId ||
-      errors.businessActivityCode ||
-      errors.isicV4 ||
       errors.organizationType
   );
 
@@ -124,8 +120,7 @@ export function SEOSection({
       (Array.isArray(keywordsValue) && keywordsValue.length ? 0 : 1) +
       (Array.isArray(knowsLanguageValue) && knowsLanguageValue.length ? 0 : 1),
     organization:
-      (organizationTypeValue ? 0 : 1) +
-      (businessActivityCodeValue || isicV4Value ? 0 : 1),
+      (organizationTypeValue ? 0 : 1),
   } as const;
 
   return (
@@ -490,26 +485,6 @@ export function SEOSection({
                 المنظمة الأم تُستخدم في بيانات Schema.org المهيكلة لإنشاء التسلسل الهرمي التنظيمي. قم بتعيين هذا فقط إذا
                 كان هذا العميل فرعاً أو قسمًا من منظمة أخرى.
               </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormInput
-                label="Business Activity Code"
-                name="businessActivityCode"
-                value={watch("businessActivityCode") || ""}
-                onChange={(e) => setValue("businessActivityCode", e.target.value || null, { shouldValidate: true })}
-                error={errors.businessActivityCode?.message}
-                placeholder="e.g., 62010"
-                hint="رمز تصنيف النشاط التجاري المحلي - يُستخدم لتصنيف SEO والتحقق - يساعد في تصنيف الشركة حسب النشاط التجاري المحلي - يُستخدم مع رمز ISIC V4 للتصنيف الشامل"
-              />
-              <FormInput
-                label="ISIC V4 Code"
-                name="isicV4"
-                value={watch("isicV4") || ""}
-                onChange={(e) => setValue("isicV4", e.target.value || null, { shouldValidate: true })}
-                error={errors.isicV4?.message}
-                placeholder="e.g., 0111"
-                hint="التصنيف الصناعي الدولي الموحد (الإصدار الرابع) - يُستخدم لتصنيف SEO وبيانات Schema.org - تصنيف دولي موحد يساعد في تصنيف الشركة عالمياً - يُستخدم مع رمز النشاط التجاري المحلي للتصنيف الشامل"
-              />
             </div>
             <FormSelect
               label="Organization Type"

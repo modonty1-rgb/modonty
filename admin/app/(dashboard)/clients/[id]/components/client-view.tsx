@@ -90,10 +90,6 @@ interface Client {
   addressCountry: string | null;
   addressPostalCode: string | null;
   canonicalUrl: string | null;
-  twitterCard: string | null;
-  twitterTitle: string | null;
-  twitterDescription: string | null;
-  twitterSite: string | null;
   gtmId: string | null;
   foundingDate: Date | null;
   createdAt: Date;
@@ -552,56 +548,6 @@ export function ClientView({ client }: ClientViewProps) {
                   </a>
                 </div>
               )}
-              {(client.twitterCard ||
-                client.twitterTitle ||
-                client.twitterDescription ||
-                client.twitterImageMedia?.url ||
-                client.twitterImageMedia?.altText ||
-                client.twitterSite) && (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Twitter Cards</p>
-                    {client.twitterCard && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Twitter Card Type</p>
-                        <p className="text-sm">{client.twitterCard}</p>
-                      </div>
-                    )}
-                    {client.twitterTitle && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Twitter Title</p>
-                        <p className="text-sm">{client.twitterTitle}</p>
-                      </div>
-                    )}
-                    {client.twitterDescription && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Twitter Description</p>
-                        <p className="text-sm">{client.twitterDescription}</p>
-                      </div>
-                    )}
-                    {client.twitterImageMedia?.url && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Twitter Image</p>
-                        <a
-                          href={client.twitterImageMedia.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-primary hover:underline"
-                        >
-                          {client.twitterImageMedia.url}
-                        </a>
-                        {client.twitterImageMedia.altText && (
-                          <p className="text-xs text-muted-foreground mt-1">Alt: {client.twitterImageMedia.altText}</p>
-                        )}
-                      </div>
-                    )}
-                    {client.twitterSite && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Twitter Site</p>
-                        <p className="text-sm">{client.twitterSite}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
               {client.gtmId && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Google Tag Manager ID</p>

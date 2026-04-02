@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { CategoryView } from "./components/category-view";
 import { CategoryArticles } from "./components/category-articles";
 import { DeleteCategoryButton } from "./components/delete-category-button";
+import { RevalidateSEOButton } from "./components/revalidate-seo-button";
 
 export default async function CategoryViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,11 +24,12 @@ export default async function CategoryViewPage({ params }: { params: Promise<{ i
         title="Category Details"
         description="View category information and articles"
       />
-      <div className="mb-6">
+      <div className="mb-6 flex items-center gap-3">
         <DeleteCategoryButton categoryId={id} />
+        <RevalidateSEOButton categoryId={id} />
       </div>
       <div className="space-y-6">
-        <CategoryView category={category} />
+        <CategoryView category={category as any} />
         <CategoryArticles articles={articles} categoryId={id} />
       </div>
     </div>

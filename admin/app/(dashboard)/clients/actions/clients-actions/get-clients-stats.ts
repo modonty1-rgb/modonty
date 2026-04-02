@@ -3,8 +3,6 @@
 import { db } from "@/lib/db";
 import { ArticleStatus, SubscriptionStatus, TrafficSource } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
-import { organizationSEOConfig } from "../../helpers/client-seo-config";
 
 /**
  * Safely fetches clients with relations, handling DateTime conversion errors
@@ -155,65 +153,58 @@ export async function getClientsStats() {
         db.client.findMany({
           select: {
             id: true,
-            name: true,
-            slug: true,
-            legalName: true,
-            url: true,
-            email: true,
-            phone: true,
-            description: true,
-            seoTitle: true,
-            seoDescription: true,
-            logoMedia: {
-              select: {
-                url: true,
-                altText: true,
-                width: true,
-                height: true,
-              },
-            },
-            ogImageMedia: {
-              select: {
-                url: true,
-                altText: true,
-                width: true,
-                height: true,
-              },
-            },
-            twitterImageMedia: {
-              select: {
-                url: true,
-                altText: true,
-                width: true,
-                height: true,
-              },
-            },
-            sameAs: true,
-            businessBrief: true,
-            gtmId: true,
-            foundingDate: true,
-            contactType: true,
-            addressStreet: true,
-            addressCity: true,
-            addressCountry: true,
-            addressPostalCode: true,
-            twitterCard: true,
-            twitterTitle: true,
-            twitterDescription: true,
-            twitterSite: true,
-            canonicalUrl: true,
+            nextjsMetadata: true,
+            jsonLdStructuredData: true,
+            jsonLdValidationReport: true,
           },
         }),
         safeFindClientsWithRelations(startOfMonth, endOfMonth),
       ]);
 
+    // Score based on what Google actually reads: cached nextjsMetadata + jsonLdStructuredData
     let averageSEO = 0;
     if (allClients.length > 0) {
       const scores = allClients.map((client) => {
-        const scoreResult = calculateSEOScore(client, organizationSEOConfig);
-        return scoreResult.percentage;
+        let score = 0;
+
+        // META score (50 pts): title=20 + description=20 + ogImage=10
+        const meta = client.nextjsMetadata as Record<string, any> | null;
+        if (meta && typeof meta === "object") {
+          const title = typeof meta.title === "string" ? meta.title.trim() : "";
+          const desc = typeof meta.description === "string" ? meta.description.trim() : "";
+          const ogImages = (meta as any).openGraph?.images;
+          const hasOg = Array.isArray(ogImages) && ogImages.length > 0 && !!ogImages[0]?.url;
+          if (title) score += 20;
+          if (desc) score += 20;
+          if (hasOg) score += 10;
+        }
+
+        // JSON-LD score (50 pts): exists+valid=30 + zero errors=20
+        if (client.jsonLdStructuredData) {
+          try {
+            const parsed = JSON.parse(client.jsonLdStructuredData) as Record<string, any>;
+            const valid =
+              typeof parsed === "object" &&
+              parsed !== null &&
+              "@context" in parsed &&
+              "@graph" in parsed;
+            if (valid) {
+              score += 30;
+              const report = client.jsonLdValidationReport as Record<string, any> | null;
+              const errCount =
+                (Array.isArray(report?.adobe?.errors) ? report.adobe.errors.length : 0) +
+                (Array.isArray(report?.ajv?.errors) ? report.ajv.errors.length : 0) +
+                (Array.isArray(report?.custom?.errors) ? report.custom.errors.length : 0);
+              if (errCount === 0) score += 20;
+            }
+          } catch {
+            // unparseable JSON-LD = 0 pts
+          }
+        }
+
+        return score; // 0–100
       });
-      averageSEO = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+      averageSEO = Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length);
     }
 
     const activeClients = clientsWithRelations.filter(

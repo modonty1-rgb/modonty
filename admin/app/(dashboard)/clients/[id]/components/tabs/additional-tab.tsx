@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 interface AdditionalTabProps {
@@ -24,11 +23,13 @@ interface AdditionalTabProps {
 export function AdditionalTab({ client }: AdditionalTabProps) {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Additional Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="border rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+          <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+            Additional Information
+          </span>
+        </div>
+        <div className="p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Alternate Name</p>
@@ -73,14 +74,16 @@ export function AdditionalTab({ client }: AdditionalTabProps) {
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Business Classification</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="border rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+          <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+            Business Classification
+          </span>
+        </div>
+        <div className="p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Business Activity Code</p>
@@ -101,14 +104,16 @@ export function AdditionalTab({ client }: AdditionalTabProps) {
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Parent Organization</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="border rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+          <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+            Parent Organization
+          </span>
+        </div>
+        <div className="p-4">
           <div>
             {client.parentOrganization ? (
               client.parentOrganization.url ? (
@@ -132,8 +137,8 @@ export function AdditionalTab({ client }: AdditionalTabProps) {
               <p className="text-sm text-muted-foreground italic">Not set</p>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

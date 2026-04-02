@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import Link from "next/link";
 import { getClientById, getClientArticles, getClientAnalytics, getClientMedia } from "../actions/clients-actions";
 import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
@@ -17,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     }
 
     // Use stored metaTags if available
-    if (client.metaTags) {
+    if (client.nextjsMetadata) {
       try {
-        const metaTags = client.metaTags as {
+        const metaTags = client.nextjsMetadata as {
           title: string;
           description: string;
           robots?: string;
@@ -163,6 +165,38 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
     redirect("/clients");
   }
 
+  // Calculate SEO score from cached data (same logic as list page)
+  let seoScore = 0;
+  const meta = client.nextjsMetadata as Record<string, any> | null;
+  if (meta && typeof meta === "object") {
+    const title = typeof meta.title === "string" ? meta.title.trim() : "";
+    const desc = typeof meta.description === "string" ? meta.description.trim() : "";
+    const ogImages = meta.openGraph?.images;
+    const hasOg =
+      Array.isArray(ogImages) && ogImages.length > 0 && !!(ogImages[0] as any)?.url;
+    if (title) seoScore += 20;
+    if (desc) seoScore += 20;
+    if (hasOg) seoScore += 10;
+  }
+  if (client.jsonLdStructuredData) {
+    try {
+      const parsed = JSON.parse(client.jsonLdStructuredData);
+      if (
+        typeof parsed === "object" &&
+        parsed !== null &&
+        "@context" in parsed &&
+        "@graph" in parsed
+      ) {
+        seoScore += 30;
+        const rep = client.jsonLdValidationReport as Record<string, any> | null;
+        const errs =
+          (Array.isArray(rep?.adobe?.errors) ? (rep.adobe.errors as unknown[]).length : 0) +
+          (Array.isArray(rep?.custom?.errors) ? (rep.custom.errors as unknown[]).length : 0);
+        if (errs === 0) seoScore += 20;
+      }
+    } catch {}
+  }
+
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -177,7 +211,38 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="container mx-auto max-w-[1128px]">
-      <ClientHeader client={client} />
+      <ClientHeader client={client as any} seoScore={seoScore} />
+      {seoScore < 80 && (
+        <div className="bg-muted/30 border border-border rounded-lg p-5 flex items-center gap-5 mb-6 mt-6">
+          <div
+            className={`flex flex-col items-center justify-center w-14 h-14 rounded-full border-2 flex-shrink-0 ${
+              seoScore >= 80 ? "border-green-500" : seoScore >= 50 ? "border-yellow-500" : "border-destructive"
+            }`}
+          >
+            <span
+              className={
+                seoScore >= 80
+                  ? "text-green-500 font-bold text-base"
+                  : seoScore >= 50
+                    ? "text-yellow-500 font-bold text-base"
+                    : "text-destructive font-bold text-base"
+              }
+            >
+              {seoScore}%
+            </span>
+            <span className="text-[9px] text-muted-foreground">SEO</span>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-foreground font-semibold text-sm">SEO غير مكتمل</h3>
+            <p className="text-muted-foreground text-xs mt-0.5">
+              أضف بيانات الـ SEO لتحسين ظهور العميل في نتائج البحث
+            </p>
+          </div>
+          <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Link href={`/clients/${id}/seo`}>Setup SEO ⚡</Link>
+          </Button>
+        </div>
+      )}
       <div className="mt-6">
         <ClientTabs
           client={client as any}

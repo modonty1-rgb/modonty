@@ -42,9 +42,12 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
     canonicalUrl: initialData?.canonicalUrl || "",
   });
 
+  const isEditMode = !!categoryId;
   useEffect(() => {
-    const newSlug = slugify(formData.name);
-    setFormData((prev) => ({ ...prev, slug: newSlug }));
+    if (!isEditMode) {
+      const newSlug = slugify(formData.name);
+      setFormData((prev) => ({ ...prev, slug: newSlug }));
+    }
   }, [formData.name]);
 
   const handleSubmit = async (e: React.FormEvent) => {

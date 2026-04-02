@@ -169,7 +169,7 @@ export function AnalticCard({
     <Card
       className={cn(
         "hover:shadow-md transition-all duration-200 border-border/50 flex flex-col relative",
-        isCompact ? "min-h-[55px] w-fit min-w-[90px]" : "min-h-[100px] h-full",
+        isCompact ? "min-h-[70px] w-fit min-w-[100px]" : "min-h-[100px] h-full",
         borderLeftColor && "border-l-4",
         className
       )}
@@ -184,7 +184,7 @@ export function AnalticCard({
         <div className="flex items-center gap-1 min-w-0 flex-1 pr-1.5">
           <CardTitle className={cn(
             "font-medium text-muted-foreground leading-tight truncate min-w-0 flex-1",
-            isCompact ? "text-[8px] sm:text-[9px]" : "text-[10px] sm:text-xs"
+            isCompact ? "text-[10px] sm:text-xs" : "text-[10px] sm:text-xs"
           )}>
             {title}
           </CardTitle>
@@ -192,11 +192,11 @@ export function AnalticCard({
         {Icon && (
           <div className={cn(
             "rounded-md bg-muted/50 flex items-center justify-center flex-shrink-0",
-            isCompact ? "h-3.5 w-3.5" : "h-6 w-6"
+            isCompact ? "h-5 w-5" : "h-6 w-6"
           )}>
             <Icon className={cn(
               "text-muted-foreground",
-              isCompact ? "h-2 w-2" : "h-3 w-3"
+              isCompact ? "h-3 w-3" : "h-3 w-3"
             )} aria-hidden="true" />
           </div>
         )}
@@ -207,7 +207,7 @@ export function AnalticCard({
       )}>
         <div className={cn(
           "font-bold tracking-tight tabular-nums leading-none break-words",
-          isCompact ? "text-xs" : "text-base",
+          isCompact ? "text-sm font-bold" : "text-base",
           valueColor
         )}>
           {displayValue}
@@ -226,7 +226,7 @@ export function AnalticCard({
         {description && !showProgress && (
           <p className={cn(
             "text-muted-foreground leading-relaxed line-clamp-2",
-            isCompact ? "text-[8px]" : "text-[10px]"
+            isCompact ? "text-[10px]" : "text-[10px]"
           )}>
             {description}
           </p>

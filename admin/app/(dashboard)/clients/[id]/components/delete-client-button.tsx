@@ -46,7 +46,7 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive">
+        <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
           <Trash2 className="h-4 w-4 mr-2" />
           Delete
         </Button>
@@ -62,7 +62,7 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
           <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={loading}>
+          <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" onClick={handleDelete} disabled={loading}>
             {loading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>

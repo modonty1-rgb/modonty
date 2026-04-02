@@ -127,6 +127,13 @@ export interface ArticleFormData {
   }>;
 }
 
+export type OpeningHoursDay = {
+  dayOfWeek: string; // "Saturday" | "Sunday" | ... | "Friday"
+  opens: string; // "09:00"
+  closes: string; // "17:00"
+  closed: boolean;
+}
+
 export interface ClientFormData {
   name: string;
   slug: string;
@@ -160,6 +167,8 @@ export interface ClientFormData {
   canonicalUrl?: string | null;
   metaRobots?: string | null;
   gtmId?: string;
+  ga4PropertyId?: string | null;
+  ga4MeasurementId?: string | null;
   subscriptionTier?: SubscriptionTier | null;
   subscriptionStartDate?: Date | null;
   subscriptionEndDate?: Date | null;
@@ -167,6 +176,17 @@ export interface ClientFormData {
   subscriptionTierConfigId?: string | null;
   subscriptionStatus?: SubscriptionStatus;
   paymentStatus?: PaymentStatus;
+
+  // GBP
+  gbpProfileUrl?: string | null;
+  gbpPlaceId?: string | null;
+  gbpAccountId?: string | null;
+  gbpLocationId?: string | null;
+  gbpCategory?: string | null;
+
+  // Business Details
+  priceRange?: string | null;
+  openingHoursSpecification?: OpeningHoursDay[] | null;
 
   // Saudi Arabia & Gulf Identifiers
   commercialRegistrationNumber?: string | null;

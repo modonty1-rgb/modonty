@@ -18,7 +18,7 @@ export default async function EditClientPage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="container mx-auto max-w-[1128px] px-6 py-6">
       <ClientFormHeaderWrapper
         title="Edit Client"
       >

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ClientTable } from "./client-table";
-import { BulkActionsToolbar } from "./bulk-actions-toolbar";
+import { RegenerateAllSeoButton } from "./regenerate-all-seo-button";
 import { useSearchContext } from "./clients-header-wrapper";
 import type { ClientForList } from "../actions/clients-actions/types";
 
@@ -13,16 +12,14 @@ interface ClientsPageClientProps {
 }
 
 export function ClientsPageClient({ clients, clientCount, description }: ClientsPageClientProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { search } = useSearchContext();
 
   return (
     <div className="space-y-4">
-      <BulkActionsToolbar
-        selectedIds={selectedIds}
-        onClearSelection={() => setSelectedIds([])}
-      />
-      <ClientTable clients={clients} onSelectionChange={setSelectedIds} search={search} />
+      <div className="flex justify-end">
+        <RegenerateAllSeoButton clients={clients} />
+      </div>
+      <ClientTable clients={clients} search={search} />
     </div>
   );
 }

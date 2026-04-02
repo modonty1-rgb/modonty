@@ -133,32 +133,6 @@ export async function generateAndSaveJsonLd(
     // Stringify normalized graph for storage
     const jsonLdString = stringifyKnowledgeGraph(normalizedGraph);
 
-    // Get current article for version tracking
-    const currentArticle = await db.article.findUnique({
-      where: { id: articleId },
-      select: {
-        jsonLdVersion: true,
-        jsonLdHistory: true,
-        jsonLdStructuredData: true,
-      },
-    });
-
-    // Build history (keep last 5 versions)
-    const history = (currentArticle?.jsonLdHistory as unknown[]) || [];
-    if (currentArticle?.jsonLdStructuredData) {
-      // Add current version to history before replacing
-      const historyEntry = {
-        version: currentArticle.jsonLdVersion || 1,
-        data: currentArticle.jsonLdStructuredData,
-        timestamp: new Date().toISOString(),
-      };
-
-      if (history.length >= 5) {
-        history.shift(); // Remove oldest
-      }
-      history.push(historyEntry);
-    }
-
     // Save to database
     await db.article.update({
       where: { id: articleId },
@@ -169,8 +143,6 @@ export async function generateAndSaveJsonLd(
           JSON.stringify(validationReport)
         ) as Prisma.InputJsonValue,
         articleBodyText,
-        jsonLdVersion: (currentArticle?.jsonLdVersion || 0) + 1,
-        jsonLdHistory: JSON.parse(JSON.stringify(history)) as Prisma.InputJsonValue,
       },
     });
 
@@ -252,58 +224,6 @@ export async function needsRegeneration(articleId: string): Promise<boolean> {
   }
 
   return article.dateModified > article.jsonLdLastGenerated;
-}
-
-/**
- * Rollback to a previous JSON-LD version
- */
-export async function rollbackJsonLd(
-  articleId: string,
-  targetVersion: number
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    const article = await db.article.findUnique({
-      where: { id: articleId },
-      select: {
-        jsonLdHistory: true,
-      },
-    });
-
-    if (!article) {
-      return { success: false, error: "Article not found" };
-    }
-
-    const history = (article.jsonLdHistory as Array<{
-      version: number;
-      data: string;
-      timestamp: string;
-    }>) || [];
-
-    const targetSnapshot = history.find((h) => h.version === targetVersion);
-
-    if (!targetSnapshot) {
-      return {
-        success: false,
-        error: `Version ${targetVersion} not found in history`,
-      };
-    }
-
-    await db.article.update({
-      where: { id: articleId },
-      data: {
-        jsonLdStructuredData: targetSnapshot.data,
-        jsonLdVersion: targetSnapshot.version,
-        jsonLdDiffSummary: `Rolled back to version ${targetVersion}`,
-      },
-    });
-
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
 }
 
 /**

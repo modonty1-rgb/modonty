@@ -22,11 +22,18 @@ export async function generateStaticParams() {
       select: { slug: true },
     });
 
+    if (!categories || categories.length === 0) {
+      // Next.js with Cache Components requires at least one result during build-time.
+      // Return a placeholder so the build can complete; the page will render `notFound()` later.
+      return [{ slug: "__no_categories__" }];
+    }
+
     return categories.map((category) => ({
       slug: category.slug,
     }));
   } catch {
-    return [];
+    // Same reasoning as above: ensure we always return at least one param for build-time validation.
+    return [{ slug: "__no_categories__" }];
   }
 }
 
@@ -42,6 +49,7 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
         seoTitle: true,
         seoDescription: true,
         socialImage: true,
+        nextjsMetadata: true,
       },
     });
 
@@ -49,6 +57,12 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
       return {
         title: "فئة غير موجودة - مودونتي",
       };
+    }
+
+    // DB cache first
+    if (category.nextjsMetadata) {
+      const stored = category.nextjsMetadata as Metadata;
+      if (stored.title) return stored;
     }
 
     return generateMetadataFromSEO({
@@ -83,6 +97,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
         seoDescription: true,
         socialImage: true,
         socialImageAlt: true,
+        jsonLdStructuredData: true,
       },
     });
 
@@ -157,14 +172,23 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
 
     return (
       <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleCollectionData) }}
-        />
+        {category.jsonLdStructuredData ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: category.jsonLdStructuredData }}
+          />
+        ) : (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(articleCollectionData) }}
+            />
+          </>
+        )}
 
         <>
           <Breadcrumb

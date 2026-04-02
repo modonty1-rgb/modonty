@@ -34,7 +34,7 @@ export function SEOFields({
 
   return (
     <Card>
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen} defaultOpen={defaultOpen}>
         <CardHeader>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
             <CardTitle>SEO</CardTitle>

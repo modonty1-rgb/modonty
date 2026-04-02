@@ -31,9 +31,22 @@ export async function createCategory(data: {
       },
     });
     revalidatePath("/categories");
+    try {
+      const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
+      await generateAndSaveCategorySeo(category.id);
+    } catch (e) { console.error("Category SEO gen failed:", e); }
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create category";
+
+    // Handle duplicate slug
+    if (message.includes("Unique constraint") && message.includes("slug")) {
+      return {
+        success: false,
+        error: "اسم التصنيف مستخدم مسبقاً — جرب اسماً مختلفاً أو أضف كلمة إضافية"
+      };
+    }
+
     return { success: false, error: message };
   }
 }

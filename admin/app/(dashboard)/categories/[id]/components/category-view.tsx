@@ -28,6 +28,11 @@ interface Category {
   seoDescription: string | null;
   socialImage: string | null;
   socialImageAlt: string | null;
+  canonicalUrl: string | null;
+  nextjsMetadata: unknown;
+  nextjsMetadataLastGenerated: Date | null;
+  jsonLdStructuredData: string | null;
+  jsonLdLastGenerated: Date | null;
   createdAt: Date;
   updatedAt: Date;
   _count: {
@@ -174,6 +179,32 @@ export function CategoryView({ category }: CategoryViewProps) {
                       </div>
                     )}
                   </div>
+                </div>
+              )}
+              {category.jsonLdLastGenerated && (
+                <div className="pt-2 border-t">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-medium text-green-600">✅ SEO Cache Generated</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(category.jsonLdLastGenerated).toISOString()}
+                    </span>
+                  </div>
+                </div>
+              )}
+              {category.jsonLdStructuredData && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">JSON-LD Structured Data</p>
+                  <pre className="text-xs bg-muted p-3 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap">
+                    {JSON.stringify(JSON.parse(category.jsonLdStructuredData), null, 2)}
+                  </pre>
+                </div>
+              )}
+              {category.nextjsMetadata != null && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Next.js Metadata (Meta Tags)</p>
+                  <pre className="text-xs bg-muted p-3 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap">
+                    {String(JSON.stringify(category.nextjsMetadata, null, 2))}
+                  </pre>
                 </div>
               )}
             </CardContent>

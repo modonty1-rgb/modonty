@@ -51,11 +51,18 @@ interface ArticlePageProps {
 export async function generateStaticParams() {
   try {
     const articles = await getArticleSlugsForStaticParams();
+    if (!articles || articles.length === 0) {
+      // Next.js with Cache Components requires at least one result during build-time.
+      // Return a placeholder so the build can complete; the page will render `notFound()` later.
+      return [{ slug: "__no_articles__" }];
+    }
+
     return articles.map((article: { slug: string }) => ({
       slug: article.slug,
     }));
   } catch {
-    return [];
+    // Same reasoning as above: ensure we always return at least one param for build-time validation.
+    return [{ slug: "__no_articles__" }];
   }
 }
 

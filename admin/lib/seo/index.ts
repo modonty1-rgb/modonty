@@ -50,7 +50,6 @@ export {
   regenerateJsonLd,
   getCachedJsonLd,
   needsRegeneration,
-  rollbackJsonLd,
   batchRegenerateJsonLd,
   getArticlesNeedingRegeneration,
   getJsonLdStats,

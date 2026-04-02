@@ -8,7 +8,6 @@ import { Save, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { TestDataButton } from './test-data-button';
 
 export function ArticleFormNavigation() {
   const {
@@ -107,7 +106,6 @@ export function ArticleFormNavigation() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TestDataButton />
                   <Button
                     variant="outline"
                     size="sm"

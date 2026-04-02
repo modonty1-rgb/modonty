@@ -336,7 +336,6 @@ export async function updateSEOFields(
         seoDescription: true,
         description: true,
         canonicalUrl: true,
-        metaRobots: true,
         gtmId: true,
       },
     });
@@ -350,7 +349,6 @@ export async function updateSEOFields(
       seoDescription: data.seoDescription ?? null,
       description: data.description ?? null,
       canonicalUrl: data.canonicalUrl ?? null,
-      metaRobots: data.metaRobots ?? null,
       gtmId: data.gtmId ?? null,
     };
 
@@ -499,10 +497,6 @@ export async function updateMediaSocialFields(
         logoMediaId: true,
         ogImageMediaId: true,
         twitterImageMediaId: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
       },
     });
 
@@ -514,10 +508,6 @@ export async function updateMediaSocialFields(
       logoMediaId: data.logoMediaId ?? null,
       ogImageMediaId: data.ogImageMediaId ?? null,
       twitterImageMediaId: data.twitterImageMediaId ?? null,
-      twitterCard: data.twitterCard ?? null,
-      twitterTitle: data.twitterTitle ?? null,
-      twitterDescription: data.twitterDescription ?? null,
-      twitterSite: data.twitterSite ?? null,
     };
 
     const updateData = buildGroupUpdateData("media-social", client as Record<string, unknown>, newData);

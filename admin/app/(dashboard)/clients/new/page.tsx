@@ -11,11 +11,13 @@ export default async function NewClientPage() {
   ]);
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="container mx-auto max-w-[1128px] px-6">
       <ClientFormHeaderWrapper
         title="Create Client"
       >
-        <ClientForm industries={industries} clients={clients} onSubmit={createClient} />
+        <div className="py-6">
+          <ClientForm industries={industries} clients={clients} onSubmit={createClient} />
+        </div>
       </ClientFormHeaderWrapper>
     </div>
   );

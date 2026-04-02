@@ -8,8 +8,24 @@ export async function getCategoryById(id: string) {
 
     return await db.category.findUnique({
       where: isObjectId ? { id } : { slug: id },
-      include: {
-        parent: true,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        parentId: true,
+        seoTitle: true,
+        seoDescription: true,
+        socialImage: true,
+        socialImageAlt: true,
+        canonicalUrl: true,
+        createdAt: true,
+        updatedAt: true,
+        nextjsMetadata: true,
+        nextjsMetadataLastGenerated: true,
+        jsonLdStructuredData: true,
+        jsonLdLastGenerated: true,
+        parent: { select: { id: true, name: true } },
         children: true,
         _count: {
           select: {

@@ -1,40 +1,27 @@
 "use client";
 
-import { useState, useMemo, useEffect, Fragment } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
 import {
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Stethoscope,
-  CreditCard,
-  Calendar,
-  FileText,
-  Package,
-  TrendingUp,
-  Users,
-  CheckCircle2,
-  AlertCircle,
+  MapPin,
+  BarChart2,
+  Pencil,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
 import { createOrganizationSEOConfigFull, organizationSEOConfig } from "../helpers/client-seo-config";
 import { SortableValue } from "@/lib/types";
 import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
 import {
-  calculateRevenue,
   getSubscriptionDaysRemaining,
   calculateDeliveryRate,
 } from "../helpers/business-metrics";
@@ -65,7 +52,6 @@ interface ListValidationReport {
 
 interface ClientTableProps {
   clients: ClientForList[];
-  onSelectionChange?: (selectedIds: string[]) => void;
   search?: string;
 }
 
@@ -118,11 +104,11 @@ function getJsonLdIssues(client: ClientForList): string[] {
  * Checks if metaTags are valid/correct using critical SEO rules
  */
 function isMetaTagsValid(client: ClientForList): boolean {
-  if (!client.metaTags) {
+  if (!client.nextjsMetadata) {
     return false;
   }
 
-  const metaTags = client.metaTags as Record<string, any>;
+  const metaTags = client.nextjsMetadata as Record<string, any>;
   if (typeof metaTags !== "object" || metaTags === null) {
     return false;
   }
@@ -205,10 +191,10 @@ function isJsonLdValid(client: ClientForList): boolean {
 function getCriticalItems(client: ClientForList): string[] {
   const items: string[] = [];
 
-  if (!client.metaTags || typeof client.metaTags !== "object") {
+  if (!client.nextjsMetadata || typeof client.nextjsMetadata !== "object") {
     items.push("Meta tags missing");
   } else {
-    const metaIssues = getMetaTagsIssues(client.metaTags as Record<string, any>);
+    const metaIssues = getMetaTagsIssues(client.nextjsMetadata as Record<string, any>);
     items.push(...metaIssues);
   }
 
@@ -231,13 +217,12 @@ function getCriticalItems(client: ClientForList): string[] {
   return items;
 }
 
-export function ClientTable({ clients, onSelectionChange, search: externalSearch }: ClientTableProps) {
+export function ClientTable({ clients, search: externalSearch }: ClientTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState(externalSearch || "");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const pageSize = 10;
 
   // Sync external search prop with internal state
@@ -342,48 +327,13 @@ export function ClientTable({ clients, onSelectionChange, search: externalSearch
   const endIndex = startIndex + pageSize;
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  const allSelected = paginatedData.length > 0 && paginatedData.every((client) => selectedIds.has(client.id));
-  const someSelected = paginatedData.some((client) => selectedIds.has(client.id));
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      paginatedData.forEach((client) => newSelected.add(client.id));
-    } else {
-      paginatedData.forEach((client) => newSelected.delete(client.id));
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
-  const handleSelectOne = (clientId: string, checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      newSelected.add(clientId);
-    } else {
-      newSelected.delete(clientId);
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
   return (
     <div className="space-y-4">
       <div className="border rounded-lg">
-        <Table>
+        <Table className="table-fixed w-full">
+          <colgroup>{/* Name */}<col className="w-[200px]" />{/* Tier */}<col className="w-[90px]" />{/* Status */}<col className="w-[90px]" />{/* Articles */}<col className="w-[70px]" />{/* Delivery */}<col className="w-[80px]" />{/* Expires */}<col className="w-[80px]" />{/* GBP */}<col className="w-[40px]" />{/* Analytics */}<col className="w-[40px]" />{/* SEO */}<col className="w-[130px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-12">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  ref={(input) => {
-                    if (input) input.indeterminate = someSelected && !allSelected;
-                  }}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-              </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("name")}
@@ -412,7 +362,6 @@ export function ClientTable({ clients, onSelectionChange, search: externalSearch
                   {getSortIcon("articles")}
                 </div>
               </TableHead>
-              <TableHead className="text-center">SEO Score</TableHead>
               <TableHead>Delivery</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
@@ -423,8 +372,18 @@ export function ClientTable({ clients, onSelectionChange, search: externalSearch
                   {getSortIcon("expires")}
                 </div>
               </TableHead>
-              <TableHead className="text-center">MetaTags</TableHead>
-              <TableHead className="text-center">JSON-LD</TableHead>
+              <TableHead className="text-center px-1">
+                <div className="flex justify-center" title="Google Business Profile">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </TableHead>
+              <TableHead className="text-center px-1">
+                <div className="flex justify-center" title="GA4 Analytics">
+                  <BarChart2 className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </TableHead>
+              <TableHead className="text-center">SEO</TableHead>
+              <TableHead className="text-right px-3">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -444,6 +403,11 @@ export function ClientTable({ clients, onSelectionChange, search: externalSearch
                 const tierName = client.subscriptionTier
                   ? client.subscriptionTier.charAt(0) + client.subscriptionTier.slice(1).toLowerCase()
                   : "N/A";
+                const gbpPlaceId = (client as { gbpPlaceId?: string | null }).gbpPlaceId;
+                const ga4PropertyId = (client as { ga4PropertyId?: string | null }).ga4PropertyId;
+                const isActive = client.subscriptionStatus === SubscriptionStatus.ACTIVE;
+                const isPaid = client.paymentStatus === PaymentStatus.PAID;
+                const isOverdue = client.paymentStatus === PaymentStatus.OVERDUE;
 
                 // Build normalized SEO data once for all scorers (core + Meta + JSON-LD)
                 const seoDataForScoring = buildClientSeoData(client);
@@ -458,278 +422,180 @@ export function ClientTable({ clients, onSelectionChange, search: externalSearch
                 const jsonLdScore = groupScores.jsonLd.percentage;
 
                 const getStatusBadge = () => {
-                  const isActive = client.subscriptionStatus === SubscriptionStatus.ACTIVE;
-                  const isPaid = client.paymentStatus === PaymentStatus.PAID;
-                  const isOverdue = client.paymentStatus === PaymentStatus.OVERDUE;
-
                   if (isActive && isPaid) {
-                    return <Badge variant="default">Active</Badge>;
+                    return (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500">
+                        Active
+                      </span>
+                    );
                   }
                   if (isActive && isOverdue) {
-                    return <Badge variant="destructive">Overdue</Badge>;
+                    return (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-500">
+                        Suspended
+                      </span>
+                    );
                   }
                   if (isActive) {
-                    return <Badge variant="secondary">Pending Payment</Badge>;
+                    return (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-500">
+                        Pending
+                      </span>
+                    );
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.EXPIRED) {
-                    return <Badge variant="outline">Expired</Badge>;
+                    return <span className="text-sm text-muted-foreground">Expired</span>;
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.CANCELLED) {
-                    return <Badge variant="outline">Cancelled</Badge>;
+                    return <span className="text-sm text-muted-foreground">Cancelled</span>;
                   }
-                  return <Badge variant="secondary">Pending</Badge>;
+                  return <span className="text-sm text-muted-foreground">Pending</span>;
                 };
 
-                const criticalItems = getCriticalItems(client);
-
                 return (
-                  <Fragment key={client.id}>
                     <TableRow
-                      className="cursor-pointer hover:bg-muted/50"
+                      key={client.id}
+                      className="cursor-pointer"
                       onClick={() => router.push(`/clients/${client.id}`)}
                     >
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.has(client.id)}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleSelectOne(client.id, e.target.checked);
-                        }}
-                        className="h-4 w-4 rounded border-gray-300"
-                      />
+                    <TableCell>
+                      <div className="flex flex-col gap-0.5">
+                        <Link
+                          href={`/clients/${client.id}`}
+                          className="font-medium text-sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {client.name}
+                        </Link>
+                        {client.email && (
+                          <span className="text-xs text-muted-foreground block truncate max-w-[160px]">
+                            {client.email}
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <HoverCard openDelay={200} closeDelay={100}>
-                        <HoverCardTrigger asChild>
-                          <Link
-                            href={`/clients/${client.id}`}
-                            className="font-medium hover:text-primary"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {client.name}
-                          </Link>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80" onClick={(e) => e.stopPropagation()}>
-                          <div className="space-y-4">
-                            <div className="space-y-1">
-                              <h4 className="text-sm font-semibold">{client.name}</h4>
-                              {client.email && (
-                                <p className="text-xs text-muted-foreground">{client.email}</p>
-                              )}
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                  <FileText className="h-3 w-3" />
-                                  <span>Total Articles</span>
-                                </div>
-                                <p className="text-sm font-semibold">{client._count.articles}</p>
-                              </div>
-                              
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                  <Package className="h-3 w-3" />
-                                  <span>This Month</span>
-                                </div>
-                                <p className="text-sm font-semibold">{client.articles?.length ?? 0}</p>
-                              </div>
-                              
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                  <TrendingUp className="h-3 w-3" />
-                                  <span>Delivery Rate</span>
-                                </div>
-                                <p className="text-sm font-semibold">
-                                  {delivery.promised > 0 ? `${delivery.rate}%` : "-"}
-                                </p>
-                              </div>
-                              
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                  <Users className="h-3 w-3" />
-                                  <span>Tier</span>
-                                </div>
-                                <p className="text-sm font-semibold">{tierName}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="space-y-2 pt-2 border-t">
-                              <div className="flex items-center justify-between text-xs">
-                                <span className="text-muted-foreground">Status</span>
-                                {getStatusBadge()}
-                              </div>
-                              
-                              {delivery.promised > 0 && (
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-muted-foreground">Delivery</span>
-                                  <span className={cn(
-                                    "font-medium",
-                                    delivery.isBehind ? "text-destructive" : "text-foreground"
-                                  )}>
-                                    {delivery.delivered}/{delivery.promised} articles
-                                  </span>
-                                </div>
-                              )}
-                              
-                              {daysRemaining !== null && (
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-muted-foreground">Expires</span>
-                                  <span className={cn(
-                                    "font-medium",
-                                    daysRemaining <= 30
-                                      ? "text-destructive"
-                                      : daysRemaining <= 90
-                                        ? "text-orange-500"
-                                        : "text-foreground"
-                                  )}>
-                                    {daysRemaining > 0 ? `In ${daysRemaining} days` : "Expired"}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            
-                            <div className="pt-2 border-t">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full"
-                                asChild
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Link href={`/clients/${client.id}`}>View Details</Link>
-                              </Button>
-                            </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{tierName}</Badge>
+                      <span className="text-sm text-muted-foreground">{tierName}</span>
                     </TableCell>
                     <TableCell>{getStatusBadge()}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <FileText className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-sm font-medium">{client._count.articles}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-center">
-                        <span
-                          className={cn(
-                            "text-sm font-semibold",
-                            seoScore >= 90
-                              ? "text-green-600"
-                              : seoScore >= 70
-                                ? "text-yellow-600"
-                                : seoScore >= 50
-                                  ? "text-orange-600"
-                                  : "text-red-600"
-                          )}
-                        >
-                          {seoScore}%
-                        </span>
-                      </div>
+                      <span className="text-sm">{client._count.articles}</span>
                     </TableCell>
                     <TableCell>
                       {delivery.promised > 0 ? (
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={cn(
-                              "text-sm font-medium",
-                              delivery.isBehind ? "text-destructive" : "text-foreground"
-                            )}
-                          >
-                            {delivery.delivered}/{delivery.promised}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            ({delivery.rate}%)
-                          </span>
-                        </div>
+                        <span className={cn(
+                          "text-sm",
+                          isActive && isPaid && delivery.delivered === 0
+                            ? "text-destructive"
+                            : "text-muted-foreground"
+                        )}>
+                          {delivery.delivered}/{delivery.promised}
+                        </span>
                       ) : (
                         <span className="text-muted-foreground text-sm">-</span>
                       )}
                     </TableCell>
                     <TableCell>
                       {daysRemaining !== null ? (
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
-                          <span
-                            className={cn(
-                              "text-sm",
-                              daysRemaining <= 30
-                                ? "text-destructive font-medium"
-                                : daysRemaining <= 90
-                                  ? "text-orange-500"
-                                  : "text-muted-foreground"
-                            )}
-                          >
-                            {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}
-                          </span>
+                        <span className={cn(
+                          "text-sm",
+                          daysRemaining <= 0
+                            ? "text-muted-foreground"
+                            : daysRemaining <= 30
+                              ? "text-amber-500"
+                              : "text-muted-foreground"
+                        )}>
+                          {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">No sub</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center px-1">
+                      {gbpPlaceId ? (
+                        <div title="GBP Connected" className="flex items-center justify-center">
+                          <MapPin className="h-4 w-4 text-green-500" />
                         </div>
                       ) : (
-                        <span className="text-muted-foreground text-sm">-</span>
+                        <div title="GBP Not connected" className="flex items-center justify-center">
+                          <MapPin className="h-4 w-4 text-muted-foreground/40" />
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center px-1">
+                      {ga4PropertyId ? (
+                        <div title="GA4 Active" className="flex items-center justify-center">
+                          <BarChart2 className="h-4 w-4 text-green-500" />
+                        </div>
+                      ) : (
+                        <div title="GA4 Not connected" className="flex items-center justify-center">
+                          <BarChart2 className="h-4 w-4 text-muted-foreground/40" />
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex flex-col items-center gap-1">
-                        <span
-                          className={cn(
-                            "text-sm font-semibold",
-                            metaScore >= 80
-                              ? "text-green-600"
-                              : metaScore >= 60
-                                ? "text-yellow-600"
-                                : "text-red-600",
-                          )}
-                        >
-                          {metaScore}%
-                        </span>
-                        {metaScore >= 80 ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-destructive" />
-                        )}
-                      </div>
+                      {seoScore ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-[60px] bg-muted rounded-full h-2 overflow-hidden">
+                            <div
+                              className={cn(
+                                "h-full rounded-full",
+                                seoScore >= 80
+                                  ? "bg-green-500"
+                                  : seoScore >= 60
+                                    ? "bg-yellow-500"
+                                    : "bg-red-500"
+                              )}
+                              style={{ width: `${Math.max(0, Math.min(100, seoScore))}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted-foreground w-9 text-right">
+                            {seoScore}%
+                          </span>
+                        </div>
+                      ) : (
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/clients/${client.id}/seo`}>Setup SEO</Link>
+                        </Button>
+                      )}
                     </TableCell>
-                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex flex-col items-center gap-1">
-                        <span
-                          className={cn(
-                            "text-sm font-semibold",
-                            jsonLdScore >= 80
-                              ? "text-green-600"
-                              : jsonLdScore >= 60
-                                ? "text-yellow-600"
-                                : "text-red-600",
-                          )}
+                    <TableCell className="text-right px-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="inline-flex items-center gap-0.5">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                          asChild
                         >
-                          {jsonLdScore}%
-                        </span>
-                        {jsonLdScore >= 80 ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4 text-destructive" />
-                        )}
+                          <Link href={`/clients/${client.id}/edit`}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 hover:bg-primary/10 rounded-md transition-colors"
+                          asChild
+                        >
+                          <Link href={`/clients/${client.id}/seo`}>
+                            <span className="text-[9px] font-bold leading-none w-3.5 h-3.5 rounded-sm bg-primary/20 text-primary flex items-center justify-center">
+                              S
+                            </span>
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                          asChild
+                        >
+                          <Link href={`/clients/${client.id}`}>
+                            <Eye className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
-                  {criticalItems.length > 0 && (
-                    <TableRow
-                      className="cursor-pointer bg-destructive/5 text-destructive hover:bg-destructive/10"
-                      onClick={() => router.push(`/clients/${client.id}`)}
-                    >
-                      <TableCell colSpan={10} className="text-xs py-2 px-4">
-                        <span className="flex items-center gap-1.5">
-                          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                          Critical: {criticalItems.join(" · ")} — Configure in client edit → SEO tab.
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </Fragment>
                 );
               })
             )}

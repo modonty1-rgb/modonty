@@ -55,12 +55,95 @@ export async function createClient(data: ClientFormData) {
       delete clientData.password;
     }
 
-    clientData.logoMediaId = null;
-    clientData.ogImageMediaId = null;
-    clientData.twitterImageMediaId = null;
+    // Whitelist: only pass fields Prisma accepts on client.create()
+    const allowedFields = [
+      "name",
+      "slug",
+      "legalName",
+      "url",
+      "sameAs",
+      "email",
+      "phone",
+      "contactType",
+      "password",
+      "seoTitle",
+      "seoDescription",
+      "description",
+      "canonicalUrl",
+      "businessBrief",
+      "targetAudience",
+      "contentPriorities",
+      "foundingDate",
+      "addressStreet",
+      "addressCity",
+      "addressCountry",
+      "addressPostalCode",
+      "commercialRegistrationNumber",
+      "vatID",
+      "taxID",
+      "legalForm",
+      "addressRegion",
+      "addressNeighborhood",
+      "addressBuildingNumber",
+      "addressAdditionalNumber",
+      "addressLatitude",
+      "addressLongitude",
+      "businessActivityCode",
+      "isicV4",
+      "numberOfEmployees",
+      "licenseNumber",
+      "licenseAuthority",
+      "alternateName",
+      "slogan",
+      "keywords",
+      "knowsLanguage",
+      "organizationType",
+      "gtmId",
+      "subscriptionTier",
+      "subscriptionStartDate",
+      "subscriptionEndDate",
+      "articlesPerMonth",
+      "subscriptionStatus",
+      "paymentStatus",
+      "ga4PropertyId",
+      "ga4MeasurementId",
+      "gbpProfileUrl",
+      "gbpPlaceId",
+      "gbpAccountId",
+      "gbpLocationId",
+      "gbpCategory",
+      "priceRange",
+      "openingHoursSpecification",
+      "googleBusinessProfileUrl",
+      "forbiddenKeywords",
+      "forbiddenClaims",
+      "competitiveMentionsAllowed",
+    ];
+
+    const cleanData: any = {};
+    for (const key of allowedFields) {
+      if (key in clientData) {
+        cleanData[key] = (clientData as any)[key];
+      }
+    }
+
+    // Handle relations
+    if ((clientData as any).subscriptionTierConfigId) {
+      cleanData.subscriptionTierConfig = {
+        connect: { id: (clientData as any).subscriptionTierConfigId },
+      };
+    }
+    if ((clientData as any).industryId) {
+      cleanData.industry = { connect: { id: (clientData as any).industryId } };
+    }
+    if ((clientData as any).parentOrganizationId) {
+      cleanData.parentOrganization = {
+        connect: { id: (clientData as any).parentOrganizationId },
+      };
+    }
 
     const client = await db.client.create({
-      data: clientData,
+      data: cleanData,
     });
 
     try {

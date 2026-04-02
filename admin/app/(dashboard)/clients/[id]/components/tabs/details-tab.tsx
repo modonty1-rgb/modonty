@@ -28,67 +28,7 @@ import {
 } from "../../../helpers/url-validation";
 
 interface DetailsTabProps {
-  client: {
-    id: string;
-    name: string;
-    slug: string;
-    legalName: string | null;
-    url: string | null;
-    logoMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    twitterImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    email: string;
-    phone: string | null;
-    sameAs: string[];
-    seoTitle: string | null;
-    seoDescription: string | null;
-    description: string | null;
-    businessBrief: string | null;
-    industry: {
-      id: string;
-      name: string;
-    } | null;
-    targetAudience: string | null;
-    contentPriorities: string[];
-    subscriptionTier: string | null;
-    subscriptionStartDate: Date | null;
-    subscriptionEndDate: Date | null;
-    articlesPerMonth: number | null;
-    subscriptionTierConfig?: {
-      id: string;
-      tier: string;
-      name: string;
-      articlesPerMonth: number;
-      price: number;
-      isPopular: boolean;
-    } | null;
-    subscriptionStatus: string;
-    paymentStatus: string;
-    contactType: string | null;
-    addressStreet: string | null;
-    addressCity: string | null;
-    addressCountry: string | null;
-    addressPostalCode: string | null;
-    canonicalUrl: string | null;
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
-    gtmId: string | null;
-    foundingDate: Date | null;
-    _count: {
-      articles: number;
-    };
-  };
+  client: any;
 }
 
 const getTierName = (tier: string | null): string => {
@@ -380,7 +320,7 @@ export function DetailsTab({ client }: DetailsTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Social Profiles</p>
                   <div className="flex flex-col gap-2">
-                    {client.sameAs.map((url, index) => {
+                    {client.sameAs.map((url: string, index: number) => {
                       const platform = detectPlatform(url);
                       const platformName = getPlatformName(platform);
 

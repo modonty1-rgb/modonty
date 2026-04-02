@@ -54,7 +54,21 @@ export async function getCategories(filters?: CategoryFilters) {
 
     const categories = await db.category.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        parentId: true,
+        name: true,
+        slug: true,
+        createdAt: true,
+        description: true,
+        seoTitle: true,
+        seoDescription: true,
+        canonicalUrl: true,
+        socialImage: true,
+        nextjsMetadata: true,
+        nextjsMetadataLastGenerated: true,
+        jsonLdStructuredData: true,
+        jsonLdLastGenerated: true,
         parent: { select: { name: true } },
         _count: { select: { articles: true } },
       },

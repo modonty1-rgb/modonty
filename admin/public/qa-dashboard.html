@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modonty QA Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #3030ff;
+    --accent: #00d8d8;
+    --navy: #0e065a;
+    --bg: #0a0a1a;
+    --card: #111128;
+    --card-hover: #161640;
+    --border: #1e1e4a;
+    --text: #e8e8f0;
+    --text-muted: #8888aa;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a1060 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header h1 .badge {
+    font-size: 11px;
+    background: var(--primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn {
+    font-family: 'Tajawal', sans-serif;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { background: var(--card-hover); border-color: var(--primary); }
+  .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
+  .btn-primary:hover { background: #2525dd; }
+  .btn-success { background: var(--success); border-color: var(--success); color: white; }
+  .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+
+  .status-dot.live { background: var(--success); }
+  .status-dot.error { background: var(--danger); animation: none; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Layout */
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .stat-card .sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .tab {
+    font-family: 'Tajawal', sans-serif;
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* Table */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: rgba(48, 48, 255, 0.08);
+    padding: 10px 14px;
+    text-align: right;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30, 30, 74, 0.5);
+    vertical-align: middle;
+  }
+
+  tr:hover td { background: rgba(48, 48, 255, 0.04); }
+
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-bar .bar {
+    width: 60px;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .score-bar .bar .fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .pill-success { background: rgba(34,197,94,0.15); color: var(--success); }
+  .pill-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .pill-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .pill-info { background: rgba(59,130,246,0.15); color: var(--info); }
+
+  /* Field Check */
+  .check { color: var(--success); }
+  .cross { color: var(--danger); }
+
+  /* Client Detail Panel */
+  .detail-panel {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .detail-panel.active { display: block; }
+
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-header h2 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .detail-section {
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    padding: 14px;
+  }
+
+  .detail-section h3 {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+
+  .field-row .field-name { color: var(--text-muted); }
+
+  /* Errors Section */
+  .errors-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .error-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(239,68,68,0.06);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .error-item .count {
+    font-weight: 700;
+    color: var(--danger);
+  }
+
+  /* Search */
+  .search-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    width: 240px;
+    direction: rtl;
+  }
+
+  .search-box:focus { outline: none; border-color: var(--primary); }
+
+  /* Auto-refresh indicator */
+  .auto-refresh {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .auto-refresh select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* Timestamp */
+  .timestamp {
+    font-size: 11px;
+    color: var(--text-muted);
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* JSON viewer */
+  .json-viewer {
+    background: #0d0d20;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    max-height: 400px;
+    overflow: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Comparison diff highlight */
+  .diff-changed {
+    background: rgba(245,158,11,0.15);
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+
+  /* Snapshot section */
+  .snapshot-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .snapshot-chip {
+    font-family: 'Tajawal', sans-serif;
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .snapshot-chip:hover { border-color: var(--accent); }
+  .snapshot-chip .time { color: var(--text-muted); direction: ltr; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>
+    🔍 Modonty QA Dashboard
+    <span class="badge">LIVE</span>
+  </h1>
+  <div class="header-actions">
+    <div class="auto-refresh">
+      تحديث تلقائي:
+      <select id="refreshInterval" onchange="setAutoRefresh()">
+        <option value="0">إيقاف</option>
+        <option value="5">5 ثواني</option>
+        <option value="10" selected>10 ثواني</option>
+        <option value="30">30 ثاني</option>
+      </select>
+      <span class="status-dot live" id="statusDot"></span>
+    </div>
+    <button class="btn" onclick="takeSnapshot()">📸 Snapshot</button>
+    <button class="btn btn-primary" onclick="fetchData()">🔄 تحديث الآن</button>
+    <span class="timestamp" id="lastUpdate">—</span>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Stats -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="loading"><div class="spinner"></div>جاري التحميل...</div>
+  </div>
+
+  <!-- Snapshots -->
+  <div class="snapshot-bar" id="snapshotBar" style="display:none;"></div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <h2 id="detailTitle">—</h2>
+      <button class="btn" onclick="closeDetail()">✕ إغلاق</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('clients')">👥 العملاء</button>
+    <button class="tab" onclick="switchTab('errors')">⚠️ الأخطاء</button>
+    <button class="tab" onclick="switchTab('fields')">📋 الحقول المفقودة</button>
+    <button class="tab" onclick="switchTab('json')">{ } JSON خام</button>
+  </div>
+
+  <!-- Search -->
+  <div style="margin-bottom: 12px; display: flex; gap: 12px; align-items: center;">
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 بحث عن عميل..." oninput="renderCurrentTab()">
+    <select class="search-box" id="scoreFilter" style="width: 160px;" onchange="renderCurrentTab()">
+      <option value="all">كل الـ Scores</option>
+      <option value="100">100/100 فقط</option>
+      <option value="80">80/100</option>
+      <option value="70">70/100</option>
+      <option value="50">50 أو أقل</option>
+      <option value="not100">أقل من 100</option>
+    </select>
+  </div>
+
+  <!-- Content -->
+  <div id="tabContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'http://localhost:3000/api/debug/clients-seo';
+let data = null;
+let currentTab = 'clients';
+let autoRefreshTimer = null;
+let snapshots = [];
+let previousData = null;
+
+// Fetch data
+async function fetchData() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    previousData = data;
+    data = await res.json();
+    document.getElementById('statusDot').className = 'status-dot live';
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('ar-SA');
+    renderStats();
+    renderCurrentTab();
+    
+    // Check for changes
+    if (previousData) {
+      const prevTotal = previousData.total;
+      const newTotal = data.total;
+      if (prevTotal !== newTotal) {
+        showToast(`📊 عدد العملاء تغير: ${prevTotal} → ${newTotal}`);
+      }
+      const prevAvg = previousData.summary?.averageScore;
+      const newAvg = data.summary?.averageScore;
+      if (prevAvg !== newAvg) {
+        showToast(`📈 المعدل تغير: ${prevAvg}% → ${newAvg}%`);
+      }
+    }
+  } catch (err) {
+    document.getElementById('statusDot').className = 'status-dot error';
+    showToast('❌ خطأ في الاتصال: ' + err.message);
+  }
+}
+
+// Stats
+function renderStats() {
+  if (!data) return;
+  const s = data.summary;
+  const valid = s.withValidJsonLd;
+  const total = data.total;
+  const withErrors = total - valid;
+  
+  // Count scores
+  const scores = {};
+  data.clients.forEach(c => {
+    const sc = c.score;
+    scores[sc] = (scores[sc] || 0) + 1;
+  });
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="label">إجمالي العملاء</div>
+      <div class="value">${total}</div>
+      <div class="sub">مع cached meta: ${s.withCachedMeta}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">متوسط الـ Score</div>
+      <div class="value" style="color: ${s.averageScore >= 90 ? 'var(--success)' : s.averageScore >= 70 ? 'var(--warning)' : 'var(--danger)'}">
+        ${s.averageScore}%
+      </div>
+      <div class="sub">${s.averageScore >= 90 ? '✅ ممتاز' : s.averageScore >= 70 ? '⚠️ يحتاج تحسين' : '❌ ضعيف'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">JSON-LD صالح</div>
+      <div class="value" style="color: var(--success)">${valid}</div>
+      <div class="sub">من ${total} عميل</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">عملاء بأخطاء</div>
+      <div class="value" style="color: var(--danger)">${withErrors}</div>
+      <div class="sub">${Math.round(withErrors/total*100)}% من الإجمالي</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">100/100 ✨</div>
+      <div class="value" style="color: var(--accent)">${scores['100/100'] || 0}</div>
+      <div class="sub">${scores['80/100'] || 0} على 80 · ${scores['70/100'] || 0} على 70</div>
+    </div>
+  `;
+}
+
+// Tab switching
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['clients','errors','fields','json'][i] === tab);
+  });
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  if (!data) return;
+  const el = document.getElementById('tabContent');
+  switch(currentTab) {
+    case 'clients': el.innerHTML = renderClientsTable(); break;
+    case 'errors': el.innerHTML = renderErrors(); break;
+    case 'fields': el.innerHTML = renderMissingFields(); break;
+    case 'json': el.innerHTML = renderJson(); break;
+  }
+}
+
+function getFilteredClients() {
+  if (!data) return [];
+  let clients = data.clients;
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+  const scoreFilter = document.getElementById('scoreFilter').value;
+  
+  if (search) {
+    clients = clients.filter(c => 
+      c.name.toLowerCase().includes(search) || 
+      c.slug.toLowerCase().includes(search)
+    );
+  }
+  
+  if (scoreFilter !== 'all') {
+    if (scoreFilter === 'not100') {
+      clients = clients.filter(c => c.score !== '100/100');
+    } else {
+      clients = clients.filter(c => c.score === `${scoreFilter}/100`);
+    }
+  }
+  
+  return clients;
+}
+
+// Clients Table
+function renderClientsTable() {
+  const clients = getFilteredClients();
+  const check = '<span class="check">✓</span>';
+  const cross = '<span class="cross">✗</span>';
+  
+  let rows = clients.map(c => {
+    const scoreNum = parseInt(c.score);
+    const color = scoreNum >= 100 ? 'var(--success)' : scoreNum >= 80 ? 'var(--info)' : scoreNum >= 70 ? 'var(--warning)' : 'var(--danger)';
+    const pillClass = scoreNum >= 100 ? 'pill-success' : scoreNum >= 80 ? 'pill-info' : scoreNum >= 70 ? 'pill-warning' : 'pill-danger';
+    const statusPill = c.jsonLd.status === 'valid' 
+      ? '<span class="pill pill-success">valid</span>' 
+      : `<span class="pill pill-danger">${c.jsonLd.status}</span>`;
+    
+    return `<tr style="cursor:pointer" onclick="showDetail('${c.slug}')">
+      <td><strong>${c.name}</strong><br><span class="mono" style="font-size:11px;color:var(--text-muted)">${c.slug}</span></td>
+      <td>
+        <div class="score-bar">
+          <div class="bar"><div class="fill" style="width:${scoreNum}%;background:${color}"></div></div>
+          <span class="pill ${pillClass}">${c.score}</span>
+        </div>
+      </td>
+      <td>${statusPill}</td>
+      <td>${c.meta.hasTitle ? check : cross}</td>
+      <td>${c.meta.hasDescription ? check : cross}</td>
+      <td>${c.meta.hasOgImage ? check : cross}</td>
+      <td>${c.raw.hasAddress ? check : cross}</td>
+      <td>${c.raw.hasLogo ? check : cross}</td>
+      <td>${c.raw.hasCanonicalUrl ? check : cross}</td>
+      <td>${c.raw.hasDescription ? check : cross}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>العميل</th><th>Score</th><th>JSON-LD</th>
+      <th>Title</th><th>Desc</th><th>OG Image</th>
+      <th>Address</th><th>Logo</th><th>Canonical</th><th>Description</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>
+  <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">يعرض ${clients.length} من ${data.total} عميل — اضغط على أي عميل لرؤية التفاصيل</div>`;
+}
+
+// Client Detail
+function showDetail(slug) {
+  const c = data.clients.find(cl => cl.slug === slug);
+  if (!c) return;
+  
+  const panel = document.getElementById('detailPanel');
+  const scoreNum = parseInt(c.score);
+  const color = scoreNum >= 100 ? 'var(--success)' : scoreNum >= 80 ? 'var(--info)' : scoreNum >= 70 ? 'var(--warning)' : 'var(--danger)';
+  
+  document.getElementById('detailTitle').innerHTML = `
+    ${c.name} 
+    <span class="pill" style="background:${color}20;color:${color}">${c.score}</span>
+    ${c.jsonLd.status === 'valid' ? '<span class="pill pill-success">JSON-LD Valid ✓</span>' : '<span class="pill pill-danger">'+c.jsonLd.status+'</span>'}
+  `;
+
+  const check = v => v ? '<span class="check">✓ موجود</span>' : '<span class="cross">✗ مفقود</span>';
+  
+  let errorsHtml = '';
+  const allErrors = [...(c.jsonLd.errors.ajv || []), ...(c.jsonLd.errors.custom || [])];
+  if (allErrors.length > 0) {
+    errorsHtml = `<div class="detail-section" style="grid-column: 1/-1;">
+      <h3>⚠️ أخطاء JSON-LD</h3>
+      ${allErrors.map(e => `<div class="error-item"><span>${e}</span></div>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-section">
+        <h3>📄 Meta Tags</h3>
+        <div class="field-row"><span class="field-name">Title</span>${check(c.meta.hasTitle)}</div>
+        ${c.meta.hasTitle ? `<div style="font-size:12px;color:var(--text-muted);margin:-4px 0 4px;direction:rtl">${c.meta.title || ''}</div>` : ''}
+        <div class="field-row"><span class="field-name">Description</span>${check(c.meta.hasDescription)}</div>
+        <div class="field-row"><span class="field-name">OG Image</span>${check(c.meta.hasOgImage)}</div>
+        <div class="field-row"><span class="field-name">Cached</span>${check(c.meta.cached)}</div>
+      </div>
+      <div class="detail-section">
+        <h3>🏢 Raw Fields</h3>
+        <div class="field-row"><span class="field-name">SEO Title</span>${check(c.raw.hasSeoTitle)}</div>
+        <div class="field-row"><span class="field-name">SEO Description</span>${check(c.raw.hasSeoDescription)}</div>
+        <div class="field-row"><span class="field-name">Email</span>${check(c.raw.hasEmail)}</div>
+        <div class="field-row"><span class="field-name">URL</span>${check(c.raw.hasUrl)}</div>
+        <div class="field-row"><span class="field-name">Address</span>${check(c.raw.hasAddress)}</div>
+        <div class="field-row"><span class="field-name">Logo</span>${check(c.raw.hasLogo)}</div>
+        <div class="field-row"><span class="field-name">OG Image</span>${check(c.raw.hasOgImage)}</div>
+        <div class="field-row"><span class="field-name">Founding Date</span>${check(c.raw.hasFoundingDate)}</div>
+        <div class="field-row"><span class="field-name">Canonical URL</span>${check(c.raw.hasCanonicalUrl)}</div>
+        <div class="field-row"><span class="field-name">Description</span>${check(c.raw.hasDescription)}</div>
+      </div>
+      ${errorsHtml}
+    </div>
+  `;
+  
+  panel.classList.add('active');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('active');
+}
+
+// Errors Tab
+function renderErrors() {
+  const errorMap = {};
+  data.clients.forEach(c => {
+    const allErrors = [...(c.jsonLd.errors.ajv || []), ...(c.jsonLd.errors.custom || [])];
+    allErrors.forEach(e => {
+      if (!errorMap[e]) errorMap[e] = [];
+      errorMap[e].push(c.name);
+    });
+  });
+
+  const sorted = Object.entries(errorMap).sort((a, b) => b[1].length - a[1].length);
+
+  if (sorted.length === 0) {
+    return '<div class="errors-list" style="text-align:center;padding:40px;color:var(--success)">✅ لا توجد أخطاء!</div>';
+  }
+
+  return `<div class="errors-list">
+    <h3 style="margin-bottom:12px;font-size:16px;">أخطاء JSON-LD عبر جميع العملاء</h3>
+    ${sorted.map(([err, clients]) => `
+      <div class="error-item">
+        <span style="flex:1;direction:ltr;text-align:left" class="mono">${err}</span>
+        <span class="count">${clients.length} عميل</span>
+      </div>
+      <div style="padding:0 12px 8px;font-size:11px;color:var(--text-muted)">
+        ${clients.join(' · ')}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+// Missing Fields Tab
+function renderMissingFields() {
+  const fields = [
+    { key: 'hasCanonicalUrl', label: 'Canonical URL' },
+    { key: 'hasDescription', label: 'Description (raw)' },
+    { key: 'hasAddress', label: 'Address' },
+    { key: 'hasSeoTitle', label: 'SEO Title' },
+    { key: 'hasSeoDescription', label: 'SEO Description' },
+    { key: 'hasLogo', label: 'Logo' },
+    { key: 'hasOgImage', label: 'OG Image' },
+    { key: 'hasUrl', label: 'URL' },
+    { key: 'hasEmail', label: 'Email' },
+    { key: 'hasFoundingDate', label: 'Founding Date' },
+  ];
+
+  const fieldStats = fields.map(f => {
+    const missing = data.clients.filter(c => !c.raw[f.key]);
+    return { ...f, missing: missing.length, clients: missing.map(c => c.name) };
+  }).sort((a, b) => b.missing - a.missing);
+
+  return `<div class="errors-list">
+    <h3 style="margin-bottom:12px;font-size:16px;">الحقول المفقودة (Raw Fields)</h3>
+    ${fieldStats.map(f => {
+      const pct = Math.round((1 - f.missing / data.total) * 100);
+      const color = pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--warning)' : 'var(--danger)';
+      return `<div class="error-item">
+        <span><strong>${f.label}</strong></span>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="score-bar">
+            <div class="bar" style="width:80px"><div class="fill" style="width:${pct}%;background:${color}"></div></div>
+            <span style="font-size:12px;color:${color}">${pct}%</span>
+          </div>
+          <span class="count" style="color: ${f.missing > 0 ? 'var(--danger)' : 'var(--success)'}">
+            ${f.missing > 0 ? f.missing + ' مفقود' : '✓ مكتمل'}
+          </span>
+        </div>
+      </div>
+      ${f.missing > 0 ? `<div style="padding:0 12px 8px;font-size:11px;color:var(--text-muted)">${f.clients.join(' · ')}</div>` : ''}`;
+    }).join('')}
+  </div>`;
+}
+
+// JSON Tab
+function renderJson() {
+  const json = JSON.stringify(data, null, 2);
+  return `<div>
+    <div style="margin-bottom:8px;display:flex;gap:8px;">
+      <button class="btn" onclick="copyJson()">📋 نسخ JSON</button>
+    </div>
+    <div class="json-viewer">${syntaxHighlight(json)}</div>
+  </div>`;
+}
+
+function syntaxHighlight(json) {
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+    let cls = 'color:#ae81ff';
+    if (/^"/.test(match)) {
+      if (/:$/.test(match)) {
+        cls = 'color:#a6e22e';
+      } else {
+        cls = 'color:#e6db74';
+      }
+    } else if (/true|false/.test(match)) {
+      cls = 'color:#66d9ef';
+    } else if (/null/.test(match)) {
+      cls = 'color:#f92672';
+    }
+    return '<span style="' + cls + '">' + match + '</span>';
+  });
+}
+
+function copyJson() {
+  navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+  showToast('✅ تم نسخ JSON');
+}
+
+// Snapshots
+function takeSnapshot() {
+  if (!data) return;
+  const snap = {
+    time: new Date().toLocaleTimeString('ar-SA'),
+    data: JSON.parse(JSON.stringify(data)),
+    total: data.total,
+    avg: data.summary.averageScore,
+    valid: data.summary.withValidJsonLd
+  };
+  snapshots.push(snap);
+  renderSnapshots();
+  showToast(`📸 Snapshot محفوظ (${snapshots.length})`);
+}
+
+function renderSnapshots() {
+  const bar = document.getElementById('snapshotBar');
+  if (snapshots.length === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  bar.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">📸 Snapshots:</span>' +
+    snapshots.map((s, i) => `
+      <button class="snapshot-chip" onclick="compareSnapshot(${i})">
+        #${i+1} <span class="time">${s.time}</span>
+        <span class="pill pill-info">${s.total} عميل</span>
+        <span class="pill ${s.avg >= 90 ? 'pill-success' : 'pill-warning'}">${s.avg}%</span>
+      </button>
+    `).join('');
+}
+
+function compareSnapshot(index) {
+  const snap = snapshots[index];
+  const current = data;
+  
+  let html = `<h3 style="margin-bottom:12px">مقارنة: Snapshot #${index+1} (${snap.time}) ↔ الحالي</h3>`;
+  html += `<div class="detail-grid">
+    <div class="detail-section">
+      <h3>📸 Snapshot #${index+1}</h3>
+      <div class="field-row"><span class="field-name">العملاء</span><span>${snap.total}</span></div>
+      <div class="field-row"><span class="field-name">المعدل</span><span>${snap.avg}%</span></div>
+      <div class="field-row"><span class="field-name">JSON-LD صالح</span><span>${snap.valid}</span></div>
+    </div>
+    <div class="detail-section">
+      <h3>🔄 الحالي</h3>
+      <div class="field-row"><span class="field-name">العملاء</span><span ${current.total !== snap.total ? 'class="diff-changed"' : ''}>${current.total}</span></div>
+      <div class="field-row"><span class="field-name">المعدل</span><span ${current.summary.averageScore !== snap.avg ? 'class="diff-changed"' : ''}>${current.summary.averageScore}%</span></div>
+      <div class="field-row"><span class="field-name">JSON-LD صالح</span><span ${current.summary.withValidJsonLd !== snap.valid ? 'class="diff-changed"' : ''}>${current.summary.withValidJsonLd}</span></div>
+    </div>
+  </div>`;
+
+  // Find new/removed clients
+  const snapSlugs = new Set(snap.data.clients.map(c => c.slug));
+  const currSlugs = new Set(current.clients.map(c => c.slug));
+  const added = current.clients.filter(c => !snapSlugs.has(c.slug));
+  const removed = snap.data.clients.filter(c => !currSlugs.has(c.slug));
+  const changed = current.clients.filter(c => {
+    const old = snap.data.clients.find(o => o.slug === c.slug);
+    return old && old.score !== c.score;
+  });
+
+  if (added.length) html += `<div style="margin-top:12px"><span class="pill pill-success">+ عملاء جدد: ${added.map(c=>c.name).join(', ')}</span></div>`;
+  if (removed.length) html += `<div style="margin-top:8px"><span class="pill pill-danger">- عملاء محذوفين: ${removed.map(c=>c.name).join(', ')}</span></div>`;
+  if (changed.length) html += `<div style="margin-top:8px"><span class="pill pill-warning">⇄ Scores تغيرت: ${changed.map(c => {
+    const old = snap.data.clients.find(o => o.slug === c.slug);
+    return c.name + ` (${old.score} → ${c.score})`;
+  }).join(', ')}</span></div>`;
+
+  document.getElementById('detailTitle').innerHTML = '📊 مقارنة Snapshots';
+  document.getElementById('detailContent').innerHTML = html;
+  document.getElementById('detailPanel').classList.add('active');
+}
+
+// Auto-refresh
+function setAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  const secs = parseInt(document.getElementById('refreshInterval').value);
+  if (secs > 0) {
+    autoRefreshTimer = setInterval(fetchData, secs * 1000);
+  }
+}
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+fetchData();
+setAutoRefresh();
+</script>
+</body>
+</html>

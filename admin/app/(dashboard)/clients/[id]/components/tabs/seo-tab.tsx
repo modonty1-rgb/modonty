@@ -21,74 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface SEOTabProps {
-  client: {
-    seoTitle: string | null;
-    seoDescription: string | null;
-    description: string | null;
-    canonicalUrl: string | null;
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
-    twitterImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    gtmId: string | null;
-    metaRobots: string | null;
-    metaTags: {
-      title: string;
-      description: string;
-      robots: string;
-      author: string;
-      language: string;
-      charset: string;
-      openGraph: {
-        title: string;
-        description: string;
-        type: string;
-        url: string;
-        siteName: string;
-        locale: string;
-        images?: Array<{
-          url: string;
-          secure_url: string;
-          type: string;
-          width: number;
-          height: number;
-          alt: string;
-        }>;
-      };
-      twitter: {
-        card: string;
-        title: string;
-        description: string;
-        image?: string;
-        imageAlt?: string;
-        site?: string;
-        creator?: string;
-      };
-      canonical: string;
-      formatDetection: {
-        telephone: boolean;
-        email: boolean;
-        address: boolean;
-      };
-    } | null;
-    jsonLdStructuredData: string | null;
-    jsonLdLastGenerated: Date | null;
-    jsonLdValidationReport: {
-      adobe?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
-      custom?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
-      richResults?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
-    } | null;
-    id: string;
-    slug: string;
-  };
+  client: any;
 }
 
 export function SEOTab({ client }: SEOTabProps) {

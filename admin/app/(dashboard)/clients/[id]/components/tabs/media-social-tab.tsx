@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -32,25 +32,7 @@ import {
 import type { MediaType } from "@prisma/client";
 
 interface MediaSocialTabProps {
-  client: {
-    logoMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    twitterImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    sameAs: string[];
-    twitterCard: string | null;
-    twitterTitle: string | null;
-    twitterDescription: string | null;
-    twitterSite: string | null;
-  };
+  client: any;
   media: Array<{
     id: string;
     filename: string;
@@ -112,11 +94,13 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
     <>
       <div className="space-y-6">
         {(client.logoMedia || client.ogImageMedia || client.twitterImageMedia) && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Assets</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="border rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+                Media Assets
+              </span>
+            </div>
+            <div className="p-4 space-y-6">
               {client.logoMedia && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Logo</p>
@@ -192,19 +176,21 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {(client.twitterCard ||
           client.twitterTitle ||
           client.twitterDescription ||
           client.twitterSite) && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Twitter Cards</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="border rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+                Twitter Cards
+              </span>
+            </div>
+            <div className="p-4 space-y-4">
               {client.twitterCard && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Twitter Card Type</p>
@@ -229,18 +215,20 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   <p className="text-sm font-medium">{client.twitterSite}</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Social Profiles</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+            <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+              Social Profiles
+            </span>
+          </div>
+          <div className="p-4">
             {client.sameAs && client.sameAs.length > 0 ? (
               <div className="flex flex-col gap-3">
-                {client.sameAs.map((url, index) => {
+                {client.sameAs.map((url: string, index: number) => {
                   const platform = detectPlatform(url);
                   const platformName = getPlatformName(platform);
 
@@ -281,38 +269,36 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
             ) : (
               <p className="text-sm text-muted-foreground italic">Not set</p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {media.length > 0 && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Media Gallery</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {media.length} {media.length === 1 ? "item" : "items"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                  >
-                    Grid
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                  >
-                    List
-                  </Button>
-                </div>
+          <div className="border rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
+                Media Gallery
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                >
+                  Grid
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                >
+                  List
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div className="p-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                {media.length} {media.length === 1 ? "item" : "items"}
+              </p>
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {media.map((item) => {
@@ -418,8 +404,8 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </div>
 

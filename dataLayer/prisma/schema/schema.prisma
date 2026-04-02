@@ -304,7 +304,6 @@ model Client {
   seoTitle       String?
   seoDescription String?
   description    String? // Schema.org Organization description (separate from seoDescription)
-  metaRobots     String? // index, noindex, follow, nofollow
 
   // Business Information
   businessBrief     String? // Business description for content writers
@@ -354,16 +353,28 @@ model Client {
   parentOrganizationId         String? @db.ObjectId // Parent company reference
 
   // Twitter Cards
-  twitterCard        String? // summary_large_image, summary
-  twitterTitle       String?
-  twitterDescription String?
-  twitterSite        String? // @username
+  // (Twitter cache fields moved to nextjsMetadata)
 
   // Canonical URL
   canonicalUrl String?
 
   // GTM Integration
   gtmId String? // Google Tag Manager ID
+
+  // Analytics
+  ga4PropertyId    String?
+  ga4MeasurementId String?
+
+  // GBP
+  gbpProfileUrl String?
+  gbpPlaceId    String?
+  gbpAccountId  String?
+  gbpLocationId String?
+  gbpCategory   String?
+
+  // Business Details
+  priceRange                String?
+  openingHoursSpecification Json?
 
   // Subscription Management
   subscriptionTier      SubscriptionTier
@@ -392,7 +403,8 @@ model Client {
   jsonLdValidationReport Json? // {adobe: {valid, errors, warnings}, custom: {...}, richResults: {...}}
   
   // Complete Meta Tags Object
-  metaTags Json? // Complete meta tags object (standard SEO, Open Graph, Twitter Cards, etc.)
+  nextjsMetadata              Json?     // Cached Next.js Metadata object (title, description, openGraph, twitter, robots)
+  nextjsMetadataLastGenerated DateTime? // When metadata was last generated
 
   // Client Notification Preferences
   notificationPreferences Json? // { articlePublished, articleApproved, digest, commentsNew, supportReplies }
@@ -554,6 +566,13 @@ model Author {
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -582,6 +601,13 @@ model Category {
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -608,6 +634,13 @@ model Tag {
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
 
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -630,6 +663,13 @@ model Industry {
   socialImageAlt String? // Alt text
   cloudinaryPublicId String? // Cloudinary public_id for direct deletion
   canonicalUrl   String?
+
+  // === SEO Cache - Standard Pattern ===
+  nextjsMetadata              Json?
+  nextjsMetadataLastGenerated DateTime?
+  jsonLdStructuredData        String?   @db.String
+  jsonLdLastGenerated         DateTime?
+  jsonLdValidationReport      Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -714,13 +754,10 @@ model Article {
   seoKeywords String[] @default([])
 
   // Schema versioning (safe rollback)
-  jsonLdVersion     Int      @default(1) // Increment on major changes
-  jsonLdHistory     Json? // Array of previous versions [{version, data, timestamp}]
-  jsonLdDiffSummary String? // Human-readable change log
+  // (removed: jsonLdVersion/jsonLdHistory/jsonLdDiffSummary)
 
   // Performance tracking
-  jsonLdGenerationTimeMs Int? // Time to generate JSON-LD in milliseconds
-  performanceBudgetMet   Boolean @default(true) // Performance budget compliance
+  // (removed: jsonLdGenerationTimeMs/performanceBudgetMet)
 
   // ============================================
   // Next.js Metadata Cache

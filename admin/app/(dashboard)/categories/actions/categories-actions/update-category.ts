@@ -57,6 +57,10 @@ export async function updateCategory(
       data: updateData,
     });
     revalidatePath("/categories");
+    try {
+      const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
+      await generateAndSaveCategorySeo(category.id);
+    } catch (e) { console.error("Category SEO gen failed:", e); }
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update category";
