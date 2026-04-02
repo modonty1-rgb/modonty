@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, Settings, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./theme-toggle";
 import { Breadcrumb } from "./breadcrumb";
 import { HeaderNav } from "./header-nav";
 import {
@@ -67,7 +66,6 @@ export function Header() {
                 <p>Guidelines</p>
               </TooltipContent>
             </Tooltip>
-            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">

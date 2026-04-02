@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, FileText } from "lucide-react";
+import { Users, FileText, Star } from "lucide-react";
 import { SubscriptionTier } from "@prisma/client";
 
 interface TierConfigWithCount {
@@ -23,84 +23,74 @@ interface TierCardsProps {
 }
 
 export function TierCards({ tiers }: TierCardsProps) {
-  const getTierColor = (tier: SubscriptionTier) => {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("ar-SA", { style: "currency", currency: "SAR", maximumFractionDigits: 0 }).format(price);
+
+  const getTierStyle = (tier: SubscriptionTier, isPopular: boolean) => {
+    if (isPopular) return "border-primary bg-primary/5 ring-1 ring-primary/20";
     switch (tier) {
-      case "BASIC":
-        return "border-border bg-muted/50";
-      case "STANDARD":
-        return "border-border bg-secondary/30";
-      case "PRO":
-        return "border-primary/30 bg-primary/5";
-      case "PREMIUM":
-        return "border-primary/50 bg-primary/10";
-      default:
-        return "border-border bg-card";
+      case "PREMIUM": return "border-primary/40 bg-primary/5";
+      case "PRO": return "border-primary/20 bg-primary/[0.02]";
+      default: return "border-border";
     }
   };
 
-  const totalArticles = tiers.reduce((sum, tier) => sum + tier.articleCount, 0);
-
   return (
-    <div className="space-y-6 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {tiers.map((tier) => (
-          <Card
-            key={tier.id}
-            className={getTierColor(tier.tier)}
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between mb-2">
-                <CardTitle className="text-xl font-bold">{tier.name}</CardTitle>
-                {!tier.isActive && (
-                  <Badge variant="secondary" className="text-xs">
-                    Inactive
-                  </Badge>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pt-2 border-t">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span>Clients</span>
-                  </div>
-                  <span className="font-bold text-2xl text-primary">
-                    {tier._count.clients}
-                  </span>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {tiers.map((tier) => (
+        <Card key={tier.id} className={getTierStyle(tier.tier, tier.isPopular)}>
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">{tier.name}</h3>
+                  <p className="text-2xl font-bold mt-1">
+                    {formatPrice(tier.price)}
+                    <span className="text-sm font-normal text-muted-foreground"> / year</span>
+                  </p>
                 </div>
+                <div className="flex flex-col items-end gap-1">
+                  {tier.isPopular && (
+                    <Badge className="gap-1">
+                      <Star className="h-3 w-3" />
+                      Recommended
+                    </Badge>
+                  )}
+                  {!tier.isActive && (
+                    <Badge variant="secondary">Inactive</Badge>
+                  )}
+                </div>
+              </div>
 
-                <div className="flex items-center justify-between pt-2 border-t">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {/* Stats */}
+              <div className="space-y-2 pt-3 border-t">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
                     <FileText className="h-4 w-4" />
-                    <span>Published Articles</span>
-                  </div>
-                  <span className="font-bold text-2xl text-primary">
-                    {tier.articleCount}
+                    Articles / month
                   </span>
+                  <span className="font-semibold">{tier.articlesPerMonth}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    Clients
+                  </span>
+                  <span className="font-semibold">{tier._count.clients}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="h-4 w-4" />
+                    Published
+                  </span>
+                  <span className="font-semibold">{tier.articleCount}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="bg-primary/5 border-primary/20">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Total Published Articles (All Plans)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <FileText className="h-5 w-5" />
-              <span className="text-sm">Total Published Articles for All Clients</span>
             </div>
-            <span className="font-bold text-3xl text-primary">
-              {totalArticles}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
