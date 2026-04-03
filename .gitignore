@@ -49,6 +49,9 @@ node_modules/.prisma/
 coverage/
 .nyc_output/
 
+# Database backups (local only — never push to git)
+backups/
+
 # Misc
 *.pem
 

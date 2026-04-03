@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 
 function escapeCsvValue(value: string | null | undefined): string {
   if (!value) return "";
@@ -24,48 +23,54 @@ function formatDate(date: Date | null | undefined): string {
 
 export async function exportAuthorsToCSV(): Promise<string> {
   try {
-    const modontyAuthor = await db.author.findUnique({
-      where: { slug: MODONTY_AUTHOR_SLUG },
+    const authors = await db.author.findMany({
       include: {
         _count: {
           select: {
             articles: {
-              where: {
-                status: ArticleStatus.PUBLISHED,
-              },
+              where: { status: ArticleStatus.PUBLISHED },
             },
           },
         },
       },
+      orderBy: { createdAt: "desc" },
     });
-
-    if (!modontyAuthor) {
-      const headers = ["Name", "Slug", "Job Title", "Article Count", "Created Date"];
-      return headers.join(",") + "\n";
-    }
 
     const headers = [
       "Name",
-      "Slug",
       "Job Title",
-      "Article Count",
+      "Email",
+      "Bio",
+      "LinkedIn",
+      "Twitter",
+      "Expertise",
+      "Experience (Years)",
+      "Verified",
+      "Published Articles",
       "Created Date",
     ];
 
     const csvRows = [headers.join(",")];
 
-    const row = [
-      escapeCsvValue(modontyAuthor.name),
-      escapeCsvValue(modontyAuthor.slug),
-      escapeCsvValue(modontyAuthor.jobTitle),
-      modontyAuthor._count.articles.toString(),
-      formatDate(modontyAuthor.createdAt),
-    ];
-    csvRows.push(row.join(","));
+    for (const author of authors) {
+      const row = [
+        escapeCsvValue(author.name),
+        escapeCsvValue(author.jobTitle),
+        escapeCsvValue(author.email),
+        escapeCsvValue(author.bio),
+        escapeCsvValue(author.linkedIn),
+        escapeCsvValue(author.twitter),
+        escapeCsvValue(author.expertiseAreas.join(", ")),
+        (author.experienceYears ?? "").toString(),
+        author.verificationStatus ? "Yes" : "No",
+        author._count.articles.toString(),
+        formatDate(author.createdAt),
+      ];
+      csvRows.push(row.join(","));
+    }
 
     return csvRows.join("\n");
-  } catch (error) {
-    console.error("Error exporting authors to CSV:", error);
-    throw new Error("Failed to export authors to CSV");
+  } catch {
+    throw new Error("Failed to export authors");
   }
 }

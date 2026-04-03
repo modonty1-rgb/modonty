@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Database,
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Users, label: "Admins", href: "/users" },
       { icon: CreditCard, label: "Plans & Pricing", href: "/subscription-tiers" },
       { icon: Download, label: "Export Data", href: "/export-data" },
+      { icon: Database, label: "Database", href: "/database" },
       { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },

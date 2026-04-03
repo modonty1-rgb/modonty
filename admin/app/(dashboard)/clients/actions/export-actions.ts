@@ -61,6 +61,7 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
     const clients = await db.client.findMany({
       where,
       include: {
+        industry: { select: { name: true } },
         _count: {
           select: {
             articles: {
@@ -91,12 +92,22 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
 
     const headers = [
       "Name",
-      "Slug",
       "Legal Name",
       "Email",
       "Phone",
-      "URL",
-      "Article Count",
+      "Website",
+      "Industry",
+      "Subscription Plan",
+      "Subscription Status",
+      "Payment Status",
+      "Start Date",
+      "End Date",
+      "Articles/Month",
+      "Published Articles",
+      "City",
+      "Country",
+      "CR Number",
+      "VAT ID",
       "Created Date",
     ];
 
@@ -105,12 +116,22 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
     for (const client of filteredClients) {
       const row = [
         escapeCsvValue(client.name),
-        escapeCsvValue(client.slug),
         escapeCsvValue(client.legalName),
         escapeCsvValue(client.email),
         escapeCsvValue(client.phone),
         escapeCsvValue(client.url),
+        escapeCsvValue(client.industry?.name),
+        escapeCsvValue(client.subscriptionTier),
+        escapeCsvValue(client.subscriptionStatus),
+        escapeCsvValue(client.paymentStatus),
+        formatDate(client.subscriptionStartDate),
+        formatDate(client.subscriptionEndDate),
+        (client.articlesPerMonth ?? "").toString(),
         client._count.articles.toString(),
+        escapeCsvValue(client.addressCity),
+        escapeCsvValue(client.addressCountry),
+        escapeCsvValue(client.commercialRegistrationNumber),
+        escapeCsvValue(client.vatID),
         formatDate(client.createdAt),
       ];
       csvRows.push(row.join(","));
