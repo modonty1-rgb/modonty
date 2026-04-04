@@ -11,7 +11,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <UserForm initialData={user} userId={id} />
     </div>
   );

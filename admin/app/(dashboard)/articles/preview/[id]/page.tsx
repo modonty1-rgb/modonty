@@ -188,7 +188,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
         />
 
         <div className="min-h-screen bg-background">
-          <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex-1">
             <div className="flex flex-col lg:flex-row lg:justify-center lg:items-start gap-6 md:gap-8">
               <div className="w-full min-w-0">
                 <article>

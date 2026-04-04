@@ -14,7 +14,7 @@ export default async function ContactMessagesPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <ContactMessagesHeaderWrapper
         messageCount={messages.length}
         description={getDescription()}

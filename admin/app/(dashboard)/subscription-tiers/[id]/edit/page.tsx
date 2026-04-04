@@ -12,7 +12,7 @@ export default async function EditTierPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <TierForm initialData={tier} />
     </div>
   );

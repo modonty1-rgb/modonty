@@ -210,7 +210,7 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
   ).length;
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <ClientHeader client={client as any} seoScore={seoScore} />
       {seoScore < 80 && (
         <div className="bg-muted/30 border border-border rounded-lg p-5 flex items-center gap-5 mb-6 mt-6">

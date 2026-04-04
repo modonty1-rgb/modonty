@@ -465,7 +465,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
   const [isTipsOpen, setIsTipsOpen] = useState(true);
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <Button
           variant="ghost"

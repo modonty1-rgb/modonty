@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function PreviewLoading() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <nav className="mb-6 flex items-center gap-2 py-3">
           <Skeleton className="h-4 w-16" />
           <Skeleton className="h-3 w-3 rounded-full" />

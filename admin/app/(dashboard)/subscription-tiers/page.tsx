@@ -10,7 +10,7 @@ export default async function SubscriptionTiersPage() {
   const activePlans = tiers.filter((t) => t.isActive).length;
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-8">
+    <div className="max-w-[1200px] mx-auto space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold leading-tight">Plans & Pricing</h1>

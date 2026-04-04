@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserViewLoading() {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <Skeleton className="h-8 w-48" />

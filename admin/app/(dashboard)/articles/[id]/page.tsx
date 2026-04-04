@@ -28,7 +28,7 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
 
   return (
     <ArticleViewProvider article={articleWithDefaults}>
-      <div className="container mx-auto max-w-[1128px] pt-4">
+      <div className="max-w-[1200px] mx-auto pt-4">
         <ArticleViewNavigationWrapper />
         <div className="flex items-center justify-between mb-6 mt-6">
           <div className="flex items-center gap-2">

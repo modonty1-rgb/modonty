@@ -14,7 +14,7 @@ export default async function AuthorsPage() {
 
   if (!author) {
     return (
-      <div className="container mx-auto max-w-[1128px] space-y-6">
+      <div className="max-w-[1200px] mx-auto space-y-6">
         <div className="text-center py-12">
           <p className="text-muted-foreground">Error: Modonty author not found</p>
         </div>
@@ -23,7 +23,7 @@ export default async function AuthorsPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold leading-tight">Modonty Author Profile</h1>

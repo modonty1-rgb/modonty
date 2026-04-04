@@ -65,7 +65,7 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="px-6 py-6 max-w-[1200px] mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight">Dashboard</h1>
         <p className="text-muted-foreground mt-1">Welcome to the admin dashboard</p>

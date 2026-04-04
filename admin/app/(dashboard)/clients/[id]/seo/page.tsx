@@ -12,7 +12,7 @@ export default async function ClientSeoPage({ params }: { params: Promise<{ id: 
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <ClientFormHeaderWrapper title={`${client.name} — SEO Setup`}>
         <ClientSeoForm initialData={client} clientId={id} />
       </ClientFormHeaderWrapper>

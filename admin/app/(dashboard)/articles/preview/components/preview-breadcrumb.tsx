@@ -13,7 +13,7 @@ export function PreviewBreadcrumb({ clientName, clientId, title }: PreviewBreadc
   return (
     <nav
       aria-label="تنقل الصفحة"
-      className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8"
+      className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8"
     >
       <ol
         className="flex items-center gap-2 py-3 text-sm flex-wrap text-muted-foreground"

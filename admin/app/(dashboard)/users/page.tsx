@@ -6,7 +6,7 @@ export default async function UsersPage() {
   const users = await getUsers();
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader
         title="Admins"
         description={`${users.length} admin${users.length !== 1 ? "s" : ""} managing the dashboard`}

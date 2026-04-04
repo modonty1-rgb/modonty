@@ -6,7 +6,7 @@ export default async function DatabasePage() {
   const isLocal = process.env.NODE_ENV !== "production";
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight">Database Overview</h1>
         <p className="text-muted-foreground text-sm mt-0.5">

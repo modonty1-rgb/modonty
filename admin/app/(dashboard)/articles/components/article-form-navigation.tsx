@@ -69,7 +69,7 @@ export function ArticleFormNavigation() {
 
   return (
     <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm">
-        <div className="container mx-auto max-w-[1128px] px-4 py-2">
+        <div className="max-w-[1200px] mx-auto px-4 py-2">
           <div className="space-y-2">
             <div className="grid grid-cols-[1fr_auto] items-center gap-4">
               <div className="flex items-center gap-3">

@@ -111,6 +111,7 @@ async function cleanTestClients() {
     await db.clientCompetitor.deleteMany({ where: { clientId: c.id } });
     await db.clientKeyword.deleteMany({ where: { clientId: c.id } });
     await db.seoIntake.deleteMany({ where: { clientId: c.id } });
+    await db.client.update({ where: { id: c.id }, data: { logoMediaId: null, ogImageMediaId: null } });
     await db.media.deleteMany({ where: { clientId: c.id } });
   }
   await db.client.deleteMany({ where: { slug: { startsWith: "test-" } } });
@@ -461,6 +462,10 @@ async function seedClients(): Promise<SectionResult> {
       await db.engagementDuration.deleteMany({ where: { clientId: existing.id } });
       await db.contactMessage.deleteMany({ where: { clientId: existing.id } });
       await db.notification.deleteMany({ where: { clientId: existing.id } });
+      await db.client.update({
+        where: { id: existing.id },
+        data: { logoMediaId: null, ogImageMediaId: null },
+      });
       await db.media.deleteMany({ where: { clientId: existing.id } });
       await db.client.delete({ where: { id: existing.id } });
     }

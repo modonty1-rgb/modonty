@@ -10,7 +10,7 @@ export default async function UploadMediaPage({ searchParams }: UploadMediaPageP
   const clientId = params.clientId || null;
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader title="Upload Media" description="Upload media files with drag-and-drop support" />
       <UploadZone initialClientId={clientId} />
     </div>

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ContactMessagesLoading() {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader
         title="Contact Messages"
         description="Manage and respond to contact messages from visitors"

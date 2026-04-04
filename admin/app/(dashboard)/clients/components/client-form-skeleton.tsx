@@ -6,7 +6,7 @@ interface ClientFormSkeletonProps {
 
 export function ClientFormSkeleton({ showDeleteButton = false }: ClientFormSkeletonProps) {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <div className="mb-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64 mt-1" />

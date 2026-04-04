@@ -14,7 +14,7 @@ export default async function EditTagPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-semibold leading-tight">Edit Tag</h1>

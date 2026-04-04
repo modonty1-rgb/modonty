@@ -6,7 +6,7 @@ export default async function NewCategoryPage() {
   const categories = await getCategories();
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader title="Create Category" description="Add a new category to the system" />
       <CategoryForm categories={categories} />
     </div>

@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ExportDataLoading() {
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <div>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-80 mt-2" />

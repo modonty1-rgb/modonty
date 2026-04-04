@@ -19,7 +19,6 @@
     "diagnose-comments": "tsx ../scripts/diagnose-comments.ts",
     "diagnose-article-comments": "tsx ../scripts/diagnose-article-comments.ts",
     "approve-comments": "tsx ../scripts/approve-and-revalidate.ts",
-    "create-test-comment": "tsx ../scripts/create-test-comment.ts",
     "test:chatbot": "tsx scripts/test-chatbot-live.ts",
     "test:chatbot-cases": "tsx scripts/test-chatbot-cases.ts",
     "test:chatbot-rag": "tsx scripts/test-chatbot-rag-scores.ts"

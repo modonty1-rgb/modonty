@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MediaLoading() {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="px-6 py-6 max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <Skeleton className="h-8 w-48" />

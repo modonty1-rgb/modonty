@@ -27,7 +27,7 @@ export default async function NewArticlePage() {
       authors={authors}
       tags={tags}
     >
-      <div className="container mx-auto max-w-[1128px] px-4 md:px-6 pb-6 md:pb-8">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 pb-6 md:pb-8">
         <ArticleFormNavigation />
         <div className="mt-6">
           <ArticleFormTabs />

@@ -5,7 +5,7 @@ export default async function CategoriesTreePage() {
   const categories = await getCategories();
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold">Category Tree</h1>
         <p className="text-muted-foreground">

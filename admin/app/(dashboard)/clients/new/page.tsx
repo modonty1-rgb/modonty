@@ -10,7 +10,7 @@ export default async function NewClientPage() {
   ]);
 
   return (
-    <div className="container mx-auto max-w-[1128px] px-6">
+    <div className="max-w-[1200px] mx-auto px-6">
       <ClientFormHeaderWrapper
         title="Create Client"
       >

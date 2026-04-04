@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -12,8 +12,6 @@
     "lint": "next lint",
     "postinstall": "npx prisma generate",
     "add-admin": "tsx scripts/add-admin-user.ts",
-    "migrate-scheduled": "tsx scripts/migrate-scheduled-articles.ts",
-    "fix-tags": "tsx scripts/fix-tag-updated-at.ts",
     "seed:settings": "node scripts/seed-settings-from-env.js",
     "seed:seo-defaults": "tsx scripts/fill-settings-seo-defaults.ts"
   },

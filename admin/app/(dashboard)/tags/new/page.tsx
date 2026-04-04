@@ -3,7 +3,7 @@ import { TagForm } from "../components/tag-form";
 
 export default function NewTagPage() {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader title="Create Tag" description="Add a new tag to the system" />
       <TagForm />
     </div>

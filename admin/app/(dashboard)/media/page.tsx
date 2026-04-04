@@ -41,12 +41,10 @@ export default async function MediaPage({
   }));
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">Media Library</h1>
-          <p className="text-muted-foreground mt-1">Manage all media files in the system</p>
-        </div>
+    <div className="px-6 py-6 max-w-[1200px] mx-auto space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">Media Library</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">Manage all media files in the system</p>
       </div>
       <MediaStats stats={stats} />
       <MediaFiltersComponent clients={clients} defaultClientId={params.clientId} />

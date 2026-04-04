@@ -3,7 +3,7 @@ import { IndustryForm } from "../components/industry-form";
 
 export default function NewIndustryPage() {
   return (
-    <div className="container mx-auto max-w-[1128px]">
+    <div className="max-w-[1200px] mx-auto">
       <PageHeader title="Create Industry" description="Add a new industry to the system" />
       <IndustryForm />
     </div>
