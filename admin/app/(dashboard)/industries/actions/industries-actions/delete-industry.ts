@@ -24,7 +24,7 @@ export async function deleteIndustry(id: string) {
     await db.industry.delete({ where: { id } });
     revalidatePath("/industries");
     await revalidateModontyTag("industries");
-    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch {}
+    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch (e) { console.error("Industries listing cache failed:", e); }
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete industry";

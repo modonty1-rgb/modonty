@@ -5,6 +5,5 @@ export { getCategoryArticles } from "./get-category-articles";
 export { createCategory } from "./create-category";
 export { updateCategory } from "./update-category";
 export { deleteCategory } from "./delete-category";
-export { bulkDeleteCategories } from "./bulk-delete-categories";
 export { getCategoriesStats } from "./get-categories-stats";
 

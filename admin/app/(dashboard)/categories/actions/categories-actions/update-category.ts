@@ -59,12 +59,8 @@ export async function updateCategory(
     });
     revalidatePath("/categories");
     await revalidateModontyTag("categories");
-    try {
-      const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
-      await generateAndSaveCategorySeo(category.id);
-      const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
-      await regenerateCategoriesListingCache();
-    } catch (e) { console.error("Category SEO gen failed:", e); }
+    try { const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator"); await generateAndSaveCategorySeo(category.id); } catch (e) { console.error("Category SEO gen failed:", e); }
+    try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update category";

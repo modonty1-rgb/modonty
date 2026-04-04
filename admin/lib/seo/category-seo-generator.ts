@@ -4,37 +4,55 @@ import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
-export async function buildCategoryMetadata(category: {
+interface SeoSettings {
+  siteUrl: string;
+  siteName: string;
+  inLanguage: string;
+  ogLocale: string;
+  metaRobots: string;
+  twitterCard: string;
+  twitterSite?: string;
+  twitterCreator?: string;
+}
+
+interface CategoryData {
   name: string;
   slug: string;
+  description?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   canonicalUrl?: string | null;
   socialImage?: string | null;
-}, siteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com") {
-  const pageUrl = category.canonicalUrl || `${siteUrl}/categories/${category.slug}`;
+  socialImageAlt?: string | null;
+}
+
+export async function buildCategoryMetadata(category: CategoryData, s: SeoSettings) {
+  const pageUrl = category.canonicalUrl || `${s.siteUrl}/categories/${category.slug}`;
   const title = category.seoTitle || category.name;
   const description = category.seoDescription || `تصفح مقالات ${category.name}`;
+
   return {
     title,
     description,
-    robots: "index, follow",
+    robots: s.metaRobots,
     alternates: { canonical: pageUrl },
     openGraph: {
       title,
       description,
       type: "website",
       url: pageUrl,
-      siteName: "Modonty",
-      locale: "ar_SA",
+      siteName: s.siteName,
+      locale: s.ogLocale,
       ...(category.socialImage && {
-        images: [{ url: category.socialImage, alt: title }],
+        images: [{ url: category.socialImage, alt: category.socialImageAlt || title }],
       }),
     },
     twitter: {
-      card: category.socialImage ? "summary_large_image" : "summary",
+      card: s.twitterCard,
       title,
       description,
+      ...(s.twitterSite && { site: s.twitterSite }),
+      ...(s.twitterCreator && { creator: s.twitterCreator }),
       ...(category.socialImage && {
         images: [category.socialImage],
       }),
@@ -42,27 +60,21 @@ export async function buildCategoryMetadata(category: {
   };
 }
 
-export async function buildCategoryJsonLd(category: {
-  name: string;
-  slug: string;
-  description?: string | null;
-  seoTitle?: string | null;
-  seoDescription?: string | null;
-  canonicalUrl?: string | null;
-}, siteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com") {
-  const pageUrl = category.canonicalUrl || `${siteUrl}/categories/${category.slug}`;
+export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings) {
+  const pageUrl = category.canonicalUrl || `${s.siteUrl}/categories/${category.slug}`;
   const title = category.seoTitle || category.name;
   const description = category.seoDescription || category.description || `تصفح مقالات ${category.name}`;
+
   return {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "CollectionPage", "@id": pageUrl, name: title, description, url: pageUrl, inLanguage: "ar" },
+      { "@type": "CollectionPage", "@id": pageUrl, name: title, description, url: pageUrl, inLanguage: s.inLanguage },
       {
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "الرئيسية", item: siteUrl },
-          { "@type": "ListItem", position: 2, name: "التصنيفات", item: `${siteUrl}/categories` },
+          { "@type": "ListItem", position: 1, name: "الرئيسية", item: s.siteUrl },
+          { "@type": "ListItem", position: 2, name: "التصنيفات", item: `${s.siteUrl}/categories` },
           { "@type": "ListItem", position: 3, name: category.name, item: pageUrl },
         ],
       },
@@ -71,19 +83,32 @@ export async function buildCategoryJsonLd(category: {
   };
 }
 
+async function resolveSettings(): Promise<SeoSettings> {
+  const settings = await getAllSettings();
+  return {
+    siteUrl: settings.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com",
+    siteName: settings.siteName || "Modonty",
+    inLanguage: settings.inLanguage || "ar",
+    ogLocale: settings.defaultOgLocale || "ar_SA",
+    metaRobots: settings.defaultMetaRobots || "index, follow",
+    twitterCard: settings.defaultTwitterCard || "summary_large_image",
+    twitterSite: settings.twitterSite || undefined,
+    twitterCreator: settings.twitterCreator || undefined,
+  };
+}
+
 export async function generateAndSaveCategorySeo(categoryId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const category = await db.category.findUnique({
       where: { id: categoryId },
-      select: { id: true, name: true, slug: true, description: true, seoTitle: true, seoDescription: true, canonicalUrl: true, socialImage: true },
+      select: { id: true, name: true, slug: true, description: true, seoTitle: true, seoDescription: true, canonicalUrl: true, socialImage: true, socialImageAlt: true },
     });
     if (!category) return { success: false, error: "Category not found" };
 
-    const settings = await getAllSettings();
-    const siteUrl = (settings as any)?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const s = await resolveSettings();
+    const metadata = await buildCategoryMetadata(category, s);
+    const jsonLd = await buildCategoryJsonLd(category, s);
 
-    const metadata = await buildCategoryMetadata(category, siteUrl);
-    const jsonLd = await buildCategoryJsonLd(category, siteUrl);
     await db.category.update({
       where: { id: categoryId },
       data: {

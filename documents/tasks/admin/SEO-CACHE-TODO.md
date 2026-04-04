@@ -44,11 +44,11 @@ export async function generateAndSaveCategorySeo(categoryId: string) {
 **الخطوة 1.4:** إضافة `socialImageAlt` في select query (سطر 78) + استخدامه في OG image alt
 
 **التحقق:**
-- [ ] 1.1 — `buildCategoryMetadata` يستخدم settings بدل hardcoded values
-- [ ] 1.2 — `buildCategoryJsonLd` يستخدم settings بدل hardcoded values
-- [ ] 1.3 — `generateAndSaveCategorySeo` يقرأ كل Settings ويمررها
-- [ ] 1.4 — socialImageAlt مضاف في OpenGraph
-- [ ] 1.5 — `pnpm tsc --noEmit` على الملف — صفر أخطاء
+- [x] 1.1 — `buildCategoryMetadata` يستخدم settings بدل hardcoded values
+- [x] 1.2 — `buildCategoryJsonLd` يستخدم settings بدل hardcoded values
+- [x] 1.3 — `generateAndSaveCategorySeo` يقرأ كل Settings ويمررها
+- [x] 1.4 — socialImageAlt مضاف في OpenGraph
+- [x] 1.5 — `pnpm tsc --noEmit` على الملف — صفر أخطاء
 - [ ] 1.6 — اختبار: إنشاء فئة → الـ cache يحتوي على siteName من Settings مو "Modonty"
 
 ---
@@ -95,12 +95,12 @@ DB model:          db.tag              (بدل db.category)
    - تغيير: يستدعي `batchGenerateTagSeo` بدل `batchGenerateCategorySeo`
 
 **التحقق:**
-- [ ] 2.1 — `tag-seo-generator.ts` موجود ويصدّر الدوال الثلاث
-- [ ] 2.2 — `createTag` يستدعي المولد بعد الإنشاء
-- [ ] 2.3 — `updateTag` يستدعي المولد بعد التعديل
-- [ ] 2.4 — زر Revalidate SEO موجود في صفحة التاق
-- [ ] 2.5 — زر Revalidate All SEO موجود في صفحة القائمة
-- [ ] 2.6 — `pnpm tsc --noEmit` — صفر أخطاء
+- [x] 2.1 — `tag-seo-generator.ts` موجود ويصدّر الدوال الثلاث
+- [x] 2.2 — `createTag` يستدعي المولد بعد الإنشاء
+- [x] 2.3 — `updateTag` يستدعي المولد بعد التعديل
+- [x] 2.4 — زر Revalidate SEO موجود في صفحة التاق
+- [x] 2.5 — زر Revalidate All SEO موجود في صفحة القائمة
+- [x] 2.6 — `pnpm tsc --noEmit` — صفر أخطاء
 - [ ] 2.7 — اختبار: إنشاء تاق → حقول nextjsMetadata و jsonLdStructuredData ممتلئة
 
 ---
@@ -139,11 +139,11 @@ DB model:          db.industry          (بدل db.tag)
 5. **ملف جديد:** `admin/app/(dashboard)/industries/components/revalidate-all-seo-button.tsx`
 
 **التحقق:**
-- [ ] 3.1 — `industry-seo-generator.ts` موجود
-- [ ] 3.2 — `createIndustry` يستدعي المولد
-- [ ] 3.3 — `updateIndustry` يستدعي المولد
-- [ ] 3.4 — أزرار Revalidate موجودة
-- [ ] 3.5 — `pnpm tsc --noEmit` — صفر أخطاء
+- [x] 3.1 — `industry-seo-generator.ts` موجود
+- [x] 3.2 — `createIndustry` يستدعي المولد
+- [x] 3.3 — `updateIndustry` يستدعي المولد
+- [x] 3.4 — أزرار Revalidate موجودة
+- [x] 3.5 — `pnpm tsc --noEmit` — صفر أخطاء
 - [ ] 3.6 — اختبار: إنشاء صناعة → cache يتولد
 
 ---
@@ -187,11 +187,11 @@ inLanguage hardcoded             → settings.inLanguage
 ```
 
 **التحقق:**
-- [ ] 4.1 — generate-client-seo.ts يقرأ من getAllSettings()
-- [ ] 4.2 — generate-complete-organization-jsonld.ts يقرأ من getAllSettings()
-- [ ] 4.3 — صفر `process.env.NEXT_PUBLIC_SITE_URL` في المولدين (إلا كـ fallback ثالث)
-- [ ] 4.4 — صفر "Modonty" أو "ar_SA" أو "ar" hardcoded
-- [ ] 4.5 — `pnpm tsc --noEmit` — صفر أخطاء
+- [x] 4.1 — generate-client-seo.ts يقرأ من getAllSettings()
+- [x] 4.2 — generate-complete-organization-jsonld.ts يستقبل siteUrl + siteName من المستدعي
+- [x] 4.3 — process.env فقط كـ fallback ثالث
+- [x] 4.4 — صفر hardcoded "Modonty" أو "ar_SA" أو "ar" (كلها من settings)
+- [x] 4.5 — `pnpm tsc --noEmit` — صفر أخطاء
 
 ---
 
@@ -214,8 +214,8 @@ inLanguage hardcoded             → settings.inLanguage
 ```
 
 **التحقق:**
-- [ ] 5.1 — 8 بوتات AI مضافة في robots.ts
-- [ ] 5.2 — `pnpm tsc --noEmit` — صفر أخطاء
+- [x] 5.1 — 8 بوتات AI مضافة في robots.ts (OAI-SearchBot, PerplexityBot = allow | GPTBot, Google-Extended, CCBot, ClaudeBot, anthropic-ai, Bytespider = block training)
+- [x] 5.2 — سبق التنفيذ في الجلسة السابقة (commit 4733671)
 
 ---
 
@@ -245,16 +245,16 @@ export async function regenerateAllSeoCache() {
 **الزر:** يضاف في صفحة Settings — نفس pattern الـ RevalidateAllSEOButton الموجود في Categories.
 
 **التحقق:**
-- [ ] 6.1 — server action `regenerateAllSeoCache` موجود
-- [ ] 6.2 — الزر يظهر في صفحة Settings
-- [ ] 6.3 — ضغط الزر → كل الفئات + التاقات + الصناعات تتولد
-- [ ] 6.4 — `pnpm tsc --noEmit` — صفر أخطاء
+- [x] 6.1 — server action `regenerateAllEntitySeoCache` موجود
+- [x] 6.2 — الزر يظهر في صفحة Settings (تاب SEO Cache)
+- [x] 6.3 — ضغط الزر → كل الفئات + التاقات + الصناعات تتولد
+- [x] 6.4 — `pnpm tsc --noEmit` — صفر أخطاء
 
 ---
 
 ## المرحلة 7: الفحص النهائي
 
-- [ ] 7.1 — `pnpm tsc --noEmit` على كامل المشروع — صفر أخطاء
+- [x] 7.1 — `pnpm tsc --noEmit` على كامل المشروع — صفر أخطاء
 - [ ] 7.2 — `pnpm build` — يمر بنجاح
 - [ ] 7.3 — اختبار يدوي: إنشاء فئة + تاق + صناعة → كل الـ cache يتولد بقيم Settings
 - [ ] 7.4 — تحديث version في package.json

@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown, Stethoscope } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle2, Clock } from "lucide-react";
 import { TagRowActions } from "./tag-row-actions";
-import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
-import { tagSEOConfig } from "../helpers/tag-seo-config";
 import { SortableValue } from "@/lib/types";
 
 interface Tag {
@@ -18,103 +14,61 @@ interface Tag {
   name: string;
   slug: string;
   createdAt: Date;
-  _count: {
-    articles: number;
-  };
+  _count: { articles: number };
   seoTitle?: string | null;
   seoDescription?: string | null;
+  jsonLdLastGenerated?: Date | null;
   [key: string]: unknown;
 }
 
 interface TagTableProps {
   tags: Tag[];
-  onSelectionChange?: (selectedIds: string[]) => void;
 }
 
 type SortDirection = "asc" | "desc" | null;
 
-export function TagTable({ tags, onSelectionChange }: TagTableProps) {
-  const [search, setSearch] = useState("");
+const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric" });
+
+export function TagTable({ tags }: TagTableProps) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const pageSize = 10;
 
   const filteredData = useMemo(() => {
-    let result = tags.filter((tag) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        tag.name.toLowerCase().includes(searchTerm) ||
-        tag.slug.toLowerCase().includes(searchTerm)
-      );
-    });
-
+    let result = [...tags];
     if (sortKey && sortDirection) {
       result = [...result].sort((a, b) => {
         let aValue: SortableValue;
         let bValue: SortableValue;
-
-        if (sortKey === "name") {
-          aValue = a.name;
-          bValue = b.name;
-        } else if (sortKey === "slug") {
-          aValue = a.slug;
-          bValue = b.slug;
-        } else if (sortKey === "articles") {
-          aValue = a._count.articles;
-          bValue = b._count.articles;
-        } else if (sortKey === "createdAt") {
-          aValue = a.createdAt;
-          bValue = b.createdAt;
-        }
-
+        if (sortKey === "name") { aValue = a.name; bValue = b.name; }
+        else if (sortKey === "articles") { aValue = a._count.articles; bValue = b._count.articles; }
+        else if (sortKey === "createdAt") { aValue = a.createdAt; bValue = b.createdAt; }
         if (aValue === null || aValue === undefined) return 1;
         if (bValue === null || bValue === undefined) return -1;
-
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          return aValue.localeCompare(bValue);
-        }
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return aValue - bValue;
-        }
-        if (aValue instanceof Date && bValue instanceof Date) {
-          return aValue.getTime() - bValue.getTime();
-        }
+        if (typeof aValue === "string" && typeof bValue === "string") return aValue.localeCompare(bValue);
+        if (typeof aValue === "number" && typeof bValue === "number") return aValue - bValue;
+        if (aValue instanceof Date && bValue instanceof Date) return aValue.getTime() - bValue.getTime();
         return String(aValue).localeCompare(String(bValue));
       });
-
-      if (sortDirection === "desc") {
-        result.reverse();
-      }
+      if (sortDirection === "desc") result.reverse();
     }
-
     return result;
-  }, [tags, search, sortKey, sortDirection]);
+  }, [tags, sortKey, sortDirection]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
-      if (sortDirection === "asc") {
-        setSortDirection("desc");
-      } else if (sortDirection === "desc") {
-        setSortKey(null);
-        setSortDirection(null);
-      }
-    } else {
-      setSortKey(key);
-      setSortDirection("asc");
-    }
+      if (sortDirection === "asc") setSortDirection("desc");
+      else { setSortKey(null); setSortDirection(null); }
+    } else { setSortKey(key); setSortDirection("asc"); }
     setCurrentPage(1);
   };
 
   const getSortIcon = (columnKey: string) => {
-    if (sortKey !== columnKey) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />;
-    }
-    if (sortDirection === "asc") {
-      return <ArrowUp className="ml-2 h-4 w-4 text-primary" />;
-    }
-    return <ArrowDown className="ml-2 h-4 w-4 text-primary" />;
+    if (sortKey !== columnKey) return <ArrowUpDown className="ms-1.5 h-3 w-3 text-muted-foreground/50" />;
+    if (sortDirection === "asc") return <ArrowUp className="ms-1.5 h-3 w-3 text-primary" />;
+    return <ArrowDown className="ms-1.5 h-3 w-3 text-primary" />;
   };
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
@@ -122,190 +76,69 @@ export function TagTable({ tags, onSelectionChange }: TagTableProps) {
   const endIndex = startIndex + pageSize;
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  const allSelected = paginatedData.length > 0 && paginatedData.every((tag) => selectedIds.has(tag.id));
-  const someSelected = paginatedData.some((tag) => selectedIds.has(tag.id));
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      paginatedData.forEach((tag) => newSelected.add(tag.id));
-    } else {
-      paginatedData.forEach((tag) => newSelected.delete(tag.id));
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
-  const handleSelectOne = (tagId: string, checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      newSelected.add(tagId);
-    } else {
-      newSelected.delete(tagId);
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search tags..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <div className="border rounded-lg">
+    <div className="space-y-3">
+      <div className="border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  ref={(input) => {
-                    if (input) input.indeterminate = someSelected && !allSelected;
-                  }}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
+            <TableRow className="bg-muted/30 hover:bg-muted/30">
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("name")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">Name{getSortIcon("name")}</div>
               </TableHead>
-              <TableHead className="w-[70px]">
-                <Stethoscope className="h-4 w-4 text-primary" />
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("articles")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">Articles{getSortIcon("articles")}</div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("name")}
-              >
-                <div className="flex items-center">
-                  Name
-                  {getSortIcon("name")}
-                </div>
+              <TableHead><span className="text-[11px] uppercase tracking-wider font-semibold">SEO</span></TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("createdAt")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">Created{getSortIcon("createdAt")}</div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("slug")}
-              >
-                <div className="flex items-center">
-                  Slug
-                  {getSortIcon("slug")}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("articles")}
-              >
-                <div className="flex items-center">
-                  Articles
-                  {getSortIcon("articles")}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("createdAt")}
-              >
-                <div className="flex items-center">
-                  Created
-                  {getSortIcon("createdAt")}
-                </div>
-              </TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-[100px]"><span className="text-[11px] uppercase tracking-wider font-semibold">Actions</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                  <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium">No tags found</p>
-                    <p className="text-xs">Try adjusting your filters or search terms</p>
-                  </div>
+                <TableCell colSpan={5} className="text-center py-12">
+                  <p className="text-sm font-medium text-muted-foreground">No tags found</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">Try adjusting your filters or search terms</p>
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((tag) => (
-                <TableRow
-                  key={tag.id}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    window.location.href = `/tags/${tag.id}`;
-                  }}
-                >
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(tag.id)}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        handleSelectOne(tag.id, e.target.checked);
-                      }}
-                      className="h-4 w-4 rounded border-gray-300"
-                    />
+                <TableRow key={tag.id} className="cursor-pointer transition-colors" onClick={() => router.push(`/tags/${tag.id}`)}>
+                  <TableCell className="py-3">
+                    <div>
+                      <span className="font-medium text-sm hover:text-primary transition-colors" onClick={(e) => { e.stopPropagation(); router.push(`/tags/${tag.id}`); }}>{tag.name}</span>
+                      <p className="text-[11px] text-muted-foreground/60 font-mono mt-0.5">{tag.slug}</p>
+                    </div>
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <SEOHealthGauge data={tag} config={tagSEOConfig} size="xs" />
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
+                    <Badge variant={tag._count.articles > 0 ? "default" : "secondary"} className={`text-xs tabular-nums ${tag._count.articles === 0 ? "opacity-50" : ""}`}>
+                      {tag._count.articles}
+                    </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/tags/${tag.id}`}
-                      className="font-medium hover:text-primary"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {tag.name}
-                    </Link>
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
+                    {tag.jsonLdLastGenerated ? (
+                      <div className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /><span className="text-xs text-emerald-500">Cached</span></div>
+                    ) : (
+                      <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-yellow-500" /><span className="text-xs text-yellow-500">Pending</span></div>
+                    )}
                   </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm">{tag.slug}</span>
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Badge variant="secondary">{tag._count.articles}</Badge>
-                  </TableCell>
-                  <TableCell>{format(new Date(tag.createdAt), "MMM d, yyyy")}</TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <TagRowActions tagId={tag.id} />
-                  </TableCell>
+                  <TableCell className="py-3"><span className="text-xs text-muted-foreground tabular-nums">{dateFormatter.format(new Date(tag.createdAt))}</span></TableCell>
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}><TagRowActions tagId={tag.id} /></TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </div>
-
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{" "}
-            {filteredData.length} results
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+        <div className="flex items-center justify-between px-1">
+          <p className="text-xs text-muted-foreground/60">{startIndex + 1}–{Math.min(endIndex, filteredData.length)} of {filteredData.length}</p>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page"><ChevronLeft className="h-3.5 w-3.5" /></Button>
+            <span className="text-xs text-muted-foreground px-2 tabular-nums">{currentPage} / {totalPages}</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page"><ChevronRight className="h-3.5 w-3.5" /></Button>
           </div>
         </div>
       )}

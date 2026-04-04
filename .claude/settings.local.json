@@ -48,7 +48,25 @@
       "Bash(curl -sL \"https://platform.openai.com/docs/bots\")",
       "Bash(curl -sL \"https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers\")",
       "Bash(curl -s -L \"https://developers.google.com/search/docs/appearance/structured-data/article\")",
-      "Bash(curl -s -L \"https://schema.org/Article\")"
+      "Bash(curl -s -L \"https://schema.org/Article\")",
+      "Bash(cp \"documents/TODO.md\" \"documents/00-todo/MASTER-TODO.md\")",
+      "Bash(cp \"documents/TODO-REVIEW.md\" \"documents/00-todo/LAUNCH-REVIEW.md\")",
+      "Bash(cp \"documents/PREFLIGHT-CHECKLIST.md\" \"documents/00-todo/PREFLIGHT-CHECKLIST.md\")",
+      "Bash(cp \"documents/02-seo/LAUNCH-CHECKLIST.md\" \"documents/00-todo/SEO-CACHE-TODO.md\")",
+      "Bash(cp \"documents/02-seo/CRUD-SEO-CACHE-FLOW.md\" \"documents/00-todo/CRUD-SEO-CACHE-FLOW.md\")",
+      "Bash(cp \"documents/TODO.md\" \"documents/tasks/MASTER-TODO.md\")",
+      "Bash(cp \"documents/TODO-REVIEW.md\" \"documents/tasks/LAUNCH-REVIEW.md\")",
+      "Bash(cp \"documents/PREFLIGHT-CHECKLIST.md\" \"documents/tasks/PREFLIGHT-CHECKLIST.md\")",
+      "Bash(cp \"documents/06-ai-chatbot/CHATBOT-TODO.md\" \"documents/tasks/CHATBOT-TODO.md\")",
+      "Bash(cp \"documents/08-intake-setup/setup-deploy/ENV-DEPLOY-CHECKLIST.md\" \"documents/tasks/ENV-DEPLOY-CHECKLIST.md\")",
+      "Bash(cp \"admin/app/\\(dashboard\\)/doc/ARTICLE-SYSTEM-TODO.md\" \"documents/tasks/admin/ARTICLES-TODO.md\")",
+      "Bash(cp \"admin/app/\\(dashboard\\)/doc/CATEGORIES-UI-TODO.md\" \"documents/tasks/admin/CATEGORIES-UI-TODO.md\")",
+      "Bash(cp \"admin/app/\\(dashboard\\)/doc/CLIENT-SYSTEM-TODO.md\" \"documents/tasks/admin/CLIENTS-SYSTEM-TODO.md\")",
+      "Bash(cp \"admin/app/\\(dashboard\\)/doc/clientTodoFil.md\" \"documents/tasks/admin/CLIENTS-AUDIT-REPORT.md\")",
+      "Bash(cp \"admin/app/\\(dashboard\\)/clients/CLIENTS-SECTION-ENHANCEMENTS.md\" \"documents/tasks/admin/CLIENTS-ENHANCEMENTS.md\")",
+      "Bash(cp \"modonty/app/articles/[slug]/LAZY_LOAD_PLAN_REVIEW.md\" \"documents/tasks/modonty/LAZY-LOAD-PLAN.md\")",
+      "Bash(cp \"console/docs/CLIENT_PAGE_TRACKING_AUDIT.md\" \"documents/tasks/console/CLIENT-PAGE-TRACKING.md\")",
+      "Bash(cp \"console/docs/Important_ANALYTICS_DATA_SOURCES_REPORT.md\" \"documents/tasks/console/ANALYTICS-DATA-SOURCES.md\")"
     ]
   }
 }

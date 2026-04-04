@@ -3,12 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/utils";
-import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { CategoryWithRelations } from "@/lib/types";
 import { createCategory, updateCategory } from "../../actions/categories-actions";
-import { deleteOldImage as deleteOldImageAction } from "../../../actions/delete-image";
-import { uploadImage } from "../../../actions/upload-image";
-import { prepareImageData } from "../../../helpers/prepare-image-data";
 
 interface CategoryFormData {
   name: string;
@@ -18,6 +14,8 @@ interface CategoryFormData {
   seoTitle: string;
   seoDescription: string;
   canonicalUrl: string;
+  socialImage: string;
+  socialImageAlt: string;
 }
 
 interface UseCategoryFormParams {
@@ -29,8 +27,6 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUploadData, setImageUploadData] = useState<ImageUploadData | null>(null);
-  const [imageRemoved, setImageRemoved] = useState(false);
 
   const [formData, setFormData] = useState<CategoryFormData>({
     name: initialData?.name || "",
@@ -40,9 +36,12 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
     canonicalUrl: initialData?.canonicalUrl || "",
+    socialImage: initialData?.socialImage || "",
+    socialImageAlt: initialData?.socialImageAlt || "",
   });
 
   const isEditMode = !!categoryId;
+
   useEffect(() => {
     if (!isEditMode) {
       const newSlug = slugify(formData.name);
@@ -55,49 +54,24 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
     setLoading(true);
     setError(null);
 
-    if (categoryId && initialData?.id && (imageUploadData?.file || imageRemoved)) {
-      await deleteOldImageAction("categories", initialData.id);
-    }
-
-    const uploadResult = await uploadImage({
-      imageData: imageUploadData,
-      tableName: "categories",
-      urlFieldName: "socialImage",
-      altFieldName: "socialImageAlt",
-      slug: formData.slug,
+    const payload = {
       name: formData.name,
-      recordId: categoryId,
-      initialId: initialData?.id,
-    });
-
-    if (!uploadResult.success) {
-      setError(uploadResult.error || "Failed to upload image");
-      setLoading(false);
-      return;
-    }
-
-    const { finalSocialImage, finalSocialImageAlt, finalCloudinaryPublicId } =
-      prepareImageData(
-        !!categoryId,
-        imageRemoved,
-        !!imageUploadData?.file,
-        uploadResult.result
-      );
+      slug: formData.slug,
+      description: formData.description || undefined,
+      parentId: formData.parentId || undefined,
+      seoTitle: formData.seoTitle || undefined,
+      seoDescription: formData.seoDescription || undefined,
+      canonicalUrl: formData.canonicalUrl || undefined,
+      socialImage: formData.socialImage || null,
+      socialImageAlt: formData.socialImageAlt || null,
+    };
 
     const result = categoryId
-      ? await updateCategory(categoryId, {
-          ...formData,
-          parentId: formData.parentId || undefined,
-          ...(finalSocialImage !== undefined ? { socialImage: finalSocialImage } : {}),
-          ...(finalSocialImageAlt !== undefined ? { socialImageAlt: finalSocialImageAlt } : {}),
-          ...(finalCloudinaryPublicId !== undefined ? { cloudinaryPublicId: finalCloudinaryPublicId } : {}),
-        })
+      ? await updateCategory(categoryId, payload)
       : await createCategory({
-          ...formData,
-          parentId: formData.parentId || undefined,
-          socialImage: finalSocialImage ?? undefined,
-          socialImageAlt: finalSocialImageAlt ?? undefined,
-          cloudinaryPublicId: finalCloudinaryPublicId ?? undefined,
+          ...payload,
+          socialImage: payload.socialImage ?? undefined,
+          socialImageAlt: payload.socialImageAlt ?? undefined,
         });
 
     if (result.success) {
@@ -117,16 +91,17 @@ export function useCategoryForm({ initialData, categoryId }: UseCategoryFormPara
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateImageField = (field: "socialImage" | "socialImageAlt", value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return {
     formData,
     loading,
     error,
-    imageUploadData,
-    imageRemoved,
-    setImageUploadData,
-    setImageRemoved,
     updateField,
     updateSEOField,
+    updateImageField,
     handleSubmit,
   };
 }

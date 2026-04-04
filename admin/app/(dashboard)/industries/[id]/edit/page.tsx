@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { getIndustryById } from "../../actions/industries-actions";
-import { PageHeader } from "@/components/shared/page-header";
 import { IndustryForm } from "../../components/industry-form";
 import { DeleteIndustryButton } from "../components/delete-industry-button";
+import { RevalidateSEOButton } from "../components/revalidate-seo-button";
+import { SeoCachePreview } from "@/components/shared/seo-cache-preview";
 
 export default async function EditIndustryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,10 +15,21 @@ export default async function EditIndustryPage({ params }: { params: Promise<{ i
 
   return (
     <div className="container mx-auto max-w-[1128px]">
-      <PageHeader title="Edit Industry" description="Update industry information" />
-      <div className="mb-6">
-        <DeleteIndustryButton industryId={id} />
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1 className="text-2xl font-semibold leading-tight">Edit Industry</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Update industry information</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <RevalidateSEOButton industryId={id} />
+          <DeleteIndustryButton industryId={id} />
+        </div>
       </div>
+      <SeoCachePreview
+        jsonLd={industry.jsonLdStructuredData}
+        metaTags={industry.nextjsMetadata}
+        lastGenerated={industry.jsonLdLastGenerated}
+      />
       <IndustryForm initialData={industry} industryId={id} />
     </div>
   );

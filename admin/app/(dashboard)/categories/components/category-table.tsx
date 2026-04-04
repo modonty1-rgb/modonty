@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle2, Clock } from "lucide-react";
 import { CategoryRowActions } from "./category-row-actions";
 import { SortableValue } from "@/lib/types";
 
@@ -16,9 +15,7 @@ interface Category {
   slug: string;
   createdAt: Date;
   parent: { name: string } | null;
-  _count: {
-    articles: number;
-  };
+  _count: { articles: number };
   seoTitle?: string | null;
   seoDescription?: string | null;
   jsonLdLastGenerated?: Date | null;
@@ -28,16 +25,17 @@ interface Category {
 
 interface CategoryTableProps {
   categories: Category[];
-  onSelectionChange?: (selectedIds: string[]) => void;
 }
 
 type SortDirection = "asc" | "desc" | null;
 
-export function CategoryTable({ categories, onSelectionChange }: CategoryTableProps) {
+const dateFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric" });
+
+export function CategoryTable({ categories }: CategoryTableProps) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const pageSize = 10;
 
   const filteredData = useMemo(() => {
@@ -48,41 +46,21 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
         let aValue: SortableValue;
         let bValue: SortableValue;
 
-        if (sortKey === "name") {
-          aValue = a.name;
-          bValue = b.name;
-        } else if (sortKey === "slug") {
-          aValue = a.slug;
-          bValue = b.slug;
-        } else if (sortKey === "parent") {
-          aValue = a.parent?.name || "";
-          bValue = b.parent?.name || "";
-        } else if (sortKey === "articles") {
-          aValue = a._count.articles;
-          bValue = b._count.articles;
-        } else if (sortKey === "createdAt") {
-          aValue = a.createdAt;
-          bValue = b.createdAt;
-        }
+        if (sortKey === "name") { aValue = a.name; bValue = b.name; }
+        else if (sortKey === "parent") { aValue = a.parent?.name || ""; bValue = b.parent?.name || ""; }
+        else if (sortKey === "articles") { aValue = a._count.articles; bValue = b._count.articles; }
+        else if (sortKey === "createdAt") { aValue = a.createdAt; bValue = b.createdAt; }
 
         if (aValue === null || aValue === undefined) return 1;
         if (bValue === null || bValue === undefined) return -1;
 
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          return aValue.localeCompare(bValue);
-        }
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return aValue - bValue;
-        }
-        if (aValue instanceof Date && bValue instanceof Date) {
-          return aValue.getTime() - bValue.getTime();
-        }
+        if (typeof aValue === "string" && typeof bValue === "string") return aValue.localeCompare(bValue);
+        if (typeof aValue === "number" && typeof bValue === "number") return aValue - bValue;
+        if (aValue instanceof Date && bValue instanceof Date) return aValue.getTime() - bValue.getTime();
         return String(aValue).localeCompare(String(bValue));
       });
 
-      if (sortDirection === "desc") {
-        result.reverse();
-      }
+      if (sortDirection === "desc") result.reverse();
     }
 
     return result;
@@ -90,12 +68,8 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
-      if (sortDirection === "asc") {
-        setSortDirection("desc");
-      } else if (sortDirection === "desc") {
-        setSortKey(null);
-        setSortDirection(null);
-      }
+      if (sortDirection === "asc") setSortDirection("desc");
+      else if (sortDirection === "desc") { setSortKey(null); setSortDirection(null); }
     } else {
       setSortKey(key);
       setSortDirection("asc");
@@ -104,13 +78,9 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
   };
 
   const getSortIcon = (columnKey: string) => {
-    if (sortKey !== columnKey) {
-      return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />;
-    }
-    if (sortDirection === "asc") {
-      return <ArrowUp className="ml-2 h-4 w-4 text-primary" />;
-    }
-    return <ArrowDown className="ml-2 h-4 w-4 text-primary" />;
+    if (sortKey !== columnKey) return <ArrowUpDown className="ms-1.5 h-3 w-3 text-muted-foreground/50" />;
+    if (sortDirection === "asc") return <ArrowUp className="ms-1.5 h-3 w-3 text-primary" />;
+    return <ArrowDown className="ms-1.5 h-3 w-3 text-primary" />;
   };
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
@@ -118,144 +88,100 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
   const endIndex = startIndex + pageSize;
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  const allSelected = paginatedData.length > 0 && paginatedData.every((category) => selectedIds.has(category.id));
-  const someSelected = paginatedData.some((category) => selectedIds.has(category.id));
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      paginatedData.forEach((category) => newSelected.add(category.id));
-    } else {
-      paginatedData.forEach((category) => newSelected.delete(category.id));
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
-  const handleSelectOne = (categoryId: string, checked: boolean) => {
-    const newSelected = new Set(selectedIds);
-    if (checked) {
-      newSelected.add(categoryId);
-    } else {
-      newSelected.delete(categoryId);
-    }
-    setSelectedIds(newSelected);
-    onSelectionChange?.(Array.from(newSelected));
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="border rounded-lg">
+    <div className="space-y-3">
+      <div className="border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  ref={(input) => {
-                    if (input) input.indeterminate = someSelected && !allSelected;
-                  }}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-              </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("name")}
-              >
-                <div className="flex items-center">
-                  Name
-                  {getSortIcon("name")}
+            <TableRow className="bg-muted/30 hover:bg-muted/30">
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("name")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">
+                  Name{getSortIcon("name")}
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("parent")}
-              >
-                <div className="flex items-center">
-                  Parent
-                  {getSortIcon("parent")}
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("parent")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">
+                  Parent{getSortIcon("parent")}
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("articles")}
-              >
-                <div className="flex items-center">
-                  Articles
-                  {getSortIcon("articles")}
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("articles")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">
+                  Articles{getSortIcon("articles")}
                 </div>
               </TableHead>
-              <TableHead>SEO Cache</TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("createdAt")}
-              >
-                <div className="flex items-center">
-                  Created
-                  {getSortIcon("createdAt")}
+              <TableHead>
+                <span className="text-[11px] uppercase tracking-wider font-semibold">SEO</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => handleSort("createdAt")}>
+                <div className="flex items-center text-[11px] uppercase tracking-wider font-semibold">
+                  Created{getSortIcon("createdAt")}
                 </div>
               </TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-[100px]">
+                <span className="text-[11px] uppercase tracking-wider font-semibold">Actions</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                  <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium">No categories found</p>
-                    <p className="text-xs">Try adjusting your filters or search terms</p>
-                  </div>
+                <TableCell colSpan={6} className="text-center py-12">
+                  <p className="text-sm font-medium text-muted-foreground">No categories found</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">Try adjusting your filters or search terms</p>
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((category) => (
                 <TableRow
                   key={category.id}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    window.location.href = `/categories/${category.id}`;
-                  }}
+                  className="cursor-pointer transition-colors"
+                  onClick={() => router.push(`/categories/${category.id}`)}
                 >
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(category.id)}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        handleSelectOne(category.id, e.target.checked);
-                      }}
-                      className="h-4 w-4 rounded border-gray-300"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/categories/${category.id}`}
-                      className="font-medium hover:text-primary"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {category.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{category.parent?.name || "-"}</TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Badge variant="secondary">{category._count.articles}</Badge>
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    {category.jsonLdLastGenerated ? (
-                      <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
-                        ✅ Generated
+                  <TableCell className="py-3">
+                    <div>
+                      <span
+                        className="font-medium text-sm hover:text-primary transition-colors"
+                        onClick={(e) => { e.stopPropagation(); router.push(`/categories/${category.id}`); }}
+                      >
+                        {category.name}
                       </span>
+                      <p className="text-[11px] text-muted-foreground/60 font-mono mt-0.5">{category.slug}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    {category.parent?.name ? (
+                      <span className="text-sm">{category.parent.name}</span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-xs text-yellow-600 font-medium">
-                        ⚠️ Pending
-                      </span>
+                      <span className="text-xs text-muted-foreground/40">—</span>
                     )}
                   </TableCell>
-                  <TableCell>{format(new Date(category.createdAt), "MMM d, yyyy")}</TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
+                    <Badge
+                      variant={category._count.articles > 0 ? "default" : "secondary"}
+                      className={`text-xs tabular-nums ${category._count.articles === 0 ? "opacity-50" : ""}`}
+                    >
+                      {category._count.articles}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
+                    {category.jsonLdLastGenerated ? (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                        <span className="text-xs text-emerald-500">Cached</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 text-yellow-500" />
+                        <span className="text-xs text-yellow-500">Pending</span>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {dateFormatter.format(new Date(category.createdAt))}
+                    </span>
+                  </TableCell>
+                  <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
                     <CategoryRowActions categoryId={category.id} />
                   </TableCell>
                 </TableRow>
@@ -266,30 +192,33 @@ export function CategoryTable({ categories, onSelectionChange }: CategoryTablePr
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{" "}
-            {filteredData.length} results
+        <div className="flex items-center justify-between px-1">
+          <p className="text-xs text-muted-foreground/60">
+            {startIndex + 1}–{Math.min(endIndex, filteredData.length)} of {filteredData.length}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              aria-label="Previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
+            <span className="text-xs text-muted-foreground px-2 tabular-nums">
+              {currentPage} / {totalPages}
             </span>
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
+              aria-label="Next page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>

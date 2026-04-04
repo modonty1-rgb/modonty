@@ -609,18 +609,32 @@ export function SettingsFormV2() {
       <TabsContent value="seo-cache">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-muted-foreground">SEO Cache — Meta Tags + JSON-LD per listing page</p>
-          <Button variant="outline" size="sm" disabled={isSaving} className="gap-2" onClick={async () => {
-            setIsSaving(true);
-            try {
-              const { regenerateAllListingCaches } = await import("@/lib/seo/listing-page-seo-generator");
-              await regenerateAllListingCaches();
-              window.location.reload();
-            } catch (e) { console.error("Generate All failed:", e); }
-            setIsSaving(false);
-          }}>
-            <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
-            {isSaving ? "Generating..." : "Generate All"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" disabled={isSaving} className="gap-2" onClick={async () => {
+              setIsSaving(true);
+              try {
+                const { regenerateAllEntitySeoCache } = await import("../actions/regenerate-all-seo");
+                const result = await regenerateAllEntitySeoCache();
+                alert(`تم توليد SEO للعناصر:\nالفئات: ${result.categories.successful}/${result.categories.total}\nالوسوم: ${result.tags.successful}/${result.tags.total}\nالصناعات: ${result.industries.successful}/${result.industries.total}`);
+              } catch (e) { console.error("Entity SEO gen failed:", e); }
+              setIsSaving(false);
+            }}>
+              <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
+              {isSaving ? "جاري التوليد..." : "توليد SEO العناصر"}
+            </Button>
+            <Button variant="outline" size="sm" disabled={isSaving} className="gap-2" onClick={async () => {
+              setIsSaving(true);
+              try {
+                const { regenerateAllListingCaches } = await import("@/lib/seo/listing-page-seo-generator");
+                await regenerateAllListingCaches();
+                window.location.reload();
+              } catch (e) { console.error("Generate All failed:", e); }
+              setIsSaving(false);
+            }}>
+              <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
+              {isSaving ? "Generating..." : "Generate All Listings"}
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="home" orientation="vertical" className="flex gap-3">

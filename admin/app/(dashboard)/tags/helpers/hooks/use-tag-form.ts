@@ -3,12 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { slugify } from "@/lib/utils";
-import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { Tag } from "@prisma/client";
 import { createTag, updateTag } from "../../actions/tags-actions";
-import { deleteOldImage as deleteOldImageAction } from "../../../actions/delete-image";
-import { uploadImage } from "../../../actions/upload-image";
-import { prepareImageData } from "../../../helpers/prepare-image-data";
 
 interface TagFormData {
   name: string;
@@ -17,6 +13,8 @@ interface TagFormData {
   seoTitle: string;
   seoDescription: string;
   canonicalUrl: string;
+  socialImage: string;
+  socialImageAlt: string;
 }
 
 interface UseTagFormParams {
@@ -28,8 +26,6 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUploadData, setImageUploadData] = useState<ImageUploadData | null>(null);
-  const [imageRemoved, setImageRemoved] = useState(false);
 
   const [formData, setFormData] = useState<TagFormData>({
     name: initialData?.name || "",
@@ -38,11 +34,17 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
     canonicalUrl: initialData?.canonicalUrl || "",
+    socialImage: initialData?.socialImage || "",
+    socialImageAlt: initialData?.socialImageAlt || "",
   });
 
+  const isEditMode = !!tagId;
+
   useEffect(() => {
-    const newSlug = slugify(formData.name);
-    setFormData((prev) => ({ ...prev, slug: newSlug }));
+    if (!isEditMode) {
+      const newSlug = slugify(formData.name);
+      setFormData((prev) => ({ ...prev, slug: newSlug }));
+    }
   }, [formData.name]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,47 +52,23 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
     setLoading(true);
     setError(null);
 
-    if (tagId && initialData?.id && (imageUploadData?.file || imageRemoved)) {
-      await deleteOldImageAction("tags", initialData.id);
-    }
-
-    const uploadResult = await uploadImage({
-      imageData: imageUploadData,
-      tableName: "tags",
-      urlFieldName: "socialImage",
-      altFieldName: "socialImageAlt",
-      slug: formData.slug,
+    const payload = {
       name: formData.name,
-      recordId: tagId,
-      initialId: initialData?.id,
-    });
-
-    if (!uploadResult.success) {
-      setError(uploadResult.error || "Failed to upload image");
-      setLoading(false);
-      return;
-    }
-
-    const { finalSocialImage, finalSocialImageAlt, finalCloudinaryPublicId } =
-      prepareImageData(
-        !!tagId,
-        imageRemoved,
-        !!imageUploadData?.file,
-        uploadResult.result
-      );
+      slug: formData.slug,
+      description: formData.description || undefined,
+      seoTitle: formData.seoTitle || undefined,
+      seoDescription: formData.seoDescription || undefined,
+      canonicalUrl: formData.canonicalUrl || undefined,
+      socialImage: formData.socialImage || null,
+      socialImageAlt: formData.socialImageAlt || null,
+    };
 
     const result = tagId
-      ? await updateTag(tagId, {
-          ...formData,
-          ...(finalSocialImage !== undefined ? { socialImage: finalSocialImage } : {}),
-          ...(finalSocialImageAlt !== undefined ? { socialImageAlt: finalSocialImageAlt } : {}),
-          ...(finalCloudinaryPublicId !== undefined ? { cloudinaryPublicId: finalCloudinaryPublicId } : {}),
-        })
+      ? await updateTag(tagId, payload)
       : await createTag({
-          ...formData,
-          socialImage: finalSocialImage ?? undefined,
-          socialImageAlt: finalSocialImageAlt ?? undefined,
-          cloudinaryPublicId: finalCloudinaryPublicId ?? undefined,
+          ...payload,
+          socialImage: payload.socialImage ?? undefined,
+          socialImageAlt: payload.socialImageAlt ?? undefined,
         });
 
     if (result.success) {
@@ -110,16 +88,17 @@ export function useTagForm({ initialData, tagId }: UseTagFormParams) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateImageField = (field: "socialImage" | "socialImageAlt", value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return {
     formData,
     loading,
     error,
-    imageUploadData,
-    imageRemoved,
-    setImageUploadData,
-    setImageRemoved,
     updateField,
     updateSEOField,
+    updateImageField,
     handleSubmit,
   };
 }

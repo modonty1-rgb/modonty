@@ -51,8 +51,8 @@ export async function updateIndustry(
     const industry = await db.industry.update({ where: { id }, data: updateData });
     revalidatePath("/industries");
     await revalidateModontyTag("industries");
-    try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch {}
-    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch {}
+    try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch (e) { console.error("Industry SEO gen failed:", e); }
+    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch (e) { console.error("Industries listing cache failed:", e); }
     return { success: true, industry };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update industry";

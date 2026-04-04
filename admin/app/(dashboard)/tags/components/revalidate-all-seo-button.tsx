@@ -10,8 +10,8 @@ export function RevalidateAllSEOButton() {
   const handleRevalidate = async () => {
     setLoading(true);
     try {
-      const { batchGenerateCategorySeo } = await import("@/lib/seo/category-seo-generator");
-      const result = await batchGenerateCategorySeo();
+      const { batchGenerateTagSeo } = await import("@/lib/seo/tag-seo-generator");
+      const result = await batchGenerateTagSeo();
       alert(`Done: ${result.successful} succeeded, ${result.failed} failed out of ${result.total}`);
       window.location.reload();
     } catch {

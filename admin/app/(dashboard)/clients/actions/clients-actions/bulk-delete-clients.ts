@@ -42,6 +42,7 @@ export async function bulkDeleteClients(clientIds: string[]) {
 
     revalidatePath("/clients");
     await revalidateModontyTag("clients");
+    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
     return { success: true };
   } catch (error) {
     console.error("Error bulk deleting clients:", error);

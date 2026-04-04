@@ -72,7 +72,7 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
           size="icon"
           className="h-8 w-8"
           onClick={handleView}
-          title="View"
+          aria-label="View"
         >
           <Eye className="h-4 w-4" />
         </Button>
@@ -81,7 +81,7 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
           size="icon"
           className="h-8 w-8"
           onClick={handleEdit}
-          title="Edit"
+          aria-label="Edit"
         >
           <Edit className="h-4 w-4" />
         </Button>
@@ -91,7 +91,7 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
           className="h-8 w-8 text-destructive hover:text-destructive"
           onClick={() => setDeleteDialogOpen(true)}
           disabled={isDeleting}
-          title="Delete"
+          aria-label="Delete"
         >
           <Trash2 className="h-4 w-4" />
         </Button>

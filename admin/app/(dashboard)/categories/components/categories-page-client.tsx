@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 import { CategoryTable } from "./category-table";
-import { BulkActionsToolbar } from "./bulk-actions-toolbar";
 
 interface Category {
   id: string;
@@ -18,48 +19,48 @@ interface Category {
 
 interface CategoriesPageClientProps {
   categories: Category[];
+  missingSeoCount: number;
 }
 
-export function CategoriesPageClient({ categories }: CategoriesPageClientProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+export function CategoriesPageClient({ categories, missingSeoCount }: CategoriesPageClientProps) {
   const [batchLoading, setBatchLoading] = useState(false);
-  const missingSeo = categories.filter((c: any) => !c.jsonLdLastGenerated).length;
 
   const handleBatchGenerate = async () => {
     setBatchLoading(true);
     try {
       const { batchGenerateCategorySeo } = await import("@/lib/seo/category-seo-generator");
       const result = await batchGenerateCategorySeo();
-      alert(`✅ Done: ${result.successful} succeeded, ${result.failed} failed out of ${result.total}`);
+      alert(`Done: ${result.successful} succeeded, ${result.failed} failed out of ${result.total}`);
       window.location.reload();
-    } catch (e) {
-      alert("❌ Failed to generate SEO");
+    } catch {
+      alert("Failed to generate SEO");
     } finally {
       setBatchLoading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <BulkActionsToolbar
-        selectedIds={selectedIds}
-        onClearSelection={() => setSelectedIds([])}
-      />
-      {missingSeo > 0 && (
-        <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
-          <span className="text-yellow-800">
-            ⚠️ {missingSeo} {missingSeo === 1 ? "category is" : "categories are"} missing SEO cache
-          </span>
-          <button
+    <div className="space-y-3">
+      {missingSeoCount > 0 && (
+        <div className="flex items-center justify-between px-3 py-2 border border-yellow-500/20 bg-yellow-500/[0.04] rounded-lg">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-3.5 w-3.5 text-yellow-500" />
+            <span className="text-xs text-yellow-500">
+              {missingSeoCount} {missingSeoCount === 1 ? "category" : "categories"} missing SEO cache
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleBatchGenerate}
             disabled={batchLoading}
-            className="px-3 py-1 text-xs font-medium bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
+            className="h-7 text-xs text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10"
           >
-            {batchLoading ? "Generating..." : "Generate SEO for all"}
-          </button>
+            {batchLoading ? "Generating…" : "Generate All"}
+          </Button>
         </div>
       )}
-      <CategoryTable categories={categories} onSelectionChange={setSelectedIds} />
+      <CategoryTable categories={categories} />
     </div>
   );
 }

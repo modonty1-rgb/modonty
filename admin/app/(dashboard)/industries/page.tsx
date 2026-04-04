@@ -1,10 +1,10 @@
 import { getIndustries, getIndustriesStats, IndustryFilters } from "./actions/industries-actions";
-import { IndustriesStats } from "./components/industries-stats";
-import { IndustriesFilters } from "./components/industries-filters";
 import { IndustriesPageClient } from "./components/industries-page-client";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Building2, Users } from "lucide-react";
 import Link from "next/link";
+import { RevalidateAllSEOButton } from "./components/revalidate-all-seo-button";
 
 export default async function IndustriesPage({
   searchParams,
@@ -19,12 +19,7 @@ export default async function IndustriesPage({
 }) {
   const params = await searchParams;
   const filters: IndustryFilters = {
-    hasClients:
-      params.hasClients === "yes"
-        ? true
-        : params.hasClients === "no"
-          ? false
-          : undefined,
+    hasClients: params.hasClients === "yes" ? true : params.hasClients === "no" ? false : undefined,
     createdFrom: params.createdFrom ? new Date(params.createdFrom) : undefined,
     createdTo: params.createdTo ? new Date(params.createdTo) : undefined,
     minClientCount: params.minClientCount ? parseInt(params.minClientCount) : undefined,
@@ -32,35 +27,38 @@ export default async function IndustriesPage({
   };
 
   const [industries, stats] = await Promise.all([getIndustries(filters), getIndustriesStats()]);
-
-  const getDescription = () => {
-    if (filters.hasClients === true) return "Viewing industries with clients";
-    if (filters.hasClients === false) return "Viewing industries without clients";
-    if (filters.createdFrom || filters.createdTo) return "Viewing industries by date range";
-    if (filters.minClientCount !== undefined || filters.maxClientCount !== undefined)
-      return "Viewing industries by client count";
-    return "Manage all industries in the system";
-  };
+  const missingSeo = industries.filter((i: any) => !i.jsonLdLastGenerated).length;
 
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">Industries</h1>
-          <p className="text-muted-foreground mt-1">{getDescription()}</p>
+    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <div>
+            <h1 className="text-xl font-semibold">Industries</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">Manage all industries in the system</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="gap-1.5 font-normal">
+              <Building2 className="h-3 w-3 text-primary" />
+              {stats.total} total
+            </Badge>
+            <Badge variant="secondary" className="gap-1.5 font-normal">
+              <Users className="h-3 w-3 text-emerald-500" />
+              {stats.withClients} with clients
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-2">
+          <RevalidateAllSEOButton />
           <Link href="/industries/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button size="sm" className="gap-1.5">
+              <Plus className="h-4 w-4" />
               New Industry
             </Button>
           </Link>
         </div>
       </div>
-      <IndustriesStats stats={stats} />
-      <IndustriesFilters />
-      <IndustriesPageClient industries={industries} />
+      <IndustriesPageClient industries={industries} missingSeoCount={missingSeo} />
     </div>
   );
 }

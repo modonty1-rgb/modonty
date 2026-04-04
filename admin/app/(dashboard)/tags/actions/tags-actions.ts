@@ -144,8 +144,8 @@ export async function createTag(data: {
     const tag = await db.tag.create({ data });
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
-    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch {}
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
+    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
     return { success: true, tag };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create tag";
@@ -201,8 +201,8 @@ export async function updateTag(
     const tag = await db.tag.update({ where: { id }, data: updateData });
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
-    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch {}
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
+    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch (e) { console.error("Tag SEO gen failed:", e); }
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
     return { success: true, tag };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update tag";
@@ -240,62 +240,11 @@ export async function deleteTag(id: string) {
     await db.tag.delete({ where: { id } });
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
-    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }
     return { success: true };
   } catch (error) {
     console.error("Error deleting tag:", error);
     const message = error instanceof Error ? error.message : "Failed to delete tag";
-    return { success: false, error: message };
-  }
-}
-
-export async function bulkDeleteTags(tagIds: string[]) {
-  try {
-    if (tagIds.length === 0) {
-      return { success: false, error: "No tags selected" };
-    }
-
-    const tags = await db.tag.findMany({
-      where: {
-        id: { in: tagIds },
-      },
-      include: {
-        _count: {
-          select: {
-            articles: true,
-          },
-        },
-      },
-    });
-
-    const tagsWithArticles = tags.filter((tag) => tag._count.articles > 0);
-
-    if (tagsWithArticles.length > 0) {
-      const tagNames = tagsWithArticles.map((t) => t.name).join(", ");
-      const totalArticles = tagsWithArticles.reduce((sum, t) => sum + t._count.articles, 0);
-      return {
-        success: false,
-        error: `Cannot delete ${tagsWithArticles.length} tag${tagsWithArticles.length === 1 ? "" : "s"} with articles: ${tagNames}. Total articles: ${totalArticles}. Please delete or reassign the articles first.`,
-      };
-    }
-
-    // Delete Cloudinary images for all tags (non-blocking)
-    for (const tagId of tagIds) {
-      await deleteOldImage("tags", tagId);
-    }
-
-    await db.tag.deleteMany({
-      where: {
-        id: { in: tagIds },
-      },
-    });
-
-    revalidatePath("/tags");
-    await revalidateModontyTag("tags");
-    return { success: true };
-  } catch (error) {
-    console.error("Error bulk deleting tags:", error);
-    const message = error instanceof Error ? error.message : "Failed to delete tags";
     return { success: false, error: message };
   }
 }

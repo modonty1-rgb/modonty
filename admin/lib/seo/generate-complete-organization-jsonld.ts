@@ -94,9 +94,11 @@ export function generateCompleteOrganizationJsonLd(
     createdAt: Date;
     updatedAt: Date;
   },
-  clientPageUrl: string
+  clientPageUrl: string,
+  options?: { siteUrl?: string; siteName?: string }
 ): JsonLdGraph {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = options?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteName = options?.siteName || "Modonty";
   const graph: JsonLdNode[] = [];
 
   // Ensure clientPageUrl is absolute
@@ -448,7 +450,7 @@ export function generateCompleteOrganizationJsonLd(
     "@type": "WebSite",
     "@id": websiteId,
     url: siteUrl,
-    name: "Modonty",
+    name: siteName,
     publisher: {
       "@id": organizationId,
     },

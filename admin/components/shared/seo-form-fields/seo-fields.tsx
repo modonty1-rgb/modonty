@@ -67,7 +67,7 @@ export function SEOFields({
             <CharacterCounter
               current={seoDescription.length}
               max={160}
-              className="ml-1"
+              className="ms-1"
             />
           </div>
         </div>

@@ -149,7 +149,14 @@ export async function generateClientSEO(clientId: string) {
     }
 
     const settings = await (await import("@/app/(dashboard)/settings/actions/settings-actions")).getAllSettings();
-    const siteUrl = (settings as unknown as Record<string, unknown>)?.siteUrl as string || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = settings.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteName = settings.siteName || "Modonty";
+    const inLanguage = settings.inLanguage || "ar";
+    const ogLocale = settings.defaultOgLocale || "ar_SA";
+    const metaRobots = settings.defaultMetaRobots || "index, follow";
+    const twitterCard = settings.defaultTwitterCard || "summary_large_image";
+    const twitterSite = settings.twitterSite || undefined;
+    const twitterCreator = settings.twitterCreator || undefined;
     const clientPageUrl = client.canonicalUrl || `${siteUrl}/clients/${client.slug}`;
 
     // Ensure URLs are absolute and HTTPS
@@ -166,7 +173,7 @@ export async function generateClientSEO(clientId: string) {
 
     const title = client.seoTitle || client.name;
     const description = client.seoDescription || client.description || "";
-    const effectiveMetaRobots = "index, follow";
+    const effectiveMetaRobots = metaRobots;
 
     // Validate and ensure absolute canonical URL
     const canonicalUrl = ensureAbsoluteUrl(clientPageUrl) || clientPageUrl;
@@ -176,20 +183,22 @@ export async function generateClientSEO(clientId: string) {
       description: description.length > 160 ? description.substring(0, 157) + "..." : description,
       robots: effectiveMetaRobots,
       author: client.name,
-      language: "ar",
+      language: inLanguage,
       charset: "UTF-8",
       openGraph: {
         title: title,
         description: description,
         type: "website",
         url: canonicalUrl,
-        siteName: "Modonty",
-        locale: "ar_SA",
+        siteName: siteName,
+        locale: ogLocale,
       },
       twitter: {
-        card: client.twitterImageMedia?.url ? "summary_large_image" : "summary",
+        card: client.twitterImageMedia?.url ? "summary_large_image" : twitterCard,
         title: title,
         description: description,
+        ...(twitterSite && { site: twitterSite }),
+        ...(twitterCreator && { creator: twitterCreator }),
       },
       canonical: canonicalUrl,
       formatDetection: {
@@ -268,7 +277,7 @@ export async function generateClientSEO(clientId: string) {
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
     }
 
-    const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl);
+    const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl, { siteUrl, siteName });
 
     // Validate (Adobe + Ajv + business rules)
     const validationReport = await validateClientJsonLdComplete(jsonLdGraph, {

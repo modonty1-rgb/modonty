@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 interface Props {
-  categoryId: string;
+  tagId: string;
 }
 
-export function RevalidateSEOButton({ categoryId }: Props) {
+export function RevalidateSEOButton({ tagId }: Props) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
@@ -16,8 +16,8 @@ export function RevalidateSEOButton({ categoryId }: Props) {
     setLoading(true);
     setStatus("idle");
     try {
-      const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
-      const result = await generateAndSaveCategorySeo(categoryId);
+      const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator");
+      const result = await generateAndSaveTagSeo(tagId);
       if (result.success) {
         setStatus("success");
         setTimeout(() => window.location.reload(), 800);
