@@ -17,6 +17,10 @@ import {
   ChevronRight,
   CreditCard,
   Database,
+  Globe,
+  FileText,
+  CircleHelp,
+  Sparkles,
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -42,6 +46,19 @@ const menuGroups: MenuGroup[] = [
       { icon: Tag, label: "Tags", href: "/tags" },
       { icon: User, label: "Authors", href: "/authors" },
       { icon: Briefcase, label: "Industries", href: "/industries" },
+    ],
+  },
+  {
+    title: "Modonty Pages",
+    items: [
+      { icon: Globe, label: "About", href: "/modonty/pages/about" },
+      { icon: FileText, label: "Terms", href: "/modonty/pages/terms" },
+      { icon: FileText, label: "User Agreement", href: "/modonty/pages/user-agreement" },
+      { icon: FileText, label: "Privacy Policy", href: "/modonty/pages/privacy-policy" },
+      { icon: FileText, label: "Cookie Policy", href: "/modonty/pages/cookie-policy" },
+      { icon: FileText, label: "Copyright", href: "/modonty/pages/copyright-policy" },
+      { icon: CircleHelp, label: "FAQ", href: "/modonty/faq" },
+      { icon: Sparkles, label: "SEO Cache", href: "/modonty/setting?page=generate-mj" },
     ],
   },
   {

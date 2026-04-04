@@ -1,8 +1,5 @@
 import Link from "@/components/link";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
-import pkg from "../../package.json";
-
-const YEAR = 2025;
 const linkClass =
   "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
 
@@ -29,7 +26,7 @@ export function Footer() {
           سياسة حقوق النشر
         </Link>
         <small className="text-xs text-muted-foreground text-center">
-        <FooterCopyright appVersion={pkg.version} year={YEAR} />
+        <FooterCopyright year={new Date().getFullYear()} />
       </small>
       </nav>
       
