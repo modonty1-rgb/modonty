@@ -161,9 +161,6 @@ importers:
       dotenv:
         specifier: ^16.6.1
         version: 16.6.1
-      exifr:
-        specifier: ^7.1.3
-        version: 7.1.3
       google-auth-library:
         specifier: ^9.0.0
         version: 9.15.1
@@ -187,10 +184,10 @@ importers:
         version: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-auth:
         specifier: ^5.0.0-beta.25
-        version: 5.0.0-beta.30(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 5.0.0-beta.30(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next-cloudinary:
         specifier: ^6.17.5
-        version: 6.17.5(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 6.17.5(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3566,9 +3563,6 @@ packages:
   events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
-
-  exifr@7.1.3:
-    resolution: {integrity: sha512-g/aje2noHivrRSLbAUtBPWFbxKdKhgj/xr1vATDdUXPOFYJlQ62Ft0oy+72V6XLIpDJfHs6gXLbBLAolqOXYRw==}
 
   express@4.22.1:
     resolution: {integrity: sha512-F2X8g9P1X7uCPZMA3MVf9wcTqlyNp7IhH5qPCI0izhaOIYXaW9L535tGA3qmjRzpH+bZczqq7hVKxTR4NWnu+g==}
@@ -9787,8 +9781,6 @@ snapshots:
 
   events@3.3.0: {}
 
-  exifr@7.1.3: {}
-
   express@4.22.1:
     dependencies:
       accepts: 1.3.8
@@ -10801,9 +10793,23 @@ snapshots:
 
   netmask@2.0.2: {}
 
+  next-auth@5.0.0-beta.30(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
+    dependencies:
+      '@auth/core': 0.41.0
+      next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+
   next-auth@5.0.0-beta.30(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
     dependencies:
       '@auth/core': 0.41.0
+      next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+
+  next-cloudinary@6.17.5(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
+    dependencies:
+      '@cloudinary-util/types': 1.5.10
+      '@cloudinary-util/url-loader': 5.10.4
+      '@cloudinary-util/util': 4.0.0
       next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
 

@@ -1,30 +1,23 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { format } from "date-fns";
 import NextImage from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Edit, Trash2, Copy, Eye, Loader2, Upload } from "lucide-react";
+import { Edit, Trash2, Info, Copy, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
 import { mediaSEOConfig } from "../helpers/media-seo-config";
 import { MediaType } from "@prisma/client";
-import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "../helpers/media-utils";
-import { updateMedia, deleteCloudinaryAsset } from "../actions";
-import { validateFile } from "./upload-zone/utils/file-validation";
-import { getCloudinaryErrorMessage } from "./upload-zone/utils/error-handler";
-import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
+import { getMediaTypeLabel } from "../helpers/media-utils";
 
 interface Media {
   id: string;
@@ -41,18 +34,19 @@ interface Media {
   createdAt: Date;
   cloudinaryPublicId?: string | null;
   cloudinaryVersion?: string | null;
+  isUsed?: boolean;
   client?: {
     id: string;
     name: string;
     slug: string;
+    logoMedia?: { url: string } | null;
   };
 }
 
 interface MediaGridProps {
   media: Media[];
   viewMode?: "grid" | "list";
-  selectedIds?: Set<string>;
-  onSelectionChange?: (ids: Set<string>) => void;
+  gridSize?: "compact" | "standard";
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
 }
@@ -60,18 +54,24 @@ interface MediaGridProps {
 export function MediaGrid({
   media,
   viewMode = "grid",
-  selectedIds = new Set(),
-  onSelectionChange,
+  gridSize = "standard",
   onDelete,
   isDeleting = false,
 }: MediaGridProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const [replacingMediaId, setReplacingMediaId] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const currentReplacingMedia = useRef<Media | null>(null);
+  const [infoMedia, setInfoMedia] = useState<Media | null>(null);
 
   const isImage = (mimeType: string) => mimeType.startsWith("image/");
+
+  const copyUrl = async (item: Media) => {
+    try {
+      await navigator.clipboard.writeText(getImageUrl(item));
+      toast({ title: "URL Copied", description: "Image URL copied to clipboard." });
+    } catch {
+      toast({ title: "Failed to copy", description: "Could not copy URL.", variant: "destructive" });
+    }
+  };
 
   const formatFileSize = (bytes: number | null): string => {
     if (!bytes) return "Unknown";
@@ -80,26 +80,6 @@ export function MediaGrid({
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
-  };
-
-  const handleSelect = (id: string, checked: boolean) => {
-    if (!onSelectionChange) return;
-    const newSelection = new Set(selectedIds);
-    if (checked) {
-      newSelection.add(id);
-    } else {
-      newSelection.delete(id);
-    }
-    onSelectionChange(newSelection);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (!onSelectionChange) return;
-    if (checked) {
-      onSelectionChange(new Set(media.map((m) => m.id)));
-    } else {
-      onSelectionChange(new Set());
-    }
   };
 
   const getImageUrl = (item: Media): string => {
@@ -140,636 +120,272 @@ export function MediaGrid({
     return item.url;
   };
 
-  const copyUrl = async (item: Media) => {
-    try {
-      const urlToCopy = getImageUrl(item);
-      await navigator.clipboard.writeText(urlToCopy);
-      toast({
-        title: "URL Copied",
-        description: "Image URL has been copied to clipboard. You can now share it with clients.",
-      });
-    } catch (error) {
-      console.error("Failed to copy URL:", error);
-      toast({
-        title: "Failed to copy",
-        description: "Could not copy URL to clipboard.",
-        variant: "destructive",
-      });
+
+
+
+  // Group media by client (shared between list and grid)
+  const groupedMedia = media.reduce<Record<string, { name: string; logoUrl: string | null; items: Media[] }>>((acc, item) => {
+    const key = item.client?.id || "unknown";
+    if (!acc[key]) {
+      acc[key] = { name: item.client?.name || "Unknown", logoUrl: item.client?.logoMedia?.url || null, items: [] };
     }
-  };
+    acc[key].items.push(item);
+    return acc;
+  }, {});
+  const clientGroups = Object.values(groupedMedia);
 
-  const handleReplaceImageClick = (item: Media) => {
-    currentReplacingMedia.current = item;
-    fileInputRef.current?.click();
-  };
-
-  const handleReplaceImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !currentReplacingMedia.current) {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-      return;
-    }
-
-    const media = currentReplacingMedia.current;
-    setReplacingMediaId(media.id);
-
-    // Validate file
-    const error = validateFile(file);
-    if (error) {
-      toast({
-        title: "File Error",
-        description: error,
-        variant: "destructive",
-      });
-      setReplacingMediaId(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-      return;
-    }
-
-    try {
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-      if (!cloudName || !uploadPreset) {
-        toast({
-          title: "Configuration Error",
-          description: "Cloudinary configuration missing. Please check your environment variables.",
-          variant: "destructive",
-        });
-        setReplacingMediaId(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-        return;
-      }
-
-      const clientId = media.client?.id || "default";
-
-      // Generate SEO-friendly public_id from existing alt text/title
-      // Use altText, title, filename, or fallback to media ID
-      const altText = media.altText?.trim() || "";
-      const title = media.title?.trim() || "";
-      let seoFileName = generateSEOFileName(
-        altText,
-        title,
-        file.name,
-        undefined
-      );
-
-      const folderPath = `clients/${clientId}`;
-      let publicId = generateCloudinaryPublicId(seoFileName, folderPath);
-
-      // If validation fails, try using media ID as fallback
-      if (!isValidCloudinaryPublicId(publicId)) {
-        seoFileName = generateSEOFileName(
-          "",
-          "",
-          media.id,
-          undefined
-        );
-        publicId = generateCloudinaryPublicId(seoFileName, folderPath);
-        
-        // If still invalid, use a simple fallback with ID
-        if (!isValidCloudinaryPublicId(publicId)) {
-          publicId = `${folderPath}/image-${media.id}`;
-        }
-      }
-
-      // Upload to Cloudinary
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", file);
-      uploadFormData.append("upload_preset", uploadPreset);
-      uploadFormData.append("public_id", publicId);
-      uploadFormData.append("asset_folder", folderPath);
-
-      const resourceType = "image"; // Only images for fast replace
-      const uploadResponse = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
-        {
-          method: "POST",
-          body: uploadFormData,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        const errorMessage = await getCloudinaryErrorMessage(uploadResponse);
-        toast({
-          title: "Upload Failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        setReplacingMediaId(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-        return;
-      }
-
-      const uploadResult = await uploadResponse.json();
-      const cloudinaryUrl = uploadResult.secure_url || uploadResult.url;
-      const cloudinaryPublicId = uploadResult.public_id;
-
-      const optimizedUrl = optimizeCloudinaryUrl(
-        cloudinaryUrl,
-        cloudinaryPublicId,
-        uploadResult.format,
-        resourceType
-      );
-
-      // Delete old Cloudinary asset if public_id exists
-      if (media.cloudinaryPublicId) {
-        const oldResourceType = media.mimeType.startsWith("image/") ? "image" : "video";
-        const deleteResult = await deleteCloudinaryAsset(media.cloudinaryPublicId, oldResourceType);
-        if (!deleteResult.success) {
-          console.error("Failed to delete old Cloudinary asset:", deleteResult.error);
-        }
-      }
-
-      // Update media record with new file details, keeping existing metadata
-      const result = await updateMedia(media.id, {
-        url: optimizedUrl,
-        filename: file.name,
-        mimeType: file.type,
-        width: uploadResult.width || null,
-        height: uploadResult.height || null,
-        fileSize: uploadResult.bytes || file.size,
-        encodingFormat: uploadResult.format || undefined,
-        cloudinaryPublicId: cloudinaryPublicId,
-        cloudinaryVersion: uploadResult.version?.toString(),
-        cloudinarySignature: uploadResult.signature,
-        // Preserve existing metadata
-        type: media.type,
-        altText: media.altText || undefined,
-        title: media.title || undefined,
-        description: media.description || undefined,
-      });
-
-      if (result.success) {
-        toast({
-          title: "Image Replaced",
-          description: "Image has been replaced successfully.",
-        });
-        router.refresh();
-      } else {
-        throw new Error(result.error || "Failed to update media");
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to replace image",
-        variant: "destructive",
-      });
-    } finally {
-      setReplacingMediaId(null);
-      currentReplacingMedia.current = null;
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-
-  if (viewMode === "list") {
-    return (
-      <>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleReplaceImageFileChange}
-          className="hidden"
-        />
-        <Card>
-        <CardContent className="p-0">
-          <div className="divide-y">
-            {/* Header */}
-            <div className="grid grid-cols-12 gap-4 p-4 bg-muted/50 font-medium text-sm">
-              <div className="col-span-1">
-                {onSelectionChange && (
-                  <Checkbox
-                    checked={selectedIds.size === media.length && media.length > 0}
-                    onCheckedChange={handleSelectAll}
-                  />
+  // Info dialog (shared between list and grid)
+  const infoDialog = (
+    <Dialog open={!!infoMedia} onOpenChange={(open) => { if (!open) setInfoMedia(null); }}>
+      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden">
+        {infoMedia && (
+          <div className="flex flex-col md:flex-row">
+            {isImage(infoMedia.mimeType) && (
+              <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto md:min-h-[360px] bg-black/90 flex items-center justify-center">
+                <NextImage src={getImageUrl(infoMedia)} alt={infoMedia.altText || infoMedia.filename} fill className="object-contain p-4" sizes="400px" />
+              </div>
+            )}
+            <div className="flex-1 p-5 space-y-5 overflow-y-auto max-h-[80vh]">
+              <div>
+                <DialogHeader className="p-0">
+                  <DialogTitle className="text-base line-clamp-2">{infoMedia.filename}</DialogTitle>
+                </DialogHeader>
+                {infoMedia.altText && (
+                  <p className="text-xs text-muted-foreground mt-1.5 line-clamp-3">{infoMedia.altText}</p>
                 )}
               </div>
-              <div className="col-span-2">Preview</div>
-              <div className="col-span-2">Filename</div>
-              <div className="col-span-1">SEO</div>
-              <div className="col-span-2">Client</div>
-              <div className="col-span-1">Type</div>
-              <div className="col-span-1">Size</div>
-              <div className="col-span-1">Date</div>
-              <div className="col-span-1">Actions</div>
-            </div>
-
-            {/* Rows */}
-            {media.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-12 gap-4 p-4 hover:bg-muted/50 transition-colors items-center"
-              >
-                <div className="col-span-1">
-                  {onSelectionChange && (
-                    <Checkbox
-                      checked={selectedIds.has(item.id)}
-                      onCheckedChange={(checked) => handleSelect(item.id, checked as boolean)}
-                    />
-                  )}
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                  <span className="text-muted-foreground">Type</span>
+                  <span className="font-medium">{getMediaTypeLabel(infoMedia.type)}</span>
                 </div>
-                <div className="col-span-2">
-                  {isImage(item.mimeType) ? (
-                    <div className="relative w-16 h-16 rounded overflow-hidden">
-                      <NextImage
-                        src={item.url}
-                        alt={item.altText || item.filename}
-                        fill
-                        className="object-cover"
-                      />
+                <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                  <span className="text-muted-foreground">Format</span>
+                  <span className="font-medium">{infoMedia.mimeType.split("/")[1]?.toUpperCase()}</span>
+                </div>
+                {infoMedia.width && infoMedia.height && (
+                  <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Dimensions</span>
+                    <span className="font-medium">{infoMedia.width} × {infoMedia.height}px</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                  <span className="text-muted-foreground">File Size</span>
+                  <span className="font-medium">{formatFileSize(infoMedia.fileSize)}</span>
+                </div>
+                {infoMedia.client && (
+                  <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Client</span>
+                    <span className="font-medium">{infoMedia.client.name}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium">{format(new Date(infoMedia.createdAt), "MMM d, yyyy")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1.5 border-b border-border/50">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className={`font-medium ${infoMedia.isUsed ? "text-emerald-500" : "text-muted-foreground"}`}>
+                    {infoMedia.isUsed ? "In Use" : "Unused"}
+                  </span>
+                </div>
+                {isImage(infoMedia.mimeType) && (
+                  <div className="flex items-center justify-between py-1.5">
+                    <span className="text-muted-foreground">SEO Score</span>
+                    <SEOHealthGauge
+                      data={{ altText: infoMedia.altText, title: infoMedia.title, description: infoMedia.description, width: infoMedia.width, height: infoMedia.height, filename: infoMedia.filename, cloudinaryPublicId: infoMedia.cloudinaryPublicId }}
+                      config={mediaSEOConfig}
+                      size="sm"
+                      showScore
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+
+  if (viewMode === "list") {
+    const listContent = (
+        <div className="space-y-6">
+          {clientGroups.map((group) => (
+            <Collapsible key={group.name} defaultOpen>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="flex items-center gap-3 w-full mb-2 pb-2 border-b hover:bg-muted/30 rounded-t px-1 -mx-1 transition-colors">
+                  {group.logoUrl ? (
+                    <div className="relative h-7 w-7 rounded-md overflow-hidden bg-muted shrink-0">
+                      <NextImage src={group.logoUrl} alt={group.name} fill className="object-contain p-0.5" sizes="28px" />
                     </div>
                   ) : (
-                    <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
-                      <span className="text-xs text-muted-foreground">
-                        {item.mimeType.split("/")[0]}
-                      </span>
+                    <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-bold shrink-0">
+                      {group.name.charAt(0)}
                     </div>
                   )}
-                </div>
-                <div className="col-span-2">
-                  <Link
-                    href={`/media/${item.id}`}
-                    className="font-medium text-sm hover:text-primary transition-colors underline"
-                  >
-                    {item.filename}
-                  </Link>
-                </div>
-                <div className="col-span-1 flex items-center justify-center">
-                  {isImage(item.mimeType) && (
-                    <SEOHealthGauge
-                      data={{
-                        altText: item.altText,
-                        title: item.title,
-                        description: item.description,
-                        // Keywords removed from SEO scoring - they should be naturally in alt text, title, description
-                        width: item.width,
-                        height: item.height,
-                        filename: item.filename,
-                        cloudinaryPublicId: item.cloudinaryPublicId,
-                      }}
-                      config={mediaSEOConfig}
-                      size="xs"
-                      showScore={false}
-                    />
-                  )}
-                </div>
-                <div className="col-span-2">
-                  <span className="text-sm text-muted-foreground">
-                    {item.client?.name || "Unknown"}
-                  </span>
-                </div>
-                <div className="col-span-1">
-                  <div className="flex flex-col gap-1">
-                    <Badge variant={getMediaTypeBadgeVariant(item.type)} className="text-xs">
-                      {getMediaTypeLabel(item.type)}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {item.mimeType.split("/")[0]}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="col-span-1">
-                  <span className="text-xs text-muted-foreground">
-                    {formatFileSize(item.fileSize)}
-                  </span>
-                </div>
-                <div className="col-span-1">
-                  <span className="text-xs text-muted-foreground">
-                    {format(new Date(item.createdAt), "MMM d, yyyy")}
-                  </span>
-                </div>
-                <div className="col-span-1 flex items-center gap-1">
-                  {isImage(item.mimeType) && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleReplaceImageClick(item);
-                            }}
-                            disabled={replacingMediaId === item.id}
-                            className="h-8 w-8 p-0"
-                          >
-                            {replacingMediaId === item.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Upload className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Replace Image</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      router.push(`/media/${item.id}/edit`);
-                    }}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  {onDelete && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onDelete(item.id);
-                      }}
-                      disabled={isDeleting}
-                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      {isDeleting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                  <h3 className="text-sm font-semibold">{group.name}</h3>
+                  <span className="text-xs text-muted-foreground">({group.items.length})</span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground ms-auto transition-transform duration-200 group-data-[state=closed]:rotate-[-90deg]" />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+              <div className="divide-y border rounded-lg overflow-hidden">
+                {group.items.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 px-3 py-2 hover:bg-muted/30 transition-colors">
+                    {/* Thumbnail */}
+                    <div className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0">
+                      {isImage(item.mimeType) ? (
+                        <NextImage src={item.url} alt={item.altText || item.filename} fill className="object-cover" sizes="40px" />
                       ) : (
-                        <Trash2 className="h-4 w-4" />
+                        <div className="flex items-center justify-center h-full text-[10px] text-muted-foreground">{item.mimeType.split("/")[1]}</div>
                       )}
-                    </Button>
-                  )}
-                </div>
+                    </div>
+
+                    {/* Name + alt text */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{item.filename}</p>
+                      {item.altText && <p className="text-[11px] text-muted-foreground truncate">{item.altText}</p>}
+                    </div>
+
+                    {/* Dimensions */}
+                    {item.width && item.height && (
+                      <span className="text-[11px] text-muted-foreground hidden md:block shrink-0">{item.width}×{item.height}</span>
+                    )}
+
+                    {/* Size */}
+                    <span className="text-[11px] text-muted-foreground hidden sm:block shrink-0 w-16 text-end">{formatFileSize(item.fileSize)}</span>
+
+                    {/* Type + Status badge */}
+                    <div className="shrink-0 hidden lg:block">
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${item.isUsed ? "bg-emerald-500/15 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                        {getMediaTypeLabel(item.type)}{item.isUsed ? " · In Use" : " · Unused"}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      <button type="button" onClick={() => copyUrl(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Copy URL">
+                        <Copy className="h-3.5 w-3.5" />
+                      </button>
+                      <button type="button" onClick={() => setInfoMedia(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Details">
+                        <Info className="h-3.5 w-3.5" />
+                      </button>
+                      <button type="button" onClick={() => router.push(`/media/${item.id}/edit`)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Edit">
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      {onDelete && (
+                        <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors" title="Delete">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      </>
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
+        </div>
     );
+    return <>{listContent}{infoDialog}</>;
   }
 
+  const gridCols = gridSize === "compact"
+    ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2"
+    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3";
+
   // Grid View
-  return (
-    <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleReplaceImageFileChange}
-        className="hidden"
-      />
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {media.map((item) => (
+  const gridContent = (
+    <div className="space-y-8">
+      {clientGroups.map((group) => (
+        <Collapsible key={group.name} defaultOpen>
+          <CollapsibleTrigger asChild>
+            <button type="button" className="flex items-center gap-3 w-full mb-3 pb-2 border-b hover:bg-muted/30 rounded-t px-1 -mx-1 transition-colors">
+              {group.logoUrl ? (
+                <div className="relative h-8 w-8 rounded-lg overflow-hidden bg-muted shrink-0">
+                  <NextImage src={group.logoUrl} alt={group.name} fill className="object-contain p-0.5" sizes="32px" />
+                </div>
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary text-sm font-bold shrink-0">
+                  {group.name.charAt(0)}
+                </div>
+              )}
+              <div className="flex-1 min-w-0 text-start">
+                <h3 className="text-sm font-semibold truncate">{group.name}</h3>
+                <p className="text-[11px] text-muted-foreground">{group.items.length} files</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 transition-transform duration-200 group-data-[state=closed]:rotate-[-90deg]" />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+          <div className={gridCols}>
+      {group.items.map((item) => (
         <Card
           key={item.id}
-          className="hover:shadow-lg transition-all duration-200 h-full relative group overflow-hidden border-border/50"
+          className="group overflow-hidden border-border/50 hover:border-primary/30 transition-colors"
         >
           <CardContent className="p-0">
-            {isImage(item.mimeType) ? (
-              <div className="aspect-square relative overflow-hidden bg-muted">
+            {/* Image */}
+            <div className={`${gridSize === "compact" ? "aspect-square" : "aspect-[4/3]"} relative overflow-hidden bg-muted`}>
+              {isImage(item.mimeType) ? (
                 <NextImage
                   src={item.url}
                   alt={item.altText || item.filename}
                   fill
                   className="object-cover"
                 />
-                
-                {/* Badges Overlay - Top Right */}
-                <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
-                  <Badge 
-                    variant={getMediaTypeBadgeVariant(item.type)} 
-                    className="text-xs shadow-md backdrop-blur-sm bg-background/90 border border-border/50"
-                  >
-                    {getMediaTypeLabel(item.type)}
-                  </Badge>
-                  <Badge 
-                    variant="secondary" 
-                    className="text-xs shadow-md backdrop-blur-sm bg-background/90 border border-border/50"
-                  >
-                    {item.mimeType.split("/")[0]}
-                  </Badge>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <span className="text-muted-foreground text-sm">{item.mimeType}</span>
                 </div>
+              )}
 
-              </div>
-            ) : (
-              <div className="aspect-square bg-muted flex items-center justify-center">
-                <span className="text-muted-foreground text-sm">{item.mimeType}</span>
-              </div>
-            )}
-            
-            {/* Card Footer - Clear and Organized */}
-            <div className="p-3 border-t bg-card space-y-3">
-              {/* Filename with Checkbox and SEO Gauge */}
-              <div className="flex items-center gap-2">
-                {onSelectionChange && (
-                  <Checkbox
-                    checked={selectedIds.has(item.id)}
-                    onCheckedChange={(checked) => handleSelect(item.id, checked as boolean)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                )}
-                <Link
-                  href={`/media/${item.id}`}
-                  className="flex-1"
-                >
-                  <p className="font-medium text-sm line-clamp-1 hover:text-primary transition-colors">
-                    {item.filename}
-                  </p>
-                </Link>
-                {isImage(item.mimeType) && (
-                  <SEOHealthGauge
-                    data={{
-                      altText: item.altText,
-                      title: item.title,
-                      description: item.description,
-                      width: item.width,
-                      height: item.height,
-                      filename: item.filename,
-                      cloudinaryPublicId: item.cloudinaryPublicId,
-                    }}
-                    config={mediaSEOConfig}
-                    size="xs"
-                    showScore={false}
-                  />
-                )}
-              </div>
-              
-              {/* Metadata - Two Rows for Clarity */}
-              <div className="space-y-1.5">
-                {/* Row 1: Technical Info */}
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  {item.width && item.height && (
-                    <div className="flex items-center gap-1">
-                      <span className="font-medium">Size:</span>
-                      <span>{item.width} × {item.height}px</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1">
-                    <span className="font-medium">File:</span>
-                    <span>{formatFileSize(item.fileSize)}</span>
-                  </div>
-                </div>
-                
-                {/* Row 2: Client */}
-                {item.client && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground min-w-0">
-                          <span className="font-medium">Client:</span>
-                          <span className="truncate">{item.client.name}</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{item.client.name}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                
-                {/* Row 3: Date */}
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span className="font-medium">Date:</span>
-                  <span>{format(new Date(item.createdAt), "MMM d, yyyy")}</span>
+              {/* Corner badge */}
+              <div className="absolute top-0 end-0 z-10">
+                <div className={`px-2 py-1 rounded-es-lg text-[10px] font-medium backdrop-blur-md ${item.isUsed ? "bg-emerald-500/85 text-white" : "bg-black/60 text-white/90"}`}>
+                  {getMediaTypeLabel(item.type)}
                 </div>
               </div>
+              {/* Usage dot */}
+              <div className="absolute top-1.5 start-1.5 z-10">
+                <div className={`h-2.5 w-2.5 rounded-full border-2 border-white/50 ${item.isUsed ? "bg-emerald-400" : "bg-zinc-400"}`} title={item.isUsed ? "In Use" : "Unused"} />
+              </div>
 
-              {/* Action Buttons - Always Visible */}
-              <div className="flex items-center gap-1 pt-2 border-t">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          window.open(item.url, "_blank");
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>View in new tab</p>
-                    </TooltipContent>
-                  </Tooltip>
+            </div>
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          copyUrl(item);
-                        }}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Copy URL</p>
-                    </TooltipContent>
-                  </Tooltip>
-
-                  {isImage(item.mimeType) && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleReplaceImageClick(item);
-                          }}
-                          disabled={replacingMediaId === item.id}
-                        >
-                          {replacingMediaId === item.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Upload className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Replace Image</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          router.push(`/media/${item.id}/edit`);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Edit</p>
-                    </TooltipContent>
-                  </Tooltip>
-
-                  {onDelete && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onDelete(item.id);
-                          }}
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Delete</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </TooltipProvider>
+            {/* Footer with actions */}
+            <div className={`flex items-center ${gridSize === "compact" ? "px-1.5 py-1" : "px-2 py-1.5"}`}>
+              {gridSize === "standard" && item.width && item.height && (
+                <span className="text-[10px] text-muted-foreground/60 me-auto">{item.width}×{item.height}</span>
+              )}
+              <div className="flex items-center gap-0.5 ms-auto">
+                <button type="button" onClick={() => copyUrl(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Copy URL">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => setInfoMedia(item)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Details">
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+                <button type="button" onClick={() => router.push(`/media/${item.id}/edit`)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Edit">
+                  <Edit className="h-3.5 w-3.5" />
+                </button>
+                {onDelete && (
+                  <button type="button" onClick={() => onDelete(item.id)} disabled={isDeleting} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
       ))}
+          </div>
+          </CollapsibleContent>
+        </Collapsible>
+      ))}
     </div>
-    </>
   );
+
+  return <>{gridContent}{infoDialog}</>;
 }
 

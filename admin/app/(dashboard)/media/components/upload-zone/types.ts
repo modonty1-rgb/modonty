@@ -33,5 +33,4 @@ export interface SEOFormData {
   altText: string;
   title: string;
   description: string;
-  dateCreated: string;
 }

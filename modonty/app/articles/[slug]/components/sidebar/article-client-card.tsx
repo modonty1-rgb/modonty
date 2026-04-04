@@ -45,7 +45,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
             <div className="absolute inset-0">
               <Image
                 src={heroUrl}
-                alt=""
+                alt={client.name}
                 fill
                 className="object-cover"
                 sizes="240px"

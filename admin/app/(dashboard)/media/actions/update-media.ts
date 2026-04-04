@@ -2,7 +2,8 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { Prisma, MediaType } from "@prisma/client";
+import { MediaType } from "@prisma/client";
+import { generateAndSaveJsonLd } from "@/lib/seo";
 
 interface UpdateMediaData {
   type?: MediaType;
@@ -18,7 +19,6 @@ interface UpdateMediaData {
   geoLongitude?: number;
   geoLocationName?: string;
   contentLocation?: string;
-  exifData?: Record<string, unknown>;
   cloudinaryPublicId?: string;
   cloudinaryVersion?: string;
   cloudinarySignature?: string;
@@ -49,7 +49,6 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         geoLongitude: data.geoLongitude,
         geoLocationName: data.geoLocationName,
         contentLocation: data.contentLocation,
-        exifData: data.exifData ? (JSON.parse(JSON.stringify(data.exifData)) as Prisma.InputJsonValue) : null,
         cloudinaryPublicId: data.cloudinaryPublicId,
         cloudinaryVersion: data.cloudinaryVersion,
         cloudinarySignature: data.cloudinarySignature,
@@ -62,6 +61,24 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         ...(data.encodingFormat !== undefined ? { encodingFormat: data.encodingFormat } : {}),
       },
     });
+
+    // Regenerate JSON-LD for all articles using this media
+    const relatedArticles = await db.article.findMany({
+      where: {
+        OR: [
+          { featuredImageId: id },
+          { gallery: { some: { mediaId: id } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (relatedArticles.length > 0) {
+      await Promise.all(
+        relatedArticles.map((article) => generateAndSaveJsonLd(article.id).catch(() => null))
+      );
+    }
+
     revalidatePath("/media");
     return { success: true, media };
   } catch (error) {

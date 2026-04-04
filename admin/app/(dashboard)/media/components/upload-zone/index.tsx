@@ -11,6 +11,7 @@ import { SEOForm } from "./components/seo-form";
 import { UploadProgress } from "./components/upload-progress";
 import { UploadSuccess } from "./components/upload-success";
 import type { UploadZoneProps } from "./types";
+import { Save, Info } from "lucide-react";
 
 export function UploadZone(props: UploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,6 +35,30 @@ export function UploadZone(props: UploadZoneProps) {
     handleSaveMedia,
   } = useUploadZone(props);
 
+  const hasActiveFile = files.length > 0 && files.some(
+    (f) =>
+      f.status !== "saved" &&
+      savingFileId !== f.id &&
+      (f.status === "pending" ||
+        f.status === "success" ||
+        (f.status === "error" &&
+          !f.error?.includes("File type") &&
+          !f.error?.includes("File size")))
+  );
+
+  const activeFile = hasActiveFile
+    ? files.find(
+        (f) =>
+          f.status !== "saved" &&
+          savingFileId !== f.id &&
+          (f.status === "pending" ||
+            f.status === "success" ||
+            (f.status === "error" &&
+              !f.error?.includes("File type") &&
+              !f.error?.includes("File size")))
+      )
+    : null;
+
   return (
     <div className="space-y-6">
       {/* Client Selector */}
@@ -44,117 +69,93 @@ export function UploadZone(props: UploadZoneProps) {
         isLoading={isLoadingClients}
       />
 
-      {/* Preview/Drop Zone and SEO Form - Unified */}
-      {files.length > 0 &&
-        files.some(
-          (f) =>
-            f.status !== "saved" &&
-            savingFileId !== f.id &&
-            (f.status === "pending" ||
-              f.status === "success" ||
-              (f.status === "error" &&
-                !f.error?.includes("File type") &&
-                !f.error?.includes("File size")))
-        ) && (
+      {/* 3-Column Grid: Preview (left) | SEO Fields (center) | Actions (right) */}
+      {activeFile && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Column 1 — File Preview */}
           <Card>
             <CardContent className="pt-6">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-base font-semibold mb-2">SEO Information</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Please provide essential SEO metadata. Alt text is required for SEO and accessibility.
-                  </p>
-                </div>
-
-                {files
-                  .filter(
-                    (f) =>
-                      f.status !== "saved" &&
-                      savingFileId !== f.id &&
-                      (f.status === "pending" ||
-                        f.status === "success" ||
-                        (f.status === "error" &&
-                          !f.error?.includes("File type") &&
-                          !f.error?.includes("File size")))
-                  )
-                  .map((uploadFile) => {
-                    return (
-                      <div key={uploadFile.id} className="space-y-6">
-                        {/* Preview/Drop Zone - Unified Area */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          {/* Preview/Drop Zone - Left Column */}
-                          <FilePreview
-                            file={uploadFile.file}
-                            previewUrl={uploadFile.previewUrl}
-                            onReplace={() => {
-                              if (!isDisabled) {
-                                fileInputRef.current?.click();
-                              }
-                            }}
-                            onFileInput={handleFileInput}
-                            isDisabled={isDisabled}
-                            isDragging={isDragging}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                            fileInputRef={fileInputRef}
-                          />
-
-                          {/* Essential SEO Fields - Right Column */}
-                          <SEOForm
-                            formData={seoForm}
-                            onChange={setSeoForm}
-                            isDisabled={isUploading && savingFileId === uploadFile.id}
-                          />
-                        </div>
-
-                        {/* Note about additional fields */}
-                        {uploadFile.status !== "saved" && (
-                          <div className="rounded-lg bg-muted/50 border p-4">
-                            <p className="text-sm text-muted-foreground">
-                              <strong>Note:</strong> Additional fields (Caption, Credit, License, Creator, Location, etc.) can be edited later from the media library.
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Save Button */}
-                        <div className="pt-4 border-t">
-                          <Button
-                            onClick={() => handleSaveMedia(uploadFile)}
-                            className="w-full"
-                            disabled={
-                              !seoForm.altText.trim() ||
-                              savingFileId === uploadFile.id ||
-                              uploadFile.status === "uploading"
-                            }
-                          >
-                            Save to Media Library
-                          </Button>
-                          {!seoForm.altText.trim() && savingFileId !== uploadFile.id && (
-                            <p className="text-xs text-muted-foreground mt-2 text-center">
-                              Alt text is required to save
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
+              <FilePreview
+                file={activeFile.file}
+                previewUrl={activeFile.previewUrl}
+                onReplace={() => {
+                  if (!isDisabled) fileInputRef.current?.click();
+                }}
+                onFileInput={handleFileInput}
+                isDisabled={isDisabled}
+                isDragging={isDragging}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                fileInputRef={fileInputRef}
+              />
             </CardContent>
           </Card>
-        )}
 
-      {/* Progress Bar Card - Show when saving */}
+          {/* Column 2 — SEO Information */}
+          <Card>
+            <CardContent className="pt-6">
+              <SEOForm
+                formData={seoForm}
+                onChange={setSeoForm}
+                isDisabled={isUploading && savingFileId === activeFile.id}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Column 3 — Actions (sticky) */}
+          <div className="space-y-4">
+            <div className="lg:sticky lg:top-4 space-y-4">
+              {/* Info Note */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex gap-2">
+                    <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground">
+                      Additional fields (Caption, Credit, License, Location) can be edited after saving from the media library.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Save Button */}
+              <Card className="border-primary/20 bg-primary/5">
+                <CardContent className="pt-6 space-y-3">
+                  <Button
+                    onClick={() => handleSaveMedia(activeFile)}
+                    className="w-full gap-1.5"
+                    disabled={
+                      !seoForm.altText.trim() ||
+                      savingFileId === activeFile.id ||
+                      activeFile.status === "uploading"
+                    }
+                  >
+                    <Save className="h-4 w-4" />
+                    Save to Media Library
+                  </Button>
+                  {!seoForm.altText.trim() && savingFileId !== activeFile.id && (
+                    <p className="text-xs text-muted-foreground text-center">
+                      Alt text is required to save
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Progress Bar */}
       {files.length > 0 && savingFileId && files.some((f) => savingFileId === f.id) && (
         <UploadProgress file={files.find((f) => savingFileId === f.id)!} />
       )}
 
-      {/* Success Message Card - Show when saved */}
+      {/* Success Message */}
       {files.length > 0 && files.some((f) => f.status === "saved") && (
         <UploadSuccess onAddNew={handleAddNew} initialClientId={props.initialClientId} />
       )}
 
-      {/* Drop Zone - Show when no file selected */}
+      {/* Drop Zone — when no file selected */}
       {files.length === 0 && (
         <FileDropZone
           onFilesSelected={handleFileInput}

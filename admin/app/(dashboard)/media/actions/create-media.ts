@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { Prisma, MediaType } from "@prisma/client";
+import { MediaType } from "@prisma/client";
 
 interface CreateMediaData {
   filename: string;
@@ -26,7 +26,6 @@ interface CreateMediaData {
   geoLongitude?: number;
   geoLocationName?: string;
   contentLocation?: string;
-  exifData?: Record<string, unknown>;
   cloudinaryPublicId?: string;
   cloudinaryVersion?: string;
   cloudinarySignature?: string;
@@ -129,7 +128,6 @@ export async function createMedia(data: CreateMediaData) {
         geoLongitude: data.geoLongitude,
         geoLocationName: data.geoLocationName,
         contentLocation: data.contentLocation,
-        exifData: data.exifData ? (JSON.parse(JSON.stringify(data.exifData)) as Prisma.InputJsonValue) : null,
         cloudinaryPublicId: data.cloudinaryPublicId,
         cloudinaryVersion: data.cloudinaryVersion,
         cloudinarySignature: data.cloudinarySignature,

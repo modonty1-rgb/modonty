@@ -10,7 +10,6 @@ export { getMediaUsage } from "./get-media-usage";
 export { canDeleteMedia } from "./can-delete-media";
 export { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
 export { deleteMedia } from "./delete-media";
-export { bulkDeleteMedia } from "./bulk-delete-media";
 
 // Re-export types
 export type { MediaFilters } from "./types";

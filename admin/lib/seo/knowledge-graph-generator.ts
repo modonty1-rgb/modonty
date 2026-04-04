@@ -293,6 +293,8 @@ function buildImageArray(
           name: article.featuredImage.creator,
         },
       }),
+      ...(article.featuredImage.credit && { creditText: article.featuredImage.credit }),
+      ...(article.featuredImage.credit && { copyrightHolder: { "@type": "Organization", name: article.featuredImage.credit } }),
       representativeOfPage: true,
     });
   }
@@ -313,6 +315,9 @@ function buildImageArray(
           caption: item.caption || item.media.caption || undefined,
           name: item.altText || item.media.altText || undefined,
           ...(item.media.license && { license: item.media.license }),
+          ...(item.media.creator && { creator: { "@type": "Person", name: item.media.creator } }),
+          ...(item.media.credit && { creditText: item.media.credit }),
+          ...(item.media.credit && { copyrightHolder: { "@type": "Organization", name: item.media.credit } }),
         });
       });
   }

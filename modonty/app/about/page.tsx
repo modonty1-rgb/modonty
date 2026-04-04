@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
+import NextImage from "next/image";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
@@ -153,11 +154,14 @@ async function AboutContent() {
           ]}
         />
         {heroImage && (
-          <div className="mb-8">
-            <img
+          <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg">
+            <NextImage
               src={heroImage}
-              alt={heroImageAlt}
-              className="w-full h-auto rounded-lg object-cover"
+              alt={heroImageAlt || "من نحن - مودونتي"}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 800px"
+              priority
             />
           </div>
         )}

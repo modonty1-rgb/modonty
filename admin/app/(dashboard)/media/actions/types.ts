@@ -8,4 +8,7 @@ export interface MediaFilters {
   dateFrom?: Date;
   dateTo?: Date;
   used?: boolean;
+  sort?: string;
+  page?: number;
+  perPage?: number;
 }

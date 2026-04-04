@@ -24,7 +24,7 @@ export function ArticleImageGallery({ gallery }: ArticleImageGalleryProps) {
             <div className="relative w-full aspect-video overflow-hidden rounded-lg">
               <OptimizedImage
                 src={galleryItem.media.url}
-                alt={galleryItem.media.altText || galleryItem.media.caption || ""}
+                alt={galleryItem.media.altText || galleryItem.media.caption || "صورة من معرض المقال"}
                 fill
                 className="object-cover h-full w-full"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -80,8 +80,8 @@ export function MediaPickerDialog({
         mimeType: "image",
         type: typeFilter !== "all" ? typeFilter : undefined,
       };
-      const mediaList = await getMedia(filters);
-      setMedia(mediaList as Media[]);
+      const result = await getMedia(filters);
+      setMedia(result.items as Media[]);
     } catch (error) {
       console.error("Failed to load media:", error);
       setMedia([]);

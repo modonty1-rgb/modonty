@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { extractEXIFData } from "@/lib/utils/exif-extractor";
 import { optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { validateFile } from "../utils/file-validation";
@@ -24,11 +23,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     altText: "",
     title: "",
     description: "",
-    dateCreated: "",
   });
-
-  // EXIF data state
-  const [exifData, setExifData] = useState<Record<string, unknown> | null>(null);
 
   // Cloudinary upload hook
   const { uploadToCloudinary } = useCloudinaryUpload({
@@ -123,27 +118,6 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
 
       setFiles([newFile]);
 
-      // Extract EXIF data for images
-      if (file.type.startsWith("image/") && !error) {
-        extractEXIFData(file)
-          .then((exifData) => {
-            if (exifData) {
-              if (exifData.fullData) {
-                setExifData(exifData.fullData);
-              }
-              if (exifData.dateCreated) {
-                const dateStr = exifData.dateCreated.toISOString().split("T")[0];
-                setSeoForm((prev) => ({
-                  ...prev,
-                  dateCreated: dateStr,
-                }));
-              }
-            }
-          })
-          .catch(() => {
-            // EXIF extraction failed silently - not critical for upload
-          });
-      }
     },
     [clientId, toast]
   );
@@ -191,9 +165,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
       altText: "",
       title: "",
       description: "",
-      dateCreated: "",
-    });
-    setExifData(null);
+      });
   };
 
   const handleAddNew = () => {
@@ -202,9 +174,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
       altText: "",
       title: "",
       description: "",
-      dateCreated: "",
-    });
-    setExifData(null);
+      });
   };
 
   const waitForUploadCompletion = async (fileId: string): Promise<UploadFile | null> => {
@@ -244,14 +214,6 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     const fileHeight = uploadFile.uploadResult!.height || 0;
     const fileFormat = uploadFile.uploadResult!.format || "";
 
-    let normalizedDateCreated: Date | undefined;
-    if (seoForm.dateCreated) {
-      const parsed = new Date(seoForm.dateCreated);
-      if (!Number.isNaN(parsed.getTime())) {
-        normalizedDateCreated = parsed;
-      }
-    }
-
     try {
       setFiles((prev) =>
         prev.map((f) =>
@@ -286,16 +248,12 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
         altText: seoForm.altText.trim(),
         title: seoForm.title.trim() || undefined,
         description: seoForm.description.trim() || undefined,
-        caption: undefined,
-        credit: undefined,
-        license: undefined,
-        creator: undefined,
-        dateCreated: normalizedDateCreated,
+        credit: "مدونتي",
+        license: "All Rights Reserved",
         geoLatitude: undefined,
         geoLongitude: undefined,
         geoLocationName: undefined,
         contentLocation: undefined,
-        exifData: exifData || undefined,
       });
 
       setFiles((prev) =>

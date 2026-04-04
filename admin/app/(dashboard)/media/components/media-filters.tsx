@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -10,9 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { SlidersHorizontal, X } from "lucide-react";
+import { useState } from "react";
 import { MediaType } from "@prisma/client";
 
 interface MediaFiltersProps {
@@ -27,7 +32,8 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
   const [mimeType, setMimeType] = useState(searchParams.get("mimeType") || "all");
   const [mediaType, setMediaType] = useState(searchParams.get("type") || "all");
   const [used, setUsed] = useState(searchParams.get("used") || "all");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [dateFrom, setDateFrom] = useState(searchParams.get("dateFrom") || "");
+  const [dateTo, setDateTo] = useState(searchParams.get("dateTo") || "");
 
   const updateURL = (params: Record<string, string>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -61,47 +67,59 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
     updateURL({ used: value, page: "1" });
   };
 
+  const handleDateFromChange = (value: string) => {
+    setDateFrom(value);
+    updateURL({ dateFrom: value, page: "1" });
+  };
+
+  const handleDateToChange = (value: string) => {
+    setDateTo(value);
+    updateURL({ dateTo: value, page: "1" });
+  };
+
   const clearFilters = () => {
     setClientId("all");
     setMimeType("all");
     setMediaType("all");
     setUsed("all");
+    setDateFrom("");
+    setDateTo("");
     router.push("/media");
   };
 
-  const hasActiveFilters = clientId !== "all" || mimeType !== "all" || mediaType !== "all" || used !== "all";
+  const activeCount = [clientId !== "all", mimeType !== "all", mediaType !== "all", used !== "all", dateFrom !== "", dateTo !== ""].filter(Boolean).length;
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 text-base font-semibold hover:text-primary transition-colors"
-            >
-              Filters
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </button>
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs">
-                <X className="h-4 w-4 mr-1" />
-                Clear
-              </Button>
+    <div className="flex items-center gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-9 gap-1.5">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            Filters
+            {activeCount > 0 && (
+              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                {activeCount}
+              </span>
             )}
-          </div>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-80 p-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium">Filters</h4>
+              {activeCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="h-7 text-xs text-muted-foreground px-2">
+                  <X className="h-3 w-3 me-1" />
+                  Clear all
+                </Button>
+              )}
+            </div>
 
-          {isExpanded && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Client Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="client-filter">Client</Label>
+            {/* Client */}
+            <div className="space-y-1.5">
+              <Label className="text-xs">Client</Label>
               <Select value={clientId} onValueChange={handleClientChange}>
-                <SelectTrigger id="client-filter">
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All Clients" />
                 </SelectTrigger>
                 <SelectContent>
@@ -115,11 +133,11 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
               </Select>
             </div>
 
-            {/* MIME Type Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="mime-type-filter">File Type</Label>
+            {/* File Type */}
+            <div className="space-y-1.5">
+              <Label className="text-xs">File Type</Label>
               <Select value={mimeType} onValueChange={handleMimeTypeChange}>
-                <SelectTrigger id="mime-type-filter">
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All File Types" />
                 </SelectTrigger>
                 <SelectContent>
@@ -130,11 +148,11 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
               </Select>
             </div>
 
-            {/* Media Type Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="media-type-filter">Media Type</Label>
+            {/* Media Type */}
+            <div className="space-y-1.5">
+              <Label className="text-xs">Media Type</Label>
               <Select value={mediaType} onValueChange={handleMediaTypeChange}>
-                <SelectTrigger id="media-type-filter">
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All Media Types" />
                 </SelectTrigger>
                 <SelectContent>
@@ -148,11 +166,11 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
               </Select>
             </div>
 
-            {/* Usage Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="used-filter">Usage</Label>
+            {/* Usage */}
+            <div className="space-y-1.5">
+              <Label className="text-xs">Usage</Label>
               <Select value={used} onValueChange={handleUsedChange}>
-                <SelectTrigger id="used-filter">
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
@@ -162,10 +180,33 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Date Range */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">From</Label>
+                <Input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => handleDateFromChange(e.target.value)}
+                  max={dateTo || undefined}
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">To</Label>
+                <Input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => handleDateToChange(e.target.value)}
+                  min={dateFrom || undefined}
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
           </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
