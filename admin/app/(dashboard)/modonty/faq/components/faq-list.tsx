@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff, GripVertical } from "lucide-react";
 import { deleteFAQ, toggleFAQStatus, bulkUpdatePositions } from "../actions/faq-actions";
 import { useToast } from "@/hooks/use-toast";
 
@@ -38,34 +38,20 @@ export function FAQList({ faqs }: FAQListProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [faqToDelete, setFaqToDelete] = useState<string | null>(null);
+  const [faqToDelete, setFaqToDelete] = useState<FAQ | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleDelete = async () => {
     if (!faqToDelete) return;
-
-    setLoading(faqToDelete);
+    setLoading(faqToDelete.id);
     try {
-      const result = await deleteFAQ(faqToDelete);
+      const result = await deleteFAQ(faqToDelete.id);
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "FAQ deleted successfully",
-        });
+        toast({ title: "Deleted", description: "FAQ removed" });
         router.refresh();
       } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to delete FAQ",
-          variant: "destructive",
-        });
+        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
     } finally {
       setLoading(null);
       setDeleteDialogOpen(false);
@@ -78,24 +64,11 @@ export function FAQList({ faqs }: FAQListProps) {
     try {
       const result = await toggleFAQStatus(id);
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "FAQ status updated",
-        });
+        toast({ title: "Updated", description: "FAQ visibility changed" });
         router.refresh();
       } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to update status",
-          variant: "destructive",
-        });
+        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
     } finally {
       setLoading(null);
     }
@@ -104,7 +77,6 @@ export function FAQList({ faqs }: FAQListProps) {
   const handleMove = async (id: string, direction: "up" | "down") => {
     const currentIndex = faqs.findIndex((f) => f.id === id);
     if (currentIndex === -1) return;
-
     const newIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
     if (newIndex < 0 || newIndex >= faqs.length) return;
 
@@ -121,18 +93,8 @@ export function FAQList({ faqs }: FAQListProps) {
       if (result.success) {
         router.refresh();
       } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to reorder FAQs",
-          variant: "destructive",
-        });
+        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
     } finally {
       setLoading(null);
     }
@@ -141,8 +103,9 @@ export function FAQList({ faqs }: FAQListProps) {
   if (faqs.length === 0) {
     return (
       <Card>
-        <CardContent className="py-12 text-center">
-          <p className="text-muted-foreground">No FAQs found. Create your first FAQ to get started.</p>
+        <CardContent className="py-16 text-center">
+          <p className="text-sm font-medium">No FAQs yet</p>
+          <p className="text-xs text-muted-foreground mt-1">Click &quot;Add New FAQ&quot; to create your first question</p>
         </CardContent>
       </Card>
     );
@@ -150,95 +113,99 @@ export function FAQList({ faqs }: FAQListProps) {
 
   return (
     <>
-      <div className="space-y-4">
-        {faqs.map((faq, index) => (
-          <Card key={faq.id}>
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      #{faq.position}
-                    </span>
-                    <Badge variant={faq.isActive ? "default" : "secondary"}>
-                      {faq.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                    {faq.seoTitle && (
-                      <Badge variant="outline" className="text-xs">
-                        SEO
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-lg">{faq.question}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{faq.answer}</p>
-                  {faq.seoDescription && (
-                    <p className="text-xs text-muted-foreground italic">
-                      SEO: {faq.seoDescription}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col gap-1">
+      <div className="space-y-2">
+        {faqs.map((faq, index) => {
+          const isLoading = loading === faq.id;
+          return (
+            <Card key={faq.id} className={!faq.isActive ? "opacity-60" : undefined}>
+              <CardContent className="p-0">
+                <div className="flex items-stretch">
+                  {/* Reorder handle + position */}
+                  <div className="flex flex-col items-center justify-center gap-0.5 px-2 border-e bg-muted/30 shrink-0">
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
+                      className="h-6 w-6"
                       onClick={() => handleMove(faq.id, "up")}
-                      disabled={index === 0 || loading === faq.id}
-                      className="h-8 w-8 p-0"
+                      disabled={index === 0 || isLoading}
                     >
-                      <ChevronUp className="h-4 w-4" />
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    </Button>
+                    <span className="text-[11px] font-mono text-muted-foreground">{faq.position}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => handleMove(faq.id, "down")}
+                      disabled={index === faqs.length - 1 || isLoading}
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 p-3 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-sm truncate">{faq.question}</h3>
+                      {!faq.isActive && (
+                        <Badge variant="outline" className="text-[10px] border-yellow-500/30 text-yellow-600 bg-yellow-500/10 shrink-0">
+                          Hidden
+                        </Badge>
+                      )}
+                      {faq.seoTitle && (
+                        <Badge variant="outline" className="text-[10px] shrink-0">SEO</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{faq.answer}</p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 px-2 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleToggleStatus(faq.id)}
+                      disabled={isLoading}
+                      title={faq.isActive ? "Hide from visitors" : "Show to visitors"}
+                    >
+                      {faq.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <Link href={`/modonty/faq/${faq.id}/edit`} title="Edit">
+                        <Edit className="h-3.5 w-3.5" />
+                      </Link>
                     </Button>
                     <Button
                       variant="ghost"
-                      size="sm"
-                      onClick={() => handleMove(faq.id, "down")}
-                      disabled={index === faqs.length - 1 || loading === faq.id}
-                      className="h-8 w-8 p-0"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      onClick={() => { setFaqToDelete(faq); setDeleteDialogOpen(true); }}
+                      disabled={isLoading}
+                      title="Delete"
                     >
-                      <ChevronDown className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleToggleStatus(faq.id)}
-                    disabled={loading === faq.id}
-                  >
-                    {faq.isActive ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Link href={`/modonty/faq/${faq.id}/edit`}>
-                    <Button variant="ghost" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setFaqToDelete(faq.id);
-                      setDeleteDialogOpen(true);
-                    }}
-                    disabled={loading === faq.id}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete FAQ</AlertDialogTitle>
+            <AlertDialogTitle>Delete this FAQ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this FAQ? This action cannot be undone.
+              {faqToDelete && (
+                <>
+                  <span className="font-medium text-foreground">&quot;{faqToDelete.question}&quot;</span>
+                  <br />
+                  This will permanently remove it from the public FAQ page.
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

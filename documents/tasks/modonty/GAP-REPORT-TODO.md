@@ -24,10 +24,10 @@
 
 ### 🟡 متوسط
 
-- [ ] **A5 — التواريخ تعرض "..."** — مؤكد: `modonty/components/date/RelativeTime.tsx:37` → `ssr: false, loading: () => <span>...</span>` — التاريخ ما يظهر في SSR
-- [ ] **B1 — الرئيسية بدون Hero Section** — مؤكد: `modonty/app/page.tsx` يبدأ مباشرة بـ FeedContainer بدون hero
-- [ ] **B4 — Sidebar يعرض فئات بـ 0 مقالات** — مؤكد: `modonty/components/layout/LeftSidebar/CategoriesCard.tsx:35-43` — ما في filter
-- [ ] **B3.4b — زر "صفحة الكاتب" يحيل لـ /about** — جزئي: رابط الاسم صحيح `/users/slug`، لكن زر "صفحة الكاتب" يحيل لـ `/about` → `article-author-bio.tsx:112`
+- [x] **A5 — التواريخ تعرض "..."** — ✅ تم: SSR يعرض تاريخ مقروء (Intl.DateTimeFormat)، بعد mount يتحول لنسبي
+- [ ] **B1 — الرئيسية بدون Hero Section** — مؤجل: Hero نظيف + صورة بنفس عرض الكونتينر — يُنفذ لاحقاً
+- [x] **B4 — Sidebar يعرض فئات بـ 0 مقالات** — ✅ تم: filter `articleCount > 0`
+- [x] **B3.4b — زر "صفحة الكاتب" يحيل لـ /about** — ✅ تم: الزر يحيل لـ `/users/${slug}`، يختفي إذا ما في slug
 
 ### 🟢 تحسينات
 
@@ -66,6 +66,14 @@
 
 - [ ] C2-C5 — Accessibility: aria-labels على أرقام التفاعل + أزرار — يحتاج فحص يدوي بـ screen reader
 - [ ] C6 — Keyboard navigation + focus states + color contrast — يحتاج فحص يدوي
+
+---
+
+## مهام قادمة — SEO Generators
+
+- [ ] **Tags page SEO generator** — build `buildTagsPageJsonLd` + add "tags" to LIST_PAGE_KEYS
+- [ ] **Industries page SEO generator** — build `buildIndustriesPageJsonLd` + add "industries" to LIST_PAGE_KEYS
+- [ ] **Articles page SEO generator** — build `buildArticlesPageJsonLd` + add "articles" to LIST_PAGE_KEYS
 
 ---
 

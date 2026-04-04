@@ -102,20 +102,22 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
               ))}
             </nav>
           )}
-          <Button
-            asChild
-            size="sm"
-            className="w-full max-w-[200px] mt-1 bg-primary text-primary-foreground hover:bg-primary/90"
-            variant="default"
-          >
-            <Link
-              href="/about"
-              className="inline-flex items-center justify-center gap-1"
+          {author.slug && (
+            <Button
+              asChild
+              size="sm"
+              className="w-full max-w-[200px] mt-1 bg-primary text-primary-foreground hover:bg-primary/90"
+              variant="default"
             >
-              صفحة الكاتب
-              <IconChevronLeft className="h-4 w-4 ltr:rotate-180" aria-hidden />
-            </Link>
-          </Button>
+              <Link
+                href={`/users/${author.slug}`}
+                className="inline-flex items-center justify-center gap-1"
+              >
+                صفحة الكاتب
+                <IconChevronLeft className="h-4 w-4 ltr:rotate-180" aria-hidden />
+              </Link>
+            </Button>
+          )}
         </CardContent>
       </Card>
     </section>

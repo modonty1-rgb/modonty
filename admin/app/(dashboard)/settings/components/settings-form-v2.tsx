@@ -24,7 +24,6 @@ import {
   saveModontySettings,
   type AllSettings,
 } from "../actions/settings-actions";
-import { GenerateMJSection, type GeneratedSeoData } from "../../modonty/setting/components/sections/generate-mj-section";
 import { applyTechnicalDefaults } from "../actions/seed-technical-defaults";
 
 // ─── Best Practice Info per field ───
@@ -206,28 +205,6 @@ const SYSTEM_DEFAULTS = [
 ] as const;
 
 // ─── Helpers ───
-function seoFromSettings(s: AllSettings): GeneratedSeoData {
-  const r = s as unknown as Record<string, unknown>;
-  return {
-    homeMetaTags: r.homeMetaTags,
-    jsonLdStructuredData: (r.jsonLdStructuredData as string | null) ?? null,
-    jsonLdLastGenerated: (r.jsonLdLastGenerated as Date | string | null) ?? null,
-    jsonLdValidationReport: r.jsonLdValidationReport,
-    clientsPageMetaTags: r.clientsPageMetaTags,
-    clientsPageJsonLdStructuredData: (r.clientsPageJsonLdStructuredData as string | null) ?? null,
-    clientsPageJsonLdLastGenerated: (r.clientsPageJsonLdLastGenerated as Date | string | null) ?? null,
-    clientsPageJsonLdValidationReport: r.clientsPageJsonLdValidationReport,
-    categoriesPageMetaTags: r.categoriesPageMetaTags,
-    categoriesPageJsonLdStructuredData: (r.categoriesPageJsonLdStructuredData as string | null) ?? null,
-    categoriesPageJsonLdLastGenerated: (r.categoriesPageJsonLdLastGenerated as Date | string | null) ?? null,
-    categoriesPageJsonLdValidationReport: r.categoriesPageJsonLdValidationReport,
-    trendingPageMetaTags: r.trendingPageMetaTags,
-    trendingPageJsonLdStructuredData: (r.trendingPageJsonLdStructuredData as string | null) ?? null,
-    trendingPageJsonLdLastGenerated: (r.trendingPageJsonLdLastGenerated as Date | string | null) ?? null,
-    trendingPageJsonLdValidationReport: r.trendingPageJsonLdValidationReport,
-  };
-}
-
 function val(settings: AllSettings, key: string): string {
   return (settings as unknown as Record<string, unknown>)[key] as string || "";
 }

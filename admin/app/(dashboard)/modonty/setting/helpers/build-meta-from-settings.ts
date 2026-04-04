@@ -156,7 +156,7 @@ export function buildMetaFromSettings(
   return built;
 }
 
-export type PageTypeForMeta = "home" | "clients" | "categories" | "trending";
+export type PageTypeForMeta = "home" | "clients" | "categories" | "trending" | "faq";
 
 const LIST_PAGE_FALLBACKS: Record<
   Exclude<PageTypeForMeta, "home">,
@@ -177,6 +177,11 @@ const LIST_PAGE_FALLBACKS: Record<
     description: "استكشف المقالات الأكثر رواجاً - محتوى يتابعه القراء الآن",
     path: "/trending",
   },
+  faq: {
+    title: "الأسئلة الشائعة",
+    description: "إجابات على الأسئلة الأكثر شيوعاً حول مدونتي - كل ما تحتاج معرفته",
+    path: "/help/faq",
+  },
 };
 
 export function buildMetaFromSettingsForPageType(
@@ -191,11 +196,13 @@ export function buildMetaFromSettingsForPageType(
     clients: settings.clientsSeoTitle,
     categories: settings.categoriesSeoTitle,
     trending: settings.trendingSeoTitle,
+    faq: (settings as Record<string, unknown>).faqSeoTitle as string | null | undefined,
   } as const;
   const descMap = {
     clients: settings.clientsSeoDescription,
     categories: settings.categoriesSeoDescription,
     trending: settings.trendingSeoDescription,
+    faq: (settings as Record<string, unknown>).faqSeoDescription as string | null | undefined,
   } as const;
   const title = titleMap[pageType]?.trim() || fallback.title;
   const description = descMap[pageType]?.trim() || fallback.description;

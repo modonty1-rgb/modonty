@@ -1887,6 +1887,14 @@ model Settings {
   articlesPageJsonLdLastGenerated   DateTime?
   articlesPageJsonLdValidationReport Json?
 
+  // FAQ page meta + JSON-LD
+  faqPageMetaTags              Json?
+  faqPageJsonLdStructuredData  String?   @db.String
+  faqPageJsonLdLastGenerated   DateTime?
+  faqPageJsonLdValidationReport Json?
+  faqSeoTitle                  String?
+  faqSeoDescription            String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

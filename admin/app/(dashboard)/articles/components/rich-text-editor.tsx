@@ -12,6 +12,10 @@ import Color from "@tiptap/extension-color";
 import TextAlign from "@tiptap/extension-text-align";
 import Heading from "@tiptap/extension-heading";
 import CharacterCount from "@tiptap/extension-character-count";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { TableHeader } from "@tiptap/extension-table-header";
 import { LongParagraphHighlight } from "./extensions/long-paragraph-highlight";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -51,6 +55,10 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Minus,
+  Table as TableIcon,
+  TableCellsMerge,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
@@ -130,6 +138,23 @@ export function RichTextEditor({
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: "border-collapse border border-border w-full my-4",
+        },
+      }),
+      TableRow,
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: "border border-border bg-muted px-3 py-2 text-start font-semibold",
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: "border border-border px-3 py-2",
+        },
+      }),
       CharacterCount,
       LongParagraphHighlight.configure({
         maxLength: 500,
@@ -154,7 +179,11 @@ export function RichTextEditor({
           "[&_blockquote]:border-r-4 [&_blockquote]:border-primary [&_blockquote]:pr-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground",
           "[&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm",
           "[&_a]:text-primary [&_a]:underline",
-          "[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-md [&_img]:my-4"
+          "[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-md [&_img]:my-4",
+          "[&_table]:border-collapse [&_table]:border [&_table]:border-border [&_table]:w-full [&_table]:my-4",
+          "[&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:px-3 [&_th]:py-2 [&_th]:text-start [&_th]:font-semibold",
+          "[&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2",
+          "[&_hr]:border-t [&_hr]:border-border [&_hr]:my-6"
         ),
         dir: "rtl",
       },
@@ -379,6 +408,70 @@ export function RichTextEditor({
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal rule"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          title="Insert table"
+        >
+          <TableIcon className="h-4 w-4" />
+        </Button>
+        {editor.isActive("table") && (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              title="Add column"
+              className="text-xs px-2"
+            >
+              +Col
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              title="Add row"
+              className="text-xs px-2"
+            >
+              +Row
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().mergeCells().run()}
+              title="Merge cells"
+            >
+              <TableCellsMerge className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              title="Delete table"
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </>
+        )}
         <MediaPickerDialog
           open={mediaPickerOpen}
           onOpenChange={setMediaPickerOpen}

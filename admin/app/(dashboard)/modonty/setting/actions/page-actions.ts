@@ -120,7 +120,7 @@ export async function updatePage(slug: string, data: PageFormData) {
     }
 
     const pageConfig = getPageConfig(slug);
-    revalidatePath("/modonty/setting", "page");
+    revalidatePath("/modonty/pages", "layout");
 
     if (pageConfig) {
       try {

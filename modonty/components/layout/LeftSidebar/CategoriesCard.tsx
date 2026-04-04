@@ -32,7 +32,7 @@ export function CategoriesCard({ categories, currentCategorySlug, totalArticlesA
           </Link>
         </div>
         <div className="min-w-0 flex-1 min-h-0 overflow-x-hidden overflow-y-auto py-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-          {categories.map((category) => (
+          {categories.filter((c) => c.articleCount > 0).map((category) => (
             <CategoryLink
               key={category.id}
               label={category.name}

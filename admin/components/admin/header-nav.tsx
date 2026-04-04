@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Building2, Image as ImageIcon, MessageSquare } from "lucide-react";
+import { FileText, Building2, Image as ImageIcon, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ContactMessagesBadge } from "./contact-messages-badge";
@@ -11,20 +11,21 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
 } from "@/components/ui/tooltip";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: FileText, label: "Articles", href: "/articles" },
   { icon: Building2, label: "Clients", href: "/clients" },
   { icon: ImageIcon, label: "Media", href: "/media" },
-  { icon: MessageSquare, label: "Contact Messages", href: "/contact-messages", showBadge: true },
+  { icon: MessageSquare, label: "Messages", href: "/contact-messages", showBadge: true },
 ];
 
 export function HeaderNav() {
   const pathname = usePathname();
 
   return (
+    <TooltipProvider>
     <nav className="hidden md:flex items-center gap-4" aria-label="Main navigation">
       <Link href="/" className="flex items-center gap-2 shrink-0">
         <div className="h-8 w-8 rounded-md overflow-hidden flex items-center justify-center bg-background border border-border">
@@ -72,5 +73,6 @@ export function HeaderNav() {
         })}
       </div>
     </nav>
+    </TooltipProvider>
   );
 }

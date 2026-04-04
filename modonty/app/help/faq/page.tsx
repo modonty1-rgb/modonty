@@ -1,16 +1,15 @@
 import { Metadata } from "next";
 import { generateMetadataFromSEO, generateFAQPageStructuredData } from "@/lib/seo";
+import { getFaqPageSeo } from "@/lib/seo/faq-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FAQAccordion } from "../components/faq-accordion";
-import { FAQSearch } from "../components/faq-search";
 import { getActiveFAQs } from "./actions/faq-actions";
 import Link from "@/components/link";
 import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { FAQPageContent } from "./components/faq-page-content";
 
-export const metadata: Metadata = generateMetadataFromSEO({
+const FALLBACK_METADATA: Metadata = generateMetadataFromSEO({
   title: "الأسئلة الشائعة",
   description: "إجابات على الأسئلة الأكثر شيوعاً حول منصة مودونتي",
   keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
@@ -18,25 +17,22 @@ export const metadata: Metadata = generateMetadataFromSEO({
   type: "website",
 });
 
-function sanitizeJsonLd(json: object): string {
+export async function generateMetadata(): Promise<Metadata> {
+  const { metadata } = await getFaqPageSeo();
+  return metadata ?? FALLBACK_METADATA;
+}
+
+function sanitizeJsonLd(json: unknown): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
 export default async function FAQPage() {
-  const faqs = await getActiveFAQs();
-  
-  // Debug: Log FAQ counts to verify data
-  if (process.env.NODE_ENV === "development") {
-    console.log("FAQ counts:", faqs.map(f => ({ 
-      id: f.id, 
-      question: f.question.substring(0, 30), 
-      upvoteCount: f.upvoteCount, 
-      downvoteCount: f.downvoteCount 
-    })));
-  }
-  
-  const structuredData = generateFAQPageStructuredData(faqs);
-  const lastUpdated = faqs.length > 0 
+  const [faqs, seo] = await Promise.all([getActiveFAQs(), getFaqPageSeo()]);
+
+  // Use cached JSON-LD from Settings, fallback to live generation
+  const jsonLdString = seo.jsonLd ?? sanitizeJsonLd(generateFAQPageStructuredData(faqs));
+
+  const lastUpdated = faqs.length > 0
     ? faqs.reduce((latest, faq) => {
         const faqDate = faq.lastReviewed || faq.updatedAt;
         return !latest || (faqDate && faqDate > latest) ? faqDate : latest;
@@ -47,7 +43,7 @@ export default async function FAQPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: typeof jsonLdString === "string" ? jsonLdString : sanitizeJsonLd(jsonLdString) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

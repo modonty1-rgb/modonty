@@ -1,575 +1,315 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import {
-  Lightbulb,
-  Image as ImageIcon,
-  Share2,
-  FileText,
-  User,
-  Target,
-  CheckCircle2,
-  AlertCircle,
-  Info,
-  Zap,
-  TrendingUp,
-  Users,
-  Palette,
-  ArrowLeft,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { GuidelineLayout } from "../components/guideline-layout";
+import { CheckCircle2, AlertCircle, Image as ImageIcon, Monitor, Smartphone, Share2 } from "lucide-react";
+
+interface ImageSpec {
+  type: string;
+  label: string;
+  width: number;
+  height: number;
+  ratio: string;
+  format: string;
+  maxSize: string;
+  usage: string;
+  required: boolean;
+  color: string;
+}
+
+const imageStandards: ImageSpec[] = [
+  {
+    type: "featured",
+    label: "Featured Image",
+    width: 1200,
+    height: 630,
+    ratio: "1.91:1",
+    format: "WebP / JPG",
+    maxSize: "200 KB",
+    usage: "صورة المقال الرئيسية — تظهر في رأس المقال ونتائج البحث والسوشال",
+    required: true,
+    color: "emerald",
+  },
+  {
+    type: "og",
+    label: "OG Image",
+    width: 1200,
+    height: 630,
+    ratio: "1.91:1",
+    format: "JPG / PNG",
+    maxSize: "300 KB",
+    usage: "صورة المشاركة — تظهر عند مشاركة الرابط في Facebook, LinkedIn, WhatsApp",
+    required: true,
+    color: "blue",
+  },
+  {
+    type: "twitter",
+    label: "Twitter Image",
+    width: 1200,
+    height: 600,
+    ratio: "2:1",
+    format: "JPG / PNG",
+    maxSize: "300 KB",
+    usage: "تظهر عند مشاركة الرابط في Twitter/X",
+    required: false,
+    color: "sky",
+  },
+  {
+    type: "logo",
+    label: "Logo",
+    width: 400,
+    height: 400,
+    ratio: "1:1",
+    format: "SVG / PNG",
+    maxSize: "50 KB",
+    usage: "شعار العميل — يظهر بجانب اسم العميل في المقالات والقوائم",
+    required: true,
+    color: "violet",
+  },
+  {
+    type: "hero",
+    label: "Hero Image",
+    width: 1200,
+    height: 630,
+    ratio: "1.91:1",
+    format: "WebP / JPG",
+    maxSize: "250 KB",
+    usage: "صورة الصفحة الرئيسية — صفحات مدونتي (من نحن، الشروط...)",
+    required: false,
+    color: "amber",
+  },
+  {
+    type: "avatar",
+    label: "Avatar",
+    width: 200,
+    height: 200,
+    ratio: "1:1",
+    format: "JPG / PNG",
+    maxSize: "30 KB",
+    usage: "صورة الكاتب — تظهر في المقالات وصفحة الكاتب",
+    required: false,
+    color: "pink",
+  },
+  {
+    type: "gallery",
+    label: "Gallery Image",
+    width: 1200,
+    height: 800,
+    ratio: "3:2",
+    format: "WebP / JPG",
+    maxSize: "200 KB",
+    usage: "صور إضافية داخل المقال — معرض الصور",
+    required: false,
+    color: "orange",
+  },
+];
+
+const cloudinaryRules = [
+  { rule: "استخدم Cloudinary فقط لرفع الصور", detail: "النظام يحسّن الصور تلقائياً عند رفعها عبر Cloudinary" },
+  { rule: "لا ترفع صور بدون ضغط", detail: "Cloudinary يضيف q_auto,f_auto تلقائياً — لا تحتاج ضغط يدوي" },
+  { rule: "اكتب Alt Text لكل صورة", detail: "النص البديل مهم للوصول ولتحسين الظهور في بحث الصور" },
+  { rule: "لا تستخدم نصوص داخل الصور", detail: "محركات البحث لا تقرأ النصوص في الصور — استخدم HTML بدلاً منها" },
+  { rule: "تأكد من حقوق الصورة", detail: "استخدم صور مرخصة أو مملوكة فقط — تجنب صور بدون ترخيص" },
+];
+
+function ImageCard({ img }: { img: ImageSpec }) {
+  // Scale to fit within a max width of ~240px for the preview
+  const maxPreviewWidth = 240;
+  const scale = Math.min(maxPreviewWidth / img.width, 1);
+  const previewW = Math.round(img.width * scale);
+  const previewH = Math.round(img.height * scale);
+  // For very tall images (1:1), cap height
+  const displayH = Math.min(previewH, 160);
+  const displayW = Math.round((img.width / img.height) * displayH);
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="p-4 flex flex-col items-center gap-3">
+        {/* Visual aspect ratio preview */}
+        <div
+          className="rounded-lg border-2 border-dashed border-muted-foreground/20 bg-muted/30 flex items-center justify-center relative"
+          style={{ width: displayW, height: displayH }}
+        >
+          <ImageIcon className="h-6 w-6 text-muted-foreground/30 absolute" />
+          <div className="absolute bottom-1 end-1.5">
+            <code className="text-[9px] bg-background/80 backdrop-blur px-1 py-0.5 rounded text-muted-foreground">
+              {img.width} x {img.height}
+            </code>
+          </div>
+          <div className="absolute top-1 start-1.5">
+            <span className="text-[9px] bg-background/80 backdrop-blur px-1 py-0.5 rounded text-muted-foreground">
+              {img.ratio}
+            </span>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="w-full space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm">{img.label}</h3>
+            {img.required ? (
+              <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">مطلوب</Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] border-muted-foreground/30 text-muted-foreground">اختياري</Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">{img.usage}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded">{img.format}</code>
+            <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded">max {img.maxSize}</code>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 export default function MediaGuidelinesPage() {
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href="/guidelines">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Guidelines
-          </Button>
-        </Link>
-      </div>
+    <GuidelineLayout
+      title="Media & Image Standards"
+      description="المقاسات المعتمدة وأفضل الممارسات — مرجع لفريق التصميم والمحتوى"
+    >
+      {/* Visual Image Cards */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Monitor className="h-4 w-4 text-blue-500" />
+            <CardTitle className="text-base">مقاسات الصور المعتمدة</CardTitle>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            هذه المقاسات ثابتة ومعتمدة — يرجى الالتزام بها في جميع الصور المرفوعة
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {imageStandards.map((img) => (
+              <ImageCard key={img.type} img={img} />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold">Media Guidelines</h1>
-        <p className="text-muted-foreground">
-          Comprehensive guide for SEO, Marketing, and Design teams on image optimization, formats, dimensions, and best practices.
-        </p>
-      </div>
-
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
-        <CardContent className="pt-6">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <Lightbulb className="h-6 w-6 text-primary" />
-              <div>
-                <h2 className="text-xl font-semibold">Image Guidelines & Best Practices</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Complete guide for logos, OG images, featured images, and profile photos
-                </p>
+      {/* Quick Reference for Designer */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-blue-500/20 bg-blue-500/[0.03]">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Share2 className="h-4 w-4 text-blue-500" />
+              <span className="font-semibold text-sm">Social Media</span>
+            </div>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Facebook / LinkedIn</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 630</code>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Twitter/X</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 600</code>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">WhatsApp</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 630</code>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <Tabs defaultValue="types" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="types">Image Types</TabsTrigger>
-                <TabsTrigger value="seo">SEO Team</TabsTrigger>
-                <TabsTrigger value="marketing">Marketing</TabsTrigger>
-                <TabsTrigger value="design">Design</TabsTrigger>
-              </TabsList>
-
-              {/* Image Types Tab */}
-              <TabsContent value="types" className="space-y-6 mt-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* Logo */}
-                  <Card className="border-blue-200 bg-blue-50/50 dark:bg-blue-950/10">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <ImageIcon className="h-5 w-5 text-blue-600" />
-                        <h4 className="font-semibold">Logo Images</h4>
-                        <Badge variant="outline" className="ml-auto">Brand Identity</Badge>
-                      </div>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <p className="font-medium mb-2">Dimensions & Format:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Recommended:</strong> 512×512px (square) or 800×200px (horizontal)</li>
-                            <li><strong>Format:</strong> PNG with transparency (preferred) or SVG</li>
-                            <li><strong>File Size:</strong> Under 100KB for web performance</li>
-                            <li><strong>Aspect Ratio:</strong> 1:1 (square) or 4:1 (horizontal)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">SEO Requirements:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Alt Text:</strong> "Company Name Logo" or "Brand Name Logo"</li>
-                            <li><strong>Title:</strong> Company/Brand name</li>
-                            <li><strong>Description:</strong> Brief brand description</li>
-                            <li><strong>Filename:</strong> company-name-logo.png (SEO-friendly)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">Use Cases:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li>Client/organization branding</li>
-                            <li>Header navigation</li>
-                            <li>Email signatures</li>
-                            <li>Social media profiles</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Open Graph (OG) Images */}
-                  <Card className="border-purple-200 bg-purple-50/50 dark:bg-purple-950/10">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Share2 className="h-5 w-5 text-purple-600" />
-                        <h4 className="font-semibold">Open Graph (OG) Images</h4>
-                        <Badge variant="outline" className="ml-auto">Social Sharing</Badge>
-                      </div>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <p className="font-medium mb-2">Dimensions & Format:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Required:</strong> 1200×630px (1.91:1 aspect ratio)</li>
-                            <li><strong>Format:</strong> JPG or PNG (JPG preferred for smaller size)</li>
-                            <li><strong>File Size:</strong> Under 300KB (optimized for social platforms)</li>
-                            <li><strong>Safe Zone:</strong> Keep important content within 1200×600px center</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">SEO Requirements:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Alt Text:</strong> Article/page title or description</li>
-                            <li><strong>Title:</strong> Same as article title</li>
-                            <li><strong>Description:</strong> Meta description (50-160 chars)</li>
-                            <li><strong>Filename:</strong> article-slug-og-image.jpg</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">Design Best Practices:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li>Include readable text (minimum 24px font size)</li>
-                            <li>Use high contrast for text visibility</li>
-                            <li>Brand colors and logo placement</li>
-                            <li>Test on Facebook, LinkedIn, Twitter previews</li>
-                          </ul>
-                        </div>
-                        <div className="p-2 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200">
-                          <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                            <AlertCircle className="h-3 w-3 inline mr-1" />
-                            <strong>Critical:</strong> OG images appear in link previews. Poor quality = lower click-through rates.
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Featured Images */}
-                  <Card className="border-green-200 bg-green-50/50 dark:bg-green-950/10">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <FileText className="h-5 w-5 text-green-600" />
-                        <h4 className="font-semibold">Featured Images (Blog Posts)</h4>
-                        <Badge variant="outline" className="ml-auto">Content</Badge>
-                      </div>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <p className="font-medium mb-2">Dimensions & Format:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Recommended:</strong> 1200×800px (3:2 aspect ratio)</li>
-                            <li><strong>Minimum:</strong> 800×600px for quality display</li>
-                            <li><strong>Format:</strong> JPG (photos) or PNG (graphics with text)</li>
-                            <li><strong>File Size:</strong> Under 500KB (optimized for web)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">SEO Requirements:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Alt Text:</strong> Descriptive, 5-125 chars, includes keywords</li>
-                            <li><strong>Title:</strong> Article headline or related title</li>
-                            <li><strong>Description:</strong> Article excerpt or summary</li>
-                            <li><strong>Caption:</strong> Contextual caption (read 300% more than body text)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">Content Guidelines:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li>Relevant to article content and topic</li>
-                            <li>High quality, professional appearance</li>
-                            <li>Appropriate for all audiences</li>
-                            <li>Includes proper attribution if required</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Profile/Avatar Images */}
-                  <Card className="border-orange-200 bg-orange-50/50 dark:bg-orange-950/10">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <User className="h-5 w-5 text-orange-600" />
-                        <h4 className="font-semibold">Profile/Avatar Images</h4>
-                        <Badge variant="outline" className="ml-auto">Author</Badge>
-                      </div>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <p className="font-medium mb-2">Dimensions & Format:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Required:</strong> 400×400px (square, 1:1 ratio)</li>
-                            <li><strong>Format:</strong> JPG or PNG</li>
-                            <li><strong>File Size:</strong> Under 100KB</li>
-                            <li><strong>Focus:</strong> Face centered, good lighting</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">SEO Requirements:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li><strong>Alt Text:</strong> "Author Name Profile Photo" or "Name Headshot"</li>
-                            <li><strong>Title:</strong> Author's full name</li>
-                            <li><strong>Description:</strong> Author bio or role</li>
-                            <li><strong>Creator:</strong> Photographer name (if applicable)</li>
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="font-medium mb-2">Design Guidelines:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                            <li>Professional headshot or clear face photo</li>
-                            <li>Consistent style across all authors</li>
-                            <li>Good contrast, no filters or heavy editing</li>
-                            <li>Appropriate for professional context</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              {/* SEO Team Tab */}
-              <TabsContent value="seo" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Target className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">SEO Optimization Checklist</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Critical SEO Fields (Required):</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Alt Text:</strong> 5-125 characters, descriptive, includes primary keyword
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Direct ranking factor for Google Image Search. Required for accessibility compliance.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Title:</strong> Used in Schema.org ImageObject structured data
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Appears in rich search results and social media previews.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Description:</strong> 50-160 characters for meta descriptions
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Used in search snippets and Open Graph tags for social sharing.
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Technical SEO Requirements:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Dimensions:</strong> Proper width/height prevents layout shifts
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Core Web Vitals metric - affects page speed ranking.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Filename:</strong> SEO-friendly, descriptive, hyphenated
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Example: "blog-post-seo-tips-2024.jpg" not "IMG_1234.jpg"
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>File Size:</strong> Optimized for web (under 500KB)
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Large files slow page load = lower rankings.
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Schema.org Structured Data</h4>
-                    <div className="space-y-3 text-sm">
-                      <p className="text-muted-foreground">
-                        All image metadata is automatically converted to Schema.org ImageObject JSON-LD structured data. 
-                        This enables:
-                      </p>
-                      <ul className="space-y-2 text-sm">
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span>Rich search results in Google Image Search</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span>Enhanced social media previews (Open Graph, Twitter Cards)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span>Better indexing and categorization by search engines</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span>Eligibility for Google's image license metadata feature</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Marketing Tab */}
-              <TabsContent value="marketing" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Marketing Impact & ROI</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">User Engagement Metrics:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Users className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Captions:</strong> Read 300% more than body text
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Reduces bounce rate by 15-25%, increases time-on-page.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Users className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Social Sharing:</strong> Rich metadata = 40% higher CTR
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Better link previews increase click-through rates on social platforms.
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Search Visibility:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Target className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Image Search:</strong> 2-3x more organic traffic
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Complete metadata = better Google Image Search rankings.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Target className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Brand Recognition:</strong> Consistent metadata builds trust
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Professional image management improves brand perception.
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Content Marketing Best Practices</h4>
-                    <div className="space-y-3 text-sm">
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                        <p className="font-medium mb-2">OG Images (Social Sharing):</p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                          <li>First impression in social media feeds - design matters!</li>
-                          <li>Include compelling headline or call-to-action</li>
-                          <li>Test previews on Facebook, LinkedIn, Twitter before publishing</li>
-                          <li>Use brand colors and consistent design language</li>
-                        </ul>
-                      </div>
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded border border-green-200">
-                        <p className="font-medium mb-2">Featured Images (Blog Posts):</p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                          <li>Choose images that represent article topic accurately</li>
-                          <li>High-quality, professional images increase credibility</li>
-                          <li>Include captions - they're read more than article body</li>
-                          <li>Proper attribution builds trust and avoids legal issues</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Design Tab */}
-              <TabsContent value="design" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Palette className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Design Specifications</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">File Format Guidelines:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li>
-                              <strong>JPG:</strong> Photos, complex images, OG images
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Best for: Photographs, images with many colors, smaller file sizes
-                              </p>
-                            </li>
-                            <li>
-                              <strong>PNG:</strong> Logos, graphics with text, transparency needed
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Best for: Logos, icons, images requiring transparency
-                              </p>
-                            </li>
-                            <li>
-                              <strong>SVG:</strong> Logos, simple graphics, scalable icons
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Best for: Vector graphics, logos that need to scale perfectly
-                              </p>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Color & Quality:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li>
-                              <strong>Color Space:</strong> sRGB (web standard)
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Ensures consistent colors across all devices and browsers
-                              </p>
-                            </li>
-                            <li>
-                              <strong>Resolution:</strong> 72-96 DPI (web standard)
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Higher DPI increases file size without web benefit
-                              </p>
-                            </li>
-                            <li>
-                              <strong>Compression:</strong> Optimize for web (85-90% quality)
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Balance quality vs. file size for optimal page speed
-                              </p>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Design Checklist</h4>
-                    <div className="grid gap-4 md:grid-cols-2 text-sm">
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Correct dimensions for image type</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Optimized file size (under recommended limit)</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Appropriate format (JPG/PNG/SVG)</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>High quality, professional appearance</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Brand colors and style consistency</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Readable text (if applicable, min 24px)</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Proper contrast for accessibility</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span>Tested on multiple devices/screens</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-
-            {/* Quick Reference */}
-            <div className="mt-6 p-4 rounded-lg bg-muted/50 border">
-              <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium mb-2">Quick Reference: Image Type Dimensions</p>
-                  <div className="grid gap-2 md:grid-cols-4 text-xs">
-                    <div>
-                      <strong>Logo:</strong> 512×512px or 800×200px
-                    </div>
-                    <div>
-                      <strong>OG Image:</strong> 1200×630px (required)
-                    </div>
-                    <div>
-                      <strong>Featured:</strong> 1200×800px (recommended)
-                    </div>
-                    <div>
-                      <strong>Avatar:</strong> 400×400px (required)
-                    </div>
-                  </div>
-                </div>
+        <Card className="border-violet-500/20 bg-violet-500/[0.03]">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <ImageIcon className="h-4 w-4 text-violet-500" />
+              <span className="font-semibold text-sm">Branding</span>
+            </div>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Logo</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">400 x 400</code>
               </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Avatar</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">200 x 200</code>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Favicon</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">32 x 32</code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-emerald-500/20 bg-emerald-500/[0.03]">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Smartphone className="h-4 w-4 text-emerald-500" />
+              <span className="font-semibold text-sm">Content</span>
+            </div>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Featured Image</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 630</code>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Gallery</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 800</code>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Hero Page</span>
+                <code className="bg-muted px-1.5 py-0.5 rounded">1200 x 630</code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Cloudinary Rules */}
+      <Card className="border-amber-500/20 bg-amber-500/[0.03]">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-base">قواعد رفع الصور</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {cloudinaryRules.map((item, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">{item.rule}</p>
+                <p className="text-xs text-muted-foreground">{item.detail}</p>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Alt Text Guide */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">كيف تكتب Alt Text صحيح؟</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.03]">
+              <p className="text-xs font-semibold text-emerald-600 mb-2">صحيح</p>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li>&quot;فريق عمل شركة مدونتي في اجتماع تخطيط المحتوى&quot;</li>
+                <li>&quot;شعار شركة أرامكو السعودية بخلفية بيضاء&quot;</li>
+                <li>&quot;رسم بياني يوضح نمو عدد المقالات في 2025&quot;</li>
+              </ul>
+            </div>
+            <div className="p-3 rounded-lg border border-red-500/20 bg-red-500/[0.03]">
+              <p className="text-xs font-semibold text-red-500 mb-2">خطأ</p>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li>&quot;صورة&quot; — غير وصفي</li>
+                <li>&quot;IMG_20250101_123456.jpg&quot; — اسم ملف</li>
+                <li>&quot;صورة صورة صورة شعار شعار&quot; — حشو كلمات</li>
+              </ul>
             </div>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </GuidelineLayout>
   );
 }

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
 import { getFAQById } from "../../actions/faq-actions";
 import { FAQForm } from "../../components/faq-form";
 
@@ -16,11 +15,11 @@ export default async function EditFAQPage({
   }
 
   return (
-    <div className="container mx-auto max-w-[1128px]">
-      <PageHeader
-        title="Edit FAQ"
-        description="Update frequently asked question details"
-      />
+    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold">Edit FAQ</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">Update question and answer</p>
+      </div>
       <FAQForm
         faqId={id}
         initialData={{

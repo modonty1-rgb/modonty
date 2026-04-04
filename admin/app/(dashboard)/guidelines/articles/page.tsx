@@ -1,734 +1,353 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
-  FileText,
-  Target,
-  TrendingUp,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { GuidelineLayout } from "../components/guideline-layout";
+import {
   CheckCircle2,
-  AlertCircle,
-  Info,
-  ArrowLeft,
-  BookOpen,
+  FileText,
+  Pen,
+  Image as ImageIcon,
   Search,
-  Users,
+  Settings,
   Zap,
   Clock,
+  CircleHelp,
   Link2,
+  Globe,
+  BarChart3,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+const articleSteps = [
+  {
+    step: 1,
+    name: "Basic",
+    icon: FileText,
+    fields: "العنوان، العميل، الكاتب، الفئة",
+    required: true,
+    description: "أساسيات المقال — العنوان يُولّد الرابط تلقائياً",
+  },
+  {
+    step: 2,
+    name: "Keywords",
+    icon: Search,
+    fields: "الكلمات المفتاحية المستهدفة",
+    required: false,
+    description: "كلمات مرجعية للكاتب — تساعد في توجيه المحتوى",
+  },
+  {
+    step: 3,
+    name: "Content",
+    icon: Pen,
+    fields: "محتوى المقال (محرر نصوص)",
+    required: true,
+    description: "المحرر يدعم: عناوين، قوائم، جداول، روابط، صور، اقتباسات",
+  },
+  {
+    step: 4,
+    name: "Media",
+    icon: ImageIcon,
+    fields: "الصورة الرئيسية + معرض الصور",
+    required: false,
+    description: "اختر من مكتبة صور العميل — المقاس المطلوب: 1200×630",
+  },
+  {
+    step: 5,
+    name: "FAQs",
+    icon: CircleHelp,
+    fields: "أسئلة وأجوبة",
+    required: false,
+    description: "أسئلة متعلقة بالمقال — تظهر كـ FAQ Schema في Google",
+  },
+  {
+    step: 6,
+    name: "Meta Tags",
+    icon: Search,
+    fields: "عنوان SEO + الوصف",
+    required: true,
+    description: "العنوان: 30-60 حرف | الوصف: 120-160 حرف",
+  },
+  {
+    step: 7,
+    name: "Semantic",
+    icon: Globe,
+    fields: "كيانات ومفاهيم",
+    required: false,
+    description: "ربط المقال بمفاهيم محددة (مثل: اسم شركة، تقنية، مصطلح)",
+  },
+  {
+    step: 8,
+    name: "Citations",
+    icon: Link2,
+    fields: "المصادر والمراجع",
+    required: false,
+    description: "روابط المصادر الموثوقة — تُستخرج تلقائياً من محتوى المقال",
+  },
+  {
+    step: 9,
+    name: "Related",
+    icon: FileText,
+    fields: "مقالات ذات صلة",
+    required: false,
+    description: "ربط مقالات مشابهة — يحسّن التنقل ومدة بقاء الزائر",
+  },
+  {
+    step: 10,
+    name: "Publication",
+    icon: Clock,
+    fields: "حالة النشر، الجدولة، المراجعة",
+    required: true,
+    description: "مسودة → قيد الكتابة → مراجعة → منشور",
+  },
+  {
+    step: 11,
+    name: "Technical SEO",
+    icon: Settings,
+    fields: "معاينة Google + Social + Canonical",
+    required: false,
+    description: "معاينة حية لشكل المقال في نتائج البحث والسوشال",
+  },
+  {
+    step: 12,
+    name: "Meta & JSON-LD",
+    icon: BarChart3,
+    fields: "البيانات المنظمة",
+    required: false,
+    description: "يُولّد تلقائياً — لا يحتاج تعديل يدوي",
+  },
+];
+
+const contentTips = [
+  { tip: "العنوان القوي يبدأ برقم أو سؤال", example: "\"7 طرق لتحسين ظهور موقعك في Google\"" },
+  { tip: "استخدم عناوين فرعية (H2, H3) كل 200-300 كلمة", example: "يسهّل القراءة ويحسّن SEO" },
+  { tip: "أضف صورة واحدة على الأقل مع Alt Text", example: "الصور تزيد التفاعل بنسبة 94%" },
+  { tip: "اكتب مقدمة قوية في أول 100 كلمة", example: "Google يعرض أول 160 حرف في النتائج" },
+  { tip: "أضف روابط داخلية لمقالات أخرى", example: "يحسّن التنقل ويزيد مدة بقاء الزائر" },
+  { tip: "استخدم قوائم مرقمة ونقطية", example: "القوائم أسهل في القراءة من الفقرات الطويلة" },
+];
+
+const autoFeatures = [
+  { feature: "الرابط (Slug)", detail: "يُولّد تلقائياً من العنوان" },
+  { feature: "عدد الكلمات", detail: "يُحسب تلقائياً أثناء الكتابة" },
+  { feature: "وقت القراءة", detail: "يُحسب تلقائياً (200 كلمة/دقيقة)" },
+  { feature: "عمق المحتوى", detail: "قصير / متوسط / طويل — حسب عدد الكلمات" },
+  { feature: "المصادر", detail: "تُستخرج تلقائياً من الروابط الخارجية في المحتوى" },
+  { feature: "البيانات المنظمة", detail: "JSON-LD يُولّد تلقائياً عند النشر" },
+  { feature: "Canonical URL", detail: "يُعيّن تلقائياً: /articles/{slug}" },
+  { feature: "OG Tags", detail: "تُملأ تلقائياً من عنوان SEO والوصف والصورة" },
+];
 
 export default function ArticlesGuidelinesPage() {
   return (
-    <div className="container mx-auto max-w-[1128px] space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href="/guidelines">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Guidelines
-          </Button>
-        </Link>
-      </div>
+    <GuidelineLayout
+      title="Articles"
+      description="دليل إنشاء المقالات — الخطوات، الحقول، والنصائح لمحتوى احترافي"
+    >
+      {/* 12-Step Overview */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-emerald-500" />
+            <CardTitle className="text-base">خطوات إنشاء المقال (12 خطوة)</CardTitle>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            كل مقال يمر بـ 12 خطوة — الخطوات المطلوبة يجب إكمالها قبل النشر
+          </p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">#</TableHead>
+                <TableHead>الخطوة</TableHead>
+                <TableHead>الحقول</TableHead>
+                <TableHead>الشرح</TableHead>
+                <TableHead className="w-20">الحالة</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {articleSteps.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <TableRow key={s.step}>
+                    <TableCell>
+                      <span className="text-xs font-mono text-muted-foreground">{s.step}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-medium text-sm">{s.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{s.fields}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground max-w-[250px]">{s.description}</TableCell>
+                    <TableCell>
+                      {s.required ? (
+                        <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">مطلوب</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px] border-muted-foreground/30 text-muted-foreground">اختياري</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold">Article Guidelines</h1>
-        <p className="text-muted-foreground">
-          Complete guide for creating SEO-optimized articles with best practices for content, structure, and metadata.
-        </p>
-      </div>
-
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
-        <CardContent className="pt-6">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <BookOpen className="h-6 w-6 text-primary" />
+      {/* Content Writing Tips */}
+      <Card className="border-emerald-500/20 bg-emerald-500/[0.03]">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Pen className="h-4 w-4 text-emerald-500" />
+            <CardTitle className="text-base">نصائح كتابة المحتوى</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {contentTips.map((item, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
               <div>
-                <h2 className="text-xl font-semibold">Article Creation & SEO Best Practices</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Comprehensive guide for content creators, SEO specialists, and marketing teams
-                </p>
+                <p className="text-sm font-medium">{item.tip}</p>
+                <p className="text-xs text-muted-foreground">{item.example}</p>
               </div>
             </div>
+          ))}
+        </CardContent>
+      </Card>
 
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="content">Content</TabsTrigger>
-                <TabsTrigger value="seo">SEO</TabsTrigger>
-                <TabsTrigger value="marketing">Marketing</TabsTrigger>
-                <TabsTrigger value="structure">Structure</TabsTrigger>
-              </TabsList>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Auto Features */}
+        <Card className="border-blue-500/20 bg-blue-500/[0.03]">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-blue-500" />
+              <CardTitle className="text-base">خصائص تلقائية</CardTitle>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              هذه الخصائص لا تحتاج إدخال يدوي — النظام يعالجها تلقائياً
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {autoFeatures.map((item, i) => (
+              <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-border/50 last:border-0">
+                <span className="font-medium">{item.feature}</span>
+                <span className="text-muted-foreground text-end max-w-[200px]">{item.detail}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-              {/* Content Tab */}
-              <TabsContent value="content" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <FileText className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Content Requirements</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Title Best Practices:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Length:</strong> 50-60 characters optimal
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Appears fully in search results without truncation
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Primary Keyword:</strong> Include in first 60 characters
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Front-loading keywords improves SEO ranking
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Engaging:</strong> Compelling and click-worthy
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Higher CTR improves search rankings
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Content Quality:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Word Count:</strong> Minimum 1000 words for depth
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Longer content ranks better (2000+ words ideal)
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Readability:</strong> Clear, scannable structure
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Use headings, bullet points, short paragraphs
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Value:</strong> Comprehensive, actionable content
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Answer user intent completely
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+        {/* AI Assistant */}
+        <Card className="border-violet-500/20 bg-violet-500/[0.03]">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-violet-500" />
+              <CardTitle className="text-base">مساعد الذكاء الاصطناعي</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-xs text-muted-foreground">
+              في خطوة المحتوى، يمكنك استخدام مساعد AI لتوليد مسودة أولية:
+            </p>
+            <div className="space-y-2">
+              <div className="flex items-start gap-2">
+                <span className="text-xs font-mono text-muted-foreground mt-0.5">1</span>
+                <p className="text-xs">أدخل الكلمات المفتاحية في خطوة Keywords أولاً</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-xs font-mono text-muted-foreground mt-0.5">2</span>
+                <p className="text-xs">اضغط على زر &quot;AI Assistant&quot; في خطوة Content</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-xs font-mono text-muted-foreground mt-0.5">3</span>
+                <p className="text-xs">اختر طول المقال (قصير / متوسط / طويل)</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-xs font-mono text-muted-foreground mt-0.5">4</span>
+                <p className="text-xs">راجع المسودة وعدّلها قبل القبول</p>
+              </div>
+            </div>
+            <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
+              <p className="text-xs text-amber-600 font-medium">
+                المسودة نقطة بداية فقط — راجعها وأضف لمستك الشخصية دائماً
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Featured Image Requirements</h4>
-                    <div className="space-y-3 text-sm">
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                        <p className="font-medium mb-2">Image Specifications:</p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                          <li><strong>Dimensions:</strong> 1200×800px (3:2 aspect ratio) recommended</li>
-                          <li><strong>Format:</strong> JPG or PNG, optimized for web</li>
-                          <li><strong>File Size:</strong> Under 500KB for fast loading</li>
-                          <li><strong>Alt Text:</strong> Descriptive, includes primary keyword</li>
-                        </ul>
-                      </div>
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded border border-green-200">
-                        <p className="font-medium mb-2">Content Guidelines:</p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                          <li>Relevant to article topic and content</li>
-                          <li>High quality, professional appearance</li>
-                          <li>Appropriate for all audiences</li>
-                          <li>Includes proper attribution if required</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+      {/* Publication Status Flow */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-base">دورة حياة المقال</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {[
+              { label: "مسودة", color: "bg-muted text-muted-foreground" },
+              { label: "→", color: "text-muted-foreground" },
+              { label: "قيد الكتابة", color: "bg-blue-500/10 text-blue-500 border border-blue-500/20" },
+              { label: "→", color: "text-muted-foreground" },
+              { label: "مراجعة", color: "bg-amber-500/10 text-amber-500 border border-amber-500/20" },
+              { label: "→", color: "text-muted-foreground" },
+              { label: "منشور", color: "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" },
+            ].map((item, i) =>
+              item.label === "→" ? (
+                <span key={i} className={`text-lg ${item.color}`}>{item.label}</span>
+              ) : (
+                <span key={i} className={`px-3 py-1.5 rounded-full text-xs font-medium ${item.color}`}>
+                  {item.label}
+                </span>
+              )
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground text-center mt-3">
+            المقال لا يظهر للزوار إلا عند تغيير الحالة إلى &quot;منشور&quot; — يمكنك أيضاً جدولة النشر لتاريخ مستقبلي
+          </p>
+        </CardContent>
+      </Card>
 
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Clock className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Reading Time Estimates</h4>
-                      <Badge variant="outline" className="ml-2">Automatic</Badge>
-                    </div>
-                    <div className="space-y-4 text-sm">
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded border border-green-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          How It Works
-                        </p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside ml-6">
-                          <li>Fully automatic calculation - no manual work required</li>
-                          <li>Updates automatically on every article save</li>
-                          <li>Displays as "⏱️ X دقيقة" on article cards and detail pages</li>
-                          <li>Real-time preview shown while editing in admin panel</li>
-                        </ul>
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                          <p className="font-medium mb-2">Technical Details:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>Reading Speed:</strong> 200 words per minute (industry standard)</li>
-                            <li><strong>Formula:</strong> Math.ceil(wordCount / 200)</li>
-                            <li><strong>Arabic Support:</strong> Removes diacritics for accurate counting</li>
-                            <li><strong>HTML Handling:</strong> Strips all HTML tags before counting</li>
-                          </ul>
-                        </div>
-
-                        <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded border border-purple-200">
-                          <p className="font-medium mb-2">Reading Time Ranges:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>Quick Read:</strong> 1-3 minutes (200-600 words)</li>
-                            <li><strong>Standard:</strong> 5-7 minutes (1,000-1,400 words)</li>
-                            <li><strong>Long-form:</strong> 10+ minutes (2,000+ words)</li>
-                            <li className="text-xs italic mt-2">Use these as reference for content planning</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <Info className="h-4 w-4 text-yellow-600" />
-                          Admin Workflow
-                        </p>
-                        <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside ml-2">
-                          <li>Write your article content naturally in the editor</li>
-                          <li>System automatically calculates word count and reading time</li>
-                          <li>Preview pane shows live reading time as you type</li>
-                          <li>Save article - reading time is stored in database</li>
-                          <li>Reading time appears automatically on frontend (no extra steps)</li>
-                        </ol>
-                      </div>
-
-                      <div>
-                        <p className="font-medium mb-2 text-sm">Benefits:</p>
-                        <div className="grid gap-2 md:grid-cols-2">
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>User Experience:</strong> Readers know time commitment upfront
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Engagement:</strong> Better expectations reduce bounce rate
-                              </div>
-                            </li>
-                          </ul>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>SEO Impact:</strong> Lower bounce rate improves rankings
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Zero Effort:</strong> System handles everything automatically
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 mt-4">
-                        <p className="text-xs text-blue-800 dark:text-blue-200">
-                          <AlertCircle className="h-3 w-3 inline mr-1" />
-                          <strong>Note:</strong> Reading time follows Medium.com and NY Times standards. The 200 WPM rate works well for both Arabic and English content, providing accurate estimates for average readers.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* SEO Tab */}
-              <TabsContent value="seo" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Target className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">SEO Optimization Checklist</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Meta Tags (Required):</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Search className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>SEO Title:</strong> 50-60 characters, includes keyword
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Appears in search results - different from article title
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Search className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Meta Description:</strong> 150-160 characters optimal
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Compelling snippet that encourages clicks
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Search className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Slug:</strong> SEO-friendly URL (auto-generated from title)
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Keep short, descriptive, include keyword
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Content SEO:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>H1 Tag:</strong> One per article (article title)
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Most important heading for SEO
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>H2/H3 Headings:</strong> Structure content logically
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Helps search engines understand content hierarchy
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Zap className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Internal Links:</strong> Link to related articles
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Improves site structure and user engagement
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Schema.org Article Structured Data</h4>
-                    <div className="space-y-3 text-sm">
-                      <p className="text-muted-foreground">
-                        All articles automatically include Schema.org Article JSON-LD structured data. Required fields:
-                      </p>
-                      <ul className="space-y-2 text-sm">
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>headline:</strong> Article title</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>datePublished:</strong> Publication date (ISO 8601 format)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>dateModified:</strong> Last update date</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>author:</strong> Author information (Person schema)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>publisher:</strong> Organization/Client information</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span><strong>image:</strong> Featured image URL</span>
-                        </li>
-                      </ul>
-                      <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200 mt-4">
-                        <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                          <AlertCircle className="h-3 w-3 inline mr-1" />
-                          <strong>Important:</strong> Structured data enables rich search results, article carousels, and enhanced visibility in Google Search.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Marketing Tab */}
-              <TabsContent value="marketing" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Marketing Impact & Best Practices</h4>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Engagement Metrics:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Users className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Time on Page:</strong> Aim for 3+ minutes
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Longer engagement signals quality to search engines
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Users className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Bounce Rate:</strong> Keep under 50%
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Low bounce rate indicates relevant, valuable content
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="font-medium mb-2 text-sm">Social Sharing:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <Target className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>OG Image:</strong> 1200×630px for social previews
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  First impression in social media feeds
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <Target className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Share Buttons:</strong> Easy sharing increases reach
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Social signals can indirectly impact SEO
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Trending Algorithm</h4>
-                      <Badge variant="outline" className="ml-2">Automatic</Badge>
-                    </div>
-                    <div className="space-y-4 text-sm">
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded border border-green-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          How It Works
-                        </p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside ml-6">
-                          <li>Fully automatic calculation based on engagement metrics</li>
-                          <li>Shows top 6 trending articles from the last 7 days</li>
-                          <li>Updates every 60 seconds with ISR (Incremental Static Regeneration)</li>
-                          <li>Time-weighted scoring favors recent popular content</li>
-                        </ul>
-                      </div>
-
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                        <p className="font-medium mb-2">Trending Score Formula:</p>
-                        <div className="space-y-2">
-                          <code className="text-xs bg-white dark:bg-gray-900 p-2 rounded block">
-                            score = (interactions) / (age + 2) ^ 1.8
-                          </code>
-                          <p className="text-xs text-muted-foreground">
-                            Similar to Reddit/Hacker News algorithm - balances popularity with freshness
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded border border-purple-200">
-                          <p className="font-medium mb-2">Interaction Weights:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>Views:</strong> ×1 (baseline engagement)</li>
-                            <li><strong>Likes:</strong> ×2 (positive signal)</li>
-                            <li><strong>Comments:</strong> ×3 (highest engagement)</li>
-                            <li><strong>Favorites:</strong> ×2 (save for later)</li>
-                          </ul>
-                          <p className="text-xs italic mt-2 text-muted-foreground">
-                            Comments count more because they indicate deep engagement
-                          </p>
-                        </div>
-
-                        <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded border border-orange-200">
-                          <p className="font-medium mb-2">Time Decay (Gravity: 1.8):</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>0-6 hours:</strong> Peak visibility</li>
-                            <li><strong>6-24 hours:</strong> High visibility</li>
-                            <li><strong>24-72 hours:</strong> Declining visibility</li>
-                            <li><strong>72+ hours:</strong> Needs high engagement to stay</li>
-                          </ul>
-                          <p className="text-xs italic mt-2 text-muted-foreground">
-                            Newer content gets a boost to compete with older popular content
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <Info className="h-4 w-4 text-yellow-600" />
-                          How to Improve Trending Score
-                        </p>
-                        <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside ml-2">
-                          <li><strong>Timing:</strong> Publish when your audience is most active</li>
-                          <li><strong>Engagement:</strong> Encourage comments with questions or discussion prompts</li>
-                          <li><strong>Quality:</strong> High-quality content naturally gets more shares and likes</li>
-                          <li><strong>Promotion:</strong> Share on social media immediately after publishing</li>
-                          <li><strong>Titles:</strong> Compelling titles drive more clicks and views</li>
-                        </ol>
-                      </div>
-
-                      <div>
-                        <p className="font-medium mb-2 text-sm">Benefits:</p>
-                        <div className="grid gap-2 md:grid-cols-2">
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Content Discovery:</strong> Users find popular articles easily
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Homepage Engagement:</strong> Trending section increases time on site
-                              </div>
-                            </li>
-                          </ul>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Fair Competition:</strong> New articles can compete with older ones
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Automatic:</strong> No manual curation needed
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 mt-4">
-                        <p className="text-xs text-blue-800 dark:text-blue-200">
-                          <AlertCircle className="h-3 w-3 inline mr-1" />
-                          <strong>Performance Note:</strong> Trending calculations are cached and update every 60 seconds. The algorithm is optimized for performance using React cache() and ISR, ensuring fast page loads while maintaining fresh trending content.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Structure Tab */}
-              <TabsContent value="structure" className="space-y-6 mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-4 text-sm">Article Structure Best Practices</h4>
-                    <div className="space-y-4 text-sm">
-                      <div>
-                        <p className="font-medium mb-2">Recommended Structure:</p>
-                        <ol className="space-y-2 text-sm list-decimal list-inside text-muted-foreground">
-                          <li><strong>Introduction (H2):</strong> Hook, context, what the article covers</li>
-                          <li><strong>Main Content (H2/H3):</strong> Detailed sections with subheadings</li>
-                          <li><strong>Conclusion (H2):</strong> Summary, key takeaways, call-to-action</li>
-                          <li><strong>Related Articles:</strong> Internal links to related content</li>
-                        </ol>
-                      </div>
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                        <p className="font-medium mb-2">Content Formatting:</p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                          <li>Use short paragraphs (2-3 sentences)</li>
-                          <li>Include bullet points and numbered lists</li>
-                          <li>Add images every 300-500 words</li>
-                          <li>Use bold/italic for emphasis (sparingly)</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Link2 className="h-5 w-5 text-primary" />
-                      <h4 className="font-semibold">Related Articles Recommendation</h4>
-                      <Badge variant="outline" className="ml-2">Automatic</Badge>
-                    </div>
-                    <div className="space-y-4 text-sm">
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded border border-green-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          How It Works
-                        </p>
-                        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside ml-6">
-                          <li>Automatically displays 3 related articles at the end of each article</li>
-                          <li>Smart multi-level matching algorithm for best recommendations</li>
-                          <li>Prevents showing the current article in recommendations</li>
-                          <li>Server Component - zero JavaScript bundle impact</li>
-                        </ul>
-                      </div>
-
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200">
-                        <p className="font-medium mb-2">Recommendation Algorithm (3-Level Priority):</p>
-                        <ol className="text-xs text-muted-foreground space-y-2 list-decimal list-inside ml-2">
-                          <li>
-                            <strong>Tag-Based Matching (Highest Priority):</strong> Articles with matching tags
-                            <p className="text-xs italic mt-1 ml-5">Most relevant - shares specific topics</p>
-                          </li>
-                          <li>
-                            <strong>Category-Based Matching (Medium Priority):</strong> Articles in the same category
-                            <p className="text-xs italic mt-1 ml-5">Fallback if not enough tag matches</p>
-                          </li>
-                          <li>
-                            <strong>Recent Articles (Low Priority):</strong> Most recently published articles
-                            <p className="text-xs italic mt-1 ml-5">Final fallback to ensure 3 articles shown</p>
-                          </li>
-                        </ol>
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded border border-purple-200">
-                          <p className="font-medium mb-2">How to Improve Recommendations:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>Use Tags:</strong> Add 3-5 relevant tags to each article</li>
-                            <li><strong>Consistent Categories:</strong> Assign appropriate categories</li>
-                            <li><strong>Tag Consistency:</strong> Use existing tags when possible</li>
-                            <li><strong>Related Content:</strong> Create articles in same topics/categories</li>
-                          </ul>
-                        </div>
-
-                        <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded border border-orange-200">
-                          <p className="font-medium mb-2">Display Features:</p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            <li><strong>Title:</strong> "مقالات قد تهمك" (Articles You Might Like)</li>
-                            <li><strong>Layout:</strong> 3-column grid (responsive)</li>
-                            <li><strong>Info Shown:</strong> Title, excerpt, image, client, date</li>
-                            <li><strong>Style:</strong> Hover effects, consistent with site design</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200">
-                        <p className="font-medium mb-2 flex items-center gap-2">
-                          <Info className="h-4 w-4 text-yellow-600" />
-                          Best Practices for Admins
-                        </p>
-                        <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside ml-2">
-                          <li><strong>Always Add Tags:</strong> Minimum 3 tags per article for better matching</li>
-                          <li><strong>Choose Right Category:</strong> Ensures fallback recommendations are relevant</li>
-                          <li><strong>Create Series:</strong> Articles in a series get naturally recommended together</li>
-                          <li><strong>Check Preview:</strong> Preview shows related articles before publishing</li>
-                          <li><strong>Build Content Clusters:</strong> Create multiple articles around same topic</li>
-                        </ol>
-                      </div>
-
-                      <div>
-                        <p className="font-medium mb-2 text-sm">Benefits:</p>
-                        <div className="grid gap-2 md:grid-cols-2">
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Session Duration:</strong> Users stay longer on site
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Page Views:</strong> Increases articles read per session
-                              </div>
-                            </li>
-                          </ul>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>SEO Internal Linking:</strong> Improves site structure and crawlability
-                              </div>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Content Discovery:</strong> Older articles get more visibility
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 mt-4">
-                        <p className="text-xs text-blue-800 dark:text-blue-200">
-                          <AlertCircle className="h-3 w-3 inline mr-1" />
-                          <strong>Performance Note:</strong> Related articles are loaded as a Server Component on the server, ensuring zero JavaScript bundle impact on the frontend. The algorithm runs efficiently with optimized database queries, and only published articles are shown.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+      {/* SEO Checklist */}
+      <Card className="border-amber-500/20 bg-amber-500/[0.03]">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Search className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-base">قائمة مراجعة SEO قبل النشر</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[
+              "عنوان SEO بين 30-60 حرف",
+              "وصف SEO بين 120-160 حرف",
+              "صورة رئيسية مع Alt Text",
+              "عنوان فرعي واحد على الأقل (H2)",
+              "رابط داخلي واحد على الأقل",
+              "الفئة محددة",
+              "3-5 وسوم (Tags) مناسبة",
+              "مراجعة المعاينة في Google Preview",
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs">
+                <div className="h-4 w-4 rounded border border-muted-foreground/30 shrink-0" />
+                <span>{item}</span>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
-    </div>
+    </GuidelineLayout>
   );
 }

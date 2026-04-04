@@ -20,9 +20,10 @@ import {
   type CategoryForCategoriesPageJsonLd,
 } from "../helpers/build-categories-page-jsonld";
 import { buildTrendingPageJsonLd } from "../helpers/build-trending-page-jsonld";
+import { buildFaqPageJsonLd, type FaqForJsonLd } from "../helpers/build-faq-page-jsonld";
 import { validateHomeOrListPageJsonLd } from "../helpers/modonty-jsonld-validator";
 
-export type PageKey = "home" | "clients" | "categories" | "trending";
+export type PageKey = "home" | "clients" | "categories" | "trending" | "faq";
 export type GeneratePageType = PageKey | "all";
 
 // Preview result (no DB save)
@@ -363,6 +364,53 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         total,
         maxUpdatedAt ?? new Date()
       );
+      const report = await validateHomeOrListPageJsonLd(jsonLdObj);
+      const valid =
+        report.adobe.valid &&
+        report.ajv.valid &&
+        report.jsonldJs.valid &&
+        report.custom.errors.length === 0;
+      const errors = [
+        ...report.adobe.errors.map((e) => e.message),
+        ...report.ajv.errors,
+        ...report.jsonldJs.errors,
+        ...report.custom.errors,
+      ].filter(Boolean);
+      return {
+        success: true,
+        data: {
+          metaTags: meta,
+          jsonLd: JSON.stringify(jsonLdObj),
+          report,
+          valid,
+          errors,
+        },
+      };
+    } else if (page === "faq") {
+      const faqs = await db.fAQ.findMany({
+        where: { isActive: true },
+        orderBy: { position: "asc" },
+        select: {
+          question: true,
+          answer: true,
+          dateCreated: true,
+          datePublished: true,
+          author: true,
+          upvoteCount: true,
+          lastReviewed: true,
+        },
+      });
+      const faqsForJsonLd: FaqForJsonLd[] = faqs.map((f) => ({
+        question: f.question,
+        answer: f.answer,
+        dateCreated: f.dateCreated,
+        datePublished: f.datePublished,
+        author: f.author,
+        upvoteCount: f.upvoteCount,
+        lastReviewed: f.lastReviewed,
+      }));
+      const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+      const jsonLdObj = buildFaqPageJsonLd(siteUrl, faqsForJsonLd);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =
         report.adobe.valid &&

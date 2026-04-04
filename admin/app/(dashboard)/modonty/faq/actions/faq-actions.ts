@@ -3,6 +3,18 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { previewPageSeo, savePageSeo } from "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo";
+
+async function regenerateFaqSeoCache() {
+  try {
+    const preview = await previewPageSeo("faq");
+    if (preview.success && preview.data) {
+      await savePageSeo("faq", preview.data);
+    }
+  } catch {
+    // Non-blocking — FAQ save should succeed even if SEO cache fails
+  }
+}
 
 export async function getFAQs() {
   try {
@@ -99,6 +111,7 @@ export async function createFAQ(data: {
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create FAQ";
@@ -143,6 +156,7 @@ export async function updateFAQ(
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update FAQ";
@@ -156,6 +170,7 @@ export async function deleteFAQ(id: string) {
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete FAQ";
@@ -175,6 +190,7 @@ export async function reorderFAQs(ids: string[]) {
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to reorder FAQs";
@@ -197,6 +213,7 @@ export async function toggleFAQStatus(id: string) {
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true, faq: updated };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to toggle FAQ status";
@@ -214,6 +231,7 @@ export async function updateLastReviewed(id: string) {
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update last reviewed";
@@ -235,6 +253,7 @@ export async function bulkUpdatePositions(updates: Array<{ id: string; position:
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
     await revalidateModontyTag("faqs");
+    await regenerateFaqSeoCache();
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update positions";

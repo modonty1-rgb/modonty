@@ -1,6 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
 
 const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "always" });
 
@@ -17,22 +17,31 @@ function formatRelative(date: Date, now: Date): string {
   return "الآن";
 }
 
+function formatAbsolute(date: Date): string {
+  return new Intl.DateTimeFormat("ar-SA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
 interface RelativeTimeProps {
   date: Date | string;
   dateTime?: string;
 }
 
-function RelativeTimeInner({ date, dateTime }: RelativeTimeProps) {
+export function RelativeTime({ date, dateTime }: RelativeTimeProps) {
   const d = typeof date === "string" ? new Date(date) : date;
-  const timeAgo = formatRelative(d, new Date());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const text = mounted ? formatRelative(d, new Date()) : formatAbsolute(d);
 
   if (dateTime !== undefined) {
-    return <time dateTime={dateTime} suppressHydrationWarning>{timeAgo}</time>;
+    return <time dateTime={dateTime} suppressHydrationWarning>{text}</time>;
   }
-  return <span suppressHydrationWarning>{timeAgo}</span>;
+  return <span suppressHydrationWarning>{text}</span>;
 }
-
-export const RelativeTime = dynamic(
-  () => Promise.resolve({ default: RelativeTimeInner }),
-  { ssr: false, loading: () => <span>...</span> }
-);

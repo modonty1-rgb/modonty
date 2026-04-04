@@ -3,16 +3,12 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Save, AlertCircle } from "lucide-react";
-import { createFAQ, updateFAQ } from "../actions/faq-actions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
+import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { createFAQ, updateFAQ } from "../actions/faq-actions";
 import type { FAQFormData } from "../helpers/faq-schema";
 import { useToast } from "@/hooks/use-toast";
 
@@ -33,8 +29,8 @@ interface FAQFormProps {
     dateCreated?: Date;
     datePublished?: Date;
     inLanguage?: string;
-    speakable?: any;
-    mainEntity?: any;
+    speakable?: unknown;
+    mainEntity?: unknown;
   };
   onSuccess?: () => void;
 }
@@ -76,12 +72,13 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: faqId ? "FAQ updated successfully" : "FAQ created successfully",
+          title: faqId ? "FAQ updated" : "FAQ created",
+          description: faqId ? "Changes saved" : "New FAQ added to the public page",
         });
         if (onSuccess) {
           onSuccess();
         } else {
+          router.push("/modonty/faq");
           router.refresh();
         }
       } else {
@@ -95,75 +92,94 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit}>
       {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <div className="p-3 mb-4 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+          {error}
+        </div>
       )}
 
-      <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="basic">Basic Information</TabsTrigger>
-          <TabsTrigger value="seo">SEO</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced SEO</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="basic" className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left Column — Question + Answer */}
+        <div className="lg:col-span-2 space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-primary" />
+                <CardTitle className="text-base">Question & Answer</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="question">
-                  Question <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="question"
-                  value={formData.question}
-                  onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                  placeholder="Enter the question"
-                  required
-                />
-              </div>
+            <CardContent className="space-y-3">
+              <FormInput
+                label="Question"
+                name="question"
+                value={formData.question}
+                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                placeholder="e.g., How do I create an account?"
+                required
+                hint="The question shown to visitors"
+              />
+              <FormTextarea
+                label="Answer"
+                name="answer"
+                value={formData.answer}
+                onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                placeholder="Write a clear, helpful answer..."
+                rows={6}
+                required
+                hint="Keep it concise — 40 to 60 words is ideal"
+              />
+            </CardContent>
+          </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="answer">
-                  Answer <span className="text-destructive">*</span>
-                </Label>
-                <Textarea
-                  id="answer"
-                  value={formData.answer}
-                  onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                  placeholder="Enter the answer"
-                  rows={6}
-                  required
-                />
+          {/* SEO Card */}
+          <Card className="border-blue-500/20 bg-blue-500/[0.02]">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-blue-500" />
+                <CardTitle className="text-base text-blue-400">Search Engine Optimization</CardTitle>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="position">Position</Label>
-                <Input
-                  id="position"
-                  type="number"
-                  value={formData.position ?? ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      position: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                    })
-                  }
-                  placeholder="Auto-assigned if not set"
-                  min={0}
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <FormInput
+                  label="SEO Title"
+                  name="seoTitle"
+                  value={formData.seoTitle || ""}
+                  onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                  placeholder="Optional — defaults to the question"
+                  hint="Title shown in Google results (30-60 characters)"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Position determines the order. Lower numbers appear first.
-                </p>
+                <CharacterCounter current={(formData.seoTitle || "").length} min={30} max={60} className="mt-1 ms-1" />
               </div>
+              <div>
+                <FormTextarea
+                  label="SEO Description"
+                  name="seoDescription"
+                  value={formData.seoDescription || ""}
+                  onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
+                  placeholder="Optional — a brief summary for search engines"
+                  rows={2}
+                  hint="Description below the title in search results (120-160 characters)"
+                />
+                <CharacterCounter current={(formData.seoDescription || "").length} min={120} max={160} className="mt-1 ms-1" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-              <div className="flex items-center space-x-2">
+        {/* Right Column — Settings + Actions */}
+        <div className="lg:sticky lg:top-4 lg:self-start space-y-4">
+          {/* Settings Card */}
+          <Card className="border-amber-500/20 bg-amber-500/[0.02]">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-amber-500" />
+                <CardTitle className="text-base text-amber-400">Settings</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
                 <Checkbox
                   id="isActive"
                   checked={formData.isActive}
@@ -171,185 +187,54 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                     setFormData({ ...formData, isActive: checked === true })
                   }
                 />
-                <Label htmlFor="isActive" className="cursor-pointer">
-                  Active (visible on public FAQ page)
-                </Label>
+                <label htmlFor="isActive" className="text-sm font-medium cursor-pointer flex-1">
+                  Show on public FAQ page
+                </label>
+              </div>
+              <FormInput
+                label="Position"
+                name="position"
+                type="number"
+                value={formData.position?.toString() ?? ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    position: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                  })
+                }
+                placeholder="Auto"
+                hint="Lower number = appears first"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Actions Card */}
+          <Card className="border-emerald-500/20 bg-emerald-500/[0.02]">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex flex-col gap-2">
+                <Button type="submit" disabled={loading} className="w-full gap-2">
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      {faqId ? "Update FAQ" : "Create FAQ"}
+                    </>
+                  )}
+                </Button>
+                {faqId && (
+                  <Button type="button" variant="outline" className="w-full gap-2" onClick={() => router.back()}>
+                    <ArrowLeft className="h-4 w-4" />
+                    Cancel
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="seo" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="seoTitle">SEO Title</Label>
-                <Input
-                  id="seoTitle"
-                  value={formData.seoTitle || ""}
-                  onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
-                  placeholder="SEO-optimized title for the question"
-                  maxLength={60}
-                />
-                <CharacterCounter current={formData.seoTitle?.length || 0} max={60} />
-                <p className="text-xs text-muted-foreground">
-                  Optimal length: 50-60 characters
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="seoDescription">SEO Description</Label>
-                <Textarea
-                  id="seoDescription"
-                  value={formData.seoDescription || ""}
-                  onChange={(e) =>
-                    setFormData({ ...formData, seoDescription: e.target.value })
-                  }
-                  placeholder="SEO description/preview text"
-                  rows={3}
-                  maxLength={160}
-                />
-                <CharacterCounter current={formData.seoDescription?.length || 0} max={160} />
-                <p className="text-xs text-muted-foreground">
-                  Optimal length: 155-160 characters
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="inLanguage">Language</Label>
-                <Input
-                  id="inLanguage"
-                  value={formData.inLanguage}
-                  onChange={(e) => setFormData({ ...formData, inLanguage: e.target.value })}
-                  placeholder="ar"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Language code for hreflang (e.g., "ar", "en")
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lastReviewed">Last Reviewed</Label>
-                <Input
-                  id="lastReviewed"
-                  type="date"
-                  value={
-                    formData.lastReviewed
-                      ? new Date(formData.lastReviewed).toISOString().split("T")[0]
-                      : ""
-                  }
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      lastReviewed: e.target.value ? new Date(e.target.value) : undefined,
-                    })
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="advanced" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced SEO Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="dateCreated">Date Created</Label>
-                <Input
-                  id="dateCreated"
-                  type="date"
-                  value={
-                    formData.dateCreated
-                      ? new Date(formData.dateCreated).toISOString().split("T")[0]
-                      : ""
-                  }
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      dateCreated: e.target.value ? new Date(e.target.value) : undefined,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="datePublished">Date Published</Label>
-                <Input
-                  id="datePublished"
-                  type="date"
-                  value={
-                    formData.datePublished
-                      ? new Date(formData.datePublished).toISOString().split("T")[0]
-                      : ""
-                  }
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      datePublished: e.target.value ? new Date(e.target.value) : undefined,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="upvoteCount">Upvote Count</Label>
-                <Input
-                  id="upvoteCount"
-                  type="number"
-                  value={formData.upvoteCount ?? ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      upvoteCount: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                    })
-                  }
-                  placeholder="0"
-                  min={0}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Community upvotes (Schema.org upvoteCount)
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="answerCount">Answer Count</Label>
-                <Input
-                  id="answerCount"
-                  type="number"
-                  value={formData.answerCount ?? ""}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      answerCount: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                    })
-                  }
-                  placeholder="1"
-                  min={0}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Number of alternative answers (if multiple answers supported)
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={loading}>
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          <Save className="mr-2 h-4 w-4" />
-          {faqId ? "Update FAQ" : "Create FAQ"}
-        </Button>
+        </div>
       </div>
     </form>
   );

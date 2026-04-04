@@ -5,8 +5,6 @@ export interface PageConfig {
   modontyPath: string;
 }
 
-export const GENERATE_MJ_SLUG = "generate-mj";
-
 export const PAGE_CONFIGS: PageConfig[] = [
   {
     slug: "about",
@@ -43,12 +41,6 @@ export const PAGE_CONFIGS: PageConfig[] = [
     label: "Copyright Policy",
     description: "Copyright policy content",
     modontyPath: "/legal/copyright-policy",
-  },
-  {
-    slug: GENERATE_MJ_SLUG,
-    label: "SEO Cache (Home & Lists)",
-    description: "Generate meta & JSON-LD for home, clients, categories, trending",
-    modontyPath: "/",
   },
 ];
 

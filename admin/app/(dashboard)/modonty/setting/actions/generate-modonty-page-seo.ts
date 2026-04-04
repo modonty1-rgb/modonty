@@ -53,7 +53,7 @@ export async function generateModontyPageSEO(slug: string) {
       getAllSettings(),
     ]);
 
-    if (!page) return { success: false, error: "Page not found" };
+    if (!page) return { success: false, error: `"${slug}" page has no content yet — go to Modonty Pages and add content before generating SEO` };
 
     const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
     const existingMeta = (page.metaTags ?? {}) as Record<string, unknown>;
@@ -174,7 +174,7 @@ export async function generateModontyPageSEO(slug: string) {
       },
     });
 
-    revalidatePath("/modonty/setting", "page");
+    revalidatePath("/modonty/pages", "layout");
     const pageConfig = getPageConfig(slug);
     if (pageConfig?.modontyPath) {
       const modontyUrl = settings.siteUrl?.trim() || "https://modonty.com";
