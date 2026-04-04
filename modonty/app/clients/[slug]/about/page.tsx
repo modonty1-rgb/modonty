@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../helpers/client-page-data";
 import { ClientAbout } from "../components/client-about";
@@ -6,6 +7,16 @@ import { ClientOfficialData } from "../components/client-official-data";
 
 interface ClientAboutPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ClientAboutPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getClientPageData(slug);
+  if (!data) return { title: "غير موجود" };
+  return {
+    title: `معلومات عن ${data.client.name}`,
+    description: data.client.description || `تفاصيل ومعلومات عن ${data.client.name}`,
+  };
 }
 
 export default async function ClientAboutPage({ params }: ClientAboutPageProps) {

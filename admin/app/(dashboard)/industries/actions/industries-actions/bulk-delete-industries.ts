@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 
 export async function bulkDeleteIndustries(industryIds: string[]) {
@@ -47,6 +48,7 @@ export async function bulkDeleteIndustries(industryIds: string[]) {
     });
 
     revalidatePath("/industries");
+    await revalidateModontyTag("industries");
     return { success: true };
   } catch (error) {
     console.error("Error bulk deleting industries:", error);

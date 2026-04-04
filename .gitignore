@@ -13,6 +13,9 @@ out/
 dist/
 build/
 
+# Test logs
+logs/
+
 # Environment files
 .env
 .env*.local

@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const revalidationSecret = process.env.REVALIDATION_SECRET || "dev-secret-key";
-    const providedSecret = secret || req.headers.get("x-revalidation-secret");
+    const revalidationSecret = process.env.REVALIDATE_SECRET || "dev-secret-key";
+    const providedSecret = secret || req.headers.get("x-revalidate-secret");
 
     const isInternalCall = providedSecret === revalidationSecret;
     

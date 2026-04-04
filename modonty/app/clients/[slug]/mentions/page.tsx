@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../helpers/client-page-data";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 interface ClientMentionsPageProps {
   params: Promise<{ slug: string }>;

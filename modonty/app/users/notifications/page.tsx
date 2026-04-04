@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -6,6 +7,11 @@ import { IconEmail } from "@/lib/icons";
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
+
+export const metadata: Metadata = {
+  title: "الإشعارات",
+  robots: { index: false, follow: false },
+};
 
 interface NotificationsPageProps {
   searchParams: Promise<{ id?: string; tab?: string }>;

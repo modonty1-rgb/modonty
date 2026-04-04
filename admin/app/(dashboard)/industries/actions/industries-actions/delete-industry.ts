@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 
 export async function deleteIndustry(id: string) {
@@ -22,6 +23,8 @@ export async function deleteIndustry(id: string) {
 
     await db.industry.delete({ where: { id } });
     revalidatePath("/industries");
+    await revalidateModontyTag("industries");
+    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch {}
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete industry";

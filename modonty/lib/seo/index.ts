@@ -24,6 +24,8 @@ export interface SEOData {
   twitterSite?: string;
   /** Hreflang: { "ar": url, "x-default": url } or extended. Defaults to ar + x-default if omitted. */
   languages?: Record<string, string>;
+  /** Robots directive: "index,follow" (default) or "noindex,nofollow" etc. */
+  robots?: string;
 }
 
 export interface MetadataOptions {
@@ -66,7 +68,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
   const ogImage = image || `${siteUrl}/og-image.jpg`;
   const imageAltResolved = imageAlt || title || siteName;
 
-  const robotsDirective = options?.robots || "index,follow";
+  const robotsDirective = data.robots || options?.robots || "index,follow";
   const shouldIndex = !robotsDirective.includes("noindex");
   const shouldFollow = !robotsDirective.includes("nofollow");
 

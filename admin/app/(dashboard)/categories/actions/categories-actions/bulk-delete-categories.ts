@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 
 export async function bulkDeleteCategories(categoryIds: string[]) {
@@ -76,6 +77,7 @@ export async function bulkDeleteCategories(categoryIds: string[]) {
     });
 
     revalidatePath("/categories");
+    await revalidateModontyTag("categories");
     return { success: true };
   } catch (error) {
     console.error("Error bulk deleting categories:", error);

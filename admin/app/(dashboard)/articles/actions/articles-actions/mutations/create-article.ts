@@ -222,6 +222,7 @@ export async function createArticle(data: ArticleFormData) {
 
     revalidatePath("/articles");
     await revalidateModontyTag("articles");
+    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch {}
     return { success: true, article };
   } catch (error) {
     console.error("Error creating article:", error);

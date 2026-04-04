@@ -1,0 +1,137 @@
+# Modonty — Full Documentation
+
+> Modonty (مودونتي) is a bilingual Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. We publish SEO-optimized articles and detailed business profiles for Arabic-speaking audiences.
+
+## Platform Overview
+
+Modonty is built for the Arabic-speaking market with a focus on Saudi Arabia (ar-SA) and Egypt (ar-EG). The platform connects businesses with readers through high-quality content, structured data, and industry-specific classification.
+
+### Key Features
+- Business directory with detailed client profiles (Organization, LocalBusiness)
+- SEO-optimized articles with rich structured data (Article, FAQPage, Person)
+- Category and tag-based content organization
+- Industry-specific content classification
+- FAQ system with community feedback (upvote/downvote)
+- Newsletter subscription system
+- Multi-tier subscription plans for businesses
+- Contact messaging system
+- Social media integration
+
+### Technology
+- Built with Next.js (App Router), React, TypeScript
+- MongoDB database with Prisma ORM
+- Cloudinary for media management
+- Full JSON-LD structured data on every public page
+- Sitemap with dynamic URLs from database
+- RTL-first responsive design with Tailwind CSS
+
+## Content Types
+
+### Articles
+Articles are the core content type. Each article includes:
+- Title, excerpt, and full body content
+- Featured image with alt text
+- Author (Person schema with credentials)
+- Category and tags classification
+- Industry association
+- Client (business) association
+- SEO metadata: title, description, canonical URL
+- JSON-LD: Article + FAQPage (when article has FAQ) + BreadcrumbList + Person + Organization
+- Publication date, modification date
+- Reading time, word count
+- Social sharing: OpenGraph + Twitter Cards
+
+URL pattern: `/clients/[client-slug]/articles/[article-slug]`
+
+### Business Profiles (Clients)
+Each business profile includes:
+- Name, legal name, alternate name, slogan
+- Description and business brief
+- Logo, OG image, Twitter image
+- Contact: email, phone, contact type, working hours
+- Address: street, city, region, country (ISO 3166-1), postal code
+- Geo: latitude, longitude (GeoCoordinates)
+- Social profiles: Facebook, Twitter/X, LinkedIn, Instagram, YouTube, TikTok, Pinterest, Snapchat
+- Industry classification with ISIC v4 codes
+- Saudi identifiers: Commercial Registration, VAT ID, Tax ID
+- Google Business Profile: URL and Place ID
+- Opening hours (OpeningHoursSpecification)
+- Price range
+- Number of employees
+- Parent organization relationship
+- JSON-LD: Organization/LocalBusiness + ContactPoint + PostalAddress + GeoCoordinates + BreadcrumbList
+
+URL pattern: `/clients/[slug]`
+Sub-pages: `/about`, `/reviews`, `/photos`, `/contact`, `/followers`, `/likes`, `/reels`, `/mentions`
+
+### Categories
+Content categories for organizing articles. Each category includes:
+- Name, slug, description
+- Parent-child hierarchy (tree structure)
+- SEO metadata and social image
+- JSON-LD: DefinedTerm + CollectionPage + BreadcrumbList
+
+URL pattern: `/categories/[slug]`
+
+### Tags
+Content tags for cross-cutting topics. Each tag includes:
+- Name, slug, description
+- SEO metadata and social image
+- JSON-LD: CollectionPage + ItemList + BreadcrumbList
+
+### Industries
+Business industry classification. Each industry includes:
+- Name, slug, description
+- Associated clients
+- SEO metadata and social image
+- JSON-LD: CollectionPage + ItemList + BreadcrumbList
+
+### FAQ
+Frequently asked questions with community feedback:
+- Question and answer pairs
+- Category grouping
+- Upvote/downvote system
+- Last reviewed date
+- JSON-LD: FAQPage + Question/Answer + SpeakableSpecification
+
+URL: `/help/faq`
+
+## Structured Data Implementation
+
+Every public page includes JSON-LD structured data following schema.org specifications:
+
+| Page Type | Schema Types |
+|-----------|-------------|
+| Homepage | WebSite + Organization + WebPage + SearchAction |
+| About | AboutPage + Organization + BreadcrumbList |
+| Contact | ContactPage + BreadcrumbList |
+| Categories listing | CollectionPage + ItemList |
+| Category detail | DefinedTerm + CollectionPage + BreadcrumbList |
+| Clients listing | CollectionPage + ItemList |
+| Client detail | Organization/LocalBusiness + ContactPoint + GeoCoordinates + BreadcrumbList |
+| Article | Article + FAQPage + BreadcrumbList + Person + Organization |
+| FAQ | FAQPage + Question/Answer + SpeakableSpecification |
+| Trending | CollectionPage + ItemList |
+| User Profile | Person + ProfilePage |
+
+## Geographic Focus
+
+- Primary market: Saudi Arabia (ar-SA)
+- Secondary market: Egypt (ar-EG)
+- Address format: ISO 3166-1 alpha-2 country codes
+- Currency: SAR (Saudi Riyal), EGP (Egyptian Pound)
+- Organization schema includes: areaServed, addressCountry, GeoCoordinates
+- Google Business Profile integration for local businesses
+
+## API and Technical Details
+
+- Sitemap: Dynamic XML sitemap at `/sitemap.xml` including all published articles, clients, and categories
+- Robots: `/robots.txt` with AI search bot allowances and training bot restrictions
+- Authentication: NextAuth with session-based auth
+- Media: Cloudinary CDN with automatic optimization (f_auto, q_auto)
+- Caching: Next.js cache tags with cross-app revalidation (admin changes trigger modonty cache refresh)
+
+## Contact
+
+- Website: https://modonty.com
+- Content Language: Arabic (ar-SA primary, ar-EG secondary)

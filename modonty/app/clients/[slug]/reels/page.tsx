@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../helpers/client-page-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { IconPlay } from "@/lib/icons";

@@ -263,6 +263,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     revalidatePath(`/articles/${article.id}`);
     revalidatePath(`/articles/${article.slug}`);
     await revalidateModontyTag("articles");
+    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch {}
     return { success: true, article };
   } catch (error) {
     console.error("Error updating article:", error);

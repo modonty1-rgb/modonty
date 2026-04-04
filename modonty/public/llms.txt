@@ -1,0 +1,40 @@
+# Modonty
+
+> Modonty (مودونتي) is a bilingual Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. We publish SEO-optimized articles and detailed business profiles for Arabic-speaking audiences.
+
+Modonty connects businesses with readers through high-quality content, structured data, and industry-specific classification. The platform supports Organization and LocalBusiness profiles with full contact, address, and social media integration.
+
+- Primary language: Arabic (ar-SA)
+- Secondary: Arabic Egypt (ar-EG)
+- Content types: Articles, Business Profiles, Categories, Industries, Tags, FAQ
+- Structured data: JSON-LD (Article, Organization, LocalBusiness, FAQPage, CollectionPage, BreadcrumbList, Person)
+
+## Main Pages
+
+- [Homepage](https://modonty.com/): Featured articles, trending content, and platform overview
+- [Categories](https://modonty.com/categories): Browse all article categories
+- [Clients](https://modonty.com/clients): Business directory with detailed profiles
+- [Trending](https://modonty.com/trending): Most popular articles
+- [News](https://modonty.com/news): Latest news and newsletter
+- [About](https://modonty.com/about): About the platform
+- [Contact](https://modonty.com/contact): Contact page
+- [FAQ](https://modonty.com/help/faq): Frequently asked questions
+
+## Content Structure
+
+- [Articles](https://modonty.com/articles): SEO-optimized articles with Article + FAQPage + Person + BreadcrumbList schema
+- [Category Pages](https://modonty.com/categories): CollectionPage + ItemList + DefinedTerm schema per category
+- [Client Profiles](https://modonty.com/clients): Organization/LocalBusiness + ContactPoint + GeoCoordinates + OpeningHours schema per business
+
+## Legal
+
+- [Terms of Service](https://modonty.com/terms)
+- [Privacy Policy](https://modonty.com/legal/privacy-policy)
+- [Cookie Policy](https://modonty.com/legal/cookie-policy)
+- [Copyright Policy](https://modonty.com/legal/copyright-policy)
+
+## Optional
+
+- [User Agreement](https://modonty.com/legal/user-agreement)
+- [Subscribe](https://modonty.com/subscribe): Newsletter subscription
+- [Feedback](https://modonty.com/help/feedback): User feedback form

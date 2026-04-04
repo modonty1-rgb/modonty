@@ -9,6 +9,7 @@ export const metadata: Metadata = generateMetadataFromSEO({
   keywords: ["اشتراك", "نشرة", "إخبارية", "بريد إلكتروني"],
   url: "/subscribe",
   type: "website",
+  robots: "noindex,nofollow",
 });
 
 export default function SubscribePage() {

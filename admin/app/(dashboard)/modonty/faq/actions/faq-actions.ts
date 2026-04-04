@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function getFAQs() {
   try {
@@ -60,6 +61,9 @@ export async function createFAQ(data: {
   createdBy?: string;
 }) {
   try {
+    if (!data.question?.trim()) return { success: false, error: "السؤال مطلوب" };
+    if (!data.answer?.trim()) return { success: false, error: "الإجابة مطلوبة" };
+
     // Get max position if not provided
     let position = data.position;
     if (position === undefined) {
@@ -94,6 +98,7 @@ export async function createFAQ(data: {
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create FAQ";
@@ -137,6 +142,7 @@ export async function updateFAQ(
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update FAQ";
@@ -149,6 +155,7 @@ export async function deleteFAQ(id: string) {
     await db.fAQ.delete({ where: { id } });
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete FAQ";
@@ -167,6 +174,7 @@ export async function reorderFAQs(ids: string[]) {
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to reorder FAQs";
@@ -188,6 +196,7 @@ export async function toggleFAQStatus(id: string) {
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true, faq: updated };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to toggle FAQ status";
@@ -204,6 +213,7 @@ export async function updateLastReviewed(id: string) {
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true, faq };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update last reviewed";
@@ -224,6 +234,7 @@ export async function bulkUpdatePositions(updates: Array<{ id: string; position:
 
     revalidatePath("/modonty/faq");
     revalidatePath("/help/faq");
+    await revalidateModontyTag("faqs");
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update positions";

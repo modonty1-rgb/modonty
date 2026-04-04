@@ -9,6 +9,7 @@ export const metadata: Metadata = generateMetadataFromSEO({
   keywords: ["ملاحظات", "اقتراحات", "تغذية راجعة", "تحسين"],
   url: "/help/feedback",
   type: "website",
+  robots: "noindex,nofollow",
 });
 
 export default function FeedbackPage() {

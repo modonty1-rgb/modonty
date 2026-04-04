@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Modonty — مودونتي",
+  "name_for_model": "modonty",
+  "description_for_human": "منصة محتوى عربية ودليل أعمال متخصص في السعودية ومصر",
+  "description_for_model": "Modonty is an Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. It provides SEO-optimized articles, detailed business profiles (Organization/LocalBusiness), category-based content organization, and FAQ. Content is in Arabic (ar-SA primary, ar-EG secondary). Use this to find information about businesses, articles, and content in the Arabic market.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://modonty.com/sitemap.xml"
+  },
+  "logo_url": "https://modonty.com/logo.png",
+  "contact_email": "info@modonty.com",
+  "legal_info_url": "https://modonty.com/legal/user-agreement"
+}

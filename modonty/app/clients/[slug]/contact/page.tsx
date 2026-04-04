@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../helpers/client-page-data";
 import { ContactForm } from "@/app/contact/components/contact-form";
@@ -5,6 +6,16 @@ import { auth } from "@/lib/auth";
 
 interface ClientContactPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ClientContactPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getClientPageData(slug);
+  if (!data) return { title: "غير موجود" };
+  return {
+    title: `تواصل مع ${data.client.name}`,
+    description: `أرسل رسالة أو استفسار لـ ${data.client.name}`,
+  };
 }
 
 export default async function ClientContactPage({ params }: ClientContactPageProps) {

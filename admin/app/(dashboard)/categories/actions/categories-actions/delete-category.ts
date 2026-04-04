@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 
 export async function deleteCategory(id: string) {
@@ -48,6 +49,8 @@ export async function deleteCategory(id: string) {
 
     await db.category.delete({ where: { id: category.id } });
     revalidatePath("/categories");
+    await revalidateModontyTag("categories");
+    try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch {}
     return { success: true };
   } catch (error) {
     console.error("Error deleting category:", error);

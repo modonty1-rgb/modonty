@@ -58,7 +58,7 @@ async function approveAndRevalidate() {
     console.log(`📝 Revalidating ${uniqueSlugs.size} article page(s)...`);
     
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const revalidationSecret = process.env.REVALIDATION_SECRET || "dev-secret-key";
+    const revalidationSecret = process.env.REVALIDATE_SECRET || "dev-secret-key";
     const revalidationResults: { slug: string; success: boolean; error?: string }[] = [];
 
     for (const slug of uniqueSlugs) {

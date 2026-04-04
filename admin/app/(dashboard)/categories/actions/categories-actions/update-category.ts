@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function updateCategory(
   id: string,
@@ -57,9 +58,12 @@ export async function updateCategory(
       data: updateData,
     });
     revalidatePath("/categories");
+    await revalidateModontyTag("categories");
     try {
       const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
       await generateAndSaveCategorySeo(category.id);
+      const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      await regenerateCategoriesListingCache();
     } catch (e) { console.error("Category SEO gen failed:", e); }
     return { success: true, category };
   } catch (error) {

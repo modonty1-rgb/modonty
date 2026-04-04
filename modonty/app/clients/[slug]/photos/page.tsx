@@ -1,9 +1,20 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientPageData } from "../helpers/client-page-data";
 import { ClientPhotosPreview } from "../components/client-photos-preview";
 
 interface ClientPhotosPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ClientPhotosPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getClientPageData(slug);
+  if (!data) return { title: "غير موجود" };
+  return {
+    title: `صور ${data.client.name}`,
+    description: `معرض صور ومحتوى مرئي لـ ${data.client.name}`,
+  };
 }
 
 export default async function ClientPhotosPage({ params }: ClientPhotosPageProps) {

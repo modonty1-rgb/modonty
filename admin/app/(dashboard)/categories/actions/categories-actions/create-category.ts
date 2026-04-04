@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function createCategory(data: {
   name: string;
@@ -16,6 +17,9 @@ export async function createCategory(data: {
   cloudinaryPublicId?: string;
 }) {
   try {
+    if (!data.name?.trim()) return { success: false, error: "اسم التصنيف مطلوب" };
+    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+
     const category = await db.category.create({
       data: {
         name: data.name,
@@ -31,10 +35,17 @@ export async function createCategory(data: {
       },
     });
     revalidatePath("/categories");
+    await revalidateModontyTag("categories");
+    // Generate individual SEO cache
     try {
       const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
       await generateAndSaveCategorySeo(category.id);
     } catch (e) { console.error("Category SEO gen failed:", e); }
+    // Update listing page cache
+    try {
+      const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
+      await regenerateCategoriesListingCache();
+    } catch (e) { console.error("Categories listing cache failed:", e); }
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create category";

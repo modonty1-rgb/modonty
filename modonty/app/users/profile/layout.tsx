@@ -6,6 +6,7 @@ export const metadata: Metadata = generateMetadataFromSEO({
   description: "عرض وتحديث الملف الشخصي",
   url: "/users/profile",
   type: "profile",
+  robots: "noindex,nofollow",
 });
 
 export default function ProfileLayout({

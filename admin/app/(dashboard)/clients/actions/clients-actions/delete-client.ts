@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function deleteClient(id: string) {
   try {
@@ -31,6 +32,8 @@ export async function deleteClient(id: string) {
       where: { id },
     });
     revalidatePath("/clients");
+    await revalidateModontyTag("clients");
+    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
     return { success: true };
   } catch (error) {
     console.error("Error deleting client:", error);

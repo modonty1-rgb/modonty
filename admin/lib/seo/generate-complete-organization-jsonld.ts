@@ -308,6 +308,37 @@ export function generateCompleteOrganizationJsonLd(
     organizationNode.geo = { "@type": "GeoCoordinates", latitude: lat, longitude: lng };
   }
 
+  // OpeningHoursSpecification (Google recommends for LocalBusiness)
+  // schema.org/OpeningHoursSpecification — stored as JSON array in Prisma
+  if (client.openingHoursSpecification) {
+    try {
+      const hours = typeof client.openingHoursSpecification === "string"
+        ? JSON.parse(client.openingHoursSpecification)
+        : client.openingHoursSpecification;
+      if (Array.isArray(hours) && hours.length > 0) {
+        organizationNode.openingHoursSpecification = hours.map((h: Record<string, unknown>) => {
+          const spec: Record<string, unknown> = { "@type": "OpeningHoursSpecification" };
+          if (h.dayOfWeek) spec.dayOfWeek = h.dayOfWeek;
+          if (h.opens) spec.opens = h.opens;
+          if (h.closes) spec.closes = h.closes;
+          if (h.validFrom) spec.validFrom = h.validFrom;
+          if (h.validThrough) spec.validThrough = h.validThrough;
+          return spec;
+        });
+      }
+    } catch { /* Invalid JSON — skip */ }
+  }
+
+  // Price range (Google recommends for LocalBusiness)
+  if (client.priceRange) {
+    organizationNode.priceRange = client.priceRange;
+  }
+
+  // hasMap — derived from geo coordinates (schema.org/hasMap on Place/LocalBusiness)
+  if (lat != null && lng != null && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+    organizationNode.hasMap = `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
   // Number of employees as QuantitativeValue
   if (client.numberOfEmployees) {
     const empValue = client.numberOfEmployees;
@@ -362,6 +393,20 @@ export function generateCompleteOrganizationJsonLd(
     
     if (validSameAsUrls.length > 0) {
       organizationNode.sameAs = validSameAsUrls;
+    }
+  }
+
+  // GBP profile URL → appended to sameAs (no dedicated schema.org property)
+  if (client.gbpProfileUrl) {
+    const gbpUrl = ensureAbsoluteUrl(client.gbpProfileUrl, siteUrl);
+    if (gbpUrl) {
+      if (Array.isArray(organizationNode.sameAs)) {
+        if (!organizationNode.sameAs.includes(gbpUrl)) {
+          organizationNode.sameAs.push(gbpUrl);
+        }
+      } else {
+        organizationNode.sameAs = [gbpUrl];
+      }
     }
   }
 

@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 import { SubscriptionTier } from "@prisma/client";
@@ -11,6 +12,10 @@ import bcrypt from "bcryptjs";
 
 export async function createClient(data: ClientFormData) {
   try {
+    if (!data.name?.trim()) return { success: false, error: "اسم العميل مطلوب" };
+    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+    if (!data.email?.trim()) return { success: false, error: "البريد الإلكتروني مطلوب" };
+
     let articlesPerMonth = data.articlesPerMonth || null;
     let subscriptionTierConfigId = data.subscriptionTierConfigId || null;
 
@@ -154,6 +159,8 @@ export async function createClient(data: ClientFormData) {
 
     revalidatePath("/clients");
     revalidatePath("/media");
+    await revalidateModontyTag("clients");
+    try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
     return { success: true, client };
   } catch (error) {
     console.error("Error creating client:", error);

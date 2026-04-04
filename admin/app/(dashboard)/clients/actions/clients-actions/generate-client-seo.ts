@@ -98,6 +98,9 @@ export async function generateClientSEO(clientId: string) {
         keywords: true,
         knowsLanguage: true,
         organizationType: true,
+        openingHoursSpecification: true,
+        priceRange: true,
+        gbpProfileUrl: true,
         // Relationships
         parentOrganizationId: true,
         logoMedia: {
@@ -145,7 +148,8 @@ export async function generateClientSEO(clientId: string) {
       return { success: false, error: "Client not found" };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const settings = await (await import("@/app/(dashboard)/settings/actions/settings-actions")).getAllSettings();
+    const siteUrl = (settings as unknown as Record<string, unknown>)?.siteUrl as string || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
     const clientPageUrl = client.canonicalUrl || `${siteUrl}/clients/${client.slug}`;
 
     // Ensure URLs are absolute and HTTPS

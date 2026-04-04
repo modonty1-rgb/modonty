@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClientEngagementBySlug } from "../helpers/client-engagement";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconLike, IconUsers, IconArticle } from "@/lib/icons";
 

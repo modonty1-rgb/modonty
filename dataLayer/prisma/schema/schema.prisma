@@ -1836,6 +1836,12 @@ model Settings {
   categoriesSeoDescription String?
   trendingSeoTitle      String?
   trendingSeoDescription  String?
+  tagsSeoTitle          String?
+  tagsSeoDescription    String?
+  industriesSeoTitle    String?
+  industriesSeoDescription String?
+  articlesSeoTitle      String?
+  articlesSeoDescription String?
 
   // Cached site-level JSON-LD (optional; same pattern as Client/Modonty)
   jsonLdStructuredData   String?   @db.String // Cached @graph JSON string
@@ -1862,6 +1868,24 @@ model Settings {
   trendingPageJsonLdStructuredData  String?   @db.String
   trendingPageJsonLdLastGenerated   DateTime?
   trendingPageJsonLdValidationReport Json?
+
+  // Tags list page meta + JSON-LD
+  tagsPageMetaTags              Json?
+  tagsPageJsonLdStructuredData  String?   @db.String
+  tagsPageJsonLdLastGenerated   DateTime?
+  tagsPageJsonLdValidationReport Json?
+
+  // Industries list page meta + JSON-LD
+  industriesPageMetaTags              Json?
+  industriesPageJsonLdStructuredData  String?   @db.String
+  industriesPageJsonLdLastGenerated   DateTime?
+  industriesPageJsonLdValidationReport Json?
+
+  // Articles list page meta + JSON-LD
+  articlesPageMetaTags              Json?
+  articlesPageJsonLdStructuredData  String?   @db.String
+  articlesPageJsonLdLastGenerated   DateTime?
+  articlesPageJsonLdValidationReport Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

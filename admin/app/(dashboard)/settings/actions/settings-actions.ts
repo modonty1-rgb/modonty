@@ -61,6 +61,12 @@ export interface ModontySettings {
   categoriesSeoDescription: string | null;
   trendingSeoTitle: string | null;
   trendingSeoDescription: string | null;
+  tagsSeoTitle: string | null;
+  tagsSeoDescription: string | null;
+  industriesSeoTitle: string | null;
+  industriesSeoDescription: string | null;
+  articlesSeoTitle: string | null;
+  articlesSeoDescription: string | null;
 }
 
 export interface SettingsJsonLdCache {
@@ -90,6 +96,18 @@ export interface SettingsGeneratedSeo {
   trendingPageJsonLdStructuredData: string | null;
   trendingPageJsonLdLastGenerated: Date | null;
   trendingPageJsonLdValidationReport: Record<string, unknown> | null;
+  tagsPageMetaTags: Record<string, unknown> | null;
+  tagsPageJsonLdStructuredData: string | null;
+  tagsPageJsonLdLastGenerated: Date | null;
+  tagsPageJsonLdValidationReport: Record<string, unknown> | null;
+  industriesPageMetaTags: Record<string, unknown> | null;
+  industriesPageJsonLdStructuredData: string | null;
+  industriesPageJsonLdLastGenerated: Date | null;
+  industriesPageJsonLdValidationReport: Record<string, unknown> | null;
+  articlesPageMetaTags: Record<string, unknown> | null;
+  articlesPageJsonLdStructuredData: string | null;
+  articlesPageJsonLdLastGenerated: Date | null;
+  articlesPageJsonLdValidationReport: Record<string, unknown> | null;
 }
 
 export interface SiteOrgSettings {
@@ -240,6 +258,12 @@ const DEFAULT_SETTINGS: AllSettings = {
   categoriesSeoDescription: null,
   trendingSeoTitle: null,
   trendingSeoDescription: null,
+  tagsSeoTitle: null,
+  tagsSeoDescription: null,
+  industriesSeoTitle: null,
+  industriesSeoDescription: null,
+  articlesSeoTitle: null,
+  articlesSeoDescription: null,
   jsonLdStructuredData: null,
   jsonLdLastGenerated: null,
   jsonLdValidationReport: null,
@@ -256,6 +280,18 @@ const DEFAULT_SETTINGS: AllSettings = {
   trendingPageJsonLdStructuredData: null,
   trendingPageJsonLdLastGenerated: null,
   trendingPageJsonLdValidationReport: null,
+  tagsPageMetaTags: null,
+  tagsPageJsonLdStructuredData: null,
+  tagsPageJsonLdLastGenerated: null,
+  tagsPageJsonLdValidationReport: null,
+  industriesPageMetaTags: null,
+  industriesPageJsonLdStructuredData: null,
+  industriesPageJsonLdLastGenerated: null,
+  industriesPageJsonLdValidationReport: null,
+  articlesPageMetaTags: null,
+  articlesPageJsonLdStructuredData: null,
+  articlesPageJsonLdLastGenerated: null,
+  articlesPageJsonLdValidationReport: null,
 };
 
 /** Build Organization sameAs array from Settings social URLs (for JSON-LD). Falls back to [] if none set. */
@@ -392,6 +428,12 @@ export async function getAllSettings(): Promise<AllSettings> {
         categoriesSeoDescription: (newSettings as Record<string, unknown>).categoriesSeoDescription as string | null,
         trendingSeoTitle: (newSettings as Record<string, unknown>).trendingSeoTitle as string | null,
         trendingSeoDescription: (newSettings as Record<string, unknown>).trendingSeoDescription as string | null,
+        tagsSeoTitle: (newSettings as Record<string, unknown>).tagsSeoTitle as string | null,
+        tagsSeoDescription: (newSettings as Record<string, unknown>).tagsSeoDescription as string | null,
+        industriesSeoTitle: (newSettings as Record<string, unknown>).industriesSeoTitle as string | null,
+        industriesSeoDescription: (newSettings as Record<string, unknown>).industriesSeoDescription as string | null,
+        articlesSeoTitle: (newSettings as Record<string, unknown>).articlesSeoTitle as string | null,
+        articlesSeoDescription: (newSettings as Record<string, unknown>).articlesSeoDescription as string | null,
         jsonLdStructuredData: newSettings.jsonLdStructuredData,
         jsonLdLastGenerated: newSettings.jsonLdLastGenerated,
         jsonLdValidationReport: (newSettings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -408,6 +450,18 @@ export async function getAllSettings(): Promise<AllSettings> {
         trendingPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).trendingPageJsonLdStructuredData ?? null) as string | null,
         trendingPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).trendingPageJsonLdLastGenerated ?? null) as Date | null,
         trendingPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).trendingPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+        tagsPageMetaTags: ((newSettings as Record<string, unknown>).tagsPageMetaTags ?? null) as Record<string, unknown> | null,
+        tagsPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).tagsPageJsonLdStructuredData ?? null) as string | null,
+        tagsPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).tagsPageJsonLdLastGenerated ?? null) as Date | null,
+        tagsPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).tagsPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+        industriesPageMetaTags: ((newSettings as Record<string, unknown>).industriesPageMetaTags ?? null) as Record<string, unknown> | null,
+        industriesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
+        industriesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
+        industriesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).industriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+        articlesPageMetaTags: ((newSettings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
+        articlesPageJsonLdStructuredData: ((newSettings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
+        articlesPageJsonLdLastGenerated: ((newSettings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
+        articlesPageJsonLdValidationReport: ((newSettings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
       };
     }
 
@@ -497,6 +551,12 @@ export async function getAllSettings(): Promise<AllSettings> {
       categoriesSeoDescription: (settings as Record<string, unknown>).categoriesSeoDescription as string | null ?? null,
       trendingSeoTitle: (settings as Record<string, unknown>).trendingSeoTitle as string | null ?? null,
       trendingSeoDescription: (settings as Record<string, unknown>).trendingSeoDescription as string | null ?? null,
+      tagsSeoTitle: (settings as Record<string, unknown>).tagsSeoTitle as string | null ?? null,
+      tagsSeoDescription: (settings as Record<string, unknown>).tagsSeoDescription as string | null ?? null,
+      industriesSeoTitle: (settings as Record<string, unknown>).industriesSeoTitle as string | null ?? null,
+      industriesSeoDescription: (settings as Record<string, unknown>).industriesSeoDescription as string | null ?? null,
+      articlesSeoTitle: (settings as Record<string, unknown>).articlesSeoTitle as string | null ?? null,
+      articlesSeoDescription: (settings as Record<string, unknown>).articlesSeoDescription as string | null ?? null,
       jsonLdStructuredData: settings.jsonLdStructuredData,
       jsonLdLastGenerated: settings.jsonLdLastGenerated,
       jsonLdValidationReport: (settings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -513,6 +573,18 @@ export async function getAllSettings(): Promise<AllSettings> {
       trendingPageJsonLdStructuredData: ((settings as Record<string, unknown>).trendingPageJsonLdStructuredData ?? null) as string | null,
       trendingPageJsonLdLastGenerated: ((settings as Record<string, unknown>).trendingPageJsonLdLastGenerated ?? null) as Date | null,
       trendingPageJsonLdValidationReport: ((settings as Record<string, unknown>).trendingPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+      tagsPageMetaTags: ((settings as Record<string, unknown>).tagsPageMetaTags ?? null) as Record<string, unknown> | null,
+      tagsPageJsonLdStructuredData: ((settings as Record<string, unknown>).tagsPageJsonLdStructuredData ?? null) as string | null,
+      tagsPageJsonLdLastGenerated: ((settings as Record<string, unknown>).tagsPageJsonLdLastGenerated ?? null) as Date | null,
+      tagsPageJsonLdValidationReport: ((settings as Record<string, unknown>).tagsPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+      industriesPageMetaTags: ((settings as Record<string, unknown>).industriesPageMetaTags ?? null) as Record<string, unknown> | null,
+      industriesPageJsonLdStructuredData: ((settings as Record<string, unknown>).industriesPageJsonLdStructuredData ?? null) as string | null,
+      industriesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).industriesPageJsonLdLastGenerated ?? null) as Date | null,
+      industriesPageJsonLdValidationReport: ((settings as Record<string, unknown>).industriesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
+      articlesPageMetaTags: ((settings as Record<string, unknown>).articlesPageMetaTags ?? null) as Record<string, unknown> | null,
+      articlesPageJsonLdStructuredData: ((settings as Record<string, unknown>).articlesPageJsonLdStructuredData ?? null) as string | null,
+      articlesPageJsonLdLastGenerated: ((settings as Record<string, unknown>).articlesPageJsonLdLastGenerated ?? null) as Date | null,
+      articlesPageJsonLdValidationReport: ((settings as Record<string, unknown>).articlesPageJsonLdValidationReport ?? null) as Record<string, unknown> | null,
     };
   } catch (error) {
     console.error("Error fetching settings:", error);
@@ -613,6 +685,9 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
         orgContactType: data.orgContactType,
         orgContactEmail: data.orgContactEmail,
         orgContactTelephone: data.orgContactTelephone,
+        orgContactAvailableLanguage: data.orgContactAvailableLanguage,
+        orgContactOption: data.orgContactOption,
+        orgContactHoursAvailable: data.orgContactHoursAvailable,
         orgAreaServed: data.orgAreaServed,
         orgStreetAddress: data.orgStreetAddress,
         orgAddressLocality: data.orgAddressLocality,
@@ -714,10 +789,18 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         categoriesSeoDescription: data.categoriesSeoDescription,
         trendingSeoTitle: data.trendingSeoTitle,
         trendingSeoDescription: data.trendingSeoDescription,
+        tagsSeoTitle: data.tagsSeoTitle,
+        tagsSeoDescription: data.tagsSeoDescription,
+        industriesSeoTitle: data.industriesSeoTitle,
+        industriesSeoDescription: data.industriesSeoDescription,
+        articlesSeoTitle: data.articlesSeoTitle,
+        articlesSeoDescription: data.articlesSeoDescription,
       },
     });
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
+    // Regenerate Home page cache when SEO titles/descriptions change
+    try { const { regenerateHomePageCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateHomePageCache(); } catch {}
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Modonty settings";

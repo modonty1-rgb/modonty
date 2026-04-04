@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { groupFieldsByTab, hasGroupData } from "../../helpers/group-fields-by-tab";
@@ -86,6 +87,7 @@ export async function updateClient(id: string, data: ClientFormData) {
     revalidatePath("/clients");
     revalidatePath(`/clients/${id}`);
     revalidatePath("/media");
+    await revalidateModontyTag("clients");
     
     return { success: true, client };
   } catch (error) {

@@ -59,6 +59,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
       ? `نتائج البحث عن "${q}" في مقالات وعملاء مودونتي`
       : "ابحث في مقالات وعملاء مدونة مودونتي",
     url: q ? `/search?q=${encodeURIComponent(q)}${typeParam}` : "/search",
+    robots: "noindex,nofollow",
   });
 }
 

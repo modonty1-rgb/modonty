@@ -8,13 +8,13 @@ async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null
 }
 
 export async function revalidateModontyTag(
-  tag: "articles" | "settings",
+  tag: "articles" | "settings" | "categories" | "clients" | "tags" | "industries" | "faqs",
   baseUrl?: string | null
 ): Promise<void> {
   try {
     const url = await getModontyBaseUrl(baseUrl);
     if (!url) return;
-    const secret = process.env.REVALIDATE_SECRET || process.env.REVALIDATION_SECRET;
+    const secret = process.env.REVALIDATE_SECRET;
 
     if (!secret) {
       if (process.env.NODE_ENV === "development") {

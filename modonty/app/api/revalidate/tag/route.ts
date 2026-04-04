@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 
-const ALLOWED_TAGS = ["articles", "settings"] as const;
+const ALLOWED_TAGS = ["articles", "settings", "categories", "clients", "tags", "industries", "faqs"] as const;
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const revalidationSecret = process.env.REVALIDATION_SECRET || process.env.REVALIDATE_SECRET || "dev-secret-key";
+    const revalidationSecret = process.env.REVALIDATE_SECRET || "dev-secret-key";
     const providedSecret = secret ?? req.headers.get("x-revalidation-secret") ?? req.headers.get("x-revalidate-secret");
 
     if (providedSecret !== revalidationSecret) {

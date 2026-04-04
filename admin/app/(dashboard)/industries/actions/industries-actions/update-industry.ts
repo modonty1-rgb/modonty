@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function updateIndustry(
   id: string,
@@ -49,6 +50,9 @@ export async function updateIndustry(
 
     const industry = await db.industry.update({ where: { id }, data: updateData });
     revalidatePath("/industries");
+    await revalidateModontyTag("industries");
+    try { const { generateAndSaveIndustrySeo } = await import("@/lib/seo/industry-seo-generator"); await generateAndSaveIndustrySeo(industry.id); } catch {}
+    try { const { regenerateIndustriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateIndustriesListingCache(); } catch {}
     return { success: true, industry };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update industry";

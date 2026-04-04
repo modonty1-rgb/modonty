@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../actions/delete-image";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
@@ -137,8 +138,14 @@ export async function createTag(data: {
   cloudinaryPublicId?: string;
 }) {
   try {
+    if (!data.name?.trim()) return { success: false, error: "اسم التاج مطلوب" };
+    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+
     const tag = await db.tag.create({ data });
     revalidatePath("/tags");
+    await revalidateModontyTag("tags");
+    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch {}
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
     return { success: true, tag };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create tag";
@@ -193,6 +200,9 @@ export async function updateTag(
 
     const tag = await db.tag.update({ where: { id }, data: updateData });
     revalidatePath("/tags");
+    await revalidateModontyTag("tags");
+    try { const { generateAndSaveTagSeo } = await import("@/lib/seo/tag-seo-generator"); await generateAndSaveTagSeo(tag.id); } catch {}
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
     return { success: true, tag };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update tag";
@@ -229,6 +239,8 @@ export async function deleteTag(id: string) {
 
     await db.tag.delete({ where: { id } });
     revalidatePath("/tags");
+    await revalidateModontyTag("tags");
+    try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch {}
     return { success: true };
   } catch (error) {
     console.error("Error deleting tag:", error);
@@ -279,6 +291,7 @@ export async function bulkDeleteTags(tagIds: string[]) {
     });
 
     revalidatePath("/tags");
+    await revalidateModontyTag("tags");
     return { success: true };
   } catch (error) {
     console.error("Error bulk deleting tags:", error);
