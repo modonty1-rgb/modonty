@@ -14,11 +14,6 @@ export interface ImageUploadData {
   previewUrl: string;
 }
 
-export interface ImageUploadState {
-  imageData: ImageUploadData | null;
-  isRemoved: boolean; // true if user explicitly removed the image
-}
-
 interface DeferredImageUploadProps {
   categorySlug?: string;
   initialImageUrl?: string;
@@ -232,7 +227,6 @@ export function DeferredImageUpload({
                 className="w-full h-auto max-h-64 object-contain"
               />
               <div className="absolute top-2 right-2 flex gap-2">
-
                 <Button
                   type="button"
                   variant="destructive"
@@ -245,6 +239,13 @@ export function DeferredImageUpload({
                 </Button>
               </div>
             </div>
+            <Textarea
+              value={altText}
+              onChange={(e) => handleAltTextChange(e.target.value)}
+              placeholder="Image alt text (required for SEO)"
+              rows={2}
+              className="text-sm"
+            />
           </div>
         ) : (
           <div

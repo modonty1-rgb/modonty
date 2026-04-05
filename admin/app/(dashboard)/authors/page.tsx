@@ -1,20 +1,20 @@
 import { getModontyAuthor, getAuthorsStats } from "./actions/authors-actions";
-import { AuthorProfileStats } from "./components/author-profile-stats";
+import { getSEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { AuthorForm } from "./components/author-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FileText, ExternalLink } from "lucide-react";
-import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { FileText, CheckCircle2, Share2 } from "lucide-react";
 
 export default async function AuthorsPage() {
-  const [author, stats] = await Promise.all([
+  const [author, stats, seoSettings] = await Promise.all([
     getModontyAuthor(),
     getAuthorsStats(),
+    getSEOSettings(),
   ]);
 
   if (!author) {
     return (
-      <div className="max-w-[1200px] mx-auto space-y-6">
+      <div className="px-6 py-6 max-w-[1200px] mx-auto">
         <div className="text-center py-12">
           <p className="text-muted-foreground">Error: Modonty author not found</p>
         </div>
@@ -23,59 +23,47 @@ export default async function AuthorsPage() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">Modonty Author Profile</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage the unified Modonty author profile. All articles are automatically attributed to this author.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {author.url && (
-            <Link href={author.url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Profile
-              </Button>
-            </Link>
-          )}
-          <Link href={`/articles?authorId=${author.id}`}>
-            <Button variant="outline" size="sm">
-              <FileText className="h-4 w-4 mr-2" />
-              View Articles
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      <AuthorProfileStats
-        author={author}
-        stats={{
-          totalArticles: stats.totalArticles,
-          publishedArticles: stats.publishedArticles,
-          draftArticles: stats.draftArticles || 0,
-          archivedArticles: stats.archivedArticles || 0,
-          seoScore: stats.averageSEO,
-          socialProfilesCount: stats.socialProfilesCount || 0,
-          eetatSignalsCount: stats.eetatSignalsCount || 0,
-        }}
+    <div className="px-6 py-6 max-w-[1200px] mx-auto space-y-6">
+      <AuthorForm
+        initialData={author}
+        authorId={author.id}
+        seoSettings={seoSettings}
+        header={
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 ring-2 ring-primary/20">
+                <AvatarImage src={author.image ?? undefined} alt={author.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground font-bold">
+                  {author.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-xl font-semibold">{author.name}</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {author.jobTitle || "Author Profile"}
+                </p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-2">
+              <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+                <FileText className="h-3 w-3 text-violet-500" />
+                <span className="font-semibold">{stats.totalArticles}</span>
+                <span className="text-muted-foreground">articles</span>
+              </Badge>
+              <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                <span className="font-semibold">{stats.publishedArticles}</span>
+                <span className="text-muted-foreground">published</span>
+              </Badge>
+              <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+                <Share2 className="h-3 w-3 text-blue-500" />
+                <span className="font-semibold">{stats.socialProfilesCount}</span>
+                <span className="text-muted-foreground">social</span>
+              </Badge>
+            </div>
+          </div>
+        }
       />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Author Profile</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">
-            Update author profile information, social links, and SEO settings.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <AuthorForm
-            initialData={author}
-            authorId={author.id}
-          />
-        </CardContent>
-      </Card>
     </div>
   );
 }

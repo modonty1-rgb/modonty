@@ -46,6 +46,12 @@ interface ArticleAuthorBioProps {
 }
 
 export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
+  const authorSocial: { key: string; href: string; label: string; icon: IconComponent }[] = [
+    author.linkedIn ? { key: "author-linkedin", href: author.linkedIn, label: "لينكد إن الكاتب", icon: Linkedin } : null,
+    author.twitter ? { key: "author-twitter", href: author.twitter, label: "إكس الكاتب", icon: Twitter } : null,
+    author.facebook ? { key: "author-facebook", href: author.facebook, label: "فيسبوك الكاتب", icon: SocialFacebookOutline } : null,
+  ].filter((item): item is NonNullable<typeof item> => item !== null);
+
   const platformSocial = getPlatformSocialLinks();
 
   return (
@@ -66,7 +72,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
           <div className="flex flex-col gap-1">
             {author.slug ? (
               <Link
-                href={`/users/${author.slug}`}
+                href={`/authors/${author.slug}`}
                 className="text-lg font-semibold text-primary hover:text-primary/90 transition-colors"
               >
                 {author.name}
@@ -83,11 +89,23 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
               {author.bio}
             </p>
           )}
-          {platformSocial.length > 0 && (
+          {(authorSocial.length > 0 || platformSocial.length > 0) && (
             <nav
               className="flex flex-nowrap justify-center gap-1.5 text-muted-foreground overflow-x-auto min-w-0"
               aria-label="تابعنا على وسائل التواصل"
             >
+              {authorSocial.map(({ key, href, label, icon: Icon }) => (
+                <Link
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={platformSocialIconClass}
+                  aria-label={label}
+                >
+                  <Icon className="h-4 w-4" aria-hidden />
+                </Link>
+              ))}
               {platformSocial.map(({ key, href, label, icon: Icon }) => (
                 <Link
                   key={key}
@@ -110,7 +128,7 @@ export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
               variant="default"
             >
               <Link
-                href={`/users/${author.slug}`}
+                href={`/authors/${author.slug}`}
                 className="inline-flex items-center justify-center gap-1"
               >
                 صفحة الكاتب

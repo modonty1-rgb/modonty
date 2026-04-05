@@ -11,9 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, Bell } from "lucide-react";
 import { Breadcrumb } from "./breadcrumb";
 import { HeaderNav } from "./header-nav";
+import { ContactMessagesBadge } from "./contact-messages-badge";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
   const { data: session } = useSession();
@@ -33,7 +35,15 @@ export function Header() {
           <HeaderNav />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* Messages Bell */}
+          <Link href="/contact-messages">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9">
+              <Bell className="h-4 w-4" />
+              <ContactMessagesBadge />
+            </Button>
+          </Link>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">

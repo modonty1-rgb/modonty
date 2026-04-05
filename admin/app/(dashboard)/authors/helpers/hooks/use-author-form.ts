@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { AuthorWithRelations } from "@/lib/types";
@@ -65,17 +65,20 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
     verificationStatus: initialData?.verificationStatus || false,
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
-    canonicalUrl: initialData?.canonicalUrl || "",
+    canonicalUrl: initialData?.canonicalUrl || `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/authors/${initialData?.slug || MODONTY_AUTHOR_SLUG}`,
   });
-
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, slug: MODONTY_AUTHOR_SLUG }));
-  }, [formData.name]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!authorId) {
+      setError("Author ID is required");
+      toast({ title: "Error", description: "Author ID is required.", variant: "destructive" });
+      setLoading(false);
+      return;
+    }
 
     if (authorId && initialData?.id && (imageUploadData?.file || imageRemoved)) {
       await deleteOldImageAction("authors", initialData.id);
@@ -94,11 +97,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (!uploadResult.success) {
       setError(uploadResult.error || "Failed to upload image");
-      toast({
-        title: "Error",
-        description: uploadResult.error || "Failed to upload image",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: uploadResult.error || "Failed to upload image", variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -131,17 +130,6 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
       imageAlt: formData.imageAlt || undefined,
     };
 
-    if (!authorId) {
-      setError("Author ID is required");
-      toast({
-        title: "Error",
-        description: "Author ID is required. Only the Modonty author can be edited.",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
     const result = await updateAuthor(authorId, {
       ...submitData,
       ...(finalImage !== undefined ? { image: finalImage } : {}),
@@ -158,8 +146,8 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push("/authors");
         router.refresh();
+        router.push("/authors");
       }
     } else {
       setError(result.error || "Failed to save author");

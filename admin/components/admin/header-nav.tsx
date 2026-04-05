@@ -3,10 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { FileText, Building2, Image as ImageIcon, MessageSquare } from "lucide-react";
+import { FileText, Building2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ContactMessagesBadge } from "./contact-messages-badge";
 import {
   Tooltip,
   TooltipTrigger,
@@ -18,7 +17,6 @@ const navItems = [
   { icon: FileText, label: "Articles", href: "/articles" },
   { icon: Building2, label: "Clients", href: "/clients" },
   { icon: ImageIcon, label: "Media", href: "/media" },
-  { icon: MessageSquare, label: "Messages", href: "/contact-messages", showBadge: true },
 ];
 
 export function HeaderNav() {
@@ -61,7 +59,6 @@ export function HeaderNav() {
                   >
                     <Icon className="h-4 w-4" />
                     <span className="hidden lg:inline text-xs">{item.label}</span>
-                    {item.showBadge && <ContactMessagesBadge />}
                   </Button>
                 </Link>
               </TooltipTrigger>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getNewContactMessagesCount } from "@/app/(dashboard)/contact-messages/actions/contact-messages-actions";
-import { Badge } from "@/components/ui/badge";
 
 export function ContactMessagesBadge() {
   const [count, setCount] = useState<number | null>(null);
@@ -14,7 +13,6 @@ export function ContactMessagesBadge() {
     }
     fetchCount();
 
-    // Refresh count every 30 seconds
     const interval = setInterval(fetchCount, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -24,11 +22,8 @@ export function ContactMessagesBadge() {
   }
 
   return (
-    <Badge
-      variant="destructive"
-      className="ml-1 h-5 min-w-5 flex items-center justify-center px-1.5 text-xs"
-    >
+    <span className="absolute -top-0.5 -end-0.5 flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold leading-none">
       {count > 99 ? "99+" : count}
-    </Badge>
+    </span>
   );
 }

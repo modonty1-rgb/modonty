@@ -169,6 +169,77 @@ export default function AuthorsGuidelinesPage() {
         </CardContent>
       </Card>
 
+      {/* Author vs Publisher SEO Strategy */}
+      <Card className="border-amber-500/20 bg-amber-500/[0.03]">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-base">استراتيجية المؤلف وبناء مصداقية الدومين</CardTitle>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            معلومة مهمة جداً — كيف يتعامل Google مع المؤلف والناشر وتأثيرهما على ترتيب الموقع
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Key Concept */}
+          <div className="p-3 rounded-lg border bg-background">
+            <p className="text-sm font-semibold mb-2">الفرق بين المؤلف (Author) والناشر (Publisher)</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-blue-500/[0.05] border border-blue-500/20">
+                <p className="text-xs font-semibold text-blue-600 mb-1">Publisher — الناشر</p>
+                <p className="text-xs text-muted-foreground">هو اللي يبني مصداقية الدومين عند Google. &quot;مدونتي&quot; كناشر = Google يربط كل المحتوى بالمنصة ويبني ثقة الدومين.</p>
+                <p className="text-xs font-medium mt-2">النوع: Organization</p>
+              </div>
+              <div className="p-3 rounded-lg bg-violet-500/[0.05] border border-violet-500/20">
+                <p className="text-xs font-semibold text-violet-600 mb-1">Author — المؤلف</p>
+                <p className="text-xs text-muted-foreground">هو اللي كتب المقال. ممكن يكون شخص (Person) أو مؤسسة (Organization). Google يقبل كلاهما رسمياً.</p>
+                <p className="text-xs font-medium mt-2">النوع: Person أو Organization</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Why Modonty as Author */}
+          <div className="p-3 rounded-lg border bg-background">
+            <p className="text-sm font-semibold mb-2">لماذا نستخدم &quot;مدونتي&quot; كمؤلف؟</p>
+            <ul className="space-y-2">
+              {[
+                { title: "تركيز إشارات الثقة", detail: "بدل تشتيت E-E-A-T بين كتّاب متعددين، كل الإشارات تتركز في هوية واحدة — يقوّي الدومين" },
+                { title: "مرونة مستقبلية", detail: "لو جبت كتّاب مستقبلاً، تقدر تغير مقالات محددة لأشخاص حقيقيين بدون تأثير على باقي المقالات" },
+                { title: "Google يقبل هذا رسمياً", detail: "وثائق Google تسمح بـ Organization كمؤلف — مواقع مثل BBC و Reuters تستخدم نفس النهج للمقالات العامة" },
+                { title: "تناسق العلامة التجارية", detail: "كل المقالات تظهر باسم واحد — تجربة موحدة للزائر وبناء وعي بالعلامة" },
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" />
+                  <span><strong>{item.title}:</strong> {item.detail}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* What Google Sees */}
+          <div className="p-3 rounded-lg border bg-background">
+            <p className="text-sm font-semibold mb-2">ماذا يرى Google في كل مقال؟</p>
+            <div className="space-y-2 text-xs font-mono bg-muted/50 p-3 rounded-lg">
+              <p className="text-muted-foreground">// البيانات المنظمة في كل مقال:</p>
+              <p><span className="text-blue-500">&quot;publisher&quot;</span>: &#123; <span className="text-emerald-500">&quot;@type&quot;</span>: &quot;Organization&quot;, <span className="text-emerald-500">&quot;name&quot;</span>: &quot;مدونتي&quot; &#125; <span className="text-amber-500">← يبني مصداقية الدومين</span></p>
+              <p><span className="text-blue-500">&quot;author&quot;</span>: &#123; <span className="text-emerald-500">&quot;@type&quot;</span>: &quot;Person&quot;, <span className="text-emerald-500">&quot;name&quot;</span>: &quot;مدونتي&quot;, <span className="text-emerald-500">&quot;worksFor&quot;</span>: &quot;مدونتي&quot; &#125; <span className="text-amber-500">← يربط المؤلف بالمنصة</span></p>
+              <p><span className="text-blue-500">&quot;creditText&quot;</span>: &quot;مدونتي&quot; <span className="text-amber-500">← يظهر في Google Images</span></p>
+              <p><span className="text-blue-500">&quot;copyrightHolder&quot;</span>: &quot;مدونتي&quot; <span className="text-amber-500">← يحمي المحتوى قانونياً</span></p>
+            </div>
+          </div>
+
+          {/* When to Change */}
+          <div className="p-3 rounded-lg border border-amber-500/20 bg-amber-500/[0.03]">
+            <p className="text-xs font-semibold text-amber-600 mb-2">متى تغيّر هذا النهج؟</p>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              <li>• لو عيّنت كتّاب متخصصين بأسمائهم الحقيقية (أطباء، محامين، خبراء) — غيّر المقالات المتخصصة فقط لأشخاص</li>
+              <li>• لو المحتوى YMYL (صحي، مالي، قانوني) — Google يفضّل أشخاص حقيقيين بشهادات</li>
+              <li>• المقالات العامة والتقنية — خليها باسم المنصة، ما في مشكلة</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Profile Fields Table */}
       <Card>
         <CardHeader className="pb-3">

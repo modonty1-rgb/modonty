@@ -68,6 +68,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const authorUrl: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/authors/modonty`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+  ];
+
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/about`,
@@ -162,6 +171,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    ...authorUrl,
     ...staticPages,
     ...articleUrls,
     ...categoryUrls,

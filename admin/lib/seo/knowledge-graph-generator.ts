@@ -114,7 +114,7 @@ export function generateArticleKnowledgeGraph(
   graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl));
 
   // 4. Person (Author)
-  graph.push(generatePersonNode(article.author, ids.author, siteUrl));
+  graph.push(generatePersonNode(article.author, ids.author, siteUrl, article.client.name, ids.publisher));
 
   // 5. BreadcrumbList
   graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
@@ -487,16 +487,27 @@ function generateOrganizationNode(
 function generatePersonNode(
   author: Author,
   id: string,
-  siteUrl: string
+  siteUrl: string,
+  publisherName?: string,
+  publisherId?: string
 ): JsonLdNode {
   const node: JsonLdNode = {
     "@type": "Person",
     "@id": id,
     name: author.name,
+    ...(author.firstName && { givenName: author.firstName }),
+    ...(author.lastName && { familyName: author.lastName }),
     ...(author.bio && { description: author.bio }),
     ...(author.image && { image: author.image }),
-    ...(author.url && { url: author.url }),
+    url: author.url || `${siteUrl}/authors/${author.slug}`,
     ...(author.jobTitle && { jobTitle: author.jobTitle }),
+    ...(publisherName && {
+      worksFor: {
+        "@type": "Organization",
+        ...(publisherId && { "@id": publisherId }),
+        name: publisherName,
+      },
+    }),
   };
 
   // Expertise areas (E-E-A-T)

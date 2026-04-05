@@ -11,39 +11,20 @@ export async function getAuthorsStats() {
     const modontyAuthor = await getModontyAuthor();
     if (!modontyAuthor) {
       return {
-        total: 0,
-        withArticles: 0,
-        withoutArticles: 0,
-        createdThisMonth: 0,
-        averageSEO: 0,
         totalArticles: 0,
         publishedArticles: 0,
         draftArticles: 0,
-        archivedArticles: 0,
+        averageSEO: 0,
         socialProfilesCount: 0,
-        eetatSignalsCount: 0,
       };
     }
 
-    const articleCount = modontyAuthor._count.articles;
-    const [publishedArticleCount, draftArticleCount, archivedArticleCount] = await Promise.all([
+    const [publishedArticleCount, draftArticleCount] = await Promise.all([
       db.article.count({
-        where: {
-          authorId: modontyAuthor.id,
-          status: ArticleStatus.PUBLISHED,
-        },
+        where: { authorId: modontyAuthor.id, status: ArticleStatus.PUBLISHED },
       }),
       db.article.count({
-        where: {
-          authorId: modontyAuthor.id,
-          status: ArticleStatus.DRAFT,
-        },
-      }),
-      db.article.count({
-        where: {
-          authorId: modontyAuthor.id,
-          status: ArticleStatus.ARCHIVED,
-        },
+        where: { authorId: modontyAuthor.id, status: ArticleStatus.DRAFT },
       }),
     ]);
 
@@ -56,42 +37,20 @@ export async function getAuthorsStats() {
       ...(modontyAuthor.sameAs || []),
     ].filter(Boolean).length;
 
-    const eetatSignalsCount = [
-      modontyAuthor.jobTitle ? 1 : 0,
-      modontyAuthor.credentials && modontyAuthor.credentials.length > 0 ? 1 : 0,
-      modontyAuthor.expertiseAreas && modontyAuthor.expertiseAreas.length > 0 ? 1 : 0,
-      modontyAuthor.verificationStatus ? 1 : 0,
-      socialProfilesCount > 0 ? 1 : 0,
-    ].reduce((sum, val) => sum + val, 0);
-
     return {
-      total: 1,
-      withArticles: publishedArticleCount > 0 ? 1 : 0,
-      withoutArticles: publishedArticleCount === 0 ? 1 : 0,
-      createdThisMonth: 0,
-      averageSEO: scoreResult.percentage,
-      totalArticles: articleCount,
+      totalArticles: modontyAuthor._count.articles,
       publishedArticles: publishedArticleCount,
       draftArticles: draftArticleCount,
-      archivedArticles: archivedArticleCount,
+      averageSEO: scoreResult.percentage,
       socialProfilesCount,
-      eetatSignalsCount,
     };
   } catch (error) {
-    console.error("Error fetching authors stats:", error);
     return {
-      total: 0,
-      withArticles: 0,
-      withoutArticles: 0,
-      createdThisMonth: 0,
-      averageSEO: 0,
       totalArticles: 0,
       publishedArticles: 0,
       draftArticles: 0,
-      archivedArticles: 0,
+      averageSEO: 0,
       socialProfilesCount: 0,
-      eetatSignalsCount: 0,
     };
   }
 }
-
