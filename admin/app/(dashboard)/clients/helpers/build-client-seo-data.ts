@@ -123,10 +123,10 @@ export function buildClientSeoData(
     addressPostalCode: (pick("addressPostalCode") as string | null) ?? "",
     addressLatitude:
       (pick("addressLatitude") as number | null | undefined) ??
-      ((base as any).addressLatitude ?? null),
+      (base.addressLatitude as number | null | undefined) ?? null,
     addressLongitude:
       (pick("addressLongitude") as number | null | undefined) ??
-      ((base as any).addressLongitude ?? null),
+      (base.addressLongitude as number | null | undefined) ?? null,
     commercialRegistrationNumber:
       (pick("commercialRegistrationNumber") as string | null) ?? "",
     vatID: (pick("vatID") as string | null) ?? "",
@@ -149,11 +149,11 @@ export function buildClientSeoData(
     foundingDate: normalizedFoundingDate,
     parentOrganizationId:
       (pick("parentOrganizationId") as string | null | undefined) ??
-      ((base as any).parentOrganizationId ?? null),
+      (base.parentOrganizationId as string | null | undefined) ?? null,
     // Media relations are taken from the base client (DB / list) and not overridden by form text fields
-    logoMedia: (base as any).logoMedia ?? null,
-    ogImageMedia: (base as any).ogImageMedia ?? null,
-    twitterImageMedia: (base as any).twitterImageMedia ?? null,
+    logoMedia: base.logoMedia ?? null,
+    ogImageMedia: base.ogImageMedia ?? null,
+    twitterImageMedia: base.twitterImageMedia ?? null,
   };
 
   return data;

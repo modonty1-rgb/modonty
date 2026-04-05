@@ -40,6 +40,44 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
       ];
     }
 
+    // H9: Move article count filtering to DB via pre-query
+    if (filters?.minArticleCount !== undefined || filters?.maxArticleCount !== undefined) {
+      const articleCounts = await db.article.groupBy({
+        by: ["clientId"],
+        where: { status: ArticleStatus.PUBLISHED },
+        _count: { id: true },
+      });
+
+      const includeZeroArticleClients =
+        (filters.minArticleCount === undefined || filters.minArticleCount === 0) &&
+        (filters.maxArticleCount === undefined || filters.maxArticleCount >= 0);
+
+      const matchingClientIds = articleCounts
+        .filter((group) => {
+          const count = group._count.id;
+          if (filters.minArticleCount !== undefined && count < filters.minArticleCount) {
+            return false;
+          }
+          if (filters.maxArticleCount !== undefined && count > filters.maxArticleCount) {
+            return false;
+          }
+          return true;
+        })
+        .map((group) => group.clientId);
+
+      if (includeZeroArticleClients) {
+        const excludedClientIds = articleCounts
+          .filter((group) => !matchingClientIds.includes(group.clientId))
+          .map((group) => group.clientId);
+
+        if (excludedClientIds.length > 0) {
+          where.id = { notIn: excludedClientIds };
+        }
+      } else {
+        where.id = { in: matchingClientIds };
+      }
+    }
+
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -59,9 +97,7 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         subscriptionEndDate: true,
         articlesPerMonth: true,
         nextjsMetadata: true,
-        jsonLdStructuredData: true,
         jsonLdValidationReport: true,
-        // SEO fields needed for score calculation
         seoTitle: true,
         seoDescription: true,
         description: true,
@@ -148,22 +184,7 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
       orderBy: { createdAt: "desc" },
     });
 
-    let filteredClients = clients;
-
-    if (filters?.minArticleCount !== undefined || filters?.maxArticleCount !== undefined) {
-      filteredClients = clients.filter((client) => {
-        const articleCount = client._count.articles;
-        if (filters.minArticleCount !== undefined && articleCount < filters.minArticleCount) {
-          return false;
-        }
-        if (filters.maxArticleCount !== undefined && articleCount > filters.maxArticleCount) {
-          return false;
-        }
-        return true;
-      });
-    }
-
-    return filteredClients;
+    return clients;
   } catch (error) {
     console.error("Error fetching clients:", error);
     return [];

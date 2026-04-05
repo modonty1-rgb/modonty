@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Link2, Mail, Package, Calendar, Clock, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { getTierDisplayName, getSubscriptionDaysRemaining } from "../../../helpers/client-display-utils";
 
 interface RequiredTabProps {
   client: {
@@ -33,33 +34,9 @@ interface RequiredTabProps {
   };
 }
 
-const getTierName = (tier: string | null): string => {
-  if (!tier) return "Not Set";
-  switch (tier) {
-    case "BASIC":
-      return "Basic";
-    case "STANDARD":
-      return "Standard";
-    case "PRO":
-      return "Pro";
-    case "PREMIUM":
-      return "Premium";
-    default:
-      return tier;
-  }
-};
-
 export function RequiredTab({ client }: RequiredTabProps) {
-  const now = new Date();
-  const getSubscriptionDaysRemaining = () => {
-    if (!client.subscriptionEndDate) return null;
-    const endDate = new Date(client.subscriptionEndDate);
-    const diffTime = endDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
 
-  const daysRemaining = getSubscriptionDaysRemaining();
+  const daysRemaining = getSubscriptionDaysRemaining(client.subscriptionEndDate);
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 30;
 
   return (
@@ -114,7 +91,7 @@ export function RequiredTab({ client }: RequiredTabProps) {
                   <p className="text-sm text-muted-foreground">Subscription Tier</p>
                 </div>
                 <Badge variant="outline" className="text-sm">
-                  {getTierName(client.subscriptionTier)}
+                  {getTierDisplayName(client.subscriptionTier)}
                 </Badge>
               </div>
             )}

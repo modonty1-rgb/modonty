@@ -48,7 +48,7 @@ export async function POST(
     const cookieStore = await cookies();
     let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
     if (!sessionId) {
-      sessionId = `view-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+      sessionId = crypto.randomUUID();
       cookieStore.set(VIEW_SESSION_COOKIE, sessionId, {
         maxAge: SESSION_MAX_AGE,
         httpOnly: true,

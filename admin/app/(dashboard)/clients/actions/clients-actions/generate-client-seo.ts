@@ -40,6 +40,9 @@ interface MetaTagsObject {
     creator?: string;
   };
   canonical: string;
+  alternates?: {
+    languages: Record<string, string>;
+  };
   formatDetection: {
     telephone: boolean;
     email: boolean;
@@ -179,8 +182,22 @@ export async function generateClientSEO(clientId: string) {
     const canonicalUrl = ensureAbsoluteUrl(clientPageUrl) || clientPageUrl;
 
     const metaTags: MetaTagsObject = {
-      title: title.length > 60 ? title.substring(0, 57) + "..." : title,
-      description: description.length > 160 ? description.substring(0, 157) + "..." : description,
+      title: title.length > 60
+        ? (() => {
+            const lastSpace = title.lastIndexOf(" ", 57);
+            return lastSpace > 0
+              ? title.substring(0, lastSpace) + "..."
+              : title.substring(0, 57) + "...";
+          })()
+        : title,
+      description: description.length > 160
+        ? (() => {
+            const lastSpace = description.lastIndexOf(" ", 157);
+            return lastSpace > 0
+              ? description.substring(0, lastSpace) + "..."
+              : description.substring(0, 157) + "...";
+          })()
+        : description,
       robots: effectiveMetaRobots,
       author: client.name,
       language: inLanguage,
@@ -222,6 +239,22 @@ export async function generateClientSEO(clientId: string) {
     const uniqueLocales = [...new Set(supportedLanguages)];
     if (uniqueLocales.length > 1) {
       metaTags.openGraph.localeAlternate = uniqueLocales.filter((l) => l !== "ar_SA");
+    }
+
+    // alternates.languages for hreflang (Google i18n SEO)
+    if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
+      const hreflangMap: Record<string, string> = {};
+      for (const lang of client.knowsLanguage) {
+        const lower = lang.toLowerCase();
+        if (lower.includes("arabic") || lower.includes("ar")) {
+          hreflangMap["ar-SA"] = canonicalUrl;
+        } else if (lower.includes("english") || lower.includes("en")) {
+          hreflangMap["en"] = canonicalUrl;
+        }
+      }
+      if (Object.keys(hreflangMap).length > 0) {
+        metaTags.alternates = { languages: hreflangMap };
+      }
     }
 
     const orgName = client.name;
@@ -277,7 +310,11 @@ export async function generateClientSEO(clientId: string) {
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
     }
 
-    const jsonLdGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl, { siteUrl, siteName });
+    const jsonLdGraph = generateCompleteOrganizationJsonLd(
+      client as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
+      clientPageUrl,
+      { siteUrl, siteName },
+    );
 
     // Validate (Adobe + Ajv + business rules)
     const validationReport = await validateClientJsonLdComplete(jsonLdGraph, {
@@ -297,7 +334,7 @@ export async function generateClientSEO(clientId: string) {
     await db.client.update({
       where: { id: clientId },
       data: {
-        nextjsMetadata: metaTagsJson as any,
+        nextjsMetadata: metaTagsJson as Prisma.InputJsonValue,
         nextjsMetadataLastGenerated: new Date(),
         jsonLdStructuredData: jsonLdString,
         jsonLdLastGenerated: new Date(),

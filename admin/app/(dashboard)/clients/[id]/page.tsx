@@ -210,10 +210,10 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
   ).length;
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div className="p-4 sm:p-6 space-y-4">
       <ClientHeader client={client as any} seoScore={seoScore} />
       {seoScore < 80 && (
-        <div className="bg-muted/30 border border-border rounded-lg p-5 flex items-center gap-5 mb-6 mt-6">
+        <div className="bg-muted/30 border border-border rounded-lg p-4 flex items-center gap-4">
           <div
             className={`flex flex-col items-center justify-center w-14 h-14 rounded-full border-2 flex-shrink-0 ${
               seoScore >= 80 ? "border-green-500" : seoScore >= 50 ? "border-yellow-500" : "border-destructive"
@@ -233,17 +233,17 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
             <span className="text-[9px] text-muted-foreground">SEO</span>
           </div>
           <div className="flex-1">
-            <h3 className="text-foreground font-semibold text-sm">SEO غير مكتمل</h3>
+            <h3 className="text-foreground font-semibold text-sm">بيانات البحث غير مكتملة</h3>
             <p className="text-muted-foreground text-xs mt-0.5">
-              أضف بيانات الـ SEO لتحسين ظهور العميل في نتائج البحث
+              أضف بيانات محركات البحث لتحسين ظهور العميل في نتائج البحث
             </p>
           </div>
           <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link href={`/clients/${id}/seo`}>Setup SEO ⚡</Link>
+            <Link href={`/clients/${id}/seo`}>إعداد بيانات البحث ⚡</Link>
           </Button>
         </div>
       )}
-      <div className="mt-6">
+      <div>
         <ClientTabs
           client={client as any}
           articles={articles}

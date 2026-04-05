@@ -27,15 +27,32 @@ export async function normalizeJsonLd(
     const compacted = await jsonld.compact(expanded, context);
 
     // Ensure @graph structure is maintained
+    let result: JsonLdGraph;
     if (compacted && typeof compacted === 'object' && "@graph" in compacted) {
-      return compacted as unknown as JsonLdGraph;
+      result = compacted as unknown as JsonLdGraph;
+    } else {
+      // If single node, wrap in @graph
+      result = {
+        "@context": "https://schema.org",
+        "@graph": Array.isArray(compacted) ? compacted : [compacted],
+      } as JsonLdGraph;
     }
 
-    // If single node, wrap in @graph
-    return {
-      "@context": "https://schema.org",
-      "@graph": Array.isArray(compacted) ? compacted : [compacted],
-    } as JsonLdGraph;
+    // Fix: jsonld.compact() with Schema.org context converts @id → id and @type → type.
+    // Restore JSON-LD spec-compliant @ prefixes on all graph nodes.
+    if (result["@graph"] && Array.isArray(result["@graph"])) {
+      result["@graph"] = (result["@graph"] as Record<string, unknown>[]).map((node) => {
+        const fixed: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(node)) {
+          if (k === "id") fixed["@id"] = v;
+          else if (k === "type") fixed["@type"] = v;
+          else fixed[k] = v;
+        }
+        return fixed;
+      }) as JsonLdGraph["@graph"];
+    }
+
+    return result;
   } catch (error) {
     // If normalization fails, return original (with warning)
     console.warn("JSON-LD normalization failed, using original:", error);

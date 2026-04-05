@@ -28,10 +28,10 @@ export function ClientsStats({ stats }: ClientsStatsProps) {
       </div>
       <div className="flex-1 [&>*]:w-full">
         <AnalticCard
-          title="SEO Health"
+          title="صحة البحث"
           value={`${stats.averageSEO}%`}
           icon="Search"
-          description={stats.averageSEO >= 80 ? "Good" : stats.averageSEO >= 60 ? "Needs work" : "Critical"}
+          description={stats.averageSEO >= 80 ? "جيد" : stats.averageSEO >= 60 ? "يحتاج تحسين" : "ضعيف"}
           variant="compact"
         />
       </div>

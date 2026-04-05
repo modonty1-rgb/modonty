@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { DeleteClientButton } from "./delete-client-button";
+import { getTierDisplayName } from "../../helpers/client-display-utils";
 
 interface ClientHeaderProps {
   client: {
@@ -24,12 +25,11 @@ interface ClientHeaderProps {
 
 export function ClientHeader({ client, seoScore }: ClientHeaderProps) {
   const tierLabel = client.subscriptionTier
-    ? client.subscriptionTier.charAt(0) +
-      client.subscriptionTier.slice(1).toLowerCase()
+    ? getTierDisplayName(client.subscriptionTier)
     : null;
 
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-between gap-4 py-3 border-b bg-background mb-4">
+    <div className="sticky top-0 z-10 flex items-center justify-between gap-4 py-3 border-b bg-background">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {client.logoMedia?.url ? (
           <img

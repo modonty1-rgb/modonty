@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Calendar, Package, CreditCard, Clock } from "lucide-react";
+import { getTierDisplayName, getSubscriptionDaysRemaining } from "../../../helpers/client-display-utils";
 
 interface SubscriptionTabProps {
   client: {
@@ -24,33 +25,8 @@ interface SubscriptionTabProps {
   };
 }
 
-const getTierName = (tier: string | null): string => {
-  if (!tier) return "Not Set";
-  switch (tier) {
-    case "BASIC":
-      return "Basic";
-    case "STANDARD":
-      return "Standard";
-    case "PRO":
-      return "Pro";
-    case "PREMIUM":
-      return "Premium";
-    default:
-      return tier;
-  }
-};
-
 export function SubscriptionTab({ client }: SubscriptionTabProps) {
-  const now = new Date();
-  const getSubscriptionDaysRemaining = () => {
-    if (!client.subscriptionEndDate) return null;
-    const endDate = new Date(client.subscriptionEndDate);
-    const diffTime = endDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const daysRemaining = getSubscriptionDaysRemaining();
+  const daysRemaining = getSubscriptionDaysRemaining(client.subscriptionEndDate);
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 30;
 
   return (
@@ -68,7 +44,7 @@ export function SubscriptionTab({ client }: SubscriptionTabProps) {
                   <p className="text-sm text-muted-foreground">Subscription Tier</p>
                 </div>
                 <Badge variant="outline" className="text-sm">
-                  {getTierName(client.subscriptionTier)}
+                  {getTierDisplayName(client.subscriptionTier)}
                 </Badge>
               </div>
             )}

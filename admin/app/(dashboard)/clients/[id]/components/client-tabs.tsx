@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { AddressTab } from "./tabs/address-tab";
@@ -15,17 +16,7 @@ import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
 import { ArticleStatus } from "@prisma/client";
 import type { MediaType } from "@prisma/client";
-
-type DetailSection =
-  | "address"
-  | "legal"
-  | "media"
-  | "security"
-  | "settings"
-  | "additional"
-  | "analytics"
-  | "articles"
-  | null;
+import { getTierDisplayName, calculateDeliveryRate } from "../../helpers/client-display-utils";
 
 type ClientTabsProps = {
   client: {
@@ -96,7 +87,6 @@ type ClientTabsProps = {
     jsonLdValidationReport: {
       adobe?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
       custom?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
-      richResults?: { valid: boolean; errors?: unknown[]; warnings?: unknown[] };
     } | null;
     foundingDate: Date | null;
     commercialRegistrationNumber: string | null;
@@ -228,25 +218,10 @@ export function ClientTabs({
   analytics,
   media,
 }: ClientTabsProps) {
-  const [activeDetail, setActiveDetail] = useState<DetailSection>(null);
-  const detailRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (activeDetail && detailRef.current) {
-      const el = detailRef.current;
-      const main = document.querySelector("main");
-      if (main) {
-        const top = el.getBoundingClientRect().top + main.scrollTop - 100;
-        main.scrollTo({ top, behavior: "smooth" });
-      }
-    }
-  }, [activeDetail]);
-
   // Delivery
   const promised =
     client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
-  const deliveryRate =
-    promised > 0 ? Math.round((articlesThisMonth / promised) * 100) : 0;
+  const deliveryRate = calculateDeliveryRate(promised, articlesThisMonth);
   const isBehind = articlesThisMonth < promised;
 
   // SEO — read from cached validation report
@@ -271,27 +246,23 @@ export function ClientTabs({
   const subExpired = client.subscriptionStatus === "EXPIRED";
   const subOverdue = client.paymentStatus === "OVERDUE";
   const tierLabel = client.subscriptionTier
-    ? client.subscriptionTier.charAt(0) +
-      client.subscriptionTier.slice(1).toLowerCase()
+    ? getTierDisplayName(client.subscriptionTier)
     : "—";
 
-  const detailNav: Array<{ key: DetailSection; label: string }> = [
-    { key: "address", label: "Address" },
-    { key: "legal", label: "Legal" },
-    { key: "media", label: "Social & Media" },
-    { key: "security", label: "Security" },
-    { key: "settings", label: "Settings" },
-    { key: "additional", label: "Additional" },
-  ];
-
   return (
-    <div className="flex gap-6">
-      {/* ── LEFT: 4 MAIN CARDS + DETAIL PANEL ── */}
-      <div className="flex-1 min-w-0 space-y-4">
-        {/* ① PROFILE */}
-        <SectionCard title="Profile">
+    <Tabs defaultValue="overview" dir="rtl">
+      <TabsList className="mb-4">
+        <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
+        <TabsTrigger value="details">التفاصيل</TabsTrigger>
+        <TabsTrigger value="content">المحتوى</TabsTrigger>
+      </TabsList>
+
+      {/* ── Tab 1: نظرة عامة ── */}
+      <TabsContent value="overview" className="space-y-4">
+        {/* ① الملف الشخصي */}
+        <SectionCard title="الملف الشخصي">
           <Grid cols={2}>
-            <Field label="Email">
+            <Field label="البريد">
               {client.email ? (
                 <a
                   href={`mailto:${client.email}`}
@@ -303,7 +274,7 @@ export function ClientTabs({
                 <span className="text-muted-foreground">—</span>
               )}
             </Field>
-            <Field label="Phone">
+            <Field label="الهاتف">
               {client.phone ? (
                 <a
                   href={`tel:${client.phone}`}
@@ -315,7 +286,7 @@ export function ClientTabs({
                 <span className="text-muted-foreground">—</span>
               )}
             </Field>
-            <Field label="Website">
+            <Field label="الموقع">
               {client.url ? (
                 <a
                   href={client.url}
@@ -329,7 +300,7 @@ export function ClientTabs({
                 <span className="text-muted-foreground">—</span>
               )}
             </Field>
-            <Field label="Industry">
+            <Field label="القطاع">
               <span>
                 {client.industry?.name ?? (
                   <span className="text-muted-foreground">—</span>
@@ -340,7 +311,7 @@ export function ClientTabs({
           {client.businessBrief && (
             <div className="mt-4 pt-4 border-t">
               <p className="text-xs text-muted-foreground mb-2">
-                Business Brief
+                نبذة عن النشاط
               </p>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                 {client.businessBrief}
@@ -349,44 +320,44 @@ export function ClientTabs({
           )}
         </SectionCard>
 
-        {/* ② SUBSCRIPTION */}
+        {/* ② الاشتراك */}
         <SectionCard
-          title="Subscription"
+          title="الاشتراك"
           badge={
             subExpired ? (
               <Badge
                 variant="outline"
                 className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
               >
-                Expired
+                منتهي
               </Badge>
             ) : subOverdue ? (
               <Badge
                 variant="outline"
                 className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
               >
-                Overdue
+                متأخر
               </Badge>
             ) : (
               <Badge
                 variant="outline"
                 className="text-xs text-green-500 border-green-500/40 bg-green-500/10"
               >
-                Active
+                نشط
               </Badge>
             )
           }
         >
           <Grid cols={4}>
-            <Field label="Tier">
+            <Field label="الباقة">
               <Badge variant="secondary" className="text-xs">
                 {tierLabel}
               </Badge>
             </Field>
-            <Field label="Articles/month">
+            <Field label="مقالات/شهر">
               <span className="text-lg font-medium">{promised}</span>
             </Field>
-            <Field label="Status">
+            <Field label="الحالة">
               <span
                 className={cn(
                   "text-sm font-medium",
@@ -398,7 +369,7 @@ export function ClientTabs({
                 {client.subscriptionStatus}
               </span>
             </Field>
-            <Field label="Payment">
+            <Field label="الدفع">
               <span
                 className={cn(
                   "text-sm font-medium",
@@ -411,14 +382,14 @@ export function ClientTabs({
               </span>
             </Field>
             {client.subscriptionStartDate && (
-              <Field label="Start">
+              <Field label="البداية">
                 <span>
                   {format(new Date(client.subscriptionStartDate), "MMM d, yyyy")}
                 </span>
               </Field>
             )}
             {client.subscriptionEndDate && (
-              <Field label="Expires">
+              <Field label="الانتهاء">
                 <span className={cn(subExpired && "text-destructive font-medium")}>
                   {format(new Date(client.subscriptionEndDate), "MMM d, yyyy")}
                 </span>
@@ -429,39 +400,39 @@ export function ClientTabs({
             <div className="mt-3 pt-3 border-t text-xs text-amber-500/80 flex items-center gap-1.5">
               ⚠{" "}
               {subExpired
-                ? "Subscription expired — contact client to renew"
-                : "Payment overdue — follow up with client"}
+                ? "الاشتراك منتهي — تواصل مع العميل للتجديد"
+                : "الدفع متأخر — تابع مع العميل"}
             </div>
           )}
         </SectionCard>
 
-        {/* ③ DELIVERY */}
+        {/* ③ التسليم هذا الشهر */}
         <SectionCard
-          title="Delivery this month"
+          title="التسليم هذا الشهر"
           badge={
             promised === 0 ? (
               <Badge variant="secondary" className="text-xs">
-                No commitment
+                بدون التزام
               </Badge>
             ) : isBehind ? (
               <Badge
                 variant="outline"
                 className="text-xs text-amber-500 border-amber-500/30 bg-amber-500/10"
               >
-                Behind
+                متأخر
               </Badge>
             ) : (
               <Badge
                 variant="outline"
                 className="text-xs text-green-500 border-green-500/40 bg-green-500/10"
               >
-                On track
+                على المسار
               </Badge>
             )
           }
         >
           <Grid cols={3}>
-            <Field label="Total articles">
+            <Field label="إجمالي المقالات">
               <Link
                 href={`/articles?clientId=${client.id}`}
                 className="text-2xl font-semibold text-primary hover:underline"
@@ -469,7 +440,7 @@ export function ClientTabs({
                 {client._count.articles}
               </Link>
             </Field>
-            <Field label="This month">
+            <Field label="هذا الشهر">
               <span
                 className={cn(
                   "text-2xl font-semibold",
@@ -478,13 +449,13 @@ export function ClientTabs({
               >
                 {articlesThisMonth}
                 {promised > 0 && (
-                  <span className="text-sm font-normal text-muted-foreground ml-1">
+                  <span className="text-sm font-normal text-muted-foreground ms-1">
                     / {promised}
                   </span>
                 )}
               </span>
             </Field>
-            <Field label="Rate">
+            <Field label="النسبة">
               <span
                 className={cn(
                   "text-2xl font-semibold",
@@ -501,9 +472,9 @@ export function ClientTabs({
           </Grid>
         </SectionCard>
 
-        {/* ④ SEO */}
+        {/* ④ محركات البحث */}
         <SectionCard
-          title="SEO"
+          title="محركات البحث"
           badge={
             seoStatus === "good" ? (
               <Badge
@@ -530,31 +501,31 @@ export function ClientTabs({
           }
         >
           <Grid cols={2}>
-            <Field label="Meta cache">
+            <Field label="بيانات الوصف">
               {hasMeta ? (
-                <span className="text-green-500 font-medium">✓ Generated</span>
+                <span className="text-green-500 font-medium">✓ مُنشأ</span>
               ) : (
-                <span className="text-red-400 font-medium">✗ Missing</span>
+                <span className="text-red-400 font-medium">✗ مفقود</span>
               )}
             </Field>
-            <Field label="JSON-LD">
+            <Field label="بيانات البحث">
               {hasJsonLd && jsonLdErrors === 0 ? (
-                <span className="text-green-500 font-medium">✓ Valid</span>
+                <span className="text-green-500 font-medium">✓ صالح</span>
               ) : hasJsonLd && jsonLdErrors > 0 ? (
                 <span className="text-amber-500 font-medium">
-                  {jsonLdErrors} errors
+                  {jsonLdErrors} أخطاء
                 </span>
               ) : (
-                <span className="text-red-400 font-medium">✗ Missing</span>
+                <span className="text-red-400 font-medium">✗ مفقود</span>
               )}
             </Field>
             {client.seoTitle && (
-              <Field label="SEO Title">
+              <Field label="عنوان البحث">
                 <span>{client.seoTitle}</span>
               </Field>
             )}
             {client.canonicalUrl && (
-              <Field label="Canonical">
+              <Field label="الرابط الرسمي">
                 <a
                   href={client.canonicalUrl}
                   target="_blank"
@@ -568,101 +539,39 @@ export function ClientTabs({
           </Grid>
           {!hasMeta && (
             <div className="mt-3 pt-3 border-t text-xs text-red-400/80">
-              ✗ No SEO cache — open Edit and save to generate
+              ✗ لا توجد بيانات بحث — افتح التعديل واحفظ لتوليدها
             </div>
           )}
         </SectionCard>
+      </TabsContent>
 
-        {/* ── DETAIL PANELS (toggle on sidebar click) ── */}
-        <div ref={detailRef} />
-        {activeDetail === "address" && <AddressTab client={client} />}
-        {activeDetail === "legal" && <LegalTab client={client} />}
-        {activeDetail === "media" && (
-          <MediaSocialTab
-            client={client}
-            media={media.map((m) => ({ ...m, type: m.type as MediaType }))}
-          />
-        )}
-        {activeDetail === "security" && <SecurityTab client={client} />}
-        {activeDetail === "settings" && <SettingsTab client={client} />}
-        {activeDetail === "additional" && <AdditionalTab client={client} />}
-        {activeDetail === "analytics" && (
-          <ClientAnalytics
-            analytics={analytics}
-            clientId={client.id}
-            client={client}
-            articlesThisMonth={articlesThisMonth}
-            totalArticles={articles.length}
-          />
-        )}
-        {activeDetail === "articles" && (
-          <ClientArticles
-            articles={articles.map((a) => ({ ...a, status: a.status as ArticleStatus }))}
-            clientId={client.id}
-          />
-        )}
-      </div>
+      {/* ── Tab 2: التفاصيل ── */}
+      <TabsContent value="details" className="space-y-4">
+        <AddressTab client={client} />
+        <LegalTab client={client} />
+        <MediaSocialTab
+          client={client}
+          media={media.map((m) => ({ ...m, type: m.type as MediaType }))}
+        />
+        <SecurityTab client={client} />
+        <SettingsTab client={client} />
+        <AdditionalTab client={client} />
+      </TabsContent>
 
-      {/* ── RIGHT: SIDEBAR ── */}
-      <div className="w-44 shrink-0">
-        <div
-          className="sticky top-6 space-y-3"
-          style={{ maxHeight: 'calc(100vh - 6rem)', overflowY: 'auto' }}
-        >
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider px-2 pb-1">
-            Details
-          </p>
-          {detailNav.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setActiveDetail(activeDetail === key ? null : key)}
-              className={cn(
-                "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
-                activeDetail === key
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-
-          <div className="border-t my-2" />
-
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider px-2 pb-1">
-            Content
-          </p>
-          <button
-            onClick={() =>
-              setActiveDetail(activeDetail === "analytics" ? null : "analytics")
-            }
-            className={cn(
-              "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
-              activeDetail === "analytics"
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-            )}
-          >
-            Performance
-          </button>
-          <button
-            onClick={() =>
-              setActiveDetail(activeDetail === "articles" ? null : "articles")
-            }
-            className={cn(
-              "w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center justify-between",
-              activeDetail === "articles"
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-            )}
-          >
-            <span>Articles</span>
-            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">
-              {client._count.articles}
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
+      {/* ── Tab 3: المحتوى ── */}
+      <TabsContent value="content" className="space-y-4">
+        <ClientAnalytics
+          analytics={analytics}
+          clientId={client.id}
+          client={client}
+          articlesThisMonth={articlesThisMonth}
+          totalArticles={articles.length}
+        />
+        <ClientArticles
+          articles={articles.map((a) => ({ ...a, status: a.status as ArticleStatus }))}
+          clientId={client.id}
+        />
+      </TabsContent>
+    </Tabs>
   );
 }

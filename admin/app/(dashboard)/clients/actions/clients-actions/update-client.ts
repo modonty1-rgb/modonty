@@ -1,10 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
+import { clientServerSchema } from "./client-server-schema";
 import { groupFieldsByTab, hasGroupData } from "../../helpers/group-fields-by-tab";
 import {
   updateRequiredFields,
@@ -22,6 +24,16 @@ import { generateClientSEO } from "./generate-client-seo";
 
 export async function updateClient(id: string, data: ClientFormData) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
+
+    // Server-side Zod validation
+    const parsed = clientServerSchema.safeParse(data);
+    if (!parsed.success) {
+      const firstError = parsed.error.errors[0];
+      return { success: false, error: firstError.message };
+    }
+
     // Early security check: Verify client ID exists
     const clientExists = await db.client.findUnique({
       where: { id },
@@ -62,8 +74,8 @@ export async function updateClient(id: string, data: ClientFormData) {
 
     // Check for failures
     const failedGroups = results.filter((r) => !r.success);
-    
-    if (failedGroups.length > 0) {
+
+    if (failedGroups.length === results.length) {
       const errorMessages = failedGroups.map((r) => `${r.groupName}: ${r.success === false ? r.error : "Unknown error"}`).join("; ");
       return {
         success: false,
@@ -71,27 +83,45 @@ export async function updateClient(id: string, data: ClientFormData) {
       };
     }
 
-    // All groups updated successfully
     const client = await db.client.findUnique({ where: { id } });
-    
-    // Automatically regenerate MetaTags and JSON-LD after successful update
-    // This ensures SEO data stays in sync with client field changes
+
+    let warning: string | undefined;
+
+    // Partial success: some groups failed but others succeeded
+    if (failedGroups.length > 0 && failedGroups.length < results.length) {
+      warning = `تم الحفظ جزئياً. فشل تحديث: ${failedGroups.map(g => g.groupName).join(', ')}`;
+    }
+
+    // Regenerate client SEO (MetaTags + JSON-LD)
     const seoResult = await generateClientSEO(id);
     if (!seoResult.success) {
-      // Log warning but don't fail the entire update
-      // This ensures users can still save their changes even if SEO generation fails
-      console.warn(`Failed to regenerate SEO data for client ${id}: ${seoResult.error}`);
+      const seoWarning = "تم الحفظ بنجاح، لكن فشل توليد بيانات البحث. يمكنك تحديثها لاحقاً.";
+      warning = warning ? `${warning} | ${seoWarning}` : seoWarning;
     }
-    
-    // Note: generateClientSEO already calls revalidatePath, but we keep these for consistency
+
+    // Cascade: regenerate JSON-LD for all client articles
+    // Client data (name, logo, org info) is embedded in article JSON-LD as publisher
+    try {
+      const clientArticles = await db.article.findMany({
+        where: { clientId: id },
+        select: { id: true },
+      });
+      if (clientArticles.length > 0) {
+        const { batchRegenerateJsonLd } = await import("@/lib/seo");
+        await batchRegenerateJsonLd(clientArticles.map((a) => a.id));
+      }
+    } catch {
+      // Don't fail the update if article cascade fails
+    }
+
     revalidatePath("/clients");
     revalidatePath(`/clients/${id}`);
     revalidatePath("/media");
     await revalidateModontyTag("clients");
+    await revalidateModontyTag("articles");
     
-    return { success: true, client };
+    return warning ? { success: true, client, warning } : { success: true, client };
   } catch (error) {
-    console.error("Error updating client:", error);
     const message = error instanceof Error ? error.message : "Failed to update client";
     return { success: false, error: message };
   }

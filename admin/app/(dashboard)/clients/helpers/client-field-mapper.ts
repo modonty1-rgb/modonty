@@ -55,7 +55,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
     // Saudi Arabia & Gulf Identifiers
     commercialRegistrationNumber: data.commercialRegistrationNumber || null,
     vatID: data.vatID || null,
-    taxID: data.vatID || data.taxID || null, // Use VAT ID as Tax ID if Tax ID is not provided
+    taxID: data.taxID || data.vatID || null, // Fallback to VAT ID only if Tax ID is not provided
     legalForm: data.legalForm || null,
 
     // Address Enhancement (National Address Format)

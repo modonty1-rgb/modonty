@@ -83,7 +83,7 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
         onClick={() => setIsOpen(true)}
       >
         <RefreshCw className="h-3.5 w-3.5" />
-        Regenerate SEO
+        تحديث بيانات محركات البحث
       </Button>
     );
   }
@@ -95,13 +95,13 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
         {/* Header */}
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold">Regenerate SEO Cache</h2>
+            <h2 className="text-sm font-semibold">تحديث بيانات محركات البحث</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
               {isRunning
-                ? `Processing ${current} of ${clients.length}...`
+                ? `جاري المعالجة ${current} من ${clients.length}...`
                 : progress.length === 0
-                ? `${clients.length} clients will be processed`
-                : `Done — ${done} success · ${errors} failed`}
+                ? `سيتم تحديث ${clients.length} عميل`
+                : `تم — ${done} نجح · ${errors} فشل`}
             </p>
           </div>
           {!isRunning && progress.length > 0 && (
@@ -109,7 +109,7 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
               onClick={handleClose}
               className="text-muted-foreground hover:text-foreground text-xs"
             >
-              Close
+              إغلاق
             </button>
           )}
         </div>
@@ -134,8 +134,8 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
         <div className="px-5 py-3 max-h-64 overflow-y-auto space-y-1">
           {progress.length === 0 ? (
             <p className="text-xs text-muted-foreground py-2">
-              This will regenerate nextjsMetadata and jsonLdStructuredData
-              for all {clients.length} clients. Google reads this data directly.
+              سيتم تحديث بيانات الظهور في محركات البحث
+              لجميع العملاء ({clients.length} عميل). قوقل يقرأ هذه البيانات مباشرة.
             </p>
           ) : (
             progress.map((p) => (
@@ -178,23 +178,23 @@ export function RegenerateAllSeoButton({ clients }: RegenerateAllSeoButtonProps)
           {!isRunning && progress.length === 0 && (
             <>
               <Button variant="outline" size="sm" onClick={handleClose}>
-                Cancel
+                إلغاء
               </Button>
               <Button size="sm" onClick={handleStart}>
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                Start
+                بدء
               </Button>
             </>
           )}
           {isRunning && (
             <Button size="sm" disabled>
               <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-              Running...
+              جاري التحديث...
             </Button>
           )}
           {!isRunning && progress.length > 0 && (
             <Button size="sm" onClick={handleClose}>
-              Done
+              تم
             </Button>
           )}
         </div>

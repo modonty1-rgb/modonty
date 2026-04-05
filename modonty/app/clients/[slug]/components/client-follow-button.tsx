@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ export function ClientFollowButton({
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [followersCount, setFollowersCount] = useState(initialFollowersCount);
   const [loading, setLoading] = useState(false);
+  const isPending = useRef(false);
 
   useEffect(() => {
     const fetchFollowStatus = async () => {
@@ -56,9 +57,12 @@ export function ClientFollowButton({
       return;
     }
 
+    if (isPending.current) return;
+    isPending.current = true;
+
     const previousFollowing = isFollowing;
     const previousCount = followersCount;
-    
+
     setIsFollowing(!isFollowing);
     setFollowersCount(isFollowing ? followersCount - 1 : followersCount + 1);
     setLoading(true);
@@ -89,6 +93,7 @@ export function ClientFollowButton({
       setFollowersCount(previousCount);
     } finally {
       setLoading(false);
+      isPending.current = false;
     }
   };
 

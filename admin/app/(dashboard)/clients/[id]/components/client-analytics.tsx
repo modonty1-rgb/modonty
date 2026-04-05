@@ -8,6 +8,7 @@ import { Eye, Users, Clock, TrendingDown, MousePointerClick, BarChart3, Search, 
 import { AnalticCard } from "@/components/shared/analtic-card";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { getSubscriptionDaysRemaining, calculateDeliveryRate } from "../../helpers/client-display-utils";
 
 interface ChannelSummary {
   views: number;
@@ -70,24 +71,13 @@ export function ClientAnalytics({ analytics, clientId, client, articlesThisMonth
   const topArticles = analytics.topArticles || [];
 
   // Delivery metrics calculations
-  const now = new Date();
   const promisedArticles =
     client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
   const deliveredArticles = articlesThisMonth;
-  const deliveryRate = promisedArticles > 0
-    ? Math.round((deliveredArticles / promisedArticles) * 100)
-    : 0;
+  const deliveryRate = calculateDeliveryRate(promisedArticles, deliveredArticles);
   const isBehind = deliveredArticles < promisedArticles;
 
-  const getSubscriptionDaysRemaining = () => {
-    if (!client.subscriptionEndDate) return null;
-    const endDate = new Date(client.subscriptionEndDate);
-    const diffTime = endDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const daysRemaining = getSubscriptionDaysRemaining();
+  const daysRemaining = getSubscriptionDaysRemaining(client.subscriptionEndDate);
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 30;
 
   return (

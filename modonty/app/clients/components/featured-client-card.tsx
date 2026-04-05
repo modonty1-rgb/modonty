@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "@/components/link";
 import { IconArticle, IconViews, IconUsers, IconCheckCircle, IconAi } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
@@ -29,13 +30,17 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
     >
       <div className="relative h-[280px] rounded-xl overflow-hidden">
         {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{
-            backgroundImage: props.logo ? `url(${props.logo})` : 'none',
-            backgroundColor: props.logo ? 'transparent' : 'hsl(var(--muted))'
-          }}
-        />
+        {props.logo ? (
+          <Image
+            src={props.logo}
+            alt={props.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1128px) 80vw, 1128px"
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-muted" />
+        )}
         
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />

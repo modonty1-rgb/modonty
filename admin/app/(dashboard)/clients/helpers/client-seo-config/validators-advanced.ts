@@ -795,8 +795,9 @@ export const validateSaudiIdentifiers: SEOFieldValidator = (value, data) => {
   // VAT ID validation (ZATCA format)
   if (hasVATID) {
     const vatID = data.vatID as string;
-    // ZATCA VAT ID format: usually 15 digits
-    const isValidVATFormat = /^\d{15}$/.test(vatID.replace(/\s/g, ""));
+    // ZATCA VAT ID format: 15 digits (strip all non-digits before validation)
+    const cleaned = vatID.replace(/\D/g, "");
+    const isValidVATFormat = /^\d{15}$/.test(cleaned);
 
     if (isValidVATFormat) {
       return {

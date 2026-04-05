@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ClientsStats } from "../actions/clients-actions/types";
+import { getTierDisplayName } from "../helpers/client-display-utils";
 
 interface BusinessAnalyticsProps {
   stats: ClientsStats;
@@ -40,7 +41,7 @@ export function BusinessAnalytics({ stats }: BusinessAnalyticsProps) {
   const revenueByTierData = (stats.revenue?.byTier ? Object.entries(stats.revenue.byTier) : [])
     .filter(([_, value]) => typeof value === "number" && value > 0)
     .map(([tier, value]) => ({
-      name: tier.charAt(0) + tier.slice(1).toLowerCase(),
+      name: getTierDisplayName(tier),
       value: Math.round(value as number),
       formatted: formatCurrency(value as number),
     }));

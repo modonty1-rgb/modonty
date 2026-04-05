@@ -23,7 +23,7 @@ export interface ClientBusinessValidationResult {
 /**
  * Ajv instance for Organization schema validation
  */
-const ajv = new Ajv({ allErrors: true, verbose: true });
+const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 /**

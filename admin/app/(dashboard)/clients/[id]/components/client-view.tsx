@@ -31,6 +31,7 @@ import {
 import { SEOHealthGauge } from "@/components/shared/seo-doctor/seo-health-gauge";
 import { organizationSEOConfig } from "../../helpers/client-seo-config";
 import { DeleteClientButton } from "./delete-client-button";
+import { getTierDisplayName } from "../../helpers/client-display-utils";
 
 interface Client {
   id: string;
@@ -103,22 +104,6 @@ interface ClientViewProps {
   client: Client;
 }
 
-
-const getTierName = (tier: string | null): string => {
-  if (!tier) return "Not Set";
-  switch (tier) {
-    case "BASIC":
-      return "Basic";
-    case "STANDARD":
-      return "Standard";
-    case "PRO":
-      return "Pro";
-    case "PREMIUM":
-      return "Premium";
-    default:
-      return tier;
-  }
-};
 
 export function ClientView({ client }: ClientViewProps) {
   const [basicOpen, setBasicOpen] = useState(true);
@@ -310,7 +295,7 @@ export function ClientView({ client }: ClientViewProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Subscription Tier</p>
                   <Badge variant="outline" className="text-sm">
-                    {getTierName(client.subscriptionTier)}
+                    {getTierDisplayName(client.subscriptionTier)}
                   </Badge>
                 </div>
               )}

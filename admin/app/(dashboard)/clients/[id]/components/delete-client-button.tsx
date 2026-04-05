@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,13 +26,18 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const isDeleting = useRef(false);
+
   const handleDelete = async () => {
+    if (isDeleting.current) return;
+    isDeleting.current = true;
     setLoading(true);
     const result = await deleteClient(clientId);
     if (result.success) {
       router.push("/clients");
       router.refresh();
     } else {
+      isDeleting.current = false;
       setLoading(false);
       setOpen(false);
       toast({
@@ -46,7 +51,7 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
+        <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" aria-label="حذف العميل">
           <Trash2 className="h-4 w-4 mr-2" />
           Delete
         </Button>

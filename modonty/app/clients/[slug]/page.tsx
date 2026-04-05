@@ -16,30 +16,6 @@ import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/cl
 import { ClientViewTracker } from "./components/client-view-tracker";
 import ClientLoading from "./loading";
 
-/** Fixes malformed JSON-LD from admin cache: renames bare "id" and "type" keys
- *  to "@id" and "@type" at every level of the @graph array.
- *  Only renames keys that are exactly "id" or "type" (not "contactType", etc.)
- */
-function sanitizeJsonLd(raw: string): string {
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed?.["@graph"] && Array.isArray(parsed["@graph"])) {
-      parsed["@graph"] = parsed["@graph"].map((node: Record<string, unknown>) => {
-        const fixed: Record<string, unknown> = {};
-        for (const [k, v] of Object.entries(node)) {
-          if (k === "id") fixed["@id"] = v;
-          else if (k === "type") fixed["@type"] = v;
-          else fixed[k] = v;
-        }
-        return fixed;
-      });
-    }
-    return JSON.stringify(parsed);
-  } catch {
-    return raw;
-  }
-}
-
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -159,7 +135,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
     const structuredData = generateStructuredData({
       type: "Client",
       name: client.name,
-      description: (client as any).description || client.seoDescription || undefined,
+      description: client.description || client.seoDescription || undefined,
       url: client.url || `/clients/${encodeURIComponent(slug)}`,
       image: client.logoMedia?.url || client.ogImageMedia?.url || undefined,
       "@type": "Organization",
@@ -167,10 +143,10 @@ async function ClientPageContent({ params }: ClientPageProps) {
       email: client.email || undefined,
       telephone: client.phone || undefined,
       sameAs: client.sameAs.length > 0 ? client.sameAs : undefined,
-      foundingDate: (client as any).foundingDate ? 
-        (typeof (client as any).foundingDate === "string" 
-          ? (client as any).foundingDate.split("T")[0] 
-          : (client as any).foundingDate.toISOString().split("T")[0]) 
+      foundingDate: client.foundingDate
+        ? (typeof client.foundingDate === "string"
+            ? (client.foundingDate as string).split("T")[0]
+            : client.foundingDate.toISOString().split("T")[0])
         : undefined,
     });
 
@@ -185,7 +161,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         {cachedSeo?.jsonLdStructuredData ? (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(cachedSeo.jsonLdStructuredData) }}
+            dangerouslySetInnerHTML={{ __html: cachedSeo.jsonLdStructuredData }}
           />
         ) : (
           <>

@@ -20,32 +20,15 @@ export async function getClientArticles(clientId: string) {
 
     const articleIds = articles.map((a) => a.id);
 
-    if (articleIds.length > 0) {
-      const viewsCounts = await db.analytics.groupBy({
-        by: ["articleId"],
-        where: {
-          articleId: { in: articleIds },
-        },
-        _count: {
-          id: true,
-        },
-      });
-
-      const viewsMap = new Map(viewsCounts.map((v) => [v.articleId, v._count.id]));
-
-      return articles.map((article) => ({
-        id: article.id,
-        title: article.title,
-        slug: article.slug,
-        status: article.status,
-        createdAt: article.createdAt,
-        datePublished: article.datePublished,
-        scheduledAt: article.scheduledAt,
-        category: article.category,
-        author: article.author,
-        views: viewsMap.get(article.id) || 0,
-      }));
-    }
+    const viewsMap = articleIds.length > 0
+      ? new Map(
+          (await db.analytics.groupBy({
+            by: ["articleId"],
+            where: { articleId: { in: articleIds } },
+            _count: { id: true },
+          })).map((v) => [v.articleId, v._count.id])
+        )
+      : new Map<string, number>();
 
     return articles.map((article) => ({
       id: article.id,
@@ -57,7 +40,7 @@ export async function getClientArticles(clientId: string) {
       scheduledAt: article.scheduledAt,
       category: article.category,
       author: article.author,
-      views: 0,
+      views: viewsMap.get(article.id) || 0,
     }));
   } catch (error) {
     console.error("Error fetching client articles:", error);

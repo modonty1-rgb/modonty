@@ -1,308 +1,237 @@
-# مدونتي — قائمة المهام الموحّدة
-> مُجمَّعة من مراجعة 125 ملف | آخر تحديث: أبريل 2026
+# Master TODO — MODONTY Admin + Frontend
+
+> Last Updated: 2026-04-05
+> Current versions: admin v0.10.0 | modonty v1.16.0
+> This is the single source of truth for all pending tasks
 
 ---
 
-## الأولويات الحرجة (ابدأ هنا)
+## Cross-App Issues
 
-| # | المهمة | الملف المصدر |
-|---|--------|-------------|
-| 🔴 | إصلاح أخطاء TypeScript وبناء المشروع | BUILD-ERRORS-SUMMARY.md |
-| 🔴 | إضافة SCHEDULED لـ Prisma enum أو حذفه من الـ form types | BUILD-ERRORS-SUMMARY.md |
-| 🔴 | إضافة حقلي `ogImageWidth/ogImageHeight` للـ Prisma schema أو حذفهم | BUILD-ERRORS-SUMMARY.md |
-| 🔴 | تشغيل `npm run build` والتحقق من نجاح البناء | BUILD-ERRORS-SUMMARY.md |
-| 🔴 | إضافة متغيرات البيئة الناقصة (NEXTAUTH_URL، DATABASE_URL، RESEND_API_KEY) | ENV-DEPLOY-CHECKLIST.md |
+### URGENT: Revert Arabic Labels Back to English in Admin
 
----
+Admin console UI is ENGLISH. Data content is Arabic. Labels/headings/buttons were incorrectly translated to Arabic in this session. Must revert:
 
-## 🤖 الشات بوت
+- [ ] **X18: Revert client detail page labels to English** — `client-tabs.tsx` changed "Profile"→"الملف الشخصي", "Subscription"→"الاشتراك", etc. ALL must go back to English
+- [ ] **X19: Revert client stats labels to English** — `clients-stats.tsx` changed "SEO Health"→"صحة البحث" etc.
+- [ ] **X20: Revert SEO tab labels to English** — `seo-tab.tsx` changed "Regenerate"→"تحديث", "Copied"→"تم النسخ" etc.
+- [ ] **X21: Revert client detail page banner to English** — `[id]/page.tsx` changed "Setup SEO"→"إعداد بيانات البحث" etc.
+- [ ] **X22: Revert client form hint to English** — `client-form.tsx` changed hint text
+- [ ] **X23: Revert filters to English** — `clients-filters.tsx` filter labels added in Arabic
+- [ ] **X24: Scan ALL client files for any Arabic UI labels** — full audit to catch anything missed
 
-**المصدر:** `06-ai-chatbot/CHATBOT-TODO.md` و `CHATBOT-PRE-DEPLOY-TEST.md`
+### Auth Check on ALL Mutation Server Actions
 
-### Analytics Dashboard
-- [ ] بناء لوحة تحليلات لبيانات ChatbotMessage
-  - [ ] أكثر الاستفسارات تكراراً
-  - [ ] فلترة حسب: التاريخ، المقال، الفئة
-  - [ ] مخطط زمني (يومي/أسبوعي)
-  - [ ] تصدير CSV
+Server actions can be called directly via POST — dashboard layout auth is NOT enough. Every mutation must have `auth()` check.
 
-### المحادثات
-- [ ] استئناف المحادثات الكاملة من قاعدة البيانات
-- [ ] ربط الرسائل بـ session/conversation واحدة
+| Entity | Create | Update | Delete | Status |
+|--------|--------|--------|--------|--------|
+| Clients | Yes | Yes | Yes | Done |
+| Articles | check | check | check | Needs check |
+| Categories | check | check | check | Needs check |
+| Tags | check | check | check | Needs check |
+| Industries | check | check | check | Needs check |
+| Authors | N/A | check | N/A | Needs check |
+| Media | check | check | check | Needs check |
+| Settings | N/A | check | N/A | Needs check |
 
-### اختبار ما قبل النشر
-- [ ] تشغيل Phase 1.1 RAG test — التحقق 4/4 passed
-- [ ] تشغيل Phase 1.2 HTTP test — التحقق من جميع الحالات
-- [ ] Phase 2.1–2.5 — اختبار 4 flows يدوياً
-- [ ] التحقق: لا cards لـ in-scope + no-DB queries
-- [ ] التحقق: روابط Serper تظهر عند استخدام Serper
-- [ ] Phase 3 article chat — اختبار التشغيل
-- [ ] التحقق: لا console errors أثناء الاختبارات
-- [ ] ضبط `COHERE_API_KEY` في env
-- [ ] ضبط `SERPER_API_KEY` في env
+- [ ] **X9: Add auth check to article mutations**
+- [ ] **X10: Add auth check to category mutations**
+- [ ] **X11: Add auth check to tag mutations**
+- [ ] **X12: Add auth check to industry mutations**
+- [ ] **X13: Add auth check to author/media/settings mutations**
 
----
+### Zod Server-Side Validation on ALL Mutations
 
-## ⚡ الأداء وCore Web Vitals
+Every mutation server action must use `safeParse()` before DB operations. Client-side form validation is UX only.
 
-**المصدر:** `05-performance/`
+| Entity | Create | Update | Delete | Status |
+|--------|--------|--------|--------|--------|
+| Clients | Yes | Yes | N/A (only needs id) | Done |
+| Articles | check | check | N/A | Needs check |
+| Categories | check | check | N/A | Needs check |
+| Tags | check | check | N/A | Needs check |
+| Industries | check | check | N/A | Needs check |
 
-### Phase 0 — قياس الخط الأساسي
-- [ ] تشغيل Lighthouse (Mobile) على `/` وتسجيل: FCP, LCP, TBT, CLS
-- [ ] حفظ التقرير (JSON أو screenshot) للمقارنة
-- [ ] تسجيل Performance trace (DevTools → CPU 4× slowdown, Network Slow 4G)
+- [ ] **X14: Add Zod validation to article mutations**
+- [ ] **X15: Add Zod validation to category mutations**
+- [ ] **X16: Add Zod validation to tag mutations**
+- [ ] **X17: Add Zod validation to industry mutations**
 
-### Phase 1 — تخفيف Layout والـ Navigation
-- [ ] إعادة تشغيل Lighthouse بعد Phase 1 والتحقق من تحسن long tasks
+### Remove ALL Bulk Delete Code
 
-### Phase 2 — تأجيل الشات بوت
-- [ ] إعادة تشغيل Lighthouse بعد Phase 2
-- [ ] التحقق: chatbot JS لا يظهر في long tasks الرئيسية
+Bulk delete is removed by decision — single delete is sufficient. Check all entities.
 
-### Phase 3 — Home Feed وقوائم المقالات
-- [ ] تقسيم interactive pieces إلى client islands:
-  - [ ] Like button
-  - [ ] Favorite/Bookmark toggle
-  - [ ] Share / TTS controls
-- [ ] عرض أول N posts فقط above fold
-- [ ] استخدام InfiniteArticleList للـ scroll loading
-- [ ] إعادة تشغيل Lighthouse بعد Phase 3
+| Entity | Action File | UI Component | Status |
+|--------|-------------|--------------|--------|
+| Clients | `bulk-delete-clients.ts` | `bulk-actions-toolbar.tsx` | Done — deleted |
+| Media | was removed in v0.9.0 | was removed in v0.9.0 | Done |
+| Articles | `bulk-delete-articles.ts` | `bulk-actions-toolbar.tsx` | Needs check |
+| Categories | check if exists | check if exists | Needs check |
+| Tags | check if exists | check if exists | Needs check |
+| Industries | check if exists | check if exists | Needs check |
 
-### Phase 4 — التواريخ
-- [ ] تنسيق التواريخ على الـ server بدلاً من الـ client
-- [ ] إبقاء RelativeTime (client) فقط حيث يحتاج تحديثاً حياً
-- [ ] حذف `Date.now()` من مسارات الـ render
+- [ ] **X5: Audit and remove bulk delete from articles**
+- [ ] **X6: Audit and remove bulk delete from categories (if exists)**
+- [ ] **X7: Audit and remove bulk delete from tags (if exists)**
+- [ ] **X8: Audit and remove bulk delete from industries (if exists)**
 
-### TBT المؤقت (لإرجاعه لاحقاً)
-- [ ] مراجعة التغييرات المؤقتة في `TBT_Temporary_Changes.md` وإرجاع ما تم تعطيله
+### Slug Uniqueness Validation
 
----
+All entities with `slug` must validate uniqueness before save. Do NOT rely on Prisma DB error.
 
-## 🛠️ التطوير التقني
+| Entity | Create | Update | Prisma Constraint | Status |
+|--------|--------|--------|--------------------|--------|
+| Clients | Yes | Yes | `@unique` (global) | Done |
+| Articles | NO | NO | `@@unique([clientId, slug])` (scoped) | Needs fix |
+| Categories | NO | NO | `@unique` (global) | Needs fix |
+| Tags | NO | NO | `@unique` (global) | Needs fix |
+| Industries | NO | NO | `@unique` (global) | Needs fix |
+| Authors | N/A | Hardcoded slug | `@unique` (global) | OK by design |
 
-**المصدر:** `04-technical-dev/`
+- [ ] **X1: Add slug uniqueness to article create/update** — Scoped: check `@@unique([clientId, slug])`
+  - Files: `articles/actions/articles-actions/mutations/create-article.ts`, `update-article.ts`
+- [ ] **X2: Add slug uniqueness to category create/update**
+  - File: `categories/actions/categories-actions/create-category.ts`, `update-category.ts`
+- [ ] **X3: Add slug uniqueness to tag create/update**
+  - File: `tags/actions/tags-actions.ts` (functions `createTag`, `updateTag`)
+- [ ] **X4: Add slug uniqueness to industry create/update**
+  - File: `industries/actions/industries-actions/create-industry.ts`, `update-industry.ts`
 
-### إصلاحات TypeScript
-- [ ] حل مشكلة SEODoctor module imports (قد يحتاج Prisma client regeneration)
-- [ ] إصلاح structured data type issues في `lib/seo/structured-data.ts`
-- [ ] إصلاح User form type issues في `users/new/page.tsx`
-- [ ] إصلاح Articles page client type issues
+### SEO Cache Gaps (from SEO-CACHE-STANDARD.md)
 
-### Cache Components (عند تفعيل `cacheComponents: true`)
-- [ ] إزالة route segment configs (dynamic, revalidate, fetchCache)
-- [ ] استبدال revalidate بـ cacheLife للـ cached functions
-- [ ] إضافة Suspense boundary فوق Footer (بسبب `new Date()` في FooterYear)
-- [ ] لـ API routes: استخراج cached logic لـ helper مع "use cache"
-- [ ] استخدام `await connection()` للـ request-time الصريح
-
-### وظيفة البحث (Search)
-- [ ] إضافة `search?: string` لـ ArticleFilters في `modonty/app/api/helpers/types.ts`
-- [ ] إضافة search filter لـ `getArticlesCached`
-- [ ] تنفيذ Prisma `contains` search (title + excerpt)
-- [ ] إنشاء `/app/search/page.tsx` (Server Component)
-- [ ] إنشاء `/app/search/loading.tsx` مع skeleton
-- [ ] إنشاء `/app/search/error.tsx`
-- [ ] إنشاء `SearchInput.tsx` (Client Component)
-- [ ] إنشاء `SearchResults.tsx` (Server Component)
-- [ ] إنشاء `SearchEmptyState.tsx`
-- [ ] تحديث TopNav form action لـ `/search`
-- [ ] إضافة تحقق: لا يبحث بأقل من 2 حرف
-- [ ] إضافة Arabic pluralization لعدد النتائج
-- [ ] اختبار: keyboard navigation (Enter, Tab, Escape)
-
-### Gemini Adapter (بديل OpenAI — توفير 35%)
-- [ ] تثبيت `@google/generative-ai`
-- [ ] الحصول على Gemini API key من Google AI Studio
-- [ ] إضافة `GEMINI_API_KEY` لـ `.env.local`
-- [ ] إنشاء `admin/lib/gemini-seed.ts`
-- [ ] إنشاء abstraction layer في `admin/lib/ai-provider.ts`
-- [ ] تحديث seed functions لاستخدام الـ abstraction
-- [ ] إضافة fallback: Gemini → OpenAI عند الفشل
-- [ ] اختبار: توليد 10 مقالات عربية وقياس التكلفة
+| # | Gap | Priority |
+|---|-----|----------|
+| 1 | Category/Tag/Industry — missing Organization in JSON-LD | High |
+| 2 | Category/Tag/Industry — missing alternates.languages in metadata | High |
+| 3 | Client update — missing cascade to regenerate articles | High (in CLIENTS-TODO C7) |
+| 4 | Article — missing nextjsMetadata cache verification | High |
+| 5 | Category/Tag/Industry — missing cascade to regenerate articles | Medium |
+| 6 | About + Legal pages — frontend builds meta live instead of reading cache | Medium |
+| 7 | Contact + Help pages — should use Modonty Pages system | Medium |
+| 8 | Settings change — no auto-cascade to all entities | Medium |
+| 9 | News page — no SEO cache | Low |
+| 10 | Search page — document as noindex | Low |
+| 11 | User profiles — no SEO cache | Low |
 
 ---
 
-## 🔍 SEO وStructured Data
+## Sections — Detailed TODOs
 
-**المصدر:** `02-seo/`
+### Clients (Current Sprint)
 
-### Phase A — Social Image Alt
-- [ ] إضافة `onAltChange` callback لـ DeferredImageUpload
-- [ ] ربط `onAltChange` في SEOSection
-- [ ] تحديث generator لاستخدام `socialImageAlt` في og:image:alt و twitter:image:alt
+**Full TODO:** [CLIENTS-TODO.md](admin/CLIENTS-TODO.md)
 
-### Phase B — Generator Meta 100%
-- [ ] إضافة `socialImageAlt` لـ generator select
-- [ ] إضافة `alternateLanguages` لـ generator select
-- [ ] إخراج: `googlebot` (مشتق من robots)
-- [ ] إخراج: `hreflang` من alternateLanguages
-- [ ] إخراج: `openGraph.images[].alt`
-- [ ] إخراج: `twitter.imageAlt`
+| Priority | Count | Status |
+|----------|-------|--------|
+| CRITICAL | 10 (1 done) | In progress |
+| HIGH | 15 | Not started |
+| MEDIUM | 17 | Not started |
+| LOW | 15 | Not started |
 
-### Phase C — JSON-LD Full @graph
-- [ ] إضافة env variables:
-  - [ ] `SITE_URL`, `SITE_NAME`, `BRAND_DESCRIPTION`
-  - [ ] `SAME_AS` (JSON array), `CONTACT_EMAIL`, `CONTACT_TYPE`
-  - [ ] `LOGO_URL`, `KNOWS_LANGUAGE`, `ADDRESS`, `GEO`
-- [ ] تطوير `generate-modonty-page-jsonld.ts` لبناء @graph كامل
-- [ ] تضمين: Organization, WebSite, WebPage/AboutPage, BreadcrumbList
+**Completed:**
+- [x] C3: Slug uniqueness validation (create + update)
 
-### Phase D — Validator
-- [ ] السماح بـ: Organization, WebSite, AboutPage, BreadcrumbList
-- [ ] التحقق من وجود WebPage أو AboutPage
-- [ ] التحقق من معايير Adobe Structured Data
+**Next up:**
+- [ ] C1: Auth checks on all mutations
+- [ ] C2: Zod validation on all mutations
+- [ ] C5: Tax ID assignment bug (3 files)
+- [ ] C6: JSON-LD `@id`/`@type` generation bug
+- [ ] C7: Client update → article JSON-LD cascade
 
-### Phase E — UI/DB إضافية
-- [ ] إضافة Prisma fields: `author`, `keywords`, `googlebot`, `ogDeterminer`, `ogLocaleAlternate`, `twitterSiteId`, `twitterCreatorId`
-- [ ] إضافة UI inputs في تبويب SEO: author, keywords, googlebot
-- [ ] إضافة UI inputs في تبويب Social: ogDeterminer, twitterSiteId/CreatorId
-- [ ] إضافة hint عند فراغ الـ description في Generated SEO
-- [ ] تجميع Meta Tags بأقسام في الـ UI
+### Articles (Next Sprint)
 
-### JSON-LD Knowledge Graph
-- [ ] مراجعة خطة Knowledge Graph في `02-seo/jsonld-specs/JSON-LD-KNOWLEDGE-GRAPH-RECHECK-PLAN.md`
-- [ ] تطبيق التوصيات على بيانات Author (Singleton)
-- [ ] مراجعة Cloudinary SEO filenames وتطبيق الحل
+**Full TODO:** [CLIENTS-ARTICLES-STUDY.md](admin/CLIENTS-ARTICLES-STUDY.md) (study complete, TODO pending)
 
----
+**Key issues identified:**
+- [ ] Author hardcoded to Modonty (can't select different author)
+- [ ] View components reference deleted JSON-LD fields (dead code)
+- [ ] nextjsMetadata cache — verify frontend reads it correctly
+- [ ] No auto-save for drafts
+- [ ] No pagination in admin list
+- [ ] Missing slug uniqueness validation (X1 above)
+- [ ] Full UI/UX review pending
 
-## 📊 Analytics وGTM
+### Media (Completed — Pushed v0.9.0 + v1.15.0)
 
-**المصدر:** `03-analytics-gtm/`
+**Full TODO:** [MEDIA-PAGE-IMPROVEMENTS.md](admin/MEDIA-PAGE-IMPROVEMENTS.md)
+- Header redesign: done
+- Grid redesign with client grouping: done
+- Upload page 3-column grid: done
+- EXIF removal: done
+- Image SEO (alt text, JSON-LD creditText/copyrightHolder): done
+- Image sitemap: done
 
-- [ ] إضافة `NEXT_PUBLIC_GTM_CONTAINER_ID` لـ env إذا لم يكن موجوداً
-- [ ] التحقق من صحة GTM integration في production
-- [ ] اختبار GA4 events على جميع الصفحات
-- [ ] تكوين conversion tracking
-- [ ] اختبار event firing
-- [ ] التحقق من جمع البيانات في GA4
+### Authors (Completed — Pushed v0.10.0 + v1.16.0)
 
----
+**Full TODO:** [AUTHORS-PAGE-IMPROVEMENTS.md](admin/AUTHORS-PAGE-IMPROVEMENTS.md)
+- Single card layout: done
+- SEO cache with Person JSON-LD: done
+- Frontend `/authors/[slug]` page: done
+- Social links from DB: done
+- Auto JSON-LD cascade to articles: done
 
-## 🚀 النشر والبنية التحتية
+### Categories (Not Started)
 
-**المصدر:** `08-intake-setup/setup-deploy/`
+- [ ] Full inspection needed (like clients)
+- [ ] UI/UX review
+- [ ] SEO cache compliance (Gap #1, #2, #5)
+- [ ] Slug uniqueness (X2 above)
 
-### متغيرات البيئة
-- [ ] `NEXTAUTH_URL=https://admin.modonty.com` في production
-- [ ] التحقق من `DATABASE_URL` → MongoDB production
-- [ ] التحقق من قوة `AUTH_SECRET`
-- [ ] التحقق من `CLOUDINARY_URL` والمفاتيح المرتبطة
-- [ ] التحقق من `RESEND_API_KEY` و `RESEND_FROM`
-- [ ] حذف trailing space من `GOOGLE_SEARCH_CONSOLE_SITE_URL`
-- [ ] التحقق من `OPENAI_API_KEY` (غير مقتطع)
-- [ ] حذف المتغيرات غير المستخدمة: `RESEND_EMAIL_LOGO_URL`, `NEXT_PUBLIC_PHONE_NUMBER`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
+### Tags (Not Started)
 
-### Google OAuth
-- [ ] فتح Google Cloud Console وإنشاء/اختيار مشروع
-- [ ] تفعيل Google+ API أو People API
-- [ ] إنشاء OAuth Consent Screen
-- [ ] إنشاء OAuth 2.0 Client ID
-- [ ] إضافة Authorized Origins:
-  - [ ] `http://localhost:3000`
-  - [ ] `https://modonty.com`
-- [ ] إضافة Redirect URIs:
-  - [ ] `http://localhost:3000/api/auth/callback/google`
-  - [ ] `https://modonty.com/api/auth/callback/google`
-- [ ] تحديث `.env` بـ Client ID و Client Secret
-- [ ] اختبار تسجيل الدخول بـ Google
+- [ ] Full inspection needed
+- [ ] UI/UX review
+- [ ] SEO cache compliance (Gap #1, #2, #5)
+- [ ] Slug uniqueness (X3 above)
+
+### Industries (Not Started)
+
+- [ ] Full inspection needed
+- [ ] UI/UX review
+- [ ] SEO cache compliance (Gap #1, #2, #5)
+- [ ] Slug uniqueness (X4 above)
 
 ---
 
-## 🎨 المنتج والميزات الجديدة
+## Previously Completed
 
-**المصدر:** `01-business-marketing/COMPETITIVE_ANALYSIS.md` و `MODONTY_100_EXTRA_SUGGESTIONS.md`
+### Session v0.9.0 + v1.15.0 (Pushed)
+- Media page complete redesign
+- Image SEO audit and fixes
+- Image sitemap created
+- EXIF removed
+- Bulk delete removed
+- Replace-in-grid removed
 
-### الأسبوع الأول (Phase 1)
-- [ ] اختبار Image Fallback System مع URLs صحيحة/مكسورة/فارغة
-- [ ] اختبار Reading Time على مقالات قصيرة (<3 دقائق) وطويلة (>10 دقائق)
-- [ ] اختبار Bookmark: إضافة/إزالة، بدون مصادقة، استمرارية DB
-- [ ] إنشاء صفحة "المحفوظات" (My Bookmarks)
-- [ ] اختبار Related Articles: نفس الفئة، لا يظهر المقال الحالي
-
-### الأسبوع الثاني (Phase 2)
-- [ ] إضافة قسم Trending (الأيام 6-7)
-- [ ] إضافة Author Follow Functionality (الأيام 7-8)
-- [ ] تحسين البحث بـ Autocomplete (الأيام 8-9)
-
-### ميزات مفقودة للإضافة
-- [ ] Email Newsletters — جدول Subscribers في DB + إرسال تلقائي عند النشر
-- [ ] Content Scheduling — حقل `scheduledAt` في Articles
-- [ ] RSS Feeds
-- [ ] Content Versioning
-- [ ] API Access للعملاء
-- [ ] Export/Import للمحتوى
-- [ ] Tags System (بالإضافة للفئات)
-- [ ] Custom Branding لكل عميل
-- [ ] Content Templates
-- [ ] Multi-language Support للمقالات
-- [ ] Advanced SEO Tools
-- [ ] Content Archiving
-
-### تحسينات الأسعار (Pricing Cards)
-**الباقة المجانية:**
-- [ ] إضافة شعار العميل في الصفحة الرئيسية
-- [ ] إضافة "زيارة الموقع" لمن لديه موقع
-
-**الباقة الأساسية:**
-- [ ] Content Calendar (تواريخ النشر القادمة)
-- [ ] Article preview + approval workflow
-- [ ] Canonical URL لكل مقالة
-- [ ] تنبيه عند نشر مقال جديد
-- [ ] مقارنة الأداء شهرياً
-
-**الباقة الاحترافية:**
-- [ ] تقارير أداء شهرية
-- [ ] تصدير قائمة المشتركين (CSV/GDPR)
-- [ ] قوالب ردود الدعم
-- [ ] Bulk comment moderation
-- [ ] تصدير Analytics شهرياً (CSV/Excel)
-
-**الباقة المطورة:**
-- [ ] تقرير SEO دوري (ربع سنوي)
-- [ ] تنبيهات تغيير ترتيب المنافسين
-- [ ] تقارير Analytics مخصصة
-- [ ] دعم متعدد اللغات للمقالات
-- [ ] إدارة متقدمة للأدوار (admin, editor, viewer)
-- [ ] تكامل CRM
-
-**عام:**
-- [ ] فترة تجريبية مجانية (1-2 أسبوع)
-- [ ] خصم الدفع السنوي (%)
-- [ ] جدول مقارنة سريع بين الباقات
-- [ ] FAQ للاشتراكات والترقيات
+### Session v0.10.0 + v1.16.0 (Pushed)
+- Authors page complete overhaul
+- SEO cache with Person JSON-LD
+- Frontend author page created
+- Header/nav redesign (bell notification)
+- DeferredImageUpload alt text fix
+- SEO-CACHE-STANDARD.md created
+- Session handoff protocol established
 
 ---
 
-## 🧪 الاختبار وضمان الجودة
+## Work Order
 
-**المصدر:** `05-performance/QA-TEST-REPORT-COMPLETE.md`
-
-- [ ] اختبار Cross-browser (Chrome, Firefox, Safari, Edge)
-- [ ] اختبار Mobile (أحجام مختلفة)
-- [ ] Accessibility audit
-- [ ] Performance audit (Lighthouse)
-- [ ] التحقق: جميع ألوان Design System تستخدم theme tokens (لا hex hardcoded)
-- [ ] التحقق: لا linting errors
-- [ ] التحقق: لا console.log في production
-- [ ] التحقق: لا TODO comments في الكود
-
----
-
-## 📈 ملخص الأولويات
-
-| المجال | الحالة | الأهمية |
-|--------|--------|---------|
-| إصلاح TypeScript build errors | 🔴 مطلوب فوراً | حرجة |
-| متغيرات البيئة للـ production | 🔴 مطلوب فوراً | حرجة |
-| Phase 0 قياس الأداء (Baseline) | 🟠 هذا الأسبوع | عالية |
-| وظيفة البحث | 🟠 هذا الأسبوع | عالية |
-| SEO Phase A+B | 🟠 هذا الأسبوع | عالية |
-| Chatbot Analytics Dashboard | 🟡 قريباً | متوسطة |
-| Gemini Adapter | 🟡 قريباً | متوسطة |
-| ميزات الأسبوع الثاني | 🟢 لاحقاً | عادية |
-| تحسينات الأسعار | 🟢 لاحقاً | عادية |
+```
+Current:  Clients (fixing 57 issues)
+    ↓
+Next:     Articles (study done, TODO + fixes needed)
+    ↓
+Then:     Cross-app slug fixes (X1-X4)
+    ↓
+Then:     Categories + Tags + Industries (inspect + fix + SEO gaps)
+    ↓
+Finally:  SEO cache gaps (remaining from standard)
+```
 
 ---
 
-> **ملاحظة:** هذا الملف مُجمَّع تلقائياً من مراجعة كل الوثائق — أي مهمة تنجز شيلها أو ضع ✅ أمامها
+> Reference files:
+> - [SESSION-LOG.md](../context/SESSION-LOG.md) — session handoff for next agent
+> - [SEO-CACHE-STANDARD.md](../MODONTY-RULE/SEO-CACHE-STANDARD.md) — master SEO caching rules
+> - [CLIENTS-ARTICLES-STUDY.md](admin/CLIENTS-ARTICLES-STUDY.md) — deep analysis of both sections

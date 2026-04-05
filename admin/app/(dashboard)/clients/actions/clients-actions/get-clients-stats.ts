@@ -5,8 +5,8 @@ import { ArticleStatus, SubscriptionStatus, TrafficSource } from "@prisma/client
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 /**
- * Safely fetches clients with relations, handling DateTime conversion errors
- * Skips records with corrupted date fields (stored as strings instead of Date)
+ * Safely fetches clients with relations, handling DateTime conversion errors.
+ * On DateTime error, falls back to a single query without date-filtered articles.
  */
 async function safeFindClientsWithRelations(startOfMonth: Date, endOfMonth: Date) {
   try {
@@ -44,77 +44,44 @@ async function safeFindClientsWithRelations(startOfMonth: Date, endOfMonth: Date
       },
     });
   } catch (error) {
-    // Handle DateTime conversion errors for corrupted data
-    if (error instanceof PrismaClientKnownRequestError) {
-      const errorMessage = error.message || "";
-      if (errorMessage.includes("Failed to convert") && errorMessage.includes("DateTime")) {
-        console.error("DateTime conversion error detected. Attempting to fetch clients individually...", errorMessage);
-        
-        // Fetch all client IDs first
-        const clientIds = await db.client.findMany({
-          select: { id: true },
-        });
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.message.includes("Failed to convert") &&
+      error.message.includes("DateTime")
+    ) {
+      console.error("DateTime conversion error — falling back to query without date-filtered articles:", error.message);
 
-        // Try to fetch each client individually, skipping corrupted ones
-        const validClients = [];
-        const corruptedClientIds: string[] = [];
-
-        for (const { id } of clientIds) {
-          try {
-            const client = await db.client.findUnique({
-              where: { id },
-              include: {
-                subscriptionTierConfig: {
-                  select: {
-                    price: true,
-                    articlesPerMonth: true,
-                    tier: true,
-                  },
-                },
-                articles: {
-                  where: {
-                    status: ArticleStatus.PUBLISHED,
-                    datePublished: {
-                      gte: startOfMonth,
-                      lte: endOfMonth,
-                    },
-                  },
-                  select: {
-                    id: true,
-                    datePublished: true,
-                  },
-                },
-                _count: {
-                  select: {
-                    articles: {
-                      where: {
-                        status: ArticleStatus.PUBLISHED,
-                      },
-                    },
-                  },
+      const clients = await db.client.findMany({
+        select: {
+          id: true,
+          subscriptionStatus: true,
+          subscriptionEndDate: true,
+          articlesPerMonth: true,
+          subscriptionTierConfig: {
+            select: {
+              price: true,
+              articlesPerMonth: true,
+              tier: true,
+            },
+          },
+          _count: {
+            select: {
+              articles: {
+                where: {
+                  status: ArticleStatus.PUBLISHED,
                 },
               },
-            });
-            
-            if (client) {
-              validClients.push(client);
-            }
-          } catch (clientError) {
-            // Skip this client if it has corrupted date fields
-            corruptedClientIds.push(id);
-            console.warn(`Skipping client ${id} due to corrupted date fields:`, clientError instanceof Error ? clientError.message : "Unknown error");
-          }
-        }
+            },
+          },
+        },
+      });
 
-        if (corruptedClientIds.length > 0) {
-          console.warn(`Skipped ${corruptedClientIds.length} clients with corrupted date fields:`, corruptedClientIds);
-        }
-
-        return validClients;
-      }
+      return clients.map((client) => ({
+        ...client,
+        articles: [] as Array<{ id: string; datePublished: Date | null }>,
+      }));
     }
-    
-    // Re-throw if not a DateTime conversion error
+
     throw error;
   }
 }

@@ -86,13 +86,13 @@ export function SEOTab({ client }: SEOTabProps) {
       });
       setValidationReport(report);
       toast({
-        title: "Success",
-        description: "Validation completed",
+        title: "تم بنجاح",
+        description: "تم التحقق من البيانات",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Validation failed",
+        title: "خطأ",
+        description: "فشل التحقق من البيانات",
         variant: "destructive",
       });
     } finally {
@@ -106,21 +106,21 @@ export function SEOTab({ client }: SEOTabProps) {
       const result = await regenerateClientJsonLdAction(client.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "JSON-LD regenerated and validated",
+          title: "تم بنجاح",
+          description: "تم تحديث بيانات محركات البحث والتحقق منها",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to regenerate JSON-LD",
+          title: "خطأ",
+          description: result.error || "فشل تحديث بيانات محركات البحث",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to regenerate JSON-LD",
+        title: "خطأ",
+        description: "فشل تحديث بيانات محركات البحث",
         variant: "destructive",
       });
     } finally {
@@ -142,21 +142,21 @@ export function SEOTab({ client }: SEOTabProps) {
       const result = await generateClientSEO(client.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "SEO data generated successfully",
+          title: "تم بنجاح",
+          description: "تم إنشاء بيانات محركات البحث بنجاح",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to generate SEO data",
+          title: "خطأ",
+          description: result.error || "فشل إنشاء بيانات محركات البحث",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to generate SEO data",
+        title: "خطأ",
+        description: "فشل إنشاء بيانات محركات البحث",
         variant: "destructive",
       });
     } finally {
@@ -171,13 +171,13 @@ export function SEOTab({ client }: SEOTabProps) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
         toast({
-          title: "Copied",
-          description: "Meta tags copied to clipboard",
+          title: "تم النسخ",
+          description: "تم نسخ بيانات الظهور",
         });
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to copy meta tags",
+          title: "خطأ",
+          description: "فشل نسخ البيانات",
           variant: "destructive",
         });
       }
@@ -190,26 +190,26 @@ export function SEOTab({ client }: SEOTabProps) {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Search className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>SEO Information</CardTitle>
+            <CardTitle>معلومات محركات البحث</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {client.seoTitle && (
               <div>
-                <p className="text-sm text-muted-foreground mb-2">SEO Title</p>
+                <p className="text-sm text-muted-foreground mb-2">عنوان البحث</p>
                 <p className="text-sm font-medium">{client.seoTitle}</p>
               </div>
             )}
             {client.seoDescription && (
               <div>
-                <p className="text-sm text-muted-foreground mb-2">SEO Description</p>
+                <p className="text-sm text-muted-foreground mb-2">وصف البحث</p>
                 <p className="text-sm leading-relaxed">{client.seoDescription}</p>
               </div>
             )}
             {client.description && (
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Organization Description</p>
+                <p className="text-sm text-muted-foreground mb-2">وصف النشاط التجاري</p>
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">{client.description}</p>
               </div>
             )}
@@ -217,7 +217,7 @@ export function SEOTab({ client }: SEOTabProps) {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Link2 className="h-4 w-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Canonical URL</p>
+                  <p className="text-sm text-muted-foreground">الرابط الرسمي</p>
                 </div>
                 <a
                   href={client.canonicalUrl}
@@ -230,7 +230,7 @@ export function SEOTab({ client }: SEOTabProps) {
               </div>
             )}
             {!client.seoTitle && !client.seoDescription && !client.description && !client.canonicalUrl && (
-              <p className="text-sm text-muted-foreground text-center py-4">No SEO information available</p>
+              <p className="text-sm text-muted-foreground text-center py-4">لا توجد معلومات لمحركات البحث</p>
             )}
           </div>
         </CardContent>
@@ -241,7 +241,7 @@ export function SEOTab({ client }: SEOTabProps) {
           <CardHeader>
             <div className="flex items-center gap-2">
               <ImageIcon className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>OG Image</CardTitle>
+              <CardTitle>صورة المشاركة</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -274,37 +274,37 @@ export function SEOTab({ client }: SEOTabProps) {
         client.twitterSite) && (
           <Card>
             <CardHeader>
-              <CardTitle>Twitter Cards</CardTitle>
+              <CardTitle>بطاقات تويتر</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {client.twitterCard && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Twitter Card Type</p>
+                    <p className="text-sm text-muted-foreground mb-2">نوع بطاقة تويتر</p>
                     <p className="text-sm font-medium">{client.twitterCard}</p>
                   </div>
                 )}
                 {client.twitterTitle && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Twitter Title</p>
+                    <p className="text-sm text-muted-foreground mb-2">عنوان تويتر</p>
                     <p className="text-sm font-medium">{client.twitterTitle}</p>
                   </div>
                 )}
                 {client.twitterDescription && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Twitter Description</p>
+                    <p className="text-sm text-muted-foreground mb-2">وصف تويتر</p>
                     <p className="text-sm leading-relaxed">{client.twitterDescription}</p>
                   </div>
                 )}
                 {client.twitterSite && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Twitter Site</p>
+                    <p className="text-sm text-muted-foreground mb-2">حساب تويتر</p>
                     <p className="text-sm font-medium">{client.twitterSite}</p>
                   </div>
                 )}
                 {client.twitterImageMedia?.url && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
+                    <p className="text-sm text-muted-foreground mb-2">صورة تويتر</p>
                     <div className="space-y-3">
                       <img
                         src={client.twitterImageMedia.url}
@@ -340,12 +340,12 @@ export function SEOTab({ client }: SEOTabProps) {
             {isGenerating ? (
               <>
                 <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                Generating...
+                جاري الإنشاء...
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4 mr-2" />
-                Generate Meta Tags & JSON-LD
+                إنشاء بيانات محركات البحث
               </>
             )}
           </Button>
@@ -357,13 +357,13 @@ export function SEOTab({ client }: SEOTabProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Tag className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Meta Tags</CardTitle>
+              <CardTitle>بيانات الظهور في البحث</CardTitle>
             </div>
             <div className="flex items-center gap-2">
               {!client.metaRobots && (
                 <Badge variant="destructive" className="flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
-                  Critical
+                  مهم
                 </Badge>
               )}
             </div>
@@ -374,9 +374,9 @@ export function SEOTab({ client }: SEOTabProps) {
             {!client.metaRobots ? (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Meta Robots Tag Missing</AlertTitle>
+                <AlertTitle>إعدادات الفهرسة غير موجودة</AlertTitle>
                 <AlertDescription>
-                  The meta robots tag is not configured. This is critical for SEO as it controls how search engines index and follow links on this page.
+                  لم يتم إعداد كيفية ظهور هذه الصفحة في نتائج البحث. هذا ضروري لتحديد ما إذا كانت محركات البحث ستعرض هذه الصفحة.
                 </AlertDescription>
               </Alert>
             ) : (
@@ -455,7 +455,7 @@ export function SEOTab({ client }: SEOTabProps) {
               {!client.jsonLdStructuredData && (
                 <Badge variant="destructive" className="flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
-                  Critical
+                  مهم
                 </Badge>
               )}
             </div>
@@ -513,12 +513,12 @@ export function SEOTab({ client }: SEOTabProps) {
                           {isRegenerating ? (
                             <>
                               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Regenerating...
+                              جاري التحديث...
                             </>
                           ) : (
                             <>
                               <Sparkles className="h-4 w-4 mr-2" />
-                              Regenerate
+                              تحديث
                             </>
                           )}
                         </Button>
@@ -756,8 +756,8 @@ export function SEOTab({ client }: SEOTabProps) {
                     onClick={() => {
                       navigator.clipboard.writeText(JSON.stringify(jsonLd, null, 2));
                       toast({
-                        title: "Copied",
-                        description: "JSON-LD copied to clipboard",
+                        title: "تم النسخ",
+                        description: "تم نسخ بيانات البحث",
                       });
                     }}
                   >

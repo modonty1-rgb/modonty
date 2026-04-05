@@ -1,20 +1,38 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 import { SubscriptionTier } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
+import { clientServerSchema } from "./client-server-schema";
 import bcrypt from "bcryptjs";
 
 export async function createClient(data: ClientFormData) {
   try {
-    if (!data.name?.trim()) return { success: false, error: "اسم العميل مطلوب" };
-    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
-    if (!data.email?.trim()) return { success: false, error: "البريد الإلكتروني مطلوب" };
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
+
+    // Server-side Zod validation
+    const parsed = clientServerSchema.safeParse(data);
+    if (!parsed.success) {
+      const firstError = parsed.error.errors[0];
+      return { success: false, error: firstError.message };
+    }
+
+    // Validate slug uniqueness
+    const existingClient = await db.client.findUnique({
+      where: { slug: parsed.data.slug.trim() },
+      select: { id: true },
+    });
+    if (existingClient) {
+      return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل" };
+    }
 
     let articlesPerMonth = data.articlesPerMonth || null;
     let subscriptionTierConfigId = data.subscriptionTierConfigId || null;
@@ -41,8 +59,8 @@ export async function createClient(data: ClientFormData) {
     }
 
     const mappedData = mapFormDataToClientData(data);
-    
-    const clientData: any = {
+
+    const clientData: Record<string, unknown> = {
       ...mappedData,
       subscriptionTierConfigId: subscriptionTierConfigId,
       articlesPerMonth: articlesPerMonth,
@@ -125,45 +143,56 @@ export async function createClient(data: ClientFormData) {
       "competitiveMentionsAllowed",
     ];
 
-    const cleanData: any = {};
+    const cleanData: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (key in clientData) {
-        cleanData[key] = (clientData as any)[key];
+        cleanData[key] = clientData[key];
       }
     }
 
-    // Handle relations
-    if ((clientData as any).subscriptionTierConfigId) {
-      cleanData.subscriptionTierConfig = {
-        connect: { id: (clientData as any).subscriptionTierConfigId },
-      };
+    // Handle relations — verify each ID exists before connecting
+    if (clientData.subscriptionTierConfigId) {
+      const tierConfig = await db.subscriptionTierConfig.findUnique({
+        where: { id: clientData.subscriptionTierConfigId as string },
+        select: { id: true },
+      });
+      if (!tierConfig) return { success: false, error: "باقة الاشتراك غير موجودة" };
+      cleanData.subscriptionTierConfig = { connect: { id: tierConfig.id } };
     }
-    if ((clientData as any).industryId) {
-      cleanData.industry = { connect: { id: (clientData as any).industryId } };
+    if (clientData.industryId) {
+      const industry = await db.industry.findUnique({
+        where: { id: clientData.industryId as string },
+        select: { id: true },
+      });
+      if (!industry) return { success: false, error: "القطاع المحدد غير موجود" };
+      cleanData.industry = { connect: { id: industry.id } };
     }
-    if ((clientData as any).parentOrganizationId) {
-      cleanData.parentOrganization = {
-        connect: { id: (clientData as any).parentOrganizationId },
-      };
+    if (clientData.parentOrganizationId) {
+      const parentOrg = await db.client.findUnique({
+        where: { id: clientData.parentOrganizationId as string },
+        select: { id: true },
+      });
+      if (!parentOrg) return { success: false, error: "المنظمة الأم غير موجودة" };
+      cleanData.parentOrganization = { connect: { id: parentOrg.id } };
     }
 
     const client = await db.client.create({
-      data: cleanData,
+      data: cleanData as Prisma.ClientCreateInput,
     });
 
+    let warning: string | undefined;
     try {
       await generateClientSEO(client.id);
-    } catch (error) {
-      console.warn(`Failed to generate SEO for client ${client.id}:`, error);
+    } catch {
+      warning = "تم حفظ العميل بنجاح، لكن فشل توليد بيانات البحث. يمكنك تحديثها لاحقاً.";
     }
 
     revalidatePath("/clients");
     revalidatePath("/media");
     await revalidateModontyTag("clients");
     try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
-    return { success: true, client };
+    return warning ? { success: true, client, warning } : { success: true, client };
   } catch (error) {
-    console.error("Error creating client:", error);
     const message = error instanceof Error ? error.message : "Failed to create client";
     return { success: false, error: message };
   }

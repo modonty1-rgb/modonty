@@ -90,11 +90,11 @@ function getJsonLdIssues(client: ClientForList): string[] {
   const totalErrors = adobeErrors.length + ajvErrors.length + customErrors.length;
 
   if (report.adobe && report.adobe.valid === false) {
-    issues.push("Schema.org validator reported errors");
+    issues.push("هناك مشكلة في بيانات البحث");
   }
 
   if (totalErrors > 0) {
-    issues.push(`JSON-LD: ${totalErrors} critical error(s)`);
+    issues.push(`بيانات البحث تحتاج تصحيح (${totalErrors})`);
   }
 
   return issues;
@@ -108,7 +108,7 @@ function isMetaTagsValid(client: ClientForList): boolean {
     return false;
   }
 
-  const metaTags = client.nextjsMetadata as Record<string, any>;
+  const metaTags = client.nextjsMetadata as Record<string, unknown>;
   if (typeof metaTags !== "object" || metaTags === null) {
     return false;
   }
@@ -120,17 +120,17 @@ function isMetaTagsValid(client: ClientForList): boolean {
 /**
  * Derive detailed meta tag issues, mirroring form SEO critical notes
  */
-function getMetaTagsIssues(metaTags: Record<string, any>): string[] {
+function getMetaTagsIssues(metaTags: Record<string, unknown>): string[] {
   const issues: string[] = [];
 
   const title = typeof metaTags.title === "string" ? metaTags.title.trim() : "";
   const description = typeof metaTags.description === "string" ? metaTags.description.trim() : "";
 
   if (!title) {
-    issues.push("Missing meta title");
+    issues.push("عنوان البحث غير موجود");
   }
   if (!description) {
-    issues.push("Missing meta description");
+    issues.push("وصف البحث غير موجود");
   }
 
   const openGraph = metaTags.openGraph as { images?: Array<{ url?: string | null }> } | undefined;
@@ -138,7 +138,7 @@ function getMetaTagsIssues(metaTags: Record<string, any>): string[] {
   const hasOgOrLogo = !!ogImage?.url;
 
   if (!hasOgOrLogo) {
-    issues.push("No OG image or logo for social shares");
+    issues.push("لا توجد صورة للمشاركة على وسائل التواصل");
   }
 
   const twitter = metaTags.twitter as {
@@ -150,7 +150,7 @@ function getMetaTagsIssues(metaTags: Record<string, any>): string[] {
   const hasTwitterImage = typeof twitter?.image === "string" && twitter.image.trim() !== "";
 
   if (card === "summary_large_image" && !hasTwitterImage && !hasOgOrLogo) {
-    issues.push("No Twitter image (Cards will have no image)");
+    issues.push("لا توجد صورة لتويتر");
   }
 
   return issues;
@@ -160,56 +160,29 @@ function getMetaTagsIssues(metaTags: Record<string, any>): string[] {
  * Checks if JSON-LD is valid/correct
  */
 function isJsonLdValid(client: ClientForList): boolean {
-  if (!client.jsonLdStructuredData) {
+  const report = getValidationReport(client);
+  if (!report) {
     return false;
   }
-  try {
-    const jsonLd = JSON.parse(client.jsonLdStructuredData);
 
-    if (typeof jsonLd !== "object" || jsonLd === null) {
-      return false;
-    }
-
-    const hasContext = "@context" in (jsonLd as Record<string, unknown>);
-    const hasGraph = "@graph" in (jsonLd as Record<string, unknown>);
-
-    if (!hasContext || !hasGraph) {
-      return false;
-    }
-
-    const issues = getJsonLdIssues(client);
-    if (issues.length > 0) {
-      return false;
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
+  const issues = getJsonLdIssues(client);
+  return issues.length === 0;
 }
 
 function getCriticalItems(client: ClientForList): string[] {
   const items: string[] = [];
 
   if (!client.nextjsMetadata || typeof client.nextjsMetadata !== "object") {
-    items.push("Meta tags missing");
+    items.push("بيانات الظهور في البحث ناقصة");
   } else {
-    const metaIssues = getMetaTagsIssues(client.nextjsMetadata as Record<string, any>);
+    const metaIssues = getMetaTagsIssues(client.nextjsMetadata as Record<string, unknown>);
     items.push(...metaIssues);
   }
 
-  if (!client.jsonLdStructuredData) {
-    items.push("JSON-LD missing");
+  const report = getValidationReport(client);
+  if (!report) {
+    items.push("بيانات محركات البحث غير موجودة");
   } else {
-    try {
-      const parsed = JSON.parse(client.jsonLdStructuredData);
-      if (typeof parsed !== "object" || parsed === null) {
-        items.push("JSON-LD invalid (cannot parse)");
-      }
-    } catch {
-      items.push("JSON-LD invalid (cannot parse)");
-    }
-
     const jsonLdIssues = getJsonLdIssues(client);
     items.push(...jsonLdIssues);
   }
@@ -278,7 +251,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
         if (bValue === null || bValue === undefined) return -1;
 
         if (typeof aValue === "string" && typeof bValue === "string") {
-          return aValue.localeCompare(bValue);
+          return aValue.localeCompare(bValue, "ar");
         }
         if (typeof aValue === "number" && typeof bValue === "number") {
           return aValue - bValue;
@@ -286,7 +259,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
         if (aValue instanceof Date && bValue instanceof Date) {
           return aValue.getTime() - bValue.getTime();
         }
-        return String(aValue).localeCompare(String(bValue));
+        return String(aValue).localeCompare(String(bValue), "ar");
       });
 
       if (sortDirection === "desc") {
@@ -327,6 +300,29 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
   const endIndex = startIndex + pageSize;
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
+  const clientComputedMap = useMemo(() => {
+    const map = new Map<string, {
+      seoScore: number;
+      metaScore: number;
+      jsonLdScore: number;
+      daysRemaining: number | null;
+      delivery: ReturnType<typeof calculateDeliveryRate>;
+    }>();
+    for (const client of paginatedData) {
+      const seoDataForScoring = buildClientSeoData(client);
+      const seoScoreResult = calculateSEOScore(seoDataForScoring, organizationSEOConfig);
+      const groupScores = computeGroupScores(seoDataForScoring);
+      map.set(client.id, {
+        seoScore: seoScoreResult.percentage,
+        metaScore: groupScores.meta.percentage,
+        jsonLdScore: groupScores.jsonLd.percentage,
+        daysRemaining: getSubscriptionDaysRemaining(client),
+        delivery: calculateDeliveryRate(client, client.articles?.length ?? 0),
+      });
+    }
+    return map;
+  }, [paginatedData]);
+
   return (
     <div className="space-y-4">
       <div className="border rounded-lg">
@@ -339,7 +335,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 onClick={() => handleSort("name")}
               >
                 <div className="flex items-center">
-                  Name
+                  الاسم
                   {getSortIcon("name")}
                 </div>
               </TableHead>
@@ -348,42 +344,42 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 onClick={() => handleSort("tier")}
               >
                 <div className="flex items-center">
-                  Tier
+                  الباقة
                   {getSortIcon("tier")}
                 </div>
               </TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>الحالة</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("articles")}
               >
                 <div className="flex items-center">
-                  Articles
+                  المقالات
                   {getSortIcon("articles")}
                 </div>
               </TableHead>
-              <TableHead>Delivery</TableHead>
+              <TableHead>التسليم</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("expires")}
               >
                 <div className="flex items-center">
-                  Expires
+                  الانتهاء
                   {getSortIcon("expires")}
                 </div>
               </TableHead>
               <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="Google Business Profile">
+                <div className="flex justify-center" title="الملف التجاري في قوقل">
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
               <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="GA4 Analytics">
+                <div className="flex justify-center" title="الإحصائيات">
                   <BarChart2 className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
-              <TableHead className="text-center">SEO</TableHead>
-              <TableHead className="text-right px-3">Actions</TableHead>
+              <TableHead className="text-center">محركات البحث</TableHead>
+              <TableHead className="text-right px-3">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -391,15 +387,17 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
               <TableRow>
                 <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium">No clients found</p>
-                    <p className="text-xs">Try adjusting your filters or search terms</p>
+                    <p className="text-sm font-medium">لا يوجد عملاء</p>
+                    <p className="text-xs">جرّب تعديل البحث أو الفلاتر</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((client) => {
-                const daysRemaining = getSubscriptionDaysRemaining(client);
-                const delivery = calculateDeliveryRate(client, client.articles?.length ?? 0);
+                const computed = clientComputedMap.get(client.id);
+                const daysRemaining = computed?.daysRemaining ?? null;
+                const delivery = computed?.delivery ?? { delivered: 0, promised: 0 };
+                const seoScore = computed?.seoScore ?? 0;
                 const tierName = client.subscriptionTier
                   ? client.subscriptionTier.charAt(0) + client.subscriptionTier.slice(1).toLowerCase()
                   : "N/A";
@@ -409,47 +407,35 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 const isPaid = client.paymentStatus === PaymentStatus.PAID;
                 const isOverdue = client.paymentStatus === PaymentStatus.OVERDUE;
 
-                // Build normalized SEO data once for all scorers (core + Meta + JSON-LD)
-                const seoDataForScoring = buildClientSeoData(client);
-
-                // Calculate SEO Score for marketing insights (core SEO Doctor config)
-                const seoScoreResult = calculateSEOScore(seoDataForScoring, organizationSEOConfig);
-                const seoScore = seoScoreResult.percentage;
-
-                // Calculate Meta / JSON-LD group scores from the same source of truth
-                const groupScores = computeGroupScores(seoDataForScoring);
-                const metaScore = groupScores.meta.percentage;
-                const jsonLdScore = groupScores.jsonLd.percentage;
-
                 const getStatusBadge = () => {
                   if (isActive && isPaid) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500">
-                        Active
+                        فعّال
                       </span>
                     );
                   }
                   if (isActive && isOverdue) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-500">
-                        Suspended
+                        موقوف
                       </span>
                     );
                   }
                   if (isActive) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-500">
-                        Pending
+                        قيد الانتظار
                       </span>
                     );
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.EXPIRED) {
-                    return <span className="text-sm text-muted-foreground">Expired</span>;
+                    return <span className="text-sm text-muted-foreground">منتهي</span>;
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.CANCELLED) {
-                    return <span className="text-sm text-muted-foreground">Cancelled</span>;
+                    return <span className="text-sm text-muted-foreground">ملغي</span>;
                   }
-                  return <span className="text-sm text-muted-foreground">Pending</span>;
+                  return <span className="text-sm text-muted-foreground">قيد الانتظار</span>;
                 };
 
                 return (
@@ -505,30 +491,30 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                               ? "text-amber-500"
                               : "text-muted-foreground"
                         )}>
-                          {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}
+                          {daysRemaining > 0 ? `${daysRemaining} يوم` : "منتهي"}
                         </span>
                       ) : (
-                        <span className="text-muted-foreground text-xs">No sub</span>
+                        <span className="text-muted-foreground text-xs">بدون اشتراك</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center px-1">
                       {gbpPlaceId ? (
-                        <div title="GBP Connected" className="flex items-center justify-center">
+                        <div title="الملف التجاري مربوط" className="flex items-center justify-center">
                           <MapPin className="h-4 w-4 text-green-500" />
                         </div>
                       ) : (
-                        <div title="GBP Not connected" className="flex items-center justify-center">
+                        <div title="الملف التجاري غير مربوط" className="flex items-center justify-center">
                           <MapPin className="h-4 w-4 text-muted-foreground/40" />
                         </div>
                       )}
                     </TableCell>
                     <TableCell className="text-center px-1">
                       {ga4PropertyId ? (
-                        <div title="GA4 Active" className="flex items-center justify-center">
+                        <div title="الإحصائيات مفعّلة" className="flex items-center justify-center">
                           <BarChart2 className="h-4 w-4 text-green-500" />
                         </div>
                       ) : (
-                        <div title="GA4 Not connected" className="flex items-center justify-center">
+                        <div title="الإحصائيات غير مفعّلة" className="flex items-center justify-center">
                           <BarChart2 className="h-4 w-4 text-muted-foreground/40" />
                         </div>
                       )}
@@ -555,7 +541,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                         </div>
                       ) : (
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={`/clients/${client.id}/seo`}>Setup SEO</Link>
+                          <Link href={`/clients/${client.id}/seo`}>إعداد محركات البحث</Link>
                         </Button>
                       )}
                     </TableCell>
@@ -566,6 +552,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
+                          aria-label="تعديل العميل"
                         >
                           <Link href={`/clients/${client.id}/edit`}>
                             <Pencil className="h-3.5 w-3.5" />
@@ -576,6 +563,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 hover:bg-primary/10 rounded-md transition-colors"
                           asChild
+                          aria-label="إعدادات محركات البحث"
                         >
                           <Link href={`/clients/${client.id}/seo`}>
                             <span className="text-[9px] font-bold leading-none w-3.5 h-3.5 rounded-sm bg-primary/20 text-primary flex items-center justify-center">
@@ -588,6 +576,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
+                          aria-label="عرض تفاصيل العميل"
                         >
                           <Link href={`/clients/${client.id}`}>
                             <Eye className="h-3.5 w-3.5" />
@@ -606,8 +595,8 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{" "}
-            {filteredData.length} results
+            عرض {startIndex + 1} إلى {Math.min(endIndex, filteredData.length)} من{" "}
+            {filteredData.length} نتيجة
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -615,17 +604,19 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              aria-label="الصفحة السابقة"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
+              صفحة {currentPage} من {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
+              aria-label="الصفحة التالية"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

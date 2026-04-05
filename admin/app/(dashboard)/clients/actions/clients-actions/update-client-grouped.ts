@@ -118,6 +118,17 @@ export async function updateRequiredFields(
       return { success: false, error: "Client not found", groupName: "required" };
     }
 
+    // Validate slug uniqueness if changed
+    if (data.slug && data.slug !== client.slug) {
+      const existingClient = await db.client.findUnique({
+        where: { slug: data.slug.trim() },
+        select: { id: true },
+      });
+      if (existingClient && existingClient.id !== clientId) {
+        return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل", groupName: "required" };
+      }
+    }
+
     // Handle subscription tier logic
     let articlesPerMonth = data.articlesPerMonth ?? client.articlesPerMonth;
     let subscriptionTierConfigId = data.subscriptionTierConfigId ?? client.subscriptionTierConfigId;
@@ -132,10 +143,10 @@ export async function updateRequiredFields(
         subscriptionTierConfigId = tierConfig.id;
         
         if (!tierConfig.isActive) {
-          console.warn(`Tier ${tierConfig.name} is deactivated but being assigned to client ${clientId}`);
+          // Deactivated tier assigned — allowed but tracked via UI warning
         }
       } else {
-        console.warn(`Tier config not found for tier: ${data.subscriptionTier}, keeping existing articlesPerMonth`);
+        // Tier config not found — keeping existing articlesPerMonth
         articlesPerMonth = client.articlesPerMonth;
       }
     } else if (!data.subscriptionTier) {
@@ -168,7 +179,6 @@ export async function updateRequiredFields(
 
     return { success: true, groupName: "required", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating required fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update required fields";
     return { success: false, error: message, groupName: "required" };
   }
@@ -212,7 +222,6 @@ export async function updateSettingsFields(
 
     return { success: true, groupName: "settings", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating settings fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update settings fields";
     return { success: false, error: message, groupName: "settings" };
   }
@@ -264,7 +273,6 @@ export async function updateBusinessFields(
 
     return { success: true, groupName: "business", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating business fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update business fields";
     return { success: false, error: message, groupName: "business" };
   }
@@ -315,7 +323,6 @@ export async function updateContactFields(
 
     return { success: true, groupName: "contact", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating contact fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update contact fields";
     return { success: false, error: message, groupName: "contact" };
   }
@@ -365,7 +372,6 @@ export async function updateSEOFields(
 
     return { success: true, groupName: "seo", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating seo fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update seo fields";
     return { success: false, error: message, groupName: "seo" };
   }
@@ -399,7 +405,7 @@ export async function updateLegalFields(
       legalForm: data.legalForm ?? null,
       commercialRegistrationNumber: data.commercialRegistrationNumber ?? null,
       vatID: data.vatID ?? null,
-      taxID: data.vatID ?? data.taxID ?? null, // Use VAT ID as Tax ID if Tax ID is not provided
+      taxID: data.taxID ?? data.vatID ?? null, // Fallback to VAT ID only if Tax ID is not provided
       licenseNumber: data.licenseNumber ?? null,
       licenseAuthority: data.licenseAuthority ?? null,
     };
@@ -417,7 +423,6 @@ export async function updateLegalFields(
 
     return { success: true, groupName: "legal", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating legal fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update legal fields";
     return { success: false, error: message, groupName: "legal" };
   }
@@ -477,7 +482,6 @@ export async function updateAddressFields(
 
     return { success: true, groupName: "address", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating address fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update address fields";
     return { success: false, error: message, groupName: "address" };
   }
@@ -523,7 +527,6 @@ export async function updateMediaSocialFields(
 
     return { success: true, groupName: "media-social", fieldsUpdated: Object.keys(updateData).length };
   } catch (error) {
-    console.error("Error updating media-social fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update media-social fields";
     return { success: false, error: message, groupName: "media-social" };
   }
@@ -573,7 +576,6 @@ export async function updateSecurityFields(
 
     return { success: true, groupName: "security", fieldsUpdated: Object.keys(groupUpdateData).length };
   } catch (error) {
-    console.error("Error updating security fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update security fields";
     return { success: false, error: message, groupName: "security" };
   }
@@ -631,7 +633,6 @@ export async function updateAdditionalFields(
 
     return { success: true, groupName: "additional", fieldsUpdated: Object.keys(groupUpdateData).length };
   } catch (error) {
-    console.error("Error updating additional fields:", error);
     const message = error instanceof Error ? error.message : "Failed to update additional fields";
     return { success: false, error: message, groupName: "additional" };
   }

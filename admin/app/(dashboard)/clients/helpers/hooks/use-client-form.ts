@@ -192,7 +192,7 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
         addressLongitude: data.addressLongitude || null,
         commercialRegistrationNumber: data.commercialRegistrationNumber || null,
         vatID: data.vatID || null,
-        taxID: data.vatID || data.taxID || null, // Use VAT ID as Tax ID if Tax ID is not provided
+        taxID: data.taxID || data.vatID || null, // Fallback to VAT ID only if Tax ID is not provided
         legalForm: data.legalForm || null,
         businessActivityCode: data.businessActivityCode || null,
         isicV4: data.isicV4 || null,

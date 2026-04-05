@@ -139,7 +139,6 @@ export async function exportClientsToCSV(filters?: ClientFilters): Promise<strin
 
     return csvRows.join("\n");
   } catch (error) {
-    console.error("Error exporting clients to CSV:", error);
     throw new Error("Failed to export clients to CSV");
   }
 }

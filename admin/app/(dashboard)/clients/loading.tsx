@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ClientsLoading() {
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6" role="status" aria-busy="true" aria-label="جاري التحميل">
       <div className="flex items-center justify-between mb-6">
         <div>
           <Skeleton className="h-8 w-48" />

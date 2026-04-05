@@ -1,6 +1,10 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 
 export async function getClientFollowers(rawSlug: string, limit = 6) {
+  "use cache";
+  cacheTag("clients");
+  cacheLife("hours");
   const decodedSlug = decodeURIComponent(rawSlug);
 
   const client = await db.client.findUnique({

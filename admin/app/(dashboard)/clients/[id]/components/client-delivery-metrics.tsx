@@ -6,6 +6,7 @@ import { Package, Calendar, TrendingUp, AlertCircle } from "lucide-react";
 import { AnalticCard } from "@/components/shared/analtic-card";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { getSubscriptionDaysRemaining, calculateDeliveryRate } from "../../helpers/client-display-utils";
 
 interface ClientDeliveryMetricsProps {
   client: {
@@ -32,27 +33,13 @@ export function ClientDeliveryMetrics({
   articlesThisMonth,
   totalArticles,
 }: ClientDeliveryMetricsProps) {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
   const promisedArticles =
     client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
   const deliveredArticles = articlesThisMonth;
-  const deliveryRate = promisedArticles > 0
-    ? Math.round((deliveredArticles / promisedArticles) * 100)
-    : 0;
+  const deliveryRate = calculateDeliveryRate(promisedArticles, deliveredArticles);
   const isBehind = deliveredArticles < promisedArticles;
 
-  const getSubscriptionDaysRemaining = () => {
-    if (!client.subscriptionEndDate) return null;
-    const endDate = new Date(client.subscriptionEndDate);
-    const diffTime = endDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const daysRemaining = getSubscriptionDaysRemaining();
+  const daysRemaining = getSubscriptionDaysRemaining(client.subscriptionEndDate);
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 30;
 
   return (

@@ -343,10 +343,24 @@ export function generateCompleteOrganizationJsonLd(
 
   // Number of employees as QuantitativeValue
   if (client.numberOfEmployees) {
-    const empValue = client.numberOfEmployees;
-    if (empValue.includes("-")) {
-      const [min, max] = empValue.split("-").map((v) => parseInt(v.trim()));
+    const empRaw = client.numberOfEmployees.trim();
+
+    // "100+" format — minValue only
+    if (/^\d[\d,]*\+$/.test(empRaw.replace(/\s/g, ""))) {
+      const minVal = parseInt(empRaw.replace(/\D/g, ""));
+      if (!isNaN(minVal)) {
+        organizationNode.numberOfEmployees = {
+          "@type": "QuantitativeValue",
+          minValue: minVal,
+        };
+      }
+    } else if (empRaw.includes("-")) {
+      // Range: "10-50", "1,000-5,000", "50-99 employees"
+      const parts = empRaw.split("-");
+      let min = parseInt(parts[0].replace(/\D/g, ""));
+      let max = parseInt(parts[1].replace(/\D/g, ""));
       if (!isNaN(min) && !isNaN(max)) {
+        if (min > max) { [min, max] = [max, min]; }
         organizationNode.numberOfEmployees = {
           "@type": "QuantitativeValue",
           minValue: min,
@@ -354,16 +368,11 @@ export function generateCompleteOrganizationJsonLd(
         };
       }
     } else {
-      const numValue = parseInt(empValue);
+      const numValue = parseInt(empRaw.replace(/\D/g, ""));
       if (!isNaN(numValue)) {
         organizationNode.numberOfEmployees = {
           "@type": "QuantitativeValue",
           value: numValue,
-        };
-      } else {
-        organizationNode.numberOfEmployees = {
-          "@type": "QuantitativeValue",
-          value: empValue,
         };
       }
     }
@@ -486,32 +495,19 @@ export function generateCompleteOrganizationJsonLd(
     dateModified: client.updatedAt.toISOString(),
   };
 
-  // primaryImageOfPage: OG image, else logo fallback (per JSON-LD research)
+  // primaryImageOfPage: only use OG image (proper page image)
+  // Logo is NOT suitable as primaryImageOfPage — it's a brand mark, not page content
+  // This property is optional per Schema.org — omit if no OG image exists
   const ogImg = client.ogImageMedia;
-  const logoImg = client.logoMedia;
   if (ogImg?.url) {
     const u = ensureAbsoluteUrl(ogImg.url, siteUrl) || ogImg.url;
-    const w = ogImg.width && ogImg.width >= 1200 ? ogImg.width : 1200;
-    const h = ogImg.height && ogImg.height >= 630 ? ogImg.height : 630;
     webPageNode.primaryImageOfPage = {
       "@type": "ImageObject",
       url: u,
       contentUrl: u,
-      width: w,
-      height: h,
+      ...(ogImg.width && { width: ogImg.width }),
+      ...(ogImg.height && { height: ogImg.height }),
       ...(ogImg.altText && { caption: ogImg.altText }),
-    };
-  } else if (logoImg?.url) {
-    const u = ensureAbsoluteUrl(logoImg.url, siteUrl) || logoImg.url;
-    const w = logoImg.width && logoImg.width >= 112 ? logoImg.width : 112;
-    const h = logoImg.height && logoImg.height >= 112 ? logoImg.height : 112;
-    webPageNode.primaryImageOfPage = {
-      "@type": "ImageObject",
-      url: u,
-      contentUrl: u,
-      width: w,
-      height: h,
-      ...(logoImg.altText && { caption: logoImg.altText }),
     };
   }
 

@@ -101,7 +101,7 @@ export function mapInitialDataToFormData(
     // Saudi Arabia & Gulf Identifiers
     commercialRegistrationNumber: initialData.commercialRegistrationNumber || null,
     vatID: initialData.vatID || null,
-    taxID: initialData.vatID || initialData.taxID || null, // Use VAT ID as Tax ID if Tax ID is not provided
+    taxID: initialData.taxID || initialData.vatID || null, // Fallback to VAT ID only if Tax ID is not provided
     legalForm: initialData.legalForm || null,
 
     // Address Enhancement (National Address Format)

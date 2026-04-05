@@ -45,11 +45,6 @@ export interface ValidationReport {
     warnings: string[];
     info: string[];
   };
-  richResults?: {
-    eligible: boolean;
-    types: string[];
-    lastChecked?: string;
-  };
 }
 
 // Cache schema.org definition to avoid repeated fetches
@@ -303,18 +298,12 @@ export function validateWithAjv(jsonLd: object): {
   errors: string[];
   warnings: string[];
 } {
-  // Debug logging (temporary)
-  console.log('🔍 Ajv Validation Input:', JSON.stringify(jsonLd, null, 2));
-  
   const errors: string[] = [];
   const warnings: string[] = [];
 
   const valid = validateArticleSchema(jsonLd);
-  
-  console.log(valid ? '✅ Ajv Validation: PASS' : '❌ Ajv Validation: FAIL');
 
   if (!valid && validateArticleSchema.errors) {
-    console.log('❌ Ajv Errors:', validateArticleSchema.errors);
     for (const error of validateArticleSchema.errors) {
       const message = `${error.instancePath || error.schemaPath}: ${error.message}`;
       if (error.keyword === "required" || error.keyword === "format") {

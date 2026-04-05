@@ -26,26 +26,11 @@ import {
   getPlatformName,
   type Platform,
 } from "../../../helpers/url-validation";
+import { getTierDisplayName } from "../../../helpers/client-display-utils";
 
 interface DetailsTabProps {
   client: any;
 }
-
-const getTierName = (tier: string | null): string => {
-  if (!tier) return "Not Set";
-  switch (tier) {
-    case "BASIC":
-      return "Basic";
-    case "STANDARD":
-      return "Standard";
-    case "PRO":
-      return "Pro";
-    case "PREMIUM":
-      return "Premium";
-    default:
-      return tier;
-  }
-};
 
 export function DetailsTab({ client }: DetailsTabProps) {
   const [basicOpen, setBasicOpen] = useState(true);
@@ -195,7 +180,7 @@ export function DetailsTab({ client }: DetailsTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Subscription Tier</p>
                   <Badge variant="outline" className="text-sm">
-                    {getTierName(client.subscriptionTier)}
+                    {getTierDisplayName(client.subscriptionTier)}
                   </Badge>
                 </div>
               )}

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { MediaPicker } from "@/components/shared/media-picker";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
 import { updateMedia } from "../../../media/actions/media-actions";
-import { getMediaById } from "@/app/(dashboard)/media/actions/get-media-by-id";
 import { useToast } from "@/hooks/use-toast";
+import { useMediaPreview } from "../../helpers/hooks/use-media-preview";
 
 interface MediaSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
@@ -23,87 +22,20 @@ export function MediaSection({
   const { watch, setValue } = form;
   const { toast } = useToast();
 
-  const [logoMedia, setLogoMedia] = useState<{
-    url: string;
-    altText: string | null;
-  } | null>(null);
-  const [ogImageMedia, setOgImageMedia] = useState<{
-    url: string;
-    altText: string | null;
-  } | null>(null);
-
   const logoMediaId = watch("logoMediaId");
   const ogImageMediaId = watch("ogImageMediaId");
 
-  useEffect(() => {
-    if (initialData?.logoMedia?.url) {
-      setLogoMedia({
-        url: initialData.logoMedia.url,
-        altText: initialData.logoMedia.altText || null,
-      });
-    }
-  }, []);
+  const { media: logoMedia, setMedia: setLogoMedia } = useMediaPreview({
+    mediaId: logoMediaId,
+    clientId: clientId || null,
+    initialMedia: initialData?.logoMedia || null,
+  });
 
-  useEffect(() => {
-    if (initialData?.ogImageMedia?.url) {
-      setOgImageMedia({
-        url: initialData.ogImageMedia.url,
-        altText: initialData.ogImageMedia.altText || null,
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchLogoMedia = async () => {
-      if (!logoMediaId || !clientId) {
-        setLogoMedia(null);
-        return;
-      }
-
-      try {
-        const media = await getMediaById(logoMediaId, clientId);
-        if (media) {
-          setLogoMedia({
-            url: media.url,
-            altText: media.altText,
-          });
-        } else {
-          setLogoMedia(null);
-        }
-      } catch (error) {
-        console.error("Error fetching logo media:", error);
-        setLogoMedia(null);
-      }
-    };
-
-    fetchLogoMedia();
-  }, [logoMediaId, clientId]);
-
-  useEffect(() => {
-    const fetchOgImageMedia = async () => {
-      if (!ogImageMediaId || !clientId) {
-        setOgImageMedia(null);
-        return;
-      }
-
-      try {
-        const media = await getMediaById(ogImageMediaId, clientId);
-        if (media) {
-          setOgImageMedia({
-            url: media.url,
-            altText: media.altText,
-          });
-        } else {
-          setOgImageMedia(null);
-        }
-      } catch (error) {
-        console.error("Error fetching OG image media:", error);
-        setOgImageMedia(null);
-      }
-    };
-
-    fetchOgImageMedia();
-  }, [ogImageMediaId, clientId]);
+  const { media: ogImageMedia, setMedia: setOgImageMedia } = useMediaPreview({
+    mediaId: ogImageMediaId,
+    clientId: clientId || null,
+    initialMedia: initialData?.ogImageMedia || null,
+  });
 
   const handleLogoAltTextUpdate = async (newAltText: string) => {
     const logoMediaId = watch("logoMediaId");

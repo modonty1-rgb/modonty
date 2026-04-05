@@ -1,11 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export async function deleteClient(id: string) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "غير مصرح" };
     const client = await db.client.findUnique({
       where: { id },
       include: {
@@ -36,7 +39,6 @@ export async function deleteClient(id: string) {
     try { const { regenerateClientsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateClientsListingCache(); } catch {}
     return { success: true };
   } catch (error) {
-    console.error("Error deleting client:", error);
     const message = error instanceof Error ? error.message : "Failed to delete client";
     return { success: false, error: message };
   }

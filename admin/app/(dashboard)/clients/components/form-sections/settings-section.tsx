@@ -5,8 +5,13 @@ import { FormSelect, FormInput } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
+type SettingsFormType = ClientFormSchemaType & {
+  ga4PropertyId?: string | null;
+  ga4MeasurementId?: string | null;
+};
+
 interface SettingsSectionProps {
-  form: UseFormReturn<ClientFormSchemaType>;
+  form: UseFormReturn<SettingsFormType>;
 }
 
 export function SettingsSection({ form }: SettingsSectionProps) {
@@ -35,7 +40,7 @@ export function SettingsSection({ form }: SettingsSectionProps) {
         name="subscriptionStatus"
         value={subscriptionStatus}
         onValueChange={(value) =>
-          setValue("subscriptionStatus", value as any, { shouldValidate: true })
+          setValue("subscriptionStatus", value as SettingsFormType["subscriptionStatus"], { shouldValidate: true })
         }
         error={errors.subscriptionStatus?.message}
         hint="الحالة الحالية للوصول إلى الاشتراك - يحدد ما إذا كان العميل يمكنه الوصول إلى الخدمات أم لا - يُستخدم لتتبع حالة الاشتراك وإدارة الوصول"
@@ -51,7 +56,7 @@ export function SettingsSection({ form }: SettingsSectionProps) {
         name="paymentStatus"
         value={paymentStatus}
         onValueChange={(value) =>
-          setValue("paymentStatus", value as any, { shouldValidate: true })
+          setValue("paymentStatus", value as SettingsFormType["paymentStatus"], { shouldValidate: true })
         }
         error={errors.paymentStatus?.message}
         hint="حالة الفوترة للاشتراك - يحدد ما إذا تم دفع الفاتورة أم لا - يُستخدم لتتبع حالة الدفع وإدارة الفواتير"
@@ -71,22 +76,22 @@ export function SettingsSection({ form }: SettingsSectionProps) {
       <FormInput
         label="GA4 Property ID"
         name="ga4PropertyId"
-        value={String(watch("ga4PropertyId" as any) ?? "")}
+        value={String(watch("ga4PropertyId") ?? "")}
         onChange={(e) =>
-          setValue("ga4PropertyId" as any, e.target.value || null, { shouldValidate: true })
+          setValue("ga4PropertyId", e.target.value || null, { shouldValidate: true })
         }
-        error={(errors as any).ga4PropertyId?.message}
+        error={errors.ga4PropertyId?.message}
         placeholder="123456789"
       />
 
       <FormInput
         label="GA4 Measurement ID"
         name="ga4MeasurementId"
-        value={String(watch("ga4MeasurementId" as any) ?? "")}
+        value={String(watch("ga4MeasurementId") ?? "")}
         onChange={(e) =>
-          setValue("ga4MeasurementId" as any, e.target.value || null, { shouldValidate: true })
+          setValue("ga4MeasurementId", e.target.value || null, { shouldValidate: true })
         }
-        error={(errors as any).ga4MeasurementId?.message}
+        error={errors.ga4MeasurementId?.message}
         placeholder="G-XXXXXXXXXX"
       />
     </div>

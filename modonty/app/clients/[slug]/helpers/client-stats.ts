@@ -1,16 +1,16 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 
 export async function getClientStats(clientId: string) {
-  try {
-    // Get follower count (from ClientLike)
-    const followersCount = await db.clientLike.count({
-      where: { clientId },
-    });
+  "use cache";
+  cacheTag("clients");
+  cacheLife("hours");
 
-    // Get total views (from ClientView)
-    const totalViews = await db.clientView.count({
-      where: { clientId },
-    });
+  try {
+    const [followersCount, totalViews] = await Promise.all([
+      db.clientLike.count({ where: { clientId } }),
+      db.clientView.count({ where: { clientId } }),
+    ]);
 
     return {
       followers: followersCount,

@@ -71,6 +71,10 @@ type Media = {
 export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const MEDIA_PAGE_SIZE = 24;
+  const [mediaLimit, setMediaLimit] = useState(MEDIA_PAGE_SIZE);
+  const visibleMedia = media.slice(0, mediaLimit);
+  const hasMore = media.length > mediaLimit;
 
   const isImage = (mimeType: string) => mimeType.startsWith("image/");
   const isVideo = (mimeType: string) => mimeType.startsWith("video/");
@@ -297,11 +301,11 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
             </div>
             <div className="p-4">
               <p className="text-sm text-muted-foreground mb-4">
-                {media.length} {media.length === 1 ? "item" : "items"}
+                {media.length} ملف{hasMore ? ` (يعرض ${mediaLimit})` : ""}
               </p>
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {media.map((item) => {
+                  {visibleMedia.map((item) => {
                     const MediaIcon = getMediaIcon(item.mimeType);
                     return (
                       <Card
@@ -346,7 +350,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {media.map((item) => {
+                  {visibleMedia.map((item) => {
                     const MediaIcon = getMediaIcon(item.mimeType);
                     return (
                       <Card
@@ -402,6 +406,17 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                       </Card>
                     );
                   })}
+                </div>
+              )}
+              {hasMore && (
+                <div className="flex justify-center pt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setMediaLimit((prev) => prev + MEDIA_PAGE_SIZE)}
+                  >
+                    عرض المزيد ({media.length - mediaLimit} متبقي)
+                  </Button>
                 </div>
               )}
             </div>

@@ -64,96 +64,35 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
     loadSettings();
   }, []);
 
-  // Watch all form fields that affect SEO Doctor
-  const watchedFields = {
-    name: form.watch("name"),
-    slug: form.watch("slug"),
-    legalName: form.watch("legalName"),
-    alternateName: form.watch("alternateName"),
-    url: form.watch("url"),
-    email: form.watch("email"),
-    phone: form.watch("phone"),
-    seoTitle: form.watch("seoTitle"),
-    seoDescription: form.watch("seoDescription"),
-    description: form.watch("description"),
-    businessBrief: form.watch("businessBrief"),
-    gtmId: form.watch("gtmId"),
-    canonicalUrl: form.watch("canonicalUrl"),
-    metaRobots: form.watch("metaRobots"),
-    twitterCard: form.watch("twitterCard"),
-    twitterTitle: form.watch("twitterTitle"),
-    twitterDescription: form.watch("twitterDescription"),
-    twitterSite: form.watch("twitterSite"),
-    contactType: form.watch("contactType"),
-    addressStreet: form.watch("addressStreet"),
-    addressBuildingNumber: form.watch("addressBuildingNumber"),
-    addressAdditionalNumber: form.watch("addressAdditionalNumber"),
-    addressNeighborhood: form.watch("addressNeighborhood"),
-    addressCity: form.watch("addressCity"),
-    addressRegion: form.watch("addressRegion"),
-    addressCountry: form.watch("addressCountry"),
-    addressPostalCode: form.watch("addressPostalCode"),
-    addressLatitude: form.watch("addressLatitude"),
-    addressLongitude: form.watch("addressLongitude"),
-    commercialRegistrationNumber: form.watch("commercialRegistrationNumber"),
-    vatID: form.watch("vatID"),
-    organizationType: form.watch("organizationType"),
-    keywords: form.watch("keywords"),
-    knowsLanguage: form.watch("knowsLanguage"),
-    slogan: form.watch("slogan"),
-    numberOfEmployees: form.watch("numberOfEmployees"),
-    parentOrganizationId: form.watch("parentOrganizationId"),
-    sameAs: form.watch("sameAs"),
-    foundingDate: form.watch("foundingDate"),
-  };
+  const watchedValues = form.watch();
+
+  const seoFieldsKey = useMemo(() => {
+    const { name, slug, legalName, alternateName, url, email, phone,
+      seoTitle, seoDescription, description, businessBrief, gtmId,
+      canonicalUrl, metaRobots, twitterCard, twitterTitle, twitterDescription,
+      twitterSite, contactType, addressStreet, addressBuildingNumber,
+      addressAdditionalNumber, addressNeighborhood, addressCity, addressRegion,
+      addressCountry, addressPostalCode, addressLatitude, addressLongitude,
+      commercialRegistrationNumber, vatID, organizationType, keywords,
+      knowsLanguage, slogan, numberOfEmployees, parentOrganizationId,
+      sameAs, foundingDate } = watchedValues;
+    return JSON.stringify({
+      name, slug, legalName, alternateName, url, email, phone,
+      seoTitle, seoDescription, description, businessBrief, gtmId,
+      canonicalUrl, metaRobots, twitterCard, twitterTitle, twitterDescription,
+      twitterSite, contactType, addressStreet, addressBuildingNumber,
+      addressAdditionalNumber, addressNeighborhood, addressCity, addressRegion,
+      addressCountry, addressPostalCode, addressLatitude, addressLongitude,
+      commercialRegistrationNumber, vatID, organizationType, keywords,
+      knowsLanguage, slogan, numberOfEmployees, parentOrganizationId,
+      sameAs, foundingDate,
+    });
+  }, [watchedValues]);
 
   const seoData = useMemo(
-    () =>
-      buildClientSeoData(initialData, {
-        ...watchedFields,
-      }),
-    [
-      initialData,
-      watchedFields.name,
-      watchedFields.slug,
-      watchedFields.legalName,
-      watchedFields.alternateName,
-      watchedFields.url,
-      watchedFields.email,
-      watchedFields.phone,
-      watchedFields.seoTitle,
-      watchedFields.seoDescription,
-      watchedFields.description,
-      watchedFields.businessBrief,
-      watchedFields.gtmId,
-      watchedFields.canonicalUrl,
-      watchedFields.metaRobots,
-      watchedFields.twitterCard,
-      watchedFields.twitterTitle,
-      watchedFields.twitterDescription,
-      watchedFields.twitterSite,
-      watchedFields.contactType,
-      watchedFields.addressStreet,
-      watchedFields.addressBuildingNumber,
-      watchedFields.addressAdditionalNumber,
-      watchedFields.addressNeighborhood,
-      watchedFields.addressCity,
-      watchedFields.addressRegion,
-      watchedFields.addressCountry,
-      watchedFields.addressPostalCode,
-      watchedFields.addressLatitude,
-      watchedFields.addressLongitude,
-      watchedFields.commercialRegistrationNumber,
-      watchedFields.vatID,
-      watchedFields.organizationType,
-      watchedFields.keywords,
-      watchedFields.knowsLanguage,
-      watchedFields.slogan,
-      watchedFields.numberOfEmployees,
-      watchedFields.sameAs,
-      watchedFields.foundingDate,
-      watchedFields.parentOrganizationId,
-    ],
+    () => buildClientSeoData(initialData, watchedValues),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [initialData, seoFieldsKey],
   );
 
   let groupPercentages = { meta: 0, jsonLd: 0 };
@@ -267,7 +206,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                   <PopoverContent className="w-72 p-3" side="bottom" align="end">
                     <div className="space-y-2 text-xs text-muted-foreground">
                       <p>📁 جميع ملفات الميديا تُدار من صفحة التعديل بعد حفظ العميل.</p>
-                      <p>🔍 بيانات الـ SEO تُضاف بعد حفظ العميل — من زر Setup SEO.</p>
+                      <p>🔍 بيانات محركات البحث تُضاف بعد حفظ العميل — من صفحة التعديل.</p>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -323,34 +262,6 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
               </Accordion>
             </div>
 
-            <div className="hidden">
-              <div className="sticky top-[calc(57px+57px+16px)] z-30 space-y-4">
-                <div className="rounded-lg border border-border bg-background p-4">
-                  <p className="text-sm font-semibold mb-3">Required Fields</p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>○ Client Name</li>
-                    <li>○ Email</li>
-                    <li>○ Password</li>
-                    <li>○ Business Brief</li>
-                  </ul>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="default"
-                  className={buttonConfig.buttonClassName}
-                  disabled={loading}
-                  onClick={() => {
-                    if (formRef.current) {
-                      formRef.current.requestSubmit();
-                    }
-                  }}
-                >
-                  {buttonConfig.buttonIcon}
-                  {buttonConfig.buttonText}
-                </Button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

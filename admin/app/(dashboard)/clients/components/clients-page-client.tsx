@@ -7,11 +7,9 @@ import type { ClientForList } from "../actions/clients-actions/types";
 
 interface ClientsPageClientProps {
   clients: ClientForList[];
-  clientCount: number;
-  description: string;
 }
 
-export function ClientsPageClient({ clients, clientCount, description }: ClientsPageClientProps) {
+export function ClientsPageClient({ clients }: ClientsPageClientProps) {
   const { search } = useSearchContext();
 
   return (

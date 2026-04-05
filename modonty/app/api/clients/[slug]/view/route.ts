@@ -26,7 +26,7 @@ export async function POST(
     const cookieStore = await cookies();
     let sessionId = cookieStore.get(VIEW_SESSION_COOKIE)?.value;
     if (!sessionId) {
-      sessionId = `view-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+      sessionId = crypto.randomUUID();
       cookieStore.set(VIEW_SESSION_COOKIE, sessionId, {
         maxAge: SESSION_MAX_AGE,
         httpOnly: true,
@@ -43,6 +43,21 @@ export async function POST(
 
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
+
+    // Deduplicate: skip if same session/user viewed within 30 minutes
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const recentView = await db.clientView.findFirst({
+      where: {
+        clientId: client.id,
+        ...(userId ? { userId } : { sessionId }),
+        createdAt: { gte: thirtyMinutesAgo },
+      },
+      select: { id: true },
+    });
+
+    if (recentView) {
+      return NextResponse.json({ ok: true, deduplicated: true });
+    }
 
     await db.clientView.create({
       data: {
