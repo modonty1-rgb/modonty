@@ -49,8 +49,14 @@ All mutations have auth + Zod + slug check:
 
 ---
 
-## 6. Articles — Post-Launch (LOW)
+## 6. Next Version Improvements (LOW)
 
+### Toast Messages Overhaul → [TOAST-MESSAGES-TODO.md](admin/TOAST-MESSAGES-TODO.md)
+- [ ] Centralize all 183+ toast messages in one file
+- [ ] Improve toast UI (icons, colors, timing)
+- [ ] Make all messages clear Arabic with helpful context
+
+### Articles Post-Launch
 - [ ] Split view preview
 - [ ] Article templates
 - [ ] AI content suggestions

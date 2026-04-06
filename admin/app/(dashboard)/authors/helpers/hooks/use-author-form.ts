@@ -75,7 +75,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (!authorId) {
       setError("Author ID is required");
-      toast({ title: "Error", description: "Author ID is required.", variant: "destructive" });
+      toast({ title: "فشل الحفظ", description: "معرّف الكاتب مطلوب.", variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -97,7 +97,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (!uploadResult.success) {
       setError(uploadResult.error || "Failed to upload image");
-      toast({ title: "Error", description: uploadResult.error || "Failed to upload image", variant: "destructive" });
+      toast({ title: "فشل الحفظ", description: uploadResult.error || "تعذّر رفع الصورة", variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -139,8 +139,9 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (result.success) {
       toast({
-        title: "Success",
-        description: "Author profile updated successfully",
+        title: "تم الحفظ",
+        description: "تم تحديث بيانات الكاتب بنجاح",
+        variant: "success",
       });
 
       if (onSuccess) {
@@ -152,8 +153,8 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
     } else {
       setError(result.error || "Failed to save author");
       toast({
-        title: "Error",
-        description: result.error || "Failed to save author",
+        title: "فشل الحفظ",
+        description: result.error || "تعذّر حفظ بيانات الكاتب",
         variant: "destructive",
       });
     }

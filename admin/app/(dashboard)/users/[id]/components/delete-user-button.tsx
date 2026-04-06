@@ -32,8 +32,8 @@ export function DeleteUserButton({ userId }: { userId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "Error",
-        description: result.error || "Failed to delete user",
+        title: "فشل الحذف",
+        description: result.error || "تعذّر حذف المستخدم",
         variant: "destructive",
       });
     }

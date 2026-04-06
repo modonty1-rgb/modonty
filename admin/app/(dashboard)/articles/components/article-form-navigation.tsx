@@ -37,11 +37,12 @@ export function ArticleFormNavigation() {
         if (articleStatus) detailsParts.push(`Status: ${articleStatus}`);
 
         toast({
-          title: 'Saved Successfully',
+          title: 'تم الحفظ بنجاح',
           description:
             detailsParts.length > 0
-              ? `Article saved successfully.\n${detailsParts.join(' — ')}`
-              : 'Article saved successfully and awaiting admin review',
+              ? `تم حفظ المقال بنجاح.\n${detailsParts.join(' — ')}`
+              : 'تم حفظ المقال بنجاح وهو في انتظار معاينة المدير',
+          variant: 'success',
         });
 
         // Use window.location for reliable redirect (router.push can race with beforeunload)
@@ -52,15 +53,15 @@ export function ArticleFormNavigation() {
         }
       } else {
         toast({
-          title: 'Save Failed',
-          description: result.error || 'An error occurred while saving the article',
+          title: 'فشل الحفظ',
+          description: result.error || 'حدث خطأ أثناء حفظ المقال',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Save Failed',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+        title: 'فشل الحفظ',
+        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
         variant: 'destructive',
       });
     }

@@ -22,8 +22,8 @@ export function TestDataButton() {
     // Check if we have basic data available
     if (clients.length === 0 || categories.length === 0 || authors.length === 0) {
       toast({
-        title: 'Insufficient Data',
-        description: 'Please ensure clients, categories and authors exist in the database',
+        title: 'بيانات غير كافية',
+        description: 'يرجى التأكد من وجود عملاء وتصنيفات وكُتّاب في قاعدة البيانات',
         variant: 'destructive',
       });
       return;
@@ -64,30 +64,16 @@ export function TestDataButton() {
       
       updateFields(testData);
       
-      // Success toast with details
-      const details: string[] = [];
-      if (sources.media.length > 0) details.push(`${sources.media.length} images available`);
-      if (sources.articles.length > 0) details.push(`${sources.articles.length} related articles`);
-
-      // Show warning if no media or articles
-      const warnings: string[] = [];
-      if (sources.media.length === 0) warnings.push('No images');
-      if (sources.articles.length === 0) warnings.push('No related articles');
-
-      const description = warnings.length > 0
-        ? `Basic data filled • ${warnings.join(' • ')}`
-        : `All fields filled successfully${details.length > 0 ? ` • ` + details.join(' • ') : ''}`;
-
       toast({
-        title: 'Test Data Filled',
-        description,
-        variant: warnings.length > 0 ? 'default' : 'default',
+        title: 'تم التحميل',
+        description: 'تم إنشاء بيانات تجريبية بنجاح',
+        variant: 'success',
       });
     } catch (error) {
       console.error('Error filling test data:', error);
       toast({
-        title: 'Error',
-        description: 'An error occurred while filling test data',
+        title: 'فشل التحميل',
+        description: 'فشل إنشاء البيانات التجريبية',
         variant: 'destructive',
       });
     } finally {

@@ -47,10 +47,10 @@ export function FAQList({ faqs }: FAQListProps) {
     try {
       const result = await deleteFAQ(faqToDelete.id);
       if (result.success) {
-        toast({ title: "Deleted", description: "FAQ removed" });
+        toast({ title: "تم الحذف", description: "تم حذف السؤال", variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
+        toast({ variant: "destructive", title: "فشل الحذف", description: result.error || "تعذّر حذف السؤال" });
       }
     } finally {
       setLoading(null);
@@ -64,10 +64,10 @@ export function FAQList({ faqs }: FAQListProps) {
     try {
       const result = await toggleFAQStatus(id);
       if (result.success) {
-        toast({ title: "Updated", description: "FAQ visibility changed" });
+        toast({ title: "تم التحديث", description: "تم تغيير حالة السؤال", variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
+        toast({ variant: "destructive", title: "فشل التحديث", description: result.error || "تعذّر تغيير الحالة" });
       }
     } finally {
       setLoading(null);
@@ -93,7 +93,7 @@ export function FAQList({ faqs }: FAQListProps) {
       if (result.success) {
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
+        toast({ variant: "destructive", title: "فشل الترتيب", description: result.error || "تعذّر تغيير الترتيب" });
       }
     } finally {
       setLoading(null);

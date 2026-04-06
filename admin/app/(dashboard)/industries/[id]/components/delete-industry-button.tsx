@@ -33,8 +33,8 @@ export function DeleteIndustryButton({ industryId }: { industryId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "Error",
-        description: result.error || "Failed to delete industry",
+        title: "فشل الحذف",
+        description: result.error || "تعذّر حذف القطاع",
         variant: "destructive",
       });
     }

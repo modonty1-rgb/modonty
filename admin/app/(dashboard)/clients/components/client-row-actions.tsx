@@ -49,21 +49,22 @@ export function ClientRowActions({ clientId }: ClientRowActionsProps) {
       const result = await deleteClient(clientId);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Client deleted successfully",
+          title: "تم الحذف",
+          description: "تم حذف العميل بنجاح",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to delete client",
+          title: "فشل الحذف",
+          description: result.error || "تعذّر حذف العميل",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete client",
+        title: "فشل الحذف",
+        description: "تعذّر حذف العميل",
         variant: "destructive",
       });
     } finally {

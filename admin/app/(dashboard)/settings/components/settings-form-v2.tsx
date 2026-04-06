@@ -359,7 +359,7 @@ export function SettingsFormV2() {
     getAllSettings()
       .then((data) => { setSettings(data); setIsLoading(false); })
       .catch(() => {
-        toast({ title: "Error", description: "Failed to load settings", variant: "destructive" });
+        toast({ title: "فشل التحميل", description: "تعذّر تحميل الإعدادات", variant: "destructive" });
         setIsLoading(false);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -382,7 +382,7 @@ export function SettingsFormV2() {
       saveModontySettings(settings),
     ]);
     const ok = results.every((r) => r.success);
-    toast({ title: ok ? "Saved" : "Error", description: ok ? "Modonty settings saved successfully" : "Some settings failed to save", variant: ok ? "default" : "destructive" });
+    toast({ title: ok ? "تم الحفظ" : "فشل الحفظ", description: ok ? "تم حفظ الإعدادات بنجاح" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
     setIsSaving(false);
   }
 
@@ -391,9 +391,9 @@ export function SettingsFormV2() {
     const r = await applyTechnicalDefaults();
     if (r.success) {
       setSettings(await getAllSettings());
-      toast({ title: "Applied", description: r.updated > 0 ? `${r.updated} default(s) updated` : "All defaults already correct", });
+      toast({ title: "تم التطبيق", description: r.updated > 0 ? `تم تحديث ${r.updated} قيمة افتراضية` : "جميع القيم الافتراضية صحيحة", variant: "success" });
     } else {
-      toast({ title: "Error", description: r.error, variant: "destructive" });
+      toast({ title: "فشل التطبيق", description: r.error, variant: "destructive" });
     }
     setIsSaving(false);
   }

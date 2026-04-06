@@ -42,21 +42,22 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
       const result = await deleteCategory(categoryId);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Category deleted successfully",
+          title: "تم الحذف",
+          description: "تم حذف التصنيف بنجاح",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to delete category",
+          title: "فشل الحذف",
+          description: result.error || "تعذّر حذف التصنيف",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete category",
+        title: "فشل الحذف",
+        description: "تعذّر حذف التصنيف",
         variant: "destructive",
       });
     } finally {

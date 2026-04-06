@@ -37,8 +37,8 @@ export function DeleteCategoryButton({ categoryId }: DeleteCategoryButtonProps) 
       setLoading(false);
       setOpen(false);
       toast({
-        title: "Error",
-        description: result.error || "Failed to delete category",
+        title: "فشل الحذف",
+        description: result.error || "تعذّر حذف التصنيف",
         variant: "destructive",
       });
     }

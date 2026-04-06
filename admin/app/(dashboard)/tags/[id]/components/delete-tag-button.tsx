@@ -33,8 +33,8 @@ export function DeleteTagButton({ tagId }: { tagId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "Error",
-        description: result.error || "Failed to delete tag",
+        title: "فشل الحذف",
+        description: result.error || "تعذّر حذف الوسم",
         variant: "destructive",
       });
     }

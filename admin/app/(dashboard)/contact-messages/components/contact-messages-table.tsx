@@ -58,21 +58,22 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await updateContactMessageStatus(id, newStatus);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message status updated",
+          title: "تم التحديث",
+          description: "تم تحديث حالة الرسالة",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to update status",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر تحديث الحالة",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "فشلت العملية",
+        description: "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     } finally {
@@ -86,21 +87,22 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await markAsRead(id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message marked as read",
+          title: "تم القراءة",
+          description: "تم تعليم الرسالة كمقروءة",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to mark as read",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر تعليم الرسالة كمقروءة",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "فشلت العملية",
+        description: "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     } finally {
@@ -114,21 +116,22 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await markAsReplied(id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message marked as replied",
+          title: "تم الرد",
+          description: "تم تعليم الرسالة كمُجاب عليها",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to mark as replied",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر تعليم الرسالة كمُجاب عليها",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "فشلت العملية",
+        description: "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     } finally {
@@ -144,21 +147,22 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await deleteContactMessage(messageToDelete);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message deleted",
+          title: "تم الحذف",
+          description: "تم حذف الرسالة",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to delete message",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر حذف الرسالة",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "فشلت العملية",
+        description: "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     } finally {

@@ -41,8 +41,8 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "Error",
-        description: result.error || "Failed to delete client",
+        title: "فشل الحذف",
+        description: result.error || "تعذّر حذف العميل",
         variant: "destructive",
       });
     }

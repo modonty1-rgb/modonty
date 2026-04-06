@@ -78,8 +78,9 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copied",
-      description: `${label} copied to clipboard`,
+      title: "تم النسخ",
+      description: `تم نسخ ${label}`,
+      variant: "success",
     });
   };
 
@@ -90,14 +91,15 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await markAsRead(message.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message marked as read",
+          title: "تم القراءة",
+          description: "تم تعليم الرسالة كمقروءة",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to mark as read",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر تعليم الرسالة كمقروءة",
           variant: "destructive",
         });
       }
@@ -112,14 +114,15 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await markAsReplied(message.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message marked as replied",
+          title: "تم الرد",
+          description: "تم تعليم الرسالة كمُجاب عليها",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to mark as replied",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر تعليم الرسالة كمُجاب عليها",
           variant: "destructive",
         });
       }
@@ -134,14 +137,15 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await updateContactMessageStatus(message.id, "archived");
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message archived",
+          title: "تم الأرشفة",
+          description: "تم أرشفة الرسالة",
+          variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to archive message",
+          title: "فشلت العملية",
+          description: result.error || "تعذّرت أرشفة الرسالة",
           variant: "destructive",
         });
       }
@@ -156,14 +160,15 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await deleteContactMessage(message.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Message deleted",
+          title: "تم الحذف",
+          description: "تم حذف الرسالة",
+          variant: "success",
         });
         router.push("/contact-messages");
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to delete message",
+          title: "فشلت العملية",
+          description: result.error || "تعذّر حذف الرسالة",
           variant: "destructive",
         });
       }

@@ -87,7 +87,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
 
     const error = validateFile(file);
     if (error) {
-      toast({ title: "File Error", description: error, variant: "destructive" });
+      toast({ title: "فشل الرفع", description: error, variant: "destructive" });
       return;
     }
 
@@ -129,7 +129,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
         if (!cloudName || !uploadPreset) {
-          toast({ title: "Configuration Error", description: "Cloudinary configuration missing.", variant: "destructive" });
+          toast({ title: "فشل الرفع", description: "إعدادات Cloudinary مفقودة.", variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -140,7 +140,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         const publicId = generateCloudinaryPublicId(seoFileName, folderPath);
 
         if (!isValidCloudinaryPublicId(publicId)) {
-          toast({ title: "Validation Error", description: "Generated filename is invalid.", variant: "destructive" });
+          toast({ title: "فشل الرفع", description: "اسم الملف المُولَّد غير صالح.", variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -160,7 +160,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
 
           if (!uploadResponse.ok) {
             const errorMessage = await getCloudinaryErrorMessage(uploadResponse);
-            toast({ title: "Upload Failed", description: errorMessage, variant: "destructive" });
+            toast({ title: "فشل الرفع", description: errorMessage, variant: "destructive" });
             setIsSaving(false);
             return;
           }
@@ -185,7 +185,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
             await deleteCloudinaryAsset(media.cloudinaryPublicId, oldResourceType);
           }
         } catch (error) {
-          toast({ title: "Upload Failed", description: error instanceof Error ? error.message : "Failed to upload file", variant: "destructive" });
+          toast({ title: "فشل الرفع", description: error instanceof Error ? error.message : "تعذّر رفع الملف", variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -223,7 +223,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
               newCloudinaryPublicId = renameResult.newPublicId;
               newCloudinaryUrl = renameResult.newUrl || media.url;
             } else {
-              toast({ title: "Warning", description: renameResult.error || "Could not rename file in Cloudinary.", variant: "destructive" });
+              toast({ title: "فشل الرفع", description: renameResult.error || "تعذّرت إعادة تسمية الملف في Cloudinary.", variant: "destructive" });
             }
           }
         }
@@ -250,14 +250,14 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
       });
 
       if (result.success) {
-        toast({ title: "Media updated", description: "Media metadata has been updated successfully." });
+        toast({ title: "تم التحديث", description: "تم تحديث بيانات الملف بنجاح", variant: "success" });
         router.refresh();
         router.push("/media");
       } else {
         throw new Error(result.error || "Failed to update media");
       }
     } catch (error) {
-      toast({ title: "Error", description: error instanceof Error ? error.message : "Failed to update media", variant: "destructive" });
+      toast({ title: "فشل التحديث", description: error instanceof Error ? error.message : "تعذّر تحديث بيانات الملف", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }

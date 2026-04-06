@@ -21,14 +21,15 @@ export function CopyableId({ id, label, variant = "inline", className }: Copyabl
       await navigator.clipboard.writeText(id);
       setCopied(true);
       toast({
-        title: "Copied",
-        description: `${label} ID copied to clipboard`,
+        title: "تم النسخ",
+        description: `تم نسخ معرّف ${label} بنجاح`,
+        variant: "success",
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Failed to copy",
-        description: "Could not copy to clipboard",
+        title: "فشل النسخ",
+        description: "تعذّر نسخ المحتوى إلى الحافظة",
         variant: "destructive",
       });
     }

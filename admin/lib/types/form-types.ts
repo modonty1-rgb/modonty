@@ -313,5 +313,6 @@ export interface FormSubmitResult {
     id: string;
     title?: string | null;
     status?: ArticleStatus;
+    updatedAt?: Date | string | null;
   };
 }

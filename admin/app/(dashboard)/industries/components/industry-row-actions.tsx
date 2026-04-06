@@ -19,9 +19,9 @@ export function IndustryRowActions({ industryId }: { industryId: string }) {
     setIsDeleting(true);
     try {
       const result = await deleteIndustry(industryId);
-      if (result.success) { toast({ title: "Success", description: "Industry deleted successfully" }); router.refresh(); }
-      else { toast({ title: "Error", description: result.error || "Failed to delete industry", variant: "destructive" }); }
-    } catch { toast({ title: "Error", description: "Failed to delete industry", variant: "destructive" }); }
+      if (result.success) { toast({ title: "تم الحذف", description: "تم حذف القطاع بنجاح", variant: "success" }); router.refresh(); }
+      else { toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف القطاع", variant: "destructive" }); }
+    } catch { toast({ title: "فشل الحذف", description: "تعذّر حذف القطاع", variant: "destructive" }); }
     finally { setIsDeleting(false); }
   };
 

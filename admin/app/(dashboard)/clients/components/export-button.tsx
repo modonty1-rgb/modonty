@@ -40,13 +40,14 @@ export function ExportButton({ filters }: ExportButtonProps) {
       document.body.removeChild(link);
       
       toast({
-        title: "Success",
-        description: "Clients exported successfully",
+        title: "تم التصدير",
+        description: "تم تصدير العملاء بنجاح",
+        variant: "success",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to export clients",
+        title: "فشل التصدير",
+        description: "تعذّر تصدير العملاء",
         variant: "destructive",
       });
     } finally {

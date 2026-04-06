@@ -19,9 +19,9 @@ export function TagRowActions({ tagId }: { tagId: string }) {
     setIsDeleting(true);
     try {
       const result = await deleteTag(tagId);
-      if (result.success) { toast({ title: "Success", description: "Tag deleted successfully" }); router.refresh(); }
-      else { toast({ title: "Error", description: result.error || "Failed to delete tag", variant: "destructive" }); }
-    } catch { toast({ title: "Error", description: "Failed to delete tag", variant: "destructive" }); }
+      if (result.success) { toast({ title: "تم الحذف", description: "تم حذف الوسم بنجاح", variant: "success" }); router.refresh(); }
+      else { toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف الوسم", variant: "destructive" }); }
+    } catch { toast({ title: "فشل الحذف", description: "تعذّر حذف الوسم", variant: "destructive" }); }
     finally { setIsDeleting(false); }
   };
 

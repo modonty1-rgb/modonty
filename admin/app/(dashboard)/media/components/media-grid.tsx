@@ -67,9 +67,9 @@ export function MediaGrid({
   const copyUrl = async (item: Media) => {
     try {
       await navigator.clipboard.writeText(getImageUrl(item));
-      toast({ title: "URL Copied", description: "Image URL copied to clipboard." });
+      toast({ title: "تم النسخ", description: "تم نسخ رابط الصورة", variant: "success" });
     } catch {
-      toast({ title: "Failed to copy", description: "Could not copy URL.", variant: "destructive" });
+      toast({ title: "فشل النسخ", description: "تعذّر نسخ الرابط.", variant: "destructive" });
     }
   };
 

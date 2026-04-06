@@ -107,10 +107,11 @@ export function UserForm({ initialData, userId }: UserFormProps) {
 
     if (result.success) {
       toast({
-        title: isEditMode ? "Account Updated" : "Account Created",
+        title: isEditMode ? "تم التحديث" : "تم الإنشاء",
         description: isEditMode
-          ? `${formData.name || "Admin"} has been updated successfully.`
-          : `${formData.name || "Admin"} has been added to the team.`,
+          ? "تم تحديث بيانات المستخدم"
+          : "تم إنشاء المستخدم بنجاح",
+        variant: "success",
       });
       router.push("/users");
       router.refresh();
@@ -126,8 +127,9 @@ export function UserForm({ initialData, userId }: UserFormProps) {
     const result = await deleteUser(userId);
     if (result.success) {
       toast({
-        title: "Account Removed",
-        description: `${formData.name || "Admin"} has been removed.`,
+        title: "تم الحذف",
+        description: "تم حذف المستخدم بنجاح",
+        variant: "success",
       });
       router.push("/users");
       router.refresh();
@@ -135,8 +137,8 @@ export function UserForm({ initialData, userId }: UserFormProps) {
       setDeleteLoading(false);
       setDeleteOpen(false);
       toast({
-        title: "Cannot Remove",
-        description: result.error || "Something went wrong.",
+        title: "فشل الحذف",
+        description: result.error || "حدث خطأ أثناء الحذف.",
         variant: "destructive",
       });
     }

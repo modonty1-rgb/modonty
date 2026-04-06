@@ -628,7 +628,7 @@ export function MetaTagPreviewStep() {
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'تم النسخ', description: `تم نسخ ${label} بنجاح` });
+      toast({ title: 'تم النسخ', description: `تم نسخ ${label} بنجاح`, variant: 'success' });
     } catch {
       toast({ title: 'فشل النسخ', description: 'فشل في نسخ المحتوى', variant: 'destructive' });
     }

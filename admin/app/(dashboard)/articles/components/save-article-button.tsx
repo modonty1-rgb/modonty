@@ -34,6 +34,7 @@ export function SaveArticleButton() {
             detailsParts.length > 0
               ? `تم حفظ المقال بنجاح.\n${detailsParts.join(' — ')}`
               : 'تم حفظ المقال بنجاح وهو في انتظار معاينة المدير',
+          variant: 'success',
         });
 
         // For new articles, redirect to articles list or stay on page

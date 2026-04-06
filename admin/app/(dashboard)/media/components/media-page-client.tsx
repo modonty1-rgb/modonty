@@ -131,7 +131,7 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
       setDeleteDialogOpen(true);
     } catch {
       setIsChecking(false);
-      toast({ title: "Error", description: "Failed to check media usage.", variant: "destructive" });
+      toast({ title: "فشل الحذف", description: "تعذّر التحقق من استخدام الملف.", variant: "destructive" });
     }
   };
 
@@ -141,13 +141,13 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
     try {
       const result = await deleteMedia(deleteTarget.id);
       if (result.success) {
-        toast({ title: "Deleted", description: "Media file deleted" });
+        toast({ title: "تم الحذف", description: "تم حذف الملف بنجاح", variant: "success" });
         router.refresh();
       } else {
-        toast({ title: "Error", description: result.error || "Failed to delete.", variant: "destructive" });
+        toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف الملف.", variant: "destructive" });
       }
     } catch {
-      toast({ title: "Error", description: "An unexpected error occurred.", variant: "destructive" });
+      toast({ title: "فشل الحذف", description: "حدث خطأ غير متوقع.", variant: "destructive" });
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);

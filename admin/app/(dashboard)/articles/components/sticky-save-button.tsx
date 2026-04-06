@@ -31,8 +31,9 @@ export function StickySaveButton() {
       if (result.success) {
         setSaved(true);
         toast({
-          title: 'Saved Successfully',
-          description: 'Article saved successfully and awaiting admin review',
+          title: 'تم الحفظ',
+          description: 'تم حفظ المقال بنجاح',
+          variant: 'success',
         });
 
         if (mode === 'new') {
@@ -41,15 +42,15 @@ export function StickySaveButton() {
         }
       } else {
         toast({
-          title: 'Save Failed',
-          description: result.error || 'An error occurred while saving the article',
+          title: 'فشل الحفظ',
+          description: result.error || 'حدث خطأ أثناء الحفظ. حاول مرة أخرى',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Save Failed',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+        title: 'فشل الحفظ',
+        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
         variant: 'destructive',
       });
     } finally {

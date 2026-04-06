@@ -177,10 +177,10 @@ export function SeoOverviewClient({ listPages, contentPages, stats }: SeoOvervie
         ? await regenerateListPageSeo(id)
         : await regenerateContentPageSeo(id);
       if (result.success) {
-        toast({ title: "SEO Updated", description: `SEO regenerated for ${page?.name || id}` });
+        toast({ title: "تم التحديث", description: "تم تحديث بيانات البحث", variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "Error", description: result.error || "Failed" });
+        toast({ variant: "destructive", title: "فشل التحديث", description: result.error || "تعذّر تحديث بيانات البحث" });
       }
     } finally {
       setRegenerating(null);

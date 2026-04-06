@@ -72,8 +72,9 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
 
       if (result.success) {
         toast({
-          title: faqId ? "FAQ updated" : "FAQ created",
-          description: faqId ? "Changes saved" : "New FAQ added to the public page",
+          title: "تم الحفظ",
+          description: "تم حفظ السؤال بنجاح",
+          variant: "success",
         });
         if (onSuccess) {
           onSuccess();

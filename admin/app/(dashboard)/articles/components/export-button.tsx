@@ -43,13 +43,14 @@ export function ExportButton({ filters }: ExportButtonProps) {
       document.body.removeChild(link);
       
       toast({
-        title: "Success",
-        description: "Articles exported successfully",
+        title: "تم التصدير",
+        description: "تم تصدير المقالات بنجاح",
+        variant: "success",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to export articles",
+        title: "فشل التصدير",
+        description: "فشل تصدير المقالات",
         variant: "destructive",
       });
     } finally {

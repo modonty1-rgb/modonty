@@ -302,6 +302,10 @@ export function ArticleFormProvider({
       if (result.success) {
         setIsDirty(false);
         setErrors({});
+        // Update updatedAt to match server — prevents optimistic locking conflict on next save
+        if (result.article?.updatedAt) {
+          setFormData((prev) => ({ ...prev, updatedAt: result.article!.updatedAt }));
+        }
       } else {
         const errorObj: Record<string, string[]> = result.error ? { _general: [result.error] } : {};
         setErrors(errorObj);
