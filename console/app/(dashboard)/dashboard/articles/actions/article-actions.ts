@@ -41,14 +41,7 @@ export async function approveArticle(articleId: string, clientId: string) {
     // The admin app's scheduled SEO jobs or manual re-publish will handle it.
     // TODO: Add an admin API endpoint for cross-app SEO regeneration.
 
-    // Revalidate modonty so the public site picks up the status change
-    // NOTE: console app lacks revalidate-modonty-tag — this is a no-op until added
-    try {
-      const { revalidateModontyTag } = await import("@/lib/revalidate-modonty-tag");
-      await revalidateModontyTag("articles");
-    } catch (error) {
-      console.error("Failed to revalidate modonty articles tag:", error);
-    }
+    // TODO: add revalidateModontyTag to console app when needed
 
     revalidatePath("/dashboard/articles");
     revalidatePath("/dashboard/content");
