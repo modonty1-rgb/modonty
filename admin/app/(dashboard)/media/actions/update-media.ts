@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MediaType } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
+import { auth } from "@/lib/auth";
 
 interface UpdateMediaData {
   type?: MediaType;
@@ -33,6 +34,8 @@ interface UpdateMediaData {
 
 export async function updateMedia(id: string, data: UpdateMediaData) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
     const media = await db.media.update({
       where: { id },
       data: {

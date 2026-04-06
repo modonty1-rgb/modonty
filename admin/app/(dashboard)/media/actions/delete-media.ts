@@ -5,9 +5,13 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { canDeleteMedia } from "./can-delete-media";
 import { deleteCloudinaryAsset } from "./delete-cloudinary-asset";
+import { auth } from "@/lib/auth";
 
 export async function deleteMedia(id: string, clientId?: string) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
     // Check if media can be deleted
     const canDelete = await canDeleteMedia(id, clientId);
     if (!canDelete.canDelete) {

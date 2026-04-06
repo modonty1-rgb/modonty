@@ -8,6 +8,7 @@ import { getModontyAuthor } from "./get-modonty-author";
 import { batchRegenerateJsonLd } from "@/lib/seo";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { auth } from "@/lib/auth";
 
 const updateAuthorSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -39,6 +40,9 @@ export async function updateAuthor(
   data: z.infer<typeof updateAuthorSchema>,
 ) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
     const parsed = updateAuthorSchema.safeParse(data);
     if (!parsed.success) {
       return { success: false, error: parsed.error.errors[0]?.message || "Invalid data" };

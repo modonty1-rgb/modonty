@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MediaType } from "@prisma/client";
+import { auth } from "@/lib/auth";
 
 interface CreateMediaData {
   filename: string;
@@ -73,6 +74,9 @@ function validateFileSize(fileSize: number | undefined, mimeType: string): { val
 
 export async function createMedia(data: CreateMediaData) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
     // Validate altText is required
     if (!data.altText || data.altText.trim().length === 0) {
       return { success: false, error: "Alt text is required for SEO and accessibility." };

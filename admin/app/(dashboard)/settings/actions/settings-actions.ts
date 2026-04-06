@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
 import type { Prisma } from "@prisma/client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -601,6 +602,7 @@ async function ensureSettingsExists(): Promise<string> {
 
 export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -632,6 +634,7 @@ export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ suc
 
 export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -678,6 +681,7 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
 
 export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSettings, "siteUrl" | "siteName" | "brandDescription" | "siteAuthor" | "inLanguage" | "defaultMetaRobots" | "defaultGooglebot" | "defaultOgType" | "defaultOgLocale" | "defaultOgDeterminer" | "defaultTwitterCard" | "defaultSitemapPriority" | "defaultSitemapChangeFreq" | "articleDefaultSitemapChangeFreq" | "articleDefaultSitemapPriority" | "defaultLicense" | "defaultCharset" | "defaultOgImageType" | "defaultOgImageWidth" | "defaultOgImageHeight" | "defaultHreflang" | "defaultPathname" | "defaultTruncationSuffix" | "defaultReferrerPolicy" | "defaultNotranslate" | "twitterSite" | "twitterCreator" | "twitterSiteId" | "twitterCreatorId">>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -711,6 +715,7 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
 
 export async function saveTrackingSettings(data: Partial<GTMSettings & HOTjarSettings>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -732,6 +737,7 @@ export async function saveTrackingSettings(data: Partial<GTMSettings & HOTjarSet
 
 export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -757,6 +763,7 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
 
 export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },
@@ -777,6 +784,7 @@ export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{
 
 export async function saveModontySettings(data: Partial<ModontySettings>): Promise<{ success: boolean; error?: string }> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const id = await ensureSettingsExists();
     await db.settings.update({
       where: { id },

@@ -9,7 +9,9 @@
 
 All mutations have auth + Zod + slug check:
 - [x] Articles, Clients, Categories, Tags, Industries
-- [ ] **Authors/Media/Settings**: auth check on mutations (remaining)
+- [x] Authors: updateAuthor
+- [x] Media: createMedia, updateMedia, deleteMedia
+- [x] Settings: all 6 save functions
 
 ---
 
@@ -33,7 +35,7 @@ All mutations have auth + Zod + slug check:
 - [x] Category/Tag/Industry — Organization + WebSite added to JSON-LD @graph
 - [x] Category/Tag/Industry — alternates.languages added (ar-SA)
 - [x] Category/Tag/Industry — breadcrumb labels → English
-- [ ] Industry update — cascade to regenerate client SEO
+- [x] Industry update — cascade to regenerate client SEO
 - [ ] About + Legal pages — use cached metadata instead of live build
 - [ ] Settings change — auto-cascade to all entities
 
