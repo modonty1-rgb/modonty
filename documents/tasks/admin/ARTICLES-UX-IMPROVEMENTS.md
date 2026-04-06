@@ -22,33 +22,12 @@
 
 ---
 
-## P2.5 — Bugs (Must fix before removing beta banner)
+## P2.5 — Bugs ✅ (Fixed in Session 4)
 
-### 1. Redirect after Update not working
-- **Problem**: Admin clicks Update, save succeeds but stays on edit page instead of redirecting to article view
-- **Root cause**: `handleSave` in `article-form-navigation.tsx` redirects via `router.push` but the redirect may race with the beforeunload handler or the toast
-- **Fix**: Debug the save callback flow — ensure `result.article?.id` is returned correctly from `updateArticle`, and that `router.push` fires after toast
-- **Files**: `article-form-navigation.tsx`, `article-form-context.tsx`
-- **Effort**: Small
-
-### 2. beforeunload too aggressive
-- **Problem**: Warning dialog appears even during Hot Module Reload in development, and fires when navigating away after auto-save (form shows dirty from auto-fill effects)
-- **Root cause**: Auto-fill effects (slug, seoTitle, canonical, etc.) set `isDirty: true` even when user hasn't touched anything
-- **Fix**: Differentiate between user-initiated changes and auto-fill changes. Only set `isDirty` for user actions, not auto-fill. Consider adding `isUserDirty` flag separate from `isDirty`
-- **Files**: `article-form-context.tsx`
-- **Effort**: Medium
-
-### 3. No automated tests
-- **Problem**: All testing is manual. Any future change could break create/edit/publish flow without anyone knowing
-- **Fix**: Add Playwright E2E tests for critical paths: create article, edit article, publish article, SEO score check
-- **Where**: `admin/tests/e2e/articles.spec.ts`
-- **Effort**: Medium
-
-### 4. SEO title truncation cuts words
-- **Problem**: `generateSEOTitle` truncates at exactly 60 chars with `title.slice(0, maxTitleLen)`, which can cut Arabic words mid-character
-- **Fix**: Truncate at last space before the limit, then append `...` if truncated
-- **Files**: `articles/helpers/seo-generation.ts`
-- **Effort**: Small
+- [x] **Redirect after Update** — replaced `router.push` with `window.location.href` for reliable redirect
+- [x] **beforeunload too aggressive** — removed `setIsDirty(true)` from all 9 auto-fill effects (slug, seoTitle, seoDescription, canonical, sitemap, ogSection, ogTags, ogAuthor, articleBodyText). Only user actions mark dirty now
+- [x] **Automated tests** — added Playwright E2E test suite (`tests/e2e/articles.spec.ts`) with 6 tests: list page, create, edit, SEO consistency, publish gate, toolbar tools, word count
+- [x] **SEO title truncation** — now truncates at last word boundary instead of mid-character
 
 ---
 

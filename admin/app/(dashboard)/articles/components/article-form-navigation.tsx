@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Save, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +20,6 @@ export function ArticleFormNavigation() {
     seoScore,
     lastAutoSaved,
   } = useArticleForm();
-  const router = useRouter();
   const { toast } = useToast();
 
   const handleSave = async () => {
@@ -46,12 +44,11 @@ export function ArticleFormNavigation() {
               : 'Article saved successfully and awaiting admin review',
         });
 
+        // Use window.location for reliable redirect (router.push can race with beforeunload)
         if (mode === 'new') {
-          router.push('/articles');
-          router.refresh();
+          window.location.href = '/articles';
         } else if (mode === 'edit' && savedArticleId) {
-          router.push(`/articles/${savedArticleId}`);
-          router.refresh();
+          window.location.href = `/articles/${savedArticleId}`;
         }
       } else {
         toast({

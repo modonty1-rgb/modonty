@@ -366,12 +366,11 @@ export function ArticleFormProvider({
   const canGoNext = currentStep < totalSteps;
   const canGoPrevious = currentStep > 1;
   
-  // Auto-fill logic
+  // Auto-fill logic (no setIsDirty — these are system-generated, not user changes)
   useEffect(() => {
     const newSlug = slugify(formData.title);
     if (newSlug && newSlug !== formData.slug && !formData.slug) {
       setFormData((prev) => ({ ...prev, slug: newSlug }));
-      setIsDirty(true);
     }
   }, [formData.title, formData.slug]);
 
@@ -383,7 +382,6 @@ export function ArticleFormProvider({
       const seoTitle = generateSEOTitle(formData.title, clientName);
       if (seoTitle) {
         setFormData((prev) => ({ ...prev, seoTitle }));
-        setIsDirty(true);
       }
     }
   }, [formData.title, formData.seoTitle, formData.clientId, clients]);
@@ -394,7 +392,6 @@ export function ArticleFormProvider({
       const seoDescription = generateSEODescription(formData.excerpt);
       if (seoDescription) {
         setFormData((prev) => ({ ...prev, seoDescription }));
-        setIsDirty(true);
       }
     }
   }, [formData.excerpt, formData.seoDescription]);
@@ -407,7 +404,6 @@ export function ArticleFormProvider({
       const canonicalUrl = generateCanonicalUrl(formData.slug, undefined, clientSlug);
       if (canonicalUrl) {
         setFormData((prev) => ({ ...prev, canonicalUrl }));
-        setIsDirty(true);
       }
     }
   }, [formData.slug, formData.canonicalUrl, formData.clientId, clients]);
@@ -418,7 +414,6 @@ export function ArticleFormProvider({
       const newPriority = formData.featured ? 0.8 : 0.5;
       if (formData.sitemapPriority !== newPriority) {
         setFormData((prev) => ({ ...prev, sitemapPriority: newPriority }));
-        setIsDirty(true);
       }
     }
   }, [formData.featured, formData.sitemapPriority]);
@@ -429,7 +424,6 @@ export function ArticleFormProvider({
       const selectedCategory = categories.find((c) => c.id === formData.categoryId);
       if (selectedCategory?.name) {
         setFormData((prev) => ({ ...prev, ogArticleSection: selectedCategory.name }));
-        setIsDirty(true);
       }
     }
   }, [formData.categoryId, formData.ogArticleSection, categories]);
@@ -440,7 +434,6 @@ export function ArticleFormProvider({
       const selectedTags = tags.filter((t) => formData.tags?.includes(t.id)).map((t) => t.name);
       if (selectedTags.length > 0) {
         setFormData((prev) => ({ ...prev, ogArticleTag: selectedTags }));
-        setIsDirty(true);
       }
     }
   }, [formData.tags, formData.ogArticleTag, tags]);
@@ -459,7 +452,6 @@ export function ArticleFormProvider({
       const selectedAuthor = authors.find((a) => a.id === formData.authorId);
       if (selectedAuthor?.name) {
         setFormData((prev) => ({ ...prev, ogArticleAuthor: selectedAuthor.name }));
-        setIsDirty(true);
       }
     }
   }, [formData.authorId, formData.ogArticleAuthor, authors]);
@@ -478,7 +470,6 @@ export function ArticleFormProvider({
         // Update articleBodyText with extracted plain text
         if (plainText && (!formData.articleBodyText || formData.articleBodyText !== plainText)) {
           setFormData((prev) => ({ ...prev, articleBodyText: plainText }));
-          setIsDirty(true);
         }
       }
     }

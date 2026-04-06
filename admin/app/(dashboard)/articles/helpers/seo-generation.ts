@@ -13,9 +13,18 @@ export function generateSEOTitle(title: string, clientName?: string): string {
     if (full.length <= 60) return full;
     const suffix = ` | ${clientName}`;
     const maxTitleLen = 60 - suffix.length;
-    if (maxTitleLen > 10) return `${title.slice(0, maxTitleLen).trim()} | ${clientName}`;
+    if (maxTitleLen > 10) {
+      // Truncate at last space to avoid cutting Arabic words
+      const truncated = title.slice(0, maxTitleLen);
+      const lastSpace = truncated.lastIndexOf(' ');
+      const clean = lastSpace > 10 ? truncated.slice(0, lastSpace) : truncated;
+      return `${clean.trim()} | ${clientName}`;
+    }
   }
-  return title.slice(0, 60);
+  if (title.length <= 60) return title;
+  const truncated = title.slice(0, 60);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return lastSpace > 10 ? truncated.slice(0, lastSpace).trim() : truncated.trim();
 }
 
 /**
