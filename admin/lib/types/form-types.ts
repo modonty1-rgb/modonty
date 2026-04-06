@@ -116,6 +116,9 @@ export interface ArticleFormData {
   jsonLdHistory?: any;
   jsonLdDiffSummary?: string;
 
+  // Optimistic locking
+  updatedAt?: Date | string | null;
+
   // Tags & FAQs
   tags?: string[];
   faqs?: FAQItem[];

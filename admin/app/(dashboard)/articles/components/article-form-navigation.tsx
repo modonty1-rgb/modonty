@@ -15,9 +15,11 @@ export function ArticleFormNavigation() {
     totalSteps,
     save,
     isSaving,
+    isDirty,
     overallProgress,
     mode,
     seoScore,
+    lastAutoSaved,
   } = useArticleForm();
   const router = useRouter();
   const { toast } = useToast();
@@ -32,16 +34,16 @@ export function ArticleFormNavigation() {
         const articleStatus = result.article?.status;
 
         const detailsParts: string[] = [];
-        if (savedArticleId) detailsParts.push(`المعرّف: ${savedArticleId}`);
-        if (articleTitle) detailsParts.push(`العنوان: "${articleTitle}"`);
-        if (articleStatus) detailsParts.push(`الحالة: ${articleStatus}`);
+        if (savedArticleId) detailsParts.push(`ID: ${savedArticleId}`);
+        if (articleTitle) detailsParts.push(`Title: "${articleTitle}"`);
+        if (articleStatus) detailsParts.push(`Status: ${articleStatus}`);
 
         toast({
-          title: 'تم الحفظ بنجاح',
+          title: 'Saved Successfully',
           description:
             detailsParts.length > 0
-              ? `تم حفظ المقال بنجاح.\n${detailsParts.join(' — ')}`
-              : 'تم حفظ المقال بنجاح وهو في انتظار معاينة المدير',
+              ? `Article saved successfully.\n${detailsParts.join(' — ')}`
+              : 'Article saved successfully and awaiting admin review',
         });
 
         if (mode === 'new') {
@@ -53,15 +55,15 @@ export function ArticleFormNavigation() {
         }
       } else {
         toast({
-          title: 'فشل الحفظ',
-          description: result.error || 'حدث خطأ أثناء حفظ المقال',
+          title: 'Save Failed',
+          description: result.error || 'An error occurred while saving the article',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'فشل الحفظ',
-        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
+        title: 'Save Failed',
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
         variant: 'destructive',
       });
     }
@@ -104,6 +106,11 @@ export function ArticleFormNavigation() {
                   <span className="text-xs font-medium text-muted-foreground">
                     {overallProgress}% Complete
                   </span>
+                  {lastAutoSaved && !isDirty && (
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
+                      Auto-saved {lastAutoSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button

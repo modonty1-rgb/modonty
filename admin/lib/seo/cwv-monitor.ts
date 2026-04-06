@@ -93,11 +93,6 @@ export function assessJsonLdPerformanceImpact(
     recommendations.push("استخدم defer أو async للتحميل غير المتزامن");
   }
 
-  // Check for potential optimizations
-  if (jsonString.includes("articleBody") && jsonString.length > 30000) {
-    recommendations.push("قلل طول articleBody أو أزله من JSON-LD");
-  }
-
   return {
     sizeBytes,
     sizeKB,
@@ -191,13 +186,11 @@ export function checkStructuredDataBudget(
 export function optimizeJsonLdForPerformance(
   jsonLd: object,
   options?: {
-    removeArticleBody?: boolean;
     truncateDescriptions?: number;
     removeOptionalFields?: boolean;
   }
 ): object {
   const opts = {
-    removeArticleBody: true,
     truncateDescriptions: 200,
     removeOptionalFields: false,
     ...options,
@@ -209,11 +202,6 @@ export function optimizeJsonLdForPerformance(
   if (!Array.isArray(graph)) return optimized;
 
   for (const node of graph) {
-    // Remove articleBody (heavy)
-    if (opts.removeArticleBody && node.articleBody) {
-      delete node.articleBody;
-    }
-
     // Truncate descriptions
     if (opts.truncateDescriptions) {
       if (node.description && node.description.length > opts.truncateDescriptions) {

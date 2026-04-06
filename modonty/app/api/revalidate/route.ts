@@ -13,7 +13,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const revalidationSecret = process.env.REVALIDATE_SECRET || "dev-secret-key";
+    const revalidationSecret = process.env.REVALIDATE_SECRET;
+    if (!revalidationSecret) {
+      return NextResponse.json(
+        { success: false, error: "Revalidation not configured" },
+        { status: 503 }
+      );
+    }
     if (secret !== revalidationSecret) {
       return NextResponse.json(
         { success: false, error: "Invalid secret" },

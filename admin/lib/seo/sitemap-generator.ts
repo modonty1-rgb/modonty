@@ -9,6 +9,7 @@
  */
 
 import { Article, Media } from "@prisma/client";
+import { SITE_NAME } from "@/lib/constants/site-name";
 
 export interface SitemapEntry {
   loc: string;
@@ -181,7 +182,7 @@ export function generateArticleSitemapEntry(
 
     if (isRecent) {
       entry.news = {
-        publicationName: options.publicationName || "مودونتي",
+        publicationName: options.publicationName || SITE_NAME,
         publicationLanguage: article.inLanguage || options?.defaults?.inLanguage || "ar",
         publicationDate: article.datePublished.toISOString(),
         title: article.title,

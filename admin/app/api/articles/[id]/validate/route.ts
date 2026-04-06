@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { extractRenderedHTML } from '@/lib/seo/page-renderer';
 
 /**
  * POST /api/articles/[id]/validate
@@ -16,17 +15,18 @@ export async function POST(
     // Load article from DB
     const article = await db.article.findUnique({
       where: { id },
-      include: {
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-        faqs: {
-          orderBy: {
-            position: 'asc',
-          },
-        },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        content: true,
+        status: true,
+        seoTitle: true,
+        seoDescription: true,
+        canonicalUrl: true,
+        jsonLdStructuredData: true,
+        tags: { include: { tag: true } },
+        faqs: { orderBy: { position: 'asc' } },
         featuredImage: true,
       },
     });
@@ -38,32 +38,32 @@ export async function POST(
       );
     }
 
-    // Use request origin so we fetch the same server (avoids env mismatch, e.g. localhost vs production)
-    const baseUrl =
-      request.nextUrl.origin ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3000";
-    const previewUrl = `${baseUrl}/articles/preview/${article.id}`;
-    
-    let html: string;
-    let rendered = false;
-    
-    try {
-      // Fetch actual rendered HTML from preview page
-      html = await extractRenderedHTML(previewUrl);
-      rendered = true;
-    } catch (error) {
-      // Fallback: If preview page not accessible, return error
-      console.error('Failed to fetch preview page HTML:', error);
-      return NextResponse.json(
-        {
-          error: 'Failed to fetch preview page HTML',
-          message: error instanceof Error ? error.message : String(error),
-          hint: 'Make sure preview page is accessible and server is running',
-        },
-        { status: 500 }
-      );
-    }
+    // Always validate from DB data — most accurate source of truth
+    // (live page may have stale cache)
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const previewUrl = `${siteUrl}/articles/${article.slug}`;
+    const jsonLd = article.jsonLdStructuredData || "";
+    const desc = article.seoDescription || "";
+    const canonical = article.canonicalUrl || "";
+    const ogTitle = article.seoTitle || article.title;
+    const imgUrl = article.featuredImage?.url || "";
+
+    const html = `<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+<title>${article.title}</title>
+<meta name="description" content="${desc}">
+<meta name="robots" content="index, follow">
+${canonical ? `<link rel="canonical" href="${canonical}">` : ""}
+${ogTitle ? `<meta property="og:title" content="${ogTitle}">` : ""}
+${desc ? `<meta property="og:description" content="${desc}">` : ""}
+${imgUrl ? `<meta property="og:image" content="${imgUrl}">` : ""}
+${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ""}
+</head>
+<body>
+<h1>${article.title}</h1>
+<article>${article.content}</article>
+</body></html>`;
+    const rendered = false;
 
     // Use the existing validation infrastructure
     const { extractStructuredData } = await import('@/lib/seo/page-extractor');

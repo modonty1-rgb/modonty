@@ -77,9 +77,23 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
       await Promise.all(
         relatedArticles.map((article) => generateAndSaveJsonLd(article.id).catch(() => null))
       );
+
+      // Also regenerate metadata for related articles (image URLs in OG metadata, etc.)
+      try {
+        const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
+        for (const article of relatedArticles) {
+          await generateAndSaveNextjsMetadata(article.id);
+        }
+      } catch {
+        // Don't fail the update if metadata regeneration fails
+      }
     }
 
     revalidatePath("/media");
+    revalidatePath("/articles");
+    // Revalidate all article detail pages (dynamic route pattern)
+    revalidatePath("/articles/[id]", "page");
+    revalidatePath("/articles/[id]/technical", "page");
     return { success: true, media };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update media";

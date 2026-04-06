@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IconLike, IconSaved, IconLoading } from "@/lib/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, dislikeArticle, favoriteArticle } from "../actions/article-interactions";
 
@@ -42,6 +42,7 @@ export function ArticleInteractionButtons({
   const [userDisliked, setUserDisliked] = useState(initialUserDisliked);
   const [userFavorited, setUserFavorited] = useState(initialUserFavorited);
   const [loading, setLoading] = useState<string | null>(null);
+  const isPending = useRef(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -55,7 +56,8 @@ export function ArticleInteractionButtons({
   }, [initialLikes, initialDislikes, initialFavorites, initialUserLiked, initialUserDisliked, initialUserFavorited]);
 
   const handleLike = async () => {
-    if (!session?.user || loading) return;
+    if (!session?.user || loading || isPending.current) return;
+    isPending.current = true;
 
     // Optimistic update
     const previousLikes = likes;
@@ -84,18 +86,20 @@ export function ArticleInteractionButtons({
         setDislikes(previousDislikes);
         setUserDisliked(previousUserDisliked);
       }
-    } catch (error) {
+    } catch {
       setLikes(previousLikes);
       setUserLiked(previousUserLiked);
       setDislikes(previousDislikes);
       setUserDisliked(previousUserDisliked);
     } finally {
       setLoading(null);
+      isPending.current = false;
     }
   };
 
   const handleDislike = async () => {
-    if (!session?.user) return;
+    if (!session?.user || loading || isPending.current) return;
+    isPending.current = true;
 
     // Optimistic update
     const previousDislikes = dislikes;
@@ -123,21 +127,21 @@ export function ArticleInteractionButtons({
         setUserDisliked(previousUserDisliked);
         setLikes(previousLikes);
         setUserLiked(previousUserLiked);
-        console.error("Failed to update dislike:", result.error);
       }
-    } catch (error) {
+    } catch {
       setDislikes(previousDislikes);
       setUserDisliked(previousUserDisliked);
       setLikes(previousLikes);
       setUserLiked(previousUserLiked);
-      console.error("Error updating dislike:", error);
     } finally {
       setLoading(null);
+      isPending.current = false;
     }
   };
 
   const handleFavorite = async () => {
-    if (!session?.user || loading) return;
+    if (!session?.user || loading || isPending.current) return;
+    isPending.current = true;
 
     // Optimistic update
     const previousFavorites = favorites;
@@ -157,11 +161,12 @@ export function ArticleInteractionButtons({
         setFavorites(previousFavorites);
         setUserFavorited(previousUserFavorited);
       }
-    } catch (error) {
+    } catch {
       setFavorites(previousFavorites);
       setUserFavorited(previousUserFavorited);
     } finally {
       setLoading(null);
+      isPending.current = false;
     }
   };
 
@@ -209,23 +214,21 @@ export function ArticleInteractionButtons({
         )}
         <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
       </Button>
-      <div className="hidden">
-        <Button
-          variant={userDisliked ? "default" : "outline"}
-          size={compact ? "sm" : "sm"}
-          onClick={handleDislike}
-          disabled={!isLoggedIn || loading === "dislike"}
-          className={btnClass}
-          aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
-        >
-          {loading === "dislike" ? (
-            <IconLoading className={`${iconClass} animate-spin`} />
-          ) : (
-            <IconLike className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
-          )}
-          <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
-        </Button>
-      </div>
+      <Button
+        variant={userDisliked ? "default" : "outline"}
+        size={compact ? "sm" : "sm"}
+        onClick={handleDislike}
+        disabled={!isLoggedIn || loading === "dislike"}
+        className={btnClass}
+        aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
+      >
+        {loading === "dislike" ? (
+          <IconLoading className={`${iconClass} animate-spin`} />
+        ) : (
+          <IconLike className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
+        )}
+        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
+      </Button>
       <Button
         variant={userFavorited ? "default" : "outline"}
         size={compact ? "sm" : "sm"}

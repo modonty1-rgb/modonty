@@ -1,67 +1,49 @@
 import type { ArticleSEOCategory, SEOCheckItem } from "../article-seo-types";
 import type { NormalizedInput } from "./normalize-input";
 
-export function analyzeStructuredData(
-  data: NormalizedInput
-): ArticleSEOCategory {
+export function analyzeStructuredData(data: NormalizedInput): ArticleSEOCategory {
   const maxScore = 20;
   let score = 0;
   const checks: SEOCheckItem[] = [];
 
+  // JSON-LD structured data — critical for rich results
   const hasSavedJsonLd =
     typeof data.jsonLdStructuredData === "string" &&
     data.jsonLdStructuredData.length > 0;
-
-  // Treat JSON-LD as \"ready from context\" when we have the same core fields
-  // that the live JSON-LD preview uses (title + canonical + description).
-  // Author/date are validated separately in the \"Core schema fields\" check.
   const hasCoreFieldsForJsonLd =
-    !!data.title &&
-    !!data.canonicalUrl &&
-    !!data.seoDescription;
+    !!data.title && !!data.canonicalUrl && !!data.seoDescription;
 
   if (hasSavedJsonLd || hasCoreFieldsForJsonLd) {
-    score += 5;
+    score += 7;
     checks.push({
       passed: true,
       label: "JSON-LD structured data",
-      reason: hasSavedJsonLd
-        ? "Generated"
-        : "Ready from form context (will generate on save)",
+      reason: hasSavedJsonLd ? "Generated" : "Ready (will generate on save)",
     });
   } else {
     checks.push({
       passed: false,
       label: "JSON-LD structured data",
-      reason: "Save article to generate",
+      reason: "Fill title, description, and canonical to generate",
     });
   }
 
+  // Core schema fields — Google Article schema requirements
   let schemaScore = 0;
-  if (data.title && data.title.length > 0) schemaScore += 2;
-  if (data.authorId) schemaScore += 2;
-  if (data.datePublished) schemaScore += 2;
-  if (data.canonicalUrl) schemaScore += 2;
-  if (data.seoDescription && data.seoDescription.length > 0)
-    schemaScore += 2;
+  const missing: string[] = [];
+  if (data.title && data.title.length > 0) { schemaScore += 2; } else { missing.push("title"); }
+  if (data.authorId) { schemaScore += 2; } else { missing.push("author"); }
+  if (data.datePublished) { schemaScore += 3; } else { missing.push("publish date"); }
+  if (data.canonicalUrl) { schemaScore += 3; } else { missing.push("canonical URL"); }
+  if (data.seoDescription && data.seoDescription.length > 0) { schemaScore += 3; } else { missing.push("SEO description"); }
 
   score += schemaScore;
-  const schemaOk = schemaScore >= 8;
+  const schemaOk = schemaScore >= 10;
   checks.push({
     passed: schemaOk,
-    label: "Core schema fields (title, author, date, canonical, description)",
-    reason: schemaOk ? "Complete" : `${schemaScore}/10 (need 8+)`,
+    label: "Core schema fields",
+    reason: schemaOk ? "All required fields present" : `Missing: ${missing.join(", ")}`,
   });
-
-  if (data.faqCount >= 3) {
-    score += 5;
-    checks.push({ passed: true, label: "FAQs ≥3", reason: `${data.faqCount} FAQs` });
-  } else if (data.faqCount > 0) {
-    score += 2;
-    checks.push({ passed: false, label: "FAQs ≥3", reason: `${data.faqCount} FAQ(s) (need 3+)` });
-  } else {
-    checks.push({ passed: false, label: "FAQs ≥3", reason: "None" });
-  }
 
   const passed = checks.filter((c) => c.passed).length;
   const total = checks.length;

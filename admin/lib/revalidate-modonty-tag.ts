@@ -23,12 +23,16 @@ export async function revalidateModontyTag(
       return;
     }
 
-    await fetch(`${url}/api/revalidate/tag`, {
+    const res = await fetch(`${url}/api/revalidate/tag`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tag, secret }),
     });
-  } catch {
-    // Non-critical: do not block mutation on revalidation failure
+
+    if (!res.ok) {
+      console.error(`[revalidateModontyTag] Failed to revalidate tag "${tag}" on ${url} — status ${res.status}`);
+    }
+  } catch (error) {
+    console.error(`[revalidateModontyTag] Network error revalidating tag "${tag}" — modonty may be down:`, error instanceof Error ? error.message : error);
   }
 }

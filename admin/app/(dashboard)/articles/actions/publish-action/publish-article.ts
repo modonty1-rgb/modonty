@@ -6,6 +6,11 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { ArticleFormData, FormSubmitResult } from "@/lib/types/form-types";
 import { createArticle } from "../articles-actions";
+import { auth } from "@/lib/auth";
+import { checkCompliance } from "@/lib/seo/pre-publish-audit";
+import { analyzeArticleSEO } from "../../analyzer";
+
+const MIN_SEO_SCORE = 60;
 
 async function validateArticleData(formData: ArticleFormData): Promise<{
   valid: boolean;
@@ -72,6 +77,7 @@ export async function publishArticle(
   formData: ArticleFormData
 ): Promise<FormSubmitResult> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     const validation = await validateArticleData(formData);
 
     if (!validation.valid) {
@@ -79,6 +85,39 @@ export async function publishArticle(
         success: false,
         error: `Validation failed: ${validation.errors.join("; ")}`,
       };
+    }
+
+    // SEO score gate — block publish below minimum
+    const seoResult = analyzeArticleSEO(formData);
+    if (seoResult.percentage < MIN_SEO_SCORE) {
+      return {
+        success: false,
+        error: `SEO score is ${seoResult.percentage}% — minimum ${MIN_SEO_SCORE}% required to publish. Improve SEO fields before publishing.`,
+      };
+    }
+
+    // Pre-publish compliance check
+    if (formData.clientId) {
+      const client = await db.client.findUnique({
+        where: { id: formData.clientId },
+        select: { forbiddenKeywords: true, forbiddenClaims: true },
+      });
+      const compliance = checkCompliance(
+        {
+          title: formData.title,
+          content: formData.content,
+          seoTitle: formData.seoTitle,
+          seoDescription: formData.seoDescription,
+          excerpt: formData.excerpt,
+        },
+        client
+      );
+      if (compliance.blocked) {
+        return {
+          success: false,
+          error: compliance.issues.map((i) => i.message).join(". "),
+        };
+      }
     }
 
     const createResult = await createArticle({
@@ -105,6 +144,14 @@ export async function publishArticle(
         ogArticleModifiedTime: now,
       },
     });
+
+    // Regenerate SEO data for the newly published article
+    try {
+      const { generateAndSaveJsonLd } = await import("@/lib/seo/jsonld-storage");
+      const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
+      await generateAndSaveJsonLd(finalArticleId);
+      await generateAndSaveNextjsMetadata(finalArticleId);
+    } catch {}
 
     revalidatePath("/articles");
     revalidatePath(`/articles/${publishedArticle.id}`);

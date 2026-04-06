@@ -82,7 +82,7 @@ export function ArticleFormStepper() {
                         <div className="flex flex-col items-center">
                           <span className="text-base font-bold tracking-tight">{step.number}</span>
                           {!validation.isValid && (
-                            <div className="absolute -top-1 -right-1 bg-destructive text-white rounded-full p-0.5 shadow-sm">
+                            <div className="absolute -top-1 -end-1 bg-destructive text-white rounded-full p-0.5 shadow-sm">
                               <AlertCircle className="h-3 w-3" />
                             </div>
                           )}
@@ -187,7 +187,7 @@ export function ArticleFormStepper() {
                               Missing Required
                             </p>
                           </div>
-                          <ul className="text-xs space-y-1 text-amber-900 dark:text-amber-200 ml-5 font-medium">
+                          <ul className="text-xs space-y-1 text-amber-900 dark:text-amber-200 ms-5 font-medium">
                             {missingRequiredFields.map(({ field, label }) => (
                               <li key={field} className="flex items-center gap-1">
                                 <span className="text-amber-600 dark:text-amber-400">•</span> {label}
@@ -205,7 +205,7 @@ export function ArticleFormStepper() {
                               Optional (for 100%)
                             </p>
                           </div>
-                          <ul className="text-xs space-y-1 text-blue-900 dark:text-blue-200 ml-5 font-medium max-h-32 overflow-y-auto">
+                          <ul className="text-xs space-y-1 text-blue-900 dark:text-blue-200 ms-5 font-medium max-h-32 overflow-y-auto">
                             {missingOptionalFields.map(({ field, label }) => (
                               <li key={field} className="flex items-center gap-1">
                                 <span className="text-blue-600 dark:text-blue-400">•</span> {label}
@@ -221,7 +221,7 @@ export function ArticleFormStepper() {
                             <AlertCircle className="h-4 w-4" />
                             {validation.errors.length} Error{validation.errors.length > 1 ? 's' : ''} Found
                           </p>
-                          <ul className="text-xs space-y-1 text-red-900 dark:text-red-200 ml-5 font-medium">
+                          <ul className="text-xs space-y-1 text-red-900 dark:text-red-200 ms-5 font-medium">
                             {validation.errors.slice(0, 3).map((error, i) => (
                               <li key={i} className="flex items-center gap-1">
                                 <span className="text-red-600 dark:text-red-400">•</span> {error}
@@ -308,7 +308,7 @@ export function ArticleFormStepper() {
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-bold">{step.number}</span>
                       {!validation.isValid && (
-                        <div className="absolute -top-0.5 -right-0.5 bg-destructive text-white rounded-full p-0.5 shadow-sm">
+                        <div className="absolute -top-0.5 -end-0.5 bg-destructive text-white rounded-full p-0.5 shadow-sm">
                           <AlertCircle className="h-2.5 w-2.5" />
                         </div>
                       )}

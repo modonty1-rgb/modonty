@@ -1,6 +1,7 @@
 'use client';
 
 import { useArticleForm } from '../article-form-context';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +97,7 @@ export function SEOSection() {
                   )}
                   <div className="p-2 space-y-1">
                     <div className="text-[10px] text-muted-foreground uppercase">
-                      {selectedClient?.name || 'مودونتي'}
+                      {selectedClient?.name || SITE_NAME}
                     </div>
                     <div className="text-xs font-semibold line-clamp-1">{effectiveTitle}</div>
                   </div>

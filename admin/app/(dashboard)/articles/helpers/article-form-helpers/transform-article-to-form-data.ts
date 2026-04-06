@@ -6,6 +6,9 @@ type ArticleFromDb = NonNullable<Awaited<ReturnType<typeof getArticleById>>>;
 
 export function transformArticleToFormData(article: ArticleFromDb): Partial<ArticleFormData> {
   return {
+    // Optimistic locking
+    updatedAt: article.updatedAt ?? null,
+
     // Basic Content
     title: article.title,
     slug: article.slug,

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ArticleViewLoading() {
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div className="p-4 sm:p-6">
       <div className="mb-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64 mt-1" />
@@ -35,7 +35,7 @@ export default function ArticleViewLoading() {
         </div>
 
         <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b shadow-sm">
-          <div className="max-w-[1200px] mx-auto px-4">
+          <div className="px-4">
             <div className="flex gap-2 overflow-x-auto py-3">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="h-9 w-24 rounded-md shrink-0" />

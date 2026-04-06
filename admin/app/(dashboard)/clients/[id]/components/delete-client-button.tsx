@@ -51,7 +51,7 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" aria-label="حذف العميل">
+        <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" aria-label="Delete client">
           <Trash2 className="h-4 w-4 mr-2" />
           Delete
         </Button>

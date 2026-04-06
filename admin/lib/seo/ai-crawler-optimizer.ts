@@ -8,7 +8,6 @@
  * - Bing Chat
  *
  * Key optimizations:
- * - Plain text articleBody for AI comprehension
  * - Semantic keywords with entity disambiguation
  * - Structured citations and sources
  * - Key facts extraction for featured snippets
@@ -17,9 +16,6 @@
 import { Article, Author, Category, Tag } from "@prisma/client";
 
 export interface AIOptimizedMetadata {
-  // Plain text content (no HTML)
-  articleBody: string;
-
   // Key facts for AI extraction (bullet points)
   keyFacts: string[];
 
@@ -244,7 +240,6 @@ export function generateAIOptimizedMetadata(
   const plainText = extractPlainTextForAI(article.content);
 
   return {
-    articleBody: plainText,
     keyFacts: extractKeyFacts(plainText),
     semanticKeywords: [], // To be populated via Wikidata integration (Phase 11)
     citations: article.citations || [],
@@ -267,9 +262,6 @@ export function enhanceJsonLdForAI(
 
   const articleNode = graph.find((n) => n["@type"] === "Article");
   if (!articleNode) return jsonLd;
-
-  // Add AI-optimized fields
-  articleNode.articleBody = aiMetadata.articleBody;
 
   // Add abstract/TL;DR
   articleNode.abstract = aiMetadata.tldr;

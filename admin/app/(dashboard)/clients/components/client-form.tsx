@@ -200,13 +200,13 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                       className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <Info className="h-3.5 w-3.5" />
-                      <span>ملاحظات</span>
+                      <span>Notes</span>
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-72 p-3" side="bottom" align="end">
                     <div className="space-y-2 text-xs text-muted-foreground">
-                      <p>📁 جميع ملفات الميديا تُدار من صفحة التعديل بعد حفظ العميل.</p>
-                      <p>🔍 بيانات محركات البحث تُضاف بعد حفظ العميل — من صفحة التعديل.</p>
+                      <p>All media files are managed from the edit page after saving the client.</p>
+                      <p>SEO data is added after saving the client — from the edit page.</p>
                     </div>
                   </PopoverContent>
                 </Popover>

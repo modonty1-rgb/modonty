@@ -403,16 +403,20 @@ export async function validateBusinessRules(
     errors.push("Missing datePublished in Article (required for published articles)");
   }
 
-  // Check publisher
-  const publisherRef = articleNode.publisher as { "@id"?: string } | undefined;
-  if (!publisherRef || !publisherRef["@id"]) {
+  // Check publisher (handle both @id and id — MongoDB may strip @ from nested keys)
+  const publisherRef = articleNode.publisher as { "@id"?: string; id?: string } | undefined;
+  const publisherId = publisherRef?.["@id"] || publisherRef?.id;
+  if (!publisherRef || !publisherId) {
     errors.push("Missing publisher reference in Article");
   } else {
-    // Find Organization node
+    // Find Organization node (includes subtypes like EducationalOrganization, LocalBusiness, etc.)
+    const orgTypes = ["Organization", "EducationalOrganization", "LocalBusiness", "Corporation", "GovernmentOrganization", "NGO", "MedicalOrganization"];
     const orgNode = graph.find(
-      (n: unknown) =>
-        (n as { "@type"?: string })["@type"] === "Organization" &&
-        (n as { "@id"?: string })["@id"] === publisherRef["@id"]
+      (n: unknown) => {
+        const nType = (n as { "@type"?: string })["@type"] || "";
+        return orgTypes.includes(nType) &&
+          ((n as { "@id"?: string })["@id"] === publisherId || (n as { id?: string }).id === publisherId);
+      }
     ) as Record<string, unknown> | undefined;
 
     if (!orgNode) {
@@ -422,16 +426,17 @@ export async function validateBusinessRules(
     }
   }
 
-  // Check author
-  const authorRef = articleNode.author as { "@id"?: string } | undefined;
-  if (!authorRef || !authorRef["@id"]) {
+  // Check author (handle both @id and id — MongoDB may strip @ from nested keys)
+  const authorRef = articleNode.author as { "@id"?: string; id?: string } | undefined;
+  const authorId = authorRef?.["@id"] || authorRef?.id;
+  if (!authorRef || !authorId) {
     errors.push("Missing author reference in Article");
   } else {
     // Find Person node
     const personNode = graph.find(
       (n: unknown) =>
         (n as { "@type"?: string })["@type"] === "Person" &&
-        (n as { "@id"?: string })["@id"] === authorRef["@id"]
+        ((n as { "@id"?: string })["@id"] === authorId || (n as { id?: string }).id === authorId)
     ) as Record<string, unknown> | undefined;
 
     if (!personNode) {
@@ -449,14 +454,6 @@ export async function validateBusinessRules(
   // Check image
   if (opts.requireHeroImage && !articleNode.image) {
     warnings.push("Hero image missing (recommended for rich results)");
-  }
-
-  // Check for FAQPage if mainEntity references it
-  const faqNodes = graph.filter(
-    (n: unknown) => (n as { "@type"?: string })["@type"] === "FAQPage"
-  );
-  if (faqNodes.length > 0) {
-    info.push(`FAQPage found with ${faqNodes.length} FAQ section(s)`);
   }
 
   return { errors, warnings, info };

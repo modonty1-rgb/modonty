@@ -2,11 +2,26 @@
 
 import { useState } from "react";
 import { AnalticCard } from "@/components/shared/analtic-card";
-import { TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
-import { SEOScoreOverall } from "@/components/shared/seo-doctor";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  BarChart3,
+  FileText,
+  CheckCircle2,
+  Edit,
+  Clock,
+  Archive,
+  CalendarDays,
+  TrendingUp,
+  Stethoscope,
+} from "lucide-react";
 
 interface ArticlesStatsProps {
   stats: {
@@ -26,116 +41,109 @@ interface ArticlesStatsProps {
 }
 
 export function ArticlesStats({ stats }: ArticlesStatsProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const seoColor = stats.averageSEO >= 80
+    ? "text-emerald-500"
+    : stats.averageSEO >= 60
+      ? "text-amber-500"
+      : "text-red-500";
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card>
-        <CollapsibleTrigger className="w-full">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 cursor-pointer hover:bg-muted/50 transition-colors">
-            <CardTitle>Statistics</CardTitle>
-            {isOpen ? (
-              <ChevronUp className="h-5 w-5 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-muted-foreground" />
-            )}
-          </CardHeader>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <CardContent className="space-y-4 pt-0">
-            {/* Main Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-              <AnalticCard
-                title="Total Articles"
-                value={stats.total}
-                icon="FileText"
-                description="All articles in the system"
-              />
-              <AnalticCard
-                title="Published"
-                value={stats.published}
-                icon="CheckCircle2"
-                description="Live articles"
-              />
-              <AnalticCard
-                title="Drafts"
-                value={stats.draft}
-                icon="Edit"
-                description="In progress"
-              />
-              <AnalticCard
-                title="Archived"
-                value={stats.archived}
-                icon="Archive"
-                description="Archived articles"
-              />
-              <AnalticCard
-                title="This Month"
-                value={stats.publishedThisMonth}
-                icon="Calendar"
-                description="Published this month"
-              />
-              <SEOScoreOverall value={stats.averageSEO} />
+    <div className="hidden md:flex items-center gap-1.5 flex-wrap">
+      <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+        <FileText className="h-3 w-3 text-blue-500" />
+        <span className="font-semibold">{stats.total}</span>
+        <span className="text-muted-foreground">total</span>
+      </Badge>
+      <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+        <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+        <span className="font-semibold">{stats.published}</span>
+        <span className="text-muted-foreground">published</span>
+      </Badge>
+      <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+        <Edit className="h-3 w-3 text-amber-500" />
+        <span className="font-semibold">{stats.draft}</span>
+        <span className="text-muted-foreground">drafts</span>
+      </Badge>
+      <Badge variant="outline" className="gap-1.5 py-1 px-2.5 font-normal">
+        <Stethoscope className={`h-3 w-3 ${seoColor}`} />
+        <span className="font-semibold">{stats.averageSEO}%</span>
+        <span className="text-muted-foreground">SEO</span>
+      </Badge>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-7 px-2 gap-1 text-muted-foreground hover:text-foreground">
+            <BarChart3 className="h-3.5 w-3.5" />
+            <span className="text-xs">Details</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Article Statistics</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <AnalticCard title="Total Articles" value={stats.total} icon="FileText" variant="compact" />
+              <AnalticCard title="Published" value={stats.published} icon="CheckCircle2" variant="compact" />
+              <AnalticCard title="Drafts" value={stats.draft} icon="Edit" variant="compact" />
+              <AnalticCard title="Scheduled" value={stats.scheduled} icon="Clock" variant="compact" />
+              <AnalticCard title="Archived" value={stats.archived} icon="Archive" variant="compact" />
+              <AnalticCard title="This Month" value={stats.publishedThisMonth} icon="Calendar" variant="compact" />
             </div>
 
-            {/* Enhanced SEO Analytics Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Overall SEO Health */}
-              <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">Overall SEO Health</h3>
-                  <Badge
-                    variant={stats.averageSEO >= 80 ? "default" : stats.averageSEO >= 60 ? "secondary" : "destructive"}
-                    className="text-xs"
-                  >
-                    {stats.averageSEO >= 80 ? "Excellent" : stats.averageSEO >= 60 ? "Good" : "Needs Work"}
-                  </Badge>
-                </div>
-                <div className="text-2xl font-bold">{stats.averageSEO}%</div>
-                <p className="text-xs text-muted-foreground mt-1">Average across all articles</p>
-              </div>
-
-              {/* Published SEO Health */}
-              {stats.published > 0 && (
-                <div className="rounded-lg border bg-card p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-medium text-muted-foreground">Published SEO</h3>
-                    <TrendingUp className="h-4 w-4 text-green-600" />
+            <div>
+              <h3 className="text-sm font-medium mb-2">SEO Breakdown</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg border bg-card p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">Overall SEO</span>
+                    <Badge
+                      variant={stats.averageSEO >= 80 ? "default" : stats.averageSEO >= 60 ? "secondary" : "destructive"}
+                      className="text-[10px] px-1.5 py-0"
+                    >
+                      {stats.averageSEO >= 80 ? "Excellent" : stats.averageSEO >= 60 ? "Good" : "Needs Work"}
+                    </Badge>
                   </div>
-                  <div className="text-2xl font-bold">{stats.averagePublishedSEO}%</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-xl font-bold">{stats.averageSEO}%</div>
+                  <p className="text-[10px] text-muted-foreground">Average across all articles</p>
+                </div>
+
+                <div className="rounded-lg border bg-card p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">Published SEO</span>
+                    <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+                  </div>
+                  <div className="text-xl font-bold">{stats.averagePublishedSEO}%</div>
+                  <p className="text-[10px] text-muted-foreground">
                     {stats.published} published article{stats.published !== 1 ? "s" : ""}
                   </p>
                 </div>
-              )}
 
-              {/* High SEO Count */}
-              <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">High SEO Score</h3>
-                  <Badge variant="default" className="text-xs bg-green-600">
-                    ≥80%
-                  </Badge>
+                <div className="rounded-lg border bg-card p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">High SEO Score</span>
+                    <Badge variant="default" className="text-[10px] px-1.5 py-0 bg-green-600">&ge;80%</Badge>
+                  </div>
+                  <div className="text-xl font-bold text-green-600">{stats.highSEOCount}</div>
+                  <p className="text-[10px] text-muted-foreground">Excellent SEO</p>
                 </div>
-                <div className="text-2xl font-bold text-green-600">{stats.highSEOCount}</div>
-                <p className="text-xs text-muted-foreground mt-1">Articles with excellent SEO</p>
-              </div>
 
-              {/* Low SEO Count */}
-              <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">Needs Improvement</h3>
-                  <Badge variant="destructive" className="text-xs">
-                    &lt;60%
-                  </Badge>
+                <div className="rounded-lg border bg-card p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">Needs Improvement</span>
+                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0">&lt;60%</Badge>
+                  </div>
+                  <div className="text-xl font-bold text-red-600">{stats.lowSEOCount}</div>
+                  <p className="text-[10px] text-muted-foreground">Requires attention</p>
                 </div>
-                <div className="text-2xl font-bold text-red-600">{stats.lowSEOCount}</div>
-                <p className="text-xs text-muted-foreground mt-1">Articles requiring attention</p>
               </div>
             </div>
-          </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

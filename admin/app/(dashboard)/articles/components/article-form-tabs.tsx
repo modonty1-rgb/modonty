@@ -97,41 +97,36 @@ export function ArticleFormTabs() {
     <Tabs value={activeTabId} onValueChange={handleTabChange} className="w-full">
       <div className="flex gap-6">
         <div className="flex-1 min-w-0">
+          {/* Step 1: Basic */}
           <TabsContent value="basic" className="space-y-6 mt-0">
             <BasicStep />
           </TabsContent>
-          <TabsContent value="keywords" className="space-y-6 mt-0">
-            <KeywordsStep />
-          </TabsContent>
+
+          {/* Step 2: Content + Media */}
           <TabsContent value="content" className="space-y-6 mt-0">
             <ContentStep />
-          </TabsContent>
-          <TabsContent value="media" className="space-y-6 mt-0">
             <MediaStep />
           </TabsContent>
-          <TabsContent value="faqs" className="space-y-6 mt-0">
-            <FAQsStep />
-          </TabsContent>
-          <TabsContent value="meta-tags" className="space-y-6 mt-0">
+
+          {/* Step 3: SEO (Keywords + Meta Tags + Semantic Keywords) */}
+          <TabsContent value="seo" className="space-y-6 mt-0">
             <MetaTagsStep />
-          </TabsContent>
-          <TabsContent value="related" className="space-y-6 mt-0">
-            <RelatedArticlesStep />
-          </TabsContent>
-          <TabsContent value="citations" className="space-y-6 mt-0">
-            <CitationsStep />
-          </TabsContent>
-          <TabsContent value="semantic-keywords" className="space-y-6 mt-0">
+            <KeywordsStep />
             <SemanticKeywordsStep />
           </TabsContent>
-          <TabsContent value="seo" className="space-y-6 mt-0">
-            <SEOStep />
+
+          {/* Step 4: FAQs & Related */}
+          <TabsContent value="faqs-related" className="space-y-6 mt-0">
+            <FAQsStep />
+            <RelatedArticlesStep />
           </TabsContent>
-          <TabsContent value="metatag-preview" className="space-y-6 mt-0">
-            <MetaTagPreviewStep />
-          </TabsContent>
-          <TabsContent value="settings" className="space-y-6 mt-0">
+
+          {/* Step 5: Publish (Citations + Settings + Technical SEO + MetaTag Preview) */}
+          <TabsContent value="publish" className="space-y-6 mt-0">
             <SettingsStep />
+            <CitationsStep />
+            <SEOStep />
+            <MetaTagPreviewStep />
           </TabsContent>
         </div>
 
@@ -142,7 +137,6 @@ export function ArticleFormTabs() {
                 {STEP_CONFIGS.map((step) => {
                   const baseValidation = getStepValidation(step.number);
                   const isSeoStep = step.id === "seo";
-                  const isMetaTagsStep = step.id === "meta-tags";
                   const validation: StepValidation = isSeoStep
                     ? (() => {
                         const cats = seoScoreResult?.categories ?? {};
@@ -167,7 +161,7 @@ export function ArticleFormTabs() {
                   const metaTitleLen = (formData.seoTitle || "").length;
                   const metaDescLen = (formData.seoDescription || "").length;
                   const metaTagsWarning =
-                    isMetaTagsStep &&
+                    isSeoStep &&
                     (
                       (metaTitleLen > 0 && (metaTitleLen < 30 || metaTitleLen > 60)) ||
                       (metaDescLen > 0 && (metaDescLen < 120 || metaDescLen > 160))
@@ -210,7 +204,7 @@ export function ArticleFormTabs() {
                               step.number
                             )}
                           </span>
-                          <span className="truncate flex-1 text-left text-sm">{step.label}</span>
+                          <span className="truncate flex-1 text-start text-sm">{step.label}</span>
                           <span
                             className={cn(
                               "shrink-0 text-[11px] font-semibold tabular-nums",

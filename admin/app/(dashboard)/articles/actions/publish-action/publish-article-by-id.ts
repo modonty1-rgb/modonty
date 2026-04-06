@@ -7,19 +7,55 @@ import { ArticleStatus } from "@prisma/client";
 import type { FormSubmitResult } from "@/lib/types/form-types";
 import { validateFullPage } from "@/lib/seo/page-validator";
 import { checkCompliance } from "@/lib/seo/pre-publish-audit";
+import { auth } from "@/lib/auth";
+import { isValidTransition } from "../../helpers/article-status-machine";
+import { analyzeArticleSEO } from "../../analyzer";
+import { getAllSettings } from "../../../settings/actions/settings-actions";
+import { getArticleDefaultsFromSettings } from "../../../settings/helpers/get-article-defaults-from-settings";
+
+const MIN_SEO_SCORE = 60;
 
 export async function publishArticleById(
   articleId: string
 ): Promise<FormSubmitResult> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     const article = await db.article.findUnique({
       where: { id: articleId },
+      include: {
+        client: true,
+        author: true,
+        category: true,
+        tags: { include: { tag: true } },
+        faqs: true,
+        featuredImage: true,
+        gallery: { include: { media: true } },
+      },
     });
 
     if (!article) {
       return {
         success: false,
         error: "Article not found",
+      };
+    }
+
+    if (!isValidTransition(article.status, ArticleStatus.PUBLISHED)) {
+      return {
+        success: false,
+        error: `Cannot publish article with status ${article.status}`,
+      };
+    }
+
+    // SEO score gate — block publish below minimum
+    const settings = await getAllSettings();
+    const defaults = getArticleDefaultsFromSettings(settings);
+    const mergedArticle = { ...article, ...defaults };
+    const seoResult = analyzeArticleSEO(mergedArticle as never);
+    if (seoResult.percentage < MIN_SEO_SCORE) {
+      return {
+        success: false,
+        error: `SEO score is ${seoResult.percentage}% — minimum ${MIN_SEO_SCORE}% required to publish. Improve SEO fields before publishing.`,
       };
     }
 
@@ -79,6 +115,14 @@ export async function publishArticleById(
         ogArticleModifiedTime: now,
       },
     });
+
+    // Regenerate SEO data for the newly published article
+    try {
+      const { generateAndSaveJsonLd } = await import("@/lib/seo/jsonld-storage");
+      const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
+      await generateAndSaveJsonLd(articleId);
+      await generateAndSaveNextjsMetadata(articleId);
+    } catch {}
 
     revalidatePath("/articles");
     revalidatePath(`/articles/${articleId}`);

@@ -218,7 +218,7 @@ export function BestPracticesReference() {
           <div>
             <h4 className="font-semibold mb-2">FAQ Schema</h4>
             <p className="text-muted-foreground">
-              Use FAQPage schema with 3+ questions to enable FAQ rich results and voice search optimization.
+              FAQs are displayed on the article page for user experience. FAQPage rich results are restricted to government and health authority sites since Aug 2023.
             </p>
           </div>
           <div>

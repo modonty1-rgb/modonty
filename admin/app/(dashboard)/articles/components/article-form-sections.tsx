@@ -49,10 +49,10 @@ export function ArticleFormSections() {
         const Icon = section.icon;
         const SectionComponent = section.component;
         const statusText = section.status.hasErrors
-          ? 'يوجد أخطاء'
+          ? 'Has errors'
           : section.status.completed
-            ? 'مكتمل'
-            : 'غير مكتمل';
+            ? 'Complete'
+            : 'Incomplete';
 
         return (
           <AccordionItem
@@ -66,7 +66,7 @@ export function ArticleFormSections() {
             >
               <div className="flex items-center gap-3 flex-1">
                 <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="flex-1 text-right">{section.label}</span>
+                <span className="flex-1 text-end">{section.label}</span>
                 <SectionStatusIndicator
                   completed={section.status.completed}
                   hasErrors={section.status.hasErrors}

@@ -17,40 +17,35 @@ import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { checkCompliance } from "@/lib/seo/pre-publish-audit";
+import { auth } from "@/lib/auth";
+import { articleServerSchema } from "../article-server-schema";
+import { sanitizeHtmlContent } from "@/lib/sanitize-html";
+import { isValidTransition } from "../../../helpers/article-status-machine";
+import { analyzeArticleSEO } from "../../../analyzer";
+
+const MIN_SEO_SCORE = 60;
+
+function sanitizeText(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
 
 export async function updateArticle(articleId: string, data: ArticleFormData) {
   try {
-    if (!data.title || data.title.trim().length === 0) {
-      return {
-        success: false,
-        error: "العنوان مطلوب",
-      };
-    }
-
-    if (!data.content || data.content.trim().length === 0) {
-      return {
-        success: false,
-        error: "المحتوى مطلوب",
-      };
-    }
-
-    if (!data.clientId) {
-      return {
-        success: false,
-        error: "العميل مطلوب",
-      };
-    }
-
-    if (!data.slug || data.slug.trim().length === 0) {
-      return {
-        success: false,
-        error: "الرابط المختصر مطلوب",
-      };
+    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
+    const parsed = articleServerSchema.safeParse(data);
+    if (!parsed.success) {
+      const firstError = parsed.error.errors[0];
+      return { success: false, error: firstError.message };
     }
 
     const existingArticle = await db.article.findUnique({
       where: { id: articleId },
-      select: { authorId: true, ogArticlePublishedTime: true },
+      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true },
     });
 
     if (!existingArticle) {
@@ -58,6 +53,45 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         success: false,
         error: "المقال غير موجود",
       };
+    }
+
+    // Optimistic locking: reject if another user modified the article
+    if (data.updatedAt && existingArticle.updatedAt.getTime() !== new Date(data.updatedAt).getTime()) {
+      return { success: false, error: "This article was modified by another user. Please refresh and try again." };
+    }
+
+    // Snapshot current version before overwriting
+    await db.articleVersion.create({
+      data: {
+        articleId,
+        title: existingArticle.title,
+        content: existingArticle.content,
+        excerpt: existingArticle.excerpt,
+        seoTitle: existingArticle.seoTitle,
+        seoDescription: existingArticle.seoDescription,
+        createdBy: session.user?.id ?? null,
+      },
+    });
+
+    // Validate status transition
+    if (data.status && data.status !== existingArticle.status) {
+      if (!isValidTransition(existingArticle.status, data.status)) {
+        return {
+          success: false,
+          error: `Cannot transition from ${existingArticle.status} to ${data.status}`,
+        };
+      }
+    }
+
+    // Validate slug uniqueness within client when slug changed
+    if (data.slug && data.slug !== existingArticle.slug) {
+      const existingSlug = await db.article.findFirst({
+        where: { clientId: data.clientId || existingArticle.clientId, slug: data.slug.trim(), id: { not: articleId } },
+        select: { id: true },
+      });
+      if (existingSlug) {
+        return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل" };
+      }
     }
 
     const client = await db.client.findUnique({
@@ -70,22 +104,33 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       },
     });
 
-    if (data.status === ArticleStatus.PUBLISHED && client) {
-      const compliance = checkCompliance(
-        {
-          title: data.title,
-          content: data.content,
-          seoTitle: data.seoTitle,
-          seoDescription: data.seoDescription,
-          excerpt: data.excerpt,
-        },
-        client
-      );
-      if (compliance.blocked) {
+    if (data.status === ArticleStatus.PUBLISHED) {
+      // SEO score gate — block publish below minimum
+      const seoResult = analyzeArticleSEO(data);
+      if (seoResult.percentage < MIN_SEO_SCORE) {
         return {
           success: false,
-          error: compliance.issues.map((i) => i.message).join(". "),
+          error: `SEO score is ${seoResult.percentage}% — minimum ${MIN_SEO_SCORE}% required to publish. Improve SEO fields before publishing.`,
         };
+      }
+
+      if (client) {
+        const compliance = checkCompliance(
+          {
+            title: data.title,
+            content: data.content,
+            seoTitle: data.seoTitle,
+            seoDescription: data.seoDescription,
+            excerpt: data.excerpt,
+          },
+          client
+        );
+        if (compliance.blocked) {
+          return {
+            success: false,
+            error: compliance.issues.map((i) => i.message).join(". "),
+          };
+        }
       }
     }
 
@@ -119,7 +164,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       data.slug
     );
 
-    const datePublished = data.datePublished || null;
+    const datePublished = data.datePublished !== undefined ? data.datePublished : existingArticle.datePublished;
 
     const metaRobots =
       data.metaRobots ||
@@ -138,13 +183,15 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       };
     }
 
+    const sanitizedContent = sanitizeHtmlContent(data.content);
+
     const article = await db.article.update({
       where: { id: articleId },
       data: {
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt || null,
-        content: data.content,
+        content: sanitizedContent,
         clientId: data.clientId,
         categoryId: data.categoryId || null,
         authorId: existingArticle.authorId,
@@ -174,76 +221,54 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       },
     });
 
-    await db.articleTag.deleteMany({
-      where: { articleId: article.id },
-    });
-
-    if (data.tags && data.tags.length > 0) {
-      for (const tagId of data.tags) {
-        try {
-          await db.articleTag.create({
-            data: {
-              articleId: article.id,
-              tagId,
-            },
-          });
-        } catch (error) {
-          console.error(
-            `Failed to create tag ${tagId} for article ${article.id}:`,
-            error
-          );
-        }
+    // Delete + re-create all relations atomically — if any fails, all roll back
+    await db.$transaction(async (tx) => {
+      await tx.articleTag.deleteMany({ where: { articleId: article.id } });
+      if (data.tags && data.tags.length > 0) {
+        await tx.articleTag.createMany({
+          data: data.tags.map((tagId) => ({
+            articleId: article.id,
+            tagId,
+          })),
+        });
       }
-    }
 
-    await db.articleFAQ.deleteMany({
-      where: { articleId: article.id },
+      await tx.articleFAQ.deleteMany({ where: { articleId: article.id } });
+      if (data.faqs && data.faqs.length > 0) {
+        await tx.articleFAQ.createMany({
+          data: data.faqs.map((faq: FAQItem, index: number) => ({
+            articleId: article.id,
+            question: sanitizeText(faq.question),
+            answer: faq.answer ? sanitizeText(faq.answer) : null,
+            position: faq.position ?? index,
+          })),
+        });
+      }
+
+      await tx.articleMedia.deleteMany({ where: { articleId: article.id } });
+      if (data.gallery && data.gallery.length > 0) {
+        await tx.articleMedia.createMany({
+          data: data.gallery.map((item, index) => ({
+            articleId: article.id,
+            mediaId: item.mediaId,
+            position: item.position ?? index,
+            caption: item.caption || null,
+            altText: item.altText || null,
+          })),
+        });
+      }
+
+      await tx.relatedArticle.deleteMany({ where: { articleId: article.id } });
+      if (data.relatedArticles && data.relatedArticles.length > 0) {
+        await tx.relatedArticle.createMany({
+          data: data.relatedArticles.map((related) => ({
+            articleId: article.id,
+            relatedId: related.relatedId,
+            relationshipType: related.relationshipType || "related",
+          })),
+        });
+      }
     });
-
-    if (data.faqs && data.faqs.length > 0) {
-      await db.articleFAQ.createMany({
-        data: data.faqs.map((faq: FAQItem, index: number) => ({
-          articleId: article.id,
-          question: faq.question,
-          answer: faq.answer,
-          position: faq.position ?? index,
-        })),
-      });
-    }
-
-    await db.articleMedia.deleteMany({
-      where: { articleId: article.id },
-    });
-
-    if (data.gallery && data.gallery.length > 0) {
-      await db.$transaction(
-        data.gallery.map((item, index) =>
-          db.articleMedia.create({
-            data: {
-              articleId: article.id,
-              mediaId: item.mediaId,
-              position: item.position ?? index,
-              caption: item.caption || null,
-              altText: item.altText || null,
-            },
-          })
-        )
-      );
-    }
-
-    await db.relatedArticle.deleteMany({
-      where: { articleId: article.id },
-    });
-
-    if (data.relatedArticles && data.relatedArticles.length > 0) {
-      await db.relatedArticle.createMany({
-        data: data.relatedArticles.map((related) => ({
-          articleId: article.id,
-          relatedId: related.relatedId,
-          relationshipType: related.relationshipType || "related",
-        })),
-      });
-    }
 
     try {
       await generateAndSaveNextjsMetadata(article.id, {
@@ -263,7 +288,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     revalidatePath(`/articles/${article.id}`);
     revalidatePath(`/articles/${article.slug}`);
     await revalidateModontyTag("articles");
-    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch {}
+    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
     return { success: true, article };
   } catch (error) {
     console.error("Error updating article:", error);

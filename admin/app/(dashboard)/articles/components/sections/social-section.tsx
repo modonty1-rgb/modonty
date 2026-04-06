@@ -1,6 +1,7 @@
 'use client';
 
 import { useArticleForm } from '../article-form-context';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -39,7 +40,7 @@ export function SocialSection() {
     { name: 'OG Title', sot: 'SEO title', value: formData.seoTitle || formData.title || '—' },
     { name: 'OG Description', sot: 'SEO description', value: formData.seoDescription || formData.excerpt || '—' },
     { name: 'OG URL', sot: 'Canonical URL', value: ogUrlDisplay },
-    { name: 'OG Site Name', sot: 'Client name', value: selectedClient?.name || 'مودونتي' },
+    { name: 'OG Site Name', sot: 'Client name', value: selectedClient?.name || SITE_NAME },
     { name: 'OG Article Section', sot: 'Category', value: selectedCategory?.name || '—' },
     { name: 'OG Article Tags', sot: 'Article tags', value: tagNames.length > 0 ? tagNames.join(', ') : '—' },
     { name: 'Twitter Title', sot: 'SEO title', value: formData.seoTitle || formData.title || '—' },

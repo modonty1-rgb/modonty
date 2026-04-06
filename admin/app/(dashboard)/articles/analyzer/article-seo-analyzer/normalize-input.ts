@@ -5,6 +5,7 @@ import { Article } from "../../[id]/helpers/article-view-types";
 
 export type NormalizedInput = {
   title: string;
+  slug: string;
   seoTitle: string;
   seoDescription: string;
   content: string;
@@ -29,16 +30,18 @@ export type NormalizedInput = {
 
 export function normalizeInput(input: ArticleSEOInput): NormalizedInput {
   const isFormData = (input: ArticleSEOInput): input is ArticleFormData => {
-    return "clientId" in input;
+    // FormData has clientId as string + no nested client object
+    return "clientId" in input && !("client" in input);
   };
 
   if (isFormData(input)) {
     const formData = input as ArticleFormData;
     const content = formData.content || "";
-    const wordCount = calculateWordCountImproved(content, formData.inLanguage || "ar");
+    const wordCount = formData.wordCount || calculateWordCountImproved(content, formData.inLanguage || "ar");
 
     return {
       title: formData.title || "",
+      slug: formData.slug || "",
       seoTitle: formData.seoTitle || formData.title || "",
       seoDescription: formData.seoDescription || formData.excerpt || "",
       content,
@@ -56,7 +59,7 @@ export function normalizeInput(input: ArticleSEOInput): NormalizedInput {
       sitemapChangeFreq: formData.sitemapChangeFreq || null,
       ogTitle: formData.seoTitle || formData.title || null,
       ogDescription: formData.seoDescription || formData.excerpt || null,
-      twitterCard: formData.twitterCard || null,
+      twitterCard: formData.twitterCard || "summary_large_image",
       faqCount: formData.faqs?.length || 0,
       inLanguage: formData.inLanguage || "ar",
     };
@@ -69,6 +72,7 @@ export function normalizeInput(input: ArticleSEOInput): NormalizedInput {
 
     return {
       title: article.title || "",
+      slug: article.slug || "",
       seoTitle: article.seoTitle || article.title || "",
       seoDescription: article.seoDescription || article.excerpt || "",
       content,
@@ -86,7 +90,7 @@ export function normalizeInput(input: ArticleSEOInput): NormalizedInput {
       sitemapChangeFreq: article.sitemapChangeFreq || null,
       ogTitle: article.seoTitle || article.title || null,
       ogDescription: article.seoDescription || article.excerpt || null,
-      twitterCard: article.twitterCard || null,
+      twitterCard: article.twitterCard || "summary_large_image",
       faqCount: article.faqs?.length || 0,
       inLanguage: article.inLanguage || "ar",
     };

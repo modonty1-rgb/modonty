@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { SITE_NAME } from "@/lib/constants/site-name";
 
 export interface SEOData {
   title?: string;
@@ -34,7 +35,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Me
     image,
     url,
     type = "website",
-    siteName = "مودونتي",
+    siteName = SITE_NAME,
     locale = "ar_SA",
     firstName,
     lastName,

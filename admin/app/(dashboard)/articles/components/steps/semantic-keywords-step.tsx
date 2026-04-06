@@ -1,7 +1,9 @@
 "use client";
 
+import { memo } from "react";
+
 import { SemanticKeywordsSection } from "../sections/semantic-keywords-section";
 
-export function SemanticKeywordsStep() {
+export const SemanticKeywordsStep = memo(function SemanticKeywordsStep() {
   return <SemanticKeywordsSection />;
-}
+});

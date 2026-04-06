@@ -61,6 +61,23 @@ export async function updateCategory(
     await revalidateModontyTag("categories");
     try { const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator"); await generateAndSaveCategorySeo(category.id); } catch (e) { console.error("Category SEO gen failed:", e); }
     try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
+
+    // Cascade: regenerate JSON-LD for all articles in this category
+    try {
+      const categoryArticles = await db.article.findMany({
+        where: { categoryId: category.id },
+        select: { id: true },
+      });
+      if (categoryArticles.length > 0) {
+        const { batchRegenerateJsonLd } = await import("@/lib/seo");
+        await batchRegenerateJsonLd(categoryArticles.map((a) => a.id));
+      }
+    } catch {
+      // Don't fail the category update if cascade fails
+    }
+
+    await revalidateModontyTag("articles");
+
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update category";

@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MODONTY_AUTHOR_SLUG } from "@/lib/constants/modonty-author";
 import { getModontyAuthor } from "./get-modonty-author";
-import { generateAndSaveJsonLd } from "@/lib/seo";
+import { batchRegenerateJsonLd } from "@/lib/seo";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 
 const updateAuthorSchema = z.object({
@@ -171,20 +172,22 @@ export async function updateAuthor(
       },
     });
 
-    // Regenerate JSON-LD for all articles by this author
-    const relatedArticles = await db.article.findMany({
-      where: { authorId: id },
-      select: { id: true },
-    });
-
-    if (relatedArticles.length > 0) {
-      await Promise.all(
-        relatedArticles.map((a) => generateAndSaveJsonLd(a.id).catch(() => null))
-      );
+    // Cascade: regenerate JSON-LD + metadata for all author's articles
+    try {
+      const authorArticles = await db.article.findMany({
+        where: { authorId: modontyAuthor.id },
+        select: { id: true },
+      });
+      if (authorArticles.length > 0) {
+        await batchRegenerateJsonLd(authorArticles.map((a) => a.id));
+      }
+    } catch {
+      // Don't fail the author update if cascade fails
     }
 
     revalidatePath("/authors");
     revalidatePath("/articles");
+    await revalidateModontyTag("articles");
 
     return { success: true, author };
   } catch (error) {

@@ -45,7 +45,7 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
       tags={tags}
       articleId={id}
     >
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 pb-6 md:pb-8">
+      <div className="p-4 sm:p-6 pb-6 md:pb-8">
         <ArticleFormNavigation />
         <div className="mt-6">
           <ArticleFormTabs />

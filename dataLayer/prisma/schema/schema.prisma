@@ -804,7 +804,7 @@ model Article {
 model ArticleVersion {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   articleId String  @db.ObjectId
-  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   // Snapshot of article data
   title          String
@@ -825,8 +825,8 @@ model ArticleTag {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   articleId String  @db.ObjectId
   tagId     String  @db.ObjectId
-  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([articleId, tagId])
   @@index([articleId])
@@ -1027,7 +1027,7 @@ model NewsSubscriber {
 model ArticleFAQ {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   articleId String  @db.ObjectId
-  article   Article @relation(fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   question String // Schema.org Question
   answer   String? // Optional until client answers (reader submissions)
@@ -1049,8 +1049,8 @@ model RelatedArticle {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   articleId String  @db.ObjectId
   relatedId String  @db.ObjectId
-  article   Article @relation("ArticleRelatedFrom", fields: [articleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  related   Article @relation("ArticleRelatedTo", fields: [relatedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  article   Article @relation("ArticleRelatedFrom", fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  related   Article @relation("ArticleRelatedTo", fields: [relatedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   relationshipType String? @default("related") // related, similar, recommended
 

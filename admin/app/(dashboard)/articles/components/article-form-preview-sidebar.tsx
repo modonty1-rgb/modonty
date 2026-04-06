@@ -1,6 +1,7 @@
 'use client';
 
 import { useArticleForm } from './article-form-context';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,8 +28,8 @@ export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebar
   const { formData, clients, categories, authors, seoScore } = useArticleForm();
   const [device, setDevice] = useState<'mobile' | 'desktop'>('mobile');
 
-  const effectiveTitle = formData.seoTitle || formData.title || 'عنوان المقال سيظهر هنا';
-  const effectiveDescription = formData.seoDescription || formData.excerpt || 'وصف المقال سيظهر هنا بشكل مختصر لجذب القراء من محركات البحث...';
+  const effectiveTitle = formData.seoTitle || formData.title || 'Article title will appear here';
+  const effectiveDescription = formData.seoDescription || formData.excerpt || 'Article description will appear here as a short snippet to attract readers from search engines...';
   const selectedClient = clients.find(c => c.id === formData.clientId);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
   const displayUrl = `${siteUrl.replace('https://', '')} › articles › ${formData.slug || 'slug'}`;
@@ -115,7 +116,7 @@ export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebar
                   M
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-medium leading-none">{selectedClient?.name || 'مودونتي'}</span>
+                  <span className="text-[11px] font-medium leading-none">{selectedClient?.name || SITE_NAME}</span>
                   <span className="text-[10px] text-zinc-500 leading-none truncate">{displayUrl}</span>
                 </div>
               </div>

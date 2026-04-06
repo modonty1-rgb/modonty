@@ -1,8 +1,45 @@
+import { Suspense } from "react";
+
 import { getArticles, getArticlesStats, getClients, getCategories, getAuthors, ArticleFilters } from "./actions/articles-actions";
 import { ArticlesStats } from "./components/articles-stats";
 import { ArticleStatus } from "@prisma/client";
 import { ArticlesPageClient } from "./components/articles-page-client";
 import { ArticlesHeaderWrapper } from "./components/articles-header-wrapper";
+import ArticlesLoading from "./loading";
+
+interface ArticlesContentProps {
+  filters: ArticleFilters;
+}
+
+async function ArticlesContent({ filters }: ArticlesContentProps) {
+  const [articles, stats, clients, categories, authors] = await Promise.all([
+    getArticles(filters),
+    getArticlesStats(),
+    getClients(),
+    getCategories(),
+    getAuthors(),
+  ]);
+
+  const getStatusDescription = () => {
+    if (filters.status === "DRAFT") return "Viewing draft articles";
+    if (filters.status === "PUBLISHED") return "Viewing published articles";
+    if (filters.status === "ARCHIVED") return "Viewing archived articles";
+    return "Manage all articles in the system";
+  };
+
+  return (
+    <ArticlesHeaderWrapper
+      articleCount={articles.length}
+      description={getStatusDescription()}
+      clients={clients}
+      categories={categories}
+      authors={authors}
+      statsSlot={<ArticlesStats stats={stats} />}
+    >
+      <ArticlesPageClient articles={articles} />
+    </ArticlesHeaderWrapper>
+  );
+}
 
 export default async function ArticlesPage({
   searchParams,
@@ -31,34 +68,12 @@ export default async function ArticlesPage({
     publishedFrom: params.publishedFrom ? new Date(params.publishedFrom) : undefined,
     publishedTo: params.publishedTo ? new Date(params.publishedTo) : undefined,
   };
-  
-  const [articles, stats, clients, categories, authors] = await Promise.all([
-    getArticles(filters),
-    getArticlesStats(),
-    getClients(),
-    getCategories(),
-    getAuthors(),
-  ]);
-
-  const getStatusDescription = () => {
-    if (filters.status === "DRAFT") return "Viewing draft articles";
-    if (filters.status === "PUBLISHED") return "Viewing published articles";
-    if (filters.status === "ARCHIVED") return "Viewing archived articles";
-    return "Manage all articles in the system";
-  };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      <ArticlesHeaderWrapper
-        articleCount={articles.length}
-        description={getStatusDescription()}
-        clients={clients}
-        categories={categories}
-        authors={authors}
-      >
-        <ArticlesStats stats={stats} />
-        <ArticlesPageClient articles={articles} />
-      </ArticlesHeaderWrapper>
+    <div className="p-4 sm:p-6 space-y-6">
+      <Suspense fallback={<ArticlesLoading />}>
+        <ArticlesContent filters={filters} />
+      </Suspense>
     </div>
   );
 }

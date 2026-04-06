@@ -3,28 +3,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
-import { FieldLabel } from "./shared/field-label";
 import { CopyableId } from "./shared/copyable-id";
 
 interface ArticleViewGalleryProps {
   article: Article;
-  sectionRef: (el: HTMLElement | null) => void;
+  sectionRef?: (el: HTMLElement | null) => void;
 }
 
 export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryProps) {
   if (!article.gallery || article.gallery.length === 0) return null;
 
   return (
-    <Card id="section-gallery" ref={sectionRef} className="scroll-mt-20">
+    <Card ref={sectionRef} className="scroll-mt-20">
       <CardHeader className="text-right" dir="rtl">
         <div className="flex items-center gap-2">
           <ImageIcon className="h-5 w-5 text-primary" />
           <CardTitle className="text-right flex-1">Media Gallery</CardTitle>
-          <FieldLabel
-            label=""
-            fieldPath="article.gallery"
-            fieldType="ArticleMedia[]"
-          />
         </div>
       </CardHeader>
       <CardContent dir="rtl">

@@ -8,11 +8,11 @@
  * - Organization (publisher/client)
  * - ImageObject (hero + gallery)
  * - BreadcrumbList
- * - FAQPage (if FAQs exist)
  *
  * All entities use stable @id for cross-referencing.
  */
 
+import { SITE_NAME } from "@/lib/constants/site-name";
 import {
   Article,
   Client,
@@ -28,6 +28,7 @@ import {
 export interface ArticleWithFullRelations extends Article {
   client: Client & {
     logoMedia?: Media | null;
+    ogImageMedia?: Media | null;
   };
   author: Author;
   category?: Category | null;
@@ -77,6 +78,11 @@ function normalizeUrl(url: string | null | undefined, siteUrl: string, fallbackP
   }
 }
 
+/** Format a Date as ISO 8601 with Saudi Arabia timezone (+03:00) */
+function toSaudiISOString(date: Date): string {
+  return date.toLocaleString('sv-SE', { timeZone: 'Asia/Riyadh' }).replace(' ', 'T') + '+03:00';
+}
+
 /**
  * Generate complete Knowledge Graph for an article
  */
@@ -98,7 +104,6 @@ export function generateArticleKnowledgeGraph(
     author: `${siteUrl}/authors/${article.author.slug}#person`,
     publisher: `${siteUrl}/clients/${article.client.slug}#organization`,
     breadcrumb: `${articleUrl}#breadcrumb`,
-    faq: `${articleUrl}#faq`,
     primaryImage: `${articleUrl}#primary-image`,
   };
 
@@ -118,11 +123,6 @@ export function generateArticleKnowledgeGraph(
 
   // 5. BreadcrumbList
   graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
-
-  // 6. FAQPage (only if FAQs exist)
-  if (article.faqs && article.faqs.length > 0) {
-    graph.push(generateFAQNode(article.faqs, ids.faq));
-  }
 
   return {
     "@context": "https://schema.org",
@@ -150,14 +150,14 @@ function generateWebPageNode(
     isPartOf: {
       "@type": "WebSite",
       "@id": `${siteUrl}#website`,
-      name: "مودونتي",
+      name: SITE_NAME,
       url: siteUrl,
     },
     breadcrumb: { "@id": ids.breadcrumb },
     ...(article.datePublished && {
-      datePublished: article.datePublished.toISOString(),
+      datePublished: toSaudiISOString(article.datePublished),
     }),
-    dateModified: article.dateModified.toISOString(),
+    dateModified: toSaudiISOString(article.dateModified),
   };
 }
 
@@ -182,18 +182,13 @@ function generateArticleNode(
     inLanguage: "ar",
     isAccessibleForFree: true,
     ...(article.datePublished && {
-      datePublished: article.datePublished.toISOString(),
+      datePublished: toSaudiISOString(article.datePublished),
     }),
-    dateModified: article.dateModified.toISOString(),
+    dateModified: toSaudiISOString(article.dateModified),
     ...(article.lastReviewed && {
-      lastReviewed: article.lastReviewed.toISOString(),
+      lastReviewed: toSaudiISOString(article.lastReviewed),
     }),
   };
-
-  // Add articleBody (plain text for AI crawlers)
-  if (article.articleBodyText) {
-    node.articleBody = article.articleBodyText;
-  }
 
   // Add word count
   if (article.wordCount) {
@@ -268,11 +263,13 @@ function buildMentionsFromSemanticKeywords(
 
 /**
  * Build image array for Article
+ * Fallback chain matches metadata-generator: featuredImage -> client.ogImage -> client.logo -> default
  */
 function buildImageArray(
   article: ArticleWithFullRelations,
   articleUrl: string
 ): JsonLdNode[] {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
   const images: JsonLdNode[] = [];
 
   // Hero image (featuredImage)
@@ -297,6 +294,20 @@ function buildImageArray(
       ...(article.featuredImage.credit && { copyrightHolder: { "@type": "Organization", name: article.featuredImage.credit } }),
       representativeOfPage: true,
     });
+  } else {
+    // Fallback: client OG image -> client logo -> site default (same chain as metadata-generator)
+    const fallbackUrl =
+      article.client.ogImageMedia?.url ||
+      article.client.logoMedia?.url ||
+      `${siteUrl}/og-image.jpg`;
+
+    images.push({
+      "@type": "ImageObject",
+      "@id": `${articleUrl}#primary-image`,
+      url: fallbackUrl,
+      contentUrl: fallbackUrl,
+      representativeOfPage: true,
+    });
   }
 
   // Gallery images
@@ -311,7 +322,6 @@ function buildImageArray(
           contentUrl: item.media.url,
           ...(item.media.width && { width: item.media.width }),
           ...(item.media.height && { height: item.media.height }),
-          // Use article-specific caption/altText if available, otherwise fall back to media
           caption: item.caption || item.media.caption || undefined,
           name: item.altText || item.media.altText || undefined,
           ...(item.media.license && { license: item.media.license }),
@@ -552,7 +562,7 @@ function generateBreadcrumbNode(
   id: string,
   siteUrl: string
 ): JsonLdNode {
-  const items: Array<{ "@type": string; position: number; name: string; item: string }> = [
+  const items: Array<{ "@type": string; position: number; name: string; item?: string }> = [
     {
       "@type": "ListItem",
       position: 1,
@@ -571,38 +581,17 @@ function generateBreadcrumbNode(
     });
   }
 
-  // Add article
+  // Last item (current page) — omit `item` per Google spec
   items.push({
     "@type": "ListItem",
     position: items.length + 1,
     name: article.title,
-    item: articleUrl,
   });
 
   return {
     "@type": "BreadcrumbList",
     "@id": id,
     itemListElement: items,
-  };
-}
-
-/**
- * Generate FAQPage node
- */
-function generateFAQNode(faqs: ArticleFAQ[], id: string): JsonLdNode {
-  return {
-    "@type": "FAQPage",
-    "@id": id,
-    mainEntity: faqs
-      .sort((a, b) => a.position - b.position)
-      .map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
   };
 }
 

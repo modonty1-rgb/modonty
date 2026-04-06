@@ -15,7 +15,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const revalidationSecret = process.env.REVALIDATE_SECRET || "dev-secret-key";
+    const revalidationSecret = process.env.REVALIDATE_SECRET;
+    if (!revalidationSecret) {
+      return NextResponse.json(
+        { success: false, error: "Revalidation not configured" },
+        { status: 503 }
+      );
+    }
     const providedSecret = secret ?? req.headers.get("x-revalidation-secret") ?? req.headers.get("x-revalidate-secret");
 
     if (providedSecret !== revalidationSecret) {

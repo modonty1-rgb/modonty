@@ -14,6 +14,4 @@ export { getArticlesStats } from "./queries/get-articles-stats";
 export { createArticle } from "./mutations/create-article";
 export { updateArticle } from "./mutations/update-article";
 export { deleteArticle } from "./mutations/delete-article";
-export { bulkDeleteArticles } from "./bulk/bulk-delete-articles";
-export { bulkUpdateArticleStatus } from "./bulk/bulk-update-article-status";
 

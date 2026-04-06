@@ -111,7 +111,23 @@ export async function updateClient(id: string, data: ClientFormData) {
         await batchRegenerateJsonLd(clientArticles.map((a) => a.id));
       }
     } catch {
-      // Don't fail the update if article cascade fails
+      // Don't fail the update if article JSON-LD cascade fails
+    }
+
+    // Also regenerate metadata for client articles (client name in OG siteName, etc.)
+    try {
+      const clientArticles = await db.article.findMany({
+        where: { clientId: id },
+        select: { id: true },
+      });
+      if (clientArticles.length > 0) {
+        const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
+        for (const article of clientArticles) {
+          await generateAndSaveNextjsMetadata(article.id);
+        }
+      }
+    } catch {
+      // Don't fail the update if metadata regeneration fails
     }
 
     revalidatePath("/clients");

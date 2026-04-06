@@ -31,8 +31,8 @@ export function StickySaveButton() {
       if (result.success) {
         setSaved(true);
         toast({
-          title: 'تم الحفظ بنجاح',
-          description: 'تم حفظ المقال بنجاح وهو في انتظار معاينة المدير',
+          title: 'Saved Successfully',
+          description: 'Article saved successfully and awaiting admin review',
         });
 
         if (mode === 'new') {
@@ -41,15 +41,15 @@ export function StickySaveButton() {
         }
       } else {
         toast({
-          title: 'فشل الحفظ',
-          description: result.error || 'حدث خطأ أثناء حفظ المقال',
+          title: 'Save Failed',
+          description: result.error || 'An error occurred while saving the article',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'فشل الحفظ',
-        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
+        title: 'Save Failed',
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
         variant: 'destructive',
       });
     } finally {
@@ -82,10 +82,10 @@ export function StickySaveButton() {
   const showUnsavedIndicator = isDirty && !saving && !isSaving && !saved;
 
   const saveButtonLabel = (saving || isSaving)
-    ? 'جاري الحفظ...'
+    ? 'Saving...'
     : saved
-      ? 'تم الحفظ'
-      : 'حفظ المقال';
+      ? 'Saved'
+      : 'Save Article';
 
   const sectionStatus = useMemo(() => {
     if (!sections || sections.length === 0) return [];
@@ -111,7 +111,7 @@ export function StickySaveButton() {
     <div
       className="fixed bottom-0 left-0 right-0 z-[100] h-[60px] border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg"
       role="region"
-      aria-label="أدوات حفظ المقال"
+      aria-label="Article save tools"
     >
       <div className="container mx-auto max-w-6xl h-full px-4 md:px-6">
         <div className="grid grid-cols-3 gap-4 h-full items-center">
@@ -120,19 +120,19 @@ export function StickySaveButton() {
             {showUnsavedIndicator && (
               <Badge variant="outline" className="flex items-center gap-1.5">
                 <AlertCircle className="h-3 w-3 text-amber-500" aria-hidden="true" />
-                <span className="text-xs">غير محفوظة</span>
+                <span className="text-xs">Unsaved</span>
               </Badge>
             )}
             {saved && (
               <Badge variant="default" className="flex items-center gap-1.5 bg-green-600">
                 <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
-                <span className="text-xs">تم الحفظ</span>
+                <span className="text-xs">Saved</span>
               </Badge>
             )}
             {isSaving && (
               <Badge variant="outline" className="flex items-center gap-1.5">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                <span className="text-xs">جاري الحفظ...</span>
+                <span className="text-xs">Saving...</span>
               </Badge>
             )}
           </div>
@@ -140,7 +140,7 @@ export function StickySaveButton() {
           {/* Column 2: Progress */}
           <div className="flex flex-col justify-center gap-1">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium">تقدم الإكمال</span>
+              <span className="text-xs font-medium">Completion</span>
               <span className="text-xs text-muted-foreground" aria-live="polite">
                 {progressPercentage}%
               </span>
@@ -148,11 +148,11 @@ export function StickySaveButton() {
             <Progress
               value={progressPercentage}
               className="h-1.5 w-full"
-              aria-label={`${progressPercentage}% من النموذج مكتمل`}
+              aria-label={`${progressPercentage}% complete`}
             />
             {hasErrors && (
               <span className="text-[10px] text-destructive" role="alert">
-                يوجد أخطاء
+                Has errors
               </span>
             )}
           </div>
@@ -172,17 +172,17 @@ export function StickySaveButton() {
               {(saving || isSaving) ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  <span>جاري الحفظ...</span>
+                  <span>Saving...</span>
                 </>
               ) : saved ? (
                 <>
                   <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                  <span>تم الحفظ</span>
+                  <span>Saved</span>
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" aria-hidden="true" />
-                  <span>حفظ</span>
+                  <span>Save</span>
                 </>
               )}
             </Button>

@@ -5,29 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layers } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
-import { FieldLabel } from "./shared/field-label";
 import { CopyableId } from "./shared/copyable-id";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface ArticleViewRelatedProps {
   article: Article;
-  sectionRef: (el: HTMLElement | null) => void;
+  sectionRef?: (el: HTMLElement | null) => void;
 }
 
 export function ArticleViewRelated({ article, sectionRef }: ArticleViewRelatedProps) {
   const hasData = article.relatedTo && article.relatedTo.length > 0;
 
   return (
-    <Card id="section-related" ref={sectionRef} className="scroll-mt-20">
+    <Card ref={sectionRef} className="scroll-mt-20">
       <CardHeader className="text-right" dir="rtl">
         <div className="flex items-center gap-2">
           <Layers className="h-5 w-5 text-primary" />
           <CardTitle className="text-right flex-1">Related Articles (Outgoing Links)</CardTitle>
-          <FieldLabel
-            label=""
-            fieldPath="article.relatedTo"
-            fieldType="RelatedArticle[]"
-          />
         </div>
       </CardHeader>
       <CardContent className="space-y-3" dir="rtl">

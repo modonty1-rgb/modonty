@@ -47,20 +47,6 @@ export function generateArticleStructuredData(article: ArticleWithRelations): Ar
     isAccessibleForFree: true,
   };
 
-  if (article.faqs && article.faqs.length > 0) {
-    structuredData.mainEntity = {
-      "@type": "FAQPage",
-      mainEntity: article.faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer ?? "",
-        },
-      })),
-    };
-  }
-
   return structuredData;
 }
 
@@ -276,17 +262,3 @@ export function generateOrganizationStructuredData(client: Client & {
   return structuredData;
 }
 
-export function generateFAQPageStructuredData(faqs: ArticleFAQ[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer ?? "",
-      },
-    })),
-  };
-}

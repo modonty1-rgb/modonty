@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
+// TODO: Add compliance check (forbidden keywords/claims) before publishing.
+// Console app cannot import admin's @/lib/seo/pre-publish-audit.
+// Options: (1) shared package in workspace, or (2) admin API endpoint for compliance.
 export async function approveArticle(articleId: string, clientId: string) {
   try {
     const article = await db.article.findFirst({
@@ -22,16 +25,30 @@ export async function approveArticle(articleId: string, clientId: string) {
     }
 
     const now = new Date();
+    const hasScheduledDate = article.scheduledAt && new Date(article.scheduledAt) > now;
 
     await db.article.update({
       where: { id: articleId },
       data: {
-        status: ArticleStatus.PUBLISHED,
-        datePublished: now,
-        ogArticlePublishedTime: now,
+        status: hasScheduledDate ? ArticleStatus.SCHEDULED : ArticleStatus.PUBLISHED,
+        ...(hasScheduledDate ? {} : { datePublished: now }),
         ogArticleModifiedTime: now,
       },
     });
+
+    // NOTE: Console app does not have access to admin's @/lib/seo modules.
+    // SEO regeneration (JSON-LD + metadata) is NOT performed here.
+    // The admin app's scheduled SEO jobs or manual re-publish will handle it.
+    // TODO: Add an admin API endpoint for cross-app SEO regeneration.
+
+    // Revalidate modonty so the public site picks up the status change
+    // NOTE: console app lacks revalidate-modonty-tag — this is a no-op until added
+    try {
+      const { revalidateModontyTag } = await import("@/lib/revalidate-modonty-tag");
+      await revalidateModontyTag("articles");
+    } catch (error) {
+      console.error("Failed to revalidate modonty articles tag:", error);
+    }
 
     revalidatePath("/dashboard/articles");
     revalidatePath("/dashboard/content");
@@ -72,10 +89,12 @@ export async function requestChanges(
       };
     }
 
+    // Transition to WRITING so the author knows changes were requested
+    // TODO: Add a revisionNotes field to Article model to persist feedback
     await db.article.update({
       where: { id: articleId },
       data: {
-        status: ArticleStatus.DRAFT,
+        status: ArticleStatus.WRITING,
       },
     });
 

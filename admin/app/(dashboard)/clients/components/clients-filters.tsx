@@ -47,28 +47,28 @@ export function ClientsFilters() {
 
   return (
     <div className="flex flex-wrap items-end gap-3">
-      {/* فلتر المقالات */}
+      {/* Articles filter */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">المقالات</Label>
+        <Label className="text-xs text-muted-foreground">Articles</Label>
         <Select
           value={hasArticles}
           onValueChange={(v) => handleChange("hasArticles", v)}
           disabled={isPending}
         >
           <SelectTrigger className="w-40 h-9 text-sm">
-            <SelectValue placeholder="الكل" />
+            <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">الكل</SelectItem>
-            <SelectItem value="yes">لديه مقالات</SelectItem>
-            <SelectItem value="no">بدون مقالات</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="yes">Has articles</SelectItem>
+            <SelectItem value="no">No articles</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* تاريخ الإنشاء من */}
+      {/* Created from */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">من تاريخ</Label>
+        <Label className="text-xs text-muted-foreground">From Date</Label>
         <Input
           type="date"
           value={createdFrom}
@@ -78,9 +78,9 @@ export function ClientsFilters() {
         />
       </div>
 
-      {/* تاريخ الإنشاء إلى */}
+      {/* Created to */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">إلى تاريخ</Label>
+        <Label className="text-xs text-muted-foreground">To Date</Label>
         <Input
           type="date"
           value={createdTo}
@@ -90,9 +90,9 @@ export function ClientsFilters() {
         />
       </div>
 
-      {/* الحد الأدنى لعدد المقالات */}
+      {/* Min article count */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">أقل عدد مقالات</Label>
+        <Label className="text-xs text-muted-foreground">Min Articles</Label>
         <Input
           type="number"
           min={0}
@@ -104,9 +104,9 @@ export function ClientsFilters() {
         />
       </div>
 
-      {/* الحد الأقصى لعدد المقالات */}
+      {/* Max article count */}
       <div className="space-y-1">
-        <Label className="text-xs text-muted-foreground">أكثر عدد مقالات</Label>
+        <Label className="text-xs text-muted-foreground">Max Articles</Label>
         <Input
           type="number"
           min={0}

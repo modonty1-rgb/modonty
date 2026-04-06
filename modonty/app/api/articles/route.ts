@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category") || undefined;
     const client = searchParams.get("client") || undefined;
     const featured = searchParams.get("featured") === "true" ? true : undefined;
+    const search = searchParams.get("search") || undefined;
 
     const result = await getArticles({
       page,
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
       category,
       client,
       featured,
+      search,
     });
 
     const response: ApiResponse<ArticleResponse[]> = {

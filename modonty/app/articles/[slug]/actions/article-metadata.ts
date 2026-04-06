@@ -42,6 +42,7 @@ export async function getArticleForMetadata(slug: string) {
         },
       },
       datePublished: true,
+      dateModified: true,
       updatedAt: true,
     },
   });

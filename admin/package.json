@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -42,9 +42,12 @@
     "@tiptap/extension-character-count": "^3.14.0",
     "@tiptap/extension-color": "^3.14.0",
     "@tiptap/extension-heading": "^3.14.0",
+    "@tiptap/extension-highlight": "^3.22.2",
     "@tiptap/extension-image": "^3.14.0",
     "@tiptap/extension-link": "^3.14.0",
     "@tiptap/extension-placeholder": "^3.14.0",
+    "@tiptap/extension-subscript": "^3.22.2",
+    "@tiptap/extension-superscript": "^3.22.2",
     "@tiptap/extension-table": "3.14.0",
     "@tiptap/extension-table-cell": "3.14.0",
     "@tiptap/extension-table-header": "3.14.0",
@@ -52,6 +55,7 @@
     "@tiptap/extension-text-align": "^3.14.0",
     "@tiptap/extension-text-style": "^3.14.0",
     "@tiptap/extension-underline": "^3.14.0",
+    "@tiptap/extension-youtube": "^3.22.2",
     "@tiptap/react": "^3.14.0",
     "@tiptap/starter-kit": "^3.14.0",
     "ajv": "^8.12.0",

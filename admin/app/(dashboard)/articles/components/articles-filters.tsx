@@ -18,8 +18,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { X, RefreshCw, Filter } from "lucide-react";
-import { ArticleStatus } from "@prisma/client";
-import { getStatusLabel } from "../helpers/status-utils";
 
 interface ArticlesFiltersProps {
   clients: Array<{ id: string; name: string }>;
@@ -138,28 +136,7 @@ export function ArticlesFilters({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={localFilters.status || "all"}
-                onValueChange={(value) => updateLocalFilter("status", value)}
-                disabled={isPending}
-              >
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="All statuses" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  {Object.values(ArticleStatus).map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {getStatusLabel(s)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="client">Client</Label>
               <Select

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
 import { slugify, generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { updateArticle } from '../actions/articles-actions';
 import {
   FileText,
@@ -41,13 +42,14 @@ interface ArticleFormContextType {
 
   // Form Data
   formData: ArticleFormData;
-  updateField: (field: keyof ArticleFormData, value: any) => void;
+  updateField: (field: keyof ArticleFormData, value: ArticleFormData[keyof ArticleFormData]) => void;
   updateFields: (fields: Partial<ArticleFormData>) => void;
 
   // Actions
   save: () => Promise<FormSubmitResult>;
   isSaving: boolean;
   isDirty: boolean;
+  lastAutoSaved: Date | null;
 
   // Validation
   errors: Record<string, string[]>;
@@ -145,7 +147,7 @@ const initialFormData: ArticleFormData = {
   ogTitle: '',
   ogDescription: '',
   ogType: 'article',
-  ogSiteName: 'مودونتي',
+  ogSiteName: SITE_NAME,
   ogLocale: 'ar_SA',
   ogArticleAuthor: '',
   ogArticlePublishedTime: null,
@@ -244,10 +246,13 @@ export function ArticleFormProvider({
 
   const [seoScore, setSeoScore] = useState<number>(0);
 
-  // Update SEO score in real-time
+  // Update SEO score in real-time (debounced to avoid excessive recalculation)
   useEffect(() => {
-    const result = analyzeArticleSEO(formData);
-    setSeoScore(result.score);
+    const timer = setTimeout(() => {
+      const result = analyzeArticleSEO(formData);
+      setSeoScore(result.score);
+    }, 500);
+    return () => clearTimeout(timer);
   }, [formData]);
 
   // Get section href (mode-aware)
@@ -271,18 +276,8 @@ export function ArticleFormProvider({
     { id: 'seo-validation', label: 'SEO & Validation', icon: CheckCircle, href: getSectionHref('seo-validation') },
   ];
 
-  const updateField = useCallback((field: keyof ArticleFormData, value: any) => {
-    setFormData((prev) => {
-      const updated = { ...prev, [field]: value };
-      // Auto-generate slug from title
-      if (field === 'title' && !prev.slug) {
-        const newSlug = slugify(value);
-        if (newSlug) {
-          updated.slug = newSlug;
-        }
-      }
-      return updated;
-    });
+  const updateField = useCallback((field: keyof ArticleFormData, value: ArticleFormData[keyof ArticleFormData]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setIsDirty(true);
     setErrors((prev) => {
       const next = { ...prev };
@@ -320,6 +315,38 @@ export function ArticleFormProvider({
       setIsSaving(false);
     }
   }, [formData, onSubmit, articleId]);
+
+  // Unsaved changes warning — prevent accidental navigation
+  useEffect(() => {
+    if (!isDirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  // Auto-save state
+  const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-save every 30 seconds when dirty (edit mode only)
+  useEffect(() => {
+    if (mode !== 'edit' || !isDirty || isSaving) return;
+
+    autoSaveTimerRef.current = setTimeout(async () => {
+      const result = await save();
+      if (result.success) {
+        setLastAutoSaved(new Date());
+      }
+    }, 30000);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [mode, isDirty, isSaving, save]);
 
   // Step navigation methods
   const goToStep = useCallback((step: number) => {
@@ -465,6 +492,7 @@ export function ArticleFormProvider({
     save,
     isSaving,
     isDirty,
+    lastAutoSaved,
     errors,
     setErrors,
     currentStep,

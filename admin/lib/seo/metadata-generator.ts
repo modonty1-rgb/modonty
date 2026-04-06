@@ -5,8 +5,9 @@
  * Used for pre-generating and caching metadata in the database.
  */
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import type { Article, Client, Author, Category, Media } from "@prisma/client";
+import { SITE_NAME } from "@/lib/constants/site-name";
 
 // Type for article with relations needed for metadata generation
 export interface ArticleWithMetadataRelations {
@@ -95,7 +96,7 @@ export async function generateNextjsMetadata(
   options?: GenerateMetadataOptions
 ): Promise<Metadata> {
   const siteUrl = options?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
-  const siteName = article.client.name || "مودونتي";
+  const siteName = article.client.name || SITE_NAME;
 
   // Effective values
   const effectiveTitle = article.seoTitle || article.title || "";
@@ -143,7 +144,18 @@ export async function generateNextjsMetadata(
     `${siteUrl}/og-image.jpg`;
 
   // Open Graph metadata — OG title/description use article seoTitle/seoDescription (SOT)
-  const openGraph: Metadata["openGraph"] = {
+  // datePublished is the single source of truth for published time
+  const publishedTime = article.datePublished || article.scheduledAt;
+  const modifiedTime = article.ogArticleModifiedTime || new Date();
+
+  const ogTags: string[] = [];
+  if (article.ogArticleTag && article.ogArticleTag.length > 0) {
+    ogTags.push(...article.ogArticleTag);
+  } else if (article.tags && article.tags.length > 0) {
+    ogTags.push(...article.tags.map((t) => t.tag.name));
+  }
+
+  const openGraph = {
     title: effectiveTitle,
     description: effectiveDescription,
     url: effectiveCanonical,
@@ -157,47 +169,25 @@ export async function generateNextjsMetadata(
       },
     ],
     locale: article.ogLocale || article.inLanguage || "ar_SA",
-    type: (article.ogType as "article") || "article",
+    type: "article",
+    ...(publishedTime && { publishedTime: new Date(publishedTime).toISOString() }),
+    modifiedTime: new Date(modifiedTime).toISOString(),
+    ...(article.ogArticleAuthor || article.author.name
+      ? { authors: [article.ogArticleAuthor || article.author.name] }
+      : {}),
+    ...(article.ogArticleSection || article.category?.name
+      ? { section: article.ogArticleSection || article.category?.name || "" }
+      : {}),
+    ...(ogTags.length > 0 ? { tags: ogTags } : {}),
   };
 
-  // Add article-specific OG fields
-  if (openGraph.type === "article") {
-    const publishedTime =
-      article.ogArticlePublishedTime ||
-      article.datePublished ||
-      article.scheduledAt;
-    if (publishedTime) {
-      openGraph.publishedTime = new Date(publishedTime).toISOString();
-    }
-
-    const modifiedTime = article.ogArticleModifiedTime || new Date();
-    openGraph.modifiedTime = new Date(modifiedTime).toISOString();
-
-    if (article.ogArticleAuthor || article.author.name) {
-      openGraph.authors = [article.ogArticleAuthor || article.author.name];
-    }
-
-    if (article.ogArticleSection || article.category?.name) {
-      openGraph.section = article.ogArticleSection || article.category?.name || "";
-    }
-
-    const tags: string[] = [];
-    if (article.ogArticleTag && article.ogArticleTag.length > 0) {
-      tags.push(...article.ogArticleTag);
-    } else if (article.tags && article.tags.length > 0) {
-      tags.push(...article.tags.map((t) => t.tag.name));
-    }
-    if (tags.length > 0) {
-      openGraph.tags = tags;
-    }
-  }
-
   // Twitter metadata — Twitter title/description use article seoTitle/seoDescription (SOT)
+  const imageAlt = article.featuredImage?.altText || effectiveTitle || siteName;
   const twitter: Metadata["twitter"] = {
     card: (article.twitterCard as "summary_large_image") || "summary_large_image",
     title: effectiveTitle,
     description: effectiveDescription,
-    images: [ogImage],
+    images: [{ url: ogImage, alt: imageAlt }],
   };
 
   if (article.twitterSite) {

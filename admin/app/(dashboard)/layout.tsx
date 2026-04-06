@@ -31,6 +31,9 @@ export default async function DashboardLayout({
           <Sidebar />
           <div className="flex-1 flex flex-col overflow-hidden">
             <Header />
+            <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-center text-xs font-medium text-amber-600 dark:text-amber-400">
+              This system is currently in beta testing. Some features may not work as expected. Please report any issues.
+            </div>
             <main className="flex-1 overflow-y-auto">{children}</main>
           </div>
         </div>

@@ -233,13 +233,13 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
             <span className="text-[9px] text-muted-foreground">SEO</span>
           </div>
           <div className="flex-1">
-            <h3 className="text-foreground font-semibold text-sm">بيانات البحث غير مكتملة</h3>
+            <h3 className="text-foreground font-semibold text-sm">SEO data incomplete</h3>
             <p className="text-muted-foreground text-xs mt-0.5">
-              أضف بيانات محركات البحث لتحسين ظهور العميل في نتائج البحث
+              Add SEO data to improve client visibility in search results
             </p>
           </div>
           <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link href={`/clients/${id}/seo`}>إعداد بيانات البحث ⚡</Link>
+            <Link href={`/clients/${id}/seo`}>Setup SEO</Link>
           </Button>
         </div>
       )}

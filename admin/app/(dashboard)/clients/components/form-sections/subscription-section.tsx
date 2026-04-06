@@ -128,7 +128,7 @@ export function SubscriptionSection({
                 Articles / Month
               </Label>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                من الباقة
+                From plan
               </span>
             </div>
             <Input

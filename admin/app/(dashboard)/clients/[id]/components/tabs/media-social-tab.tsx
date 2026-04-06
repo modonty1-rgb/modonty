@@ -301,7 +301,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
             </div>
             <div className="p-4">
               <p className="text-sm text-muted-foreground mb-4">
-                {media.length} ملف{hasMore ? ` (يعرض ${mediaLimit})` : ""}
+                {media.length} files{hasMore ? ` (showing ${mediaLimit})` : ""}
               </p>
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -415,7 +415,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                     size="sm"
                     onClick={() => setMediaLimit((prev) => prev + MEDIA_PAGE_SIZE)}
                   >
-                    عرض المزيد ({media.length - mediaLimit} متبقي)
+                    Show More ({media.length - mediaLimit} remaining)
                   </Button>
                 </div>
               )}

@@ -3,9 +3,11 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
 
 export async function deleteArticle(id: string) {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     await Promise.all([
       db.articleTag.deleteMany({ where: { articleId: id } }),
       db.articleVersion.deleteMany({ where: { articleId: id } }),
@@ -24,7 +26,7 @@ export async function deleteArticle(id: string) {
 
     revalidatePath("/articles");
     await revalidateModontyTag("articles");
-    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch {}
+    try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
     return { success: true };
   } catch (error) {
     console.error("Error deleting article:", error);

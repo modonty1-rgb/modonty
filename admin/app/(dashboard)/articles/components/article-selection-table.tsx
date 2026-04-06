@@ -113,11 +113,11 @@ export function ArticleSelectionTable({
   const getRelationshipTypeLabel = (type: 'related' | 'similar' | 'recommended'): string => {
     switch (type) {
       case 'similar':
-        return 'مشابه';
+        return 'Similar';
       case 'recommended':
-        return 'موصى به';
+        return 'Recommended';
       default:
-        return 'ذو صلة';
+        return 'Related';
     }
   };
 
@@ -139,7 +139,7 @@ export function ArticleSelectionTable({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="البحث في العناوين..."
+              placeholder="Search titles..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-9"
@@ -149,10 +149,10 @@ export function ArticleSelectionTable({
         <div className="flex gap-2">
           <Select value={selectedCategoryId || 'all'} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="جميع الفئات" />
+              <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">جميع الفئات</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -165,8 +165,8 @@ export function ArticleSelectionTable({
               <Button variant="outline" className="w-[180px] justify-between">
                 <span>
                   {selectedTagIds.length > 0
-                    ? `${selectedTagIds.length} علامة محددة`
-                    : 'جميع العلامات'}
+                    ? `${selectedTagIds.length} tags selected`
+                    : 'All Tags'}
                 </span>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
@@ -200,7 +200,7 @@ export function ArticleSelectionTable({
                   </div>
                 ) : (
                   <div className="p-4 text-center text-sm text-muted-foreground">
-                    لا توجد علامات متاحة
+                    No tags available
                   </div>
                 )}
               </div>
@@ -211,7 +211,7 @@ export function ArticleSelectionTable({
 
       {(selectedCategoryId || selectedTagIds.length > 0 || searchQuery) && (
         <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm text-muted-foreground">الفلاتر النشطة:</span>
+          <span className="text-sm text-muted-foreground">Active filters:</span>
           {selectedCategoryId && (
             <Badge variant="secondary" className="gap-1">
               {categories.find((c) => c.id === selectedCategoryId)?.name}
@@ -239,7 +239,7 @@ export function ArticleSelectionTable({
           })}
           {searchQuery && (
             <Badge variant="secondary" className="gap-1">
-              بحث: {searchQuery}
+              Search: {searchQuery}
               <button
                 onClick={() => handleSearchChange('')}
                 className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
@@ -254,12 +254,12 @@ export function ArticleSelectionTable({
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
           {selectedArticleIds.length > 0 && (
-            <span>{selectedArticleIds.length} مقال محدد</span>
+            <span>{selectedArticleIds.length} articles selected</span>
           )}
         </div>
         {articles.length > 0 && (
           <Button variant="outline" size="sm" onClick={handleSelectAll}>
-            {isAllSelected ? 'إلغاء تحديد الكل' : 'تحديد الكل'}
+            {isAllSelected ? 'Deselect All' : 'Select All'}
           </Button>
         )}
       </div>
@@ -279,25 +279,25 @@ export function ArticleSelectionTable({
                   className="h-4 w-4 rounded border-gray-300"
                 />
               </TableHead>
-              <TableHead>العنوان</TableHead>
-              <TableHead>العميل</TableHead>
-              <TableHead>نوع العلاقة</TableHead>
-              <TableHead className="w-24">إجراءات</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead>Relationship Type</TableHead>
+              <TableHead className="w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                  جاري التحميل...
+                  Loading...
                 </TableCell>
               </TableRow>
             ) : articles.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium">لا توجد مقالات</p>
-                    <p className="text-xs">جرب تعديل الفلاتر أو مصطلحات البحث</p>
+                    <p className="text-sm font-medium">No articles found</p>
+                    <p className="text-xs">Try adjusting filters or search terms</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -336,13 +336,13 @@ export function ArticleSelectionTable({
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div>
-                              <p className="text-[11px] text-muted-foreground mb-1">الحالة</p>
+                              <p className="text-[11px] text-muted-foreground mb-1">Status</p>
                               <Badge variant={getStatusVariant(article.status as ArticleStatus)}>
                                 {getStatusLabel(article.status as ArticleStatus)}
                               </Badge>
                             </div>
                             <div>
-                              <p className="text-[11px] text-muted-foreground mb-1">تاريخ النشر</p>
+                              <p className="text-[11px] text-muted-foreground mb-1">Published</p>
                               <p className="text-xs">
                                 {article.datePublished
                                   ? format(new Date(article.datePublished), 'yyyy-MM-dd')
@@ -350,13 +350,13 @@ export function ArticleSelectionTable({
                               </p>
                             </div>
                             <div>
-                              <p className="text-[11px] text-muted-foreground mb-1">الفئة</p>
+                              <p className="text-[11px] text-muted-foreground mb-1">Category</p>
                               <p className="text-xs">
                                 {article.categoryName || '-'}
                               </p>
                             </div>
                             <div>
-                              <p className="text-[11px] text-muted-foreground mb-1">العلامات</p>
+                              <p className="text-[11px] text-muted-foreground mb-1">Tags</p>
                               {article.tags.length > 0 ? (
                                 <div className="flex flex-wrap gap-1">
                                   {article.tags.slice(0, 3).map((tag) => (
@@ -395,9 +395,9 @@ export function ArticleSelectionTable({
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="related">ذو صلة</SelectItem>
-                              <SelectItem value="similar">مشابه</SelectItem>
-                              <SelectItem value="recommended">موصى به</SelectItem>
+                              <SelectItem value="related">Related</SelectItem>
+                              <SelectItem value="similar">Similar</SelectItem>
+                              <SelectItem value="recommended">Recommended</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>

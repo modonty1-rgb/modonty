@@ -29,7 +29,7 @@ export function ArticleFormLayout({ children }: { children: React.ReactNode }) {
         {/* Main Content Area */}
         <main className={cn(
           "flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
-          showPreview && "mr-0 lg:mr-[400px]"
+          showPreview && "me-0 lg:me-[400px]"
         )}>
           <div className="container mx-auto max-w-6xl px-4 md:px-6 py-6 md:py-8">
             {children}
@@ -37,7 +37,7 @@ export function ArticleFormLayout({ children }: { children: React.ReactNode }) {
         </main>
 
         {/* Floating Preview Toggle Button */}
-        <div className="fixed bottom-8 right-8 z-[60] flex flex-col gap-2">
+        <div className="fixed bottom-8 end-8 z-[60] flex flex-col gap-2">
           <Button
             variant="default"
             size="icon"
@@ -53,7 +53,7 @@ export function ArticleFormLayout({ children }: { children: React.ReactNode }) {
 
         {/* Preview Sidebar */}
         <aside className={cn(
-          "fixed top-[calc(3.5rem+1.75rem)] right-0 bottom-0 z-50 w-full lg:w-[400px] transition-transform duration-300 ease-in-out transform border-l bg-background",
+          "fixed top-[calc(3.5rem+1.75rem)] end-0 bottom-0 z-50 w-full lg:w-[400px] transition-transform duration-300 ease-in-out transform border-l bg-background",
           showPreview ? "translate-x-0" : "translate-x-full"
         )}>
           <ArticleFormPreviewSidebar onClose={() => setShowPreview(false)} />

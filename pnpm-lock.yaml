@@ -101,6 +101,9 @@ importers:
       '@tiptap/extension-heading':
         specifier: ^3.14.0
         version: 3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))
+      '@tiptap/extension-highlight':
+        specifier: ^3.22.2
+        version: 3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))
       '@tiptap/extension-image':
         specifier: ^3.14.0
         version: 3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))
@@ -110,6 +113,12 @@ importers:
       '@tiptap/extension-placeholder':
         specifier: ^3.14.0
         version: 3.19.0(@tiptap/extensions@3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0))
+      '@tiptap/extension-subscript':
+        specifier: ^3.22.2
+        version: 3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)
+      '@tiptap/extension-superscript':
+        specifier: ^3.22.2
+        version: 3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)
       '@tiptap/extension-table':
         specifier: 3.14.0
         version: 3.14.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)
@@ -131,6 +140,9 @@ importers:
       '@tiptap/extension-underline':
         specifier: ^3.14.0
         version: 3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))
+      '@tiptap/extension-youtube':
+        specifier: ^3.22.2
+        version: 3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))
       '@tiptap/react':
         specifier: ^3.14.0
         version: 3.19.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)(@types/react-dom@19.2.3(@types/react@19.2.13))(@types/react@19.2.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -184,10 +196,10 @@ importers:
         version: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-auth:
         specifier: ^5.0.0-beta.25
-        version: 5.0.0-beta.30(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 5.0.0-beta.30(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next-cloudinary:
         specifier: ^6.17.5
-        version: 6.17.5(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 6.17.5(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2235,6 +2247,11 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.19.0
 
+  '@tiptap/extension-highlight@3.22.2':
+    resolution: {integrity: sha512-ecJ5HnCSlUW65xZlqkqz0nN8yhGzp+91HIPKjafPurV4jseUy1O77FthQ6KiZBQFipeqN04tkqEiFt918ydWUQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.22.2
+
   '@tiptap/extension-horizontal-rule@3.19.0':
     resolution: {integrity: sha512-iqUHmgMGhMgYGwG6L/4JdelVQ5Mstb4qHcgTGd/4dkcUOepILvhdxajPle7OEdf9sRgjQO6uoAU5BVZVC26+ng==}
     peerDependencies:
@@ -2293,6 +2310,18 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.19.0
 
+  '@tiptap/extension-subscript@3.22.2':
+    resolution: {integrity: sha512-J1wkSlbk7LTE9QRRFDtrIARST2TR9PFl7SIjXxxJwtBdBAJBqRYmioG4m44cFbbmwHDBLOoSs3JTb95Sx+OiAQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.22.2
+      '@tiptap/pm': ^3.22.2
+
+  '@tiptap/extension-superscript@3.22.2':
+    resolution: {integrity: sha512-TNMqn/0EGjRKPooCRq7uBBwk0Khj+AmSfJ/7+GC/QlvHOgL8/tpgisLOqPih9dMdp5YNTLlpdeI6SkA1VikBEw==}
+    peerDependencies:
+      '@tiptap/core': ^3.22.2
+      '@tiptap/pm': ^3.22.2
+
   '@tiptap/extension-table-cell@3.14.0':
     resolution: {integrity: sha512-g8u0RfAill2F4DevffYHHeNHAfh3E3Kx/8fhRR6EdhQh5pj+mCuuJoTWB7kJjo6NuXCX7cBRRRB5XUmYu8KuTQ==}
     peerDependencies:
@@ -2333,6 +2362,11 @@ packages:
     resolution: {integrity: sha512-800MGEWfG49j10wQzAFiW/ele1HT04MamcL8iyuPNu7ZbjbGN2yknvdrJlRy7hZlzIrVkZMr/1tz62KN33VHIw==}
     peerDependencies:
       '@tiptap/core': ^3.19.0
+
+  '@tiptap/extension-youtube@3.22.2':
+    resolution: {integrity: sha512-wSLswwaLW+LWxe1/PtKzALeeAUS+LGLJfwFJHYTyc+EkqqpQSi2PhDwFx8m9+ADmb8UvjF2Hsg3cha1KrFAJEg==}
+    peerDependencies:
+      '@tiptap/core': ^3.22.2
 
   '@tiptap/extensions@3.19.0':
     resolution: {integrity: sha512-ZmGUhLbMWaGqnJh2Bry+6V4M6gMpUDYo4D1xNux5Gng/E/eYtc+PMxMZ/6F7tNTAuujLBOQKj6D+4SsSm457jw==}
@@ -8055,6 +8089,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
 
+  '@tiptap/extension-highlight@3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))':
+    dependencies:
+      '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
+
   '@tiptap/extension-horizontal-rule@3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)':
     dependencies:
       '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
@@ -8103,6 +8141,16 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
 
+  '@tiptap/extension-subscript@3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)':
+    dependencies:
+      '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
+      '@tiptap/pm': 3.19.0
+
+  '@tiptap/extension-superscript@3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)':
+    dependencies:
+      '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
+      '@tiptap/pm': 3.19.0
+
   '@tiptap/extension-table-cell@3.14.0(@tiptap/extension-table@3.14.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0))':
     dependencies:
       '@tiptap/extension-table': 3.14.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)
@@ -8133,6 +8181,10 @@ snapshots:
       '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
 
   '@tiptap/extension-underline@3.19.0(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))':
+    dependencies:
+      '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
+
+  '@tiptap/extension-youtube@3.22.2(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))':
     dependencies:
       '@tiptap/core': 3.19.0(@tiptap/pm@3.19.0)
 
@@ -10793,23 +10845,9 @@ snapshots:
 
   netmask@2.0.2: {}
 
-  next-auth@5.0.0-beta.30(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@auth/core': 0.41.0
-      next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-
   next-auth@5.0.0-beta.30(next@16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
     dependencies:
       '@auth/core': 0.41.0
-      next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-
-  next-cloudinary@6.17.5(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@cloudinary-util/types': 1.5.10
-      '@cloudinary-util/url-loader': 5.10.4
-      '@cloudinary-util/util': 4.0.0
       next: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
 

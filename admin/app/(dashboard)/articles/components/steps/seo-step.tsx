@@ -13,6 +13,7 @@ import {
   Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { TechnicalSEOGuidance } from '../sections/technical-seo-guidance';
 import { TechnicalSection } from '../sections/technical-section';
@@ -96,7 +97,7 @@ export function SEOStep() {
       title: formData.ogTitle || effectiveTitle,
       description: formData.ogDescription || effectiveDescription,
       url: ogUrl,
-      siteName: formData.ogSiteName || selectedClient?.name || 'مودونتي',
+      siteName: formData.ogSiteName || selectedClient?.name || SITE_NAME,
       locale: formData.ogLocale || formData.inLanguage || 'ar_SA',
     };
 

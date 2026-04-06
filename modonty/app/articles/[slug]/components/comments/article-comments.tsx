@@ -96,11 +96,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
     return result;
   };
 
-  const handleSuccess = () => {
-    // Optionally refresh comments (though new ones won't show until approved)
-    // For now, we just show the success message
-  };
-
   const handleLike = async (commentId: string) => {
     if (!userId) {
       router.push('/users/login');
@@ -355,7 +350,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                   onSubmit={(content) => handleReplySubmit(content, comment.id)}
                   onSuccess={() => {
                     setShowReplyForm(false);
-                    handleSuccess();
                   }}
                   placeholder="اكتب ردك..."
                   submitLabel="رد"

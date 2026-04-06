@@ -22,8 +22,8 @@ export function TestDataButton() {
     // Check if we have basic data available
     if (clients.length === 0 || categories.length === 0 || authors.length === 0) {
       toast({
-        title: 'لا توجد بيانات كافية',
-        description: 'يرجى التأكد من وجود عملاء وفئات وكُتّاب في قاعدة البيانات',
+        title: 'Insufficient Data',
+        description: 'Please ensure clients, categories and authors exist in the database',
         variant: 'destructive',
       });
       return;
@@ -36,7 +36,7 @@ export function TestDataButton() {
       const sources = await getTestDataSources();
       
       if (!sources.success) {
-        const errorMsg = 'error' in sources ? sources.error : 'فشل في جلب البيانات';
+        const errorMsg = 'error' in sources ? sources.error : 'Failed to fetch data';
         throw new Error(errorMsg as string);
       }
       
@@ -66,28 +66,28 @@ export function TestDataButton() {
       
       // Success toast with details
       const details: string[] = [];
-      if (sources.media.length > 0) details.push(`${sources.media.length} صورة متاحة`);
-      if (sources.articles.length > 0) details.push(`${sources.articles.length} مقال مرتبط`);
-      
+      if (sources.media.length > 0) details.push(`${sources.media.length} images available`);
+      if (sources.articles.length > 0) details.push(`${sources.articles.length} related articles`);
+
       // Show warning if no media or articles
       const warnings: string[] = [];
-      if (sources.media.length === 0) warnings.push('لا توجد صور');
-      if (sources.articles.length === 0) warnings.push('لا توجد مقالات مرتبطة');
-      
-      const description = warnings.length > 0 
-        ? `تم ملء البيانات الأساسية • ${warnings.join(' • ')}`
-        : `تم ملء جميع الحقول بنجاح${details.length > 0 ? ` • ` + details.join(' • ') : ''}`;
-      
+      if (sources.media.length === 0) warnings.push('No images');
+      if (sources.articles.length === 0) warnings.push('No related articles');
+
+      const description = warnings.length > 0
+        ? `Basic data filled • ${warnings.join(' • ')}`
+        : `All fields filled successfully${details.length > 0 ? ` • ` + details.join(' • ') : ''}`;
+
       toast({
-        title: '✓ تم ملء البيانات التجريبية',
+        title: 'Test Data Filled',
         description,
         variant: warnings.length > 0 ? 'default' : 'default',
       });
     } catch (error) {
       console.error('Error filling test data:', error);
       toast({
-        title: 'خطأ',
-        description: 'حدث خطأ أثناء ملء البيانات التجريبية',
+        title: 'Error',
+        description: 'An error occurred while filling test data',
         variant: 'destructive',
       });
     } finally {
@@ -109,7 +109,7 @@ export function TestDataButton() {
       ) : (
         <FlaskConical className="h-4 w-4" />
       )}
-      <span className="hidden sm:inline">{isLoading ? 'جاري التحميل...' : 'Fill Test Data'}</span>
+      <span className="hidden sm:inline">{isLoading ? 'Loading...' : 'Fill Test Data'}</span>
       <span className="sm:hidden">{isLoading ? '...' : 'Test'}</span>
     </Button>
   );

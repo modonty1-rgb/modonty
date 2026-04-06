@@ -17,7 +17,7 @@ export function TagInput({
   tags,
   onChange,
   suggestions = [],
-  placeholder = "أضف علامة واضغط Enter",
+  placeholder = "Add tag and press Enter",
 }: TagInputProps) {
   const [inputValue, setInputValue] = useState("");
 

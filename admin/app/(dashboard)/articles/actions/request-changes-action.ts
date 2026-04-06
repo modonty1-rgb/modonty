@@ -5,9 +5,11 @@ import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { ArticleStatus } from "@prisma/client";
 import type { FormSubmitResult } from "@/lib/types/form-types";
+import { auth } from "@/lib/auth";
 
 export async function requestChanges(articleId: string): Promise<FormSubmitResult> {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     const article = await db.article.findUnique({
       where: { id: articleId },
     });

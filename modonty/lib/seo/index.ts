@@ -11,6 +11,8 @@ export interface SEOData {
   type?: "website" | "article" | "profile";
   siteName?: string;
   locale?: string;
+  /** Alternate locales for og:locale:alternate */
+  localeAlternate?: string[];
   firstName?: string;
   lastName?: string;
   twitterCreator?: string;
@@ -52,6 +54,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     section,
     tags,
     twitterSite,
+    localeAlternate,
     languages: languagesInput,
   } = data;
 
@@ -86,6 +89,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
       },
     ],
     locale: locale,
+    ...(localeAlternate && localeAlternate.length > 0 && { localeAlternate }),
     type: type,
   };
 

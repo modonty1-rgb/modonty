@@ -26,7 +26,7 @@ export function TagMultiSelect({
   availableTags,
   selectedTagIds,
   onChange,
-  placeholder = 'اختر العلامات',
+  placeholder = 'Select tags',
   className,
 }: TagMultiSelectProps) {
   const [open, setOpen] = useState(false);
@@ -76,7 +76,7 @@ export function TagMultiSelect({
                       }
                     }}
                     className="ml-1 hover:bg-destructive/20 rounded-full p-0.5 cursor-pointer inline-flex items-center justify-center"
-                    aria-label={`إزالة ${tag.name}`}
+                    aria-label={`Remove ${tag.name}`}
                   >
                     <X className="h-3 w-3" />
                   </span>
@@ -118,7 +118,7 @@ export function TagMultiSelect({
             </div>
           ) : (
             <div className="p-4 text-center text-sm text-muted-foreground">
-              لا توجد علامات متاحة
+              No tags available
             </div>
           )}
         </div>

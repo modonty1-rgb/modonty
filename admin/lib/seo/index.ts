@@ -228,7 +228,6 @@ export {
   generateBreadcrumbStructuredData,
   generateAuthorStructuredData,
   generateOrganizationStructuredData,
-  generateFAQPageStructuredData,
 } from "./structured-data";
 
 // ============================================

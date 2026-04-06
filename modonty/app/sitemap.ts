@@ -1,19 +1,17 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
 
 type SitemapArticle = {
   slug: string;
   datePublished: Date | null;
   dateModified: Date | null;
-  featured: boolean;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
 
-  const [articles, defaults] = await Promise.all([
+  const [articles, categories, clients, authors] = await Promise.all([
     db.article.findMany({
       where: {
         status: ArticleStatus.PUBLISHED,
@@ -26,152 +24,76 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: true,
         datePublished: true,
         dateModified: true,
-        featured: true,
       },
       orderBy: { datePublished: "desc" },
     }),
-    getArticleDefaultsFromSettings(),
+    db.category.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+    }),
+    db.client.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+    }),
+    db.author.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+    }),
   ]);
 
-  const categories = await db.category.findMany({
-    select: {
-      slug: true,
-      updatedAt: true,
-    },
-  });
-
-  const clients = await db.client.findMany({
-    select: {
-      slug: true,
-      updatedAt: true,
-    },
-  });
-
+  // Google ignores priority and changeFrequency — omit both per official docs
   const articleUrls: MetadataRoute.Sitemap = articles.map((article: SitemapArticle) => ({
     url: `${baseUrl}/articles/${article.slug}`,
     lastModified: article.dateModified || article.datePublished || new Date(),
-    changeFrequency: (defaults.sitemapChangeFreq || "weekly") as "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never",
-    priority: defaults.sitemapPriority ?? (article.featured ? 0.8 : 0.5),
   }));
 
   const categoryUrls: MetadataRoute.Sitemap = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: category.updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.7,
   }));
 
   const clientUrls: MetadataRoute.Sitemap = clients.map((client) => ({
     url: `${baseUrl}/clients/${client.slug}`,
     lastModified: client.updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.6,
   }));
 
-  const authorUrl: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/authors/modonty`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-  ];
+  const authorUrls: MetadataRoute.Sitemap = authors.map((author) => ({
+    url: `${baseUrl}/authors/${author.slug}`,
+    lastModified: author.updatedAt,
+  }));
+
+  // TODO: Add tag archive pages (/tags/[slug]) to sitemap once the route is created.
+  // Tags exist in DB but have no public page yet — needed for search engine discoverability.
+
+  // TODO: Create a dedicated image sitemap (app/image-sitemap.xml/route.ts) for article featured images.
+  // This improves discoverability in Google Image Search.
 
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/subscribe`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/news`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/news/subscribe`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/legal/user-agreement`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/legal/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/legal/cookie-policy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/legal/copyright-policy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/help`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/help/feedback`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/help/faq`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
+    { url: `${baseUrl}/about`, lastModified: new Date() },
+    { url: `${baseUrl}/contact`, lastModified: new Date() },
+    { url: `${baseUrl}/subscribe`, lastModified: new Date() },
+    { url: `${baseUrl}/news`, lastModified: new Date() },
+    { url: `${baseUrl}/news/subscribe`, lastModified: new Date() },
+    { url: `${baseUrl}/legal/user-agreement`, lastModified: new Date() },
+    { url: `${baseUrl}/legal/privacy-policy`, lastModified: new Date() },
+    { url: `${baseUrl}/legal/cookie-policy`, lastModified: new Date() },
+    { url: `${baseUrl}/legal/copyright-policy`, lastModified: new Date() },
+    { url: `${baseUrl}/help`, lastModified: new Date() },
+    { url: `${baseUrl}/help/feedback`, lastModified: new Date() },
+    { url: `${baseUrl}/help/faq`, lastModified: new Date() },
   ];
 
   return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/categories`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/clients`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    ...authorUrl,
+    { url: baseUrl, lastModified: new Date() },
+    { url: `${baseUrl}/categories`, lastModified: new Date() },
+    { url: `${baseUrl}/clients`, lastModified: new Date() },
+    ...authorUrls,
     ...staticPages,
     ...articleUrls,
     ...categoryUrls,

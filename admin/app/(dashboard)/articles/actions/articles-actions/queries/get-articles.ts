@@ -138,6 +138,7 @@ export async function getArticles(filters?: ArticleFilters) {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 50, // TODO: A75 — add full server-side pagination (skip/take + total count) for large datasets
     });
 
     const settings = await getAllSettings();

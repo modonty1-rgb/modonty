@@ -91,7 +91,7 @@ export function RelatedArticlesBuilder({
   return (
     <div className="space-y-6">
       <div>
-        <Label className="text-base font-semibold mb-4 block">اختيار المقالات ذات الصلة</Label>
+        <Label className="text-base font-semibold mb-4 block">Select Related Articles</Label>
         <ArticleSelectionTable
           articles={availableArticles}
           selectedArticleIds={selectedArticleIds}
@@ -111,8 +111,8 @@ export function RelatedArticlesBuilder({
 
       {relatedArticles.length === 0 && !loading && (
         <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm font-medium mb-1">لا توجد مقالات محددة</p>
-          <p className="text-xs">استخدم الجدول أعلاه لاختيار المقالات ذات الصلة</p>
+          <p className="text-sm font-medium mb-1">No articles selected</p>
+          <p className="text-xs">Use the table above to select related articles</p>
         </div>
       )}
     </div>

@@ -15,7 +15,6 @@ export async function getArticleSlugsForStaticParams() {
       ],
     },
     select: { slug: true },
-    take: 100,
   });
 }
 

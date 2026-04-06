@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useArticleForm } from '../article-form-context';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -51,7 +52,7 @@ export function SEOValidationSection() {
               },
               publisher: {
                 '@type': 'Organization',
-                name: formData.ogSiteName || 'مودونتي',
+                name: formData.ogSiteName || SITE_NAME,
               },
               mainEntityOfPage: {
                 '@type': 'WebPage',

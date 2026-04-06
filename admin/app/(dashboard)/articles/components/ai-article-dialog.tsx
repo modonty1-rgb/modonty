@@ -36,6 +36,19 @@ import Color from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
 import { cn } from '@/lib/utils';
 
+interface GeneratedArticleData {
+  title: string;
+  content: string;
+  excerpt: string;
+  seoTitle: string;
+  seoDescription: string;
+  wordCount: number;
+  readingTimeMinutes: number;
+  contentDepth: string;
+  keywords: string[];
+  faqs: Array<{ question: string; answer: string }>;
+}
+
 type DialogStep = 'input' | 'loading' | 'preview';
 
 interface AiArticleDialogProps {
@@ -47,7 +60,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
   const [step, setStep] = useState<DialogStep>('input');
   const [keywords, setKeywords] = useState('');
   const [length, setLength] = useState<'short' | 'medium' | 'long'>('medium');
-  const [generatedData, setGeneratedData] = useState<any>(null);
+  const [generatedData, setGeneratedData] = useState<GeneratedArticleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -84,8 +97,8 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
           '[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3',
           '[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2',
           '[&_p]:mb-4 [&_p]:leading-relaxed',
-          '[&_ul]:list-disc [&_ul]:mr-6 [&_ul]:mb-4',
-          '[&_ol]:list-decimal [&_ol]:mr-6 [&_ol]:mb-4'
+          '[&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4',
+          '[&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4'
         ),
         dir: 'rtl',
       },
@@ -101,7 +114,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
     const fromForm = (formData.seoKeywords ?? []).join(', ').trim();
     const keywordsToUse = keywords.trim() || fromForm;
     if (!keywordsToUse) {
-      setError('يرجى إدخال الكلمات المفتاحية في تبويب «الكلمات المفتاحية لـ SEO» أو هنا');
+      setError('Please enter keywords in the "SEO Keywords" tab or here');
       return;
     }
 
@@ -121,11 +134,11 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
         setGeneratedData(result.data);
         setStep('preview');
       } else {
-        setError(result.error || 'فشل توليد المقال');
+        setError(result.error || 'Failed to generate article');
         setStep('input');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع');
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setStep('input');
     } finally {
       setIsGenerating(false);
@@ -152,7 +165,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
       contentDepth: generatedData.contentDepth,
       authorId,
       seoKeywords: generatedData.keywords ?? [],
-      faqs: generatedData.faqs.map((faq: any, index: number) => ({
+      faqs: generatedData.faqs.map((faq: { question: string; answer: string }, index: number) => ({
         question: faq.question,
         answer: faq.answer,
         position: index,
@@ -160,8 +173,8 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
     });
 
     toast({
-      title: 'تم تطبيق المحتوى',
-      description: 'تم ملء النموذج بالمحتوى المُولّد بنجاح',
+      title: 'Content Applied',
+      description: 'Form has been filled with generated content successfully',
     });
 
     onOpenChange(false);
@@ -198,9 +211,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
       long: 'outline',
     };
     const labels: Record<string, string> = {
-      short: 'قصير',
-      medium: 'متوسط',
-      long: 'طويل',
+      short: 'Short',
+      medium: 'Medium',
+      long: 'Long',
     };
     return (
       <Badge variant={variants[depth] || 'default'}>
@@ -221,33 +234,33 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            توليد مقال بالذكاء الاصطناعي
+            AI Article Generator
           </DialogTitle>
           <DialogDescription>
-            أدخل الكلمات المفتاحية واختر طول المقال لتوليد محتوى احترافي جاهز للنشر. إن وُجدت
-            كلمات في تبويب «الكلمات المفتاحية لـ SEO» فستُعبَّأ هنا ويُولَّد المقال بناءً عليها.
+            Enter keywords and choose article length to generate professional content ready to publish.
+            If keywords exist in the "SEO Keywords" tab, they will be auto-filled here.
           </DialogDescription>
         </DialogHeader>
 
         {step === 'input' && (
           <div className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label htmlFor="keywords">الكلمات المفتاحية *</Label>
+              <Label htmlFor="keywords">Keywords *</Label>
               <Textarea
                 id="keywords"
-                placeholder="مثال: التسويق الرقمي، استراتيجيات التسويق، تحسين محركات البحث"
+                placeholder="e.g. digital marketing, SEO strategies, content optimization"
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
                 rows={4}
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                اذكر الموضوعات أو الكلمات المفتاحية التي تريد أن يتناولها المقال
+                Specify the topics or keywords the article should cover
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label>طول المقال</Label>
+              <Label>Article Length</Label>
               <div className="grid grid-cols-3 gap-3">
                 <Button
                   type="button"
@@ -255,9 +268,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                   onClick={() => setLength('short')}
                   className="h-auto py-4 flex flex-col items-center gap-2"
                 >
-                  <span className="font-semibold">قصير</span>
+                  <span className="font-semibold">Short</span>
                   <span className="text-xs text-muted-foreground">
-                    400-600 كلمة
+                    400-600 words
                   </span>
                 </Button>
                 <Button
@@ -266,9 +279,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                   onClick={() => setLength('medium')}
                   className="h-auto py-4 flex flex-col items-center gap-2"
                 >
-                  <span className="font-semibold">متوسط</span>
+                  <span className="font-semibold">Medium</span>
                   <span className="text-xs text-muted-foreground">
-                    900-1200 كلمة
+                    900-1200 words
                   </span>
                 </Button>
                 <Button
@@ -277,9 +290,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                   onClick={() => setLength('long')}
                   className="h-auto py-4 flex flex-col items-center gap-2"
                 >
-                  <span className="font-semibold">طويل</span>
+                  <span className="font-semibold">Long</span>
                   <span className="text-xs text-muted-foreground">
-                    1500-2500 كلمة
+                    1500-2500 words
                   </span>
                 </Button>
               </div>
@@ -296,9 +309,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">جارٍ توليد المقال...</p>
+            <p className="text-sm text-muted-foreground">Generating article...</p>
             <p className="text-xs text-muted-foreground">
-              قد يستغرق هذا بضع ثوانٍ
+              This may take a few seconds
             </p>
           </div>
         )}
@@ -307,43 +320,43 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
           <div className="space-y-4 py-4">
             <Tabs defaultValue="content" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="content">المحتوى</TabsTrigger>
+                <TabsTrigger value="content">Content</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
-                <TabsTrigger value="faqs">الأسئلة الشائعة</TabsTrigger>
+                <TabsTrigger value="faqs">FAQs</TabsTrigger>
               </TabsList>
 
               <TabsContent value="content" className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label>العنوان</Label>
+                    <Label>Title</Label>
                     {getContentDepthBadge(generatedData.contentDepth)}
                   </div>
                   <h3 className="text-lg font-semibold">{generatedData.title}</h3>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>الملخص</Label>
+                  <Label>Excerpt</Label>
                   <p className="text-sm text-muted-foreground">{generatedData.excerpt}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>المحتوى</Label>
+                  <Label>Content</Label>
                   <div className="border rounded-md bg-background">
                     {previewEditor && <EditorContent editor={previewEditor} />}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>عدد الكلمات: {generatedData.wordCount}</span>
+                  <span>Word count: {generatedData.wordCount}</span>
                   <span>•</span>
-                  <span>وقت القراءة: {generatedData.readingTimeMinutes} دقيقة</span>
+                  <span>Reading time: {generatedData.readingTimeMinutes} min</span>
                 </div>
               </TabsContent>
 
               <TabsContent value="seo" className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label>عنوان SEO</Label>
+                    <Label>SEO Title</Label>
                     <Badge
                       variant={
                         generatedData.seoTitle.length >= 40 &&
@@ -352,7 +365,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                           : 'secondary'
                       }
                     >
-                      {generatedData.seoTitle.length} حرف
+                      {generatedData.seoTitle.length} chars
                     </Badge>
                   </div>
                   <p className="text-sm">{generatedData.seoTitle}</p>
@@ -360,7 +373,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label>وصف SEO</Label>
+                    <Label>SEO Description</Label>
                     <Badge
                       variant={
                         generatedData.seoDescription.length >= 130 &&
@@ -369,7 +382,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                           : 'secondary'
                       }
                     >
-                      {generatedData.seoDescription.length} حرف
+                      {generatedData.seoDescription.length} chars
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
@@ -378,7 +391,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>الكلمات المفتاحية</Label>
+                  <Label>Keywords</Label>
                   <div className="flex flex-wrap gap-2">
                     {generatedData.keywords?.map((keyword: string, index: number) => (
                       <Badge key={index} variant="outline">
@@ -392,7 +405,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
               <TabsContent value="faqs" className="space-y-4 mt-4">
                 {generatedData.faqs && generatedData.faqs.length > 0 ? (
                   <Accordion type="single" collapsible className="w-full">
-                    {generatedData.faqs.map((faq: any, index: number) => (
+                    {generatedData.faqs.map((faq: { question: string; answer: string }, index: number) => (
                       <AccordionItem key={index} value={`faq-${index}`}>
                         <AccordionTrigger className="text-right">
                           {faq.question}
@@ -405,7 +418,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                   </Accordion>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    لا توجد أسئلة شائعة
+                    No FAQs generated
                   </p>
                 )}
               </TabsContent>
@@ -417,7 +430,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
           {step === 'input' && (
             <>
               <Button variant="outline" onClick={handleCancel}>
-                إلغاء
+                Cancel
               </Button>
               <Button
                 onClick={handleGenerate}
@@ -427,13 +440,13 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
               >
                 {isGenerating ? (
                   <>
-                    <Loader2 className="h-4 w-4 ml-2 animate-spin" />
-                    جارٍ التوليد...
+                    <Loader2 className="h-4 w-4 ms-2 animate-spin" />
+                    Generating...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4 ml-2" />
-                    توليد المقال
+                    <Sparkles className="h-4 w-4 ms-2" />
+                    Generate Article
                   </>
                 )}
               </Button>
@@ -442,22 +455,22 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
 
           {step === 'loading' && (
             <Button variant="outline" onClick={handleCancel} disabled={isGenerating}>
-              إلغاء
+              Cancel
             </Button>
           )}
 
           {step === 'preview' && (
             <>
               <Button variant="outline" onClick={handleRetry}>
-                <RefreshCw className="h-4 w-4 ml-2" />
-                إعادة المحاولة
+                <RefreshCw className="h-4 w-4 ms-2" />
+                Retry
               </Button>
               <Button variant="outline" onClick={handleCancel}>
-                إلغاء
+                Cancel
               </Button>
               <Button onClick={handleConfirm}>
-                <CheckCircle className="h-4 w-4 ml-2" />
-                تأكيد وتطبيق
+                <CheckCircle className="h-4 w-4 ms-2" />
+                Confirm & Apply
               </Button>
             </>
           )}

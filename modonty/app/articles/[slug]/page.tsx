@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { GTMClientTracker } from "@/components/gtm/GTMClientTracker";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
@@ -146,8 +147,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       type: "article",
       siteName: articleForGeneration.client.name,
       locale: articleDefaults.ogLocale || "ar_SA",
+      localeAlternate: ["ar_EG", "en_US"],
       publishedTime: articleForGeneration.datePublished || undefined,
-      modifiedTime: articleForGeneration.updatedAt,
+      modifiedTime: articleForGeneration.dateModified || articleForGeneration.updatedAt,
       authors: articleForGeneration.author?.name
         ? [articleForGeneration.author.name]
         : undefined,
@@ -307,7 +309,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     id="article-content"
                     className="prose prose-base md:prose-lg max-w-none mb-8 md:mb-12"
                     style={{ lineHeight: '1.6' }}
-                    dangerouslySetInnerHTML={{ __html: article.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
                   />
                   <ArticleBodyLinkTracker articleId={article.id} />
 

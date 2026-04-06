@@ -23,24 +23,24 @@ export function ArticleFormProgress() {
   const hasErrors = sectionStatus.some((s) => s.hasErrors);
 
   return (
-    <div className="mb-6 space-y-3" role="region" aria-label="تقدم إكمال النموذج">
+    <div className="mb-6 space-y-3" role="region" aria-label="Form completion progress">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">تقدم الإكمال</span>
+          <span className="text-sm font-medium">Completion Progress</span>
           <span className="text-sm text-muted-foreground" aria-live="polite">
             {progressPercentage}%
           </span>
         </div>
         {hasErrors && (
           <span className="text-xs text-destructive" role="alert">
-            يوجد أخطاء في بعض الأقسام
+            Some sections have errors
           </span>
         )}
       </div>
       <Progress
         value={progressPercentage}
         className="h-2"
-        aria-label={`${progressPercentage}% من النموذج مكتمل`}
+        aria-label={`${progressPercentage}% complete`}
       />
     </div>
   );

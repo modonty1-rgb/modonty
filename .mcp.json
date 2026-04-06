@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "context7": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp@latest"]
+    },
+    "a11y": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "a11y-mcp"]
+    },
+    "gsc": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "google-searchconsole-mcp"]
+    }
+  }
+}

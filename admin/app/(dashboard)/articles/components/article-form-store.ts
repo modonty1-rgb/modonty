@@ -5,17 +5,13 @@ import { devtools } from 'zustand/middleware';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
 import { ArticleStatus } from '@prisma/client';
 import { slugify } from '../helpers/seo-helpers';
+import { SITE_NAME } from '@/lib/constants/site-name';
 import type { FullPageValidationResult } from '@/lib/seo/types';
 import {
   FileText,
   Edit,
-  Link,
   Search,
-  Share2,
-  Settings,
-  Image,
   Tag,
-  Code,
   CheckCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -99,7 +95,7 @@ const initialFormData: ArticleFormData = {
   metaRobots: 'index, follow',
   ogTitle: '',
   ogDescription: '',
-  ogSiteName: 'مودونتي',
+  ogSiteName: SITE_NAME,
   ogLocale: 'ar_SA',
   ogArticleAuthor: '',
   ogArticleSection: '',
@@ -365,19 +361,10 @@ export const useArticleFormStore = create<ArticleFormStore>()(
 // Sections configuration helper
 export const getSections = (): SectionConfig[] => {
   return [
-    { id: 'basic', label: 'Basic Info', icon: FileText, anchor: '#basic' },
+    { id: 'basic', label: 'Basic', icon: FileText, anchor: '#basic' },
     { id: 'content', label: 'Content', icon: Edit, anchor: '#content' },
-    { id: 'meta', label: 'Meta & Relations', icon: Link, anchor: '#meta' },
-    { id: 'seo', label: 'SEO Meta', icon: Search, anchor: '#seo' },
-    { id: 'social', label: 'Social Media', icon: Share2, anchor: '#social' },
-    { id: 'technical', label: 'Technical SEO', icon: Settings, anchor: '#technical' },
-    { id: 'media', label: 'Media', icon: Image, anchor: '#media' },
-    { id: 'tags', label: 'Tags & FAQs', icon: Tag, anchor: '#tags' },
-    {
-      id: 'seo-validation',
-      label: 'SEO & Validation',
-      icon: CheckCircle,
-      anchor: '#seo-validation',
-    },
+    { id: 'seo', label: 'SEO', icon: Search, anchor: '#seo' },
+    { id: 'faqs-related', label: 'FAQs & Related', icon: Tag, anchor: '#faqs-related' },
+    { id: 'publish', label: 'Publish', icon: CheckCircle, anchor: '#publish' },
   ];
 };

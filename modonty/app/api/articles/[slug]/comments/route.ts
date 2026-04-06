@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { CommentStatus, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 
+const COMMENT_COOLDOWN_MS = 60_000;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -139,6 +141,21 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: "Unauthorized. Please log in to comment." } as ApiResponse<never>,
         { status: 401 }
+      );
+    }
+
+    // Rate limit: 1 comment per 60s per user (DB-based, works across instances)
+    const recentComment = await db.comment.findFirst({
+      where: {
+        authorId: session.user.id,
+        createdAt: { gt: new Date(Date.now() - COMMENT_COOLDOWN_MS) },
+      },
+      select: { id: true },
+    });
+    if (recentComment) {
+      return NextResponse.json(
+        { success: false, error: "Please wait before posting another comment." } as ApiResponse<never>,
+        { status: 429 }
       );
     }
 

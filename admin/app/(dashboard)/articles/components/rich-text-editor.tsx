@@ -12,6 +12,10 @@ import Color from "@tiptap/extension-color";
 import TextAlign from "@tiptap/extension-text-align";
 import Heading from "@tiptap/extension-heading";
 import CharacterCount from "@tiptap/extension-character-count";
+import Highlight from "@tiptap/extension-highlight";
+import Youtube from "@tiptap/extension-youtube";
+import Superscript from "@tiptap/extension-superscript";
+import Subscript from "@tiptap/extension-subscript";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
@@ -59,6 +63,13 @@ import {
   Table as TableIcon,
   TableCellsMerge,
   Trash2,
+  Undo2,
+  Redo2,
+  Highlighter,
+  Youtube as YoutubeIcon,
+  Superscript as SuperscriptIcon,
+  Subscript as SubscriptIcon,
+  RemoveFormatting,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MediaPickerDialog } from "@/components/shared/media-picker-dialog";
@@ -87,6 +98,8 @@ export function RichTextEditor({
   const [linkRel, setLinkRel] = useState<"follow" | "nofollow" | "sponsored">("follow");
   const [linkTarget, setLinkTarget] = useState<"_blank" | "_self">("_blank");
   const linkSelectionRef = useRef<{ from: number; to: number } | null>(null);
+  const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -156,6 +169,10 @@ export function RichTextEditor({
         },
       }),
       CharacterCount,
+      Highlight.configure({ multicolor: false }),
+      Youtube.configure({ width: 640, height: 360 }),
+      Superscript,
+      Subscript,
       LongParagraphHighlight.configure({
         maxLength: 500,
         className:
@@ -174,9 +191,9 @@ export function RichTextEditor({
           "[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3",
           "[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2",
           "[&_p]:mb-4 [&_p]:leading-relaxed",
-          "[&_ul]:list-disc [&_ul]:mr-6 [&_ul]:mb-4",
-          "[&_ol]:list-decimal [&_ol]:mr-6 [&_ol]:mb-4",
-          "[&_blockquote]:border-r-4 [&_blockquote]:border-primary [&_blockquote]:pr-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground",
+          "[&_ul]:list-disc [&_ul]:me-6 [&_ul]:mb-4",
+          "[&_ol]:list-decimal [&_ol]:me-6 [&_ol]:mb-4",
+          "[&_blockquote]:border-r-4 [&_blockquote]:border-primary [&_blockquote]:pe-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground",
           "[&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm",
           "[&_a]:text-primary [&_a]:underline",
           "[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-md [&_img]:my-4",
@@ -231,6 +248,30 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Undo"
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().undo()}
+        >
+          <Undo2 className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="Redo"
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().redo()}
+        >
+          <Redo2 className="h-4 w-4" />
+        </Button>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="Bold"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={cn(editor.isActive("bold") && "bg-muted")}
         >
@@ -240,6 +281,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Italic"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={cn(editor.isActive("italic") && "bg-muted")}
         >
@@ -249,6 +291,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Underline"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className={cn(editor.isActive("underline") && "bg-muted")}
         >
@@ -258,6 +301,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Strikethrough"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           className={cn(editor.isActive("strike") && "bg-muted")}
         >
@@ -267,10 +311,41 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Code"
           onClick={() => editor.chain().focus().toggleCode().run()}
           className={cn(editor.isActive("code") && "bg-muted")}
         >
           <Code className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="Highlight"
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          className={cn(editor.isActive("highlight") && "bg-muted")}
+        >
+          <Highlighter className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="Superscript"
+          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          className={cn(editor.isActive("superscript") && "bg-muted")}
+        >
+          <SuperscriptIcon className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="Subscript"
+          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          className={cn(editor.isActive("subscript") && "bg-muted")}
+        >
+          <SubscriptIcon className="h-4 w-4" />
         </Button>
 
         <Separator orientation="vertical" className="h-6" />
@@ -279,6 +354,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Heading 1"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={cn(editor.isActive("heading", { level: 1 }) && "bg-muted")}
         >
@@ -288,6 +364,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Heading 2"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={cn(editor.isActive("heading", { level: 2 }) && "bg-muted")}
         >
@@ -297,6 +374,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Heading 3"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={cn(editor.isActive("heading", { level: 3 }) && "bg-muted")}
         >
@@ -309,6 +387,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Bullet List"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={cn(editor.isActive("bulletList") && "bg-muted")}
         >
@@ -318,6 +397,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Ordered List"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={cn(editor.isActive("orderedList") && "bg-muted")}
         >
@@ -327,6 +407,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Blockquote"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={cn(editor.isActive("blockquote") && "bg-muted")}
         >
@@ -339,6 +420,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Align Right"
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
           className={cn(editor.isActive({ textAlign: "right" }) && "bg-muted")}
         >
@@ -348,6 +430,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Align Center"
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
           className={cn(editor.isActive({ textAlign: "center" }) && "bg-muted")}
         >
@@ -357,6 +440,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Align Left"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           className={cn(editor.isActive({ textAlign: "left" }) && "bg-muted")}
         >
@@ -366,6 +450,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Align Justify"
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
           className={cn(editor.isActive({ textAlign: "justify" }) && "bg-muted")}
         >
@@ -378,6 +463,7 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Insert Link"
           onClick={() => {
             if (!clientId) {
               toast({
@@ -404,9 +490,19 @@ export function RichTextEditor({
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Insert Image"
           onClick={() => setMediaPickerOpen(true)}
         >
           <ImageIcon className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label="YouTube Video"
+          onClick={() => setYoutubeDialogOpen(true)}
+        >
+          <YoutubeIcon className="h-4 w-4" />
         </Button>
 
         <Separator orientation="vertical" className="h-6" />
@@ -417,6 +513,7 @@ export function RichTextEditor({
           size="sm"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           title="Horizontal rule"
+          aria-label="Horizontal Rule"
         >
           <Minus className="h-4 w-4" />
         </Button>
@@ -426,6 +523,7 @@ export function RichTextEditor({
           size="sm"
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
           title="Insert table"
+          aria-label="Insert Table"
         >
           <TableIcon className="h-4 w-4" />
         </Button>
@@ -437,6 +535,7 @@ export function RichTextEditor({
               size="sm"
               onClick={() => editor.chain().focus().addColumnAfter().run()}
               title="Add column"
+              aria-label="Add Column"
               className="text-xs px-2"
             >
               +Col
@@ -447,6 +546,7 @@ export function RichTextEditor({
               size="sm"
               onClick={() => editor.chain().focus().addRowAfter().run()}
               title="Add row"
+              aria-label="Add Row"
               className="text-xs px-2"
             >
               +Row
@@ -457,6 +557,7 @@ export function RichTextEditor({
               size="sm"
               onClick={() => editor.chain().focus().mergeCells().run()}
               title="Merge cells"
+              aria-label="Merge Cells"
             >
               <TableCellsMerge className="h-4 w-4" />
             </Button>
@@ -466,12 +567,26 @@ export function RichTextEditor({
               size="sm"
               onClick={() => editor.chain().focus().deleteTable().run()}
               title="Delete table"
+              aria-label="Delete Table"
               className="text-destructive hover:text-destructive"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </>
         )}
+
+        <Separator orientation="vertical" className="h-6" />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+          title="Clear formatting"
+          aria-label="Clear Formatting"
+        >
+          <RemoveFormatting className="h-4 w-4" />
+        </Button>
         <MediaPickerDialog
           open={mediaPickerOpen}
           onOpenChange={setMediaPickerOpen}
@@ -551,43 +666,91 @@ export function RichTextEditor({
                 type="button"
                 onClick={() => {
                   if (linkUrl.trim()) {
+                    const savedSelection = linkSelectionRef.current;
                     setLinkDialogOpen(false);
-                    
+
                     const attrs: { href: string; target?: string; rel?: string } = {
                       href: linkUrl.trim(),
                     };
-                    
+
                     if (linkRel) {
                       attrs.rel = linkRel;
                     }
-                    
+
                     if (linkTarget === "_blank") {
                       attrs.target = "_blank";
                       attrs.rel = (attrs.rel ? `${attrs.rel} ` : "") + "noopener noreferrer";
                     }
-                    
-                    setTimeout(() => {
-                      if (linkSelectionRef.current) {
-                        const { from, to } = linkSelectionRef.current;
-                        const selectedText = editor.state.doc.textBetween(from, to, " ");
-                        
-                        if (selectedText.trim()) {
-                          editor.chain().focus().setTextSelection({ from, to }).setLink(attrs).run();
-                        } else {
-                          editor.chain().focus().setTextSelection({ from, to }).insertContent(`<a ${Object.entries(attrs).map(([k, v]) => `${k}="${v}"`).join(" ")}>${linkUrl.trim()}</a>`).run();
-                        }
+
+                    if (savedSelection) {
+                      const { from, to } = savedSelection;
+                      const selectedText = editor.state.doc.textBetween(from, to, " ");
+
+                      if (selectedText.trim()) {
+                        editor.chain().focus().setTextSelection({ from, to }).setLink(attrs).run();
                       } else {
-                        editor.chain().focus().setLink(attrs).run();
+                        editor.chain().focus().setTextSelection({ from, to }).insertContent({
+                          type: "text",
+                          text: linkUrl.trim(),
+                          marks: [{
+                            type: "link",
+                            attrs: {
+                              href: attrs.href,
+                              target: attrs.target || null,
+                              rel: attrs.rel || null,
+                            },
+                          }],
+                        }).run();
                       }
-                      setLinkUrl("");
-                      setLinkRel("follow");
-                      setLinkTarget("_blank");
-                      linkSelectionRef.current = null;
-                    }, 100);
+                    } else {
+                      editor.chain().focus().setLink(attrs).run();
+                    }
+                    setLinkUrl("");
+                    setLinkRel("follow");
+                    setLinkTarget("_blank");
+                    linkSelectionRef.current = null;
                   }
                 }}
               >
                 إضافة
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* YouTube Dialog */}
+        <Dialog open={youtubeDialogOpen} onOpenChange={setYoutubeDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Embed YouTube Video</DialogTitle>
+              <DialogDescription>Paste a YouTube URL to embed the video in the article.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="youtube-url">YouTube URL</Label>
+                <Input
+                  id="youtube-url"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  dir="ltr"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setYoutubeDialogOpen(false); setYoutubeUrl(""); }}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (youtubeUrl.trim()) {
+                    editor.chain().focus().setYoutubeVideo({ src: youtubeUrl.trim() }).run();
+                    setYoutubeUrl("");
+                    setYoutubeDialogOpen(false);
+                  }
+                }}
+              >
+                Embed
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -597,11 +760,12 @@ export function RichTextEditor({
       <EditorContent editor={editor} className="min-h-[300px]" />
 
       <div className="border-t border-border p-2 flex justify-between items-center text-xs text-muted-foreground">
-        <div className="flex gap-4">
-          <span>الكلمات: {actualWordCount}</span>
-          <span>الأحرف: {characterCount}</span>
+        <div className="flex gap-3">
+          <span className="font-medium">{actualWordCount} words</span>
+          <span>{characterCount} chars</span>
+          <span>~{Math.max(1, Math.ceil(actualWordCount / 200))} min read</span>
         </div>
-        <div className="text-muted-foreground/70">Ctrl+K للأوامر السريعة</div>
+        <div className="text-muted-foreground/70">Ctrl+K</div>
       </div>
     </div>
   );

@@ -3,28 +3,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HelpCircle } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
-import { FieldLabel } from "./shared/field-label";
 import { CopyableId } from "./shared/copyable-id";
 
 interface ArticleViewFaqsProps {
   article: Article;
-  sectionRef: (el: HTMLElement | null) => void;
+  sectionRef?: (el: HTMLElement | null) => void;
 }
 
 export function ArticleViewFaqs({ article, sectionRef }: ArticleViewFaqsProps) {
   if (!article.faqs || article.faqs.length === 0) return null;
 
   return (
-    <Card id="section-faqs" ref={sectionRef} className="scroll-mt-20">
+    <Card ref={sectionRef} className="scroll-mt-20">
       <CardHeader className="text-right" dir="rtl">
         <div className="flex items-center gap-2">
           <HelpCircle className="h-5 w-5 text-primary" />
           <CardTitle className="text-right flex-1">Frequently Asked Questions</CardTitle>
-          <FieldLabel
-            label=""
-            fieldPath="article.faqs"
-            fieldType="ArticleFAQ[]"
-          />
         </div>
       </CardHeader>
       <CardContent className="space-y-6 text-right" dir="rtl">

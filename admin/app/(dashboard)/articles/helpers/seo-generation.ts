@@ -9,9 +9,13 @@
 export function generateSEOTitle(title: string, clientName?: string): string {
   if (!title) return "";
   if (clientName) {
-    return `${title} | ${clientName}`;
+    const full = `${title} | ${clientName}`;
+    if (full.length <= 60) return full;
+    const suffix = ` | ${clientName}`;
+    const maxTitleLen = 60 - suffix.length;
+    if (maxTitleLen > 10) return `${title.slice(0, maxTitleLen).trim()} | ${clientName}`;
   }
-  return title;
+  return title.slice(0, 60);
 }
 
 /**

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-05 16:30
+# Session Context — Last Updated: 2026-04-06 03:15
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,203 +7,310 @@
 ---
 
 ## Current Versions
-- **admin**: v0.11.0 (pushed)
-- **modonty**: v1.17.0 (pushed)
-
-## What Was Done This Session
-
-### 1. Clients Section — Complete Overhaul (57 Issues Fixed)
-
-**Security (C1-C4):**
-- Auth check (`auth()`) added to all mutation actions (create, update, delete)
-- Zod server-side validation added (`client-server-schema.ts` + `safeParse()`)
-- Slug uniqueness validation on create + update
-- Bulk delete removed entirely (action + component + export)
-
-**Logic Bugs (C5-C7):**
-- Tax ID assignment fixed in ALL 4 files (was copying VAT→Tax, now Tax takes priority)
-- JSON-LD `@id`/`@type` fix — root cause in `jsonld-processor.ts` (jsonld.compact strips @ prefix). Fixed at source, removed `sanitizeJsonLd()` hack from frontend
-- Client update now cascades to regenerate ALL article JSON-LD via `batchRegenerateJsonLd()`
-
-**Dead Code (C8-C10):**
-- Removed hidden dead sidebar from client-form.tsx (28 lines)
-- Deleted 4 empty/unused components: additional-section, classification-section, contact-section, form-stepper
-- Fixed unreachable code in get-client-articles.ts (merged duplicate return paths)
-
-**SEO & JSON-LD (H1-H6):**
-- H1: Logo @id — SKIPPED (verified from Google docs: not in any official example)
-- H2: companyRegistration — FALSE POSITIVE (field IS included in output)
-- H3: primaryImageOfPage — removed logo fallback, use real dimensions only
-- H4: Removed 3 emoji debug console.logs from jsonld-validator.ts
-- H5: Removed unused `richResults` field from ValidationReport interface
-- H6: Added `alternates.languages` from `knowsLanguage` field (hreflang: ar-SA, en)
-
-**TypeScript (H7):**
-- Removed ALL `any` types across 8 files (create-client, generate-client-seo, client-seo-form, client-table, settings-section, client-form, build-client-seo-data, modonty client page)
-
-**Performance (H8-H12):**
-- H8: Replaced 36 individual form.watch() calls with single watch() + seoFieldsKey memo
-- H9: Moved article count filtering from JS to DB (pre-query with groupBy)
-- H10: Removed O(n) individual client queries, replaced with single fallback query
-- H11: Pre-computed validation results in useMemo Map before render loop
-- H12: Removed jsonLdStructuredData from list query (5-10KB per client saved)
-
-**UI/UX (H13-H15):**
-- H13: Replaced sidebar+inline-panel with shadcn Tabs (3 tabs: Overview, Details, Content)
-- H14: Media gallery pagination (24 items + "Show more" button)
-- H15: Extracted duplicate code into `client-display-utils.ts` (3 functions) + `use-media-preview.ts` hook. Updated 9 files.
-- Fixed detail page padding/spacing (removed max-w-[1200px], added proper p-4 sm:p-6)
-
-**Error Handling (M2-M5):**
-- Created error.tsx for clients route
-- Partial update failures return warning instead of full error
-- SEO generation failures return warning field
-- Delete button race condition fixed with useRef guard
-
-**Validation (M6-M10):**
-- Relationship IDs validated before connect (industry, parent org, subscription tier)
-- VAT ID regex loosened (strips all non-digits before validation)
-- numberOfEmployees parsing: supports "100+", "1,000-5,000", "50-99 employees"
-- Meta title truncation at word boundary
-- min/max swap for employee count range
-
-**Frontend Fixes (M11-M14):**
-- View tracking deduplication (30-min window)
-- Follow button race condition (useRef isPending)
-- Added caching to client-stats.ts and client-followers.ts
-- Featured clients carousel: CSS background → next/image
-
-**Code Quality (M15-M17, L1-L15):**
-- Removed redundant console.logs from 6 mutation files
-- Fixed useEffect missing dependencies with useRef pattern
-- Added ARIA labels to delete button, table actions, pagination
-- Added aria-busy to loading skeletons
-- Fixed loading skeleton layout mismatch
-- Removed unused props from clients-page-client.tsx
-- Fixed sort comparison with 'ar' locale
-- Removed invalid Ajv verbose option
-- Session ID generation: Math.random() → crypto.randomUUID()
-- Added Suspense boundaries (stats + table stream independently)
-- Exposed all 6 filters in UI
-
-### 2. SEO Reference Document Created
-
-- `documents/MODONTY-RULE/SEO-REFERENCE.md` — Master reference with 49 verified sources
-- Tier 1: Google Search Central, Schema.org, OpenGraph, Twitter Cards
-- Tier 2: SEMrush, Ahrefs, Moz (industry tools)
-- Tier 3: Search Engine Journal, Search Engine Land
-- Golden rule saved in memory: zero guessing on SEO/JSON-LD changes
-
-### 3. Master TODO Created
-
-- `documents/tasks/MASTER-TODO.md` — Single source of truth for all pending tasks
-- Cross-app issues: slug validation (X1-X4), bulk delete audit (X5-X8), auth checks (X9-X13), Zod validation (X14-X17)
-- X18-X24: Revert Arabic UI labels back to English (admin console is English-first)
-
-### 4. Key Rules Established
-
-- **SEO Golden Rule**: Any JSON-LD/metadata change must be verified from official sources. Zero guessing.
-- **Admin Language**: UI labels/headings/buttons in ENGLISH. Only data content is Arabic.
-- **Slug Validation**: Every entity with slug must validate uniqueness before save.
-- **Auth on Actions**: Every mutation server action must have auth() check.
-- **TSC Strategy**: Skip during simple edits, required after agent merges and before push.
+- **admin**: v0.12.0 (pushing now)
+- **modonty**: v1.17.0 (no changes this session)
 
 ---
 
-## Known Issues (from MASTER-TODO.md)
+## What Was Done This Session (Session 4) — Articles UX Improvements
 
-### Must Do Next
-1. **X18-X24: Revert Arabic labels to English** — client-tabs.tsx, clients-stats.tsx, seo-tab.tsx, [id]/page.tsx, client-form.tsx, clients-filters.tsx were incorrectly translated to Arabic
-2. Cross-app slug validation (X1-X4): articles, categories, tags, industries
-3. Cross-app auth checks (X9-X13): all entity mutations
-4. Cross-app Zod validation (X14-X17): all entity mutations
-5. Cross-app bulk delete audit (X5-X8): remove if exists
+### P1 — Critical (All Done)
+1. **Unified SEO score** — form and view page now show identical scores. Fixed `normalize-input.ts`: use stored wordCount, add twitterCard default.
+2. **Publish gate at 60% SEO** — added to all 4 publish paths (publish-article.ts, publish-article-by-id.ts, update-article.ts, create-article.ts).
+3. **Form reduced from 12 to 5 steps** — Basic, Content+Media, SEO (meta+keywords+semantic), FAQs+Related, Publish (settings+citations+technical+preview).
 
-### SEO Gaps (from SEO-CACHE-STANDARD.md)
-- Gap #3 CLOSED (client → article cascade)
-- Remaining gaps: 1,2,4-11
+### P2 — Important (All Done)
+4. **Auto-save every 30s** in edit mode with "Auto-saved HH:MM" indicator in header.
+5. **Live word count** in editor footer: "X words · Y chars · ~Z min read" (English).
+6. **Improved seed data** — rich multi-paragraph Arabic content, proper SEO descriptions (120-160 chars), FAQs per article.
+7. **Unsaved changes warning** — `beforeunload` event fires when form is dirty.
 
----
+### TipTap Editor Upgrade
+- Added 6 new tools: Undo/Redo, Highlight, Superscript, Subscript, YouTube embed, Clear Formatting.
+- Total toolbar: 20 tools across 2 rows.
+- Installed: `@tiptap/extension-highlight`, `@tiptap/extension-youtube`, `@tiptap/extension-superscript`, `@tiptap/extension-subscript`.
 
-## Files Changed (this push)
+### Other Fixes
+- `generateSEOTitle` now truncates to fit within 60 chars (was breaking save).
+- `articleServerSchema` relaxed seoTitle max from 60→120, seoDescription max from 160→300 (analyzer warns, schema doesn't block).
+- Beta testing banner added to admin layout header.
+- Cleaned up unused lucide imports in article-form-store.ts.
 
-### Admin — Actions
-- `clients/actions/clients-actions/create-client.ts` — auth, Zod, slug check, types fixed
-- `clients/actions/clients-actions/update-client.ts` — auth, Zod, cascade, partial warnings
-- `clients/actions/clients-actions/delete-client.ts` — auth added
-- `clients/actions/clients-actions/update-client-grouped.ts` — tax ID fix, console.logs removed
-- `clients/actions/clients-actions/get-clients.ts` — article count filter to DB, over-fetch reduced
-- `clients/actions/clients-actions/get-clients-stats.ts` — O(n) fallback fixed
-- `clients/actions/clients-actions/get-client-articles.ts` — unreachable code fixed
-- `clients/actions/clients-actions/index.ts` — bulk delete export removed
-- `clients/actions/clients-actions/types.ts` — jsonLdStructuredData removed from list type
-- `clients/actions/clients-actions/client-server-schema.ts` — NEW: Zod server schema
-- `clients/actions/clients-actions/generate-client-seo.ts` — alternates.languages, types fixed, title truncation
+### Files Changed (Key)
+- `admin/app/(dashboard)/articles/analyzer/article-seo-analyzer/normalize-input.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/publish-article.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/publish-article-by-id.ts`
+- `admin/app/(dashboard)/articles/actions/articles-actions/mutations/update-article.ts`
+- `admin/app/(dashboard)/articles/actions/articles-actions/mutations/create-article.ts`
+- `admin/app/(dashboard)/articles/actions/articles-actions/article-server-schema.ts`
+- `admin/app/(dashboard)/articles/helpers/step-validation-helpers/step-configs.ts`
+- `admin/app/(dashboard)/articles/helpers/seo-generation.ts`
+- `admin/app/(dashboard)/articles/components/article-form-tabs.tsx`
+- `admin/app/(dashboard)/articles/components/article-form-context.tsx`
+- `admin/app/(dashboard)/articles/components/article-form-navigation.tsx`
+- `admin/app/(dashboard)/articles/components/article-form-store.ts`
+- `admin/app/(dashboard)/articles/components/rich-text-editor.tsx`
+- `admin/app/(dashboard)/settings/actions/seed-integration-test.ts`
+- `admin/app/(dashboard)/layout.tsx`
+- `admin/package.json` (version + new deps)
 
-### Admin — Components
-- `clients/components/client-form.tsx` — single watch(), dead sidebar removed
-- `clients/components/client-table.tsx` — memoized validation, types fixed, ARIA
-- `clients/components/client-seo-form.tsx` — types fixed
-- `clients/components/clients-page-client.tsx` — unused props removed
-- `clients/components/clients-stats.tsx` — label changes
-- `clients/components/clients-filters.tsx` — all 6 filters exposed
-- `clients/components/form-sections/settings-section.tsx` — types fixed
-- `clients/components/form-sections/media-section.tsx` — useRef for deps
-- `clients/[id]/components/client-tabs.tsx` — sidebar→tabs redesign
-- `clients/[id]/components/client-header.tsx` — spacing fix
-- `clients/[id]/components/tabs/media-social-tab.tsx` — pagination
-- `clients/[id]/components/tabs/seo-tab.tsx` — label changes
-- `clients/[id]/components/delete-client-button.tsx` — race condition fix
-- `clients/[id]/page.tsx` — spacing, SEO banner text
-- `clients/page.tsx` — Suspense boundaries
-- `clients/loading.tsx` — aria-busy, layout match
-- `clients/error.tsx` — NEW: error boundary
-
-### Admin — Helpers
-- `clients/helpers/client-display-utils.ts` — NEW: shared utility (tier name, days remaining, delivery rate)
-- `clients/helpers/hooks/use-media-preview.ts` — NEW: shared media preview hook
-- `clients/helpers/client-field-mapper.ts` — tax ID fix
-- `clients/helpers/hooks/use-client-form.ts` — tax ID fix
-- `clients/helpers/map-initial-data-to-form-data.ts` — tax ID fix
-- `clients/helpers/build-client-seo-data.ts` — types fixed
-- `clients/helpers/client-seo-config/client-jsonld-validator.ts` — Ajv verbose removed
-- `clients/helpers/client-seo-config/validators-advanced.ts` — VAT regex fix
-
-### Admin — Shared SEO
-- `lib/seo/jsonld-processor.ts` — @id/@type restoration after compact
-- `lib/seo/jsonld-validator.ts` — richResults removed, debug logs removed
-- `lib/seo/generate-complete-organization-jsonld.ts` — primaryImageOfPage fix, employees parsing
-
-### Admin — Deleted Files
-- `clients/actions/clients-actions/bulk-delete-clients.ts`
-- `clients/components/bulk-actions-toolbar.tsx`
-- `clients/components/form-sections/additional-section.tsx`
-- `clients/components/form-sections/classification-section.tsx`
-- `clients/components/form-sections/contact-section.tsx`
-- `clients/components/form-stepper.tsx`
-
-### Modonty (Frontend)
-- `app/clients/[slug]/page.tsx` — sanitizeJsonLd removed, types fixed
-- `app/clients/[slug]/helpers/client-stats.ts` — caching added
-- `app/clients/[slug]/helpers/client-followers.ts` — caching added
-- `app/clients/[slug]/components/client-follow-button.tsx` — race condition fix
-- `app/clients/components/featured-client-card.tsx` — CSS background → next/image
-- `app/api/clients/[slug]/view/route.ts` — deduplication, crypto.randomUUID()
-- `app/api/clients/[slug]/share/route.ts` — crypto.randomUUID()
-
-### Documents
-- `MODONTY-RULE/SEO-REFERENCE.md` — NEW: master SEO reference (49 sources)
-- `tasks/MASTER-TODO.md` — rewritten as single source of truth
-- `tasks/admin/CLIENTS-TODO.md` — 57 items tracked and completed
-- `tasks/admin/CLIENTS-ARTICLES-STUDY.md` — deep analysis document
-- `context/SESSION-LOG.md` — this file
+### P3 — Post-Launch (Not Started)
+- Split view preview, drag & drop images, templates, AI suggestions, bulk SEO fix.
 
 ---
 
-## Next Steps
+## What Was Done in Session 2
 
-1. Revert Arabic UI labels to English (X18-X24)
-2. Start Articles section (study done, TODO pending)
-3. Cross-app fixes (slug, auth, Zod, bulk delete)
-4. Categories + Tags + Industries
-5. Remaining SEO gaps
+### 1. Articles Section — Complete Overhaul (81 Issues Fixed)
+
+All 81 items from `documents/tasks/admin/ARTICLES-TODO.md` are DONE across 9 phases:
+
+**Phase 1 — Security (A1-A4):**
+- Auth check added to all 8 article mutation files
+- Zod server-side validation (`article-server-schema.ts`) on create + update
+- Slug uniqueness validation scoped to clientId
+- Bulk delete removed (file deleted + export cleaned)
+
+**Phase 2 — SEO Cascades (A5-A7, A49-A53):**
+- Author/Category/Client/Media update → cascade regenerate all article JSON-LD + metadata
+- All 4 publish paths now regenerate JSON-LD + metadata + revalidate
+- Console approval has TODO (can't access admin SEO libs)
+
+**Phase 3 — Data Integrity (A8-A10, A37, A39):**
+- Tags/FAQs/gallery/related wrapped in $transaction in create + update
+- datePublished preserved on update (not overwritten)
+- FAQ questions + answers sanitized with HTML entity encoding
+
+**Phase 4 — SEO Compliance (A11-A14, A43-A45, A64-A65):**
+- dateModified added to metadata
+- og:locale:alternate (ar_EG, en_US)
+- twitter:image:alt as {url, alt} object
+- Last breadcrumb URL removed per Google spec
+- articleBody removed from JSON-LD (Google doesn't use it)
+- FAQPage removed from @graph (restricted since 2023)
+
+**Phase 5 — Performance/TypeScript/RTL (A15-A20, A41-A42):**
+- SEO analysis debounced (500ms)
+- Duplicate slug auto-fill removed
+- Like/dislike/favorite race conditions fixed (findFirst + P2002)
+- isPending useRef guard on all interaction handlers
+- any types fixed in article-form-context + ai-article-dialog
+- RTL CSS fixed in 6 files (mr→me, pr→pe, right→end, left→start)
+
+**Phase 6 — Security + Frontend Guards (A40, A46-A47, A54, A58-A61):**
+- XSS in content rendering: zero-dependency sanitizeHtml utility (both admin + modonty)
+- XSS in link insertion: replaced string concatenation with TipTap structured API
+- Status transition validation: created `article-status-machine.ts` with valid transitions
+- Pre-publish audit: added checkCompliance() to publish-article.ts
+- Error boundaries created for admin/articles + modonty/articles
+- Suspense boundary on admin articles list page
+
+**Phase 7 — Business Logic + SEO (A55-A56, A62-A63, A66-A70):**
+- OG image fallback chain unified (JSON-LD matches metadata)
+- datePublished is single source of truth for publishedTime
+- SCHEDULED auto-publish: cron API route + vercel.json (every 5 min)
+- Console requestChanges: DRAFT→WRITING transition (was DRAFT→DRAFT no-op)
+- Sitemap: dynamic author queries (replaced hardcoded), parallelized all queries
+- Content sanitized at storage layer (create + update)
+- Compliance check added to bulkUpdateArticleStatus
+
+**Phase 8 — Quality (A21-A30):**
+- Console approval respects scheduledAt (sets SCHEDULED if future date)
+- Silent catch blocks replaced with console.error (5 instances)
+- Revalidation added to bulk operations
+- Dead status validation removed from create-article
+- Dislike button enabled (removed hidden wrapper)
+- Empty handleSuccess removed from article-comments
+- ARIA labels added to 20+ toolbar buttons in rich text editor
+- SITE_NAME constant created, replaced in 16 files
+- Link dialog setTimeout race condition fixed
+- Prisma cascade rules: NoAction→Cascade on 6 relations
+
+**Phase 9 — Polish + Production (A31-A36, A48, A57, A71-A81):**
+- ArticleVersion tracking before each update
+- Comment spam protection (60s DB-based cooldown)
+- 8 form step components memoized with React.memo
+- Sitemap priority/changefreq removed (Google ignores them)
+- Optimistic locking via updatedAt comparison
+- Saudi timezone (+03:00) for JSON-LD dates
+- Security headers added to admin + modonty next.config.ts
+- generateStaticParams: removed take:100 limit
+- Admin article list: added take:50
+- API search endpoint wired up
+- Revalidation secrets: removed hardcoded fallbacks, 503 if not configured
+- Console auth: production guard throws if AUTH_SECRET missing
+- Revalidation failure logging added
+
+### 2. X18-X24 — Arabic Labels Reverted to English
+
+12 client files fixed — ALL admin UI labels back to English:
+- `client-tabs.tsx` — tab names, field labels, badges, warnings
+- `clients-stats.tsx` — SEO health label
+- `seo-tab.tsx` — all toast messages, card titles, labels, buttons
+- `[id]/page.tsx` — SEO banner text
+- `client-form.tsx` — notes popover
+- `clients-filters.tsx` — all filter labels
+- `error.tsx` — error message and button
+- `loading.tsx` — aria-label
+- `regenerate-all-seo-button.tsx` — all dialog text
+- `media-social-tab.tsx` — file count and show more
+- `delete-client-button.tsx` — aria-label
+- `subscription-section.tsx` — "from plan" label
+
+Remaining Arabic in client files: Zod validation messages, SEO hint texts, server action errors — these are content-facing messages for Arabic admin users, acceptable.
+
+### 3. Padding/Spacing Fix
+
+Replaced `max-w-[1200px] mx-auto` with `p-4 sm:p-6` on ALL article pages:
+- `articles/page.tsx` (list)
+- `articles/loading.tsx`
+- `articles/error.tsx`
+- `articles/new/page.tsx`
+- `articles/new/loading.tsx`
+- `articles/[id]/page.tsx` (detail — fixed earlier)
+- `articles/[id]/loading.tsx`
+- `articles/[id]/edit/page.tsx`
+
+NOT changed (intentional — navigation bars within sticky headers):
+- `preview/[id]/page.tsx`
+- `preview/[id]/loading.tsx`
+- `preview/components/preview-breadcrumb.tsx`
+- `article-form-navigation.tsx`
+- `article-view-navigation.tsx`
+
+### 4. tsc Fix — metadata-generator.ts
+
+Fixed OpenGraph typing error: removed invalid `OpenGraphArticle` import, used untyped object literal instead. Both admin and modonty pass tsc with zero errors.
+
+### 5. isomorphic-dompurify Removed
+
+Originally installed for XSS sanitization but caused EPERM issues with Prisma on Windows. Replaced with zero-dependency regex-based sanitizers in both apps:
+- `admin/lib/sanitize-html.ts` — exports `sanitizeHtmlContent()`
+- `modonty/lib/sanitize-html.ts` — exports `sanitizeHtml()`
+- Removed `isomorphic-dompurify` from `modonty/package.json`
+
+### 6. Agent Usage Rule Saved
+
+Saved to memory: use fewer agents, do small fixes directly. Agents only for truly large independent tasks (max 2-3 parallel).
+
+---
+
+## Key New Files Created This Session
+
+### Admin
+- `admin/app/(dashboard)/articles/actions/articles-actions/article-server-schema.ts` — Zod validation
+- `admin/app/(dashboard)/articles/helpers/article-status-machine.ts` — valid status transitions
+- `admin/app/(dashboard)/articles/error.tsx` — error boundary
+- `admin/app/api/cron/publish-scheduled/route.ts` — SCHEDULED auto-publish cron
+- `admin/lib/sanitize-html.ts` — zero-dependency HTML sanitizer
+- `admin/lib/constants/site-name.ts` — SITE_NAME constant
+- `admin/vercel.json` — cron config for scheduled publishing
+
+### Modonty
+- `modonty/app/articles/error.tsx` — error boundary
+- `modonty/lib/sanitize-html.ts` — zero-dependency HTML sanitizer
+
+---
+
+## Key Modified Files This Session
+
+### Admin — Article Actions
+- `mutations/create-article.ts` — auth, Zod, slug, transaction, FAQ sanitize, HTML sanitize, dead validation removed
+- `mutations/update-article.ts` — auth, Zod, slug, transaction, datePublished fix, HTML sanitize, optimistic locking, ArticleVersion
+- `mutations/delete-article.ts` — auth, error logging
+- `publish-action/publish-article.ts` — auth, SEO regen, compliance check
+- `publish-action/publish-article-by-id.ts` — auth, SEO regen, status validation
+- `bulk/bulk-update-article-status.ts` — auth, datePublished fix, SEO regen, compliance check, status validation, revalidation
+- `bulk/bulk-delete-articles.ts` — DELETED
+
+### Admin — Article Components
+- `rich-text-editor.tsx` — TipTap link API (XSS fix), ARIA labels, RTL, link dialog fix
+- `article-form-context.tsx` — debounced SEO, removed duplicate slug, typed
+- `article-form-layout.tsx` — RTL
+- `article-form-stepper.tsx` — RTL
+- `article-form-tabs.tsx` — RTL
+- `article-form-sections.tsx` — RTL, memoized steps
+- `ai-article-dialog.tsx` — RTL, typed
+- `article-interaction-buttons.tsx` — isPending guard, dislike enabled
+- `article-comments.tsx` — removed empty handleSuccess
+
+### Admin — SEO
+- `lib/seo/knowledge-graph-generator.ts` — removed articleBody, FAQPage, Saudi timezone, OG fallback chain
+- `lib/seo/metadata-generator.ts` — OpenGraph typing fix, datePublished as SOT, og:locale:alternate
+- `lib/seo/jsonld-storage.ts` — ogImageMedia included in query
+
+### Admin — Client Files (Arabic→English)
+- 12 files listed above in X18-X24 section
+
+### Modonty
+- `app/articles/[slug]/page.tsx` — sanitizeHtml on content rendering
+- `app/articles/[slug]/actions/article-interactions.ts` — race condition fixes
+- `app/articles/[slug]/components/article-interaction-buttons.tsx` — isPending guard
+- `app/articles/[slug]/actions/article-metadata.ts` — dateModified
+- `app/articles/[slug]/actions/ask-client-actions.ts` — FAQ sanitization
+- `app/api/articles/[slug]/comments/route.ts` — rate limiting
+- `app/sitemap.ts` — dynamic authors, removed priority/changefreq, parallelized
+- `next.config.ts` — security headers
+
+### Console
+- `article-actions.ts` — requestChanges DRAFT→WRITING, approval respects scheduledAt
+
+### Prisma Schema
+- `schema.prisma` — NoAction→Cascade on 6 article relations
+
+---
+
+## tsc Status
+- **admin**: ZERO errors
+- **modonty**: ZERO errors
+- **console**: not checked (no changes beyond article-actions.ts)
+
+---
+
+## What Needs To Be Done Before Push
+
+1. **UI/UX review of article pages** — user wants to visually test all article pages before push
+2. **Check for Arabic UI labels in article files** — 53 files have Arabic, most are form hints (acceptable), but some may be UI labels that need English
+3. **Version bump** — admin v0.12.0, modonty v1.18.0
+4. **Update this SESSION-LOG.md** — final update before push
+5. **Run backup** — `bash scripts/backup.sh`
+6. **Push**
+
+---
+
+## What's Left After Push
+
+### Cross-App Issues (MASTER-TODO.md)
+- X1-X4: Slug uniqueness for categories/tags/industries
+- X5-X8: Bulk delete audit for categories/tags/industries
+- X9-X13: Auth checks on all entity mutations
+- X14-X17: Zod validation on all entity mutations
+
+### Sections Not Yet Inspected
+- Categories (full inspection + SEO gaps)
+- Tags (full inspection + SEO gaps)
+- Industries (full inspection + SEO gaps)
+
+### SEO Cache Gaps
+- Gaps 1, 2, 4-11 from SEO-CACHE-STANDARD.md
+
+---
+
+## Key Rules (from memory)
+
+1. **Admin language**: UI labels/headings/buttons in ENGLISH. Only data content is Arabic.
+2. **SEO golden rule**: Any JSON-LD/metadata change MUST be verified from official sources.
+3. **Check both create and update**: Any logic change must be applied to ALL write paths.
+4. **Agent usage**: Use fewer agents, do small fixes directly. Max 2-3 agents for large independent tasks.
+5. **tsc strategy**: Skip during small edits, run at end of scope.
+6. **Version bump before push**: Always update package.json version.
+7. **Backup before push**: Run `bash scripts/backup.sh`.
+8. **Session context handoff**: Update this file before every push.
+
+---
+
+> Reference files:
+> - [ARTICLES-TODO.md](../tasks/admin/ARTICLES-TODO.md) — 81 items, ALL completed
+> - [MASTER-TODO.md](../tasks/MASTER-TODO.md) — cross-app pending tasks
+> - [SEO-REFERENCE.md](../MODONTY-RULE/SEO-REFERENCE.md) — master SEO reference (49 sources)
+> - [SEO-CACHE-STANDARD.md](../MODONTY-RULE/SEO-CACHE-STANDARD.md) — master SEO caching rules

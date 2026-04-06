@@ -28,7 +28,7 @@ export function ArticleMultiSelect({
   availableArticles,
   selectedArticleIds,
   onChange,
-  placeholder = 'اختر المقالات',
+  placeholder = 'Select articles',
   className,
 }: ArticleMultiSelectProps) {
   const [open, setOpen] = useState(false);
@@ -78,7 +78,7 @@ export function ArticleMultiSelect({
                       }
                     }}
                     className="ml-1 hover:bg-destructive/20 rounded-full p-0.5 cursor-pointer inline-flex items-center justify-center"
-                    aria-label={`إزالة ${article.title}`}
+                    aria-label={`Remove ${article.title}`}
                   >
                     <X className="h-3 w-3" />
                   </span>
@@ -123,7 +123,7 @@ export function ArticleMultiSelect({
             </div>
           ) : (
             <div className="p-4 text-center text-sm text-muted-foreground">
-              لا توجد مقالات متاحة
+              No articles available
             </div>
           )}
         </div>

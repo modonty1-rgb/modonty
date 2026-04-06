@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SITE_NAME } from "@/lib/constants/site-name";
 
 interface SEOPreviewCardProps {
   title: string;
@@ -16,7 +17,7 @@ export function SEOPreviewCard({
   description,
   url,
   image,
-  siteName = "مودونتي",
+  siteName = SITE_NAME,
 }: SEOPreviewCardProps) {
   const displayTitle = title || "عنوان المقال";
   const displayDescription = description || "وصف المقال...";

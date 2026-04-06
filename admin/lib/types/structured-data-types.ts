@@ -33,17 +33,6 @@ export interface ArticleStructuredData extends StructuredDataBase {
   inLanguage?: string;
   isAccessibleForFree?: boolean;
   license?: string;
-  mainEntity?: {
-    "@type": "FAQPage";
-    mainEntity: Array<{
-      "@type": "Question";
-      name: string;
-      acceptedAnswer: {
-        "@type": "Answer";
-        text: string;
-      };
-    }>;
-  };
 }
 
 export interface OrganizationStructuredData extends StructuredDataBase {

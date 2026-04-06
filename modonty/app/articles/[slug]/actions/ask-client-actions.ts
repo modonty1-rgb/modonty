@@ -6,6 +6,15 @@ import { auth } from "@/lib/auth";
 import { ArticleStatus, ArticleFAQStatus } from "@prisma/client";
 import { askClientSchema, type AskClientFormData } from "../helpers/schemas/ask-client-schema";
 
+function sanitizeText(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 export async function submitAskClient(
   data: AskClientFormData,
   articleId: string
@@ -58,7 +67,7 @@ export async function submitAskClient(
   await db.articleFAQ.create({
     data: {
       articleId,
-      question: parsed.data.question.trim(),
+      question: sanitizeText(parsed.data.question.trim()),
       answer: null,
       position,
       status: ArticleFAQStatus.PENDING,
