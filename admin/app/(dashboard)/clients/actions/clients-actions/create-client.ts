@@ -16,7 +16,7 @@ import bcrypt from "bcryptjs";
 export async function createClient(data: ClientFormData) {
   try {
     const session = await auth();
-    if (!session) return { success: false, error: "غير مصرح" };
+    if (!session) return { success: false, error: "Unauthorized" };
 
     // Server-side Zod validation
     const parsed = clientServerSchema.safeParse(data);
@@ -31,7 +31,7 @@ export async function createClient(data: ClientFormData) {
       select: { id: true },
     });
     if (existingClient) {
-      return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل" };
+      return { success: false, error: "This slug is already in use" };
     }
 
     let articlesPerMonth = data.articlesPerMonth || null;
@@ -156,7 +156,7 @@ export async function createClient(data: ClientFormData) {
         where: { id: clientData.subscriptionTierConfigId as string },
         select: { id: true },
       });
-      if (!tierConfig) return { success: false, error: "باقة الاشتراك غير موجودة" };
+      if (!tierConfig) return { success: false, error: "Subscription tier not found" };
       cleanData.subscriptionTierConfig = { connect: { id: tierConfig.id } };
     }
     if (clientData.industryId) {
@@ -164,7 +164,7 @@ export async function createClient(data: ClientFormData) {
         where: { id: clientData.industryId as string },
         select: { id: true },
       });
-      if (!industry) return { success: false, error: "القطاع المحدد غير موجود" };
+      if (!industry) return { success: false, error: "Selected industry not found" };
       cleanData.industry = { connect: { id: industry.id } };
     }
     if (clientData.parentOrganizationId) {
@@ -172,7 +172,7 @@ export async function createClient(data: ClientFormData) {
         where: { id: clientData.parentOrganizationId as string },
         select: { id: true },
       });
-      if (!parentOrg) return { success: false, error: "المنظمة الأم غير موجودة" };
+      if (!parentOrg) return { success: false, error: "Parent organization not found" };
       cleanData.parentOrganization = { connect: { id: parentOrg.id } };
     }
 
@@ -184,7 +184,7 @@ export async function createClient(data: ClientFormData) {
     try {
       await generateClientSEO(client.id);
     } catch {
-      warning = "تم حفظ العميل بنجاح، لكن فشل توليد بيانات البحث. يمكنك تحديثها لاحقاً.";
+      warning = "Client saved successfully, but SEO data generation failed. You can update it later.";
     }
 
     revalidatePath("/clients");

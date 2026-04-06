@@ -287,7 +287,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                       value={watchedFields.description || ""}
                       onChange={(e) => setValue("description", e.target.value || null)}
                       rows={3}
-                      placeholder="وصف النشاط التجاري لمحركات البحث"
+                      placeholder="Business description for search engines"
                     />
 
                     <div className="rounded-md border border-border bg-background">
@@ -296,7 +296,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                         onClick={() => setShowTechnicalPreview((v) => !v)}
                         className="w-full px-3 py-2 text-left text-sm font-semibold"
                       >
-                        معاينة الحقول التقنية
+                        Technical Fields Preview
                       </button>
                       {showTechnicalPreview && (
                         <div className="px-3 pb-3">
@@ -317,7 +317,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
 
               <AccordionItem value="schema" className="border border-white/10 rounded-lg bg-white/5">
                 <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                  بيانات محركات البحث
+                  Schema Data
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
                   <div className="space-y-4">
@@ -402,9 +402,9 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 <AccordionContent className="px-4 pb-5 pt-3">
                   <div className="border-l-2 border-[#4285f4] pl-4 space-y-4">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm font-semibold">غير مربوط</div>
+                      <div className="text-sm font-semibold">Not Connected</div>
                       <Button type="button" disabled>
-                        ربط الملف التجاري
+                        Connect Business Profile
                       </Button>
                     </div>
 
@@ -437,11 +437,11 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
 
                     <div className="rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
                       <ul className="list-disc pl-4 space-y-1">
-                        <li>مزامنة بيانات التواصل</li>
-                        <li>مزامنة ساعات العمل</li>
-                        <li>التقييمات</li>
-                        <li>المنشورات</li>
-                        <li>تنبيه التعارضات</li>
+                        <li>Sync contact data</li>
+                        <li>Sync business hours</li>
+                        <li>Reviews</li>
+                        <li>Posts</li>
+                        <li>Conflict alerts</li>
                       </ul>
                     </div>
                   </div>
@@ -567,7 +567,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                     />
 
                     <div className="rounded-md border border-border bg-background p-3">
-                      <div className="text-sm font-semibold mb-3">ساعات العمل</div>
+                      <div className="text-sm font-semibold mb-3">Business Hours</div>
                       <div className="space-y-2">
                         {openingHours.map((day, idx) => (
                           <div key={day.dayOfWeek} className="grid grid-cols-12 gap-2 items-center">
@@ -585,7 +585,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                                     setValue("openingHoursSpecification", next);
                                   }}
                                 />
-                                مفتوح
+                                Open
                               </label>
                             </div>
                             <div className="col-span-4">
@@ -637,7 +637,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
 
               <AccordionItem value="analysis" className="border border-white/10 rounded-lg bg-white/5">
                 <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                  تحليل محركات البحث
+                  SEO Analysis
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
                   <div className="space-y-6">
@@ -657,13 +657,13 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
               {seoDoctorNode}
 
               <Card className="p-4 space-y-4">
-                <div className="text-sm font-semibold">التقدم</div>
+                <div className="text-sm font-semibold">Progress</div>
 
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <button type="button" className="w-full text-left space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">بيانات الظهور</span>
+                        <span className="font-medium">Meta Data</span>
                         <span className="text-muted-foreground">{groupPercentages.meta}%</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -694,7 +694,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                   </HoverCardTrigger>
                   <HoverCardContent className="w-[420px]" align="end">
                     <div className="space-y-2">
-                      <div className="text-sm font-semibold">ملاحظات بيانات الظهور</div>
+                      <div className="text-sm font-semibold">Meta Data Notes</div>
                       <div className="space-y-1 text-sm">
                         {metaIssues
                           .filter((i) => i.status === "error" || i.status === "warning")
@@ -709,7 +709,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                             </div>
                           ))}
                         {metaIssues.filter((i) => i.status === "error" || i.status === "warning").length === 0 && (
-                          <div className="text-xs text-muted-foreground">لا توجد ملاحظات.</div>
+                          <div className="text-xs text-muted-foreground">No notes.</div>
                         )}
                       </div>
                     </div>
@@ -720,7 +720,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                   <HoverCardTrigger asChild>
                     <button type="button" className="w-full text-left space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">بيانات البحث المتقدمة</span>
+                        <span className="font-medium">JSON-LD Data</span>
                         <span className="text-muted-foreground">{groupPercentages.jsonLd}%</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -751,7 +751,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                   </HoverCardTrigger>
                   <HoverCardContent className="w-[420px]" align="end">
                     <div className="space-y-2">
-                      <div className="text-sm font-semibold">ملاحظات بيانات البحث المتقدمة</div>
+                      <div className="text-sm font-semibold">JSON-LD Data Notes</div>
                       <div className="space-y-1 text-sm">
                         {jsonLdIssues
                           .filter((i) => i.status === "error" || i.status === "warning")
@@ -766,7 +766,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                             </div>
                           ))}
                         {jsonLdIssues.filter((i) => i.status === "error" || i.status === "warning").length === 0 && (
-                          <div className="text-xs text-muted-foreground">لا توجد ملاحظات.</div>
+                          <div className="text-xs text-muted-foreground">No notes.</div>
                         )}
                       </div>
                     </div>
@@ -775,7 +775,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
               </Card>
 
               <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "جاري الحفظ..." : "حفظ بيانات البحث"}
+                {loading ? "Saving..." : "Save SEO Data"}
               </Button>
             </div>
           </div>

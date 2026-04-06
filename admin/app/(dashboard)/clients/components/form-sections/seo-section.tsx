@@ -37,20 +37,20 @@ export function SEOSection({
   };
   
   const seoTitleHint = seoSettings 
-    ? `عنوان SEO الذي يظهر في نتائج محركات البحث - الطول الأمثل بين ${seoSettings.seoTitleMin} و ${seoSettings.seoTitleMax} حرف - يجب أن يكون جذاباً ويصف المحتوى بدقة - يُستخدم في علامة title و Open Graph`
-    : "عنوان SEO الذي يظهر في نتائج محركات البحث - الطول الأمثل بين 30 و 60 حرف - يجب أن يكون جذاباً ويصف المحتوى بدقة - يُستخدم في علامة title و Open Graph";
+    ? `SEO title shown in search engine results — optimal length between ${seoSettings.seoTitleMin} and ${seoSettings.seoTitleMax} characters — should be compelling and accurately describe the content — used in title tag and Open Graph`
+    : "SEO title shown in search engine results — optimal length between 30 and 60 characters — should be compelling and accurately describe the content — used in title tag and Open Graph";
   
   const seoDescriptionHint = seoSettings
-    ? `الوصف الذي يظهر في نتائج محركات البحث تحت العنوان - الطول الأمثل بين ${seoSettings.seoDescriptionMin} و ${seoSettings.seoDescriptionMax} حرف - يجب أن يكون جذاباً ويشجع المستخدمين على النقر - يُستخدم في علامة meta description`
-    : "الوصف الذي يظهر في نتائج محركات البحث تحت العنوان - الطول الأمثل بين 120 و 160 حرف - يجب أن يكون جذاباً ويشجع المستخدمين على النقر - يُستخدم في علامة meta description";
+    ? `Description shown below the title in search results — optimal length between ${seoSettings.seoDescriptionMin} and ${seoSettings.seoDescriptionMax} characters — should be compelling and encourage clicks — used in meta description tag`
+    : "Description shown below the title in search results — optimal length between 120 and 160 characters — should be compelling and encourage clicks — used in meta description tag";
 
   const twitterTitleHint = seoSettings
-    ? `عنوان Twitter/X المخصص للمشاركات الاجتماعية - الطول الأقصى: ${seoSettings.twitterTitleMax} حرف - يُستخدم في Twitter Cards لتحسين مشاركات وسائل التواصل الاجتماعي - يُستخدم فقط إذا كان مختلفاً عن SEO Title`
-    : "عنوان Twitter/X المخصص للمشاركات الاجتماعية - الطول الأقصى: 70 حرف - يُستخدم في Twitter Cards لتحسين مشاركات وسائل التواصل الاجتماعي - يُستخدم فقط إذا كان مختلفاً عن SEO Title";
+    ? `Custom Twitter/X title for social sharing — max length: ${seoSettings.twitterTitleMax} characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Title`
+    : "Custom Twitter/X title for social sharing — max length: 70 characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Title";
 
   const twitterDescriptionHint = seoSettings
-    ? `وصف Twitter/X المخصص للمشاركات الاجتماعية - الطول الأقصى: ${seoSettings.twitterDescriptionMax} حرف - يُستخدم في Twitter Cards لتحسين مشاركات وسائل التواصل الاجتماعي - يُستخدم فقط إذا كان مختلفاً عن SEO Description`
-    : "وصف Twitter/X المخصص للمشاركات الاجتماعية - الطول الأقصى: 200 حرف - يُستخدم في Twitter Cards لتحسين مشاركات وسائل التواصل الاجتماعي - يُستخدم فقط إذا كان مختلفاً عن SEO Description";
+    ? `Custom Twitter/X description for social sharing — max length: ${seoSettings.twitterDescriptionMax} characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Description`
+    : "Custom Twitter/X description for social sharing — max length: 200 characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Description";
 
   useEffect(() => {
     async function loadSettings() {
@@ -178,8 +178,8 @@ export function SEOSection({
                     max={seoSettings.seoTitleMax}
                     restrict={seoSettings.seoTitleRestrict}
                     className="ml-1"
-                    belowMinHint="الطول أقل من الموصى به. بحسب Google Search Central، العناوين بين 50–60 حرفاً تظهر كاملة في نتائج البحث."
-                    aboveMaxHint="يتجاوز الطول الموصى به. Google تقص العناوين عادةً بعد ~60 حرفاً في نتائج البحث."
+                    belowMinHint="Below recommended length. Per Google Search Central, titles between 50-60 characters display fully in search results."
+                    aboveMaxHint="Exceeds recommended length. Google typically truncates titles after ~60 characters in search results."
                   />
                 </div>
               )}
@@ -203,8 +203,8 @@ export function SEOSection({
                     max={seoSettings.seoDescriptionMax}
                     restrict={seoSettings.seoDescriptionRestrict}
                     className="ml-1"
-                    belowMinHint="الوصف قصير. الطول المثالي 120–158 حرف لظهور كامل في نتائج البحث (Google Search Central)."
-                    aboveMaxHint="يتجاوز الطول الموصى به. يُفضّل 120–158 حرف لتجنّب القص في النتائج."
+                    belowMinHint="Description is too short. Ideal length is 120-158 characters for full display in search results (Google Search Central)."
+                    aboveMaxHint="Exceeds recommended length. Keep it between 120-158 characters to avoid truncation in search results."
                   />
                 </div>
               )}
@@ -217,7 +217,7 @@ export function SEOSection({
               onChange={(e) => setValue("canonicalUrl", e.target.value || null, { shouldValidate: true })}
               error={errors.canonicalUrl?.message}
               placeholder="https://example.com/page"
-              hint="رابط Canonical يمنع مشاكل المحتوى المكرر - يُستخدم عندما يكون هناك محتوى متشابه في عناوين URL مختلفة - يساعد محركات البحث في تحديد الصفحة الأصلية - يُستخدم في علامة canonical link"
+              hint="Canonical URL prevents duplicate content issues — used when similar content exists on different URLs — helps search engines identify the original page — used in canonical link tag"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormSelect
@@ -234,7 +234,7 @@ export function SEOSection({
                   )
                 }
                 error={errors.metaRobots?.message}
-                hint="يتحكم في كيفية فهرسة محركات البحث لصفحات هذا العميل - index, follow: السماح بالفهرسة ومتابعة الروابط (افتراضي) - noindex, follow: عدم الفهرسة ولكن متابعة الروابط - index, nofollow: الفهرسة ولكن عدم متابعة الروابط - noindex, nofollow: عدم الفهرسة أو متابعة الروابط"
+                hint="Controls how search engines index this client's pages — index, follow: allow indexing and follow links (default) — noindex, follow: don't index but follow links — index, nofollow: index but don't follow links — noindex, nofollow: don't index or follow links"
                 placeholder="Select robots directive"
               >
                 <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
@@ -248,7 +248,7 @@ export function SEOSection({
                 value={watch("twitterCard") || "auto"}
                 onValueChange={(value) => setValue("twitterCard", value === "auto" ? null : (value as "summary" | "summary_large_image"), { shouldValidate: true })}
                 error={errors.twitterCard?.message}
-                hint="نوع البطاقة المستخدمة في مشاركات Twitter/X - يحدد كيفية عرض المحتوى عند المشاركة على Twitter/X - يُستخدم لتحسين ظهور المحتوى في منصة Twitter/X"
+                hint="Card type used for Twitter/X shares — determines how content is displayed when shared on Twitter/X — used to optimize content appearance on the Twitter/X platform"
               >
                 <SelectItem value="auto">Auto-generate from OG tags</SelectItem>
                 <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
@@ -274,7 +274,7 @@ export function SEOSection({
                       max={seoSettings.twitterTitleMax}
                       restrict={seoSettings.twitterTitleRestrict}
                       className="ml-1"
-                      aboveMaxHint="يتجاوز حد Twitter Cards (70 حرف). قد يُقص في المشاركات (X Developer Docs)."
+                      aboveMaxHint="Exceeds Twitter Cards limit (70 chars). May be truncated in posts (X Developer Docs)."
                     />
                   </div>
                 )}
@@ -288,7 +288,7 @@ export function SEOSection({
                 }
                 error={errors.twitterSite?.message}
                 placeholder="@username"
-                hint="اسم المستخدم على Twitter/X (مثل: @company) - يُستخدم للاعتماد والربط بالحساب الرسمي - يساعد في ربط المحتوى بالحساب الرسمي للشركة على Twitter/X"
+                hint="Twitter/X username (e.g., @company) — used for attribution and linking to the official account — helps connect content to the company's official Twitter/X account"
               />
             </div>
             <div>
@@ -310,7 +310,7 @@ export function SEOSection({
                     max={seoSettings.twitterDescriptionMax}
                     restrict={seoSettings.twitterDescriptionRestrict}
                     className="ml-1"
-                    aboveMaxHint="يتجاوز حد Twitter Cards (200 حرف). قد يُقص في المشاركات (X Developer Docs)."
+                    aboveMaxHint="Exceeds Twitter Cards limit (200 chars). May be truncated in posts (X Developer Docs)."
                   />
                 </div>
               )}
@@ -322,7 +322,7 @@ export function SEOSection({
               onChange={(e) => setValue("gtmId", e.target.value || null, { shouldValidate: true })}
               error={errors.gtmId?.message}
               placeholder="GTM-XXXXXXX"
-              hint="مطلوب فقط إذا أراد العميل حاوية Google Tag Manager منفصلة خاصة به - اتركه فارغاً للتتبع التلقائي عبر الحاوية الرئيسية - معظم العملاء لا يحتاجون هذا - جميع مقالات العميل يتم تتبعها تلقائياً عبر الحاوية الرئيسية مع معرف العميل الفريد"
+              hint="Only required if the client wants a separate Google Tag Manager container — leave empty for automatic tracking via the main container — most clients don't need this — all client articles are automatically tracked via the main container with a unique client ID"
             />
           </div>
         )}
@@ -372,7 +372,7 @@ export function SEOSection({
                 rows={3}
                 error={errors.description?.message}
                 placeholder="Describe your organization's mission, values, and key achievements..."
-                hint="وصف المنظمة في بيانات Schema.org المهيكلة - منفصل عن وصف SEO - يُستخدم في JSON-LD structured data - يصف مهمة المنظمة وقيمها وإنجازاتها الرئيسية - الحد الأدنى 100 حرف، والقيمة المثالية تقريباً 300 حرف لتحقيق أفضل نتائج SEO (Optimal: 300 characters for best SEO)"
+                hint="Organization description in Schema.org structured data — separate from SEO description — used in JSON-LD structured data — describes the organization's mission, values, and key achievements — minimum 100 characters, optimal ~300 characters for best SEO"
               />
               <div className="mt-1">
                 <CharacterCounter
@@ -380,8 +380,8 @@ export function SEOSection({
                   min={100}
                   max={500}
                   className="ml-1"
-                  belowMinHint="يُفضّل 100 حرف على الأقل لوصف كافٍ في Schema.org structured data."
-                  aboveMaxHint="يُفضّل وصف مختصر (حتى 500 حرف) لوضوح أفضل في Schema.org. الوصف الكامل يُترك لصفحة «من نحن»."
+                  belowMinHint="At least 100 characters recommended for an adequate Schema.org structured data description."
+                  aboveMaxHint="Keep it concise (up to 500 chars) for better clarity in Schema.org. Full description belongs on the About page."
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export function SEOSection({
               rows={2}
               error={errors.keywords?.message}
               placeholder="e.g., technology, innovation, consulting, digital transformation"
-              hint="الكلمات المفتاحية لتصنيف Schema.org - مفصولة بفواصل - تُستخدم في البيانات المهيكلة لتحسين محركات البحث - تساعد في تصنيف الشركة حسب النشاط والقطاع (مثل: تكنولوجيا، استشارات، تحول رقمي)"
+              hint="Keywords for Schema.org classification — comma-separated — used in structured data for SEO — helps classify the company by activity and sector (e.g., technology, consulting, digital transformation)"
             />
             <FormTextarea
               label="Knows Language"
@@ -423,7 +423,7 @@ export function SEOSection({
               rows={2}
               error={errors.knowsLanguage?.message}
               placeholder="e.g., Arabic, English"
-              hint="اللغات المدعومة في Schema.org ContactPoint (مثل: العربية، الإنجليزية) - تُستخدم في البيانات المهيكلة لتحسين محركات البحث - تساعد محركات البحث في فهم اللغات التي يمكن التواصل بها مع الشركة"
+              hint="Supported languages in Schema.org ContactPoint (e.g., Arabic, English) — used in structured data for SEO — helps search engines understand the languages the company communicates in"
             />
           </div>
         )}
@@ -472,7 +472,7 @@ export function SEOSection({
                 onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
                 error={errors.parentOrganizationId?.message}
                 placeholder="Select parent organization (optional)"
-                hint="ربط هذا العميل بشركة أو منظمة أم - يُستخدم في علاقات Schema.org الهرمية - يُستخدم فقط إذا كان هذا العميل فرعاً أو قسمًا من منظمة أخرى - يساعد في فهم هيكل الشركة"
+                hint="Link this client to a parent company or organization — used in Schema.org hierarchical relationships — only set if this client is a subsidiary or division of another organization — helps define company structure"
               >
                 <option value="">None (Independent Organization)</option>
                 {clients.map((client) => (
@@ -482,8 +482,8 @@ export function SEOSection({
                 ))}
               </FormNativeSelect>
               <p className="text-xs text-muted-foreground mt-2">
-                المنظمة الأم تُستخدم في بيانات Schema.org المهيكلة لإنشاء التسلسل الهرمي التنظيمي. قم بتعيين هذا فقط إذا
-                كان هذا العميل فرعاً أو قسمًا من منظمة أخرى.
+                Parent organization is used in Schema.org structured data to create the organizational hierarchy. Only set this if
+                this client is a subsidiary or division of another organization.
               </p>
             </div>
             <FormSelect
@@ -508,7 +508,7 @@ export function SEOSection({
                 )
               }
               error={errors.organizationType?.message}
-              hint="لـ SEO/Schema.org: يصنف نوع المنظمة لمحركات البحث (Organization, Corporation, LocalBusiness, NonProfit, إلخ) - يختلف عن الشكل القانوني (Legal Form) - يُستخدم في بيانات Schema.org @type لتحسين محركات البحث - يساعد محركات البحث في فهم نوع الكيان"
+              hint="For SEO/Schema.org: classifies the organization type for search engines (Organization, Corporation, LocalBusiness, NonProfit, etc.) — different from Legal Form — used in Schema.org @type for SEO — helps search engines understand the entity type"
               placeholder="Select Organization Type"
             >
               <SelectItem value="Organization">Organization</SelectItem>

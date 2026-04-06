@@ -4,9 +4,12 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
+import { auth } from "@/lib/auth";
 
 export async function deleteIndustry(id: string) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
     const industry = await db.industry.findUnique({
       where: { id },
       include: { _count: { select: { clients: true } } },

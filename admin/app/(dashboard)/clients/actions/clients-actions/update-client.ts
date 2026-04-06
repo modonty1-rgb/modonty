@@ -25,7 +25,7 @@ import { generateClientSEO } from "./generate-client-seo";
 export async function updateClient(id: string, data: ClientFormData) {
   try {
     const session = await auth();
-    if (!session) return { success: false, error: "غير مصرح" };
+    if (!session) return { success: false, error: "Unauthorized" };
 
     // Server-side Zod validation
     const parsed = clientServerSchema.safeParse(data);
@@ -89,13 +89,13 @@ export async function updateClient(id: string, data: ClientFormData) {
 
     // Partial success: some groups failed but others succeeded
     if (failedGroups.length > 0 && failedGroups.length < results.length) {
-      warning = `تم الحفظ جزئياً. فشل تحديث: ${failedGroups.map(g => g.groupName).join(', ')}`;
+      warning = `Partially saved. Failed to update: ${failedGroups.map(g => g.groupName).join(', ')}`;
     }
 
     // Regenerate client SEO (MetaTags + JSON-LD)
     const seoResult = await generateClientSEO(id);
     if (!seoResult.success) {
-      const seoWarning = "تم الحفظ بنجاح، لكن فشل توليد بيانات البحث. يمكنك تحديثها لاحقاً.";
+      const seoWarning = "Saved successfully, but SEO data generation failed. You can update it later.";
       warning = warning ? `${warning} | ${seoWarning}` : seoWarning;
     }
 

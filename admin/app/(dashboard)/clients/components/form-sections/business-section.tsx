@@ -78,7 +78,7 @@ export function BusinessSection({
           rows={3}
           error={errors.targetAudience?.message}
           placeholder="Describe the target audience for this client"
-          hint="يساعد الكتّاب في تخصيص نبرة المحتوى وأسلوبه ومواضيعه - يصف الجمهور المستهدف للعميل (العمر، الجنس، الاهتمامات، إلخ) - يُستخدم لتوجيه الكتّاب في كتابة محتوى مناسب للجمهور"
+          hint="Helps writers customize content tone and topics — describes target audience (age, gender, interests) — used to guide writers"
         />
         <FormTextarea
           label="Content Priorities (comma-separated)"
@@ -91,7 +91,7 @@ export function BusinessSection({
           rows={2}
           error={errors.contentPriorities?.message}
           placeholder="keyword1, keyword2, keyword3"
-          hint="المواضيع/الكلمات المفتاحية الرئيسية التي يجب إعطاؤها الأولوية في المقالات - مفصولة بفواصل - تُستخدم لتوجيه الكتّاب في اختيار المواضيع التي يجب التركيز عليها - يختلف عن Keywords في تبويب SEO (هذا للمحتوى التحريري، وذاك للتصنيف)"
+          hint="Main topics/keywords to prioritize in articles — comma-separated — guides writers in choosing focus topics — different from SEO Keywords tab"
         />
       </div>
     </div>

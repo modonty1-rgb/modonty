@@ -7,13 +7,13 @@ import { z } from "zod";
  */
 export const clientServerSchema = z.object({
   // Required fields
-  name: z.string().min(1, "اسم العميل مطلوب").max(200, "اسم العميل طويل جداً"),
+  name: z.string().min(1, "Client name is required").max(200, "Client name is too long"),
   slug: z
     .string()
-    .min(1, "الرابط المختصر مطلوب")
-    .max(200, "الرابط المختصر طويل جداً")
-    .regex(/^[a-z0-9-]+$/, "الرابط المختصر يجب أن يحتوي على حروف صغيرة وأرقام وشرطات فقط"),
-  email: z.string().email("البريد الإلكتروني غير صالح"),
+    .min(1, "Slug is required")
+    .max(200, "Slug is too long")
+    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+  email: z.string().email("Invalid email address"),
 
   // Optional string fields — passthrough with max length
   legalName: z.string().max(200).optional().nullable(),

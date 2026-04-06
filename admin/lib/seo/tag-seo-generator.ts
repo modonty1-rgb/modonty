@@ -35,7 +35,10 @@ export async function buildTagMetadata(tag: TagData, s: SeoSettings) {
     title,
     description,
     robots: s.metaRobots,
-    alternates: { canonical: pageUrl },
+    alternates: {
+      canonical: pageUrl,
+      languages: { "ar-SA": pageUrl },
+    },
     openGraph: {
       title,
       description,
@@ -68,17 +71,38 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
   return {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "CollectionPage", "@id": pageUrl, name: title, description, url: pageUrl, inLanguage: s.inLanguage },
+      {
+        "@type": "CollectionPage",
+        "@id": pageUrl,
+        name: title,
+        description,
+        url: pageUrl,
+        inLanguage: s.inLanguage,
+        isPartOf: { "@id": `${s.siteUrl}#website` },
+        publisher: { "@id": `${s.siteUrl}#organization` },
+      },
       {
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "الرئيسية", item: s.siteUrl },
-          { "@type": "ListItem", position: 2, name: "الوسوم", item: `${s.siteUrl}/tags` },
+          { "@type": "ListItem", position: 1, name: "Home", item: s.siteUrl },
+          { "@type": "ListItem", position: 2, name: "Tags", item: `${s.siteUrl}/tags` },
           { "@type": "ListItem", position: 3, name: tag.name, item: pageUrl },
         ],
       },
       { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: tag.name, description, url: pageUrl },
+      {
+        "@type": "Organization",
+        "@id": `${s.siteUrl}#organization`,
+        name: s.siteName,
+        url: s.siteUrl,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${s.siteUrl}#website`,
+        name: s.siteName,
+        url: s.siteUrl,
+      },
     ],
   };
 }

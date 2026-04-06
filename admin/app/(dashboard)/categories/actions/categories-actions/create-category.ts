@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
+import { categoryServerSchema } from "./category-server-schema";
 
 export async function createCategory(data: {
   name: string;
@@ -17,8 +19,19 @@ export async function createCategory(data: {
   cloudinaryPublicId?: string;
 }) {
   try {
-    if (!data.name?.trim()) return { success: false, error: "اسم التصنيف مطلوب" };
-    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = categoryServerSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors[0].message };
+    }
+
+    // Slug uniqueness check
+    const existing = await db.category.findFirst({ where: { slug: data.slug.trim() }, select: { id: true } });
+    if (existing) {
+      return { success: false, error: "This slug is already in use. Try a different one." };
+    }
 
     const category = await db.category.create({
       data: {
@@ -36,12 +49,10 @@ export async function createCategory(data: {
     });
     revalidatePath("/categories");
     await revalidateModontyTag("categories");
-    // Generate individual SEO cache
     try {
       const { generateAndSaveCategorySeo } = await import("@/lib/seo/category-seo-generator");
       await generateAndSaveCategorySeo(category.id);
     } catch (e) { console.error("Category SEO gen failed:", e); }
-    // Update listing page cache
     try {
       const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator");
       await regenerateCategoriesListingCache();
@@ -49,16 +60,6 @@ export async function createCategory(data: {
     return { success: true, category };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create category";
-
-    // Handle duplicate slug
-    if (message.includes("Unique constraint") && message.includes("slug")) {
-      return {
-        success: false,
-        error: "اسم التصنيف مستخدم مسبقاً — جرب اسماً مختلفاً أو أضف كلمة إضافية"
-      };
-    }
-
     return { success: false, error: message };
   }
 }
-

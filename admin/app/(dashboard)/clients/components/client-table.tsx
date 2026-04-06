@@ -90,11 +90,11 @@ function getJsonLdIssues(client: ClientForList): string[] {
   const totalErrors = adobeErrors.length + ajvErrors.length + customErrors.length;
 
   if (report.adobe && report.adobe.valid === false) {
-    issues.push("هناك مشكلة في بيانات البحث");
+    issues.push("SEO data has issues");
   }
 
   if (totalErrors > 0) {
-    issues.push(`بيانات البحث تحتاج تصحيح (${totalErrors})`);
+    issues.push(`SEO data needs fixing (${totalErrors} errors)`);
   }
 
   return issues;
@@ -127,10 +127,10 @@ function getMetaTagsIssues(metaTags: Record<string, unknown>): string[] {
   const description = typeof metaTags.description === "string" ? metaTags.description.trim() : "";
 
   if (!title) {
-    issues.push("عنوان البحث غير موجود");
+    issues.push("SEO title is missing");
   }
   if (!description) {
-    issues.push("وصف البحث غير موجود");
+    issues.push("SEO description is missing");
   }
 
   const openGraph = metaTags.openGraph as { images?: Array<{ url?: string | null }> } | undefined;
@@ -138,7 +138,7 @@ function getMetaTagsIssues(metaTags: Record<string, unknown>): string[] {
   const hasOgOrLogo = !!ogImage?.url;
 
   if (!hasOgOrLogo) {
-    issues.push("لا توجد صورة للمشاركة على وسائل التواصل");
+    issues.push("Social sharing image is missing");
   }
 
   const twitter = metaTags.twitter as {
@@ -150,7 +150,7 @@ function getMetaTagsIssues(metaTags: Record<string, unknown>): string[] {
   const hasTwitterImage = typeof twitter?.image === "string" && twitter.image.trim() !== "";
 
   if (card === "summary_large_image" && !hasTwitterImage && !hasOgOrLogo) {
-    issues.push("لا توجد صورة لتويتر");
+    issues.push("Twitter image is missing");
   }
 
   return issues;
@@ -173,7 +173,7 @@ function getCriticalItems(client: ClientForList): string[] {
   const items: string[] = [];
 
   if (!client.nextjsMetadata || typeof client.nextjsMetadata !== "object") {
-    items.push("بيانات الظهور في البحث ناقصة");
+    items.push("Search appearance data is incomplete");
   } else {
     const metaIssues = getMetaTagsIssues(client.nextjsMetadata as Record<string, unknown>);
     items.push(...metaIssues);
@@ -181,7 +181,7 @@ function getCriticalItems(client: ClientForList): string[] {
 
   const report = getValidationReport(client);
   if (!report) {
-    items.push("بيانات محركات البحث غير موجودة");
+    items.push("Search engine data is missing");
   } else {
     const jsonLdIssues = getJsonLdIssues(client);
     items.push(...jsonLdIssues);
@@ -335,7 +335,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 onClick={() => handleSort("name")}
               >
                 <div className="flex items-center">
-                  الاسم
+                  Name
                   {getSortIcon("name")}
                 </div>
               </TableHead>
@@ -344,42 +344,42 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 onClick={() => handleSort("tier")}
               >
                 <div className="flex items-center">
-                  الباقة
+                  Plan
                   {getSortIcon("tier")}
                 </div>
               </TableHead>
-              <TableHead>الحالة</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("articles")}
               >
                 <div className="flex items-center">
-                  المقالات
+                  Articles
                   {getSortIcon("articles")}
                 </div>
               </TableHead>
-              <TableHead>التسليم</TableHead>
+              <TableHead>Delivery</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("expires")}
               >
                 <div className="flex items-center">
-                  الانتهاء
+                  Expires
                   {getSortIcon("expires")}
                 </div>
               </TableHead>
               <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="الملف التجاري في قوقل">
+                <div className="flex justify-center" title="Google Business Profile">
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
               <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="الإحصائيات">
+                <div className="flex justify-center" title="Analytics">
                   <BarChart2 className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
-              <TableHead className="text-center">محركات البحث</TableHead>
-              <TableHead className="text-right px-3">إجراءات</TableHead>
+              <TableHead className="text-center">SEO</TableHead>
+              <TableHead className="text-right px-3">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -387,8 +387,8 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
               <TableRow>
                 <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium">لا يوجد عملاء</p>
-                    <p className="text-xs">جرّب تعديل البحث أو الفلاتر</p>
+                    <p className="text-sm font-medium">No clients found</p>
+                    <p className="text-xs">Try adjusting your search or filters</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -411,31 +411,31 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                   if (isActive && isPaid) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500">
-                        فعّال
+                        Active
                       </span>
                     );
                   }
                   if (isActive && isOverdue) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-500">
-                        موقوف
+                        Overdue
                       </span>
                     );
                   }
                   if (isActive) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-500">
-                        قيد الانتظار
+                        Pending
                       </span>
                     );
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.EXPIRED) {
-                    return <span className="text-sm text-muted-foreground">منتهي</span>;
+                    return <span className="text-sm text-muted-foreground">Expired</span>;
                   }
                   if (client.subscriptionStatus === SubscriptionStatus.CANCELLED) {
-                    return <span className="text-sm text-muted-foreground">ملغي</span>;
+                    return <span className="text-sm text-muted-foreground">Cancelled</span>;
                   }
-                  return <span className="text-sm text-muted-foreground">قيد الانتظار</span>;
+                  return <span className="text-sm text-muted-foreground">Pending</span>;
                 };
 
                 return (
@@ -491,30 +491,30 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                               ? "text-amber-500"
                               : "text-muted-foreground"
                         )}>
-                          {daysRemaining > 0 ? `${daysRemaining} يوم` : "منتهي"}
+                          {daysRemaining > 0 ? `${daysRemaining} days` : "Expired"}
                         </span>
                       ) : (
-                        <span className="text-muted-foreground text-xs">بدون اشتراك</span>
+                        <span className="text-muted-foreground text-xs">No subscription</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center px-1">
                       {gbpPlaceId ? (
-                        <div title="الملف التجاري مربوط" className="flex items-center justify-center">
+                        <div title="Business profile connected" className="flex items-center justify-center">
                           <MapPin className="h-4 w-4 text-green-500" />
                         </div>
                       ) : (
-                        <div title="الملف التجاري غير مربوط" className="flex items-center justify-center">
+                        <div title="Business profile not connected" className="flex items-center justify-center">
                           <MapPin className="h-4 w-4 text-muted-foreground/40" />
                         </div>
                       )}
                     </TableCell>
                     <TableCell className="text-center px-1">
                       {ga4PropertyId ? (
-                        <div title="الإحصائيات مفعّلة" className="flex items-center justify-center">
+                        <div title="Analytics enabled" className="flex items-center justify-center">
                           <BarChart2 className="h-4 w-4 text-green-500" />
                         </div>
                       ) : (
-                        <div title="الإحصائيات غير مفعّلة" className="flex items-center justify-center">
+                        <div title="Analytics disabled" className="flex items-center justify-center">
                           <BarChart2 className="h-4 w-4 text-muted-foreground/40" />
                         </div>
                       )}
@@ -541,7 +541,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                         </div>
                       ) : (
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={`/clients/${client.id}/seo`}>إعداد محركات البحث</Link>
+                          <Link href={`/clients/${client.id}/seo`}>Setup SEO</Link>
                         </Button>
                       )}
                     </TableCell>
@@ -552,7 +552,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
-                          aria-label="تعديل العميل"
+                          aria-label="Edit client"
                         >
                           <Link href={`/clients/${client.id}/edit`}>
                             <Pencil className="h-3.5 w-3.5" />
@@ -563,7 +563,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 hover:bg-primary/10 rounded-md transition-colors"
                           asChild
-                          aria-label="إعدادات محركات البحث"
+                          aria-label="SEO settings"
                         >
                           <Link href={`/clients/${client.id}/seo`}>
                             <span className="text-[9px] font-bold leading-none w-3.5 h-3.5 rounded-sm bg-primary/20 text-primary flex items-center justify-center">
@@ -576,7 +576,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
-                          aria-label="عرض تفاصيل العميل"
+                          aria-label="View client details"
                         >
                           <Link href={`/clients/${client.id}`}>
                             <Eye className="h-3.5 w-3.5" />
@@ -595,8 +595,8 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            عرض {startIndex + 1} إلى {Math.min(endIndex, filteredData.length)} من{" "}
-            {filteredData.length} نتيجة
+            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{" "}
+            {filteredData.length} results
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -604,19 +604,19 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              aria-label="الصفحة السابقة"
+              aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm text-muted-foreground">
-              صفحة {currentPage} من {totalPages}
+              Page {currentPage} of {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              aria-label="الصفحة التالية"
+              aria-label="Next page"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

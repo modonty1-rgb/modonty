@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../actions/delete-image";
+import { auth } from "@/lib/auth";
+import { tagServerSchema } from "./tag-server-schema";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import { tagSEOConfig } from "../helpers/tag-seo-config";
@@ -138,8 +140,15 @@ export async function createTag(data: {
   cloudinaryPublicId?: string;
 }) {
   try {
-    if (!data.name?.trim()) return { success: false, error: "اسم التاج مطلوب" };
-    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = tagServerSchema.safeParse(data);
+    if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
+    // Slug uniqueness check
+    const existing = await db.tag.findFirst({ where: { slug: data.slug.trim() }, select: { id: true } });
+    if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
 
     const tag = await db.tag.create({ data });
     revalidatePath("/tags");
@@ -168,6 +177,16 @@ export async function updateTag(
   }
 ) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = tagServerSchema.safeParse(data);
+    if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
+    // Slug uniqueness check (exclude current)
+    const existingSlug = await db.tag.findFirst({ where: { slug: data.slug.trim(), id: { not: id } }, select: { id: true } });
+    if (existingSlug) return { success: false, error: "This slug is already in use. Try a different one." };
+
     const updateData: {
       name: string;
       slug: string;
@@ -212,6 +231,9 @@ export async function updateTag(
 
 export async function deleteTag(id: string) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
     const tag = await db.tag.findUnique({
       where: { id },
       include: {

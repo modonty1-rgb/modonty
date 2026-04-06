@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
+import { categoryServerSchema } from "./category-server-schema";
 
 export async function updateCategory(
   id: string,
@@ -20,7 +22,24 @@ export async function updateCategory(
   },
 ) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = categoryServerSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors[0].message };
+    }
+
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+
+    // Slug uniqueness check (exclude current)
+    const existing = await db.category.findFirst({
+      where: { slug: data.slug.trim(), id: { not: isObjectId ? id : undefined } },
+      select: { id: true },
+    });
+    if (existing) {
+      return { success: false, error: "This slug is already in use. Try a different one." };
+    }
 
     const updateData: {
       name: string;
@@ -43,15 +62,9 @@ export async function updateCategory(
       canonicalUrl: data.canonicalUrl || null,
     };
 
-    if (data.socialImage !== undefined) {
-      updateData.socialImage = data.socialImage;
-    }
-    if (data.socialImageAlt !== undefined) {
-      updateData.socialImageAlt = data.socialImageAlt;
-    }
-    if (data.cloudinaryPublicId !== undefined) {
-      updateData.cloudinaryPublicId = data.cloudinaryPublicId;
-    }
+    if (data.socialImage !== undefined) updateData.socialImage = data.socialImage;
+    if (data.socialImageAlt !== undefined) updateData.socialImageAlt = data.socialImageAlt;
+    if (data.cloudinaryPublicId !== undefined) updateData.cloudinaryPublicId = data.cloudinaryPublicId;
 
     const category = await db.category.update({
       where: isObjectId ? { id } : { slug: id },
@@ -84,4 +97,3 @@ export async function updateCategory(
     return { success: false, error: message };
   }
 }
-

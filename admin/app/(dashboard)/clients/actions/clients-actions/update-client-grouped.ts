@@ -125,7 +125,7 @@ export async function updateRequiredFields(
         select: { id: true },
       });
       if (existingClient && existingClient.id !== clientId) {
-        return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل", groupName: "required" };
+        return { success: false, error: "This slug is already in use", groupName: "required" };
       }
     }
 

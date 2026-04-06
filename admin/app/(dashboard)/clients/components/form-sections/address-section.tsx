@@ -21,7 +21,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCountry", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCountry?.message}
           placeholder="SA (Saudi Arabia)"
-          hint="افتراضي: SA (المملكة العربية السعودية) - يُستخدم في بيانات Schema.org Address و ContactPoint - يساعد في تحديد منطقة الخدمة (areaServed)"
+          hint="Default: SA (Saudi Arabia) — used in Schema.org Address and ContactPoint — helps define the service area (areaServed)"
         />
         <FormInput
           name="addressRegion"
@@ -30,7 +30,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressRegion", e.target.value || null, { shouldValidate: true })}
           error={errors.addressRegion?.message}
           placeholder="e.g., Riyadh, Dubai, London"
-          hint="المنطقة أو المحافظة أو الولاية - يُستخدم في بيانات Schema.org Address لتحديد الموقع الجغرافي للشركة - يدعم جميع الدول وليس فقط السعودية"
+          hint="Region, province, or state — used in Schema.org Address to define the company's geographic location — supports all countries, not just Saudi Arabia"
         />
         <FormInput
           name="addressCity"
@@ -39,7 +39,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCity", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCity?.message}
           placeholder="e.g., Riyadh"
-          hint="اسم المدينة - جزء من نظام العنوان الوطني السعودي - يُستخدم في بيانات Schema.org Address لتحديد الموقع الجغرافي للشركة"
+          hint="City name — part of the Saudi National Address system — used in Schema.org Address to define the company's geographic location"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr_1fr] gap-5">
@@ -50,7 +50,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressNeighborhood", e.target.value || null, { shouldValidate: true })}
           error={errors.addressNeighborhood?.message}
           placeholder="e.g., Al Olaya"
-          hint="الحي أو المنطقة - جزء من نظام العنوان الوطني السعودي - يُستخدم لتحديد الموقع بدقة ضمن المدينة"
+          hint="Neighborhood or district — part of the Saudi National Address system — used to pinpoint location within the city"
         />
         <FormInput
           name="addressLatitude"
@@ -65,7 +65,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLatitude?.message}
           placeholder="e.g., 24.7136"
-          hint="خط العرض الجغرافي للموقع - يُستخدم في بيانات Schema.org GeoCoordinates - يساعد في تحديد الموقع بدقة على الخرائط - القيمة بين -90 و 90"
+          hint="Geographic latitude — used in Schema.org GeoCoordinates — helps pinpoint location on maps — value between -90 and 90"
         />
         <FormInput
           name="addressLongitude"
@@ -80,7 +80,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLongitude?.message}
           placeholder="e.g., 46.6753"
-          hint="خط الطول الجغرافي للموقع - يُستخدم في بيانات Schema.org GeoCoordinates - يساعد في تحديد الموقع بدقة على الخرائط - القيمة بين -180 و 180"
+          hint="Geographic longitude — used in Schema.org GeoCoordinates — helps pinpoint location on maps — value between -180 and 180"
         />
       </div>
       <div>
@@ -91,7 +91,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressStreet", e.target.value || null, { shouldValidate: true })}
           error={errors.addressStreet?.message}
           placeholder="King Fahd Road"
-          hint="اسم الشارع - جزء من نظام العنوان الوطني السعودي - يُستخدم في بيانات Schema.org Address لتحديد الموقع بدقة"
+          hint="Street name — part of the Saudi National Address system — used in Schema.org Address to pinpoint location"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -102,7 +102,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressPostalCode", e.target.value || null, { shouldValidate: true })}
           error={errors.addressPostalCode?.message}
           placeholder="12345-6789"
-          hint="الرمز البريدي المكون من 9 أرقام - جزء من نظام العنوان الوطني السعودي - إلزامي اعتباراً من عام 2026 - يُستخدم في بيانات Schema.org Address لتحديد الموقع بدقة"
+          hint="9-digit postal code — part of the Saudi National Address system — mandatory from 2026 — used in Schema.org Address to pinpoint location"
         />
         <FormInput
           name="addressBuildingNumber"
@@ -111,7 +111,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressBuildingNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.addressBuildingNumber?.message}
           placeholder="e.g., 1234"
-          hint="رقم المبنى في العنوان الوطني السعودي - يُستخدم مع الرقم الإضافي لتحديد الموقع بدقة - جزء من نظام العنوان الوطني السعودي"
+          hint="Building number in the Saudi National Address — used with additional number to pinpoint location — part of the Saudi National Address system"
         />
         <FormInput
           name="addressAdditionalNumber"
@@ -120,7 +120,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressAdditionalNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.addressAdditionalNumber?.message}
           placeholder="e.g., 5 (for unit 5)"
-          hint="الرقم الإضافي أو رقم الوحدة في المبنى (مثل: رقم الشقة، المكتب، الطابق) - يُستخدم مع رقم المبنى لتحديد الموقع بدقة - جزء من نظام العنوان الوطني السعودي - اختياري"
+          hint="Additional number or unit number (e.g., apartment, office, floor) — used with building number to pinpoint location — part of the Saudi National Address system — optional"
         />
       </div>
     </div>

@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
+import { industryServerSchema } from "./industry-server-schema";
 
 export async function createIndustry(data: {
   name: string;
@@ -16,8 +18,15 @@ export async function createIndustry(data: {
   cloudinaryPublicId?: string;
 }) {
   try {
-    if (!data.name?.trim()) return { success: false, error: "اسم الصناعة مطلوب" };
-    if (!data.slug?.trim()) return { success: false, error: "الرابط المختصر مطلوب" };
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = industryServerSchema.safeParse(data);
+    if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
+    // Slug uniqueness check
+    const existing = await db.industry.findFirst({ where: { slug: data.slug.trim() }, select: { id: true } });
+    if (existing) return { success: false, error: "This slug is already in use. Try a different one." };
 
     const industry = await db.industry.create({ data });
     revalidatePath("/industries");

@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
+import { industryServerSchema } from "./industry-server-schema";
 
 export async function updateIndustry(
   id: string,
@@ -19,6 +21,16 @@ export async function updateIndustry(
   },
 ) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const parsed = industryServerSchema.safeParse(data);
+    if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
+    // Slug uniqueness check (exclude current)
+    const existingSlug = await db.industry.findFirst({ where: { slug: data.slug.trim(), id: { not: id } }, select: { id: true } });
+    if (existingSlug) return { success: false, error: "This slug is already in use. Try a different one." };
+
     const updateData: {
       name: string;
       slug: string;

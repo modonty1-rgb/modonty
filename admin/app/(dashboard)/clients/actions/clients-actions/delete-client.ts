@@ -8,7 +8,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 export async function deleteClient(id: string) {
   try {
     const session = await auth();
-    if (!session) return { success: false, error: "غير مصرح" };
+    if (!session) return { success: false, error: "Unauthorized" };
     const client = await db.client.findUnique({
       where: { id },
       include: {

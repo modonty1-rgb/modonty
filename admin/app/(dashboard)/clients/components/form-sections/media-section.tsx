@@ -76,8 +76,8 @@ export function MediaSection({
   return (
     <div className="space-y-6">
       <div className="text-xs text-muted-foreground">
-        صور الشعار و Open Graph تُستخدم في كل المحتوى المنشور ومشاركات السوشيال،
-        ويمكن تعديل نص البديل (alt text) من أيقونة التعديل على كل صورة.
+        Logo and Open Graph images are used in all published content and social shares.
+        You can edit alt text from the edit icon on each image.
       </div>
 
       <div className="space-y-2">

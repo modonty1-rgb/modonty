@@ -40,7 +40,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
                   <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p className="max-w-xs">معلومات أساسية للكتّاب لإنشاء مقالات ذات صلة ومخصصة - يصف نشاط العميل ومنتجاته/خدماته والجمهور المستهدف ونقاط البيع الفريدة</p>
+                  <p className="max-w-xs">Essential info for writers to create relevant, tailored articles — describes the client's business, products/services, target audience, and unique selling points</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -58,7 +58,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
             <CharacterCounter
               current={businessBrief.length}
               min={100}
-              belowMinHint="يُفضّل 100 حرف على الأقل لملخص أعمال واضح للكتّاب ووصف كافٍ في Schema.org."
+              belowMinHint="At least 100 characters recommended for a clear business brief for writers and adequate Schema.org description."
             />
             {errors.businessBrief?.message && (
               <p className="text-xs text-destructive">{errors.businessBrief.message}</p>
@@ -73,7 +73,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
             onChange={(e) => form.setValue("slogan", e.target.value || null, { shouldValidate: true })}
             error={errors.slogan?.message}
             placeholder="e.g., Innovation Beyond Boundaries"
-            hint="شعار الشركة أو الشعار التسويقي - يُستخدم في بيانات Schema.org المهيكلة - يعبر عن هوية الشركة ورسالتها في جملة قصيرة وجذابة - يُفضّل ألا يتجاوز تقريباً 100 حرف ليبقى واضحاً وسهل التذكر (Recommended: max 100 characters)"
+            hint="Company tagline or marketing slogan — used in Schema.org structured data — should be short and memorable — recommended max 100 characters"
           />
           {slogan && (
             <div className="mt-1">
@@ -81,7 +81,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
                 current={(slogan || "").length}
                 max={100}
                 className="ml-1"
-                aboveMaxHint="يتجاوز الحد الموصى به (100 حرف). يُفضّل جملة قصيرة وواضحة لسهولة التذكر (Schema.org best practices)."
+                aboveMaxHint="Exceeds recommended limit (100 chars). Keep it short and clear for better recall (Schema.org best practices)."
               />
             </div>
           )}

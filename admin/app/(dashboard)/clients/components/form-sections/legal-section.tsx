@@ -21,7 +21,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           value={watch("legalForm") || undefined}
           onValueChange={(value) => setValue("legalForm", value ? (value as "LLC" | "JSC" | "Sole Proprietorship" | "Partnership" | "Limited Partnership" | "Simplified Joint Stock Company") : null, { shouldValidate: true })}
           error={errors.legalForm?.message}
-          hint="للامتثال القانوني: الشكل القانوني الرسمي للكيان التجاري في المملكة العربية السعودية (شركة ذات مسؤولية محدودة، شركة مساهمة، مؤسسة فردية، إلخ) - يختلف عن نوع المنظمة (Organization Type) - مطلوب للامتثال القانوني والتسجيل الرسمي"
+          hint="Legal entity form (LLC, JSC, Sole Proprietorship, etc.) — different from Organization Type — required for legal compliance and registration"
           placeholder="Select Legal Form"
         >
           <SelectItem value="LLC">LLC (Limited Liability Company)</SelectItem>
@@ -42,7 +42,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           }}
           error={errors.vatID?.message}
           placeholder="e.g., 300012345600003"
-          hint="رقم التسجيل الضريبي من هيئة الزكاة والضريبة والجمارك (ZATCA) - عادة ما يكون 15 رقماً - مطلوب للشركات الخاضعة للضريبة - يُستخدم في المعاملات الضريبية والزكوية - يُستخدم أيضاً كرقم التعريف الضريبي (Tax ID)"
+          hint="Tax registration number from ZATCA — usually 15 digits — required for taxable companies — used for tax and zakat transactions — also used as Tax ID"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -53,7 +53,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           onChange={(e) => setValue("licenseNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.licenseNumber?.message}
           placeholder="e.g., HC-2024-001234"
-          hint="اختياري - رقم الترخيص للقطاعات المنظمة فقط (الصحة، المالية، التعليم، إلخ) - مطلوب من الهيئات التنظيمية المحددة - يختلف عن رقم السجل التجاري (CR) - يُستخدم للأنشطة التي تحتاج ترخيص خاص من جهة حكومية"
+          hint="Optional — license number for regulated sectors only (health, finance, education) — required by specific regulatory authorities — different from CR number"
         />
         <FormInput
           name="licenseAuthority"
@@ -62,7 +62,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           onChange={(e) => setValue("licenseAuthority", e.target.value || null, { shouldValidate: true })}
           error={errors.licenseAuthority?.message}
           placeholder="e.g., Ministry of Health"
-          hint="الهيئة التنظيمية التي أصدرت الترخيص (مثل: وزارة الصحة، وزارة التعليم، مؤسسة النقد العربي السعودي) - مطلوب إذا تم إدخال رقم الترخيص - يُستخدم لتحديد الجهة المسؤولة عن الترخيص"
+          hint="Regulatory authority that issued the license (e.g. Ministry of Health, Ministry of Education, SAMA) — required if license number is entered"
         />
       </div>
     </div>

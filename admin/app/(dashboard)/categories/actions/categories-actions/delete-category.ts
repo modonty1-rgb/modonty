@@ -4,9 +4,12 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
+import { auth } from "@/lib/auth";
 
 export async function deleteCategory(id: string) {
   try {
+    const session = await auth();
+    if (!session) return { success: false, error: "Unauthorized" };
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
 
     const category = await db.category.findUnique({

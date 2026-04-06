@@ -58,14 +58,14 @@ export function BasicInfoSection({
           value={name || ""}
           onChange={(e) => form.setValue("name", e.target.value, { shouldValidate: true })}
           error={errors.name?.message}
-          hint="اسم العميل المستخدم في المقالات والمدونة الرسمية - يظهر في جميع المحتوى المنشور لهذا العميل"
+          hint="Client name used in articles and blog — appears in all published content for this client"
           required
         />
         <FormField
           label="Slug"
           name="slug"
           error={errors.slug?.message}
-          hint="معرف صديق للروابط (URL) - يتم توليده تلقائياً من الاسم - محسّن لمحركات البحث (SEO) - يُستخدم في روابط المقالات والصفحات"
+          hint="URL-friendly identifier — auto-generated from name — optimized for SEO — used in article and page URLs"
         >
           <div className="space-y-2">
             <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm items-center gap-2">
@@ -94,11 +94,11 @@ export function BasicInfoSection({
         <FormInput
           name="email"
           type="email"
-          label="Email — اسم المستخدم"
+          label="Email — Username"
           value={email || ""}
           onChange={(e) => form.setValue("email", e.target.value, { shouldValidate: true })}
           error={errors.email?.message}
-          hint="البريد الإلكتروني للعميل (اسم المستخدم) - يُستخدم لتسجيل الدخول والوصول إلى الحساب - مطلوب للتواصل وإدارة الحساب"
+          hint="Client email (username) — used for login and account access — required for communication and account management"
           required
         />
         <FormInput
@@ -108,7 +108,7 @@ export function BasicInfoSection({
           value={password || ""}
           onChange={(e) => form.setValue("password", e.target.value, { shouldValidate: true })}
           error={errors.password?.message}
-          placeholder={isEditMode ? "اتركه فارغاً للإبقاء" : "••••••••"}
+          placeholder={isEditMode ? "Leave empty to keep current" : "••••••••"}
           required={!isEditMode}
         />
       </div>
@@ -121,7 +121,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("phone", e.target.value || null, { shouldValidate: true })}
           error={errors.phone?.message}
           placeholder="+966 11 123 4567"
-          hint="رقم الهاتف للتواصل - يُستخدم للاستفسارات التجارية - يُضاف في بيانات Schema.org ContactPoint لتحسين محركات البحث"
+          hint="Phone number for contact — used for business inquiries — added to Schema.org ContactPoint for SEO"
         />
         <FormInput
           name="url"
@@ -131,7 +131,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("url", e.target.value || null, { shouldValidate: true })}
           error={errors.url?.message}
           placeholder="https://www.example.com"
-          hint="رابط الموقع الإلكتروني الرئيسي للعميل - يُستخدم في الروابط الخلفية (backlinks) وبيانات Schema.org المهيكلة - يساعد في تحسين محركات البحث"
+          hint="Main website URL — used for backlinks and Schema.org structured data — helps with SEO"
         />
       </div>
 

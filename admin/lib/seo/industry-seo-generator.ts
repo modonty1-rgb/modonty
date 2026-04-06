@@ -35,7 +35,10 @@ export async function buildIndustryMetadata(industry: IndustryData, s: SeoSettin
     title,
     description,
     robots: s.metaRobots,
-    alternates: { canonical: pageUrl },
+    alternates: {
+      canonical: pageUrl,
+      languages: { "ar-SA": pageUrl },
+    },
     openGraph: {
       title,
       description,
@@ -68,17 +71,38 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
   return {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "CollectionPage", "@id": pageUrl, name: title, description, url: pageUrl, inLanguage: s.inLanguage },
+      {
+        "@type": "CollectionPage",
+        "@id": pageUrl,
+        name: title,
+        description,
+        url: pageUrl,
+        inLanguage: s.inLanguage,
+        isPartOf: { "@id": `${s.siteUrl}#website` },
+        publisher: { "@id": `${s.siteUrl}#organization` },
+      },
       {
         "@type": "BreadcrumbList",
         "@id": `${pageUrl}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "الرئيسية", item: s.siteUrl },
-          { "@type": "ListItem", position: 2, name: "القطاعات", item: `${s.siteUrl}/industries` },
+          { "@type": "ListItem", position: 1, name: "Home", item: s.siteUrl },
+          { "@type": "ListItem", position: 2, name: "Industries", item: `${s.siteUrl}/industries` },
           { "@type": "ListItem", position: 3, name: industry.name, item: pageUrl },
         ],
       },
       { "@type": "DefinedTerm", "@id": `${pageUrl}#term`, name: industry.name, description, url: pageUrl },
+      {
+        "@type": "Organization",
+        "@id": `${s.siteUrl}#organization`,
+        name: s.siteName,
+        url: s.siteUrl,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${s.siteUrl}#website`,
+        name: s.siteName,
+        url: s.siteUrl,
+      },
     ],
   };
 }

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-06 03:15
+# Session Context — Last Updated: 2026-04-06 12:50
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,12 +7,45 @@
 ---
 
 ## Current Versions
-- **admin**: v0.12.0 (pushing now)
+- **admin**: v0.13.0 (pushing now)
 - **modonty**: v1.17.0 (no changes this session)
 
 ---
 
-## What Was Done This Session (Session 4) — Articles UX Improvements
+## What Was Done This Session (Session 4) — Part 2: Security + Labels + Feedback
+
+### Categories/Tags/Industries — Security + SEO
+- Auth checks added to all 9 mutations (create/update/delete x 3)
+- Zod server-side validation schemas created (3 files)
+- Slug uniqueness pre-check added (3 sections)
+- error.tsx boundaries created (3 files)
+- Arabic error messages → English (all 3 sections)
+- JSON-LD: Organization + WebSite added to @graph (3 generators)
+- Breadcrumb labels → English (3 generators)
+- Metadata: alternates.languages added (3 generators)
+- UI/UX reviewed and confirmed clean
+
+### Clients — Arabic Labels → English
+- 80+ Arabic UI labels fixed across 14 files
+- Table headers, status badges, pagination, aria-labels, hints, error messages
+- Zod schema error messages → English
+- Form section hints (basic, address, business, legal, SEO, settings, media)
+
+### Feedback System
+- Beta banner redesigned with "Send Note" button
+- Dialog: team member dropdown (7 names) + message textarea
+- Sends email to modonty1@gmail.com via Resend with retry
+- Confirmation: "Message received!" after successful send
+- Tested and verified — email delivered
+
+### Task Files Reorganized
+- 23 files → 6 clean files + 4 references
+- One file per section: ARTICLES.md, CLIENTS.md, CATEGORIES.md, TAGS.md, INDUSTRIES.md, MEDIA.md
+- Master TODO sorted by priority
+
+---
+
+## What Was Done This Session (Session 4) — Part 1: Articles UX Improvements
 
 ### P1 — Critical (All Done)
 1. **Unified SEO score** — form and view page now show identical scores. Fixed `normalize-input.ts`: use stored wordCount, add twitterCard default.

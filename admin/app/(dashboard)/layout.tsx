@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
 import { SessionProvider } from "@/app/components/providers/session-provider";
+import { FeedbackBanner } from "./components/feedback-banner";
 
 export const dynamic = 'force-dynamic';
 
@@ -31,9 +32,7 @@ export default async function DashboardLayout({
           <Sidebar />
           <div className="flex-1 flex flex-col overflow-hidden">
             <Header />
-            <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-center text-xs font-medium text-amber-600 dark:text-amber-400">
-              This system is currently in beta testing. Some features may not work as expected. Please report any issues.
-            </div>
+            <FeedbackBanner />
             <main className="flex-1 overflow-y-auto">{children}</main>
           </div>
         </div>
