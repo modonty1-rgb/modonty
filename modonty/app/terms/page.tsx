@@ -1,38 +1,16 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { db } from "@/lib/db";
+import { FormattedDate } from "@/components/date/FormattedDate";
+import { getTermsPageForMetadata } from "./helpers/terms-metadata";
+import { getTermsPageContent } from "./helpers/terms-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const page = await db.modonty.findUnique({
-      where: { slug: "terms" },
-      select: {
-        title: true,
-        seoTitle: true,
-        seoDescription: true,
-        metaRobots: true,
-        socialImage: true,
-        socialImageAlt: true,
-        ogTitle: true,
-        ogDescription: true,
-        ogType: true,
-        ogUrl: true,
-        ogSiteName: true,
-        ogLocale: true,
-        ogImage: true,
-        twitterCard: true,
-        twitterTitle: true,
-        twitterDescription: true,
-        twitterSite: true,
-        twitterCreator: true,
-        canonicalUrl: true,
-        inLanguage: true,
-      },
-    });
+    const page = await getTermsPageForMetadata();
 
     if (!page) {
-      // Fallback to default metadata
       return {
         title: "الشروط والأحكام - مودونتي",
         description: "اقرأ شروط وأحكام استخدام منصة مودونتي",
@@ -47,7 +25,6 @@ export async function generateMetadata(): Promise<Metadata> {
     const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
-    // Parse robots directive
     const robotsDirective = page.metaRobots || "index,follow";
     const shouldIndex = !robotsDirective.includes("noindex");
     const shouldFollow = !robotsDirective.includes("nofollow");
@@ -108,7 +85,6 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Error generating metadata for terms page:", error);
-    // Fallback to default metadata
     return {
       title: "الشروط والأحكام - مودونتي",
       description: "اقرأ شروط وأحكام استخدام منصة مودونتي",
@@ -120,19 +96,25 @@ function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
 }
 
-export default async function TermsPage() {
+function TermsFallback() {
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="h-8 w-48 bg-muted animate-pulse rounded mb-6" />
+      <div className="h-10 w-full bg-muted animate-pulse rounded mb-6" />
+      <div className="space-y-4">
+        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+      </div>
+    </div>
+  );
+}
+
+async function TermsContent() {
   let page;
   let hasContent = false;
 
   try {
-    page = await db.modonty.findUnique({
-      where: { slug: "terms" },
-      select: {
-        title: true,
-        content: true,
-      },
-    });
-
+    page = await getTermsPageContent();
     if (page && page.content) {
       hasContent = true;
     }
@@ -140,7 +122,6 @@ export default async function TermsPage() {
     console.error("Error fetching terms page:", error);
   }
 
-  // Fallback content
   const fallbackTitle = "الشروط والأحكام";
   const fallbackContent = `
     <p>
@@ -193,6 +174,14 @@ export default async function TermsPage() {
         />
         <div className="prose prose-sm max-w-none">
           <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
+          {page?.updatedAt && (
+            <p className="text-sm text-muted-foreground mb-6">
+              آخر تحديث:{" "}
+              <Suspense fallback={<span>...</span>}>
+                <FormattedDate date={page.updatedAt} />
+              </Suspense>
+            </p>
+          )}
           <div
             className="space-y-6 text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: pageContent }}
@@ -200,5 +189,13 @@ export default async function TermsPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function TermsPage() {
+  return (
+    <Suspense fallback={<TermsFallback />}>
+      <TermsContent />
+    </Suspense>
   );
 }

@@ -23,7 +23,7 @@
 
 ## Remaining (MEDIUM)
 
-- [ ] About + Legal pages — use cached metadata instead of live build
+- [x] About + Legal pages — use cached metadata instead of live build (terms page)
 - [x] Settings change — auto-cascade to all entities (v0.17.0)
 
 ---
@@ -33,7 +33,7 @@
 - [ ] Centralize all toast messages in one JSON file
 - [ ] Split view preview for articles
 - [ ] Article templates (news, how-to, listicle)
-- [ ] Bulk SEO fix for low-score articles
+- [x] Bulk SEO fix for low-score articles (in SEO Overview page)
 
 ---
 
