@@ -51,17 +51,16 @@ export function TagForm({ initialData, tagId }: TagFormProps) {
                 name="name"
                 value={formData.name}
                 onChange={(e) => updateField("name", e.target.value)}
-                hint={formData.slug ? `Slug: ${formData.slug}` : "Slug will be generated from name"}
                 required
               />
               <input type="hidden" name="slug" value={formData.slug} />
-              {!!tagId && (
-                <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md border">
-                  <span className="text-xs text-muted-foreground">Slug:</span>
-                  <code className="text-xs font-mono text-foreground">{formData.slug}</code>
+              <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md border">
+                <span className="text-xs text-muted-foreground">Slug:</span>
+                <code className="text-xs font-mono text-foreground">{formData.slug || "—"}</code>
+                {tagId && (
                   <span className="text-xs text-yellow-600 ms-auto">⚠️ Won&apos;t change after publish</span>
-                </div>
-              )}
+                )}
+              </div>
               <div>
                 <FormTextarea
                   label="Description"

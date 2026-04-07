@@ -75,7 +75,6 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   onChange={(e) => updateField("name", e.target.value)}
                   required
                 />
-                <input type="hidden" name="slug" value={formData.slug} />
                 <FormInput
                   label="Job Title"
                   name="jobTitle"
@@ -83,6 +82,14 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   onChange={(e) => updateField("jobTitle", e.target.value)}
                   hint="e.g., Content Platform, Digital Publisher"
                 />
+              </div>
+              <input type="hidden" name="slug" value={formData.slug} />
+              <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md border">
+                <span className="text-xs text-muted-foreground">Slug:</span>
+                <code className="text-xs font-mono text-foreground">{formData.slug || "—"}</code>
+                {authorId && (
+                  <span className="text-xs text-yellow-600 ms-auto">⚠️ Won&apos;t change after publish</span>
+                )}
               </div>
 
               {/* Profile Image */}
