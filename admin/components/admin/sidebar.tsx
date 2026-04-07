@@ -261,7 +261,14 @@ export function Sidebar() {
               </Link>
               <div className="flex items-center gap-2">
                 <ThemeToggle />
-                <span className="text-[11px] font-medium text-muted-foreground">v{pkg.version}</span>
+                <Link
+                  href="/changelog"
+                  className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  title="سجل التحديثات والملاحظات"
+                >
+                  v{pkg.version}
+                  <span className="text-[9px] bg-primary/10 text-primary rounded px-1">?</span>
+                </Link>
               </div>
             </>
           )}

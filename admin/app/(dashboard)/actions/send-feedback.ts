@@ -1,5 +1,6 @@
 "use server";
 
+import { db } from "@/lib/db";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
 
 const FEEDBACK_EMAIL = "modonty1@gmail.com";
@@ -13,6 +14,16 @@ export async function sendFeedback(data: {
     if (!data.name?.trim()) return { success: false, error: "Please select your name" };
     if (!data.message?.trim()) return { success: false, error: "Please write a message" };
 
+    // Save to DB (admin notes)
+    await db.adminNote.create({
+      data: {
+        author: data.name,
+        message: data.message.trim(),
+        page: data.page || null,
+      },
+    });
+
+    // Send email
     await sendEmailWithRetry({
       from: process.env.RESEND_FROM || "noreply@modonty.com",
       to: FEEDBACK_EMAIL,
@@ -44,6 +55,8 @@ export async function sendFeedback(data: {
           </p>
         </div>
       `,
+    }).catch(() => {
+      // Email failure shouldn't block — note is already saved in DB
     });
 
     return { success: true };

@@ -2116,3 +2116,42 @@ model FAQFeedback {
   @@index([isHelpful])
   @@map("faq_feedback")
 }
+
+// ============================================
+// CHANGELOG & ADMIN NOTES
+// ============================================
+
+model Changelog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  version   String
+  title     String
+  items     Json     // [{type: "fix"|"feature"|"improve", text: "..."}]
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("changelogs")
+}
+
+model AdminNote {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  author    String
+  message   String
+  page      String?
+  replies   AdminNoteReply[]
+  createdAt DateTime         @default(now())
+
+  @@index([createdAt])
+  @@map("admin_notes")
+}
+
+model AdminNoteReply {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  noteId    String    @db.ObjectId
+  note      AdminNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  author    String
+  message   String
+  createdAt DateTime  @default(now())
+
+  @@index([noteId, createdAt])
+  @@map("admin_note_replies")
+}
