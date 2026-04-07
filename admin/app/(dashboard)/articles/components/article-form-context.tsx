@@ -295,6 +295,7 @@ export function ArticleFormProvider({
 
   const save = useCallback(async () => {
     setIsSaving(true);
+    isSavingRef.current = true;
     try {
       const result = articleId
         ? await updateArticle(articleId, formData)
@@ -317,13 +318,17 @@ export function ArticleFormProvider({
       return { success: false, error: errorMessage };
     } finally {
       setIsSaving(false);
+      isSavingRef.current = false;
     }
   }, [formData, onSubmit, articleId]);
 
   // Unsaved changes warning — prevent accidental navigation
+  const isSavingRef = useRef(false);
   useEffect(() => {
     if (!isDirty) return;
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Skip warning if we're in the middle of saving (redirect after save)
+      if (isSavingRef.current) return;
       e.preventDefault();
     };
     window.addEventListener('beforeunload', handleBeforeUnload);

@@ -261,7 +261,7 @@ export function Sidebar() {
               </Link>
               <div className="flex items-center gap-2">
                 <ThemeToggle />
-                <span className="text-[10px] text-muted-foreground/40">v{pkg.version}</span>
+                <span className="text-[11px] font-medium text-muted-foreground">v{pkg.version}</span>
               </div>
             </>
           )}
