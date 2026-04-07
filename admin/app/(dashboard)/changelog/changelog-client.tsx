@@ -92,13 +92,24 @@ function ItemBadge({ type }: { type: string }) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("ar-SA", {
+  const d = new Date(date);
+  const formatted = d.toLocaleDateString("ar-SA", {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  // Add emoji based on time of day
+  const hour = d.getHours();
+  if (hour >= 0 && hour < 5) return `🌙 ${formatted}`;      // فجر / سهر
+  if (hour >= 5 && hour < 7) return `🌅 ${formatted}`;       // فجر مبكر
+  if (hour >= 7 && hour < 12) return `☀️ ${formatted}`;      // صباح
+  if (hour >= 12 && hour < 17) return `🌤️ ${formatted}`;     // ظهر
+  if (hour >= 17 && hour < 20) return `🌇 ${formatted}`;     // مساء
+  if (hour >= 20 && hour < 23) return `🌙 ${formatted}`;     // ليل
+  return `💤 ${formatted}`;                                    // متأخر جداً
 }
 
 function NoteCard({ note }: { note: AdminNote }) {
