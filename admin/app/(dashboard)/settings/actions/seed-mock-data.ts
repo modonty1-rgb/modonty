@@ -100,10 +100,10 @@ const AUTHORS = [
 ];
 
 const TIER_CONFIGS = [
-  { tier: "BASIC" as const, name: "الباقة الأساسية", articlesPerMonth: 4, price: 500, isActive: true, isPopular: false, description: "4 مقالات شهرياً — مثالية للشركات الصغيرة" },
-  { tier: "STANDARD" as const, name: "الباقة المتقدمة", articlesPerMonth: 8, price: 900, isActive: true, isPopular: true, description: "8 مقالات شهرياً — الأكثر طلباً" },
-  { tier: "PRO" as const, name: "الباقة الاحترافية", articlesPerMonth: 15, price: 1500, isActive: true, isPopular: false, description: "15 مقالة شهرياً — للشركات المتوسطة" },
-  { tier: "PREMIUM" as const, name: "الباقة المميزة", articlesPerMonth: 30, price: 2500, isActive: true, isPopular: false, description: "30 مقالة شهرياً — للمؤسسات الكبرى" },
+  { tier: "BASIC" as const, name: "مجاني", articlesPerMonth: 1, price: 0, isActive: true, isPopular: false, description: "مقالة واحدة مجانية — ملف تعريفي — تحليلات أساسية" },
+  { tier: "STANDARD" as const, name: "الانطلاقة", articlesPerMonth: 4, price: 499, isActive: true, isPopular: false, description: "4 مقالات شهرياً — نشر متعدد المنصات — قائمة بريدية 500" },
+  { tier: "PRO" as const, name: "الزخم", articlesPerMonth: 8, price: 1299, isActive: true, isPopular: true, description: "8 مقالات شهرياً — فيديو ريلز — تقييم العملاء المحتملين — اجتماع استراتيجي شهري" },
+  { tier: "PREMIUM" as const, name: "الريادة", articlesPerMonth: 12, price: 2999, isActive: true, isPopular: false, description: "12 مقالة شهرياً — مدير حساب مخصص — تقارير مخصصة — دعم 24/7" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -501,7 +501,7 @@ const MODONTY_PAGES = [
 
 const FAQS = [
   { question: "ما هي خدمات مدونتي؟", answer: "مدونتي منصة سعودية متخصصة في تحسين محركات البحث (SEO) وصناعة المحتوى العربي الاحترافي. نساعد الشركات في بناء حضور رقمي قوي يجذب العملاء عبر محركات البحث.", position: 0 },
-  { question: "كم تكلفة خدمات SEO؟", answer: "تبدأ باقاتنا من 500 ريال شهرياً (الباقة الأساسية — 4 مقالات) وتصل إلى 2500 ريال (الباقة المميزة — 30 مقالة). كل باقة تشمل تحسين SEO وتقارير أداء شهرية.", position: 1 },
+  { question: "كم تكلفة خدمات SEO؟", answer: "نقدم 4 باقات: مجاني (مقالة واحدة)، الانطلاقة 499 ريال (4 مقالات)، الزخم 1,299 ريال (8 مقالات + ريلز)، الريادة 2,999 ريال (12 مقالة + مدير حساب مخصص). ادفع 12 شهر واحصل على 18 شهر.", position: 1 },
   { question: "متى أشوف نتائج تحسين محركات البحث؟", answer: "عادةً تبدأ النتائج بالظهور خلال 3-6 أشهر. SEO استثمار طويل الأمد — المحتوى الجيد يستمر في جلب زيارات لسنوات. نقدم تقارير شهرية لتتابع التقدم.", position: 2 },
 ];
 

@@ -8,6 +8,7 @@ import { clientFormSchema, type ClientFormSchemaType } from "../client-form-sche
 import { mapInitialDataToFormData } from "../map-initial-data-to-form-data";
 import type { ClientFormData, ClientWithRelations } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { slugify } from "@/lib/utils";
 import { updateClient, createClient } from "../../actions/clients-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { getActiveTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
@@ -53,59 +54,14 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
     loadTierConfigs();
   }, []);
 
-  // Auto-update slug when name changes (pure Arabic slug for SEO - best practice)
+  // Auto-update slug when name changes — uses same slugify as categories/tags/industries
   useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      // Only update slug when name field changes, not on any other field change
-      if (name === "name" && value.name) {
-        // Common Arabic business stop words to remove for catchier slugs
-        const arabicStopWords = [
-          "الشركة",
-          "المؤسسة",
-          "الشاملة",
-          "للتكنولوجيا",
-          "الخدمات",
-          "الحلول",
-          "المحدودة",
-          "المساهمة",
-          "الشركات",
-          "المجموعة",
-          "الدولية",
-          "العالمية",
-          "للتسويق",
-          "للإعلام",
-          "للاستشارات",
-        ];
-
-        let slug = value.name;
-
-        // Remove Arabic stop words for catchier slugs
-        for (const word of arabicStopWords) {
-          slug = slug.replace(new RegExp(word, "gi"), " ");
-        }
-
-        // Remove Arabic definite article "ال" at start of words for cleaner slugs
-        slug = slug.replace(/\bال(?=[\u0600-\u06FF])/g, "");
-
-        // Remove English business stop words if mixed with Arabic
-        const englishStopWords = /\b(inc|incorporated|llc|ltd|limited|corp|corporation|company|co|group|international|global|enterprises|holdings|solutions|services|systems|tech|technology|saudi|arabia)\b/gi;
-        slug = slug.replace(englishStopWords, " ");
-
-        // Generate pure Arabic slug (UTF-8 supported - SEO best practice)
-        // Keep Arabic characters (\u0600-\u06FF), English letters, numbers, spaces, hyphens
-        const newSlug = slug
-          .trim()
-          .replace(/[^\u0600-\u06FFa-z0-9\s-]+/g, "") // Keep Arabic, English, numbers, spaces, hyphens
-          .replace(/\s+/g, "-") // Replace spaces with hyphens
-          .replace(/-+/g, "-") // Replace multiple hyphens with single
-          .replace(/(^-|-$)/g, "") // Remove leading/trailing hyphens
-          .substring(0, 50); // Limit length for catchiness
-
-        // Only update if slug actually changed to prevent infinite loops
+    const subscription = form.watch((value, { name: fieldName }) => {
+      if (fieldName === "name") {
+        const newSlug = slugify(value.name || "");
         const currentSlug = form.getValues("slug") || "";
-        if (newSlug !== currentSlug && newSlug.length > 0) {
+        if (newSlug !== currentSlug) {
           form.setValue("slug", newSlug, { shouldValidate: false, shouldDirty: false });
-          // Trigger validation for slug field to clear any "required" errors
           form.trigger("slug");
         }
       }

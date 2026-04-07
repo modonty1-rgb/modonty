@@ -2,8 +2,6 @@
 
 import { UseFormReturn, useWatch } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { FormInput } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
@@ -31,19 +29,9 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
       )}
       <div className="space-y-5">
         <div>
-          <Label className="flex items-center gap-1.5 mb-2 cursor-default">
+          <Label className="cursor-default">
             <span>Business Brief</span>
-            <span className="text-destructive">*</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">Essential info for writers to create relevant, tailored articles — describes the client's business, products/services, target audience, and unique selling points</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <span className="text-destructive ms-1">*</span>
           </Label>
           <Textarea
             name="businessBrief"
@@ -73,7 +61,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
             onChange={(e) => form.setValue("slogan", e.target.value || null, { shouldValidate: true })}
             error={errors.slogan?.message}
             placeholder="e.g., Innovation Beyond Boundaries"
-            hint="Company tagline or marketing slogan — used in Schema.org structured data — should be short and memorable — recommended max 100 characters"
+            hint="شعار الشركة — يظهر في بيانات SEO — حد أقصى 100 حرف"
           />
           {slogan && (
             <div className="mt-1">

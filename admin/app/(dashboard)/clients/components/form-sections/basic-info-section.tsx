@@ -1,7 +1,8 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { FormInput, FormField } from "@/components/admin/form-field";
+import { FormInput, FormField, FormSelect } from "@/components/admin/form-field";
+import { SelectItem } from "@/components/ui/select";
 import { Link2 } from "lucide-react";
 import { BusinessBriefSection } from "./business-brief-section";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
@@ -58,14 +59,14 @@ export function BasicInfoSection({
           value={name || ""}
           onChange={(e) => form.setValue("name", e.target.value, { shouldValidate: true })}
           error={errors.name?.message}
-          hint="Client name used in articles and blog — appears in all published content for this client"
+          hint="يظهر في المقالات والمحتوى المنشور"
           required
         />
         <FormField
           label="Slug"
           name="slug"
           error={errors.slug?.message}
-          hint="URL-friendly identifier — auto-generated from name — optimized for SEO — used in article and page URLs"
+          hint="يُنشأ تلقائياً من الاسم — يُستخدم في روابط الصفحات"
         >
           <div className="space-y-2">
             <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm items-center gap-2">
@@ -90,30 +91,37 @@ export function BasicInfoSection({
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormInput
-          name="email"
-          type="email"
-          label="Email — Username"
-          value={email || ""}
-          onChange={(e) => form.setValue("email", e.target.value, { shouldValidate: true })}
-          error={errors.email?.message}
-          hint="Client email (username) — used for login and account access — required for communication and account management"
-          required
-        />
-        <FormInput
-          name="password"
-          type="password"
-          label="Password"
-          value={password || ""}
-          onChange={(e) => form.setValue("password", e.target.value, { shouldValidate: true })}
-          error={errors.password?.message}
-          placeholder={isEditMode ? "Leave empty to keep current" : "••••••••"}
-          required={!isEditMode}
-        />
+      <div className="rounded-lg border border-blue-500/20 bg-blue-500/[0.03] p-4 space-y-4">
+        <div dir="rtl">
+          <p className="text-sm font-medium text-blue-400">بيانات دخول العميل</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            يتم إرسال هذه البيانات للعميل للدخول على لوحة التحكم الخاصة به وإدارة محتواه.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <FormInput
+            name="email"
+            type="email"
+            label="Email — Username"
+            value={email || ""}
+            onChange={(e) => form.setValue("email", e.target.value, { shouldValidate: true })}
+            error={errors.email?.message}
+            required
+          />
+          <FormInput
+            name="password"
+            type="text"
+            label="Password"
+            value={password || ""}
+            onChange={(e) => form.setValue("password", e.target.value, { shouldValidate: true })}
+            error={errors.password?.message}
+            placeholder={isEditMode ? "Leave empty to keep current" : "Enter password"}
+            required={!isEditMode}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <FormInput
           name="phone"
           label="Phone"
@@ -121,8 +129,24 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("phone", e.target.value || null, { shouldValidate: true })}
           error={errors.phone?.message}
           placeholder="+966 11 123 4567"
-          hint="Phone number for contact — used for business inquiries — added to Schema.org ContactPoint for SEO"
+          hint="يظهر في بيانات التواصل وSchema.org"
         />
+        <FormSelect
+          label="Contact Type"
+          name="contactType"
+          value={contactType || undefined}
+          onValueChange={(value) => form.setValue("contactType", value ? (value as string) : null, { shouldValidate: true })}
+          error={errors.contactType?.message}
+          placeholder="Select type"
+          hint="نوع التواصل في Schema.org ContactPoint"
+        >
+          <SelectItem value="customer service">Customer Service</SelectItem>
+          <SelectItem value="sales">Sales</SelectItem>
+          <SelectItem value="technical support">Technical Support</SelectItem>
+          <SelectItem value="billing support">Billing Support</SelectItem>
+          <SelectItem value="reservations">Reservations</SelectItem>
+          <SelectItem value="emergency">Emergency</SelectItem>
+        </FormSelect>
         <FormInput
           name="url"
           type="url"
@@ -131,7 +155,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("url", e.target.value || null, { shouldValidate: true })}
           error={errors.url?.message}
           placeholder="https://www.example.com"
-          hint="Main website URL — used for backlinks and Schema.org structured data — helps with SEO"
+          hint="يُستخدم في الروابط الخلفية وبيانات SEO"
         />
       </div>
 

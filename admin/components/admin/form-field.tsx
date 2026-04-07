@@ -2,9 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { ReactNode } from "react";
-import { Info } from "lucide-react";
 
 interface FormFieldProps {
   label: string;
@@ -16,31 +14,14 @@ interface FormFieldProps {
 }
 
 export function FormField({ label, name, error, required, hint, children }: FormFieldProps) {
-  const labelContent = (
-    <div className="flex items-center gap-1.5">
-      <span>{label}</span>
-      {required && <span className="text-destructive">*</span>}
-      {hint && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="max-w-xs">{hint}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
-    </div>
-  );
-
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="cursor-default">
-        {labelContent}
+        <span>{label}</span>
+        {required && <span className="text-destructive ms-1">*</span>}
       </Label>
       {children}
+      {hint && <p className="text-[11px] text-amber-600 dark:text-amber-500 leading-tight">{hint}</p>}
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

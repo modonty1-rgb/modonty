@@ -26,7 +26,7 @@
 
 ---
 
-## Post-Deploy — Auth Fix (13 remaining actions)
+## Post-Deploy — Admin Auth Fix (13 remaining actions)
 
 - [ ] contact-messages-actions.ts — add auth to delete, updateStatus, markAsRead, markAsReplied
 - [ ] faq-actions.ts — add auth to create, update, delete, reorder, toggleStatus
@@ -37,7 +37,25 @@
 
 ---
 
-## Next Version (LOW)
+## Post-Deploy — Modonty Public Site
+
+### HIGH — Email & Subscriptions
+- [ ] Integrate email service (Resend/SendGrid) for newsletter delivery
+- [ ] Fix /api/subscribe — currently placeholder, doesn't send emails
+- [ ] Subscribers get saved to DB but receive nothing — connect email sending
+
+### MEDIUM — Loading & Error Pages
+- [ ] Add loading.tsx to: author page, login, contact, about, legal pages
+- [ ] Add loading.tsx to: user profile sub-pages (favorites, liked, comments, following, notifications)
+- [ ] Add error.tsx to critical public pages (article, client, categories)
+
+### LOW — Nice to Have
+- [ ] Add loading.tsx to help/faq, subscribe pages
+- [ ] Add sitemap entries for tag archive pages (/tags/[slug])
+
+---
+
+## Next Version — Admin (LOW)
 
 - [ ] Centralize all toast messages in one JSON file
 - [ ] Split view preview for articles

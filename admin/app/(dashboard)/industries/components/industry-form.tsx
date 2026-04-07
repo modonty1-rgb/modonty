@@ -68,7 +68,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                   value={formData.description}
                   onChange={(e) => updateField("description", e.target.value)}
                   rows={2}
-                  hint="Used for context and SEO (50+ chars recommended)"
+                  hint="يُستخدم في SEO — يُنصح بـ 50+ حرف"
                 />
                 <CharacterCounter current={formData.description.length} min={0} className="mt-1 ms-1" />
               </div>
@@ -89,7 +89,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                   name="seoTitle"
                   value={formData.seoTitle}
                   onChange={(e) => updateSEOField("seoTitle", e.target.value)}
-                  hint="50-60 chars optimal"
+                  hint="العنوان الذي يظهر في جوجل — 50-60 حرف"
                 />
                 <div>
                   <FormInput
@@ -97,7 +97,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
-                    hint="150-160 chars optimal"
+                    hint="الوصف الذي يظهر في نتائج البحث — 150-160 حرف"
                   />
                   <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
                 </div>

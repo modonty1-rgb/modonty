@@ -21,7 +21,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCountry", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCountry?.message}
           placeholder="SA (Saudi Arabia)"
-          hint="Default: SA (Saudi Arabia) — used in Schema.org Address and ContactPoint — helps define the service area (areaServed)"
+          hint="يُستخدم في Schema.org لتحديد منطقة الخدمة"
         />
         <FormInput
           name="addressRegion"
@@ -30,7 +30,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressRegion", e.target.value || null, { shouldValidate: true })}
           error={errors.addressRegion?.message}
           placeholder="e.g., Riyadh, Dubai, London"
-          hint="Region, province, or state — used in Schema.org Address to define the company's geographic location — supports all countries, not just Saudi Arabia"
+          hint="يظهر في بيانات الموقع الجغرافي — Schema.org"
         />
         <FormInput
           name="addressCity"
@@ -39,7 +39,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCity", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCity?.message}
           placeholder="e.g., Riyadh"
-          hint="City name — part of the Saudi National Address system — used in Schema.org Address to define the company's geographic location"
+          hint="يظهر في بيانات العنوان — Schema.org"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr_1fr] gap-5">
@@ -50,7 +50,6 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressNeighborhood", e.target.value || null, { shouldValidate: true })}
           error={errors.addressNeighborhood?.message}
           placeholder="e.g., Al Olaya"
-          hint="Neighborhood or district — part of the Saudi National Address system — used to pinpoint location within the city"
         />
         <FormInput
           name="addressLatitude"
@@ -65,7 +64,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLatitude?.message}
           placeholder="e.g., 24.7136"
-          hint="Geographic latitude — used in Schema.org GeoCoordinates — helps pinpoint location on maps — value between -90 and 90"
+          hint="إحداثيات الخريطة — Schema.org GeoCoordinates"
         />
         <FormInput
           name="addressLongitude"
@@ -80,7 +79,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLongitude?.message}
           placeholder="e.g., 46.6753"
-          hint="Geographic longitude — used in Schema.org GeoCoordinates — helps pinpoint location on maps — value between -180 and 180"
+          hint="إحداثيات الخريطة — Schema.org GeoCoordinates"
         />
       </div>
       <div>
@@ -91,7 +90,6 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressStreet", e.target.value || null, { shouldValidate: true })}
           error={errors.addressStreet?.message}
           placeholder="King Fahd Road"
-          hint="Street name — part of the Saudi National Address system — used in Schema.org Address to pinpoint location"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -102,7 +100,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressPostalCode", e.target.value || null, { shouldValidate: true })}
           error={errors.addressPostalCode?.message}
           placeholder="12345-6789"
-          hint="9-digit postal code — part of the Saudi National Address system — mandatory from 2026 — used in Schema.org Address to pinpoint location"
+          hint="الرمز البريدي — إلزامي من 2026"
         />
         <FormInput
           name="addressBuildingNumber"
@@ -111,7 +109,6 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressBuildingNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.addressBuildingNumber?.message}
           placeholder="e.g., 1234"
-          hint="Building number in the Saudi National Address — used with additional number to pinpoint location — part of the Saudi National Address system"
         />
         <FormInput
           name="addressAdditionalNumber"
@@ -120,7 +117,6 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressAdditionalNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.addressAdditionalNumber?.message}
           placeholder="e.g., 5 (for unit 5)"
-          hint="Additional number or unit number (e.g., apartment, office, floor) — used with building number to pinpoint location — part of the Saudi National Address system — optional"
         />
       </div>
     </div>

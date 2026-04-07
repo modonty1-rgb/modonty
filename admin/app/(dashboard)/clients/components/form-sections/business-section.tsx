@@ -1,8 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { FormInput, FormTextarea, FormNativeSelect, FormSelect } from "@/components/admin/form-field";
-import { SelectItem } from "@/components/ui/select";
+import { FormInput, FormTextarea, FormNativeSelect } from "@/components/admin/form-field";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import { AlertCircle } from "lucide-react";
 
@@ -27,21 +26,6 @@ export function BusinessSection({
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormSelect
-          label="Contact Type"
-          name="contactType"
-          value={watch("contactType") || undefined}
-          onValueChange={(value) =>
-            setValue("contactType", value ? (value as string) : null, { shouldValidate: true })
-          }
-          error={errors.contactType?.message}
-          placeholder="Select contact type"
-        >
-          <SelectItem value="Customer Service">Customer Service</SelectItem>
-          <SelectItem value="Sales">Sales</SelectItem>
-          <SelectItem value="Technical Support">Technical Support</SelectItem>
-        </FormSelect>
-
         <FormNativeSelect
           label="Parent Organization"
           name="parentOrganizationId"
@@ -50,6 +34,7 @@ export function BusinessSection({
             setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })
           }
           error={errors.parentOrganizationId?.message}
+          hint="إذا كان العميل فرع أو تابع لشركة أخرى — اتركه فارغ إذا كان مستقل"
         >
           <option value="">None</option>
           {clients.map((client) => (
@@ -78,7 +63,7 @@ export function BusinessSection({
           rows={3}
           error={errors.targetAudience?.message}
           placeholder="Describe the target audience for this client"
-          hint="Helps writers customize content tone and topics — describes target audience (age, gender, interests) — used to guide writers"
+          hint="يساعد الكتّاب في تخصيص المحتوى والأسلوب"
         />
         <FormTextarea
           label="Content Priorities (comma-separated)"
@@ -91,7 +76,7 @@ export function BusinessSection({
           rows={2}
           error={errors.contentPriorities?.message}
           placeholder="keyword1, keyword2, keyword3"
-          hint="Main topics/keywords to prioritize in articles — comma-separated — guides writers in choosing focus topics — different from SEO Keywords tab"
+          hint="كلمات مفتاحية للكتّاب — مفصولة بفاصلة"
         />
       </div>
     </div>

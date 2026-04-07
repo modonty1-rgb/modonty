@@ -36,21 +36,21 @@ export function SEOSection({
     }));
   };
   
-  const seoTitleHint = seoSettings 
-    ? `SEO title shown in search engine results — optimal length between ${seoSettings.seoTitleMin} and ${seoSettings.seoTitleMax} characters — should be compelling and accurately describe the content — used in title tag and Open Graph`
-    : "SEO title shown in search engine results — optimal length between 30 and 60 characters — should be compelling and accurately describe the content — used in title tag and Open Graph";
-  
+  const seoTitleHint = seoSettings
+    ? `عنوان SEO — الطول الأمثل ${seoSettings.seoTitleMin}-${seoSettings.seoTitleMax} حرف`
+    : "عنوان SEO — الطول الأمثل 30-60 حرف";
+
   const seoDescriptionHint = seoSettings
-    ? `Description shown below the title in search results — optimal length between ${seoSettings.seoDescriptionMin} and ${seoSettings.seoDescriptionMax} characters — should be compelling and encourage clicks — used in meta description tag`
-    : "Description shown below the title in search results — optimal length between 120 and 160 characters — should be compelling and encourage clicks — used in meta description tag";
+    ? `وصف SEO — الطول الأمثل ${seoSettings.seoDescriptionMin}-${seoSettings.seoDescriptionMax} حرف`
+    : "وصف SEO — الطول الأمثل 120-160 حرف";
 
   const twitterTitleHint = seoSettings
-    ? `Custom Twitter/X title for social sharing — max length: ${seoSettings.twitterTitleMax} characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Title`
-    : "Custom Twitter/X title for social sharing — max length: 70 characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Title";
+    ? `عنوان X/Twitter — حد أقصى ${seoSettings.twitterTitleMax} حرف`
+    : "عنوان X/Twitter — حد أقصى 70 حرف";
 
   const twitterDescriptionHint = seoSettings
-    ? `Custom Twitter/X description for social sharing — max length: ${seoSettings.twitterDescriptionMax} characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Description`
-    : "Custom Twitter/X description for social sharing — max length: 200 characters — used in Twitter Cards to optimize social media posts — only used if different from SEO Description";
+    ? `وصف X/Twitter — حد أقصى ${seoSettings.twitterDescriptionMax} حرف`
+    : "وصف X/Twitter — حد أقصى 200 حرف";
 
   useEffect(() => {
     async function loadSettings() {
@@ -217,7 +217,7 @@ export function SEOSection({
               onChange={(e) => setValue("canonicalUrl", e.target.value || null, { shouldValidate: true })}
               error={errors.canonicalUrl?.message}
               placeholder="https://example.com/page"
-              hint="Canonical URL prevents duplicate content issues — used when similar content exists on different URLs — helps search engines identify the original page — used in canonical link tag"
+              hint="يمنع المحتوى المكرر — يحدد الصفحة الأصلية"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormSelect
@@ -234,7 +234,7 @@ export function SEOSection({
                   )
                 }
                 error={errors.metaRobots?.message}
-                hint="Controls how search engines index this client's pages — index, follow: allow indexing and follow links (default) — noindex, follow: don't index but follow links — index, nofollow: index but don't follow links — noindex, nofollow: don't index or follow links"
+                hint="يتحكم في فهرسة محركات البحث لهذا العميل"
                 placeholder="Select robots directive"
               >
                 <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
@@ -248,7 +248,7 @@ export function SEOSection({
                 value={watch("twitterCard") || "auto"}
                 onValueChange={(value) => setValue("twitterCard", value === "auto" ? null : (value as "summary" | "summary_large_image"), { shouldValidate: true })}
                 error={errors.twitterCard?.message}
-                hint="Card type used for Twitter/X shares — determines how content is displayed when shared on Twitter/X — used to optimize content appearance on the Twitter/X platform"
+                hint="شكل المحتوى عند المشاركة في X/Twitter"
               >
                 <SelectItem value="auto">Auto-generate from OG tags</SelectItem>
                 <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
@@ -288,7 +288,7 @@ export function SEOSection({
                 }
                 error={errors.twitterSite?.message}
                 placeholder="@username"
-                hint="Twitter/X username (e.g., @company) — used for attribution and linking to the official account — helps connect content to the company's official Twitter/X account"
+                hint="حساب X/Twitter الرسمي للعميل"
               />
             </div>
             <div>
@@ -322,7 +322,7 @@ export function SEOSection({
               onChange={(e) => setValue("gtmId", e.target.value || null, { shouldValidate: true })}
               error={errors.gtmId?.message}
               placeholder="GTM-XXXXXXX"
-              hint="Only required if the client wants a separate Google Tag Manager container — leave empty for automatic tracking via the main container — most clients don't need this — all client articles are automatically tracked via the main container with a unique client ID"
+              hint="اختياري — فقط إذا كان العميل يريد تتبع منفصل"
             />
           </div>
         )}
@@ -372,7 +372,7 @@ export function SEOSection({
                 rows={3}
                 error={errors.description?.message}
                 placeholder="Describe your organization's mission, values, and key achievements..."
-                hint="Organization description in Schema.org structured data — separate from SEO description — used in JSON-LD structured data — describes the organization's mission, values, and key achievements — minimum 100 characters, optimal ~300 characters for best SEO"
+                hint="وصف المنظمة في Schema.org — 100+ حرف للأفضل"
               />
               <div className="mt-1">
                 <CharacterCounter
@@ -403,7 +403,7 @@ export function SEOSection({
               rows={2}
               error={errors.keywords?.message}
               placeholder="e.g., technology, innovation, consulting, digital transformation"
-              hint="Keywords for Schema.org classification — comma-separated — used in structured data for SEO — helps classify the company by activity and sector (e.g., technology, consulting, digital transformation)"
+              hint="كلمات لتصنيف الشركة — SEO — مفصولة بفاصلة"
             />
             <FormTextarea
               label="Knows Language"
@@ -423,7 +423,7 @@ export function SEOSection({
               rows={2}
               error={errors.knowsLanguage?.message}
               placeholder="e.g., Arabic, English"
-              hint="Supported languages in Schema.org ContactPoint (e.g., Arabic, English) — used in structured data for SEO — helps search engines understand the languages the company communicates in"
+              hint="لغات التواصل — تظهر في بيانات SEO"
             />
           </div>
         )}
@@ -472,7 +472,7 @@ export function SEOSection({
                 onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
                 error={errors.parentOrganizationId?.message}
                 placeholder="Select parent organization (optional)"
-                hint="Link this client to a parent company or organization — used in Schema.org hierarchical relationships — only set if this client is a subsidiary or division of another organization — helps define company structure"
+                hint="اختياري — إذا كان العميل فرع من شركة أخرى"
               >
                 <option value="">None (Independent Organization)</option>
                 {clients.map((client) => (
@@ -508,7 +508,7 @@ export function SEOSection({
                 )
               }
               error={errors.organizationType?.message}
-              hint="For SEO/Schema.org: classifies the organization type for search engines (Organization, Corporation, LocalBusiness, NonProfit, etc.) — different from Legal Form — used in Schema.org @type for SEO — helps search engines understand the entity type"
+              hint="نوع المنظمة في SEO — يختلف عن الشكل القانوني"
               placeholder="Select Organization Type"
             >
               <SelectItem value="Organization">Organization</SelectItem>

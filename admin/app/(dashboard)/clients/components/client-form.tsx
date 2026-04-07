@@ -5,15 +5,7 @@ import { useHeaderRef } from "./client-form-header-wrapper";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info, Plus, Pencil, Loader2 } from "lucide-react";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { AlertCircle, AlertTriangle, CheckCircle2, Info as InfoIcon } from "lucide-react";
+import { Plus, Pencil, Loader2 } from "lucide-react";
 import { SEODoctor } from "@/components/shared/seo-doctor";
 import { createOrganizationSEOConfig, createOrganizationSEOConfigFull } from "../helpers/client-seo-config";
 import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -184,70 +176,61 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                 </div>
               )}
 
-              <div className="flex items-center justify-between mb-2 gap-3">
-                <div className="flex items-center gap-1.5 flex-wrap">
+              {isEditMode && (
+                <div className="flex items-center gap-1.5 flex-wrap mb-2">
                   <span className="text-[10px] text-muted-foreground font-medium">Required:</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">○ Client Name</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">○ Email</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">○ Password</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">○ Business Brief</span>
+                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Client Name</span>
+                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Email</span>
+                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Business Brief</span>
                 </div>
-                <div className="flex items-center">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <Info className="h-3.5 w-3.5" />
-                      <span>Notes</span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-72 p-3" side="bottom" align="end">
-                    <div className="space-y-2 text-xs text-muted-foreground">
-                      <p>All media files are managed from the edit page after saving the client.</p>
-                      <p>SEO data is added after saving the client — from the edit page.</p>
+              )}
+
+              {!isEditMode ? (
+                /* CREATE MODE — flat, essentials only */
+                <div className="space-y-6">
+                  {watchedValues.slug && (
+                    <div className="flex justify-end">
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                        https://modonty.com/clients/{watchedValues.slug}
+                      </span>
                     </div>
-                  </PopoverContent>
-                </Popover>
+                  )}
+                  <BasicInfoSection form={form} industries={industries} />
+                  <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} />
                 </div>
-              </div>
+              ) : (
+                /* EDIT MODE — accordion with all sections */
+                <Accordion type="multiple" defaultValue={["client-info"]} className="w-full">
+                  <AccordionItem value="client-info" className="border border-white/10 rounded-lg bg-white/5">
+                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                      <div className="flex items-center justify-between w-full pe-2">
+                        <span>Client Info</span>
+                        {watchedValues.slug && (
+                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                            https://modonty.com/clients/{watchedValues.slug}
+                          </span>
+                        )}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <BasicInfoSection form={form} industries={industries} isEditMode />
+                        <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
 
-              <Accordion type="multiple" defaultValue={["client-info"]} className="w-full">
-                <AccordionItem value="client-info" className="border border-white/10 rounded-lg bg-white/5">
-                  <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                    Client Info
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 pt-3">
-                    <div className="space-y-6">
-                      <BasicInfoSection form={form} industries={industries} />
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                  <AccordionItem value="company" className="border border-white/10 rounded-lg bg-white/5">
+                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                      Company Profile
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <BusinessSection form={form} industries={industries} clients={clients} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
 
-                <AccordionItem value="company" className="border border-white/10 rounded-lg bg-white/5">
-                  <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                    Company Profile
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 pt-3">
-                    <div className="space-y-6">
-                      <BusinessSection form={form} industries={industries} />
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="subscription" className="border border-white/10 rounded-lg bg-white/5">
-                  <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                    Subscription
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 pt-3">
-                    <div className="space-y-6">
-                      <SubscriptionSection form={form} isEditMode={isEditMode} tierConfigs={tierConfigs} />
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {isEditMode && (
                   <AccordionItem value="settings" className="border border-white/10 rounded-lg bg-white/5">
                     <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
                       Settings
@@ -258,8 +241,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                )}
-              </Accordion>
+                </Accordion>
+              )}
             </div>
 
           </div>
