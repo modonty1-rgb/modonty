@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { auth } from "@/lib/auth";
 
 function optimizeAvatarUrl(url: string | undefined | null): string | null {
   if (!url) return null;
@@ -58,6 +59,7 @@ export async function createUser(data: {
   image?: string;
 }) {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     if (!data.name || !data.email || !data.password) {
       return { success: false, error: "Name, email, and password are required" };
     }
@@ -94,6 +96,7 @@ export async function updateUser(
   }
 ) {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     if (data.email) {
       const existing = await db.user.findUnique({ where: { email: data.email } });
       if (existing && existing.id !== id) {
@@ -129,6 +132,7 @@ export async function updateUser(
 
 export async function deleteUser(id: string) {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     const adminCount = await db.user.count({ where: { role: "ADMIN" } });
     if (adminCount <= 1) {
       return { success: false, error: "Cannot remove the last admin. At least one admin must exist." };

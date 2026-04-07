@@ -1,13 +1,14 @@
 # Master TODO — MODONTY
 
 > Last Updated: 2026-04-07
-> Versions: admin v0.16.0 | modonty v1.17.0
+> Versions: admin v0.20.0 | modonty v1.17.0
 
 ---
 
 ## All Critical/High Tasks ✅ DONE
 
 - [x] Security: auth + Zod + slug on ALL entities (articles, clients, categories, tags, industries, authors, media, settings)
+- [x] Security: auth on user management (create/update/delete admin)
 - [x] Error boundaries: all sections have error.tsx
 - [x] Arabic labels → English: clients (80+ labels), categories, tags, industries
 - [x] SEO: Organization + WebSite in JSON-LD, alternates.languages, breadcrumbs English
@@ -18,13 +19,21 @@
 - [x] Feedback banner (Send Note → DB + email)
 - [x] Progress counter fix (56% → 60%)
 - [x] Arabic tooltips + SEO analyzer messages
+- [x] About + Legal pages — cached metadata (terms page)
+- [x] Settings change — auto-cascade to all entities (v0.17.0)
+- [x] Bulk SEO fix for low-score articles (in SEO Overview page)
+- [x] Slug box visible on all entity forms (categories, tags, industries, authors)
 
 ---
 
-## Remaining (MEDIUM)
+## Post-Deploy — Auth Fix (13 remaining actions)
 
-- [x] About + Legal pages — use cached metadata instead of live build (terms page)
-- [x] Settings change — auto-cascade to all entities (v0.17.0)
+- [ ] contact-messages-actions.ts — add auth to delete, updateStatus, markAsRead, markAsReplied
+- [ ] faq-actions.ts — add auth to create, update, delete, reorder, toggleStatus
+- [ ] upload-image.ts — add auth to uploadImage
+- [ ] upload-avatar.ts — add auth to uploadAvatar
+- [ ] send-feedback.ts — add auth to sendFeedback
+- [ ] cascade-all-seo.ts — add auth to cascadeSettingsToAllEntities
 
 ---
 
@@ -33,7 +42,6 @@
 - [ ] Centralize all toast messages in one JSON file
 - [ ] Split view preview for articles
 - [ ] Article templates (news, how-to, listicle)
-- [x] Bulk SEO fix for low-score articles (in SEO Overview page)
 
 ---
 
@@ -51,6 +59,9 @@
 
 | Version | What |
 |---------|------|
+| admin v0.20.0 | Bulk SEO fix, terms cache, slug box all forms, users auth |
+| admin v0.19.0 | Arabic media upload fix — safe ASCII filenames |
+| admin v0.18.0 | Open status transitions, error toast 10s |
 | admin v0.17.0 | Settings cascade to all entities SEO |
 | admin v0.16.0 | Changelog page, team notes with replies, time emojis |
 | admin v0.15.0 | Toast Arabic + icons, optimistic lock fix, progress fix, Arabic SEO |
