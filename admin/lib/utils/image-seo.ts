@@ -40,41 +40,38 @@ export function generateSEOFileName(
 ): string {
   // Use altText as primary source, fallback to title, then original filename
   const sourceText = altText?.trim() || title?.trim() || originalFilename || "image";
-  
-  // Generate slug from the text
-  let seoSlug = slugify(sourceText);
-  
-  // Ensure minimum length (at least 3 characters)
-  if (seoSlug.length < 3) {
-    seoSlug = `image-${seoSlug}`;
+
+  // Generate slug then strip non-ASCII — safe for Cloudinary/CDN/browsers
+  // Arabic SEO is handled by alt text in DB (Google's #1 signal), not filename
+  let seoSlug = slugify(sourceText)
+    .replace(/[^a-z0-9-]/g, "")  // Only keep a-z, 0-9, hyphens
+    .replace(/-+/g, "-")          // Collapse multiple hyphens
+    .replace(/^-+|-+$/g, "");     // Trim leading/trailing hyphens
+
+  // Fallback for 100% Arabic or empty input
+  if (!seoSlug || seoSlug.length < 3) {
+    seoSlug = "img";
   }
-  
-  // Add unique suffix to prevent duplicates (short, SEO-friendly)
+
+  // Truncate to keep URL short (Google recommends short filenames)
+  if (seoSlug.length > 60) {
+    seoSlug = seoSlug.substring(0, 60).replace(/-+$/, "");
+  }
+
+  // Add unique suffix to prevent duplicates
   if (ensureUnique) {
     const uniqueSuffix = generateUniqueSuffix();
-    // Reserve space for suffix (9 chars: "-" + 8 char suffix)
-    const maxBaseLength = 100 - 9;
-    if (seoSlug.length > maxBaseLength) {
-      seoSlug = seoSlug.substring(0, maxBaseLength);
-      // Remove trailing hyphen if cut off mid-word
-      seoSlug = seoSlug.replace(/-+$/, "");
-    }
     seoSlug = `${seoSlug}-${uniqueSuffix}`;
-  } else {
-    // Limit length to 100 characters if not using unique suffix
-    if (seoSlug.length > 100) {
-      seoSlug = seoSlug.substring(0, 100);
-      // Remove trailing hyphen if cut off mid-word
-      seoSlug = seoSlug.replace(/-+$/, "");
-    }
   }
-  
+
   // Add client slug prefix for organization (optional)
   if (clientSlug) {
-    const clientPrefix = slugify(clientSlug);
-    return `${clientPrefix}/${seoSlug}`;
+    const clientPrefix = slugify(clientSlug).replace(/[^a-z0-9-]/g, "");
+    if (clientPrefix) {
+      return `${clientPrefix}/${seoSlug}`;
+    }
   }
-  
+
   return seoSlug;
 }
 
@@ -132,11 +129,11 @@ export function generateCloudinaryPublicId(
 /**
  * Validate Cloudinary public_id format
  * 
- * Cloudinary public_id rules:
- * - Can contain: alphanumeric, underscore, hyphen, forward slash
- * - Cannot start or end with slash
+ * Cloudinary public_id validation (strict ASCII-only for safety)
+ * Arabic SEO is handled by alt text, not filename
+ * - Only allow: a-z, 0-9, underscore, hyphen, forward slash, dot
  * - Max length: 255 characters
- * 
+ *
  * @param publicId - Public ID to validate
  * @returns true if valid, false otherwise
  */
@@ -144,9 +141,8 @@ export function isValidCloudinaryPublicId(publicId: string): boolean {
   if (!publicId || publicId.length === 0) return false;
   if (publicId.length > 255) return false;
   if (publicId.startsWith("/") || publicId.endsWith("/")) return false;
-  
-  // Only allow alphanumeric, underscore, hyphen, and forward slash
-  const validPattern = /^[a-zA-Z0-9_\-/]+$/;
+
+  const validPattern = /^[a-zA-Z0-9_.\-/]+$/;
   return validPattern.test(publicId);
 }
 
