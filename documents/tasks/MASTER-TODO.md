@@ -1,105 +1,65 @@
 # Master TODO — MODONTY
 
-> Last Updated: 2026-04-06
-> Versions: admin v0.12.0 | modonty v1.17.0
+> Last Updated: 2026-04-07
+> Versions: admin v0.16.0 | modonty v1.17.0
 
 ---
 
-## 1. Security — Auth + Validation ✅ (DONE)
+## All Critical/High Tasks ✅ DONE
 
-All mutations have auth + Zod + slug check:
-- [x] Articles, Clients, Categories, Tags, Industries
-- [x] Authors: updateAuthor
-- [x] Media: createMedia, updateMedia, deleteMedia
-- [x] Settings: all 6 save functions
-
----
-
-## 2. Error Boundaries ✅ (DONE)
-
-- [x] Categories, Tags, Industries, Articles, Clients — all have `error.tsx`
-
----
-
-## 3. Arabic Labels → English ✅ (DONE)
-
-- [x] Clients — 65+ labels fixed across 10 files
-- [x] Categories — fixed
-- [x] Tags — fixed
-- [x] Industries — fixed
+- [x] Security: auth + Zod + slug on ALL entities (articles, clients, categories, tags, industries, authors, media, settings)
+- [x] Error boundaries: all sections have error.tsx
+- [x] Arabic labels → English: clients (80+ labels), categories, tags, industries
+- [x] SEO: Organization + WebSite in JSON-LD, alternates.languages, breadcrumbs English
+- [x] Industry cascade to clients
+- [x] Toast UI: Arabic messages, icons, colors, auto-dismiss
+- [x] Articles: 5-step form, auto-save, publish gate, editor upgrade, optimistic lock fix
+- [x] Changelog + team notes system
+- [x] Feedback banner (Send Note → DB + email)
+- [x] Progress counter fix (56% → 60%)
+- [x] Arabic tooltips + SEO analyzer messages
 
 ---
 
-## 4. SEO Cache Gaps (MEDIUM)
+## Remaining (MEDIUM)
 
-- [x] Category/Tag/Industry — Organization + WebSite added to JSON-LD @graph
-- [x] Category/Tag/Industry — alternates.languages added (ar-SA)
-- [x] Category/Tag/Industry — breadcrumb labels → English
-- [x] Industry update — cascade to regenerate client SEO
 - [ ] About + Legal pages — use cached metadata instead of live build
-- [ ] Settings change — auto-cascade to all entities
+- [x] Settings change — auto-cascade to all entities (v0.17.0)
 
 ---
 
-## 5. UI/UX Review ✅ (DONE)
+## Next Version (LOW)
 
-- [x] Categories — reviewed, clean, follows standard pattern
-- [x] Tags — reviewed, clean, follows standard pattern
-- [x] Industries — reviewed, clean, follows standard pattern
-
----
-
-## 6. Next Version Improvements (LOW)
-
-### Toast Messages Overhaul → [TOAST-MESSAGES-TODO.md](admin/TOAST-MESSAGES-TODO.md)
-- [ ] Centralize all 183+ toast messages in one file
-- [ ] Improve toast UI (icons, colors, timing)
-- [ ] Make all messages clear Arabic with helpful context
-
-### Articles Post-Launch
-- [ ] Split view preview
-- [ ] Article templates
-- [ ] AI content suggestions
-- [ ] Bulk SEO fix
+- [ ] Centralize all toast messages in one JSON file
+- [ ] Split view preview for articles
+- [ ] Article templates (news, how-to, listicle)
+- [ ] Bulk SEO fix for low-score articles
 
 ---
 
-## 7. System & Roles (FUTURE)
+## Future
 
-- [ ] Add DESIGNER role (Media-only access for designer)
+- [ ] DESIGNER role (Media-only access for designer)
 - [ ] Role-based route protection per role
 - [ ] User action logging (who did what)
 - [ ] Add clientId to Media table (each image → one client)
+- [ ] AI content suggestions
 
 ---
 
-## Done ✅
+## Done — Version History
 
 | Version | What |
 |---------|------|
-| admin v0.12.0 | Articles: 5-step form, SEO gate, auto-save, editor upgrade, bug fixes |
+| admin v0.17.0 | Settings cascade to all entities SEO |
+| admin v0.16.0 | Changelog page, team notes with replies, time emojis |
+| admin v0.15.0 | Toast Arabic + icons, optimistic lock fix, progress fix, Arabic SEO |
+| admin v0.14.0 | Auth on authors/media/settings, industry cascade |
+| admin v0.13.0 | Security categories/tags/industries, feedback system, client labels |
+| admin v0.12.0 | Articles: 5-step form, auto-save, editor, SEO gate |
 | admin v0.11.0 | Clients: security, SEO, JSON-LD, UI overhaul |
 | admin v0.10.0 | Authors: overhaul, Person JSON-LD, cascade |
 | admin v0.9.0 | Media: redesign, image SEO, EXIF, sitemap |
-| modonty v1.17.0 | Clients security + SEO |
-| modonty v1.16.0 | Authors page + alt text fix |
-| modonty v1.15.0 | Image sitemap + SEO |
-
----
-
-## Work Order
-
-```
-Next:     Clients Arabic labels → English (64+ labels)
-  ↓
-Then:     Industry cascade to clients
-  ↓
-Then:     Authors/Media/Settings auth check
-  ↓
-Then:     Remaining SEO cache gaps
-  ↓
-Future:   Roles system, article templates, AI suggestions
-```
 
 ---
 

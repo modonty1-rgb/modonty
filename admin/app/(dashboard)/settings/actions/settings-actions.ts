@@ -672,6 +672,12 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
     });
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
+
+    // Cascade: regenerate SEO for all entities (runs in background)
+    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
+      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
+    );
+
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Site settings";
@@ -706,6 +712,12 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
     });
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
+
+    // Cascade: regenerate SEO for all entities (runs in background)
+    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
+      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
+    );
+
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Organization settings";
@@ -754,6 +766,12 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
     });
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
+
+    // Cascade: regenerate SEO for all entities (runs in background)
+    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
+      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
+    );
+
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Social Media settings";
