@@ -9,7 +9,8 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 3
-const TOAST_REMOVE_DELAY = 5000
+const TOAST_REMOVE_DELAY_SUCCESS = 4000
+const TOAST_REMOVE_DELAY_ERROR = 10000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -63,13 +64,17 @@ const addToRemoveQueue = (toastId: string) => {
     return
   }
 
+  const toast = memoryState.toasts.find(t => t.id === toastId)
+  const isError = toast?.variant === "destructive"
+  const delay = isError ? TOAST_REMOVE_DELAY_ERROR : TOAST_REMOVE_DELAY_SUCCESS
+
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId)
     dispatch({
       type: "REMOVE_TOAST",
       toastId: toastId,
     })
-  }, TOAST_REMOVE_DELAY)
+  }, delay)
 
   toastTimeouts.set(toastId, timeout)
 }

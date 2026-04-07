@@ -1,11 +1,11 @@
 import type { ArticleStatus } from "@prisma/client";
 
 const VALID_TRANSITIONS: Record<ArticleStatus, ArticleStatus[]> = {
-  WRITING: ["DRAFT"],
+  WRITING: ["DRAFT", "SCHEDULED", "PUBLISHED"],
   DRAFT: ["WRITING", "SCHEDULED", "PUBLISHED"],
-  SCHEDULED: ["PUBLISHED", "DRAFT"],
-  PUBLISHED: ["ARCHIVED"],
-  ARCHIVED: ["DRAFT"],
+  SCHEDULED: ["PUBLISHED", "DRAFT", "WRITING"],
+  PUBLISHED: ["ARCHIVED", "DRAFT"],
+  ARCHIVED: ["DRAFT", "WRITING"],
 };
 
 export function isValidTransition(from: ArticleStatus, to: ArticleStatus): boolean {
