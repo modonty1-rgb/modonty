@@ -6,22 +6,19 @@ export function analyzeSocial(data: NormalizedInput): ArticleSEOCategory {
   let score = 0;
   const checks: SEOCheckItem[] = [];
 
-  const hasOG =
-    data.ogTitle ||
-    data.ogDescription ||
-    (data.featuredImageId && data.ogTitle);
+  const hasOG = data.ogTitle || data.ogDescription || (data.featuredImageId && data.ogTitle);
   if (hasOG) {
     score += 3;
-    checks.push({ passed: true, label: "Open Graph metadata", reason: "Set" });
+    checks.push({ passed: true, label: "بيانات المشاركة", reason: "موجودة" });
   } else {
-    checks.push({ passed: false, label: "Open Graph metadata", reason: "Add OG title/description in Settings → Social" });
+    checks.push({ passed: false, label: "بيانات المشاركة", reason: "أضف عنوان ووصف في الإعدادات" });
   }
 
   if (data.twitterCard) {
     score += 2;
-    checks.push({ passed: true, label: "Twitter Card type", reason: data.twitterCard });
+    checks.push({ passed: true, label: "بطاقة تويتر", reason: data.twitterCard });
   } else {
-    checks.push({ passed: false, label: "Twitter Card type", reason: "Add in Settings → Social" });
+    checks.push({ passed: false, label: "بطاقة تويتر", reason: "أضفها في الإعدادات" });
   }
 
   const passed = checks.filter((c) => c.passed).length;

@@ -242,9 +242,9 @@ export function ArticleFormProvider({
     [formData, errors]
   );
 
-  const overallProgress = calculateOverallProgress(formData, errors);
-
   const [seoScore, setSeoScore] = useState<number>(0);
+
+  const overallProgress = calculateOverallProgress(formData, errors, seoScore);
 
   // Update SEO score in real-time (debounced to avoid excessive recalculation)
   useEffect(() => {

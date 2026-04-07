@@ -9,36 +9,36 @@ export function analyzeMetaTags(data: NormalizedInput): ArticleSEOCategory {
   const titleLength = data.seoTitle.length;
   if (titleLength >= 30 && titleLength <= 60) {
     score += 10;
-    checks.push({ passed: true, label: "SEO title 30–60 chars", reason: `${titleLength} chars` });
+    checks.push({ passed: true, label: "عنوان البحث 30–60 حرف", reason: `${titleLength} حرف — مثالي` });
   } else if (titleLength > 0 && titleLength < 30) {
     score += 5;
-    checks.push({ passed: false, label: "SEO title 30–60 chars", reason: `${titleLength} chars (too short)` });
+    checks.push({ passed: false, label: "عنوان البحث 30–60 حرف", reason: `${titleLength} حرف — قصير جداً` });
   } else if (titleLength > 60) {
     score += 5;
-    checks.push({ passed: false, label: "SEO title 30–60 chars", reason: `${titleLength} chars (too long)` });
+    checks.push({ passed: false, label: "عنوان البحث 30–60 حرف", reason: `${titleLength} حرف — طويل جداً` });
   } else {
-    checks.push({ passed: false, label: "SEO title 30–60 chars", reason: "Missing" });
+    checks.push({ passed: false, label: "عنوان البحث", reason: "مفقود — أضف عنوان في تبويب SEO" });
   }
 
   const descLength = data.seoDescription.length;
   if (descLength >= 120 && descLength <= 160) {
     score += 10;
-    checks.push({ passed: true, label: "SEO description 120–160 chars", reason: `${descLength} chars` });
+    checks.push({ passed: true, label: "وصف البحث 120–160 حرف", reason: `${descLength} حرف — مثالي` });
   } else if (descLength > 0 && descLength < 120) {
     score += 5;
-    checks.push({ passed: false, label: "SEO description 120–160 chars", reason: `${descLength} chars (too short)` });
+    checks.push({ passed: false, label: "وصف البحث 120–160 حرف", reason: `${descLength} حرف — قصير جداً` });
   } else if (descLength > 160) {
     score += 5;
-    checks.push({ passed: false, label: "SEO description 120–160 chars", reason: `${descLength} chars (too long)` });
+    checks.push({ passed: false, label: "وصف البحث 120–160 حرف", reason: `${descLength} حرف — طويل جداً` });
   } else {
-    checks.push({ passed: false, label: "SEO description 120–160 chars", reason: "Missing" });
+    checks.push({ passed: false, label: "وصف البحث", reason: "مفقود — أضف وصف في تبويب SEO" });
   }
 
   if (data.metaRobots && !data.metaRobots.includes("noindex")) {
     score += 5;
-    checks.push({ passed: true, label: "Meta robots allow indexing", reason: data.metaRobots });
+    checks.push({ passed: true, label: "الفهرسة مفعّلة", reason: data.metaRobots });
   } else {
-    checks.push({ passed: false, label: "Meta robots allow indexing", reason: "noindex blocks search engines" });
+    checks.push({ passed: false, label: "الفهرسة", reason: "محظورة — noindex يمنع ظهور المقال في البحث" });
   }
 
   const passed = checks.filter((c) => c.passed).length;

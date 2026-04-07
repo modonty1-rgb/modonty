@@ -218,7 +218,10 @@ export async function createArticle(data: ArticleFormData) {
     revalidatePath("/articles");
     await revalidateModontyTag("articles");
     try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
-    return { success: true, article };
+
+    // Re-fetch updatedAt after SEO generation
+    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, updatedAt: true } });
+    return { success: true, article: freshArticle || article };
   } catch (error) {
     console.error("Error creating article:", error);
     const message =

@@ -8,22 +8,18 @@ export function analyzeImages(data: NormalizedInput): ArticleSEOCategory {
 
   if (data.featuredImageId) {
     score += 10;
-    checks.push({ passed: true, label: "Featured image", reason: "Set" });
+    checks.push({ passed: true, label: "صورة المقال الرئيسية", reason: "موجودة" });
   } else {
-    checks.push({ passed: false, label: "Featured image", reason: "Missing" });
+    checks.push({ passed: false, label: "صورة المقال الرئيسية", reason: "مفقودة — أضف صورة من تبويب المحتوى" });
   }
 
-  if (
-    data.featuredImageId &&
-    data.featuredImageAlt &&
-    data.featuredImageAlt.length > 0
-  ) {
+  if (data.featuredImageId && data.featuredImageAlt && data.featuredImageAlt.length > 0) {
     score += 5;
-    checks.push({ passed: true, label: "Alt text for featured image", reason: "Provided" });
+    checks.push({ passed: true, label: "النص البديل للصورة", reason: "موجود" });
   } else if (data.featuredImageId) {
-    checks.push({ passed: false, label: "Alt text for featured image", reason: "Missing (add in Media)" });
+    checks.push({ passed: false, label: "النص البديل للصورة", reason: "مفقود — أضفه من صفحة الميديا" });
   } else {
-    checks.push({ passed: true, label: "Alt text for featured image", reason: "N/A (no image)" });
+    checks.push({ passed: true, label: "النص البديل للصورة", reason: "لا يوجد صورة" });
   }
 
   const passed = checks.filter((c) => c.passed).length;

@@ -6,26 +6,24 @@ export function analyzeTechnical(data: NormalizedInput): ArticleSEOCategory {
   let score = 0;
   const checks: SEOCheckItem[] = [];
 
-  // Canonical URL uses HTTPS — ranking signal
   if (data.canonicalUrl && data.canonicalUrl.startsWith("https://")) {
     score += 5;
-    checks.push({ passed: true, label: "Canonical URL uses HTTPS", reason: "Secure" });
+    checks.push({ passed: true, label: "الرابط الأساسي HTTPS", reason: "آمن" });
   } else if (data.canonicalUrl) {
     score += 2;
-    checks.push({ passed: false, label: "Canonical URL uses HTTPS", reason: "Use https://" });
+    checks.push({ passed: false, label: "الرابط الأساسي HTTPS", reason: "استخدم https://" });
   } else {
-    checks.push({ passed: false, label: "Canonical URL", reason: "Missing — needed to prevent duplicate content" });
+    checks.push({ passed: false, label: "الرابط الأساسي", reason: "مفقود — مطلوب لمنع تكرار المحتوى" });
   }
 
-  // Slug is clean and SEO-friendly
   if (data.slug && data.slug.length > 0 && data.slug.length <= 75) {
     score += 5;
-    checks.push({ passed: true, label: "URL slug is clean", reason: `/${data.slug}` });
+    checks.push({ passed: true, label: "الرابط المختصر", reason: `/${data.slug}` });
   } else if (data.slug && data.slug.length > 75) {
     score += 3;
-    checks.push({ passed: false, label: "URL slug too long", reason: `${data.slug.length} chars — keep under 75` });
+    checks.push({ passed: false, label: "الرابط المختصر طويل", reason: `${data.slug.length} حرف — اجعله أقل من 75` });
   } else {
-    checks.push({ passed: false, label: "URL slug", reason: "Missing" });
+    checks.push({ passed: false, label: "الرابط المختصر", reason: "مفقود" });
   }
 
   const passed = checks.filter((c) => c.passed).length;

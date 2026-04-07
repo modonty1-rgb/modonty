@@ -289,7 +289,10 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     revalidatePath(`/articles/${article.slug}`);
     await revalidateModontyTag("articles");
     try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
-    return { success: true, article };
+
+    // Re-fetch updatedAt after SEO generation (SEO gen updates the article record, changing updatedAt)
+    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, updatedAt: true } });
+    return { success: true, article: freshArticle || article };
   } catch (error) {
     console.error("Error updating article:", error);
     const message =

@@ -34,12 +34,12 @@ import { MetaTagsStep } from "./steps/meta-tags-step";
 import { MetaTagPreviewStep } from "./steps/metatag-preview-step";
 
 const SEO_CATEGORY_LABELS: Record<string, string> = {
-  metaTags: "Meta Tags",
-  content: "Content",
-  images: "Images",
-  structuredData: "Structured Data",
-  technical: "Technical",
-  social: "Social",
+  metaTags: "العنوان والوصف",
+  content: "المحتوى",
+  images: "الصور",
+  structuredData: "البيانات المهيكلة",
+  technical: "الإعدادات التقنية",
+  social: "التواصل الاجتماعي",
 };
 
 function getStepHint(
@@ -48,7 +48,7 @@ function getStepHint(
   formData: ReturnType<typeof useArticleForm>["formData"],
 ): string {
   if (validation.completionPercentage === 100 && !validation.hasErrors)
-    return "Complete";
+    return "مكتمل ✓";
   const missingReq = getMissingRequiredFields(step.number, formData).map(
     (x) => x.label,
   );
@@ -57,16 +57,16 @@ function getStepHint(
   );
   const parts: string[] = [];
   if (missingReq.length)
-    parts.push(`Missing required: ${missingReq.join(", ")}`);
+    parts.push(`مطلوب: ${missingReq.join("، ")}`);
   if (missingOpt.length)
-    parts.push(`Missing optional: ${missingOpt.join(", ")}`);
+    parts.push(`اختياري: ${missingOpt.join("، ")}`);
   if (validation.errors.length)
-    parts.push(`Issues: ${validation.errors[0] ?? "See form"}`);
-  return parts.join(" · ") || "Complete";
+    parts.push(`تنبيه: ${validation.errors[0] ?? "راجع النموذج"}`);
+  return parts.join(" · ") || "مكتمل ✓";
 }
 
 function getSeoStepHint(seo: ArticleSEOScoreResult | null): string {
-  if (!seo || seo.percentage === 100) return "Complete";
+  if (!seo || seo.percentage === 100) return "مكتمل ✓";
   const parts: string[] = [];
   const cats = seo.categories as Record<string, { items?: { passed: boolean; label: string; reason?: string }[] }>;
   for (const [key, cat] of Object.entries(cats)) {
@@ -76,7 +76,7 @@ function getSeoStepHint(seo: ArticleSEOScoreResult | null): string {
       parts.push(`${label}: ${f.reason ?? f.label}`);
     }
   }
-  return parts.length ? parts.join(" · ") : "Complete";
+  return parts.length ? parts.join(" · ") : "مكتمل ✓";
 }
 
 export function ArticleFormTabs() {

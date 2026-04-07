@@ -6,43 +6,38 @@ export function analyzeStructuredData(data: NormalizedInput): ArticleSEOCategory
   let score = 0;
   const checks: SEOCheckItem[] = [];
 
-  // JSON-LD structured data — critical for rich results
-  const hasSavedJsonLd =
-    typeof data.jsonLdStructuredData === "string" &&
-    data.jsonLdStructuredData.length > 0;
-  const hasCoreFieldsForJsonLd =
-    !!data.title && !!data.canonicalUrl && !!data.seoDescription;
+  const hasSavedJsonLd = typeof data.jsonLdStructuredData === "string" && data.jsonLdStructuredData.length > 0;
+  const hasCoreFieldsForJsonLd = !!data.title && !!data.canonicalUrl && !!data.seoDescription;
 
   if (hasSavedJsonLd || hasCoreFieldsForJsonLd) {
     score += 7;
     checks.push({
       passed: true,
-      label: "JSON-LD structured data",
-      reason: hasSavedJsonLd ? "Generated" : "Ready (will generate on save)",
+      label: "بيانات JSON-LD",
+      reason: hasSavedJsonLd ? "تم إنشاؤها" : "جاهزة — ستُنشأ عند الحفظ",
     });
   } else {
     checks.push({
       passed: false,
-      label: "JSON-LD structured data",
-      reason: "Fill title, description, and canonical to generate",
+      label: "بيانات JSON-LD",
+      reason: "أكمل العنوان والوصف والرابط الأساسي",
     });
   }
 
-  // Core schema fields — Google Article schema requirements
   let schemaScore = 0;
   const missing: string[] = [];
-  if (data.title && data.title.length > 0) { schemaScore += 2; } else { missing.push("title"); }
-  if (data.authorId) { schemaScore += 2; } else { missing.push("author"); }
-  if (data.datePublished) { schemaScore += 3; } else { missing.push("publish date"); }
-  if (data.canonicalUrl) { schemaScore += 3; } else { missing.push("canonical URL"); }
-  if (data.seoDescription && data.seoDescription.length > 0) { schemaScore += 3; } else { missing.push("SEO description"); }
+  if (data.title && data.title.length > 0) { schemaScore += 2; } else { missing.push("العنوان"); }
+  if (data.authorId) { schemaScore += 2; } else { missing.push("الكاتب"); }
+  if (data.datePublished) { schemaScore += 3; } else { missing.push("تاريخ النشر"); }
+  if (data.canonicalUrl) { schemaScore += 3; } else { missing.push("الرابط الأساسي"); }
+  if (data.seoDescription && data.seoDescription.length > 0) { schemaScore += 3; } else { missing.push("وصف البحث"); }
 
   score += schemaScore;
   const schemaOk = schemaScore >= 10;
   checks.push({
     passed: schemaOk,
-    label: "Core schema fields",
-    reason: schemaOk ? "All required fields present" : `Missing: ${missing.join(", ")}`,
+    label: "الحقول الأساسية",
+    reason: schemaOk ? "جميع الحقول المطلوبة موجودة" : `ينقص: ${missing.join("، ")}`,
   });
 
   const passed = checks.filter((c) => c.passed).length;
