@@ -130,9 +130,20 @@ export async function updateClient(id: string, data: ClientFormData) {
       // Don't fail the update if metadata regeneration fails
     }
 
+    // Revalidate admin paths
     revalidatePath("/clients");
     revalidatePath(`/clients/${id}`);
     revalidatePath("/media");
+
+    // Revalidate modonty public pages - fetch slug to revalidate correct path
+    const updatedClient = await db.client.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
+    if (updatedClient?.slug) {
+      revalidatePath(`/clients/${updatedClient.slug}`);
+    }
+
     await revalidateModontyTag("clients");
     await revalidateModontyTag("articles");
     
