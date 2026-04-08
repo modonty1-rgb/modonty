@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageSquarePlus, Loader2, CheckCircle2 } from "lucide-react";
+import { MessageSquarePlus, Loader2, CheckCircle2, X } from "lucide-react";
 import { sendFeedback } from "../actions/send-feedback";
 
 const TEAM_MEMBERS = [
@@ -32,6 +32,7 @@ const TEAM_MEMBERS = [
 ];
 
 export function FeedbackBanner() {
+  const [bannerVisible, setBannerVisible] = useState(true);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -58,20 +59,33 @@ export function FeedbackBanner() {
     }
   };
 
+  if (!bannerVisible) return null;
+
   return (
-    <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 flex items-center justify-center gap-3">
+    <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 flex items-center justify-between gap-3">
       <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
         This system is in beta. If something is unclear, broken, or confusing — let us know.
       </span>
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-6 px-2.5 text-[11px] gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-        onClick={() => setOpen(true)}
-      >
-        <MessageSquarePlus className="h-3 w-3" />
-        Send Note
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-6 px-2.5 text-[11px] gap-1 border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+          onClick={() => setOpen(true)}
+        >
+          <MessageSquarePlus className="h-3 w-3" />
+          Send Note
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 w-6 p-0 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
+          onClick={() => setBannerVisible(false)}
+          aria-label="Close banner"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
