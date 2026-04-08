@@ -6,8 +6,6 @@ import { ClientHero } from "./components/hero/client-hero";
 import { ClientStickyProvider } from "./components/client-tabs-nav";
 import { getClientPageData } from "./helpers/client-page-data";
 
-export const dynamic = "force-dynamic";
-
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
 const GTMClientTracker = dynamicImport(
   () => import("@/components/gtm/GTMClientTracker").then((mod) => ({ default: mod.GTMClientTracker })),

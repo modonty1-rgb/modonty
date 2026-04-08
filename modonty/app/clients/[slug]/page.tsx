@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-
-export const dynamic = "force-dynamic";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 import { getClientForMetadata } from "./helpers/client-metadata";

@@ -1,0 +1,238 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [active] [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.21.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.21.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e301]:
+              - img [ref=e302]
+              - generic [ref=e304]: Authors
+          - navigation "Main navigation" [ref=e110]:
+            - link "Modonty Modonty" [ref=e111] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e113]
+              - generic [ref=e114]: Modonty
+            - generic [ref=e116]:
+              - link "Articles" [ref=e117] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e118]:
+                  - img
+                  - generic [ref=e119]: Articles
+              - link "Clients" [ref=e120] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e121]:
+                  - img
+                  - generic [ref=e122]: Clients
+              - link "Media" [ref=e123] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e124]:
+                  - img
+                  - generic [ref=e125]: Media
+          - generic [ref=e126]:
+            - link "1" [ref=e260] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e261]:
+                - img
+                - generic [ref=e262]: "1"
+            - button "M" [ref=e129] [cursor=pointer]:
+              - generic [ref=e131]: M
+      - generic [ref=e132]:
+        - generic [ref=e133]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button "Send Note" [ref=e134] [cursor=pointer]:
+          - img
+          - text: Send Note
+      - main [ref=e135]:
+        - generic [ref=e306]:
+          - generic [ref=e307]:
+            - generic [ref=e309]:
+              - generic [ref=e310]:
+                - generic [ref=e312]: M
+                - generic [ref=e313]:
+                  - heading "Modonty" [level=1] [ref=e314]
+                  - paragraph [ref=e315]: Author Profile
+              - generic [ref=e316]:
+                - generic [ref=e317]:
+                  - img [ref=e318]
+                  - generic [ref=e321]: "8"
+                  - generic [ref=e322]: articles
+                - generic [ref=e323]:
+                  - img [ref=e324]
+                  - generic [ref=e327]: "6"
+                  - generic [ref=e328]: published
+                - generic [ref=e329]:
+                  - img [ref=e330]
+                  - generic [ref=e336]: "0"
+                  - generic [ref=e337]: social
+            - generic [ref=e340] [cursor=pointer]:
+              - generic [ref=e341]:
+                - img [ref=e342]
+                - generic [ref=e346]: SEO
+              - generic [ref=e350]:
+                - generic [ref=e351]:
+                  - generic [ref=e352]:
+                    - img [ref=e353]
+                    - generic [ref=e357]: "1"
+                  - generic [ref=e358]:
+                    - img [ref=e359]
+                    - generic [ref=e361]: "3"
+                  - generic [ref=e362]:
+                    - img [ref=e363]
+                    - generic [ref=e366]: "5"
+                - generic [ref=e367]: 63%
+          - generic [ref=e368]:
+            - img [ref=e369]
+            - paragraph [ref=e371]: "Auto on save: Canonical URL · JSON-LD · Open Graph · Twitter Card · Articles updated"
+          - generic [ref=e373]:
+            - generic [ref=e375]:
+              - generic [ref=e376]:
+                - generic [ref=e377]:
+                  - generic [ref=e378]: Full Name*
+                  - textbox "Full Name*" [ref=e379]: Modonty
+                - generic [ref=e380]:
+                  - generic [ref=e381]: Job Title
+                  - textbox "Job Title" [ref=e382]: Content Platform
+                  - paragraph [ref=e383]: "مثال: منصة محتوى، ناشر رقمي"
+              - generic [ref=e384]:
+                - generic [ref=e385]: "Slug:"
+                - code [ref=e386]: modonty
+                - generic [ref=e387]: ⚠️ Won't change after publish
+              - generic [ref=e389]:
+                - generic [ref=e390]:
+                  - text: Image
+                  - paragraph [ref=e391]: Choose an image or drag it here. It will be uploaded upon final submission of the form.
+                - generic [ref=e393] [cursor=pointer]:
+                  - img [ref=e395]
+                  - generic [ref=e398]:
+                    - paragraph [ref=e399]: Click or drag to upload image
+                    - paragraph [ref=e400]: "Supported: JPG, PNG, GIF, WebP, SVG (max 10MB)"
+              - generic [ref=e401]:
+                - generic [ref=e402]:
+                  - generic [ref=e403]: Bio
+                  - textbox "Bio" [ref=e404]: Modonty is a leading content platform providing high-quality articles and insights.
+                  - paragraph [ref=e405]: نبذة مختصرة عن الكاتب
+                - generic [ref=e407]: 83 / 100 minimum
+              - generic [ref=e409]:
+                - generic [ref=e410]:
+                  - generic [ref=e411]: Website
+                  - textbox "Website" [ref=e412]: https://modonty.com
+                - generic [ref=e413]:
+                  - generic [ref=e414]: Email
+                  - textbox "Email" [ref=e415]
+              - generic [ref=e416]:
+                - generic [ref=e417]:
+                  - generic [ref=e418]: LinkedIn
+                  - textbox "LinkedIn" [ref=e419]
+                - generic [ref=e420]:
+                  - generic [ref=e421]: X (Twitter)
+                  - textbox "X (Twitter)" [ref=e422]
+                - generic [ref=e423]:
+                  - generic [ref=e424]: Facebook
+                  - textbox "Facebook" [ref=e425]
+              - generic [ref=e427]:
+                - generic [ref=e428]:
+                  - generic [ref=e429]: Expertise Areas
+                  - textbox "Expertise Areas" [ref=e430]
+                  - paragraph [ref=e431]: مفصولة بفاصلة
+                - generic [ref=e432]:
+                  - generic [ref=e433]: Organizations
+                  - textbox "Organizations" [ref=e434]
+                  - paragraph [ref=e435]: مفصولة بفاصلة
+              - generic [ref=e436]:
+                - generic [ref=e437]: Credentials
+                - textbox "Credentials" [ref=e438]
+                - paragraph [ref=e439]: كل شهادة في سطر
+              - generic [ref=e440]:
+                - checkbox "Verified Expert" [checked] [ref=e441] [cursor=pointer]:
+                  - generic:
+                    - img
+                - checkbox [checked]
+                - generic [ref=e442] [cursor=pointer]: Verified Expert
+              - generic [ref=e444]:
+                - generic [ref=e445]:
+                  - generic [ref=e446]: SEO Title
+                  - textbox "SEO Title" [ref=e447]: Modonty - Author Profile
+                  - paragraph [ref=e448]: العنوان الذي يظهر في جوجل — 30-60 حرف
+                - generic [ref=e449]:
+                  - generic [ref=e450]: SEO Description
+                  - textbox "SEO Description" [ref=e451]: Learn more about Modonty, the author behind all content on Modonty.com
+                  - paragraph [ref=e452]: الوصف الذي يظهر في نتائج البحث — 120-160 حرف
+            - generic [ref=e453]:
+              - button "Cancel" [ref=e454] [cursor=pointer]
+              - button "Save Changes" [ref=e455] [cursor=pointer]:
+                - img
+                - text: Save Changes
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e297] [cursor=pointer]:
+    - img [ref=e298]
+  - alert [ref=e258]

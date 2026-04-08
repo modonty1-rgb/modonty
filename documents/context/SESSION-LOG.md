@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-06 12:50
+# Session Context — Last Updated: 2026-04-08 20:00
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,8 +7,57 @@
 ---
 
 ## Current Versions
-- **admin**: v0.13.0 (pushing now)
-- **modonty**: v1.17.0 (no changes this session)
+- **admin**: v0.13.0 (updated with media fixes)
+- **modonty**: v1.17.0 (updated with dynamic rendering)
+
+---
+
+## What Was Done This Session (Session 5) — Media Modal & Hero Image Rendering Fix
+
+### Problem
+Hero image was not displaying on modonty client public pages (`http://localhost:3001/clients/[slug]`) even though media was being saved to the database. Browser showed only CSS gradient placeholder.
+
+### Root Cause
+Client pages were being statically generated and cached. When database was updated with new media, the static cached version wasn't being refreshed.
+
+### Solution Implemented
+
+#### 1. Enable Dynamic Rendering (Modonty)
+- Added `export const dynamic = "force-dynamic"` to `modonty/app/clients/[slug]/layout.tsx`
+- Added `export const dynamic = "force-dynamic"` to `modonty/app/clients/[slug]/page.tsx`
+- **Why**: Official Next.js 16 docs confirm `force-dynamic` ensures routes render fresh data on every request instead of using static cache
+- **Verified**: Against official Next.js 16 documentation via Context7
+
+#### 2. Revalidate Modonty Pages on Admin Update (Admin)
+- Updated `admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts`
+- After client update, fetch slug and call `revalidatePath(`/clients/${slug}`)`
+- Ensures media changes in admin immediately reflect on public pages
+- **Commits**: 
+  - `51027ed` Fix: Enable dynamic rendering for client pages to reflect media updates
+  - `31b2100` Fix: Revalidate modonty client page when media is updated from admin
+
+### Files Modified
+- `modonty/app/clients/[slug]/layout.tsx` — Added `export const dynamic = "force-dynamic"`
+- `modonty/app/clients/[slug]/page.tsx` — Added `export const dynamic = "force-dynamic"`
+- `admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts` — Added modonty path revalidation
+
+### Previous Session Fixes (Already Applied)
+- Created `clientMediaSchema` for media-only form validation
+- Fixed `use-client-media-modal.ts` to not strip media IDs with || undefined
+- Media modal form validation now uses dedicated schema instead of full 50+ field schema
+
+### TypeScript Status
+- ✅ `pnpm tsc --noEmit --project admin/tsconfig.json` — ZERO errors
+- ✅ `pnpm tsc --noEmit --project modonty/tsconfig.json` — ZERO errors
+
+### Next Steps for Testing
+1. Start dev servers: `pnpm dev`
+2. Create/edit client with media modal
+3. Upload hero image and logo
+4. Save modal changes
+5. Navigate to public modonty client page
+6. Verify hero image and logo display as actual images (not CSS gradients)
+7. Verify changes are reflected immediately (within seconds)
 
 ---
 
