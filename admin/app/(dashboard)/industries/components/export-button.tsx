@@ -6,6 +6,7 @@ import { Download, Loader2 } from "lucide-react";
 import { exportIndustriesToCSV } from "../actions/export-actions";
 import { IndustryFilters } from "../actions/industries-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 interface ExportButtonProps {
   filters?: IndustryFilters;
@@ -40,14 +41,14 @@ export function ExportButton({ filters }: ExportButtonProps) {
       document.body.removeChild(link);
       
       toast({
-        title: "تم التصدير",
-        description: "تم تصدير القطاعات بنجاح",
+        title: messages.success.exported,
+        description: messages.descriptions.industries_exported,
         variant: "success",
       });
     } catch (error) {
       toast({
-        title: "فشل التصدير",
-        description: "تعذّر تصدير القطاعات",
+        title: messages.error.export_failed,
+        description: messages.descriptions.industries_export_failed,
         variant: "destructive",
       });
     } finally {

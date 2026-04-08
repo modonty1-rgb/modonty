@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { messages } from "@/lib/messages";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -49,22 +50,22 @@ export function ClientRowActions({ clientId }: ClientRowActionsProps) {
       const result = await deleteClient(clientId);
       if (result.success) {
         toast({
-          title: "تم الحذف",
-          description: "تم حذف العميل بنجاح",
+          title: messages.success.deleted,
+          description: messages.descriptions.client_deleted,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشل الحذف",
+          title: messages.error.delete_failed,
           description: result.error || "تعذّر حذف العميل",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "فشل الحذف",
-        description: "تعذّر حذف العميل",
+        title: messages.error.delete_failed,
+        description: messages.descriptions.client_delete_failed,
         variant: "destructive",
       });
     } finally {

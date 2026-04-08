@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,8 +16,8 @@ export function ExportButton({ data, filename = "analytics-data" }: ExportButton
   const handleExport = () => {
     if (!data || data.length === 0) {
       toast({
-        title: "No data",
-        description: "No data to export",
+        title: messages.error.operation_failed,
+        description: messages.descriptions.article_no_data,
         variant: "destructive",
       });
       return;

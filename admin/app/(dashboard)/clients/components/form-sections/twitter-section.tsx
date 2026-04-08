@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { messages } from "@/lib/messages";
 import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { MediaPicker } from "@/components/shared/media-picker";
 import { CharacterCounter } from "@/components/shared/character-counter";
@@ -51,12 +52,12 @@ export function TwitterSection({
     const result = await updateMedia(twitterImageMediaId, { altText: newAltText });
     if (result.success) {
       toast({
-        title: "Alt text updated",
-        description: "Twitter image alt text has been updated in the media library.",
+        title: messages.success.updated,
+        description: "Alt text saved",
       });
     } else {
       toast({
-        title: "Error",
+        title: messages.error.server_error,
         description: result.error || "Failed to update alt text",
         variant: "destructive",
       });

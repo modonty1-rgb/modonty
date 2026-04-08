@@ -6,6 +6,7 @@ import { Loader2, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useArticleForm } from './article-form-context';
 import { useState, useEffect, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -31,8 +32,8 @@ export function StickySaveButton() {
       if (result.success) {
         setSaved(true);
         toast({
-          title: 'تم الحفظ',
-          description: 'تم حفظ المقال بنجاح',
+          title: messages.success.saved,
+          description: messages.descriptions.article_save_success,
           variant: 'success',
         });
 
@@ -42,15 +43,15 @@ export function StickySaveButton() {
         }
       } else {
         toast({
-          title: 'فشل الحفظ',
-          description: result.error || 'حدث خطأ أثناء الحفظ. حاول مرة أخرى',
+          title: messages.error.server_error,
+          description: result.error || messages.descriptions.save_error,
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'فشل الحفظ',
-        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
+        title: messages.error.save_failed,
+        description: error instanceof Error ? error.message : messages.descriptions.unexpected_error,
         variant: 'destructive',
       });
     } finally {

@@ -8,6 +8,7 @@ import { MediaGrid } from "./media-grid";
 import { MediaToolbar } from "./media-toolbar";
 import { deleteMedia, canDeleteMedia } from "../actions/media-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -131,7 +132,7 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
       setDeleteDialogOpen(true);
     } catch {
       setIsChecking(false);
-      toast({ title: "فشل الحذف", description: "تعذّر التحقق من استخدام الملف.", variant: "destructive" });
+      toast({ title: messages.error.delete_failed, description: messages.descriptions.media_verify_failed, variant: "destructive" });
     }
   };
 
@@ -141,13 +142,13 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
     try {
       const result = await deleteMedia(deleteTarget.id);
       if (result.success) {
-        toast({ title: "تم الحذف", description: "تم حذف الملف بنجاح", variant: "success" });
+        toast({ title: messages.success.deleted, description: messages.descriptions.media_deleted, variant: "success" });
         router.refresh();
       } else {
-        toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف الملف.", variant: "destructive" });
+        toast({ title: messages.error.delete_failed, description: result.error || messages.descriptions.media_delete_failed, variant: "destructive" });
       }
     } catch {
-      toast({ title: "فشل الحذف", description: "حدث خطأ غير متوقع.", variant: "destructive" });
+      toast({ title: messages.error.delete_failed, description: messages.descriptions.unexpected_error, variant: "destructive" });
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);

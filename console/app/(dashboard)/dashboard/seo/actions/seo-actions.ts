@@ -3,6 +3,7 @@
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 export async function createSeoIntake(
   clientId: string,
@@ -14,7 +15,7 @@ export async function createSeoIntake(
       where: { id: clientId },
       select: { id: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
+    if (!client) return { success: false, error: messages.error.notFound };
 
     const existing = await db.seoIntake.findFirst({
       where: { clientId },
@@ -45,8 +46,7 @@ export async function createSeoIntake(
     revalidatePath("/dashboard/seo");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Create failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 
@@ -66,7 +66,7 @@ export async function createCompetitor(
       where: { id: clientId },
       select: { id: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
+    if (!client) return { success: false, error: messages.error.notFound };
 
     await db.clientCompetitor.create({
       data: {
@@ -82,8 +82,7 @@ export async function createCompetitor(
     revalidatePath("/dashboard/seo");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Create failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 
@@ -139,7 +138,7 @@ export async function createKeyword(
       where: { id: clientId },
       select: { id: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
+    if (!client) return { success: false, error: messages.error.notFound };
 
     await db.clientKeyword.create({
       data: {
@@ -155,8 +154,7 @@ export async function createKeyword(
     revalidatePath("/dashboard/seo");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Create failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 

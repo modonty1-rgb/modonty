@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Edit, Trash2, Eye } from "lucide-react";
 import { deleteIndustry } from "../actions/industries-actions";
@@ -19,9 +20,9 @@ export function IndustryRowActions({ industryId }: { industryId: string }) {
     setIsDeleting(true);
     try {
       const result = await deleteIndustry(industryId);
-      if (result.success) { toast({ title: "تم الحذف", description: "تم حذف القطاع بنجاح", variant: "success" }); router.refresh(); }
-      else { toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف القطاع", variant: "destructive" }); }
-    } catch { toast({ title: "فشل الحذف", description: "تعذّر حذف القطاع", variant: "destructive" }); }
+      if (result.success) { toast({ title: messages.success.deleted, description: messages.descriptions.industry_deleted, variant: "success" }); router.refresh(); }
+      else { toast({ title: messages.error.delete_failed, description: result.error || messages.descriptions.industry_delete_failed, variant: "destructive" }); }
+    } catch { toast({ title: messages.error.delete_failed, description: messages.descriptions.industry_delete_failed, variant: "destructive" }); }
     finally { setIsDeleting(false); }
   };
 

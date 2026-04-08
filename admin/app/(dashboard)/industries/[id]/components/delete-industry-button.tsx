@@ -16,6 +16,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteIndustry } from "../../actions/industries-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 export function DeleteIndustryButton({ industryId }: { industryId: string }) {
   const router = useRouter();
@@ -33,7 +34,7 @@ export function DeleteIndustryButton({ industryId }: { industryId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "تعذّر حذف القطاع",
         variant: "destructive",
       });

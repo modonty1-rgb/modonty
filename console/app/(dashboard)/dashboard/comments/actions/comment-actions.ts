@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
+import { messages } from "@/lib/messages";
 
 export async function approveComment(commentId: string, clientId: string) {
   try {
@@ -14,7 +15,7 @@ export async function approveComment(commentId: string, clientId: string) {
     });
 
     if (!comment) {
-      return { success: false, error: "Comment not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.comment.update({
@@ -25,8 +26,7 @@ export async function approveComment(commentId: string, clientId: string) {
     revalidatePath("/dashboard/comments");
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Approval failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 
@@ -40,7 +40,7 @@ export async function rejectComment(commentId: string, clientId: string) {
     });
 
     if (!comment) {
-      return { success: false, error: "Comment not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.comment.update({
@@ -66,7 +66,7 @@ export async function deleteComment(commentId: string, clientId: string) {
     });
 
     if (!comment) {
-      return { success: false, error: "Comment not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.comment.update({

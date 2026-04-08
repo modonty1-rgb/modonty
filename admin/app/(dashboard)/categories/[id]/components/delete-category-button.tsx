@@ -16,6 +16,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteCategory } from "../../actions/categories-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 interface DeleteCategoryButtonProps {
   categoryId: string;
@@ -37,7 +38,7 @@ export function DeleteCategoryButton({ categoryId }: DeleteCategoryButtonProps) 
       setLoading(false);
       setOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "تعذّر حذف التصنيف",
         variant: "destructive",
       });

@@ -19,6 +19,7 @@ import {
 import { Edit, Trash2, ChevronUp, ChevronDown, Eye, EyeOff, GripVertical } from "lucide-react";
 import { deleteFAQ, toggleFAQStatus, bulkUpdatePositions } from "../actions/faq-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 interface FAQ {
   id: string;
@@ -47,10 +48,10 @@ export function FAQList({ faqs }: FAQListProps) {
     try {
       const result = await deleteFAQ(faqToDelete.id);
       if (result.success) {
-        toast({ title: "تم الحذف", description: "تم حذف السؤال", variant: "success" });
+        toast({ title: messages.success.deleted, description: messages.descriptions.faq_deleted, variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "فشل الحذف", description: result.error || "تعذّر حذف السؤال" });
+        toast({ variant: "destructive", title: messages.error.delete_failed, description: result.error || messages.descriptions.faq_update_failed });
       }
     } finally {
       setLoading(null);
@@ -64,10 +65,10 @@ export function FAQList({ faqs }: FAQListProps) {
     try {
       const result = await toggleFAQStatus(id);
       if (result.success) {
-        toast({ title: "تم التحديث", description: "تم تغيير حالة السؤال", variant: "success" });
+        toast({ title: messages.success.updated, description: messages.descriptions.faq_status_changed, variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "فشل التحديث", description: result.error || "تعذّر تغيير الحالة" });
+        toast({ variant: "destructive", title: messages.error.update_failed, description: result.error || messages.descriptions.faq_update_failed });
       }
     } finally {
       setLoading(null);
@@ -93,7 +94,7 @@ export function FAQList({ faqs }: FAQListProps) {
       if (result.success) {
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "فشل الترتيب", description: result.error || "تعذّر تغيير الترتيب" });
+        toast({ variant: "destructive", title: messages.error.operation_failed, description: result.error || "تعذّر تغيير الترتيب" });
       }
     } finally {
       setLoading(null);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -69,7 +70,7 @@ export function TierForm({ initialData }: TierFormProps) {
 
     if (result.success) {
       toast({
-        title: "Plan Updated",
+        title: messages.success.updated,
         description: `${formData.name} plan has been saved successfully.`,
       });
       router.push("/subscription-tiers");
@@ -139,7 +140,7 @@ export function TierForm({ initialData }: TierFormProps) {
                 value={formData.articlesPerMonth.toString()}
                 onChange={(e) => setFormData({ ...formData, articlesPerMonth: parseInt(e.target.value) || 0 })}
                 required
-                hint="How many articles the client gets monthly"
+                hint={messages.hints.subscriptionTier.features}
               />
               <FormInput
                 label="Price (SAR / Year)"
@@ -148,7 +149,7 @@ export function TierForm({ initialData }: TierFormProps) {
                 value={formData.price.toString()}
                 onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
                 required
-                hint="Annual subscription price"
+                hint={messages.hints.subscriptionTier.price}
                 step="0.01"
               />
             </div>
@@ -159,7 +160,7 @@ export function TierForm({ initialData }: TierFormProps) {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
               placeholder="What's included in this plan..."
-              hint="Shown to clients when choosing a plan"
+              hint={messages.hints.subscriptionTier.description}
             />
           </CardContent>
         </Card>

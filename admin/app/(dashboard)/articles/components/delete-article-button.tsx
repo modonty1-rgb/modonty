@@ -15,6 +15,7 @@ import {
 import { Trash2 } from 'lucide-react';
 import { deleteArticle } from '../actions/articles-actions';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 
 interface DeleteArticleButtonProps {
   articleId: string;
@@ -36,8 +37,8 @@ export function DeleteArticleButton({ articleId }: DeleteArticleButtonProps) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to delete article',
+        title: messages.error.error,
+        description: result.error || messages.error.delete_failed,
         variant: 'destructive',
       });
     }

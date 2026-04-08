@@ -231,6 +231,43 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
 
+                  <AccordionItem value="media" className="border border-white/10 rounded-lg bg-white/5">
+                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                      Media & Social
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <MediaSocialSection form={form} clientId={clientId} initialData={initialData} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="seo" className="border border-white/10 rounded-lg bg-white/5">
+                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                      SEO Details
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <SEOSection form={form} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="seo-validation" className="border border-white/10 rounded-lg bg-white/5">
+                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                      SEO Validation
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <ClientSEOValidationSection
+                          formData={watchedValues}
+                          clientId={clientId}
+                          mode="edit"
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
                   <AccordionItem value="settings" className="border border-white/10 rounded-lg bg-white/5">
                     <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
                       Settings

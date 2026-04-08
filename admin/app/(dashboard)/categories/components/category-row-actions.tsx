@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,22 +43,22 @@ export function CategoryRowActions({ categoryId }: CategoryRowActionsProps) {
       const result = await deleteCategory(categoryId);
       if (result.success) {
         toast({
-          title: "تم الحذف",
-          description: "تم حذف التصنيف بنجاح",
+          title: messages.success.deleted,
+          description: messages.descriptions.category_deleted,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشل الحذف",
-          description: result.error || "تعذّر حذف التصنيف",
+          title: messages.error.delete_failed,
+          description: result.error || messages.descriptions.category_delete_failed,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "فشل الحذف",
-        description: "تعذّر حذف التصنيف",
+        title: messages.error.delete_failed,
+        description: messages.descriptions.category_delete_failed,
         variant: "destructive",
       });
     } finally {

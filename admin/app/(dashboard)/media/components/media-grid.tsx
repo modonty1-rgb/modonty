@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { messages } from "@/lib/messages";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { format } from "date-fns";
 import NextImage from "next/image";
@@ -67,9 +68,9 @@ export function MediaGrid({
   const copyUrl = async (item: Media) => {
     try {
       await navigator.clipboard.writeText(getImageUrl(item));
-      toast({ title: "تم النسخ", description: "تم نسخ رابط الصورة", variant: "success" });
+      toast({ title: messages.success.copied, description: messages.descriptions.media_copied, variant: "success" });
     } catch {
-      toast({ title: "فشل النسخ", description: "تعذّر نسخ الرابط.", variant: "destructive" });
+      toast({ title: messages.error.copy_failed, description: messages.descriptions.media_copy_failed, variant: "destructive" });
     }
   };
 

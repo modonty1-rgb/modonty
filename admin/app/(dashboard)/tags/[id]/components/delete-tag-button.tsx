@@ -16,6 +16,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteTag } from "../../actions/tags-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 export function DeleteTagButton({ tagId }: { tagId: string }) {
   const router = useRouter();
@@ -33,7 +34,7 @@ export function DeleteTagButton({ tagId }: { tagId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "تعذّر حذف الوسم",
         variant: "destructive",
       });

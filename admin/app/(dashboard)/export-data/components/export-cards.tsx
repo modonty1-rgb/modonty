@@ -31,6 +31,7 @@ import {
   Megaphone,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { exportArticlesToCSV } from "../../articles/actions/export-actions";
 import { exportClientsToCSV } from "../../clients/actions/export-actions";
 import { exportCategoriesToCSV } from "../../categories/actions/export-actions";
@@ -151,9 +152,9 @@ export function ExportCards({ counts }: ExportCardsProps) {
       const csv = await generateCsv(config.id);
       downloadCsv(config.id, csv);
       setCompleted((prev) => new Set(prev).add(config.id));
-      toast({ title: "Downloaded", description: `${config.title} export is ready.` });
+      toast({ title: messages.success.exported, description: `${config.title} export is ready.` });
     } catch {
-      toast({ title: "Export Failed", description: `Could not export ${config.title}. Please try again.`, variant: "destructive" });
+      toast({ title: messages.error.export_failed, description: `Could not export ${config.title}. Please try again.`, variant: "destructive" });
     } finally {
       setLoadingId(null);
     }
@@ -176,7 +177,7 @@ export function ExportCards({ counts }: ExportCardsProps) {
     }
     setLoadingAll(false);
     toast({
-      title: "All Done",
+      title: messages.success.success,
       description: `${successCount} of ${exportConfigs.length} files downloaded.`,
     });
   };

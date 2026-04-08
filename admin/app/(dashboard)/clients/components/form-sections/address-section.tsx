@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { messages } from "@/lib/messages";
 import { FormInput } from "@/components/admin/form-field";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
@@ -21,7 +22,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCountry", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCountry?.message}
           placeholder="SA (Saudi Arabia)"
-          hint="يُستخدم في Schema.org لتحديد منطقة الخدمة"
+          hint={messages.hints.client.region}
         />
         <FormInput
           name="addressRegion"
@@ -30,7 +31,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressRegion", e.target.value || null, { shouldValidate: true })}
           error={errors.addressRegion?.message}
           placeholder="e.g., Riyadh, Dubai, London"
-          hint="يظهر في بيانات الموقع الجغرافي — Schema.org"
+          hint={messages.hints.client.city}
         />
         <FormInput
           name="addressCity"
@@ -39,7 +40,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressCity", e.target.value || null, { shouldValidate: true })}
           error={errors.addressCity?.message}
           placeholder="e.g., Riyadh"
-          hint="يظهر في بيانات العنوان — Schema.org"
+          hint={messages.hints.client.postalCode}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr_1fr] gap-5">
@@ -64,7 +65,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLatitude?.message}
           placeholder="e.g., 24.7136"
-          hint="إحداثيات الخريطة — Schema.org GeoCoordinates"
+          hint={messages.hints.client.latitude}
         />
         <FormInput
           name="addressLongitude"
@@ -79,7 +80,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           }}
           error={errors.addressLongitude?.message}
           placeholder="e.g., 46.6753"
-          hint="إحداثيات الخريطة — Schema.org GeoCoordinates"
+          hint={messages.hints.client.latitude}
         />
       </div>
       <div>
@@ -100,7 +101,7 @@ export function AddressSection({ form }: AddressSectionProps) {
           onChange={(e) => setValue("addressPostalCode", e.target.value || null, { shouldValidate: true })}
           error={errors.addressPostalCode?.message}
           placeholder="12345-6789"
-          hint="الرمز البريدي — إلزامي من 2026"
+          hint={messages.hints.client.postalCode}
         />
         <FormInput
           name="addressBuildingNumber"

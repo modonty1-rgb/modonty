@@ -7,6 +7,7 @@ import { useArticleForm } from './article-form-context';
 import { generateTestData } from '../helpers/generate-test-data';
 import { getTestDataSources } from '../actions/articles-actions/queries/get-test-data-sources';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 
 export function TestDataButton() {
   const { updateFields, clients, categories, authors, tags } = useArticleForm();
@@ -22,8 +23,8 @@ export function TestDataButton() {
     // Check if we have basic data available
     if (clients.length === 0 || categories.length === 0 || authors.length === 0) {
       toast({
-        title: 'بيانات غير كافية',
-        description: 'يرجى التأكد من وجود عملاء وتصنيفات وكُتّاب في قاعدة البيانات',
+        title: messages.error.error,
+        description: messages.descriptions.database_check_required,
         variant: 'destructive',
       });
       return;
@@ -65,15 +66,15 @@ export function TestDataButton() {
       updateFields(testData);
       
       toast({
-        title: 'تم التحميل',
-        description: 'تم إنشاء بيانات تجريبية بنجاح',
+        title: messages.success.success,
+        description: messages.descriptions.test_data_created,
         variant: 'success',
       });
     } catch (error) {
       console.error('Error filling test data:', error);
       toast({
-        title: 'فشل التحميل',
-        description: 'فشل إنشاء البيانات التجريبية',
+        title: messages.error.failed,
+        description: messages.descriptions.test_data_failed,
         variant: 'destructive',
       });
     } finally {

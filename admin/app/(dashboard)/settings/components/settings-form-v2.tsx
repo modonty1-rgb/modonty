@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { Building2, Shield, RefreshCw, Download, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -359,7 +360,7 @@ export function SettingsFormV2() {
     getAllSettings()
       .then((data) => { setSettings(data); setIsLoading(false); })
       .catch(() => {
-        toast({ title: "فشل التحميل", description: "تعذّر تحميل الإعدادات", variant: "destructive" });
+        toast({ title: messages.error.server_error, description: messages.descriptions.settings_load_failed, variant: "destructive" });
         setIsLoading(false);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -382,7 +383,7 @@ export function SettingsFormV2() {
       saveModontySettings(settings),
     ]);
     const ok = results.every((r) => r.success);
-    toast({ title: ok ? "تم الحفظ" : "فشل الحفظ", description: ok ? "تم حفظ الإعدادات بنجاح" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
+    toast({ title: ok ? messages.success.saved : messages.error.update_failed, description: ok ? "تم حفظ الإعدادات بنجاح" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
     setIsSaving(false);
   }
 
@@ -391,9 +392,9 @@ export function SettingsFormV2() {
     const r = await applyTechnicalDefaults();
     if (r.success) {
       setSettings(await getAllSettings());
-      toast({ title: "تم التطبيق", description: r.updated > 0 ? `تم تحديث ${r.updated} قيمة افتراضية` : "جميع القيم الافتراضية صحيحة", variant: "success" });
+      toast({ title: messages.success.updated, description: r.updated > 0 ? `تم تحديث ${r.updated} قيمة افتراضية` : "جميع القيم الافتراضية صحيحة", variant: "success" });
     } else {
-      toast({ title: "فشل التطبيق", description: r.error, variant: "destructive" });
+      toast({ title: messages.error.operation_failed, description: r.error, variant: "destructive" });
     }
     setIsSaving(false);
   }

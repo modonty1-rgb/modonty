@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { updatePage } from "../../actions/page-actions";
 import { generateModontyPageSEO } from "../../actions/generate-modonty-page-seo";
 import { pageSchema, type PageFormData } from "../page-schema";
@@ -185,10 +186,10 @@ export function usePageForm({ slug, initialData, settingsDefaults, onRegenerated
     try {
       const result = await generateModontyPageSEO(slug);
       if (result.success) {
-        toast({ title: "SEO Updated", description: "SEO data regenerated successfully" });
+        toast({ title: messages.success.updated, description: "SEO data regenerated successfully" });
         onRegenerated?.();
       } else {
-        toast({ variant: "destructive", title: "Error", description: "Could not regenerate SEO data. Please try again." });
+        toast({ variant: "destructive", title: messages.error.server_error, description: "Could not regenerate SEO data. Please try again." });
       }
     } finally {
       setSeoGenerating(false);
@@ -244,12 +245,12 @@ export function usePageForm({ slug, initialData, settingsDefaults, onRegenerated
         if (result.warning) {
           toast({
             variant: "destructive",
-            title: "Page saved with warning",
+            title: messages.success.updated,
             description: result.warning,
           });
         } else {
           toast({
-            title: "Page saved",
+            title: messages.success.updated,
             description: "Page saved and SEO data regenerated",
           });
         }

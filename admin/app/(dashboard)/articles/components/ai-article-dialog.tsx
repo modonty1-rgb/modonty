@@ -24,6 +24,7 @@ import { Loader2, Sparkles, CheckCircle, XCircle, RefreshCw } from 'lucide-react
 import { generateArticleAI } from '../actions/generate-article-ai';
 import { useArticleForm } from './article-form-context';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 import { slugify } from '../helpers/seo-helpers';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -173,8 +174,8 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
     });
 
     toast({
-      title: 'Content Applied',
-      description: 'Form has been filled with generated content successfully',
+      title: messages.success.success,
+      description: messages.descriptions.form_filled,
     });
 
     onOpenChange(false);

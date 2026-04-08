@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { messages } from "@/lib/messages";
 import { FormInput, FormField, FormSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import { Link2 } from "lucide-react";
@@ -59,14 +60,14 @@ export function BasicInfoSection({
           value={name || ""}
           onChange={(e) => form.setValue("name", e.target.value, { shouldValidate: true })}
           error={errors.name?.message}
-          hint="يظهر في المقالات والمحتوى المنشور"
+          hint={messages.hints.client.name}
           required
         />
         <FormField
           label="Slug"
           name="slug"
           error={errors.slug?.message}
-          hint="يُنشأ تلقائياً من الاسم — يُستخدم في روابط الصفحات"
+          hint={messages.hints.client.slug}
         >
           <div className="space-y-2">
             <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm items-center gap-2">
@@ -129,7 +130,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("phone", e.target.value || null, { shouldValidate: true })}
           error={errors.phone?.message}
           placeholder="+966 11 123 4567"
-          hint="يظهر في بيانات التواصل وSchema.org"
+          hint={messages.hints.client.email}
         />
         <FormSelect
           label="Contact Type"
@@ -138,7 +139,7 @@ export function BasicInfoSection({
           onValueChange={(value) => form.setValue("contactType", value ? (value as string) : null, { shouldValidate: true })}
           error={errors.contactType?.message}
           placeholder="Select type"
-          hint="نوع التواصل في Schema.org ContactPoint"
+          hint={messages.hints.client.contactType}
         >
           <SelectItem value="customer service">Customer Service</SelectItem>
           <SelectItem value="sales">Sales</SelectItem>

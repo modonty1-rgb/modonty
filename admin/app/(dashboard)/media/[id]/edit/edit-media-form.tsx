@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
 import { updateMedia, renameCloudinaryAsset, deleteCloudinaryAsset } from "../../actions/media-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import NextImage from "next/image";
 import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { MediaType } from "@prisma/client";
@@ -87,7 +88,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
 
     const error = validateFile(file);
     if (error) {
-      toast({ title: "فشل الرفع", description: error, variant: "destructive" });
+      toast({ title: messages.error.upload_failed, description: error, variant: "destructive" });
       return;
     }
 
@@ -129,7 +130,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
         if (!cloudName || !uploadPreset) {
-          toast({ title: "فشل الرفع", description: "إعدادات Cloudinary مفقودة.", variant: "destructive" });
+          toast({ title: messages.error.upload_failed, description: messages.descriptions.cloudinary_missing, variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -140,7 +141,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         const publicId = generateCloudinaryPublicId(seoFileName, folderPath);
 
         if (!isValidCloudinaryPublicId(publicId)) {
-          toast({ title: "فشل الرفع", description: "اسم الملف المُولَّد غير صالح.", variant: "destructive" });
+          toast({ title: messages.error.upload_failed, description: messages.descriptions.invalid_filename, variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -160,7 +161,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
 
           if (!uploadResponse.ok) {
             const errorMessage = await getCloudinaryErrorMessage(uploadResponse);
-            toast({ title: "فشل الرفع", description: errorMessage, variant: "destructive" });
+            toast({ title: messages.error.upload_failed, description: errorMessage, variant: "destructive" });
             setIsSaving(false);
             return;
           }
@@ -185,7 +186,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
             await deleteCloudinaryAsset(media.cloudinaryPublicId, oldResourceType);
           }
         } catch (error) {
-          toast({ title: "فشل الرفع", description: error instanceof Error ? error.message : "تعذّر رفع الملف", variant: "destructive" });
+          toast({ title: messages.error.upload_failed, description: error instanceof Error ? error.message : "تعذّر رفع الملف", variant: "destructive" });
           setIsSaving(false);
           return;
         }
@@ -223,7 +224,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
               newCloudinaryPublicId = renameResult.newPublicId;
               newCloudinaryUrl = renameResult.newUrl || media.url;
             } else {
-              toast({ title: "فشل الرفع", description: renameResult.error || "تعذّرت إعادة تسمية الملف في Cloudinary.", variant: "destructive" });
+              toast({ title: messages.error.upload_failed, description: renameResult.error || "تعذّرت إعادة تسمية الملف في Cloudinary.", variant: "destructive" });
             }
           }
         }
@@ -250,14 +251,14 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
       });
 
       if (result.success) {
-        toast({ title: "تم التحديث", description: "تم تحديث بيانات الملف بنجاح", variant: "success" });
+        toast({ title: messages.success.updated, description: messages.descriptions.media_metadata_updated, variant: "success" });
         router.refresh();
         router.push("/media");
       } else {
         throw new Error(result.error || "Failed to update media");
       }
     } catch (error) {
-      toast({ title: "فشل التحديث", description: error instanceof Error ? error.message : "تعذّر تحديث بيانات الملف", variant: "destructive" });
+      toast({ title: messages.error.update_failed, description: error instanceof Error ? error.message : "تعذّر تحديث بيانات الملف", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }

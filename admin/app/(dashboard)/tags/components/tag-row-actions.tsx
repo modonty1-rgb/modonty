@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Edit, Trash2, Eye } from "lucide-react";
 import { deleteTag } from "../actions/tags-actions";
@@ -19,9 +20,9 @@ export function TagRowActions({ tagId }: { tagId: string }) {
     setIsDeleting(true);
     try {
       const result = await deleteTag(tagId);
-      if (result.success) { toast({ title: "تم الحذف", description: "تم حذف الوسم بنجاح", variant: "success" }); router.refresh(); }
-      else { toast({ title: "فشل الحذف", description: result.error || "تعذّر حذف الوسم", variant: "destructive" }); }
-    } catch { toast({ title: "فشل الحذف", description: "تعذّر حذف الوسم", variant: "destructive" }); }
+      if (result.success) { toast({ title: messages.success.deleted, description: messages.descriptions.tag_deleted, variant: "success" }); router.refresh(); }
+      else { toast({ title: messages.error.delete_failed, description: result.error || messages.descriptions.tag_delete_failed, variant: "destructive" }); }
+    } catch { toast({ title: messages.error.delete_failed, description: messages.descriptions.tag_delete_failed, variant: "destructive" }); }
     finally { setIsDeleting(false); }
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { messages } from "@/lib/messages";
 import { MediaPicker } from "@/components/shared/media-picker";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
@@ -43,12 +44,12 @@ export function MediaSection({
     const result = await updateMedia(logoMediaId, { altText: newAltText });
     if (result.success) {
       toast({
-        title: "Alt text updated",
-        description: "Logo alt text has been updated in the media library.",
+        title: messages.success.updated,
+        description: "Alt text saved",
       });
     } else {
       toast({
-        title: "Error",
+        title: messages.error.server_error,
         description: result.error || "Failed to update alt text",
         variant: "destructive",
       });
@@ -62,7 +63,7 @@ export function MediaSection({
     if (result.success) {
       toast({
         title: "Alt text updated",
-        description: "OG image alt text has been updated in the media library.",
+        description: "Alt text saved",
       });
     } else {
       toast({

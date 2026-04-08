@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { messages } from "@/lib/messages";
 import { useRouter, usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -580,7 +581,7 @@ export function ClientSEOValidationSection({
                           source: "Clients → Edit → Meta",
                           content: JSON.stringify(metaPreview, null, 2),
                           sourceType: "preview",
-                          description: "Client meta tags (title, Open Graph, Twitter)",
+                          description: "Meta tags copied",
                           returnUrl: pathname ?? "/clients",
                         })
                       );
@@ -633,7 +634,7 @@ export function ClientSEOValidationSection({
                           source: "Clients → Edit → JSON-LD",
                           content: JSON.stringify(jsonLd, null, 2),
                           sourceType: "preview",
-                          description: "Client JSON-LD (Organization schema)",
+                          description: "JSON-LD copied",
                           returnUrl: pathname ?? "/clients",
                         })
                       );

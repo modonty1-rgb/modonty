@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { messages } from "@/lib/messages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -177,10 +178,10 @@ export function SeoOverviewClient({ listPages, contentPages, stats }: SeoOvervie
         ? await regenerateListPageSeo(id)
         : await regenerateContentPageSeo(id);
       if (result.success) {
-        toast({ title: "تم التحديث", description: "تم تحديث بيانات البحث", variant: "success" });
+        toast({ title: messages.success.updated, description: messages.descriptions.search_data_updated, variant: "success" });
         router.refresh();
       } else {
-        toast({ variant: "destructive", title: "فشل التحديث", description: result.error || "تعذّر تحديث بيانات البحث" });
+        toast({ variant: "destructive", title: messages.error.update_failed, description: result.error || messages.descriptions.search_data_updated });
       }
     } finally {
       setRegenerating(null);

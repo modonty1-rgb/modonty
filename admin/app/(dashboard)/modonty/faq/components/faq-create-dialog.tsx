@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, AlertCircle, Loader2 } from "lucide-react";
 import { createFAQ } from "../actions/faq-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 export function FAQCreateDialog() {
   const router = useRouter();
@@ -53,8 +54,8 @@ export function FAQCreateDialog() {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: "FAQ created successfully",
+          title: messages.success.created,
+          description: messages.descriptions.faq_created,
         });
         resetForm();
         setOpen(false);

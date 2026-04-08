@@ -8,6 +8,7 @@ import { clientFormSchema, type ClientFormSchemaType } from "../client-form-sche
 import { mapInitialDataToFormData } from "../map-initial-data-to-form-data";
 import type { ClientFormData, ClientWithRelations } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { slugify } from "@/lib/utils";
 import { updateClient, createClient } from "../../actions/clients-actions";
 import { SubscriptionTier } from "@prisma/client";
@@ -174,7 +175,7 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
       if (result.success) {
         const clientName = data.name || "Client";
         toast({
-          title: isEditMode ? "Client Updated Successfully" : "Client Created Successfully",
+          title: isEditMode ? messages.success.updated : messages.success.created,
           description: isEditMode
             ? `${clientName} has been updated successfully.`
             : `${clientName} has been created successfully and is ready for use.`,

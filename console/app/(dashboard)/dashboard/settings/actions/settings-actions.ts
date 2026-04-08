@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 export type NotificationPreferences = {
   articlePublished?: boolean;
@@ -24,7 +25,7 @@ export async function updateClientSettings(
       where: { id: clientId },
       select: { id: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
+    if (!client) return { success: false, error: messages.error.notFound };
 
     await db.client.update({
       where: { id: clientId },
@@ -39,7 +40,6 @@ export async function updateClientSettings(
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Update failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }

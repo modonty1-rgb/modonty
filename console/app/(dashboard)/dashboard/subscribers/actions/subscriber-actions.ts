@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 export async function unsubscribeUser(subscriberId: string, clientId: string) {
   try {
@@ -13,7 +14,7 @@ export async function unsubscribeUser(subscriberId: string, clientId: string) {
     });
 
     if (!subscriber) {
-      return { success: false, error: "Subscriber not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.subscriber.update({
@@ -27,7 +28,7 @@ export async function unsubscribeUser(subscriberId: string, clientId: string) {
     revalidatePath("/dashboard/subscribers");
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unsubscribe failed";
+    const message = messages.error.serverError;
     return { success: false, error: message };
   }
 }
@@ -42,7 +43,7 @@ export async function resubscribeUser(subscriberId: string, clientId: string) {
     });
 
     if (!subscriber) {
-      return { success: false, error: "Subscriber not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.subscriber.update({
@@ -56,7 +57,7 @@ export async function resubscribeUser(subscriberId: string, clientId: string) {
     revalidatePath("/dashboard/subscribers");
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Resubscribe failed";
+    const message = messages.error.serverError;
     return { success: false, error: message };
   }
 }
@@ -71,7 +72,7 @@ export async function deleteSubscriber(subscriberId: string, clientId: string) {
     });
 
     if (!subscriber) {
-      return { success: false, error: "Subscriber not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.subscriber.delete({
@@ -81,7 +82,7 @@ export async function deleteSubscriber(subscriberId: string, clientId: string) {
     revalidatePath("/dashboard/subscribers");
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Delete failed";
+    const message = messages.error.serverError;
     return { success: false, error: message };
   }
 }
@@ -115,7 +116,7 @@ export async function exportSubscribers(clientId: string) {
 
     return { success: true, data: csv };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Export failed";
+    const message = messages.error.serverError;
     return { success: false, error: message };
   }
 }

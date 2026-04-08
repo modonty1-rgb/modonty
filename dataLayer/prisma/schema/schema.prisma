@@ -451,6 +451,7 @@ model Client {
 
   @@index([industryId])
   @@index([userId])
+  @@index([createdAt])
   @@map("clients")
 }
 
@@ -1017,6 +1018,8 @@ model NewsSubscriber {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
+  @@index([subscribed])
+  @@index([createdAt])
   @@map("news_subscribers")
 }
 

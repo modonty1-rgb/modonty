@@ -22,6 +22,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { LongParagraphHighlight } from "./extensions/long-paragraph-highlight";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -467,8 +468,8 @@ export function RichTextEditor({
           onClick={() => {
             if (!clientId) {
               toast({
-                title: "تحذير",
-                description: "يرجى اختيار عميل أولاً لضمان تتبع الروابط الخلفية بشكل صحيح",
+                title: messages.error.operation_failed,
+                description: messages.descriptions.client_required,
                 variant: "destructive",
               });
               return;

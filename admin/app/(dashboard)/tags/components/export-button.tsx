@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Download, Loader2 } from "lucide-react";
 import { exportTagsToCSV } from "../actions/export-actions";
 import { TagFilters } from "../actions/tags-actions";
@@ -40,14 +41,14 @@ export function ExportButton({ filters }: ExportButtonProps) {
       document.body.removeChild(link);
       
       toast({
-        title: "تم التصدير",
-        description: "تم تصدير الوسوم بنجاح",
+        title: messages.success.exported,
+        description: messages.descriptions.tags_exported,
         variant: "success",
       });
     } catch (error) {
       toast({
-        title: "فشل التصدير",
-        description: "تعذّر تصدير الوسوم",
+        title: messages.error.export_failed,
+        description: messages.descriptions.tags_export_failed,
         variant: "destructive",
       });
     } finally {

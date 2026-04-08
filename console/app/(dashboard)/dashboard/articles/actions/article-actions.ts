@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 // TODO: Add compliance check (forbidden keywords/claims) before publishing.
 // Console app cannot import admin's @/lib/seo/pre-publish-audit.
@@ -20,7 +21,7 @@ export async function approveArticle(articleId: string, clientId: string) {
     if (!article) {
       return {
         success: false,
-        error: "Article not found or not available for approval",
+        error: messages.error.notFound,
       };
     }
 
@@ -49,8 +50,7 @@ export async function approveArticle(articleId: string, clientId: string) {
 
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to approve article";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 
@@ -71,14 +71,14 @@ export async function requestChanges(
     if (!article) {
       return {
         success: false,
-        error: "Article not found or not available",
+        error: messages.error.notFound,
       };
     }
 
     if (!feedback || feedback.trim().length === 0) {
       return {
         success: false,
-        error: "Feedback is required when requesting changes",
+        error: messages.error.feedback_required,
       };
     }
 
@@ -96,7 +96,6 @@ export async function requestChanges(
 
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to request changes";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }

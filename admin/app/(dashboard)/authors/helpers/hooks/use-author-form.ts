@@ -10,6 +10,7 @@ import { uploadImage } from "../../../actions/upload-image";
 import { prepareImageData } from "../../../helpers/prepare-image-data";
 import { MODONTY_AUTHOR_SLUG, MODONTY_AUTHOR_NAME } from "@/lib/constants/modonty-author";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { AuthorFormData } from "@/lib/types";
 
 interface AuthorFormDataState {
@@ -75,7 +76,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (!authorId) {
       setError("Author ID is required");
-      toast({ title: "فشل الحفظ", description: "معرّف الكاتب مطلوب.", variant: "destructive" });
+      toast({ title: messages.error.server_error, description: "معرّف الكاتب مطلوب.", variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -97,7 +98,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (!uploadResult.success) {
       setError(uploadResult.error || "Failed to upload image");
-      toast({ title: "فشل الحفظ", description: uploadResult.error || "تعذّر رفع الصورة", variant: "destructive" });
+      toast({ title: messages.error.server_error, description: uploadResult.error || "تعذّر رفع الصورة", variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -139,7 +140,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
 
     if (result.success) {
       toast({
-        title: "تم الحفظ",
+        title: messages.success.updated,
         description: "تم تحديث بيانات الكاتب بنجاح",
         variant: "success",
       });
@@ -153,7 +154,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
     } else {
       setError(result.error || "Failed to save author");
       toast({
-        title: "فشل الحفظ",
+        title: messages.error.server_error,
         description: result.error || "تعذّر حفظ بيانات الكاتب",
         variant: "destructive",
       });

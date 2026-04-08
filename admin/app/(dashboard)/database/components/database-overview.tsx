@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Database, HardDrive, Clock, ShieldAlert, Download, Upload, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { runBackup } from "../actions/run-backup";
 import { getAvailableBackups, runRestore } from "../actions/run-restore";
 
@@ -71,7 +72,7 @@ export function DatabaseOverview({ health, isLocal }: { health: DatabaseHealth; 
     setBackupResult(result);
     setBackupLoading(false);
     toast({
-      title: result.success ? "Backup Complete" : "Backup Failed",
+      title: result.success ? messages.success.success : messages.error.server_error,
       description: result.message,
       variant: result.success ? "default" : "destructive",
     });
@@ -86,7 +87,7 @@ export function DatabaseOverview({ health, isLocal }: { health: DatabaseHealth; 
     setConfirmText("");
     setSelectedBackup(null);
     toast({
-      title: result.success ? "Restore Complete" : "Restore Failed",
+      title: result.success ? messages.success.success : messages.error.server_error,
       description: result.message,
       variant: result.success ? "default" : "destructive",
     });

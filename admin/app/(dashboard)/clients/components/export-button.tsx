@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Download, Loader2 } from "lucide-react";
 import { exportClientsToCSV } from "../actions/export-actions";
 import { ClientFilters } from "../actions/clients-actions";
@@ -40,14 +41,14 @@ export function ExportButton({ filters }: ExportButtonProps) {
       document.body.removeChild(link);
       
       toast({
-        title: "تم التصدير",
-        description: "تم تصدير العملاء بنجاح",
+        title: messages.success.exported,
+        description: messages.descriptions.clients_exported,
         variant: "success",
       });
     } catch (error) {
       toast({
-        title: "فشل التصدير",
-        description: "تعذّر تصدير العملاء",
+        title: messages.error.export_failed,
+        description: messages.descriptions.clients_export_failed,
         variant: "destructive",
       });
     } finally {

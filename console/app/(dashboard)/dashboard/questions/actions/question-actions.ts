@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { ArticleFAQStatus } from "@prisma/client";
+import { messages } from "@/lib/messages";
 
 export async function replyToQuestion(
   faqId: string,
@@ -11,7 +12,7 @@ export async function replyToQuestion(
 ): Promise<{ success: boolean; error?: string }> {
   const trimmed = answer?.trim();
   if (!trimmed) {
-    return { success: false, error: "أدخل نص الرد" };
+    return { success: false, error: messages.error.answer_required };
   }
 
   const faq = await db.articleFAQ.findFirst({
@@ -19,7 +20,7 @@ export async function replyToQuestion(
     select: { id: true, article: { select: { slug: true } } },
   });
   if (!faq) {
-    return { success: false, error: "السؤال غير موجود أو لا يخصك" };
+    return { success: false, error: messages.error.notFound };
   }
 
   await db.articleFAQ.update({

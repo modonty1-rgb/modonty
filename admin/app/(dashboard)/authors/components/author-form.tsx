@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { messages } from "@/lib/messages";
 import { Button } from "@/components/ui/button";
 import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { Label } from "@/components/ui/label";
@@ -80,7 +81,7 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   name="jobTitle"
                   value={formData.jobTitle}
                   onChange={(e) => updateField("jobTitle", e.target.value)}
-                  hint="مثال: منصة محتوى، ناشر رقمي"
+                  hint={messages.hints.author.jobTitle}
                 />
               </div>
               <input type="hidden" name="slug" value={formData.slug} />
@@ -109,7 +110,7 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   value={formData.bio}
                   onChange={(e) => updateField("bio", e.target.value)}
                   rows={3}
-                  hint="يظهر في المقالات — يُنصح بـ 100+ حرف"
+                  hint={messages.hints.author.bio}
                 />
                 <CharacterCounter current={formData.bio.length} min={100} className="ms-1 mt-1" />
               </div>
@@ -165,14 +166,14 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   name="expertiseAreas"
                   value={formData.expertiseAreas}
                   onChange={(e) => updateField("expertiseAreas", e.target.value)}
-                  hint="مفصولة بفاصلة"
+                  hint={messages.hints.author.expertiseAreas}
                 />
                 <FormInput
                   label="Organizations"
                   name="memberOf"
                   value={formData.memberOf}
                   onChange={(e) => updateField("memberOf", e.target.value)}
-                  hint="مفصولة بفاصلة"
+                  hint={messages.hints.author.expertiseAreas}
                 />
               </div>
               <FormTextarea
@@ -181,7 +182,7 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                 value={formData.credentials}
                 onChange={(e) => updateField("credentials", e.target.value)}
                 rows={2}
-                hint="كل شهادة في سطر"
+                hint={messages.hints.author.credentials}
               />
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -204,14 +205,14 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                   name="seoTitle"
                   value={formData.seoTitle}
                   onChange={(e) => updateSEOField("seoTitle", e.target.value)}
-                  hint="العنوان الذي يظهر في جوجل — 30-60 حرف"
+                  hint={messages.hints.author.metaTitle}
                 />
                 <FormInput
                   label="SEO Description"
                   name="seoDescription"
                   value={formData.seoDescription}
                   onChange={(e) => updateSEOField("seoDescription", e.target.value)}
-                  hint="الوصف الذي يظهر في نتائج البحث — 120-160 حرف"
+                  hint={messages.hints.author.metaDescription}
                 />
               </div>
             </CardContent>

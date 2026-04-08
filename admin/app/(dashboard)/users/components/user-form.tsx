@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -107,7 +108,7 @@ export function UserForm({ initialData, userId }: UserFormProps) {
 
     if (result.success) {
       toast({
-        title: isEditMode ? "تم التحديث" : "تم الإنشاء",
+        title: isEditMode ? messages.success.updated : messages.success.created,
         description: isEditMode
           ? "تم تحديث بيانات المستخدم"
           : "تم إنشاء المستخدم بنجاح",
@@ -127,7 +128,7 @@ export function UserForm({ initialData, userId }: UserFormProps) {
     const result = await deleteUser(userId);
     if (result.success) {
       toast({
-        title: "تم الحذف",
+        title: messages.success.deleted,
         description: "تم حذف المستخدم بنجاح",
         variant: "success",
       });
@@ -137,7 +138,7 @@ export function UserForm({ initialData, userId }: UserFormProps) {
       setDeleteLoading(false);
       setDeleteOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "حدث خطأ أثناء الحذف.",
         variant: "destructive",
       });
@@ -280,7 +281,7 @@ export function UserForm({ initialData, userId }: UserFormProps) {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="example@email.com"
                 required
-                hint="Used to log in to the dashboard"
+                hint={messages.hints.user.email}
                 autoComplete="new-email"
               />
 

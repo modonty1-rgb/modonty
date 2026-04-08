@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useArticleForm } from "../article-form-context";
 import { Card, CardContent } from "@/components/ui/card";
+import { messages } from "@/lib/messages";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,8 @@ export function CitationsSection() {
   const extractLinks = useCallback(() => {
     if (!formData.content) {
       toast({
-        title: "لا يوجد محتوى",
-        description: "يرجى إضافة محتوى للمقال أولاً",
+        title: messages.error.operation_failed,
+        description: messages.descriptions.article_content_required,
         variant: "destructive",
       });
       return;
@@ -64,9 +65,9 @@ export function CitationsSection() {
       
       if (newCitations.length === 0) {
         toast({
-          title: "لا توجد روابط جديدة",
-          description: authoritativeSources.length > 0 
-            ? "تم إضافة جميع المصادر الموثوقة مسبقاً" 
+          title: messages.success.success,
+          description: authoritativeSources.length > 0
+            ? "تم إضافة جميع المصادر الموثوقة مسبقاً"
             : "لا توجد مصادر موثوقة في المحتوى",
         });
         return;
@@ -79,14 +80,14 @@ export function CitationsSection() {
       const duplicates = authoritativeSources.length - newCitations.length;
       
       toast({
-        title: "✓ تم تحديث المصادر",
+        title: messages.success.updated,
         description: `تمت إضافة ${newCitations.length} مصدر موثوق${duplicates > 0 ? ` • تم تخطي ${duplicates} مكرر` : ''}`,
       });
     } catch (error) {
       console.error('Error extracting links:', error);
       toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء استخراج الروابط",
+        title: messages.error.server_error,
+        description: messages.descriptions.citations_error,
         variant: "destructive",
       });
     } finally {

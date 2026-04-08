@@ -15,6 +15,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteUser } from "../../actions/users-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 export function DeleteUserButton({ userId }: { userId: string }) {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function DeleteUserButton({ userId }: { userId: string }) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "تعذّر حذف المستخدم",
         variant: "destructive",
       });

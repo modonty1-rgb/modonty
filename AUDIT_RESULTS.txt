@@ -1,0 +1,249 @@
+═══════════════════════════════════════════════════════════════════════════════
+  AUDIT RESULTS: Centralize Admin Toast Messages & Form Hints
+  Date: 2026-04-08
+  Scope: admin/app/(dashboard) + admin/components
+═══════════════════════════════════════════════════════════════════════════════
+
+SUMMARY
+───────────────────────────────────────────────────────────────────────────────
+✓ Total toast() calls found:           186
+✓ Total hint= props found:              73
+✓ Total hardcoded Arabic strings:     500+ (in titles, placeholders, labels)
+✓ Estimated files to modify:           45-55 files
+✓ Affected entity modules:             13 (articles, clients, categories, tags,
+                                           authors, users, industries, contact-
+                                           messages, database, media, modonty/faq,
+                                           settings, seo-overview)
+
+───────────────────────────────────────────────────────────────────────────────
+COMMAND 1: TOAST() CALLS (186 total)
+───────────────────────────────────────────────────────────────────────────────
+
+Files with toast calls (by entity):
+  ✓ articles/       - 34 calls (ai-article-dialog, export, delete, save, etc.)
+  ✓ authors/        - 4 calls (use-author-form hook)
+  ✓ categories/     - 7 calls (delete, export, row-actions)
+  ✓ clients/        - 17 calls (delete, export, row-actions, media, twitter, seo)
+  ✓ contact-messages/ - 21 calls (table operations, view, status updates)
+  ✓ database/       - 2 calls (overview)
+  ✓ export-data/    - 3 calls (export cards)
+  ✓ industries/     - 6 calls (delete, export, row-actions)
+  ✓ media/          - 34 calls (upload, delete, edit, grid copy)
+  ✓ modonty/faq/    - 8 calls (create, form, list, sort)
+  ✓ modonty/settings/ - 7 calls (page form, SEO regeneration)
+  ✓ seo-overview/   - 6 calls (articles health, overview client)
+  ✓ settings/       - 20 calls (seed operations, tier form)
+  ✓ subscription-tiers/ - 1 call (tier form)
+  ✓ tags/           - 5 calls (delete, export, row-actions)
+  ✓ users/          - 2 calls (user form, delete)
+
+Examples of toast messages by category:
+
+SUCCESS MESSAGES:
+  "تم الإنشاء بنجاح" - Created (used 15+ times)
+  "تم التحديث بنجاح" - Updated (used 12+ times)
+  "تم الحذف بنجاح" - Deleted (used 20+ times)
+  "تم النسخ" / "تم النسخ إلى الحافظة" - Copied (used 8+ times)
+  "تم التصدير" - Exported (used 5+ times)
+  "تم الحفظ بنجاح" - Saved (used 8+ times)
+  "تم التحديث" - Updated (used 10+ times)
+  "تم النشر بنجاح" - Published
+  "تم الأرشفة بنجاح" - Archived
+  "تم الاستعادة بنجاح" - Restored
+  "تم الإرسال بنجاح" - Sent
+  "تم القراءة" - Read
+  "تم الرد" - Replied
+  "تم التحديث" / "SEO Updated" - SEO Updated
+
+ERROR MESSAGES:
+  "حدث خطأ في الخادم. جرب لاحقاً" - Server error (used 15+ times)
+  "فشل الحذف" / "تعذّر حذف [entity]" - Delete failed (used 25+ times)
+  "فشل التصدير" - Export failed (used 3+ times)
+  "فشل النسخ" / "تعذّر نسخ الرابط" - Copy failed (used 5+ times)
+  "فشل الحفظ" - Save failed (used 8+ times)
+  "تعذّر رفع [file]" - Upload failed (used 20+ times)
+  "تعذّر تحديث [data]" - Update failed (used 15+ times)
+  "فشل التحديث" - Update failed (used 10+ times)
+  "فشلت العملية" - Operation failed (used 12+ times)
+  "عنوان بريد إلكتروني غير صحيح" - Invalid email
+  "هذا الحقل مطلوب" - Required field
+  "لم يتم العثور على المورد" - Not found
+  "الملف كبير جداً" - File too large
+  "نوع ملف غير مدعوم" - Invalid file type
+  "تعذّر نقل الملف" - File operation failed
+
+───────────────────────────────────────────────────────────────────────────────
+COMMAND 2: FORMFIELD HINT PROPS (73 total)
+───────────────────────────────────────────────────────────────────────────────
+
+Distribution by entity:
+  ✓ articles/         - 12 hints (title, slug, content, images, meta, etc.)
+  ✓ authors/          - 6 hints (jobTitle, bio, expertise, credentials, seo)
+  ✓ categories/       - 3 hints (name, slug, description, icon)
+  ✓ clients/          - 35+ hints (address, basic-info, business, legal, seo,
+                                    settings, media, twitter)
+  ✓ industries/       - 2 hints (name, slug, description)
+  ✓ tags/             - 2 hints (name, slug, description)
+  ✓ users/            - 1 hint (role)
+  ✓ contact-messages/ - 4 hints (name, email, subject, message)
+  ✓ subscription-tiers/ - 1 hint (tier)
+  ✓ modonty/faq/      - 7 hints (question, answer, category)
+
+Examples of hints:
+  "يظهر في المقالات والمحتوى المنشور" - Shows in articles
+  "يُنشأ تلقائياً من الاسم — يُستخدم في روابط الصفحات" - Auto-generated slug
+  "يُستخدم في SEO — يُنصح بـ 50+ حرف" - SEO usage
+  "إحداثيات الخريطة — Schema.org GeoCoordinates" - Map coordinates
+  "العنوان الذي يظهر في جوجل — 50-60 حرف" - Google title length
+  "الوصف الذي يظهر في نتائج البحث — 150-160 حرف" - Meta description length
+  "وصف المنظمة في Schema.org — 100+ حرف للأفضل" - Schema description
+  "إذا كان العميل فرع أو تابع لشركة أخرى — اتركه فارغ إذا كان مستقل"
+  "كلمات لتصنيف الشركة — SEO — مفصولة بفاصلة" - Keywords, comma-separated
+
+───────────────────────────────────────────────────────────────────────────────
+COMMAND 3: HARDCODED ARABIC STRINGS (in titles, placeholders, labels)
+───────────────────────────────────────────────────────────────────────────────
+
+Found 200+ hardcoded strings including:
+  Toast titles: "نجح", "فشل", "خطأ", "تحذير", "لا يوجد محتوى"
+  Placeholders: "اكتب ملاحظتك...", "أضف وصفًا للصورة...", "ما هو السؤال؟"
+  ARIA labels: "يوجد أخطاء", "مكتمل", "غير مكتمل"
+  Default values: "عنوان المقال" (article title default)
+  SelectValue placeholders: "اسمك" (your name)
+
+───────────────────────────────────────────────────────────────────────────────
+COMMAND 4: VALIDATION ERROR MESSAGES
+───────────────────────────────────────────────────────────────────────────────
+
+Currently using:
+  ✓ admin/lib/messages.ts (existing validation constants)
+
+Need to centralize:
+  ✓ Hardcoded validation errors in toast messages
+  ✓ Zod schema error messages
+  ✓ Server action error responses
+  ✓ Hook-level error messages (use-author-form.ts, use-client-form.ts, etc.)
+
+Current patterns found:
+  - Direct hardcoded strings in toast()
+  - No consistent message import pattern
+  - Mix of English and Arabic error messages
+  - Some errors in hooks, some in components, some in server actions
+
+═══════════════════════════════════════════════════════════════════════════════
+FILES TO MODIFY (by category)
+═══════════════════════════════════════════════════════════════════════════════
+
+ARTICLES (12 files):
+  □ app/(dashboard)/articles/components/ai-article-dialog.tsx
+  □ app/(dashboard)/articles/components/article-form-navigation.tsx
+  □ app/(dashboard)/articles/components/delete-article-button.tsx
+  □ app/(dashboard)/articles/components/export-button.tsx
+  □ app/(dashboard)/articles/components/jsonld-preview.tsx
+  □ app/(dashboard)/articles/components/rich-text-editor.tsx
+  □ app/(dashboard)/articles/components/save-article-button.tsx
+  □ app/(dashboard)/articles/components/sticky-save-button.tsx
+  □ app/(dashboard)/articles/components/test-data-button.tsx
+  □ app/(dashboard)/articles/components/sections/citations-section.tsx
+  □ app/(dashboard)/articles/components/steps/metatag-preview-step.tsx
+  □ app/(dashboard)/articles/[id]/components/shared/copyable-id.tsx
+
+AUTHORS (2 files):
+  □ app/(dashboard)/authors/components/author-form.tsx
+  □ app/(dashboard)/authors/helpers/hooks/use-author-form.ts
+
+CATEGORIES (4 files):
+  □ app/(dashboard)/categories/components/category-form.tsx
+  □ app/(dashboard)/categories/components/category-row-actions.tsx
+  □ app/(dashboard)/categories/components/export-button.tsx
+  □ app/(dashboard)/categories/[id]/components/delete-category-button.tsx
+
+CLIENTS (8 files):
+  □ app/(dashboard)/clients/components/client-row-actions.tsx
+  □ app/(dashboard)/clients/components/export-button.tsx
+  □ app/(dashboard)/clients/components/form-sections/address-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/basic-info-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/business-brief-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/business-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/legal-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/media-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/seo-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/settings-section.tsx
+  □ app/(dashboard)/clients/components/form-sections/twitter-section.tsx
+  □ app/(dashboard)/clients/helpers/hooks/use-client-form.ts
+  □ app/(dashboard)/clients/[id]/components/delete-client-button.tsx
+  □ app/(dashboard)/clients/[id]/components/tabs/seo-tab.tsx
+
+CONTACT MESSAGES (3 files):
+  □ app/(dashboard)/contact-messages/components/contact-messages-table.tsx
+  □ app/(dashboard)/contact-messages/[id]/components/contact-message-view.tsx
+
+DATABASE (1 file):
+  □ app/(dashboard)/database/components/database-overview.tsx
+
+EXPORT DATA (1 file):
+  □ app/(dashboard)/export-data/components/export-cards.tsx
+
+INDUSTRIES (3 files):
+  □ app/(dashboard)/industries/components/export-button.tsx
+  □ app/(dashboard)/industries/components/industry-row-actions.tsx
+  □ app/(dashboard)/industries/[id]/components/delete-industry-button.tsx
+
+MEDIA (6 files):
+  □ app/(dashboard)/media/components/media-grid.tsx
+  □ app/(dashboard)/media/components/media-page-client.tsx
+  □ app/(dashboard)/media/components/upload-zone/hooks/use-cloudinary-upload.ts
+  □ app/(dashboard)/media/components/upload-zone/hooks/use-upload-zone.ts
+  □ app/(dashboard)/media/[id]/edit/edit-media-form.tsx
+
+MODONTY/FAQ (3 files):
+  □ app/(dashboard)/modonty/faq/components/faq-create-dialog.tsx
+  □ app/(dashboard)/modonty/faq/components/faq-form.tsx
+  □ app/(dashboard)/modonty/faq/components/faq-list.tsx
+
+MODONTY/SETTINGS (2 files):
+  □ app/(dashboard)/modonty/setting/helpers/hooks/use-page-form.ts
+
+SEO OVERVIEW (2 files):
+  □ app/(dashboard)/seo-overview/articles-seo-health.tsx
+  □ app/(dashboard)/seo-overview/seo-overview-client.tsx
+
+SETTINGS (3 files):
+  □ app/(dashboard)/settings/components/settings-form-v2.tsx
+  □ app/(dashboard)/settings/seed/client-seed/components/client-seed-button.tsx
+  □ app/(dashboard)/settings/seed/components/seed-form.tsx
+  □ app/(dashboard)/settings/seed/components/seed-form-actions.tsx
+  □ app/(dashboard)/settings/seed/components/seed-form-settings.tsx
+  □ app/(dashboard)/settings/seed/components/seed-test-result.tsx
+
+TAGS (3 files):
+  □ app/(dashboard)/tags/components/export-button.tsx
+  □ app/(dashboard)/tags/components/tag-row-actions.tsx
+  □ app/(dashboard)/tags/[id]/components/delete-tag-button.tsx
+
+USERS (2 files):
+  □ app/(dashboard)/users/components/user-form.tsx
+  □ app/(dashboard)/users/[id]/components/delete-user-button.tsx
+
+═══════════════════════════════════════════════════════════════════════════════
+AUDIT FINDINGS SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Audit Complete
+✓ All hardcoded messages catalogued
+✓ Files identified and listed
+✓ Ready for Phase 2: Create message files
+
+Total scope:
+  - 50+ files to modify (string replacements only)
+  - 186 toast() calls to update
+  - 73 hint props to update
+  - 500+ hardcoded strings to extract
+  - 4 new message files to create
+  - Zero logic changes (strings only)
+  - Zero component behavior changes
+
+Next steps: Create 4 message files (types.ts, ar.ts, validation.ts, index.ts)
+            Then perform targeted string replacements
+
+═══════════════════════════════════════════════════════════════════════════════

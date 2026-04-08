@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/email/resend-client";
+import { messages } from "@/lib/messages";
 
 export async function updateMessageStatus(
   messageId: string,
@@ -18,7 +19,7 @@ export async function updateMessageStatus(
     });
 
     if (!message) {
-      return { success: false, error: "Message not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     const updateData: any = { status };
@@ -39,7 +40,7 @@ export async function updateMessageStatus(
     revalidatePath("/dashboard/support");
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Update failed";
+    const errorMessage = messages.error.serverError;
     return { success: false, error: errorMessage };
   }
 }
@@ -54,7 +55,7 @@ export async function deleteMessage(messageId: string, clientId: string) {
     });
 
     if (!message) {
-      return { success: false, error: "Message not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.contactMessage.delete({
@@ -64,7 +65,7 @@ export async function deleteMessage(messageId: string, clientId: string) {
     revalidatePath("/dashboard/support");
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Delete failed";
+    const errorMessage = messages.error.serverError;
     return { success: false, error: errorMessage };
   }
 }
@@ -86,7 +87,7 @@ export async function bulkUpdateMessages(
     revalidatePath("/dashboard/support");
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Bulk update failed";
+    const errorMessage = messages.error.serverError;
     return { success: false, error: errorMessage };
   }
 }
@@ -103,12 +104,12 @@ export async function sendReply(
       select: { id: true, email: true, subject: true, userId: true },
     });
     if (!message) {
-      return { success: false, error: "Message not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     const trimmedBody = replyBody.trim();
     if (!trimmedBody) {
-      return { success: false, error: "Reply text is required" };
+      return { success: false, error: messages.error.reply_required };
     }
 
     await db.contactMessage.update({
@@ -155,7 +156,7 @@ export async function sendReply(
     }
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Send reply failed";
+    const errorMessage = messages.error.serverError;
     return { success: false, error: errorMessage };
   }
 }

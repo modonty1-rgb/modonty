@@ -5,6 +5,7 @@ import {
   computeLeadScoresForClient,
   upsertLeadScoring,
 } from "@/lib/lead-scoring/compute";
+import { messages } from "@/lib/messages";
 
 export type RefreshLeadScoresResult =
   | { ok: true; processed: number }
@@ -15,7 +16,7 @@ export async function refreshLeadScores(): Promise<RefreshLeadScoresResult> {
   const clientId = (session as { clientId?: string })?.clientId;
 
   if (!session || !clientId) {
-    return { ok: false, error: "Unauthorized or missing client" };
+    return { ok: false, error: messages.error.unauthorized };
   }
 
   try {
@@ -23,7 +24,6 @@ export async function refreshLeadScores(): Promise<RefreshLeadScoresResult> {
     const processed = await upsertLeadScoring(payloads);
     return { ok: true, processed };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Unknown error";
-    return { ok: false, error: message };
+    return { ok: false, error: messages.error.serverError };
   }
 }

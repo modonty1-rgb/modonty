@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 function str(v: string | undefined | null) {
   return v === undefined ? undefined : (v?.trim() || null);
@@ -63,7 +64,7 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
       where: { id: clientId },
       select: { id: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
+    if (!client) return { success: false, error: messages.error.notFound };
 
     const u: Record<string, unknown> = {};
     if (data.name !== undefined && data.name.trim()) u.name = data.name.trim();
@@ -118,7 +119,6 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     revalidatePath("/dashboard/seo");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Update failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }

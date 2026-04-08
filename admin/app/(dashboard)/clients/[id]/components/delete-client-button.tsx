@@ -15,6 +15,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { deleteClient } from "../../actions/clients-actions";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 
 interface DeleteClientButtonProps {
   clientId: string;
@@ -41,7 +42,7 @@ export function DeleteClientButton({ clientId }: DeleteClientButtonProps) {
       setLoading(false);
       setOpen(false);
       toast({
-        title: "فشل الحذف",
+        title: messages.error.delete_failed,
         description: result.error || "تعذّر حذف العميل",
         variant: "destructive",
       });

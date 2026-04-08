@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,8 +73,8 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
 
       if (result.success) {
         toast({
-          title: "تم الحفظ",
-          description: "تم حفظ السؤال بنجاح",
+          title: messages.success.saved,
+          description: faqId ? messages.descriptions.faq_updated : messages.descriptions.faq_created,
           variant: "success",
         });
         if (onSuccess) {

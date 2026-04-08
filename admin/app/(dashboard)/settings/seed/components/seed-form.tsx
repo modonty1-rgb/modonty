@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { checkClientsExist } from "../actions/seed-actions";
 import { SeedLogViewer } from "./seed-log-viewer";
 import { SeedFormInputs } from "./seed-form-inputs";
@@ -195,7 +196,7 @@ export function SeedForm() {
   const handleCreateClientSeed = async () => {
     if (!isDev) {
       toast({
-        title: "Not available in this environment",
+        title: messages.error.operation_failed,
         description: "The seeding UI is only enabled in development.",
         variant: "destructive",
       });
@@ -210,7 +211,7 @@ export function SeedForm() {
     const requestedCount = parseInt(input, 10);
     if (isNaN(requestedCount) || requestedCount < 1 || requestedCount > 50) {
       toast({
-        title: "Invalid client count",
+        title: messages.error.validation_failed,
         description: "Please enter a value between 1 and 50 for client seed.",
         variant: "destructive",
       });
@@ -298,7 +299,7 @@ export function SeedForm() {
   const handleRunSeed = async () => {
     if (!isDev) {
       toast({
-        title: "Not available in this environment",
+        title: messages.error.operation_failed,
         description: "The seeding UI is only enabled in development.",
         variant: "destructive",
       });

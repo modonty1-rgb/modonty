@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Save, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 import { cn } from '@/lib/utils';
 
 export function ArticleFormNavigation() {
@@ -37,7 +38,7 @@ export function ArticleFormNavigation() {
         if (articleStatus) detailsParts.push(`Status: ${articleStatus}`);
 
         toast({
-          title: 'تم الحفظ بنجاح',
+          title: messages.success.saved,
           description:
             detailsParts.length > 0
               ? `تم حفظ المقال بنجاح.\n${detailsParts.join(' — ')}`
@@ -53,15 +54,15 @@ export function ArticleFormNavigation() {
         }
       } else {
         toast({
-          title: 'فشل الحفظ',
-          description: result.error || 'حدث خطأ أثناء حفظ المقال',
+          title: messages.error.server_error,
+          description: result.error || messages.descriptions.article_save_error,
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'فشل الحفظ',
-        description: error instanceof Error ? error.message : 'حدث خطأ غير متوقع',
+        title: messages.error.save_failed,
+        description: error instanceof Error ? error.message : messages.descriptions.unexpected_error,
         variant: 'destructive',
       });
     }

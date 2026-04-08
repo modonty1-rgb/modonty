@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import {
   Card,
   CardContent,
@@ -71,13 +72,13 @@ export function JsonLdPreview({
     try {
       await navigator.clipboard.writeText(JSON.stringify(jsonLd, null, 2));
       toast({
-        title: "نجح",
-        description: "تم نسخ JSON-LD",
+        title: messages.success.copied,
+        description: messages.descriptions.jsonld_copied,
       });
     } catch {
       toast({
-        title: "فشل",
-        description: "فشل في النسخ",
+        title: messages.error.copy_failed,
+        description: messages.descriptions.jsonld_copy_failed,
         variant: "destructive",
       });
     }
@@ -102,8 +103,8 @@ export function JsonLdPreview({
       setAutoFixDialogOpen(true);
     } catch (error) {
       toast({
-        title: "خطأ",
-        description: "فشل في معاينة الإصلاحات",
+        title: messages.error.error,
+        description: messages.descriptions.seo_preview_failed,
         variant: "destructive",
       });
     } finally {
@@ -119,8 +120,8 @@ export function JsonLdPreview({
       const result = await autoFixArticle(articleId);
       if (result.success) {
         toast({
-          title: "نجح",
-          description: `تم إصلاح ${result.fixes.length} مشكلة`,
+          title: messages.success.success,
+          description: messages.descriptions.seo_fixes_applied,
         });
         setAutoFixDialogOpen(false);
         setAutoFixPreview(null);
@@ -132,15 +133,15 @@ export function JsonLdPreview({
         }
       } else {
         toast({
-          title: "فشل",
-          description: result.error || "فشل في إصلاح المشاكل",
+          title: messages.error.failed,
+          description: result.error || messages.descriptions.seo_fixes_error,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إصلاح المشاكل",
+        title: messages.error.error,
+        description: messages.descriptions.seo_fixes_error,
         variant: "destructive",
       });
     } finally {

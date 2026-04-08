@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { messages } from "@/lib/messages";
 
 export async function changePassword(
   clientId: string,
@@ -14,11 +15,11 @@ export async function changePassword(
       where: { id: clientId },
       select: { id: true, password: true },
     });
-    if (!client) return { success: false, error: "Client not found" };
-    if (!client.password) return { success: false, error: "No password set" };
+    if (!client) return { success: false, error: messages.error.notFound };
+    if (!client.password) return { success: false, error: messages.error.notFound };
 
     const valid = await bcrypt.compare(currentPassword, client.password);
-    if (!valid) return { success: false, error: "wrongPassword" };
+    if (!valid) return { success: false, error: messages.error.wrongPassword };
 
     const hashed = await bcrypt.hash(newPassword, 10);
     await db.client.update({
@@ -29,7 +30,6 @@ export async function changePassword(
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Update failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }

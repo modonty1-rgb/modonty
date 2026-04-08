@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { messages } from "@/lib/messages";
 import { Search, Link2, Code, Image as ImageIcon, FileCode, Tag, AlertTriangle, Sparkles, Copy, Check, RefreshCw, Loader2, XCircle, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -86,13 +87,13 @@ export function SEOTab({ client }: SEOTabProps) {
       });
       setValidationReport(report);
       toast({
-        title: "Success",
-        description: "Validation complete",
+        title: messages.success.success,
+        description: "Validation successful",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Validation failed",
+        title: messages.error.server_error,
+        description: "Validation incomplete",
         variant: "destructive",
       });
     } finally {
@@ -106,8 +107,8 @@ export function SEOTab({ client }: SEOTabProps) {
       const result = await regenerateClientJsonLdAction(client.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "SEO data updated and validated",
+          title: messages.success.updated,
+          description: "SEO updated",
         });
         router.refresh();
       } else {
@@ -119,8 +120,8 @@ export function SEOTab({ client }: SEOTabProps) {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update SEO data",
+        title: messages.error.server_error,
+        description: messages.descriptions.save_error,
         variant: "destructive",
       });
     } finally {
@@ -142,20 +143,20 @@ export function SEOTab({ client }: SEOTabProps) {
       const result = await generateClientSEO(client.id);
       if (result.success) {
         toast({
-          title: "Success",
-          description: "SEO data generated successfully",
+          title: messages.success.created,
+          description: "SEO generated",
         });
         router.refresh();
       } else {
         toast({
-          title: "Error",
+          title: messages.error.server_error,
           description: result.error || "Failed to generate SEO data",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
+        title: messages.error.server_error,
         description: "Failed to generate SEO data",
         variant: "destructive",
       });
@@ -171,12 +172,12 @@ export function SEOTab({ client }: SEOTabProps) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
         toast({
-          title: "Copied",
+          title: messages.success.copied,
           description: "JSON-LD data copied",
         });
       } catch (error) {
         toast({
-          title: "Error",
+          title: messages.error.copy_failed,
           description: "Failed to copy data",
           variant: "destructive",
         });
@@ -756,7 +757,7 @@ export function SEOTab({ client }: SEOTabProps) {
                     onClick={() => {
                       navigator.clipboard.writeText(JSON.stringify(jsonLd, null, 2));
                       toast({
-                        title: "Copied",
+                        title: messages.success.copied,
                         description: "Search data copied",
                       });
                     }}

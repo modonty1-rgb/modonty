@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { messages } from "@/lib/messages";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -78,7 +79,7 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "تم النسخ",
+      title: messages.success.copied,
       description: `تم نسخ ${label}`,
       variant: "success",
     });
@@ -91,14 +92,14 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await markAsRead(message.id);
       if (result.success) {
         toast({
-          title: "تم القراءة",
-          description: "تم تعليم الرسالة كمقروءة",
+          title: messages.success.updated,
+          description: messages.descriptions.message_status_updated,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر تعليم الرسالة كمقروءة",
           variant: "destructive",
         });
@@ -114,14 +115,14 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await markAsReplied(message.id);
       if (result.success) {
         toast({
-          title: "تم الرد",
-          description: "تم تعليم الرسالة كمُجاب عليها",
+          title: messages.success.updated,
+          description: messages.descriptions.message_update_failed,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر تعليم الرسالة كمُجاب عليها",
           variant: "destructive",
         });
@@ -137,14 +138,14 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await updateContactMessageStatus(message.id, "archived");
       if (result.success) {
         toast({
-          title: "تم الأرشفة",
-          description: "تم أرشفة الرسالة",
+          title: messages.success.updated,
+          description: messages.descriptions.message_status_updated,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّرت أرشفة الرسالة",
           variant: "destructive",
         });
@@ -160,14 +161,14 @@ export function ContactMessageView({ message }: ContactMessageViewProps) {
       const result = await deleteContactMessage(message.id);
       if (result.success) {
         toast({
-          title: "تم الحذف",
-          description: "تم حذف الرسالة",
+          title: messages.success.deleted,
+          description: messages.descriptions.category_deleted,
           variant: "success",
         });
         router.push("/contact-messages");
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر حذف الرسالة",
           variant: "destructive",
         });

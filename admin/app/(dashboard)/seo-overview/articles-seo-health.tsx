@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -151,13 +152,13 @@ export function ArticlesSeoHealth({ articles }: ArticlesSeoHealthProps) {
 
       if (failed === 0) {
         toast({
-          title: "SEO Fix Complete",
+          title: messages.success.updated,
           description: `${improved} improved, ${unchanged} unchanged`,
           variant: "success",
         });
       } else {
         toast({
-          title: "SEO Fix Complete",
+          title: messages.error.operation_failed,
           description: `${improved} improved, ${failed} failed`,
           variant: "destructive",
         });
@@ -166,7 +167,7 @@ export function ArticlesSeoHealth({ articles }: ArticlesSeoHealthProps) {
       router.refresh();
     } catch (error) {
       toast({
-        title: "Fix Failed",
+        title: messages.error.server_error,
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
       });

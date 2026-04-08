@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { ar } from "@/lib/ar";
+import { messages } from "@/lib/messages";
 import {
   Card,
   CardContent,
@@ -50,7 +52,9 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
       });
 
       if (result?.error) {
-        setError("Invalid email/slug or password.");
+        const errorMsg = messages.error.invalidCredentials;
+        setError(errorMsg);
+        toast.error(errorMsg);
       } else if (result?.ok) {
         router.push("/dashboard");
         router.refresh();

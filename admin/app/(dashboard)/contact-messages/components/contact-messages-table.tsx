@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DataTable } from "@/components/admin/data-table";
+import { messages } from "@/lib/messages";
 import { StatusBadge } from "./status-badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -45,7 +46,7 @@ interface ContactMessagesTableProps {
   messages: ContactMessage[];
 }
 
-export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
+export function ContactMessagesTable({ messages: contactMessages }: ContactMessagesTableProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -58,14 +59,14 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await updateContactMessageStatus(id, newStatus);
       if (result.success) {
         toast({
-          title: "تم التحديث",
-          description: "تم تحديث حالة الرسالة",
+          title: messages.success.updated,
+          description: messages.descriptions.message_status_updated,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر تحديث الحالة",
           variant: "destructive",
         });
@@ -73,7 +74,7 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
     } catch (error) {
       toast({
         title: "فشلت العملية",
-        description: "حدث خطأ غير متوقع",
+        description: messages.descriptions.unexpected_error,
         variant: "destructive",
       });
     } finally {
@@ -87,14 +88,14 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await markAsRead(id);
       if (result.success) {
         toast({
-          title: "تم القراءة",
-          description: "تم تعليم الرسالة كمقروءة",
+          title: messages.success.read,
+          description: messages.descriptions.message_status_updated,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر تعليم الرسالة كمقروءة",
           variant: "destructive",
         });
@@ -102,7 +103,7 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
     } catch (error) {
       toast({
         title: "فشلت العملية",
-        description: "حدث خطأ غير متوقع",
+        description: messages.descriptions.unexpected_error,
         variant: "destructive",
       });
     } finally {
@@ -116,14 +117,14 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await markAsReplied(id);
       if (result.success) {
         toast({
-          title: "تم الرد",
-          description: "تم تعليم الرسالة كمُجاب عليها",
+          title: messages.success.replied,
+          description: messages.descriptions.message_replied,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر تعليم الرسالة كمُجاب عليها",
           variant: "destructive",
         });
@@ -131,7 +132,7 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
     } catch (error) {
       toast({
         title: "فشلت العملية",
-        description: "حدث خطأ غير متوقع",
+        description: messages.descriptions.unexpected_error,
         variant: "destructive",
       });
     } finally {
@@ -147,14 +148,14 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
       const result = await deleteContactMessage(messageToDelete);
       if (result.success) {
         toast({
-          title: "تم الحذف",
-          description: "تم حذف الرسالة",
+          title: messages.success.deleted,
+          description: messages.descriptions.message_deleted,
           variant: "success",
         });
         router.refresh();
       } else {
         toast({
-          title: "فشلت العملية",
+          title: messages.error.operation_failed,
           description: result.error || "تعذّر حذف الرسالة",
           variant: "destructive",
         });
@@ -162,7 +163,7 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
     } catch (error) {
       toast({
         title: "فشلت العملية",
-        description: "حدث خطأ غير متوقع",
+        description: messages.descriptions.unexpected_error,
         variant: "destructive",
       });
     } finally {
@@ -181,7 +182,7 @@ export function ContactMessagesTable({ messages }: ContactMessagesTableProps) {
     <>
       <div className="space-y-4">
         <DataTable
-          data={messages}
+          data={contactMessages}
           columns={[
             {
               key: "name",

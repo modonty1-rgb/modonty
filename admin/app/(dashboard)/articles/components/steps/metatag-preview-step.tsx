@@ -15,6 +15,7 @@ import { AlertCircle, Code, Copy, ScanSearch, Database, GitCompare, ChevronDown 
 import { JsonLdValidationButton } from '@/components/shared/jsonld-validation-button';
 import { SITE_NAME } from '@/lib/constants/site-name';
 import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { generateBreadcrumbStructuredData } from '@/lib/seo';
 import { openInspect } from '@/app/(dashboard)/inspect/helpers/open-inspect';
@@ -628,9 +629,9 @@ export function MetaTagPreviewStep() {
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'تم النسخ', description: `تم نسخ ${label} بنجاح`, variant: 'success' });
+      toast({ title: messages.success.copied, description: `تم نسخ ${label} بنجاح`, variant: 'success' });
     } catch {
-      toast({ title: 'فشل النسخ', description: 'فشل في نسخ المحتوى', variant: 'destructive' });
+      toast({ title: messages.error.copy_failed, description: messages.descriptions.copy_to_clipboard_failed, variant: 'destructive' });
     }
   };
 
@@ -669,7 +670,7 @@ export function MetaTagPreviewStep() {
                             source: "Articles → Edit → Metadata JSON",
                             content: JSON.stringify(nextjsMetadataObject, null, 2),
                             sourceType: "preview",
-                            description: "Article metadata (title, Open Graph, Twitter, robots)",
+                            description: "Metadata copied",
                             returnUrl: pathname ?? "/articles",
                           })
                         );
@@ -730,7 +731,7 @@ export function MetaTagPreviewStep() {
                             source: "Articles → Edit → MetaTag & JSON-LD",
                             content: JSON.stringify(jsonLdPreview, null, 2),
                             sourceType: "preview",
-                            description: "Article JSON-LD (Schema.org)",
+                            description: "JSON-LD copied",
                             returnUrl: pathname ?? "/articles",
                           })
                         );

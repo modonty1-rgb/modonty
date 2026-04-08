@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MediaType } from "@prisma/client";
+import { messages } from "@/lib/messages";
 
 export async function deleteMedia(mediaId: string, clientId: string) {
   try {
@@ -14,7 +15,7 @@ export async function deleteMedia(mediaId: string, clientId: string) {
     });
 
     if (!media) {
-      return { success: false, error: "Media not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     const usageCount = await db.article.count({
@@ -24,7 +25,7 @@ export async function deleteMedia(mediaId: string, clientId: string) {
     if (usageCount > 0) {
       return {
         success: false,
-        error: `Cannot delete media. It is used in ${usageCount} article(s).`,
+        error: messages.error.conflict,
       };
     }
 
@@ -35,8 +36,7 @@ export async function deleteMedia(mediaId: string, clientId: string) {
     revalidatePath("/dashboard/media");
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Delete failed";
-    return { success: false, error: message };
+    return { success: false, error: messages.error.serverError };
   }
 }
 
@@ -59,7 +59,7 @@ export async function updateMediaMetadata(
     });
 
     if (!media) {
-      return { success: false, error: "Media not found" };
+      return { success: false, error: messages.error.notFound };
     }
 
     await db.media.update({

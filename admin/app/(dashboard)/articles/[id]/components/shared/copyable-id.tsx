@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/lib/messages";
 import { Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,15 +22,15 @@ export function CopyableId({ id, label, variant = "inline", className }: Copyabl
       await navigator.clipboard.writeText(id);
       setCopied(true);
       toast({
-        title: "تم النسخ",
+        title: messages.success.copied,
         description: `تم نسخ معرّف ${label} بنجاح`,
         variant: "success",
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "فشل النسخ",
-        description: "تعذّر نسخ المحتوى إلى الحافظة",
+        title: messages.error.copy_failed,
+        description: messages.descriptions.copy_to_clipboard_failed,
         variant: "destructive",
       });
     }

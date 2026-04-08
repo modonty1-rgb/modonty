@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { messages } from "@/lib/messages";
 import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId } from "@/lib/utils/image-seo";
 import { getCloudinaryErrorMessage } from "../utils/error-handler";
 import type { UploadFile, Client, SEOFormData } from "../types";
@@ -35,7 +36,7 @@ export function useCloudinaryUpload({
         )
       );
       toast({
-        title: "Configuration Error",
+        title: messages.error.server_error,
         description: errorMsg,
         variant: "destructive",
       });
@@ -54,7 +55,7 @@ export function useCloudinaryUpload({
         )
       );
       toast({
-        title: "Client Error",
+        title: messages.error.server_error,
         description: errorMsg,
         variant: "destructive",
       });
@@ -86,7 +87,7 @@ export function useCloudinaryUpload({
         )
       );
       toast({
-        title: "Validation Error",
+        title: messages.error.server_error,
         description: errorMsg,
         variant: "destructive",
       });
@@ -137,7 +138,7 @@ export function useCloudinaryUpload({
           )
         );
         toast({
-          title: "Upload Failed",
+          title: messages.error.upload_failed,
           description: errorMessage,
           variant: "destructive",
         });
@@ -170,7 +171,7 @@ export function useCloudinaryUpload({
       );
 
       toast({
-        title: "Upload Successful",
+        title: messages.success.updated,
         description: "File uploaded to Cloudinary with SEO-friendly filename.",
         variant: "default",
       });
@@ -187,7 +188,7 @@ export function useCloudinaryUpload({
         )
       );
       toast({
-        title: "Upload Failed",
+        title: messages.error.upload_failed,
         description: errorMessage,
         variant: "destructive",
       });
