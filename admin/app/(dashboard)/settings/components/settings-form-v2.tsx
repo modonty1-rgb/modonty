@@ -636,6 +636,20 @@ export function SettingsFormV2() {
                   <Label className="text-xs text-muted-foreground">SEO Description</Label>
                   <Textarea value={val(settings, descKey)} onChange={(e) => set(descKey, e.target.value)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} className="resize-none text-sm min-h-[72px]" />
                 </div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <p className="text-[10px] text-muted-foreground uppercase font-medium mb-2">Social Sharing Image</p>
+                  {settings.ogImageUrl ? (
+                    <div className="flex items-center gap-3">
+                      <NextImage src={settings.ogImageUrl} alt={settings.altImage || ""} width={80} height={42} className="rounded object-cover flex-shrink-0" />
+                      <div className="min-w-0 space-y-0.5">
+                        <p className="text-xs text-foreground truncate">{settings.altImage || "No alt text set"}</p>
+                        <p className="text-[10px] text-muted-foreground">Managed in Media tab</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">No image set — add one in the Media tab</p>
+                  )}
+                </div>
               </div>
             )}
 

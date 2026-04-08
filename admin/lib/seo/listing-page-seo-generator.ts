@@ -32,6 +32,8 @@ interface ListingPageConfig {
   siteName: string;
   siteUrl: string;
   breadcrumbName: string;
+  ogImage?: string;
+  ogImageAlt?: string;
   items: Array<{ name: string; url: string; position: number; description?: string; image?: string }>;
 }
 
@@ -48,11 +50,15 @@ function buildListingMetadata(config: ListingPageConfig) {
       url: config.pageUrl,
       siteName: config.siteName,
       locale: "ar_SA",
+      ...(config.ogImage && {
+        images: [{ url: config.ogImage, width: 1200, height: 630, alt: config.ogImageAlt || config.title }],
+      }),
     },
     twitter: {
-      card: "summary" as const,
+      card: (config.ogImage ? "summary_large_image" : "summary") as "summary_large_image" | "summary",
       title: config.title,
       description: config.description,
+      ...(config.ogImage && { images: [config.ogImage] }),
     },
   };
 }
@@ -134,6 +140,9 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
     const description = (s.categoriesSeoDescription as string) || "تصفح جميع تصنيفات المقالات";
     const pageUrl = `${siteUrl}/categories`;
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const categories = await db.category.findMany({
       select: { name: true, slug: true, description: true, socialImage: true },
       orderBy: { name: "asc" },
@@ -141,6 +150,7 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التصنيفات",
+      ogImage, ogImageAlt,
       items: categories.map((c, i) => ({ name: c.name, url: `${siteUrl}/categories/${c.slug}`, position: i + 1, description: c.description || undefined, image: c.socialImage || undefined })),
     };
 
@@ -165,6 +175,9 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
     const description = (s.tagsSeoDescription as string) || "تصفح جميع التاجات";
     const pageUrl = `${siteUrl}/tags`;
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const tags = await db.tag.findMany({
       select: { name: true, slug: true, description: true },
       orderBy: { name: "asc" },
@@ -172,6 +185,7 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "التاجات",
+      ogImage, ogImageAlt,
       items: tags.map((t, i) => ({ name: t.name, url: `${siteUrl}/tags/${t.slug}`, position: i + 1, description: t.description || undefined })),
     };
 
@@ -196,6 +210,9 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
     const description = (s.industriesSeoDescription as string) || "تصفح جميع القطاعات";
     const pageUrl = `${siteUrl}/industries`;
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const industries = await db.industry.findMany({
       select: { name: true, slug: true, description: true },
       orderBy: { name: "asc" },
@@ -203,6 +220,7 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "القطاعات",
+      ogImage, ogImageAlt,
       items: industries.map((ind, i) => ({ name: ind.name, url: `${siteUrl}/industries/${ind.slug}`, position: i + 1, description: ind.description || undefined })),
     };
 
@@ -227,6 +245,9 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
     const description = (s.clientsSeoDescription as string) || "تصفح جميع عملاء مدونتي";
     const pageUrl = `${siteUrl}/clients`;
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const clients = await db.client.findMany({
       select: { name: true, slug: true, description: true, logoMedia: { select: { url: true } } },
       orderBy: { name: "asc" },
@@ -234,6 +255,7 @@ export async function regenerateClientsListingCache(): Promise<{ success: boolea
 
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "العملاء",
+      ogImage, ogImageAlt,
       items: clients.map((c, i) => ({ name: c.name, url: `${siteUrl}/clients/${c.slug}`, position: i + 1, description: c.description || undefined, image: c.logoMedia?.url || undefined })),
     };
 
@@ -265,8 +287,12 @@ export async function regenerateArticlesListingCache(): Promise<{ success: boole
       take: 50,
     });
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "المقالات",
+      ogImage, ogImageAlt,
       items: articles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
     };
 
@@ -404,8 +430,12 @@ export async function regenerateTrendingPageCache(): Promise<{ success: boolean;
       take: 20,
     });
 
+    const ogImage = (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.altImage as string) || undefined;
+
     const config: ListingPageConfig = {
       pageUrl, title, description, siteName, siteUrl, breadcrumbName: "الرائج",
+      ogImage, ogImageAlt,
       items: topArticles.map((a, i) => ({ name: a.title, url: `${siteUrl}/clients/${a.client.slug}/articles/${a.slug}`, position: i + 1, description: a.excerpt || undefined, image: a.featuredImage?.url || undefined })),
     };
 

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-08 22:00 (PRE-PUSH v0.24.0)
+# Session Context — Last Updated: 2026-04-09 00:06 (PRE-PUSH v0.25.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,8 +7,56 @@
 ---
 
 ## Current Versions
-- **admin**: v0.24.0 (Settings UX overhaul + cache chain fix)
+- **admin**: v0.25.0 (Listing pages OG image + settings image preview + full changelog seed)
 - **modonty**: v1.18.0 (no changes this session)
+
+---
+
+## ✅ Session 8 — Listing Pages OG Image (2026-04-09 00:06)
+
+### What Was Delivered
+
+**OG image + twitter:card for all listing pages:**
+- `buildListingMetadata()` now includes `openGraph.images` and `twitter.card: "summary_large_image"` when `ogImageUrl` is set
+- Source: `settings.ogImageUrl` + `settings.altImage` (shared Modonty brand image 1200×630)
+- Zero new schema fields — image is embedded INTO the cached JSON blob (`clientsPageMetaTags`, etc.)
+- ALL 6 regenerate functions updated: categories, tags, industries, clients, articles, trending
+
+**Settings form — image preview:**
+- Each listing page tab (Clients, Categories, Tags, Industries, Articles, Trending) now shows a read-only Social Sharing Image card
+- Shows thumbnail (80×42) + alt text + "Managed in Media tab" hint
+- Falls back to "No image set" message if `ogImageUrl` is empty
+
+**Changelog seeded:**
+- Created `dataLayer/scripts/seed-changelog.ts`
+- All 17 versions (v0.9.0 through v0.25.0) seeded into `modonty_dev` DB
+
+**MASTER-TODO updated:**
+- Added FUTURE section for modonty listing pages (tags/industries/articles — cache ready in DB, pages not built yet)
+- Version history updated through v0.25.0
+
+### Key Files Changed
+1. `admin/lib/seo/listing-page-seo-generator.ts` — `ListingPageConfig` interface + `buildListingMetadata` + 6 regenerate functions
+2. `admin/app/(dashboard)/settings/components/settings-form-v2.tsx` — image preview block in listing tabs
+3. `admin/package.json` — version 0.24.0 → 0.25.0
+4. `documents/tasks/MASTER-TODO.md` — updated with FUTURE section + version history
+5. `dataLayer/scripts/seed-changelog.ts` — new: seeds all 17 changelog entries
+
+### Live Test Results (Playwright)
+- Clients: `og:image`, `og:image:width`, `og:image:height`, `twitter:card: summary_large_image`, `twitter:image` ✅
+- Categories: confirmed ✅
+- Trending: confirmed ✅
+- Tags/Industries/Articles: no modonty pages yet (cache pre-populated, documented as FUTURE)
+- Home page regression: og:image still works ✅
+
+### ⚠️ Still Pending (carried over)
+- Add `REVALIDATE_SECRET` to Vercel Dashboard for BOTH apps (admin + modonty)
+- Build `/tags`, `/industries`, `/articles` listing pages in modonty (cache in DB ready)
+
+### If Issues Appear
+1. **OG image missing after regenerate**: Check that `settings.ogImageUrl` is set in admin Settings → Media tab
+2. **Tags/Industries/Articles OG missing**: These pages don't exist in modonty yet — not a bug
+3. **Rollback admin**: `git reset --hard e2d1590`
 
 ---
 

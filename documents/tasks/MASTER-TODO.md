@@ -1,7 +1,7 @@
 # Master TODO — MODONTY
 
-> Last Updated: 2026-04-07
-> Versions: admin v0.20.0 | modonty v1.17.0
+> Last Updated: 2026-04-08
+> Versions: admin v0.25.0 | modonty v1.18.0
 
 ---
 
@@ -53,6 +53,13 @@
 - [ ] Add loading.tsx to help/faq, subscribe pages
 - [ ] Add sitemap entries for tag archive pages (/tags/[slug])
 
+### FUTURE — Listing Pages (modonty)
+> ⚠️ Admin already generates + caches OG metadata for these pages (DB ready).
+> Pages need to be built in modonty to use the cache.
+- [ ] Build `/tags` listing page in modonty (cache exists in `tagsPageMetaTags`)
+- [ ] Build `/industries` listing page in modonty (cache exists in `industriesPageMetaTags`)
+- [ ] Build `/articles` listing page in modonty (cache exists in `articlesPageMetaTags`)
+
 ---
 
 ## Next Version — Admin (LOW)
@@ -77,6 +84,9 @@
 
 | Version | What |
 |---------|------|
+| admin v0.25.0 | Listing pages OG image — clients, categories, trending (tags/industries/articles cache ready) |
+| admin v0.24.0 | REVALIDATE_SECRET fix, SEO Description textarea, listing cache revalidation |
+| admin v0.21.0 | Client form UX overhaul, slug bug fix, Arabic hints, real pricing |
 | admin v0.20.0 | Bulk SEO fix, terms cache, slug box all forms, users auth |
 | admin v0.19.0 | Arabic media upload fix — safe ASCII filenames |
 | admin v0.18.0 | Open status transitions, error toast 10s |
