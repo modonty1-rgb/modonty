@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-08 20:00
+# Session Context — Last Updated: 2026-04-08 15:20 (POST-PUSH)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,8 +7,51 @@
 ---
 
 ## Current Versions
-- **admin**: v0.13.0 (updated with media fixes)
-- **modonty**: v1.17.0 (updated with dynamic rendering)
+- **admin**: v0.22.0 (media modal feature complete)
+- **modonty**: v1.18.0 (media modal display complete)
+
+---
+
+## ✅ PUSH COMPLETE — Session 6 (2026-04-08 15:15 UTC)
+
+**Commits pushed:** 6 total (5 prior work + 1 version bump)  
+**Vercel deployment:** Auto-triggered, monitor at https://vercel.com/modonty/modonty
+
+### What Was Delivered
+
+**Media Modal Feature — Admin to Modonty Complete Flow**
+- Admin can now upload and associate logo/hero images with clients via modal dialog
+- Images persist to database (logoMediaId, heroImageMediaId fields)
+- Modonty public pages fetch and display images correctly
+- Cache invalidation working (revalidatePath on image change)
+
+### Key Files Changed
+
+**admin app:**
+1. `helpers/client-form-schema.ts` — NEW: `clientMediaSchema` (only logoMediaId + heroImageMediaId, optional/nullable)
+2. `components/hooks/use-client-media-modal.ts` — FIX: Removed `|| undefined` logic that was stripping media IDs
+3. `actions/clients-actions/update-client.ts` — ADD: `revalidatePath()` call after media update
+
+**modonty app:**
+1. `app/clients/[slug]/layout.tsx` — REMOVED: Incompatible `export const dynamic = "force-dynamic"`
+2. `app/clients/[slug]/page.tsx` — REMOVED: Incompatible `export const dynamic = "force-dynamic"`
+
+### Why Removed Dynamic Export?
+- `next.config.ts` has `cacheComponents: true` enabled
+- These two settings are incompatible (NextJS error message explicit)
+- Alternative: Use cache + `revalidatePath()` on mutation (working solution)
+
+### Test Results
+- ✅ TypeScript: Zero errors (both apps)
+- ✅ Live page test: Logo (400×284px) + Hero image displaying correctly
+- ✅ Database: Test client has media IDs persisted
+- ✅ Git: All commits clean, ready for deployment
+
+### If Issues Appear During Deployment
+1. **Build fails**: Check Vercel logs (next build step)
+2. **Images not showing**: Check Cloudinary URLs in database
+3. **Media not saving**: Check `updateMediaSocialFields()` is being called (should be called from use-client-media-modal)
+4. **Rollback**: `git reset --hard e2d1590 && git push -f origin main`
 
 ---
 
