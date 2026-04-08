@@ -18,7 +18,7 @@ interface ArticleClientCardProps {
     url?: string | null;
     description?: string | null;
     logoMedia?: { url: string } | null;
-    ogImageMedia?: { url: string } | null;
+    heroImageMedia?: { url: string } | null;
   };
   /** When provided, Ask Client block is rendered inside the card */
   askClientProps?: {
@@ -32,7 +32,7 @@ interface ArticleClientCardProps {
 
 export function ArticleClientCard({ client, askClientProps }: ArticleClientCardProps) {
   const logoUrl = client.logoMedia?.url ?? null;
-  const heroUrl = client.ogImageMedia?.url ?? null;
+  const heroUrl = client.heroImageMedia?.url ?? null;
   const description = client.description?.trim();
   const hasDescription = description && description.length > 0;
 

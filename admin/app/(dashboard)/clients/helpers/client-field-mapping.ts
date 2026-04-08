@@ -346,7 +346,7 @@ export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
     example: '{ url: "https://...", width: 200, height: 200, altText: "Modonty Logo" }',
   },
   {
-    field: 'ogImageMedia',
+    field: 'heroImageMedia',
     category: 'Media',
     description: 'Open Graph image for social media sharing',
     metaTags: {
@@ -374,7 +374,7 @@ export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
     example: '{ url: "https://...", width: 1200, height: 630, altText: "..." }',
   },
   {
-    field: 'twitterImageMedia',
+    field: 'heroImageMedia',
     category: 'Media',
     description: 'Twitter Card image for Twitter sharing',
     metaTags: {
@@ -823,7 +823,7 @@ export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Twitter Card type (summary_large_image, summary)',
     metaTags: {
       metaTagsPath: 'twitter.card',
-      transformation: 'default:"summary_large_image" (if twitterImageMedia present) or "summary"',
+      transformation: 'default:"summary_large_image" (if heroImageMedia present) or "summary"',
     },
     score: {
       optimal: 3,

@@ -7,13 +7,7 @@ interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
     height: number | null;
     altText: string | null;
   } | null;
-  ogImageMedia?: {
-    url: string;
-    width: number | null;
-    height: number | null;
-    altText: string | null;
-  } | null;
-  twitterImageMedia?: {
+  heroImageMedia?: {
     url: string;
     width: number | null;
     height: number | null;
@@ -495,10 +489,10 @@ export function generateCompleteOrganizationJsonLd(
     dateModified: client.updatedAt.toISOString(),
   };
 
-  // primaryImageOfPage: only use OG image (proper page image)
+  // primaryImageOfPage: only use hero image (proper page image)
   // Logo is NOT suitable as primaryImageOfPage — it's a brand mark, not page content
-  // This property is optional per Schema.org — omit if no OG image exists
-  const ogImg = client.ogImageMedia;
+  // This property is optional per Schema.org — omit if no hero image exists
+  const ogImg = client.heroImageMedia;
   if (ogImg?.url) {
     const u = ensureAbsoluteUrl(ogImg.url, siteUrl) || ogImg.url;
     webPageNode.primaryImageOfPage = {

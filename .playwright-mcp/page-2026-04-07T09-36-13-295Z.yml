@@ -1,0 +1,364 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.16.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.16.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - generic [ref=e89]:
+        - generic [ref=e90]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button "Send Note" [ref=e91] [cursor=pointer]:
+          - img
+          - text: Send Note
+      - main [ref=e92]:
+        - generic [ref=e94]:
+          - heading "سجل التحديثات والملاحظات" [level=1] [ref=e95]
+          - generic [ref=e96]:
+            - tablist [ref=e97]:
+              - tab "التحديثات (8)" [selected] [ref=e98] [cursor=pointer]
+              - tab "ملاحظات الفريق (1)" [ref=e99] [cursor=pointer]
+            - tabpanel "التحديثات (8)" [ref=e100]:
+              - generic [ref=e101]:
+                - generic [ref=e102]:
+                  - generic [ref=e103]:
+                    - generic [ref=e104]: v0.9.0
+                    - heading "تطوير صفحة الميديا + SEO الصور" [level=3] [ref=e105]
+                  - generic [ref=e106]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e107]:
+                  - generic [ref=e108]:
+                    - img [ref=e109]
+                    - generic [ref=e112]: جديد
+                    - generic [ref=e113]: إعادة تصميم شامل لصفحة الميديا
+                  - generic [ref=e114]:
+                    - img [ref=e115]
+                    - generic [ref=e118]: جديد
+                    - generic [ref=e119]: SEO الصور — alt text + JSON-LD creditText
+                  - generic [ref=e120]:
+                    - img [ref=e121]
+                    - generic [ref=e124]: جديد
+                    - generic [ref=e125]: خريطة موقع الصور (Image Sitemap)
+                  - generic [ref=e126]:
+                    - img [ref=e127]
+                    - generic [ref=e129]: تحسين
+                    - generic [ref=e130]: إزالة بيانات EXIF من الصور
+                  - generic [ref=e131]:
+                    - img [ref=e132]
+                    - generic [ref=e134]: تحسين
+                    - generic [ref=e135]: إزالة الحذف الجماعي
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - generic [ref=e138]:
+                    - generic [ref=e139]: v0.10.0
+                    - heading "تطوير صفحة الكتّاب + SEO Cache" [level=3] [ref=e140]
+                  - generic [ref=e141]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e142]:
+                  - generic [ref=e143]:
+                    - img [ref=e144]
+                    - generic [ref=e147]: جديد
+                    - generic [ref=e148]: إعادة تصميم شامل لصفحة الكتّاب
+                  - generic [ref=e149]:
+                    - img [ref=e150]
+                    - generic [ref=e153]: جديد
+                    - generic [ref=e154]: Person JSON-LD + ربط تلقائي بالمقالات
+                  - generic [ref=e155]:
+                    - img [ref=e156]
+                    - generic [ref=e159]: جديد
+                    - generic [ref=e160]: صفحة كاتب في الموقع العام
+                  - generic [ref=e161]:
+                    - img [ref=e162]
+                    - generic [ref=e165]: جديد
+                    - generic [ref=e166]: جرس الإشعارات في الترويسة
+              - generic [ref=e167]:
+                - generic [ref=e168]:
+                  - generic [ref=e169]:
+                    - generic [ref=e170]: v0.11.0
+                    - heading "تطوير شامل للعملاء — أمان + SEO + أداء" [level=3] [ref=e171]
+                  - generic [ref=e172]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e173]:
+                  - generic [ref=e174]:
+                    - img [ref=e175]
+                    - generic [ref=e178]: جديد
+                    - generic [ref=e179]: حماية العملاء — auth + Zod + فحص الرابط المختصر
+                  - generic [ref=e180]:
+                    - img [ref=e181]
+                    - generic [ref=e184]: جديد
+                    - generic [ref=e185]: ربط تحديث العميل بتحديث JSON-LD المقالات تلقائياً
+                  - generic [ref=e186]:
+                    - img [ref=e187]
+                    - generic [ref=e196]: إصلاح
+                    - generic [ref=e197]: إصلاح JSON-LD — @id/@type كانت تُحذف
+                  - generic [ref=e198]:
+                    - img [ref=e199]
+                    - generic [ref=e208]: إصلاح
+                    - generic [ref=e209]: إصلاح Tax ID — كان يُسند لحقل خاطئ
+                  - generic [ref=e210]:
+                    - img [ref=e211]
+                    - generic [ref=e213]: تحسين
+                    - generic [ref=e214]: إعادة تصميم واجهة العملاء بالكامل
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: v0.12.0
+                    - heading "تطوير شامل للمقالات — 5 خطوات + محرر متقدم" [level=3] [ref=e219]
+                  - generic [ref=e220]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e221]:
+                  - generic [ref=e222]:
+                    - img [ref=e223]
+                    - generic [ref=e226]: جديد
+                    - generic [ref=e227]: تقليل خطوات إنشاء المقال من 12 إلى 5
+                  - generic [ref=e228]:
+                    - img [ref=e229]
+                    - generic [ref=e232]: جديد
+                    - generic [ref=e233]: الحفظ التلقائي كل 30 ثانية في وضع التعديل
+                  - generic [ref=e234]:
+                    - img [ref=e235]
+                    - generic [ref=e238]: جديد
+                    - generic [ref=e239]: منع النشر تحت 60% SEO
+                  - generic [ref=e240]:
+                    - img [ref=e241]
+                    - generic [ref=e244]: جديد
+                    - generic [ref=e245]: ترقية المحرر — Undo/Redo + Highlight + YouTube + Superscript + Clear
+                  - generic [ref=e246]:
+                    - img [ref=e247]
+                    - generic [ref=e250]: جديد
+                    - generic [ref=e251]: توحيد نتيجة SEO بين الفورم وصفحة العرض
+                  - generic [ref=e252]:
+                    - img [ref=e253]
+                    - generic [ref=e255]: تحسين
+                    - generic [ref=e256]: عداد كلمات مباشر + أحرف + وقت قراءة في المحرر
+                  - generic [ref=e257]:
+                    - img [ref=e258]
+                    - generic [ref=e260]: تحسين
+                    - generic [ref=e261]: تحذير عند مغادرة الصفحة بدون حفظ
+                  - generic [ref=e262]:
+                    - img [ref=e263]
+                    - generic [ref=e265]: تحسين
+                    - generic [ref=e266]: بيانات تجريبية محسّنة — محتوى عربي غني + أسئلة شائعة
+                  - generic [ref=e267]:
+                    - img [ref=e268]
+                    - generic [ref=e277]: إصلاح
+                    - generic [ref=e278]: إصلاح redirect بعد التحديث
+                  - generic [ref=e279]:
+                    - img [ref=e280]
+                    - generic [ref=e289]: إصلاح
+                    - generic [ref=e290]: إصلاح beforeunload المفرط
+                  - generic [ref=e291]:
+                    - img [ref=e292]
+                    - generic [ref=e301]: إصلاح
+                    - generic [ref=e302]: إصلاح قص عنوان SEO في منتصف الكلمة
+                  - generic [ref=e303]:
+                    - img [ref=e304]
+                    - generic [ref=e313]: إصلاح
+                    - generic [ref=e314]: إصلاح بناء Console — إزالة import مفقود
+              - generic [ref=e315]:
+                - generic [ref=e316]:
+                  - generic [ref=e317]:
+                    - generic [ref=e318]: v0.13.0
+                    - heading "أمان التصنيفات والوسوم والصناعات + نظام الملاحظات" [level=3] [ref=e319]
+                  - generic [ref=e320]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e321]:
+                  - generic [ref=e322]:
+                    - img [ref=e323]
+                    - generic [ref=e326]: جديد
+                    - generic [ref=e327]: حماية التصنيفات — auth + Zod + فحص الرابط المختصر
+                  - generic [ref=e328]:
+                    - img [ref=e329]
+                    - generic [ref=e332]: جديد
+                    - generic [ref=e333]: حماية الوسوم — auth + Zod + فحص الرابط المختصر
+                  - generic [ref=e334]:
+                    - img [ref=e335]
+                    - generic [ref=e338]: جديد
+                    - generic [ref=e339]: حماية الصناعات — auth + Zod + فحص الرابط المختصر
+                  - generic [ref=e340]:
+                    - img [ref=e341]
+                    - generic [ref=e344]: جديد
+                    - generic [ref=e345]: صفحات خطأ (error.tsx) للتصنيفات والوسوم والصناعات
+                  - generic [ref=e346]:
+                    - img [ref=e347]
+                    - generic [ref=e350]: جديد
+                    - generic [ref=e351]: نظام إرسال الملاحظات عبر البريد + بانر Beta
+                  - generic [ref=e352]:
+                    - img [ref=e353]
+                    - generic [ref=e355]: تحسين
+                    - generic [ref=e356]: تحويل 80+ تسمية عربية في صفحة العملاء إلى إنجليزية
+                  - generic [ref=e357]:
+                    - img [ref=e358]
+                    - generic [ref=e360]: تحسين
+                    - generic [ref=e361]: إضافة Organization + WebSite في JSON-LD لكل الأقسام
+                  - generic [ref=e362]:
+                    - img [ref=e363]
+                    - generic [ref=e365]: تحسين
+                    - generic [ref=e366]: Breadcrumb بالإنجليزية في كل الأقسام
+                  - generic [ref=e367]:
+                    - img [ref=e368]
+                    - generic [ref=e370]: تحسين
+                    - generic [ref=e371]: إضافة alternates.languages (ar-SA) في الميتاداتا
+                  - generic [ref=e372]:
+                    - img [ref=e373]
+                    - generic [ref=e382]: إصلاح
+                    - generic [ref=e383]: إصلاح تصميم صفحة العملاء — فلاتر مخفية + إحصائيات مضغوطة
+              - generic [ref=e384]:
+                - generic [ref=e385]:
+                  - generic [ref=e386]:
+                    - generic [ref=e387]: v0.14.0
+                    - heading "أمان الكتّاب والميديا والإعدادات + ربط الصناعات" [level=3] [ref=e388]
+                  - generic [ref=e389]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e390]:
+                  - generic [ref=e391]:
+                    - img [ref=e392]
+                    - generic [ref=e395]: جديد
+                    - generic [ref=e396]: حماية جميع عمليات الكتّاب — تحقق من الصلاحية
+                  - generic [ref=e397]:
+                    - img [ref=e398]
+                    - generic [ref=e401]: جديد
+                    - generic [ref=e402]: حماية جميع عمليات الميديا (رفع + تعديل + حذف)
+                  - generic [ref=e403]:
+                    - img [ref=e404]
+                    - generic [ref=e407]: جديد
+                    - generic [ref=e408]: حماية 6 عمليات حفظ في الإعدادات
+                  - generic [ref=e409]:
+                    - img [ref=e410]
+                    - generic [ref=e413]: جديد
+                    - generic [ref=e414]: ربط تحديث الصناعة بتحديث SEO العملاء تلقائياً
+                  - generic [ref=e415]:
+                    - img [ref=e416]
+                    - generic [ref=e418]: تحسين
+                    - generic [ref=e419]: تحسين وضوح رقم الإصدار في السايدبار
+              - generic [ref=e420]:
+                - generic [ref=e421]:
+                  - generic [ref=e422]:
+                    - generic [ref=e423]: v0.15.0
+                    - heading "رسائل التنبيه عربية + أيقونات ملونة" [level=3] [ref=e424]
+                  - generic [ref=e425]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e426]:
+                  - generic [ref=e427]:
+                    - img [ref=e428]
+                    - generic [ref=e430]: تحسين
+                    - generic [ref=e431]: تحسين شامل لرسائل التنبيه — أيقونات + ألوان + نصوص عربية واضحة
+                  - generic [ref=e432]:
+                    - img [ref=e433]
+                    - generic [ref=e436]: جديد
+                    - generic [ref=e437]: إضافة نوع success للتنبيهات — أخضر مع علامة صح
+                  - generic [ref=e438]:
+                    - img [ref=e439]
+                    - generic [ref=e442]: جديد
+                    - generic [ref=e443]: إضافة نوع warning للتنبيهات — أصفر مع علامة تحذير
+                  - generic [ref=e444]:
+                    - img [ref=e445]
+                    - generic [ref=e447]: تحسين
+                    - generic [ref=e448]: التنبيهات تختفي تلقائياً بعد 5 ثواني
+                  - generic [ref=e449]:
+                    - img [ref=e450]
+                    - generic [ref=e452]: تحسين
+                    - generic [ref=e453]: دعم 3 تنبيهات في نفس الوقت بدل 1
+                  - generic [ref=e454]:
+                    - img [ref=e455]
+                    - generic [ref=e464]: إصلاح
+                    - generic [ref=e465]: إصلاح تنبيه 'مغادرة الصفحة' بعد الحفظ
+              - generic [ref=e466]:
+                - generic [ref=e467]:
+                  - generic [ref=e468]:
+                    - generic [ref=e469]: v0.16.0
+                    - heading "سجل التحديثات + ملاحظات الفريق + إصلاحات" [level=3] [ref=e470]
+                  - generic [ref=e471]: ٧ أبريل ٢٠٢٦، ١٢:٣٣ م
+                - generic [ref=e472]:
+                  - generic [ref=e473]:
+                    - img [ref=e474]
+                    - generic [ref=e477]: جديد
+                    - generic [ref=e478]: صفحة سجل التحديثات — عرض كل التحديثات حسب الإصدار
+                  - generic [ref=e479]:
+                    - img [ref=e480]
+                    - generic [ref=e483]: جديد
+                    - generic [ref=e484]: نظام ملاحظات الفريق — كتابة ملاحظات + ردود محادثة
+                  - generic [ref=e485]:
+                    - img [ref=e486]
+                    - generic [ref=e489]: جديد
+                    - generic [ref=e490]: رابط سجل التحديثات في السايدبار جنب رقم الإصدار
+                  - generic [ref=e491]:
+                    - img [ref=e492]
+                    - generic [ref=e494]: تحسين
+                    - generic [ref=e495]: زر إرسال الملاحظة يحفظ في قاعدة البيانات + يرسل إيميل
+                  - generic [ref=e496]:
+                    - img [ref=e497]
+                    - generic [ref=e506]: إصلاح
+                    - generic [ref=e507]: "إصلاح جذري لمشكلة 'تم تعديل المقال من مستخدم آخر' — السبب: SEO يغيّر updatedAt بعد الحفظ"
+                  - generic [ref=e508]:
+                    - img [ref=e509]
+                    - generic [ref=e518]: إصلاح
+                    - generic [ref=e519]: إصلاح مؤشر التقدم — كان 56% والصحيح 60%
+                  - generic [ref=e520]:
+                    - img [ref=e521]
+                    - generic [ref=e523]: تحسين
+                    - generic [ref=e524]: جميع رسائل SEO Analyzer بالعربية
+                  - generic [ref=e525]:
+                    - img [ref=e526]
+                    - generic [ref=e528]: تحسين
+                    - generic [ref=e529]: جميع تلميحات الخطوات بالعربية مع وصف واضح
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e535] [cursor=pointer]:
+    - img [ref=e536]
+  - alert [ref=e539]

@@ -230,14 +230,7 @@ export async function clearDatabase(logCallback?: (message: string, level?: "inf
     log("  Deleting subscribers (depend on clients - children)...", "info");
     await db.subscriber.deleteMany({});
 
-    log("  Clearing media references from clients...", "info");
-    await db.client.updateMany({
-      data: {
-        logoMediaId: null,
-        ogImageMediaId: null,
-        twitterImageMediaId: null,
-      },
-    });
+    // Media references cleared on client creation (omitted)
 
     log("  Clearing parent organization references from clients...", "info");
     await db.client.updateMany({

@@ -6,7 +6,7 @@ export async function canDeleteMedia(id: string, clientId?: string) {
   try {
     const usageResult = await getMediaUsage(id, clientId);
     if (!usageResult.success) {
-      return { canDelete: false, reason: usageResult.error };
+      return { canDelete: false, reason: usageResult.error as string };
     }
 
     const { usage } = usageResult;
@@ -15,7 +15,9 @@ export async function canDeleteMedia(id: string, clientId?: string) {
     }
 
     // Check for published articles usage
-    const publishedUsage = usage.featuredIn.filter((a) => a.status === "PUBLISHED");
+    const publishedUsage = usage.featuredIn.filter(
+      (a: { status: string }) => a.status === "PUBLISHED"
+    );
     if (publishedUsage.length > 0) {
       return {
         canDelete: false,
@@ -26,9 +28,8 @@ export async function canDeleteMedia(id: string, clientId?: string) {
 
     // Check for Client media relations
     const { clientUsage } = usage;
-    const logoClients = clientUsage?.logoClients ?? [];
-    const ogClients = clientUsage?.ogImageClients ?? [];
-    const twitterClients = clientUsage?.twitterImageClients ?? [];
+    const logoClients = (clientUsage?.logoClients as Array<{ name: string }>) ?? [];
+    const heroClients = (clientUsage?.heroImageClients as Array<{ name: string }>) ?? [];
 
     if (logoClients.length > 0) {
       const names = logoClients.map((c) => c.name).join(", ");
@@ -38,19 +39,11 @@ export async function canDeleteMedia(id: string, clientId?: string) {
         usage: { clientUsage },
       };
     }
-    if (ogClients.length > 0) {
-      const names = ogClients.map((c) => c.name).join(", ");
+    if (heroClients.length > 0) {
+      const names = heroClients.map((c) => c.name).join(", ");
       return {
         canDelete: false,
-        reason: `This media is used as OG image for client(s): ${names}. Please change the client's media settings first.`,
-        usage: { clientUsage },
-      };
-    }
-    if (twitterClients.length > 0) {
-      const names = twitterClients.map((c) => c.name).join(", ");
-      return {
-        canDelete: false,
-        reason: `This media is used as Twitter image for client(s): ${names}. Please change the client's media settings first.`,
+        reason: `This media is used as hero image for client(s): ${names}. Please change the client's media settings first.`,
         usage: { clientUsage },
       };
     }

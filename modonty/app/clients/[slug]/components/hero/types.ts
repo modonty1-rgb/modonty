@@ -5,8 +5,7 @@ export interface ClientHeroClient {
   legalName?: string | null;
   businessBrief?: string | null;
   logoMedia?: { url: string } | null;
-  ogImageMedia?: { url: string } | null;
-  twitterImageMedia?: { url: string } | null;
+  heroImageMedia?: { url: string } | null;
   url?: string | null;
   sameAs: string[];
   foundingDate?: Date | null;

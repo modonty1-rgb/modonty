@@ -98,8 +98,7 @@ export async function getMediaStats() {
       // Detailed usage breakdown
       inArticles,
       asLogos,
-      asOGImages,
-      asTwitterImages,
+      asHeroImages,
     ] = await Promise.all([
       // Total media
       db.media.count({
@@ -186,18 +185,11 @@ export async function getMediaStats() {
           logoClients: { some: {} },
         },
       }),
-      // Detailed usage breakdown: Media used as OG images
+      // Detailed usage breakdown: Media used as hero images
       db.media.count({
         where: {
           clientId: { not: null },
-          ogImageClients: { some: {} },
-        },
-      }),
-      // Detailed usage breakdown: Media used as Twitter images
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          twitterImageClients: { some: {} },
+          heroImageClients: { some: {} },
         },
       }),
     ]);
@@ -212,8 +204,7 @@ export async function getMediaStats() {
         OR: [
           { featuredArticles: { some: {} } },
           { logoClients: { some: {} } },
-          { ogImageClients: { some: {} } },
-          { twitterImageClients: { some: {} } },
+          { heroImageClients: { some: {} } },
         ],
       },
     });
@@ -238,8 +229,7 @@ export async function getMediaStats() {
       usageBreakdown: {
         inArticles,
         asLogos,
-        asOGImages,
-        asTwitterImages,
+        asHeroImages,
         totalUsed: totalUsedUnique,
         unused: unusedDetailed,
       },
@@ -275,8 +265,7 @@ export async function getMediaStats() {
       usageBreakdown: {
         inArticles: 0,
         asLogos: 0,
-        asOGImages: 0,
-        asTwitterImages: 0,
+        asHeroImages: 0,
         totalUsed: 0,
         unused: 0,
       },

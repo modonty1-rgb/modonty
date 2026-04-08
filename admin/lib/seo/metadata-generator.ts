@@ -41,7 +41,7 @@ export interface ArticleWithMetadataRelations {
   client: Client & {
     name: string;
     slug?: string | null;
-    ogImageMedia?: { url: string } | null;
+    heroImageMedia?: { url: string } | null;
     logoMedia?: { url: string } | null;
   };
   author: Author & {
@@ -139,7 +139,7 @@ export async function generateNextjsMetadata(
   // Featured image
   const ogImage =
     article.featuredImage?.url ||
-    article.client.ogImageMedia?.url ||
+    article.client.heroImageMedia?.url ||
     article.client.logoMedia?.url ||
     `${siteUrl}/og-image.jpg`;
 

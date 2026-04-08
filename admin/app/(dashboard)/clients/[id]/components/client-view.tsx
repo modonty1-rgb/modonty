@@ -45,13 +45,7 @@ interface Client {
     width: number | null;
     height: number | null;
   } | null;
-  ogImageMedia: {
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  } | null;
-  twitterImageMedia: {
+  heroImageMedia: {
     url: string;
     altText: string | null;
     width: number | null;
@@ -460,25 +454,25 @@ export function ClientView({ client }: ClientViewProps) {
                   </div>
                 </div>
               )}
-              {client.ogImageMedia?.url && (
+              {client.heroImageMedia?.url && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">OG Image URL</p>
+                  <p className="text-sm text-muted-foreground mb-2">Hero Image URL</p>
                   <div className="space-y-2">
                     <img
-                      src={client.ogImageMedia.url}
-                      alt={client.ogImageMedia.altText || `${client.name} OG image`}
+                      src={client.heroImageMedia.url}
+                      alt={client.heroImageMedia.altText || `${client.name} hero image`}
                       className="h-32 w-32 rounded object-cover"
                     />
                     <a
-                      href={client.ogImageMedia.url}
+                      href={client.heroImageMedia.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline block"
                     >
-                      {client.ogImageMedia.url}
+                      {client.heroImageMedia.url}
                     </a>
-                    {client.ogImageMedia.altText && (
-                      <p className="text-xs text-muted-foreground">Alt: {client.ogImageMedia.altText}</p>
+                    {client.heroImageMedia.altText && (
+                      <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
                     )}
                   </div>
                 </div>

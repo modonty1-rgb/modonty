@@ -48,7 +48,7 @@ export function SeedForm() {
     ogImageUrl?: string;
     ogImageCloudinaryPublicId?: string;
     ogImageCloudinaryVersion?: string;
-    ogImageMediaId?: string;
+    heroImageMediaId?: string;
     databaseVerified?: boolean;
     error?: string;
   } | null>(null);

@@ -20,12 +20,7 @@ export const getClientPageData = cache(async (rawSlug: string) => {
             url: true,
           },
         },
-        ogImageMedia: {
-          select: {
-            url: true,
-          },
-        },
-        twitterImageMedia: {
+        heroImageMedia: {
           select: {
             url: true,
           },

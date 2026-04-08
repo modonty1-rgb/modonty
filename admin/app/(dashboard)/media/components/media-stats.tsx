@@ -49,8 +49,7 @@ interface MediaStatsProps {
     usageBreakdown?: {
       inArticles: number;
       asLogos: number;
-      asOGImages: number;
-      asTwitterImages: number;
+      asHeroImages: number;
       totalUsed: number;
       unused: number;
     };

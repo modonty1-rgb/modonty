@@ -1,0 +1,347 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+      - navigation:
+        - generic:
+          - link:
+            - /url: /
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /seo-overview
+            - img
+            - generic: SEO Overview
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: Content
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /articles
+                - img
+                - generic: Articles
+              - link:
+                - /url: /categories
+                - img
+                - generic: Categories
+              - link:
+                - /url: /tags
+                - img
+                - generic: Tags
+              - link:
+                - /url: /authors
+                - img
+                - generic: Authors
+              - link:
+                - /url: /industries
+                - img
+                - generic: Industries
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Modonty Pages
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Audience
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: System
+            - img
+      - generic:
+        - link:
+          - /url: /guidelines
+          - img
+          - text: Guidelines
+        - generic:
+          - button:
+            - img
+          - link:
+            - /url: /changelog
+            - text: v0.21.0
+            - generic: "?"
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - img
+              - generic:
+                - img
+                - generic: Clients
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: Modonty
+              - generic:
+                - link:
+                  - /url: /articles
+                  - button:
+                    - img
+                    - generic: Articles
+                - link:
+                  - /url: /clients
+                  - button:
+                    - img
+                    - generic: Clients
+                - link:
+                  - /url: /media
+                  - button:
+                    - img
+                    - generic: Media
+          - generic:
+            - link:
+              - /url: /contact-messages
+              - button:
+                - img
+                - generic: "1"
+            - button:
+              - generic:
+                - generic: M
+      - generic:
+        - generic: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button:
+          - img
+          - text: Send Note
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]:
+                  - text: Clients
+                  - generic: (4)
+                - generic:
+                  - generic: 4 total
+                  - generic: 11% delivery
+                  - generic: 65% SEO
+              - generic:
+                - button:
+                  - img
+                  - text: Filters
+                - link:
+                  - /url: /clients/new
+                  - button:
+                    - img
+                    - text: New Client
+            - generic:
+              - generic:
+                - img
+                - textbox:
+                  - /placeholder: Search clients...
+          - generic:
+            - generic:
+              - generic:
+                - table:
+                  - rowgroup:
+                    - row:
+                      - columnheader:
+                        - generic:
+                          - text: Name
+                          - img
+                      - columnheader:
+                        - generic:
+                          - text: Plan
+                          - img
+                      - columnheader: Status
+                      - columnheader:
+                        - generic: Articles
+                      - columnheader: Delivery
+                      - columnheader:
+                        - generic: Expires
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader: SEO
+                      - columnheader: Actions
+                  - rowgroup:
+                    - row:
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d5ec61e2087dee91fe99a1
+                            - text: JBR SEO
+                          - generic: support@jbrseo.com
+                      - cell: Pro
+                      - cell: Active
+                      - cell: "0"
+                      - cell:
+                        - generic: 0/8
+                      - cell: 548 days
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - generic: 29%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d5ec61e2087dee91fe99a1/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d5ec61e2087dee91fe99a1/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d5ec61e2087dee91fe99a1
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d163a64e8bf3f470aff0df
+                            - text: عيادات بلسم الطبية
+                          - generic: info@balsam-medical.sa
+                      - cell: Standard
+                      - cell: Active
+                      - cell: "1"
+                      - cell:
+                        - generic: 1/8
+                      - cell: No subscription
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - generic: 47%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d163a64e8bf3f470aff0df/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d163a64e8bf3f470aff0df/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d163a64e8bf3f470aff0df
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d1639f4e8bf3f470aff0de
+                            - text: متجر نوفا للإلكترونيات
+                          - generic: info@nova-electronics.sa
+                      - cell: Pro
+                      - cell: Active
+                      - cell: "0"
+                      - cell:
+                        - generic: 0/15
+                      - cell: No subscription
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - generic: 30%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d1639f4e8bf3f470aff0de/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d1639f4e8bf3f470aff0de/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d1639f4e8bf3f470aff0de
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d02101be4b3c3ed2425d1c
+                            - text: أكاديمية المستقبل
+                          - generic: info@future-academy.sa
+                      - cell: Basic
+                      - cell: Active
+                      - cell: "5"
+                      - cell:
+                        - generic: 3/4
+                      - cell: 266 days
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - generic: 90%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d02101be4b3c3ed2425d1c/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d02101be4b3c3ed2425d1c/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d02101be4b3c3ed2425d1c
+                            - img
+  - list
+  - button "Open Next.js Dev Tools" [ref=e143] [cursor=pointer]:
+    - img [ref=e144]
+  - alert
+  - dialog "Edit Media" [ref=e340]:
+    - generic [ref=e341]:
+      - generic [ref=e342]:
+        - heading "Edit Media" [level=2] [ref=e343]
+        - paragraph [ref=e344]: Update logo and hero image for this client
+      - button [active] [ref=e345] [cursor=pointer]:
+        - img
+    - generic [ref=e346]:
+      - generic [ref=e347]:
+        - generic [ref=e348]: Logo and Open Graph images are used in all published content and social shares. You can edit alt text from the edit icon on each image.
+        - generic [ref=e350]:
+          - text: Logo
+          - button "Select Media" [ref=e352] [cursor=pointer]:
+            - img
+            - text: Select Media
+        - generic [ref=e354]:
+          - text: Hero Image
+          - button "Select Media" [ref=e356] [cursor=pointer]:
+            - img
+            - text: Select Media
+      - generic [ref=e357]:
+        - button "Cancel" [ref=e358] [cursor=pointer]
+        - button "Save Media" [ref=e359] [cursor=pointer]
+    - button "Close" [ref=e360] [cursor=pointer]:
+      - img [ref=e361]
+      - generic [ref=e364]: Close

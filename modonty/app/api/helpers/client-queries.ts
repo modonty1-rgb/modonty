@@ -15,7 +15,7 @@ type ClientWithArticles = Prisma.ClientGetPayload<{
         url: true;
       };
     };
-    ogImageMedia: {
+    heroImageMedia: {
       select: {
         url: true;
       };
@@ -56,7 +56,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
           url: true,
         },
       },
-      ogImageMedia: {
+      heroImageMedia: {
         select: {
           url: true,
         },
@@ -124,7 +124,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
       industry: client.industry || undefined,
       url: client.url || undefined,
       logo: client.logoMedia?.url || undefined,
-      ogImage: client.ogImageMedia?.url || undefined,
+      ogImage: client.heroImageMedia?.url || undefined,
       email: client.email || undefined,
       phone: client.phone || undefined,
       seoTitle: client.seoTitle || undefined,
@@ -190,7 +190,7 @@ export async function getClientsSearch(
     },
     include: {
       logoMedia: { select: { url: true } },
-      ogImageMedia: { select: { url: true } },
+      heroImageMedia: { select: { url: true } },
       industry: { select: { id: true, name: true, slug: true } },
       _count: {
         select: {
@@ -240,7 +240,7 @@ export async function getClientsSearch(
       industry: client.industry || undefined,
       url: client.url || undefined,
       logo: client.logoMedia?.url || undefined,
-      ogImage: client.ogImageMedia?.url || undefined,
+      ogImage: client.heroImageMedia?.url || undefined,
       email: client.email || undefined,
       phone: client.phone || undefined,
       seoTitle: client.seoTitle || undefined,
@@ -283,7 +283,7 @@ export async function getClientBySlug(slug: string) {
           url: true,
         },
       },
-      ogImageMedia: {
+      heroImageMedia: {
         select: {
           url: true,
         },
@@ -339,7 +339,7 @@ export async function getClientBySlug(slug: string) {
     legalName: client.legalName || undefined,
     url: client.url || undefined,
     logo: client.logoMedia?.url || undefined,
-    ogImage: client.ogImageMedia?.url || undefined,
+    ogImage: client.heroImageMedia?.url || undefined,
     email: client.email || undefined,
     phone: client.phone || undefined,
     seoTitle: client.seoTitle || undefined,

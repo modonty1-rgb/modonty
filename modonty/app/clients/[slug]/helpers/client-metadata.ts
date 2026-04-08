@@ -13,7 +13,7 @@ export async function getClientForMetadata(slug: string) {
       name: true,
       seoDescription: true,
       logoMedia: { select: { url: true } },
-      ogImageMedia: { select: { url: true } },
+      heroImageMedia: { select: { url: true } },
     },
   });
 }

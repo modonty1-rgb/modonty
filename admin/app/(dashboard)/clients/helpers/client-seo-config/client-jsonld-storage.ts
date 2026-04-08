@@ -81,13 +81,7 @@ export interface ClientWithFullRelations {
     width: number | null;
     height: number | null;
   } | null;
-  ogImageMedia?: {
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  } | null;
-  twitterImageMedia?: {
+  heroImageMedia?: {
     url: string;
     altText: string | null;
     width: number | null;
@@ -166,15 +160,7 @@ export async function fetchClientForJsonLd(
           height: true,
         },
       },
-      ogImageMedia: {
-        select: {
-          url: true,
-          altText: true,
-          width: true,
-          height: true,
-        },
-      },
-      twitterImageMedia: {
+      heroImageMedia: {
         select: {
           url: true,
           altText: true,

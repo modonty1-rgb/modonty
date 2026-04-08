@@ -1,0 +1,82 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - navigation "تنقل الصفحة" [ref=e5]:
+        - list [ref=e6]:
+          - listitem [ref=e7]:
+            - link "الرئيسية الرئيسية" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e9]
+              - generic [ref=e12]: الرئيسية
+          - listitem [ref=e13]:
+            - img [ref=e14]
+            - link "العملاء" [ref=e16] [cursor=pointer]:
+              - /url: /clients
+              - generic [ref=e17]: العملاء
+          - listitem [ref=e18]:
+            - generic [ref=e20]: Test Media Client
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e26]: TM
+          - generic [ref=e27]:
+            - heading "Test Media Client موثق" [level=1] [ref=e28]:
+              - text: Test Media Client
+              - img "موثق" [ref=e29]
+            - paragraph [ref=e32]: This is a comprehensive test client for validating the media modal feature integration. The business specializes in testing media components and ensuring proper SEO metadata generation.
+            - paragraph [ref=e33]: ٠ متابع · ٠ مقال · ٠ مشاهدة
+        - button "متابعة" [ref=e38] [cursor=pointer]:
+          - img
+          - text: متابعة
+      - main [ref=e39]:
+        - navigation "أقسام صفحة العميل" [ref=e40]:
+          - list [ref=e42]:
+            - listitem [ref=e43]:
+              - link "الكل" [ref=e44] [cursor=pointer]:
+                - /url: /clients/test-media-client
+            - listitem [ref=e45]:
+              - link "حول" [ref=e46] [cursor=pointer]:
+                - /url: /clients/test-media-client/about
+            - listitem [ref=e47]:
+              - link "تواصل مع الشركة" [ref=e48] [cursor=pointer]:
+                - /url: /clients/test-media-client/contact
+            - listitem [ref=e49]:
+              - link "الصور" [ref=e50] [cursor=pointer]:
+                - /url: /clients/test-media-client/photos
+            - listitem [ref=e51]:
+              - link "المتابعون" [ref=e52] [cursor=pointer]:
+                - /url: /clients/test-media-client/followers
+            - listitem [ref=e53]:
+              - link "التقييمات" [ref=e54] [cursor=pointer]:
+                - /url: /clients/test-media-client/reviews
+            - listitem [ref=e55]:
+              - link "الريلز" [ref=e56] [cursor=pointer]:
+                - /url: /clients/test-media-client/reels
+            - listitem [ref=e57]:
+              - link "الإعجابات" [ref=e58] [cursor=pointer]:
+                - /url: /clients/test-media-client/likes
+    - contentinfo [ref=e60]:
+      - navigation "روابط قانونية" [ref=e61]:
+        - link "اتفاقية المستخدم" [ref=e62] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e63] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e64] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e65] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e66]: © 2026 مودونتي
+  - generic [ref=e71] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e72]:
+      - img [ref=e73]
+    - generic [ref=e76]:
+      - button "Open issues overlay" [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]: "3"
+          - generic [ref=e80]: "4"
+        - generic [ref=e81]:
+          - text: Issue
+          - generic [ref=e82]: s
+      - button "Collapse issues badge" [ref=e83]:
+        - img [ref=e84]
+  - alert [ref=e86]

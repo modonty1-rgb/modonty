@@ -1,0 +1,178 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]: This system is currently in beta testing. Some features may not work as expected. Please report any issues.
+      - main [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - link [ref=e116] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e117]
+                - 'heading "اختبار خالد: دليل تحسين تجربة المستخدم" [level=1] [ref=e119]'
+              - generic [ref=e120]:
+                - generic [ref=e121]: أكاديمية المستقبل
+                - generic [ref=e122]: ·
+                - generic [ref=e123]: SEO تحسين محركات البحث
+                - generic [ref=e124]: ·
+                - generic [ref=e125]: Writing
+                - generic [ref=e126]: ·
+                - generic [ref=e127]: Apr 6, 2026
+            - generic [ref=e128]:
+              - generic "Click to view full SEO guidance" [ref=e129] [cursor=pointer]: 80%
+              - link "Edit" [ref=e130] [cursor=pointer]:
+                - /url: /articles/69d2f9090d73480fcbf3050e/edit
+                - img
+                - text: Edit
+              - button [ref=e131] [cursor=pointer]:
+                - img
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - generic [ref=e137]: "186"
+              - text: words
+            - generic [ref=e138]:
+              - img [ref=e139]
+              - generic [ref=e142]: ~1 min read
+            - generic [ref=e143]:
+              - img [ref=e144]
+              - generic [ref=e147]: 0 views
+            - generic [ref=e148]:
+              - img [ref=e149]
+              - generic [ref=e151]: 0 comments
+          - generic [ref=e155]:
+            - 'heading "اختبار خالد: دليل تحسين تجربة المستخدم" [level=1] [ref=e156]'
+            - paragraph [ref=e157]: دليل شامل يغطي أفضل الممارسات في تصميم تجربة المستخدم للتطبيقات العربية، من التخطيط إلى الاختبار والتحسين المستمر. أمثلة عملية ونصائح خبراء.
+            - generic [ref=e158]:
+              - generic [ref=e159]: Modonty
+              - generic [ref=e160]: Apr 6, 2026
+              - generic [ref=e161]: ~1 min read
+            - generic [ref=e162]:
+              - heading "لماذا تجربة المستخدم مهمة؟" [level=2] [ref=e163]
+              - paragraph [ref=e164]: تجربة المستخدم هي العمود الفقري لأي تطبيق ناجح. في العالم العربي تتطلب التطبيقات اهتماماً خاصاً بتصميم RTL والخطوط العربية وتفضيلات المستخدم المحلي. الشركات التي تستثمر في تجربة المستخدم تحقق عائد استثمار أعلى بنسبة 400% مقارنة بالشركات التي تتجاهلها.
+              - paragraph
+              - heading "أساسيات تصميم RTL" [level=2] [ref=e165]
+              - paragraph [ref=e166]: التصميم من اليمين إلى اليسار يتطلب أكثر من مجرد عكس الا
+              - paragraph [ref=e167]: تحديث اختباريت
+              - paragraph
+              - heading "نصائح خالد للمطورين" [level=2] [ref=e168]
+              - heading "أولاً، ابدأ دائماً بالبحث عن المستخدم. ثانياً، اختبر مبكراً واختبر كثيراً. ثالثاً، لا تنسخ التصميم الغربي حرفياً — كيّفه للثقافة العربية. رابعاً، استثمر في الأداء لأن المستخدم العربي يتوقع سرعة عالية.جاه. يجب مراعاة ترتيب العناصر البصرية واتجاه الأيقونات وتدفق القراءة الطبيعي للمستخدم العربي. استخدم خاصية dir في HTML و logical properties في CSS مثل margin-inline-start بدلاً من margin-left." [level=2] [ref=e169]
+              - paragraph
+              - heading "اختيار الخطوط العربية المناسبة" [level=2] [ref=e170]
+              - paragraph [ref=e171]: الخط هو أهم عنصر في التصميم العربي. خطوط مثل Tajawal و Cairo و IBM Plex Arabic توفر قراءة ممتازة على الشاشات. تجنب الخطوط المزخرفة في النصوص الطويلة. حجم الخط المثالي للمحتوى العربي هو 16-18px مع ارتفاع سطر 1.8 على الأقل.
+              - paragraph
+              - heading "الخلاصة" [level=2] [ref=e172]
+              - paragraph [ref=e173]: تحسين تجربة المستخدم في التطبيقات العربية يتطلب فهماً عميقاً للثقافة والسلوك المحلي. ابدأ بالأساسيات ثم حسّن باستمرار بناءً على بيانات المستخدمين الحقيقية. الاستثمار في UX ليس تكلفة بل استثمار يعود بأرباح مضاعفة.
+              - paragraph
+            - generic [ref=e175]:
+              - generic [ref=e177]: M
+              - generic [ref=e178]:
+                - paragraph [ref=e179]: Modonty
+                - paragraph [ref=e180]: Modonty is a leading content platform providing high-quality articles and insights.
+          - generic [ref=e182]:
+            - generic [ref=e184]:
+              - img [ref=e185]
+              - text: SEO Overview
+            - generic [ref=e188]:
+              - generic [ref=e189]:
+                - generic [ref=e190]:
+                  - paragraph [ref=e191]: SEO Title
+                  - paragraph [ref=e192]: "اختبار خالد: دليل تحسين تجربة المستخدم | أكاديمية المستقبل"
+                - generic [ref=e193]:
+                  - paragraph [ref=e194]: SEO Description
+                  - paragraph [ref=e195]: دليل شامل يغطي أفضل الممارسات في تصميم تجربة المستخدم للتطبيقات العربية، من التخطيط إلى الاختبار والتحسين المستمر. أمثلة عملية ونصائح خبراء.
+                - generic [ref=e196]:
+                  - paragraph [ref=e197]: Canonical URL
+                  - paragraph [ref=e198]: https://modonty.com/articles/اختبار-خالد-دليل-تحسين-تجربة-المستخدم
+                - generic [ref=e199]:
+                  - paragraph [ref=e200]: Slug
+                  - paragraph [ref=e201]: /اختبار-خالد-دليل-تحسين-تجربة-المستخدم
+              - link "View Technical Details" [ref=e203] [cursor=pointer]:
+                - /url: /articles/69d2f9090d73480fcbf3050e/technical
+                - button "View Technical Details" [ref=e204]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e210] [cursor=pointer]:
+    - img [ref=e211]

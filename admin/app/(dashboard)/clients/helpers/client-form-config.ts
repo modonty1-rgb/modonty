@@ -162,7 +162,7 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Media",
     description: "Logo, OG image, Twitter image, and Twitter card settings",
     icon: "Image",
-    fields: ["logoMediaId", "ogImageMediaId", "twitterImageMediaId", "twitterCard", "twitterTitle", "twitterDescription", "twitterSite"],
+    fields: ["logoMediaId", "heroImageMediaId", "twitterCard", "twitterTitle", "twitterDescription", "twitterSite"],
     required: [],
     priority: "secondary",
     availableInCreate: false,

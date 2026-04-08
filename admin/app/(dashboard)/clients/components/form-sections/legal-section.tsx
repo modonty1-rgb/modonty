@@ -22,7 +22,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           value={watch("legalForm") || undefined}
           onValueChange={(value) => setValue("legalForm", value ? (value as "LLC" | "JSC" | "Sole Proprietorship" | "Partnership" | "Limited Partnership" | "Simplified Joint Stock Company") : null, { shouldValidate: true })}
           error={errors.legalForm?.message}
-          hint="الشكل القانوني للشركة — يختلف عن نوع المنظمة"
+          hint={messages.hints.client.legalForm}
           placeholder="Select Legal Form"
         >
           <SelectItem value="LLC">LLC (Limited Liability Company)</SelectItem>
@@ -43,7 +43,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           }}
           error={errors.vatID?.message}
           placeholder="e.g., 300012345600003"
-          hint="رقم التسجيل الضريبي من هيئة الزكاة — 15 رقم"
+          hint={messages.hints.client.taxId}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -54,7 +54,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           onChange={(e) => setValue("licenseNumber", e.target.value || null, { shouldValidate: true })}
           error={errors.licenseNumber?.message}
           placeholder="e.g., HC-2024-001234"
-          hint="اختياري — للقطاعات المرخصة فقط (صحة، مالية، تعليم)"
+          hint={messages.hints.client.tradeLicense}
         />
         <FormInput
           name="licenseAuthority"
@@ -63,7 +63,7 @@ export function LegalSection({ form }: LegalSectionProps) {
           onChange={(e) => setValue("licenseAuthority", e.target.value || null, { shouldValidate: true })}
           error={errors.licenseAuthority?.message}
           placeholder="e.g., Ministry of Health"
-          hint="الجهة المصدرة للترخيص — مطلوب إذا أدخلت رقم الترخيص"
+          hint="Licensing authority — required if license number is entered"
         />
       </div>
     </div>

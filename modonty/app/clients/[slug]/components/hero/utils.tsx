@@ -10,11 +10,10 @@ export function getSocialPlatform(url: string): { name: string; icon: ReactEleme
 }
 
 export function getCoverImage(client: {
-  ogImageMedia?: { url: string } | null;
-  twitterImageMedia?: { url: string } | null;
+  heroImageMedia?: { url: string } | null;
   logoMedia?: { url: string } | null;
 }): string | undefined {
-  return client.ogImageMedia?.url || client.twitterImageMedia?.url || client.logoMedia?.url;
+  return client.heroImageMedia?.url || client.logoMedia?.url;
 }
 
 export function getInitials(name: string): string {

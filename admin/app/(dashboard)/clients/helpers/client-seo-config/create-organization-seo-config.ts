@@ -69,12 +69,12 @@ function getLabelFromMapping(mappingFieldName: string, validatorFieldName: strin
     }
   }
 
-  if (mappingFieldName === "ogImageMedia") {
-    if (validatorFieldName === "ogImageAlt") {
-      return "Open Graph image alt text";
+  if (mappingFieldName === "heroImageMedia") {
+    if (validatorFieldName === "heroImageAlt") {
+      return "Hero image alt text";
     }
-    if (validatorFieldName === "ogImage" || validatorFieldName === "ogImageWidth") {
-      return "Open Graph image";
+    if (validatorFieldName === "heroImage" || validatorFieldName === "heroImageWidth") {
+      return "Hero image";
     }
   }
 
@@ -91,8 +91,7 @@ function getLabelFromMapping(mappingFieldName: string, validatorFieldName: strin
  */
 const FIELD_TO_VALIDATOR_MAP: Record<string, string[]> = {
   'logoMedia': ['logo', 'logoAlt'],
-  'ogImageMedia': ['ogImage', 'ogImageAlt', 'ogImageWidth'],
-  'twitterImageMedia': ['twitterImageAlt'],
+  'heroImageMedia': ['heroImage', 'heroImageAlt', 'heroImageWidth'],
   // Direct mappings (field name = validator name)
   'name': ['name'],
   'slug': ['slug'],
@@ -155,9 +154,9 @@ function getValidatorForField(fieldName: string, settings?: SEOSettings): SEOFie
     'url': validateUrl,
     'logo': validateLogo,
     'logoAlt': validateLogoAlt,
-    'ogImage': validateOGImageForClient,
-    'ogImageAlt': validateOGImageAltForClient,
-    'ogImageWidth': validateOGImageDimensionsForClient,
+    'heroImage': validateOGImageForClient,
+    'heroImageAlt': validateOGImageAltForClient,
+    'heroImageWidth': validateOGImageDimensionsForClient,
     'seoTitle': createValidateSEOTitleAndOG(settings),
     'seoDescription': createValidateSEODescription(settings),
     'sameAs': validateSocialProfiles,

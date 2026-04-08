@@ -149,7 +149,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
           take: 20,
           include: {
             logoMedia: { select: { url: true } },
-            ogImageMedia: { select: { url: true } },
+            heroImageMedia: { select: { url: true } },
             industry: { select: { name: true } },
             parentOrganization: { select: { slug: true } },
           },
@@ -170,7 +170,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         url: c.url,
         canonicalUrl: c.canonicalUrl,
         logoMedia: c.logoMedia,
-        ogImageMedia: c.ogImageMedia,
+        heroImageMedia: c.heroImageMedia,
         sameAs: c.sameAs,
         email: c.email,
         phone: c.phone,

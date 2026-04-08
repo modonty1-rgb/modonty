@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const description = articleForGeneration.seoDescription || articleForGeneration.excerpt || "";
     const image =
       articleForGeneration.featuredImage?.url ||
-      articleForGeneration.client.ogImageMedia?.url ||
+      articleForGeneration.client.heroImageMedia?.url ||
       articleForGeneration.client.logoMedia?.url ||
       undefined;
     const imageAlt =

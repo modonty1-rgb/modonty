@@ -24,7 +24,7 @@ export function MediaSection({
   const { toast } = useToast();
 
   const logoMediaId = watch("logoMediaId");
-  const ogImageMediaId = watch("ogImageMediaId");
+  const heroImageMediaId = watch("heroImageMediaId");
 
   const { media: logoMedia, setMedia: setLogoMedia } = useMediaPreview({
     mediaId: logoMediaId,
@@ -32,10 +32,10 @@ export function MediaSection({
     initialMedia: initialData?.logoMedia || null,
   });
 
-  const { media: ogImageMedia, setMedia: setOgImageMedia } = useMediaPreview({
-    mediaId: ogImageMediaId,
+  const { media: heroImageMedia, setMedia: setHeroImageMedia } = useMediaPreview({
+    mediaId: heroImageMediaId,
     clientId: clientId || null,
-    initialMedia: initialData?.ogImageMedia || null,
+    initialMedia: (initialData as any)?.heroImageMedia || null,
   });
 
   const handleLogoAltTextUpdate = async (newAltText: string) => {
@@ -56,18 +56,18 @@ export function MediaSection({
     }
   };
 
-  const handleOGImageAltTextUpdate = async (newAltText: string) => {
-    const ogImageMediaId = watch("ogImageMediaId");
-    if (!ogImageMediaId) return;
-    const result = await updateMedia(ogImageMediaId, { altText: newAltText });
+  const handleHeroImageAltTextUpdate = async (newAltText: string) => {
+    const heroImageMediaId = watch("heroImageMediaId");
+    if (!heroImageMediaId) return;
+    const result = await updateMedia(heroImageMediaId, { altText: newAltText });
     if (result.success) {
       toast({
-        title: "Alt text updated",
+        title: messages.success.updated,
         description: "Alt text saved",
       });
     } else {
       toast({
-        title: "Error",
+        title: messages.error.server_error,
         description: result.error || "Failed to update alt text",
         variant: "destructive",
       });
@@ -108,24 +108,24 @@ export function MediaSection({
       <div className="space-y-2">
         <MediaPicker
           clientId={clientId || initialData?.id || null}
-          value={ogImageMedia?.url || (initialData as any)?.ogImageMedia?.url || ""}
-          altText={ogImageMedia?.altText || (initialData as any)?.ogImageMedia?.altText || ""}
-          mediaId={ogImageMediaId || undefined}
+          value={heroImageMedia?.url || (initialData as any)?.heroImageMedia?.url || ""}
+          altText={heroImageMedia?.altText || (initialData as any)?.heroImageMedia?.altText || ""}
+          mediaId={heroImageMediaId || undefined}
           showUrlField={false}
           showAltOverlay
           onSelect={(media) => {
-            setValue("ogImageMediaId", media.mediaId || null, { shouldValidate: true });
-            setOgImageMedia({
+            setValue("heroImageMediaId", media.mediaId || null, { shouldValidate: true });
+            setHeroImageMedia({
               url: media.url,
               altText: media.altText,
             });
           }}
           onClear={() => {
-            setValue("ogImageMediaId", null, { shouldValidate: true });
-            setOgImageMedia(null);
+            setValue("heroImageMediaId", null, { shouldValidate: true });
+            setHeroImageMedia(null);
           }}
-          onAltTextUpdate={handleOGImageAltTextUpdate}
-          label="OG Image"
+          onAltTextUpdate={handleHeroImageAltTextUpdate}
+          label="Hero Image"
         />
       </div>
     </div>

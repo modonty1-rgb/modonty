@@ -1,0 +1,259 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to light mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - link "Articles" [ref=e119] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e120]:
+              - img [ref=e121]
+              - generic [ref=e123]: Articles 69d163ea...
+          - navigation "Main navigation" [ref=e125]:
+            - link "Modonty Modonty" [ref=e126] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e128]
+              - generic [ref=e129]: Modonty
+            - generic [ref=e131]:
+              - link "Articles" [ref=e132] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e133]:
+                  - img
+                  - generic [ref=e134]: Articles
+              - link "Clients" [ref=e135] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e136]:
+                  - img
+                  - generic [ref=e137]: Clients
+              - link "Media" [ref=e138] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e139]:
+                  - img
+                  - generic [ref=e140]: Media
+          - generic [ref=e141]:
+            - link [ref=e142] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e143]:
+                - img
+            - button "M" [ref=e144] [cursor=pointer]:
+              - generic [ref=e146]: M
+      - main [ref=e147]:
+        - generic [ref=e148]:
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - link [ref=e153] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e154]
+                - 'heading "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [level=1] [ref=e156]'
+              - generic [ref=e157]:
+                - generic [ref=e158]: أكاديمية المستقبل
+                - generic [ref=e159]: ·
+                - generic [ref=e160]: العقارات والاستثمار
+                - generic [ref=e161]: ·
+                - generic [ref=e162]: Writing
+                - generic [ref=e163]: ·
+                - generic [ref=e164]: Apr 4, 2026
+            - generic [ref=e165]:
+              - generic "Click to view full SEO guidance" [ref=e166] [cursor=pointer]: 76%
+              - link "Edit" [ref=e167] [cursor=pointer]:
+                - /url: /articles/69d163ea4e8bf3f470aff0ee/edit
+                - img
+                - text: Edit
+              - button [ref=e168] [cursor=pointer]:
+                - img
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - img [ref=e171]
+              - generic [ref=e174]: "394"
+              - text: words
+            - generic [ref=e175]:
+              - img [ref=e176]
+              - generic [ref=e179]: ~2 min read
+            - generic [ref=e180]:
+              - img [ref=e181]
+              - generic [ref=e184]: 0 views
+            - generic [ref=e185]:
+              - img [ref=e186]
+              - generic [ref=e188]: 0 comments
+            - generic [ref=e189]:
+              - img [ref=e190]
+              - generic [ref=e193]: جوجل
+              - generic [ref=e194]: محتوى
+          - generic [ref=e197]:
+            - 'heading "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [level=1] [ref=e198]'
+            - paragraph [ref=e199]: دليل متكامل عن واقع ومستقبل التعليم الإلكتروني في المملكة العربية السعودية، يشمل الفرص والتحديات وأفضل المنصات التعليمية وتوقعات السوق حتى 2030.
+            - generic [ref=e200]:
+              - generic [ref=e201]: Modonty
+              - generic [ref=e202]: Apr 4, 2026
+              - generic [ref=e203]: ~2 min read
+            - generic [ref=e204]:
+              - 'heading "مقدمة: لماذا التعليم الرقمي؟" [level=2] [ref=e205]'
+              - paragraph [ref=e206]: يشهد قطاع التعليم في المملكة العربية السعودية تحولاً جذرياً نحو الرقمنة، وذلك تماشياً مع رؤية 2030 التي تضع التعليم في صدارة أولوياتها. سوق التعليم الإلكتروني في المنطقة يُقدَّر بأكثر من 1.2 مليار دولار، ومن المتوقع أن ينمو بمعدل سنوي يتجاوز 15% خلال السنوات الخمس المقبلة.
+              - paragraph [ref=e207]: في هذا الدليل الشامل، نستعرض أهم الفرص والتحديات التي تواجه التعليم الرقمي في السعودية، مع تقديم رؤية مستقبلية حول كيفية تطور هذا القطاع الحيوي.
+              - 'heading "الفصل الأول: واقع التعليم الإلكتروني في السعودية" [level=2] [ref=e208]'
+              - paragraph [ref=e209]: منذ جائحة كورونا في 2020، تسارعت وتيرة التحول الرقمي في التعليم بشكل غير مسبوق. أصبحت المنصات التعليمية الرقمية جزءاً أساسياً من المنظومة التعليمية، حيث تبنّت الحكومة السعودية منصة "مدرستي" التي خدمت أكثر من 6 ملايين طالب وطالبة.
+              - heading "أبرز المنصات التعليمية السعودية" [level=3] [ref=e210]
+              - list [ref=e211]:
+                - listitem [ref=e212]:
+                  - paragraph [ref=e213]:
+                    - strong [ref=e214]: "منصة مدرستي:"
+                    - text: المنصة الرسمية للتعليم عن بُعد، تقدم محتوى تعليمي متكامل لجميع المراحل الدراسية
+                - listitem [ref=e215]:
+                  - paragraph [ref=e216]:
+                    - strong [ref=e217]: "منصة نون أكاديمي:"
+                    - text: منصة تعليمية سعودية متخصصة في التحضير للاختبارات والتأسيس الأكاديمي
+                - listitem [ref=e218]:
+                  - paragraph [ref=e219]:
+                    - strong [ref=e220]: "منصة دروب:"
+                    - text: منصة حكومية للتدريب المهني والتطوير الوظيفي
+                - listitem [ref=e221]:
+                  - paragraph [ref=e222]:
+                    - strong [ref=e223]: "منصة رواق:"
+                    - text: منصة عربية رائدة في المساقات المفتوحة عبر الإنترنت
+              - 'heading "الفصل الثاني: الفرص الاستثمارية في التعليم الرقمي" [level=2] [ref=e224]'
+              - paragraph [ref=e225]: يُتيح قطاع التعليم الرقمي فرصاً استثمارية ضخمة للشركات ورواد الأعمال. وفقاً لتقارير السوق، فإن الطلب على المحتوى التعليمي الرقمي العربي يفوق العرض بنسبة كبيرة، مما يخلق فجوة سوقية يمكن استغلالها.
+              - heading "مجالات الاستثمار الواعدة" [level=3] [ref=e226]
+              - list [ref=e227]:
+                - listitem [ref=e228]:
+                  - paragraph [ref=e229]: تطوير المحتوى التعليمي التفاعلي باللغة العربية
+                - listitem [ref=e230]:
+                  - paragraph [ref=e231]: منصات التعلم التكيفي المدعومة بالذكاء الاصطناعي
+                - listitem [ref=e232]:
+                  - paragraph [ref=e233]: تطبيقات الواقع الافتراضي والمعزز في التعليم
+                - listitem [ref=e234]:
+                  - paragraph [ref=e235]: أنظمة إدارة التعلم المخصصة للسوق السعودي
+                - listitem [ref=e236]:
+                  - paragraph [ref=e237]: حلول التقييم والاختبارات الإلكترونية
+              - 'heading "الفصل الثالث: التحديات والحلول" [level=2] [ref=e238]'
+              - paragraph [ref=e239]: "رغم النمو الكبير، يواجه التعليم الرقمي في السعودية عدة تحديات تحتاج إلى معالجة:"
+              - 'heading "التحدي الأول: جودة المحتوى العربي" [level=3] [ref=e240]'
+              - paragraph [ref=e241]: لا يزال المحتوى التعليمي العربي الرقمي يعاني من نقص في الجودة مقارنة بالمحتوى الإنجليزي. الحل يكمن في الاستثمار في فرق متخصصة لتصميم المحتوى التعليمي وفق أحدث المعايير العالمية مع مراعاة الخصوصية الثقافية.
+              - 'heading "التحدي الثاني: البنية التحتية التقنية" [level=3] [ref=e242]'
+              - paragraph [ref=e243]: بعض المناطق النائية لا تزال تعاني من ضعف الاتصال بالإنترنت. تعمل الحكومة السعودية على توسيع شبكات الجيل الخامس لتغطية جميع أنحاء المملكة بحلول 2030.
+              - 'heading "التحدي الثالث: تأهيل المعلمين" [level=3] [ref=e244]'
+              - paragraph [ref=e245]: يحتاج المعلمون إلى تدريب مستمر على استخدام الأدوات الرقمية وأساليب التدريس الحديثة. برامج التطوير المهني الرقمي أصبحت ضرورة وليست رفاهية.
+              - 'heading "الفصل الرابع: مستقبل التعليم الرقمي — رؤية 2030" [level=2] [ref=e246]'
+              - paragraph [ref=e247]: "تستهدف رؤية المملكة 2030 تحقيق تحول شامل في قطاع التعليم، يشمل:"
+              - list [ref=e248]:
+                - listitem [ref=e249]:
+                  - paragraph [ref=e250]: رقمنة 100% من المناهج الدراسية
+                - listitem [ref=e251]:
+                  - paragraph [ref=e252]: إنشاء أكاديميات رقمية متخصصة في المهارات المستقبلية
+                - listitem [ref=e253]:
+                  - paragraph [ref=e254]: تطوير شراكات مع كبرى الجامعات العالمية للتعليم عن بُعد
+                - listitem [ref=e255]:
+                  - paragraph [ref=e256]: دمج تقنيات الذكاء الاصطناعي في العملية التعليمية
+                - listitem [ref=e257]:
+                  - paragraph [ref=e258]: إطلاق منصات تعليمية متخصصة في القطاعات الحيوية كالصحة والطاقة والتقنية
+              - heading "الخلاصة" [level=2] [ref=e259]
+              - paragraph [ref=e260]: التعليم الرقمي في السعودية ليس مجرد اتجاه عابر، بل هو تحول استراتيجي يُعيد تشكيل مستقبل الأجيال القادمة. الفرص المتاحة هائلة لمن يستطيع تقديم حلول مبتكرة تلبي احتياجات السوق السعودي المتنامي.
+          - generic [ref=e261]:
+            - generic [ref=e263]:
+              - img [ref=e264]
+              - text: SEO Overview
+            - generic [ref=e267]:
+              - generic [ref=e268]:
+                - generic [ref=e269]:
+                  - paragraph [ref=e270]: SEO Title
+                  - paragraph [ref=e271]: مستقبل التعليم الرقمي
+                - generic [ref=e272]:
+                  - paragraph [ref=e273]: SEO Description
+                  - paragraph [ref=e274]: المنصات والأدوات والفرص.
+                - generic [ref=e275]:
+                  - paragraph [ref=e276]: Canonical URL
+                  - paragraph [ref=e277]: https://modonty.com/articles/digital-education-future
+                - generic [ref=e278]:
+                  - paragraph [ref=e279]: Slug
+                  - paragraph [ref=e280]: /digital-education-future
+              - link "View Technical Details" [ref=e282] [cursor=pointer]:
+                - /url: /articles/69d163ea4e8bf3f470aff0ee/technical
+                - button "View Technical Details" [ref=e283]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e284]

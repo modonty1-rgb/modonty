@@ -1,0 +1,177 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.20.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.20.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Industries" [ref=e100] [cursor=pointer]:
+                - /url: /industries
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button "Send Note" [ref=e130] [cursor=pointer]:
+          - img
+          - text: Send Note
+      - main [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e134]:
+            - heading "Create Industry" [level=1] [ref=e135]
+            - paragraph [ref=e136]: Add a new industry to the system
+          - generic [ref=e138]:
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - generic [ref=e144]: Basic Information
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - generic [ref=e148]:
+                      - generic [ref=e149]: Name
+                      - generic [ref=e150]: "*"
+                    - textbox "Name *" [ref=e151]
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: "Slug:"
+                    - code [ref=e154]: —
+                  - generic [ref=e155]:
+                    - generic [ref=e156]:
+                      - generic [ref=e158]:
+                        - generic [ref=e159]: Description
+                        - img [ref=e160]
+                      - textbox "Description" [ref=e162]
+                    - generic [ref=e164]: 0 / 0 minimum
+              - generic [ref=e165]:
+                - generic [ref=e169]: SEO
+                - generic [ref=e171]:
+                  - generic [ref=e172]:
+                    - generic [ref=e174]:
+                      - generic [ref=e175]: SEO Title
+                      - img [ref=e176]
+                    - textbox "SEO Title" [ref=e178]
+                  - generic [ref=e179]:
+                    - generic [ref=e180]:
+                      - generic [ref=e182]:
+                        - generic [ref=e183]: SEO Description
+                        - img [ref=e184]
+                      - textbox "SEO Description" [ref=e186]
+                    - generic [ref=e188]: 0 / 160 maximum
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - generic [ref=e194]: Social Image
+                - generic [ref=e196]:
+                  - generic [ref=e197]:
+                    - text: Image URL
+                    - textbox "https://res.cloudinary.com/..." [ref=e199]
+                  - generic [ref=e200]:
+                    - text: Alt Text
+                    - textbox "Describe the image…" [ref=e201]
+                  - generic [ref=e202]:
+                    - img [ref=e203]
+                    - generic [ref=e207]: Paste a Cloudinary URL above
+              - button "Create Industry" [ref=e211] [cursor=pointer]:
+                - img
+                - text: Create Industry
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e217] [cursor=pointer]:
+    - img [ref=e218]
+  - alert [ref=e221]

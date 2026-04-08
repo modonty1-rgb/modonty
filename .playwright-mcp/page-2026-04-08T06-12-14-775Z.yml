@@ -1,0 +1,833 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - button "Collapse sidebar" [ref=e25] [cursor=pointer]:
+        - img
+      - navigation [ref=e26]:
+        - generic [ref=e27]:
+          - link "Dashboard" [ref=e28] [cursor=pointer]:
+            - /url: /
+            - img [ref=e29]
+            - generic [ref=e34]: Dashboard
+          - link "SEO Overview" [ref=e35] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e36]
+            - generic [ref=e39]: SEO Overview
+        - generic [ref=e41]:
+          - button "Content" [expanded] [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - generic [ref=e47]: Content
+            - img [ref=e48]
+          - generic [ref=e51]:
+            - link "Articles" [ref=e52] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e53]
+              - generic [ref=e56]: Articles
+            - link "Categories" [ref=e57] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e58]
+              - generic [ref=e60]: Categories
+            - link "Tags" [ref=e61] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e62]
+              - generic [ref=e65]: Tags
+            - link "Authors" [ref=e66] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e67]
+              - generic [ref=e69]: Authors
+            - link "Industries" [ref=e70] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e71]
+              - generic [ref=e73]: Industries
+        - button "Modonty Pages" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - generic [ref=e79]: Modonty Pages
+          - img [ref=e80]
+        - button "Audience" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e88]: Audience
+          - img [ref=e89]
+        - button "System" [ref=e92] [cursor=pointer]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - generic [ref=e97]: System
+          - img [ref=e98]
+      - generic [ref=e100]:
+        - link "Guidelines" [ref=e101] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e102]
+          - text: Guidelines
+        - generic [ref=e104]:
+          - button "Switch to light mode" [ref=e105] [cursor=pointer]:
+            - img
+          - link "v0.21.0 ?" [ref=e106] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.21.0
+            - generic [ref=e107]: "?"
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button "Send Note" [ref=e111] [cursor=pointer]:
+          - img
+          - text: Send Note
+      - main [ref=e112]:
+        - generic [ref=e113]:
+          - generic [ref=e114]:
+            - heading "Dashboard" [level=1] [ref=e115]
+            - paragraph [ref=e116]: Welcome to the admin dashboard
+          - generic [ref=e117]:
+            - region "Total Articles metric card" [ref=e118]:
+              - generic [ref=e119]:
+                - generic [ref=e121]: Total Articles
+                - img [ref=e123]
+              - generic [ref=e126]:
+                - generic [ref=e127]: "8"
+                - paragraph [ref=e128]: All articles in the system
+                - status [ref=e129]:
+                  - img [ref=e130]
+                  - generic [ref=e133]: +100.0% vs last period
+            - region "Clients metric card" [ref=e134]:
+              - generic [ref=e135]:
+                - generic [ref=e137]: Clients
+                - img [ref=e139]
+              - generic [ref=e143]:
+                - generic [ref=e144]: "4"
+                - paragraph [ref=e145]: Active clients
+                - status [ref=e146]:
+                  - img [ref=e147]
+                  - generic [ref=e150]: +100.0% vs last period
+            - region "Users metric card" [ref=e151]:
+              - generic [ref=e152]:
+                - generic [ref=e154]: Users
+                - img [ref=e156]
+              - generic [ref=e161]:
+                - generic [ref=e162]: "6"
+                - paragraph [ref=e163]: Registered users
+                - status [ref=e164]:
+                  - img [ref=e165]
+                  - generic [ref=e168]: +100.0% vs last period
+            - region "Subscribers metric card" [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e172]: Subscribers
+                - img [ref=e174]
+              - generic [ref=e177]:
+                - generic [ref=e178]: "2"
+                - paragraph [ref=e179]: Newsletter subscribers
+                - status [ref=e180]:
+                  - img [ref=e181]
+                  - generic [ref=e184]: +100.0% vs last period
+          - generic [ref=e185]:
+            - region "Active Subscriptions metric card" [ref=e186]:
+              - generic [ref=e187]:
+                - generic [ref=e189]: Active Subscriptions
+                - img [ref=e191]
+              - generic [ref=e195]:
+                - generic [ref=e196]: "3"
+                - paragraph [ref=e197]: Clients with active subscriptions
+            - region "Expiring Soon metric card" [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e201]: Expiring Soon
+                - img [ref=e203]
+              - generic [ref=e205]:
+                - generic [ref=e206]: "0"
+                - paragraph [ref=e207]: Subscriptions expiring in 7 days
+            - region "Overdue Payments metric card" [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e211]: Overdue Payments
+                - img [ref=e213]
+              - generic [ref=e215]:
+                - generic [ref=e216]: "0"
+                - paragraph [ref=e217]: Clients with overdue payments
+            - region "Expired Subscriptions metric card" [ref=e218]:
+              - generic [ref=e219]:
+                - generic [ref=e221]: Expired Subscriptions
+                - img [ref=e223]
+              - generic [ref=e225]:
+                - generic [ref=e226]: "0"
+                - paragraph [ref=e227]: Subscriptions that have expired
+          - generic [ref=e228]:
+            - heading "Subscription Plans" [level=2] [ref=e229]
+            - generic [ref=e230]:
+              - generic [ref=e233]:
+                - generic [ref=e235]:
+                  - heading "مجاني" [level=3] [ref=e236]
+                  - paragraph [ref=e237]: ‏٠ ر.س.‏ / year
+                - generic [ref=e238]:
+                  - generic [ref=e239]:
+                    - generic [ref=e240]:
+                      - img [ref=e241]
+                      - text: Articles / month
+                    - generic [ref=e244]: "1"
+                  - generic [ref=e245]:
+                    - generic [ref=e246]:
+                      - img [ref=e247]
+                      - text: Clients
+                    - generic [ref=e252]: "1"
+                  - generic [ref=e253]:
+                    - generic [ref=e254]:
+                      - img [ref=e255]
+                      - text: Published
+                    - generic [ref=e258]: "5"
+              - generic [ref=e261]:
+                - generic [ref=e263]:
+                  - heading "الريادة" [level=3] [ref=e264]
+                  - paragraph [ref=e265]: ‏٢٬٩٩٩ ر.س.‏ / year
+                - generic [ref=e266]:
+                  - generic [ref=e267]:
+                    - generic [ref=e268]:
+                      - img [ref=e269]
+                      - text: Articles / month
+                    - generic [ref=e272]: "12"
+                  - generic [ref=e273]:
+                    - generic [ref=e274]:
+                      - img [ref=e275]
+                      - text: Clients
+                    - generic [ref=e280]: "0"
+                  - generic [ref=e281]:
+                    - generic [ref=e282]:
+                      - img [ref=e283]
+                      - text: Published
+                    - generic [ref=e286]: "0"
+              - generic [ref=e289]:
+                - generic [ref=e290]:
+                  - generic [ref=e291]:
+                    - heading "الزخم" [level=3] [ref=e292]
+                    - paragraph [ref=e293]: ‏١٬٢٩٩ ر.س.‏ / year
+                  - generic [ref=e295]:
+                    - img [ref=e296]
+                    - text: Recommended
+                - generic [ref=e298]:
+                  - generic [ref=e299]:
+                    - generic [ref=e300]:
+                      - img [ref=e301]
+                      - text: Articles / month
+                    - generic [ref=e304]: "8"
+                  - generic [ref=e305]:
+                    - generic [ref=e306]:
+                      - img [ref=e307]
+                      - text: Clients
+                    - generic [ref=e312]: "2"
+                  - generic [ref=e313]:
+                    - generic [ref=e314]:
+                      - img [ref=e315]
+                      - text: Published
+                    - generic [ref=e318]: "0"
+              - generic [ref=e321]:
+                - generic [ref=e323]:
+                  - heading "الانطلاقة" [level=3] [ref=e324]
+                  - paragraph [ref=e325]: ‏٤٩٩ ر.س.‏ / year
+                - generic [ref=e326]:
+                  - generic [ref=e327]:
+                    - generic [ref=e328]:
+                      - img [ref=e329]
+                      - text: Articles / month
+                    - generic [ref=e332]: "4"
+                  - generic [ref=e333]:
+                    - generic [ref=e334]:
+                      - img [ref=e335]
+                      - text: Clients
+                    - generic [ref=e340]: "1"
+                  - generic [ref=e341]:
+                    - generic [ref=e342]:
+                      - img [ref=e343]
+                      - text: Published
+                    - generic [ref=e346]: "1"
+          - generic [ref=e347]:
+            - generic [ref=e348]:
+              - generic [ref=e349]:
+                - generic [ref=e351]: Client Alerts & Warnings
+                - paragraph [ref=e353]: No client alerts at this time. All systems operating normally.
+              - generic [ref=e354]:
+                - generic [ref=e355]:
+                  - generic [ref=e356]: Articles Overview
+                  - paragraph [ref=e357]: Status breakdown and recent article activity
+                - generic [ref=e358]:
+                  - generic [ref=e359]:
+                    - link "Writing 2 (25%)" [ref=e360] [cursor=pointer]:
+                      - /url: /articles?status=WRITING
+                      - generic [ref=e361]:
+                        - generic [ref=e362]:
+                          - img [ref=e363]
+                          - generic [ref=e366]: Writing
+                        - generic [ref=e367]:
+                          - generic [ref=e368]: "2"
+                          - generic [ref=e369]: (25%)
+                    - link "Draft 0 (0%)" [ref=e372] [cursor=pointer]:
+                      - /url: /articles?status=DRAFT
+                      - generic [ref=e373]:
+                        - generic [ref=e374]:
+                          - img [ref=e375]
+                          - generic [ref=e378]: Draft
+                        - generic [ref=e379]:
+                          - generic [ref=e380]: "0"
+                          - generic [ref=e381]: (0%)
+                    - link "Scheduled 0 (0%)" [ref=e383] [cursor=pointer]:
+                      - /url: /articles?status=SCHEDULED
+                      - generic [ref=e384]:
+                        - generic [ref=e385]:
+                          - img [ref=e386]
+                          - generic [ref=e388]: Scheduled
+                        - generic [ref=e389]:
+                          - generic [ref=e390]: "0"
+                          - generic [ref=e391]: (0%)
+                    - link "Published 6 (75%)" [ref=e393] [cursor=pointer]:
+                      - /url: /articles?status=PUBLISHED
+                      - generic [ref=e394]:
+                        - generic [ref=e395]:
+                          - img [ref=e396]
+                          - generic [ref=e399]: Published
+                        - generic [ref=e400]:
+                          - generic [ref=e401]: "6"
+                          - generic [ref=e402]: (75%)
+                    - link "Archived 0 (0%)" [ref=e405] [cursor=pointer]:
+                      - /url: /articles?status=ARCHIVED
+                      - generic [ref=e406]:
+                        - generic [ref=e407]:
+                          - img [ref=e408]
+                          - generic [ref=e411]: Archived
+                        - generic [ref=e412]:
+                          - generic [ref=e413]: "0"
+                          - generic [ref=e414]: (0%)
+                  - generic [ref=e416]:
+                    - heading "Recent Articles" [level=3] [ref=e417]
+                    - table [ref=e419]:
+                      - rowgroup [ref=e420]:
+                        - row "Title Client Category Author Status Created" [ref=e421]:
+                          - columnheader "Title" [ref=e422]
+                          - columnheader "Client" [ref=e423]
+                          - columnheader "Category" [ref=e424]
+                          - columnheader "Author" [ref=e425]
+                          - columnheader "Status" [ref=e426]
+                          - columnheader "Created" [ref=e427]
+                      - rowgroup [ref=e428]:
+                        - row "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة عيادات بلسم الطبية الصحة والعافية Modonty PUBLISHED Apr 7, 2026" [ref=e429]:
+                          - cell "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e430]:
+                            - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e431] [cursor=pointer]:
+                              - /url: /articles/69d4f72c769fbb50b610e3e8
+                          - cell "عيادات بلسم الطبية" [ref=e432]
+                          - cell "الصحة والعافية" [ref=e433]
+                          - cell "Modonty" [ref=e434]
+                          - cell "PUBLISHED" [ref=e435]:
+                            - generic [ref=e436]: PUBLISHED
+                          - cell "Apr 7, 2026" [ref=e437]
+                        - row "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1 أكاديمية المستقبل التعليم والتدريب Modonty WRITING Apr 6, 2026" [ref=e438]:
+                          - cell "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1" [ref=e439]:
+                            - link "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1" [ref=e440] [cursor=pointer]:
+                              - /url: /articles/69d37ed891005fa8473183c8
+                          - cell "أكاديمية المستقبل" [ref=e441]
+                          - cell "التعليم والتدريب" [ref=e442]
+                          - cell "Modonty" [ref=e443]
+                          - cell "WRITING" [ref=e444]:
+                            - generic [ref=e445]: WRITING
+                          - cell "Apr 6, 2026" [ref=e446]
+                        - row "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة أكاديمية المستقبل التسويق الرقمي Modonty PUBLISHED Apr 6, 2026" [ref=e447]:
+                          - cell "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة" [ref=e448]:
+                            - link "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة" [ref=e449] [cursor=pointer]:
+                              - /url: /articles/69d37e1b4a51c01e57968963
+                          - cell "أكاديمية المستقبل" [ref=e450]
+                          - cell "التسويق الرقمي" [ref=e451]
+                          - cell "Modonty" [ref=e452]
+                          - cell "PUBLISHED" [ref=e453]:
+                            - generic [ref=e454]: PUBLISHED
+                          - cell "Apr 6, 2026" [ref=e455]
+                        - 'row "اختبار خالد: دليل تحسين تجربة المستخدم 1 أكاديمية المستقبل SEO تحسين محركات البحث Modonty PUBLISHED Apr 6, 2026" [ref=e456]':
+                          - 'cell "اختبار خالد: دليل تحسين تجربة المستخدم 1" [ref=e457]':
+                            - 'link "اختبار خالد: دليل تحسين تجربة المستخدم 1" [ref=e458] [cursor=pointer]':
+                              - /url: /articles/69d2f9090d73480fcbf3050e
+                          - cell "أكاديمية المستقبل" [ref=e459]
+                          - cell "SEO تحسين محركات البحث" [ref=e460]
+                          - cell "Modonty" [ref=e461]
+                          - cell "PUBLISHED" [ref=e462]:
+                            - generic [ref=e463]: PUBLISHED
+                          - cell "Apr 6, 2026" [ref=e464]
+                        - row "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026 أكاديمية المستقبل SEO تحسين محركات البحث Modonty WRITING Apr 6, 2026" [ref=e465]:
+                          - cell "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026" [ref=e466]:
+                            - link "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026" [ref=e467] [cursor=pointer]:
+                              - /url: /articles/69d2e3bc83864877b03eddfb
+                          - cell "أكاديمية المستقبل" [ref=e468]
+                          - cell "SEO تحسين محركات البحث" [ref=e469]
+                          - cell "Modonty" [ref=e470]
+                          - cell "WRITING" [ref=e471]:
+                            - generic [ref=e472]: WRITING
+                          - cell "Apr 6, 2026" [ref=e473]
+              - generic [ref=e474]:
+                - generic [ref=e475]:
+                  - generic [ref=e476]: Subscriber Overview
+                  - paragraph [ref=e477]: Breakdown statistics and recent subscriber activity
+                - generic [ref=e478]:
+                  - generic [ref=e479]:
+                    - generic [ref=e481]:
+                      - generic [ref=e482]:
+                        - img [ref=e483]
+                        - generic [ref=e488]: Total Subscribers
+                      - generic [ref=e489]: "2"
+                    - generic [ref=e491]:
+                      - generic [ref=e492]:
+                        - img [ref=e493]
+                        - generic [ref=e496]: Active
+                      - generic [ref=e497]:
+                        - generic [ref=e498]: "2"
+                        - generic [ref=e499]: (100%)
+                    - generic [ref=e503]:
+                      - generic [ref=e504]:
+                        - img [ref=e505]
+                        - generic [ref=e510]: Unsubscribed
+                      - generic [ref=e511]:
+                        - generic [ref=e512]: "0"
+                        - generic [ref=e513]: (0%)
+                  - generic [ref=e515]:
+                    - heading "Recent Subscribers" [level=3] [ref=e516]
+                    - table [ref=e518]:
+                      - rowgroup [ref=e519]:
+                        - row "Email Name Client Status Subscribed" [ref=e520]:
+                          - columnheader "Email" [ref=e521]
+                          - columnheader "Name" [ref=e522]
+                          - columnheader "Client" [ref=e523]
+                          - columnheader "Status" [ref=e524]
+                          - columnheader "Subscribed" [ref=e525]
+                      - rowgroup [ref=e526]:
+                        - row "sub2@test.com فاطمة أكاديمية المستقبل Active Apr 4, 2026" [ref=e527]:
+                          - cell "sub2@test.com" [ref=e528]
+                          - cell "فاطمة" [ref=e529]
+                          - cell "أكاديمية المستقبل" [ref=e530]
+                          - cell "Active" [ref=e531]:
+                            - generic [ref=e532]: Active
+                          - cell "Apr 4, 2026" [ref=e533]
+                        - row "sub1@test.com محمد أكاديمية المستقبل Active Apr 4, 2026" [ref=e534]:
+                          - cell "sub1@test.com" [ref=e535]
+                          - cell "محمد" [ref=e536]
+                          - cell "أكاديمية المستقبل" [ref=e537]
+                          - cell "Active" [ref=e538]:
+                            - generic [ref=e539]: Active
+                          - cell "Apr 4, 2026" [ref=e540]
+              - generic [ref=e541]:
+                - generic [ref=e542]:
+                  - region "Active Clients metric card" [ref=e543]:
+                    - generic [ref=e544]:
+                      - generic [ref=e546]: Active Clients
+                      - img [ref=e548]
+                    - generic [ref=e552]:
+                      - generic [ref=e553]: "3"
+                      - paragraph [ref=e554]: Clients with active subscriptions
+                      - status [ref=e555]:
+                        - img [ref=e556]
+                        - generic [ref=e559]: +100.0% vs last period
+                  - region "Needs Attention metric card" [ref=e560]:
+                    - generic [ref=e561]:
+                      - generic [ref=e563]: Needs Attention
+                      - img [ref=e565]
+                    - generic [ref=e567]:
+                      - generic [ref=e568]: "0"
+                      - paragraph [ref=e569]: Clients requiring immediate action
+                - generic [ref=e570]:
+                  - generic [ref=e572]: Top Clients by Articles
+                  - generic [ref=e574]:
+                    - generic [ref=e575]:
+                      - generic [ref=e576]:
+                        - generic [ref=e577]: "1"
+                        - link "أكاديمية المستقبل" [ref=e578] [cursor=pointer]:
+                          - /url: /clients/69d02101be4b3c3ed2425d1c
+                      - generic [ref=e579]: 7 articles
+                    - generic [ref=e580]:
+                      - generic [ref=e581]:
+                        - generic [ref=e582]: "2"
+                        - link "عيادات بلسم الطبية" [ref=e583] [cursor=pointer]:
+                          - /url: /clients/69d163a64e8bf3f470aff0df
+                      - generic [ref=e584]: 1 articles
+                    - generic [ref=e585]:
+                      - generic [ref=e586]:
+                        - generic [ref=e587]: "3"
+                        - link "متجر نوفا للإلكترونيات" [ref=e588] [cursor=pointer]:
+                          - /url: /clients/69d1639f4e8bf3f470aff0de
+                      - generic [ref=e589]: 0 articles
+                    - generic [ref=e590]:
+                      - generic [ref=e591]:
+                        - generic [ref=e592]: "4"
+                        - link "JBR SEO" [ref=e593] [cursor=pointer]:
+                          - /url: /clients/69d5ec61e2087dee91fe99a1
+                      - generic [ref=e594]: 0 articles
+              - generic [ref=e595]:
+                - generic [ref=e596]:
+                  - generic [ref=e598]: Subscription Status Distribution
+                  - generic [ref=e601]:
+                    - list [ref=e603]:
+                      - listitem [ref=e604]:
+                        - img "Active legend icon" [ref=e605]
+                        - text: Active
+                      - listitem [ref=e607]:
+                        - img "Pending legend icon" [ref=e608]
+                        - text: Pending
+                    - application [ref=e610]
+                - generic [ref=e611]:
+                  - generic [ref=e613]: Payment Status Distribution
+                  - generic [ref=e616]:
+                    - list [ref=e618]:
+                      - listitem [ref=e619]:
+                        - img "Paid legend icon" [ref=e620]
+                        - text: Paid
+                      - listitem [ref=e622]:
+                        - img "Pending legend icon" [ref=e623]
+                        - text: Pending
+                    - application [ref=e625]
+              - generic [ref=e626]:
+                - generic [ref=e628]: Subscription Tier Distribution
+                - generic [ref=e631]:
+                  - list [ref=e633]:
+                    - listitem [ref=e634]:
+                      - img "Clients legend icon" [ref=e635]
+                      - text: Clients
+                  - application [ref=e637]:
+                    - generic [ref=e649]:
+                      - generic [ref=e650]:
+                        - generic [ref=e652]: BASIC
+                        - generic [ref=e654]: STANDARD
+                        - generic [ref=e656]: PRO
+                      - generic [ref=e657]:
+                        - generic [ref=e659]: "0"
+                        - generic [ref=e661]: "0.5"
+                        - generic [ref=e663]: "1"
+                        - generic [ref=e665]: "1.5"
+                        - generic [ref=e667]: "2"
+              - generic [ref=e668]:
+                - generic [ref=e669]:
+                  - generic [ref=e671]: Articles Published Over Time
+                  - generic [ref=e674]:
+                    - list [ref=e676]:
+                      - listitem [ref=e677]:
+                        - img "Articles Published legend icon" [ref=e678]
+                        - text: Articles Published
+                    - application [ref=e680]:
+                      - generic [ref=e693]:
+                        - generic [ref=e696]: Apr 2026
+                        - generic [ref=e697]:
+                          - generic [ref=e699]: "0"
+                          - generic [ref=e701]: "2"
+                          - generic [ref=e703]: "4"
+                          - generic [ref=e705]: "6"
+                          - generic [ref=e707]: "8"
+                - generic [ref=e708]:
+                  - generic [ref=e710]: Client Growth Trend
+                  - generic [ref=e713]:
+                    - list [ref=e715]:
+                      - listitem [ref=e716]:
+                        - img "New Clients legend icon" [ref=e717]
+                        - text: New Clients
+                      - listitem [ref=e719]:
+                        - img "Total Clients legend icon" [ref=e720]
+                        - text: Total Clients
+                    - application [ref=e722]:
+                      - generic [ref=e737]:
+                        - generic [ref=e740]: Apr 2026
+                        - generic [ref=e741]:
+                          - generic [ref=e743]: "0"
+                          - generic [ref=e745]: "1"
+                          - generic [ref=e747]: "2"
+                          - generic [ref=e749]: "3"
+                          - generic [ref=e751]: "4"
+              - generic [ref=e752]:
+                - generic [ref=e754]: Subscriber Growth Trend
+                - generic [ref=e757]:
+                  - list [ref=e759]:
+                    - listitem [ref=e760]:
+                      - img "New Subscribers legend icon" [ref=e761]
+                      - text: New Subscribers
+                    - listitem [ref=e763]:
+                      - img "Total Subscribers legend icon" [ref=e764]
+                      - text: Total Subscribers
+                  - application [ref=e766]:
+                    - generic [ref=e781]:
+                      - generic [ref=e784]: Apr 2026
+                      - generic [ref=e785]:
+                        - generic [ref=e787]: "0"
+                        - generic [ref=e789]: "0.5"
+                        - generic [ref=e791]: "1"
+                        - generic [ref=e793]: "1.5"
+                        - generic [ref=e795]: "2"
+              - generic [ref=e796]:
+                - generic [ref=e799]:
+                  - generic [ref=e800]: Top Clients - Delivery Progress
+                  - generic [ref=e801]: Showing top 3 clients by delivery volume
+                - generic [ref=e802]:
+                  - generic [ref=e804]:
+                    - list [ref=e806]:
+                      - listitem [ref=e807]:
+                        - img "Delivered legend icon" [ref=e808]
+                        - text: Delivered
+                      - listitem [ref=e810]:
+                        - img "Monthly Limit legend icon" [ref=e811]
+                        - text: Monthly Limit
+                    - application [ref=e813]:
+                      - generic [ref=e825]:
+                        - generic [ref=e826]:
+                          - generic [ref=e828]: "0"
+                          - generic [ref=e830]: "4"
+                          - generic [ref=e832]: "8"
+                          - generic [ref=e834]: "12"
+                          - generic [ref=e836]: "16"
+                        - generic [ref=e837]: Articles
+                        - generic [ref=e838]:
+                          - generic [ref=e840]: أكاديمية المستقبل
+                          - generic [ref=e842]: عيادات بلسم الطبية
+                          - generic [ref=e844]: متجر نوفا للإلكتروني...
+                  - generic [ref=e846]:
+                    - generic [ref=e849]: Delivered
+                    - generic [ref=e852]: Monthly Limit
+                    - generic [ref=e855]: At Limit
+                    - generic [ref=e858]: Near Limit (90%+)
+            - generic [ref=e859]:
+              - generic [ref=e860]:
+                - generic [ref=e862]: Quick Actions
+                - generic [ref=e864]:
+                  - link "New Article" [ref=e865] [cursor=pointer]:
+                    - /url: /articles/new
+                    - img
+                    - text: New Article
+                  - link "New Client" [ref=e866] [cursor=pointer]:
+                    - /url: /clients/new
+                    - img
+                    - text: New Client
+                  - link "Expiring" [ref=e867] [cursor=pointer]:
+                    - /url: /clients?filter=expiring
+                    - img
+                    - text: Expiring
+                  - link "Overdue" [ref=e868] [cursor=pointer]:
+                    - /url: /clients?filter=overdue
+                    - img
+                    - text: Overdue
+                  - link "At Limit" [ref=e869] [cursor=pointer]:
+                    - /url: /clients?filter=at-limit
+                    - img
+                    - text: At Limit
+                  - link "Analytics" [ref=e870] [cursor=pointer]:
+                    - /url: /analytics
+                    - img
+                    - text: Analytics
+              - generic [ref=e871]:
+                - generic [ref=e874]:
+                  - generic [ref=e875]: Monthly Delivery Progress
+                  - generic [ref=e876]: Current month delivery status across all clients
+                - generic [ref=e877]:
+                  - generic [ref=e878]:
+                    - generic [ref=e879]:
+                      - generic [ref=e880]:
+                        - generic [ref=e881]: Overall Progress
+                        - generic [ref=e882]: 3 active clients
+                      - generic [ref=e883]:
+                        - generic [ref=e884]: 15%
+                        - generic [ref=e885]: 4 / 27 articles
+                    - generic [ref=e888]:
+                      - generic [ref=e889]:
+                        - generic [ref=e890]: "Delivered this month:"
+                        - generic [ref=e891]: 4 articles
+                      - generic [ref=e892]:
+                        - generic [ref=e893]: "Total monthly limit:"
+                        - generic [ref=e894]: 27 articles
+                      - generic [ref=e895]:
+                        - generic [ref=e896]: "Remaining capacity:"
+                        - generic [ref=e897]: 23 articles
+                    - paragraph [ref=e899]:
+                      - strong [ref=e900]: "Delivered:"
+                      - text: Articles published or scheduled this month (based on
+                      - code [ref=e901]: datePublished
+                      - text: for PUBLISHED,
+                      - code [ref=e902]: scheduledAt
+                      - text: for SCHEDULED).
+                      - strong [ref=e903]: "Source:"
+                      - text: Real-time database queries.
+                      - strong [ref=e904]: "Limit:"
+                      - text: Sum of all active clients'
+                      - code [ref=e905]: articlesPerMonth
+                      - text: values stored in database. Tier limits are configured in
+                      - code [ref=e906]: SubscriptionTierConfig
+                      - text: collection and can be managed via Subscription Tiers admin page.
+                  - generic [ref=e907]:
+                    - generic [ref=e908]:
+                      - generic [ref=e909]: Client Breakdown
+                      - generic [ref=e910]: Showing top 3 of 3
+                    - generic [ref=e911]:
+                      - generic [ref=e913]:
+                        - generic [ref=e914]:
+                          - generic [ref=e915]:
+                            - img [ref=e916]
+                            - link "أكاديمية المستقبل" [ref=e919] [cursor=pointer]:
+                              - /url: /clients/69d02101be4b3c3ed2425d1c
+                          - generic [ref=e920]:
+                            - generic [ref=e921]: 3 delivered
+                            - generic [ref=e922]: •
+                            - generic [ref=e923]: 1 remaining
+                            - generic [ref=e924]: •
+                            - generic [ref=e925]: 4 limit
+                        - generic [ref=e927]: 75%
+                      - generic [ref=e931]:
+                        - generic [ref=e932]:
+                          - generic [ref=e933]:
+                            - img [ref=e934]
+                            - link "عيادات بلسم الطبية" [ref=e937] [cursor=pointer]:
+                              - /url: /clients/69d163a64e8bf3f470aff0df
+                          - generic [ref=e938]:
+                            - generic [ref=e939]: 1 delivered
+                            - generic [ref=e940]: •
+                            - generic [ref=e941]: 7 remaining
+                            - generic [ref=e942]: •
+                            - generic [ref=e943]: 8 limit
+                        - generic [ref=e945]: 13%
+                      - generic [ref=e949]:
+                        - generic [ref=e950]:
+                          - generic [ref=e951]:
+                            - img [ref=e952]
+                            - link "متجر نوفا للإلكترونيات" [ref=e955] [cursor=pointer]:
+                              - /url: /clients/69d1639f4e8bf3f470aff0de
+                          - generic [ref=e956]:
+                            - generic [ref=e957]: 0 delivered
+                            - generic [ref=e958]: •
+                            - generic [ref=e959]: 15 remaining
+                            - generic [ref=e960]: •
+                            - generic [ref=e961]: 15 limit
+                        - generic [ref=e963]: 0%
+              - generic [ref=e966]:
+                - generic [ref=e967]:
+                  - generic [ref=e968]: Recent Activity
+                  - generic [ref=e970]:
+                    - img [ref=e971]
+                    - generic [ref=e973]:
+                      - paragraph [ref=e974]: "⚠️ DEV REMINDER: Needs Recheck & Enhancement"
+                      - paragraph [ref=e975]: Subscription/Payment updates are inferred from client updates. Improve accuracy by tracking actual status changes.
+                - generic [ref=e977]:
+                  - generic [ref=e978]:
+                    - img [ref=e980]
+                    - generic [ref=e983]:
+                      - generic [ref=e984]:
+                        - generic [ref=e985]: Published article
+                        - link "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة" [ref=e986] [cursor=pointer]:
+                          - /url: /articles/69d37e1b4a51c01e57968963
+                        - generic [ref=e987]: for أكاديمية المستقبل
+                      - generic [ref=e988]:
+                        - img [ref=e989]
+                        - generic [ref=e992]: less than a minute ago
+                        - generic [ref=e993]: •
+                        - generic [ref=e994]: Apr 8, 9:12 AM
+                  - generic [ref=e995]:
+                    - img [ref=e997]
+                    - generic [ref=e1001]:
+                      - generic [ref=e1002]:
+                        - generic [ref=e1003]: Created client
+                        - link "JBR SEO" [ref=e1004] [cursor=pointer]:
+                          - /url: /clients/69d5ec61e2087dee91fe99a1
+                      - generic [ref=e1005]:
+                        - img [ref=e1006]
+                        - generic [ref=e1009]: 23 minutes ago
+                        - generic [ref=e1010]: •
+                        - generic [ref=e1011]: Apr 8, 8:49 AM
+                  - generic [ref=e1012]:
+                    - img [ref=e1014]
+                    - generic [ref=e1017]:
+                      - generic [ref=e1018]:
+                        - generic [ref=e1019]: Published article
+                        - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e1020] [cursor=pointer]:
+                          - /url: /articles/69d4f72c769fbb50b610e3e8
+                        - generic [ref=e1021]: for عيادات بلسم الطبية
+                      - generic [ref=e1022]:
+                        - img [ref=e1023]
+                        - generic [ref=e1026]: about 18 hours ago
+                        - generic [ref=e1027]: •
+                        - generic [ref=e1028]: Apr 7, 3:23 PM
+                  - generic [ref=e1029]:
+                    - img [ref=e1031]
+                    - generic [ref=e1033]:
+                      - generic [ref=e1034]:
+                        - generic [ref=e1035]: Updated subscription
+                        - link "عيادات بلسم الطبية" [ref=e1036] [cursor=pointer]:
+                          - /url: /clients/69d163a64e8bf3f470aff0df
+                        - generic [ref=e1037]: ACTIVE
+                      - generic [ref=e1038]:
+                        - img [ref=e1039]
+                        - generic [ref=e1042]: about 20 hours ago
+                        - generic [ref=e1043]: •
+                        - generic [ref=e1044]: Apr 7, 1:04 PM
+                  - generic [ref=e1045]:
+                    - img [ref=e1047]
+                    - generic [ref=e1049]:
+                      - generic [ref=e1050]:
+                        - generic [ref=e1051]: Updated payment
+                        - link "عيادات بلسم الطبية" [ref=e1052] [cursor=pointer]:
+                          - /url: /clients/69d163a64e8bf3f470aff0df
+                        - generic [ref=e1053]: PAID
+                      - generic [ref=e1054]:
+                        - img [ref=e1055]
+                        - generic [ref=e1058]: about 20 hours ago
+                        - generic [ref=e1059]: •
+                        - generic [ref=e1060]: Apr 7, 1:04 PM
+                  - generic [ref=e1061]:
+                    - img [ref=e1063]
+                    - generic [ref=e1065]:
+                      - generic [ref=e1066]:
+                        - generic [ref=e1067]: Updated subscription
+                        - link "متجر نوفا للإلكترونيات" [ref=e1068] [cursor=pointer]:
+                          - /url: /clients/69d1639f4e8bf3f470aff0de
+                        - generic [ref=e1069]: ACTIVE
+                      - generic [ref=e1070]:
+                        - img [ref=e1071]
+                        - generic [ref=e1074]: about 20 hours ago
+                        - generic [ref=e1075]: •
+                        - generic [ref=e1076]: Apr 7, 1:04 PM
+                  - generic [ref=e1077]:
+                    - img [ref=e1079]
+                    - generic [ref=e1081]:
+                      - generic [ref=e1082]:
+                        - generic [ref=e1083]: Updated payment
+                        - link "متجر نوفا للإلكترونيات" [ref=e1084] [cursor=pointer]:
+                          - /url: /clients/69d1639f4e8bf3f470aff0de
+                        - generic [ref=e1085]: PAID
+                      - generic [ref=e1086]:
+                        - img [ref=e1087]
+                        - generic [ref=e1090]: about 20 hours ago
+                        - generic [ref=e1091]: •
+                        - generic [ref=e1092]: Apr 7, 1:04 PM
+                  - generic [ref=e1093]:
+                    - img [ref=e1095]
+                    - generic [ref=e1097]:
+                      - generic [ref=e1098]:
+                        - generic [ref=e1099]: Updated subscription
+                        - link "أكاديمية المستقبل" [ref=e1100] [cursor=pointer]:
+                          - /url: /clients/69d02101be4b3c3ed2425d1c
+                        - generic [ref=e1101]: ACTIVE
+                      - generic [ref=e1102]:
+                        - img [ref=e1103]
+                        - generic [ref=e1106]: about 20 hours ago
+                        - generic [ref=e1107]: •
+                        - generic [ref=e1108]: Apr 7, 1:04 PM
+                  - generic [ref=e1109]:
+                    - img [ref=e1111]
+                    - generic [ref=e1113]:
+                      - generic [ref=e1114]:
+                        - generic [ref=e1115]: Updated payment
+                        - link "أكاديمية المستقبل" [ref=e1116] [cursor=pointer]:
+                          - /url: /clients/69d02101be4b3c3ed2425d1c
+                        - generic [ref=e1117]: PAID
+                      - generic [ref=e1118]:
+                        - img [ref=e1119]
+                        - generic [ref=e1122]: about 20 hours ago
+                        - generic [ref=e1123]: •
+                        - generic [ref=e1124]: Apr 7, 1:04 PM
+                  - generic [ref=e1125]:
+                    - img [ref=e1127]
+                    - generic [ref=e1130]:
+                      - generic [ref=e1131]:
+                        - generic [ref=e1132]: Published article
+                        - 'link "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e1133] [cursor=pointer]':
+                          - /url: /articles/69d163ea4e8bf3f470aff0ee
+                        - generic [ref=e1134]: for أكاديمية المستقبل
+                      - generic [ref=e1135]:
+                        - img [ref=e1136]
+                        - generic [ref=e1139]: 2 days ago
+                        - generic [ref=e1140]: •
+                        - generic [ref=e1141]: Apr 6, 12:02 AM
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e17] [cursor=pointer]:
+    - img [ref=e18]
+  - alert [ref=e21]
+  - generic [ref=e1142]: أكاديمية المستقبل

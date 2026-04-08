@@ -62,13 +62,7 @@ export type ClientForList = {
     width: number | null;
     height: number | null;
   } | null;
-  ogImageMedia: {
-    url: string;
-    altText: string | null;
-    width: number | null;
-    height: number | null;
-  } | null;
-  twitterImageMedia: {
+  heroImageMedia: {
     url: string;
     altText: string | null;
     width: number | null;

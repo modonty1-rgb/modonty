@@ -97,7 +97,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
   return (
     <>
       <div className="space-y-6">
-        {(client.logoMedia || client.ogImageMedia || client.twitterImageMedia) && (
+        {(client.logoMedia || client.heroImageMedia || client.heroImageMedia) && (
           <div className="border rounded-lg overflow-hidden">
             <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
@@ -130,51 +130,51 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                   </div>
                 </div>
               )}
-              {client.ogImageMedia && (
+              {client.heroImageMedia && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="flex items-center gap-4">
                     <img
-                      src={client.ogImageMedia.url}
-                      alt={client.ogImageMedia.altText || "OG image"}
+                      src={client.heroImageMedia.url}
+                      alt={client.heroImageMedia.altText || "OG image"}
                       className="h-24 w-24 rounded object-contain border"
                     />
                     <div className="flex-1 min-w-0">
                       <a
-                        href={client.ogImageMedia.url}
+                        href={client.heroImageMedia.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.ogImageMedia.url}
+                        {client.heroImageMedia.url}
                       </a>
-                      {client.ogImageMedia.altText && (
-                        <p className="text-xs text-muted-foreground mt-1">Alt: {client.ogImageMedia.altText}</p>
+                      {client.heroImageMedia.altText && (
+                        <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>
                       )}
                     </div>
                   </div>
                 </div>
               )}
-              {client.twitterImageMedia && (
+              {client.heroImageMedia && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                   <div className="flex items-center gap-4">
                     <img
-                      src={client.twitterImageMedia.url}
-                      alt={client.twitterImageMedia.altText || "Twitter image"}
+                      src={client.heroImageMedia.url}
+                      alt={client.heroImageMedia.altText || "Twitter image"}
                       className="h-24 w-24 rounded object-contain border"
                     />
                     <div className="flex-1 min-w-0">
                       <a
-                        href={client.twitterImageMedia.url}
+                        href={client.heroImageMedia.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.twitterImageMedia.url}
+                        {client.heroImageMedia.url}
                       </a>
-                      {client.twitterImageMedia.altText && (
-                        <p className="text-xs text-muted-foreground mt-1">Alt: {client.twitterImageMedia.altText}</p>
+                      {client.heroImageMedia.altText && (
+                        <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>
                       )}
                     </div>
                   </div>

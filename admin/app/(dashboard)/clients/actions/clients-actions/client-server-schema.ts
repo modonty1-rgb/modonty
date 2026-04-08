@@ -79,8 +79,7 @@ export const clientServerSchema = z.object({
   parentOrganizationId: z.string().optional().nullable(),
   subscriptionTierConfigId: z.string().optional().nullable(),
   logoMediaId: z.string().optional().nullable(),
-  ogImageMediaId: z.string().optional().nullable(),
-  twitterImageMediaId: z.string().optional().nullable(),
+  heroImageMediaId: z.string().optional().nullable(),
 
   // Enums — passthrough as strings, validated by Prisma
   subscriptionTier: z.string().optional().nullable(),

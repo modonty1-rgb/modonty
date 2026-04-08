@@ -18,7 +18,7 @@ export const createValidateSEOTitleAndOG = (
       enhancedMessage += ` → ${seoTitleMapping.metaTags.metaTagsPath}`;
     }
 
-    const ogImageMedia = data.ogImageMedia as MediaRelation;
+    const heroImageMedia = data.heroImageMedia as MediaRelation;
     const hasOGTitle =
       data.seoTitle &&
       typeof data.seoTitle === "string" &&
@@ -30,17 +30,17 @@ export const createValidateSEOTitleAndOG = (
     const hasOGUrl =
       data.url && typeof data.url === "string" && data.url.trim().length > 0;
     const hasOGImage =
-      ogImageMedia?.url &&
-      typeof ogImageMedia.url === "string" &&
-      ogImageMedia.url.trim().length > 0;
+      heroImageMedia?.url &&
+      typeof heroImageMedia.url === "string" &&
+      heroImageMedia.url.trim().length > 0;
     const hasOGImageAlt =
-      ogImageMedia?.altText &&
-      typeof ogImageMedia.altText === "string" &&
-      ogImageMedia.altText.trim().length > 0;
+      heroImageMedia?.altText &&
+      typeof heroImageMedia.altText === "string" &&
+      heroImageMedia.altText.trim().length > 0;
     const hasOGImageWidth =
-      ogImageMedia?.width && typeof ogImageMedia.width === "number";
+      heroImageMedia?.width && typeof heroImageMedia.width === "number";
     const hasOGImageHeight =
-      ogImageMedia?.height && typeof ogImageMedia.height === "number";
+      heroImageMedia?.height && typeof heroImageMedia.height === "number";
 
     let ogScore = 0;
     let ogMessage = "";

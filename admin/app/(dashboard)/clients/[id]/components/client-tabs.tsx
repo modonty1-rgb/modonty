@@ -32,11 +32,7 @@ type ClientTabsProps = {
       url: string;
       altText: string | null;
     } | null;
-    ogImageMedia: {
-      url: string;
-      altText: string | null;
-    } | null;
-    twitterImageMedia: {
+    heroImageMedia: {
       url: string;
       altText: string | null;
     } | null;

@@ -25,7 +25,7 @@ interface TestResult {
   ogImageUrl?: string;
   ogImageCloudinaryPublicId?: string;
   ogImageCloudinaryVersion?: string;
-  ogImageMediaId?: string;
+  heroImageMediaId?: string;
   databaseVerified?: boolean;
   error?: string;
 }
@@ -134,7 +134,7 @@ export function SeedTestResult({ testResult }: SeedTestResultProps) {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <p><span className="font-medium">Media ID:</span> {testResult.ogImageMediaId}</p>
+                  <p><span className="font-medium">Media ID:</span> {testResult.heroImageMediaId}</p>
                   <p><span className="font-medium">Cloudinary Public ID:</span> <code className="text-xs bg-muted px-1 rounded">{testResult.ogImageCloudinaryPublicId}</code></p>
                   <p><span className="font-medium">Version:</span> {testResult.ogImageCloudinaryVersion}</p>
                 </div>

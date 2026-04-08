@@ -135,15 +135,7 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
             height: true,
           },
         },
-        ogImageMedia: {
-          select: {
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-        twitterImageMedia: {
+        heroImageMedia: {
           select: {
             url: true,
             altText: true,

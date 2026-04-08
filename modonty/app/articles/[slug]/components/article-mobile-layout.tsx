@@ -26,7 +26,7 @@ interface ArticleMobileLayoutProps {
       url?: string | null;
       description?: string | null;
       logoMedia?: { url: string } | null;
-      ogImageMedia?: { url: string } | null;
+      heroImageMedia?: { url: string } | null;
     } | null;
     askClientProps?: {
       articleId: string;

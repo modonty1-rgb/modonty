@@ -35,7 +35,7 @@ export function BusinessSection({
             setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })
           }
           error={errors.parentOrganizationId?.message}
-          hint="إذا كان العميل فرع أو تابع لشركة أخرى — اتركه فارغ إذا كان مستقل"
+          hint={messages.hints.client.parentOrganization}
         >
           <option value="">None</option>
           {clients.map((client) => (
@@ -64,7 +64,7 @@ export function BusinessSection({
           rows={3}
           error={errors.targetAudience?.message}
           placeholder="Describe the target audience for this client"
-          hint="يساعد الكتّاب في تخصيص المحتوى والأسلوب"
+          hint={messages.hints.client.businessType}
         />
         <FormTextarea
           label="Content Priorities (comma-separated)"
@@ -77,7 +77,7 @@ export function BusinessSection({
           rows={2}
           error={errors.contentPriorities?.message}
           placeholder="keyword1, keyword2, keyword3"
-          hint="كلمات مفتاحية للكتّاب — مفصولة بفاصلة"
+          hint={messages.hints.client.keywords}
         />
       </div>
     </div>

@@ -90,50 +90,50 @@ export const validateLogoAlt: SEOFieldValidator = (value, data) => {
 };
 
 export const validateOGImageForClient: SEOFieldValidator = (value, data) => {
-  const ogImageMedia = data.ogImageMedia as MediaRelation;
-  const ogImageUrl = (ogImageMedia?.url as string) || (value as string) || "";
+  const heroImageMedia = data.heroImageMedia as MediaRelation;
+  const ogImageUrl = (heroImageMedia?.url as string) || (value as string) || "";
   if (ogImageUrl && typeof ogImageUrl === "string" && ogImageUrl.trim().length > 0) {
     return {
       status: "good",
-      message: "Open Graph image set for social sharing",
+      message: "Hero image set for social sharing",
       score: 5,
     };
   }
   return {
     status: "warning",
-    message: "OG image recommended (1200x630px) for social media",
+    message: "Hero image recommended (1200x630px) for social media",
     score: 0,
   };
 };
 
 export const validateOGImageAltForClient: SEOFieldValidator = (value, data) => {
-  const ogImageMedia = data.ogImageMedia as MediaRelation;
+  const heroImageMedia = data.heroImageMedia as MediaRelation;
   const hasOGImage =
-    ogImageMedia?.url &&
-    typeof ogImageMedia.url === "string" &&
-    ogImageMedia.url.trim().length > 0;
+    heroImageMedia?.url &&
+    typeof heroImageMedia.url === "string" &&
+    heroImageMedia.url.trim().length > 0;
   if (hasOGImage) {
     if (
-      ogImageMedia?.altText &&
-      typeof ogImageMedia.altText === "string" &&
-      ogImageMedia.altText.trim().length > 0
+      heroImageMedia?.altText &&
+      typeof heroImageMedia.altText === "string" &&
+      heroImageMedia.altText.trim().length > 0
     ) {
       return {
         status: "good",
-        message: "OG image alt text provided - required for accessibility and SEO",
+        message: "Hero image alt text provided - required for accessibility and SEO",
         score: 5,
       };
     }
     return {
       status: "error",
       message:
-        "OG image alt text required when OG image exists (accessibility + SEO)",
+        "Hero image alt text required when hero image exists (accessibility + SEO)",
       score: 0,
     };
   }
   return {
     status: "info",
-    message: "OG image alt text not needed (no OG image provided)",
+    message: "Hero image alt text not needed (no hero image provided)",
     score: 0,
   };
 };
@@ -142,25 +142,25 @@ export const validateOGImageDimensionsForClient: SEOFieldValidator = (
   value,
   data,
 ) => {
-  const ogImageMedia = data.ogImageMedia as MediaRelation;
+  const heroImageMedia = data.heroImageMedia as MediaRelation;
   const hasOGImage =
-    ogImageMedia?.url &&
-    typeof ogImageMedia.url === "string" &&
-    ogImageMedia.url.trim().length > 0;
+    heroImageMedia?.url &&
+    typeof heroImageMedia.url === "string" &&
+    heroImageMedia.url.trim().length > 0;
   if (hasOGImage) {
     const hasWidth =
-      ogImageMedia?.width && typeof ogImageMedia.width === "number";
+      heroImageMedia?.width && typeof heroImageMedia.width === "number";
     const hasHeight =
-      ogImageMedia?.height && typeof ogImageMedia.height === "number";
+      heroImageMedia?.height && typeof heroImageMedia.height === "number";
 
     if (hasWidth && hasHeight) {
-      const width = ogImageMedia.width as number;
-      const height = ogImageMedia.height as number;
+      const width = heroImageMedia.width as number;
+      const height = heroImageMedia.height as number;
       if (width === 1200 && height === 630) {
         return {
           status: "good",
           message:
-            "OG image dimensions optimal (1200x630px) - perfect for social sharing",
+            "Hero image dimensions optimal (1200x630px) - perfect for social sharing",
           score: 5,
         };
       }
@@ -204,73 +204,72 @@ export const validateTwitterCardsForClient: SEOFieldValidator = (value, data) =>
   const hasTwitterCard = twitterCard && typeof twitterCard === "string" && twitterCard.trim().length > 0;
   const hasTwitterTitle = data.twitterTitle && typeof data.twitterTitle === "string" && data.twitterTitle.trim().length > 0;
   const hasTwitterDesc = data.twitterDescription && typeof data.twitterDescription === "string" && data.twitterDescription.trim().length > 0;
-  
-  const twitterImageMedia = data.twitterImageMedia as MediaRelation;
-  const hasTwitterImg =
-    twitterImageMedia?.url &&
-    typeof twitterImageMedia.url === "string" &&
-    twitterImageMedia.url.trim().length > 0;
-  
-  const hasTwitterImageAlt =
-    twitterImageMedia?.altText &&
-    typeof twitterImageMedia.altText === "string" &&
-    twitterImageMedia.altText.trim().length > 0;
-  
-  const ogImageMedia = data.ogImageMedia as MediaRelation;
-  const canAutoGenerate = data.seoTitle && data.seoDescription && ogImageMedia?.url;
+
+  const heroImageMedia = data.heroImageMedia as MediaRelation;
+  const hasHeroImg =
+    heroImageMedia?.url &&
+    typeof heroImageMedia.url === "string" &&
+    heroImageMedia.url.trim().length > 0;
+
+  const hasHeroImageAlt =
+    heroImageMedia?.altText &&
+    typeof heroImageMedia.altText === "string" &&
+    heroImageMedia.altText.trim().length > 0;
+
+  const canAutoGenerate = data.seoTitle && data.seoDescription && heroImageMedia?.url;
   
   // Auto-generate selected and can auto-generate
   if (isAuto && canAutoGenerate) {
     return {
       status: "good",
-      message: "Twitter Cards set to auto-generate from SEO title, description, and OG image - optimal configuration",
+      message: "Twitter Cards set to auto-generate from SEO title, description, and hero image - optimal configuration",
       score: 10,
     };
   }
-  
+
   // Auto-generate selected but cannot auto-generate
   if (isAuto && !canAutoGenerate) {
     const missing = [];
     if (!data.seoTitle) missing.push("SEO title");
     if (!data.seoDescription) missing.push("SEO description");
-    if (!ogImageMedia?.url) missing.push("OG image");
+    if (!heroImageMedia?.url) missing.push("hero image");
     const missingList = missing.join(", ");
 
     return {
       status: "warning",
       message:
-        missing.length === 1 && missing[0] === "OG image"
-          ? "Twitter Cards are set to auto-generate from SEO fields, but the Open Graph image is not set yet. After you create and save the client, open the edit screen, go to the Media (OG image) section, and add an image to reach 100% Meta."
+        missing.length === 1 && missing[0] === "hero image"
+          ? "Twitter Cards are set to auto-generate from SEO fields, but the hero image is not set yet. After you create and save the client, open the edit screen, go to the Media (hero image) section, and add an image to reach 100% Meta."
           : `Twitter Cards are set to auto-generate, but missing: ${missingList}. Fill these fields so we can generate Twitter Cards automatically.`,
       score: 3,
     };
   }
-  
+
   // Complete configuration
-  if (hasTwitterCard && hasTwitterTitle && hasTwitterDesc && hasTwitterImg) {
+  if (hasTwitterCard && hasTwitterTitle && hasTwitterDesc && hasHeroImg) {
     let message = "Complete Twitter Cards configured - optimal for social SEO";
     let score = 10;
-    
-    if (hasTwitterImageAlt) {
+
+    if (hasHeroImageAlt) {
       message += " - Includes alt text for accessibility";
       score = 15;
     } else {
       message += " - Add image alt text for accessibility and SEO";
     }
-    
+
     return {
       status: "good",
       message,
       score,
     };
   }
-  
+
   // Card type selected but missing other fields
   if (hasTwitterCard) {
     const missing = [];
     if (!hasTwitterTitle) missing.push("Twitter title");
     if (!hasTwitterDesc) missing.push("Twitter description");
-    if (!hasTwitterImg && !ogImageMedia?.url) missing.push("Twitter/OG image");
+    if (!hasHeroImg) missing.push("hero image");
     
     if (missing.length > 0) {
       return {
@@ -289,7 +288,7 @@ export const validateTwitterCardsForClient: SEOFieldValidator = (value, data) =>
       score: 5,
     };
   }
-  
+
   // No configuration
   return {
     status: "warning",
@@ -302,34 +301,34 @@ export const validateTwitterImageAltForClient: SEOFieldValidator = (
   value,
   data,
 ) => {
-  const twitterImageMedia = data.twitterImageMedia as MediaRelation;
-  const hasTwitterImage =
-    twitterImageMedia?.url &&
-    typeof twitterImageMedia.url === "string" &&
-    twitterImageMedia.url.trim().length > 0;
-  if (hasTwitterImage) {
+  const heroImageMedia = data.heroImageMedia as MediaRelation;
+  const hasHeroImage =
+    heroImageMedia?.url &&
+    typeof heroImageMedia.url === "string" &&
+    heroImageMedia.url.trim().length > 0;
+  if (hasHeroImage) {
     if (
-      twitterImageMedia?.altText &&
-      typeof twitterImageMedia.altText === "string" &&
-      twitterImageMedia.altText.trim().length > 0
+      heroImageMedia?.altText &&
+      typeof heroImageMedia.altText === "string" &&
+      heroImageMedia.altText.trim().length > 0
     ) {
       return {
         status: "good",
         message:
-          "Twitter image alt text provided - required for accessibility and SEO",
+          "Hero image alt text provided - required for accessibility and SEO",
         score: 5,
       };
     }
     return {
       status: "error",
       message:
-        "Twitter image alt text required when Twitter image exists (accessibility + SEO)",
+        "Hero image alt text required when hero image exists (accessibility + SEO)",
       score: 0,
     };
   }
   return {
     status: "info",
-    message: "Twitter image alt text not needed (no Twitter image provided)",
+    message: "Hero image alt text not needed (no hero image provided)",
     score: 0,
   };
 };

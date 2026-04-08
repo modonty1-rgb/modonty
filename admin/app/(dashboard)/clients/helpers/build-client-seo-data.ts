@@ -152,8 +152,7 @@ export function buildClientSeoData(
       (base.parentOrganizationId as string | null | undefined) ?? null,
     // Media relations are taken from the base client (DB / list) and not overridden by form text fields
     logoMedia: base.logoMedia ?? null,
-    ogImageMedia: base.ogImageMedia ?? null,
-    twitterImageMedia: base.twitterImageMedia ?? null,
+    heroImageMedia: base.heroImageMedia ?? null,
   };
 
   return data;

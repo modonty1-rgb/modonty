@@ -345,25 +345,25 @@ export function DetailsTab({ client }: DetailsTabProps) {
                   </div>
                 </div>
               )}
-              {client.ogImageMedia?.url && (
+              {client.heroImageMedia?.url && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="space-y-2">
                     <img
-                      src={client.ogImageMedia.url}
-                      alt={client.ogImageMedia.altText || `${client.name} OG image`}
+                      src={client.heroImageMedia.url}
+                      alt={client.heroImageMedia.altText || `${client.name} OG image`}
                       className="h-32 w-32 rounded object-cover"
                     />
                     <a
-                      href={client.ogImageMedia.url}
+                      href={client.heroImageMedia.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline block"
                     >
-                      {client.ogImageMedia.url}
+                      {client.heroImageMedia.url}
                     </a>
-                    {client.ogImageMedia.altText && (
-                      <p className="text-xs text-muted-foreground">Alt: {client.ogImageMedia.altText}</p>
+                    {client.heroImageMedia.altText && (
+                      <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
                     )}
                   </div>
                 </div>
@@ -421,8 +421,8 @@ export function DetailsTab({ client }: DetailsTabProps) {
               {(client.twitterCard ||
                 client.twitterTitle ||
                 client.twitterDescription ||
-                client.twitterImageMedia?.url ||
-                client.twitterImageMedia?.altText ||
+                client.heroImageMedia?.url ||
+                client.heroImageMedia?.altText ||
                 client.twitterSite) && (
                   <div className="space-y-2">
                     <p className="text-sm font-medium">Twitter Cards</p>
@@ -444,19 +444,19 @@ export function DetailsTab({ client }: DetailsTabProps) {
                         <p className="text-sm">{client.twitterDescription}</p>
                       </div>
                     )}
-                    {client.twitterImageMedia?.url && (
+                    {client.heroImageMedia?.url && (
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Twitter Image</p>
                         <a
-                          href={client.twitterImageMedia.url}
+                          href={client.heroImageMedia.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm text-primary hover:underline"
                         >
-                          {client.twitterImageMedia.url}
+                          {client.heroImageMedia.url}
                         </a>
-                        {client.twitterImageMedia.altText && (
-                          <p className="text-xs text-muted-foreground mt-1">Alt: {client.twitterImageMedia.altText}</p>
+                        {client.heroImageMedia.altText && (
+                          <p className="text-xs text-muted-foreground mt-1">Alt: {client.heroImageMedia.altText}</p>
                         )}
                       </div>
                     )}

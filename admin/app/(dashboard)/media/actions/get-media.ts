@@ -92,8 +92,7 @@ export async function getMedia(filters?: MediaFilters) {
             select: {
               featuredArticles: true,
               logoClients: true,
-              ogImageClients: true,
-              twitterImageClients: true,
+              heroImageClients: true,
             },
           },
         },

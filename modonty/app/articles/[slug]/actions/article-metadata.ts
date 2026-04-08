@@ -23,7 +23,7 @@ export async function getArticleForMetadata(slug: string) {
         select: {
           name: true,
           logoMedia: { select: { url: true } },
-          ogImageMedia: { select: { url: true } },
+          heroImageMedia: { select: { url: true } },
         },
       },
       author: { select: { name: true } },

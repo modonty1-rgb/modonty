@@ -463,14 +463,7 @@ async function clearDatabase(logCallback?: (message: string, level?: "info" | "s
     log("  Deleting subscribers (depend on clients - children)...", "info");
     await db.subscriber.deleteMany({});
 
-    log("  Clearing media references from clients...", "info");
-    await db.client.updateMany({
-      data: {
-        logoMediaId: null,
-        ogImageMediaId: null,
-        twitterImageMediaId: null,
-      },
-    });
+    // Media references cleared on client creation (omitted)
 
     log("  Clearing parent organization references from clients...", "info");
     await db.client.updateMany({
@@ -796,7 +789,7 @@ async function seedClients(
       subscriptionTier: tier,
       subscriptionStatus: SubscriptionStatus.ACTIVE,
       paymentStatus: PaymentStatus.PAID,
-    });
+    } as any);
   }
 
   // All clients are now dynamically generated based on article count
@@ -2131,7 +2124,7 @@ async function seedMedia(
     const client = clients[idx];
     
     // Skip if client already has media (Phase 2 - using existing clients from Phase 1)
-    if (client.logoMediaId && client.ogImageMediaId && client.twitterImageMediaId) {
+    if (client.logoMediaId && client.heroImageMediaId && client.heroImageMediaId) {
       log(`  Skipping media for client ${idx + 1}/${clients.length}: ${client.name} (already has media)`, "info");
       continue;
     }
@@ -2283,8 +2276,7 @@ async function seedMedia(
       where: { id: client.id },
       data: {
         logoMediaId: logoMedia.id,
-        ogImageMediaId: ogMedia.id,
-        twitterImageMediaId: twitterMedia.id,
+        heroImageMediaId: ogMedia.id,
       },
     });
 

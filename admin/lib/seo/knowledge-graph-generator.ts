@@ -28,7 +28,7 @@ import {
 export interface ArticleWithFullRelations extends Article {
   client: Client & {
     logoMedia?: Media | null;
-    ogImageMedia?: Media | null;
+    heroImageMedia?: Media | null;
   };
   author: Author;
   category?: Category | null;
@@ -295,9 +295,9 @@ function buildImageArray(
       representativeOfPage: true,
     });
   } else {
-    // Fallback: client OG image -> client logo -> site default (same chain as metadata-generator)
+    // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
     const fallbackUrl =
-      article.client.ogImageMedia?.url ||
+      article.client.heroImageMedia?.url ||
       article.client.logoMedia?.url ||
       `${siteUrl}/og-image.jpg`;
 

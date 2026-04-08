@@ -45,7 +45,7 @@ export async function fetchArticleForJsonLd(
       client: {
         include: {
           logoMedia: true,
-          ogImageMedia: true,
+          heroImageMedia: true,
         },
       },
       author: true,

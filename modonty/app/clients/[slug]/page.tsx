@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 import { getClientForMetadata } from "./helpers/client-metadata";
@@ -87,7 +89,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
     return generateMetadataFromSEO({
       title: client.seoTitle || client.name,
       description: client.seoDescription || `استكشف مقالات ${client.name}`,
-      image: client.ogImageMedia?.url || client.logoMedia?.url || undefined,
+      image: client.heroImageMedia?.url || client.logoMedia?.url || undefined,
       url: `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`,
       type: "website",
       languages: {
@@ -137,7 +139,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
       name: client.name,
       description: client.description || client.seoDescription || undefined,
       url: client.url || `/clients/${encodeURIComponent(slug)}`,
-      image: client.logoMedia?.url || client.ogImageMedia?.url || undefined,
+      image: client.logoMedia?.url || client.heroImageMedia?.url || undefined,
       "@type": "Organization",
       legalName: client.legalName || undefined,
       email: client.email || undefined,

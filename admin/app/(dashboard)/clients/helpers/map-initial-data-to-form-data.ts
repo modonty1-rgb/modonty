@@ -68,8 +68,7 @@ export function mapInitialDataToFormData(
 
     // Media IDs
     logoMediaId: initialData.logoMediaId || null,
-    ogImageMediaId: initialData.ogImageMediaId || null,
-    twitterImageMediaId: initialData.twitterImageMediaId || null,
+    heroImageMediaId: initialData.heroImageMediaId || null,
 
     // Social profiles
     sameAs: initialData.sameAs || [],

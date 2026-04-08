@@ -41,7 +41,7 @@ export default async function MediaPage({
   const transformedMedia = mediaResult.items.map((m) => ({
     ...m,
     client: m.client || undefined,
-    isUsed: m._count.featuredArticles > 0 || m._count.logoClients > 0 || m._count.ogImageClients > 0 || m._count.twitterImageClients > 0,
+    isUsed: m._count.featuredArticles > 0 || m._count.logoClients > 0 || m._count.heroImageClients > 0 || m._count.heroImageClients > 0,
   }));
 
   return (

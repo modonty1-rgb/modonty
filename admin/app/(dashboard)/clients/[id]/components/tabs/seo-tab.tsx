@@ -237,7 +237,7 @@ export function SEOTab({ client }: SEOTabProps) {
         </CardContent>
       </Card>
 
-      {client.ogImageMedia?.url && (
+      {client.heroImageMedia?.url && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -248,20 +248,20 @@ export function SEOTab({ client }: SEOTabProps) {
           <CardContent>
             <div className="space-y-3">
               <img
-                src={client.ogImageMedia.url}
-                alt={client.ogImageMedia.altText || "OG image"}
+                src={client.heroImageMedia.url}
+                alt={client.heroImageMedia.altText || "OG image"}
                 className="h-40 w-40 rounded object-cover border"
               />
               <a
-                href={client.ogImageMedia.url}
+                href={client.heroImageMedia.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline block break-all"
               >
-                {client.ogImageMedia.url}
+                {client.heroImageMedia.url}
               </a>
-              {client.ogImageMedia.altText && (
-                <p className="text-xs text-muted-foreground">Alt: {client.ogImageMedia.altText}</p>
+              {client.heroImageMedia.altText && (
+                <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
               )}
             </div>
           </CardContent>
@@ -271,7 +271,7 @@ export function SEOTab({ client }: SEOTabProps) {
       {(client.twitterCard ||
         client.twitterTitle ||
         client.twitterDescription ||
-        client.twitterImageMedia?.url ||
+        client.heroImageMedia?.url ||
         client.twitterSite) && (
           <Card>
             <CardHeader>
@@ -303,25 +303,25 @@ export function SEOTab({ client }: SEOTabProps) {
                     <p className="text-sm font-medium">{client.twitterSite}</p>
                   </div>
                 )}
-                {client.twitterImageMedia?.url && (
+                {client.heroImageMedia?.url && (
                   <div>
                     <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                     <div className="space-y-3">
                       <img
-                        src={client.twitterImageMedia.url}
-                        alt={client.twitterImageMedia.altText || "Twitter image"}
+                        src={client.heroImageMedia.url}
+                        alt={client.heroImageMedia.altText || "Twitter image"}
                         className="h-40 w-40 rounded object-cover border"
                       />
                       <a
-                        href={client.twitterImageMedia.url}
+                        href={client.heroImageMedia.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline block break-all"
                       >
-                        {client.twitterImageMedia.url}
+                        {client.heroImageMedia.url}
                       </a>
-                      {client.twitterImageMedia.altText && (
-                        <p className="text-xs text-muted-foreground">Alt: {client.twitterImageMedia.altText}</p>
+                      {client.heroImageMedia.altText && (
+                        <p className="text-xs text-muted-foreground">Alt: {client.heroImageMedia.altText}</p>
                       )}
                     </div>
                   </div>

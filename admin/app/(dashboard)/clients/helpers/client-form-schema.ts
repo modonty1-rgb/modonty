@@ -121,10 +121,9 @@ export const clientFormSchema = z
     legalName: z.string().max(200, "Legal name must be less than 200 characters").optional().nullable().or(z.literal("")),
     url: urlSchema,
 
-    // Media
-    logoMediaId: z.string().optional().nullable(),
-    ogImageMediaId: z.string().optional().nullable(),
-    twitterImageMediaId: z.string().optional().nullable(),
+    // Media (optional in edit mode, set via modal)
+    logoMediaId: z.string().min(1, "Logo is required").optional().nullable(),
+    heroImageMediaId: z.string().min(1, "Hero image is required").optional().nullable(),
 
     // Social profiles
     sameAs: stringArraySchema,
@@ -330,3 +329,13 @@ export const clientFormSchema = z
   );
 
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
+
+// ============================================
+// MEDIA-ONLY SCHEMA (for modal use only)
+// ============================================
+export const clientMediaSchema = z.object({
+  logoMediaId: z.string().optional().nullable(),
+  heroImageMediaId: z.string().optional().nullable(),
+});
+
+export type ClientMediaSchemaType = z.infer<typeof clientMediaSchema>;

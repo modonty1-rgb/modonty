@@ -16,7 +16,6 @@ import { SubscriptionSection } from "./form-sections/subscription-section";
 import { BusinessSection } from "./form-sections/business-section";
 import { SEOSection } from "./form-sections/seo-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
-import { MediaSocialSection } from "./form-sections/media-social-section";
 import { SettingsSection } from "./form-sections/settings-section";
 import {
   createClientSEOGroupScores,
@@ -227,17 +226,6 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     <AccordionContent className="px-4 pb-5 pt-3">
                       <div className="space-y-6">
                         <BusinessSection form={form} industries={industries} clients={clients} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="media" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
-                      Media & Social
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <MediaSocialSection form={form} clientId={clientId} initialData={initialData} />
                       </div>
                     </AccordionContent>
                   </AccordionItem>

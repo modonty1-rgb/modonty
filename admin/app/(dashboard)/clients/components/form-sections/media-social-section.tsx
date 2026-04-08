@@ -2,7 +2,6 @@
 
 import { UseFormReturn } from "react-hook-form";
 import { MediaSection } from "./media-section";
-import { TwitterSection } from "./twitter-section";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
 import { AlertCircle } from "lucide-react";
@@ -27,8 +26,7 @@ export function MediaSocialSection({
 
   const hasMediaErrors = sectionHasErrors([
     "logoMediaId",
-    "ogImageMediaId",
-    "twitterImageMediaId",
+    "heroImageMediaId",
   ]);
 
   return (
@@ -45,7 +43,6 @@ export function MediaSocialSection({
 
       <div className="space-y-6">
         <MediaSection form={form} clientId={clientId} initialData={initialData} />
-        <TwitterSection form={form} clientId={clientId} initialData={initialData} />
       </div>
     </div>
   );

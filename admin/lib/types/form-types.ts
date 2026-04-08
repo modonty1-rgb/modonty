@@ -144,8 +144,7 @@ export interface ClientFormData {
   url?: string;
   // Centralized media references
   logoMediaId?: string | null;
-  ogImageMediaId?: string | null;
-  twitterImageMediaId?: string | null;
+  heroImageMediaId?: string | null;
   sameAs?: string[];
   email: string;
   phone?: string;

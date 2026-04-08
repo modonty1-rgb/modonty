@@ -55,16 +55,7 @@ export type ClientWithRelations = Prisma.ClientGetPayload<{
         height: true;
       };
     };
-    ogImageMedia: {
-      select: {
-        id: true;
-        url: true;
-        altText: true;
-        width: true;
-        height: true;
-      };
-    };
-    twitterImageMedia: {
+    heroImageMedia: {
       select: {
         id: true;
         url: true;

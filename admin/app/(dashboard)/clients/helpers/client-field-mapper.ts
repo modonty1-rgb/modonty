@@ -17,8 +17,7 @@ export function mapFormDataToClientData(data: ClientFormData) {
 
     // Media
     logoMediaId: data.logoMediaId || null,
-    ogImageMediaId: data.ogImageMediaId || null,
-    twitterImageMediaId: data.twitterImageMediaId || null,
+    heroImageMediaId: data.heroImageMediaId || null,
 
     // Social profiles
     sameAs: validatedSameAs,

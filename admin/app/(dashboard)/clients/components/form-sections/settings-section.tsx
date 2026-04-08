@@ -44,7 +44,7 @@ export function SettingsSection({ form }: SettingsSectionProps) {
           setValue("subscriptionStatus", value as SettingsFormType["subscriptionStatus"], { shouldValidate: true })
         }
         error={errors.subscriptionStatus?.message}
-        hint="حالة الاشتراك الحالية"
+        hint="Current subscription status"
       >
         <SelectItem value="PENDING">Pending</SelectItem>
         <SelectItem value="ACTIVE">Active</SelectItem>
@@ -60,7 +60,7 @@ export function SettingsSection({ form }: SettingsSectionProps) {
           setValue("paymentStatus", value as SettingsFormType["paymentStatus"], { shouldValidate: true })
         }
         error={errors.paymentStatus?.message}
-        hint="حالة الدفع للاشتراك"
+        hint={messages.hints.client.paymentStatus}
       >
         <SelectItem value="PENDING">Pending</SelectItem>
         <SelectItem value="PAID">Paid</SelectItem>

@@ -121,7 +121,7 @@ export async function getArticleBySlug(slug: string, userId?: string) {
               url: true,
             },
           },
-          ogImageMedia: {
+          heroImageMedia: {
             select: {
               url: true,
             },
@@ -280,7 +280,7 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
       client: {
         include: {
           logoMedia: { select: { url: true } },
-          ogImageMedia: { select: { url: true } },
+          heroImageMedia: { select: { url: true } },
         },
       },
       author: {

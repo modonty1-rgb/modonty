@@ -16,6 +16,7 @@ import {
   BarChart2,
   Pencil,
   Eye,
+  Image,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createOrganizationSEOConfigFull, organizationSEOConfig } from "../helpers/client-seo-config";
@@ -29,6 +30,8 @@ import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
+import { ClientMediaModal } from "./client-media-modal";
+import type { ClientWithRelations } from "@/lib/types";
 
 type ListValidationError = { message?: string } | string;
 
@@ -196,6 +199,9 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [mediaModalOpen, setMediaModalOpen] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+  const [selectedClientData, setSelectedClientData] = useState<Partial<ClientWithRelations> | undefined>();
   const pageSize = 10;
 
   // Sync external search prop with internal state
@@ -575,6 +581,20 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedClientId(client.id);
+                            setSelectedClientData(client as Partial<ClientWithRelations>);
+                            setMediaModalOpen(true);
+                          }}
+                          aria-label="Edit media"
+                        >
+                          <Image className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
                           aria-label="View client details"
                         >
@@ -622,6 +642,16 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
             </Button>
           </div>
         </div>
+      )}
+
+      {/* Media Modal */}
+      {selectedClientId && (
+        <ClientMediaModal
+          open={mediaModalOpen}
+          onOpenChange={setMediaModalOpen}
+          clientId={selectedClientId}
+          initialData={selectedClientData}
+        />
       )}
     </div>
   );

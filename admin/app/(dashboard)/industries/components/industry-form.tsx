@@ -1,8 +1,6 @@
 "use client";
+
 import { messages } from "@/lib/messages";
-
-"use client";
-
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,7 +90,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                   name="seoTitle"
                   value={formData.seoTitle}
                   onChange={(e) => updateSEOField("seoTitle", e.target.value)}
-                  hint="العنوان الذي يظهر في جوجل — 50-60 حرف"
+                  hint={messages.hints.category.metaTitle}
                 />
                 <div>
                   <FormInput
@@ -100,7 +98,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
-                    hint="الوصف الذي يظهر في نتائج البحث — 150-160 حرف"
+                    hint={messages.hints.category.metaDescription}
                   />
                   <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
                 </div>

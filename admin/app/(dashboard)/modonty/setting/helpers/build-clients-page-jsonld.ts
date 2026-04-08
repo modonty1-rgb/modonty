@@ -38,7 +38,7 @@ export interface ClientForClientsPageJsonLd {
   url?: string | null;
   canonicalUrl?: string | null;
   logoMedia?: { url?: string | null } | null;
-  ogImageMedia?: { url?: string | null } | null;
+  heroImageMedia?: { url?: string | null } | null;
   sameAs?: string[];
   email?: string | null;
   phone?: string | null;
@@ -175,7 +175,7 @@ function clientToOrganization(
   const url = client.canonicalUrl?.trim() || client.url?.trim() || profileUrl;
   const absUrl = ensureAbsoluteUrl(url, siteUrl) || profileUrl;
   const absLogo = client.logoMedia?.url ? ensureAbsoluteUrl(client.logoMedia.url, siteUrl) : undefined;
-  const absImage = client.ogImageMedia?.url ? ensureAbsoluteUrl(client.ogImageMedia.url, siteUrl) : undefined;
+  const absImage = client.heroImageMedia?.url ? ensureAbsoluteUrl(client.heroImageMedia.url, siteUrl) : undefined;
 
   const orgType = client.organizationType?.trim() || "Organization";
 

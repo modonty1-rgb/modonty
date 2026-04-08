@@ -819,8 +819,9 @@ export async function seedMockData(): Promise<{
           foundingDate: daysAgo(730),
           userId: Object.values(userIds)[i % 3],
           logoMediaId: mediaIds[i],
+          heroImageMediaId: mediaIds[(i + 1) % mediaIds.length] || mediaIds[i],
           subscriptionTierConfigId: tierMap[c.subscriptionTier],
-        },
+        } as any,
         select: { id: true, slug: true },
       });
       clientIds[c.slug] = client.id;
@@ -911,7 +912,7 @@ export async function seedMockData(): Promise<{
     const clientImgLinks: Record<string, string> = { "nova-electronics": "nova-og", "balsam-medical": "balsam-og", "future-academy": "future-og" };
     for (const [slug, imgName] of Object.entries(clientImgLinks)) {
       if (mediaMap[imgName] && clientIds[slug]) {
-        await db.client.update({ where: { id: clientIds[slug] }, data: { ogImageMediaId: mediaMap[imgName] } });
+        await db.client.update({ where: { id: clientIds[slug] }, data: { heroImageMediaId: mediaMap[imgName] } });
       }
     }
     // Link author avatars

@@ -1,0 +1,527 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - link "Articles" [ref=e313] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e314]:
+              - img [ref=e315]
+              - generic [ref=e317]: مستقبل التعليم الرقمي
+          - navigation "Main navigation" [ref=e121]:
+            - link "Modonty Modonty" [ref=e122] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e124]
+              - generic [ref=e125]: Modonty
+            - generic [ref=e127]:
+              - link "Articles" [ref=e128] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e129]:
+                  - img
+                  - generic [ref=e130]: Articles
+              - link "Clients" [ref=e131] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e132]:
+                  - img
+                  - generic [ref=e133]: Clients
+              - link "Media" [ref=e134] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e135]:
+                  - img
+                  - generic [ref=e136]: Media
+          - generic [ref=e137]:
+            - link "1" [ref=e178] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e179]:
+                - img
+                - generic [ref=e180]: "1"
+            - button "M" [ref=e140] [cursor=pointer]:
+              - generic [ref=e142]: M
+      - main [ref=e143]:
+        - generic [ref=e318]:
+          - navigation [ref=e319]:
+            - generic [ref=e321]:
+              - button "Content" [ref=e322] [cursor=pointer]:
+                - img [ref=e323]
+                - generic [ref=e326]: Content
+              - button "Related (Outgoing)" [ref=e327] [cursor=pointer]:
+                - img [ref=e328]
+                - generic [ref=e332]: Related (Outgoing)
+              - button "Related (Incoming)" [ref=e333] [cursor=pointer]:
+                - img [ref=e334]
+                - generic [ref=e336]: Related (Incoming)
+              - button "Article Info" [ref=e337] [cursor=pointer]:
+                - img [ref=e338]
+                - generic [ref=e341]: Article Info
+              - button "SEO" [ref=e342] [cursor=pointer]:
+                - img [ref=e343]
+                - generic [ref=e346]: SEO
+              - button "Social & Protocols" [ref=e347] [cursor=pointer]:
+                - img [ref=e348]
+                - generic [ref=e354]: Social & Protocols
+              - button "JSON-LD" [ref=e355] [cursor=pointer]:
+                - img [ref=e356]
+                - generic [ref=e359]: JSON-LD
+              - button "Metadata" [ref=e360] [cursor=pointer]:
+                - img [ref=e361]
+                - generic [ref=e364]: Metadata
+          - generic [ref=e365]:
+            - generic [ref=e367]:
+              - generic [ref=e368]:
+                - img [ref=e369]
+                - text: أكاديمية المستقبل
+              - button [ref=e374] [cursor=pointer]:
+                - img
+              - generic [ref=e375]:
+                - paragraph [ref=e376]: Article ID
+                - button [ref=e377] [cursor=pointer]:
+                  - img
+            - generic [ref=e378]:
+              - generic "Click to view full SEO guidance" [ref=e379] [cursor=pointer]: 61%
+              - generic [ref=e380]:
+                - link "Back to list" [ref=e381] [cursor=pointer]:
+                  - /url: /articles
+                  - img
+                - button "Edit article" [ref=e382] [cursor=pointer]:
+                  - img
+                - button "Delete article" [ref=e383] [cursor=pointer]:
+                  - img
+                - link "View public" [ref=e384] [cursor=pointer]:
+                  - /url: /articles/69d163ea4e8bf3f470aff0ee
+                  - img
+          - generic [ref=e385]:
+            - generic [ref=e388]:
+              - generic [ref=e389]:
+                - generic [ref=e390]:
+                  - generic [ref=e391]: Writing
+                  - button [ref=e393] [cursor=pointer]:
+                    - img
+                - generic [ref=e394]:
+                  - img [ref=e395]
+                  - generic [ref=e397]: العقارات والاستثمار
+                  - button [ref=e399] [cursor=pointer]:
+                    - img
+                - generic [ref=e400]:
+                  - img [ref=e401]
+                  - generic [ref=e404]: Modonty
+                  - button [ref=e406] [cursor=pointer]:
+                    - img
+              - generic [ref=e407]:
+                - generic [ref=e408]:
+                  - img [ref=e409]
+                  - generic [ref=e411]: Apr 4, 2026
+                  - button [ref=e413] [cursor=pointer]:
+                    - img
+                - generic [ref=e414]:
+                  - img [ref=e415]
+                  - generic [ref=e418]: ~2 min read
+                  - button [ref=e420] [cursor=pointer]:
+                    - img
+                - generic [ref=e421]:
+                  - img [ref=e422]
+                  - generic [ref=e425]: short
+                  - button [ref=e427] [cursor=pointer]:
+                    - img
+                - generic [ref=e428]:
+                  - img [ref=e429]
+                  - generic [ref=e432]: "License: https://creativecommons.org/licenses/by/4.0/"
+                  - button [ref=e434] [cursor=pointer]:
+                    - img
+            - generic [ref=e435]:
+              - generic [ref=e436]:
+                - generic [ref=e437]:
+                  - generic [ref=e438]:
+                    - generic [ref=e439]: مستقبل التعليم الرقمي
+                    - button [ref=e441] [cursor=pointer]:
+                      - img
+                  - generic [ref=e442]:
+                    - generic [ref=e443]: التعليم الرقمي ينمو بسرعة.
+                    - button [ref=e445] [cursor=pointer]:
+                      - img
+                - generic [ref=e446]:
+                  - generic [ref=e447]:
+                    - img [ref=e448]
+                    - generic [ref=e451]: digital-education-future
+                    - button [ref=e453] [cursor=pointer]:
+                      - img
+                  - button "دليل الطول الكامل" [ref=e455] [cursor=pointer]:
+                    - img
+                    - generic [ref=e456]: دليل الطول الكامل
+                  - generic [ref=e457]:
+                    - generic [ref=e458]:
+                      - generic [ref=e459]: Very Short
+                      - generic [ref=e460]: "Words:"
+                      - generic [ref=e461]: "8"
+                      - button [ref=e462] [cursor=pointer]:
+                        - img [ref=e463]
+                    - generic [ref=e465]:
+                      - generic [ref=e466]: "Characters:"
+                      - generic [ref=e467]: "61"
+                    - generic [ref=e468]:
+                      - generic [ref=e469]: "No spaces:"
+                      - generic [ref=e470]: "53"
+                    - generic [ref=e471]:
+                      - generic [ref=e472]: "Paragraphs:"
+                      - generic [ref=e473]: "1"
+                    - generic [ref=e474]:
+                      - generic [ref=e475]: "Headings:"
+                      - generic [ref=e476]: "1"
+                    - generic [ref=e477]:
+                      - generic [ref=e478]: "Links:"
+                      - generic [ref=e479]: "0"
+                    - generic [ref=e480]:
+                      - generic [ref=e481]: "Images:"
+                      - generic [ref=e482]: "0"
+                  - generic [ref=e484]:
+                    - img [ref=e485]
+                    - generic [ref=e488]: Content (rich_text)
+                    - button [ref=e490] [cursor=pointer]:
+                      - img
+                  - generic [ref=e491]:
+                    - heading "الفرصة الذهبية" [level=2] [ref=e492]
+                    - paragraph [ref=e493]: سوق التعليم الإلكتروني يصل إلى 1.2 مليار دولار.
+                  - generic [ref=e494]:
+                    - generic [ref=e495]:
+                      - paragraph [ref=e496]: Plain Text (for SEO)
+                      - button [ref=e498] [cursor=pointer]:
+                        - img
+                    - generic [ref=e499]: الفرصة الذهبية سوق التعليم الإلكتروني يصل إلى 1.2 مليار دولار.
+                    - paragraph [ref=e500]: Plain text extracted from TipTap HTML content (used for Schema.org articleBody)
+              - generic [ref=e501]:
+                - generic [ref=e503]:
+                  - img [ref=e504]
+                  - generic [ref=e508]: Related Articles (Outgoing Links)
+                  - button [ref=e510] [cursor=pointer]:
+                    - img
+                - generic [ref=e511]:
+                  - paragraph [ref=e512]: Articles that this article links to (outgoing relationships)
+                  - paragraph [ref=e513]: This article doesn't link to any other articles yet.
+              - generic [ref=e514]:
+                - generic [ref=e516]:
+                  - img [ref=e517]
+                  - generic [ref=e519]: Related Articles (Incoming Links)
+                  - button [ref=e521] [cursor=pointer]:
+                    - img
+                - generic [ref=e522]:
+                  - paragraph [ref=e523]: Articles that link to this article (incoming relationships)
+                  - paragraph [ref=e524]: No other articles link to this article yet.
+              - generic [ref=e525]:
+                - generic [ref=e527]:
+                  - img [ref=e528]
+                  - generic [ref=e531]: Article Info
+                - generic [ref=e532]:
+                  - generic [ref=e533]:
+                    - generic [ref=e534]:
+                      - paragraph [ref=e535]: Last Updated
+                      - button [ref=e536] [cursor=pointer]:
+                        - img
+                    - paragraph [ref=e537]: Apr 4, 2026 at 10:18 PM
+                  - generic [ref=e538]:
+                    - generic [ref=e539]:
+                      - generic [ref=e540]:
+                        - paragraph [ref=e541]: Language
+                        - button [ref=e542] [cursor=pointer]:
+                          - img
+                      - paragraph [ref=e543]: ar-SA
+                    - generic [ref=e544]:
+                      - generic [ref=e545]:
+                        - paragraph [ref=e546]: Tags
+                        - button [ref=e547] [cursor=pointer]:
+                          - img
+                      - generic [ref=e548]:
+                        - generic [ref=e549]:
+                          - generic [ref=e550]: جوجل
+                          - generic [ref=e551]:
+                            - generic [ref=e552]: 69d020fabe4b3c3ed2425d09
+                            - button "Copy Tag ID" [ref=e553] [cursor=pointer]:
+                              - img
+                        - generic [ref=e554]:
+                          - generic [ref=e555]: محتوى
+                          - generic [ref=e556]:
+                            - generic [ref=e557]: 69d020fbbe4b3c3ed2425d0c
+                            - button "Copy Tag ID" [ref=e558] [cursor=pointer]:
+                              - img
+              - generic [ref=e559]:
+                - generic [ref=e561]:
+                  - img [ref=e562]
+                  - generic [ref=e565]: SEO
+                - generic [ref=e566]:
+                  - generic [ref=e567]:
+                    - generic [ref=e568]:
+                      - paragraph [ref=e569]: SEO Title
+                      - button [ref=e570] [cursor=pointer]:
+                        - img
+                    - paragraph [ref=e571]: مستقبل التعليم الرقمي
+                  - generic [ref=e572]:
+                    - generic [ref=e573]:
+                      - paragraph [ref=e574]: SEO Description
+                      - button [ref=e575] [cursor=pointer]:
+                        - img
+                    - paragraph [ref=e576]: المنصات والأدوات والفرص.
+                  - generic [ref=e577]:
+                    - generic [ref=e578]:
+                      - img [ref=e579]
+                      - generic [ref=e582]:
+                        - paragraph [ref=e583]: Canonical URL
+                        - button [ref=e584] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e585]: https://modonty.com/articles/digital-education-future
+                  - generic [ref=e586]:
+                    - generic [ref=e587]:
+                      - img [ref=e588]
+                      - generic [ref=e591]:
+                        - paragraph [ref=e592]: Main Entity of Page
+                        - button [ref=e593] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e594]: https://modonty.com/articles/digital-education-future
+                  - generic [ref=e595]:
+                    - generic [ref=e596]:
+                      - paragraph [ref=e597]: Meta Robots
+                      - button [ref=e598] [cursor=pointer]:
+                        - img
+                    - paragraph [ref=e599]: index, follow
+                  - generic [ref=e600]:
+                    - generic [ref=e601]:
+                      - img [ref=e602]
+                      - generic [ref=e604]:
+                        - paragraph [ref=e605]: Breadcrumb Path
+                        - button [ref=e606] [cursor=pointer]:
+                          - img
+                    - code [ref=e609]: "[ { \"name\": \"الرئيسية\", \"url\": \"/\" }, { \"name\": \"العقارات والاستثمار\", \"url\": \"/categories/real-estate-investment\" }, { \"name\": \"مستقبل التعليم الرقمي\", \"url\": \"/articles/digital-education-future\" } ]"
+              - generic [ref=e611]:
+                - generic [ref=e612]:
+                  - generic [ref=e613]: Technical SEO Guidance
+                  - generic [ref=e614]: Analysis of your article against 2025 SEO best practices
+                  - generic [ref=e617]:
+                    - generic [ref=e618]:
+                      - generic [ref=e619]:
+                        - heading "Overall SEO Score" [level=3] [ref=e620]
+                        - paragraph [ref=e621]: Based on 2025 SEO best practices
+                      - generic [ref=e622]:
+                        - generic [ref=e623]: 61%
+                        - generic [ref=e624]: Good
+                    - generic [ref=e627]:
+                      - generic [ref=e628]:
+                        - generic [ref=e629]:
+                          - img [ref=e630]
+                          - generic [ref=e632]: Meta Tags
+                        - generic [ref=e633]:
+                          - generic [ref=e634]: 33%
+                          - generic [ref=e635]: 1/3
+                      - generic [ref=e636]:
+                        - generic [ref=e637]:
+                          - img [ref=e638]
+                          - generic [ref=e640]: Content
+                        - generic [ref=e641]:
+                          - generic [ref=e642]: 67%
+                          - generic [ref=e643]: 2/3
+                      - generic [ref=e644]:
+                        - generic [ref=e645]:
+                          - img [ref=e646]
+                          - generic [ref=e648]: Images
+                        - generic [ref=e649]:
+                          - generic [ref=e650]: 50%
+                          - generic [ref=e651]: 1/2
+                      - generic [ref=e652]:
+                        - generic [ref=e653]:
+                          - img [ref=e654]
+                          - generic [ref=e656]: Structured Data
+                        - generic [ref=e657]:
+                          - generic [ref=e658]: 67%
+                          - generic [ref=e659]: 2/3
+                      - generic [ref=e660]:
+                        - generic [ref=e661]:
+                          - img [ref=e662]
+                          - generic [ref=e665]: Technical
+                        - generic [ref=e666]:
+                          - generic [ref=e667]: 100%
+                          - generic [ref=e668]: 2/2
+                      - generic [ref=e669]:
+                        - generic [ref=e670]:
+                          - img [ref=e671]
+                          - generic [ref=e674]: Mobile
+                        - generic [ref=e675]:
+                          - generic [ref=e676]: 100%
+                          - generic [ref=e677]: 2/2
+                - generic [ref=e679]:
+                  - tablist [ref=e680]:
+                    - tab "In-Page SEO" [selected] [ref=e681] [cursor=pointer]
+                    - tab "Off-Page SEO" [ref=e682] [cursor=pointer]
+                    - tab "Best Practices" [ref=e683] [cursor=pointer]
+                  - tabpanel "In-Page SEO" [ref=e684]:
+                    - generic [ref=e685]:
+                      - paragraph [ref=e686]: SEO analysis based on unified analyzer
+                      - paragraph [ref=e687]: "Score: 61%"
+              - generic [ref=e688]:
+                - generic [ref=e690]:
+                  - img [ref=e691]
+                  - generic [ref=e697]: Social & Protocols
+                - generic [ref=e699]:
+                  - generic [ref=e700]:
+                    - generic [ref=e701]:
+                      - generic [ref=e702]: "OG Type:"
+                      - button [ref=e704] [cursor=pointer]:
+                        - img
+                    - generic [ref=e705]: website
+                  - generic [ref=e706]:
+                    - generic [ref=e707]:
+                      - generic [ref=e708]: "OG Modified:"
+                      - button [ref=e710] [cursor=pointer]:
+                        - img
+                    - generic [ref=e711]: Apr 4, 2026
+                  - generic [ref=e712]:
+                    - generic [ref=e713]:
+                      - generic [ref=e714]: "Twitter Card:"
+                      - button [ref=e716] [cursor=pointer]:
+                        - img
+                    - generic [ref=e717]: summary_large_image
+                  - generic [ref=e718]:
+                    - generic [ref=e719]:
+                      - generic [ref=e720]: "Sitemap Priority:"
+                      - button [ref=e722] [cursor=pointer]:
+                        - img
+                    - generic [ref=e723]: "0.80"
+                  - generic [ref=e724]:
+                    - generic [ref=e725]:
+                      - generic [ref=e726]: "Change Frequency:"
+                      - button [ref=e728] [cursor=pointer]:
+                        - img
+                    - generic [ref=e729]: daily
+              - generic [ref=e730]:
+                - generic [ref=e732]:
+                  - img [ref=e733]
+                  - generic [ref=e736]: JSON-LD
+                - generic [ref=e737]:
+                  - generic [ref=e738]:
+                    - paragraph [ref=e739]: JSON-LD Status
+                    - generic [ref=e740]:
+                      - generic [ref=e741]:
+                        - generic [ref=e742]:
+                          - generic [ref=e743]: "Version:"
+                          - button [ref=e745] [cursor=pointer]:
+                            - img
+                        - generic [ref=e746]: —
+                      - generic [ref=e747]:
+                        - generic [ref=e748]:
+                          - generic [ref=e749]: "Last generated:"
+                          - button [ref=e751] [cursor=pointer]:
+                            - img
+                        - generic [ref=e752]: Apr 4, 2026
+                  - generic [ref=e753]:
+                    - generic [ref=e754]:
+                      - paragraph [ref=e755]: JSON-LD Structured Data
+                      - button [ref=e757] [cursor=pointer]:
+                        - img
+                    - code [ref=e760]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"id\": \"https://modonty.com/articles/digital-education-future\", \"type\": \"WebPage\", \"breadcrumb\": { \"id\": \"https://modonty.com/articles/digital-education-future#breadcrumb\" }, \"dateModified\": \"2026-04-04T19:18:04.361Z\", \"description\": \"المنصات والأدوات والفرص.\", \"inLanguage\": \"ar\", \"isPartOf\": { \"id\": \"https://modonty.com#website\", \"type\": \"WebSite\", \"name\": \"مودونتي\", \"url\": \"https://modonty.com\" }, \"mainEntity\": { \"id\": \"https://modonty.com/articles/digital-education-future#article\" }, \"name\": \"مستقبل التعليم الرقمي\", \"url\": \"https://modonty.com/articles/digital-education-future\" }, { \"id\": \"https://modonty.com/articles/digital-education-future#article\", \"type\": \"Article\", \"about\": { \"id\": \"https://modonty.com/categories/real-estate-investment\", \"type\": \"Thing\", \"name\": \"العقارات والاستثمار\" }, \"articleBody\": \"الفرصة الذهبية\\n\\nسوق التعليم الإلكتروني يصل إلى 1.2 مليار دولار.\", \"articleSection\": \"العقارات والاستثمار\", \"author\": { \"id\": \"https://modonty.com/authors/modonty#person\" }, \"dateModified\": \"2026-04-04T19:18:04.361Z\", \"description\": \"المنصات والأدوات والفرص.\", \"headline\": \"مستقبل التعليم الرقمي\", \"inLanguage\": \"ar\", \"isAccessibleForFree\": true, \"keywords\": \"جوجل, محتوى\", \"mainEntityOfPage\": \"https://modonty.com/articles/digital-education-future\", \"publisher\": { \"id\": \"https://modonty.com/clients/future-academy#organization\" }, \"url\": \"https://modonty.com/articles/digital-education-future\", \"wordCount\": 300 }, { \"id\": \"https://modonty.com/clients/future-academy#organization\", \"type\": \"EducationalOrganization\", \"address\": { \"type\": \"PostalAddress\", \"addressCountry\": \"SA\", \"addressLocality\": \"جدة\", \"addressNeighborhood\": \"حي الروضة\", \"addressRegion\": \"منطقة مكة المكرمة\", \"postalCode\": \"21589\", \"streetAddress\": \"شارع الأمير سلطان\" }, \"contactPoint\": { \"type\": \"ContactPoint\", \"areaServed\": \"SA\", \"availableLanguage\": [ \"Arabic\", \"English\" ], \"contactType\": \"customer service\", \"email\": \"info@future-academy.sa\", \"telephone\": \"+966503456789\" }, \"description\": \"أكاديمية تعليمية سعودية تقدم دورات احترافية في البرمجة والتصميم والتسويق الرقمي. حضورياً في جدة وأونلاين لجميع أنحاء العالم العربي.\", \"foundingDate\": \"2024-04-03\", \"keywords\": [ \"دورات\", \"تعليم\", \"برمجة\", \"تسويق رقمي\" ], \"legalName\": \"مؤسسة المستقبل للتعليم والتدريب\", \"logo\": { \"type\": \"ImageObject\", \"height\": 400, \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1775251931/seed-data/future-logo.png\", \"width\": 400 }, \"name\": \"أكاديمية المستقبل\", \"sameAs\": [ \"https://twitter.com/future_academy_sa\", \"https://youtube.com/@future-academy\" ], \"url\": \"https://future-academy.sa\" }, { \"id\": \"https://modonty.com/authors/modonty#person\", \"type\": \"Person\", \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\" }, { \"id\": \"https://modonty.com/articles/digital-education-future#breadcrumb\", \"type\": \"BreadcrumbList\", \"itemListElement\": [ { \"type\": \"ListItem\", \"item\": \"https://modonty.com\", \"name\": \"الرئيسية\", \"position\": 1 }, { \"type\": \"ListItem\", \"item\": \"https://modonty.com/categories/real-estate-investment\", \"name\": \"العقارات والاستثمار\", \"position\": 2 }, { \"type\": \"ListItem\", \"item\": \"https://modonty.com/articles/digital-education-future\", \"name\": \"مستقبل التعليم الرقمي\", \"position\": 3 } ] } ] }"
+                  - generic [ref=e761]:
+                    - generic [ref=e762]:
+                      - paragraph [ref=e763]: JSON-LD Validation Report
+                      - button [ref=e765] [cursor=pointer]:
+                        - img
+                    - code [ref=e768]: "{ \"adobe\": { \"valid\": true, \"errors\": [], \"warnings\": [], \"timestamp\": \"2026-04-04T19:18:07.913Z\" }, \"ajv\": { \"valid\": false, \"errors\": [ \"/@graph/0: must have required property '@id'\", \"/@graph/0: must have required property 'headline'\", \"/@graph/0: must have required property 'datePublished'\", \"/@graph/0: must have required property 'author'\", \"/@graph/0: must have required property 'publisher'\", \"/@graph/0: must have required property '@id'\", \"/@graph/0: must have required property '@id'\", \"/@graph/0: must have required property '@id'\", \"/@graph/0: must have required property '@id'\", \"/@graph/0: must have required property 'itemListElement'\", \"/@graph/0: must have required property '@type'\", \"/@graph/1: must have required property '@id'\", \"/@graph/1: must have required property 'datePublished'\", \"/@graph/1/author: must have required property '@id'\", \"/@graph/1/publisher: must have required property '@id'\", \"/@graph/1: must have required property '@id'\", \"/@graph/1: must have required property 'name'\", \"/@graph/1: must have required property '@id'\", \"/@graph/1: must have required property 'name'\", \"/@graph/1: must have required property '@id'\", \"/@graph/1: must have required property '@id'\", \"/@graph/1: must have required property 'itemListElement'\", \"/@graph/1: must have required property '@type'\", \"/@graph/2: must have required property '@id'\", \"/@graph/2: must have required property 'headline'\", \"/@graph/2: must have required property 'datePublished'\", \"/@graph/2: must have required property 'dateModified'\", \"/@graph/2: must have required property 'author'\", \"/@graph/2: must have required property 'publisher'\", \"/@graph/2: must have required property '@id'\", \"/@graph/2: must have required property '@id'\", \"/@graph/2: must have required property '@id'\", \"/@graph/2: must have required property '@id'\", \"/@graph/2: must have required property 'itemListElement'\", \"/@graph/2: must have required property '@type'\", \"/@graph/3: must have required property '@id'\", \"/@graph/3: must have required property 'headline'\", \"/@graph/3: must have required property 'datePublished'\", \"/@graph/3: must have required property 'dateModified'\", \"/@graph/3: must have required property 'author'\", \"/@graph/3: must have required property 'publisher'\", \"/@graph/3: must have required property '@id'\", \"/@graph/3: must have required property '@id'\", \"/@graph/3: must have required property '@id'\", \"/@graph/3: must have required property '@id'\", \"/@graph/3: must have required property 'itemListElement'\", \"/@graph/3: must have required property '@type'\", \"/@graph/4: must have required property '@id'\", \"/@graph/4: must have required property 'headline'\", \"/@graph/4: must have required property 'datePublished'\", \"/@graph/4: must have required property 'dateModified'\", \"/@graph/4: must have required property 'author'\", \"/@graph/4: must have required property 'publisher'\", \"/@graph/4: must have required property '@id'\", \"/@graph/4: must have required property 'name'\", \"/@graph/4: must have required property '@id'\", \"/@graph/4: must have required property 'name'\", \"/@graph/4: must have required property '@id'\", \"/@graph/4: must have required property 'url'\", \"/@graph/4: must have required property '@id'\", \"/@graph/4: must have required property '@type'\" ], \"warnings\": [ \"/@graph/0: must match \\\"then\\\" schema\", \"/@graph/0: must match \\\"then\\\" schema\", \"/@graph/0: must match \\\"then\\\" schema\", \"/@graph/0: must match \\\"then\\\" schema\", \"/@graph/0: must match \\\"then\\\" schema\", \"/@graph/1/headline: must NOT have fewer than 30 characters\", \"/@graph/1: must match \\\"then\\\" schema\", \"/@graph/1: must match \\\"then\\\" schema\", \"/@graph/1: must match \\\"then\\\" schema\", \"/@graph/1: must match \\\"then\\\" schema\", \"/@graph/1: must match \\\"then\\\" schema\", \"/@graph/2: must match \\\"then\\\" schema\", \"/@graph/2: must match \\\"then\\\" schema\", \"/@graph/2: must match \\\"then\\\" schema\", \"/@graph/2: must match \\\"then\\\" schema\", \"/@graph/2: must match \\\"then\\\" schema\", \"/@graph/3: must match \\\"then\\\" schema\", \"/@graph/3: must match \\\"then\\\" schema\", \"/@graph/3: must match \\\"then\\\" schema\", \"/@graph/3: must match \\\"then\\\" schema\", \"/@graph/3: must match \\\"then\\\" schema\", \"/@graph/4: must match \\\"then\\\" schema\", \"/@graph/4: must match \\\"then\\\" schema\", \"/@graph/4: must match \\\"then\\\" schema\", \"/@graph/4: must match \\\"then\\\" schema\", \"/@graph/4: must match \\\"then\\\" schema\" ] }, \"custom\": { \"errors\": [ \"Missing Article node in @graph\" ], \"warnings\": [], \"info\": [] } }"
+              - generic [ref=e769]:
+                - generic [ref=e771]:
+                  - img [ref=e772]
+                  - generic [ref=e775]: Metadata
+                - generic [ref=e776]:
+                  - generic [ref=e777]:
+                    - generic [ref=e778]:
+                      - paragraph [ref=e779]: Last Generated
+                      - button [ref=e781] [cursor=pointer]:
+                        - img
+                    - paragraph [ref=e782]: Apr 4, 2026 at 10:18 PM
+                  - generic [ref=e783]:
+                    - generic [ref=e784]:
+                      - paragraph [ref=e785]: Metadata
+                      - button [ref=e787] [cursor=pointer]:
+                        - img
+                    - code [ref=e790]: "{ \"title\": \"مستقبل التعليم الرقمي - أكاديمية المستقبل\", \"description\": \"المنصات والأدوات والفرص.\", \"alternates\": { \"canonical\": \"https://modonty.com/articles/digital-education-future\" }, \"openGraph\": { \"title\": \"مستقبل التعليم الرقمي\", \"description\": \"المنصات والأدوات والفرص.\", \"url\": \"https://modonty.com/articles/digital-education-future\", \"siteName\": \"أكاديمية المستقبل\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1775251941/seed-data/future-og.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"مستقبل التعليم الرقمي\" } ], \"locale\": \"ar_SA\", \"type\": \"website\" }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"مستقبل التعليم الرقمي\", \"description\": \"المنصات والأدوات والفرص.\", \"images\": [ \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto/v1775251941/seed-data/future-og.jpg\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": false, \"follow\": true, \"googleBot\": { \"index\": false, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e173] [cursor=pointer]:
+    - img [ref=e174]
+  - alert [ref=e177]

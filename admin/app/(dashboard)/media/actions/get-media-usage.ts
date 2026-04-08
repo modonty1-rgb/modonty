@@ -29,14 +29,7 @@ export async function getMediaUsage(id: string, clientId?: string) {
             slug: true,
           },
         },
-        ogImageClients: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        twitterImageClients: {
+        heroImageClients: {
           select: {
             id: true,
             name: true,
@@ -56,8 +49,7 @@ export async function getMediaUsage(id: string, clientId?: string) {
       totalUsage: media.featuredArticles.length,
       clientUsage: {
         logoClients: media.logoClients,
-        ogImageClients: media.ogImageClients,
-        twitterImageClients: media.twitterImageClients,
+        heroImageClients: media.heroImageClients,
       },
     };
 

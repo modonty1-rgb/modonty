@@ -1,4 +1,5 @@
 export { messages } from './ar';
+export { validationMessages, getErrorMessage } from './validation';
 export type {
   SuccessKey,
   ErrorKey,
@@ -17,7 +18,7 @@ export function getSuccessMessage(key: SuccessKey): string {
   return messages.success[key];
 }
 
-export function getErrorMessage(key: ErrorKey): string {
+export function getErrorMessageByKey(key: ErrorKey): string {
   return messages.error[key];
 }
 

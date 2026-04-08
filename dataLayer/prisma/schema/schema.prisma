@@ -282,13 +282,11 @@ model Client {
   legalName String? // Schema.org Organization
   url       String? // Organization website
 
-  // Centralized primary media relations (no @unique: MongoDB treats multiple nulls as duplicate)
-  logoMediaId         String? @db.ObjectId
-  logoMedia           Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  ogImageMediaId      String? @db.ObjectId
-  ogImageMedia        Media?  @relation("ClientOGMedia", fields: [ogImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  twitterImageMediaId String? @db.ObjectId
-  twitterImageMedia   Media?  @relation("ClientTwitterMedia", fields: [twitterImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // Media (optional for backward compatibility, required in form UI)
+  logoMediaId      String? @db.ObjectId
+  logoMedia        Media?  @relation("ClientLogoMedia", fields: [logoMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  heroImageMediaId String? @db.ObjectId
+  heroImageMedia   Media?  @relation("ClientHeroImageMedia", fields: [heroImageMediaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   // Schema.org Organization - Social profiles
   sameAs String[] // LinkedIn, Twitter, Facebook URLs
@@ -914,9 +912,8 @@ model Media {
   type MediaType @default(GENERAL)
 
   // Primary client media roles (centralized; many clients can share same media)
-  logoClients         Client[] @relation("ClientLogoMedia")
-  ogImageClients      Client[] @relation("ClientOGMedia")
-  twitterImageClients Client[] @relation("ClientTwitterMedia")
+  logoClients      Client[] @relation("ClientLogoMedia")
+  heroImageClients Client[] @relation("ClientHeroImageMedia")
 
   // Relationships
   featuredArticles Article[]      @relation("ArticleFeaturedImage")

@@ -1,8 +1,6 @@
 "use client";
+
 import { messages } from "@/lib/messages";
-
-"use client";
-
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

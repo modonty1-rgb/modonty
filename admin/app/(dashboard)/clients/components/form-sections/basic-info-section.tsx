@@ -130,7 +130,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("phone", e.target.value || null, { shouldValidate: true })}
           error={errors.phone?.message}
           placeholder="+966 11 123 4567"
-          hint={messages.hints.client.email}
+          hint={messages.hints.client.phone}
         />
         <FormSelect
           label="Contact Type"
@@ -156,7 +156,7 @@ export function BasicInfoSection({
           onChange={(e) => form.setValue("url", e.target.value || null, { shouldValidate: true })}
           error={errors.url?.message}
           placeholder="https://www.example.com"
-          hint="يُستخدم في الروابط الخلفية وبيانات SEO"
+          hint="Website — used in backlinks and SEO data"
         />
       </div>
 

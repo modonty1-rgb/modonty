@@ -119,7 +119,7 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                 onChange={(e) => setFormData({ ...formData, question: e.target.value })}
                 placeholder="e.g., How do I create an account?"
                 required
-                hint="The question shown to visitors"
+                hint={messages.hints.faq.question}
               />
               <FormTextarea
                 label="Answer"
@@ -129,7 +129,7 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                 placeholder="Write a clear, helpful answer..."
                 rows={6}
                 required
-                hint="Keep it concise — 40 to 60 words is ideal"
+                hint={messages.hints.faq.answer}
               />
             </CardContent>
           </Card>
@@ -150,7 +150,7 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                   value={formData.seoTitle || ""}
                   onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
                   placeholder="Optional — defaults to the question"
-                  hint="Title shown in Google results (30-60 characters)"
+                  hint="SEO title for search engines (30-60 characters)"
                 />
                 <CharacterCounter current={(formData.seoTitle || "").length} min={30} max={60} className="mt-1 ms-1" />
               </div>
@@ -162,7 +162,7 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                   onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
                   placeholder="Optional — a brief summary for search engines"
                   rows={2}
-                  hint="Description below the title in search results (120-160 characters)"
+                  hint="SEO description for search results (120-160 characters)"
                 />
                 <CharacterCounter current={(formData.seoDescription || "").length} min={120} max={160} className="mt-1 ms-1" />
               </div>
@@ -205,7 +205,7 @@ export function FAQForm({ faqId, initialData, onSuccess }: FAQFormProps) {
                   })
                 }
                 placeholder="Auto"
-                hint="Lower number = appears first"
+                hint="Display order — lower number appears first"
               />
             </CardContent>
           </Card>

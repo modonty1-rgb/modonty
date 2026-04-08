@@ -54,7 +54,7 @@ interface TestClientCreationResult {
   ogImageUrl?: string;
   ogImageCloudinaryPublicId?: string;
   ogImageCloudinaryVersion?: string;
-  ogImageMediaId?: string;
+  heroImageMediaId?: string;
   databaseVerified?: boolean;
 }
 
@@ -241,23 +241,8 @@ export async function testCreateClientWithMedia(): Promise<TestClientCreationRes
   try {
     // Delete all existing clients and media for clean test
     console.log("Cleaning up existing clients and media...");
-    
-    // First, unlink media from clients (set logoMediaId and ogImageMediaId to null)
-    await db.client.updateMany({
-      data: {
-        logoMediaId: null,
-        ogImageMediaId: null,
-      },
-    });
 
-    // Delete all media records
-    const mediaCount = await db.media.count();
-    if (mediaCount > 0) {
-      await db.media.deleteMany({});
-      console.log(`Deleted ${mediaCount} media records`);
-    }
-
-    // Delete all clients
+    // Delete all clients (cascade will handle media references)
     const clientCount = await db.client.count();
     if (clientCount > 0) {
       await db.client.deleteMany({});
@@ -302,7 +287,7 @@ export async function testCreateClientWithMedia(): Promise<TestClientCreationRes
         subscriptionEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         articlesPerMonth: tierConfig.articlesPerMonth,
         subscriptionTierConfigId: tierConfig.id,
-      },
+      } as any,
     });
 
     let logoUrl: string;
@@ -414,7 +399,7 @@ export async function testCreateClientWithMedia(): Promise<TestClientCreationRes
       where: { id: client.id },
       data: {
         logoMediaId: logoMedia.id,
-        ogImageMediaId: ogMedia.id,
+        heroImageMediaId: ogMedia.id,
       },
     });
 
@@ -423,16 +408,16 @@ export async function testCreateClientWithMedia(): Promise<TestClientCreationRes
       where: { id: client.id },
       include: {
         logoMedia: true,
-        ogImageMedia: true,
+        heroImageMedia: true,
       },
     });
 
     const databaseVerified = !!(
       verifiedClient &&
       verifiedClient.logoMediaId === logoMedia.id &&
-      verifiedClient.ogImageMediaId === ogMedia.id &&
+      verifiedClient.heroImageMediaId === ogMedia.id &&
       verifiedClient.logoMedia?.cloudinaryPublicId === logoUploadResult.public_id &&
-      verifiedClient.ogImageMedia?.cloudinaryPublicId === ogUploadResult.public_id
+      verifiedClient.heroImageMedia?.cloudinaryPublicId === ogUploadResult.public_id
     );
 
     return {
@@ -446,7 +431,7 @@ export async function testCreateClientWithMedia(): Promise<TestClientCreationRes
       ogImageUrl: ogOptimizedUrl,
       ogImageCloudinaryPublicId: ogUploadResult.public_id,
       ogImageCloudinaryVersion: ogUploadResult.version?.toString(),
-      ogImageMediaId: ogMedia.id,
+      heroImageMediaId: ogMedia.id,
       databaseVerified,
     };
   } catch (error) {

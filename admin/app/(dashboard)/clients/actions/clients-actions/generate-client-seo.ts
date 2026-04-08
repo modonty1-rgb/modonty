@@ -114,15 +114,7 @@ export async function generateClientSEO(clientId: string) {
             height: true,
           },
         },
-        ogImageMedia: {
-          select: {
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-        twitterImageMedia: {
+        heroImageMedia: {
           select: {
             url: true,
             altText: true,
@@ -211,7 +203,7 @@ export async function generateClientSEO(clientId: string) {
         locale: ogLocale,
       },
       twitter: {
-        card: client.twitterImageMedia?.url ? "summary_large_image" : twitterCard,
+        card: client.heroImageMedia?.url ? "summary_large_image" : twitterCard,
         title: title,
         description: description,
         ...(twitterSite && { site: twitterSite }),
@@ -274,38 +266,24 @@ export async function generateClientSEO(clientId: string) {
       };
     };
 
-    // OG image: ogImageMedia else logo fallback (ogp.me requires og:image; Facebook best practices)
-    if (client.ogImageMedia?.url) {
+    // OG image: heroImageMedia (required)
+    if (client.heroImageMedia?.url) {
       metaTags.openGraph.images = [
         makeOgImage(
-          client.ogImageMedia.url,
-          client.ogImageMedia.altText || defaultAlt,
-          client.ogImageMedia.width,
-          client.ogImageMedia.height
-        ),
-      ];
-    } else if (client.logoMedia?.url) {
-      metaTags.openGraph.images = [
-        makeOgImage(
-          client.logoMedia.url,
-          client.logoMedia.altText || defaultAlt,
-          client.logoMedia.width,
-          client.logoMedia.height
+          client.heroImageMedia.url,
+          client.heroImageMedia.altText || defaultAlt,
+          client.heroImageMedia.width,
+          client.heroImageMedia.height
         ),
       ];
     }
 
-    // Twitter: image + imageAlt; fallback OG → logo when summary_large_image (X Developer Docs)
+    // Twitter: heroImageMedia (required)
     const ogImageUrl = metaTags.openGraph.images?.[0]?.secure_url || metaTags.openGraph.images?.[0]?.url;
     const ogImageAlt = metaTags.openGraph.images?.[0]?.alt;
-    const hasAnyImage = !!(client.twitterImageMedia?.url || ogImageUrl);
-    metaTags.twitter.card = hasAnyImage ? "summary_large_image" : "summary";
+    metaTags.twitter.card = ogImageUrl ? "summary_large_image" : "summary";
 
-    if (client.twitterImageMedia?.url) {
-      const twitterImageUrl = ensureAbsoluteUrl(client.twitterImageMedia.url) || client.twitterImageMedia.url;
-      metaTags.twitter.image = twitterImageUrl.startsWith("https") ? twitterImageUrl : twitterImageUrl.replace("http://", "https://");
-      metaTags.twitter.imageAlt = client.twitterImageMedia.altText || defaultAlt;
-    } else if (metaTags.twitter.card === "summary_large_image" && ogImageUrl) {
+    if (ogImageUrl) {
       metaTags.twitter.image = ogImageUrl;
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
     }

@@ -52,7 +52,7 @@ export function SEOFields({
           name="seoTitle"
           value={seoTitle}
           onChange={(e) => onSeoTitleChange(e.target.value)}
-          hint="Meta title for search engines (50-60 chars optimal) - improves search visibility"
+          hint="SEO title shown in search results (50-60 characters optimal)"
         />
         <div>
           <FormTextarea
@@ -61,7 +61,7 @@ export function SEOFields({
             value={seoDescription}
             onChange={(e) => onSeoDescriptionChange(e.target.value)}
             rows={3}
-            hint="Meta description shown in search results (150-160 chars) - influences click-through rate"
+            hint="SEO description shown in search results (150-160 characters)"
           />
           <div className="mt-1">
             <CharacterCounter

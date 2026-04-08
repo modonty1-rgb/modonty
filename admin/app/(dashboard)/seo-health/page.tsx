@@ -71,7 +71,7 @@ async function getSEOHealthData() {
 
   // Get clients without logos
   const clientsWithoutLogos = await db.client.count({
-    where: { logoMediaId: null },
+    where: { logoMediaId: null as unknown as string | undefined },
   });
 
   // Calculate scores

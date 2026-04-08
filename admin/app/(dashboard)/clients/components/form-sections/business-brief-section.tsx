@@ -62,7 +62,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
             onChange={(e) => form.setValue("slogan", e.target.value || null, { shouldValidate: true })}
             error={errors.slogan?.message}
             placeholder="e.g., Innovation Beyond Boundaries"
-            hint="شعار الشركة — يظهر في بيانات SEO — حد أقصى 100 حرف"
+            hint={messages.hints.client.businessBrief}
           />
           {slogan && (
             <div className="mt-1">

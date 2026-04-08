@@ -33,7 +33,7 @@ export async function fetchArticleForMetadata(
     include: {
       client: {
         include: {
-          ogImageMedia: {
+          heroImageMedia: {
             select: {
               url: true,
             },

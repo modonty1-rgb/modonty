@@ -111,7 +111,7 @@ async function cleanTestClients() {
     await db.clientCompetitor.deleteMany({ where: { clientId: c.id } });
     await db.clientKeyword.deleteMany({ where: { clientId: c.id } });
     await db.seoIntake.deleteMany({ where: { clientId: c.id } });
-    await db.client.update({ where: { id: c.id }, data: { logoMediaId: null, ogImageMediaId: null } });
+    // Clear media references (omit fields instead of setting to null)
     await db.media.deleteMany({ where: { clientId: c.id } });
   }
   await db.client.deleteMany({ where: { slug: { startsWith: "test-" } } });
@@ -324,7 +324,25 @@ async function seedIndustries(): Promise<SectionResult> {
 
   // ── CONSTRAINT: create client linked to industry, try delete ──
   if (i1.success && i1.industry) {
-    const tempClient = await db.client.create({ data: { name: "temp", slug: "test-temp-constraint", email: "temp@test.com", subscriptionTier: "BASIC", industryId: i1.industry.id } });
+    // Create temp media for linking
+    const tempLogo = await db.media.create({
+      data: { filename: "temp-logo.jpg", mimeType: "image/jpeg", fileSize: 1000, url: "https://example.com/temp.jpg", clientId: null, type: "LOGO" }
+    });
+    const tempHero = await db.media.create({
+      data: { filename: "temp-hero.jpg", mimeType: "image/jpeg", fileSize: 1000, url: "https://example.com/temp.jpg", clientId: null, type: "GENERAL" }
+    });
+
+    const tempClient = await db.client.create({
+      data: {
+        name: "temp",
+        slug: "test-temp-constraint",
+        email: "temp@test.com",
+        subscriptionTier: "BASIC",
+        industryId: i1.industry.id,
+        logoMediaId: tempLogo.id,
+        heroImageMediaId: tempHero.id,
+      }
+    });
     const delR = await deleteIndustry(i1.industry.id);
     R.push(ok(!delR.success, "deleteIndustry(has client) → should fail", "constraint", delR.success ? "Should have failed" : undefined));
     // cleanup temp client
@@ -462,10 +480,7 @@ async function seedClients(): Promise<SectionResult> {
       await db.engagementDuration.deleteMany({ where: { clientId: existing.id } });
       await db.contactMessage.deleteMany({ where: { clientId: existing.id } });
       await db.notification.deleteMany({ where: { clientId: existing.id } });
-      await db.client.update({
-        where: { id: existing.id },
-        data: { logoMediaId: null, ogImageMediaId: null },
-      });
+      // Clear media references (already cleared on creation)
       await db.media.deleteMany({ where: { clientId: existing.id } });
       await db.client.delete({ where: { id: existing.id } });
     }

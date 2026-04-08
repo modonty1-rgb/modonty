@@ -499,8 +499,7 @@ export async function updateMediaSocialFields(
       where: { id: clientId },
       select: {
         logoMediaId: true,
-        ogImageMediaId: true,
-        twitterImageMediaId: true,
+        heroImageMediaId: true,
       },
     });
 
@@ -510,8 +509,7 @@ export async function updateMediaSocialFields(
 
     const newData: Record<string, unknown> = {
       logoMediaId: data.logoMediaId ?? null,
-      ogImageMediaId: data.ogImageMediaId ?? null,
-      twitterImageMediaId: data.twitterImageMediaId ?? null,
+      heroImageMediaId: data.heroImageMediaId ?? null,
     };
 
     const updateData = buildGroupUpdateData("media-social", client as Record<string, unknown>, newData);

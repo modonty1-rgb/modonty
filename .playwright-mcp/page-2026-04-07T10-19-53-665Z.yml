@@ -1,0 +1,236 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.17.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.17.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: Articles 69d2f909...
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - button "Send Note" [ref=e130] [cursor=pointer]:
+          - img
+          - text: Send Note
+      - main [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - link [ref=e137] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e138]
+                - 'heading "اختبار خالد: دليل تحسين تجربة المستخدم 1" [level=1] [ref=e140]'
+              - generic [ref=e141]:
+                - generic [ref=e142]: أكاديمية المستقبل
+                - generic [ref=e143]: ·
+                - generic [ref=e144]: SEO تحسين محركات البحث
+                - generic [ref=e145]: ·
+                - generic [ref=e146]: Writing
+                - generic [ref=e147]: ·
+                - generic [ref=e148]: Apr 6, 2026
+            - generic [ref=e149]:
+              - generic "Click to view full SEO guidance" [ref=e150] [cursor=pointer]: 88%
+              - link "Edit" [ref=e151] [cursor=pointer]:
+                - /url: /articles/69d2f9090d73480fcbf3050e/edit
+                - img
+                - text: Edit
+              - button [ref=e152] [cursor=pointer]:
+                - img
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - img [ref=e155]
+              - generic [ref=e158]: "177"
+              - text: words
+            - generic [ref=e159]:
+              - img [ref=e160]
+              - generic [ref=e163]: ~1 min read
+            - generic [ref=e164]:
+              - img [ref=e165]
+              - generic [ref=e168]: 0 views
+            - generic [ref=e169]:
+              - img [ref=e170]
+              - generic [ref=e172]: 0 comments
+          - generic [ref=e175]:
+            - generic [ref=e176]:
+              - img "حقول القمح الخضراء — رمز لنمو التعليم الرقمي في السعودية" [ref=e178]
+              - 'heading "اختبار خالد: دليل تحسين تجربة المستخدم 1" [level=1] [ref=e179]'
+              - paragraph [ref=e180]: دليل شامل يغطي أفضل الممارسات في تصميم تجربة المستخدم للتطبيقات العربية، من التخطيط إلى الاختبار والتحسين المستمر. أمثلة عملية ونصائح خبراء.
+              - generic [ref=e181]:
+                - generic [ref=e182]: Modonty
+                - generic [ref=e183]: Apr 6, 2026
+                - generic [ref=e184]: ~1 min read
+              - generic [ref=e185]:
+                - heading "لماذا تجربة المستخدم مهمة؟" [level=2] [ref=e186]
+                - paragraph [ref=e187]: تجربة المستخدم هي العمود الفقري لأي تطبيق ناجح. في العالم العربي تتطلب التطبيقات اهتماماً خاصاً بتصميم RTL والخطوط العربية وتفضيلات المستخدم المحلي. الشركات التي تستثمر في تجربة المستخدم تحقق عائد استثمار أعلى بنسبة 400% مقارنة بالشركات التي تتجاهلها.
+                - paragraph
+                - heading "أساسيات تصميم RTL" [level=2] [ref=e188]
+                - paragraph [ref=e189]: التصميم من اليمين إلى اليسار يتطلب أكثر من مجرد عكس الا
+                - paragraph [ref=e190]: تحديث اختباريت
+                - paragraph
+                - heading "نصائح خالد للمطورين" [level=2] [ref=e191]
+                - heading "أولاً، ابدأ دائماً بالبحث عن المستخدم. ثانياً، اختبر مبكراً واختبر كثيراً. ثالثاً، لا تنسخ التصميم الغربي حرفياً — كيّفه للثقافة العربية. رابعاً، استثمر في الأداء لأن المستخدم العربي يتوقع سرعة عالية.جاه. يجب مراعاة ترتيب العناصر البصرية واتجاه الأيقونات وتدفق القراءة الطبيعي للمستخدم العربي. استخدم خاصية dir في HTML و logical properties في CSS مثل margin-inline-start بدلاً من margin-left." [level=2] [ref=e192]
+                - paragraph
+                - heading "اختيار الخطوط العربية المناسبة" [level=2] [ref=e193]
+                - paragraph [ref=e194]: الخط هو أهم عنصر في التصميم العربي. خطوط مثل Tajawal و Cairo و IBM Plex Arabic توفر قراءة ممتازة على الشاشات. تجنب الخطوط المزخرفة في النصوص الطويلة. حجم الخط المثالي للمحتوى العربي هو 16-18px مع ارتفاع سطر 1.8 على الأقل.
+                - paragraph
+                - heading "الخلاصة" [level=2] [ref=e195]
+                - paragraph [ref=e196]: تحسين تجربة المستخدم في التطبيقات العربية يتطلب فهماً عميقاً للثقافة والسلوك المحلي. ابدأ بالأساسيات ثم حسّن باستمرار بناءً على بيانات المستخدمين الحقيقية. الاستثمار في UX ليس تكلفة بل استثمار يعود بأرباح مضاعفة.
+                - paragraph
+                - paragraph [ref=e197]: اختبار الحفظ المتعدد حفظ1 تجربة s1 s2 s3
+              - generic [ref=e199]:
+                - generic [ref=e201]:
+                  - img [ref=e202]
+                  - generic [ref=e206]: Media Gallery
+                - generic [ref=e209] [cursor=pointer]:
+                  - img "حقول القمح الخضراء — رمز لنمو التعليم الرقمي في السعودية" [ref=e210]
+                  - generic [ref=e212]:
+                    - generic: حقول القمح الخضراء — رمز لنمو التعليم الرقمي في السعودية
+                    - generic [ref=e213]:
+                      - generic [ref=e214]: 69d031e4b2ab843aaecbc767
+                      - button "Copy Media ID" [ref=e215]:
+                        - img
+              - generic [ref=e217]:
+                - generic [ref=e219]: M
+                - generic [ref=e220]:
+                  - paragraph [ref=e221]: Modonty
+                  - paragraph [ref=e222]: Modonty is a leading content platform providing high-quality articles and insights.
+            - generic [ref=e224]:
+              - generic [ref=e226]: جدول المحتويات
+              - navigation [ref=e228]:
+                - button "لماذا تجربة المستخدم مهمة؟" [ref=e229] [cursor=pointer]
+                - button "أساسيات تصميم RTL" [ref=e230] [cursor=pointer]
+                - button "نصائح خالد للمطورين" [ref=e231] [cursor=pointer]
+                - button "أولاً، ابدأ دائماً بالبحث عن المستخدم. ثانياً، اختبر مبكراً واختبر كثيراً. ثالثاً، لا تنسخ التصميم الغربي حرفياً — كيّفه للثقافة العربية. رابعاً، استثمر في الأداء لأن المستخدم العربي يتوقع سرعة عالية.جاه. يجب مراعاة ترتيب العناصر البصرية واتجاه الأيقونات وتدفق القراءة الطبيعي للمستخدم العربي. استخدم خاصية dir في HTML و logical properties في CSS مثل margin-inline-start بدلاً من margin-left." [ref=e232] [cursor=pointer]
+                - button "اختيار الخطوط العربية المناسبة" [ref=e233] [cursor=pointer]
+                - button "الخلاصة" [ref=e234] [cursor=pointer]
+          - generic [ref=e235]:
+            - generic [ref=e237]:
+              - img [ref=e238]
+              - text: SEO Overview
+            - generic [ref=e241]:
+              - generic [ref=e242]:
+                - generic [ref=e243]:
+                  - paragraph [ref=e244]: SEO Title
+                  - paragraph [ref=e245]: "اختبار خالد: دليل تحسين تجربة المستخدم | أكاديمية المستقبل"
+                - generic [ref=e246]:
+                  - paragraph [ref=e247]: SEO Description
+                  - paragraph [ref=e248]: دليل شامل يغطي أفضل الممارسات في تصميم تجربة المستخدم للتطبيقات العربية، من التخطيط إلى الاختبار والتحسين المستمر. أمثلة عملية ونصائح خبراء.
+                - generic [ref=e249]:
+                  - paragraph [ref=e250]: Canonical URL
+                  - paragraph [ref=e251]: https://modonty.com/articles/اختبار-خالد-دليل-تحسين-تجربة-المستخدم
+                - generic [ref=e252]:
+                  - paragraph [ref=e253]: Slug
+                  - paragraph [ref=e254]: /اختبار-خالد-دليل-تحسين-تجربة-المستخدم
+              - link "View Technical Details" [ref=e256] [cursor=pointer]:
+                - /url: /articles/69d2f9090d73480fcbf3050e/technical
+                - button "View Technical Details" [ref=e257]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e263] [cursor=pointer]:
+    - img [ref=e264]
+  - alert [ref=e267]

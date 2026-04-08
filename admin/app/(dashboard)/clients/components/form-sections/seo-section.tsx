@@ -1,6 +1,7 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
+import { messages } from "@/lib/messages";
 import { FormInput, FormTextarea, FormSelect, FormNativeSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import { CharacterCounter } from "@/components/shared/character-counter";
@@ -217,7 +218,7 @@ export function SEOSection({
               onChange={(e) => setValue("canonicalUrl", e.target.value || null, { shouldValidate: true })}
               error={errors.canonicalUrl?.message}
               placeholder="https://example.com/page"
-              hint="يمنع المحتوى المكرر — يحدد الصفحة الأصلية"
+              hint={messages.hints.client.canonical}
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormSelect
@@ -234,7 +235,7 @@ export function SEOSection({
                   )
                 }
                 error={errors.metaRobots?.message}
-                hint="يتحكم في فهرسة محركات البحث لهذا العميل"
+                hint={messages.hints.client.robots}
                 placeholder="Select robots directive"
               >
                 <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
@@ -248,7 +249,7 @@ export function SEOSection({
                 value={watch("twitterCard") || "auto"}
                 onValueChange={(value) => setValue("twitterCard", value === "auto" ? null : (value as "summary" | "summary_large_image"), { shouldValidate: true })}
                 error={errors.twitterCard?.message}
-                hint="شكل المحتوى عند المشاركة في X/Twitter"
+                hint={messages.hints.client.twitterCard}
               >
                 <SelectItem value="auto">Auto-generate from OG tags</SelectItem>
                 <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
@@ -288,7 +289,7 @@ export function SEOSection({
                 }
                 error={errors.twitterSite?.message}
                 placeholder="@username"
-                hint="حساب X/Twitter الرسمي للعميل"
+                hint={messages.hints.client.twitterHandle}
               />
             </div>
             <div>
@@ -322,7 +323,7 @@ export function SEOSection({
               onChange={(e) => setValue("gtmId", e.target.value || null, { shouldValidate: true })}
               error={errors.gtmId?.message}
               placeholder="GTM-XXXXXXX"
-              hint="اختياري — فقط إذا كان العميل يريد تتبع منفصل"
+              hint={messages.hints.client.gaTrackingId}
             />
           </div>
         )}
@@ -372,7 +373,7 @@ export function SEOSection({
                 rows={3}
                 error={errors.description?.message}
                 placeholder="Describe your organization's mission, values, and key achievements..."
-                hint="وصف المنظمة في Schema.org — 100+ حرف للأفضل"
+                hint={messages.hints.client.socialDescription}
               />
               <div className="mt-1">
                 <CharacterCounter
@@ -403,7 +404,7 @@ export function SEOSection({
               rows={2}
               error={errors.keywords?.message}
               placeholder="e.g., technology, innovation, consulting, digital transformation"
-              hint="كلمات لتصنيف الشركة — SEO — مفصولة بفاصلة"
+              hint={messages.hints.client.keywords}
             />
             <FormTextarea
               label="Knows Language"
@@ -423,7 +424,7 @@ export function SEOSection({
               rows={2}
               error={errors.knowsLanguage?.message}
               placeholder="e.g., Arabic, English"
-              hint="لغات التواصل — تظهر في بيانات SEO"
+              hint={messages.hints.client.languages}
             />
           </div>
         )}
@@ -472,7 +473,7 @@ export function SEOSection({
                 onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
                 error={errors.parentOrganizationId?.message}
                 placeholder="Select parent organization (optional)"
-                hint="اختياري — إذا كان العميل فرع من شركة أخرى"
+                hint={messages.hints.client.parentCompany}
               >
                 <option value="">None (Independent Organization)</option>
                 {clients.map((client) => (
@@ -508,7 +509,7 @@ export function SEOSection({
                 )
               }
               error={errors.organizationType?.message}
-              hint="نوع المنظمة في SEO — يختلف عن الشكل القانوني"
+              hint={messages.hints.client.organizationType}
               placeholder="Select Organization Type"
             >
               <SelectItem value="Organization">Organization</SelectItem>

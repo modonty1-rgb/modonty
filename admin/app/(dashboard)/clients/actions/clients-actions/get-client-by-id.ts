@@ -16,16 +16,7 @@ export async function getClientById(id: string) {
             height: true,
           },
         },
-        ogImageMedia: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-        twitterImageMedia: {
+        heroImageMedia: {
           select: {
             id: true,
             url: true,
