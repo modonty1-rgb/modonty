@@ -1,0 +1,269 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - generic [ref=e71]:
+          - button "System" [expanded] [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]:
+              - img [ref=e74]
+              - generic [ref=e77]: System
+            - img [ref=e78]
+          - generic [ref=e81]:
+            - link "Admins" [ref=e82] [cursor=pointer]:
+              - /url: /users
+              - img [ref=e83]
+              - generic [ref=e88]: Admins
+            - link "Plans & Pricing" [ref=e89] [cursor=pointer]:
+              - /url: /subscription-tiers
+              - img [ref=e90]
+              - generic [ref=e92]: Plans & Pricing
+            - link "Export Data" [ref=e93] [cursor=pointer]:
+              - /url: /export-data
+              - img [ref=e94]
+              - generic [ref=e97]: Export Data
+            - link "Database" [ref=e98] [cursor=pointer]:
+              - /url: /database
+              - img [ref=e99]
+              - generic [ref=e103]: Database
+            - link "Settings" [ref=e104] [cursor=pointer]:
+              - /url: /settings
+              - img [ref=e105]
+              - generic [ref=e108]: Settings
+      - generic [ref=e109]:
+        - link "Guidelines" [ref=e110] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e111]
+          - text: Guidelines
+        - generic [ref=e113]:
+          - button "Switch to light mode" [ref=e114] [cursor=pointer]:
+            - img
+          - link "v0.22.0 ?" [ref=e115] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic [ref=e116]: "?"
+    - generic [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e119]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e120]:
+          - button "Send Note" [ref=e121] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e122] [cursor=pointer]:
+            - img
+      - main [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - heading "Plans & Pricing" [level=1] [ref=e126]
+            - paragraph [ref=e127]: 4 active plans · 0 clients · 0 published articles
+          - generic [ref=e128]:
+            - generic [ref=e131]:
+              - generic [ref=e133]:
+                - heading "Basic" [level=3] [ref=e134]
+                - paragraph [ref=e135]: ‏١٬٢٠٠ ر.س.‏ / year
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - generic [ref=e138]:
+                    - img [ref=e139]
+                    - text: Articles / month
+                  - generic [ref=e142]: "2"
+                - generic [ref=e143]:
+                  - generic [ref=e144]:
+                    - img [ref=e145]
+                    - text: Clients
+                  - generic [ref=e150]: "0"
+                - generic [ref=e151]:
+                  - generic [ref=e152]:
+                    - img [ref=e153]
+                    - text: Published
+                  - generic [ref=e156]: "0"
+            - generic [ref=e159]:
+              - generic [ref=e161]:
+                - heading "Premium" [level=3] [ref=e162]
+                - paragraph [ref=e163]: ‏٩٬٦٠٠ ر.س.‏ / year
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]:
+                    - img [ref=e167]
+                    - text: Articles / month
+                  - generic [ref=e170]: "16"
+                - generic [ref=e171]:
+                  - generic [ref=e172]:
+                    - img [ref=e173]
+                    - text: Clients
+                  - generic [ref=e178]: "0"
+                - generic [ref=e179]:
+                  - generic [ref=e180]:
+                    - img [ref=e181]
+                    - text: Published
+                  - generic [ref=e184]: "0"
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - generic [ref=e189]:
+                  - heading "Pro" [level=3] [ref=e190]
+                  - paragraph [ref=e191]: ‏٤٬٨٠٠ ر.س.‏ / year
+                - generic [ref=e193]:
+                  - img [ref=e194]
+                  - text: Recommended
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - generic [ref=e198]:
+                    - img [ref=e199]
+                    - text: Articles / month
+                  - generic [ref=e202]: "8"
+                - generic [ref=e203]:
+                  - generic [ref=e204]:
+                    - img [ref=e205]
+                    - text: Clients
+                  - generic [ref=e210]: "0"
+                - generic [ref=e211]:
+                  - generic [ref=e212]:
+                    - img [ref=e213]
+                    - text: Published
+                  - generic [ref=e216]: "0"
+            - generic [ref=e219]:
+              - generic [ref=e221]:
+                - heading "Standard" [level=3] [ref=e222]
+                - paragraph [ref=e223]: ‏٢٬٤٠٠ ر.س.‏ / year
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - generic [ref=e226]:
+                    - img [ref=e227]
+                    - text: Articles / month
+                  - generic [ref=e230]: "4"
+                - generic [ref=e231]:
+                  - generic [ref=e232]:
+                    - img [ref=e233]
+                    - text: Clients
+                  - generic [ref=e238]: "0"
+                - generic [ref=e239]:
+                  - generic [ref=e240]:
+                    - img [ref=e241]
+                    - text: Published
+                  - generic [ref=e244]: "0"
+          - generic [ref=e245]:
+            - generic [ref=e247]:
+              - img [ref=e248]
+              - textbox "Search plans..." [ref=e251]
+            - table [ref=e254]:
+              - rowgroup [ref=e255]:
+                - row "Plan Articles / Mo Price (SAR/yr) Clients" [ref=e256]:
+                  - columnheader "Plan" [ref=e257] [cursor=pointer]:
+                    - generic [ref=e258]:
+                      - text: Plan
+                      - img [ref=e259]
+                  - columnheader "Articles / Mo" [ref=e262] [cursor=pointer]:
+                    - generic [ref=e263]:
+                      - text: Articles / Mo
+                      - img [ref=e264]
+                  - columnheader "Price (SAR/yr)" [ref=e267] [cursor=pointer]:
+                    - generic [ref=e268]:
+                      - text: Price (SAR/yr)
+                      - img [ref=e269]
+                  - columnheader "Clients" [ref=e272] [cursor=pointer]:
+                    - generic [ref=e273]:
+                      - text: Clients
+                      - img [ref=e274]
+                  - columnheader [ref=e277] [cursor=pointer]:
+                    - img [ref=e279]
+              - rowgroup [ref=e282]:
+                - row "Basic 2 ١٬٢٠٠ 0" [ref=e283]:
+                  - cell "Basic" [ref=e284]:
+                    - generic [ref=e286]: Basic
+                  - cell "2" [ref=e287]
+                  - cell "١٬٢٠٠" [ref=e288]
+                  - cell "0" [ref=e289]
+                  - cell [ref=e290]:
+                    - link [ref=e291] [cursor=pointer]:
+                      - /url: /subscription-tiers/69d665971c69501a44d05e80/edit
+                      - button [ref=e292]:
+                        - img
+                - row "Premium 16 ٩٬٦٠٠ 0" [ref=e293]:
+                  - cell "Premium" [ref=e294]:
+                    - generic [ref=e296]: Premium
+                  - cell "16" [ref=e297]
+                  - cell "٩٬٦٠٠" [ref=e298]
+                  - cell "0" [ref=e299]
+                  - cell [ref=e300]:
+                    - link [ref=e301] [cursor=pointer]:
+                      - /url: /subscription-tiers/69d665981c69501a44d05e83/edit
+                      - button [ref=e302]:
+                        - img
+                - row "Pro Recommended 8 ٤٬٨٠٠ 0" [ref=e303]:
+                  - cell "Pro Recommended" [ref=e304]:
+                    - generic [ref=e305]:
+                      - generic [ref=e306]: Pro
+                      - generic [ref=e307]:
+                        - img [ref=e308]
+                        - text: Recommended
+                  - cell "8" [ref=e310]
+                  - cell "٤٬٨٠٠" [ref=e311]
+                  - cell "0" [ref=e312]
+                  - cell [ref=e313]:
+                    - link [ref=e314] [cursor=pointer]:
+                      - /url: /subscription-tiers/69d665981c69501a44d05e82/edit
+                      - button [ref=e315]:
+                        - img
+                - row "Standard 4 ٢٬٤٠٠ 0" [ref=e316]:
+                  - cell "Standard" [ref=e317]:
+                    - generic [ref=e319]: Standard
+                  - cell "4" [ref=e320]
+                  - cell "٢٬٤٠٠" [ref=e321]
+                  - cell "0" [ref=e322]
+                  - cell [ref=e323]:
+                    - link [ref=e324] [cursor=pointer]:
+                      - /url: /subscription-tiers/69d665971c69501a44d05e81/edit
+                      - button [ref=e325]:
+                        - img
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e331] [cursor=pointer]:
+    - img [ref=e332]
+  - alert [ref=e335]

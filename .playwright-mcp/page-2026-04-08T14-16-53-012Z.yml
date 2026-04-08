@@ -1,0 +1,428 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - button "Collapse sidebar" [ref=e25] [cursor=pointer]:
+        - img
+      - navigation [ref=e26]:
+        - generic [ref=e27]:
+          - link "Dashboard" [ref=e28] [cursor=pointer]:
+            - /url: /
+            - img [ref=e29]
+            - generic [ref=e34]: Dashboard
+          - link "SEO Overview" [ref=e35] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e36]
+            - generic [ref=e39]: SEO Overview
+        - generic [ref=e41]:
+          - button "Content" [expanded] [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - generic [ref=e47]: Content
+            - img [ref=e48]
+          - generic [ref=e51]:
+            - link "Articles" [ref=e52] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e53]
+              - generic [ref=e56]: Articles
+            - link "Categories" [ref=e57] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e58]
+              - generic [ref=e60]: Categories
+            - link "Tags" [ref=e61] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e62]
+              - generic [ref=e65]: Tags
+            - link "Authors" [ref=e66] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e67]
+              - generic [ref=e69]: Authors
+            - link "Industries" [ref=e70] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e71]
+              - generic [ref=e73]: Industries
+        - button "Modonty Pages" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - generic [ref=e79]: Modonty Pages
+          - img [ref=e80]
+        - button "Audience" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e88]: Audience
+          - img [ref=e89]
+        - generic [ref=e91]:
+          - button "System" [expanded] [ref=e92] [cursor=pointer]:
+            - generic [ref=e93]:
+              - img [ref=e94]
+              - generic [ref=e97]: System
+            - img [ref=e98]
+          - generic [ref=e101]:
+            - link "Admins" [ref=e102] [cursor=pointer]:
+              - /url: /users
+              - img [ref=e103]
+              - generic [ref=e108]: Admins
+            - link "Plans & Pricing" [ref=e109] [cursor=pointer]:
+              - /url: /subscription-tiers
+              - img [ref=e110]
+              - generic [ref=e112]: Plans & Pricing
+            - link "Export Data" [ref=e113] [cursor=pointer]:
+              - /url: /export-data
+              - img [ref=e114]
+              - generic [ref=e117]: Export Data
+            - link "Database" [ref=e118] [cursor=pointer]:
+              - /url: /database
+              - img [ref=e119]
+              - generic [ref=e123]: Database
+            - link "Settings" [ref=e124] [cursor=pointer]:
+              - /url: /settings
+              - img [ref=e125]
+              - generic [ref=e128]: Settings
+      - generic [ref=e129]:
+        - link "Guidelines" [ref=e130] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e131]
+          - text: Guidelines
+        - generic [ref=e133]:
+          - button "Switch to light mode" [ref=e134] [cursor=pointer]:
+            - img
+          - link "v0.22.0 ?" [ref=e135] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic [ref=e136]: "?"
+    - generic [ref=e137]:
+      - banner [ref=e138]:
+        - generic [ref=e139]:
+          - navigation "Breadcrumb" [ref=e141]:
+            - link "Go to dashboard" [ref=e142] [cursor=pointer]:
+              - /url: /
+              - img [ref=e143]
+            - generic [ref=e146]:
+              - img [ref=e147]
+              - generic [ref=e149]: Settings
+          - navigation "Main navigation" [ref=e151]:
+            - link "Modonty Modonty" [ref=e152] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e154]
+              - generic [ref=e155]: Modonty
+            - generic [ref=e157]:
+              - link "Articles" [ref=e158] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e159]:
+                  - img
+                  - generic [ref=e160]: Articles
+              - link "Clients" [ref=e161] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e162]:
+                  - img
+                  - generic [ref=e163]: Clients
+              - link "Media" [ref=e164] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e165]:
+                  - img
+                  - generic [ref=e166]: Media
+          - generic [ref=e167]:
+            - link [ref=e168] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e169]:
+                - img
+            - button "M" [ref=e170] [cursor=pointer]:
+              - generic [ref=e172]: M
+      - generic [ref=e173]:
+        - generic [ref=e174]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e175]:
+          - button "Send Note" [ref=e176] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e177] [cursor=pointer]:
+            - img
+      - main [ref=e178]:
+        - generic [ref=e179]:
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - heading "Settings" [level=1] [ref=e182]
+              - paragraph [ref=e183]: Configure your site once — your team handles the rest
+            - button "Integration Test" [ref=e184] [cursor=pointer]:
+              - img
+              - text: Integration Test
+          - generic [ref=e185]:
+            - tablist [ref=e186]:
+              - tab "Modonty" [ref=e187] [cursor=pointer]:
+                - img [ref=e188]
+                - text: Modonty
+              - tab "SEO Cache" [ref=e192] [cursor=pointer]:
+                - img [ref=e193]
+                - text: SEO Cache
+              - tab "System" [selected] [ref=e198] [cursor=pointer]:
+                - img [ref=e199]
+                - text: System
+            - tabpanel "System" [ref=e319]:
+              - generic [ref=e320]:
+                - generic [ref=e321]: Read Only — Press Apply to sync
+                - button "Apply Defaults" [ref=e322] [cursor=pointer]:
+                  - img
+                  - text: Apply Defaults
+              - generic [ref=e323]:
+                - paragraph [ref=e324]: SEO Rules — industry consensus (Semrush, Ahrefs, Moz, X Docs)
+                - table [ref=e326]:
+                  - rowgroup [ref=e327]:
+                    - row "SEO Title Min 30 Semrush" [ref=e328]:
+                      - cell "SEO Title Min" [ref=e329]
+                      - cell "30" [ref=e330]
+                      - cell "Semrush" [ref=e331]:
+                        - link "Semrush" [ref=e332] [cursor=pointer]:
+                          - /url: https://www.semrush.com/blog/title-tag/
+                    - row "SEO Title Max 60 Semrush / Ahrefs" [ref=e333]:
+                      - cell "SEO Title Max" [ref=e334]
+                      - cell "60" [ref=e335]
+                      - cell "Semrush / Ahrefs" [ref=e336]:
+                        - link "Semrush / Ahrefs" [ref=e337] [cursor=pointer]:
+                          - /url: https://ahrefs.com/blog/title-tag-seo/
+                    - row "SEO Title Restrict false Yoast pattern" [ref=e338]:
+                      - cell "SEO Title Restrict" [ref=e339]
+                      - cell "false" [ref=e340]
+                      - cell "Yoast pattern" [ref=e341]:
+                        - link "Yoast pattern" [ref=e342] [cursor=pointer]:
+                          - /url: https://yoast.com/what-is-a-title-tag/
+                    - row "SEO Desc Min 120 Semrush" [ref=e343]:
+                      - cell "SEO Desc Min" [ref=e344]
+                      - cell "120" [ref=e345]
+                      - cell "Semrush" [ref=e346]:
+                        - link "Semrush" [ref=e347] [cursor=pointer]:
+                          - /url: https://www.semrush.com/blog/meta-description/
+                    - row "SEO Desc Max 160 Moz / Semrush" [ref=e348]:
+                      - cell "SEO Desc Max" [ref=e349]
+                      - cell "160" [ref=e350]
+                      - cell "Moz / Semrush" [ref=e351]:
+                        - link "Moz / Semrush" [ref=e352] [cursor=pointer]:
+                          - /url: https://moz.com/learn/seo/meta-description
+                    - row "SEO Desc Restrict false Yoast pattern" [ref=e353]:
+                      - cell "SEO Desc Restrict" [ref=e354]
+                      - cell "false" [ref=e355]
+                      - cell "Yoast pattern" [ref=e356]:
+                        - link "Yoast pattern" [ref=e357] [cursor=pointer]:
+                          - /url: https://yoast.com/meta-descriptions/
+                    - row "X Title Max 70 X Docs" [ref=e358]:
+                      - cell "X Title Max" [ref=e359]
+                      - cell "70" [ref=e360]
+                      - cell "X Docs" [ref=e361]:
+                        - link "X Docs" [ref=e362] [cursor=pointer]:
+                          - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                    - row "X Title Restrict true Soft warning" [ref=e363]:
+                      - cell "X Title Restrict" [ref=e364]
+                      - cell "true" [ref=e365]
+                      - cell "Soft warning" [ref=e366]
+                    - row "X Desc Max 200 X Docs" [ref=e367]:
+                      - cell "X Desc Max" [ref=e368]
+                      - cell "200" [ref=e369]
+                      - cell "X Docs" [ref=e370]:
+                        - link "X Docs" [ref=e371] [cursor=pointer]:
+                          - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                    - row "X Desc Restrict true Soft warning" [ref=e372]:
+                      - cell "X Desc Restrict" [ref=e373]
+                      - cell "true" [ref=e374]
+                      - cell "Soft warning" [ref=e375]
+                    - row "OG Title Max 60 Meta" [ref=e376]:
+                      - cell "OG Title Max" [ref=e377]
+                      - cell "60" [ref=e378]
+                      - cell "Meta" [ref=e379]:
+                        - link "Meta" [ref=e380] [cursor=pointer]:
+                          - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                    - row "OG Title Restrict false Soft warning" [ref=e381]:
+                      - cell "OG Title Restrict" [ref=e382]
+                      - cell "false" [ref=e383]
+                      - cell "Soft warning" [ref=e384]
+                    - row "OG Desc Max 200 Meta" [ref=e385]:
+                      - cell "OG Desc Max" [ref=e386]
+                      - cell "200" [ref=e387]
+                      - cell "Meta" [ref=e388]:
+                        - link "Meta" [ref=e389] [cursor=pointer]:
+                          - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                    - row "OG Desc Restrict false Soft warning" [ref=e390]:
+                      - cell "OG Desc Restrict" [ref=e391]
+                      - cell "false" [ref=e392]
+                      - cell "Soft warning" [ref=e393]
+              - generic [ref=e394]:
+                - paragraph [ref=e395]: Business Defaults — stable for 6+ months
+                - table [ref=e397]:
+                  - rowgroup [ref=e398]:
+                    - row "Site URL — Business" [ref=e399]:
+                      - cell "Site URL" [ref=e400]
+                      - cell "—" [ref=e401]
+                      - cell "Business" [ref=e402]
+                    - row "Site Name — Business" [ref=e403]:
+                      - cell "Site Name" [ref=e404]
+                      - cell "—" [ref=e405]
+                      - cell "Business" [ref=e406]
+                    - row "Default Author — Business" [ref=e407]:
+                      - cell "Default Author" [ref=e408]
+                      - cell "—" [ref=e409]
+                      - cell "Business" [ref=e410]
+                    - row "Content Language — ISO 639-1" [ref=e411]:
+                      - cell "Content Language" [ref=e412]
+                      - cell "—" [ref=e413]
+                      - cell "ISO 639-1" [ref=e414]:
+                        - link "ISO 639-1" [ref=e415] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+                    - row "Country — ISO 3166-1" [ref=e416]:
+                      - cell "Country" [ref=e417]
+                      - cell "—" [ref=e418]
+                      - cell "ISO 3166-1" [ref=e419]:
+                        - link "ISO 3166-1" [ref=e420] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+                    - row "Area Served — ISO 3166-1" [ref=e421]:
+                      - cell "Area Served" [ref=e422]
+                      - cell "—" [ref=e423]
+                      - cell "ISO 3166-1" [ref=e424]:
+                        - link "ISO 3166-1" [ref=e425] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+                    - row "Contact Type — Schema.org" [ref=e426]:
+                      - cell "Contact Type" [ref=e427]
+                      - cell "—" [ref=e428]
+                      - cell "Schema.org" [ref=e429]:
+                        - link "Schema.org" [ref=e430] [cursor=pointer]:
+                          - /url: https://schema.org/contactType
+                    - row "Available Languages — ISO 639-1" [ref=e431]:
+                      - cell "Available Languages" [ref=e432]
+                      - cell "—" [ref=e433]
+                      - cell "ISO 639-1" [ref=e434]:
+                        - link "ISO 639-1" [ref=e435] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+                    - row "Search URL — Schema.org" [ref=e436]:
+                      - cell "Search URL" [ref=e437]
+                      - cell "—" [ref=e438]
+                      - cell "Schema.org" [ref=e439]:
+                        - link "Schema.org" [ref=e440] [cursor=pointer]:
+                          - /url: https://schema.org/SearchAction
+              - generic [ref=e441]:
+                - paragraph [ref=e442]: Technical Defaults — industry standards, never change
+                - table [ref=e444]:
+                  - rowgroup [ref=e445]:
+                    - row "Page Charset — WHATWG" [ref=e446]:
+                      - cell "Page Charset" [ref=e447]
+                      - cell "—" [ref=e448]
+                      - cell "WHATWG" [ref=e449]:
+                        - link "WHATWG" [ref=e450] [cursor=pointer]:
+                          - /url: https://html.spec.whatwg.org/multipage/semantics.html#charset
+                    - row "Robots Directive — Google" [ref=e451]:
+                      - cell "Robots Directive" [ref=e452]
+                      - cell "—" [ref=e453]
+                      - cell "Google" [ref=e454]:
+                        - link "Google" [ref=e455] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+                    - row "Googlebot Directive — Google" [ref=e456]:
+                      - cell "Googlebot Directive" [ref=e457]
+                      - cell "—" [ref=e458]
+                      - cell "Google" [ref=e459]:
+                        - link "Google" [ref=e460] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+                    - row "Open Graph Type — OGP" [ref=e461]:
+                      - cell "Open Graph Type" [ref=e462]
+                      - cell "—" [ref=e463]
+                      - cell "OGP" [ref=e464]:
+                        - link "OGP" [ref=e465] [cursor=pointer]:
+                          - /url: https://ogp.me/
+                    - row "Open Graph Locale — OGP" [ref=e466]:
+                      - cell "Open Graph Locale" [ref=e467]
+                      - cell "—" [ref=e468]
+                      - cell "OGP" [ref=e469]:
+                        - link "OGP" [ref=e470] [cursor=pointer]:
+                          - /url: https://ogp.me/
+                    - row "OG Determiner — OGP" [ref=e471]:
+                      - cell "OG Determiner" [ref=e472]
+                      - cell "—" [ref=e473]
+                      - cell "OGP" [ref=e474]:
+                        - link "OGP" [ref=e475] [cursor=pointer]:
+                          - /url: https://ogp.me/
+                    - row "Twitter Card Type — X Docs" [ref=e476]:
+                      - cell "Twitter Card Type" [ref=e477]
+                      - cell "—" [ref=e478]
+                      - cell "X Docs" [ref=e479]:
+                        - link "X Docs" [ref=e480] [cursor=pointer]:
+                          - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                    - row "OG Image Type — Meta" [ref=e481]:
+                      - cell "OG Image Type" [ref=e482]
+                      - cell "—" [ref=e483]
+                      - cell "Meta" [ref=e484]:
+                        - link "Meta" [ref=e485] [cursor=pointer]:
+                          - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                    - row "OG Image Width — Meta" [ref=e486]:
+                      - cell "OG Image Width" [ref=e487]
+                      - cell "—" [ref=e488]
+                      - cell "Meta" [ref=e489]:
+                        - link "Meta" [ref=e490] [cursor=pointer]:
+                          - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                    - row "OG Image Height — Meta" [ref=e491]:
+                      - cell "OG Image Height" [ref=e492]
+                      - cell "—" [ref=e493]
+                      - cell "Meta" [ref=e494]:
+                        - link "Meta" [ref=e495] [cursor=pointer]:
+                          - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                    - row "Hreflang — Google" [ref=e496]:
+                      - cell "Hreflang" [ref=e497]
+                      - cell "—" [ref=e498]
+                      - cell "Google" [ref=e499]:
+                        - link "Google" [ref=e500] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/specialty/international/localized-versions
+                    - row "No Translate — Google" [ref=e501]:
+                      - cell "No Translate" [ref=e502]
+                      - cell "—" [ref=e503]
+                      - cell "Google" [ref=e504]:
+                        - link "Google" [ref=e505] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/special-tags
+                    - row "Referrer Policy — MDN" [ref=e506]:
+                      - cell "Referrer Policy" [ref=e507]
+                      - cell "—" [ref=e508]
+                      - cell "MDN" [ref=e509]:
+                        - link "MDN" [ref=e510] [cursor=pointer]:
+                          - /url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+                    - row "Sitemap Priority — Google" [ref=e511]:
+                      - cell "Sitemap Priority" [ref=e512]
+                      - cell "—" [ref=e513]
+                      - cell "Google" [ref=e514]:
+                        - link "Google" [ref=e515] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                    - row "Sitemap Frequency — Google" [ref=e516]:
+                      - cell "Sitemap Frequency" [ref=e517]
+                      - cell "—" [ref=e518]
+                      - cell "Google" [ref=e519]:
+                        - link "Google" [ref=e520] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                    - row "Article Sitemap Priority — Google" [ref=e521]:
+                      - cell "Article Sitemap Priority" [ref=e522]
+                      - cell "—" [ref=e523]
+                      - cell "Google" [ref=e524]:
+                        - link "Google" [ref=e525] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                    - row "Article Sitemap Freq — Google" [ref=e526]:
+                      - cell "Article Sitemap Freq" [ref=e527]
+                      - cell "—" [ref=e528]
+                      - cell "Google" [ref=e529]:
+                        - link "Google" [ref=e530] [cursor=pointer]:
+                          - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                    - row "License — CC" [ref=e531]:
+                      - cell "License" [ref=e532]
+                      - cell "—" [ref=e533]
+                      - cell "CC" [ref=e534]:
+                        - link "CC" [ref=e535] [cursor=pointer]:
+                          - /url: https://creativecommons.org/licenses/by/4.0/
+                    - row "Free Access true Schema.org" [ref=e536]:
+                      - cell "Free Access" [ref=e537]
+                      - cell "true" [ref=e538]
+                      - cell "Schema.org" [ref=e539]:
+                        - link "Schema.org" [ref=e540] [cursor=pointer]:
+                          - /url: https://schema.org/isAccessibleForFree
+                    - row "Default Pathname — Next.js" [ref=e541]:
+                      - cell "Default Pathname" [ref=e542]
+                      - cell "—" [ref=e543]
+                      - cell "Next.js" [ref=e544]:
+                        - link "Next.js" [ref=e545] [cursor=pointer]:
+                          - /url: https://nextjs.org/docs/app/api-reference/functions/generate-metadata
+                    - row "Truncation Suffix ... UX" [ref=e546]:
+                      - cell "Truncation Suffix" [ref=e547]
+                      - cell "..." [ref=e548]
+                      - cell "UX" [ref=e549]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e17] [cursor=pointer]:
+    - img [ref=e18]
+  - alert [ref=e21]

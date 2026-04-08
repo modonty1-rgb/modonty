@@ -1,0 +1,177 @@
+- generic [ref=e1]:
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - button "Collapse sidebar" [ref=e25] [cursor=pointer]:
+        - img
+      - navigation [ref=e26]:
+        - generic [ref=e27]:
+          - link "Dashboard" [ref=e28] [cursor=pointer]:
+            - /url: /
+            - img [ref=e29]
+            - generic [ref=e34]: Dashboard
+          - link "SEO Overview" [ref=e35] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e36]
+            - generic [ref=e39]: SEO Overview
+        - generic [ref=e41]:
+          - button "Content" [expanded] [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - generic [ref=e47]: Content
+            - img [ref=e48]
+          - generic [ref=e51]:
+            - link "Articles" [ref=e52] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e53]
+              - generic [ref=e56]: Articles
+            - link "Categories" [ref=e57] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e58]
+              - generic [ref=e60]: Categories
+            - link "Tags" [ref=e61] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e62]
+              - generic [ref=e65]: Tags
+            - link "Authors" [ref=e66] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e67]
+              - generic [ref=e69]: Authors
+            - link "Industries" [ref=e70] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e71]
+              - generic [ref=e73]: Industries
+        - button "Modonty Pages" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - generic [ref=e79]: Modonty Pages
+          - img [ref=e80]
+        - button "Audience" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e88]: Audience
+          - img [ref=e89]
+        - button "System" [ref=e92] [cursor=pointer]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - generic [ref=e97]: System
+          - img [ref=e98]
+      - generic [ref=e100]:
+        - link "Guidelines" [ref=e101] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e102]
+          - text: Guidelines
+        - generic [ref=e104]:
+          - button "Switch to light mode" [ref=e105] [cursor=pointer]:
+            - img
+          - link "v0.22.0 ?" [ref=e106] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic [ref=e107]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e109]:
+        - generic [ref=e110]:
+          - navigation "Breadcrumb" [ref=e112]:
+            - link "Go to dashboard" [ref=e113] [cursor=pointer]:
+              - /url: /
+              - img [ref=e114]
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - generic [ref=e231]: Clients
+          - navigation "Main navigation" [ref=e126]:
+            - link "Modonty Modonty" [ref=e127] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e129]
+              - generic [ref=e130]: Modonty
+            - generic [ref=e132]:
+              - link "Articles" [ref=e133] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e134]:
+                  - img
+                  - generic [ref=e135]: Articles
+              - link "Clients" [ref=e136] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [active] [ref=e137]:
+                  - img
+                  - generic [ref=e138]: Clients
+              - link "Media" [ref=e139] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e140]:
+                  - img
+                  - generic [ref=e141]: Media
+          - generic [ref=e142]:
+            - link [ref=e143] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e144]:
+                - img
+            - button "M" [ref=e145] [cursor=pointer]:
+              - generic [ref=e147]: M
+      - generic [ref=e148]:
+        - generic [ref=e149]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e150]:
+          - button "Send Note" [ref=e151] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e152] [cursor=pointer]:
+            - img
+      - main [ref=e153]:
+        - generic [ref=e232]:
+          - generic [ref=e233]:
+            - generic [ref=e234]:
+              - generic [ref=e235]:
+                - heading "Clients (0)" [level=1] [ref=e236]:
+                  - text: Clients
+                  - generic [ref=e237]: (0)
+                - generic [ref=e238]:
+                  - generic [ref=e239]: 0 total
+                  - generic [ref=e240]: 0% delivery
+                  - generic [ref=e241]: 0% SEO
+              - generic [ref=e242]:
+                - button "Filters" [ref=e243] [cursor=pointer]:
+                  - img
+                  - text: Filters
+                - link "New Client" [ref=e244] [cursor=pointer]:
+                  - /url: /clients/new
+                  - button "New Client" [ref=e245]:
+                    - img
+                    - text: New Client
+            - generic [ref=e247]:
+              - img
+              - textbox "Search clients..." [ref=e248]
+          - table [ref=e252]:
+            - rowgroup [ref=e264]:
+              - row "Name Plan Status Articles Delivery Expires SEO Actions" [ref=e265]:
+                - columnheader "Name" [ref=e266] [cursor=pointer]:
+                  - generic [ref=e267]:
+                    - text: Name
+                    - img [ref=e268]
+                - columnheader "Plan" [ref=e271] [cursor=pointer]:
+                  - generic [ref=e272]:
+                    - text: Plan
+                    - img [ref=e273]
+                - columnheader "Status" [ref=e276]
+                - columnheader "Articles" [ref=e277] [cursor=pointer]:
+                  - generic [ref=e278]: Articles
+                - columnheader "Delivery" [ref=e281]
+                - columnheader "Expires" [ref=e282] [cursor=pointer]:
+                  - generic [ref=e283]:
+                    - text: Expires
+                    - img [ref=e284]
+                - columnheader [ref=e287]:
+                  - generic "Google Business Profile" [ref=e288]:
+                    - img [ref=e289]
+                - columnheader [ref=e292]:
+                  - generic "Analytics" [ref=e293]:
+                    - img [ref=e294]
+                - columnheader "SEO" [ref=e295]
+                - columnheader "Actions" [ref=e296]
+            - rowgroup [ref=e297]:
+              - row "No clients found Try adjusting your search or filters" [ref=e298]:
+                - cell "No clients found Try adjusting your search or filters" [ref=e299]:
+                  - generic [ref=e300]:
+                    - paragraph [ref=e301]: No clients found
+                    - paragraph [ref=e302]: Try adjusting your search or filters
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e17] [cursor=pointer]:
+    - img [ref=e18]
+  - alert [ref=e21]

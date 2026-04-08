@@ -403,10 +403,19 @@ export function SettingsFormV2() {
 
   return (
     <Tabs defaultValue="modonty" className="w-full">
-      <TabsList className="w-full justify-start gap-1 mb-4">
-        <TabsTrigger value="modonty" className="gap-2"><Building2 className="h-4 w-4" />Modonty</TabsTrigger>
-        <TabsTrigger value="seo-cache" className="gap-2"><RefreshCw className="h-4 w-4" />SEO Cache</TabsTrigger>
-        <TabsTrigger value="system" className="gap-2 ms-auto opacity-60 hover:opacity-100"><Shield className="h-3.5 w-3.5" />System</TabsTrigger>
+      <TabsList className="w-full justify-start gap-1 mb-4 flex-wrap h-auto">
+        <TabsTrigger value="modonty" className="gap-1.5"><Building2 className="h-3.5 w-3.5" />Modonty</TabsTrigger>
+        {SEO_PAGES.filter(p => p.key !== "home").map(({ key, name, color }) => {
+          const c = COLOR_MAP[color] || COLOR_MAP.blue;
+          const cacheInfo = getPageCacheInfo(settings, key);
+          return (
+            <TabsTrigger key={key} value={key} className="gap-1.5">
+              <div className={`h-1.5 w-1.5 rounded-full ${cacheInfo.hasCache ? c.dot : "bg-muted-foreground/30"}`} />
+              {name}
+            </TabsTrigger>
+          );
+        })}
+        <TabsTrigger value="system" className="gap-1.5 ms-auto opacity-60 hover:opacity-100"><Shield className="h-3.5 w-3.5" />System</TabsTrigger>
       </TabsList>
 
       {/* ═══════════════════════════════════════════════ */}
@@ -414,7 +423,7 @@ export function SettingsFormV2() {
       {/* Site identity, contact, address, social, etc.   */}
       {/* ═══════════════════════════════════════════════ */}
       <TabsContent value="modonty">
-        <Accordion type="multiple" defaultValue={["branding", "contact", "social", "tracking"]} className="space-y-2">
+        <Accordion type="multiple" defaultValue={["branding", "contact", "social", "tracking", "homepage-seo"]} className="space-y-2">
 
           {/* ── Branding & Images (blue) ── */}
           <AccordionItem value="branding" className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3">
@@ -423,6 +432,7 @@ export function SettingsFormV2() {
               <div>
                 <Label className="text-xs text-muted-foreground">Brand Description</Label>
                 <Textarea value={settings.brandDescription || ""} onChange={(e) => set("brandDescription", e.target.value)} className="mt-1 h-14" />
+                <p className="text-xs text-amber-500/70 mt-1">Used in JSON-LD Organization schema — not the page meta description. Meta descriptions are set in the page tabs above (Home, Clients, etc.).</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <ImageField label="Logo" value={settings.logoUrl || ""} onChange={(v) => set("logoUrl", v)} hint="Cloudinary: f_auto,q_auto,w_200,h_200,c_fit — min 112x112px" aspectRatio="square" />
@@ -510,6 +520,18 @@ export function SettingsFormV2() {
           </AccordionItem>
 
 
+          {/* ── Homepage SEO (orange) ── */}
+          <AccordionItem value="homepage-seo" className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3">
+            <AccordionTrigger className="py-2 text-xs font-medium text-orange-400 hover:no-underline">Homepage SEO</AccordionTrigger>
+            <AccordionContent className="space-y-2 pb-3">
+              <p className="text-xs text-muted-foreground/60">Meta title and description for the Modonty homepage — what appears in Google search results.</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="SEO Title" value={settings.modontySeoTitle || ""} onChange={(v) => set("modontySeoTitle", v)} placeholder="Home | Modonty" />
+                <Field label="SEO Description" value={settings.modontySeoDescription || ""} onChange={(v) => set("modontySeoDescription", v)} placeholder="Browse all content on Modonty..." />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
         </Accordion>
         <Button onClick={saveModonty} disabled={isSaving} className="mt-3">{isSaving ? "Saving..." : "Save Modonty Settings"}</Button>
       </TabsContent>
@@ -582,135 +604,68 @@ export function SettingsFormV2() {
       </TabsContent>
 
       {/* ═══════════════════════════════════════════════ */}
-      {/* TAB 4 — SEO Cache (Generate M/J)               */}
+      {/* TABS — Per-page SEO (one tab per listing page)  */}
       {/* ═══════════════════════════════════════════════ */}
-      <TabsContent value="seo-cache">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-xs text-muted-foreground">SEO Cache — Meta Tags + JSON-LD per listing page</p>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" disabled={isSaving} className="gap-2" onClick={async () => {
-              setIsSaving(true);
-              try {
-                const { regenerateAllEntitySeoCache } = await import("../actions/regenerate-all-seo");
-                const result = await regenerateAllEntitySeoCache();
-                alert(`تم توليد SEO للعناصر:\nالفئات: ${result.categories.successful}/${result.categories.total}\nالوسوم: ${result.tags.successful}/${result.tags.total}\nالصناعات: ${result.industries.successful}/${result.industries.total}`);
-              } catch (e) { console.error("Entity SEO gen failed:", e); }
-              setIsSaving(false);
-            }}>
-              <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
-              {isSaving ? "جاري التوليد..." : "توليد SEO العناصر"}
-            </Button>
-            <Button variant="outline" size="sm" disabled={isSaving} className="gap-2" onClick={async () => {
-              setIsSaving(true);
-              try {
-                const { regenerateAllListingCaches } = await import("@/lib/seo/listing-page-seo-generator");
-                await regenerateAllListingCaches();
-                window.location.reload();
-              } catch (e) { console.error("Generate All failed:", e); }
-              setIsSaving(false);
-            }}>
-              <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
-              {isSaving ? "Generating..." : "Generate All Listings"}
-            </Button>
-          </div>
-        </div>
+      {SEO_PAGES.filter(p => p.key !== "home").map(({ key, name, description, color, titleKey, descKey, jsonLdType }) => {
+        const c = COLOR_MAP[color] || COLOR_MAP.blue;
+        const cacheInfo = getPageCacheInfo(settings, key);
+        return (
+          <TabsContent key={key} value={key} className="space-y-4">
+            {/* Header */}
+            <div className={`rounded-lg border ${c.border} ${c.bg} px-4 py-3 flex items-center justify-between`}>
+              <div>
+                <p className={`text-sm font-semibold ${c.text}`}>{name} Page</p>
+                <p className="text-xs text-muted-foreground">{description} — {jsonLdType}</p>
+              </div>
+              <Badge variant="outline" className={cacheInfo.hasCache ? `${c.text} border-current/30 text-xs` : "text-muted-foreground text-xs"}>
+                {cacheInfo.hasCache ? `Cached ${cacheInfo.timeAgo}` : "Not cached yet"}
+              </Badge>
+            </div>
 
-        <Tabs defaultValue="home" orientation="vertical" className="flex gap-3">
-          {/* Sidebar */}
-          <TabsList className="flex-col h-auto items-stretch gap-1 w-52 shrink-0 bg-transparent p-0 sticky top-4 self-start">
-            {SEO_PAGES.map(({ key, name, color }) => {
-              const c = COLOR_MAP[color] || COLOR_MAP.blue;
-              const cacheInfo = getPageCacheInfo(settings, key);
-              return (
-                <TabsTrigger key={key} value={key} className={`justify-start gap-2 text-xs px-3 py-2 data-[state=active]:${c.bg} data-[state=active]:${c.border} data-[state=active]:border`}>
-                  <div className={`h-1.5 w-1.5 rounded-full ${cacheInfo.hasCache ? c.dot : "bg-muted-foreground/30"}`} />
-                  <span className="truncate">{name}</span>
-                  <span className={`ms-auto text-[10px] shrink-0 ${cacheInfo.hasCache ? "text-green-500" : "text-muted-foreground/50"}`}>{cacheInfo.timeAgo}</span>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+            {/* SEO Title + Description */}
+            {titleKey && descKey && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">SEO Title</Label>
+                  <Input value={val(settings, titleKey)} onChange={(e) => set(titleKey, e.target.value)} placeholder={`${name} | Modonty`} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">SEO Description</Label>
+                  <Input value={val(settings, descKey)} onChange={(e) => set(descKey, e.target.value)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} />
+                </div>
+              </div>
+            )}
 
-          {/* Content per page */}
-          <div className="flex-1 min-w-0">
-            {SEO_PAGES.map(({ key, name, description, color, titleKey, descKey, jsonLdType }) => {
-              const c = COLOR_MAP[color] || COLOR_MAP.blue;
-              const cacheInfo = getPageCacheInfo(settings, key);
-              return (
-                <TabsContent key={key} value={key} className="mt-0">
-                  <div className={`rounded-lg border ${c.border} ${c.bg} p-4 space-y-3`}>
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className={`text-sm font-medium ${c.text}`}>{name}</p>
-                        <p className="text-[10px] text-muted-foreground">{description} — {jsonLdType}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={cacheInfo.hasCache ? `${c.text} border-current/30` : "text-muted-foreground"}>
-                          {cacheInfo.hasCache ? `Cached ${cacheInfo.timeAgo}` : "Not generated"}
-                        </Badge>
-                        <Button variant="outline" size="sm" className="h-7 text-[10px]" disabled={isSaving} onClick={async () => {
-                          setIsSaving(true);
-                          try {
-                            const gen = await import("@/lib/seo/listing-page-seo-generator");
-                            const fnMap: Record<string, () => Promise<{ success: boolean }>> = {
-                              home: gen.regenerateHomePageCache,
-                              categories: gen.regenerateCategoriesListingCache,
-                              tags: gen.regenerateTagsListingCache,
-                              industries: gen.regenerateIndustriesListingCache,
-                              clients: gen.regenerateClientsListingCache,
-                              articles: gen.regenerateArticlesListingCache,
-                              trending: gen.regenerateTrendingPageCache,
-                            };
-                            if (fnMap[key]) await fnMap[key]();
-                            window.location.reload();
-                          } catch (e) { console.error(`Generate ${key} failed:`, e); }
-                          setIsSaving(false);
-                        }}>Generate</Button>
-                      </div>
-                    </div>
-
-                    {/* SEO Title + Description */}
-                    {titleKey && descKey && (
-                      <div className="grid grid-cols-2 gap-3">
-                        <Field label="SEO Title" value={val(settings, titleKey)} onChange={(v) => set(titleKey, v)} placeholder={`${name} | Modonty`} />
-                        <Field label="SEO Description" value={val(settings, descKey)} onChange={(v) => set(descKey, v)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} />
-                      </div>
-                    )}
-
-                    {/* Cache Preview */}
-                    {cacheInfo.hasCache && (
-                      <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="preview" className="border-none">
-                          <AccordionTrigger className="py-1 text-[10px] text-muted-foreground hover:no-underline">View cached data</AccordionTrigger>
-                          <AccordionContent>
-                            <div className="space-y-2">
-                              {cacheInfo.metaTags != null && (
-                                <div>
-                                  <p className="text-[10px] font-medium text-muted-foreground mb-1">Meta Tags</p>
-                                  <pre className="text-[10px] font-mono bg-background/50 rounded-md p-2 overflow-auto max-h-40 whitespace-pre-wrap">{String(JSON.stringify(cacheInfo.metaTags, null, 2))}</pre>
-                                </div>
-                              )}
-                              {cacheInfo.jsonLd != null && (
-                                <div>
-                                  <p className="text-[10px] font-medium text-muted-foreground mb-1">JSON-LD</p>
-                                  <pre className="text-[10px] font-mono bg-background/50 rounded-md p-2 overflow-auto max-h-40 whitespace-pre-wrap">{typeof cacheInfo.jsonLd === "string" ? (() => { try { return JSON.stringify(JSON.parse(cacheInfo.jsonLd as string), null, 2); } catch { return String(cacheInfo.jsonLd); } })() : String(JSON.stringify(cacheInfo.jsonLd, null, 2))}</pre>
-                                </div>
-                              )}
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    )}
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </div>
-        </Tabs>
-
-        <Button onClick={saveModonty} disabled={isSaving} className="mt-3">{isSaving ? "Saving..." : "Save Page SEO"}</Button>
-      </TabsContent>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <Button onClick={saveModonty} disabled={isSaving}>
+                {isSaving ? "Saving..." : `Save ${name} SEO`}
+              </Button>
+              <Button variant="outline" size="sm" disabled={isSaving} className="gap-2 ms-auto" onClick={async () => {
+                setIsSaving(true);
+                try {
+                  const gen = await import("@/lib/seo/listing-page-seo-generator");
+                  const fnMap: Record<string, () => Promise<{ success: boolean }>> = {
+                    home: gen.regenerateHomePageCache,
+                    categories: gen.regenerateCategoriesListingCache,
+                    tags: gen.regenerateTagsListingCache,
+                    industries: gen.regenerateIndustriesListingCache,
+                    clients: gen.regenerateClientsListingCache,
+                    articles: gen.regenerateArticlesListingCache,
+                    trending: gen.regenerateTrendingPageCache,
+                  };
+                  if (fnMap[key]) await fnMap[key]();
+                  window.location.reload();
+                } catch (e) { console.error(`Generate ${key} failed:`, e); }
+                setIsSaving(false);
+              }}>
+                <RefreshCw className={`h-3.5 w-3.5 ${isSaving ? "animate-spin" : ""}`} />
+                Regenerate Cache
+              </Button>
+            </div>
+          </TabsContent>
+        );
+      })}
     </Tabs>
   );
 }

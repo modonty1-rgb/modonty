@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import Image from "next/image";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,11 @@ import {
   BarChart2,
   Pencil,
   Eye,
-  Image,
+  ImageIcon,
+  FileText,
+  Truck,
+  CalendarClock,
+  SearchCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createOrganizationSEOConfigFull, organizationSEOConfig } from "../helpers/client-seo-config";
@@ -333,7 +338,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
     <div className="space-y-4">
       <div className="border rounded-lg">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[200px]" />{/* Tier */}<col className="w-[90px]" />{/* Status */}<col className="w-[90px]" />{/* Articles */}<col className="w-[70px]" />{/* Delivery */}<col className="w-[80px]" />{/* Expires */}<col className="w-[80px]" />{/* GBP */}<col className="w-[40px]" />{/* Analytics */}<col className="w-[40px]" />{/* SEO */}<col className="w-[130px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[80px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* Analytics */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -346,45 +351,55 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-muted/50 text-center"
                 onClick={() => handleSort("tier")}
               >
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                   Plan
                   {getSortIcon("tier")}
                 </div>
               </TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-center">Status</TableHead>
               <TableHead
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-muted/50 text-center px-2"
                 onClick={() => handleSort("articles")}
+                title="Articles"
               >
-                <div className="flex items-center">
-                  Articles
+                <div className="flex items-center justify-center gap-0.5">
+                  <FileText className="h-3.5 w-3.5 text-muted-foreground" />
                   {getSortIcon("articles")}
                 </div>
               </TableHead>
-              <TableHead>Delivery</TableHead>
+              <TableHead className="text-center px-2" title="Delivery rate">
+                <div className="flex justify-center">
+                  <Truck className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </TableHead>
               <TableHead
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-muted/50 text-center px-2"
                 onClick={() => handleSort("expires")}
+                title="Subscription expires"
               >
-                <div className="flex items-center">
-                  Expires
+                <div className="flex items-center justify-center gap-0.5">
+                  <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" />
                   {getSortIcon("expires")}
                 </div>
               </TableHead>
-              <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="Google Business Profile">
+              <TableHead className="text-center px-1" title="Google Business Profile">
+                <div className="flex justify-center">
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
-              <TableHead className="text-center px-1">
-                <div className="flex justify-center" title="Analytics">
+              <TableHead className="text-center px-1" title="Analytics">
+                <div className="flex justify-center">
                   <BarChart2 className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
-              <TableHead className="text-center">SEO</TableHead>
+              <TableHead className="text-center px-1" title="SEO Score">
+                <div className="flex justify-center">
+                  <SearchCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </TableHead>
               <TableHead className="text-right px-3">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -451,56 +466,94 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                       onClick={() => router.push(`/clients/${client.id}`)}
                     >
                     <TableCell>
-                      <div className="flex flex-col gap-0.5">
-                        <Link
-                          href={`/clients/${client.id}`}
-                          className="font-medium text-sm"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {client.name}
-                        </Link>
-                        {client.email && (
-                          <span className="text-xs text-muted-foreground block truncate max-w-[160px]">
-                            {client.email}
-                          </span>
-                        )}
+                      <div className="flex items-center gap-2.5">
+                        <div className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border">
+                          {client.logoMedia?.url ? (
+                            <Image
+                              src={client.logoMedia.url}
+                              alt={client.logoMedia.altText || client.name}
+                              fill
+                              className="object-cover"
+                              sizes="32px"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-xs font-bold text-muted-foreground">
+                              {client.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <Link
+                            href={`/clients/${client.id}`}
+                            className="font-medium text-sm truncate"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {client.name}
+                          </Link>
+                          {client.email && (
+                            <span className="text-xs text-muted-foreground block truncate max-w-[150px]">
+                              {client.email}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <span className="text-sm text-muted-foreground">{tierName}</span>
+                    <TableCell className="text-center">
+                      {(() => {
+                        const tier = client.subscriptionTier;
+                        const style = tier === "PREMIUM"
+                          ? "bg-purple-500/10 text-purple-400"
+                          : tier === "STANDARD"
+                            ? "bg-blue-500/10 text-blue-400"
+                            : "bg-muted text-muted-foreground";
+                        return (
+                          <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium", style)}>
+                            {tierName}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
-                    <TableCell>{getStatusBadge()}</TableCell>
-                    <TableCell>
-                      <span className="text-sm">{client._count.articles}</span>
+                    <TableCell className="text-center">{getStatusBadge()}</TableCell>
+                    <TableCell className="text-center px-2">
+                      <span className={cn("text-sm font-medium", client._count.articles === 0 ? "text-muted-foreground/50" : "text-foreground")}>
+                        {client._count.articles}
+                      </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-center px-2">
                       {delivery.promised > 0 ? (
-                        <span className={cn(
-                          "text-sm",
-                          isActive && isPaid && delivery.delivered === 0
-                            ? "text-destructive"
-                            : "text-muted-foreground"
-                        )}>
-                          {delivery.delivered}/{delivery.promised}
-                        </span>
+                        (() => {
+                          const ratio = delivery.delivered / delivery.promised;
+                          const color = ratio >= 0.75
+                            ? "text-emerald-500"
+                            : ratio >= 0.25
+                              ? "text-amber-500"
+                              : "text-red-500";
+                          return (
+                            <span className={cn("text-sm font-medium", color)}>
+                              {delivery.delivered}/{delivery.promised}
+                            </span>
+                          );
+                        })()
                       ) : (
-                        <span className="text-muted-foreground text-sm">-</span>
+                        <span className="text-muted-foreground/40 text-sm">—</span>
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-center px-2">
                       {daysRemaining !== null ? (
                         <span className={cn(
-                          "text-sm",
+                          "text-xs font-medium",
                           daysRemaining <= 0
                             ? "text-muted-foreground"
-                            : daysRemaining <= 30
-                              ? "text-amber-500"
-                              : "text-muted-foreground"
+                            : daysRemaining <= 14
+                              ? "text-red-500"
+                              : daysRemaining <= 30
+                                ? "text-amber-500"
+                                : "text-emerald-500"
                         )}>
-                          {daysRemaining > 0 ? `${daysRemaining} days` : "Expired"}
+                          {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}
                         </span>
                       ) : (
-                        <span className="text-muted-foreground text-xs">No subscription</span>
+                        <span className="text-muted-foreground/40 text-sm">—</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center px-1">
@@ -527,23 +580,28 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                     </TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       {seoScore ? (
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="w-[60px] bg-muted rounded-full h-2 overflow-hidden">
-                            <div
-                              className={cn(
-                                "h-full rounded-full",
-                                seoScore >= 80
-                                  ? "bg-green-500"
-                                  : seoScore >= 60
-                                    ? "bg-yellow-500"
-                                    : "bg-red-500"
-                              )}
-                              style={{ width: `${Math.max(0, Math.min(100, seoScore))}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground w-9 text-right">
-                            {seoScore}%
-                          </span>
+                        <div className="flex items-center justify-center">
+                          {(() => {
+                            const r = 11;
+                            const circ = 2 * Math.PI * r;
+                            const filled = (seoScore / 100) * circ;
+                            const color = seoScore >= 80 ? "#22c55e" : seoScore >= 60 ? "#eab308" : "#ef4444";
+                            return (
+                              <svg width="28" height="28" viewBox="0 0 28 28">
+                                <circle cx="14" cy="14" r={r} fill="none" stroke="currentColor" strokeWidth="2.5" className="text-muted" />
+                                <circle
+                                  cx="14" cy="14" r={r} fill="none"
+                                  stroke={color} strokeWidth="2.5"
+                                  strokeDasharray={`${filled} ${circ - filled}`}
+                                  strokeLinecap="round"
+                                  transform="rotate(-90 14 14)"
+                                />
+                                <text x="14" y="14" textAnchor="middle" dominantBaseline="central" fontSize="7" fontWeight="600" fill={color}>
+                                  {seoScore}%
+                                </text>
+                              </svg>
+                            );
+                          })()}
                         </div>
                       ) : (
                         <Button variant="outline" size="sm" asChild>
@@ -589,7 +647,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           }}
                           aria-label="Edit media"
                         >
-                          <Image className="h-3.5 w-3.5" />
+                          <ImageIcon className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           variant="ghost"

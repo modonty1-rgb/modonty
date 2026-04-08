@@ -25,6 +25,7 @@ export function ClientMediaModal({
   const { form, handleSave, loading, error, setError } = useClientMediaModal({
     clientId,
     initialData,
+    onSuccess: () => onOpenChange(false),
   });
 
   const handleClose = () => {
@@ -36,23 +37,12 @@ export function ClientMediaModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0">
-          <div className="flex-1">
-            <DialogTitle>Edit Media</DialogTitle>
-            <DialogDescription>
-              Update logo and hero image for this client
-            </DialogDescription>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={handleClose}
-            disabled={loading}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit Media</DialogTitle>
+          <DialogDescription>
+            Update logo and hero image for this client
+          </DialogDescription>
         </DialogHeader>
 
         {/* Error Display */}
@@ -78,6 +68,7 @@ export function ClientMediaModal({
             form={form as any}
             clientId={clientId}
             initialData={initialData}
+            onMediaChange={() => setError(null)}
           />
 
           <DialogFooter className="flex gap-2 justify-end pt-4">

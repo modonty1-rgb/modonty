@@ -1,0 +1,800 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+      - navigation:
+        - generic:
+          - link:
+            - /url: /
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /seo-overview
+            - img
+            - generic: SEO Overview
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: Content
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /articles
+                - img
+                - generic: Articles
+              - link:
+                - /url: /categories
+                - img
+                - generic: Categories
+              - link:
+                - /url: /tags
+                - img
+                - generic: Tags
+              - link:
+                - /url: /authors
+                - img
+                - generic: Authors
+              - link:
+                - /url: /industries
+                - img
+                - generic: Industries
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Modonty Pages
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Audience
+            - img
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: System
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /users
+                - img
+                - generic: Admins
+              - link:
+                - /url: /subscription-tiers
+                - img
+                - generic: Plans & Pricing
+              - link:
+                - /url: /export-data
+                - img
+                - generic: Export Data
+              - link:
+                - /url: /database
+                - img
+                - generic: Database
+              - link:
+                - /url: /settings
+                - img
+                - generic: Settings
+      - generic:
+        - link:
+          - /url: /guidelines
+          - img
+          - text: Guidelines
+        - generic:
+          - button:
+            - img
+          - link:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic: "?"
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - img
+              - generic:
+                - img
+                - generic: Settings
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: Modonty
+              - generic:
+                - link:
+                  - /url: /articles
+                  - button:
+                    - img
+                    - generic: Articles
+                - link:
+                  - /url: /clients
+                  - button:
+                    - img
+                    - generic: Clients
+                - link:
+                  - /url: /media
+                  - button:
+                    - img
+                    - generic: Media
+          - generic:
+            - link:
+              - /url: /contact-messages
+              - button:
+                - img
+            - button:
+              - generic:
+                - generic: M
+      - generic:
+        - generic: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic:
+          - button:
+            - img
+            - text: Send Note
+          - button:
+            - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=1]: Settings
+              - paragraph: Configure your site once — your team handles the rest
+            - button:
+              - img
+              - text: Integration Test
+          - generic:
+            - tablist:
+              - tab:
+                - img
+                - text: Modonty
+              - tab:
+                - img
+                - text: SEO Cache
+              - tab [selected]:
+                - img
+                - text: System
+            - tabpanel:
+              - generic:
+                - generic: Read Only — Press Apply to sync
+                - button:
+                  - img
+                  - text: Apply Defaults
+              - generic:
+                - paragraph: SEO Rules — industry consensus (Semrush, Ahrefs, Moz, X Docs)
+                - generic:
+                  - table:
+                    - rowgroup:
+                      - row:
+                        - cell: SEO Title Min
+                        - cell: "30"
+                        - cell:
+                          - link:
+                            - /url: https://www.semrush.com/blog/title-tag/
+                            - text: Semrush
+                      - row:
+                        - cell: SEO Title Max
+                        - cell: "60"
+                        - cell:
+                          - link:
+                            - /url: https://ahrefs.com/blog/title-tag-seo/
+                            - text: Semrush / Ahrefs
+                      - row:
+                        - cell: SEO Title Restrict
+                        - cell: "false"
+                        - cell:
+                          - link:
+                            - /url: https://yoast.com/what-is-a-title-tag/
+                            - text: Yoast pattern
+                      - row:
+                        - cell: SEO Desc Min
+                        - cell: "120"
+                        - cell:
+                          - link:
+                            - /url: https://www.semrush.com/blog/meta-description/
+                            - text: Semrush
+                      - row:
+                        - cell: SEO Desc Max
+                        - cell: "160"
+                        - cell:
+                          - link:
+                            - /url: https://moz.com/learn/seo/meta-description
+                            - text: Moz / Semrush
+                      - row:
+                        - cell: SEO Desc Restrict
+                        - cell: "false"
+                        - cell:
+                          - link:
+                            - /url: https://yoast.com/meta-descriptions/
+                            - text: Yoast pattern
+                      - row:
+                        - cell: X Title Max
+                        - cell: "70"
+                        - cell:
+                          - link:
+                            - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                            - text: X Docs
+                      - row:
+                        - cell: X Title Restrict
+                        - cell: "true"
+                        - cell: Soft warning
+                      - row:
+                        - cell: X Desc Max
+                        - cell: "200"
+                        - cell:
+                          - link:
+                            - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                            - text: X Docs
+                      - row:
+                        - cell: X Desc Restrict
+                        - cell: "true"
+                        - cell: Soft warning
+                      - row:
+                        - cell: OG Title Max
+                        - cell: "60"
+                        - cell:
+                          - link:
+                            - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                            - text: Meta
+                      - row:
+                        - cell: OG Title Restrict
+                        - cell: "false"
+                        - cell: Soft warning
+                      - row:
+                        - cell: OG Desc Max
+                        - cell: "200"
+                        - cell:
+                          - link:
+                            - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                            - text: Meta
+                      - row:
+                        - cell: OG Desc Restrict
+                        - cell: "false"
+                        - cell: Soft warning
+              - generic:
+                - paragraph: Business Defaults — stable for 6+ months
+                - generic:
+                  - table:
+                    - rowgroup:
+                      - row:
+                        - cell: Site URL
+                        - cell: —
+                        - cell: Business
+                      - row:
+                        - cell: Site Name
+                        - cell: —
+                        - cell: Business
+                      - row:
+                        - cell: Default Author
+                        - cell: —
+                        - cell: Business
+                      - row:
+                        - cell: Content Language
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+                            - text: ISO 639-1
+                      - row:
+                        - cell: Country
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+                            - text: ISO 3166-1
+                      - row:
+                        - cell: Area Served
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+                            - text: ISO 3166-1
+                      - row:
+                        - cell: Contact Type
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://schema.org/contactType
+                            - text: Schema.org
+                      - row:
+                        - cell: Available Languages
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+                            - text: ISO 639-1
+                      - row:
+                        - cell: Search URL
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://schema.org/SearchAction
+                            - text: Schema.org
+              - generic:
+                - paragraph: Technical Defaults — industry standards, never change
+                - generic:
+                  - table:
+                    - rowgroup:
+                      - row:
+                        - cell: Page Charset
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://html.spec.whatwg.org/multipage/semantics.html#charset
+                            - text: WHATWG
+                      - row:
+                        - cell: Robots Directive
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+                            - text: Google
+                      - row:
+                        - cell: Googlebot Directive
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+                            - text: Google
+                      - row:
+                        - cell: Open Graph Type
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://ogp.me/
+                            - text: OGP
+                      - row:
+                        - cell: Open Graph Locale
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://ogp.me/
+                            - text: OGP
+                      - row:
+                        - cell: OG Determiner
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://ogp.me/
+                            - text: OGP
+                      - row:
+                        - cell: Twitter Card Type
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developer.x.com/en/docs/twitter-for-websites/cards/overview/markup
+                            - text: X Docs
+                      - row:
+                        - cell: OG Image Type
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                            - text: Meta
+                      - row:
+                        - cell: OG Image Width
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                            - text: Meta
+                      - row:
+                        - cell: OG Image Height
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.facebook.com/docs/sharing/webmasters/
+                            - text: Meta
+                      - row:
+                        - cell: Hreflang
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/specialty/international/localized-versions
+                            - text: Google
+                      - row:
+                        - cell: No Translate
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/special-tags
+                            - text: Google
+                      - row:
+                        - cell: Referrer Policy
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+                            - text: MDN
+                      - row:
+                        - cell: Sitemap Priority
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                            - text: Google
+                      - row:
+                        - cell: Sitemap Frequency
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                            - text: Google
+                      - row:
+                        - cell: Article Sitemap Priority
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                            - text: Google
+                      - row:
+                        - cell: Article Sitemap Freq
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+                            - text: Google
+                      - row:
+                        - cell: License
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://creativecommons.org/licenses/by/4.0/
+                            - text: CC
+                      - row:
+                        - cell: Free Access
+                        - cell: "true"
+                        - cell:
+                          - link:
+                            - /url: https://schema.org/isAccessibleForFree
+                            - text: Schema.org
+                      - row:
+                        - cell: Default Pathname
+                        - cell: —
+                        - cell:
+                          - link:
+                            - /url: https://nextjs.org/docs/app/api-reference/functions/generate-metadata
+                            - text: Next.js
+                      - row:
+                        - cell: Truncation Suffix
+                        - cell: ...
+                        - cell: UX
+  - list
+  - button "Open Next.js Dev Tools" [ref=e17] [cursor=pointer]:
+    - img [ref=e18]
+  - alert
+  - dialog "Integration Test" [active] [ref=e551]:
+    - generic [ref=e552]:
+      - heading "Integration Test" [level=2] [ref=e553]:
+        - img [ref=e554]
+        - text: Integration Test
+      - paragraph [ref=e558]: CREATE → UPDATE → DELETE → RE-CREATE using real server actions
+    - generic [ref=e603]:
+      - generic [ref=e604]:
+        - img [ref=e988]
+        - generic [ref=e607]: Complete
+      - generic [ref=e608]:
+        - generic [ref=e609]: 1m 8s
+        - generic [ref=e610]: 7/7
+    - generic [ref=e627]:
+      - generic [ref=e628]:
+        - generic [ref=e629]:
+          - heading "Categories" [level=3] [ref=e630]
+          - generic [ref=e632]: 20 passed
+        - generic [ref=e633]:
+          - generic [ref=e634]:
+            - img [ref=e635]
+            - generic [ref=e638]: validate
+            - generic [ref=e639]: createCategory(empty name) → should fail
+          - generic [ref=e640]:
+            - img [ref=e641]
+            - generic [ref=e644]: validate
+            - generic [ref=e645]: createCategory(duplicate slug) → should fail
+          - generic [ref=e646]:
+            - img [ref=e647]
+            - generic [ref=e650]: create
+            - generic [ref=e651]: createCategory(parent)
+          - generic [ref=e652]:
+            - img [ref=e653]
+            - generic [ref=e656]: create
+            - generic [ref=e657]: createCategory(child)
+          - generic [ref=e658]:
+            - img [ref=e659]
+            - generic [ref=e662]: verify
+            - generic [ref=e663]: verify parent name = 'تسويق رقمي تست'
+          - generic [ref=e664]:
+            - img [ref=e665]
+            - generic [ref=e668]: verify
+            - generic [ref=e669]: verify parent slug = 'test-parent-cat'
+          - generic [ref=e670]:
+            - img [ref=e671]
+            - generic [ref=e674]: verify
+            - generic [ref=e675]: verify parent seoTitle saved
+          - generic [ref=e676]:
+            - img [ref=e677]
+            - generic [ref=e680]: update
+            - generic [ref=e681]: updateCategory(parent name → محدث)
+          - generic [ref=e682]:
+            - img [ref=e683]
+            - generic [ref=e686]: update
+            - generic [ref=e687]: updateCategory(child → set parentId)
+          - generic [ref=e688]:
+            - img [ref=e689]
+            - generic [ref=e692]: verify
+            - generic [ref=e693]: verify updated name = 'تسويق رقمي محدث'
+          - generic [ref=e694]:
+            - img [ref=e695]
+            - generic [ref=e698]: verify
+            - generic [ref=e699]: verify child.parentId = parent.id
+          - generic [ref=e700]:
+            - img [ref=e701]
+            - generic [ref=e704]: constraint
+            - generic [ref=e705]: deleteCategory(parent with child) → should fail
+          - generic [ref=e706]:
+            - img [ref=e707]
+            - generic [ref=e710]: delete
+            - generic [ref=e711]: deleteCategory(child)
+          - generic [ref=e712]:
+            - img [ref=e713]
+            - generic [ref=e716]: delete
+            - generic [ref=e717]: deleteCategory(parent after child removed)
+          - generic [ref=e718]:
+            - img [ref=e719]
+            - generic [ref=e722]: verify
+            - generic [ref=e723]: verify parent deleted from DB
+          - generic [ref=e724]:
+            - img [ref=e725]
+            - generic [ref=e728]: re-create
+            - generic [ref=e729]: re-create("التسويق الرقمي")
+          - generic [ref=e730]:
+            - img [ref=e731]
+            - generic [ref=e734]: re-create
+            - generic [ref=e735]: re-create("التجارة الإلكترونية")
+          - generic [ref=e736]:
+            - img [ref=e737]
+            - generic [ref=e740]: re-create
+            - generic [ref=e741]: re-create("التقنية والذكاء الاصطناعي")
+          - generic [ref=e742]:
+            - img [ref=e743]
+            - generic [ref=e746]: re-create
+            - generic [ref=e747]: re-create("SEO تحسين محركات البحث")
+          - generic [ref=e748]:
+            - img [ref=e749]
+            - generic [ref=e752]: integrity
+            - generic [ref=e753]: "integrity: seo-arabic.parentId → digital-marketing"
+      - generic [ref=e754]:
+        - generic [ref=e755]:
+          - heading "Tags" [level=3] [ref=e756]
+          - generic [ref=e758]: 14 passed
+        - generic [ref=e759]:
+          - generic [ref=e760]:
+            - img [ref=e761]
+            - generic [ref=e764]: validate
+            - generic [ref=e765]: createTag(empty name) → should fail
+          - generic [ref=e766]:
+            - img [ref=e767]
+            - generic [ref=e770]: create
+            - generic [ref=e771]: createTag('تاج تست')
+          - generic [ref=e772]:
+            - img [ref=e773]
+            - generic [ref=e776]: verify
+            - generic [ref=e777]: verify tag name
+          - generic [ref=e778]:
+            - img [ref=e779]
+            - generic [ref=e782]: verify
+            - generic [ref=e783]: verify tag seoTitle
+          - generic [ref=e784]:
+            - img [ref=e785]
+            - generic [ref=e788]: update
+            - generic [ref=e789]: updateTag(name → 'تاج محدث')
+          - generic [ref=e790]:
+            - img [ref=e791]
+            - generic [ref=e794]: verify
+            - generic [ref=e795]: verify updated name
+          - generic [ref=e796]:
+            - img [ref=e797]
+            - generic [ref=e800]: verify
+            - generic [ref=e801]: verify updated description
+          - generic [ref=e802]:
+            - img [ref=e803]
+            - generic [ref=e806]: delete
+            - generic [ref=e807]: deleteTag('test-tag-1')
+          - generic [ref=e808]:
+            - img [ref=e809]
+            - generic [ref=e812]: verify
+            - generic [ref=e813]: verify tag deleted from DB
+          - generic [ref=e814]:
+            - img [ref=e815]
+            - generic [ref=e818]: re-create
+            - generic [ref=e819]: re-create("SEO")
+          - generic [ref=e820]:
+            - img [ref=e821]
+            - generic [ref=e824]: re-create
+            - generic [ref=e825]: re-create("ذكاء اصطناعي")
+          - generic [ref=e826]:
+            - img [ref=e827]
+            - generic [ref=e830]: re-create
+            - generic [ref=e831]: re-create("تسويق رقمي")
+          - generic [ref=e832]:
+            - img [ref=e833]
+            - generic [ref=e836]: re-create
+            - generic [ref=e837]: re-create("تجارة إلكترونية")
+          - generic [ref=e838]:
+            - img [ref=e839]
+            - generic [ref=e842]: re-create
+            - generic [ref=e843]: re-create("رؤية 2030")
+      - generic [ref=e850]:
+        - generic [ref=e851]:
+          - heading "Industries" [level=3] [ref=e852]
+          - generic [ref=e854]: 12 passed
+        - generic [ref=e855]:
+          - generic [ref=e856]:
+            - img [ref=e857]
+            - generic [ref=e860]: validate
+            - generic [ref=e861]: createIndustry(empty name) → should fail
+          - generic [ref=e862]:
+            - img [ref=e863]
+            - generic [ref=e866]: create
+            - generic [ref=e867]: createIndustry('صناعة تست')
+          - generic [ref=e868]:
+            - img [ref=e869]
+            - generic [ref=e872]: verify
+            - generic [ref=e873]: verify industry name
+          - generic [ref=e874]:
+            - img [ref=e875]
+            - generic [ref=e878]: update
+            - generic [ref=e879]: updateIndustry(name → 'صناعة محدثة')
+          - generic [ref=e880]:
+            - img [ref=e881]
+            - generic [ref=e884]: verify
+            - generic [ref=e885]: verify updated name
+          - generic [ref=e886]:
+            - img [ref=e887]
+            - generic [ref=e890]: constraint
+            - generic [ref=e891]: deleteIndustry(has client) → should fail
+          - generic [ref=e892]:
+            - img [ref=e893]
+            - generic [ref=e896]: delete
+            - generic [ref=e897]: deleteIndustry(after client removed)
+          - generic [ref=e898]:
+            - img [ref=e899]
+            - generic [ref=e902]: verify
+            - generic [ref=e903]: verify industry deleted
+          - generic [ref=e904]:
+            - img [ref=e905]
+            - generic [ref=e908]: re-create
+            - generic [ref=e909]: re-create("التجارة الإلكترونية")
+          - generic [ref=e910]:
+            - img [ref=e911]
+            - generic [ref=e914]: re-create
+            - generic [ref=e915]: re-create("الرعاية الصحية")
+          - generic [ref=e916]:
+            - img [ref=e917]
+            - generic [ref=e920]: re-create
+            - generic [ref=e921]: re-create("التعليم والتدريب")
+          - generic [ref=e922]:
+            - img [ref=e923]
+            - generic [ref=e926]: re-create
+            - generic [ref=e927]: re-create("التقنية والذكاء الاصطناعي")
+      - generic [ref=e928]:
+        - generic [ref=e929]:
+          - heading "Clients" [level=3] [ref=e930]
+          - generic [ref=e931]:
+            - generic [ref=e932]: 1 passed
+            - generic [ref=e933]: 4 failed
+        - generic [ref=e934]:
+          - generic [ref=e935]:
+            - img [ref=e936]
+            - generic [ref=e939]: validate
+            - generic [ref=e940]: createClient(empty name) → should fail
+          - generic [ref=e941]:
+            - img [ref=e942]
+            - generic [ref=e946]: create
+            - generic [ref=e947]: createClient('عميل تست نوفا')
+            - generic [ref=e948]: "Tier config not found for tier: PRO"
+          - generic [ref=e949]:
+            - img [ref=e950]
+            - generic [ref=e954]: re-create
+            - generic [ref=e955]: re-create("متجر نوفا للإلكترونيات")
+            - generic [ref=e956]: "Tier config not found for tier: PRO"
+          - generic [ref=e957]:
+            - img [ref=e958]
+            - generic [ref=e962]: re-create
+            - generic [ref=e963]: re-create("عيادات بلسم الطبية")
+            - generic [ref=e964]: "Tier config not found for tier: STANDARD"
+          - generic [ref=e965]:
+            - img [ref=e966]
+            - generic [ref=e970]: integrity
+            - generic [ref=e971]: "integrity: nova → ecommerce industry"
+            - generic [ref=e972]: "industryId: undefined"
+      - generic [ref=e973]:
+        - generic [ref=e974]:
+          - heading "Articles" [level=3] [ref=e975]
+          - generic [ref=e976]:
+            - generic [ref=e977]: 0 passed
+            - generic [ref=e978]: 1 failed
+        - generic [ref=e980]:
+          - img [ref=e981]
+          - generic [ref=e985]: create
+          - generic [ref=e986]: findClient
+          - generic [ref=e987]: Run Clients first
+      - generic [ref=e991]:
+        - generic [ref=e992]:
+          - heading "FAQs" [level=3] [ref=e993]
+          - generic [ref=e995]: 11 passed
+        - generic [ref=e996]:
+          - generic [ref=e997]:
+            - img [ref=e998]
+            - generic [ref=e1001]: validate
+            - generic [ref=e1002]: createFAQ(empty question) → should fail
+          - generic [ref=e1003]:
+            - img [ref=e1004]
+            - generic [ref=e1007]: create
+            - generic [ref=e1008]: createFAQ('سؤال تست')
+          - generic [ref=e1009]:
+            - img [ref=e1010]
+            - generic [ref=e1013]: verify
+            - generic [ref=e1014]: verify question
+          - generic [ref=e1015]:
+            - img [ref=e1016]
+            - generic [ref=e1019]: verify
+            - generic [ref=e1020]: verify isActive = true
+          - generic [ref=e1021]:
+            - img [ref=e1022]
+            - generic [ref=e1025]: update
+            - generic [ref=e1026]: updateFAQ(question → 'سؤال محدث؟')
+          - generic [ref=e1027]:
+            - img [ref=e1028]
+            - generic [ref=e1031]: verify
+            - generic [ref=e1032]: verify updated question
+          - generic [ref=e1033]:
+            - img [ref=e1034]
+            - generic [ref=e1037]: delete
+            - generic [ref=e1038]: deleteFAQ
+          - generic [ref=e1039]:
+            - img [ref=e1040]
+            - generic [ref=e1043]: verify
+            - generic [ref=e1044]: verify FAQ deleted
+          - generic [ref=e1045]:
+            - img [ref=e1046]
+            - generic [ref=e1049]: re-create
+            - generic [ref=e1050]: re-create("ما هي خدمات مدونتي؟...")
+          - generic [ref=e1051]:
+            - img [ref=e1052]
+            - generic [ref=e1055]: re-create
+            - generic [ref=e1056]: re-create("كم تكلفة خدمات SEO؟...")
+          - generic [ref=e1057]:
+            - img [ref=e1058]
+            - generic [ref=e1061]: re-create
+            - generic [ref=e1062]: re-create("متى تظهر نتائج SEO؟...")
+      - generic [ref=e1063]:
+        - generic [ref=e1064]:
+          - heading "Interactions" [level=3] [ref=e1065]
+          - generic [ref=e1067]: 0 passed
+        - generic [ref=e1069]:
+          - img [ref=e1070]
+          - generic [ref=e1072]: validate
+          - generic [ref=e1073]: prerequisites (run Articles + Clients first)
+          - generic [ref=e1074]: No articles or clients found
+    - generic [ref=e1075]:
+      - generic [ref=e1076]:
+        - generic [ref=e1077]:
+          - generic [ref=e1078]: 58 passed
+          - generic [ref=e1079]: 5 failed
+        - generic [ref=e1080]:
+          - button "Run Again" [ref=e1081] [cursor=pointer]
+          - button "Done" [ref=e1082] [cursor=pointer]
+      - generic [ref=e1083]: "Log: logs/integration-test/test-2026-04-08T14-16-03.log"
+    - button "Close" [ref=e589] [cursor=pointer]:
+      - img [ref=e590]
+      - generic [ref=e593]: Close

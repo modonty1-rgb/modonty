@@ -170,11 +170,7 @@ export function useCloudinaryUpload({
         )
       );
 
-      toast({
-        title: messages.success.updated,
-        description: "File uploaded to Cloudinary with SEO-friendly filename.",
-        variant: "default",
-      });
+      // No toast here — the final "Media Saved" toast in use-upload-zone handles user feedback
     } catch (error) {
       const errorMessage =
         error instanceof Error

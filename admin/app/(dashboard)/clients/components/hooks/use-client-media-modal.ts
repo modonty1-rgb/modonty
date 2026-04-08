@@ -5,19 +5,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
-import { updateClient } from "../../actions/clients-actions";
-import { clientFormSchema, clientMediaSchema, type ClientFormSchemaType, type ClientMediaSchemaType } from "../../helpers/client-form-schema";
-import { mapInitialDataToFormData } from "../../helpers/map-initial-data-to-form-data";
-import type { ClientWithRelations, ClientFormData } from "@/lib/types";
+import { updateClientMedia } from "../../actions/clients-actions";
+import { clientMediaSchema, type ClientMediaSchemaType } from "../../helpers/client-form-schema";
+import type { ClientWithRelations } from "@/lib/types";
 
 interface UseClientMediaModalOptions {
   clientId: string;
   initialData?: Partial<ClientWithRelations>;
+  onSuccess?: () => void;
 }
 
 export function useClientMediaModal({
   clientId,
   initialData,
+  onSuccess,
 }: UseClientMediaModalOptions) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -40,13 +41,10 @@ export function useClientMediaModal({
       setError(null);
 
       try {
-        // Prepare form data for updateClient (only media fields)
-        const submitData: Partial<ClientFormData> = {
+        const result = await updateClientMedia(clientId, {
           logoMediaId: data.logoMediaId,
           heroImageMediaId: data.heroImageMediaId,
-        } as ClientFormData;
-
-        const result = await updateClient(clientId, submitData as ClientFormData);
+        });
 
         if (result.success) {
           toast({
@@ -54,8 +52,7 @@ export function useClientMediaModal({
             description: "Media updated successfully.",
           });
           setLoading(false);
-          // Return success flag for modal to close
-          return { success: true };
+          onSuccess?.();
         } else {
           setError(result.error || "Failed to save media. Please try again.");
           setLoading(false);

@@ -1,0 +1,237 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.22.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e106]:
+        - generic [ref=e107]:
+          - navigation "Breadcrumb" [ref=e109]:
+            - link "Go to dashboard" [ref=e110] [cursor=pointer]:
+              - /url: /
+              - img [ref=e111]
+            - generic [ref=e114]:
+              - img [ref=e115]
+              - generic [ref=e117]: Clients
+          - navigation "Main navigation" [ref=e119]:
+            - link "Modonty Modonty" [ref=e120] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e122]
+              - generic [ref=e123]: Modonty
+            - generic [ref=e125]:
+              - link "Articles" [ref=e126] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e127]:
+                  - img
+                  - generic [ref=e128]: Articles
+              - link "Clients" [ref=e129] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e130]:
+                  - img
+                  - generic [ref=e131]: Clients
+              - link "Media" [ref=e132] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e133]:
+                  - img
+                  - generic [ref=e134]: Media
+          - generic [ref=e135]:
+            - link "1" [ref=e136] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e137]:
+                - img
+                - generic [ref=e138]: "1"
+            - button "M" [ref=e139] [cursor=pointer]:
+              - generic [ref=e141]: M
+      - generic [ref=e89]:
+        - generic [ref=e90]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e91]:
+          - button "Send Note" [ref=e92] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e93] [cursor=pointer]:
+            - img
+      - main [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e142]:
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - heading "Clients (2)" [level=1] [ref=e145]:
+                  - text: Clients
+                  - generic [ref=e146]: (2)
+                - generic [ref=e147]:
+                  - generic [ref=e148]: 2 total
+                  - generic [ref=e149]: 17% delivery
+                  - generic [ref=e150]: 70% SEO
+              - generic [ref=e151]:
+                - button "Filters" [ref=e152] [cursor=pointer]:
+                  - img
+                  - text: Filters
+                - link "New Client" [ref=e153] [cursor=pointer]:
+                  - /url: /clients/new
+                  - button "New Client" [ref=e154]:
+                    - img
+                    - text: New Client
+            - generic [ref=e156]:
+              - img
+              - textbox "Search clients..." [ref=e157]
+          - table [ref=e161]:
+            - rowgroup [ref=e173]:
+              - row "Name Plan Status Articles Delivery Expires SEO Actions" [ref=e174]:
+                - columnheader "Name" [ref=e175] [cursor=pointer]:
+                  - generic [ref=e176]:
+                    - text: Name
+                    - img [ref=e177]
+                - columnheader "Plan" [ref=e180] [cursor=pointer]:
+                  - generic [ref=e181]:
+                    - text: Plan
+                    - img [ref=e182]
+                - columnheader "Status" [ref=e185]
+                - columnheader "Articles" [ref=e186] [cursor=pointer]:
+                  - generic [ref=e187]: Articles
+                - columnheader "Delivery" [ref=e190]
+                - columnheader "Expires" [ref=e191] [cursor=pointer]:
+                  - generic [ref=e192]:
+                    - text: Expires
+                    - img [ref=e193]
+                - columnheader [ref=e196]:
+                  - generic "Google Business Profile" [ref=e197]:
+                    - img [ref=e198]
+                - columnheader [ref=e201]:
+                  - generic "Analytics" [ref=e202]:
+                    - img [ref=e203]
+                - columnheader "SEO" [ref=e204]
+                - columnheader "Actions" [ref=e205]
+            - rowgroup [ref=e206]:
+              - row "عيادات بلسم الطبية info@balsam-medical.sa Standard Active 0 0/4 No subscription 30% Edit client SEO settings Edit media View client details" [ref=e207] [cursor=pointer]:
+                - cell "عيادات بلسم الطبية info@balsam-medical.sa" [ref=e208]:
+                  - generic [ref=e209]:
+                    - link "عيادات بلسم الطبية" [ref=e210]:
+                      - /url: /clients/69d6665792f34b725bbddecf
+                    - generic [ref=e211]: info@balsam-medical.sa
+                - cell "Standard" [ref=e212]
+                - cell "Active" [ref=e213]
+                - cell "0" [ref=e214]
+                - cell "0/4" [ref=e215]:
+                  - generic [ref=e216]: 0/4
+                - cell "No subscription" [ref=e217]
+                - cell [ref=e218]:
+                  - generic "Business profile not connected" [ref=e219]:
+                    - img [ref=e220]
+                - cell [ref=e223]:
+                  - generic "Analytics disabled" [ref=e224]:
+                    - img [ref=e225]
+                - cell "30%" [ref=e226]:
+                  - generic [ref=e230]: 30%
+                - cell "Edit client SEO settings Edit media View client details" [ref=e231]:
+                  - generic [ref=e232]:
+                    - link "Edit client" [ref=e233]:
+                      - /url: /clients/69d6665792f34b725bbddecf/edit
+                      - img
+                    - link "SEO settings" [ref=e234]:
+                      - /url: /clients/69d6665792f34b725bbddecf/seo
+                      - generic [ref=e235]: S
+                    - button "Edit media" [ref=e236]:
+                      - img
+                    - link "View client details" [ref=e237]:
+                      - /url: /clients/69d6665792f34b725bbddecf
+                      - img
+              - row "متجر نوفا للإلكترونيات info@nova-electronics.sa Pro Active 2 2/8 No subscription 30% Edit client SEO settings Edit media View client details" [ref=e238] [cursor=pointer]:
+                - cell "متجر نوفا للإلكترونيات info@nova-electronics.sa" [ref=e239]:
+                  - generic [ref=e240]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e241]:
+                      - /url: /clients/69d6665592f34b725bbddece
+                    - generic [ref=e242]: info@nova-electronics.sa
+                - cell "Pro" [ref=e243]
+                - cell "Active" [ref=e244]
+                - cell "2" [ref=e245]
+                - cell "2/8" [ref=e246]:
+                  - generic [ref=e247]: 2/8
+                - cell "No subscription" [ref=e248]
+                - cell [ref=e249]:
+                  - generic "Business profile not connected" [ref=e250]:
+                    - img [ref=e251]
+                - cell [ref=e254]:
+                  - generic "Analytics disabled" [ref=e255]:
+                    - img [ref=e256]
+                - cell "30%" [ref=e257]:
+                  - generic [ref=e261]: 30%
+                - cell "Edit client SEO settings Edit media View client details" [ref=e262]:
+                  - generic [ref=e263]:
+                    - link "Edit client" [ref=e264]:
+                      - /url: /clients/69d6665592f34b725bbddece/edit
+                      - img
+                    - link "SEO settings" [ref=e265]:
+                      - /url: /clients/69d6665592f34b725bbddece/seo
+                      - generic [ref=e266]: S
+                    - button "Edit media" [ref=e267]:
+                      - img
+                    - link "View client details" [ref=e268]:
+                      - /url: /clients/69d6665592f34b725bbddece
+                      - img
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e105]

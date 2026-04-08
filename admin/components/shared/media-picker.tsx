@@ -112,12 +112,27 @@ export function MediaPicker({
   const isValidUrl = imageUrl !== null;
   const isDisabled = disabled || !clientId;
 
+  // Recommended image sizes for branding
+  // Logo: 160×160px (circular) - used in headers and favicons
+  // Hero Image: 1200×630px (OG image) - used in social shares and meta tags
+  const isLogo = label?.toLowerCase().includes("logo");
+  const imageHeight = isLogo ? "h-32" : "h-40"; // Logo: 128px | Hero: 160px
+
   return (
     <div className="space-y-2">
       {label && (
         <Label>
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
+          {isLogo ? (
+            <span className="text-[10px] text-muted-foreground ml-2">
+              (Recommended: 160×160px circular)
+            </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground ml-2">
+              (Recommended: 1200×630px or 1200×400px)
+            </span>
+          )}
         </Label>
       )}
 
@@ -130,8 +145,8 @@ export function MediaPicker({
         </div>
       ) : value ? (
         <div className="space-y-2">
-          <div className="relative border rounded-md overflow-hidden">
-            <div className="aspect-video relative bg-muted">
+          <div className={`relative border overflow-hidden ${isLogo ? "rounded-full h-32 w-32" : "rounded-md"}`}>
+            <div className={`${imageHeight} relative bg-muted flex items-center justify-center`}>
               {isValidUrl && imageUrl ? (
                 <>
                   <NextImage

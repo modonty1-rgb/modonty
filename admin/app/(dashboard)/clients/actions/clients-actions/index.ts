@@ -9,4 +9,5 @@ export { getClientArticles } from "./get-client-articles";
 export { getClientAnalytics } from "./get-client-analytics";
 export { getClientMedia } from "./get-client-media";
 export { generateClientSEO } from "./generate-client-seo";
+export { updateClientMedia } from "./update-client-media";
 

@@ -1,0 +1,215 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - generic [ref=e71]:
+          - button "System" [expanded] [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]:
+              - img [ref=e74]
+              - generic [ref=e77]: System
+            - img [ref=e78]
+          - generic [ref=e81]:
+            - link "Admins" [ref=e82] [cursor=pointer]:
+              - /url: /users
+              - img [ref=e83]
+              - generic [ref=e88]: Admins
+            - link "Plans & Pricing" [ref=e89] [cursor=pointer]:
+              - /url: /subscription-tiers
+              - img [ref=e90]
+              - generic [ref=e92]: Plans & Pricing
+            - link "Export Data" [ref=e93] [cursor=pointer]:
+              - /url: /export-data
+              - img [ref=e94]
+              - generic [ref=e97]: Export Data
+            - link "Database" [ref=e98] [cursor=pointer]:
+              - /url: /database
+              - img [ref=e99]
+              - generic [ref=e103]: Database
+            - link "Settings" [ref=e104] [cursor=pointer]:
+              - /url: /settings
+              - img [ref=e105]
+              - generic [ref=e108]: Settings
+      - generic [ref=e109]:
+        - link "Guidelines" [ref=e110] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e111]
+          - text: Guidelines
+        - generic [ref=e113]:
+          - button "Switch to light mode" [ref=e114] [cursor=pointer]:
+            - img
+          - link "v0.22.0 ?" [ref=e115] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.22.0
+            - generic [ref=e116]: "?"
+    - generic [ref=e117]:
+      - banner [ref=e118]:
+        - generic [ref=e119]:
+          - navigation "Breadcrumb" [ref=e121]:
+            - link "Go to dashboard" [ref=e122] [cursor=pointer]:
+              - /url: /
+              - img [ref=e123]
+            - generic [ref=e126]:
+              - img [ref=e127]
+              - generic [ref=e129]: Settings
+          - navigation "Main navigation" [ref=e131]:
+            - link "Modonty Modonty" [ref=e132] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e134]
+              - generic [ref=e135]: Modonty
+            - generic [ref=e137]:
+              - link "Articles" [ref=e138] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e139]:
+                  - img
+                  - generic [ref=e140]: Articles
+              - link "Clients" [ref=e141] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e142]:
+                  - img
+                  - generic [ref=e143]: Clients
+              - link "Media" [ref=e144] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e145]:
+                  - img
+                  - generic [ref=e146]: Media
+          - generic [ref=e147]:
+            - link "1" [ref=e167] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e168]:
+                - img
+                - generic [ref=e169]: "1"
+            - button "M" [ref=e150] [cursor=pointer]:
+              - generic [ref=e152]: M
+      - generic [ref=e153]:
+        - generic [ref=e154]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e155]:
+          - button "Send Note" [ref=e156] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e157] [cursor=pointer]:
+            - img
+      - main [ref=e158]:
+        - generic [ref=e159]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - heading "Settings" [level=1] [ref=e162]
+              - paragraph [ref=e163]: Configure your site once — your team handles the rest
+            - button "Integration Test" [ref=e164] [cursor=pointer]:
+              - img
+              - text: Integration Test
+          - generic [ref=e170]:
+            - tablist [ref=e171]:
+              - tab "Modonty" [ref=e172] [cursor=pointer]:
+                - img [ref=e173]
+                - text: Modonty
+              - tab "SEO Cache" [active] [selected] [ref=e177] [cursor=pointer]:
+                - img [ref=e178]
+                - text: SEO Cache
+              - tab "System" [ref=e183] [cursor=pointer]:
+                - img [ref=e184]
+                - text: System
+            - tabpanel "SEO Cache" [ref=e305]:
+              - generic [ref=e306]:
+                - paragraph [ref=e307]: SEO Cache — Meta Tags + JSON-LD per listing page
+                - generic [ref=e308]:
+                  - button "توليد SEO العناصر" [ref=e309] [cursor=pointer]:
+                    - img
+                    - text: توليد SEO العناصر
+                  - button "Generate All Listings" [ref=e310] [cursor=pointer]:
+                    - img
+                    - text: Generate All Listings
+              - generic [ref=e311]:
+                - tablist [ref=e312]:
+                  - tab "Home 3 min" [selected] [ref=e313] [cursor=pointer]:
+                    - generic [ref=e315]: Home
+                    - generic [ref=e316]: 3 min
+                  - tab "Clients 3 min" [ref=e317] [cursor=pointer]:
+                    - generic [ref=e319]: Clients
+                    - generic [ref=e320]: 3 min
+                  - tab "Categories 3 min" [ref=e321] [cursor=pointer]:
+                    - generic [ref=e323]: Categories
+                    - generic [ref=e324]: 3 min
+                  - tab "Tags 3 min" [ref=e325] [cursor=pointer]:
+                    - generic [ref=e327]: Tags
+                    - generic [ref=e328]: 3 min
+                  - tab "Industries 3 min" [ref=e329] [cursor=pointer]:
+                    - generic [ref=e331]: Industries
+                    - generic [ref=e332]: 3 min
+                  - tab "Articles 3 min" [ref=e333] [cursor=pointer]:
+                    - generic [ref=e335]: Articles
+                    - generic [ref=e336]: 3 min
+                  - tab "Trending 3 min" [ref=e337] [cursor=pointer]:
+                    - generic [ref=e339]: Trending
+                    - generic [ref=e340]: 3 min
+                - tabpanel "Home 3 min" [ref=e342]:
+                  - generic [ref=e343]:
+                    - generic [ref=e344]:
+                      - generic [ref=e345]:
+                        - paragraph [ref=e346]: Home
+                        - paragraph [ref=e347]: Main landing page — WebPage + Organization
+                      - generic [ref=e348]:
+                        - generic [ref=e349]: Cached 3 min
+                        - button "Generate" [ref=e350] [cursor=pointer]
+                    - generic [ref=e351]:
+                      - generic [ref=e352]:
+                        - text: SEO Title
+                        - textbox "Home | Modonty" [ref=e353]
+                      - generic [ref=e354]:
+                        - text: SEO Description
+                        - textbox "Browse all home on Modonty..." [ref=e355]
+                    - heading "View cached data" [level=3] [ref=e358]:
+                      - button "View cached data" [ref=e359] [cursor=pointer]:
+                        - text: View cached data
+                        - img [ref=e360]
+              - button "Save Page SEO" [ref=e362] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e166]

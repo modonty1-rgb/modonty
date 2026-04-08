@@ -13,12 +13,14 @@ interface MediaSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
   clientId?: string;
   initialData?: Partial<ClientWithRelations>;
+  onMediaChange?: () => void;
 }
 
 export function MediaSection({
   form,
   clientId,
   initialData,
+  onMediaChange,
 }: MediaSectionProps) {
   const { watch, setValue } = form;
   const { toast } = useToast();
@@ -76,11 +78,6 @@ export function MediaSection({
 
   return (
     <div className="space-y-6">
-      <div className="text-xs text-muted-foreground">
-        Logo and Open Graph images are used in all published content and social shares.
-        You can edit alt text from the edit icon on each image.
-      </div>
-
       <div className="space-y-2">
         <MediaPicker
           clientId={clientId || initialData?.id || null}
@@ -95,6 +92,7 @@ export function MediaSection({
               url: media.url,
               altText: media.altText,
             });
+            onMediaChange?.();
           }}
           onClear={() => {
             setValue("logoMediaId", null, { shouldValidate: true });
@@ -119,6 +117,7 @@ export function MediaSection({
               url: media.url,
               altText: media.altText,
             });
+            onMediaChange?.();
           }}
           onClear={() => {
             setValue("heroImageMediaId", null, { shouldValidate: true });
