@@ -47,23 +47,19 @@ export async function getClientMedia(
 }
 
 export async function getMediaUsageCount(mediaId: string): Promise<number> {
-  const [articleCount, logoCount, ogImageCount, twitterImageCount] =
-    await Promise.all([
-      db.article.count({
-        where: { featuredImageId: mediaId },
-      }),
-      db.client.count({
-        where: { logoMediaId: mediaId },
-      }),
-      db.client.count({
-        where: { ogImageMediaId: mediaId },
-      }),
-      db.client.count({
-        where: { twitterImageMediaId: mediaId },
-      }),
-    ]);
+  const [articleCount, logoCount, heroImageCount] = await Promise.all([
+    db.article.count({
+      where: { featuredImageId: mediaId },
+    }),
+    db.client.count({
+      where: { logoMediaId: mediaId },
+    }),
+    db.client.count({
+      where: { heroImageMediaId: mediaId },
+    }),
+  ]);
 
-  return articleCount + logoCount + ogImageCount + twitterImageCount;
+  return articleCount + logoCount + heroImageCount;
 }
 
 export async function getClientBrandingMedia(clientId: string) {
@@ -71,15 +67,13 @@ export async function getClientBrandingMedia(clientId: string) {
     where: { id: clientId },
     include: {
       logoMedia: true,
-      ogImageMedia: true,
-      twitterImageMedia: true,
+      heroImageMedia: true,
     },
   });
 
   return {
     logo: client?.logoMedia || null,
-    ogImage: client?.ogImageMedia || null,
-    twitterImage: client?.twitterImageMedia || null,
+    heroImage: client?.heroImageMedia || null,
   };
 }
 

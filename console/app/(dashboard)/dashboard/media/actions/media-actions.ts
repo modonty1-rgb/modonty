@@ -84,7 +84,7 @@ export async function updateMediaMetadata(
 
 export async function setClientBrandingMedia(
   clientId: string,
-  mediaType: "logo" | "ogImage" | "twitterImage",
+  mediaType: "logo" | "heroImage",
   mediaId: string | null
 ) {
   try {
@@ -92,10 +92,8 @@ export async function setClientBrandingMedia(
 
     if (mediaType === "logo") {
       updateData.logoMediaId = mediaId;
-    } else if (mediaType === "ogImage") {
-      updateData.ogImageMediaId = mediaId;
-    } else if (mediaType === "twitterImage") {
-      updateData.twitterImageMediaId = mediaId;
+    } else if (mediaType === "heroImage") {
+      updateData.heroImageMediaId = mediaId;
     }
 
     await db.client.update({
