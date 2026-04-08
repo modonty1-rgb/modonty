@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-08 15:20 (POST-PUSH)
+# Session Context — Last Updated: 2026-04-08 22:00 (PRE-PUSH v0.24.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,8 +7,62 @@
 ---
 
 ## Current Versions
-- **admin**: v0.22.0 (media modal feature complete)
-- **modonty**: v1.18.0 (media modal display complete)
+- **admin**: v0.24.0 (Settings UX overhaul + cache chain fix)
+- **modonty**: v1.18.0 (no changes this session)
+
+---
+
+## ✅ Session 7 — Settings UX Overhaul + Cache Chain Fix (2026-04-08 22:00)
+
+### What Was Delivered
+
+**Settings page — Modonty tab full redesign:**
+- Removed all Accordion collapse behavior → flat colored cards
+- 2-column grid layout: Site Identity + Contact (col 1) | Homepage SEO + Analytics + Social (col 2)
+- SEO Description field changed from `Input` → `Textarea` (multiline, resize-none)
+- Removed Org Logo field — always syncs from main Logo (all downstream code updated)
+- Analytics strip: removed manual Enabled toggles, auto-derived from ID presence (GTM/Hotjar best practice)
+- Analytics positioned directly under Homepage SEO card
+
+**Cache invalidation chain — full fix:**
+- Added `REVALIDATE_SECRET` to both `admin/.env.local` and `modonty/.env.local`
+- Added `NEXT_PUBLIC_SITE_URL=http://localhost:3001` to `admin/.env.local` for dev
+- `regenerateHomePageCache()` now calls `revalidateModontyTag("settings")` after DB write
+- `regenerateAllListingCaches()` now calls `revalidateModontyTag("settings")` after all pages done
+- **Result:** Admin Save & Publish + Regenerate cache both bust modonty Next.js cache immediately — no server restart needed
+
+**Verified live (Playwright 4-scenario test):**
+- Scenario 1: Save & Publish updates modonty title/desc/OG/JSON-LD without restart ✅
+- Scenario 2: Regenerate cache button alone busts modonty cache ✅
+- Scenario 3: JSON-LD structure 19/19 checks passed ✅
+- Scenario 4: Revert to clean state confirmed ✅
+
+### Key Files Changed
+
+**admin app:**
+1. `app/(dashboard)/settings/components/settings-form-v2.tsx` — Modonty tab full redesign, SEO Description → Textarea
+2. `lib/seo/listing-page-seo-generator.ts` — added `revalidateModontyTag` import + calls after DB writes
+3. `admin/.env.local` — added REVALIDATE_SECRET + NEXT_PUBLIC_SITE_URL (dev only, not committed)
+
+**modonty app:**
+1. `modonty/.env.local` — added REVALIDATE_SECRET (dev only, not committed)
+
+**Multiple files — orgLogoUrl removal (previous session continuation):**
+- `build-home-jsonld-from-settings.ts` — removed orgLogoUrl, uses logoUrl only
+- `build-clients-page-jsonld.ts` — same
+- `generate-modonty-page-seo.ts` — same
+- `listing-page-seo-generator.ts` — same
+- `authors-actions/update-author.ts` — same
+- `modonty/setting/helpers/hooks/use-page-form.ts` — same
+- `modonty/setting/components/page-form.tsx` — SettingsDefaults interface updated
+
+### ⚠️ Production Action Required
+Add `REVALIDATE_SECRET` to Vercel Dashboard for BOTH apps (admin + modonty) with the same value. Without this, modonty cache is never busted after admin saves.
+
+### If Issues Appear
+1. **Modonty not updating after admin save**: Check REVALIDATE_SECRET matches in both Vercel env vars
+2. **Cache still stale**: Check `NEXT_PUBLIC_SITE_URL` points to modonty's production URL in admin Vercel env
+3. **Rollback admin**: `git reset --hard e2d1590`
 
 ---
 

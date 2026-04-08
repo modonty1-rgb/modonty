@@ -16,7 +16,7 @@ export interface SettingsDefaults {
   siteUrl: string;
   twitterSite: string;
   twitterCreator: string;
-  orgLogoUrl: string;
+  logoUrl: string;
   defaultMetaRobots: string;
   defaultGooglebot: string;
   defaultOgType: string;

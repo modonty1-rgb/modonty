@@ -16,7 +16,6 @@ export interface SettingsForHomeJsonLd {
   categoriesSeoDescription?: string | null;
   trendingSeoTitle?: string | null;
   trendingSeoDescription?: string | null;
-  orgLogoUrl?: string | null;
   logoUrl?: string | null;
   ogImageUrl?: string | null;
   orgContactType?: string | null;
@@ -92,7 +91,8 @@ export function buildHomeJsonLdFromSettings(
   const siteName = settings.siteName?.trim() || "Modonty";
   const name = settings.modontySeoTitle?.trim() || siteName;
   const description = settings.modontySeoDescription?.trim() || settings.brandDescription?.trim() || "";
-  const logoUrl = (settings.orgLogoUrl ?? settings.logoUrl ?? "").trim();
+  const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
+  const logoIsWide = !(settings.logoUrl ?? "").trim() && !!(settings.ogImageUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
@@ -110,7 +110,9 @@ export function buildHomeJsonLdFromSettings(
     sameAs,
   };
   if (absLogo) {
-    org.logo = { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
+    org.logo = logoIsWide
+      ? { "@type": "ImageObject", url: absLogo, width: 1200, height: 630 }
+      : { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
   }
   if (
     settings.orgContactType ||
@@ -352,7 +354,8 @@ export function buildListPageJsonLdFromSettings(
     settings.orgContactAvailableLanguage ?? settings.inLanguage
   );
   const siteName = settings.siteName?.trim() || "Modonty";
-  const logoUrl = (settings.orgLogoUrl ?? settings.logoUrl ?? "").trim();
+  const logoUrl = (settings.logoUrl ?? "").trim() || (settings.ogImageUrl ?? "").trim();
+  const logoIsWide2 = !(settings.logoUrl ?? "").trim() && !!(settings.ogImageUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const ogImageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absOgImage = ogImageUrl ? ensureAbsoluteUrl(ogImageUrl, siteUrl) : undefined;
@@ -369,7 +372,9 @@ export function buildListPageJsonLdFromSettings(
     description: settings.brandDescription?.trim() ?? "",
     sameAs: sameAsList,
   };
-  if (absLogo) org.logo = { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
+  if (absLogo) org.logo = logoIsWide2
+    ? { "@type": "ImageObject", url: absLogo, width: 1200, height: 630 }
+    : { "@type": "ImageObject", url: absLogo, width: 512, height: 512 };
   if (
     settings.orgContactType ||
     settings.orgContactEmail ||

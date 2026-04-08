@@ -6,15 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { Building2, Shield, RefreshCw, Download, Info } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   getAllSettings,
   saveSiteSettings,
@@ -108,7 +105,7 @@ const BEST_PRACTICES: Record<string, BestPractice> = {
   },
 };
 
-function BestPracticeButton({ practiceKey }: { practiceKey: string }) {
+function BestPracticeButton({ practiceKey, label }: { practiceKey: string; label?: string }) {
   const bp = BEST_PRACTICES[practiceKey];
   if (!bp) return null;
   return (
@@ -116,7 +113,7 @@ function BestPracticeButton({ practiceKey }: { practiceKey: string }) {
       <DialogTrigger asChild>
         <button type="button" className="inline-flex items-center gap-1 text-[10px] text-amber-500/80 hover:text-amber-400 transition-colors">
           <Info className="h-3 w-3" />
-          Best practices
+          {label ?? "Best practices"}
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
@@ -210,11 +207,13 @@ function val(settings: AllSettings, key: string): string {
   return (settings as unknown as Record<string, unknown>)[key] as string || "";
 }
 
-function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+function Field({ label, value, onChange, placeholder, multiline }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; multiline?: boolean }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs text-muted-foreground">{label}</Label>
-      <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+      {multiline
+        ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="resize-none text-sm min-h-[72px]" />
+        : <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />}
     </div>
   );
 }
@@ -261,6 +260,7 @@ function ImageField({ label, value, onChange, hint, aspectRatio = "auto" }: {
   );
 }
 
+
 // ─── SEO Pages Config ───
 const SEO_PAGES = [
   { key: "home", name: "Home", description: "Main landing page", color: "blue", titleKey: "modontySeoTitle", descKey: "modontySeoDescription", jsonLdType: "WebPage + Organization" },
@@ -294,7 +294,6 @@ function getPageCacheInfo(settings: AllSettings, pageKey: string): { hasCache: b
   }
 }
 
-// ─── Page Cache Card ───
 const COLOR_MAP: Record<string, { border: string; bg: string; text: string; dot: string }> = {
   blue:    { border: "border-blue-500/20", bg: "bg-blue-500/5", text: "text-blue-400", dot: "bg-blue-400" },
   emerald: { border: "border-emerald-500/20", bg: "bg-emerald-500/5", text: "text-emerald-400", dot: "bg-emerald-400" },
@@ -321,34 +320,6 @@ function formatTimeAgo(dateStr: string | null): string {
   } catch { return "Never"; }
 }
 
-function PageCacheCard({ name, description, color, lastGenerated, hasCache }: {
-  name: string;
-  description: string;
-  color: string;
-  lastGenerated: string | null;
-  hasCache: boolean;
-}) {
-  const c = COLOR_MAP[color] || COLOR_MAP.blue;
-  const timeAgo = formatTimeAgo(lastGenerated);
-
-  return (
-    <div className={`rounded-lg border ${c.border} ${c.bg} p-3 space-y-2`}>
-      <div className="flex items-center justify-between">
-        <p className={`text-xs font-medium ${c.text}`}>{name}</p>
-        <div className="flex items-center gap-1.5">
-          <div className={`h-1.5 w-1.5 rounded-full ${hasCache ? c.dot : "bg-muted-foreground/30"}`} />
-          <span className={`text-[10px] ${hasCache ? c.text : "text-muted-foreground"}`}>{timeAgo}</span>
-        </div>
-      </div>
-      <p className="text-[10px] text-muted-foreground leading-relaxed">{description}</p>
-      <div className="flex gap-2">
-        <Button variant="outline" size="sm" className="h-7 text-[10px] flex-1" disabled>Preview</Button>
-        <Button variant="outline" size="sm" className="h-7 text-[10px] flex-1" disabled>Generate</Button>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main ───
 export function SettingsFormV2() {
   const { toast } = useToast();
@@ -358,6 +329,14 @@ export function SettingsFormV2() {
 
   useEffect(() => {
     getAllSettings()
+      .then(async (data) => {
+        // Auto-seed defaults on first load if key fields are missing
+        if (!data.siteName || !data.inLanguage || !data.defaultCharset) {
+          await applyTechnicalDefaults();
+          return getAllSettings();
+        }
+        return data;
+      })
       .then((data) => { setSettings(data); setIsLoading(false); })
       .catch(() => {
         toast({ title: messages.error.server_error, description: messages.descriptions.settings_load_failed, variant: "destructive" });
@@ -383,7 +362,13 @@ export function SettingsFormV2() {
       saveModontySettings(settings),
     ]);
     const ok = results.every((r) => r.success);
-    toast({ title: ok ? messages.success.saved : messages.error.update_failed, description: ok ? "تم حفظ الإعدادات بنجاح" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
+    if (ok) {
+      // Regenerate all listing page caches so modonty reflects changes immediately
+      const gen = await import("@/lib/seo/listing-page-seo-generator");
+      await gen.regenerateAllListingCaches();
+      setSettings(await getAllSettings());
+    }
+    toast({ title: ok ? messages.success.saved : messages.error.update_failed, description: ok ? "تم حفظ الإعدادات وتحديث موقع مدونتي تلقائياً" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
     setIsSaving(false);
   }
 
@@ -420,48 +405,41 @@ export function SettingsFormV2() {
 
       {/* ═══════════════════════════════════════════════ */}
       {/* TAB 1 — Modonty                                */}
-      {/* Site identity, contact, address, social, etc.   */}
       {/* ═══════════════════════════════════════════════ */}
       <TabsContent value="modonty">
-        <Accordion type="multiple" defaultValue={["branding", "contact", "social", "tracking", "homepage-seo"]} className="space-y-2">
+        <div className="grid grid-cols-2 gap-4">
 
-          {/* ── Branding & Images (blue) ── */}
-          <AccordionItem value="branding" className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3">
-            <AccordionTrigger className="py-2 text-xs font-medium text-blue-400 hover:no-underline">Branding & Images</AccordionTrigger>
-            <AccordionContent className="space-y-2 pb-3">
+          {/* ── Column 1: Site Identity + Contact & Location ── */}
+          <div className="space-y-4">
+
+            {/* Site Identity (blue) */}
+            <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-blue-400">Site Identity</p>
               <div>
                 <Label className="text-xs text-muted-foreground">Brand Description</Label>
-                <Textarea value={settings.brandDescription || ""} onChange={(e) => set("brandDescription", e.target.value)} className="mt-1 h-14" />
-                <p className="text-xs text-amber-500/70 mt-1">Used in JSON-LD Organization schema — not the page meta description. Meta descriptions are set in the page tabs above (Home, Clients, etc.).</p>
+                <Textarea value={settings.brandDescription || ""} onChange={(e) => set("brandDescription", e.target.value)} className="mt-1 h-14 text-xs" placeholder="منصة المحتوى العربي الرائدة..." />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageField label="Logo" value={settings.logoUrl || ""} onChange={(v) => set("logoUrl", v)} hint="Cloudinary: f_auto,q_auto,w_200,h_200,c_fit — min 112x112px" aspectRatio="square" />
-                <ImageField label="Org Logo (JSON-LD)" value={settings.orgLogoUrl || ""} onChange={(v) => set("orgLogoUrl", v)} hint="Organization schema — f_auto,q_auto,w_512,h_512,c_fit" aspectRatio="square" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageField label="Default Share Image (OG)" value={settings.ogImageUrl || ""} onChange={(v) => set("ogImageUrl", v)} hint="1200x630 — f_auto,q_auto,w_1200,h_630,c_fill" aspectRatio="og" />
-                <Field label="Image Alt Text" value={settings.altImage || ""} onChange={(v) => set("altImage", v)} placeholder="Modonty — Arabic content platform" />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+              <ImageField label="Logo" value={settings.logoUrl || ""} onChange={(v) => set("logoUrl", v)} hint="Square, min 112×112px" aspectRatio="square" />
+              <ImageField label="Main Image (OG)" value={settings.ogImageUrl || ""} onChange={(v) => set("ogImageUrl", v)} hint="1200×630" aspectRatio="og" />
+              <Field label="Alt Text" value={settings.altImage || ""} onChange={(v) => set("altImage", v)} placeholder="مدونتي — منصة المحتوى العربي" />
+            </div>
 
-          {/* ── Contact & Address (emerald) ── */}
-          <AccordionItem value="contact" className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3">
-            <AccordionTrigger className="py-2 text-xs font-medium text-emerald-400 hover:no-underline">Contact & Address — Google Knowledge Panel</AccordionTrigger>
-            <AccordionContent className="space-y-2 pb-3">
-              <div className="grid grid-cols-4 gap-3">
+            {/* Contact & Location (emerald) */}
+            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-emerald-400">Contact & Location</p>
+              <div className="grid grid-cols-3 gap-2.5">
                 <Field label="Email" value={settings.orgContactEmail || ""} onChange={(v) => set("orgContactEmail", v)} />
                 <Field label="Phone" value={settings.orgContactTelephone || ""} onChange={(v) => set("orgContactTelephone", v)} placeholder="+966500000000" />
-                <Field label="Contact Option" value={settings.orgContactOption || ""} onChange={(v) => set("orgContactOption", v)} placeholder="TollFree" />
-                <Field label="Working Hours" value={settings.orgContactHoursAvailable || ""} onChange={(v) => set("orgContactHoursAvailable", v)} placeholder="Su-Th 09:00-18:00" />
+                <Field label="Hours" value={settings.orgContactHoursAvailable || ""} onChange={(v) => set("orgContactHoursAvailable", v)} placeholder="Su-Th 09:00-18:00" />
               </div>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-2.5">
                 <Field label="Street" value={settings.orgStreetAddress || ""} onChange={(v) => set("orgStreetAddress", v)} />
                 <Field label="City" value={settings.orgAddressLocality || ""} onChange={(v) => set("orgAddressLocality", v)} />
                 <Field label="Region" value={settings.orgAddressRegion || ""} onChange={(v) => set("orgAddressRegion", v)} />
                 <Field label="Postal Code" value={settings.orgPostalCode || ""} onChange={(v) => set("orgPostalCode", v)} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2.5">
+                <Field label="Country" value={settings.orgAddressCountry || ""} onChange={(v) => set("orgAddressCountry", v)} placeholder="SA" />
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Latitude</Label>
                   <Input type="number" step="any" value={settings.orgGeoLatitude ?? ""} onChange={(e) => set("orgGeoLatitude", e.target.value ? parseFloat(e.target.value) : null)} />
@@ -471,73 +449,92 @@ export function SettingsFormV2() {
                   <Input type="number" step="any" value={settings.orgGeoLongitude ?? ""} onChange={(e) => set("orgGeoLongitude", e.target.value ? parseFloat(e.target.value) : null)} />
                 </div>
               </div>
-            </AccordionContent>
-          </AccordionItem>
+            </div>
 
-          {/* ── Social + Twitter Cards (sky) ── */}
-          <AccordionItem value="social" className="rounded-lg border border-sky-500/20 bg-sky-500/5 px-3">
-            <AccordionTrigger className="py-2 text-xs font-medium text-sky-400 hover:no-underline">Social Media & Twitter Cards</AccordionTrigger>
-            <AccordionContent className="space-y-2 pb-3">
-              <div className="grid grid-cols-4 gap-3">
-                <Field label="Twitter / X" value={settings.twitterUrl || ""} onChange={(v) => set("twitterUrl", v)} />
-                <Field label="LinkedIn" value={settings.linkedInUrl || ""} onChange={(v) => set("linkedInUrl", v)} />
-                <Field label="Facebook" value={settings.facebookUrl || ""} onChange={(v) => set("facebookUrl", v)} />
-                <Field label="Instagram" value={settings.instagramUrl || ""} onChange={(v) => set("instagramUrl", v)} />
+          </div>
+
+          {/* ── Column 2: Homepage SEO + Analytics + Social Profiles ── */}
+          <div className="space-y-4">
+
+            {/* Homepage SEO (orange) */}
+            <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 p-3 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-orange-400">Homepage SEO</p>
+                {(() => {
+                  const ci = getPageCacheInfo(settings, "home");
+                  return <span className={`text-[10px] ${ci.hasCache ? "text-green-400/60" : "text-muted-foreground/40"}`}>{ci.hasCache ? `· ${ci.timeAgo}` : "· not cached"}</span>;
+                })()}
               </div>
-              <div className="grid grid-cols-4 gap-3">
-                <Field label="YouTube" value={settings.youtubeUrl || ""} onChange={(v) => set("youtubeUrl", v)} />
-                <Field label="TikTok" value={settings.tiktokUrl || ""} onChange={(v) => set("tiktokUrl", v)} />
-                <Field label="Pinterest" value={settings.pinterestUrl || ""} onChange={(v) => set("pinterestUrl", v)} />
-                <Field label="Snapchat" value={settings.snapchatUrl || ""} onChange={(v) => set("snapchatUrl", v)} />
+              <Field label="SEO Title" value={settings.modontySeoTitle || ""} onChange={(v) => set("modontySeoTitle", v)} placeholder="مدونتي | منصة المحتوى العربي" />
+              <Field label="SEO Description" value={settings.modontySeoDescription || ""} onChange={(v) => set("modontySeoDescription", v)} placeholder="تصفح آلاف المقالات من أفضل الكتّاب..." multiline />
+              <div className="flex justify-end">
+                <Button variant="ghost" size="sm" disabled={isSaving} className="gap-1.5 text-[10px] h-6 text-orange-400/50 hover:text-orange-400 px-2" onClick={async () => {
+                  setIsSaving(true);
+                  try {
+                    const gen = await import("@/lib/seo/listing-page-seo-generator");
+                    await gen.regenerateHomePageCache();
+                    setSettings(await getAllSettings());
+                  } catch (e) { console.error("Generate home failed:", e); }
+                  setIsSaving(false);
+                }}>
+                  <RefreshCw className={`h-3 w-3 ${isSaving ? "animate-spin" : ""}`} />
+                  Regenerate cache
+                </Button>
               </div>
-              <div className="grid grid-cols-4 gap-3">
+            </div>
+
+            {/* Analytics (violet) — small, directly under Homepage SEO */}
+            <div className="rounded-lg border border-violet-500/20 bg-violet-500/5 px-3 py-2.5 flex items-center gap-3">
+              <p className="text-[11px] font-semibold text-violet-400 shrink-0">Analytics</p>
+              <div className="h-3.5 w-px bg-violet-500/20 shrink-0" />
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] text-violet-300 shrink-0">GTM</p>
+                <Input value={settings.gtmContainerId || ""} onChange={(e) => set("gtmContainerId", e.target.value)} placeholder="GTM-XXXXXXX" className="h-7 text-xs w-32" />
+                {settings.gtmContainerId?.trim() && <span className="text-[10px] text-green-400/70">active</span>}
+              </div>
+              <div className="h-3.5 w-px bg-violet-500/20 shrink-0" />
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] text-violet-300 shrink-0">Hotjar</p>
+                <Input value={settings.hotjarSiteId || ""} onChange={(e) => set("hotjarSiteId", e.target.value)} placeholder="1234567" className="h-7 text-xs w-24" />
+                {settings.hotjarSiteId?.trim() && <span className="text-[10px] text-green-400/70">active</span>}
+              </div>
+            </div>
+
+            {/* Social Profiles (sky) */}
+            <div className="rounded-lg border border-sky-500/20 bg-sky-500/5 p-3 space-y-2.5">
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-semibold text-sky-400">Social Profiles</p>
+                {(() => {
+                  const count = [settings.twitterUrl, settings.linkedInUrl, settings.facebookUrl, settings.instagramUrl, settings.youtubeUrl, settings.tiktokUrl, settings.pinterestUrl, settings.snapchatUrl].filter(Boolean).length;
+                  return count > 0 ? <span className="text-[10px] text-sky-400/50">· {count}</span> : null;
+                })()}
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <Field label="Twitter / X" value={settings.twitterUrl || ""} onChange={(v) => set("twitterUrl", v)} placeholder="x.com/modonty" />
+                <Field label="LinkedIn" value={settings.linkedInUrl || ""} onChange={(v) => set("linkedInUrl", v)} placeholder="linkedin.com/company/modonty" />
+                <Field label="Facebook" value={settings.facebookUrl || ""} onChange={(v) => set("facebookUrl", v)} placeholder="facebook.com/modonty" />
+                <Field label="Instagram" value={settings.instagramUrl || ""} onChange={(v) => set("instagramUrl", v)} placeholder="instagram.com/modonty" />
+                <Field label="YouTube" value={settings.youtubeUrl || ""} onChange={(v) => set("youtubeUrl", v)} placeholder="youtube.com/@modonty" />
+                <Field label="TikTok" value={settings.tiktokUrl || ""} onChange={(v) => set("tiktokUrl", v)} placeholder="tiktok.com/@modonty" />
+                <Field label="Pinterest" value={settings.pinterestUrl || ""} onChange={(v) => set("pinterestUrl", v)} placeholder="pinterest.com/modonty" />
+                <Field label="Snapchat" value={settings.snapchatUrl || ""} onChange={(v) => set("snapchatUrl", v)} placeholder="snapchat.com/add/modonty" />
+              </div>
+              <div className="border-t border-sky-500/10 pt-2.5 grid grid-cols-2 gap-2.5">
                 <Field label="X Site Handle" value={settings.twitterSite || ""} onChange={(v) => set("twitterSite", v)} placeholder="@modonty" />
                 <Field label="X Creator Handle" value={settings.twitterCreator || ""} onChange={(v) => set("twitterCreator", v)} placeholder="@modonty" />
-                <Field label="X Site ID (opt)" value={settings.twitterSiteId || ""} onChange={(v) => set("twitterSiteId", v)} />
-                <Field label="X Creator ID (opt)" value={settings.twitterCreatorId || ""} onChange={(v) => set("twitterCreatorId", v)} />
               </div>
-            </AccordionContent>
-          </AccordionItem>
+            </div>
 
-          {/* ── Tracking + Search (violet) ── */}
-          <AccordionItem value="tracking" className="rounded-lg border border-violet-500/20 bg-violet-500/5 px-3">
-            <AccordionTrigger className="py-2 text-xs font-medium text-violet-400 hover:no-underline">Tracking & Site Search</AccordionTrigger>
-            <AccordionContent className="space-y-2 pb-3">
-              <div className="grid grid-cols-4 gap-3 items-end">
-                <Field label="GTM ID" value={settings.gtmContainerId || ""} onChange={(v) => set("gtmContainerId", v)} placeholder="GTM-XXXXXXX" />
-                <div className="flex items-center gap-2 pb-1">
-                  <Checkbox checked={settings.gtmEnabled} onCheckedChange={(c) => set("gtmEnabled", !!c)} />
-                  <Label className="text-xs">Enable GTM</Label>
-                </div>
-                <Field label="Hotjar ID" value={settings.hotjarSiteId || ""} onChange={(v) => set("hotjarSiteId", v)} />
-                <div className="flex items-center gap-2 pb-1">
-                  <Checkbox checked={settings.hotjarEnabled} onCheckedChange={(c) => set("hotjarEnabled", !!c)} />
-                  <Label className="text-xs">Enable Hotjar</Label>
-                </div>
-              </div>
-              <Field label="Site Search URL" value={settings.orgSearchUrlTemplate || ""} onChange={(v) => set("orgSearchUrlTemplate", v)} placeholder="https://modonty.com/search?q={search_term_string}" />
-            </AccordionContent>
-          </AccordionItem>
+          </div>
+        </div>
 
-
-          {/* ── Homepage SEO (orange) ── */}
-          <AccordionItem value="homepage-seo" className="rounded-lg border border-orange-500/20 bg-orange-500/5 px-3">
-            <AccordionTrigger className="py-2 text-xs font-medium text-orange-400 hover:no-underline">Homepage SEO</AccordionTrigger>
-            <AccordionContent className="space-y-2 pb-3">
-              <p className="text-xs text-muted-foreground/60">Meta title and description for the Modonty homepage — what appears in Google search results.</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="SEO Title" value={settings.modontySeoTitle || ""} onChange={(v) => set("modontySeoTitle", v)} placeholder="Home | Modonty" />
-                <Field label="SEO Description" value={settings.modontySeoDescription || ""} onChange={(v) => set("modontySeoDescription", v)} placeholder="Browse all content on Modonty..." />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-        </Accordion>
-        <Button onClick={saveModonty} disabled={isSaving} className="mt-3">{isSaving ? "Saving..." : "Save Modonty Settings"}</Button>
+        <Button onClick={saveModonty} disabled={isSaving} className="w-full mt-4">
+          {isSaving ? "Saving..." : "Save & Publish"}
+        </Button>
       </TabsContent>
 
       {/* ═══════════════════════════════════════════════ */}
-      {/* TAB 3 — System (Read-Only Technical Defaults)  */}
+      {/* TAB — System (Read-Only Technical Defaults)    */}
       {/* ═══════════════════════════════════════════════ */}
       <TabsContent value="system" className="space-y-3">
         <div className="flex items-center justify-between mb-1">
@@ -550,7 +547,15 @@ export function SettingsFormV2() {
 
         {/* SEO Rules (blue) */}
         <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-          <p className="text-xs font-medium text-blue-400 mb-2">SEO Rules — industry consensus (Semrush, Ahrefs, Moz, X Docs)</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-blue-400">SEO Rules — industry consensus (Semrush, Ahrefs, Moz, X Docs)</p>
+            <div className="flex items-center gap-3">
+              <BestPracticeButton practiceKey="seoTitle" label="SEO Title" />
+              <BestPracticeButton practiceKey="seoDescription" label="SEO Desc" />
+              <BestPracticeButton practiceKey="twitter" label="Twitter" />
+              <BestPracticeButton practiceKey="openGraph" label="Open Graph" />
+            </div>
+          </div>
           <div className="rounded-md border border-blue-500/10 overflow-hidden">
             <table className="w-full text-xs">
               <tbody>
@@ -611,7 +616,6 @@ export function SettingsFormV2() {
         const cacheInfo = getPageCacheInfo(settings, key);
         return (
           <TabsContent key={key} value={key} className="space-y-4">
-            {/* Header */}
             <div className={`rounded-lg border ${c.border} ${c.bg} px-4 py-3 flex items-center justify-between`}>
               <div>
                 <p className={`text-sm font-semibold ${c.text}`}>{name} Page</p>
@@ -622,21 +626,19 @@ export function SettingsFormV2() {
               </Badge>
             </div>
 
-            {/* SEO Title + Description */}
             {titleKey && descKey && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2.5">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">SEO Title</Label>
                   <Input value={val(settings, titleKey)} onChange={(e) => set(titleKey, e.target.value)} placeholder={`${name} | Modonty`} />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">SEO Description</Label>
-                  <Input value={val(settings, descKey)} onChange={(e) => set(descKey, e.target.value)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} />
+                  <Textarea value={val(settings, descKey)} onChange={(e) => set(descKey, e.target.value)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} className="resize-none text-sm min-h-[72px]" />
                 </div>
               </div>
             )}
 
-            {/* Actions */}
             <div className="flex items-center gap-2">
               <Button onClick={saveModonty} disabled={isSaving}>
                 {isSaving ? "Saving..." : `Save ${name} SEO`}

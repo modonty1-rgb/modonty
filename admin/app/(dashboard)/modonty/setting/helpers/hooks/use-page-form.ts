@@ -112,7 +112,7 @@ interface UsePageFormParams {
 function buildFormData(slug: string, initialData: PageInitialData | undefined, settingsDefaults: SettingsDefaults): PageFormData {
   const defaultCanonical = `${settingsDefaults.siteUrl}/${slug}`;
   const m = (initialData?.metaTags as Record<string, unknown> | undefined)?.organizationSeo as PageFormData["organizationSeo"] | undefined;
-  const defaultLogo = settingsDefaults.orgLogoUrl ?? "";
+  const defaultLogo = settingsDefaults.logoUrl ?? "";
 
   return {
     title: initialData?.title || "",

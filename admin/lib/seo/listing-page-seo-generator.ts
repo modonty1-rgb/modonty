@@ -13,6 +13,7 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
   return (settings?.siteUrl as string) || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
@@ -288,7 +289,7 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     const siteName = getSiteName(s);
     const title = (s.modontySeoTitle as string) || siteName;
     const description = (s.modontySeoDescription as string) || (s.brandDescription as string) || "منصة محتوى عربية متخصصة";
-    const logoUrl = (s.orgLogoUrl as string) || (s.logoUrl as string) || undefined;
+    const logoUrl = (s.logoUrl as string) || (s.ogImageUrl as string) || undefined;
     const ogImageUrl = (s.ogImageUrl as string) || undefined;
     const inLanguage = (s.inLanguage as string) || "ar-SA";
 
@@ -373,6 +374,7 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
         jsonLdValidationReport: { valid: true, generatedAt: new Date().toISOString(), schemas: ["WebSite", "Organization", "WebPage"] } as Prisma.InputJsonValue,
       },
     });
+    await revalidateModontyTag("settings");
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
@@ -434,5 +436,7 @@ export async function regenerateAllListingCaches(): Promise<{ results: Record<st
     const r = await page.fn();
     results[page.name] = r.success;
   }
+  // Bust modonty cache once after ALL pages regenerated
+  await revalidateModontyTag("settings");
   return { results };
 }

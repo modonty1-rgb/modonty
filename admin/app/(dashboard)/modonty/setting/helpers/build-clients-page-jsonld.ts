@@ -79,7 +79,7 @@ export function buildSiteOrgAndWebSite(
   const inLangCodes = parseLanguageCodes(settings.inLanguage);
   const availLangCodes = parseLanguageCodes(settings.orgContactAvailableLanguage ?? settings.inLanguage);
   const siteName = settings.siteName?.trim() || "Modonty";
-  const logoUrl = (settings.orgLogoUrl ?? settings.logoUrl ?? "").trim();
+  const logoUrl = (settings.logoUrl ?? "").trim();
   const absLogo = logoUrl ? ensureAbsoluteUrl(logoUrl, siteUrl) : undefined;
   const sameAsList: string[] = Array.isArray(settings.sameAs)
     ? settings.sameAs.filter((u): u is string => typeof u === "string" && u.trim().length > 0).map((u) => u.trim())

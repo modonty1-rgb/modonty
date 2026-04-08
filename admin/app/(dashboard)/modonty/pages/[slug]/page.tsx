@@ -20,7 +20,7 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
     siteUrl: settings.siteUrl ?? "https://modonty.com",
     twitterSite: settings.twitterSite ?? "",
     twitterCreator: settings.twitterCreator ?? "",
-    orgLogoUrl: settings.orgLogoUrl ?? settings.logoUrl ?? "",
+    logoUrl: settings.logoUrl ?? "",
     defaultMetaRobots: settings.defaultMetaRobots ?? "index, follow",
     defaultGooglebot: settings.defaultGooglebot ?? "index, follow",
     defaultOgType: settings.defaultOgType ?? "website",

@@ -107,7 +107,7 @@ export async function generateModontyPageSEO(slug: string) {
     const sameAs = await getSameAsFromSettings();
     const hasContact = settings.orgContactType?.trim() || settings.orgContactEmail?.trim() || settings.orgContactTelephone?.trim();
     const areaServed = settings.orgAreaServed?.trim() || "SA, AE, KW, BH, OM, QA, EG";
-    const logoUrl = settings.orgLogoUrl?.trim() || settings.logoUrl?.trim();
+    const logoUrl = settings.logoUrl?.trim() || settings.ogImageUrl?.trim();
     const hasAddress = settings.orgStreetAddress?.trim() || settings.orgAddressCountry?.trim();
     const hasGeo = settings.orgGeoLatitude != null && settings.orgGeoLongitude != null;
 

@@ -733,9 +733,9 @@ export async function saveTrackingSettings(data: Partial<GTMSettings & HOTjarSet
       where: { id },
       data: {
         gtmContainerId: data.gtmContainerId,
-        gtmEnabled: data.gtmEnabled,
+        gtmEnabled: !!(data.gtmContainerId?.trim()),
         hotjarSiteId: data.hotjarSiteId,
-        hotjarEnabled: data.hotjarEnabled,
+        hotjarEnabled: !!(data.hotjarSiteId?.trim()),
       },
     });
     revalidatePath("/settings");
@@ -787,6 +787,7 @@ export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{
       where: { id },
       data: {
         logoUrl: data.logoUrl,
+        orgLogoUrl: data.logoUrl, // always in sync — no separate org logo
         ogImageUrl: data.ogImageUrl,
         altImage: data.altImage,
       },
@@ -825,8 +826,6 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
     });
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
-    // Regenerate Home page cache when SEO titles/descriptions change
-    try { const { regenerateHomePageCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateHomePageCache(); } catch {}
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Modonty settings";

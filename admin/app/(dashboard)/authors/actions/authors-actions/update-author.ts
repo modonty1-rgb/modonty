@@ -127,7 +127,7 @@ export async function updateAuthor(
         "@type": "Organization",
         name: settings.siteName,
         ...(siteUrl && { url: siteUrl }),
-        ...(settings.orgLogoUrl && { logo: settings.orgLogoUrl }),
+        ...(settings.logoUrl && { logo: settings.logoUrl }),
         ...(settings.brandDescription && { description: settings.brandDescription }),
       };
     }
