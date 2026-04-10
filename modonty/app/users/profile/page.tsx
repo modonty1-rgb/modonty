@@ -165,8 +165,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-blue-500/10 p-3">
-                          <IconComment className="h-5 w-5 text-blue-500" />
+                        <div className="rounded-full bg-primary/10 p-3">
+                          <IconComment className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">التعليقات</p>
@@ -185,8 +185,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-green-500/10 p-3">
-                          <IconLike className="h-5 w-5 text-green-500" />
+                        <div className="rounded-full bg-primary/10 p-3">
+                          <IconLike className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">الإعجابات</p>
@@ -205,8 +205,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-blue-500/10 p-3">
-                          <IconLike className="h-5 w-5 text-blue-500" />
+                        <div className="rounded-full bg-primary/10 p-3">
+                          <IconLike className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">إعجابات المقالات</p>
@@ -225,8 +225,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-red-500/10 p-3">
-                          <IconLike className="h-5 w-5 text-red-500" />
+                        <div className="rounded-full bg-destructive/10 p-3">
+                          <IconLike className="h-5 w-5 text-destructive" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">عدم الإعجاب</p>
@@ -245,8 +245,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-yellow-500/10 p-3">
-                          <IconSaved className="h-5 w-5 text-yellow-500" />
+                        <div className="rounded-full bg-accent/10 p-3">
+                          <IconSaved className="h-5 w-5 text-accent" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">المقالات المحفوظة</p>
@@ -265,8 +265,8 @@ export default function ProfilePage() {
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-purple-500/10 p-3">
-                          <IconUsers className="h-5 w-5 text-purple-500" />
+                        <div className="rounded-full bg-primary/10 p-3">
+                          <IconUsers className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">العملاء المتابعون</p>

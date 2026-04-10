@@ -46,15 +46,6 @@ export async function requestPasswordReset(
       .update(plainToken)
       .digest("hex");
 
-    console.log(`[forgotPassword][${requestId}] Generated token:`, {
-      requestId,
-      timestamp,
-      plainToken: plainToken,
-      hashedToken: hashedToken,
-      userId: user.id,
-      email: user.email,
-    });
-
     const updatedUser = await db.user.update({
       where: { id: user.id },
       data: {
@@ -69,17 +60,8 @@ export async function requestPasswordReset(
       },
     });
 
-    console.log(`[forgotPassword][${requestId}] Token stored in database:`, {
-      requestId,
-      userId: updatedUser.id,
-      email: updatedUser.email,
-      storedToken: updatedUser.passwordResetToken,
-      expires: updatedUser.passwordResetExpires?.toISOString(),
-    });
-
     await sendResetEmail(user.email!, plainToken, requestId);
     
-    console.log(`[forgotPassword][${requestId}] Reset email sent successfully`);
     return { success: true };
   } catch (err) {
     console.error("Forgot password error:", err);

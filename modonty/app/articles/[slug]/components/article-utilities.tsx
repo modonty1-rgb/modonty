@@ -8,9 +8,10 @@ interface ArticleUtilitiesProps {
   articleUrl: string;
   /** Smaller button to sit beside engagement actions */
   compact?: boolean;
+  buttonVariant?: "outline" | "ghost";
 }
 
-export function ArticleUtilities({ articleUrl, compact = false }: ArticleUtilitiesProps) {
+export function ArticleUtilities({ articleUrl, compact = false, buttonVariant = "outline" }: ArticleUtilitiesProps) {
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,7 +50,7 @@ export function ArticleUtilities({ articleUrl, compact = false }: ArticleUtiliti
   return (
     <div className="flex items-center gap-2 md:gap-3 flex-wrap">
       <Button
-        variant="outline"
+        variant={buttonVariant}
         size={compact ? "icon" : "sm"}
         onClick={handleCopyLink}
         className={compact ? "h-8 w-8 shrink-0" : "text-sm min-h-[44px] md:min-h-0"}

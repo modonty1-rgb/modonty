@@ -1,0 +1,252 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.29.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.29.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Clients" [ref=e307] [cursor=pointer]:
+                - /url: /clients
+            - generic [ref=e308]:
+              - img [ref=e309]
+              - link "متجر نوفا للإلكترونيات" [ref=e681] [cursor=pointer]:
+                - /url: /clients/69d6665592f34b725bbddece
+            - generic [ref=e682]:
+              - img [ref=e683]
+              - generic [ref=e685]: Edit
+          - navigation "Main navigation" [ref=e102]:
+            - link "Modonty Modonty" [ref=e103] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e105]
+              - generic [ref=e106]: Modonty
+            - generic [ref=e108]:
+              - link "Articles" [ref=e109] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e110]:
+                  - img
+                  - generic [ref=e111]: Articles
+              - link "Clients" [ref=e112] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e113]:
+                  - img
+                  - generic [ref=e114]: Clients
+              - link "Media" [ref=e115] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e116]:
+                  - img
+                  - generic [ref=e117]: Media
+          - generic [ref=e118]:
+            - link "4" [ref=e150] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e151]:
+                - img
+                - generic [ref=e152]: "4"
+            - button "M" [ref=e121] [cursor=pointer]:
+              - generic [ref=e123]: M
+      - generic [ref=e124]:
+        - generic [ref=e125]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e126]:
+          - button "Send Note" [ref=e127] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e128] [cursor=pointer]:
+            - img
+      - main [ref=e129]:
+        - generic [ref=e686]:
+          - generic [ref=e688]:
+            - heading "Edit Client" [level=1] [ref=e689]
+            - generic [ref=e692] [cursor=pointer]:
+              - generic [ref=e693]:
+                - img [ref=e694]
+                - generic [ref=e698]: SEO
+              - generic [ref=e702]:
+                - generic [ref=e703]:
+                  - generic [ref=e704]:
+                    - img [ref=e705]
+                    - generic [ref=e709]: "2"
+                  - generic [ref=e710]:
+                    - img [ref=e711]
+                    - generic [ref=e713]: "5"
+                  - generic [ref=e714]:
+                    - img [ref=e715]
+                    - generic [ref=e718]: "3"
+                - generic [ref=e719]: 47%
+            - generic [ref=e720]:
+              - button "Saving..." [disabled]:
+                - img
+                - text: Saving...
+          - generic [ref=e726]:
+            - generic [ref=e727]:
+              - generic [ref=e728]: "Required:"
+              - generic [ref=e729]: Client Name
+              - generic [ref=e730]: Email
+              - generic [ref=e731]: Business Brief
+            - generic [ref=e732]:
+              - generic [ref=e733]:
+                - heading "Client Info https://modonty.com/clients/nova-electronics" [level=3] [ref=e734]:
+                  - button "Client Info https://modonty.com/clients/nova-electronics" [expanded] [ref=e735] [cursor=pointer]:
+                    - generic [ref=e736]:
+                      - generic [ref=e737]: Client Info
+                      - generic [ref=e738]: https://modonty.com/clients/nova-electronics
+                    - img [ref=e739]
+                - region "Client Info https://modonty.com/clients/nova-electronics" [ref=e741]:
+                  - generic [ref=e743]:
+                    - generic [ref=e744]:
+                      - generic [ref=e745]:
+                        - generic [ref=e746]:
+                          - generic [ref=e747]: Name*
+                          - textbox "Name*" [ref=e748]: متجر نوفا للإلكترونيات
+                          - paragraph [ref=e749]: يظهر في المقالات والمحتوى المنشور
+                        - generic [ref=e750]:
+                          - generic [ref=e751]: Slug
+                          - generic [ref=e753]:
+                            - img [ref=e754]
+                            - generic [ref=e757]: nova-electronics
+                            - generic [ref=e758]: locked
+                          - paragraph [ref=e759]: يُنشأ تلقائياً من الاسم — يُستخدم في روابط الصفحات
+                      - generic [ref=e760]:
+                        - generic [ref=e761]:
+                          - paragraph [ref=e762]: بيانات دخول العميل
+                          - paragraph [ref=e763]: يتم إرسال هذه البيانات للعميل للدخول على لوحة التحكم الخاصة به وإدارة محتواه.
+                        - generic [ref=e764]:
+                          - generic [ref=e765]:
+                            - generic [ref=e766]: Email — Username*
+                            - textbox "Email — Username*" [ref=e767]: info@nova-electronics.sa
+                          - generic [ref=e768]:
+                            - generic [ref=e769]: Password
+                            - textbox "Password" [ref=e770]:
+                              - /placeholder: Leave empty to keep current
+                              - text: Nova123!
+                      - generic [ref=e771]:
+                        - generic [ref=e772]:
+                          - generic [ref=e773]: Phone
+                          - textbox "Phone" [ref=e774]:
+                            - /placeholder: +966 11 123 4567
+                          - paragraph [ref=e775]: رقم الهاتف الرئيسي للتواصل
+                        - generic [ref=e776]:
+                          - generic [ref=e777]: Contact Type
+                          - combobox [ref=e778] [cursor=pointer]:
+                            - generic: Select type
+                            - img [ref=e779]
+                          - combobox [ref=e781]
+                          - paragraph [ref=e782]: نوع التواصل في Schema.org ContactPoint
+                        - generic [ref=e783]:
+                          - generic [ref=e784]: Website URL
+                          - textbox "Website URL" [ref=e785]:
+                            - /placeholder: https://www.example.com
+                          - paragraph [ref=e786]: Website — used in backlinks and SEO data
+                      - generic [ref=e788]:
+                        - generic [ref=e789]:
+                          - generic [ref=e790]: Business Brief*
+                          - textbox "Describe the client's business, products/services, target audience, and unique selling points. (Minimum 100 characters)" [ref=e791]: متجر نوفا للإلكترونيات يقدم أحدث المنتجات الإلكترونية من هواتف ذكية وأجهزة لوحية وإكسسوارات تقنية بأسعار منافسة لعملاء المملكة العربية السعودية.
+                          - generic [ref=e794]: 144 / 100 minimum
+                        - generic [ref=e796]:
+                          - generic [ref=e797]: Slogan
+                          - textbox "Slogan" [ref=e798]:
+                            - /placeholder: e.g., Innovation Beyond Boundaries
+                          - paragraph [ref=e799]: شعار الشركة — يظهر في بيانات SEO — حد أقصى 100 حرف
+                    - generic [ref=e801]:
+                      - button "Basic 1,200" [ref=e802] [cursor=pointer]
+                      - button "Premium 9,600" [ref=e803] [cursor=pointer]
+                      - button "Pro 4,800" [ref=e804] [cursor=pointer]
+                      - button "Standard 2,400" [ref=e805] [cursor=pointer]
+                      - spinbutton [ref=e806]: "8"
+                      - textbox [ref=e807]
+                      - textbox [ref=e808]
+              - heading "Company Profile" [level=3] [ref=e810]:
+                - button "Company Profile" [ref=e811] [cursor=pointer]:
+                  - text: Company Profile
+                  - img [ref=e812]
+              - heading "SEO Details" [level=3] [ref=e815]:
+                - button "SEO Details" [ref=e816] [cursor=pointer]:
+                  - text: SEO Details
+                  - img [ref=e817]
+              - heading "SEO Validation" [level=3] [ref=e820]:
+                - button "SEO Validation" [ref=e821] [cursor=pointer]:
+                  - text: SEO Validation
+                  - img [ref=e822]
+              - heading "Settings" [level=3] [ref=e825]:
+                - button "Settings" [ref=e826] [cursor=pointer]:
+                  - text: Settings
+                  - img [ref=e827]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e829] [cursor=pointer]:
+    - generic [ref=e832]:
+      - text: Rendering
+      - generic [ref=e833]:
+        - generic [ref=e834]: .
+        - generic [ref=e835]: .
+        - generic [ref=e836]: .
+  - alert [ref=e149]: Modonty Admin - Dashboard

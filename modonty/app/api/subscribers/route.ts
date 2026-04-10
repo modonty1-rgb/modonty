@@ -1,27 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 
+const subscribeSchema = z.object({
+  email: z.string().email().max(254),
+  clientId: z.string().min(1),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, clientId } = body;
+    const parsed = subscribeSchema.safeParse(body);
 
-    if (!email || !email.includes("@")) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: "Invalid email" } as ApiResponse<never>,
+        { success: false, error: "Invalid request" } as ApiResponse<never>,
         { status: 400 }
       );
     }
 
-    if (!clientId) {
-      return NextResponse.json(
-        { success: false, error: "Client ID required" } as ApiResponse<never>,
-        { status: 400 }
-      );
-    }
+    const { email, clientId } = parsed.data;
 
     // Check if already subscribed for this client
     const existing = await db.subscriber.findFirst({

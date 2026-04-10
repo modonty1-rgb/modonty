@@ -35,15 +35,15 @@ interface CommentCardProps {
 const statusConfig = {
   APPROVED: {
     label: "موافق عليه",
-    className: "bg-green-500 hover:bg-green-600 text-white",
+    className: "bg-primary hover:bg-primary/90 text-primary-foreground",
   },
   PENDING: {
     label: "قيد المراجعة",
-    className: "bg-yellow-500 hover:bg-yellow-600 text-white",
+    className: "bg-accent hover:bg-accent/90 text-accent-foreground",
   },
   REJECTED: {
     label: "مرفوض",
-    className: "bg-red-500 hover:bg-red-600 text-white",
+    className: "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
   },
 };
 

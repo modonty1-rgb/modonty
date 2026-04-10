@@ -1,0 +1,281 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [active] [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e405]:
+              - img [ref=e406]
+              - link "Modonty" [ref=e408] [cursor=pointer]:
+                - /url: /modonty
+            - generic [ref=e409]:
+              - img [ref=e410]
+              - link "Pages" [ref=e412] [cursor=pointer]:
+                - /url: /modonty/pages
+            - generic [ref=e413]:
+              - img [ref=e414]
+              - generic [ref=e416]: About
+          - navigation "Main navigation" [ref=e121]:
+            - link "Modonty Modonty" [ref=e122] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e124]
+              - generic [ref=e125]: Modonty
+            - generic [ref=e127]:
+              - link "Articles" [ref=e128] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e129]:
+                  - img
+                  - generic [ref=e130]: Articles
+              - link "Clients" [ref=e131] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e132]:
+                  - img
+                  - generic [ref=e133]: Clients
+              - link "Media" [ref=e134] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e135]:
+                  - img
+                  - generic [ref=e136]: Media
+          - generic [ref=e137]:
+            - link "1" [ref=e138] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e139]:
+                - img
+                - generic [ref=e140]: "1"
+            - button "M" [ref=e141] [cursor=pointer]:
+              - generic [ref=e143]: M
+      - generic [ref=e144]:
+        - generic [ref=e145]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e146]:
+          - button "Send Note" [ref=e147] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e148] [cursor=pointer]:
+            - img
+      - main [ref=e149]:
+        - generic [ref=e418]:
+          - generic [ref=e419]:
+            - generic [ref=e420]:
+              - heading "About" [level=1] [ref=e421]
+              - paragraph [ref=e422]: About page content — /about
+            - generic [ref=e423]:
+              - button "Preview" [ref=e424] [cursor=pointer]:
+                - img
+                - text: Preview
+              - button "Regenerate SEO" [ref=e425] [cursor=pointer]:
+                - img
+                - text: Regenerate SEO
+          - generic [ref=e426]:
+            - generic [ref=e427]:
+              - generic [ref=e428]:
+                - generic [ref=e432]: Content
+                - generic [ref=e433]:
+                  - generic [ref=e434]:
+                    - generic [ref=e435]: Title*
+                    - textbox "Title*" [ref=e436]:
+                      - /placeholder: Enter page title
+                      - text: عن مدونتي
+                    - paragraph [ref=e437]: Main heading shown on the page
+                  - generic [ref=e438]:
+                    - generic [ref=e439]:
+                      - text: Content
+                      - generic [ref=e440]: "*"
+                    - generic [ref=e441]:
+                      - generic [ref=e442]:
+                        - button "Undo" [disabled]:
+                          - img
+                        - button "Redo" [disabled]:
+                          - img
+                        - button "Bold" [ref=e443] [cursor=pointer]:
+                          - img
+                        - button "Italic" [ref=e444] [cursor=pointer]:
+                          - img
+                        - button "Underline" [ref=e445] [cursor=pointer]:
+                          - img
+                        - button "Strikethrough" [ref=e446] [cursor=pointer]:
+                          - img
+                        - button "Code" [ref=e447] [cursor=pointer]:
+                          - img
+                        - button "Highlight" [ref=e448] [cursor=pointer]:
+                          - img
+                        - button "Superscript" [ref=e449] [cursor=pointer]:
+                          - img
+                        - button "Subscript" [ref=e450] [cursor=pointer]:
+                          - img
+                        - button "Heading 1" [ref=e451] [cursor=pointer]:
+                          - img
+                        - button "Heading 2" [ref=e452] [cursor=pointer]:
+                          - img
+                        - button "Heading 3" [ref=e453] [cursor=pointer]:
+                          - img
+                        - button "Bullet List" [ref=e454] [cursor=pointer]:
+                          - img
+                        - button "Ordered List" [ref=e455] [cursor=pointer]:
+                          - img
+                        - button "Blockquote" [ref=e456] [cursor=pointer]:
+                          - img
+                        - button "Align Right" [ref=e457] [cursor=pointer]:
+                          - img
+                        - button "Align Center" [ref=e458] [cursor=pointer]:
+                          - img
+                        - button "Align Left" [ref=e459] [cursor=pointer]:
+                          - img
+                        - button "Align Justify" [ref=e460] [cursor=pointer]:
+                          - img
+                        - button "Insert Link" [ref=e461] [cursor=pointer]:
+                          - img
+                        - button "Insert Image" [ref=e462] [cursor=pointer]:
+                          - img
+                        - button "YouTube Video" [ref=e463] [cursor=pointer]:
+                          - img
+                        - button "Horizontal Rule" [ref=e464] [cursor=pointer]:
+                          - img
+                        - button "Insert Table" [ref=e465] [cursor=pointer]:
+                          - img
+                        - button "Clear Formatting" [ref=e466] [cursor=pointer]:
+                          - img
+                      - generic [ref=e468]:
+                        - heading "عن مدونتي" [level=1] [ref=e469]
+                        - paragraph [ref=e470]:
+                          - strong [ref=e471]: مدونتي
+                          - text: هي منصة سعودية متخصصة في تقديم خدمات تحسين محركات البحث (SEO) وصناعة المحتوى العربي الاحترافي.
+                        - heading "رؤيتنا" [level=2] [ref=e472]
+                        - paragraph [ref=e473]: نؤمن أن كل شركة عربية تستحق أن تظهر في الصفحة الأولى من جوجل. نحن نساعدك في بناء حضور رقمي قوي يجذب عملاءك المحتملين.
+                        - heading "خدماتنا" [level=2] [ref=e474]
+                        - list [ref=e475]:
+                          - listitem [ref=e476]:
+                            - paragraph [ref=e477]: تحسين محركات البحث SEO
+                          - listitem [ref=e478]:
+                            - paragraph [ref=e479]: كتابة المحتوى التسويقي
+                          - listitem [ref=e480]:
+                            - paragraph [ref=e481]: إدارة المدونات التجارية
+                          - listitem [ref=e482]:
+                            - paragraph [ref=e483]: تحليل المنافسين والكلمات المفتاحية
+                        - paragraph [ref=e484]
+                      - generic [ref=e485]:
+                        - generic [ref=e486]:
+                          - generic [ref=e487]: 49 words
+                          - generic [ref=e488]: 341 chars
+                          - generic [ref=e489]: ~1 min read
+                        - generic [ref=e490]: Ctrl+K
+              - generic [ref=e491]:
+                - generic [ref=e495]: Search Engine Optimization
+                - generic [ref=e496]:
+                  - generic [ref=e497]:
+                    - generic [ref=e498]:
+                      - generic [ref=e499]: SEO Title
+                      - textbox "SEO Title" [ref=e500]:
+                        - /placeholder: e.g., About Us - Modonty
+                        - text: عن مدونتي — منصة SEO عربية متخصصة
+                      - paragraph [ref=e501]: Title shown in Google search results (30-60 characters)
+                    - generic [ref=e503]: "33 / 30 minimum (max: 60)"
+                  - generic [ref=e504]:
+                    - generic [ref=e505]:
+                      - generic [ref=e506]: SEO Description
+                      - textbox "SEO Description" [ref=e507]:
+                        - /placeholder: Brief description for search engines...
+                        - text: تعرف على مدونتي — منصة سعودية متخصصة في تحسين محركات البحث وصناعة المحتوى العربي الاحترافي للشركات.
+                      - paragraph [ref=e508]: Description shown below the title in search results (120-160 characters)
+                    - generic [ref=e510]: "99 / 120 minimum (max: 160)"
+            - generic [ref=e511]:
+              - generic [ref=e512]:
+                - generic [ref=e516]: Hero & Social Image
+                - generic [ref=e517]:
+                  - generic [ref=e518]:
+                    - generic [ref=e519]:
+                      - text: Image URL
+                      - textbox "https://res.cloudinary.com/..." [ref=e521]
+                    - generic [ref=e522]:
+                      - text: Alt Text
+                      - textbox "Describe the image…" [ref=e523]
+                    - generic [ref=e524]:
+                      - img [ref=e525]
+                      - generic [ref=e529]: Paste a Cloudinary URL above
+                  - paragraph [ref=e530]: Used as hero image and shared on social media
+              - button "Save Page" [ref=e533] [cursor=pointer]:
+                - img
+                - text: Save Page
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e404]

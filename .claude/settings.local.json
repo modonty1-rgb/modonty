@@ -1,4 +1,29 @@
 {
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"{\\\"systemMessage\\\": \\\"⚠️ Session ended — SESSION-LOG not yet updated. Open new session and check documents/context/SESSION-LOG.md\\\"}\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const t=new Date().toTimeString().slice(0,8);let s;try{const i=JSON.parse(d);s='['+t+'] '+(i.tool_name||'?')+': '+(i.tool_input&&(i.tool_input.file_path||i.tool_input.path)||'?');}catch(e){s='['+t+'] parse-error';}require('fs').appendFileSync('c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/context/session-changes.log',s+'\\n');});\" 2>/dev/null || true",
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Bash(pnpm tsc:*)",
@@ -107,7 +132,14 @@
       "mcp__gsc__query_by_search_type",
       "Bash(pnpm dev:*)",
       "Bash(echo \"admin PID: $!\")",
-      "Read(//c/Users/w2nad/Pictures/Screenshots//**)"
+      "Read(//c/Users/w2nad/Pictures/Screenshots//**)",
+      "Bash(npm --version)",
+      "Bash(where node:*)",
+      "Read(//tmp/**)",
+      "Bash(node -e ':*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\w2nad\\.claude\\projects\\c--Users-w2nad-Desktop-dreamToApp-MODONTY\\memory"
     ]
   }
 }

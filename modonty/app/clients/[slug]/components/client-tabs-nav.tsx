@@ -71,7 +71,7 @@ function StickyClientName({ name, className }: { name: string; className?: strin
         {name}
       </span>
       <IconCheckCircle
-        className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0"
+        className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0"
         aria-label="موثق"
       />
     </div>

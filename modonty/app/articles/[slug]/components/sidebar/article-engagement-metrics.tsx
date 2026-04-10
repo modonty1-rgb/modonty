@@ -1,59 +1,48 @@
 'use client';
 
-import { IconComment, IconViews, IconHelp } from "@/lib/icons";
+import { IconComment, IconHelp } from "@/lib/icons";
 
 interface ArticleEngagementMetricsProps {
   comments: number;
-  views: number;
   questions?: number;
 }
 
 export function ArticleEngagementMetrics({
   comments,
-  views,
   questions = 0,
 }: ArticleEngagementMetricsProps) {
   const scrollToComments = () => {
-    const commentsSection = document.getElementById('article-comments');
-    if (commentsSection) {
-      commentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    document.getElementById('article-comments')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const scrollToFaq = () => {
-    const faqSection = document.getElementById('article-faq');
-    if (faqSection) {
-      faqSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    document.getElementById('article-faq')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  if (comments === 0 && questions === 0) return null;
+
   return (
-    <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-      {views > 0 && (
-        <div className="flex items-center gap-2">
-          <IconViews className="h-4 w-4 shrink-0" />
-          <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>
-        </div>
+    <div className="flex items-center gap-1">
+      {comments > 0 && (
+        <button
+          type="button"
+          onClick={scrollToComments}
+          className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+          aria-label="انتقل إلى قسم التعليقات"
+        >
+          <IconComment className="h-4 w-4 shrink-0" />
+          <span className="text-xs tabular-nums leading-none">{comments.toLocaleString('ar-SA')}</span>
+        </button>
       )}
       {questions > 0 && (
         <button
           type="button"
           onClick={scrollToFaq}
-          className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
+          className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
           aria-label="انتقل إلى الأسئلة الشائعة"
         >
           <IconHelp className="h-4 w-4 shrink-0" />
-          <span className="tabular-nums">{questions.toLocaleString('ar-SA')}</span>
-        </button>
-      )}
-      {comments > 0 && (
-        <button
-          onClick={scrollToComments}
-          className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
-          aria-label="انتقل إلى قسم التعليقات"
-        >
-          <IconComment className="h-4 w-4 shrink-0" />
-          <span className="tabular-nums">{comments.toLocaleString('ar-SA')}</span>
+          <span className="text-xs tabular-nums leading-none">{questions.toLocaleString('ar-SA')}</span>
         </button>
       )}
     </div>

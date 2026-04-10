@@ -44,7 +44,7 @@ export function Breadcrumb({ items = [], className, maxItems = 3 }: BreadcrumbPr
       className={cn("container mx-auto max-w-[1128px] px-4", className)}
     >
       <ol
-        className="flex items-center gap-2 py-3 text-sm flex-wrap"
+        className="flex items-center gap-2 py-3 text-sm overflow-hidden"
         itemScope
         itemType="https://schema.org/BreadcrumbList"
       >

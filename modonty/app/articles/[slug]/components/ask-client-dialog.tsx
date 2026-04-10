@@ -34,6 +34,7 @@ interface PendingFaq {
 interface AskClientDialogProps {
   articleId: string;
   clientId: string;
+  clientName?: string;
   articleTitle?: string;
   user: { name: string | null; email: string | null } | null;
   pendingFaqs?: PendingFaq[];
@@ -44,6 +45,7 @@ interface AskClientDialogProps {
 export function AskClientDialog({
   articleId,
   clientId,
+  clientName,
   articleTitle,
   user,
   pendingFaqs: pendingFaqsProp,
@@ -176,7 +178,7 @@ export function AskClientDialog({
           if (next) {
             trackCtaClick({
               type: "FORM",
-              label: "اسأل العميل",
+              label: clientName ? `تواصل مع ${clientName}` : "اسأل العميل",
               targetUrl: "#",
               articleId,
               clientId,
@@ -188,15 +190,15 @@ export function AskClientDialog({
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-center bg-background border-input text-foreground shadow-sm"
+            className="w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm"
             type="button"
           >
-            اسأل العميل
+            {clientName ? `اسأل ${clientName} مباشرةً` : "اسأل العميل"}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md" dir="rtl">
           <DialogHeader>
-            <DialogTitle>اسأل العميل</DialogTitle>
+            <DialogTitle>{clientName ? `تواصل مع ${clientName}` : "اسأل العميل"}</DialogTitle>
             <DialogDescription>
               {articleTitle ? `اطرح سؤالك حول: ${articleTitle}` : "اطرح سؤالك وسيتم الرد عليه لاحقاً."}
             </DialogDescription>

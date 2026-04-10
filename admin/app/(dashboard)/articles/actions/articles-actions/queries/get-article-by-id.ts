@@ -3,6 +3,15 @@
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
+export async function getArticleEngagementCounts(id: string): Promise<{ views: number; comments: number }> {
+  if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) return { views: 0, comments: 0 };
+  const [views, comments] = await Promise.all([
+    db.articleView.count({ where: { articleId: id } }),
+    db.comment.count({ where: { articleId: id } }),
+  ]);
+  return { views, comments };
+}
+
 const OBJECT_ID_REGEX = /^[0-9a-fA-F]{24}$/;
 
 export async function getArticleById(id: string) {

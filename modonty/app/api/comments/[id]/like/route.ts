@@ -6,22 +6,11 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  console.log('====================================');
-  console.log('[API ENTRY] /api/comments/[id]/like POST handler called');
-  console.log('[API ENTRY] Time:', new Date().toISOString());
-  console.log('[API ENTRY] URL:', req.url);
-  console.log('====================================');
 
   try {
     const session = await auth();
-    console.log('[API AUTH] Session check:', { 
-      hasSession: !!session, 
-      hasUserId: !!session?.user?.id,
-      userId: session?.user?.id 
-    });
 
     if (!session?.user?.id) {
-      console.log('[API AUTH] UNAUTHORIZED - No valid session');
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
         { status: 401 }
@@ -31,7 +20,6 @@ export async function POST(
     const { id: commentId } = await params;
     const userId = session.user.id;
 
-    console.log('[Comment Like API]', { commentId, userId, timestamp: new Date().toISOString() });
 
     const comment = await db.comment.findUnique({
       where: { id: commentId },
@@ -58,7 +46,6 @@ export async function POST(
       },
     });
 
-    console.log('[Comment Like API] Existing like:', existingLike ? 'YES' : 'NO', 'Existing dislike:', existingDislike ? 'YES' : 'NO');
 
     if (existingLike) {
       await db.commentLike.deleteMany({
@@ -67,7 +54,6 @@ export async function POST(
           userId,
         },
       });
-      console.log('[Comment Like API] Action: REMOVED like');
     } else {
       if (existingDislike) {
         await db.commentDislike.deleteMany({
@@ -84,7 +70,6 @@ export async function POST(
           userId,
         },
       });
-      console.log('[Comment Like API] Action: ADDED like');
     }
 
     const [likesCount, dislikesCount] = await Promise.all([
@@ -92,7 +77,6 @@ export async function POST(
       db.commentDislike.count({ where: { commentId } }),
     ]);
 
-    console.log('[Comment Like API] Result:', { likesCount, dislikesCount, userLiked: !existingLike });
 
     const responseData = {
       success: true,
@@ -104,12 +88,9 @@ export async function POST(
       },
     };
 
-    console.log('[API EXIT] Sending success response:', responseData);
-    console.log('====================================');
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('[API ERROR] Error toggling comment like:', error);
-    console.log('====================================');
     return NextResponse.json(
       { success: false, error: "Failed to toggle like" },
       { status: 500 }

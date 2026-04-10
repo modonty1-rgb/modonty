@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "@/components/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArticleEngagementMetrics } from "./article-engagement-metrics";
 import { ArticleInteractionButtons } from "../article-interaction-buttons";
-import { ArticleUtilities } from "../client-only-utilities";
 import { ArticleShareButtons } from "../article-share-buttons";
+import { ArticleUtilities } from "../client-only-utilities";
 
 interface ArticleSidebarEngagementProps {
   title: string;
@@ -12,7 +13,6 @@ interface ArticleSidebarEngagementProps {
   articleSlug: string;
   clientId?: string;
   commentsCount: number;
-  views: number;
   questionsCount?: number;
   userId?: string | null;
   likes: number;
@@ -29,7 +29,6 @@ export function ArticleSidebarEngagement({
   articleSlug,
   clientId,
   commentsCount,
-  views,
   questionsCount = 0,
   userId,
   likes,
@@ -41,30 +40,55 @@ export function ArticleSidebarEngagement({
 }: ArticleSidebarEngagementProps) {
   return (
     <Card className="min-w-0">
-      <CardContent className="p-5 flex flex-col gap-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center shrink-0 min-w-0">
-            <ArticleInteractionButtons
-              articleId={articleId}
-              articleSlug={articleSlug}
-              initialLikes={likes}
-              initialDislikes={dislikes}
-              initialFavorites={favorites}
-              initialUserLiked={userLiked}
-              initialUserDisliked={userDisliked}
-              initialUserFavorited={userFavorited}
-              compact
-            />
-          </div>
-          <ArticleEngagementMetrics comments={commentsCount} views={views} questions={questionsCount} />
+      <CardContent className="p-0">
+
+        {/* Header — always visible; login prompt added when not logged in */}
+        <div className="px-4 py-3 bg-muted/40 rounded-t-lg flex items-center justify-between">
+          <span className="text-xs font-semibold text-muted-foreground tracking-tight">التفاعل مع المقال</span>
+          {!userId && (
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <Link
+                href={`/users/login`}
+                className="font-semibold text-accent underline-offset-4 hover:underline"
+              >
+                سجّل الدخول
+              </Link>
+            </p>
+          )}
         </div>
-        <div className="flex flex-col gap-3 border-t border-border pt-5">
-          <span className="text-xs font-semibold text-muted-foreground tracking-tight">شارك المقال</span>
-          <div className="flex items-center gap-3 flex-wrap">
-            <ArticleShareButtons title={title} url="" articleSlug={articleSlug} hideCopyLink articleId={articleId} clientId={clientId} />
-            <ArticleUtilities articleUrl="" compact />
+        <div className="border-b border-border" />
+
+        {/* Stats + Interactions — one unified row */}
+        <div className="px-4 py-3 flex items-center justify-center gap-1">
+          <ArticleEngagementMetrics comments={commentsCount} questions={questionsCount} />
+          {(commentsCount > 0 || (questionsCount ?? 0) > 0) && (
+            <div className="h-8 w-px bg-border mx-1 shrink-0" />
+          )}
+          <ArticleInteractionButtons
+            articleId={articleId}
+            articleSlug={articleSlug}
+            initialLikes={likes}
+            initialDislikes={dislikes}
+            initialFavorites={favorites}
+            initialUserLiked={userLiked}
+            initialUserDisliked={userDisliked}
+            initialUserFavorited={userFavorited}
+            vertical
+            hideLoginHint
+          />
+        </div>
+
+        <div className="border-t border-border" />
+
+        {/* Share */}
+        <div className="px-4 py-3 flex items-center justify-between gap-3">
+          <span className="text-xs font-semibold text-muted-foreground tracking-tight shrink-0">شارك المقال</span>
+          <div className="flex items-center gap-2">
+            <ArticleShareButtons title={title} url="" articleSlug={articleSlug} hideCopyLink buttonVariant="ghost" articleId={articleId} clientId={clientId} />
+            <ArticleUtilities articleUrl="" compact buttonVariant="ghost" />
           </div>
         </div>
+
       </CardContent>
     </Card>
   );

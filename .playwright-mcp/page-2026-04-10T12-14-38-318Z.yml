@@ -1,0 +1,258 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - banner [ref=e109]:
+        - generic [ref=e110]:
+          - navigation "Breadcrumb" [ref=e112]:
+            - link "Go to dashboard" [ref=e113] [cursor=pointer]:
+              - /url: /
+              - img [ref=e114]
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - generic [ref=e120]: Articles
+          - navigation "Main navigation" [ref=e122]:
+            - link "Modonty Modonty" [ref=e123] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e125]
+              - generic [ref=e126]: Modonty
+            - generic [ref=e128]:
+              - link "Articles" [ref=e129] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e130]:
+                  - img
+                  - generic [ref=e131]: Articles
+              - link "Clients" [ref=e132] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e133]:
+                  - img
+                  - generic [ref=e134]: Clients
+              - link "Media" [ref=e135] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e136]:
+                  - img
+                  - generic [ref=e137]: Media
+          - generic [ref=e138]:
+            - link "4" [ref=e139] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e140]:
+                - img
+                - generic [ref=e141]: "4"
+            - button "M" [ref=e142] [cursor=pointer]:
+              - generic [ref=e144]: M
+      - generic [ref=e145]:
+        - generic [ref=e146]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e147]:
+          - button "Send Note" [ref=e148] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e149] [cursor=pointer]:
+            - img
+      - main [ref=e150]:
+        - generic [ref=e152]:
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - heading "Articles (3)" [level=1] [ref=e155]:
+                - text: Articles
+                - generic [ref=e156]: (3)
+              - generic [ref=e157]:
+                - generic [ref=e158]:
+                  - img [ref=e159]
+                  - generic [ref=e162]: "3"
+                  - generic [ref=e163]: total
+                - generic [ref=e164]:
+                  - img [ref=e165]
+                  - generic [ref=e168]: "2"
+                  - generic [ref=e169]: published
+                - generic [ref=e170]:
+                  - img [ref=e171]
+                  - generic [ref=e174]: "0"
+                  - generic [ref=e175]: drafts
+                - generic [ref=e176]:
+                  - img [ref=e177]
+                  - generic [ref=e181]: 83%
+                  - generic [ref=e182]: SEO
+                - button "Details" [ref=e183] [cursor=pointer]:
+                  - img
+                  - generic [ref=e184]: Details
+            - generic [ref=e185]:
+              - button "Filters" [ref=e186] [cursor=pointer]:
+                - img
+                - text: Filters
+              - link "SEO Health" [ref=e187] [cursor=pointer]:
+                - /url: /seo-overview
+                - button "SEO Health" [ref=e188]:
+                  - img
+                  - text: SEO Health
+              - link "New Article" [ref=e189] [cursor=pointer]:
+                - /url: /articles/new
+                - button "New Article" [ref=e190]:
+                  - img
+                  - text: New Article
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - img
+              - textbox "Search articles..." [ref=e193]
+            - generic [ref=e194]:
+              - generic [ref=e195] [cursor=pointer]: All
+              - generic [ref=e196] [cursor=pointer]: Writing
+              - generic [ref=e197] [cursor=pointer]: Draft
+              - generic [ref=e198] [cursor=pointer]: Scheduled
+              - generic [ref=e199] [cursor=pointer]: Published
+              - generic [ref=e200] [cursor=pointer]: Archived
+          - table [ref=e204]:
+            - rowgroup [ref=e205]:
+              - row "Article SEO Status Date" [ref=e206]:
+                - columnheader "Article" [ref=e207] [cursor=pointer]:
+                  - generic [ref=e208]:
+                    - text: Article
+                    - img [ref=e209]
+                - columnheader "SEO" [ref=e212]
+                - columnheader "Status" [ref=e213]
+                - columnheader "Date" [ref=e214] [cursor=pointer]:
+                  - generic [ref=e215]:
+                    - text: Date
+                    - img [ref=e216]
+            - rowgroup [ref=e219]:
+              - row "مستقبل التعليم الرقمي في السعودية متجر نوفا للإلكترونيات · التسويق الرقمي 80% Writing Apr 8, 2026" [ref=e220] [cursor=pointer]:
+                - cell "مستقبل التعليم الرقمي في السعودية متجر نوفا للإلكترونيات · التسويق الرقمي" [ref=e221]:
+                  - generic [ref=e222]:
+                    - link "مستقبل التعليم الرقمي في السعودية" [ref=e223]:
+                      - /url: /articles/69d6667992f34b725bbddee6
+                    - generic [ref=e224]:
+                      - generic [ref=e225]: متجر نوفا للإلكترونيات
+                      - generic [ref=e226]: ·
+                      - generic [ref=e227]:
+                        - img [ref=e228]
+                        - text: التسويق الرقمي
+                - cell "80%" [ref=e230]:
+                  - generic [ref=e231]: 80%
+                - cell "Writing" [ref=e232]:
+                  - generic [ref=e233]: Writing
+                - cell "Apr 8, 2026" [ref=e234]:
+                  - generic [ref=e235]: Apr 8, 2026
+              - row "الذكاء الاصطناعي في الرعاية الصحية السعودية متجر نوفا للإلكترونيات · التسويق الرقمي · 21 88% Published Apr 8, 2026" [ref=e236] [cursor=pointer]:
+                - cell "الذكاء الاصطناعي في الرعاية الصحية السعودية متجر نوفا للإلكترونيات · التسويق الرقمي · 21" [ref=e237]:
+                  - generic [ref=e238]:
+                    - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e239]:
+                      - /url: /articles/69d6666a92f34b725bbddeda
+                    - generic [ref=e240]:
+                      - generic [ref=e241]: متجر نوفا للإلكترونيات
+                      - generic [ref=e242]: ·
+                      - generic [ref=e243]:
+                        - img [ref=e244]
+                        - text: التسويق الرقمي
+                      - generic [ref=e246]: ·
+                      - generic [ref=e247]:
+                        - img [ref=e248]
+                        - text: "21"
+                - cell "88%" [ref=e251]:
+                  - generic [ref=e252]: 88%
+                - cell "Published" [ref=e253]:
+                  - generic [ref=e254]: Published
+                - cell "Apr 8, 2026" [ref=e255]:
+                  - generic [ref=e256]: Apr 8, 2026
+              - row "دليل SEO المتاجر الإلكترونية 2025 متجر نوفا للإلكترونيات · التسويق الرقمي · 15 80% Published Apr 8, 2026" [ref=e257] [cursor=pointer]:
+                - cell "دليل SEO المتاجر الإلكترونية 2025 متجر نوفا للإلكترونيات · التسويق الرقمي · 15" [ref=e258]:
+                  - generic [ref=e259]:
+                    - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e260]:
+                      - /url: /articles/69d6665b92f34b725bbdded0
+                    - generic [ref=e261]:
+                      - generic [ref=e262]: متجر نوفا للإلكترونيات
+                      - generic [ref=e263]: ·
+                      - generic [ref=e264]:
+                        - img [ref=e265]
+                        - text: التسويق الرقمي
+                      - generic [ref=e267]: ·
+                      - generic [ref=e268]:
+                        - img [ref=e269]
+                        - text: "15"
+                - cell "80%" [ref=e272]:
+                  - generic [ref=e273]: 80%
+                - cell "Published" [ref=e274]:
+                  - generic [ref=e275]: Published
+                - cell "Apr 8, 2026" [ref=e276]:
+                  - generic [ref=e277]: Apr 8, 2026
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e283] [cursor=pointer]:
+    - img [ref=e284]
+  - alert [ref=e287]

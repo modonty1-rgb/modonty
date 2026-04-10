@@ -1,4 +1,5 @@
 import { RelativeTime } from "@/components/date/RelativeTime";
+import { IconViews } from "@/lib/icons";
 
 interface ArticleHeaderProps {
   title: string;
@@ -10,6 +11,7 @@ interface ArticleHeaderProps {
   createdAt: Date;
   readingTimeMinutes: number | null;
   wordCount: number | null;
+  views?: number;
 }
 
 export function ArticleHeader({
@@ -20,6 +22,7 @@ export function ArticleHeader({
   createdAt,
   readingTimeMinutes,
   wordCount,
+  views,
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
@@ -45,6 +48,12 @@ export function ArticleHeader({
           <span>⏱️ {readingTimeMinutes} دقيقة قراءة</span>
         )}
         {wordCount && <span>📝 {wordCount} كلمة</span>}
+        {views !== undefined && (
+          <span className="flex items-center gap-1">
+            <IconViews className="h-3.5 w-3.5 shrink-0" />
+            <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>
+          </span>
+        )}
       </div>
 
     </header>

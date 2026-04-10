@@ -39,10 +39,11 @@ export function CommentFormDialog({ articleId, articleSlug, userId, clientId }: 
 
   return (
     <Card className="min-w-0">
+      <div className="px-4 py-3 bg-muted/40 rounded-t-lg">
+        <span className="text-xs font-semibold text-muted-foreground tracking-tight">أضف تعليق</span>
+      </div>
+      <div className="border-b border-border" />
       <CardContent className="p-4 flex flex-col gap-4">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase shrink-0">
-          أضف تعليق
-        </h2>
         <Dialog
           open={open}
           onOpenChange={(next) => {

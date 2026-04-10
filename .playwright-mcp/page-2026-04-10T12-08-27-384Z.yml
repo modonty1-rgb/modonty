@@ -1,0 +1,373 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+      - navigation:
+        - generic:
+          - link:
+            - /url: /
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /seo-overview
+            - img
+            - generic: SEO Overview
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: Content
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /articles
+                - img
+                - generic: Articles
+              - link:
+                - /url: /categories
+                - img
+                - generic: Categories
+              - link:
+                - /url: /tags
+                - img
+                - generic: Tags
+              - link:
+                - /url: /authors
+                - img
+                - generic: Authors
+              - link:
+                - /url: /industries
+                - img
+                - generic: Industries
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Modonty Pages
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Audience
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: System
+            - img
+      - generic:
+        - link:
+          - /url: /guidelines
+          - img
+          - text: Guidelines
+        - generic:
+          - button:
+            - img
+          - link:
+            - /url: /changelog
+            - text: v0.27.0
+            - generic: "?"
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - img
+              - generic:
+                - img
+                - link:
+                  - /url: /articles
+                  - text: Articles
+              - generic:
+                - img
+                - link:
+                  - /url: /articles/69d6667992f34b725bbddee6
+                  - text: مستقبل التعليم الرقمي في السعودية
+              - generic:
+                - img
+                - generic: Edit
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: Modonty
+              - generic:
+                - link:
+                  - /url: /articles
+                  - button:
+                    - img
+                    - generic: Articles
+                - link:
+                  - /url: /clients
+                  - button:
+                    - img
+                    - generic: Clients
+                - link:
+                  - /url: /media
+                  - button:
+                    - img
+                    - generic: Media
+          - generic:
+            - link:
+              - /url: /contact-messages
+              - button:
+                - img
+                - generic: "4"
+            - button:
+              - generic:
+                - generic: M
+      - generic:
+        - generic: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic:
+          - button:
+            - img
+            - text: Send Note
+          - button:
+            - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Step 2 of 5
+                    - generic: "SEO Health: 80%"
+                    - generic:
+                      - generic: Live Analysis
+                  - generic:
+                    - generic:
+                      - generic: 72% Complete
+                    - generic:
+                      - button:
+                        - img
+                        - generic: Update
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - tabpanel:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Content
+                            - generic:
+                              - button:
+                                - img
+                                - generic: Clear
+                          - generic:
+                            - generic:
+                              - button [disabled]:
+                                - img
+                              - button [disabled]:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                              - button:
+                                - img
+                            - generic:
+                              - generic:
+                                - heading [level=2]: الفرصة الذهبية في التعليم الرقمي
+                                - paragraph:
+                                  - text: سوق التعليم الإلكتروني في الشرق الأوسط يصل إلى
+                                  - strong: 1.2 مليار دولار
+                                  - text: بحلول 2026. المملكة العربية السعودية تقود هذا التحول بمبادرات طموحة ضمن رؤية 2030.
+                                - paragraph: التعليم الرقمي لم يعد بديلاً مؤقتاً، بل أصبح ركيزة أساسية في المنظومة التعليمية. منصة مدرستي خدمت أكثر من 6 ملايين طالب خلال جائحة كورونا.
+                                - heading [level=2]: المنصات السعودية الرائدة
+                                - heading [level=3]: منصة مدرستي
+                                - paragraph: المنصة الحكومية الأكبر في المنطقة، تقدم محتوى تعليمي تفاعلي لجميع المراحل الدراسية مع أدوات تقييم ذكية ومتابعة أولياء الأمور.
+                                - heading [level=3]: منصات القطاع الخاص
+                                - paragraph: شركات مثل نون أكاديمي وإثراء تقدم دورات متخصصة في البرمجة والتصميم وريادة الأعمال، مستهدفة الشباب السعودي الطموح.
+                                - heading [level=2]: التقنيات المستخدمة
+                                - paragraph: الواقع الافتراضي (VR) يُستخدم في تدريس العلوم والتاريخ، مما يتيح للطلاب زيارة المواقع التاريخية والمختبرات افتراضياً. الذكاء الاصطناعي يخصص المحتوى حسب مستوى كل طالب.
+                                - heading [level=2]: التحديات
+                                - paragraph: الفجوة الرقمية بين المدن والقرى، وتأهيل المعلمين لاستخدام التقنيات الحديثة، من أبرز التحديات التي تعمل الوزارة على حلها.
+                            - generic:
+                              - generic:
+                                - generic: 131 words
+                                - generic: 918 chars
+                                - generic: ~1 min read
+                              - generic: Ctrl+K
+                        - generic:
+                          - text: Content Statistics
+                          - generic:
+                            - generic:
+                              - generic: Word Count
+                              - generic: "131"
+                              - generic: "Letters: 0"
+                              - generic: Short content (less than 300 words)
+                            - generic:
+                              - generic: Reading Time
+                              - generic: "1"
+                              - generic: minutes
+                            - generic:
+                              - generic: Content Depth
+                              - generic: Short
+                              - generic: Add more content
+                        - generic:
+                          - generic: Quick SEO Content Check
+                          - generic:
+                            - generic:
+                              - generic: Headline (H1) present
+                            - generic:
+                              - generic:
+                                - img
+                              - generic: Subheadings (H2/H3) used
+                            - generic:
+                              - generic: Images with Alt text
+                            - generic:
+                              - generic: Internal/External links
+                            - generic:
+                              - generic: Optimal length (> 600 words)
+                            - generic:
+                              - generic:
+                                - img
+                              - generic: Paragraphs are concise (< 500 characters per paragraph)
+                    - generic:
+                      - generic:
+                        - generic:
+                          - text: Featured Image
+                          - button:
+                            - img
+                            - text: Select Featured Image
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - text: Image Gallery
+                                - paragraph: 0/10 images
+                              - button:
+                                - img
+                                - text: Add Image
+                            - button:
+                              - img
+                              - text: Add First Image
+                - generic:
+                  - generic:
+                    - tablist:
+                      - tab:
+                        - generic:
+                          - img
+                        - generic: Basic
+                        - generic: 100%
+                      - tab [selected]:
+                        - generic: "2"
+                        - generic: Content
+                        - generic: 80%
+                      - tab:
+                        - generic:
+                          - img
+                        - generic: SEO
+                        - generic: 80%
+                      - tab:
+                        - generic: "4"
+                        - generic: FAQs & Related
+                        - generic: 50%
+                      - tab:
+                        - generic: "5"
+                        - generic: Publish
+                        - generic: 50%
+  - list
+  - button "Open Next.js Dev Tools" [ref=e483] [cursor=pointer]:
+    - img [ref=e484]
+  - alert
+  - dialog "Select Media" [ref=e599]:
+    - generic [ref=e600]:
+      - heading "Select Media" [level=2] [ref=e601]
+      - paragraph [ref=e602]: Choose an image from the media library for this client.
+    - generic [ref=e603]:
+      - generic [ref=e604]:
+        - generic [ref=e605]:
+          - img
+          - textbox "Search media by filename or alt text..." [active] [ref=e606]
+        - combobox [ref=e608] [cursor=pointer]:
+          - generic: All Types
+          - img [ref=e609]
+        - button "Refresh media list" [ref=e611] [cursor=pointer]:
+          - img
+      - generic [ref=e613]:
+        - generic [ref=e615] [cursor=pointer]:
+          - img "Test image 3 for media library" [ref=e617]
+          - generic [ref=e618]:
+            - paragraph [ref=e619]: img3.png
+            - generic [ref=e620]:
+              - generic [ref=e621]: General
+              - generic [ref=e622]: 1351 × 351
+        - generic [ref=e624] [cursor=pointer]:
+          - img "Test image 2 for nova electronics" [ref=e626]
+          - generic [ref=e627]:
+            - paragraph [ref=e628]: img2.png
+            - generic [ref=e629]:
+              - generic [ref=e630]: General
+              - generic [ref=e631]: 53 × 255
+        - generic [ref=e633] [cursor=pointer]:
+          - img "Test image 1 for nova electronics" [ref=e635]
+          - generic [ref=e636]:
+            - paragraph [ref=e637]: img1.png
+            - generic [ref=e638]:
+              - generic [ref=e639]: General
+              - generic [ref=e640]: 1032 × 521
+        - generic [ref=e642] [cursor=pointer]:
+          - img "Deserunt nesciunt q" [ref=e644]
+          - generic [ref=e645]:
+            - paragraph [ref=e646]: 545643186_122114813000981446_1447770622795620204_n.png
+            - generic [ref=e647]:
+              - generic [ref=e648]: General
+              - generic [ref=e649]: 960 × 365
+    - button "Close" [ref=e650] [cursor=pointer]:
+      - img [ref=e651]
+      - generic [ref=e654]: Close

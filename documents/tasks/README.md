@@ -34,10 +34,11 @@
 
 ---
 
-## Modonty (1 file)
+## Modonty (2 files)
 
 | File | Description |
 |------|-------------|
+| [MODONTY-PUBLIC-TODO.md](modonty/MODONTY-PUBLIC-TODO.md) | **مهام إطلاق modonty.com للعميل النهائي** — مرتبة بالأولوية |
 | [LAZY-LOAD-PLAN.md](modonty/LAZY-LOAD-PLAN.md) | خطة Lazy Load للمقالات |
 
 ---

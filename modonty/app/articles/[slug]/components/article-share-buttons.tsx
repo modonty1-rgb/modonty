@@ -8,6 +8,7 @@ interface ArticleShareButtonsProps {
   url: string;
   articleSlug: string;
   hideCopyLink?: boolean;
+  buttonVariant?: "outline" | "ghost";
   articleId?: string;
   clientId?: string;
 }
@@ -18,6 +19,7 @@ export function ArticleShareButtons({
   url,
   articleSlug,
   hideCopyLink = false,
+  buttonVariant = "outline",
   articleId,
   clientId,
 }: ArticleShareButtonsProps) {
@@ -50,6 +52,7 @@ export function ArticleShareButtons({
       showCopyLink={!hideCopyLink}
       onShare={onShare}
       size="sm"
+      buttonVariant={buttonVariant}
     />
   );
 }

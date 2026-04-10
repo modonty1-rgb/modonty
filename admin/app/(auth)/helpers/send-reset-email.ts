@@ -54,18 +54,6 @@ export async function sendResetEmail(
     </div>
   `;
 
-  console.log(`[sendResetEmail][${requestId}] Preparing email:`, {
-    requestId,
-    timestamp,
-    to: email,
-    subject: emailSubject,
-    tokenFull: token,
-    tokenPrefix,
-    resetLink,
-  });
-
-  console.log(`[sendResetEmail][${requestId}] HTML being sent (first 300 chars):`, emailHtml.substring(0, 300));
-
   await sendEmailWithRetry({
     from: process.env.RESEND_FROM || "",
     to: email,
@@ -73,5 +61,4 @@ export async function sendResetEmail(
     html: emailHtml,
   });
 
-  console.log(`[sendResetEmail][${requestId}] Email sent successfully to:`, email);
 }

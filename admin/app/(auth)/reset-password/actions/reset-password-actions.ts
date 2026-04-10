@@ -41,12 +41,6 @@ export async function resetPassword(
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   const now = new Date();
 
-  console.log("[resetPassword] Token validation:", {
-    receivedTokenLength: token.length,
-    hashedTokenPrefix: hashedToken.substring(0, 16) + "...",
-    currentTime: now.toISOString(),
-  });
-
   try {
     // First, check if token exists (ignoring expiration) for debugging
     const tokenExists = await db.user.findFirst({
@@ -71,15 +65,6 @@ export async function resetPassword(
 
     // Token exists, check if expired
     const isExpired = !tokenExists.passwordResetExpires || tokenExists.passwordResetExpires <= now;
-
-    console.log("[resetPassword] Token found:", {
-      userId: tokenExists.id,
-      email: tokenExists.email,
-      role: tokenExists.role,
-      expires: tokenExists.passwordResetExpires?.toISOString(),
-      isExpired,
-      currentTime: now.toISOString(),
-    });
 
     if (isExpired) {
       console.error("[resetPassword] Token EXPIRED:", {
@@ -114,7 +99,6 @@ export async function resetPassword(
       },
     });
 
-    console.log("[resetPassword] Password updated successfully for user:", tokenExists.email);
   } catch (err) {
     console.error("[resetPassword] Database error:", err);
     return { success: false, error: "Something went wrong. Please try again." };

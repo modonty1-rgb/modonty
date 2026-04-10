@@ -37,12 +37,24 @@
 
 ---
 
+## ⚠️ Vercel — Pending Manual Actions
+
+- [ ] **AUTH_SECRET** — copy the new local secret to Vercel: Dashboard → Project → Settings → Environment Variables → `AUTH_SECRET`
+  Value: `rGtnuhR8EeViMTAbFAF9bhL3sH38iRdxsovdyXRnoJI=`
+  ⚠️ After updating: Redeploy the project so Vercel picks up the new value. All logged-in users will be signed out (expected).
+- [ ] **NEXTAUTH_URL** — confirm Vercel has `NEXTAUTH_URL=https://modonty.com` (not localhost)
+
+---
+
 ## Post-Deploy — Modonty Public Site
 
 ### HIGH — Email & Subscriptions
-- [ ] Integrate email service (Resend/SendGrid) for newsletter delivery
-- [ ] Fix /api/subscribe — currently placeholder, doesn't send emails
-- [ ] Subscribers get saved to DB but receive nothing — connect email sending
+⚠️ Requires Resend account + API key before implementation.
+- [ ] Subscribe to Resend (resend.com) and get API key
+- [ ] Add `RESEND_API_KEY` to `.env.local` + Vercel environment variables
+- [ ] Send welcome email on newsletter subscription (`/api/subscribers` → trigger email after DB insert)
+- [ ] Fix `/api/news/subscribe` — same, connect to Resend
+- [ ] Verify email delivery end-to-end
 
 ### MEDIUM — Loading & Error Pages
 - [ ] Add loading.tsx to: author page, login, contact, about, legal pages
@@ -79,6 +91,20 @@
 - [ ] Centralize all toast messages in one JSON file
 - [ ] Split view preview for articles
 - [ ] Article templates (news, how-to, listicle)
+
+---
+
+## Modonty — Mobile Phase 2 (Mockup Ready ✅)
+
+> Mockup is in `design-preview/page.tsx`. These tasks transfer it to production.
+
+- [ ] **MOB1** — Move bottom bar from `fixed bottom-16` to `sticky top-14`
+- [ ] **MOB2** — Add client avatar + "اسأل العميل" button in Zone 1
+- [ ] **MOB3** — Add Newsletter trigger (🔔) in the bar
+- [ ] **MOB4** — Add views (👁) + questions (❓) in the meta row
+- [ ] **MOB5** — Newsletter overlay on the featured image
+- [ ] **MOB6** — Update the Sheet with full content
+- [ ] **MOB7** — Unify CTA text: "اسأل العميل" everywhere
 
 ---
 

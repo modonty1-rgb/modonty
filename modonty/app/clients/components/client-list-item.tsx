@@ -67,14 +67,14 @@ export function ClientListItem(props: ClientListItemProps) {
                     {isPremium ? (
                       <Badge 
                         variant="secondary"
-                        className="gap-1 text-xs bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400"
+                        className="gap-1 text-xs bg-primary/10 border-primary/30 text-primary"
                       >
                         <IconCheckCircle className="h-3 w-3" />
                         بريميوم
                       </Badge>
                     ) : (
-                      <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full flex-shrink-0">
-                        <IconCheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
+                      <div className="bg-primary/10 p-1 rounded-full flex-shrink-0">
+                        <IconCheckCircle className="h-4 w-4 text-primary fill-primary/20" />
                       </div>
                     )}
                   </>

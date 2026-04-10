@@ -19,6 +19,7 @@ export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const hasSetEmailFromSession = useRef(false);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
     });
 
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/subscribers", {
         method: "POST",
@@ -53,23 +55,26 @@ export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
         setSubscribed(true);
         setAlreadySubscribed(json?.data?.message === "Already subscribed to this client");
         setEmail("");
+      } else {
+        setError("فشل الاشتراك. يرجى المحاولة مرة أخرى.");
       }
     } catch {
-      // Silent fail
+      setError("حدث خطأ. يرجى المحاولة مرة أخرى.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card className="min-w-0 hover:shadow-md transition-shadow">
-      <CardContent className="p-4 flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <IconNews className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            اشترك في النشرة الإخبارية
-          </span>
-        </div>
+    <Card className="min-w-0">
+      <div className="px-4 py-3 bg-muted/40 rounded-t-lg flex items-center gap-2">
+        <IconNews className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <span className="text-xs font-semibold text-muted-foreground tracking-tight">
+          اشترك في النشرة الإخبارية
+        </span>
+      </div>
+      <div className="border-b border-border" />
+      <CardContent className="p-4 flex flex-col gap-3">
         {subscribed ? (
           <p className="text-sm text-muted-foreground">
             {alreadySubscribed ? "أنت مشترك مسبقاً في هذه النشرة." : "شكراً لك! تم الاشتراك بنجاح."}
@@ -84,8 +89,11 @@ export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
               required
               className="h-9 text-sm"
             />
+            {error && (
+              <p className="text-xs text-destructive">{error}</p>
+            )}
             <Button type="submit" size="sm" disabled={loading} className="w-full">
-              {loading ? "جاري..." : "اشترك"}
+              {loading ? "جاري الاشتراك..." : "اشترك"}
             </Button>
           </form>
         )}

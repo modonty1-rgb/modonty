@@ -1,0 +1,187 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - generic [ref=e108]:
+        - generic [ref=e109]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e110]:
+          - button "Send Note" [ref=e111] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e112] [cursor=pointer]:
+            - img
+      - main [ref=e113]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - heading "Guidelines" [level=1] [ref=e119]
+            - paragraph [ref=e120]: دليل شامل لفريق العمل — المقاسات المعتمدة، طريقة الاستخدام، وأفضل الممارسات لكل قسم
+          - generic [ref=e121]:
+            - link "Media & Image Standards مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي" [ref=e122] [cursor=pointer]:
+              - /url: /guidelines/media
+              - generic [ref=e125]:
+                - img [ref=e127]
+                - generic [ref=e131]:
+                  - heading "Media & Image Standards" [level=3] [ref=e132]
+                  - paragraph [ref=e133]: مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي
+                - img [ref=e134]
+            - link "Articles دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر" [ref=e136] [cursor=pointer]:
+              - /url: /guidelines/articles
+              - generic [ref=e139]:
+                - img [ref=e141]
+                - generic [ref=e144]:
+                  - heading "Articles" [level=3] [ref=e145]
+                  - paragraph [ref=e146]: دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر
+                - img [ref=e147]
+            - link "Authors إعداد ملف الكاتب، المصداقية، والربط مع المقالات" [ref=e149] [cursor=pointer]:
+              - /url: /guidelines/authors
+              - generic [ref=e152]:
+                - img [ref=e154]
+                - generic [ref=e156]:
+                  - heading "Authors" [level=3] [ref=e157]
+                  - paragraph [ref=e158]: إعداد ملف الكاتب، المصداقية، والربط مع المقالات
+                - img [ref=e159]
+            - link "Clients إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات" [ref=e161] [cursor=pointer]:
+              - /url: /guidelines/clients
+              - generic [ref=e164]:
+                - img [ref=e166]
+                - generic [ref=e170]:
+                  - heading "Clients" [level=3] [ref=e171]
+                  - paragraph [ref=e172]: إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات
+                - img [ref=e173]
+            - link "Categories تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف" [ref=e175] [cursor=pointer]:
+              - /url: /guidelines/categories
+              - generic [ref=e178]:
+                - img [ref=e180]
+                - generic [ref=e182]:
+                  - heading "Categories" [level=3] [ref=e183]
+                  - paragraph [ref=e184]: تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف
+                - img [ref=e185]
+            - link "Tags استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح" [ref=e187] [cursor=pointer]:
+              - /url: /guidelines/tags
+              - generic [ref=e190]:
+                - img [ref=e192]
+                - generic [ref=e195]:
+                  - heading "Tags" [level=3] [ref=e196]
+                  - paragraph [ref=e197]: استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح
+                - img [ref=e198]
+            - link "Industries تصنيف العملاء حسب القطاع الصناعي والمجال التجاري" [ref=e200] [cursor=pointer]:
+              - /url: /guidelines/industries
+              - generic [ref=e203]:
+                - img [ref=e205]
+                - generic [ref=e207]:
+                  - heading "Industries" [level=3] [ref=e208]
+                  - paragraph [ref=e209]: تصنيف العملاء حسب القطاع الصناعي والمجال التجاري
+                - img [ref=e210]
+            - link "Subscribers إدارة المشتركين، قوائم البريد، وسياسة الخصوصية" [ref=e212] [cursor=pointer]:
+              - /url: /guidelines/subscribers
+              - generic [ref=e215]:
+                - img [ref=e217]
+                - generic [ref=e220]:
+                  - heading "Subscribers" [level=3] [ref=e221]
+                  - paragraph [ref=e222]: إدارة المشتركين، قوائم البريد، وسياسة الخصوصية
+                - img [ref=e223]
+            - link "Analytics متابعة الأداء، المقاييس المهمة، وتقارير الزوار" [ref=e225] [cursor=pointer]:
+              - /url: /guidelines/analytics
+              - generic [ref=e228]:
+                - img [ref=e230]
+                - generic [ref=e232]:
+                  - heading "Analytics" [level=3] [ref=e233]
+                  - paragraph [ref=e234]: متابعة الأداء، المقاييس المهمة، وتقارير الزوار
+                - img [ref=e235]
+            - link "Google Tag Manager إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء" [ref=e237] [cursor=pointer]:
+              - /url: /guidelines/gtm
+              - generic [ref=e240]:
+                - img [ref=e242]
+                - generic [ref=e246]:
+                  - heading "Google Tag Manager" [level=3] [ref=e247]
+                  - paragraph [ref=e248]: إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء
+                - img [ref=e249]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e256] [cursor=pointer]:
+    - generic [ref=e259]:
+      - text: Compiling
+      - generic [ref=e260]:
+        - generic [ref=e261]: .
+        - generic [ref=e262]: .
+        - generic [ref=e263]: .
+  - alert [ref=e264]

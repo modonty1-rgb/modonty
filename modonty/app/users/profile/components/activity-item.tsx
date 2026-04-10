@@ -13,10 +13,10 @@ interface ActivityItemProps {
 
 export function ActivityItem({ type, content, link, timestamp }: ActivityItemProps) {
   const icons = {
-    comment: <IconComment className="h-5 w-5 text-blue-500" />,
-    like_comment: <IconLike className="h-5 w-5 text-green-500" />,
-    favorite_article: <IconSaved className="h-5 w-5 text-yellow-500" />,
-    follow_client: <IconUsers className="h-5 w-5 text-purple-500" />,
+    comment: <IconComment className="h-5 w-5 text-primary" />,
+    like_comment: <IconLike className="h-5 w-5 text-primary" />,
+    favorite_article: <IconSaved className="h-5 w-5 text-accent" />,
+    follow_client: <IconUsers className="h-5 w-5 text-primary" />,
   };
 
   const icon = icons[type];

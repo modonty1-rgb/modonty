@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getArticleById } from "../actions/articles-actions";
+import { getArticleById, getArticleEngagementCounts } from "../actions/articles-actions";
 import { getAllSettings } from "../../settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "../../settings/helpers/get-article-defaults-from-settings";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default async function ArticleViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [article, settings] = await Promise.all([getArticleById(id), getAllSettings()]);
+  const [article, settings, counts] = await Promise.all([getArticleById(id), getAllSettings(), getArticleEngagementCounts(id)]);
 
   if (!article) {
     redirect("/articles");
@@ -119,11 +119,11 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
         )}
         <div className="flex items-center gap-1.5">
           <Eye className="h-3.5 w-3.5 text-green-500" />
-          <span>0 views</span>
+          <span>{counts.views} views</span>
         </div>
         <div className="flex items-center gap-1.5">
           <MessageSquare className="h-3.5 w-3.5 text-purple-500" />
-          <span>0 comments</span>
+          <span>{counts.comments} comments</span>
         </div>
         {a.tags && a.tags.length > 0 && (
           <div className="flex items-center gap-1.5">

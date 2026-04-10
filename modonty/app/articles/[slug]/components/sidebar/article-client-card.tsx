@@ -108,6 +108,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
           <AskClientDialog
             articleId={askClientProps.articleId}
             clientId={askClientProps.clientId}
+            clientName={client.name}
             articleTitle={askClientProps.articleTitle}
             user={askClientProps.user}
             pendingFaqs={askClientProps.pendingFaqs}

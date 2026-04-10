@@ -33,7 +33,7 @@
     
     /* Muted & Neutral States */
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --muted-foreground: 0 0% 36%;      /* #5b5b5b — brand gray-dark */
     
     /* Destructive (Keep red for errors) */
     --destructive: 0 84.2% 60.2%;

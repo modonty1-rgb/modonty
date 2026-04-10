@@ -21,9 +21,9 @@ export function calculateEngagementScore(metrics: {
 }
 
 export function getEngagementLabel(score: number): { label: string; color: string } {
-  if (score >= 4.5) return { label: 'ممتاز', color: 'text-green-600' };
-  if (score >= 3.5) return { label: 'جيد جداً', color: 'text-blue-600' };
-  if (score >= 2.5) return { label: 'جيد', color: 'text-yellow-600' };
-  if (score >= 1.5) return { label: 'متوسط', color: 'text-orange-600' };
-  return { label: 'منخفض', color: 'text-gray-500' };
+  if (score >= 4.5) return { label: 'ممتاز', color: 'text-primary' };
+  if (score >= 3.5) return { label: 'جيد جداً', color: 'text-primary' };
+  if (score >= 2.5) return { label: 'جيد', color: 'text-accent' };
+  if (score >= 1.5) return { label: 'متوسط', color: 'text-muted-foreground' };
+  return { label: 'منخفض', color: 'text-muted-foreground' };
 }

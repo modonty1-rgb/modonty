@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface Heading {
@@ -85,20 +85,22 @@ export function ArticleTableOfContents({ content }: ArticleTableOfContentsProps)
   };
 
   return (
-    <Card className="sticky top-20 hover:shadow-md transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-base font-semibold">جدول المحتويات</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <nav className="space-y-2">
+    <Card className="min-w-0">
+      {/* Header */}
+      <div className="px-4 py-3 bg-muted/40 rounded-t-lg">
+        <span className="text-xs font-semibold text-muted-foreground tracking-tight">جدول المحتويات</span>
+      </div>
+      <div className="border-b border-border" />
+      <div className="px-4 py-3">
+        <nav className="space-y-1">
           {headings.map((heading) => (
             <button
               key={heading.id}
               onClick={() => scrollToHeading(heading.id)}
               className={cn(
-                "block text-right w-full text-sm transition-colors hover:text-primary",
-                heading.level === 3 && "pr-4",
-                heading.level === 4 && "pr-8",
+                "block text-right w-full text-xs transition-colors hover:text-primary py-0.5",
+                heading.level === 3 && "pr-3",
+                heading.level === 4 && "pr-6",
                 activeId === heading.id
                   ? "text-primary font-medium"
                   : "text-muted-foreground"
@@ -108,7 +110,7 @@ export function ArticleTableOfContents({ content }: ArticleTableOfContentsProps)
             </button>
           ))}
         </nav>
-      </CardContent>
+      </div>
     </Card>
   );
 }

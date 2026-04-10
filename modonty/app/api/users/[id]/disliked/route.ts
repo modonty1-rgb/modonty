@@ -12,7 +12,6 @@ export async function GET(
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
-    console.log('[Disliked API] Phase 3: Fetching all disliked items for userId:', userId);
 
     const [clientDislikes, articleDislikes, commentDislikes, totalClients, totalArticles, totalComments] = await Promise.all([
       db.clientDislike.findMany({
@@ -149,7 +148,6 @@ export async function GET(
     const paginatedItems = allItems.slice(skip, skip + limit);
     const totalItems = totalClients + totalArticles + totalComments;
 
-    console.log('[Disliked API] Phase 3: Returning', paginatedItems.length, 'items (', clientItems.length, 'clients,', articleItems.length, 'articles,', commentItems.length, 'comments)');
 
     return NextResponse.json({
       success: true,

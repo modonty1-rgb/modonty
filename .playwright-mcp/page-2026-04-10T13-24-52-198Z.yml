@@ -1,0 +1,281 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e9]:
+            - paragraph [ref=e10]: Modonty
+            - paragraph [ref=e11]: Team Guidelines
+        - link "Admin Sign In →" [ref=e12] [cursor=pointer]:
+          - /url: /login
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - img [ref=e17]
+            - heading "Guidelines" [level=1] [ref=e19]
+          - paragraph [ref=e20]: دليل شامل لفريق العمل — المقاسات المعتمدة، طريقة الاستخدام، وأفضل الممارسات لكل قسم
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]:
+              - img [ref=e26]
+              - generic [ref=e32]:
+                - text: للمصمم
+                - paragraph [ref=e33]: الأساسيات اللي لازم تعرفها قبل ما ترفع أي صورة أو تسلّم أي تصميم
+            - generic [ref=e34]: Designer
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - img [ref=e37]
+              - generic [ref=e40]:
+                - paragraph [ref=e41]: الصورة الرئيسية للمقال
+                - paragraph [ref=e42]: 1920 × 1080 — نسبة 16:9 بالضبط
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - generic [ref=e47]:
+                - paragraph [ref=e48]: لوجو العميل
+                - paragraph [ref=e49]: 500 × 500 — مربع + PNG بخلفية شفافة
+            - generic [ref=e50]:
+              - img [ref=e51]
+              - generic [ref=e54]:
+                - paragraph [ref=e55]: غلاف صفحة العميل
+                - paragraph [ref=e56]: 2400 × 400 — بنر عريض 6:1
+            - generic [ref=e57]:
+              - img [ref=e58]
+              - generic [ref=e61]:
+                - paragraph [ref=e62]: صور البطاقات والمعرض
+                - paragraph [ref=e63]: 1200 × 675 — نسبة 16:9
+            - generic [ref=e64]:
+              - img [ref=e65]
+              - generic [ref=e68]:
+                - paragraph [ref=e69]: صور الكتّاب والفئات
+                - paragraph [ref=e70]: مربع 1:1 — الوجه في المنتصف دائماً
+          - link "دليل الصور الكامل مع كل المقاسات" [ref=e72] [cursor=pointer]:
+            - /url: /guidelines/media
+            - img [ref=e73]
+            - text: دليل الصور الكامل مع كل المقاسات
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - img [ref=e80]
+              - generic [ref=e82]:
+                - text: لكاتب المحتوى — دليل SEO الكامل
+                - paragraph [ref=e83]: كل مقال تكتبه يحتاج هذه النقاط — اتبعها وارتفع في نتائج البحث
+            - generic [ref=e84]: Content Writer
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e87]:
+                - img [ref=e88]
+                - generic [ref=e91]: "الخطوة 1 — Basic: العنوان والملخص والرابط"
+              - generic [ref=e92]:
+                - generic [ref=e93]:
+                  - paragraph [ref=e94]: Title — عنوان المقال
+                  - generic [ref=e95]:
+                    - img [ref=e96]
+                    - paragraph [ref=e99]: بين 50 و 60 حرف — ضع الكلمة المفتاحية في بداية العنوان. النظام يعرض عداد الحروف مباشرة
+                  - generic [ref=e100]:
+                    - img [ref=e101]
+                    - paragraph [ref=e105]: لا تكتب عنواناً عاماً مثل «مقال جديد» — ولا تكرر نفس العنوان في مقالين
+                - generic [ref=e106]:
+                  - paragraph [ref=e107]: Excerpt — ملخص المقال
+                  - generic [ref=e108]:
+                    - img [ref=e109]
+                    - paragraph [ref=e112]: بين 140 و 160 حرف — هذا الملخص يظهر في بطاقات المقالات وقوائم التصفح على الموقع
+                  - generic [ref=e113]:
+                    - img [ref=e114]
+                    - paragraph [ref=e118]: لا تتركه فارغاً — الملخص الفارغ يُعرض اسم العميل فقط
+                - generic [ref=e119]:
+                  - paragraph [ref=e120]: Slug — رابط المقال
+                  - generic [ref=e121]:
+                    - img [ref=e122]
+                    - paragraph [ref=e125]: يتولّد تلقائياً — راجعه وتأكد أنه بالإنجليزي وبه كلمات مفتاحية
+                  - generic [ref=e126]:
+                    - img [ref=e127]
+                    - paragraph [ref=e131]: لا تواريخ، لا أرقام عشوائية، لا عربي في الرابط
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - img [ref=e134]
+                - generic [ref=e137]: "الخطوة 3 — SEO: حقول محركات البحث"
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - paragraph [ref=e140]: SEO Title — عنوان جوجل
+                  - generic [ref=e141]:
+                    - img [ref=e142]
+                    - paragraph [ref=e145]: 50 إلى 60 حرف — هذا هو العنوان الذي يظهر في نتائج جوجل. يختلف عن عنوان المقال
+                  - generic [ref=e146]:
+                    - img [ref=e147]
+                    - paragraph [ref=e151]: لا تتركه فارغاً — جوجل يستخدم عنوان المقال بدلاً منه وقد لا يكون مثالياً
+                - generic [ref=e152]:
+                  - paragraph [ref=e153]: SEO Description — وصف جوجل
+                  - generic [ref=e154]:
+                    - img [ref=e155]
+                    - paragraph [ref=e158]: 140 إلى 160 حرف — هذا هو الوصف الذي يظهر تحت الرابط في جوجل. جملة تشويقية تدفع للنقر
+                  - generic [ref=e159]:
+                    - img [ref=e160]
+                    - paragraph [ref=e164]: لا تنسخ الـ Excerpt هنا مباشرة — اكتب جملة مخصصة لجوجل تحتوي الكلمة المفتاحية
+                - generic [ref=e165]:
+                  - paragraph [ref=e166]: SEO Keywords — الكلمات المفتاحية
+                  - generic [ref=e167]:
+                    - img [ref=e168]
+                    - paragraph [ref=e171]: "أضف الكلمة المفتاحية الرئيسية أولاً ثم كلمات ثانوية مرتبطة — مثال: «تسويق المحتوى», «كتابة مقالات SEO»"
+                  - generic [ref=e172]:
+                    - img [ref=e173]
+                    - paragraph [ref=e177]: لا تضع عشرات الكلمات غير المرتبطة — 3 إلى 5 كلمات مفتاحية محددة أفضل من 20 عامة
+            - generic [ref=e178]:
+              - generic [ref=e179]:
+                - img [ref=e180]
+                - generic [ref=e181]: المحتوى — الخطوة 2
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - paragraph [ref=e184]: العناوين الفرعية H2 و H3
+                  - generic [ref=e185]:
+                    - img [ref=e186]
+                    - paragraph [ref=e189]: استخدم أزرار H2 و H3 في شريط المحرر — قسّم المقال بعناوين واضحة، ضع كلمات مفتاحية فيها
+                  - generic [ref=e190]:
+                    - img [ref=e191]
+                    - paragraph [ref=e195]: لا تكتب المقال كتلة نص واحدة بدون عناوين — يضر بالقراءة وبـ SEO
+                - generic [ref=e196]:
+                  - paragraph [ref=e197]: الكلمة المفتاحية في المحتوى
+                  - generic [ref=e198]:
+                    - img [ref=e199]
+                    - paragraph [ref=e202]: الكلمة المفتاحية تظهر في أول 100 كلمة وتتكرر بشكل طبيعي (1-2% من المقال)
+                  - generic [ref=e203]:
+                    - img [ref=e204]
+                    - paragraph [ref=e208]: لا تكررها بشكل مصطنع — جوجل يعاقب على حشو الكلمات المفتاحية
+                - generic [ref=e209]:
+                  - paragraph [ref=e210]: طول المقال
+                  - generic [ref=e211]:
+                    - img [ref=e212]
+                    - paragraph [ref=e215]: 800 كلمة حد أدنى — 1500+ للمواضيع التنافسية. فقرات قصيرة 3-5 أسطر
+                  - generic [ref=e216]:
+                    - img [ref=e217]
+                    - paragraph [ref=e221]: المقالات أقل من 500 كلمة نادراً تظهر في الصفحة الأولى
+            - generic [ref=e222]:
+              - generic [ref=e223]:
+                - img [ref=e224]
+                - generic [ref=e227]: الروابط والصور
+              - generic [ref=e228]:
+                - generic [ref=e229]:
+                  - paragraph [ref=e230]: الروابط الداخلية
+                  - generic [ref=e231]:
+                    - img [ref=e232]
+                    - paragraph [ref=e235]: استخدم زر الرابط 🔗 في المحرر لإضافة 2-3 روابط لمقالات أخرى داخل نفس الموقع
+                  - generic [ref=e236]:
+                    - img [ref=e237]
+                    - paragraph [ref=e241]: لا تنشر مقالاً بدون أي رابط داخلي — يضعف بنية الموقع ويقلل وقت القراءة
+                - generic [ref=e242]:
+                  - paragraph [ref=e243]: Alt Text للصور
+                  - generic [ref=e244]:
+                    - img [ref=e245]
+                    - paragraph [ref=e248]: عند إضافة صورة من زر 🖼️ في المحرر — اكتب وصفاً حقيقياً للصورة يتضمن الكلمة المفتاحية
+                  - generic [ref=e249]:
+                    - img [ref=e250]
+                    - paragraph [ref=e254]: لا تترك Alt Text فارغاً ولا تكتب «صورة» — جوجل يقرأ الـ Alt Text لفهم محتوى الصورة
+                - generic [ref=e255]:
+                  - paragraph [ref=e256]: قبل النشر
+                  - generic [ref=e257]:
+                    - img [ref=e258]
+                    - paragraph [ref=e261]: نقطة SEO لازم 60% أو أكثر — راجع الـ SEO HEALTH في أعلى الصفحة قبل النشر
+                  - generic [ref=e262]:
+                    - img [ref=e263]
+                    - paragraph [ref=e267]: لا تنشر بنقطة أقل من 60% — النظام سيمنع النشر ويجب تحسين الحقول الناقصة
+          - generic [ref=e268]:
+            - paragraph [ref=e269]:
+              - text: ⚠️ كل ما ذُكر أعلاه موجود في الأدمن فعلاً —
+              - strong [ref=e270]: Basic (Step 1)
+              - text: للعنوان والملخص والرابط ·
+              - strong [ref=e271]: Content (Step 2)
+              - text: للمحرر ·
+              - strong [ref=e272]: SEO (Step 3)
+              - text: لحقول جوجل
+            - link "دليل إنشاء المقالات الكامل" [ref=e273] [cursor=pointer]:
+              - /url: /guidelines/articles
+              - img [ref=e274]
+              - text: دليل إنشاء المقالات الكامل
+        - generic [ref=e278]: جميع الأقسام
+        - generic [ref=e280]:
+          - link "Media & Image Standards مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي" [ref=e281] [cursor=pointer]:
+            - /url: /guidelines/media
+            - generic [ref=e284]:
+              - img [ref=e286]
+              - generic [ref=e290]:
+                - heading "Media & Image Standards" [level=3] [ref=e291]
+                - paragraph [ref=e292]: مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي
+              - img [ref=e293]
+          - link "Articles دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر" [ref=e295] [cursor=pointer]:
+            - /url: /guidelines/articles
+            - generic [ref=e298]:
+              - img [ref=e300]
+              - generic [ref=e303]:
+                - heading "Articles" [level=3] [ref=e304]
+                - paragraph [ref=e305]: دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر
+              - img [ref=e306]
+          - link "Authors إعداد ملف الكاتب، المصداقية، والربط مع المقالات" [ref=e308] [cursor=pointer]:
+            - /url: /guidelines/authors
+            - generic [ref=e311]:
+              - img [ref=e313]
+              - generic [ref=e315]:
+                - heading "Authors" [level=3] [ref=e316]
+                - paragraph [ref=e317]: إعداد ملف الكاتب، المصداقية، والربط مع المقالات
+              - img [ref=e318]
+          - link "Clients إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات" [ref=e320] [cursor=pointer]:
+            - /url: /guidelines/clients
+            - generic [ref=e323]:
+              - img [ref=e325]
+              - generic [ref=e329]:
+                - heading "Clients" [level=3] [ref=e330]
+                - paragraph [ref=e331]: إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات
+              - img [ref=e332]
+          - link "Categories تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف" [ref=e334] [cursor=pointer]:
+            - /url: /guidelines/categories
+            - generic [ref=e337]:
+              - img [ref=e339]
+              - generic [ref=e341]:
+                - heading "Categories" [level=3] [ref=e342]
+                - paragraph [ref=e343]: تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف
+              - img [ref=e344]
+          - link "Tags استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح" [ref=e346] [cursor=pointer]:
+            - /url: /guidelines/tags
+            - generic [ref=e349]:
+              - img [ref=e351]
+              - generic [ref=e354]:
+                - heading "Tags" [level=3] [ref=e355]
+                - paragraph [ref=e356]: استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح
+              - img [ref=e357]
+          - link "Industries تصنيف العملاء حسب القطاع الصناعي والمجال التجاري" [ref=e359] [cursor=pointer]:
+            - /url: /guidelines/industries
+            - generic [ref=e362]:
+              - img [ref=e364]
+              - generic [ref=e366]:
+                - heading "Industries" [level=3] [ref=e367]
+                - paragraph [ref=e368]: تصنيف العملاء حسب القطاع الصناعي والمجال التجاري
+              - img [ref=e369]
+          - link "Subscribers إدارة المشتركين، قوائم البريد، وسياسة الخصوصية" [ref=e371] [cursor=pointer]:
+            - /url: /guidelines/subscribers
+            - generic [ref=e374]:
+              - img [ref=e376]
+              - generic [ref=e379]:
+                - heading "Subscribers" [level=3] [ref=e380]
+                - paragraph [ref=e381]: إدارة المشتركين، قوائم البريد، وسياسة الخصوصية
+              - img [ref=e382]
+          - link "Analytics متابعة الأداء، المقاييس المهمة، وتقارير الزوار" [ref=e384] [cursor=pointer]:
+            - /url: /guidelines/analytics
+            - generic [ref=e387]:
+              - img [ref=e389]
+              - generic [ref=e391]:
+                - heading "Analytics" [level=3] [ref=e392]
+                - paragraph [ref=e393]: متابعة الأداء، المقاييس المهمة، وتقارير الزوار
+              - img [ref=e394]
+          - link "Google Tag Manager إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء" [ref=e396] [cursor=pointer]:
+            - /url: /guidelines/gtm
+            - generic [ref=e399]:
+              - img [ref=e401]
+              - generic [ref=e405]:
+                - heading "Google Tag Manager" [level=3] [ref=e406]
+                - paragraph [ref=e407]: إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء
+              - img [ref=e408]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e415] [cursor=pointer]:
+    - img [ref=e416]
+  - alert [ref=e419]

@@ -1,0 +1,261 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - link "Articles" [ref=e119] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e120]:
+              - img [ref=e121]
+              - link "Articles 69d7a1d0..." [ref=e123] [cursor=pointer]:
+                - /url: /articles/69d7a1d002d85d88d9cd3370
+            - generic [ref=e124]:
+              - img [ref=e125]
+              - generic [ref=e127]: Edit
+          - navigation "Main navigation" [ref=e129]:
+            - link "Modonty Modonty" [ref=e130] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e132]
+              - generic [ref=e133]: Modonty
+            - generic [ref=e135]:
+              - link "Articles" [ref=e136] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e137]:
+                  - img
+                  - generic [ref=e138]: Articles
+              - link "Clients" [ref=e139] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e140]:
+                  - img
+                  - generic [ref=e141]: Clients
+              - link "Media" [ref=e142] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e143]:
+                  - img
+                  - generic [ref=e144]: Media
+          - generic [ref=e145]:
+            - link [ref=e146] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e147]:
+                - img
+            - button "M" [ref=e148] [cursor=pointer]:
+              - generic [ref=e150]: M
+      - generic [ref=e151]:
+        - generic [ref=e152]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e153]:
+          - button "Send Note" [ref=e154] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e155] [cursor=pointer]:
+            - img
+      - main [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - generic [ref=e162]:
+                - generic [ref=e163]: Step 1 of 5
+                - generic [ref=e164]: "SEO Health: 0%"
+                - generic [ref=e167]: Live Analysis
+              - generic [ref=e168]:
+                - generic [ref=e170]: 60% Complete
+                - button "Update" [ref=e172] [cursor=pointer]:
+                  - img
+                  - generic [ref=e173]: Update
+            - 'generic "Overall progress: 60%" [ref=e175]'
+          - generic [ref=e179]:
+            - 'tabpanel "Basic: 100% complete. مكتمل ✓" [ref=e181]':
+              - generic [ref=e184]:
+                - generic [ref=e186]:
+                  - generic [ref=e187]:
+                    - generic [ref=e188]:
+                      - generic [ref=e189]: Client*
+                      - combobox "Client*" [ref=e190]:
+                        - option "Select a client"
+                        - option "JABR GROUP CONTRACTING AND MANUFACTURING" [selected]
+                        - option "JBR SEO"
+                        - option "Test Media Client"
+                        - option "أكاديمية المستقبل"
+                        - option "عيادات بلسم الطبية"
+                        - option "متجر نوفا للإلكترونيات"
+                    - generic [ref=e192]:
+                      - generic [ref=e194]: JG
+                      - generic [ref=e195]:
+                        - paragraph [ref=e196]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e197]:
+                          - img [ref=e198]
+                          - generic [ref=e201]: Logo ready
+                  - generic [ref=e203]:
+                    - generic [ref=e204]: Category
+                    - combobox "Category" [ref=e205]:
+                      - option "None"
+                      - option "SEO تحسين محركات البحث"
+                      - option "الانشاءات والتعمير" [selected]
+                      - option "التسويق الرقمي"
+                      - option "التعليم والتدريب"
+                      - option "التقنية والذكاء الاصطناعي"
+                      - option "التمويل الشخصي"
+                      - option "السياحة والسفر"
+                      - option "الصحة والعافية"
+                      - option "العقارات والاستثمار"
+                      - option "القانون وتأسيس الشركات"
+                      - option "المحتوى والكتابة"
+                      - option "المطاعم والطعام"
+                      - option "الموضة والجمال"
+                      - option "تصميم المواقع"
+                      - option "ريادة الأعمال"
+                - generic [ref=e206]:
+                  - generic [ref=e207]:
+                    - generic [ref=e208]: Title*
+                    - textbox "Title*" [ref=e209]: ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟
+                    - generic [ref=e210]:
+                      - paragraph [ref=e211]: Optimize for 50-60 characters for better search visibility
+                      - generic [ref=e213]: 60 / 60 maximum
+                  - generic [ref=e214]:
+                    - generic [ref=e215]: Slug
+                    - generic [ref=e216]: ماهى-أنظمة-مكافحة-الحريق-وكيف-تختار-النظام-المناسب-لمشروعك؟
+                    - button [ref=e217] [cursor=pointer]:
+                      - img
+                  - generic [ref=e218]:
+                    - text: Excerpt
+                    - textbox "Excerpt" [ref=e219]: "أنظمة مكافحة الحريق في السعودية: تعرّف على الأنواع المختلفة، المعايير المعتمدة مثل كود البناء السعودي وNFPA، وكيف تختار النظام المناسب لمشروعك وتقليل المخاطر"
+                    - generic [ref=e220]:
+                      - paragraph [ref=e221]: Optimize for 150-160 characters for better search visibility
+                      - generic [ref=e223]: 157 / 160 maximum
+                  - generic [ref=e224]:
+                    - generic [ref=e225]: Tags
+                    - combobox [ref=e226] [cursor=pointer]:
+                      - generic [ref=e227]:
+                        - generic [ref=e228]:
+                          - text: الانظمة الكهروميكانيكية
+                          - button "Remove الانظمة الكهروميكانيكية" [ref=e229]:
+                            - img
+                        - generic [ref=e230]:
+                          - text: انظمة الحريق
+                          - button "Remove انظمة الحريق" [ref=e231]:
+                            - img
+                        - generic [ref=e232]:
+                          - text: تنفيذ مشاريع كاملة
+                          - button "Remove تنفيذ مشاريع كاملة" [ref=e233]:
+                            - img
+                        - generic [ref=e234]:
+                          - text: رؤية 2030
+                          - button "Remove رؤية 2030" [ref=e235]:
+                            - img
+                        - generic [ref=e236]:
+                          - text: عقارات
+                          - button "Remove عقارات" [ref=e237]:
+                            - img
+                      - img
+                  - generic [ref=e238]:
+                    - text: Author
+                    - generic [ref=e239]:
+                      - generic [ref=e240]: Modonty
+                      - generic [ref=e241]: (Only author)
+            - tablist [ref=e244]:
+              - 'tab "Basic: 100% complete. مكتمل ✓" [selected] [ref=e245] [cursor=pointer]':
+                - generic [ref=e246]: "1"
+                - generic [ref=e247]: Basic
+                - generic [ref=e248]: 100%
+              - 'tab "Content: 100% complete. مكتمل ✓" [ref=e249] [cursor=pointer]':
+                - generic [ref=e250]: "2"
+                - generic [ref=e251]: Content
+                - generic [ref=e252]: 100%
+              - 'tab "SEO: 100% complete. مكتمل ✓" [ref=e253] [cursor=pointer]':
+                - generic [ref=e254]: "3"
+                - generic [ref=e255]: SEO
+                - generic [ref=e256]: 100%
+              - 'tab "FAQs & Related: 50% complete. اختياري: مقالات ذات صلة" [ref=e257] [cursor=pointer]':
+                - generic [ref=e258]: "4"
+                - generic [ref=e259]: FAQs & Related
+                - generic [ref=e260]: 50%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e261] [cursor=pointer]':
+                - generic [ref=e262]: "5"
+                - generic [ref=e263]: Publish
+                - generic [ref=e264]: 50%
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e265]

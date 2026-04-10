@@ -97,14 +97,14 @@ export function ClientCard(props: ClientCardProps) {
                 {isPremium ? (
                   <Badge 
                     variant="secondary" 
-                    className="gap-1 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400"
+                    className="gap-1 bg-primary/10 border-primary/30 text-primary"
                   >
                     <IconCheckCircle className="h-3 w-3" />
                     بريميوم
                   </Badge>
                 ) : (
-                  <div className="bg-green-100 dark:bg-green-900/30 p-1.5 rounded-full">
-                    <IconCheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 fill-green-600/20 dark:fill-green-400/20" />
+                  <div className="bg-primary/10 p-1.5 rounded-full">
+                    <IconCheckCircle className="h-5 w-5 text-primary fill-primary/20" />
                   </div>
                 )}
               </>
@@ -195,11 +195,11 @@ export function ClientCard(props: ClientCardProps) {
             <div className="hidden sm:block pt-3 border-t border-dashed">
               <div className="grid grid-cols-4 gap-2 text-xs">
                 <MetricChip icon={IconComment} value={props.commentsCount} label="تعليقات" />
-                <MetricChip icon={IconLike} value={props.likesCount} label="إعجاب" color="text-green-600" />
+                <MetricChip icon={IconLike} value={props.likesCount} label="إعجاب" color="text-primary" />
                 <div className="hidden" aria-hidden>
-                  <MetricChip icon={IconLike} value={props.dislikesCount} label="رفض" color="text-red-600" />
+                  <MetricChip icon={IconLike} value={props.dislikesCount} label="رفض" color="text-destructive" />
                 </div>
-                <MetricChip icon={IconFeatured} value={props.favoritesCount} label="مفضلة" color="text-yellow-600" />
+                <MetricChip icon={IconFeatured} value={props.favoritesCount} label="مفضلة" color="text-accent" />
               </div>
             </div>
 

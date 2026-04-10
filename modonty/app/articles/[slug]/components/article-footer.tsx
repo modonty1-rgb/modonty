@@ -49,7 +49,14 @@ export function ArticleFooter({
           )}
           {license && (
             <p className="text-xs text-muted-foreground mt-1">
-              الرخصة: {license}
+              الرخصة:{" "}
+              {license.startsWith("http") ? (
+                <Link href={license} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">
+                  {license}
+                </Link>
+              ) : (
+                license
+              )}
             </p>
           )}
         </div>

@@ -237,8 +237,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
             <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
               {/* Left sidebar – مشاركة وتفاعل + العميل */}
-              <aside className="hidden lg:flex w-[240px] min-w-0 shrink-0 flex-col gap-6" role="complementary" aria-label="مشاركة وتفاعل">
-                <div className="sticky top-[3.5rem] flex flex-col gap-6">
+              <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="مشاركة وتفاعل">
+                <div className="flex flex-col gap-6">
                   {article.client ? (
                     <ArticleClientCard
                       client={article.client}
@@ -258,7 +258,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     articleSlug={article.slug}
                     clientId={article.clientId ?? undefined}
                     commentsCount={article._count.comments}
-                    views={article._count.views}
                     questionsCount={article._count.faqs}
                     userId={userId}
                     likes={article._count.likes}
@@ -282,6 +281,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     createdAt={article.createdAt}
                     readingTimeMinutes={article.readingTimeMinutes}
                     wordCount={article.wordCount}
+                    views={article._count.views}
                   />
 
                   {article.featuredImage && (
@@ -300,15 +300,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <div className="lg:hidden mb-4">
                     <ArticleEngagementMetrics
                       comments={article._count.comments}
-                      views={article._count.views}
                       questions={article._count.faqs}
                     />
                   </div>
 
                   <div
                     id="article-content"
-                    className="prose prose-base md:prose-lg max-w-none mb-8 md:mb-12"
-                    style={{ lineHeight: '1.6' }}
+                    className="prose prose-base md:prose-lg max-w-none mb-8 md:mb-12 text-right [&_h2]:text-right [&_h3]:text-right [&_h4]:text-right [&_li]:text-right"
+                    style={{ lineHeight: '1.6', direction: 'rtl' }}
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
                   />
                   <ArticleBodyLinkTracker articleId={article.id} />
@@ -366,26 +365,28 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 </article>
               </div>
 
-              {/* Right sidebar – author, TOC, etc. */}
-              <aside className="hidden lg:flex min-w-0 flex-col gap-6" role="complementary" aria-label="جدول المحتويات">
-                <div className="[&_section]:my-0">
-                  <ArticleAuthorBio author={article.author} />
-                </div>
-                {article.citations?.length ? (
+              {/* Right sidebar – Author → TOC → Newsletter */}
+              <aside className="hidden lg:block sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="جدول المحتويات">
+                <div className="flex flex-col gap-6">
                   <div className="[&_section]:my-0">
-                    <ArticleCitations citations={article.citations} />
+                    <ArticleAuthorBio author={article.author} />
                   </div>
-                ) : null}
-                <div className="[&>div]:mt-0 [&>div]:mb-0">
-                  <NewsletterCTA clientId={article.clientId} articleId={article.id} />
+                  <ArticleTableOfContents content={article.content} />
+                  {article.citations?.length ? (
+                    <div className="[&_section]:my-0">
+                      <ArticleCitations citations={article.citations} />
+                    </div>
+                  ) : null}
+                  <div className="[&>div]:mt-0 [&>div]:mb-0">
+                    <NewsletterCTA clientId={article.clientId} articleId={article.id} />
+                  </div>
+                  <CommentFormDialog
+                    articleId={article.id}
+                    articleSlug={article.slug}
+                    userId={userId}
+                    clientId={article.clientId ?? undefined}
+                  />
                 </div>
-                <CommentFormDialog
-                  articleId={article.id}
-                  articleSlug={article.slug}
-                  userId={userId}
-                  clientId={article.clientId ?? undefined}
-                />
-                <ArticleTableOfContents content={article.content} />
               </aside>
             </div>
 

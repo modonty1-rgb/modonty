@@ -1,0 +1,89 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - search "بحث المقالات" [ref=e9] [cursor=pointer]:
+          - img [ref=e11]
+          - generic [ref=e14]: ابحث...
+        - generic [ref=e15]:
+          - button "فتح المحادثة" [ref=e16] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e18] [cursor=pointer]:
+            - img
+    - main [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - img [ref=e24]
+          - heading "الصفحة غير موجودة" [level=3] [ref=e27]
+        - generic [ref=e28]:
+          - paragraph [ref=e29]: عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.
+          - paragraph [ref=e30]: يرجى التحقق من الرابط أو العودة إلى الصفحة الرئيسية.
+          - generic [ref=e31]:
+            - link "الصفحة الرئيسية" [ref=e32] [cursor=pointer]:
+              - /url: /
+              - button "الصفحة الرئيسية" [ref=e33]:
+                - img
+                - text: الصفحة الرئيسية
+            - link "الفئات" [ref=e34] [cursor=pointer]:
+              - /url: /categories
+              - button "الفئات" [ref=e35]:
+                - img
+                - text: الفئات
+            - link "العملاء" [ref=e36] [cursor=pointer]:
+              - /url: /clients
+              - button "العملاء" [ref=e37]:
+                - img
+                - text: العملاء
+    - contentinfo [ref=e38]:
+      - navigation "روابط قانونية" [ref=e39]:
+        - link "اتفاقية المستخدم" [ref=e40] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e41] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e42] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e43] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e44]: © 2026 مودونتي
+    - contentinfo [ref=e45]:
+      - navigation [ref=e46]:
+        - link "الرئيسية" [ref=e47] [cursor=pointer]:
+          - /url: /
+          - img [ref=e49]
+          - generic [ref=e52]: الرئيسية
+        - link "الرائجة" [ref=e53] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e55]
+          - generic [ref=e58]: الرائجة
+        - link "الفئات" [ref=e59] [cursor=pointer]:
+          - /url: /categories
+          - img [ref=e61]
+          - generic [ref=e65]: الفئات
+        - link "العملاء" [ref=e66] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e68]
+          - generic [ref=e72]: العملاء
+        - link "المحفوظات" [ref=e73] [cursor=pointer]:
+          - /url: /users/profile/favorites
+          - img [ref=e75]
+          - generic [ref=e77]: المحفوظات
+        - button "Open menu" [ref=e78] [cursor=pointer]:
+          - img
+  - generic [ref=e83] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e84]:
+      - img [ref=e85]
+    - generic [ref=e88]:
+      - button "Open issues overlay" [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]: "4"
+          - generic [ref=e92]: "5"
+        - generic [ref=e93]:
+          - text: Issue
+          - generic [ref=e94]: s
+      - button "Collapse issues badge" [ref=e95]:
+        - img [ref=e96]
+  - alert [ref=e98]

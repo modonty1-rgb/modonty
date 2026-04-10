@@ -68,7 +68,7 @@ function MoreFromClientSkeleton() {
 }
 
 export function MoreFromClient({ clientId, articleId, clientName }: MoreFromClientProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [articles, setArticles] = useState<Article[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
@@ -132,10 +132,6 @@ export function MoreFromClient({ clientId, articleId, clientName }: MoreFromClie
                       <span className="flex items-center gap-1" aria-label="الإعجابات">
                         <IconLike className="h-3.5 w-3.5 shrink-0" />
                         <span className="tabular-nums">{article.likesCount.toLocaleString("ar-SA")}</span>
-                      </span>
-                      <span className="flex items-center gap-1 hidden" aria-label="عدم الإعجاب" aria-hidden>
-                        <IconLike className="h-3.5 w-3.5 shrink-0" />
-                        <span className="tabular-nums">{article.dislikesCount.toLocaleString("ar-SA")}</span>
                       </span>
                       <span className="flex items-center gap-1" aria-label="التعليقات">
                         <IconComment className="h-3.5 w-3.5 shrink-0" />

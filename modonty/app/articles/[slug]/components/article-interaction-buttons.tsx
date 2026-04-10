@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { IconLike, IconSaved, IconLoading } from "@/lib/icons";
+import { Skeleton } from "@/components/ui/skeleton";
+import { IconLike, IconDislike, IconSaved, IconLoading } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, dislikeArticle, favoriteArticle } from "../actions/article-interactions";
@@ -19,6 +20,10 @@ interface ArticleInteractionButtonsProps {
   initialUserFavorited?: boolean;
   /** Compact layout: one line, icon-only smaller buttons */
   compact?: boolean;
+  /** Vertical layout: icon on top, count below — for engagement card */
+  vertical?: boolean;
+  /** Hide the "login to interact" hint (when shown elsewhere) */
+  hideLoginHint?: boolean;
 }
 
 export function ArticleInteractionButtons({
@@ -31,6 +36,8 @@ export function ArticleInteractionButtons({
   initialUserDisliked = false,
   initialUserFavorited = false,
   compact = false,
+  vertical = false,
+  hideLoginHint = false,
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -170,24 +177,47 @@ export function ArticleInteractionButtons({
     }
   };
 
-  const containerClass = `flex items-center ${compact ? "gap-2 flex-nowrap" : "gap-2 md:gap-3 flex-wrap"}`;
   const isLoggedIn = Boolean(session?.user);
-  const iconClass = compact ? "h-3.5 w-3.5 shrink-0" : "h-4 w-4 ml-2";
-  const btnClass = compact
-    ? "h-8 px-1.5 gap-0.5 text-xs shrink-0 active:scale-95 transition-transform duration-100"
-    : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 active:scale-95 transition-transform duration-100";
+
+  const containerClass = vertical
+    ? "flex items-center gap-1"
+    : `flex items-center ${compact ? "gap-2 flex-nowrap" : "gap-2 md:gap-3 flex-wrap"}`;
+
+  const iconClass = vertical
+    ? "h-4 w-4 shrink-0"
+    : compact ? "h-3.5 w-3.5 shrink-0" : "h-4 w-4 ml-2";
+
+  const btnClass = vertical
+    ? "flex flex-col items-center gap-0.5 h-auto px-3 py-1.5 min-w-0 active:scale-95 transition-transform duration-100"
+    : compact
+      ? "h-8 px-1.5 gap-0.5 text-xs shrink-0 active:scale-95 transition-transform duration-100"
+      : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 active:scale-95 transition-transform duration-100";
 
   if (!mounted) {
+    if (vertical) {
+      return (
+        <div className="flex items-center gap-1" aria-hidden>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex flex-col items-center gap-0.5 px-3 py-1.5">
+              <Skeleton className="h-4 w-4 rounded" />
+              <Skeleton className="h-3 w-4 rounded" />
+            </div>
+          ))}
+        </div>
+      );
+    }
     return (
-      <div className="flex flex-col gap-2">
-        <div className={containerClass} aria-hidden />
+      <div className={`flex items-center ${compact ? "gap-2" : "gap-2 md:gap-3"}`} aria-hidden>
+        {[0, 1, 2].map((i) => (
+          <Skeleton key={i} className={compact ? "h-8 w-10 rounded-md" : "h-9 w-14 rounded-md"} />
+        ))}
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2 min-w-0">
-    {!isLoggedIn && (
+    {!isLoggedIn && !hideLoginHint && (
       <p className="text-xs text-muted-foreground min-w-0 break-words leading-relaxed" role="status">
         <Link
           href={pathname ? `/users/login?callbackUrl=${encodeURIComponent(pathname)}` : "/users/login"}
@@ -200,7 +230,7 @@ export function ArticleInteractionButtons({
     )}
     <div className={containerClass}>
       <Button
-        variant={userLiked ? "default" : "outline"}
+        variant={userLiked ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleLike}
         disabled={!isLoggedIn || loading === "like"}
@@ -212,10 +242,10 @@ export function ArticleInteractionButtons({
         ) : (
           <IconLike className={`${iconClass} ${userLiked ? "fill-current" : ""}`} />
         )}
-        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
+        <span className={vertical ? "text-xs tabular-nums leading-none" : compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
       </Button>
       <Button
-        variant={userDisliked ? "default" : "outline"}
+        variant={userDisliked ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleDislike}
         disabled={!isLoggedIn || loading === "dislike"}
@@ -225,12 +255,12 @@ export function ArticleInteractionButtons({
         {loading === "dislike" ? (
           <IconLoading className={`${iconClass} animate-spin`} />
         ) : (
-          <IconLike className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
+          <IconDislike className={`${iconClass} ${userDisliked ? "fill-current" : ""}`} />
         )}
-        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
+        <span className={vertical ? "text-xs tabular-nums leading-none" : compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
       </Button>
       <Button
-        variant={userFavorited ? "default" : "outline"}
+        variant={userFavorited ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleFavorite}
         disabled={!isLoggedIn || loading === "favorite"}
@@ -242,7 +272,7 @@ export function ArticleInteractionButtons({
         ) : (
           <IconSaved className={`${iconClass} ${userFavorited ? "fill-current" : ""}`} />
         )}
-        <span className={compact ? "text-xs tabular-nums" : "ml-1"}>{favorites}</span>
+        <span className={vertical ? "text-xs tabular-nums leading-none" : compact ? "text-xs tabular-nums" : "ml-1"}>{favorites}</span>
       </Button>
     </div>
     </div>

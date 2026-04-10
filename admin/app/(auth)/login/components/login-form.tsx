@@ -60,7 +60,6 @@ export function LoginForm() {
       redirect: false,
     })
       .then(async (result) => {
-        console.log("[Login] signIn result:", result);
 
         if (result?.error) {
           if (isKnownAuthError(result.error)) {
@@ -77,7 +76,6 @@ export function LoginForm() {
         // Always verify session before redirect (NextAuth v5 beta quirk)
         const session = await getSession();
         if (session) {
-          console.log("[Login] Session verified - login successful, redirecting...");
           router.push("/");
           router.refresh();
         } else {
@@ -95,7 +93,6 @@ export function LoginForm() {
 
         const session = await getSession();
         if (session) {
-          console.log("[Login] Session found - login succeeded despite error");
           router.push("/");
           router.refresh();
           setLoading(false);

@@ -54,7 +54,6 @@ export default function LikedPage() {
 
       try {
         setLoading(true);
-        console.log('[Liked Page] Fetching liked items for user:', session.user.id);
         const response = await fetch(`/api/users/${session.user.id}/liked?limit=20`);
         
         if (!response.ok) {
@@ -64,7 +63,6 @@ export default function LikedPage() {
         }
 
         const data = await response.json();
-        console.log('[Liked Page] Received:', { success: data.success, count: data.data?.length });
         
         if (data.success) {
           const parsedItems = data.data.map((item: any) => ({
@@ -72,7 +70,6 @@ export default function LikedPage() {
             likedAt: new Date(item.likedAt),
           }));
           setItems(parsedItems);
-          console.log('[Liked Page] Parsed items:', parsedItems.length);
         } else {
           setError(data.error || "Failed to load liked items");
         }
@@ -176,17 +173,17 @@ function TypeBadge({ type }: { type: "client" | "article" | "comment" }) {
     client: {
       icon: IconClients,
       label: "عميل",
-      color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
     article: {
       icon: IconArticle,
       label: "مقالة",
-      color: "bg-green-500/10 text-green-500 border-green-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
     comment: {
       icon: IconMessage,
       label: "تعليق",
-      color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
   };
 
@@ -229,7 +226,7 @@ function ClientLikeCard({ item }: { item: LikedItem }) {
                 <h4 className="font-semibold text-lg">{item.item.name}</h4>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
-                  <IconLike className="h-5 w-5 text-red-500 fill-red-500" />
+                  <IconLike className="h-5 w-5 text-destructive fill-destructive" />
                 </div>
               </div>
               {item.item.description && (
@@ -284,7 +281,7 @@ function ArticleLikeCard({ item }: { item: LikedItem }) {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <TypeBadge type={item.type} />
-                  <IconLike className="h-5 w-5 text-red-500 fill-red-500" />
+                  <IconLike className="h-5 w-5 text-destructive fill-destructive" />
                 </div>
               </div>
               {item.item.excerpt && (

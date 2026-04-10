@@ -1,0 +1,236 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - img [ref=e46]
+              - generic [ref=e48]: المحفوظات
+        - generic [ref=e50]:
+          - button "تسجيل الدخول" [ref=e51] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e52] [cursor=pointer]
+    - main [ref=e54]:
+      - navigation "تنقل الصفحة" [ref=e56]:
+        - list [ref=e57]:
+          - listitem [ref=e58]:
+            - link "الرئيسية الرئيسية" [ref=e59] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e60]
+              - generic [ref=e63]: الرئيسية
+          - listitem [ref=e64]:
+            - img [ref=e65]
+            - img [ref=e68]
+          - listitem [ref=e72]:
+            - generic [ref=e74]: دليل SEO المتاجر الإلكترونية 2025
+      - main [ref=e75]:
+        - generic [ref=e76]:
+          - complementary "مشاركة وتفاعل" [ref=e77]:
+            - generic [ref=e78]:
+              - generic [ref=e79]:
+                - img "متجر نوفا للإلكترونيات" [ref=e82]
+                - heading "متجر نوفا للإلكترونيات" [level=2] [ref=e84]:
+                  - link "متجر نوفا للإلكترونيات" [ref=e85] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - text: متجر نوفا للإلكترونيات
+                    - img [ref=e86]
+                - button "اسأل العميل" [ref=e90] [cursor=pointer]
+              - generic [ref=e92]:
+                - generic [ref=e94]:
+                  - generic [ref=e95]:
+                    - img [ref=e96]
+                    - generic [ref=e99]: ٢٣
+                  - button "انتقل إلى الأسئلة الشائعة" [ref=e100] [cursor=pointer]:
+                    - img [ref=e101]
+                    - generic [ref=e104]: ٣
+                  - button "انتقل إلى قسم التعليقات" [ref=e105] [cursor=pointer]:
+                    - img [ref=e106]
+                    - generic [ref=e108]: ٦
+                - generic [ref=e109]:
+                  - generic [ref=e110]: شارك المقال
+                  - button "مشاركة" [ref=e112] [cursor=pointer]:
+                    - img
+          - article [ref=e114]:
+            - generic [ref=e115]:
+              - heading "دليل SEO المتاجر الإلكترونية 2025" [level=1] [ref=e116]
+              - paragraph [ref=e117]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+              - generic [ref=e118]:
+                - generic [ref=e120]: Modonty
+                - time [ref=e121]: ٨ أبريل ٢٠٢٦
+                - generic [ref=e122]: ⏱️ 1 دقيقة قراءة
+                - generic [ref=e123]: 📝 144 كلمة
+            - img "Test image 3 for media library" [ref=e125]
+            - generic [ref=e126]:
+              - link "متجر نوفا للإلكترونيات" [ref=e127] [cursor=pointer]:
+                - /url: /clients/nova-electronics
+                - generic [ref=e128]:
+                  - img [ref=e129]
+                  - text: متجر نوفا للإلكترونيات
+              - link "التسويق الرقمي" [ref=e133] [cursor=pointer]:
+                - /url: /categories/digital-marketing
+                - generic [ref=e134]:
+                  - img [ref=e135]
+                  - text: التسويق الرقمي
+              - link "SEO" [ref=e137] [cursor=pointer]:
+                - /url: /tags/seo
+                - generic [ref=e138]:
+                  - img [ref=e139]
+                  - text: SEO
+              - link "ذكاء اصطناعي" [ref=e142] [cursor=pointer]:
+                - /url: /tags/ai
+                - generic [ref=e143]:
+                  - img [ref=e144]
+                  - text: ذكاء اصطناعي
+            - generic [ref=e147]:
+              - heading "لماذا SEO ضروري لمتجرك الإلكتروني؟" [level=2] [ref=e148]
+              - paragraph [ref=e149]:
+                - text: في عالم التجارة الإلكترونية، يعتمد
+                - strong [ref=e150]: 87% من المتسوقين
+                - text: على محركات البحث للعثور على المنتجات. إذا لم يظهر متجرك في الصفحة الأولى، فأنت تخسر العملاء المحتملين يومياً.
+              - paragraph [ref=e151]: تحسين محركات البحث ليس خياراً بل ضرورة. المتاجر التي تستثمر في SEO تحقق معدل تحويل أعلى بنسبة 14.6% مقارنة بالإعلانات المدفوعة التي تحقق 1.7% فقط.
+              - heading "بحث الكلمات المفتاحية للمتاجر" [level=2] [ref=e152]
+              - paragraph [ref=e153]: ركز على كلمات نية الشراء العالية مثل "شراء" و"سعر" و"أفضل". هذه الكلمات تجذب زوار مستعدين للشراء بدلاً من مجرد البحث عن معلومات.
+              - heading "أدوات البحث المجانية" [level=3] [ref=e154]
+              - paragraph [ref=e155]: استخدم Google Keyword Planner و Google Trends لاكتشاف ما يبحث عنه جمهورك. ابدأ بالكلمات الطويلة (Long-tail keywords) التي تحقق منافسة أقل ومعدل تحويل أعلى.
+              - heading "تحسين صفحات المنتجات" [level=2] [ref=e156]
+              - paragraph [ref=e157]: كل صفحة منتج يجب أن تحتوي على عنوان فريد يتضمن الكلمة المفتاحية، وصف مفصل لا يقل عن 300 كلمة، وصور عالية الجودة مع نص بديل واضح.
+              - heading "سرعة الموقع والأداء" [level=2] [ref=e158]
+              - paragraph [ref=e159]: سرعة التحميل عامل ترتيب مباشر. كل ثانية تأخير تقلل التحويلات بنسبة 7%. استخدم CDN، وضغط الصور، وتحميل JavaScript المؤجل لتحسين الأداء.
+            - region "الأسئلة الشائعة (3)" [ref=e160]:
+              - button "الأسئلة الشائعة (3) انقر لعرض الأسئلة" [ref=e163] [cursor=pointer]:
+                - generic [ref=e164]:
+                  - heading "الأسئلة الشائعة (3)" [level=2] [ref=e165]
+                  - generic [ref=e166]: انقر لعرض الأسئلة
+                - img [ref=e168]
+            - button "التعليقات (٦) انقر لعرض التعليقات" [ref=e174] [cursor=pointer]:
+              - generic [ref=e176]:
+                - heading "التعليقات (٦)" [level=2] [ref=e177]
+                - generic [ref=e178]: انقر لعرض التعليقات
+              - img [ref=e180]
+            - region "المزيد من Modonty" [ref=e182]:
+              - button "المزيد من Modonty انقر لعرض المزيد" [ref=e186] [cursor=pointer]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]:
+                    - img [ref=e189]
+                    - heading "المزيد من Modonty" [level=2] [ref=e192]
+                  - generic [ref=e193]: انقر لعرض المزيد
+                - img [ref=e195]
+            - region "المزيد من متجر نوفا للإلكترونيات" [ref=e197]:
+              - button "المزيد من متجر نوفا للإلكترونيات انقر لعرض المزيد" [ref=e201] [cursor=pointer]:
+                - generic [ref=e202]:
+                  - generic [ref=e203]:
+                    - img [ref=e204]
+                    - heading "المزيد من متجر نوفا للإلكترونيات" [level=2] [ref=e207]
+                  - generic [ref=e208]: انقر لعرض المزيد
+                - img [ref=e210]
+            - region "مقالات قد تهمك" [ref=e212]:
+              - button "مقالات قد تهمك انقر لعرض المزيد" [ref=e216] [cursor=pointer]:
+                - generic [ref=e217]:
+                  - generic [ref=e218]:
+                    - img [ref=e219]
+                    - heading "مقالات قد تهمك" [level=2] [ref=e222]
+                  - generic [ref=e223]: انقر لعرض المزيد
+                - img [ref=e225]
+            - generic [ref=e229]:
+              - paragraph [ref=e230]:
+                - text: نشر بواسطة
+                - link "متجر نوفا للإلكترونيات" [ref=e231] [cursor=pointer]:
+                  - /url: /clients/nova-electronics
+              - paragraph [ref=e232]: "آخر تحديث: ١٠ أبريل ٢٠٢٦"
+              - paragraph [ref=e233]: "عمق المحتوى: short"
+              - paragraph [ref=e234]: "الرخصة: https://creativecommons.org/licenses/by/4.0/"
+          - complementary "جدول المحتويات" [ref=e235]:
+            - region "عن الكاتب" [ref=e237]:
+              - generic [ref=e239]:
+                - heading "عن الكاتب" [level=2] [ref=e240]
+                - generic [ref=e243]: M
+                - link "Modonty" [ref=e245] [cursor=pointer]:
+                  - /url: /authors/modonty
+                - paragraph [ref=e246]: Modonty is a leading content platform providing high-quality articles and insights.
+                - navigation "تابعنا على وسائل التواصل" [ref=e247]:
+                  - link "فيسبوك" [ref=e248] [cursor=pointer]:
+                    - /url: https://www.facebook.com/profile.php?fb_profile_edit_entry_point=%7B%22click_point%22%3A%22edit_profile_button%22%2C%22feature%22%3A%22profile_header%22%7D&id=61585093180638&sk=about
+                    - img [ref=e249]
+                  - link "لينكد إن" [ref=e251] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/111692906/admin/dashboard/
+                    - img [ref=e252]
+                  - link "يوتيوب" [ref=e254] [cursor=pointer]:
+                    - /url: https://youtube.com/modonty
+                    - img [ref=e255]
+                  - link "إكس / تويتر" [ref=e259] [cursor=pointer]:
+                    - /url: https://x.com/modonty
+                    - img [ref=e260]
+                  - link "انستغرام" [ref=e262] [cursor=pointer]:
+                    - /url: https://www.instagram.com/modonty.sa
+                    - img [ref=e263]
+                  - link "تيك توك" [ref=e268] [cursor=pointer]:
+                    - /url: https://www.tiktok.com/@modonty.ksa
+                    - img [ref=e269]
+                  - link "سناب شات" [ref=e271] [cursor=pointer]:
+                    - /url: https://www.snapchat.com/@modonty
+                    - img [ref=e272]
+                - link "صفحة الكاتب" [ref=e274] [cursor=pointer]:
+                  - /url: /authors/modonty
+                  - text: صفحة الكاتب
+                  - img
+            - generic [ref=e277]:
+              - generic [ref=e278]:
+                - img [ref=e279]
+                - generic [ref=e282]: اشترك في النشرة الإخبارية
+              - generic [ref=e283]:
+                - textbox "البريد الإلكتروني" [ref=e284]
+                - button "اشترك" [ref=e285] [cursor=pointer]
+            - generic [ref=e287]:
+              - heading "أضف تعليق" [level=2] [ref=e288]
+              - button "أضف تعليق" [ref=e289] [cursor=pointer]
+    - contentinfo [ref=e290]:
+      - navigation "روابط قانونية" [ref=e291]:
+        - link "اتفاقية المستخدم" [ref=e292] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e293] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e294] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e295] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e296]: © 2026 مودونتي
+  - generic [ref=e301] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e302]:
+      - img [ref=e303]
+    - generic [ref=e306]:
+      - button "Open issues overlay" [ref=e307]:
+        - generic [ref=e308]:
+          - generic [ref=e309]: "4"
+          - generic [ref=e310]: "5"
+        - generic [ref=e311]:
+          - text: Issue
+          - generic [ref=e312]: s
+      - button "Collapse issues badge" [ref=e313]:
+        - img [ref=e314]
+  - alert [ref=e316]

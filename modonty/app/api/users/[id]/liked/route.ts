@@ -12,7 +12,6 @@ export async function GET(
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
-    console.log('[Liked API] Phase 2: Fetching client and article likes for userId:', userId);
 
     // Phase 2: Fetch both client likes and article likes
     const [clientLikes, articleLikes, totalClients, totalArticles] = await Promise.all([
@@ -105,7 +104,6 @@ export async function GET(
     const paginatedItems = allItems.slice(skip, skip + limit);
     const totalItems = totalClients + totalArticles;
 
-    console.log('[Liked API] Phase 2: Returning', paginatedItems.length, 'items (', clientItems.length, 'clients,', articleItems.length, 'articles)');
 
     return NextResponse.json({
       success: true,

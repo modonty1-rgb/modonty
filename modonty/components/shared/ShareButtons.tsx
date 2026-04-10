@@ -24,6 +24,7 @@ export interface ShareButtonsProps {
   showCopyLink?: boolean;
   onShare?: (platform: string) => void | Promise<void>;
   size?: "sm" | "default";
+  buttonVariant?: "outline" | "ghost";
   className?: string;
 }
 
@@ -36,6 +37,7 @@ export function ShareButtons({
   showCopyLink = true,
   onShare,
   size = "sm",
+  buttonVariant = "outline",
   className,
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
@@ -97,7 +99,7 @@ export function ShareButtons({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size={size} className={cn("min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2", className)} aria-label="مشاركة">
+        <Button variant={buttonVariant} size={size} className={cn("min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2", className)} aria-label="مشاركة">
           <IconShare className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -134,7 +136,7 @@ export function ShareButtons({
         )}
         {showCopyLink && (
           <DropdownMenuItem onClick={handleCopy} className="gap-2 cursor-pointer">
-            {copied ? <><IconCheck className="h-4 w-4 text-green-500" /> <span className="text-green-500">تم النسخ!</span></> : <><IconCopy className="h-4 w-4" /> <span>نسخ الرابط</span></>}
+            {copied ? <><IconCheck className="h-4 w-4 text-primary" /> <span className="text-primary">تم النسخ!</span></> : <><IconCopy className="h-4 w-4" /> <span>نسخ الرابط</span></>}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

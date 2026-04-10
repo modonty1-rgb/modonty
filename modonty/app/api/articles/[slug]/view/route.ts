@@ -78,6 +78,17 @@ export async function POST(
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
 
+    // Deduplicate: one view per (articleId, sessionId) per day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const alreadyViewed = await db.articleView.findFirst({
+      where: { articleId: article.id, sessionId, createdAt: { gte: today } },
+      select: { id: true },
+    });
+    if (alreadyViewed) {
+      return NextResponse.json({ ok: true, analyticsId: null });
+    }
+
     await db.articleView.create({
       data: {
         articleId: article.id,

@@ -70,7 +70,6 @@ export default function DislikedPage() {
 
       try {
         setLoading(true);
-        console.log('[Disliked Page] Fetching disliked items for user:', session.user.id);
         const response = await fetch(`/api/users/${session.user.id}/disliked?limit=20`);
         
         if (!response.ok) {
@@ -80,7 +79,6 @@ export default function DislikedPage() {
         }
 
         const data = await response.json();
-        console.log('[Disliked Page] Received:', { success: data.success, count: data.data?.length });
         
         if (data.success) {
           const parsedItems = data.data.map((item: any) => ({
@@ -88,7 +86,6 @@ export default function DislikedPage() {
             dislikedAt: new Date(item.dislikedAt),
           }));
           setItems(parsedItems);
-          console.log('[Disliked Page] Parsed items:', parsedItems.length);
         } else {
           setError(data.error || "Failed to load disliked items");
         }
@@ -193,17 +190,17 @@ function TypeBadge({ type }: { type: "client" | "article" | "comment" }) {
     client: {
       icon: IconClients,
       label: "عميل",
-      color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
     article: {
       icon: IconArticle,
       label: "مقالة",
-      color: "bg-green-500/10 text-green-500 border-green-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
     comment: {
       icon: IconMessage,
       label: "تعليق",
-      color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+      color: "bg-primary/10 text-primary border-primary/20",
     },
   };
 

@@ -1,0 +1,819 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - link "Articles" [ref=e119] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e120]:
+              - img [ref=e121]
+              - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e305] [cursor=pointer]:
+                - /url: /articles/69d6665b92f34b725bbdded0
+            - generic [ref=e124]:
+              - img [ref=e125]
+              - generic [ref=e127]: Edit
+          - navigation "Main navigation" [ref=e129]:
+            - link "Modonty Modonty" [ref=e130] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e132]
+              - generic [ref=e133]: Modonty
+            - generic [ref=e135]:
+              - link "Articles" [ref=e136] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e137]:
+                  - img
+                  - generic [ref=e138]: Articles
+              - link "Clients" [ref=e139] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e140]:
+                  - img
+                  - generic [ref=e141]: Clients
+              - link "Media" [ref=e142] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e143]:
+                  - img
+                  - generic [ref=e144]: Media
+          - generic [ref=e145]:
+            - link "4" [ref=e306] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e307]:
+                - img
+                - generic [ref=e308]: "4"
+            - button "M" [ref=e148] [cursor=pointer]:
+              - generic [ref=e150]: M
+      - generic [ref=e151]:
+        - generic [ref=e152]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e153]:
+          - button "Send Note" [ref=e154] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e155] [cursor=pointer]:
+            - img
+      - main [ref=e156]:
+        - generic [ref=e309]:
+          - generic [ref=e312]:
+            - generic [ref=e313]:
+              - generic [ref=e314]:
+                - generic [ref=e315]: Step 5 of 5
+                - generic [ref=e316]: "SEO Health: 88%"
+                - generic [ref=e319]: Live Analysis
+              - generic [ref=e320]:
+                - generic [ref=e322]: 76% Complete
+                - button "Update" [ref=e324] [cursor=pointer]:
+                  - img
+                  - generic [ref=e325]: Update
+            - 'generic "Overall progress: 76%" [ref=e327]'
+          - generic [ref=e331]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [active] [ref=e547]':
+              - generic [ref=e549]:
+                - generic [ref=e550]:
+                  - generic [ref=e551]: Publication Settings
+                  - generic [ref=e552]: Control status, scheduling, and review dates for this article.
+                - generic [ref=e553]:
+                  - region "Status & visibility" [ref=e554]:
+                    - heading "Status & visibility" [level=3] [ref=e555]
+                    - generic [ref=e556]:
+                      - generic [ref=e557]:
+                        - generic [ref=e558]:
+                          - checkbox "Featured" [checked] [ref=e559] [cursor=pointer]:
+                            - generic:
+                              - img
+                          - generic [ref=e560] [cursor=pointer]: Featured
+                          - generic [ref=e561]: Enabled
+                        - paragraph [ref=e562]: Highlight this article in featured sections (e.g. homepage, trending) and give it higher sitemap priority (0.8).
+                      - generic [ref=e563]:
+                        - generic [ref=e564]: Status
+                        - combobox "Status" [ref=e565]:
+                          - option "Writing"
+                          - option "Draft"
+                          - option "Scheduled"
+                          - option "Published" [selected]
+                          - option "Archived"
+                  - region "Scheduling" [ref=e566]:
+                    - heading "Scheduling" [level=3] [ref=e567]
+                    - generic [ref=e568]:
+                      - generic [ref=e569]:
+                        - text: Scheduled At
+                        - textbox "Scheduled At" [ref=e570]
+                        - paragraph [ref=e571]: Leave empty to publish immediately or use status Draft.
+                      - generic [ref=e572]:
+                        - text: Last Reviewed
+                        - textbox "Last Reviewed" [ref=e573]
+                        - paragraph [ref=e574]: When content was last reviewed for accuracy.
+                  - generic [ref=e575]:
+                    - text: Date Published
+                    - textbox "Date Published" [disabled] [ref=e576]: 2026-04-08T14:29
+                    - paragraph [ref=e577]: Automatically set when the article is published.
+              - generic [ref=e580]:
+                - text: Citations
+                - paragraph [ref=e581]: External authoritative source URLs for E-E-A-T.
+                - generic [ref=e582]:
+                  - textbox "Add citation URL" [ref=e583]:
+                    - /placeholder: https://...
+                  - button "Add" [ref=e584] [cursor=pointer]:
+                    - img
+                    - text: Add
+                  - button "Extract" [ref=e585] [cursor=pointer]:
+                    - img
+                    - text: Extract
+              - generic [ref=e586]:
+                - generic [ref=e588]:
+                  - generic [ref=e589]: Technical SEO Guidance
+                  - generic [ref=e590]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e593]:
+                    - generic [ref=e594]:
+                      - generic [ref=e595]:
+                        - heading "Overall SEO Score" [level=3] [ref=e596]
+                        - paragraph [ref=e597]: Based on 2025 SEO best practices
+                      - generic [ref=e598]:
+                        - generic [ref=e599]: 88%
+                        - generic [ref=e600]: Excellent
+                    - generic [ref=e603]:
+                      - generic [ref=e604]:
+                        - generic [ref=e605]:
+                          - img [ref=e606]
+                          - generic [ref=e609]: Meta Tags
+                        - generic [ref=e610]:
+                          - generic [ref=e611]: 100%
+                          - generic [ref=e612]: 3/3
+                      - generic [ref=e613]:
+                        - generic [ref=e614]:
+                          - img [ref=e615]
+                          - generic [ref=e617]: Content
+                        - generic [ref=e618]:
+                          - generic [ref=e619]: 50%
+                          - generic [ref=e620]: 1/2
+                      - generic [ref=e621]:
+                        - generic [ref=e622]:
+                          - img [ref=e623]
+                          - generic [ref=e626]: Images
+                        - generic [ref=e627]:
+                          - generic [ref=e628]: 100%
+                          - generic [ref=e629]: 2/2
+                      - generic [ref=e630]:
+                        - generic [ref=e631]:
+                          - img [ref=e632]
+                          - generic [ref=e635]: Structured Data
+                        - generic [ref=e636]:
+                          - generic [ref=e637]: 100%
+                          - generic [ref=e638]: 2/2
+                      - generic [ref=e639]:
+                        - generic [ref=e640]:
+                          - img [ref=e641]
+                          - generic [ref=e644]: Technical
+                        - generic [ref=e645]:
+                          - generic [ref=e646]: 100%
+                          - generic [ref=e647]: 2/2
+                      - generic [ref=e648]:
+                        - generic [ref=e649]:
+                          - img [ref=e650]
+                          - generic [ref=e653]: Mobile
+                        - generic [ref=e654]:
+                          - generic [ref=e655]: 100%
+                          - generic [ref=e656]: 2/2
+                - generic [ref=e659]:
+                  - generic [ref=e660]: Technical SEO Guidance
+                  - generic [ref=e661]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e664]:
+                    - generic [ref=e665]:
+                      - generic [ref=e666]:
+                        - heading "Overall SEO Score" [level=3] [ref=e667]
+                        - paragraph [ref=e668]: Based on 2025 SEO best practices
+                      - generic [ref=e669]:
+                        - generic [ref=e670]: 88%
+                        - generic [ref=e671]: Excellent
+                    - generic [ref=e674]:
+                      - generic [ref=e675]:
+                        - generic [ref=e676]:
+                          - img [ref=e677]
+                          - generic [ref=e680]: Meta Tags
+                        - generic [ref=e681]:
+                          - generic [ref=e682]: 100%
+                          - generic [ref=e683]: 3/3
+                      - generic [ref=e684]:
+                        - generic [ref=e685]:
+                          - img [ref=e686]
+                          - generic [ref=e688]: Content
+                        - generic [ref=e689]:
+                          - generic [ref=e690]: 50%
+                          - generic [ref=e691]: 1/2
+                      - generic [ref=e692]:
+                        - generic [ref=e693]:
+                          - img [ref=e694]
+                          - generic [ref=e697]: Images
+                        - generic [ref=e698]:
+                          - generic [ref=e699]: 100%
+                          - generic [ref=e700]: 2/2
+                      - generic [ref=e701]:
+                        - generic [ref=e702]:
+                          - img [ref=e703]
+                          - generic [ref=e706]: Structured Data
+                        - generic [ref=e707]:
+                          - generic [ref=e708]: 100%
+                          - generic [ref=e709]: 2/2
+                      - generic [ref=e710]:
+                        - generic [ref=e711]:
+                          - img [ref=e712]
+                          - generic [ref=e715]: Technical
+                        - generic [ref=e716]:
+                          - generic [ref=e717]: 100%
+                          - generic [ref=e718]: 2/2
+                      - generic [ref=e719]:
+                        - generic [ref=e720]:
+                          - img [ref=e721]
+                          - generic [ref=e724]: Mobile
+                        - generic [ref=e725]:
+                          - generic [ref=e726]: 100%
+                          - generic [ref=e727]: 2/2
+                - generic [ref=e729]:
+                  - generic [ref=e731] [cursor=pointer]:
+                    - generic [ref=e732]:
+                      - img [ref=e733]
+                      - text: Search & Social Previews
+                    - img [ref=e736]
+                  - generic [ref=e740]:
+                    - generic [ref=e741]:
+                      - heading "Google" [level=4] [ref=e742]:
+                        - img [ref=e743]
+                        - text: Google
+                      - generic [ref=e746]:
+                        - generic [ref=e747]: http://localhost:3001/articles/seo-guide-ecommerce-2025
+                        - generic [ref=e748] [cursor=pointer]: دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة
+                        - generic [ref=e749]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات."
+                    - generic [ref=e750]:
+                      - heading "Facebook" [level=4] [ref=e751]:
+                        - img [ref=e752]
+                        - text: Facebook
+                      - generic [ref=e755]:
+                        - img "دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e757]
+                        - generic [ref=e758]:
+                          - generic [ref=e759]: مودونتي
+                          - generic [ref=e760]: دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة
+                          - generic [ref=e761]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات."
+                    - generic [ref=e762]:
+                      - heading "Twitter" [level=4] [ref=e763]:
+                        - img [ref=e764]
+                        - text: Twitter
+                      - generic [ref=e766]:
+                        - img "دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e768]
+                        - generic [ref=e769]:
+                          - generic [ref=e770]: دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة
+                          - generic [ref=e771]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات."
+                          - generic [ref=e772]: http://localhost:3001/articles/seo-guide-ecommerce-2025
+                - generic [ref=e773]:
+                  - generic [ref=e775]: SEO Metadata Summary
+                  - table [ref=e778]:
+                    - rowgroup [ref=e779]:
+                      - row "Name SOT Value" [ref=e780]:
+                        - columnheader "Name" [ref=e781]
+                        - columnheader "SOT" [ref=e782]
+                        - columnheader "Value" [ref=e783]
+                    - rowgroup [ref=e784]:
+                      - row "Canonical URL Article slug https://modonty.com/articles/seo-guide-ecommerce-2025" [ref=e785]:
+                        - cell "Canonical URL" [ref=e786]
+                        - cell "Article slug" [ref=e787]
+                        - cell "https://modonty.com/articles/seo-guide-ecommerce-2025" [ref=e788]
+                      - row "OG Title SEO title دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e789]:
+                        - cell "OG Title" [ref=e790]
+                        - cell "SEO title" [ref=e791]
+                        - cell "دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e792]
+                      - 'row "OG Description SEO description دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات." [ref=e793]':
+                        - cell "OG Description" [ref=e794]
+                        - cell "SEO description" [ref=e795]
+                        - 'cell "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات." [ref=e796]'
+                      - row "OG URL Canonical URL https://modonty.com/articles/seo-guide-ecommerce-2025" [ref=e797]:
+                        - cell "OG URL" [ref=e798]
+                        - cell "Canonical URL" [ref=e799]
+                        - cell "https://modonty.com/articles/seo-guide-ecommerce-2025" [ref=e800]
+                      - row "OG Site Name Client name متجر نوفا للإلكترونيات" [ref=e801]:
+                        - cell "OG Site Name" [ref=e802]
+                        - cell "Client name" [ref=e803]
+                        - cell "متجر نوفا للإلكترونيات" [ref=e804]
+                      - row "OG Article Section Category التسويق الرقمي" [ref=e805]:
+                        - cell "OG Article Section" [ref=e806]
+                        - cell "Category" [ref=e807]
+                        - cell "التسويق الرقمي" [ref=e808]
+                      - row "OG Article Tags Article tags SEO, ذكاء اصطناعي" [ref=e809]:
+                        - cell "OG Article Tags" [ref=e810]
+                        - cell "Article tags" [ref=e811]
+                        - cell "SEO, ذكاء اصطناعي" [ref=e812]
+                      - row "Twitter Title SEO title دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e813]:
+                        - cell "Twitter Title" [ref=e814]
+                        - cell "SEO title" [ref=e815]
+                        - cell "دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة" [ref=e816]
+                      - 'row "Twitter Description SEO description دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات." [ref=e817]':
+                        - cell "Twitter Description" [ref=e818]
+                        - cell "SEO description" [ref=e819]
+                        - 'cell "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات." [ref=e820]'
+                      - row "Language Settings ar-SA" [ref=e821]:
+                        - cell "Language" [ref=e822]
+                        - cell "Settings" [ref=e823]
+                        - cell "ar-SA" [ref=e824]
+                      - row "Content format Settings rich_text" [ref=e825]:
+                        - cell "Content format" [ref=e826]
+                        - cell "Settings" [ref=e827]
+                        - cell "rich_text" [ref=e828]
+                      - row "OG Type Settings website" [ref=e829]:
+                        - cell "OG Type" [ref=e830]
+                        - cell "Settings" [ref=e831]
+                        - cell "website" [ref=e832]
+                      - row "OG Locale Settings ar_SA" [ref=e833]:
+                        - cell "OG Locale" [ref=e834]
+                        - cell "Settings" [ref=e835]
+                        - cell "ar_SA" [ref=e836]
+                      - row "Twitter Card Settings summary_large_image" [ref=e837]:
+                        - cell "Twitter Card" [ref=e838]
+                        - cell "Settings" [ref=e839]
+                        - cell "summary_large_image" [ref=e840]
+                      - row "Twitter Site Settings —" [ref=e841]:
+                        - cell "Twitter Site" [ref=e842]
+                        - cell "Settings" [ref=e843]
+                        - cell "—" [ref=e844]
+                      - row "Twitter Creator Settings —" [ref=e845]:
+                        - cell "Twitter Creator" [ref=e846]
+                        - cell "Settings" [ref=e847]
+                        - cell "—" [ref=e848]
+                      - row "Accessible for free Settings Yes" [ref=e849]:
+                        - cell "Accessible for free" [ref=e850]
+                        - cell "Settings" [ref=e851]
+                        - cell "Yes" [ref=e852]
+                      - row "License Settings https://creativecommons.org/licenses/by/4.0/" [ref=e853]:
+                        - cell "License" [ref=e854]
+                        - cell "Settings" [ref=e855]
+                        - cell "https://creativecommons.org/licenses/by/4.0/" [ref=e856]
+                      - row "Meta Robots Settings index, follow" [ref=e857]:
+                        - cell "Meta Robots" [ref=e858]
+                        - cell "Settings" [ref=e859]
+                        - cell "index, follow" [ref=e860]
+                      - row "Sitemap Priority Settings 0.8" [ref=e861]:
+                        - cell "Sitemap Priority" [ref=e862]
+                        - cell "Settings" [ref=e863]
+                        - cell "0.8" [ref=e864]
+                      - row "Sitemap Change Freq Settings daily" [ref=e865]:
+                        - cell "Sitemap Change Freq" [ref=e866]
+                        - cell "Settings" [ref=e867]
+                        - cell "daily" [ref=e868]
+              - generic [ref=e870]:
+                - generic [ref=e872]:
+                  - img [ref=e873]
+                  - text: MetaTag & JSON-LD
+                - generic [ref=e876]:
+                  - generic [ref=e877]:
+                    - generic [ref=e878]:
+                      - heading "Metadata JSON" [level=4] [ref=e879]
+                      - generic [ref=e880]:
+                        - button "Inspect" [ref=e881] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e882] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e884]: "{ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"alternates\": { \"canonical\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, \"openGraph\": { \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"siteName\": \"متجر نوفا للإلكترونيات\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351, \"alt\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-08T14:29:46.656Z\", \"modifiedTime\": \"2026-04-10T12:45:29.872Z\", \"authors\": [ \"Modonty\" ], \"section\": \"التسويق الرقمي\", \"tags\": [ \"SEO\", \"ذكاء اصطناعي\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"images\": [ \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                  - generic [ref=e885]:
+                    - generic [ref=e886]:
+                      - heading "JSON-LD Preview" [level=4] [ref=e887]
+                      - generic [ref=e888]:
+                        - button "التحقق" [ref=e889] [cursor=pointer]:
+                          - img
+                          - text: التحقق
+                        - button "Inspect" [ref=e890] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e891] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e893]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\", \"headline\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"datePublished\": \"2026-04-08T14:29:46.656Z\", \"dateModified\": \"2026-04-10T12:45:29.872Z\", \"author\": { \"@id\": \"http://localhost:3001/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"articleSection\": \"التسويق الرقمي\", \"keywords\": [ \"SEO\", \"ذكاء اصطناعي\" ], \"image\": { \"@type\": \"ImageObject\", \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351 }, \"wordCount\": 144, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"متجر نوفا للإلكترونيات\", \"url\": \"http://localhost:3001\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3001/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"التسويق الرقمي\", \"item\": \"http://localhost:3001/categories/digital-marketing\" }, { \"@type\": \"ListItem\", \"position\": 3, \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"item\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" } ], \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"name\": \"متجر نوفا للإلكترونيات\", \"url\": \"http://localhost:3001\", \"logo\": { \"@type\": \"ImageObject\", \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\", \"width\": 53, \"height\": 255 } }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3001/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                  - generic [ref=e894]:
+                    - heading "Metadata from DB (last saved)" [level=4] [ref=e895]:
+                      - img [ref=e896]
+                      - text: Metadata from DB (last saved)
+                    - button "Copy" [ref=e901] [cursor=pointer]:
+                      - img
+                      - text: Copy
+                    - code [ref=e903]: "{ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"alternates\": { \"canonical\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\" }, \"openGraph\": { \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"url\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\", \"siteName\": \"متجر نوفا للإلكترونيات\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351, \"alt\": \"Test image 3 for media library\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-08T14:29:53.623Z\", \"modifiedTime\": \"2026-04-10T12:45:29.872Z\", \"authors\": [ \"Modonty\" ], \"section\": \"التسويق الرقمي\", \"tags\": [ \"SEO\", \"ذكاء اصطناعي\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"alt\": \"Test image 3 for media library\" } ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                  - generic [ref=e904]:
+                    - heading "JSON-LD from DB (last saved)" [level=4] [ref=e905]:
+                      - img [ref=e906]
+                      - text: JSON-LD from DB (last saved)
+                    - button "Copy" [ref=e911] [cursor=pointer]:
+                      - img
+                      - text: Copy
+                    - code [ref=e913]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"@type\": \"WebPage\", \"breadcrumb\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" }, \"dateModified\": \"2026-04-10T15:45:32+03:00\", \"datePublished\": \"2026-04-08T17:29:53+03:00\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"inLanguage\": \"ar\", \"isPartOf\": { \"id\": \"http://localhost:3001#website\", \"type\": \"WebSite\", \"name\": \"مودونتي\", \"url\": \"http://localhost:3001\" }, \"mainEntity\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\" }, \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\", \"@type\": \"Article\", \"about\": { \"id\": \"http://localhost:3001/categories/digital-marketing\", \"type\": \"Thing\", \"name\": \"التسويق الرقمي\" }, \"articleSection\": \"التسويق الرقمي\", \"author\": { \"id\": \"http://localhost:3001/authors/modonty#person\" }, \"dateModified\": \"2026-04-10T15:45:32+03:00\", \"datePublished\": \"2026-04-08T17:29:53+03:00\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"headline\": \"دليل SEO المتاجر الإلكترونية 2025\", \"image\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#primary-image\", \"type\": \"ImageObject\", \"contentUrl\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"copyrightHolder\": { \"type\": \"Organization\", \"name\": \"مدونتي\" }, \"creditText\": \"مدونتي\", \"height\": 351, \"license\": \"All Rights Reserved\", \"name\": \"Test image 3 for media library\", \"representativeOfPage\": true, \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351 }, \"inLanguage\": \"ar\", \"isAccessibleForFree\": true, \"keywords\": \"SEO, ذكاء اصطناعي\", \"mainEntityOfPage\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"publisher\": { \"id\": \"http://localhost:3001/clients/nova-electronics#organization\" }, \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"wordCount\": 144 }, { \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"@type\": \"Organization\", \"address\": { \"type\": \"PostalAddress\", \"addressCountry\": \"SA\", \"addressLocality\": \"الرياض\" }, \"contactPoint\": { \"type\": \"ContactPoint\", \"areaServed\": \"SA\", \"availableLanguage\": [ \"Arabic\", \"English\" ], \"email\": \"info@nova-electronics.sa\" }, \"logo\": { \"type\": \"ImageObject\", \"height\": 255, \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\", \"width\": 53 }, \"name\": \"متجر نوفا للإلكترونيات\" }, { \"@id\": \"http://localhost:3001/authors/modonty#person\", \"@type\": \"Person\", \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\", \"worksFor\": { \"id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"type\": \"Organization\", \"name\": \"متجر نوفا للإلكترونيات\" } }, { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\", \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"type\": \"ListItem\", \"item\": \"http://localhost:3001\", \"name\": \"الرئيسية\", \"position\": 1 }, { \"type\": \"ListItem\", \"item\": \"http://localhost:3001/categories/digital-marketing\", \"name\": \"التسويق الرقمي\", \"position\": 2 }, { \"type\": \"ListItem\", \"name\": \"دليل SEO المتاجر الإلكترونية 2025\", \"position\": 3 } ] } ] }"
+                  - generic [ref=e914]:
+                    - generic [ref=e915]:
+                      - 'heading "Diff: Form vs DB" [level=4] [ref=e916]':
+                        - img [ref=e917]
+                        - text: "Diff: Form vs DB"
+                      - generic [ref=e922]:
+                        - generic [ref=e923]:
+                          - strong [ref=e924]: Form
+                          - text: = current preview (not saved)
+                        - generic [ref=e925]: ·
+                        - generic [ref=e926]:
+                          - strong [ref=e927]: DB
+                          - text: = last saved in database
+                        - generic [ref=e928]: ·
+                        - generic [ref=e929]: Save article to write Form → DB
+                    - generic [ref=e930]:
+                      - generic [ref=e931]:
+                        - generic [ref=e932]: Metadata
+                        - generic [ref=e933]: Different — canonical, ogTitle, ogUrl, twitterTitle
+                      - generic [ref=e934]:
+                        - button "Show what changed (side-by-side + line diff)" [expanded] [ref=e935] [cursor=pointer]:
+                          - img
+                          - text: Show what changed (side-by-side + line diff)
+                        - generic [ref=e936]:
+                          - generic [ref=e937]:
+                            - generic [ref=e938]:
+                              - paragraph [ref=e939]: Form (unsaved)
+                              - code [ref=e941]: "{ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"alternates\": { \"canonical\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, \"openGraph\": { \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"siteName\": \"متجر نوفا للإلكترونيات\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351, \"alt\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-08T14:29:46.656Z\", \"modifiedTime\": \"2026-04-10T12:45:29.872Z\", \"authors\": [ \"Modonty\" ], \"section\": \"التسويق الرقمي\", \"tags\": [ \"SEO\", \"ذكاء اصطناعي\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"images\": [ \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                            - generic [ref=e942]:
+                              - paragraph [ref=e943]: DB (saved)
+                              - code [ref=e945]: "{ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"alternates\": { \"canonical\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\" }, \"openGraph\": { \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"url\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\", \"siteName\": \"متجر نوفا للإلكترونيات\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351, \"alt\": \"Test image 3 for media library\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-08T14:29:53.623Z\", \"modifiedTime\": \"2026-04-10T12:45:29.872Z\", \"authors\": [ \"Modonty\" ], \"section\": \"التسويق الرقمي\", \"tags\": [ \"SEO\", \"ذكاء اصطناعي\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"alt\": \"Test image 3 for media library\" } ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                          - generic [ref=e946]:
+                            - paragraph [ref=e947]: Line diff
+                            - generic [ref=e948]:
+                              - generic [ref=e949]: "{"
+                              - generic [ref=e950]: "\"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\","
+                              - generic [ref=e951]: "\"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e952]: "\"alternates\": {"
+                              - generic [ref=e953]: "+ \"canonical\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\""
+                              - generic [ref=e954]: "− \"canonical\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\""
+                              - generic [ref=e955]: "},"
+                              - generic [ref=e956]: "\"openGraph\": {"
+                              - generic [ref=e957]: "+ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\","
+                              - generic [ref=e958]: "− \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e959]: "\"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e960]: "+ \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e961]: "− \"url\": \"https://modonty.com/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e962]: "\"siteName\": \"متجر نوفا للإلكترونيات\","
+                              - generic [ref=e963]: "\"images\": ["
+                              - generic [ref=e964]: "{"
+                              - generic [ref=e965]: "\"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\","
+                              - generic [ref=e966]: "\"width\": 1351,"
+                              - generic [ref=e967]: "\"height\": 351,"
+                              - generic [ref=e968]: "+ \"alt\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\""
+                              - generic [ref=e969]: "− \"alt\": \"Test image 3 for media library\""
+                              - generic [ref=e970]: "}"
+                              - generic [ref=e971]: "],"
+                              - generic [ref=e972]: "\"locale\": \"ar_SA\","
+                              - generic [ref=e973]: "\"type\": \"article\","
+                              - generic [ref=e974]: "+ \"publishedTime\": \"2026-04-08T14:29:46.656Z\","
+                              - generic [ref=e975]: "− \"publishedTime\": \"2026-04-08T14:29:53.623Z\","
+                              - generic [ref=e976]: "\"modifiedTime\": \"2026-04-10T12:45:29.872Z\","
+                              - generic [ref=e977]: "\"authors\": ["
+                              - generic [ref=e978]: "\"Modonty\""
+                              - generic [ref=e979]: "],"
+                              - generic [ref=e980]: "\"section\": \"التسويق الرقمي\","
+                              - generic [ref=e981]: "\"tags\": ["
+                              - generic [ref=e982]: "\"SEO\","
+                              - generic [ref=e983]: "\"ذكاء اصطناعي\""
+                              - generic [ref=e984]: "]"
+                              - generic [ref=e985]: "},"
+                              - generic [ref=e986]: "\"twitter\": {"
+                              - generic [ref=e987]: "\"card\": \"summary_large_image\","
+                              - generic [ref=e988]: "+ \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة - متجر نوفا للإلكترونيات\","
+                              - generic [ref=e989]: "− \"title\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e990]: "\"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e991]: "\"images\": ["
+                              - generic [ref=e992]: + "https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png"
+                              - generic [ref=e993]: "− {"
+                              - generic [ref=e994]: "− \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\","
+                              - generic [ref=e995]: "− \"alt\": \"Test image 3 for media library\""
+                              - generic [ref=e996]: "− }"
+                              - generic [ref=e997]: "],"
+                              - generic [ref=e998]: "\"creator\": \"Modonty\""
+                              - generic [ref=e999]: "},"
+                              - generic [ref=e1000]: "\"robots\": {"
+                              - generic [ref=e1001]: "\"index\": true,"
+                              - generic [ref=e1002]: "\"follow\": true,"
+                              - generic [ref=e1003]: "\"googleBot\": {"
+                              - generic [ref=e1004]: "\"index\": true,"
+                              - generic [ref=e1005]: "\"follow\": true,"
+                              - generic [ref=e1006]: "\"max-video-preview\": -1,"
+                              - generic [ref=e1007]: "\"max-image-preview\": \"large\","
+                              - generic [ref=e1008]: "\"max-snippet\": -1"
+                              - generic [ref=e1009]: "}"
+                              - generic [ref=e1010]: "}"
+                              - generic [ref=e1011]: "}"
+                    - generic [ref=e1012]:
+                      - generic [ref=e1013]:
+                        - generic [ref=e1014]: JSON-LD
+                        - generic [ref=e1015]: Different — datePublished, headline
+                      - generic [ref=e1016]:
+                        - button "Show what changed (side-by-side + line diff)" [expanded] [ref=e1017] [cursor=pointer]:
+                          - img
+                          - text: Show what changed (side-by-side + line diff)
+                        - generic [ref=e1018]:
+                          - generic [ref=e1019]:
+                            - generic [ref=e1020]:
+                              - paragraph [ref=e1021]: Form (unsaved)
+                              - code [ref=e1023]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\", \"headline\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"datePublished\": \"2026-04-08T14:29:46.656Z\", \"dateModified\": \"2026-04-10T12:45:29.872Z\", \"author\": { \"@id\": \"http://localhost:3001/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"articleSection\": \"التسويق الرقمي\", \"keywords\": [ \"SEO\", \"ذكاء اصطناعي\" ], \"image\": { \"@type\": \"ImageObject\", \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351, \"height\": 351 }, \"wordCount\": 144, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"متجر نوفا للإلكترونيات\", \"url\": \"http://localhost:3001\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3001/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"التسويق الرقمي\", \"item\": \"http://localhost:3001/categories/digital-marketing\" }, { \"@type\": \"ListItem\", \"position\": 3, \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"item\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" } ], \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"name\": \"متجر نوفا للإلكترونيات\", \"url\": \"http://localhost:3001\", \"logo\": { \"@type\": \"ImageObject\", \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\", \"width\": 53, \"height\": 255 } }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3001/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                            - generic [ref=e1024]:
+                              - paragraph [ref=e1025]: DB (saved)
+                              - code [ref=e1027]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"@type\": \"WebPage\", \"breadcrumb\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\" }, \"dateModified\": \"2026-04-10T15:45:32+03:00\", \"datePublished\": \"2026-04-08T17:29:53+03:00\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"inLanguage\": \"ar\", \"isPartOf\": { \"id\": \"http://localhost:3001#website\", \"type\": \"WebSite\", \"name\": \"مودونتي\", \"url\": \"http://localhost:3001\" }, \"mainEntity\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\" }, \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\", \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\" }, { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\", \"@type\": \"Article\", \"about\": { \"id\": \"http://localhost:3001/categories/digital-marketing\", \"type\": \"Thing\", \"name\": \"التسويق الرقمي\" }, \"articleSection\": \"التسويق الرقمي\", \"author\": { \"id\": \"http://localhost:3001/authors/modonty#person\" }, \"dateModified\": \"2026-04-10T15:45:32+03:00\", \"datePublished\": \"2026-04-08T17:29:53+03:00\", \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\", \"headline\": \"دليل SEO المتاجر الإلكترونية 2025\", \"image\": { \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#primary-image\", \"type\": \"ImageObject\", \"contentUrl\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"copyrightHolder\": { \"type\": \"Organization\", \"name\": \"مدونتي\" }, \"creditText\": \"مدونتي\", \"height\": 351, \"license\": \"All Rights Reserved\", \"name\": \"Test image 3 for media library\", \"representativeOfPage\": true, \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\", \"width\": 1351 }, \"inLanguage\": \"ar\", \"isAccessibleForFree\": true, \"keywords\": \"SEO, ذكاء اصطناعي\", \"mainEntityOfPage\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"publisher\": { \"id\": \"http://localhost:3001/clients/nova-electronics#organization\" }, \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\", \"wordCount\": 144 }, { \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"@type\": \"Organization\", \"address\": { \"type\": \"PostalAddress\", \"addressCountry\": \"SA\", \"addressLocality\": \"الرياض\" }, \"contactPoint\": { \"type\": \"ContactPoint\", \"areaServed\": \"SA\", \"availableLanguage\": [ \"Arabic\", \"English\" ], \"email\": \"info@nova-electronics.sa\" }, \"logo\": { \"type\": \"ImageObject\", \"height\": 255, \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\", \"width\": 53 }, \"name\": \"متجر نوفا للإلكترونيات\" }, { \"@id\": \"http://localhost:3001/authors/modonty#person\", \"@type\": \"Person\", \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\", \"worksFor\": { \"id\": \"http://localhost:3001/clients/nova-electronics#organization\", \"type\": \"Organization\", \"name\": \"متجر نوفا للإلكترونيات\" } }, { \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\", \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"type\": \"ListItem\", \"item\": \"http://localhost:3001\", \"name\": \"الرئيسية\", \"position\": 1 }, { \"type\": \"ListItem\", \"item\": \"http://localhost:3001/categories/digital-marketing\", \"name\": \"التسويق الرقمي\", \"position\": 2 }, { \"type\": \"ListItem\", \"name\": \"دليل SEO المتاجر الإلكترونية 2025\", \"position\": 3 } ] } ] }"
+                          - generic [ref=e1028]:
+                            - paragraph [ref=e1029]: Line diff
+                            - generic [ref=e1030]:
+                              - generic [ref=e1031]: "{"
+                              - generic [ref=e1032]: "\"@context\": \"https://schema.org\","
+                              - generic [ref=e1033]: "\"@graph\": ["
+                              - generic [ref=e1034]: "{"
+                              - generic [ref=e1035]: "+ \"@type\": \"Article\","
+                              - generic [ref=e1036]: "+ \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\","
+                              - generic [ref=e1037]: "+ \"headline\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e1038]: "− \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e1039]: "− \"@type\": \"WebPage\","
+                              - generic [ref=e1040]: "− \"breadcrumb\": {"
+                              - generic [ref=e1041]: "− \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\""
+                              - generic [ref=e1042]: "− },"
+                              - generic [ref=e1043]: "− \"dateModified\": \"2026-04-10T15:45:32+03:00\","
+                              - generic [ref=e1044]: "− \"datePublished\": \"2026-04-08T17:29:53+03:00\","
+                              - generic [ref=e1045]: "\"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e1046]: "+ \"datePublished\": \"2026-04-08T14:29:46.656Z\","
+                              - generic [ref=e1047]: "+ \"dateModified\": \"2026-04-10T12:45:29.872Z\","
+                              - generic [ref=e1048]: "+ \"author\": {"
+                              - generic [ref=e1049]: "+ \"@id\": \"http://localhost:3001/authors/default-author#person\""
+                              - generic [ref=e1050]: "− \"inLanguage\": \"ar\","
+                              - generic [ref=e1051]: "− \"isPartOf\": {"
+                              - generic [ref=e1052]: "− \"id\": \"http://localhost:3001#website\","
+                              - generic [ref=e1053]: "− \"type\": \"WebSite\","
+                              - generic [ref=e1054]: "− \"name\": \"مودونتي\","
+                              - generic [ref=e1055]: "− \"url\": \"http://localhost:3001\""
+                              - generic [ref=e1056]: "},"
+                              - generic [ref=e1057]: "+ \"publisher\": {"
+                              - generic [ref=e1058]: "+ \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\""
+                              - generic [ref=e1059]: "− \"mainEntity\": {"
+                              - generic [ref=e1060]: "− \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\""
+                              - generic [ref=e1061]: "},"
+                              - generic [ref=e1062]: "+ \"mainEntityOfPage\": {"
+                              - generic [ref=e1063]: "+ \"@type\": \"WebPage\","
+                              - generic [ref=e1064]: "+ \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\""
+                              - generic [ref=e1065]: "− \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e1066]: "− \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\""
+                              - generic [ref=e1067]: "− },"
+                              - generic [ref=e1068]: "− {"
+                              - generic [ref=e1069]: "− \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#article\","
+                              - generic [ref=e1070]: "− \"@type\": \"Article\","
+                              - generic [ref=e1071]: "− \"about\": {"
+                              - generic [ref=e1072]: "− \"id\": \"http://localhost:3001/categories/digital-marketing\","
+                              - generic [ref=e1073]: "− \"type\": \"Thing\","
+                              - generic [ref=e1074]: "− \"name\": \"التسويق الرقمي\""
+                              - generic [ref=e1075]: "},"
+                              - generic [ref=e1076]: "+ \"inLanguage\": \"ar-SA\","
+                              - generic [ref=e1077]: "+ \"isAccessibleForFree\": true,"
+                              - generic [ref=e1078]: "\"articleSection\": \"التسويق الرقمي\","
+                              - generic [ref=e1079]: "+ \"keywords\": ["
+                              - generic [ref=e1080]: + "SEO",
+                              - generic [ref=e1081]: + "ذكاء اصطناعي"
+                              - generic [ref=e1082]: + ],
+                              - generic [ref=e1083]: "− \"author\": {"
+                              - generic [ref=e1084]: "− \"id\": \"http://localhost:3001/authors/modonty#person\""
+                              - generic [ref=e1085]: "− },"
+                              - generic [ref=e1086]: "− \"dateModified\": \"2026-04-10T15:45:32+03:00\","
+                              - generic [ref=e1087]: "− \"datePublished\": \"2026-04-08T17:29:53+03:00\","
+                              - generic [ref=e1088]: "− \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e1089]: "− \"headline\": \"دليل SEO المتاجر الإلكترونية 2025\","
+                              - generic [ref=e1090]: "\"image\": {"
+                              - generic [ref=e1091]: "+ \"@type\": \"ImageObject\","
+                              - generic [ref=e1092]: "− \"id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#primary-image\","
+                              - generic [ref=e1093]: "− \"type\": \"ImageObject\","
+                              - generic [ref=e1094]: "− \"contentUrl\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\","
+                              - generic [ref=e1095]: "− \"copyrightHolder\": {"
+                              - generic [ref=e1096]: "− \"type\": \"Organization\","
+                              - generic [ref=e1097]: "− \"name\": \"مدونتي\""
+                              - generic [ref=e1098]: "− },"
+                              - generic [ref=e1099]: "− \"creditText\": \"مدونتي\","
+                              - generic [ref=e1100]: "− \"height\": 351,"
+                              - generic [ref=e1101]: "− \"license\": \"All Rights Reserved\","
+                              - generic [ref=e1102]: "− \"name\": \"Test image 3 for media library\","
+                              - generic [ref=e1103]: "− \"representativeOfPage\": true,"
+                              - generic [ref=e1104]: "\"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728818/clients/69d6665592f34b725bbddece/test-image-3-for-media-library-rb38mnv7q.png\","
+                              - generic [ref=e1105]: "+ \"width\": 1351,"
+                              - generic [ref=e1106]: "+ \"height\": 351"
+                              - generic [ref=e1107]: "− \"width\": 1351"
+                              - generic [ref=e1108]: "},"
+                              - generic [ref=e1109]: "+ \"wordCount\": 144,"
+                              - generic [ref=e1110]: "+ \"license\": \"https://creativecommons.org/licenses/by/4.0/\""
+                              - generic [ref=e1111]: "− \"inLanguage\": \"ar\","
+                              - generic [ref=e1112]: "− \"isAccessibleForFree\": true,"
+                              - generic [ref=e1113]: "− \"keywords\": \"SEO, ذكاء اصطناعي\","
+                              - generic [ref=e1114]: "− \"mainEntityOfPage\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e1115]: "− \"publisher\": {"
+                              - generic [ref=e1116]: "− \"id\": \"http://localhost:3001/clients/nova-electronics#organization\""
+                              - generic [ref=e1117]: "− },"
+                              - generic [ref=e1118]: "− \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e1119]: "− \"wordCount\": 144"
+                              - generic [ref=e1120]: "},"
+                              - generic [ref=e1121]: "{"
+                              - generic [ref=e1122]: "+ \"@type\": \"WebPage\","
+                              - generic [ref=e1123]: "+ \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e1124]: "+ \"url\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\","
+                              - generic [ref=e1125]: "+ \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e1126]: "+ \"description\": \"دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات.\","
+                              - generic [ref=e1127]: "+ \"isPartOf\": {"
+                              - generic [ref=e1128]: "+ \"@type\": \"WebSite\","
+                              - generic [ref=e1129]: "+ \"name\": \"متجر نوفا للإلكترونيات\","
+                              - generic [ref=e1130]: "+ \"url\": \"http://localhost:3001\""
+                              - generic [ref=e1131]: "− \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\","
+                              - generic [ref=e1132]: "− \"@type\": \"Organization\","
+                              - generic [ref=e1133]: "− \"address\": {"
+                              - generic [ref=e1134]: "− \"type\": \"PostalAddress\","
+                              - generic [ref=e1135]: "− \"addressCountry\": \"SA\","
+                              - generic [ref=e1136]: "− \"addressLocality\": \"الرياض\""
+                              - generic [ref=e1137]: "},"
+                              - generic [ref=e1138]: "+ \"breadcrumb\": {"
+                              - generic [ref=e1139]: "+ \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\""
+                              - generic [ref=e1140]: "− \"contactPoint\": {"
+                              - generic [ref=e1141]: "− \"type\": \"ContactPoint\","
+                              - generic [ref=e1142]: "− \"areaServed\": \"SA\","
+                              - generic [ref=e1143]: "− \"availableLanguage\": ["
+                              - generic [ref=e1144]: − "Arabic",
+                              - generic [ref=e1145]: − "English"
+                              - generic [ref=e1146]: − ],
+                              - generic [ref=e1147]: "− \"email\": \"info@nova-electronics.sa\""
+                              - generic [ref=e1148]: "− },"
+                              - generic [ref=e1149]: "− \"logo\": {"
+                              - generic [ref=e1150]: "− \"type\": \"ImageObject\","
+                              - generic [ref=e1151]: "− \"height\": 255,"
+                              - generic [ref=e1152]: "− \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\","
+                              - generic [ref=e1153]: "− \"width\": 53"
+                              - generic [ref=e1154]: "− },"
+                              - generic [ref=e1155]: "− \"name\": \"متجر نوفا للإلكترونيات\""
+                              - generic [ref=e1156]: "− },"
+                              - generic [ref=e1157]: "− {"
+                              - generic [ref=e1158]: "− \"@id\": \"http://localhost:3001/authors/modonty#person\","
+                              - generic [ref=e1159]: "− \"@type\": \"Person\","
+                              - generic [ref=e1160]: "− \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\","
+                              - generic [ref=e1161]: "− \"name\": \"Modonty\","
+                              - generic [ref=e1162]: "− \"url\": \"https://modonty.com\","
+                              - generic [ref=e1163]: "− \"worksFor\": {"
+                              - generic [ref=e1164]: "− \"id\": \"http://localhost:3001/clients/nova-electronics#organization\","
+                              - generic [ref=e1165]: "− \"type\": \"Organization\","
+                              - generic [ref=e1166]: "− \"name\": \"متجر نوفا للإلكترونيات\""
+                              - generic [ref=e1167]: "}"
+                              - generic [ref=e1168]: "},"
+                              - generic [ref=e1169]: "{"
+                              - generic [ref=e1170]: "− \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\","
+                              - generic [ref=e1171]: "\"@type\": \"BreadcrumbList\","
+                              - generic [ref=e1172]: "\"itemListElement\": ["
+                              - generic [ref=e1173]: "{"
+                              - generic [ref=e1174]: "+ \"@type\": \"ListItem\","
+                              - generic [ref=e1175]: "+ \"position\": 1,"
+                              - generic [ref=e1176]: "− \"type\": \"ListItem\","
+                              - generic [ref=e1177]: "− \"item\": \"http://localhost:3001\","
+                              - generic [ref=e1178]: "\"name\": \"الرئيسية\","
+                              - generic [ref=e1179]: "+ \"item\": \"http://localhost:3001/\""
+                              - generic [ref=e1180]: "− \"position\": 1"
+                              - generic [ref=e1181]: "},"
+                              - generic [ref=e1182]: "{"
+                              - generic [ref=e1183]: "+ \"@type\": \"ListItem\","
+                              - generic [ref=e1184]: "+ \"position\": 2,"
+                              - generic [ref=e1185]: "− \"type\": \"ListItem\","
+                              - generic [ref=e1186]: "− \"item\": \"http://localhost:3001/categories/digital-marketing\","
+                              - generic [ref=e1187]: "\"name\": \"التسويق الرقمي\","
+                              - generic [ref=e1188]: "+ \"item\": \"http://localhost:3001/categories/digital-marketing\""
+                              - generic [ref=e1189]: "− \"position\": 2"
+                              - generic [ref=e1190]: "},"
+                              - generic [ref=e1191]: "{"
+                              - generic [ref=e1192]: "+ \"@type\": \"ListItem\","
+                              - generic [ref=e1193]: "+ \"position\": 3,"
+                              - generic [ref=e1194]: "+ \"name\": \"دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة\","
+                              - generic [ref=e1195]: "+ \"item\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025\""
+                              - generic [ref=e1196]: "− \"type\": \"ListItem\","
+                              - generic [ref=e1197]: "− \"name\": \"دليل SEO المتاجر الإلكترونية 2025\","
+                              - generic [ref=e1198]: "− \"position\": 3"
+                              - generic [ref=e1199]: "}"
+                              - generic [ref=e1200]: + ],
+                              - generic [ref=e1201]: "+ \"@id\": \"http://localhost:3001/articles/seo-guide-ecommerce-2025#breadcrumb\""
+                              - generic [ref=e1202]: "+ },"
+                              - generic [ref=e1203]: "+ {"
+                              - generic [ref=e1204]: "+ \"@type\": \"Organization\","
+                              - generic [ref=e1205]: "+ \"@id\": \"http://localhost:3001/clients/nova-electronics#organization\","
+                              - generic [ref=e1206]: "+ \"name\": \"متجر نوفا للإلكترونيات\","
+                              - generic [ref=e1207]: "+ \"url\": \"http://localhost:3001\","
+                              - generic [ref=e1208]: "+ \"logo\": {"
+                              - generic [ref=e1209]: "+ \"@type\": \"ImageObject\","
+                              - generic [ref=e1210]: "+ \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1775728649/clients/69d6665592f34b725bbddece/test-image-2-for-nova-electronics-razmeg866.png\","
+                              - generic [ref=e1211]: "+ \"width\": 53,"
+                              - generic [ref=e1212]: "+ \"height\": 255"
+                              - generic [ref=e1213]: "+ }"
+                              - generic [ref=e1214]: "+ },"
+                              - generic [ref=e1215]: "+ {"
+                              - generic [ref=e1216]: "+ \"@type\": \"Person\","
+                              - generic [ref=e1217]: "+ \"@id\": \"http://localhost:3001/authors/default-author#person\","
+                              - generic [ref=e1218]: "+ \"name\": \"Modonty\""
+                              - generic [ref=e1219]: − ]
+                              - generic [ref=e1220]: "}"
+                              - generic [ref=e1221]: "]"
+                              - generic [ref=e1222]: "}"
+            - tablist [ref=e390]:
+              - 'tab "Basic: 100% complete. مكتمل ✓" [ref=e391] [cursor=pointer]':
+                - img [ref=e545]
+                - generic [ref=e393]: Basic
+                - generic [ref=e394]: 100%
+              - 'tab "Content: 90% complete. اختياري: معرض الصور" [ref=e395] [cursor=pointer]':
+                - img [ref=e1223]
+                - generic [ref=e397]: Content
+                - generic [ref=e398]: 90%
+              - 'tab "SEO: 88% complete. المحتوى: 144 كلمة — أضف محتوى أكثر (الحد الأدنى 300)" [ref=e399] [cursor=pointer]':
+                - img [ref=e401]
+                - generic [ref=e403]: SEO
+                - generic [ref=e404]: 88%
+              - 'tab "FAQs & Related: 50% complete. اختياري: مقالات ذات صلة" [ref=e405] [cursor=pointer]':
+                - img [ref=e1225]
+                - generic [ref=e407]: FAQs & Related
+                - generic [ref=e408]: 50%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [selected] [ref=e409] [cursor=pointer]':
+                - generic [ref=e410]: "5"
+                - generic [ref=e411]: Publish
+                - generic [ref=e412]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e413] [cursor=pointer]:
+    - img [ref=e414]
+  - alert [ref=e304]

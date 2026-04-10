@@ -64,16 +64,16 @@ export function CreatePasswordPrompt() {
 
   if (success) {
     return (
-      <Card className="border-green-500/50">
+      <Card className="border-primary/50">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
             <div className="flex justify-center">
-              <div className="rounded-full bg-green-100 p-3">
-                <IconShield className="h-6 w-6 text-green-600" />
+              <div className="rounded-full bg-primary/10 p-3">
+                <IconShield className="h-6 w-6 text-primary" />
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-green-700">
+              <h3 className="text-lg font-semibold text-primary">
                 تم إنشاء كلمة المرور بنجاح
               </h3>
               <p className="text-sm text-muted-foreground mt-2">

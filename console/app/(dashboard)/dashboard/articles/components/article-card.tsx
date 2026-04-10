@@ -11,7 +11,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, Check, MessageSquare, Clock } from "lucide-react";
+import { Eye, Check, MessageSquare, Clock, BarChart3 } from "lucide-react";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 import { approveArticle, requestChanges } from "../actions/article-actions";
 import { useState } from "react";
@@ -126,6 +126,15 @@ export function ArticleCard({ article }: ArticleCardProps) {
                 {ar.articles.preview}
               </Button>
             </Link>
+
+            {!isPending && (
+              <Link href={`/dashboard/articles/${article.id}`}>
+                <Button variant="outline" size="sm">
+                  <BarChart3 className="h-4 w-4 me-2" />
+                  {ar.articleStats.statsTitle}
+                </Button>
+              </Link>
+            )}
 
             {isPending && (
               <>

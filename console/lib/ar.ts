@@ -649,6 +649,15 @@ export const ar = {
     passwordMinLength: "كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل",
   },
 
+  articleStats: {
+    views: "المشاهدات",
+    likes: "الإعجابات",
+    dislikes: "عدم الإعجاب",
+    comments: "التعليقات",
+    questions: "الأسئلة",
+    statsTitle: "إحصائيات المقال",
+  },
+
   errors: {
     approveFailed: "تعذّر الموافقة على المقالة",
     requestFailed: "تعذّر إرسال طلب التعديل",

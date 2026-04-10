@@ -28,7 +28,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <IconLike className="h-4 w-4 text-red-500" />
+            <IconLike className="h-4 w-4 text-destructive" />
             الإعجابات
           </CardTitle>
         </CardHeader>
@@ -63,7 +63,7 @@ export default async function ClientLikesPage({ params }: ClientLikesPageProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <IconLike className="h-4 w-4 text-red-500" />
+            <IconLike className="h-4 w-4 text-destructive" />
             المفضّلة
           </CardTitle>
         </CardHeader>

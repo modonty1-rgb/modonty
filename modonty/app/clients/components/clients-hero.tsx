@@ -11,7 +11,7 @@ export function ClientsHero({
   totalArticles 
 }: ClientsHeroProps) {
   return (
-    <div className="relative overflow-hidden border-b border-white/10 bg-[#0e065a]">
+    <div className="relative overflow-hidden border-b border-white/10 bg-primary">
       <div
         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:24px_24px]"
         aria-hidden

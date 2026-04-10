@@ -1,0 +1,210 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - link "Articles" [ref=e119] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e120]:
+              - img [ref=e121]
+              - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e271] [cursor=pointer]:
+                - /url: /articles/69d6665b92f34b725bbdded0
+            - generic [ref=e124]:
+              - img [ref=e125]
+              - generic [ref=e127]: Edit
+          - navigation "Main navigation" [ref=e129]:
+            - link "Modonty Modonty" [ref=e130] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e132]
+              - generic [ref=e133]: Modonty
+            - generic [ref=e135]:
+              - link "Articles" [ref=e136] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e137]:
+                  - img
+                  - generic [ref=e138]: Articles
+              - link "Clients" [ref=e139] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e140]:
+                  - img
+                  - generic [ref=e141]: Clients
+              - link "Media" [ref=e142] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e143]:
+                  - img
+                  - generic [ref=e144]: Media
+          - generic [ref=e145]:
+            - link "4" [ref=e272] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e273]:
+                - img
+                - generic [ref=e274]: "4"
+            - button "M" [ref=e148] [cursor=pointer]:
+              - generic [ref=e150]: M
+      - generic [ref=e151]:
+        - generic [ref=e152]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e153]:
+          - button "Send Note" [ref=e154] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e155] [cursor=pointer]:
+            - img
+      - main [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - generic [ref=e162]:
+                - generic [ref=e163]: Step 3 of 5
+                - generic [ref=e164]: "SEO Health: 88%"
+                - generic [ref=e167]: Live Analysis
+              - generic [ref=e168]:
+                - generic [ref=e170]: 76% Complete
+                - button "Update" [ref=e172] [cursor=pointer]:
+                  - img
+                  - generic [ref=e173]: Update
+            - 'generic "Overall progress: 76%" [ref=e275]'
+          - generic [ref=e179]:
+            - 'tabpanel "SEO: 88% complete. المحتوى: 144 كلمة — أضف محتوى أكثر (الحد الأدنى 300)" [ref=e276]':
+              - generic [ref=e278]:
+                - generic [ref=e280]: Meta Tags
+                - generic [ref=e281]:
+                  - generic [ref=e282]:
+                    - text: SEO Title
+                    - textbox "Optimized title for search engines (50-60 characters)" [ref=e283]: دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة
+                    - generic [ref=e284]:
+                      - paragraph [ref=e285]: Optimize for 50-60 characters for better search visibility
+                      - generic [ref=e287]: 53 / 60 maximum
+                  - generic [ref=e288]:
+                    - text: SEO Description
+                    - textbox "Meta description for search results (150-160 characters)" [ref=e289]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات."
+                    - generic [ref=e290]:
+                      - paragraph [ref=e291]: Optimize for 150-160 characters for better search visibility
+                      - generic [ref=e293]: 135 / 160 maximum
+              - generic [ref=e296]:
+                - text: SEO Keywords
+                - paragraph [ref=e297]: Keywords this article is based on. Stored as reference for the article.
+                - generic [ref=e298]:
+                  - textbox "Add SEO keyword" [ref=e299]:
+                    - /placeholder: Add keyword...
+                  - button "Add" [ref=e300] [cursor=pointer]:
+                    - img
+                    - text: Add
+              - generic [ref=e303]:
+                - text: Semantic Keywords
+                - paragraph [ref=e304]: Entities/concepts for disambiguation (e.g. people, places, organisations). Used for schema.org about/mentions and entity-first SEO. Optional Wikidata ID and URL.
+                - generic [ref=e305]:
+                  - textbox "Add semantic keyword" [ref=e306]:
+                    - /placeholder: Add entity name...
+                  - button "Add" [ref=e307] [cursor=pointer]:
+                    - img
+                    - text: Add
+            - tablist [ref=e238]:
+              - 'tab "Basic: 100% complete. مكتمل ✓" [ref=e239] [cursor=pointer]':
+                - img [ref=e308]
+                - generic [ref=e241]: Basic
+                - generic [ref=e242]: 100%
+              - 'tab "Content: 90% complete. اختياري: معرض الصور" [ref=e243] [cursor=pointer]':
+                - img [ref=e310]
+                - generic [ref=e245]: Content
+                - generic [ref=e246]: 90%
+              - 'tab "SEO: 88% complete. المحتوى: 144 كلمة — أضف محتوى أكثر (الحد الأدنى 300)" [active] [selected] [ref=e247] [cursor=pointer]':
+                - img [ref=e249]
+                - generic [ref=e251]: SEO
+                - generic [ref=e252]: 88%
+              - 'tab "FAQs & Related: 50% complete. اختياري: مقالات ذات صلة" [ref=e253] [cursor=pointer]':
+                - generic [ref=e254]: "4"
+                - generic [ref=e255]: FAQs & Related
+                - generic [ref=e256]: 50%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e257] [cursor=pointer]':
+                - generic [ref=e258]: "5"
+                - generic [ref=e259]: Publish
+                - generic [ref=e260]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e266] [cursor=pointer]:
+    - img [ref=e267]
+  - alert [ref=e270]

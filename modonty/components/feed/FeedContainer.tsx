@@ -23,6 +23,10 @@ export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps
             <LeftSidebar currentCategorySlug={currentCategorySlug} />
           </Suspense>
           <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
+            <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
+              <p className="text-sm font-semibold text-foreground">مرحباً بك في مودونتي</p>
+              <p className="text-xs text-muted-foreground mt-0.5">منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.</p>
+            </div>
             <section aria-labelledby="articles-feed-heading" className="space-y-4 [&>*:nth-child(2)]:!mt-0">
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات

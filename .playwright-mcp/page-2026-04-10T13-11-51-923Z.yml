@@ -1,0 +1,356 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - heading "Guidelines" [level=1] [ref=e120]
+            - paragraph [ref=e121]: دليل شامل لفريق العمل — المقاسات المعتمدة، طريقة الاستخدام، وأفضل الممارسات لكل قسم
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - img [ref=e127]
+                - generic [ref=e133]:
+                  - text: للمصمم
+                  - paragraph [ref=e134]: الأساسيات اللي لازم تعرفها قبل ما ترفع أي صورة أو تسلّم أي تصميم
+              - generic [ref=e135]: Designer
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - img [ref=e138]
+                - generic [ref=e141]:
+                  - paragraph [ref=e142]: الصورة الرئيسية للمقال
+                  - paragraph [ref=e143]: 1920 × 1080 — نسبة 16:9 بالضبط
+              - generic [ref=e144]:
+                - img [ref=e145]
+                - generic [ref=e148]:
+                  - paragraph [ref=e149]: لوجو العميل
+                  - paragraph [ref=e150]: 500 × 500 — مربع + PNG بخلفية شفافة
+              - generic [ref=e151]:
+                - img [ref=e152]
+                - generic [ref=e155]:
+                  - paragraph [ref=e156]: غلاف صفحة العميل
+                  - paragraph [ref=e157]: 2400 × 400 — بنر عريض 6:1
+              - generic [ref=e158]:
+                - img [ref=e159]
+                - generic [ref=e162]:
+                  - paragraph [ref=e163]: صور البطاقات والمعرض
+                  - paragraph [ref=e164]: 1200 × 675 — نسبة 16:9
+              - generic [ref=e165]:
+                - img [ref=e166]
+                - generic [ref=e169]:
+                  - paragraph [ref=e170]: صور الكتّاب والفئات
+                  - paragraph [ref=e171]: مربع 1:1 — الوجه في المنتصف دائماً
+            - link "دليل الصور الكامل مع كل المقاسات" [ref=e173] [cursor=pointer]:
+              - /url: /guidelines/media
+              - img [ref=e174]
+              - text: دليل الصور الكامل مع كل المقاسات
+          - generic [ref=e177]:
+            - generic [ref=e178]:
+              - generic [ref=e179]:
+                - img [ref=e181]
+                - generic [ref=e183]:
+                  - text: لكاتب المحتوى — دليل SEO الكامل
+                  - paragraph [ref=e184]: كل مقال تكتبه يحتاج هذه النقاط — اتبعها وارتفع في نتائج البحث
+              - generic [ref=e185]: Content Writer
+            - generic [ref=e186]:
+              - generic [ref=e187]:
+                - generic [ref=e188]:
+                  - img [ref=e189]
+                  - generic [ref=e192]: العنوان والوصف
+                - generic [ref=e193]:
+                  - generic [ref=e194]:
+                    - paragraph [ref=e195]: SEO Title
+                    - generic [ref=e196]:
+                      - img [ref=e197]
+                      - paragraph [ref=e200]: بين 50 و 60 حرف — ضع الكلمة المفتاحية في بداية العنوان
+                    - generic [ref=e201]:
+                      - img [ref=e202]
+                      - paragraph [ref=e206]: لا تكتب عنواناً عاماً مثل «مقال جديد» أو تكرر نفس العنوان في مقالين
+                  - generic [ref=e207]:
+                    - paragraph [ref=e208]: Meta Description
+                    - generic [ref=e209]:
+                      - img [ref=e210]
+                      - paragraph [ref=e213]: بين 140 و 160 حرف — جملة تشويقية تحتوي الكلمة المفتاحية وتدفع للنقر
+                    - generic [ref=e214]:
+                      - img [ref=e215]
+                      - paragraph [ref=e219]: لا تنسخ أول جملة من المقال كوصف — اكتب جملة مستقلة مخصصة للبحث
+                  - generic [ref=e220]:
+                    - paragraph [ref=e221]: عنوان المقال (H1)
+                    - generic [ref=e222]:
+                      - img [ref=e223]
+                      - paragraph [ref=e226]: عنوان واحد فقط، يشبه SEO Title، يحتوي الكلمة المفتاحية
+                    - generic [ref=e227]:
+                      - img [ref=e228]
+                      - paragraph [ref=e232]: لا تضع H1 داخل النص — هو عنوان المقال تلقائياً
+              - generic [ref=e233]:
+                - generic [ref=e234]:
+                  - img [ref=e235]
+                  - generic [ref=e238]: الكلمة المفتاحية
+                - generic [ref=e239]:
+                  - generic [ref=e240]:
+                    - paragraph [ref=e241]: اختيار الكلمة المفتاحية
+                    - generic [ref=e242]:
+                      - img [ref=e243]
+                      - paragraph [ref=e246]: كلمة مفتاحية رئيسية واحدة لكل مقال — محددة وليست عامة
+                    - generic [ref=e247]:
+                      - img [ref=e248]
+                      - paragraph [ref=e252]: لا تستهدف «التسويق» — استهدف «تسويق المحتوى للمطاعم السعودية»
+                  - generic [ref=e253]:
+                    - paragraph [ref=e254]: الفقرة الأولى
+                    - generic [ref=e255]:
+                      - img [ref=e256]
+                      - paragraph [ref=e259]: الكلمة المفتاحية تظهر في أول 100 كلمة من المقال
+                    - generic [ref=e260]:
+                      - img [ref=e261]
+                      - paragraph [ref=e265]: لا تبدأ المقال بمقدمة طويلة بدون ذكر الموضوع
+                  - generic [ref=e266]:
+                    - paragraph [ref=e267]: الكثافة الطبيعية
+                    - generic [ref=e268]:
+                      - img [ref=e269]
+                      - paragraph [ref=e272]: الكلمة المفتاحية تظهر بشكل طبيعي في المحتوى — 1 إلى 2%
+                    - generic [ref=e273]:
+                      - img [ref=e274]
+                      - paragraph [ref=e278]: لا تكرر الكلمة المفتاحية بشكل مصطنع — محركات البحث تعاقب على هذا
+              - generic [ref=e279]:
+                - generic [ref=e280]:
+                  - img [ref=e281]
+                  - generic [ref=e282]: هيكل المحتوى
+                - generic [ref=e283]:
+                  - generic [ref=e284]:
+                    - paragraph [ref=e285]: طول المقال
+                    - generic [ref=e286]:
+                      - img [ref=e287]
+                      - paragraph [ref=e290]: 800 كلمة كحد أدنى — 1500 كلمة أو أكثر للمواضيع التنافسية
+                    - generic [ref=e291]:
+                      - img [ref=e292]
+                      - paragraph [ref=e296]: المقالات القصيرة (أقل من 500 كلمة) نادراً ما تظهر في الصفحة الأولى
+                  - generic [ref=e297]:
+                    - paragraph [ref=e298]: العناوين الفرعية H2 و H3
+                    - generic [ref=e299]:
+                      - img [ref=e300]
+                      - paragraph [ref=e303]: قسّم المقال بعناوين فرعية واضحة — ضع كلمات مفتاحية ثانوية فيها
+                    - generic [ref=e304]:
+                      - img [ref=e305]
+                      - paragraph [ref=e309]: لا تكتب مقالاً بدون عناوين فرعية — يصعب القراءة ويضعف SEO
+                  - generic [ref=e310]:
+                    - paragraph [ref=e311]: الفقرات والجمل
+                    - generic [ref=e312]:
+                      - img [ref=e313]
+                      - paragraph [ref=e316]: فقرات قصيرة 3 إلى 5 أسطر — جمل واضحة ومباشرة
+                    - generic [ref=e317]:
+                      - img [ref=e318]
+                      - paragraph [ref=e322]: لا تكتب فقرات طويلة جداً — تنفّر القارئ وتقلل وقت القراءة
+              - generic [ref=e323]:
+                - generic [ref=e324]:
+                  - img [ref=e325]
+                  - generic [ref=e328]: الروابط والصور
+                - generic [ref=e329]:
+                  - generic [ref=e330]:
+                    - paragraph [ref=e331]: الروابط الداخلية
+                    - generic [ref=e332]:
+                      - img [ref=e333]
+                      - paragraph [ref=e336]: 2 إلى 3 روابط لمقالات أخرى ذات صلة داخل نفس الموقع
+                    - generic [ref=e337]:
+                      - img [ref=e338]
+                      - paragraph [ref=e342]: لا تنشر مقالاً بدون أي رابط داخلي — هذا يضعف بنية الموقع
+                  - generic [ref=e343]:
+                    - paragraph [ref=e344]: Alt Text للصور
+                    - generic [ref=e345]:
+                      - img [ref=e346]
+                      - paragraph [ref=e349]: وصف حقيقي يتضمن الكلمة المفتاحية بشكل طبيعي — «فريق تسويق يعمل على خطة محتوى»
+                    - generic [ref=e350]:
+                      - img [ref=e351]
+                      - paragraph [ref=e355]: لا تكتب «صورة» أو تترك الحقل فارغاً أو تضع اسم الملف
+                  - generic [ref=e356]:
+                    - paragraph [ref=e357]: رابط المقال (Slug)
+                    - generic [ref=e358]:
+                      - img [ref=e359]
+                      - paragraph [ref=e362]: بالإنجليزي، كلمات مفتاحية فقط، شرطة بين الكلمات — «seo-guide-restaurants-2025»
+                    - generic [ref=e363]:
+                      - img [ref=e364]
+                      - paragraph [ref=e368]: لا تواريخ، لا أرقام عشوائية، لا عربي في الرابط
+            - generic [ref=e369]:
+              - paragraph [ref=e370]:
+                - text: ⚠️ نقطة SEO لازم تكون
+                - strong [ref=e371]: 60% أو أكثر
+                - text: قبل النشر — النظام يمنع النشر إذا كانت أقل
+              - link "دليل إنشاء المقالات الكامل" [ref=e372] [cursor=pointer]:
+                - /url: /guidelines/articles
+                - img [ref=e373]
+                - text: دليل إنشاء المقالات الكامل
+          - generic [ref=e377]: جميع الأقسام
+          - generic [ref=e379]:
+            - link "Media & Image Standards مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي" [ref=e380] [cursor=pointer]:
+              - /url: /guidelines/media
+              - generic [ref=e383]:
+                - img [ref=e385]
+                - generic [ref=e389]:
+                  - heading "Media & Image Standards" [level=3] [ref=e390]
+                  - paragraph [ref=e391]: مقاسات الصور المعتمدة، الصيغ المطلوبة، وأفضل الممارسات للتصميم والمحتوى المرئي
+                - img [ref=e392]
+            - link "Articles دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر" [ref=e394] [cursor=pointer]:
+              - /url: /guidelines/articles
+              - generic [ref=e397]:
+                - img [ref=e399]
+                - generic [ref=e402]:
+                  - heading "Articles" [level=3] [ref=e403]
+                  - paragraph [ref=e404]: دليل إنشاء المقالات — الخطوات، حقول المحتوى، SEO، والنشر
+                - img [ref=e405]
+            - link "Authors إعداد ملف الكاتب، المصداقية، والربط مع المقالات" [ref=e407] [cursor=pointer]:
+              - /url: /guidelines/authors
+              - generic [ref=e410]:
+                - img [ref=e412]
+                - generic [ref=e414]:
+                  - heading "Authors" [level=3] [ref=e415]
+                  - paragraph [ref=e416]: إعداد ملف الكاتب، المصداقية، والربط مع المقالات
+                - img [ref=e417]
+            - link "Clients إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات" [ref=e419] [cursor=pointer]:
+              - /url: /guidelines/clients
+              - generic [ref=e422]:
+                - img [ref=e424]
+                - generic [ref=e428]:
+                  - heading "Clients" [level=3] [ref=e429]
+                  - paragraph [ref=e430]: إعداد بيانات العملاء، الشعار، المعلومات التجارية، والربط مع المقالات
+                - img [ref=e431]
+            - link "Categories تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف" [ref=e433] [cursor=pointer]:
+              - /url: /guidelines/categories
+              - generic [ref=e436]:
+                - img [ref=e438]
+                - generic [ref=e440]:
+                  - heading "Categories" [level=3] [ref=e441]
+                  - paragraph [ref=e442]: تنظيم المحتوى بالفئات، التسلسل الهرمي، وأفضل ممارسات التصنيف
+                - img [ref=e443]
+            - link "Tags استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح" [ref=e445] [cursor=pointer]:
+              - /url: /guidelines/tags
+              - generic [ref=e448]:
+                - img [ref=e450]
+                - generic [ref=e453]:
+                  - heading "Tags" [level=3] [ref=e454]
+                  - paragraph [ref=e455]: استخدام الوسوم لربط المحتوى المتشابه وتحسين التصفح
+                - img [ref=e456]
+            - link "Industries تصنيف العملاء حسب القطاع الصناعي والمجال التجاري" [ref=e458] [cursor=pointer]:
+              - /url: /guidelines/industries
+              - generic [ref=e461]:
+                - img [ref=e463]
+                - generic [ref=e465]:
+                  - heading "Industries" [level=3] [ref=e466]
+                  - paragraph [ref=e467]: تصنيف العملاء حسب القطاع الصناعي والمجال التجاري
+                - img [ref=e468]
+            - link "Subscribers إدارة المشتركين، قوائم البريد، وسياسة الخصوصية" [ref=e470] [cursor=pointer]:
+              - /url: /guidelines/subscribers
+              - generic [ref=e473]:
+                - img [ref=e475]
+                - generic [ref=e478]:
+                  - heading "Subscribers" [level=3] [ref=e479]
+                  - paragraph [ref=e480]: إدارة المشتركين، قوائم البريد، وسياسة الخصوصية
+                - img [ref=e481]
+            - link "Analytics متابعة الأداء، المقاييس المهمة، وتقارير الزوار" [ref=e483] [cursor=pointer]:
+              - /url: /guidelines/analytics
+              - generic [ref=e486]:
+                - img [ref=e488]
+                - generic [ref=e490]:
+                  - heading "Analytics" [level=3] [ref=e491]
+                  - paragraph [ref=e492]: متابعة الأداء، المقاييس المهمة، وتقارير الزوار
+                - img [ref=e493]
+            - link "Google Tag Manager إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء" [ref=e495] [cursor=pointer]:
+              - /url: /guidelines/gtm
+              - generic [ref=e498]:
+                - img [ref=e500]
+                - generic [ref=e504]:
+                  - heading "Google Tag Manager" [level=3] [ref=e505]
+                  - paragraph [ref=e506]: إعداد تتبع الزوار، ربط التحليلات، وقياس الأداء
+                - img [ref=e507]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e514] [cursor=pointer]:
+    - img [ref=e515]
+  - alert [ref=e518]

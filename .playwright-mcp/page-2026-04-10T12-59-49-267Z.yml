@@ -1,0 +1,490 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - link "Guidelines" [ref=e117] [cursor=pointer]:
+            - /url: /guidelines
+            - button "Guidelines" [ref=e118]:
+              - img
+              - text: Guidelines
+          - generic [ref=e119]:
+            - heading "Media & Image Standards" [level=1] [ref=e120]
+            - paragraph [ref=e121]: المقاسات المعتمدة وأفضل الممارسات — مرجع لفريق التصميم والمحتوى
+          - generic [ref=e122]:
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - img [ref=e125]
+                - generic [ref=e127]: مقاسات الصور المعتمدة
+              - paragraph [ref=e128]: مستخرجة من الكود مباشرة — هذه هي المقاسات الفعلية التي يستخدمها النظام
+            - generic [ref=e130]:
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - img [ref=e134]
+                  - code [ref=e139]: 1920 × 1080
+                  - generic [ref=e140]: 16:9
+                - generic [ref=e141]:
+                  - generic [ref=e142]:
+                    - generic [ref=e143]:
+                      - heading "Featured Image" [level=3] [ref=e144]
+                      - paragraph [ref=e145]: صورة المقال المميزة
+                    - generic [ref=e146]: مطلوب
+                  - paragraph [ref=e147]: تظهر في رأس المقال — يجب أن تكون 16:9 بالضبط وإلا ستظهر بأشرطة بيضاء
+                  - generic [ref=e148]:
+                    - code [ref=e149]: WebP / JPG
+                    - code [ref=e150]: max 500 KB
+                    - code [ref=e151]: contain
+                  - paragraph [ref=e152]: ⚠️ object-contain — الصورة لا تُقطع. إذا كان الأسبكت راشيو غلط ستظهر أشرطة بيضاء.
+              - generic [ref=e154]:
+                - generic [ref=e155]:
+                  - img [ref=e156]
+                  - code [ref=e161]: 1200 × 675
+                  - generic [ref=e162]: 16:9
+                - generic [ref=e163]:
+                  - generic [ref=e164]:
+                    - generic [ref=e165]:
+                      - heading "Card Thumbnail" [level=3] [ref=e166]
+                      - paragraph [ref=e167]: ثمبنيل بطاقة المقال
+                    - generic [ref=e168]: مطلوب
+                  - paragraph [ref=e169]: تظهر في قوائم المقالات وصفحات التصفح — يمكن قص الحواف
+                  - generic [ref=e170]:
+                    - code [ref=e171]: WebP / JPG
+                    - code [ref=e172]: max 200 KB
+                    - code [ref=e173]: cover
+              - generic [ref=e175]:
+                - generic [ref=e176]:
+                  - img [ref=e177]
+                  - code [ref=e182]: 1200 × 630
+                  - generic [ref=e183]: 1.91:1
+                - generic [ref=e184]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]:
+                      - heading "OG / Social Image" [level=3] [ref=e187]
+                      - paragraph [ref=e188]: صورة المشاركة
+                    - generic [ref=e189]: مطلوب
+                  - paragraph [ref=e190]: تظهر عند مشاركة الرابط في Facebook, LinkedIn, WhatsApp, Twitter/X
+                  - generic [ref=e191]:
+                    - code [ref=e192]: JPG / PNG
+                    - code [ref=e193]: max 300 KB
+                    - code [ref=e194]: cover
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - img [ref=e198]
+                  - code [ref=e203]: 500 × 500
+                  - generic [ref=e204]: 1:1
+                - generic [ref=e205]:
+                  - generic [ref=e206]:
+                    - generic [ref=e207]:
+                      - heading "Client Logo" [level=3] [ref=e208]
+                      - paragraph [ref=e209]: لوجو العميل
+                    - generic [ref=e210]: مطلوب
+                  - paragraph [ref=e211]: يظهر بجانب اسم العميل في المقالات والقوائم — يُعرض بحجم 80×80
+                  - generic [ref=e212]:
+                    - code [ref=e213]: SVG / PNG
+                    - code [ref=e214]: max 50 KB
+                    - code [ref=e215]: contain
+                  - paragraph [ref=e216]: ⚠️ PNG بخلفية شفافة — لا تستخدم JPG للوجوهات
+              - generic [ref=e218]:
+                - generic [ref=e219]:
+                  - img [ref=e220]
+                  - code [ref=e225]: 2400 × 400
+                  - generic [ref=e226]: 6:1
+                - generic [ref=e227]:
+                  - generic [ref=e228]:
+                    - generic [ref=e229]:
+                      - heading "Client Hero Cover" [level=3] [ref=e230]
+                      - paragraph [ref=e231]: غلاف صفحة العميل
+                    - generic [ref=e232]: اختياري
+                  - paragraph [ref=e233]: بنر عريض يظهر في أعلى صفحة العميل — يغطي عرض الشاشة كاملاً
+                  - generic [ref=e234]:
+                    - code [ref=e235]: WebP / JPG
+                    - code [ref=e236]: max 500 KB
+                    - code [ref=e237]: cover
+                  - paragraph [ref=e238]: Gradient داكن يُضاف تلقائياً — لا تضع نصوص في الصورة
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - img [ref=e242]
+                  - code [ref=e247]: 500 × 500
+                  - generic [ref=e248]: 1:1
+                - generic [ref=e249]:
+                  - generic [ref=e250]:
+                    - generic [ref=e251]:
+                      - heading "Client Avatar" [level=3] [ref=e252]
+                      - paragraph [ref=e253]: أفاتار العميل
+                    - generic [ref=e254]: اختياري
+                  - paragraph [ref=e255]: يظهر فوق الغلاف في صفحة العميل — بحجم 80×80 موبايل / 112×112 ديسكتوب
+                  - generic [ref=e256]:
+                    - code [ref=e257]: PNG
+                    - code [ref=e258]: max 100 KB
+                    - code [ref=e259]: contain
+                  - paragraph [ref=e260]: ⚠️ PNG بخلفية شفافة مفضّل
+              - generic [ref=e262]:
+                - generic [ref=e263]:
+                  - img [ref=e264]
+                  - code [ref=e269]: 256 × 256
+                  - generic [ref=e270]: 1:1
+                - generic [ref=e271]:
+                  - generic [ref=e272]:
+                    - generic [ref=e273]:
+                      - heading "Author Avatar" [level=3] [ref=e274]
+                      - paragraph [ref=e275]: أفاتار المؤلف
+                    - generic [ref=e276]: اختياري
+                  - paragraph [ref=e277]: تظهر في المقالات وصفحة الكاتب — يُعرض بحجم 80×80
+                  - generic [ref=e278]:
+                    - code [ref=e279]: JPG / PNG
+                    - code [ref=e280]: max 50 KB
+                    - code [ref=e281]: cover
+              - generic [ref=e283]:
+                - generic [ref=e284]:
+                  - img [ref=e285]
+                  - code [ref=e290]: 600 × 600
+                  - generic [ref=e291]: 1:1
+                - generic [ref=e292]:
+                  - generic [ref=e293]:
+                    - generic [ref=e294]:
+                      - heading "Category Image" [level=3] [ref=e295]
+                      - paragraph [ref=e296]: صورة الفئة
+                    - generic [ref=e297]: اختياري
+                  - paragraph [ref=e298]: "تظهر في صفحة الفئة — موبايل: 16:9 / ديسكتوب: 192×192 مربع"
+                  - generic [ref=e299]:
+                    - code [ref=e300]: WebP / JPG
+                    - code [ref=e301]: max 150 KB
+                    - code [ref=e302]: cover
+              - generic [ref=e304]:
+                - generic [ref=e305]:
+                  - img [ref=e306]
+                  - code [ref=e311]: 1200 × 675
+                  - generic [ref=e312]: 16:9
+                - generic [ref=e313]:
+                  - generic [ref=e314]:
+                    - generic [ref=e315]:
+                      - heading "Gallery Image" [level=3] [ref=e316]
+                      - paragraph [ref=e317]: صور معرض المقال
+                    - generic [ref=e318]: اختياري
+                  - paragraph [ref=e319]: "صور إضافية داخل المقال — شبكة: 1 عمود موبايل / 2 تابلت / 3 ديسكتوب"
+                  - generic [ref=e320]:
+                    - code [ref=e321]: WebP / JPG
+                    - code [ref=e322]: max 200 KB
+                    - code [ref=e323]: cover
+          - generic [ref=e324]:
+            - generic [ref=e325]:
+              - generic [ref=e326]: جدول مرجعي سريع
+              - paragraph [ref=e327]: للمصمم — أرسل هذا الجدول مع طلب التصميم
+            - table [ref=e330]:
+              - rowgroup [ref=e331]:
+                - row "الصورة الأسبكت راشيو المقاس الموصى به Object Fit الفورمات" [ref=e332]:
+                  - columnheader "الصورة" [ref=e333]
+                  - columnheader "الأسبكت راشيو" [ref=e334]
+                  - columnheader "المقاس الموصى به" [ref=e335]
+                  - columnheader "Object Fit" [ref=e336]
+                  - columnheader "الفورمات" [ref=e337]
+              - rowgroup [ref=e338]:
+                - row "Featured Image صورة المقال المميزة 16:9 1920 × 1080 contain WebP / JPG" [ref=e339]:
+                  - cell "Featured Image صورة المقال المميزة" [ref=e340]:
+                    - text: Featured Image
+                    - generic [ref=e341]: صورة المقال المميزة
+                  - cell "16:9" [ref=e342]:
+                    - code [ref=e343]: 16:9
+                  - cell "1920 × 1080" [ref=e344]:
+                    - code [ref=e345]: 1920 × 1080
+                  - cell "contain" [ref=e346]:
+                    - generic [ref=e347]: contain
+                  - cell "WebP / JPG" [ref=e348]:
+                    - code [ref=e349]: WebP / JPG
+                - row "Card Thumbnail ثمبنيل بطاقة المقال 16:9 1200 × 675 cover WebP / JPG" [ref=e350]:
+                  - cell "Card Thumbnail ثمبنيل بطاقة المقال" [ref=e351]:
+                    - text: Card Thumbnail
+                    - generic [ref=e352]: ثمبنيل بطاقة المقال
+                  - cell "16:9" [ref=e353]:
+                    - code [ref=e354]: 16:9
+                  - cell "1200 × 675" [ref=e355]:
+                    - code [ref=e356]: 1200 × 675
+                  - cell "cover" [ref=e357]:
+                    - generic [ref=e358]: cover
+                  - cell "WebP / JPG" [ref=e359]:
+                    - code [ref=e360]: WebP / JPG
+                - row "OG / Social Image صورة المشاركة 1.91:1 1200 × 630 cover JPG / PNG" [ref=e361]:
+                  - cell "OG / Social Image صورة المشاركة" [ref=e362]:
+                    - text: OG / Social Image
+                    - generic [ref=e363]: صورة المشاركة
+                  - cell "1.91:1" [ref=e364]:
+                    - code [ref=e365]: 1.91:1
+                  - cell "1200 × 630" [ref=e366]:
+                    - code [ref=e367]: 1200 × 630
+                  - cell "cover" [ref=e368]:
+                    - generic [ref=e369]: cover
+                  - cell "JPG / PNG" [ref=e370]:
+                    - code [ref=e371]: JPG / PNG
+                - row "Client Logo لوجو العميل 1:1 500 × 500 contain SVG / PNG" [ref=e372]:
+                  - cell "Client Logo لوجو العميل" [ref=e373]:
+                    - text: Client Logo
+                    - generic [ref=e374]: لوجو العميل
+                  - cell "1:1" [ref=e375]:
+                    - code [ref=e376]: 1:1
+                  - cell "500 × 500" [ref=e377]:
+                    - code [ref=e378]: 500 × 500
+                  - cell "contain" [ref=e379]:
+                    - generic [ref=e380]: contain
+                  - cell "SVG / PNG" [ref=e381]:
+                    - code [ref=e382]: SVG / PNG
+                - row "Client Hero Cover غلاف صفحة العميل 6:1 2400 × 400 cover WebP / JPG" [ref=e383]:
+                  - cell "Client Hero Cover غلاف صفحة العميل" [ref=e384]:
+                    - text: Client Hero Cover
+                    - generic [ref=e385]: غلاف صفحة العميل
+                  - cell "6:1" [ref=e386]:
+                    - code [ref=e387]: 6:1
+                  - cell "2400 × 400" [ref=e388]:
+                    - code [ref=e389]: 2400 × 400
+                  - cell "cover" [ref=e390]:
+                    - generic [ref=e391]: cover
+                  - cell "WebP / JPG" [ref=e392]:
+                    - code [ref=e393]: WebP / JPG
+                - row "Client Avatar أفاتار العميل 1:1 500 × 500 contain PNG" [ref=e394]:
+                  - cell "Client Avatar أفاتار العميل" [ref=e395]:
+                    - text: Client Avatar
+                    - generic [ref=e396]: أفاتار العميل
+                  - cell "1:1" [ref=e397]:
+                    - code [ref=e398]: 1:1
+                  - cell "500 × 500" [ref=e399]:
+                    - code [ref=e400]: 500 × 500
+                  - cell "contain" [ref=e401]:
+                    - generic [ref=e402]: contain
+                  - cell "PNG" [ref=e403]:
+                    - code [ref=e404]: PNG
+                - row "Author Avatar أفاتار المؤلف 1:1 256 × 256 cover JPG / PNG" [ref=e405]:
+                  - cell "Author Avatar أفاتار المؤلف" [ref=e406]:
+                    - text: Author Avatar
+                    - generic [ref=e407]: أفاتار المؤلف
+                  - cell "1:1" [ref=e408]:
+                    - code [ref=e409]: 1:1
+                  - cell "256 × 256" [ref=e410]:
+                    - code [ref=e411]: 256 × 256
+                  - cell "cover" [ref=e412]:
+                    - generic [ref=e413]: cover
+                  - cell "JPG / PNG" [ref=e414]:
+                    - code [ref=e415]: JPG / PNG
+                - row "Category Image صورة الفئة 1:1 600 × 600 cover WebP / JPG" [ref=e416]:
+                  - cell "Category Image صورة الفئة" [ref=e417]:
+                    - text: Category Image
+                    - generic [ref=e418]: صورة الفئة
+                  - cell "1:1" [ref=e419]:
+                    - code [ref=e420]: 1:1
+                  - cell "600 × 600" [ref=e421]:
+                    - code [ref=e422]: 600 × 600
+                  - cell "cover" [ref=e423]:
+                    - generic [ref=e424]: cover
+                  - cell "WebP / JPG" [ref=e425]:
+                    - code [ref=e426]: WebP / JPG
+                - row "Gallery Image صور معرض المقال 16:9 1200 × 675 cover WebP / JPG" [ref=e427]:
+                  - cell "Gallery Image صور معرض المقال" [ref=e428]:
+                    - text: Gallery Image
+                    - generic [ref=e429]: صور معرض المقال
+                  - cell "16:9" [ref=e430]:
+                    - code [ref=e431]: 16:9
+                  - cell "1200 × 675" [ref=e432]:
+                    - code [ref=e433]: 1200 × 675
+                  - cell "cover" [ref=e434]:
+                    - generic [ref=e435]: cover
+                  - cell "WebP / JPG" [ref=e436]:
+                    - code [ref=e437]: WebP / JPG
+          - generic [ref=e438]:
+            - generic [ref=e440]:
+              - generic [ref=e441]:
+                - generic [ref=e442]: contain
+                - generic [ref=e443]: لا قص — الصورة كاملة دائماً
+              - paragraph [ref=e444]:
+                - text: الصورة تظهر كاملة بدون قص. إذا كان الأسبكت راشيو مختلفاً عن الحاوية ستظهر أشرطة (letterbox). هذا
+                - strong [ref=e445]: تحذير للمحتوى
+                - text: — يعني الصورة مقاساتها غلط.
+              - paragraph [ref=e446]: "يُستخدم في: Featured Image, Client Logo, Client Avatar"
+            - generic [ref=e448]:
+              - generic [ref=e449]:
+                - generic [ref=e450]: cover
+                - generic [ref=e451]: يملأ الحاوية — قد يقص الحواف
+              - paragraph [ref=e452]:
+                - text: الصورة تملأ الحاوية بالكامل وقد تُقص من الحواف. المحتوى المهم يجب أن يكون في
+                - strong [ref=e453]: المنتصف
+                - text: دائماً للحماية من القص.
+              - paragraph [ref=e454]: "يُستخدم في: Card Thumbnail, Hero Cover, Gallery, Avatars"
+          - generic [ref=e455]:
+            - generic [ref=e457]:
+              - img [ref=e458]
+              - generic [ref=e461]: قواعد التصميم الأساسية
+            - generic [ref=e462]:
+              - generic [ref=e463]:
+                - img [ref=e464]
+                - generic [ref=e467]:
+                  - paragraph [ref=e468]: 16:9 لكل محتوى المقالات
+                  - paragraph [ref=e469]: Featured Image, Card Thumbnail, Gallery Images, Sidebar Hero — جميعها 16:9
+              - generic [ref=e470]:
+                - img [ref=e471]
+                - generic [ref=e474]:
+                  - paragraph [ref=e475]: 1:1 لكل الأفاتارات واللوجوهات
+                  - paragraph [ref=e476]: Client Logo, Hero Avatar, Author Avatar, Category — جميعها مربع
+              - generic [ref=e477]:
+                - img [ref=e478]
+                - generic [ref=e481]:
+                  - paragraph [ref=e482]: 6:1 للغلاف فقط
+                  - paragraph [ref=e483]: Client Hero Cover هو الوحيد الذي يستخدم 6:1 (بنر عريض)
+              - generic [ref=e484]:
+                - img [ref=e485]
+                - generic [ref=e488]:
+                  - paragraph [ref=e489]: PNG + خلفية شفافة للوجوهات والأفاتارات
+                  - paragraph [ref=e490]: لا تستخدم JPG للوجوهات — الخلفية البيضاء تبدو غير احترافية
+              - generic [ref=e491]:
+                - img [ref=e492]
+                - generic [ref=e495]:
+                  - paragraph [ref=e496]: لا نصوص داخل الصور
+                  - paragraph [ref=e497]: محركات البحث لا تقرأ النصوص في الصور — الـ UI يضيف النصوص برمجياً
+              - generic [ref=e498]:
+                - img [ref=e499]
+                - generic [ref=e502]:
+                  - paragraph [ref=e503]: الحد الأدنى 1280px عرض للمقالات
+                  - paragraph [ref=e504]: لا ترفع صور أقل من 1280px عرضاً لمحتوى المقالات
+          - generic [ref=e505]:
+            - generic [ref=e507]:
+              - img [ref=e508]
+              - generic [ref=e510]: أخطاء شائعة — تجنّبها
+            - generic [ref=e512]:
+              - generic [ref=e513]:
+                - generic [ref=e514]:
+                  - img [ref=e515]
+                  - paragraph [ref=e519]: رفع بنر 6:1 كـ Featured Image
+                - generic [ref=e520]:
+                  - img [ref=e521]
+                  - paragraph [ref=e524]: استخدم 16:9 (1920×1080)
+              - generic [ref=e525]:
+                - generic [ref=e526]:
+                  - img [ref=e527]
+                  - paragraph [ref=e531]: رفع لوجو مستطيل (مثلاً 422×70) كـ Client Logo
+                - generic [ref=e532]:
+                  - img [ref=e533]
+                  - paragraph [ref=e536]: استخدم 1:1 مربع (500×500)
+              - generic [ref=e537]:
+                - generic [ref=e538]:
+                  - img [ref=e539]
+                  - paragraph [ref=e543]: استخدام JPG للوجو بخلفية بيضاء
+                - generic [ref=e544]:
+                  - img [ref=e545]
+                  - paragraph [ref=e548]: استخدم PNG بخلفية شفافة
+              - generic [ref=e549]:
+                - generic [ref=e550]:
+                  - img [ref=e551]
+                  - paragraph [ref=e555]: رفع صور أقل من 600px عرضاً
+                - generic [ref=e556]:
+                  - img [ref=e557]
+                  - paragraph [ref=e560]: ارفع دائماً النسخة عالية الجودة
+              - generic [ref=e561]:
+                - generic [ref=e562]:
+                  - img [ref=e563]
+                  - paragraph [ref=e567]: كتابة نصوص مباشرة على الصورة
+                - generic [ref=e568]:
+                  - img [ref=e569]
+                  - paragraph [ref=e572]: اتركها فارغة — الـ UI يضيف النصوص
+          - generic [ref=e573]:
+            - generic [ref=e575]: كيف تكتب Alt Text صحيح؟
+            - generic [ref=e577]:
+              - generic [ref=e578]:
+                - paragraph [ref=e579]: صحيح
+                - list [ref=e580]:
+                  - listitem [ref=e581]: "\"فريق عمل شركة مدونتي في اجتماع تخطيط المحتوى\""
+                  - listitem [ref=e582]: "\"شعار شركة أرامكو السعودية بخلفية شفافة\""
+                  - listitem [ref=e583]: "\"رسم بياني يوضح نمو عدد المقالات في 2025\""
+              - generic [ref=e584]:
+                - paragraph [ref=e585]: خطأ
+                - list [ref=e586]:
+                  - listitem [ref=e587]: "\"صورة\" — غير وصفي"
+                  - listitem [ref=e588]: "\"IMG_20250101_123456.jpg\" — اسم ملف"
+                  - listitem [ref=e589]: "\"صورة صورة صورة شعار شعار\" — حشو كلمات"
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e595] [cursor=pointer]:
+    - img [ref=e596]
+  - alert [ref=e599]

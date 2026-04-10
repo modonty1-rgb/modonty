@@ -50,6 +50,7 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
       title="مقالات ذات صلة"
       headingId="manual-related-articles-heading"
       icon={IconLink}
+      defaultOpen={true}
     >
       {relatedArticles.map(({ id, related }) => (
         <CtaTrackedLink

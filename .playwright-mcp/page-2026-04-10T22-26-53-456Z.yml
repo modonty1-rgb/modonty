@@ -1,0 +1,265 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.29.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.29.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: Articles 69d6665b...
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e130]:
+          - button "Send Note" [ref=e131] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e132] [cursor=pointer]:
+            - img
+      - main [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - link [ref=e139] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e140]
+                - heading "دليل SEO المتاجر الإلكترونية 2025" [level=1] [ref=e142]
+              - generic [ref=e143]:
+                - generic [ref=e144]: متجر نوفا للإلكترونيات
+                - generic [ref=e145]: ·
+                - generic [ref=e146]: التسويق الرقمي
+                - generic [ref=e147]: ·
+                - generic [ref=e148]: Published
+                - generic [ref=e149]: ·
+                - generic [ref=e150]: Apr 8, 2026
+            - generic [ref=e151]:
+              - generic "Click to view full SEO guidance" [ref=e152] [cursor=pointer]: 88%
+              - link "Edit" [ref=e153] [cursor=pointer]:
+                - /url: /articles/69d6665b92f34b725bbdded0/edit
+                - img
+                - text: Edit
+              - button [ref=e154] [cursor=pointer]:
+                - img
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - img [ref=e157]
+              - generic [ref=e160]: "144"
+              - text: words
+            - generic [ref=e161]:
+              - img [ref=e162]
+              - generic [ref=e165]: ~1 min read
+            - generic [ref=e166]:
+              - img [ref=e167]
+              - generic [ref=e170]: 59 views
+            - generic [ref=e171]:
+              - img [ref=e172]
+              - generic [ref=e174]: 7 comments
+            - generic [ref=e175]:
+              - img [ref=e176]
+              - generic [ref=e179]: SEO
+              - generic [ref=e180]: ذكاء اصطناعي
+            - generic [ref=e181]:
+              - img [ref=e182]
+              - generic [ref=e184]: "Published: Apr 8, 2026"
+          - generic [ref=e187]:
+            - generic [ref=e188]:
+              - img "دليل SEO المتاجر الإلكترونية 2025 - هيرو إيمدج" [ref=e190]
+              - heading "دليل SEO المتاجر الإلكترونية 2025" [level=1] [ref=e191]
+              - paragraph [ref=e192]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+              - generic [ref=e193]:
+                - generic [ref=e194]: Modonty
+                - generic [ref=e195]: Apr 8, 2026
+                - generic [ref=e196]: ~1 min read
+              - generic [ref=e197]:
+                - heading "لماذا SEO ضروري لمتجرك الإلكتروني؟" [level=2] [ref=e198]
+                - paragraph [ref=e199]:
+                  - text: في عالم التجارة الإلكترونية، يعتمد
+                  - strong [ref=e200]: 87% من المتسوقين
+                  - text: على محركات البحث للعثور على المنتجات. إذا لم يظهر متجرك في الصفحة الأولى، فأنت تخسر العملاء المحتملين يومياً.
+                - paragraph [ref=e201]: تحسين محركات البحث ليس خياراً بل ضرورة. المتاجر التي تستثمر في SEO تحقق معدل تحويل أعلى بنسبة 14.6% مقارنة بالإعلانات المدفوعة التي تحقق 1.7% فقط.
+                - heading "بحث الكلمات المفتاحية للمتاجر" [level=2] [ref=e202]
+                - paragraph [ref=e203]: ركز على كلمات نية الشراء العالية مثل "شراء" و"سعر" و"أفضل". هذه الكلمات تجذب زوار مستعدين للشراء بدلاً من مجرد البحث عن معلومات.
+                - heading "أدوات البحث المجانية" [level=3] [ref=e204]
+                - paragraph [ref=e205]: استخدم Google Keyword Planner و Google Trends لاكتشاف ما يبحث عنه جمهورك. ابدأ بالكلمات الطويلة (Long-tail keywords) التي تحقق منافسة أقل ومعدل تحويل أعلى.
+                - heading "تحسين صفحات المنتجات" [level=2] [ref=e206]
+                - paragraph [ref=e207]: كل صفحة منتج يجب أن تحتوي على عنوان فريد يتضمن الكلمة المفتاحية، وصف مفصل لا يقل عن 300 كلمة، وصور عالية الجودة مع نص بديل واضح.
+                - heading "سرعة الموقع والأداء" [level=2] [ref=e208]
+                - paragraph [ref=e209]: سرعة التحميل عامل ترتيب مباشر. كل ثانية تأخير تقلل التحويلات بنسبة 7%. استخدم CDN، وضغط الصور، وتحميل JavaScript المؤجل لتحسين الأداء.
+              - generic [ref=e211]:
+                - generic [ref=e213]:
+                  - img [ref=e214]
+                  - generic [ref=e217]: Frequently Asked Questions
+                - generic [ref=e218]:
+                  - generic [ref=e219]:
+                    - generic [ref=e220]:
+                      - generic [ref=e221]:
+                        - generic [ref=e222]: "س1:"
+                        - generic [ref=e223]: كم يستغرق تحسين SEO المتجر؟
+                      - generic [ref=e224]:
+                        - generic [ref=e225]: 69d9528843b51b2befd00b47
+                        - button "Copy FAQ ID" [ref=e226] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e227]: عادة تظهر النتائج الأولى خلال 3-6 أشهر من العمل المستمر على تحسين المحتوى والروابط الخلفية.
+                  - generic [ref=e228]:
+                    - generic [ref=e229]:
+                      - generic [ref=e230]:
+                        - generic [ref=e231]: "س2:"
+                        - generic [ref=e232]: هل أحتاج خبير SEO أم أستطيع فعلها بنفسي؟
+                      - generic [ref=e233]:
+                        - generic [ref=e234]: 69d9528843b51b2befd00b48
+                        - button "Copy FAQ ID" [ref=e235] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e236]: يمكنك البدء بنفسك باستخدام الأدوات المجانية مثل Google Search Console. لكن للنتائج المتقدمة، يُفضل الاستعانة بمتخصص.
+                  - generic [ref=e237]:
+                    - generic [ref=e238]:
+                      - generic [ref=e239]:
+                        - generic [ref=e240]: "س3:"
+                        - generic [ref=e241]: سؤال اختبار - سيناريو 17
+                      - generic [ref=e242]:
+                        - generic [ref=e243]: 69d9528843b51b2befd00b49
+                        - button "Copy FAQ ID" [ref=e244] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e245]: "إجابة اختبار - سيناريو 17: هذا رد تجريبي على السؤال"
+              - generic [ref=e247]:
+                - generic [ref=e249]: M
+                - generic [ref=e250]:
+                  - paragraph [ref=e251]: Modonty
+                  - paragraph [ref=e252]: Modonty is a leading content platform providing high-quality articles and insights.
+            - generic [ref=e254]:
+              - generic [ref=e256]: جدول المحتويات
+              - navigation [ref=e258]:
+                - button "لماذا SEO ضروري لمتجرك الإلكتروني؟" [ref=e259] [cursor=pointer]
+                - button "بحث الكلمات المفتاحية للمتاجر" [ref=e260] [cursor=pointer]
+                - button "أدوات البحث المجانية" [ref=e261] [cursor=pointer]
+                - button "تحسين صفحات المنتجات" [ref=e262] [cursor=pointer]
+                - button "سرعة الموقع والأداء" [ref=e263] [cursor=pointer]
+          - generic [ref=e264]:
+            - generic [ref=e266]:
+              - img [ref=e267]
+              - text: SEO Overview
+            - generic [ref=e270]:
+              - generic [ref=e271]:
+                - generic [ref=e272]:
+                  - paragraph [ref=e273]: SEO Title
+                  - paragraph [ref=e274]: دليل SEO المتاجر الإلكترونية 2025 — استراتيجيات مجربة
+                - generic [ref=e275]:
+                  - paragraph [ref=e276]: SEO Description
+                  - paragraph [ref=e277]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: بحث الكلمات المفتاحية، تحسين صفحات المنتجات، وسرعة الموقع. استراتيجيات مجربة لزيادة المبيعات."
+                - generic [ref=e278]:
+                  - paragraph [ref=e279]: Canonical URL
+                  - paragraph [ref=e280]: https://modonty.com/articles/seo-guide-ecommerce-2025
+                - generic [ref=e281]:
+                  - paragraph [ref=e282]: Slug
+                  - paragraph [ref=e283]: /seo-guide-ecommerce-2025
+              - link "View Technical Details" [ref=e285] [cursor=pointer]:
+                - /url: /articles/69d6665b92f34b725bbdded0/technical
+                - button "View Technical Details" [ref=e286]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e292] [cursor=pointer]:
+    - img [ref=e293]
+  - alert [ref=e296]

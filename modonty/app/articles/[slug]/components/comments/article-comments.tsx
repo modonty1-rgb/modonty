@@ -16,13 +16,12 @@ import {
   IconReply,
   IconLike,
   IconUser,
-  IconError,
   IconChevronDown,
   IconChevronUp,
 } from "@/lib/icons";
 import { CommentForm } from "../comment-form";
 import { useRouter } from "next/navigation";
-import { submitComment, submitReply, likeComment, dislikeComment, approveComment, approveAllCommentsForArticle } from "../../actions/comment-actions";
+import { submitComment, submitReply, likeComment } from "../../actions/comment-actions";
 import { fetchArticleComments } from "../../actions/article-lazy-actions";
 
 interface Comment {
@@ -32,7 +31,6 @@ interface Comment {
   status?: string;
   parentId?: string | null;
   replyingTo?: { id: string; authorName: string } | null;
-  isOrphaned?: boolean;
   author: {
     id: string;
     name: string | null;
@@ -56,7 +54,7 @@ interface ArticleCommentsProps {
 
 export function ArticleComments({ comments: initialComments, commentsCount, articleId, articleSlug, userId }: ArticleCommentsProps) {
   const [comments, setComments] = useState(initialComments);
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(initialComments.length > 0);
   const [error, setError] = useState<string | null>(null);
@@ -152,93 +150,12 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
     }
   };
 
-  const handleDislike = async (commentId: string) => {
-    if (!userId) {
-      router.push('/users/login');
-      return;
-    }
-
-    const updatedComments = comments.map(comment => {
-      if (comment.id === commentId) {
-        const currentLikesCount = comment._count?.likes || 0;
-        const currentDislikesCount = comment._count?.dislikes || 0;
-        const userLiked = comment.likes && comment.likes.length > 0;
-        const userDisliked = comment.dislikes && comment.dislikes.length > 0;
-
-        let newLikesCount = currentLikesCount;
-        let newDislikesCount = currentDislikesCount;
-        let newUserDisliked = userDisliked;
-
-        if (userDisliked) {
-          newDislikesCount--;
-          newUserDisliked = false;
-        } else {
-          newDislikesCount++;
-          newUserDisliked = true;
-          if (userLiked) {
-            newLikesCount--;
-          }
-        }
-
-        return {
-          ...comment,
-          _count: {
-            likes: newLikesCount,
-            dislikes: newDislikesCount,
-          },
-          likes: [],
-          dislikes: newUserDisliked ? [{ id: 'temp' }] : [],
-        };
-      }
-      return comment;
-    });
-
-    setComments(updatedComments);
-
-    try {
-      const result = await dislikeComment(commentId, articleSlug);
-
-      if (!result.success) {
-        throw new Error(result.error || 'Dislike operation failed');
-      }
-
-    } catch (error) {
-      const data = await fetchArticleComments(articleId, userId ?? undefined);
-      setComments(Array.isArray(data) ? data : []);
-    }
-  };
-
-  const handleApprove = async (commentId: string) => {
-    try {
-      const result = await approveComment(commentId, articleSlug);
-      
-      if (result.success) {
-        router.refresh();
-      }
-    } catch (error) {
-      // Error handled silently
-    }
-  };
-
-  const handleApproveAll = async () => {
-    try {
-      const result = await approveAllCommentsForArticle(articleId, articleSlug);
-      
-      if (result.success) {
-        router.refresh();
-      }
-    } catch (error) {
-      // Error handled silently
-    }
-  };
 
   const CommentItem = ({ comment }: { comment: Comment }) => {
     const [showReplyForm, setShowReplyForm] = useState(false);
     
     const likesCount = comment._count?.likes || 0;
-    const dislikesCount = comment._count?.dislikes || 0;
     const userLiked = comment.likes && comment.likes.length > 0;
-    const userDisliked = comment.dislikes && comment.dislikes.length > 0;
 
     return (
       <div className="rounded-lg border bg-card p-3 hover:bg-muted/40 transition-colors">
@@ -246,7 +163,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
         {comment.replyingTo && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
             <IconReply className="h-3 w-3" />
-            <span>Replying to</span>
+            <span>رداً على</span>
             <span className="font-medium text-foreground">
               @{comment.replyingTo.authorName}
             </span>
@@ -276,12 +193,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
               <span className="font-medium text-sm">
                 {comment.author?.name || "ضيف"}
               </span>
-              {comment.isOrphaned && (
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                  <IconError className="h-3 w-3" />
-                  Orphaned
-                </span>
-              )}
               <span className="text-xs text-muted-foreground">
                 <RelativeTime date={comment.createdAt} dateTime={comment.createdAt.toISOString()} />
               </span>
@@ -317,29 +228,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
                     {likesCount > 0 && <span>{likesCount}</span>}
                   </button>
                   
-                  <button
-                    type="button"
-                    onClick={() => handleDislike(comment.id)}
-                    className={cn(
-                      "hidden",
-                      "text-xs hover:text-foreground flex items-center gap-1 transition-colors",
-                      userDisliked ? "text-destructive" : "text-muted-foreground"
-                    )}
-                    aria-hidden
-                  >
-                    <IconLike className={cn("h-3 w-3", userDisliked && "fill-current")} />
-                    {dislikesCount > 0 && <span>{dislikesCount}</span>}
-                  </button>
                 </div>
-              )}
-
-              {comment.status !== 'APPROVED' && (
-                <button
-                  onClick={() => handleApprove(comment.id)}
-                  className="text-xs text-green-600 hover:text-green-700 flex items-center gap-1"
-                >
-                  <span>✓ Approve</span>
-                </button>
               )}
             </div>
 
@@ -414,18 +303,6 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mb-4">
-                  <Button
-                    onClick={handleApproveAll}
-                    variant="outline"
-                    size="sm"
-                    className="gap-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
-                  >
-                    <span className="text-xs">✓ Approve All (Dev)</span>
-                  </Button>
-                </div>
-              )}
               {loading ? (
                 <div className="space-y-2">
                   {[1, 2, 3].map((i) => (

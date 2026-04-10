@@ -38,7 +38,7 @@ function ChatLoginPrompt() {
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center justify-center gap-2">
         مدونتي الذكية بانتظارك
-        <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
+        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
           تجريبي
         </span>
       </h3>
@@ -57,7 +57,7 @@ const BETA_BADGE = (
   <span
     role="status"
     aria-label="تجريبي"
-    className="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium text-amber-800 bg-amber-100/80 dark:bg-amber-900/50 dark:text-amber-200"
+    className="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium text-primary bg-primary/10"
   >
     تجريبي
   </span>
@@ -83,10 +83,10 @@ function SheetTitleContent({
     return (
       <span className="inline-flex items-center gap-2 flex-wrap min-w-0" dir="rtl">
         <span
-          className="inline-flex items-center gap-2 rounded-lg border border-amber-200/70 bg-amber-50/80 px-3 py-1.5 text-sm font-medium text-amber-900 shadow-sm dark:border-amber-700/50 dark:bg-amber-900/40 dark:text-amber-100"
+          className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary shadow-sm"
           role="status"
         >
-          <Icon className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+          <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden />
           <span className="truncate">اسأل عن مقالات {selectedCategory.name}</span>
         </span>
         {BETA_BADGE}

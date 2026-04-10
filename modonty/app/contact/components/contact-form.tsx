@@ -124,7 +124,7 @@ export function ContactForm({ clientId, defaultName, defaultEmail }: ContactForm
           )}
 
           {success && (
-            <div className="text-sm text-green-600 bg-green-50 p-3 rounded-md">
+            <div className="text-sm text-primary bg-primary/10 p-3 rounded-md">
               {success}
             </div>
           )}

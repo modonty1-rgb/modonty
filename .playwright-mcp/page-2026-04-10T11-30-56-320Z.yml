@@ -1,0 +1,527 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e119]: Media
+          - navigation "Main navigation" [ref=e121]:
+            - link "Modonty Modonty" [ref=e122] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e124]
+              - generic [ref=e125]: Modonty
+            - generic [ref=e127]:
+              - link "Articles" [ref=e128] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e129]:
+                  - img
+                  - generic [ref=e130]: Articles
+              - link "Clients" [ref=e131] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e132]:
+                  - img
+                  - generic [ref=e133]: Clients
+              - link "Media" [ref=e134] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e135]:
+                  - img
+                  - generic [ref=e136]: Media
+          - generic [ref=e137]:
+            - link [ref=e138] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e139]:
+                - img
+            - button "M" [ref=e140] [cursor=pointer]:
+              - generic [ref=e142]: M
+      - generic [ref=e143]:
+        - generic [ref=e144]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e145]:
+          - button "Send Note" [ref=e146] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e147] [cursor=pointer]:
+            - img
+      - main [ref=e148]:
+        - generic [ref=e149]:
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - heading "Media Library" [level=1] [ref=e153]
+                - paragraph [ref=e154]: Manage all media files in the system
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - img [ref=e157]
+                  - generic [ref=e161]: "55"
+                  - generic [ref=e162]: files
+                - generic [ref=e163]:
+                  - img [ref=e164]
+                  - generic [ref=e166]: 25.69 MB
+                - generic [ref=e167]:
+                  - img [ref=e168]
+                  - generic [ref=e171]: 42%
+                  - generic [ref=e172]: used
+                - generic [ref=e173]:
+                  - img [ref=e174]
+                  - generic [ref=e176]: "+55"
+                  - generic [ref=e177]: this month
+            - button "Filters" [ref=e179] [cursor=pointer]:
+              - img
+              - text: Filters
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - generic [ref=e182]:
+                - img [ref=e183]
+                - textbox "Search by filename, alt text, or title..." [ref=e186]
+              - generic [ref=e187]:
+                - button "Standard Grid" [ref=e188] [cursor=pointer]:
+                  - img
+                - button "Compact Grid" [ref=e189] [cursor=pointer]:
+                  - img
+                - button "List View" [ref=e190] [cursor=pointer]:
+                  - img
+              - combobox [ref=e191] [cursor=pointer]:
+                - generic: Newest First
+                - img [ref=e192]
+              - link "Upload" [ref=e194] [cursor=pointer]:
+                - /url: /media/upload
+                - button "Upload" [ref=e195]:
+                  - img
+                  - text: Upload
+            - generic [ref=e196]:
+              - generic [ref=e197]:
+                - button "أكاديمية المستقبل أكاديمية المستقبل 1 files" [expanded] [ref=e198] [cursor=pointer]:
+                  - img "أكاديمية المستقبل" [ref=e200]
+                  - generic [ref=e201]:
+                    - heading "أكاديمية المستقبل" [level=3] [ref=e202]
+                    - paragraph [ref=e203]: 1 files
+                  - img [ref=e204]
+                - generic [ref=e209]:
+                  - generic [ref=e210]:
+                    - img "Voluptatem cupidita" [ref=e211]
+                    - generic [ref=e213]: General
+                    - generic "Unused" [ref=e215]
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: 960×365
+                    - generic [ref=e218]:
+                      - button "Copy URL" [ref=e219] [cursor=pointer]:
+                        - img [ref=e220]
+                      - button "Details" [ref=e223] [cursor=pointer]:
+                        - img [ref=e224]
+                      - button "Edit" [ref=e226] [cursor=pointer]:
+                        - img [ref=e227]
+                      - button "Delete" [ref=e230] [cursor=pointer]:
+                        - img [ref=e231]
+              - generic [ref=e234]:
+                - button "JABR GROUP CONTRACTING AND MANUFACTURING JABR GROUP CONTRACTING AND MANUFACTURING 12 files" [expanded] [ref=e235] [cursor=pointer]:
+                  - img "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e237]
+                  - generic [ref=e238]:
+                    - heading "JABR GROUP CONTRACTING AND MANUFACTURING" [level=3] [ref=e239]
+                    - paragraph [ref=e240]: 12 files
+                  - img [ref=e241]
+                - generic [ref=e244]:
+                  - generic [ref=e246]:
+                    - generic [ref=e247]:
+                      - img "أنظمة مكافحة الحريق في السعودية ما هى الأنواع؟ المواصفات والمعايير؟ وكيف تختار النظام المناسب لمشروعك؟" [ref=e248]
+                      - generic [ref=e250]: General
+                      - generic "Unused" [ref=e252]
+                    - generic [ref=e253]:
+                      - generic [ref=e254]: 4500×4500
+                      - generic [ref=e255]:
+                        - button "Copy URL" [ref=e256] [cursor=pointer]:
+                          - img [ref=e257]
+                        - button "Details" [ref=e260] [cursor=pointer]:
+                          - img [ref=e261]
+                        - button "Edit" [ref=e263] [cursor=pointer]:
+                          - img [ref=e264]
+                        - button "Delete" [ref=e267] [cursor=pointer]:
+                          - img [ref=e268]
+                  - generic [ref=e272]:
+                    - generic [ref=e273]:
+                      - img "أنظمة مكافحة الحريق في السعودية ما هى الأنواع؟ المواصفات والمعايير؟" [ref=e274]
+                      - generic [ref=e276]: General
+                      - generic "In Use" [ref=e278]
+                    - generic [ref=e279]:
+                      - generic [ref=e280]: 4200×700
+                      - generic [ref=e281]:
+                        - button "Copy URL" [ref=e282] [cursor=pointer]:
+                          - img [ref=e283]
+                        - button "Details" [ref=e286] [cursor=pointer]:
+                          - img [ref=e287]
+                        - button "Edit" [ref=e289] [cursor=pointer]:
+                          - img [ref=e290]
+                        - button "Delete" [ref=e293] [cursor=pointer]:
+                          - img [ref=e294]
+                  - generic [ref=e298]:
+                    - generic [ref=e299]:
+                      - img "مميزات واضافات نظام HVAC" [ref=e300]
+                      - generic [ref=e302]: General
+                      - generic "Unused" [ref=e304]
+                    - generic [ref=e305]:
+                      - generic [ref=e306]: 4500×4500
+                      - generic [ref=e307]:
+                        - button "Copy URL" [ref=e308] [cursor=pointer]:
+                          - img [ref=e309]
+                        - button "Details" [ref=e312] [cursor=pointer]:
+                          - img [ref=e313]
+                        - button "Edit" [ref=e315] [cursor=pointer]:
+                          - img [ref=e316]
+                        - button "Delete" [ref=e319] [cursor=pointer]:
+                          - img [ref=e320]
+                  - generic [ref=e324]:
+                    - generic [ref=e325]:
+                      - img "ما هو نظام HVAC؟ ولماذا هو مهم ؟ وكيف يؤثر على كفاءة المباني في السعودية؟" [ref=e326]
+                      - generic [ref=e328]: General
+                      - generic "In Use" [ref=e330]
+                    - generic [ref=e331]:
+                      - generic [ref=e332]: 4200×700
+                      - generic [ref=e333]:
+                        - button "Copy URL" [ref=e334] [cursor=pointer]:
+                          - img [ref=e335]
+                        - button "Details" [ref=e338] [cursor=pointer]:
+                          - img [ref=e339]
+                        - button "Edit" [ref=e341] [cursor=pointer]:
+                          - img [ref=e342]
+                        - button "Delete" [ref=e345] [cursor=pointer]:
+                          - img [ref=e346]
+                  - generic [ref=e350]:
+                    - generic [ref=e351]:
+                      - img "الفرق بين الأعمال المدنية (Civil) والأعمال الكهروميكانيكية (MEP)" [ref=e352]
+                      - generic [ref=e354]: General
+                      - generic "Unused" [ref=e356]
+                    - generic [ref=e357]:
+                      - generic [ref=e358]: 4500×4500
+                      - generic [ref=e359]:
+                        - button "Copy URL" [ref=e360] [cursor=pointer]:
+                          - img [ref=e361]
+                        - button "Details" [ref=e364] [cursor=pointer]:
+                          - img [ref=e365]
+                        - button "Edit" [ref=e367] [cursor=pointer]:
+                          - img [ref=e368]
+                        - button "Delete" [ref=e371] [cursor=pointer]:
+                          - img [ref=e372]
+                  - generic [ref=e376]:
+                    - generic [ref=e377]:
+                      - img "الفرق بين الأعمال المدنية (Civil) والأعمال الكهروميكانيكية (MEP) دليلك العملي لفهم تنفيذ المشاريع في السعودية" [ref=e378]
+                      - generic [ref=e380]: General
+                      - generic "In Use" [ref=e382]
+                    - generic [ref=e383]:
+                      - generic [ref=e384]: 4200×700
+                      - generic [ref=e385]:
+                        - button "Copy URL" [ref=e386] [cursor=pointer]:
+                          - img [ref=e387]
+                        - button "Details" [ref=e390] [cursor=pointer]:
+                          - img [ref=e391]
+                        - button "Edit" [ref=e393] [cursor=pointer]:
+                          - img [ref=e394]
+                        - button "Delete" [ref=e397] [cursor=pointer]:
+                          - img [ref=e398]
+                  - generic [ref=e402]:
+                    - generic [ref=e403]:
+                      - img "أعمال MEPالعمود الفقري لأي مشروع ناجح" [ref=e404]
+                      - generic [ref=e406]: General
+                      - generic "Unused" [ref=e408]
+                    - generic [ref=e409]:
+                      - generic [ref=e410]: 4500×4500
+                      - generic [ref=e411]:
+                        - button "Copy URL" [ref=e412] [cursor=pointer]:
+                          - img [ref=e413]
+                        - button "Details" [ref=e416] [cursor=pointer]:
+                          - img [ref=e417]
+                        - button "Edit" [ref=e419] [cursor=pointer]:
+                          - img [ref=e420]
+                        - button "Delete" [ref=e423] [cursor=pointer]:
+                          - img [ref=e424]
+                  - generic [ref=e428]:
+                    - generic [ref=e429]:
+                      - img "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e430]
+                      - generic [ref=e432]: General
+                      - generic "In Use" [ref=e434]
+                    - generic [ref=e435]:
+                      - generic [ref=e436]: 4200×700
+                      - generic [ref=e437]:
+                        - button "Copy URL" [ref=e438] [cursor=pointer]:
+                          - img [ref=e439]
+                        - button "Details" [ref=e442] [cursor=pointer]:
+                          - img [ref=e443]
+                        - button "Edit" [ref=e445] [cursor=pointer]:
+                          - img [ref=e446]
+                        - button "Delete" [ref=e449] [cursor=pointer]:
+                          - img [ref=e450]
+                  - generic [ref=e454]:
+                    - generic [ref=e455]:
+                      - img "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بدون تعقيد وبأعلى كفاءة؟" [ref=e456]
+                      - generic [ref=e458]: General
+                      - generic "Unused" [ref=e460]
+                    - generic [ref=e461]:
+                      - generic [ref=e462]: 4500×4500
+                      - generic [ref=e463]:
+                        - button "Copy URL" [ref=e464] [cursor=pointer]:
+                          - img [ref=e465]
+                        - button "Details" [ref=e468] [cursor=pointer]:
+                          - img [ref=e469]
+                        - button "Edit" [ref=e471] [cursor=pointer]:
+                          - img [ref=e472]
+                        - button "Delete" [ref=e475] [cursor=pointer]:
+                          - img [ref=e476]
+                  - generic [ref=e480]:
+                    - generic [ref=e481]:
+                      - img "ماهى مشاريع تسليم مفتاح (Turnkey)" [ref=e482]
+                      - generic [ref=e484]: General
+                      - generic "In Use" [ref=e486]
+                    - generic [ref=e487]:
+                      - generic [ref=e488]: 4200×700
+                      - generic [ref=e489]:
+                        - button "Copy URL" [ref=e490] [cursor=pointer]:
+                          - img [ref=e491]
+                        - button "Details" [ref=e494] [cursor=pointer]:
+                          - img [ref=e495]
+                        - button "Edit" [ref=e497] [cursor=pointer]:
+                          - img [ref=e498]
+                        - button "Delete" [ref=e501] [cursor=pointer]:
+                          - img [ref=e502]
+                  - generic [ref=e506]:
+                    - generic [ref=e507]:
+                      - img "مشاريع تسليم مفتاح (Turnkey)" [ref=e508]
+                      - generic [ref=e510]: General
+                      - generic "Unused" [ref=e512]
+                    - generic [ref=e513]:
+                      - generic [ref=e514]: 4200×700
+                      - generic [ref=e515]:
+                        - button "Copy URL" [ref=e516] [cursor=pointer]:
+                          - img [ref=e517]
+                        - button "Details" [ref=e520] [cursor=pointer]:
+                          - img [ref=e521]
+                        - button "Edit" [ref=e523] [cursor=pointer]:
+                          - img [ref=e524]
+                        - button "Delete" [ref=e527] [cursor=pointer]:
+                          - img [ref=e528]
+                  - generic [ref=e532]:
+                    - generic [ref=e533]:
+                      - img "جبر العقارية (logo)" [ref=e534]
+                      - generic [ref=e536]: General
+                      - generic "In Use" [ref=e538]
+                    - generic [ref=e539]:
+                      - generic [ref=e540]: 800×800
+                      - generic [ref=e541]:
+                        - button "Copy URL" [ref=e542] [cursor=pointer]:
+                          - img [ref=e543]
+                        - button "Details" [ref=e546] [cursor=pointer]:
+                          - img [ref=e547]
+                        - button "Edit" [ref=e549] [cursor=pointer]:
+                          - img [ref=e550]
+                        - button "Delete" [ref=e553] [cursor=pointer]:
+                          - img [ref=e554]
+              - generic [ref=e557]:
+                - button "JBR SEO JBR SEO 7 files" [expanded] [ref=e558] [cursor=pointer]:
+                  - img "JBR SEO" [ref=e560]
+                  - generic [ref=e561]:
+                    - heading "JBR SEO" [level=3] [ref=e562]
+                    - paragraph [ref=e563]: 7 files
+                  - img [ref=e564]
+                - generic [ref=e567]:
+                  - generic [ref=e569]:
+                    - generic [ref=e570]:
+                      - img "لماذا لا يظهر موقعك في Google؟ أهم الحلول" [ref=e571]
+                      - generic [ref=e573]: General
+                      - generic "Unused" [ref=e575]
+                    - generic [ref=e576]:
+                      - generic [ref=e577]: 4500×4500
+                      - generic [ref=e578]:
+                        - button "Copy URL" [ref=e579] [cursor=pointer]:
+                          - img [ref=e580]
+                        - button "Details" [ref=e583] [cursor=pointer]:
+                          - img [ref=e584]
+                        - button "Edit" [ref=e586] [cursor=pointer]:
+                          - img [ref=e587]
+                        - button "Delete" [ref=e590] [cursor=pointer]:
+                          - img [ref=e591]
+                  - generic [ref=e595]:
+                    - generic [ref=e596]:
+                      - img "لماذا لا يظهر موقعك في Google؟ أهم الأسباب" [ref=e597]
+                      - generic [ref=e599]: General
+                      - generic "Unused" [ref=e601]
+                    - generic [ref=e602]:
+                      - generic [ref=e603]: 4500×4500
+                      - generic [ref=e604]:
+                        - button "Copy URL" [ref=e605] [cursor=pointer]:
+                          - img [ref=e606]
+                        - button "Details" [ref=e609] [cursor=pointer]:
+                          - img [ref=e610]
+                        - button "Edit" [ref=e612] [cursor=pointer]:
+                          - img [ref=e613]
+                        - button "Delete" [ref=e616] [cursor=pointer]:
+                          - img [ref=e617]
+                  - generic [ref=e621]:
+                    - generic [ref=e622]:
+                      - img "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e623]
+                      - generic [ref=e625]: General
+                      - generic "In Use" [ref=e627]
+                    - generic [ref=e628]:
+                      - generic [ref=e629]: 4200×700
+                      - generic [ref=e630]:
+                        - button "Copy URL" [ref=e631] [cursor=pointer]:
+                          - img [ref=e632]
+                        - button "Details" [ref=e635] [cursor=pointer]:
+                          - img [ref=e636]
+                        - button "Edit" [ref=e638] [cursor=pointer]:
+                          - img [ref=e639]
+                        - button "Delete" [ref=e642] [cursor=pointer]:
+                          - img [ref=e643]
+                  - generic [ref=e647]:
+                    - generic [ref=e648]:
+                      - img "افضل الطرق والممارسات ل Link Building" [ref=e649]
+                      - generic [ref=e651]: General
+                      - generic "Unused" [ref=e653]
+                    - generic [ref=e654]:
+                      - generic [ref=e655]: 4500×4500
+                      - generic [ref=e656]:
+                        - button "Copy URL" [ref=e657] [cursor=pointer]:
+                          - img [ref=e658]
+                        - button "Details" [ref=e661] [cursor=pointer]:
+                          - img [ref=e662]
+                        - button "Edit" [ref=e664] [cursor=pointer]:
+                          - img [ref=e665]
+                        - button "Delete" [ref=e668] [cursor=pointer]:
+                          - img [ref=e669]
+                  - generic [ref=e673]:
+                    - generic [ref=e674]:
+                      - img "كيف تبني روابط قوية Link Buildingلموقعك؟" [ref=e675]
+                      - generic [ref=e677]: General
+                      - generic "Unused" [ref=e679]
+                    - generic [ref=e680]:
+                      - generic [ref=e681]: 4500×4500
+                      - generic [ref=e682]:
+                        - button "Copy URL" [ref=e683] [cursor=pointer]:
+                          - img [ref=e684]
+                        - button "Details" [ref=e687] [cursor=pointer]:
+                          - img [ref=e688]
+                        - button "Edit" [ref=e690] [cursor=pointer]:
+                          - img [ref=e691]
+                        - button "Delete" [ref=e694] [cursor=pointer]:
+                          - img [ref=e695]
+                  - generic [ref=e699]:
+                    - generic [ref=e700]:
+                      - img "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e701]
+                      - generic [ref=e703]: General
+                      - generic "In Use" [ref=e705]
+                    - generic [ref=e706]:
+                      - generic [ref=e707]: 4200×700
+                      - generic [ref=e708]:
+                        - button "Copy URL" [ref=e709] [cursor=pointer]:
+                          - img [ref=e710]
+                        - button "Details" [ref=e713] [cursor=pointer]:
+                          - img [ref=e714]
+                        - button "Edit" [ref=e716] [cursor=pointer]:
+                          - img [ref=e717]
+                        - button "Delete" [ref=e720] [cursor=pointer]:
+                          - img [ref=e721]
+                  - generic [ref=e725]:
+                    - generic [ref=e726]:
+                      - img "مراحل و خطوات Technical SEO" [ref=e727]
+                      - generic [ref=e729]: General
+                      - generic "Unused" [ref=e731]
+                    - generic [ref=e732]:
+                      - generic [ref=e733]: 4500×4500
+                      - generic [ref=e734]:
+                        - button "Copy URL" [ref=e735] [cursor=pointer]:
+                          - img [ref=e736]
+                        - button "Details" [ref=e739] [cursor=pointer]:
+                          - img [ref=e740]
+                        - button "Edit" [ref=e742] [cursor=pointer]:
+                          - img [ref=e743]
+                        - button "Delete" [ref=e746] [cursor=pointer]:
+                          - img [ref=e747]
+            - generic [ref=e750]:
+              - paragraph [ref=e751]: 1–20 of 55
+              - generic [ref=e752]:
+                - button [disabled]:
+                  - img
+                - generic [ref=e753]: 1 / 3
+                - button [ref=e754] [cursor=pointer]:
+                  - img
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e755]

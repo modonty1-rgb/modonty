@@ -61,7 +61,7 @@ export function SubscribeForm() {
       <CardContent>
         {success ? (
           <div className="flex flex-col items-center gap-3 py-4">
-            <IconCheckCircle className="h-12 w-12 text-green-600" />
+            <IconCheckCircle className="h-12 w-12 text-primary" />
             <p className="text-center text-muted-foreground">
               شكراً لك! تم الاشتراك بنجاح. تحقق من بريدك الإلكتروني لتأكيد الاشتراك.
             </p>

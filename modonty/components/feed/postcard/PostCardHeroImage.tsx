@@ -1,6 +1,7 @@
 import Link from "@/components/link";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/components/media/OptimizedImage";
+import { IconArticle } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
 const LCP_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
@@ -12,7 +13,15 @@ export function PostCardHeroImage({
   isLcp,
   articleTitle,
 }: PostCardProps) {
-  if (!post.image) return null;
+  if (!post.image) {
+    return (
+      <Link href={`/articles/${post.slug}`} className="block" aria-label={articleTitle ? `مقال: ${articleTitle}` : undefined}>
+        <div className="relative w-full aspect-video overflow-hidden rounded-md bg-muted flex items-center justify-center">
+          <IconArticle className="h-10 w-10 text-muted-foreground/30" />
+        </div>
+      </Link>
+    );
+  }
 
   const lcp = isLcp ?? (index === 0);
   const optimizedSrc = optimizeCloudinaryUrl(post.image, lcp);

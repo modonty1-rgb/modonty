@@ -200,7 +200,7 @@ export function PrivacySettings() {
         </div>
 
         {success && (
-          <div className="p-3 bg-green-500/10 text-green-500 rounded-md text-sm">
+          <div className="p-3 bg-primary/10 text-primary rounded-md text-sm">
             {success}
           </div>
         )}

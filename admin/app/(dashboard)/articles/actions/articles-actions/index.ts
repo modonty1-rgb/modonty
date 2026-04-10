@@ -5,7 +5,7 @@ export type {
   ArticleSelectionItem,
 } from "./queries/get-articles-for-selection";
 export { getArticlesForSelection } from "./queries/get-articles-for-selection";
-export { getArticleById } from "./queries/get-article-by-id";
+export { getArticleById, getArticleEngagementCounts } from "./queries/get-article-by-id";
 export { getArticleBySlug } from "./queries/get-article-by-slug";
 export { getClients } from "./queries/get-articles-clients";
 export { getCategories } from "./queries/get-articles-categories";

@@ -137,13 +137,13 @@ export function CommentForm({
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{content.length} / 2000</span>
             {error && <span className="text-destructive">{error}</span>}
-            {success && <span className="text-green-600 dark:text-green-400">{success}</span>}
+            {success && <span className="text-primary">{success}</span>}
           </div>
         )}
         {compact && (error || success) && (
           <div className="text-xs">
             {error && <span className="text-destructive">{error}</span>}
-            {success && <span className="text-green-600 dark:text-green-400">{success}</span>}
+            {success && <span className="text-primary">{success}</span>}
           </div>
         )}
       </div>
