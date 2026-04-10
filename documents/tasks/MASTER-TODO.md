@@ -62,6 +62,18 @@
 
 ---
 
+## Next Version — Admin (HIGH — UX)
+
+- [ ] **Inline Media Picker in Article Editor** — when adding an image inside the article, open a Dialog (upload new OR pick from existing library) without leaving the editor page. Currently forces user to leave article → go to Media → upload → come back. Kills workflow.
+- [ ] **Media Gallery — images cropped in preview** — `media-grid.tsx:337` uses `object-cover` inside `aspect-[4/3]` container. Wide images (e.g. 4200×700 banners) get severely cropped. Fix: change to `object-contain` + keep `bg-muted` background so full image is always visible.
+- [ ] **Article Editor — Image Gallery preview cropped** — same `object-cover` issue inside the article editor Image Gallery section. Wide images show heavily cropped. Fix: `object-contain` + `bg-muted`.
+- [x] **Article Editor — Featured Image preview cropped** — `thumbnail-image-view.tsx:161` fixed: `object-cover` → `object-contain`. Deployed in admin v0.28.0.
+- [ ] **"Featured" label unclear in articles** — two problems: (1) The "Featured Image" field label is ambiguous — better label: **"Cover Image"** or **"Hero Image"**. (2) The "Featured" checkbox in Publish step is vague — better label: **"Highlight on Homepage"** with clear description.
+- [ ] **Publish error message misleading** — when SEO score < 60%, toast shows "حدث خطأ في الخادم. جرب لاحقًا" — client thinks the system is broken. Real reason is their own SEO score. Fix: show specific message e.g. "لا يمكن النشر — نقاط SEO 51% (الحد الأدنى 60%). حسّن حقول SEO أولاً." Never show "server error" for a business rule validation.
+- [ ] **Media picker search not filtering** (OBS-001) — in the article editor "Select Featured Image" dialog, typing in the search box does not filter results. Search input is not triggering React state update.
+- [ ] **Media edit: no Client reassignment field** (OBS-002) — once uploaded, an image cannot be moved to a different client. The media edit form has no Client field. If uploaded to wrong client → inaccessible from article editors of other clients. Fix: add Client dropdown in `/media/[id]/edit`.
+- [ ] **Media upload: client assignment unclear** (OBS-004) — uploading from the global Media page auto-assigns to a client unpredictably. Should either require a client selection, or images without client should appear in all pickers as a "General" pool.
+
 ## Next Version — Admin (LOW)
 
 - [ ] Centralize all toast messages in one JSON file

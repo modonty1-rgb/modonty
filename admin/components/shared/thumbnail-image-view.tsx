@@ -158,7 +158,7 @@ export function ThumbnailImageView({
                   src={getThumbnailUrl()}
                   alt={altText || filename || 'Image thumbnail'}
                   fill
-                  className="object-cover transition-all duration-500 group-hover:scale-110"
+                  className="object-contain transition-all duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 {/* Hover overlay with backdrop blur */}
