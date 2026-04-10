@@ -41,6 +41,7 @@ export type ErrorKey =
   | 'invalid_filename'
   | 'operation_failed'
   | 'save_failed'
+  | 'cannot_publish'
   | 'failed'
   | 'error';
 

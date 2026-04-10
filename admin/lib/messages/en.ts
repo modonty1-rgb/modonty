@@ -57,6 +57,7 @@ const error: Record<ErrorKey, string> = {
   invalid_filename: 'Generated filename is invalid',
   operation_failed: 'Operation failed',
   save_failed: 'Save failed',
+  cannot_publish: 'Cannot publish',
   failed: 'Failed',
   error: 'Error',
 } as const;

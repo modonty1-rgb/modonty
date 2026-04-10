@@ -334,7 +334,7 @@ export function MediaGrid({
                   src={item.url}
                   alt={item.altText || item.filename}
                   fill
-                  className="object-cover"
+                  className="object-contain p-1"
                   sizes={
                     gridSize === "compact"
                       ? "(max-width: 767px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 17vw"

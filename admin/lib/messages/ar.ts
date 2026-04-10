@@ -57,6 +57,7 @@ const error: Record<ErrorKey, string> = {
   invalid_filename: 'اسم الملف المُولَّد غير صالح',
   operation_failed: 'فشلت العملية',
   save_failed: 'فشل الحفظ',
+  cannot_publish: 'لا يمكن النشر',
   failed: 'فشل',
   error: 'خطأ',
 } as const;
