@@ -6,6 +6,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  redirects: async () => [
+    // /articles used to exist; now the homepage IS the articles feed
+    { source: '/articles', destination: '/', permanent: true },
+  ],
   headers: async () => [
     {
       source: "/(.*)",
