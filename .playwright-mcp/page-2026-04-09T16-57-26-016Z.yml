@@ -1,0 +1,144 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - progressbar
+      - generic [ref=e5]: 🎨 Design Preview – صفحة تجريبية فقط
+      - navigation "مسار التنقل" [ref=e6]:
+        - link "الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8]
+          - text: الرئيسية
+        - generic [ref=e10]: ›
+        - link "العملاء" [ref=e11] [cursor=pointer]:
+          - /url: /clients
+        - generic [ref=e12]: ›
+        - link "متجر نوفا للإلكترونيات" [ref=e13] [cursor=pointer]:
+          - /url: /clients/nova-electronics
+        - generic [ref=e14]: ›
+        - generic [ref=e15]: الذكاء الاصطناعي في الرعاية الصحية السعودية 2025
+      - generic [ref=e16]:
+        - link "متجر نوفا للإلكترونيات" [ref=e17] [cursor=pointer]:
+          - /url: /clients/nova-electronics
+          - img "متجر نوفا للإلكترونيات" [ref=e19]
+        - button "اسأل الآن" [ref=e20] [cursor=pointer]
+        - button "48" [ref=e22] [cursor=pointer]:
+          - img [ref=e23]
+          - generic [ref=e25]: "48"
+        - button "31" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: "31"
+        - button "4" [ref=e30] [cursor=pointer]:
+          - img [ref=e31]
+          - generic [ref=e33]: "4"
+        - button [ref=e34] [cursor=pointer]:
+          - img [ref=e35]
+        - button [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+      - main [ref=e40]:
+        - article [ref=e43]:
+          - generic [ref=e44]:
+            - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية 2025" [level=1] [ref=e45]
+            - paragraph [ref=e46]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+            - generic [ref=e47]:
+              - generic [ref=e48]: Modonty
+              - time [ref=e49]: قبل يوم واحد
+              - generic [ref=e50]: ⏱️ 6 دقيقة قراءة
+              - generic [ref=e51]: 📝 ١٬٢٤٠ كلمة
+          - generic [ref=e52]:
+            - img "الذكاء الاصطناعي في الرعاية الصحية السعودية 2025" [ref=e53]
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: جديد متجر نوفا للإلكترونيات في بريدك 🔔
+              - button "اشترك الآن ←" [ref=e56] [cursor=pointer]
+          - generic [ref=e57]:
+            - generic [ref=e58] [cursor=pointer]: 🏪 متجر نوفا للإلكترونيات
+            - generic [ref=e59] [cursor=pointer]: 📁 التسويق الرقمي
+            - generic [ref=e60] [cursor=pointer]: 🏷 ذكاء اصطناعي
+            - generic [ref=e61] [cursor=pointer]: 🏷 الصحة
+            - generic [ref=e62] [cursor=pointer]: 🏷 رؤية 2030
+            - generic [ref=e63] [cursor=pointer]: 🏷 SEO
+          - generic [ref=e64]:
+            - heading "ثورة الذكاء الاصطناعي في المستشفيات السعودية" [level=2] [ref=e65]
+            - paragraph [ref=e66]: تشهد المملكة العربية السعودية تحولاً جذرياً في القطاع الصحي بفضل الذكاء الاصطناعي. مع رؤية 2030، تستثمر المملكة مليارات الريالات في التقنيات الصحية الذكية.
+            - paragraph [ref=e67]:
+              - text: أظهرت الدراسات أن أنظمة الذكاء الاصطناعي تستطيع
+              - strong [ref=e68]: تشخيص سرطان الثدي بدقة 94.5%
+              - text: ، متفوقة على بعض الأطباء المتخصصين. هذه التقنية تُنقذ آلاف المرضى سنوياً من خلال الكشف المبكر.
+            - heading "التطبيقات الحالية" [level=2] [ref=e69]
+            - heading "التشخيص بالأشعة" [level=3] [ref=e70]
+            - paragraph [ref=e71]: تستخدم مستشفيات الرياض وجدة أنظمة الذكاء الاصطناعي لقراءة صور الأشعة السينية والرنين المغناطيسي، مما يقلل وقت التشخيص من أيام إلى دقائق.
+            - heading "التطبيب عن بُعد" [level=3] [ref=e72]
+            - paragraph [ref=e73]: منصات مثل صحة وموعد تتيح للمرضى استشارة الأطباء عن بُعد مع دعم الذكاء الاصطناعي للتشخيص الأولي وتوجيه المريض للتخصص المناسب.
+            - heading "التحديات والحلول" [level=2] [ref=e74]
+            - paragraph [ref=e75]: رغم التقدم الكبير، تواجه هذه التقنيات تحديات في خصوصية البيانات والثقة. الحل يكمن في تنظيمات واضحة وشفافية في آلية عمل الخوارزميات.
+            - heading "المستقبل" [level=2] [ref=e76]
+            - paragraph [ref=e77]: بحلول 2030، ستكون 50% من التشخيصات الروتينية مدعومة بالذكاء الاصطناعي. هذا لا يعني استبدال الأطباء، بل تمكينهم بأدوات أذكى وأدق.
+          - button "❓ انقر لعرض الأسئلة الشائعة الأسئلة الشائعة (3)" [ref=e79] [cursor=pointer]:
+            - generic [ref=e80]:
+              - generic [ref=e81]: ❓
+              - generic [ref=e82]: انقر لعرض الأسئلة الشائعة
+            - generic [ref=e83]:
+              - generic [ref=e84]: الأسئلة الشائعة (3)
+              - img [ref=e85]
+          - button "💬 انقر لعرض التعليقات التعليقات (4)" [ref=e89] [cursor=pointer]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: 💬
+              - generic [ref=e92]: انقر لعرض التعليقات
+            - generic [ref=e93]:
+              - generic [ref=e94]: التعليقات (4)
+              - img [ref=e95]
+          - button "📋 انقر لعرض المزيد من MODONTY المزيد من MODONTY (3)" [ref=e98] [cursor=pointer]:
+            - generic [ref=e99]:
+              - generic [ref=e100]: 📋
+              - generic [ref=e101]: انقر لعرض المزيد من MODONTY
+            - generic [ref=e102]:
+              - generic [ref=e103]: المزيد من MODONTY (3)
+              - img [ref=e104]
+          - button "📋 انقر لعرض المزيد من متجر نوفا للإلكترونيات المزيد من متجر نوفا للإلكترونيات (3)" [ref=e107] [cursor=pointer]:
+            - generic [ref=e108]:
+              - generic [ref=e109]: 📋
+              - generic [ref=e110]: انقر لعرض المزيد من متجر نوفا للإلكترونيات
+            - generic [ref=e111]:
+              - generic [ref=e112]: المزيد من متجر نوفا للإلكترونيات (3)
+              - img [ref=e113]
+          - button "✨ انقر لعرض مقالات قد تهمك مقالات قد تهمك (3)" [ref=e116] [cursor=pointer]:
+            - generic [ref=e117]:
+              - generic [ref=e118]: ✨
+              - generic [ref=e119]: انقر لعرض مقالات قد تهمك
+            - generic [ref=e120]:
+              - generic [ref=e121]: مقالات قد تهمك (3)
+              - img [ref=e122]
+          - generic [ref=e124]:
+            - paragraph [ref=e125]:
+              - text: نشر بواسطة
+              - link "متجر نوفا للإلكترونيات" [ref=e126] [cursor=pointer]:
+                - /url: /clients/nova-electronics
+              - text: "· آخر تحديث: قبل ساعتين"
+            - paragraph [ref=e127]: "عمق المحتوى: short"
+            - paragraph [ref=e128]: "الرخصة: https://creativecommons.org/licenses/by/4.0/"
+    - contentinfo [ref=e129]:
+      - navigation "روابط قانونية" [ref=e130]:
+        - link "اتفاقية المستخدم" [ref=e131] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e132] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e133] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e134] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e135]: © 2026 مودونتي
+    - contentinfo [ref=e136]
+  - generic [ref=e141] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e142]:
+      - img [ref=e143]
+    - generic [ref=e146]:
+      - button "Open issues overlay" [ref=e147]:
+        - generic [ref=e148]:
+          - generic [ref=e149]: "3"
+          - generic [ref=e150]: "4"
+        - generic [ref=e151]:
+          - text: Issue
+          - generic [ref=e152]: s
+      - button "Collapse issues badge" [ref=e153]:
+        - img [ref=e154]
+  - alert [ref=e156]

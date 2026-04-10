@@ -26,7 +26,7 @@ export function SubscribeForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/subscribe", {
+      const response = await fetch("/api/news/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

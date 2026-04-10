@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -160,11 +161,13 @@ export function CloudinaryImageInput({
 
       {/* Preview */}
       {showPreview && isValid && !imageError && (
-        <div className="relative border rounded-lg overflow-hidden bg-muted/30">
-          <img
+        <div className="relative border rounded-lg overflow-hidden bg-muted/30 aspect-video">
+          <Image
             src={localUrl}
             alt={altText || "Preview"}
-            className="w-full h-auto max-h-40 object-contain"
+            fill
+            className="object-contain"
+            sizes="(max-width: 768px) 100vw, 400px"
             onError={() => setImageError(true)}
           />
         </div>

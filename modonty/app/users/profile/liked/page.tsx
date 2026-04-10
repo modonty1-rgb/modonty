@@ -11,6 +11,7 @@ import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
+import Image from "next/image";
 import Link from "@/components/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -208,10 +209,13 @@ function ClientLikeCard({ item }: { item: LikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <img
+              <Image
                 src={item.item.image}
-                alt={item.item.imageAlt || item.item.name}
+                alt={item.item.imageAlt || item.item.name || ""}
+                width={64}
+                height={64}
                 className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                sizes="64px"
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
@@ -253,10 +257,13 @@ function ArticleLikeCard({ item }: { item: LikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <img
+              <Image
                 src={item.item.image}
-                alt={item.item.imageAlt || item.item.title}
+                alt={item.item.imageAlt || item.item.title || ""}
+                width={64}
+                height={64}
                 className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                sizes="64px"
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">

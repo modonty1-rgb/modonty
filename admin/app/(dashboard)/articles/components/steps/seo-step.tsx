@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { useArticleForm } from '../article-form-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -208,7 +209,9 @@ export function SEOStep() {
                     </h4>
                     <div className="border rounded-lg overflow-hidden">
                       {featuredMedia?.url ? (
-                        <img src={featuredMedia.url} alt={effectiveTitle} className="w-full aspect-video object-cover" />
+                        <div className="relative aspect-video">
+                          <Image src={featuredMedia.url} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+                        </div>
                       ) : (
                         <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
                           <ImageIcon className="h-8 w-8 text-muted-foreground" />
@@ -229,7 +232,9 @@ export function SEOStep() {
                     </h4>
                     <div className="border rounded-lg overflow-hidden">
                       {featuredMedia?.url ? (
-                        <img src={featuredMedia.url} alt={effectiveTitle} className="w-full aspect-video object-cover" />
+                        <div className="relative aspect-video">
+                          <Image src={featuredMedia.url} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+                        </div>
                       ) : (
                         <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
                           <ImageIcon className="h-8 w-8 text-muted-foreground" />

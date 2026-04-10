@@ -116,18 +116,15 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
         subscribed: true,
       },
     }),
-    db.articleView.count({
-      where: {
-        article: { clientId },
-        createdAt: { gte: sevenDaysAgo },
-      },
-    }),
-    db.articleView.count({
-      where: {
-        article: { clientId },
-        createdAt: { gte: thirtyDaysAgo },
-      },
-    }),
+    // BUG-07 fix: count article + client page views to match Analytics page
+    Promise.all([
+      db.articleView.count({ where: { article: { clientId }, createdAt: { gte: sevenDaysAgo } } }),
+      db.clientView.count({ where: { clientId, createdAt: { gte: sevenDaysAgo } } }),
+    ]).then(([a, c]) => a + c),
+    Promise.all([
+      db.articleView.count({ where: { article: { clientId }, createdAt: { gte: thirtyDaysAgo } } }),
+      db.clientView.count({ where: { clientId, createdAt: { gte: thirtyDaysAgo } } }),
+    ]).then(([a, c]) => a + c),
     db.articleView.count({
       where: {
         article: { clientId },
@@ -175,7 +172,7 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
     Promise.all([
       db.conversion.count({
         where: {
-          article: { clientId },
+          clientId,
           createdAt: { gte: thirtyDaysAgo },
         },
       }),
@@ -235,28 +232,21 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
     engagementRate,
   });
 
-  const uniqueUsers7d = await db.articleView.findMany({
-    where: {
-      article: { clientId },
-      createdAt: { gte: sevenDaysAgo },
-    },
+  // BUG-06 fix: build Set manually to handle null sessionId correctly
+  const rawViews7d = await db.articleView.findMany({
+    where: { article: { clientId }, createdAt: { gte: sevenDaysAgo } },
     select: { sessionId: true, userId: true },
-    distinct: ["sessionId"],
   });
   const activeUsers7d = new Set(
-    uniqueUsers7d.map((v) => v.sessionId || v.userId).filter(Boolean)
+    rawViews7d.map((v) => v.userId ?? v.sessionId).filter(Boolean)
   ).size;
 
-  const uniqueUsers30d = await db.articleView.findMany({
-    where: {
-      article: { clientId },
-      createdAt: { gte: thirtyDaysAgo },
-    },
+  const rawViews30d = await db.articleView.findMany({
+    where: { article: { clientId }, createdAt: { gte: thirtyDaysAgo } },
     select: { sessionId: true, userId: true },
-    distinct: ["sessionId"],
   });
   const activeUsers30d = new Set(
-    uniqueUsers30d.map((v) => v.sessionId || v.userId).filter(Boolean)
+    rawViews30d.map((v) => v.userId ?? v.sessionId).filter(Boolean)
   ).size;
 
   const returnVisitors = await db.articleView.findMany({
@@ -266,10 +256,16 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
     },
     select: { sessionId: true, userId: true },
   });
-  const uniqueSessions = new Set(
-    returnVisitors.map((v) => v.sessionId || v.userId).filter(Boolean)
-  ).size;
-  const returnVisitorRate = uniqueSessions > 0 ? (uniqueSessions / views30d) * 100 : 0;
+  // Count views per unique session to find sessions that visited more than once
+  const sessionViewCount = new Map<string, number>();
+  for (const v of returnVisitors) {
+    const key = v.userId ?? v.sessionId;
+    if (!key) continue;
+    sessionViewCount.set(key, (sessionViewCount.get(key) ?? 0) + 1);
+  }
+  const uniqueSessions = sessionViewCount.size;
+  const returnerCount = [...sessionViewCount.values()].filter((c) => c > 1).length;
+  const returnVisitorRate = uniqueSessions > 0 ? (returnerCount / uniqueSessions) * 100 : 0;
 
   const highEngagementUsers = await db.leadScoring.count({
     where: {
@@ -336,13 +332,13 @@ function calculateEngagementScore(metrics: {
   interactionRate: number;
   engagementRate: number;
 }): number {
-  const timeScore = Math.min(100, (metrics.avgTimeOnPage / 180) * 100) * 0.3;
-  const scrollScore = metrics.avgScrollDepth * 0.25;
-  const completionScore = metrics.completionRate * 0.25;
-  const interactionScore = Math.min(100, metrics.interactionRate * 10) * 0.1;
-  const engagementScore = metrics.engagementRate * 0.1;
+  // BUG-09 fix: completionRate and engagementRate come from empty engagementDuration table
+  // Redistribute their weights to the metrics we actually have
+  const timeScore = Math.min(100, (metrics.avgTimeOnPage / 180) * 100) * 0.4;
+  const scrollScore = metrics.avgScrollDepth * 0.35;
+  const interactionScore = Math.min(100, metrics.interactionRate * 10) * 0.25;
 
-  return Math.round(timeScore + scrollScore + completionScore + interactionScore + engagementScore);
+  return Math.round(timeScore + scrollScore + interactionScore);
 }
 
 export async function getTopArticles(
@@ -513,7 +509,7 @@ export async function getRecentActivity(
       }),
       db.conversion.findMany({
         where: {
-          article: { clientId },
+          clientId,
         },
         select: {
           type: true,
@@ -550,12 +546,19 @@ export async function getRecentActivity(
       }),
     ]);
 
+  const conversionTypeAr: Record<string, string> = {
+    CONTACT_FORM: "رسالة تواصل",
+    NEWSLETTER: "اشتراك نشرة",
+    SIGNUP: "تسجيل مستخدم",
+    PURCHASE: "عملية شراء",
+  };
+
   recentArticles.forEach((article) => {
     if (article.datePublished) {
       activities.push({
         type: "article",
         title: article.title,
-        description: "New article published",
+        description: "مقال جديد منشور",
         timestamp: article.datePublished,
       });
     }
@@ -564,8 +567,8 @@ export async function getRecentActivity(
   recentConversions.forEach((conversion) => {
     activities.push({
       type: "conversion",
-      title: `${conversion.type} conversion`,
-      description: `On article: ${conversion.article?.title ?? "Unknown"}`,
+      title: conversionTypeAr[conversion.type] ?? conversion.type,
+      description: conversion.article?.title ? `في المقالة: ${conversion.article.title}` : "تحويل جديد",
       timestamp: conversion.createdAt,
     });
   });
@@ -573,8 +576,8 @@ export async function getRecentActivity(
   recentComments.forEach((comment) => {
     activities.push({
       type: "comment",
-      title: "New comment",
-      description: `On article: ${comment.article?.title ?? "Unknown"}`,
+      title: "تعليق جديد",
+      description: `في المقالة: ${comment.article?.title ?? "—"}`,
       timestamp: comment.createdAt,
     });
   });
@@ -582,7 +585,7 @@ export async function getRecentActivity(
   recentSubscribers.forEach((subscriber) => {
     activities.push({
       type: "subscriber",
-      title: "New subscriber",
+      title: "مشترك جديد",
       description: subscriber.email,
       timestamp: subscriber.subscribedAt,
     });

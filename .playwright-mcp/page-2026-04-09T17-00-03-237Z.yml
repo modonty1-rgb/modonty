@@ -1,0 +1,36 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e7]:
+        - heading "جاري تحميل آخر المقالات" [level=2] [ref=e8]
+        - article [ref=e9]
+        - article [ref=e19]
+        - article [ref=e29]
+        - article [ref=e39]
+    - contentinfo [ref=e49]:
+      - navigation "روابط قانونية" [ref=e50]:
+        - link "اتفاقية المستخدم" [ref=e51] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e52] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e53] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e54] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e55]: © 2026 مودونتي
+    - contentinfo [ref=e56]
+  - generic [ref=e61] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e62]:
+      - img [ref=e63]
+    - generic [ref=e66]:
+      - button "Open issues overlay" [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]: "3"
+          - generic [ref=e70]: "4"
+        - generic [ref=e71]:
+          - text: Issue
+          - generic [ref=e72]: s
+      - button "Collapse issues badge" [ref=e73]:
+        - img [ref=e74]
+  - alert [ref=e76]

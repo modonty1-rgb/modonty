@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { submitContactMessage } from "@/app/contact/actions/contact-actions";
 import type { ApiResponse } from "@/lib/types";
+
+const CONTACT_RATE_LIMIT = 3;
+const CONTACT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,18 +28,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Capture metadata
-    const ipAddress = request.headers.get("x-forwarded-for") || 
-                     request.headers.get("x-real-ip") || 
+    const ipAddress = request.headers.get("x-forwarded-for") ||
+                     request.headers.get("x-real-ip") ||
                      "unknown";
+
+    // Rate limit: max 3 messages per IP per hour (DB-based, works across instances)
+    const recentCount = await db.contactMessage.count({
+      where: {
+        ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
+        createdAt: { gt: new Date(Date.now() - CONTACT_WINDOW_MS) },
+      },
+    });
+    if (recentCount >= CONTACT_RATE_LIMIT) {
+      return NextResponse.json(
+        { success: false, error: "لقد تجاوزت الحد المسموح به. يرجى المحاولة بعد ساعة." } as ApiResponse<never>,
+        { status: 429 }
+      );
+    }
     const userAgent = request.headers.get("user-agent") || "unknown";
     const referrer = request.headers.get("referer") || request.headers.get("referrer") || null;
+    const resolvedIp = Array.isArray(ipAddress) ? ipAddress[0] : ipAddress;
 
     const result = await submitContactMessage({
       name,
       email,
       subject,
       message,
-      ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
+      ipAddress: resolvedIp,
       userAgent,
       referrer,
       clientId: typeof clientId === "string" ? clientId : undefined,

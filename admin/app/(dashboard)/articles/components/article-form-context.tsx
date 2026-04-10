@@ -29,6 +29,7 @@ type ArticleClient = {
   id: string;
   name: string;
   slug?: string;
+  logoMediaId?: string | null;
   logoMedia?: {
     url: string;
     width?: number | null;

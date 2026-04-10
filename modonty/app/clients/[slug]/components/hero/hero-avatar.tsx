@@ -1,4 +1,5 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
+import { AvatarFallback } from "@/components/ui/avatar";
 import type { ClientHeroClient } from "./types";
 
 interface HeroAvatarProps {
@@ -8,11 +9,20 @@ interface HeroAvatarProps {
 
 export function HeroAvatar({ client, initials }: HeroAvatarProps) {
   return (
-    <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-background shadow-xl bg-background flex-shrink-0">
-      <AvatarImage src={client.logoMedia?.url || undefined} alt={client.name} />
-      <AvatarFallback className="text-xl md:text-2xl font-bold bg-primary text-primary-foreground">
-        {initials}
-      </AvatarFallback>
-    </Avatar>
+    <div className="relative h-20 w-20 md:h-28 md:w-28 rounded-full border-4 border-background shadow-xl bg-background flex-shrink-0 overflow-hidden flex items-center justify-center">
+      {client.logoMedia?.url ? (
+        <Image
+          src={client.logoMedia.url}
+          alt={client.name}
+          fill
+          className="object-contain p-1"
+          sizes="(max-width: 768px) 80px, 112px"
+        />
+      ) : (
+        <AvatarFallback className="text-xl md:text-2xl font-bold bg-primary text-primary-foreground w-full h-full flex items-center justify-center rounded-full">
+          {initials}
+        </AvatarFallback>
+      )}
+    </div>
   );
 }

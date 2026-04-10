@@ -1,0 +1,185 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - img "شعار جديد للاختبار" [ref=e118]
+              - generic [ref=e119]:
+                - heading "عيادات بلسم الطبية" [level=1] [ref=e120]
+                - paragraph [ref=e121]: balsam-medical
+              - generic [ref=e122]:
+                - generic [ref=e123]: Active
+                - generic [ref=e124]: Paid
+                - generic [ref=e125]: Standard
+            - generic [ref=e126]:
+              - generic [ref=e130]: 100%
+              - link "← Back" [ref=e131] [cursor=pointer]:
+                - /url: /clients
+              - link "✎ Edit" [ref=e132] [cursor=pointer]:
+                - /url: /clients/69d6665792f34b725bbddecf/edit
+              - button "Delete client" [ref=e133] [cursor=pointer]:
+                - img
+                - text: Delete
+          - generic [ref=e135]:
+            - tablist [ref=e136]:
+              - tab "Overview" [selected] [ref=e137] [cursor=pointer]
+              - tab "Details" [ref=e138] [cursor=pointer]
+              - tab "Content" [ref=e139] [cursor=pointer]
+            - tabpanel "Overview" [ref=e140]:
+              - generic [ref=e141]:
+                - generic [ref=e143]: Profile
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - paragraph [ref=e147]: Email
+                    - link "info@balsam-medical.sa" [ref=e149] [cursor=pointer]:
+                      - /url: mailto:info@balsam-medical.sa
+                  - generic [ref=e150]:
+                    - paragraph [ref=e151]: Phone
+                    - generic [ref=e152]: —
+                  - generic [ref=e153]:
+                    - paragraph [ref=e154]: Website
+                    - generic [ref=e155]: —
+                  - generic [ref=e156]:
+                    - paragraph [ref=e157]: Industry
+                    - generic [ref=e158]: الرعاية الصحية
+              - generic [ref=e159]:
+                - generic [ref=e160]:
+                  - generic [ref=e161]: Subscription
+                  - generic [ref=e162]: Active
+                - generic [ref=e164]:
+                  - generic [ref=e165]:
+                    - paragraph [ref=e166]: Plan
+                    - generic [ref=e168]: Standard
+                  - generic [ref=e169]:
+                    - paragraph [ref=e170]: Articles/Month
+                    - generic [ref=e171]: "4"
+                  - generic [ref=e172]:
+                    - paragraph [ref=e173]: Status
+                    - generic [ref=e174]: ACTIVE
+                  - generic [ref=e175]:
+                    - paragraph [ref=e176]: Payment
+                    - generic [ref=e177]: PAID
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - generic [ref=e180]: Delivery This Month
+                  - generic [ref=e181]: Behind
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - paragraph [ref=e185]: Total Articles
+                    - link "0" [ref=e187] [cursor=pointer]:
+                      - /url: /articles?clientId=69d6665792f34b725bbddecf
+                  - generic [ref=e188]:
+                    - paragraph [ref=e189]: This Month
+                    - generic [ref=e191]:
+                      - text: "0"
+                      - generic [ref=e192]: / 4
+                  - generic [ref=e193]:
+                    - paragraph [ref=e194]: Rate
+                    - generic [ref=e195]: 0%
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - generic [ref=e198]: SEO
+                  - generic [ref=e199]: Good
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - paragraph [ref=e203]: Metadata
+                    - generic [ref=e204]: ✓ Generated
+                  - generic [ref=e205]:
+                    - paragraph [ref=e206]: JSON-LD
+                    - generic [ref=e207]: ✓ Valid
+                  - generic [ref=e208]:
+                    - paragraph [ref=e209]: SEO Title
+                    - generic [ref=e210]: عيادات بلسم
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e216] [cursor=pointer]:
+    - img [ref=e217]

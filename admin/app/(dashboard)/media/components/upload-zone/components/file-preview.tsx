@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Upload } from "lucide-react";
 
 interface FilePreviewProps {
@@ -58,10 +59,14 @@ export function FilePreview({
         />
         {isImage && previewUrl ? (
           <div className="relative w-full h-full flex items-center justify-center">
-            <img
+            <Image
               src={previewUrl}
               alt="Selected image"
+              width={800}
+              height={320}
               className="max-w-full h-auto max-h-80 mx-auto rounded"
+              sizes="(max-width: 768px) 100vw, 800px"
+              unoptimized
             />
             {!isDisabled && (
               <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center">

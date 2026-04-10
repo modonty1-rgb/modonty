@@ -14,11 +14,12 @@ import { TagMultiSelect } from '../tag-multi-select';
 import { ClientLogoPreview } from '../client-logo-preview';
 import { Copy, Check, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
-import Link from 'next/link';
+import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
 
 export function BasicSection() {
   const { formData, updateField, errors, clients, categories, tags, authors } = useArticleForm();
   const [slugCopied, setSlugCopied] = useState(false);
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
 
   // Find selected client with logo data
   const selectedClient = clients.find((c) => c.id === formData.clientId);
@@ -68,15 +69,24 @@ export function BasicSection() {
                       <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                       <AlertDescription className="text-amber-900 dark:text-amber-100">
                         Publisher logo is missing. This is required for Article rich results.{' '}
-                        <Link
-                          href={`/clients/${selectedClient.id}/edit`}
+                        <button
+                          type="button"
+                          onClick={() => setLogoModalOpen(true)}
                           className="font-medium underline underline-offset-4 hover:text-amber-700 dark:hover:text-amber-200"
                         >
                           Add logo
-                        </Link>
+                        </button>
                       </AlertDescription>
                     </Alert>
                   )}
+
+                  <ClientLogoModal
+                    open={logoModalOpen}
+                    onOpenChange={setLogoModalOpen}
+                    clientId={selectedClient.id}
+                    initialLogoUrl={selectedClient.logoMedia?.url ?? null}
+                    initialLogoMediaId={selectedClient.logoMediaId ?? null}
+                  />
                 </div>
               )}
             </div>

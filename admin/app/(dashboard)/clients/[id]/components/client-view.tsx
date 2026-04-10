@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -111,10 +112,13 @@ export function ClientView({ client }: ClientViewProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {client.logoMedia?.url && (
-            <img
+            <Image
               src={client.logoMedia.url}
               alt={client.logoMedia.altText || client.name}
+              width={64}
+              height={64}
               className="h-16 w-16 rounded-lg object-contain"
+              sizes="64px"
             />
           )}
           <div>
@@ -180,10 +184,13 @@ export function ClientView({ client }: ClientViewProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Logo URL</p>
                   <div className="flex items-center gap-4">
-                    <img
+                    <Image
                       src={client.logoMedia.url}
                       alt={client.logoMedia.altText || `${client.name} logo`}
+                      width={96}
+                      height={96}
                       className="h-24 w-24 rounded object-contain"
+                      sizes="96px"
                     />
                   </div>
                   {client.logoMedia.altText && (
@@ -458,10 +465,13 @@ export function ClientView({ client }: ClientViewProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Hero Image URL</p>
                   <div className="space-y-2">
-                    <img
+                    <Image
                       src={client.heroImageMedia.url}
                       alt={client.heroImageMedia.altText || `${client.name} hero image`}
+                      width={128}
+                      height={128}
                       className="h-32 w-32 rounded object-cover"
+                      sizes="128px"
                     />
                     <a
                       href={client.heroImageMedia.url}

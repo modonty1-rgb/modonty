@@ -1,0 +1,170 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=1] [ref=e5]
+      - generic [ref=e7]:
+        - complementary [ref=e8]:
+          - generic [ref=e9]:
+            - generic [ref=e11]:
+              - generic [ref=e12]:
+                - img [ref=e13]
+                - heading "تحليلات" [level=2] [ref=e15]
+              - generic [ref=e16]:
+                - generic [ref=e17]:
+                  - img [ref=e18]
+                  - generic [ref=e21]: المقالات
+                  - generic [ref=e24]: "2"
+                - generic [ref=e25]:
+                  - img [ref=e26]
+                  - generic [ref=e28]: التفاعلات الكلية
+                  - generic [ref=e31]: ٤
+                - generic [ref=e32]:
+                  - img [ref=e33]
+                  - generic [ref=e35]: متوسط لكل مقال
+                  - generic [ref=e38]: "2"
+              - generic [ref=e39]:
+                - generic [ref=e40]:
+                  - img [ref=e41]
+                  - generic [ref=e43]: إعجابات
+                  - generic [ref=e46]: ١
+                - generic [ref=e47]:
+                  - img [ref=e48]
+                  - generic [ref=e50]: تعليقات
+                  - generic [ref=e53]: ٣
+                - generic [ref=e54]:
+                  - img [ref=e55]
+                  - generic [ref=e58]: مشاهدات
+                  - generic [ref=e61]: ٥
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - heading "الفئات" [level=2] [ref=e65]
+                - link "جميع الفئات 2" [ref=e66] [cursor=pointer]:
+                  - /url: /
+                  - text: جميع الفئات
+                  - generic [ref=e67]: "2"
+              - link "التسويق الرقمي 2" [ref=e69] [cursor=pointer]:
+                - /url: /?category=digital-marketing
+                - generic [ref=e70]:
+                  - img [ref=e71]
+                  - generic [ref=e74]: التسويق الرقمي
+                - generic [ref=e75]: "2"
+        - region "آخر المقالات" [ref=e77]:
+          - heading "آخر المقالات" [level=2] [ref=e78]
+          - generic [ref=e79]:
+            - article [ref=e80]:
+              - generic [ref=e82]:
+                - generic [ref=e83]:
+                  - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e84] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - generic [ref=e86]: من
+                  - generic [ref=e87]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e88] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e89]: متجر نوفا للإلكترونيات
+                    - generic [ref=e91]:
+                      - time [ref=e93]: قبل 4 ساعات
+                      - generic [ref=e94]: •
+                      - generic [ref=e95]: ⏱️ 1 دقيقة
+                - generic [ref=e96]:
+                  - img [ref=e97]
+                  - generic [ref=e100]: نسخة صوتية
+              - generic [ref=e101]:
+                - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e102] [cursor=pointer]:
+                  - /url: /articles/seo-guide-ecommerce-2025
+                  - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e103]
+                - paragraph [ref=e104]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+                - link "اقرأ المزيد" [ref=e106] [cursor=pointer]:
+                  - /url: /articles/seo-guide-ecommerce-2025
+                  - text: اقرأ المزيد
+                  - img [ref=e107]
+                - generic [ref=e109]:
+                  - link "عرض المقال" [ref=e110] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - generic [ref=e111]:
+                      - img [ref=e112]
+                      - text: "1"
+                    - generic [ref=e114]:
+                      - img [ref=e115]
+                      - text: "0"
+                    - generic [ref=e117]:
+                      - img [ref=e118]
+                      - text: "3"
+                    - generic [ref=e120]:
+                      - img [ref=e121]
+                      - text: "5"
+                  - link "مشاركة المقال" [ref=e124] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - img [ref=e125]
+                    - generic [ref=e131]: مشاركة
+            - article [ref=e132]:
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e136] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - generic [ref=e138]: من
+                  - generic [ref=e139]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e140] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e141]: متجر نوفا للإلكترونيات
+                    - generic [ref=e143]:
+                      - time [ref=e145]: قبل 4 ساعات
+                      - generic [ref=e146]: •
+                      - generic [ref=e147]: ⏱️ 1 دقيقة
+                - generic [ref=e148]:
+                  - img [ref=e149]
+                  - generic [ref=e152]: نسخة صوتية
+              - generic [ref=e153]:
+                - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e154] [cursor=pointer]:
+                  - /url: /articles/ai-healthcare-saudi-2025
+                  - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية" [level=3] [ref=e155]
+                - paragraph [ref=e156]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+                - link "اقرأ المزيد" [ref=e158] [cursor=pointer]:
+                  - /url: /articles/ai-healthcare-saudi-2025
+                  - text: اقرأ المزيد
+                  - img [ref=e159]
+                - generic [ref=e161]:
+                  - link "عرض المقال" [ref=e162] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - generic [ref=e163]:
+                      - img [ref=e164]
+                      - text: "0"
+                    - generic [ref=e166]:
+                      - img [ref=e167]
+                      - text: "0"
+                    - generic [ref=e169]:
+                      - img [ref=e170]
+                      - text: "0"
+                    - generic [ref=e172]:
+                      - img [ref=e173]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e176] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - img [ref=e177]
+                    - generic [ref=e183]: مشاركة
+        - complementary [ref=e184]
+    - contentinfo [ref=e220]:
+      - navigation "روابط قانونية" [ref=e221]:
+        - link "اتفاقية المستخدم" [ref=e222] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e223] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e224] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e225] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e226]: © 2026 مودونتي
+  - generic [ref=e231] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e232]:
+      - img [ref=e233]
+    - generic [ref=e236]:
+      - button "Open issues overlay" [ref=e237]:
+        - generic [ref=e238]:
+          - generic [ref=e239]: "3"
+          - generic [ref=e240]: "4"
+        - generic [ref=e241]:
+          - text: Issue
+          - generic [ref=e242]: s
+      - button "Collapse issues badge" [ref=e243]:
+        - img [ref=e244]
+  - alert [ref=e246]

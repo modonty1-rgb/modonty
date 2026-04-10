@@ -35,8 +35,8 @@ import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
-import { ClientMediaModal } from "./client-media-modal";
-import type { ClientWithRelations } from "@/lib/types";
+import { ClientHeroModal } from "./client-hero-modal";
+import { ClientLogoModal } from "./client-logo-modal";
 
 type ListValidationError = { message?: string } | string;
 
@@ -204,9 +204,11 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [mediaModalOpen, setMediaModalOpen] = useState(false);
+  const [heroModalOpen, setHeroModalOpen] = useState(false);
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [selectedClientData, setSelectedClientData] = useState<Partial<ClientWithRelations> | undefined>();
+  const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
+  const [selectedLogoUrl, setSelectedLogoUrl] = useState<string | null>(null);
   const pageSize = 10;
 
   // Sync external search prop with internal state
@@ -467,7 +469,17 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                     >
                     <TableCell>
                       <div className="flex items-center gap-2.5">
-                        <div className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border">
+                        <button
+                          type="button"
+                          title={client.logoMedia?.url ? "Change logo" : "Add logo"}
+                          className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border hover:ring-2 hover:ring-primary transition-all"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedClientId(client.id);
+                            setSelectedLogoUrl(client.logoMedia?.url ?? null);
+                            setLogoModalOpen(true);
+                          }}
+                        >
                           {client.logoMedia?.url ? (
                             <Image
                               src={client.logoMedia.url}
@@ -481,7 +493,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                               {client.name.charAt(0)}
                             </div>
                           )}
-                        </div>
+                        </button>
                         <div className="flex flex-col gap-0.5 min-w-0">
                           <Link
                             href={`/clients/${client.id}`}
@@ -642,8 +654,8 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedClientId(client.id);
-                            setSelectedClientData(client as Partial<ClientWithRelations>);
-                            setMediaModalOpen(true);
+                            setSelectedHeroUrl(client.heroImageMedia?.url ?? null);
+                            setHeroModalOpen(true);
                           }}
                           aria-label="Edit media"
                         >
@@ -702,13 +714,23 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
         </div>
       )}
 
-      {/* Media Modal */}
+      {/* Hero Modal */}
       {selectedClientId && (
-        <ClientMediaModal
-          open={mediaModalOpen}
-          onOpenChange={setMediaModalOpen}
+        <ClientHeroModal
+          open={heroModalOpen}
+          onOpenChange={setHeroModalOpen}
           clientId={selectedClientId}
-          initialData={selectedClientData}
+          initialHeroUrl={selectedHeroUrl}
+        />
+      )}
+
+      {/* Logo Modal */}
+      {selectedClientId && (
+        <ClientLogoModal
+          open={logoModalOpen}
+          onOpenChange={setLogoModalOpen}
+          clientId={selectedClientId}
+          initialLogoUrl={selectedLogoUrl}
         />
       )}
     </div>

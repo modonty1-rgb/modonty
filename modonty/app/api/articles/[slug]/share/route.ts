@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 
+const SHARE_RATE_LIMIT = 10;
+const SHARE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -24,6 +27,24 @@ export async function POST(
       );
     }
 
+    // Rate limit: max 10 shares per article per session per hour (DB-based)
+    const sessionId = request.cookies.get("modonty_view_sid")?.value;
+    if (sessionId) {
+      const recentShares = await db.share.count({
+        where: {
+          articleId: article.id,
+          sessionId,
+          createdAt: { gt: new Date(Date.now() - SHARE_WINDOW_MS) },
+        },
+      });
+      if (recentShares >= SHARE_RATE_LIMIT) {
+        return NextResponse.json(
+          { success: false, error: "Too many shares" } as ApiResponse<never>,
+          { status: 429 }
+        );
+      }
+    }
+
     // Map platform string to enum
     const platformMap: Record<string, SharePlatform> = {
       TWITTER: SharePlatform.TWITTER,
@@ -37,12 +58,13 @@ export async function POST(
 
     const sharePlatform = platformMap[platform] || SharePlatform.OTHER;
 
-    // Track share
+    // Track share — include sessionId for rate limiting + analytics
     await db.share.create({
       data: {
         articleId: article.id,
         clientId: article.clientId,
         platform: sharePlatform,
+        sessionId: sessionId ?? undefined,
       },
     });
 

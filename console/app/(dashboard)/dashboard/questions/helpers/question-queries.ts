@@ -82,7 +82,6 @@ export async function getVisitorQuestionStats(clientId: string) {
     db.articleFAQ.count({
       where: {
         article: { clientId },
-        submittedByEmail: { not: null },
       },
     }),
   ]);

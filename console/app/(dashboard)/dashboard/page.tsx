@@ -56,7 +56,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardStatCard
               icon={Users}
               title={ar.dashboard.subscribers}
@@ -65,7 +65,7 @@ export default async function DashboardPage() {
               subLines={[ar.dashboard.totalSubscribers]}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardActionCard
               href="/dashboard/articles"
               icon={FileText}
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
               ctaLabel={ar.dashboard.manageApprove}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardActionCard
               href="/dashboard/analytics"
               icon={BarChart3}
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
               ctaLabel={ar.dashboard.viewAnalytics}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardActionCard
               href="/dashboard/comments"
               icon={MessageSquare}
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
               ctaLabel={ar.dashboard.moderateComments}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardActionCard
               href="/dashboard/support"
               icon={Mail}
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
               ctaLabel={ar.dashboard.manageSupport}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardStatCard
               icon={BarChart3}
               title={ar.dashboard.engagementScore}
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
               ]}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardStatCard
               icon={Users}
               title={ar.dashboard.activeUsers}
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
               ]}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardStatCard
               icon={Share2}
               title={ar.dashboard.interactions}
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
               ]}
             />
           </div>
-          <div className="w-[180px] shrink-0">
+          <div className="min-w-[160px] flex-1">
             <DashboardStatCard
               icon={Target}
               title={ar.dashboard.conversions}

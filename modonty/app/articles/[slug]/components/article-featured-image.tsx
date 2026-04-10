@@ -10,12 +10,12 @@ interface ArticleFeaturedImageProps {
 
 export function ArticleFeaturedImage({ image, title }: ArticleFeaturedImageProps) {
   return (
-    <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6">
+    <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-6 bg-muted">
       <OptimizedImage
         src={image.url}
         alt={image.altText || title}
         fill
-        className="object-cover h-full w-full"
+        className="object-contain h-full w-full"
         preload
         loading="eager"
         fetchPriority="high"

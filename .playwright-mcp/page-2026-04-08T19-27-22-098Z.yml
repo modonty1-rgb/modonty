@@ -1,0 +1,284 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e123] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e124]: Dashboard
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+            - generic [ref=e125]: SEO Overview
+        - generic [ref=e126]:
+          - button "Content" [expanded] [ref=e127] [cursor=pointer]:
+            - generic [ref=e128]:
+              - img [ref=e129]
+              - generic [ref=e132]: Content
+            - img [ref=e133]
+          - generic [ref=e136]:
+            - link "Articles" [ref=e137] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e138]
+              - generic [ref=e141]: Articles
+            - link "Categories" [ref=e142] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e143]
+              - generic [ref=e145]: Categories
+            - link "Tags" [ref=e146] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e147]
+              - generic [ref=e150]: Tags
+            - link "Authors" [ref=e151] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e152]
+              - generic [ref=e154]: Authors
+            - link "Industries" [ref=e155] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e156]
+              - generic [ref=e158]: Industries
+        - button "Modonty Pages" [ref=e160] [cursor=pointer]:
+          - generic [ref=e161]:
+            - img [ref=e162]
+            - generic [ref=e164]: Modonty Pages
+          - img [ref=e165]
+        - button "Audience" [ref=e168] [cursor=pointer]:
+          - generic [ref=e169]:
+            - img [ref=e170]
+            - generic [ref=e173]: Audience
+          - img [ref=e174]
+        - generic [ref=e176]:
+          - button "System" [expanded] [ref=e177] [cursor=pointer]:
+            - generic [ref=e178]:
+              - img [ref=e179]
+              - generic [ref=e182]: System
+            - img [ref=e183]
+          - generic [ref=e186]:
+            - link "Admins" [ref=e187] [cursor=pointer]:
+              - /url: /users
+              - img [ref=e188]
+              - generic [ref=e193]: Admins
+            - link "Plans & Pricing" [ref=e194] [cursor=pointer]:
+              - /url: /subscription-tiers
+              - img [ref=e195]
+              - generic [ref=e197]: Plans & Pricing
+            - link "Export Data" [ref=e198] [cursor=pointer]:
+              - /url: /export-data
+              - img [ref=e199]
+              - generic [ref=e202]: Export Data
+            - link "Database" [ref=e203] [cursor=pointer]:
+              - /url: /database
+              - img [ref=e204]
+              - generic [ref=e208]: Database
+            - link "Settings" [ref=e209] [cursor=pointer]:
+              - /url: /settings
+              - img [ref=e210]
+              - generic [ref=e213]: Settings
+      - generic [ref=e102]:
+        - link "Guidelines" [ref=e214] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e215]
+          - text: Guidelines
+        - generic [ref=e217]:
+          - button "Switch to light mode" [ref=e218] [cursor=pointer]:
+            - img
+          - link "v0.23.0 ?" [ref=e219] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.23.0
+            - generic [ref=e220]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e221]:
+        - generic [ref=e222]:
+          - navigation "Breadcrumb" [ref=e224]:
+            - link "Go to dashboard" [ref=e225] [cursor=pointer]:
+              - /url: /
+              - img [ref=e226]
+            - generic [ref=e229]:
+              - img [ref=e230]
+              - generic [ref=e232]: Settings
+          - navigation "Main navigation" [ref=e234]:
+            - link "Modonty Modonty" [ref=e235] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e237]
+              - generic [ref=e238]: Modonty
+            - generic [ref=e240]:
+              - link "Articles" [ref=e241] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e242]:
+                  - img
+                  - generic [ref=e243]: Articles
+              - link "Clients" [ref=e244] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e245]:
+                  - img
+                  - generic [ref=e246]: Clients
+              - link "Media" [ref=e247] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e248]:
+                  - img
+                  - generic [ref=e249]: Media
+          - generic [ref=e250]:
+            - link "1" [ref=e251] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e252]:
+                - img
+                - generic [ref=e253]: "1"
+            - button "M" [ref=e254] [cursor=pointer]:
+              - generic [ref=e256]: M
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - heading "Settings" [level=1] [ref=e118]
+              - paragraph [ref=e119]: Configure your site once — your team handles the rest
+              - paragraph [ref=e120]: "من هنا تتحكم في إعدادات موقع مدونتي كاملاً. كل تبويب يخص صفحة معينة تظهر للزوار على الإنترنت — مثلاً: صفحة مدونتي هي الصفحة الرئيسية التي يراها الزائر أول ما يفتح الموقع، وصفحة العملاء هي الصفحة التي تجمع كل عملاء مدونتي، وصفحة المقالات هي الصفحة التي تجمع كل المقالات المنشورة. لكل صفحة عنوان ووصف يظهران في نتائج محركات البحث (جوجل، بينج، ياهو)."
+            - button "Integration Test" [ref=e121] [cursor=pointer]:
+              - img
+              - text: Integration Test
+          - generic [ref=e257]:
+            - tablist [ref=e258]:
+              - tab "Modonty" [selected] [ref=e259] [cursor=pointer]:
+                - img [ref=e260]
+                - text: Modonty
+              - tab "Clients" [ref=e264] [cursor=pointer]: Clients
+              - tab "Categories" [ref=e266] [cursor=pointer]: Categories
+              - tab "Tags" [ref=e268] [cursor=pointer]: Tags
+              - tab "Industries" [ref=e270] [cursor=pointer]: Industries
+              - tab "Articles" [ref=e272] [cursor=pointer]: Articles
+              - tab "Trending" [ref=e274] [cursor=pointer]: Trending
+              - tab "System" [ref=e276] [cursor=pointer]:
+                - img [ref=e277]
+                - text: System
+            - tabpanel "Modonty" [ref=e279]:
+              - generic [ref=e280]:
+                - generic [ref=e281]:
+                  - generic [ref=e282]:
+                    - paragraph [ref=e283]: Site Identity
+                    - generic [ref=e284]:
+                      - text: Brand Description
+                      - textbox "منصة المحتوى العربي الرائدة..." [ref=e285]: مدونتي — منصة المحتوى العربي الرائدة في المملكة العربية السعودية
+                    - generic [ref=e286]:
+                      - text: Logo
+                      - generic [ref=e287]:
+                        - textbox "https://res.cloudinary.com/..." [ref=e288]: https://res.cloudinary.com/demo/image/upload/sample.jpg
+                        - img "Logo" [ref=e290]
+                      - paragraph [ref=e291]: Square, min 112×112px
+                    - generic [ref=e292]:
+                      - text: Main Image (OG)
+                      - generic [ref=e293]:
+                        - textbox "https://res.cloudinary.com/..." [ref=e294]
+                        - generic [ref=e296]: No image
+                      - paragraph [ref=e297]: 1200×630
+                    - generic [ref=e298]:
+                      - text: Alt Text
+                      - textbox "مدونتي — منصة المحتوى العربي" [ref=e299]
+                  - generic [ref=e300]:
+                    - paragraph [ref=e301]: Contact & Location
+                    - generic [ref=e302]:
+                      - generic [ref=e303]:
+                        - text: Email
+                        - textbox [ref=e304]: info@modonty.com
+                      - generic [ref=e305]:
+                        - text: Phone
+                        - textbox "+966500000000" [ref=e306]: "+966512345678"
+                      - generic [ref=e307]:
+                        - text: Hours
+                        - textbox "Su-Th 09:00-18:00" [ref=e308]
+                    - generic [ref=e309]:
+                      - generic [ref=e310]:
+                        - text: Street
+                        - textbox [ref=e311]
+                      - generic [ref=e312]:
+                        - text: City
+                        - textbox [ref=e313]
+                      - generic [ref=e314]:
+                        - text: Region
+                        - textbox [ref=e315]
+                      - generic [ref=e316]:
+                        - text: Postal Code
+                        - textbox [ref=e317]
+                    - generic [ref=e318]:
+                      - generic [ref=e319]:
+                        - text: Country
+                        - textbox "SA" [ref=e320]
+                      - generic [ref=e321]:
+                        - text: Latitude
+                        - spinbutton [ref=e322]
+                      - generic [ref=e323]:
+                        - text: Longitude
+                        - spinbutton [ref=e324]
+                - generic [ref=e325]:
+                  - generic [ref=e326]:
+                    - generic [ref=e327]:
+                      - paragraph [ref=e328]: Homepage SEO
+                      - generic [ref=e329]: · 3 hr
+                    - generic [ref=e330]:
+                      - text: SEO Title
+                      - textbox "مدونتي | منصة المحتوى العربي" [ref=e331]: مدونتي TEST | منصة المحتوى العربي
+                    - generic [ref=e332]:
+                      - text: SEO Description
+                      - textbox "تصفح آلاف المقالات من أفضل الكتّاب..." [ref=e333]: TEST_DESC — تصفح آلاف المقالات من أفضل الكتّاب العرب في المملكة العربية السعودية
+                    - generic [ref=e334]:
+                      - button "Regenerate cache" [disabled]:
+                        - img
+                        - text: Regenerate cache
+                  - generic [ref=e336]:
+                    - paragraph [ref=e337]: Analytics
+                    - generic [ref=e339]:
+                      - paragraph [ref=e340]: GTM
+                      - textbox "GTM-XXXXXXX" [ref=e341]: GTM-TEST123
+                      - generic [ref=e342]: active
+                    - generic [ref=e344]:
+                      - paragraph [ref=e345]: Hotjar
+                      - textbox "1234567" [ref=e346]
+                  - generic [ref=e347]:
+                    - generic [ref=e348]:
+                      - paragraph [ref=e349]: Social Profiles
+                      - generic [ref=e350]: · 1
+                    - generic [ref=e351]:
+                      - generic [ref=e352]:
+                        - text: Twitter / X
+                        - textbox "x.com/modonty" [ref=e353]: https://x.com/modonty
+                      - generic [ref=e354]:
+                        - text: LinkedIn
+                        - textbox "linkedin.com/company/modonty" [ref=e355]
+                      - generic [ref=e356]:
+                        - text: Facebook
+                        - textbox "facebook.com/modonty" [ref=e357]
+                      - generic [ref=e358]:
+                        - text: Instagram
+                        - textbox "instagram.com/modonty" [ref=e359]
+                      - generic [ref=e360]:
+                        - text: YouTube
+                        - textbox "youtube.com/@modonty" [ref=e361]
+                      - generic [ref=e362]:
+                        - text: TikTok
+                        - textbox "tiktok.com/@modonty" [ref=e363]
+                      - generic [ref=e364]:
+                        - text: Pinterest
+                        - textbox "pinterest.com/modonty" [ref=e365]
+                      - generic [ref=e366]:
+                        - text: Snapchat
+                        - textbox "snapchat.com/add/modonty" [ref=e367]
+                    - generic [ref=e368]:
+                      - generic [ref=e369]:
+                        - text: X Site Handle
+                        - textbox "@modonty" [ref=e370]
+                      - generic [ref=e371]:
+                        - text: X Creator Handle
+                        - textbox "@modonty" [ref=e372]
+              - button "Saving..." [disabled]
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e374]

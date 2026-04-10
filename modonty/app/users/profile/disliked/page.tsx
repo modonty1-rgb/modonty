@@ -11,6 +11,7 @@ import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
+import Image from "next/image";
 import Link from "@/components/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -225,10 +226,13 @@ function ClientDislikeCard({ item }: { item: DislikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <img
+              <Image
                 src={item.item.image}
-                alt={item.item.imageAlt || item.item.name}
+                alt={item.item.imageAlt || item.item.name || ""}
+                width={64}
+                height={64}
                 className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                sizes="64px"
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
@@ -269,10 +273,13 @@ function ArticleDislikeCard({ item }: { item: DislikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.image ? (
-              <img
+              <Image
                 src={item.item.image}
-                alt={item.item.imageAlt || item.item.title}
+                alt={item.item.imageAlt || item.item.title || ""}
+                width={64}
+                height={64}
                 className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                sizes="64px"
               />
             ) : (
               <Avatar className="h-16 w-16 flex-shrink-0">
@@ -320,10 +327,13 @@ function CommentDislikeCard({ item }: { item: DislikedItem }) {
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
             {item.item.author?.image ? (
-              <img
+              <Image
                 src={item.item.author.image}
                 alt={item.item.author.name || "User"}
+                width={40}
+                height={40}
                 className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                sizes="40px"
               />
             ) : (
               <Avatar className="h-10 w-10 flex-shrink-0">

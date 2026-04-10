@@ -434,10 +434,14 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
                       </div>
                       <div className="rounded-lg overflow-hidden bg-muted/50 border">
                         {previewUrl ? (
-                          <img
+                          <NextImage
                             src={previewUrl}
                             alt={formData.altText || media.filename}
+                            width={400}
+                            height={224}
                             className="w-full h-auto max-h-56 object-contain"
+                            sizes="400px"
+                            unoptimized
                           />
                         ) : (
                           <NextImage

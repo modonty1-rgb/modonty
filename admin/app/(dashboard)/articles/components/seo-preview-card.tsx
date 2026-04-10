@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SITE_NAME } from "@/lib/constants/site-name";
@@ -50,11 +51,13 @@ export function SEOPreviewCard({
           <TabsContent value="facebook" className="mt-4">
             <div className="border border-border rounded-md overflow-hidden">
               {displayImage && (
-                <div className="aspect-video w-full bg-muted">
-                  <img
+                <div className="aspect-video w-full bg-muted relative">
+                  <Image
                     src={displayImage}
                     alt={displayTitle}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 600px"
                   />
                 </div>
               )}
@@ -71,11 +74,13 @@ export function SEOPreviewCard({
           <TabsContent value="twitter" className="mt-4">
             <div className="border border-border rounded-md overflow-hidden">
               {displayImage && (
-                <div className="aspect-video w-full bg-muted">
-                  <img
+                <div className="aspect-video w-full bg-muted relative">
+                  <Image
                     src={displayImage}
                     alt={displayTitle}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 600px"
                   />
                 </div>
               )}

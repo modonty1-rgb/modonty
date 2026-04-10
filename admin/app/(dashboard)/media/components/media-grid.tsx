@@ -335,6 +335,11 @@ export function MediaGrid({
                   alt={item.altText || item.filename}
                   fill
                   className="object-cover"
+                  sizes={
+                    gridSize === "compact"
+                      ? "(max-width: 767px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 17vw"
+                      : "(max-width: 767px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
+                  }
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

@@ -1,0 +1,276 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Modonty" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - button "طي القائمة" [ref=e6] [cursor=pointer]:
+          - img
+      - navigation [ref=e7]:
+        - link "معلومات الشركة" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard/profile
+          - img [ref=e9]
+          - generic [ref=e13]: معلومات الشركة
+        - link "معلومات مهمة" [ref=e14] [cursor=pointer]:
+          - /url: /dashboard/seo
+          - img [ref=e15]
+          - generic [ref=e18]: معلومات مهمة
+        - link "المقالات 0" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard/articles
+          - img [ref=e20]
+          - generic [ref=e23]: المقالات
+          - generic [ref=e24]: "0"
+        - link "المحتوى" [ref=e25] [cursor=pointer]:
+          - /url: /dashboard/content
+          - img [ref=e26]
+          - generic [ref=e30]: المحتوى
+        - link "الوسائط" [ref=e31] [cursor=pointer]:
+          - /url: /dashboard/media
+          - img [ref=e32]
+          - generic [ref=e36]: الوسائط
+        - link "الحملات نسخة تجريبية" [ref=e37] [cursor=pointer]:
+          - /url: /dashboard/campaigns
+          - img [ref=e38]
+          - generic [ref=e41]: الحملات
+          - generic [ref=e42]: نسخة تجريبية
+        - link "المشتركون 3" [ref=e43] [cursor=pointer]:
+          - /url: /dashboard/subscribers
+          - img [ref=e44]
+          - generic [ref=e49]: المشتركون
+          - generic [ref=e50]: "3"
+        - link "العملاء المحتملون 1" [ref=e51] [cursor=pointer]:
+          - /url: /dashboard/leads
+          - img [ref=e52]
+          - generic [ref=e56]: العملاء المحتملون
+          - generic [ref=e57]: "1"
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e61]: م
+          - paragraph [ref=e63]: متجر نوفا للإلكترونيات
+        - button "تسجيل الخروج" [ref=e64] [cursor=pointer]:
+          - img
+          - generic [ref=e65]: تسجيل الخروج
+    - generic [ref=e66]:
+      - banner [ref=e67]:
+        - banner [ref=e68]:
+          - navigation "Main" [ref=e69]:
+            - generic [ref=e70]:
+              - link "Modonty" [ref=e71] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e72]: /
+              - link "لوحة التحكم" [ref=e73] [cursor=pointer]:
+                - /url: /dashboard
+            - generic [ref=e74]:
+              - link "لوحة التحكم" [ref=e75] [cursor=pointer]:
+                - /url: /dashboard
+                - button [ref=e76]:
+                  - img
+              - link "الإحصائيات" [ref=e77] [cursor=pointer]:
+                - /url: /dashboard/analytics
+                - button [ref=e78]:
+                  - img
+              - link "1" [ref=e79] [cursor=pointer]:
+                - /url: /dashboard/comments
+                - button [ref=e80]:
+                  - img
+                - generic [ref=e81]: "1"
+              - link "أسئلة الزوار" [ref=e82] [cursor=pointer]:
+                - /url: /dashboard/questions
+                - button [ref=e83]:
+                  - img
+              - link "1" [ref=e84] [cursor=pointer]:
+                - /url: /dashboard/support
+                - button [ref=e85]:
+                  - img
+                - generic [ref=e86]: "1"
+              - link "الإعدادات" [ref=e87] [cursor=pointer]:
+                - /url: /dashboard/settings
+                - button [ref=e88]:
+                  - img
+      - main [ref=e89]:
+        - generic [ref=e90]:
+          - region "لوحة التحكم" [ref=e91]:
+            - generic [ref=e92]:
+              - heading "لوحة التحكم" [level=1] [ref=e93]
+              - paragraph [ref=e94]: مرحباً بعودتك. إليك ملخص الأداء.
+            - generic [ref=e95]:
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - generic [ref=e99]:
+                    - img [ref=e100]
+                    - heading "المشتركون" [level=3] [ref=e105]
+                  - paragraph [ref=e106]: قائمة النشرة
+                - generic [ref=e107]:
+                  - paragraph [ref=e108]: "3"
+                  - paragraph [ref=e110]: إجمالي المشتركين
+              - link "المقالات إدارة والموافقة تمت الموافقة على الكل إدارة والموافقة →" [ref=e112] [cursor=pointer]:
+                - /url: /dashboard/articles
+                - generic [ref=e113]:
+                  - generic [ref=e114]:
+                    - generic [ref=e115]:
+                      - img [ref=e116]
+                      - heading "المقالات" [level=3] [ref=e119]
+                    - paragraph [ref=e120]: إدارة والموافقة
+                  - generic [ref=e121]:
+                    - paragraph [ref=e122]: تمت الموافقة على الكل
+                    - paragraph [ref=e123]: إدارة والموافقة →
+              - link "الإحصائيات المشاهدات والتفاعل 19 مشاهدة عرض الإحصائيات →" [ref=e125] [cursor=pointer]:
+                - /url: /dashboard/analytics
+                - generic [ref=e126]:
+                  - generic [ref=e127]:
+                    - generic [ref=e128]:
+                      - img [ref=e129]
+                      - heading "الإحصائيات" [level=3] [ref=e131]
+                    - paragraph [ref=e132]: المشاهدات والتفاعل
+                  - generic [ref=e133]:
+                    - paragraph [ref=e134]: 19 مشاهدة
+                    - paragraph [ref=e135]: عرض الإحصائيات →
+              - link "التعليقات انتظار المراجعة 1 بانتظار المراجعة مراجعة التعليقات →" [ref=e137] [cursor=pointer]:
+                - /url: /dashboard/comments
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - generic [ref=e140]:
+                      - img [ref=e141]
+                      - heading "التعليقات" [level=3] [ref=e143]
+                    - paragraph [ref=e144]: انتظار المراجعة
+                  - generic [ref=e145]:
+                    - paragraph [ref=e146]: 1 بانتظار المراجعة
+                    - paragraph [ref=e147]: مراجعة التعليقات →
+              - link "الدعم رسائل التواصل عرض الرسائل إدارة الدعم →" [ref=e149] [cursor=pointer]:
+                - /url: /dashboard/support
+                - generic [ref=e150]:
+                  - generic [ref=e151]:
+                    - generic [ref=e152]:
+                      - img [ref=e153]
+                      - heading "الدعم" [level=3] [ref=e156]
+                    - paragraph [ref=e157]: رسائل التواصل
+                  - generic [ref=e158]:
+                    - paragraph [ref=e159]: عرض الرسائل
+                    - paragraph [ref=e160]: إدارة الدعم →
+              - generic [ref=e162]:
+                - generic [ref=e164]:
+                  - img [ref=e165]
+                  - heading "درجة التفاعل" [level=3] [ref=e167]
+                - generic [ref=e168]:
+                  - paragraph [ref=e169]: "30"
+                  - paragraph [ref=e171]: "Avg time: 80s · Scroll: 27%"
+              - generic [ref=e173]:
+                - generic [ref=e175]:
+                  - img [ref=e176]
+                  - heading "المستخدمون النشطون" [level=3] [ref=e181]
+                - generic [ref=e182]:
+                  - paragraph [ref=e183]: "6"
+                  - generic [ref=e184]:
+                    - paragraph [ref=e185]: 7d · 6 (30d)
+                    - paragraph [ref=e186]: "Return rate: 31.6%"
+              - generic [ref=e188]:
+                - generic [ref=e190]:
+                  - img [ref=e191]
+                  - heading "التفاعلات" [level=3] [ref=e197]
+                - generic [ref=e198]:
+                  - paragraph [ref=e199]: "10"
+                  - generic [ref=e200]:
+                    - paragraph [ref=e201]: 1 إعجابات · 3 مشاركات · 6 تعليقات
+                    - paragraph [ref=e202]: "النسبة: 52.6%"
+              - generic [ref=e204]:
+                - generic [ref=e206]:
+                  - img [ref=e207]
+                  - heading "التحويلات" [level=3] [ref=e211]
+                - generic [ref=e212]:
+                  - paragraph [ref=e213]: "0"
+                  - generic [ref=e214]:
+                    - paragraph [ref=e215]: "النسبة: 0.00%"
+                    - paragraph [ref=e216]: "نسبة الارتداد: 21.4%"
+          - region "المشاهدات والتفاعل" [ref=e217]:
+            - heading "المشاهدات والتفاعل" [level=2] [ref=e218]
+            - generic [ref=e219]:
+              - generic [ref=e221]:
+                - heading "حسب المشاهدات" [level=3] [ref=e222]:
+                  - img [ref=e223]
+                  - text: حسب المشاهدات
+                - paragraph [ref=e226]: أفضل المقالات أداءً
+              - generic [ref=e231]:
+                - heading "مصادر الزيارات" [level=3] [ref=e232]
+                - paragraph [ref=e233]: آخر 30 يوم
+            - generic [ref=e238]:
+              - heading "مشاهدات (7 أيام)" [level=3] [ref=e239]:
+                - img [ref=e240]
+                - text: مشاهدات (7 أيام)
+              - paragraph [ref=e242]: المشاهدات والتفاعل
+          - region "النشاط الأخير" [ref=e246]:
+            - heading "النشاط الأخير" [level=2] [ref=e247]
+            - generic [ref=e248]:
+              - generic [ref=e249]:
+                - heading "حسب التفاعل" [level=3] [ref=e250]:
+                  - img [ref=e251]
+                  - text: حسب التفاعل
+                - paragraph [ref=e253]: الدرجة
+              - list [ref=e255]:
+                - listitem [ref=e256]:
+                  - paragraph [ref=e257]: دليل SEO المتاجر الإلكترونية 2025
+                  - generic [ref=e258]: "الدرجة: 0"
+                - listitem [ref=e259]:
+                  - paragraph [ref=e260]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                  - generic [ref=e261]: "الدرجة: 0"
+            - generic [ref=e262]:
+              - generic [ref=e263]:
+                - heading "النشاط الأخير" [level=3] [ref=e264]
+                - paragraph [ref=e265]: آخر التحديثات والأحداث
+              - list [ref=e267]:
+                - listitem [ref=e268]:
+                  - img [ref=e270]
+                  - generic [ref=e275]:
+                    - paragraph [ref=e276]: New subscriber
+                    - paragraph [ref=e277]: test-visitor@test.com
+                    - paragraph [ref=e278]: 4/9/2026 10:44 AM
+                - listitem [ref=e279]:
+                  - img [ref=e281]
+                  - generic [ref=e283]:
+                    - paragraph [ref=e284]: New comment
+                    - paragraph [ref=e285]: "On article: دليل SEO المتاجر الإلكترونية 2025"
+                    - paragraph [ref=e286]: 4/9/2026 10:18 AM
+                - listitem [ref=e287]:
+                  - img [ref=e289]
+                  - generic [ref=e294]:
+                    - paragraph [ref=e295]: New subscriber
+                    - paragraph [ref=e296]: sub2@test.com
+                    - paragraph [ref=e297]: 4/8/2026 05:30 PM
+                - listitem [ref=e298]:
+                  - img [ref=e300]
+                  - generic [ref=e305]:
+                    - paragraph [ref=e306]: New subscriber
+                    - paragraph [ref=e307]: sub1@test.com
+                    - paragraph [ref=e308]: 4/8/2026 05:30 PM
+                - listitem [ref=e309]:
+                  - img [ref=e311]
+                  - generic [ref=e313]:
+                    - paragraph [ref=e314]: New comment
+                    - paragraph [ref=e315]: "On article: دليل SEO المتاجر الإلكترونية 2025"
+                    - paragraph [ref=e316]: 4/8/2026 05:30 PM
+                - listitem [ref=e317]:
+                  - img [ref=e319]
+                  - generic [ref=e321]:
+                    - paragraph [ref=e322]: New comment
+                    - paragraph [ref=e323]: "On article: دليل SEO المتاجر الإلكترونية 2025"
+                    - paragraph [ref=e324]: 4/8/2026 05:30 PM
+                - listitem [ref=e325]:
+                  - img [ref=e327]
+                  - generic [ref=e329]:
+                    - paragraph [ref=e330]: New comment
+                    - paragraph [ref=e331]: "On article: دليل SEO المتاجر الإلكترونية 2025"
+                    - paragraph [ref=e332]: 4/8/2026 05:30 PM
+                - listitem [ref=e333]:
+                  - img [ref=e335]
+                  - generic [ref=e337]:
+                    - paragraph [ref=e338]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                    - paragraph [ref=e339]: New article published
+                    - paragraph [ref=e340]: 4/8/2026 05:30 PM
+                - listitem [ref=e341]:
+                  - img [ref=e343]
+                  - generic [ref=e345]:
+                    - paragraph [ref=e346]: دليل SEO المتاجر الإلكترونية 2025
+                    - paragraph [ref=e347]: New article published
+                    - paragraph [ref=e348]: 4/8/2026 05:29 PM
+  - button "Open Next.js Dev Tools" [ref=e354] [cursor=pointer]:
+    - img [ref=e355]

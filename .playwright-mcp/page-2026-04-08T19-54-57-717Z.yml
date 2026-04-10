@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=1] [ref=e5]
+      - generic [ref=e7]:
+        - complementary [ref=e8]
+        - region "آخر المقالات" [ref=e28]:
+          - heading "آخر المقالات" [level=2] [ref=e29]
+          - generic [ref=e30]:
+            - article [ref=e31]:
+              - generic [ref=e33]:
+                - generic [ref=e34]:
+                  - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e35] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - generic [ref=e37]: من
+                  - generic [ref=e38]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e39] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e40]: متجر نوفا للإلكترونيات
+                    - generic [ref=e42]:
+                      - time [ref=e44]: قبل 5 ساعات
+                      - generic [ref=e45]: •
+                      - generic [ref=e46]: ⏱️ 1 دقيقة
+                - generic [ref=e47]:
+                  - img [ref=e48]
+                  - generic [ref=e51]: نسخة صوتية
+              - generic [ref=e52]:
+                - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e53] [cursor=pointer]:
+                  - /url: /articles/seo-guide-ecommerce-2025
+                  - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e54]
+                - paragraph [ref=e55]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+                - link "اقرأ المزيد" [ref=e57] [cursor=pointer]:
+                  - /url: /articles/seo-guide-ecommerce-2025
+                  - text: اقرأ المزيد
+                  - img [ref=e58]
+                - generic [ref=e60]:
+                  - link "عرض المقال" [ref=e61] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - generic [ref=e62]:
+                      - img [ref=e63]
+                      - text: "1"
+                    - generic [ref=e65]:
+                      - img [ref=e66]
+                      - text: "0"
+                    - generic [ref=e68]:
+                      - img [ref=e69]
+                      - text: "3"
+                    - generic [ref=e71]:
+                      - img [ref=e72]
+                      - text: "5"
+                  - link "مشاركة المقال" [ref=e75] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - img [ref=e76]
+                    - generic [ref=e82]: مشاركة
+            - article [ref=e83]:
+              - generic [ref=e85]:
+                - generic [ref=e86]:
+                  - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e87] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - generic [ref=e89]: من
+                  - generic [ref=e90]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e91] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e92]: متجر نوفا للإلكترونيات
+                    - generic [ref=e94]:
+                      - time [ref=e96]: قبل 5 ساعات
+                      - generic [ref=e97]: •
+                      - generic [ref=e98]: ⏱️ 1 دقيقة
+                - generic [ref=e99]:
+                  - img [ref=e100]
+                  - generic [ref=e103]: نسخة صوتية
+              - generic [ref=e104]:
+                - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e105] [cursor=pointer]:
+                  - /url: /articles/ai-healthcare-saudi-2025
+                  - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية" [level=3] [ref=e106]
+                - paragraph [ref=e107]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+                - link "اقرأ المزيد" [ref=e109] [cursor=pointer]:
+                  - /url: /articles/ai-healthcare-saudi-2025
+                  - text: اقرأ المزيد
+                  - img [ref=e110]
+                - generic [ref=e112]:
+                  - link "عرض المقال" [ref=e113] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - generic [ref=e114]:
+                      - img [ref=e115]
+                      - text: "0"
+                    - generic [ref=e117]:
+                      - img [ref=e118]
+                      - text: "0"
+                    - generic [ref=e120]:
+                      - img [ref=e121]
+                      - text: "0"
+                    - generic [ref=e123]:
+                      - img [ref=e124]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e127] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - img [ref=e128]
+                    - generic [ref=e134]: مشاركة
+        - complementary [ref=e135]
+    - contentinfo [ref=e171]:
+      - navigation "روابط قانونية" [ref=e172]:
+        - link "اتفاقية المستخدم" [ref=e173] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e174] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e175] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e176] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e177]: © 2026 مودونتي
+  - generic [ref=e182] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e183]:
+      - img [ref=e184]
+    - generic [ref=e187]:
+      - button "Open issues overlay" [ref=e188]:
+        - generic [ref=e189]:
+          - generic [ref=e190]: "3"
+          - generic [ref=e191]: "4"
+        - generic [ref=e192]:
+          - text: Issue
+          - generic [ref=e193]: s
+      - button "Collapse issues badge" [ref=e194]:
+        - img [ref=e195]
+  - alert [ref=e197]

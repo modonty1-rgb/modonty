@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
 import { Article } from "../helpers/article-view-types";
@@ -26,10 +27,12 @@ export function ArticleViewGallery({ article, sectionRef }: ArticleViewGalleryPr
           {article.gallery.map((item) =>
             item.media ? (
               <div key={item.id} className="relative aspect-square overflow-hidden rounded-lg border bg-muted/30 group cursor-pointer">
-                <img
+                <Image
                   src={item.media.url}
                   alt={item.media.altText || ""}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  fill
+                  className="object-cover transition-transform group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
                 {item.media.altText && (
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-xs text-right" dir="rtl">

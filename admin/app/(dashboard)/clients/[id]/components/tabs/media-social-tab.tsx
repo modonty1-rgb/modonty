@@ -109,10 +109,13 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Logo</p>
                   <div className="flex items-center gap-4">
-                    <img
+                    <NextImage
                       src={client.logoMedia.url}
                       alt={client.logoMedia.altText || "Logo"}
-                      className="h-24 w-24 rounded object-contain border"
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 rounded object-contain border bg-muted"
+                      sizes="96px"
                     />
                     <div className="flex-1 min-w-0">
                       <a
@@ -134,10 +137,13 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">OG Image</p>
                   <div className="flex items-center gap-4">
-                    <img
+                    <NextImage
                       src={client.heroImageMedia.url}
                       alt={client.heroImageMedia.altText || "OG image"}
-                      className="h-24 w-24 rounded object-contain border"
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 rounded object-contain border bg-muted"
+                      sizes="96px"
                     />
                     <div className="flex-1 min-w-0">
                       <a
@@ -159,10 +165,13 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                   <div className="flex items-center gap-4">
-                    <img
+                    <NextImage
                       src={client.heroImageMedia.url}
                       alt={client.heroImageMedia.altText || "Twitter image"}
-                      className="h-24 w-24 rounded object-contain border"
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 rounded object-contain border bg-muted"
+                      sizes="96px"
                     />
                     <div className="flex-1 min-w-0">
                       <a

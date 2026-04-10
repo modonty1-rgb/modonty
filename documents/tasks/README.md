@@ -9,6 +9,7 @@
 | File | Description |
 |------|-------------|
 | [MASTER-TODO.md](MASTER-TODO.md) | قائمة المهام الرئيسية الموحدة |
+| [IMAGE-ISSUES-TODO.md](IMAGE-ISSUES-TODO.md) | Fix all image issues across 3 apps (plain img tags, object-fit, sizes, config) |
 | [LAUNCH-REVIEW.md](LAUNCH-REVIEW.md) | مراجعة ما قبل الإطلاق |
 | [PREFLIGHT-CHECKLIST.md](PREFLIGHT-CHECKLIST.md) | فحص قبل/بعد كل مهمة |
 | [CHATBOT-TODO.md](CHATBOT-TODO.md) | مهام الشات بوت |

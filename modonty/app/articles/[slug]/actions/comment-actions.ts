@@ -50,7 +50,7 @@ export async function submitComment(
         content: sanitizedContent,
         articleId,
         authorId: userId,
-        status: CommentStatus.APPROVED,
+        status: CommentStatus.PENDING,
       },
       include: {
         author: {
@@ -116,7 +116,7 @@ export async function submitReply(
         articleId,
         authorId: userId,
         parentId: parentCommentId,
-        status: CommentStatus.APPROVED,
+        status: CommentStatus.PENDING,
       },
       include: {
         author: {

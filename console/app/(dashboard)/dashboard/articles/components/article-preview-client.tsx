@@ -306,6 +306,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
                     alt={article.featuredImage.altText || article.title}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 672px"
                   />
                 </div>
                 {article.featuredImage.altText && (

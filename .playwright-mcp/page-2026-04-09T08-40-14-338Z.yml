@@ -1,0 +1,303 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Modonty" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - button "طي القائمة" [ref=e6] [cursor=pointer]:
+          - img
+      - navigation [ref=e7]:
+        - link "معلومات الشركة" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard/profile
+          - img [ref=e9]
+          - generic [ref=e13]: معلومات الشركة
+        - link "معلومات مهمة" [ref=e14] [cursor=pointer]:
+          - /url: /dashboard/seo
+          - img [ref=e15]
+          - generic [ref=e18]: معلومات مهمة
+        - link "المقالات 0" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard/articles
+          - img [ref=e20]
+          - generic [ref=e23]: المقالات
+          - generic [ref=e24]: "0"
+        - link "المحتوى" [ref=e25] [cursor=pointer]:
+          - /url: /dashboard/content
+          - img [ref=e26]
+          - generic [ref=e30]: المحتوى
+        - link "الوسائط" [ref=e31] [cursor=pointer]:
+          - /url: /dashboard/media
+          - img [ref=e32]
+          - generic [ref=e36]: الوسائط
+        - link "الحملات نسخة تجريبية" [ref=e37] [cursor=pointer]:
+          - /url: /dashboard/campaigns
+          - img [ref=e38]
+          - generic [ref=e41]: الحملات
+          - generic [ref=e42]: نسخة تجريبية
+        - link "المشتركون 3" [ref=e43] [cursor=pointer]:
+          - /url: /dashboard/subscribers
+          - img [ref=e44]
+          - generic [ref=e49]: المشتركون
+          - generic [ref=e50]: "3"
+        - link "العملاء المحتملون 1" [ref=e51] [cursor=pointer]:
+          - /url: /dashboard/leads
+          - img [ref=e52]
+          - generic [ref=e56]: العملاء المحتملون
+          - generic [ref=e57]: "1"
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e61]: م
+          - paragraph [ref=e63]: متجر نوفا للإلكترونيات
+        - button "تسجيل الخروج" [ref=e64] [cursor=pointer]:
+          - img
+          - generic [ref=e65]: تسجيل الخروج
+    - generic [ref=e66]:
+      - banner [ref=e67]:
+        - banner [ref=e68]:
+          - navigation "Main" [ref=e69]:
+            - generic [ref=e70]:
+              - link "Modonty" [ref=e71] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e72]: /
+              - link "لوحة التحكم" [ref=e73] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e74]: /
+              - generic [ref=e75]: الإحصائيات
+            - generic [ref=e76]:
+              - link "لوحة التحكم" [ref=e77] [cursor=pointer]:
+                - /url: /dashboard
+                - button [ref=e78]:
+                  - img
+              - link "الإحصائيات" [ref=e79] [cursor=pointer]:
+                - /url: /dashboard/analytics
+                - button [ref=e80]:
+                  - img
+              - link "1" [ref=e81] [cursor=pointer]:
+                - /url: /dashboard/comments
+                - button [ref=e82]:
+                  - img
+                - generic [ref=e83]: "1"
+              - link "أسئلة الزوار" [ref=e84] [cursor=pointer]:
+                - /url: /dashboard/questions
+                - button [ref=e85]:
+                  - img
+              - link "1" [ref=e86] [cursor=pointer]:
+                - /url: /dashboard/support
+                - button [ref=e87]:
+                  - img
+                - generic [ref=e88]: "1"
+              - link "الإعدادات" [ref=e89] [cursor=pointer]:
+                - /url: /dashboard/settings
+                - button [ref=e90]:
+                  - img
+      - main [ref=e91]:
+        - generic [ref=e92]:
+          - region "الإحصائيات" [ref=e93]:
+            - generic [ref=e94]:
+              - heading "الإحصائيات" [level=1] [ref=e95]
+              - paragraph [ref=e96]: إحصائيات وأداء
+            - generic [ref=e97]:
+              - generic [ref=e98]:
+                - generic [ref=e99]:
+                  - generic [ref=e100]:
+                    - img [ref=e101]
+                    - heading "مشاهدات (7 أيام)" [level=3] [ref=e103]
+                  - paragraph [ref=e104]: إجمالي المشاهدات
+                - generic [ref=e105]:
+                  - paragraph [ref=e106]: "20"
+                  - paragraph [ref=e108]: "المقالات: 19 · العميل: 1"
+              - generic [ref=e109]:
+                - generic [ref=e110]:
+                  - generic [ref=e111]:
+                    - img [ref=e112]
+                    - heading "مشاهدات (30 يوماً)" [level=3] [ref=e114]
+                  - paragraph [ref=e115]: إجمالي المشاهدات
+                - generic [ref=e116]:
+                  - paragraph [ref=e117]: "20"
+                  - paragraph [ref=e119]: "المقالات: 19 · العميل: 1"
+              - generic [ref=e120]:
+                - generic [ref=e122]:
+                  - img [ref=e123]
+                  - heading "نسبة التفاعل" [level=3] [ref=e128]
+                - generic [ref=e129]:
+                  - paragraph [ref=e130]: 0.0%
+                  - paragraph [ref=e132]: "تفاعل: 0 · ارتداد: 0"
+              - generic [ref=e133]:
+                - generic [ref=e135]:
+                  - img [ref=e136]
+                  - heading "نسبة التحويل" [level=3] [ref=e140]
+                - generic [ref=e141]:
+                  - paragraph [ref=e142]: 5.26%
+                  - paragraph [ref=e144]: 1 إجمالي التحويلات
+          - region "مصادر الزيارات · مؤشرات الويب" [ref=e145]:
+            - heading "مصادر الزيارات · مؤشرات الويب" [level=2] [ref=e146]
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - generic [ref=e149]:
+                  - heading "مصادر الزيارات" [level=3] [ref=e150]:
+                    - img [ref=e151]
+                    - text: مصادر الزيارات
+                  - paragraph [ref=e153]: آخر 30 يوم
+                - list [ref=e155]:
+                  - listitem [ref=e156]:
+                    - generic [ref=e157]:
+                      - generic [ref=e158]: referral
+                      - generic [ref=e159]: 14 (100.0%)
+              - generic [ref=e161]:
+                - generic [ref=e162]:
+                  - heading "مؤشرات الويب" [level=3] [ref=e163]:
+                    - img [ref=e164]
+                    - text: مؤشرات الويب
+                  - paragraph [ref=e167]: متوسط 30 يوم
+                - list [ref=e169]:
+                  - listitem [ref=e170]:
+                    - generic [ref=e171]: LCP
+                    - generic [ref=e172]: —
+                  - listitem [ref=e173]:
+                    - generic [ref=e174]: CLS
+                    - generic [ref=e175]: —
+                  - listitem [ref=e176]:
+                    - generic [ref=e177]: INP
+                    - generic [ref=e178]: —
+                  - listitem [ref=e179]:
+                    - generic [ref=e180]: TTFB
+                    - generic [ref=e181]: —
+                  - listitem [ref=e182]:
+                    - generic [ref=e183]: TBT
+                    - generic [ref=e184]: —
+          - region "التفاعل · التحويلات" [ref=e185]:
+            - heading "التفاعل · التحويلات" [level=2] [ref=e186]
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - generic [ref=e189]:
+                  - heading "التفاعل" [level=3] [ref=e190]:
+                    - img [ref=e191]
+                    - text: التفاعل
+                  - paragraph [ref=e193]: سلوك المستخدم
+                - generic [ref=e194]:
+                  - list [ref=e195]:
+                    - listitem [ref=e196]:
+                      - generic [ref=e197]: وقت الصفحة
+                      - generic [ref=e198]: 80s ث متوسط
+                    - listitem [ref=e199]:
+                      - generic [ref=e200]: عمق التمرير
+                      - generic [ref=e201]: 27% % متوسط
+                    - listitem [ref=e202]:
+                      - generic [ref=e203]: نسبة الإكمال
+                      - generic [ref=e204]: 0.0%
+                    - listitem [ref=e205]:
+                      - generic [ref=e206]: وقت القراءة
+                      - generic [ref=e207]: 80s ث متوسط
+                  - generic [ref=e208]:
+                    - paragraph [ref=e209]: توزيع عمق التمرير
+                    - list [ref=e210]:
+                      - listitem [ref=e211]:
+                        - generic [ref=e212]: 0-25%
+                        - generic [ref=e214]: 61.5%
+                      - listitem [ref=e215]:
+                        - generic [ref=e216]: 25-50%
+                        - generic [ref=e218]: 0.0%
+                      - listitem [ref=e219]:
+                        - generic [ref=e220]: 50-75%
+                        - generic [ref=e222]: 23.1%
+                      - listitem [ref=e223]:
+                        - generic [ref=e224]: 75-100%
+                        - generic [ref=e226]: 15.4%
+              - generic [ref=e227]:
+                - generic [ref=e228]:
+                  - heading "التحويلات" [level=3] [ref=e229]:
+                    - img [ref=e230]
+                    - text: التحويلات
+                  - paragraph [ref=e234]: أنواع التحويلات
+                - list [ref=e236]:
+                  - listitem [ref=e237]:
+                    - generic [ref=e238]:
+                      - generic [ref=e239]: newsletter
+                      - generic [ref=e240]: 1 (100.0%)
+          - region "أفضل المقالات · أكثر الروابط نقرة · مشاهدات صفحة العميل" [ref=e242]:
+            - heading "أفضل المقالات · أكثر الروابط نقرة · مشاهدات صفحة العميل" [level=2] [ref=e243]
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - heading "أفضل المقالات" [level=3] [ref=e246]:
+                  - img [ref=e247]
+                  - text: أفضل المقالات
+                - paragraph [ref=e249]: حسب المشاهدات (30 يوماً)
+              - list [ref=e251]:
+                - listitem [ref=e252]:
+                  - generic [ref=e253]:
+                    - paragraph [ref=e254]: دليل SEO المتاجر الإلكترونية 2025
+                    - paragraph [ref=e255]: التسويق الرقمي · 19 مشاهدة · 80s ث متوسط · 27% تمرير
+                  - generic [ref=e256]:
+                    - paragraph [ref=e257]: "0"
+                    - paragraph [ref=e258]: التحويلات
+                - listitem [ref=e259]:
+                  - generic [ref=e260]:
+                    - paragraph [ref=e261]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                    - paragraph [ref=e262]: التسويق الرقمي · 0 مشاهدة · 0s ث متوسط · 0% تمرير
+                  - generic [ref=e263]:
+                    - paragraph [ref=e264]: "0"
+                    - paragraph [ref=e265]: التحويلات
+            - generic [ref=e266]:
+              - generic [ref=e267]:
+                - generic [ref=e268]:
+                  - heading "أكثر الروابط نقرة" [level=3] [ref=e269]:
+                    - img [ref=e270]
+                    - text: أكثر الروابط نقرة
+                  - paragraph [ref=e273]: في المقالات (30 يوماً)
+                - paragraph [ref=e275]: لا بيانات نقرة
+              - generic [ref=e276]:
+                - generic [ref=e277]:
+                  - heading "مشاهدات صفحة العميل" [level=3] [ref=e278]:
+                    - img [ref=e279]
+                    - text: مشاهدات صفحة العميل
+                  - paragraph [ref=e282]: صفحة العلامة والملف (30 يوماً)
+                - generic [ref=e283]:
+                  - list [ref=e284]:
+                    - listitem [ref=e285]:
+                      - generic [ref=e286]: إجمالي المشاهدات
+                      - generic [ref=e287]: "1"
+                    - listitem [ref=e288]:
+                      - generic [ref=e289]: زوار فريدون
+                      - generic [ref=e290]: "1"
+                  - generic [ref=e291]:
+                    - paragraph [ref=e292]: أهم المصادر
+                    - list [ref=e293]:
+                      - listitem [ref=e294]:
+                        - generic [ref=e295]: http://localhost:3001/clients/nova-electronics
+                        - generic [ref=e296]: "1"
+          - region "أكثر الأزرار نقرة" [ref=e297]:
+            - heading "أكثر الأزرار نقرة" [level=2] [ref=e298]
+            - generic [ref=e299]:
+              - generic [ref=e300]:
+                - heading "أكثر الأزرار نقرة" [level=3] [ref=e301]:
+                  - img [ref=e302]
+                  - text: أكثر الأزرار نقرة
+                - paragraph [ref=e308]: الأزرار والروابط المتتبعة (30 يوماً)
+              - list [ref=e310]:
+                - listitem [ref=e311]:
+                  - generic [ref=e312]:
+                    - paragraph [ref=e313]: أضف تعليق
+                    - paragraph [ref=e314]: form
+                  - generic [ref=e317]: "3"
+                - listitem [ref=e318]:
+                  - generic [ref=e319]:
+                    - paragraph [ref=e320]: Tab – حول
+                    - paragraph [ref=e321]: link
+                  - generic [ref=e324]: "1"
+                - listitem [ref=e325]:
+                  - generic [ref=e326]:
+                    - paragraph [ref=e327]: اسأل العميل
+                    - paragraph [ref=e328]: form
+                  - generic [ref=e331]: "1"
+                - listitem [ref=e332]:
+                  - generic [ref=e333]:
+                    - paragraph [ref=e334]: Feed card – عرض المقال
+                    - paragraph [ref=e335]: link
+                  - generic [ref=e338]: "1"
+                - listitem [ref=e339]:
+                  - generic [ref=e340]:
+                    - paragraph [ref=e341]: اشترك
+                    - paragraph [ref=e342]: button
+                  - generic [ref=e345]: "1"
+  - button "Open Next.js Dev Tools" [ref=e351] [cursor=pointer]:
+    - img [ref=e352]

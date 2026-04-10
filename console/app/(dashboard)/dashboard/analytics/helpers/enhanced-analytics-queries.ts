@@ -188,10 +188,12 @@ export async function getEngagementMetrics(
     },
   });
 
-  const scrollDepths = await db.engagementDuration.findMany({
+  // Use analytics table (real data) — engagementDuration is deferred/empty
+  const scrollDepths = await db.analytics.findMany({
     where: {
       article: { clientId },
-      createdAt: { gte: since },
+      timestamp: { gte: since },
+      scrollDepth: { not: null },
     },
     select: { scrollDepth: true },
   });
@@ -203,8 +205,8 @@ export async function getEngagementMetrics(
     "75-100": 0,
   };
 
-  scrollDepths.forEach((ed) => {
-    const depth = ed.scrollDepth;
+  scrollDepths.forEach((row) => {
+    const depth = row.scrollDepth ?? 0;
     if (depth <= 25) distribution["0-25"]++;
     else if (depth <= 50) distribution["25-50"]++;
     else if (depth <= 75) distribution["50-75"]++;
@@ -228,7 +230,8 @@ export async function getEngagementMetrics(
     avgCompletionRate: engagementDuration._avg.completionRate ?? 0,
     bounceRate,
     engagementRate,
-    avgReadingTime: engagementDuration._avg.readingTime ?? 0,
+    // engagementDuration.readingTime is deferred — use analytics.timeOnPage as proxy
+    avgReadingTime: engagementDuration._avg.readingTime ?? analytics._avg.timeOnPage ?? 0,
     scrollDepthDistribution: distribution,
     engagedSessions,
     bouncedSessions,
@@ -245,7 +248,7 @@ export async function getConversions(
   const conversions = await db.conversion.groupBy({
     by: ["type"],
     where: {
-      article: { clientId },
+      clientId,
       createdAt: { gte: since },
     },
     _count: {

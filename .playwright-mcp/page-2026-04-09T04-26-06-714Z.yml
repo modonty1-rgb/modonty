@@ -1,0 +1,241 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.25.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.25.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - generic [ref=e100]: Industries
+          - navigation "Main navigation" [ref=e102]:
+            - link "Modonty Modonty" [ref=e103] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e105]
+              - generic [ref=e106]: Modonty
+            - generic [ref=e108]:
+              - link "Articles" [ref=e109] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e110]:
+                  - img
+                  - generic [ref=e111]: Articles
+              - link "Clients" [ref=e112] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e113]:
+                  - img
+                  - generic [ref=e114]: Clients
+              - link "Media" [ref=e115] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e116]:
+                  - img
+                  - generic [ref=e117]: Media
+          - generic [ref=e118]:
+            - link [ref=e119] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e120]:
+                - img
+            - button "M" [ref=e121] [cursor=pointer]:
+              - generic [ref=e123]: M
+      - generic [ref=e124]:
+        - generic [ref=e125]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e126]:
+          - button "Send Note" [ref=e127] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e128] [cursor=pointer]:
+            - img
+      - main [ref=e129]:
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - heading "Industries" [level=1] [ref=e134]
+                - paragraph [ref=e135]: Manage all industries in the system
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - img [ref=e138]
+                  - text: 4 total
+                - generic [ref=e142]:
+                  - img [ref=e143]
+                  - text: 2 with clients
+            - generic [ref=e148]:
+              - button "Revalidate All SEO" [ref=e149] [cursor=pointer]:
+                - img
+                - text: Revalidate All
+              - link "New Industry" [ref=e150] [cursor=pointer]:
+                - /url: /industries/new
+                - button "New Industry" [ref=e151]:
+                  - img
+                  - text: New Industry
+          - table [ref=e156]:
+            - rowgroup [ref=e157]:
+              - row "Name Clients SEO Created Actions" [ref=e158]:
+                - columnheader "Name" [ref=e159] [cursor=pointer]:
+                  - generic [ref=e160]:
+                    - text: Name
+                    - img [ref=e161]
+                - columnheader "Clients" [ref=e164] [cursor=pointer]:
+                  - generic [ref=e165]:
+                    - text: Clients
+                    - img [ref=e166]
+                - columnheader "SEO" [ref=e169]
+                - columnheader "Created" [ref=e170] [cursor=pointer]:
+                  - generic [ref=e171]:
+                    - text: Created
+                    - img [ref=e172]
+                - columnheader "Actions" [ref=e175]
+            - rowgroup [ref=e176]:
+              - row "التجارة الإلكترونية ecommerce 1 Cached Apr 8, 2026 View Edit Delete" [ref=e177] [cursor=pointer]:
+                - cell "التجارة الإلكترونية ecommerce" [ref=e178]:
+                  - generic [ref=e179]:
+                    - text: التجارة الإلكترونية
+                    - paragraph [ref=e180]: ecommerce
+                - cell "1" [ref=e181]:
+                  - generic [ref=e182]: "1"
+                - cell "Cached" [ref=e183]:
+                  - generic [ref=e184]:
+                    - img [ref=e185]
+                    - generic [ref=e188]: Cached
+                - cell "Apr 8, 2026" [ref=e189]
+                - cell "View Edit Delete" [ref=e190]:
+                  - generic [ref=e191]:
+                    - button "View" [ref=e192]:
+                      - img
+                    - button "Edit" [ref=e193]:
+                      - img
+                    - button "Delete" [ref=e194]:
+                      - img
+              - row "التعليم والتدريب education-training 0 Cached Apr 8, 2026 View Edit Delete" [ref=e195] [cursor=pointer]:
+                - cell "التعليم والتدريب education-training" [ref=e196]:
+                  - generic [ref=e197]:
+                    - text: التعليم والتدريب
+                    - paragraph [ref=e198]: education-training
+                - cell "0" [ref=e199]:
+                  - generic [ref=e200]: "0"
+                - cell "Cached" [ref=e201]:
+                  - generic [ref=e202]:
+                    - img [ref=e203]
+                    - generic [ref=e206]: Cached
+                - cell "Apr 8, 2026" [ref=e207]
+                - cell "View Edit Delete" [ref=e208]:
+                  - generic [ref=e209]:
+                    - button "View" [ref=e210]:
+                      - img
+                    - button "Edit" [ref=e211]:
+                      - img
+                    - button "Delete" [ref=e212]:
+                      - img
+              - row "التقنية والذكاء الاصطناعي tech-ai 0 Cached Apr 8, 2026 View Edit Delete" [ref=e213] [cursor=pointer]:
+                - cell "التقنية والذكاء الاصطناعي tech-ai" [ref=e214]:
+                  - generic [ref=e215]:
+                    - text: التقنية والذكاء الاصطناعي
+                    - paragraph [ref=e216]: tech-ai
+                - cell "0" [ref=e217]:
+                  - generic [ref=e218]: "0"
+                - cell "Cached" [ref=e219]:
+                  - generic [ref=e220]:
+                    - img [ref=e221]
+                    - generic [ref=e224]: Cached
+                - cell "Apr 8, 2026" [ref=e225]
+                - cell "View Edit Delete" [ref=e226]:
+                  - generic [ref=e227]:
+                    - button "View" [ref=e228]:
+                      - img
+                    - button "Edit" [ref=e229]:
+                      - img
+                    - button "Delete" [ref=e230]:
+                      - img
+              - row "الرعاية الصحية healthcare 1 Cached Apr 8, 2026 View Edit Delete" [ref=e231] [cursor=pointer]:
+                - cell "الرعاية الصحية healthcare" [ref=e232]:
+                  - generic [ref=e233]:
+                    - text: الرعاية الصحية
+                    - paragraph [ref=e234]: healthcare
+                - cell "1" [ref=e235]:
+                  - generic [ref=e236]: "1"
+                - cell "Cached" [ref=e237]:
+                  - generic [ref=e238]:
+                    - img [ref=e239]
+                    - generic [ref=e242]: Cached
+                - cell "Apr 8, 2026" [ref=e243]
+                - cell "View Edit Delete" [ref=e244]:
+                  - generic [ref=e245]:
+                    - button "View" [ref=e246]:
+                      - img
+                    - button "Edit" [ref=e247]:
+                      - img
+                    - button "Delete" [ref=e248]:
+                      - img
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e254] [cursor=pointer]:
+    - img [ref=e255]
+  - alert [ref=e258]

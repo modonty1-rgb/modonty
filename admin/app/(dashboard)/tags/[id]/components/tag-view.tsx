@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -147,11 +148,13 @@ export function TagView({ tag }: TagViewProps) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Social Image</p>
                   <div className="space-y-2">
-                    <div className="relative border rounded-lg overflow-hidden max-w-md">
-                      <img
+                    <div className="relative border rounded-lg overflow-hidden max-w-md aspect-video">
+                      <Image
                         src={tag.socialImage}
                         alt={tag.socialImageAlt || "Social image"}
-                        className="w-full h-auto max-h-64 object-contain"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 448px"
                       />
                     </div>
                     {tag.socialImageAlt && (

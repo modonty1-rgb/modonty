@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ar } from "@/lib/ar";
 import {
@@ -107,11 +108,13 @@ export function ArticleCard({ article }: ArticleCardProps) {
           </div>
 
           {article.featuredImage && (
-            <div className="mb-4 aspect-video w-full max-w-md rounded-lg overflow-hidden bg-muted">
-              <img
+            <div className="relative mb-4 aspect-video w-full max-w-md rounded-lg overflow-hidden bg-muted">
+              <Image
                 src={article.featuredImage.url}
                 alt={article.featuredImage.altText || article.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 448px"
               />
             </div>
           )}

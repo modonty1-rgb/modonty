@@ -1,0 +1,287 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e227]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e228] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e230]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e232] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e233]
+        - generic [ref=e234]:
+          - search "بحث المقالات" [ref=e235] [cursor=pointer]:
+            - img [ref=e237]
+            - generic [ref=e240]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e241]:
+            - link "الرئيسية" [ref=e242] [cursor=pointer]:
+              - /url: /
+              - img [ref=e244]
+              - generic [ref=e247]: الرئيسية
+            - link "الرائجة" [ref=e248] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e250]
+              - generic [ref=e253]: الرائجة
+            - link "الفئات" [ref=e254] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e256]
+              - generic [ref=e260]: الفئات
+            - link "العملاء" [ref=e261] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e263]
+              - generic [ref=e267]: العملاء
+            - link "1 محفوظ المحفوظات" [ref=e268] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - generic [ref=e269]:
+                - img [ref=e270]
+                - generic "1 محفوظ" [ref=e272]: "1"
+              - generic [ref=e273]: المحفوظات
+        - generic [ref=e274]:
+          - link "صندوق البريد" [ref=e275] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e276]
+          - generic [ref=e279]:
+            - button "ز" [ref=e280] [cursor=pointer]:
+              - generic [ref=e282]: ز
+            - button "فتح المحادثة" [ref=e283] [cursor=pointer]
+    - main [ref=e4]:
+      - navigation "تنقل الصفحة" [ref=e5]:
+        - list [ref=e6]:
+          - listitem [ref=e7]:
+            - link "الرئيسية الرئيسية" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e9]
+              - generic [ref=e12]: الرئيسية
+          - listitem [ref=e13]:
+            - img [ref=e14]
+            - link "العملاء" [ref=e16] [cursor=pointer]:
+              - /url: /clients
+              - generic [ref=e17]: العملاء
+          - listitem [ref=e18]:
+            - generic [ref=e20]: متجر نوفا للإلكترونيات
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e26]: من
+          - generic [ref=e27]:
+            - heading "متجر نوفا للإلكترونيات موثق" [level=1] [ref=e28]:
+              - text: متجر نوفا للإلكترونيات
+              - img "موثق" [ref=e29]
+            - paragraph [ref=e32]: متجر نوفا للإلكترونيات يقدم أحدث المنتجات الإلكترونية من هواتف ذكية وأجهزة لوحية وإكسسوارات تقنية بأسعار منافسة لعملاء المملكة العربية السعودية.
+            - paragraph [ref=e33]: ٠ متابع · ٢ مقال · ٠ مشاهدة
+        - generic [ref=e36]:
+          - button "مشاركة" [ref=e285] [cursor=pointer]:
+            - img
+          - button "متابعة" [ref=e496] [cursor=pointer]:
+            - img
+            - text: متابعة
+      - main [ref=e39]:
+        - navigation "أقسام صفحة العميل" [ref=e40]:
+          - list [ref=e42]:
+            - listitem [ref=e43]:
+              - link "الكل" [ref=e44] [cursor=pointer]:
+                - /url: /clients/nova-electronics
+            - listitem [ref=e45]:
+              - link "حول" [ref=e46] [cursor=pointer]:
+                - /url: /clients/nova-electronics/about
+            - listitem [ref=e47]:
+              - link "تواصل مع الشركة" [ref=e48] [cursor=pointer]:
+                - /url: /clients/nova-electronics/contact
+            - listitem [ref=e49]:
+              - link "الصور" [ref=e50] [cursor=pointer]:
+                - /url: /clients/nova-electronics/photos
+            - listitem [ref=e51]:
+              - link "المتابعون" [ref=e52] [cursor=pointer]:
+                - /url: /clients/nova-electronics/followers
+            - listitem [ref=e53]:
+              - link "التقييمات" [ref=e54] [cursor=pointer]:
+                - /url: /clients/nova-electronics/reviews
+            - listitem [ref=e55]:
+              - link "الريلز" [ref=e56] [cursor=pointer]:
+                - /url: /clients/nova-electronics/reels
+            - listitem [ref=e57]:
+              - link "الإعجابات" [ref=e58] [cursor=pointer]:
+                - /url: /clients/nova-electronics/likes
+        - generic [ref=e287]:
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - heading "ملخص الأعمال" [level=3] [ref=e291]:
+                - img [ref=e292]
+                - text: ملخص الأعمال
+              - paragraph [ref=e296]: متجر نوفا للإلكترونيات يقدم أحدث المنتجات الإلكترونية من هواتف ذكية وأجهزة لوحية وإكسسوارات تقنية بأسعار منافسة لعملاء المملكة العربية السعودية.
+            - generic [ref=e297]:
+              - heading "نبذة عن متجر نوفا للإلكترونيات" [level=3] [ref=e299]:
+                - img [ref=e300]
+                - text: نبذة عن متجر نوفا للإلكترونيات
+              - paragraph [ref=e303]: أحدث الأجهزة الإلكترونية.
+            - generic [ref=e304]:
+              - heading "معلومات الشركة" [level=3] [ref=e306]:
+                - img [ref=e307]
+                - text: معلومات الشركة
+              - generic [ref=e312]:
+                - img [ref=e313]
+                - generic [ref=e317]:
+                  - paragraph [ref=e318]: الصناعة
+                  - paragraph [ref=e319]: التجارة الإلكترونية
+            - generic [ref=e320]:
+              - heading "معلومات الاتصال" [level=3] [ref=e322]:
+                - img [ref=e323]
+                - text: معلومات الاتصال
+              - generic [ref=e326]:
+                - img [ref=e327]
+                - generic [ref=e331]:
+                  - link "البريد الإلكتروني" [ref=e332] [cursor=pointer]:
+                    - /url: mailto:info@nova-electronics.sa
+                  - button "نسخ البريد الإلكتروني" [ref=e333] [cursor=pointer]:
+                    - img
+          - region "المقالات" [ref=e335]:
+            - heading "المقالات" [level=2] [ref=e336]
+            - generic [ref=e337]:
+              - article [ref=e338]:
+                - generic [ref=e340]:
+                  - generic [ref=e343]:
+                    - time [ref=e345]: قبل 17 ساعة
+                    - generic [ref=e346]: •
+                    - generic [ref=e347]: ⏱️ 1 دقيقة
+                  - generic [ref=e348]:
+                    - img [ref=e349]
+                    - generic [ref=e352]: نسخة صوتية
+                - generic [ref=e353]:
+                  - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e354] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e355]
+                  - paragraph [ref=e356]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+                  - link "اقرأ المزيد" [ref=e358] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - text: اقرأ المزيد
+                    - img [ref=e359]
+                  - generic [ref=e361]:
+                    - link "عرض المقال" [ref=e362] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - generic [ref=e363]:
+                        - img [ref=e364]
+                        - text: "1"
+                      - generic [ref=e366]:
+                        - img [ref=e367]
+                        - text: "1"
+                      - generic [ref=e369]:
+                        - img [ref=e370]
+                        - text: "6"
+                      - generic [ref=e372]:
+                        - img [ref=e373]
+                        - text: "13"
+                    - link "مشاركة المقال" [ref=e376] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - img [ref=e377]
+                      - generic [ref=e383]: مشاركة
+              - article [ref=e384]:
+                - generic [ref=e386]:
+                  - generic [ref=e389]:
+                    - time [ref=e391]: قبل 17 ساعة
+                    - generic [ref=e392]: •
+                    - generic [ref=e393]: ⏱️ 1 دقيقة
+                  - generic [ref=e394]:
+                    - img [ref=e395]
+                    - generic [ref=e398]: نسخة صوتية
+                - generic [ref=e399]:
+                  - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e400] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية" [level=3] [ref=e401]
+                  - paragraph [ref=e402]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+                  - link "اقرأ المزيد" [ref=e404] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - text: اقرأ المزيد
+                    - img [ref=e405]
+                  - generic [ref=e407]:
+                    - link "عرض المقال" [ref=e408] [cursor=pointer]:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - generic [ref=e409]:
+                        - img [ref=e410]
+                        - text: "0"
+                      - generic [ref=e412]:
+                        - img [ref=e413]
+                        - text: "0"
+                      - generic [ref=e415]:
+                        - img [ref=e416]
+                        - text: "0"
+                      - generic [ref=e418]:
+                        - img [ref=e419]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e422] [cursor=pointer]:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - img [ref=e423]
+                      - generic [ref=e429]: مشاركة
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - heading "المتابعون" [level=3] [ref=e433]:
+                - img [ref=e434]
+                - text: المتابعون
+              - generic [ref=e439]:
+                - paragraph [ref=e440]: لا يوجد متابعون بعد. عند بدء متابعة هذا العميل، ستظهر الحسابات هنا.
+                - link "عرض المتابعين" [ref=e441] [cursor=pointer]:
+                  - /url: /clients/nova-electronics/followers
+            - generic [ref=e442]:
+              - heading "التقييمات" [level=3] [ref=e444]:
+                - img [ref=e445]
+                - text: التقييمات
+              - generic [ref=e447]:
+                - generic [ref=e448]:
+                  - generic [ref=e449]:
+                    - generic [ref=e451]: زت
+                    - generic [ref=e452]:
+                      - text: زائر تجريبي
+                      - 'link "على: دليل SEO المتاجر الإلكترونية 2025" [ref=e453] [cursor=pointer]':
+                        - /url: /articles/seo-guide-ecommerce-2025
+                      - paragraph [ref=e454]: تعليق اختبار - سيناريو 9
+                  - generic [ref=e455]:
+                    - generic [ref=e457]: MA
+                    - generic [ref=e458]:
+                      - text: Modonty Admin
+                      - 'link "على: دليل SEO المتاجر الإلكترونية 2025" [ref=e459] [cursor=pointer]':
+                        - /url: /articles/seo-guide-ecommerce-2025
+                      - paragraph [ref=e460]: أنصح بـ Semrush.
+                  - generic [ref=e461]:
+                    - generic [ref=e463]: م
+                    - generic [ref=e464]:
+                      - text: مستخدم مجهول
+                      - 'link "على: دليل SEO المتاجر الإلكترونية 2025" [ref=e465] [cursor=pointer]':
+                        - /url: /articles/seo-guide-ecommerce-2025
+                      - paragraph [ref=e466]: شكراً على المعلومات.
+                - link "عرض كل التقييمات" [ref=e467] [cursor=pointer]:
+                  - /url: /clients/nova-electronics/reviews
+            - generic [ref=e468]:
+              - heading "الإعجابات" [level=3] [ref=e470]:
+                - img [ref=e471]
+                - text: الإعجابات
+              - generic [ref=e473]:
+                - generic [ref=e474]:
+                  - generic [ref=e475]:
+                    - generic [ref=e476]:
+                      - img [ref=e477]
+                      - text: متابعو الصفحة
+                    - generic [ref=e482]: ١
+                  - generic [ref=e483]:
+                    - generic [ref=e484]:
+                      - img [ref=e485]
+                      - text: المفضّلة
+                    - generic [ref=e487]: ٠
+                  - generic [ref=e488]:
+                    - generic [ref=e489]:
+                      - img [ref=e490]
+                      - text: إعجابات المقالات
+                    - generic [ref=e493]: ١
+                - link "عرض تفاصيل الإعجابات" [ref=e494] [cursor=pointer]:
+                  - /url: /clients/nova-electronics/likes
+            - region "عملاء مشابهون":
+              - heading "عملاء مشابهون" [level=2] [ref=e495]
+    - contentinfo [ref=e210]:
+      - navigation "روابط قانونية" [ref=e211]:
+        - link "اتفاقية المستخدم" [ref=e212] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e213] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e214] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e215] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+        - generic [ref=e216]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e222] [cursor=pointer]:
+    - img [ref=e223]
+  - alert [ref=e226]

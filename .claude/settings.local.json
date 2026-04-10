@@ -104,7 +104,10 @@
       "mcp__gsc__export_analytics",
       "mcp__gsc__analyze_brand_queries",
       "mcp__gsc__query_by_search_appearance",
-      "mcp__gsc__query_by_search_type"
+      "mcp__gsc__query_by_search_type",
+      "Bash(pnpm dev:*)",
+      "Bash(echo \"admin PID: $!\")",
+      "Read(//c/Users/w2nad/Pictures/Screenshots//**)"
     ]
   }
 }

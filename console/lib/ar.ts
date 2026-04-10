@@ -311,6 +311,9 @@ export const ar = {
     sAvg: "ث متوسط",
     percentAvg: "% متوسط",
     scrollDepthDist: "توزيع عمق التمرير",
+    topCtaClicks: "أكثر الأزرار نقرة",
+    ctaClicksDesc: "الأزرار والروابط المتتبعة (30 يوماً)",
+    noCtaData: "لا بيانات نقرات بعد",
   },
 
   leads: {
@@ -341,6 +344,7 @@ export const ar = {
     conversions: "التحويلات",
     lastActive: "آخر نشاط",
     noLeadsFound: "لم يُعثر على عملاء محتملين",
+    noLeadsHint: "انقر \"تحديث الدرجات\" لحساب نقاط الزوار بناءً على تفاعلاتهم مع المحتوى",
     noContact: "لا يوجد اتصال",
     anonymous: "مجهول",
     unqualified: "غير مؤهل",
@@ -396,6 +400,7 @@ export const ar = {
     campaignPerformance: "أداء الحملات",
     detailedMetrics: "مقاييس تفصيلية لكل حملة",
     noCampaignData: "لا توجد بيانات حملات",
+    noCampaignHint: "لبدء التتبع، أضف معامل utm_campaign لروابطك — مثال: /articles/slug?utm_source=instagram&utm_campaign=ramadan",
     utmAnalysis: "تحليل معاملات UTM",
     trackBySource: "حسب المصدر والوسيط والحملة",
     noUtmData: "لا توجد بيانات تتبع UTM",

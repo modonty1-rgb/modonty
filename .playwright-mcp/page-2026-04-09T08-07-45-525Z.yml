@@ -1,0 +1,174 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Modonty" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - button "طي القائمة" [ref=e6] [cursor=pointer]:
+          - img
+      - navigation [ref=e7]:
+        - link "معلومات الشركة" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard/profile
+          - img [ref=e9]
+          - generic [ref=e13]: معلومات الشركة
+        - link "معلومات مهمة" [ref=e14] [cursor=pointer]:
+          - /url: /dashboard/seo
+          - img [ref=e15]
+          - generic [ref=e18]: معلومات مهمة
+        - link "المقالات 0" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard/articles
+          - img [ref=e20]
+          - generic [ref=e23]: المقالات
+          - generic [ref=e24]: "0"
+        - link "المحتوى" [ref=e25] [cursor=pointer]:
+          - /url: /dashboard/content
+          - img [ref=e26]
+          - generic [ref=e30]: المحتوى
+        - link "الوسائط" [ref=e31] [cursor=pointer]:
+          - /url: /dashboard/media
+          - img [ref=e32]
+          - generic [ref=e36]: الوسائط
+        - link "الحملات نسخة تجريبية" [ref=e37] [cursor=pointer]:
+          - /url: /dashboard/campaigns
+          - img [ref=e38]
+          - generic [ref=e41]: الحملات
+          - generic [ref=e42]: نسخة تجريبية
+        - link "المشتركون 3" [ref=e43] [cursor=pointer]:
+          - /url: /dashboard/subscribers
+          - img [ref=e44]
+          - generic [ref=e49]: المشتركون
+          - generic [ref=e50]: "3"
+        - link "العملاء المحتملون 1" [ref=e51] [cursor=pointer]:
+          - /url: /dashboard/leads
+          - img [ref=e52]
+          - generic [ref=e56]: العملاء المحتملون
+          - generic [ref=e57]: "1"
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e61]: م
+          - paragraph [ref=e63]: متجر نوفا للإلكترونيات
+        - button "تسجيل الخروج" [ref=e64] [cursor=pointer]:
+          - img
+          - generic [ref=e65]: تسجيل الخروج
+    - generic [ref=e66]:
+      - banner [ref=e67]:
+        - banner [ref=e68]:
+          - navigation "Main" [ref=e69]:
+            - generic [ref=e70]:
+              - link "Modonty" [ref=e71] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e72]: /
+              - link "لوحة التحكم" [ref=e73] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e74]: /
+              - generic [ref=e75]: العملاء المحتملون
+            - generic [ref=e76]:
+              - link "لوحة التحكم" [ref=e77] [cursor=pointer]:
+                - /url: /dashboard
+                - button [ref=e78]:
+                  - img
+              - link "الإحصائيات" [ref=e79] [cursor=pointer]:
+                - /url: /dashboard/analytics
+                - button [ref=e80]:
+                  - img
+              - link "1" [ref=e81] [cursor=pointer]:
+                - /url: /dashboard/comments
+                - button [ref=e82]:
+                  - img
+                - generic [ref=e83]: "1"
+              - link "أسئلة الزوار" [ref=e84] [cursor=pointer]:
+                - /url: /dashboard/questions
+                - button [ref=e85]:
+                  - img
+              - link "1" [ref=e86] [cursor=pointer]:
+                - /url: /dashboard/support
+                - button [ref=e87]:
+                  - img
+                - generic [ref=e88]: "1"
+              - link "الإعدادات" [ref=e89] [cursor=pointer]:
+                - /url: /dashboard/settings
+                - button [ref=e90]:
+                  - img
+      - main [ref=e91]:
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - heading "تقييم العملاء المحتملين" [level=1] [ref=e95]
+              - paragraph [ref=e96]: تتبع الزوار الأكثر تفاعلاً
+            - button "تحديث الدرجات" [ref=e97] [cursor=pointer]:
+              - img
+              - text: تحديث الدرجات
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e101]:
+                - img [ref=e102]
+                - heading "عملاء ساخنون" [level=3] [ref=e104]
+              - generic [ref=e105]:
+                - paragraph [ref=e106]: "0"
+                - paragraph [ref=e107]: تفاعل عالي
+            - generic [ref=e108]:
+              - generic [ref=e110]:
+                - img [ref=e111]
+                - heading "عملاء دافئون" [level=3] [ref=e114]
+              - generic [ref=e115]:
+                - paragraph [ref=e116]: "0"
+                - paragraph [ref=e117]: تفاعل متوسط
+            - generic [ref=e118]:
+              - generic [ref=e120]:
+                - img [ref=e121]
+                - heading "عملاء باردون" [level=3] [ref=e134]
+              - generic [ref=e135]:
+                - paragraph [ref=e136]: "1"
+                - paragraph [ref=e137]: تفاعل منخفض
+            - generic [ref=e138]:
+              - generic [ref=e140]:
+                - img [ref=e141]
+                - heading "مؤهلون" [level=3] [ref=e144]
+              - generic [ref=e145]:
+                - paragraph [ref=e146]: "0"
+                - paragraph [ref=e147]: جاهزون للتواصل
+            - generic [ref=e148]:
+              - generic [ref=e150]:
+                - img [ref=e151]
+                - heading "متوسط الدرجة" [level=3] [ref=e155]
+              - generic [ref=e156]:
+                - paragraph [ref=e157]: "3"
+                - paragraph [ref=e158]: من 100
+          - generic [ref=e159]:
+            - generic [ref=e161]:
+              - generic [ref=e162]:
+                - heading "ملخص العملاء المحتملين" [level=3] [ref=e163]
+                - paragraph [ref=e164]: 1 عميل محتمل
+              - generic [ref=e165]:
+                - button "الكل" [ref=e166] [cursor=pointer]
+                - button "ساخن" [ref=e167] [cursor=pointer]
+                - button "دافئ" [ref=e168] [cursor=pointer]
+                - button "بارد" [ref=e169] [cursor=pointer]
+            - table [ref=e172]:
+              - rowgroup [ref=e173]:
+                - row "جهة الاتصال المستوى الدرجة الصفحات الوقت (دقيقة) التفاعلات التحويلات آخر نشاط" [ref=e174]:
+                  - columnheader "جهة الاتصال" [ref=e175]
+                  - columnheader "المستوى" [ref=e176]
+                  - columnheader "الدرجة" [ref=e177]
+                  - columnheader "الصفحات" [ref=e178]
+                  - columnheader "الوقت (دقيقة)" [ref=e179]
+                  - columnheader "التفاعلات" [ref=e180]
+                  - columnheader "التحويلات" [ref=e181]
+                  - columnheader "آخر نشاط" [ref=e182]
+              - rowgroup [ref=e183]:
+                - row "مجهول لا يوجد اتصال بارد 3 1 0.0 0 0 ٨‏/٤‏/٢٠٢٦" [ref=e184]:
+                  - cell "مجهول لا يوجد اتصال" [ref=e185]:
+                    - generic [ref=e186]:
+                      - paragraph [ref=e187]: مجهول
+                      - paragraph [ref=e188]: لا يوجد اتصال
+                  - cell "بارد" [ref=e189]:
+                    - generic [ref=e190]: بارد
+                  - cell "3" [ref=e191]
+                  - cell "1" [ref=e192]
+                  - cell "0.0" [ref=e193]
+                  - cell "0" [ref=e194]
+                  - cell "0" [ref=e195]
+                  - cell "٨‏/٤‏/٢٠٢٦" [ref=e196]
+  - button "Open Next.js Dev Tools" [ref=e202] [cursor=pointer]:
+    - img [ref=e203]

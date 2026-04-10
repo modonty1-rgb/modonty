@@ -71,9 +71,10 @@ export function LeadsTable({ leads }: LeadsTableProps) {
       </CardHeader>
       <CardContent>
         {filteredLeads.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-8">
-            {l.noLeadsFound}
-          </p>
+          <div className="text-center py-10 space-y-2">
+            <p className="text-sm font-medium text-foreground">{l.noLeadsFound}</p>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">{l.noLeadsHint}</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

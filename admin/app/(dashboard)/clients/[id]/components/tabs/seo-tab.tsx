@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { messages } from "@/lib/messages";
@@ -247,10 +248,13 @@ export function SEOTab({ client }: SEOTabProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <img
+              <Image
                 src={client.heroImageMedia.url}
                 alt={client.heroImageMedia.altText || "OG image"}
+                width={160}
+                height={160}
                 className="h-40 w-40 rounded object-cover border"
+                sizes="160px"
               />
               <a
                 href={client.heroImageMedia.url}
@@ -307,10 +311,13 @@ export function SEOTab({ client }: SEOTabProps) {
                   <div>
                     <p className="text-sm text-muted-foreground mb-2">Twitter Image</p>
                     <div className="space-y-3">
-                      <img
+                      <Image
                         src={client.heroImageMedia.url}
                         alt={client.heroImageMedia.altText || "Twitter image"}
+                        width={160}
+                        height={160}
                         className="h-40 w-40 rounded object-cover border"
+                        sizes="160px"
                       />
                       <a
                         href={client.heroImageMedia.url}

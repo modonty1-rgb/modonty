@@ -9,6 +9,7 @@ import { IconUsers, IconClients } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import Image from "next/image";
 import Link from "@/components/link";
 import { ClientFollowButton } from "@/app/clients/[slug]/components/client-follow-button";
 
@@ -151,10 +152,12 @@ export default function FollowingPage() {
                           <Link href={`/clients/${client.slug}`} className="flex-shrink-0">
                             {client.logo ? (
                               <div className="relative w-16 h-16 rounded overflow-hidden bg-muted">
-                                <img
+                                <Image
                                   src={client.logo}
                                   alt={client.name}
-                                  className="object-cover w-full h-full"
+                                  fill
+                                  className="object-cover"
+                                  sizes="64px"
                                 />
                               </div>
                             ) : (

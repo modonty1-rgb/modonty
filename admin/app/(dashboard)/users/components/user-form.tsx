@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { messages } from "@/lib/messages";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -219,10 +220,13 @@ export function UserForm({ initialData, userId }: UserFormProps) {
               <div className="relative group">
                 <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-border bg-muted flex items-center justify-center">
                   {hasValidImage ? (
-                    <img
+                    <Image
                       src={formData.image}
                       alt={formData.name || "Admin"}
+                      width={112}
+                      height={112}
                       className="w-full h-full object-cover"
+                      sizes="112px"
                       onError={() => setImgError(true)}
                     />
                   ) : formData.image && imgError ? (

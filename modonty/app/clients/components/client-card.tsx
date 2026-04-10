@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "@/components/link";
 import { highlightQuery } from "@/lib/highlight-query";
 import {
@@ -12,7 +13,6 @@ import {
   IconTrending,
 } from "@/lib/icons";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -77,12 +77,20 @@ export function ClientCard(props: ClientCardProps) {
       >
         <CardHeader className="space-y-4">
           <div className="flex items-start justify-between">
-            <Avatar className="h-20 w-20 ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20">
-              <AvatarImage src={props.logo} alt={props.name} />
-              <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
+            <div className="h-20 w-20 rounded-full ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20 overflow-hidden flex items-center justify-center flex-shrink-0">
+              {props.logo ? (
+                <Image
+                  src={props.logo}
+                  alt={props.name}
+                  width={80}
+                  height={80}
+                  className="h-full w-full object-contain"
+                  sizes="80px"
+                />
+              ) : (
+                <span className="text-2xl font-bold text-primary">{initials}</span>
+              )}
+            </div>
             
             {props.isVerified && (
               <>

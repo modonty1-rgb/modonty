@@ -20,9 +20,10 @@ export function CampaignsTable({ campaigns }: CampaignsTableProps) {
       </CardHeader>
       <CardContent>
         {campaigns.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-8">
-            {c.noCampaignData}
-          </p>
+          <div className="text-center py-10 space-y-2">
+            <p className="text-sm font-medium text-foreground">{c.noCampaignData}</p>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto">{c.noCampaignHint}</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

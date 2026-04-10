@@ -18,7 +18,8 @@ import {
 } from "./helpers/enhanced-analytics-queries";
 import { getTopClickedLinks } from "./helpers/link-clicks-queries";
 import { getClientViewsAnalytics } from "./helpers/client-views-queries";
-import { Users, Target, Link as LinkIcon, Eye, BarChart3, Gauge, Activity } from "lucide-react";
+import { getTopCTAClicks } from "./helpers/cta-clicks-queries";
+import { Users, Target, Link as LinkIcon, Eye, BarChart3, Gauge, Activity, MousePointerClick } from "lucide-react";
 import { AnalyticsStatCard } from "./components/analytics-stat-card";
 import { AnalyticsProgressList } from "./components/analytics-progress-list";
 
@@ -40,6 +41,7 @@ export default async function AnalyticsPage() {
     topArticles,
     topLinks,
     clientViewsData,
+    ctaClicks,
   ] = await Promise.all([
     getClientViewCounts(clientId, 7),
     getClientViewCounts(clientId, 30),
@@ -51,6 +53,7 @@ export default async function AnalyticsPage() {
     getArticlePerformance(clientId, 30, 10),
     getTopClickedLinks(clientId, 30, 10),
     getClientViewsAnalytics(clientId, 30),
+    getTopCTAClicks(clientId, 30, 10),
   ]);
 
   const a = ar.analytics;
@@ -398,6 +401,51 @@ export default async function AnalyticsPage() {
             </CardContent>
           </Card>
         </div>
+      </section>
+
+      <section aria-labelledby="cta-clicks-heading">
+        <h2 id="cta-clicks-heading" className="sr-only">{a.topCtaClicks}</h2>
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MousePointerClick className="h-4 w-4 text-primary" />
+              {a.topCtaClicks}
+            </CardTitle>
+            <CardDescription>{a.ctaClicksDesc}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {ctaClicks.items.length > 0 ? (
+              <ul className="space-y-0 divide-y divide-border" role="list">
+                {ctaClicks.items.map((item, index) => (
+                  <li key={index} className="flex items-center justify-between gap-4 py-3 first:pt-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {item.label ?? item.type}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 capitalize">
+                        {item.type.replace(/_/g, " ").toLowerCase()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="w-20 h-2 rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full"
+                          style={{ width: `${item.percentage}%` }}
+                          role="presentation"
+                        />
+                      </div>
+                      <span className="text-sm font-medium text-foreground tabular-nums w-8 text-end">
+                        {item.clicks}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">{a.noCtaData}</p>
+            )}
+          </CardContent>
+        </Card>
       </section>
     </div>
   );

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { subDays, addDays, startOfDay, endOfDay, startOfMonth, endOfMonth, format, parse } from "date-fns";
+import { subDays, addDays, startOfDay, endOfDay, startOfMonth, endOfMonth, format, parse, startOfWeek } from "date-fns";
 
 export async function getDashboardStats() {
   try {
@@ -884,5 +884,193 @@ export async function getSubscriberGrowthTrendData() {
   } catch (error) {
     console.error("Error fetching subscriber growth trend data:", error);
     return [];
+  }
+}
+
+export async function getVisitorEngagementStats() {
+  try {
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+    const thirtyDaysAgo = startOfDay(subDays(now, 30));
+
+    const [
+      // totals (all time)
+      totalLikes,
+      totalDislikes,
+      totalFavorites,
+      totalComments,
+      totalReplies,
+      totalShares,
+      // today
+      likesToday,
+      dislikesToday,
+      favoritesToday,
+      commentsToday,
+      sharesToday,
+      // this week
+      likesWeek,
+      dislikesWeek,
+      favoritesWeek,
+      commentsWeek,
+      sharesWeek,
+      // shares by platform (last 30 days)
+      sharesByPlatform,
+      // top shared article (last 30 days)
+      topSharedArticles,
+    ] = await Promise.all([
+      db.articleLike.count(),
+      db.articleDislike.count(),
+      db.articleFavorite.count(),
+      db.comment.count({ where: { status: "APPROVED", parentId: null } }),
+      db.comment.count({ where: { status: "APPROVED", parentId: { not: null } } }),
+      db.share.count(),
+      // today
+      db.articleLike.count({ where: { createdAt: { gte: todayStart } } }),
+      db.articleDislike.count({ where: { createdAt: { gte: todayStart } } }),
+      db.articleFavorite.count({ where: { createdAt: { gte: todayStart } } }),
+      db.comment.count({ where: { createdAt: { gte: todayStart }, parentId: null } }),
+      db.share.count({ where: { createdAt: { gte: todayStart } } }),
+      // this week
+      db.articleLike.count({ where: { createdAt: { gte: weekStart } } }),
+      db.articleDislike.count({ where: { createdAt: { gte: weekStart } } }),
+      db.articleFavorite.count({ where: { createdAt: { gte: weekStart } } }),
+      db.comment.count({ where: { createdAt: { gte: weekStart }, parentId: null } }),
+      db.share.count({ where: { createdAt: { gte: weekStart } } }),
+      // platform breakdown
+      db.share.groupBy({
+        by: ["platform"],
+        _count: { _all: true },
+        where: { createdAt: { gte: thirtyDaysAgo } },
+        orderBy: { _count: { platform: "desc" } },
+      }),
+      // top shared articles (last 30 days)
+      db.share.groupBy({
+        by: ["articleId"],
+        _count: { _all: true },
+        where: { articleId: { not: null }, createdAt: { gte: thirtyDaysAgo } },
+        orderBy: { _count: { articleId: "desc" } },
+        take: 3,
+      }),
+    ]);
+
+    // Resolve article titles for top shared
+    const topSharedWithTitles = await Promise.all(
+      topSharedArticles
+        .filter((s) => s.articleId !== null)
+        .map(async (s) => {
+          const article = await db.article.findUnique({
+            where: { id: s.articleId! },
+            select: { id: true, title: true },
+          });
+          return { articleId: s.articleId!, title: article?.title ?? "Unknown", count: s._count._all };
+        })
+    );
+
+    return {
+      totals: { likes: totalLikes, dislikes: totalDislikes, favorites: totalFavorites, comments: totalComments, replies: totalReplies, shares: totalShares },
+      today: { likes: likesToday, dislikes: dislikesToday, favorites: favoritesToday, comments: commentsToday, shares: sharesToday },
+      week: { likes: likesWeek, dislikes: dislikesWeek, favorites: favoritesWeek, comments: commentsWeek, shares: sharesWeek },
+      sharesByPlatform: sharesByPlatform.map((s) => ({ platform: s.platform, count: s._count._all })),
+      topSharedArticles: topSharedWithTitles,
+    };
+  } catch (error) {
+    console.error("Error fetching visitor engagement stats:", error);
+    return {
+      totals: { likes: 0, dislikes: 0, favorites: 0, comments: 0, replies: 0, shares: 0 },
+      today: { likes: 0, dislikes: 0, favorites: 0, comments: 0, shares: 0 },
+      week: { likes: 0, dislikes: 0, favorites: 0, comments: 0, shares: 0 },
+      sharesByPlatform: [],
+      topSharedArticles: [],
+    };
+  }
+}
+
+export async function getEngagementQueue() {
+  try {
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+    const yesterday = startOfDay(subDays(now, 1));
+
+    const [
+      pendingComments,
+      newContactMessages,
+      pendingFAQs,
+      viewsToday,
+      viewsYesterday,
+      viewsThisWeek,
+      recentPendingComments,
+      recentContactMessages,
+      recentPendingFAQs,
+    ] = await Promise.all([
+      // counts
+      db.comment.count({ where: { status: "PENDING" } }),
+      db.contactMessage.count({ where: { status: "new" } }),
+      db.articleFAQ.count({ where: { status: "PENDING" } }),
+      db.articleView.count({ where: { createdAt: { gte: todayStart } } }),
+      db.articleView.count({ where: { createdAt: { gte: yesterday, lt: todayStart } } }),
+      db.articleView.count({ where: { createdAt: { gte: weekStart } } }),
+      // recent items for preview
+      db.comment.findMany({
+        where: { status: "PENDING" },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          author: { select: { name: true } },
+          article: { select: { id: true, title: true } },
+        },
+      }),
+      db.contactMessage.findMany({
+        where: { status: "new" },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          name: true,
+          subject: true,
+          createdAt: true,
+        },
+      }),
+      db.articleFAQ.findMany({
+        where: { status: "PENDING" },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          question: true,
+          createdAt: true,
+          article: { select: { id: true, title: true } },
+        },
+      }),
+    ]);
+
+    const viewsTrend = viewsYesterday > 0
+      ? Math.round(((viewsToday - viewsYesterday) / viewsYesterday) * 100)
+      : viewsToday > 0 ? 100 : 0;
+
+    return {
+      pendingComments,
+      newContactMessages,
+      pendingFAQs,
+      views: { today: viewsToday, yesterday: viewsYesterday, thisWeek: viewsThisWeek, trend: viewsTrend },
+      recentPendingComments,
+      recentContactMessages,
+      recentPendingFAQs,
+    };
+  } catch (error) {
+    console.error("Error fetching engagement queue:", error);
+    return {
+      pendingComments: 0,
+      newContactMessages: 0,
+      pendingFAQs: 0,
+      views: { today: 0, yesterday: 0, thisWeek: 0, trend: 0 },
+      recentPendingComments: [],
+      recentContactMessages: [],
+      recentPendingFAQs: [],
+    };
   }
 }

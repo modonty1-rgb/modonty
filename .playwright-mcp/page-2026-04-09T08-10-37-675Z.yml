@@ -1,0 +1,269 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "Modonty" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - button "طي القائمة" [ref=e6] [cursor=pointer]:
+          - img
+      - navigation [ref=e7]:
+        - link "معلومات الشركة" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard/profile
+          - img [ref=e9]
+          - generic [ref=e13]: معلومات الشركة
+        - link "معلومات مهمة" [ref=e14] [cursor=pointer]:
+          - /url: /dashboard/seo
+          - img [ref=e15]
+          - generic [ref=e18]: معلومات مهمة
+        - link "المقالات 0" [ref=e19] [cursor=pointer]:
+          - /url: /dashboard/articles
+          - img [ref=e20]
+          - generic [ref=e23]: المقالات
+          - generic [ref=e24]: "0"
+        - link "المحتوى" [ref=e25] [cursor=pointer]:
+          - /url: /dashboard/content
+          - img [ref=e26]
+          - generic [ref=e30]: المحتوى
+        - link "الوسائط" [ref=e31] [cursor=pointer]:
+          - /url: /dashboard/media
+          - img [ref=e32]
+          - generic [ref=e36]: الوسائط
+        - link "الحملات نسخة تجريبية" [ref=e37] [cursor=pointer]:
+          - /url: /dashboard/campaigns
+          - img [ref=e38]
+          - generic [ref=e41]: الحملات
+          - generic [ref=e42]: نسخة تجريبية
+        - link "المشتركون 3" [ref=e43] [cursor=pointer]:
+          - /url: /dashboard/subscribers
+          - img [ref=e44]
+          - generic [ref=e49]: المشتركون
+          - generic [ref=e50]: "3"
+        - link "العملاء المحتملون 1" [ref=e51] [cursor=pointer]:
+          - /url: /dashboard/leads
+          - img [ref=e52]
+          - generic [ref=e56]: العملاء المحتملون
+          - generic [ref=e57]: "1"
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e61]: م
+          - paragraph [ref=e63]: متجر نوفا للإلكترونيات
+        - button "تسجيل الخروج" [ref=e64] [cursor=pointer]:
+          - img
+          - generic [ref=e65]: تسجيل الخروج
+    - generic [ref=e66]:
+      - banner [ref=e67]:
+        - banner [ref=e68]:
+          - navigation "Main" [ref=e69]:
+            - generic [ref=e70]:
+              - link "Modonty" [ref=e71] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e72]: /
+              - link "لوحة التحكم" [ref=e73] [cursor=pointer]:
+                - /url: /dashboard
+              - generic [ref=e74]: /
+              - generic [ref=e75]: معلومات الشركة
+            - generic [ref=e76]:
+              - link "لوحة التحكم" [ref=e77] [cursor=pointer]:
+                - /url: /dashboard
+                - button [ref=e78]:
+                  - img
+              - link "الإحصائيات" [ref=e79] [cursor=pointer]:
+                - /url: /dashboard/analytics
+                - button [ref=e80]:
+                  - img
+              - link "1" [ref=e81] [cursor=pointer]:
+                - /url: /dashboard/comments
+                - button [ref=e82]:
+                  - img
+                - generic [ref=e83]: "1"
+              - link "أسئلة الزوار" [ref=e84] [cursor=pointer]:
+                - /url: /dashboard/questions
+                - button [ref=e85]:
+                  - img
+              - link "1" [ref=e86] [cursor=pointer]:
+                - /url: /dashboard/support
+                - button [ref=e87]:
+                  - img
+                - generic [ref=e88]: "1"
+              - link "الإعدادات" [ref=e89] [cursor=pointer]:
+                - /url: /dashboard/settings
+                - button [ref=e90]:
+                  - img
+      - main [ref=e91]:
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - heading "معلومات الشركة" [level=1] [ref=e94]
+            - paragraph [ref=e95]: تعديل بيانات الشركة والتواصل
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - heading "البيانات الأساسية" [level=3] [ref=e99]
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - text: اسم الشركة
+                  - textbox "اسم الشركة" [ref=e102]: متجر نوفا للإلكترونيات
+                - generic [ref=e103]:
+                  - text: الاسم القانوني
+                  - textbox "الاسم القانوني" [ref=e104]
+                - generic [ref=e105]:
+                  - text: الاسم البديل
+                  - textbox "الاسم البديل" [ref=e106]
+                - generic [ref=e107]:
+                  - text: الموقع الإلكتروني
+                  - textbox "الموقع الإلكتروني" [ref=e108]:
+                    - /placeholder: https://
+                - generic [ref=e109]:
+                  - text: الشعار
+                  - textbox "الشعار" [ref=e110]
+                - generic [ref=e111]:
+                  - text: وصف الشركة
+                  - textbox "وصف الشركة" [ref=e112]
+            - generic [ref=e113]:
+              - heading "معلومات التواصل" [level=3] [ref=e115]
+              - generic [ref=e116]:
+                - generic [ref=e117]:
+                  - text: البريد الإلكتروني
+                  - textbox "البريد الإلكتروني" [ref=e118]:
+                    - /placeholder: example@mail.com
+                    - text: info@nova-electronics.sa
+                - generic [ref=e119]:
+                  - text: الهاتف
+                  - textbox "الهاتف" [ref=e120]:
+                    - /placeholder: +966...
+                - generic [ref=e121]:
+                  - text: نوع جهة الاتصال
+                  - textbox "نوع جهة الاتصال" [ref=e122]
+            - generic [ref=e123]:
+              - heading "العنوان" [level=3] [ref=e125]
+              - generic [ref=e126]:
+                - generic [ref=e127]:
+                  - text: الشارع
+                  - textbox "الشارع" [ref=e128]
+                - generic [ref=e129]:
+                  - text: المدينة
+                  - textbox "المدينة" [ref=e130]: الرياض
+                - generic [ref=e131]:
+                  - text: الدولة
+                  - textbox "الدولة" [ref=e132]: SA
+                - generic [ref=e133]:
+                  - text: الرمز البريدي
+                  - textbox "الرمز البريدي" [ref=e134]
+                - generic [ref=e135]:
+                  - text: المنطقة
+                  - textbox "المنطقة" [ref=e136]
+                - generic [ref=e137]:
+                  - text: الحي
+                  - textbox "الحي" [ref=e138]
+                - generic [ref=e139]:
+                  - text: رقم المبنى
+                  - textbox "رقم المبنى" [ref=e140]
+                - generic [ref=e141]:
+                  - text: الرقم الإضافي
+                  - textbox "الرقم الإضافي" [ref=e142]
+            - generic [ref=e143]:
+              - heading "بيانات السجل التجاري والضرائب" [level=3] [ref=e145]
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - text: رقم السجل التجاري
+                  - textbox "رقم السجل التجاري" [ref=e148]
+                - generic [ref=e149]:
+                  - text: الرقم الضريبي (زاتكا)
+                  - textbox "الرقم الضريبي (زاتكا)" [ref=e150]
+                - generic [ref=e151]:
+                  - text: الرقم الضريبي
+                  - textbox "الرقم الضريبي" [ref=e152]
+                - generic [ref=e153]:
+                  - text: الشكل القانوني
+                  - textbox "الشكل القانوني" [ref=e154]
+            - generic [ref=e155]:
+              - heading "معلومات الأعمال" [level=3] [ref=e157]
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - text: القطاع
+                  - combobox "القطاع" [ref=e160]:
+                    - option "—"
+                    - option "التجارة الإلكترونية" [selected]
+                    - option "التعليم والتدريب"
+                    - option "التقنية والذكاء الاصطناعي"
+                    - option "الرعاية الصحية"
+                - generic [ref=e161]:
+                  - text: نوع المنظمة
+                  - textbox "نوع المنظمة" [ref=e162]
+                - generic [ref=e163]:
+                  - text: تاريخ التأسيس
+                  - textbox "تاريخ التأسيس" [ref=e164]
+                - generic [ref=e165]:
+                  - text: الجمهور المستهدف
+                  - textbox "الجمهور المستهدف" [ref=e166]
+                - generic [ref=e167]:
+                  - text: نبذة عن الأعمال
+                  - textbox "نبذة عن الأعمال" [ref=e168]: متجر نوفا للإلكترونيات يقدم أحدث المنتجات الإلكترونية من هواتف ذكية وأجهزة لوحية وإكسسوارات تقنية بأسعار منافسة لعملاء المملكة العربية السعودية.
+                - generic [ref=e169]:
+                  - text: الحسابات الاجتماعية
+                  - textbox "الحسابات الاجتماعية" [ref=e170]:
+                    - /placeholder: رابط واحد في كل سطر (لينكدإن، تويتر، فيسبوك)
+            - generic [ref=e171]:
+              - heading "الرابط الأساسي" [level=3] [ref=e173]
+              - generic [ref=e175]:
+                - text: الرابط الأساسي
+                - textbox "الرابط الأساسي" [ref=e176]
+            - generic [ref=e177]:
+              - heading "إعدادات SEO" [level=3] [ref=e179]
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - generic [ref=e182]:
+                    - text: المنصة
+                    - textbox "المنصة" [ref=e183]:
+                      - /placeholder: WordPress, Next.js...
+                  - generic [ref=e184]:
+                    - text: رابط Staging
+                    - textbox "رابط Staging" [ref=e185]:
+                      - /placeholder: https://staging...
+                - generic [ref=e186]:
+                  - generic [ref=e187]:
+                    - text: الهدف الرئيسي
+                    - textbox "الهدف الرئيسي" [ref=e188]
+                  - generic [ref=e189]:
+                    - text: مؤشرات الأداء
+                    - textbox "مؤشرات الأداء" [ref=e190]
+                - paragraph [ref=e191]: نساعدك نحدد الأولويات ونرتب الخطة. النتائج تتحقق تدريجياً وتتأثر بالمنافسة وجودة الموقع والاستمرارية — نعمل معك لأفضل نتيجة ممكنة دون وعد بأرقام أو مواعيد ثابتة.
+                - generic [ref=e192]:
+                  - generic [ref=e193]:
+                    - text: سلطة النطاق
+                    - spinbutton "سلطة النطاق" [ref=e194]
+                  - generic [ref=e195]:
+                    - text: عدد الروابط الخلفية
+                    - spinbutton "عدد الروابط الخلفية" [ref=e196]
+                - generic [ref=e197]:
+                  - text: سياسة بناء الروابط
+                  - textbox "سياسة بناء الروابط" [ref=e198]
+                - generic [ref=e199]:
+                  - text: نبرة المحتوى
+                  - textbox "نبرة المحتوى" [ref=e200]:
+                    - /placeholder: رسمي، ودّي، تقني...
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - text: قطاع الامتثال
+                    - textbox "قطاع الامتثال" [ref=e203]:
+                      - /placeholder: قطاع الصناعة
+                  - generic [ref=e204]:
+                    - text: ادعاءات مقيدة
+                    - textbox "ادعاءات مقيدة" [ref=e205]
+                - generic [ref=e206]:
+                  - text: رابط Google Business Profile
+                  - textbox "رابط Google Business Profile" [ref=e207]:
+                    - /placeholder: https://...
+                - generic [ref=e208]:
+                  - text: كلمات ممنوعة
+                  - textbox "كلمات ممنوعة" [ref=e209]:
+                    - /placeholder: كلمة في كل سطر
+                - generic [ref=e210]:
+                  - text: ادعاءات ممنوعة
+                  - textbox "ادعاءات ممنوعة" [ref=e211]:
+                    - /placeholder: ادعاء في كل سطر
+                - generic [ref=e212]:
+                  - checkbox "السماح بذكر المنافسين" [ref=e213]
+                  - generic [ref=e214]: السماح بذكر المنافسين
+            - button "حفظ" [ref=e215] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e221] [cursor=pointer]:
+    - img [ref=e222]

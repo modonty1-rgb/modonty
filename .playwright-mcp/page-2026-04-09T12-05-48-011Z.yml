@@ -1,0 +1,325 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.25.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.25.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e256] [cursor=pointer]:
+                - /url: /articles/69d6666a92f34b725bbddeda
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - generic [ref=e108]: Edit
+          - navigation "Main navigation" [ref=e110]:
+            - link "Modonty Modonty" [ref=e111] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e113]
+              - generic [ref=e114]: Modonty
+            - generic [ref=e116]:
+              - link "Articles" [ref=e117] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e118]:
+                  - img
+                  - generic [ref=e119]: Articles
+              - link "Clients" [ref=e120] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e121]:
+                  - img
+                  - generic [ref=e122]: Clients
+              - link "Media" [ref=e123] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e124]:
+                  - img
+                  - generic [ref=e125]: Media
+          - generic [ref=e126]:
+            - link "4" [ref=e257] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e258]:
+                - img
+                - generic [ref=e259]: "4"
+            - button "M" [ref=e129] [cursor=pointer]:
+              - generic [ref=e131]: M
+      - generic [ref=e132]:
+        - generic [ref=e133]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e134]:
+          - button "Send Note" [ref=e135] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e136] [cursor=pointer]:
+            - img
+      - main [ref=e137]:
+        - generic [ref=e138]:
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - generic [ref=e144]: Step 2 of 5
+                - generic [ref=e145]: "SEO Health: 88%"
+                - generic [ref=e148]: Live Analysis
+              - generic [ref=e149]:
+                - generic [ref=e151]: 76% Complete
+                - button "Update" [ref=e153] [cursor=pointer]:
+                  - img
+                  - generic [ref=e154]: Update
+            - 'generic "Overall progress: 76%" [ref=e260]'
+          - generic [ref=e160]:
+            - 'tabpanel "Content: 90% complete. اختياري: معرض الصور" [ref=e261]':
+              - generic [ref=e263]:
+                - generic [ref=e264]:
+                  - generic [ref=e265]:
+                    - generic [ref=e266]: Content
+                    - button "Clear" [ref=e268] [cursor=pointer]:
+                      - img
+                      - generic [ref=e269]: Clear
+                  - generic [ref=e270]:
+                    - generic [ref=e271]:
+                      - button "Undo" [disabled]:
+                        - img
+                      - button "Redo" [disabled]:
+                        - img
+                      - button "Bold" [ref=e272] [cursor=pointer]:
+                        - img
+                      - button "Italic" [ref=e273] [cursor=pointer]:
+                        - img
+                      - button "Underline" [ref=e274] [cursor=pointer]:
+                        - img
+                      - button "Strikethrough" [ref=e275] [cursor=pointer]:
+                        - img
+                      - button "Code" [ref=e276] [cursor=pointer]:
+                        - img
+                      - button "Highlight" [ref=e277] [cursor=pointer]:
+                        - img
+                      - button "Superscript" [ref=e278] [cursor=pointer]:
+                        - img
+                      - button "Subscript" [ref=e279] [cursor=pointer]:
+                        - img
+                      - button "Heading 1" [ref=e280] [cursor=pointer]:
+                        - img
+                      - button "Heading 2" [ref=e281] [cursor=pointer]:
+                        - img
+                      - button "Heading 3" [ref=e282] [cursor=pointer]:
+                        - img
+                      - button "Bullet List" [ref=e283] [cursor=pointer]:
+                        - img
+                      - button "Ordered List" [ref=e284] [cursor=pointer]:
+                        - img
+                      - button "Blockquote" [ref=e285] [cursor=pointer]:
+                        - img
+                      - button "Align Right" [ref=e286] [cursor=pointer]:
+                        - img
+                      - button "Align Center" [ref=e287] [cursor=pointer]:
+                        - img
+                      - button "Align Left" [ref=e288] [cursor=pointer]:
+                        - img
+                      - button "Align Justify" [ref=e289] [cursor=pointer]:
+                        - img
+                      - button "Insert Link" [ref=e290] [cursor=pointer]:
+                        - img
+                      - button "Insert Image" [ref=e291] [cursor=pointer]:
+                        - img
+                      - button "YouTube Video" [ref=e292] [cursor=pointer]:
+                        - img
+                      - button "Horizontal Rule" [ref=e293] [cursor=pointer]:
+                        - img
+                      - button "Insert Table" [ref=e294] [cursor=pointer]:
+                        - img
+                      - button "Clear Formatting" [ref=e295] [cursor=pointer]:
+                        - img
+                    - generic [ref=e297]:
+                      - heading "ثورة الذكاء الاصطناعي في المستشفيات السعودية" [level=2] [ref=e298]
+                      - paragraph [ref=e299]: تشهد المملكة العربية السعودية تحولاً جذرياً في القطاع الصحي بفضل الذكاء الاصطناعي. مع رؤية 2030، تستثمر المملكة مليارات الريالات في التقنيات الصحية الذكية.
+                      - paragraph [ref=e300]:
+                        - text: أظهرت الدراسات أن أنظمة AI تستطيع
+                        - strong [ref=e301]: تشخيص سرطان الثدي بدقة 94.5%
+                        - text: ، متفوقة على بعض الأطباء المتخصصين. هذه التقنية تُنقذ حياة آلاف المرضى سنوياً من خلال الكشف المبكر.
+                      - heading "التطبيقات الحالية" [level=2] [ref=e302]
+                      - heading "التشخيص بالأشعة" [level=3] [ref=e303]
+                      - paragraph [ref=e304]: تستخدم مستشفيات الرياض وجدة أنظمة AI لقراءة صور الأشعة السينية والرنين المغناطيسي، مما يقلل وقت التشخيص من أيام إلى دقائق.
+                      - heading "التطبيب عن بُعد" [level=3] [ref=e305]
+                      - paragraph [ref=e306]: منصات مثل صحة وموعد تتيح للمرضى استشارة الأطباء عن بُعد مع دعم AI للتشخيص الأولي وتوجيه المريض للتخصص المناسب.
+                      - heading "التحديات والحلول" [level=2] [ref=e307]
+                      - paragraph [ref=e308]: رغم التقدم الكبير، تواجه هذه التقنيات تحديات في خصوصية البيانات والثقة. الحل يكمن في تنظيمات واضحة وشفافية في آلية عمل الخوارزميات.
+                      - heading "المستقبل" [level=2] [ref=e309]
+                      - paragraph [ref=e310]: بحلول 2030، ستكون 50% من التشخيصات الروتينية مدعومة بالذكاء الاصطناعي. هذا لا يعني استبدال الأطباء، بل تمكينهم بأدوات أذكى وأدق.
+                    - generic [ref=e311]:
+                      - generic [ref=e312]:
+                        - generic [ref=e313]: 135 words
+                        - generic [ref=e314]: 922 chars
+                        - generic [ref=e315]: ~1 min read
+                      - generic [ref=e316]: Ctrl+K
+                - generic [ref=e317]:
+                  - text: Content Statistics
+                  - generic [ref=e318]:
+                    - generic [ref=e319]:
+                      - generic [ref=e320]: Word Count
+                      - generic [ref=e321]: "136"
+                      - generic [ref=e322]: "Letters: 0"
+                      - generic [ref=e323]: Short content (less than 300 words)
+                    - generic [ref=e324]:
+                      - generic [ref=e325]: Reading Time
+                      - generic [ref=e326]: "1"
+                      - generic [ref=e327]: minutes
+                    - generic [ref=e328]:
+                      - generic [ref=e329]: Content Depth
+                      - generic [ref=e330]: Short
+                      - generic [ref=e331]: Add more content
+                - generic [ref=e332]:
+                  - generic [ref=e333]: Quick SEO Content Check
+                  - generic [ref=e334]:
+                    - generic [ref=e337]: Headline (H1) present
+                    - generic [ref=e338]:
+                      - img [ref=e340]
+                      - generic [ref=e343]: Subheadings (H2/H3) used
+                    - generic [ref=e346]: Images with Alt text
+                    - generic [ref=e349]: Internal/External links
+                    - generic [ref=e352]: Optimal length (> 600 words)
+                    - generic [ref=e353]:
+                      - img [ref=e355]
+                      - generic [ref=e358]: Paragraphs are concise (< 500 characters per paragraph)
+              - generic [ref=e360]:
+                - generic [ref=e361]:
+                  - text: Featured Image
+                  - generic [ref=e454]:
+                    - generic [ref=e455] [cursor=pointer]:
+                      - img "Test image 1 for nova electronics" [ref=e456]
+                      - generic [ref=e458]:
+                        - img [ref=e459]
+                        - generic [ref=e464]: View Full Image
+                    - generic [ref=e465]:
+                      - generic [ref=e466]:
+                        - paragraph [ref=e467]: img1.png
+                        - paragraph [ref=e468]: Test image 1 for nova electronics
+                        - generic [ref=e470]: 1032 × 521
+                      - generic [ref=e471]:
+                        - button "Change Image" [ref=e472] [cursor=pointer]:
+                          - img
+                          - text: Change Image
+                        - button "Remove" [ref=e473] [cursor=pointer]:
+                          - img
+                          - text: Remove
+                - generic [ref=e384]:
+                  - generic [ref=e385]:
+                    - generic [ref=e386]:
+                      - text: Image Gallery
+                      - paragraph [ref=e387]: 0/10 images
+                    - button "Add Image" [ref=e388] [cursor=pointer]:
+                      - img
+                      - text: Add Image
+                  - button "Add First Image" [ref=e389] [cursor=pointer]:
+                    - img
+                    - text: Add First Image
+            - tablist [ref=e219]:
+              - 'tab "Basic: 100% complete. مكتمل ✓" [ref=e220] [cursor=pointer]':
+                - img [ref=e390]
+                - generic [ref=e222]: Basic
+                - generic [ref=e223]: 100%
+              - 'tab "Content: 90% complete. اختياري: معرض الصور" [selected] [ref=e224] [cursor=pointer]':
+                - generic [ref=e225]: "2"
+                - generic [ref=e226]: Content
+                - generic [ref=e227]: 90%
+              - 'tab "SEO: 88% complete. المحتوى: 136 كلمة — أضف محتوى أكثر (الحد الأدنى 300)" [ref=e228] [cursor=pointer]':
+                - img [ref=e230]
+                - generic [ref=e232]: SEO
+                - generic [ref=e233]: 88%
+              - 'tab "FAQs & Related: 50% complete. اختياري: مقالات ذات صلة" [ref=e234] [cursor=pointer]':
+                - generic [ref=e235]: "4"
+                - generic [ref=e236]: FAQs & Related
+                - generic [ref=e237]: 50%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e238] [cursor=pointer]':
+                - generic [ref=e239]: "5"
+                - generic [ref=e240]: Publish
+                - generic [ref=e241]: 50%
+  - region "Notifications (F8)":
+    - list
+  - generic [active]:
+    - menu "Next.js Dev Tools Items" [ref=e474]:
+      - generic [ref=e475]:
+        - menuitem "Route Static" [ref=e476] [cursor=pointer]:
+          - generic [ref=e477]: Route
+          - generic [ref=e478]: Static
+        - generic "Turbopack is enabled." [ref=e479]:
+          - generic [ref=e480]: Bundler
+          - generic [ref=e481]: Turbopack
+        - menuitem "Route Info" [ref=e482]:
+          - generic [ref=e483]: Route Info
+          - img [ref=e485]
+      - menuitem "Preferences" [ref=e488]:
+        - generic [ref=e489]: Preferences
+        - img [ref=e491]
+    - button "Close Next.js Dev Tools" [expanded] [ref=e493] [cursor=pointer]:
+      - img [ref=e393]
+  - alert [ref=e255]

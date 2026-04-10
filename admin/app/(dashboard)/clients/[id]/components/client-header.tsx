@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,10 +33,13 @@ export function ClientHeader({ client, seoScore }: ClientHeaderProps) {
     <div className="sticky top-0 z-10 flex items-center justify-between gap-4 py-3 border-b bg-background">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {client.logoMedia?.url ? (
-          <img
+          <Image
             src={client.logoMedia.url}
             alt={client.logoMedia.altText || client.name}
+            width={40}
+            height={40}
             className="h-10 w-10 rounded-lg object-contain flex-shrink-0 border"
+            sizes="40px"
           />
         ) : (
           <div className="h-10 w-10 rounded-lg border bg-muted flex items-center justify-center flex-shrink-0 text-muted-foreground text-lg">

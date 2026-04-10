@@ -153,7 +153,7 @@ export function MediaPicker({
                     src={imageUrl}
                     alt={altText || "Selected media"}
                     fill
-                    className="object-contain"
+                    className="object-scale-down p-2"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = "none";

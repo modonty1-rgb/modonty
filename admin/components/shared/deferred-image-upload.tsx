@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -220,11 +221,14 @@ export function DeferredImageUpload({
 
         {previewUrl ? (
           <div className="space-y-4">
-            <div className="relative border rounded-lg overflow-hidden group">
-              <img
+            <div className="relative border rounded-lg overflow-hidden group aspect-video">
+              <Image
                 src={previewUrl}
                 alt={altText || "Preview"}
-                className="w-full h-auto max-h-64 object-contain"
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 600px"
+                unoptimized={previewUrl.startsWith("blob:")}
               />
               <div className="absolute top-2 right-2 flex gap-2">
                 <Button

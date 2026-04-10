@@ -9,6 +9,7 @@ import { IconSaved } from "@/lib/icons";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import Image from "next/image";
 import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 
@@ -164,10 +165,12 @@ export default function FavoritesPage() {
                           <div className="flex gap-4">
                             {article.featuredImage && (
                               <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-muted">
-                                <img
+                                <Image
                                   src={article.featuredImage.url}
                                   alt={article.featuredImage.altText || article.title}
-                                  className="object-cover w-full h-full"
+                                  fill
+                                  className="object-cover"
+                                  sizes="96px"
                                 />
                               </div>
                             )}
