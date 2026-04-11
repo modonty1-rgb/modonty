@@ -20,6 +20,7 @@ export async function RightSidebar({ className }: RightSidebarProps) {
 
   return (
     <aside
+      aria-label="الشريط الجانبي الأيمن"
       className={cn(
         "hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]",
         className

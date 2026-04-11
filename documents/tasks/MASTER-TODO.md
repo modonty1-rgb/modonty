@@ -1,7 +1,7 @@
 # Master TODO — MODONTY
 
-> Last Updated: 2026-04-08
-> Versions: admin v0.25.0 | modonty v1.18.0
+> Last Updated: 2026-04-11
+> Versions: admin v0.29.0 | modonty v1.20.0
 
 ---
 
@@ -48,6 +48,17 @@
 
 ## Post-Deploy — Modonty Public Site
 
+### HIGH — User Account (⏸ pending Resend)
+⚠️ جميع البنود التالية تحتاج Resend API key.
+- [ ] **USR-R1** — Password Reset (نسيت كلمة المرور) — صفحة + action + إيميل بـ reset link
+- [ ] **USR-R2** — Email Verification عند التسجيل — إرسال confirmation link للإيميل الجديد
+- [ ] **USR-R3** — Notification Settings (تفضيلات الإشعارات بالإيميل)
+- [ ] **USR-L1** — إشعارات الرد على التعليق بالإيميل
+
+### MEDIUM — User Account
+- [ ] **USR-L2** — Session management: logout من أجهزة أخرى (إدارة الجلسات النشطة)
+- [ ] **USR-N1** — FAQ reply notification detail view — صفحة الإشعارات تعرض "اختر رسالة لعرض التفاصيل" عند الضغط على إشعار `faq_reply` لأنها مبنية لـ `ContactMessage` فقط. يحتاج: إضافة case في `notifications/page.tsx` يجيب بيانات الـ FAQ من الـ DB ويعرض السؤال والرد في الجانب الأيمن.
+
 ### HIGH — Email & Subscriptions
 ⚠️ Requires Resend account + API key before implementation.
 - [ ] Subscribe to Resend (resend.com) and get API key
@@ -64,6 +75,53 @@
 ### LOW — Nice to Have
 - [ ] Add loading.tsx to help/faq, subscribe pages
 - [ ] Add sitemap entries for tag archive pages (/tags/[slug])
+
+### SEO — Infinite Scroll Crawlability (Phase 2 — أسبوع 1-2 بعد الإطلاق)
+> الـ sitemap يكفي للـ indexing الآن. هذه تحسينات للـ internal links و link juice.
+- [ ] **SEO-INF1** — دعم `/?page=N` في `page.tsx`: السيرفر يرسل HTML مختلف لكل صفحة بناءً على `searchParams.page`
+- [ ] **SEO-INF2** — إضافة `<a>` links لـ "الصفحة التالية / السابقة" في نهاية الـ feed (مرئية لجوجل، اختيارية لـ UX)
+- [ ] **SEO-INF3** — `pushState` في `InfiniteArticleList`: يحدّث الـ URL عند تحميل كل batch جديد (`/?page=2`, `/?page=3`)
+- [ ] **SEO-INF4** — canonical tag لكل `/?page=N` يشير لنفسه (لا للـ homepage)
+
+### SEO — Image Sitemap (Phase 3 — مستقبلي)
+- [ ] **SEO-IMG1** — إنشاء `app/image-sitemap.xml/route.ts` يشمل كل الصور المنشورة للمقالات (يحسّن Google Image Search)
+
+---
+
+## Modonty — Semantic HTML & Page Structure
+
+> تفاصيل كاملة: [SEMANTIC-HTML-TODO.md](modonty/SEMANTIC-HTML-TODO.md)
+> تفاصيل SEO article: [SEO-ARTICLE-TODO.md](modonty/SEO-ARTICLE-TODO.md)
+
+### ✅ Nested `<main>` — مكتمل
+- [x] **SEM-1a→g** — 7 صفحات: `articles/[slug]`, `clients`, `categories`, `categories/[slug]`, `trending`, `search`, `news`
+
+### ✅ Missing `<h1>` — مكتمل
+- [x] **SEM-2a** — `clients/page.tsx` — `<h1 className="sr-only">العملاء</h1>`
+- [x] **SEM-2b** — `categories/page.tsx` — `<h1 className="sr-only">الفئات</h1>`
+- [x] **SEM-2c** — `users/profile/page.tsx` — `<h1 className="sr-only">الملف الشخصي</h1>`
+- [x] **SEM-2d→i** — 6 profile sub-pages: favorites, liked, comments, following, disliked, settings — sr-only h1 مضاف لكل صفحة
+
+### ✅ `<section>` accessible name — مكتمل
+- [x] **SEM-3a** — `authors/[slug]/page.tsx` — `aria-labelledby="author-articles-heading"`
+- [x] **SEM-3b** — `news/page.tsx` — `aria-labelledby="news-articles-heading"`
+
+### ✅ `<nav>` aria-label — مكتمل
+- [x] **SEM-4** — `MobileFooter.tsx` — `aria-label="التنقل السفلي"`
+
+### ✅ `<aside>` aria-label — مكتمل
+- [x] **SEM-6a** — `LeftSidebar.tsx` — `aria-label="الشريط الجانبي الأيسر"`
+- [x] **SEM-6b** — `RightSidebar.tsx` — `aria-label="الشريط الجانبي الأيمن"`
+- [x] **SEM-6c** — `SidebarSkeletons.tsx` — `aria-hidden="true"` on both skeleton asides
+
+### ✅ Missing `error.tsx` — مكتمل (9 routes)
+- [x] `clients`, `categories`, `authors/[slug]`, `trending`, `subscribe`, `users/profile`, `users/login`, `help`, `help/faq`
+
+### 🔴 HIGH — SEO Article Structured Data (تفاصيل في SEO-ARTICLE-TODO.md)
+- [ ] **SEO-A1** — Breadcrumb JSON-LD مفقود من صفحة المقال (الدالة موجودة — غير مستدعاة)
+- [ ] **SEO-A2** — JSON-LD fallback غائب للمقالات بدون DB cache
+- [ ] **SEO-A3** — `og:site_name` = اسم العميل بدل "مودونتي" ← يحتاج قرار
+- [ ] **SEO-A4** — صورة المقال في JSON-LD بدون width/height
 
 ### FUTURE — Listing Pages (modonty)
 > ⚠️ Admin already generates + caches OG metadata for these pages (DB ready).

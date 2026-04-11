@@ -17,14 +17,6 @@ const SecuritySettings = dynamic(
   () => import("./components/security-settings").then((m) => ({ default: m.SecuritySettings })),
   { ssr: false }
 );
-const PrivacySettings = dynamic(
-  () => import("./components/privacy-settings").then((m) => ({ default: m.PrivacySettings })),
-  { ssr: false }
-);
-const NotificationsSettings = dynamic(
-  () => import("./components/notifications-settings").then((m) => ({ default: m.NotificationsSettings })),
-  { ssr: false }
-);
 const PreferencesSettings = dynamic(
   () => import("./components/preferences-settings").then((m) => ({ default: m.PreferencesSettings })),
   { ssr: false }
@@ -63,12 +55,7 @@ export default function SettingsPage() {
         return <ProfileSettings />;
       case "security":
         return <SecuritySettings />;
-      case "privacy":
-        return <PrivacySettings />;
-      case "notifications":
-        return <NotificationsSettings />;
       case "appearance":
-      case "preferences":
         return <PreferencesSettings />;
       case "account":
         return <AccountSettings />;
@@ -79,6 +66,7 @@ export default function SettingsPage() {
 
   return (
     <>
+      <h1 className="sr-only">الإعدادات</h1>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

@@ -75,7 +75,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
           ]}
         />
 
-        <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+        <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
           <div className="relative -mx-4 mb-6 overflow-hidden bg-gradient-to-br from-[#0e065a] to-primary px-4 pb-8 pt-6">
             <div
               className="pointer-events-none absolute bottom-4 left-8 flex items-end gap-1 opacity-30"
@@ -105,7 +105,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
 
           {/* Server-rendered trending articles */}
           <TrendingArticles articles={trending} showTitle={false} />
-        </main>
+        </div>
       </>
     </>
   );

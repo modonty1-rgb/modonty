@@ -120,6 +120,7 @@ export default function FavoritesPage() {
 
   return (
     <>
+      <h1 className="sr-only">المحفوظات</h1>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

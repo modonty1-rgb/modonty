@@ -60,7 +60,8 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
 
         <CategoriesHero totalCategories={totalCategories} totalArticles={totalArticles} />
 
-        <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+        <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+          <h1 className="sr-only">الفئات</h1>
           {!search && !featured && (
             <section aria-labelledby="featured-categories-heading">
               <h2 id="featured-categories-heading" className="sr-only">
@@ -99,7 +100,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
             </div>
           )}
           </section>
-        </main>
+        </div>
       </>
     </>
   );

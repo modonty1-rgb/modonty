@@ -23,7 +23,7 @@ export default async function NewsPage() {
         ]}
       />
 
-      <main className="mt-8">
+      <div className="mt-8">
         <h1 className="text-3xl font-bold mb-6">أخبار مودونتي</h1>
         <p className="text-muted-foreground mb-8">
           نقطة التجمع لكل ما هو جديد من مودونتي. اشترك في النشرة لتحصل على أهم الأخبار
@@ -68,8 +68,8 @@ export default async function NewsPage() {
         </Card>
 
         {articles.length > 0 && (
-          <section>
-            <h2 className="text-sm font-semibold text-foreground mb-3">
+          <section aria-labelledby="news-articles-heading">
+            <h2 id="news-articles-heading" className="text-sm font-semibold text-foreground mb-3">
               من أحدث المقالات على مودونتي
             </h2>
             <ul className="space-y-2">
@@ -93,7 +93,7 @@ export default async function NewsPage() {
             </Link>
           </section>
         )}
-      </main>
+      </div>
     </div>
   );
 }

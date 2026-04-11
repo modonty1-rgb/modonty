@@ -35,12 +35,6 @@ export function ProfileTabs() {
       icon: IconLike,
     },
     {
-      value: "disliked",
-      label: "غير المعجبة",
-      href: "/users/profile/disliked",
-      icon: IconLike,
-    },
-    {
       value: "favorites",
       label: "المحفوظات",
       href: "/users/profile/favorites",
@@ -54,25 +48,23 @@ export function ProfileTabs() {
     },
   ];
 
-  const activeTab = pathname === "/users/profile" 
-    ? "overview" 
+  const activeTab = pathname === "/users/profile"
+    ? "overview"
     : pathname.includes("/settings")
     ? "settings"
-    : pathname.includes("/comments") && !pathname.includes("/liked") && !pathname.includes("/disliked")
+    : pathname.includes("/comments")
     ? "comments"
-    : pathname.includes("/liked") && !pathname.includes("/disliked")
+    : pathname.includes("/liked")
     ? "liked"
-    : pathname.includes("/disliked")
-    ? "disliked"
-    : pathname.includes("/favorites") 
-    ? "favorites" 
+    : pathname.includes("/favorites")
+    ? "favorites"
     : pathname.includes("/following")
     ? "following"
     : "overview";
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
+      <div className="w-full grid grid-cols-3 md:grid-cols-5 gap-2 p-1 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;
@@ -80,7 +72,7 @@ export function ProfileTabs() {
             <Link
               key={tab.value}
               href={tab.href}
-              className={cn("flex-1", tab.value === "disliked" && "hidden")}
+              className="flex-1"
             >
               <Button
                 type="button"

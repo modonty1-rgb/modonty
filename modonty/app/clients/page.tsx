@@ -51,7 +51,8 @@ export default async function ClientsPage() {
 
       <ClientsHero {...stats} />
 
-      <main>
+      <div>
+        <h1 className="sr-only">العملاء</h1>
         {featuredClients.length > 0 && (
           <section aria-labelledby="featured-clients-heading">
             <h2 id="featured-clients-heading" className="sr-only">
@@ -70,7 +71,7 @@ export default async function ClientsPage() {
             industries={industries}
           />
         </section>
-      </main>
+      </div>
     </>
   );
 }

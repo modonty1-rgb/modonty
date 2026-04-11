@@ -101,6 +101,7 @@ export const authConfig = {
               name: true,
               image: true,
               avatar: true,
+              bio: true,
               role: true,
               createdAt: true,
               password: true,
@@ -111,6 +112,7 @@ export const authConfig = {
             token.email = dbUser.email;
             token.name = dbUser.name;
             token.picture = dbUser.image || dbUser.avatar;
+            token.bio = dbUser.bio ?? null;
             token.role = dbUser.role;
             token.createdAt = dbUser.createdAt.toISOString();
             token.hasPassword = !!dbUser.password;
@@ -141,6 +143,10 @@ export const authConfig = {
         // Add createdAt for "joined date" display
         if (token.createdAt) {
           (session.user as any).createdAt = token.createdAt;
+        }
+        // Add bio for profile display
+        if (token.bio !== undefined) {
+          (session.user as any).bio = token.bio;
         }
       }
       return session;

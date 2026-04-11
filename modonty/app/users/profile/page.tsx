@@ -135,8 +135,12 @@ export default function ProfilePage() {
                 </Avatar>
               </div>
               <div className="min-w-0 flex-1">
+                <h1 className="sr-only">الملف الشخصي</h1>
                 <h2 className="text-xl font-semibold truncate">{session.user.name || "مستخدم"}</h2>
                 <p className="text-muted-foreground truncate" title={session.user.email ?? undefined}>{session.user.email}</p>
+                {(session.user as { bio?: string }).bio && (
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{(session.user as { bio?: string }).bio}</p>
+                )}
               </div>
             </div>
 

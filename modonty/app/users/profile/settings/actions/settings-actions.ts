@@ -24,6 +24,7 @@ export async function updateProfile(userId: string, data: ProfileFormData) {
       data: {
         name: data.name,
         image: data.image || null,
+        bio: data.bio || null,
       },
     });
 

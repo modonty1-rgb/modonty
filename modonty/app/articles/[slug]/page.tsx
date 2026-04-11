@@ -234,7 +234,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               { label: article.title },
             ]}
           />
-          <main className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
+          <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
             <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
               {/* Left sidebar – مشاركة وتفاعل + العميل */}
               <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="مشاركة وتفاعل">
@@ -428,7 +428,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 userId,
               }}
             />
-          </main>
+          </div>
 
         </>
       </>

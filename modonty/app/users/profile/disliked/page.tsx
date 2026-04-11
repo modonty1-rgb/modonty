@@ -128,6 +128,7 @@ export default function DislikedPage() {
 
   return (
     <>
+      <h1 className="sr-only">غير المعجبة</h1>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

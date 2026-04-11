@@ -17,7 +17,12 @@ export async function replyToQuestion(
 
   const faq = await db.articleFAQ.findFirst({
     where: { id: faqId, article: { clientId } },
-    select: { id: true, article: { select: { slug: true } } },
+    select: {
+      id: true,
+      question: true,
+      submittedByEmail: true,
+      article: { select: { slug: true, title: true, clientId: true } },
+    },
   });
   if (!faq) {
     return { success: false, error: messages.error.notFound };
@@ -30,6 +35,29 @@ export async function replyToQuestion(
       status: ArticleFAQStatus.PUBLISHED,
     },
   });
+
+  // Notify the user who submitted the question
+  if (faq.submittedByEmail) {
+    try {
+      const user = await db.user.findUnique({
+        where: { email: faq.submittedByEmail },
+        select: { id: true },
+      });
+      if (user) {
+        await db.notification.create({
+          data: {
+            userId: user.id,
+            clientId: faq.article.clientId ?? undefined,
+            type: "faq_reply",
+            title: "تم الرد على سؤالك",
+            body: `${faq.question.slice(0, 100)}`,
+          },
+        });
+      }
+    } catch {
+      // Notification failure must not block the reply
+    }
+  }
 
   revalidatePath(`/articles/${faq.article.slug}`);
   revalidatePath("/dashboard/questions");

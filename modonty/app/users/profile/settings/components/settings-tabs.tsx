@@ -5,11 +5,8 @@ import { Button } from "@/components/ui/button";
 import {
   IconUser,
   IconShield,
-  IconLock,
-  IconBell,
   IconTheme,
   IconDelete,
-  IconFilters,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -21,11 +18,8 @@ export function SettingsTabs() {
   const tabs = [
     { value: "profile", label: "الملف الشخصي", icon: IconUser },
     { value: "security", label: "الأمان", icon: IconShield },
-    { value: "notifications", label: "الإشعارات", icon: IconBell },
     { value: "appearance", label: "المظهر", icon: IconTheme },
-    { value: "preferences", label: "التفضيلات", icon: IconFilters },
-    { value: "privacy", label: "الخصوصية", icon: IconLock },
-    { value: "account", label: "الحذف", icon: IconDelete },
+    { value: "account", label: "الحساب", icon: IconDelete },
   ];
 
   const handleTabChange = (value: string) => {
@@ -36,7 +30,7 @@ export function SettingsTabs() {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1.5 p-1.5 bg-muted rounded-lg">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = section === tab.value;

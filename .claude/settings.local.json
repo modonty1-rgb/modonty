@@ -1,5 +1,15 @@
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"UserPromptSubmit\\\", \\\"additionalContext\\\": \\\"MANDATORY — NO EXCEPTIONS: When you complete any task (bug fix, feature, live test, migration), you MUST update all relevant TODO files IN THE SAME RESPONSE without being asked. Rules: (1) Mark done items as [x] and move to Done section. (2) When items move to MASTER-TODO, update the source file immediately with a note. (3) Update Last Updated date. Failing to do this is a mistake — the user should never have to ask.\\\"}}\""
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

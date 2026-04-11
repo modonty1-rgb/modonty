@@ -46,6 +46,7 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
 
   return (
     <aside
+      aria-label="الشريط الجانبي الأيسر"
       className={cn(
         "hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]",
         className

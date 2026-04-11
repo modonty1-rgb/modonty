@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (Brand Compliance + Public Site Polish)
+# Session Context — Last Updated: 2026-04-11 (User Account Polish + FAQ Reply Notification Fix)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,39 @@
 
 ## Current Versions
 - **admin**: v0.29.0
-- **modonty**: v1.21.0
-- **console**: v0.1.1
+- **modonty**: v1.22.0
+- **console**: v0.1.2
+
+---
+
+## ✅ Session 15 — User Account Polish + FAQ Reply Notification Fix (2026-04-11)
+
+### What Was Done
+
+**1. console v0.1.2 — Bug fix**
+- `question-actions.ts`: `replyToQuestion` now creates `faq_reply` notification for the user after client replies
+  - Looks up user via `submittedByEmail` → creates `db.notification` with type `faq_reply`
+  - Wrapped in try/catch so notification failure never blocks the reply
+  - Full live flow tested end-to-end: user asks → client replies → bell shows 1 → notification visible
+
+**2. modonty v1.22.0 — User account + semantic HTML**
+- Settings tabs simplified from 7 → 4 (profile · security · appearance · account)
+- Removed duplicate "disliked" tab from profile grid (6 → 5 columns)
+- Nested `<main>` fixed in `articles/[slug]/page.tsx` → changed to `<div>`
+- sr-only `<h1>` added to 6 profile sub-pages (favorites, liked, comments, following, disliked, settings)
+- `aria-labelledby` added to authors/[slug] + news sections
+- `aria-label` added to MobileFooter nav
+- `aria-label` added to LeftSidebar + RightSidebar
+- `aria-hidden="true"` on SidebarSkeletons
+- `BellRevalidateTrigger` added to notifications page (bell count syncs on every visit)
+
+**3. Tooling**
+- `UserPromptSubmit` hook added to `.claude/settings.local.json` — enforces automatic TODO file updates on every task completion
+- `feedback_todo_file_rules.md` memory updated with migration rules
+
+**4. Known UX Gap (USR-N1 — MASTER-TODO MEDIUM)**
+- `faq_reply` notification type not handled in notifications detail panel — shows empty right side
+- `notifications/page.tsx` needs a case for `faq_reply` to fetch ArticleFAQ data and show question + answer
 
 ---
 

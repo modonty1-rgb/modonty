@@ -144,6 +144,7 @@ model User {
   image         String? // NextAuth standard field (profile image URL)
 
   // Custom fields
+  bio                   String?   // Short user bio (max 500 chars)
   password              String?   // Hashed password (optional for OAuth users)
   passwordResetToken    String?   // SHA-256 hash of token
   passwordResetExpires  DateTime? // typically 1h from request

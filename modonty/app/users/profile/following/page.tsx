@@ -111,6 +111,7 @@ export default function FollowingPage() {
 
   return (
     <>
+      <h1 className="sr-only">المتابعون</h1>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

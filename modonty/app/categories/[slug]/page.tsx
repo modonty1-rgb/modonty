@@ -208,7 +208,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
             }}
           />
 
-          <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+          <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
             <section aria-labelledby="category-articles-heading">
               <h2 id="category-articles-heading" className="sr-only">
                 مقالات {category.name}
@@ -261,7 +261,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
                 />
               </Suspense>
             )}
-          </main>
+          </div>
         </>
       </>
     );

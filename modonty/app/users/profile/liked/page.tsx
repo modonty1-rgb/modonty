@@ -112,6 +112,7 @@ export default function LikedPage() {
 
   return (
     <>
+      <h1 className="sr-only">الإعجابات</h1>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

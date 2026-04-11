@@ -7,6 +7,7 @@ import { IconEmail } from "@/lib/icons";
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { MarkAsReadOnOpen } from "./components/mark-as-read-on-open";
+import { BellRevalidateTrigger } from "./components/bell-revalidate-trigger";
 
 export const metadata: Metadata = {
   title: "الإشعارات",
@@ -87,6 +88,8 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
         <h1 className="text-2xl font-semibold leading-tight text-foreground mb-6">
           صندوق البريد
         </h1>
+        {/* Refresh layout so bell count syncs on every visit */}
+        <BellRevalidateTrigger justMarkedAsRead={true} />
         <MarkAsReadOnOpen
           notificationId={
             selectedNotification?.readAt == null ? selectedId ?? null : null

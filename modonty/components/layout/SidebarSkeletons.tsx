@@ -1,6 +1,6 @@
 export function LeftSidebarSkeleton() {
   return (
-    <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start">
+    <aside aria-hidden="true" className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start">
       <div className="max-h-[calc(100vh-4rem)] overflow-y-auto space-y-4">
         <div className="rounded-lg border bg-card p-3 space-y-3">
           <div className="h-4 w-24 skeleton-shimmer rounded" />
@@ -22,7 +22,7 @@ export function LeftSidebarSkeleton() {
 
 export function RightSidebarSkeleton() {
   return (
-    <aside className="hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]">
+    <aside aria-hidden="true" className="hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]">
       <div className="flex h-full flex-col space-y-4">
         {/* SocialCard */}
         <div className="rounded-lg border bg-card p-3 flex justify-center gap-2">

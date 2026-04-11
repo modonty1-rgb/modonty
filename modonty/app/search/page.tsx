@@ -148,7 +148,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         ]}
       />
       <div className="min-h-screen bg-background">
-        <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1" dir="rtl">
+        <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1" dir="rtl">
         <section aria-labelledby="search-heading" className="space-y-6">
           <h1 id="search-heading" className="sr-only">
             بحث المقالات
@@ -167,7 +167,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             />
           </SearchSection>
         </section>
-      </main>
+      </div>
       </div>
     </>
   );
