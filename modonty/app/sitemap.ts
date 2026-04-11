@@ -88,7 +88,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/terms`, lastModified: new Date() },
     { url: `${baseUrl}/contact`, lastModified: new Date() },
     { url: `${baseUrl}/news`, lastModified: new Date() },
-    { url: `${baseUrl}/news/subscribe`, lastModified: new Date() },
     { url: `${baseUrl}/legal/user-agreement`, lastModified: new Date() },
     { url: `${baseUrl}/legal/privacy-policy`, lastModified: new Date() },
     { url: `${baseUrl}/legal/cookie-policy`, lastModified: new Date() },
@@ -96,7 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/help`, lastModified: new Date() },
     { url: `${baseUrl}/help/feedback`, lastModified: new Date() },
     { url: `${baseUrl}/help/faq`, lastModified: new Date() },
-    // /subscribe is noindex — excluded from sitemap intentionally
+    // /news/subscribe is a form page — excluded from sitemap intentionally
   ];
 
   return [

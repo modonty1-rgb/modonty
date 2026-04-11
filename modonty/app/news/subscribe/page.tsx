@@ -6,6 +6,7 @@ import { NewsSubscribeForm } from "./components/news-subscribe-form";
 export const metadata: Metadata = {
   title: "اشتراك في أخبار مودونتي",
   description: "اشترك في النشرة الإخبارية لمودونتي واحصل على آخر الأخبار والمقالات في بريدك.",
+  robots: { index: false, follow: false },
 };
 
 export default function NewsSubscribePage() {
