@@ -61,6 +61,21 @@ export function ArticleFooter({
           )}
         </div>
       </div>
+
+      {/* JBRSEO-6: CTA */}
+      <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-lg border border-primary/15 bg-primary/5 px-4 py-3.5">
+        <p className="text-sm text-muted-foreground">
+          تريد محتوى مثل هذا يجذب عملاء لنشاطك من جوجل؟
+        </p>
+        <a
+          href="https://www.jbrseo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1"
+        >
+          عملاء بلا إعلانات <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </footer>
   );
 }

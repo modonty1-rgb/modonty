@@ -66,10 +66,35 @@ export default async function ClientsPage() {
           <h2 id="all-clients-heading" className="sr-only">
             جميع العملاء
           </h2>
-          <ClientsContent 
+          <ClientsContent
             initialClients={clients}
             industries={industries}
           />
+        </section>
+
+        {/* JBRSEO-2: CTA — join as client */}
+        <section aria-labelledby="join-cta-heading" className="container mx-auto max-w-[1128px] px-4 py-12 mt-4">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-primary to-primary/80 px-8 py-12 text-center text-primary-foreground shadow-lg">
+            {/* decorative circles */}
+            <span className="pointer-events-none absolute -start-10 -top-10 h-40 w-40 rounded-full bg-white/5" aria-hidden="true" />
+            <span className="pointer-events-none absolute -bottom-10 -end-10 h-56 w-56 rounded-full bg-white/5" aria-hidden="true" />
+
+            <h2 id="join-cta-heading" className="relative text-2xl font-bold leading-snug sm:text-3xl">
+              هل تريد عملاء من جوجل — بدون إعلانات؟
+            </h2>
+            <p className="relative mt-3 text-base text-primary-foreground/80 sm:text-lg">
+              انضم لعملاء مودونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
+            </p>
+            <a
+              href="https://www.jbrseo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-bold text-primary shadow-md hover:bg-white/90 transition-colors"
+            >
+              عملاء بلا إعلانات
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </section>
       </div>
     </>

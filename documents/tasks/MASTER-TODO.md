@@ -152,6 +152,30 @@
 
 ---
 
+## jbr SEO Integration — modonty Sales Funnel
+
+> تفاصيل كاملة: [JBRSEO-INTEGRATION-TODO.md](modonty/JBRSEO-INTEGRATION-TODO.md)
+
+### ✅ منجز (modonty v1.24.0)
+- [x] **JBRSEO-1** — Header CTA "عملاء بلا إعلانات ↗" ديسكتوب + موبايل
+- [x] **JBRSEO-2** — `/clients` CTA panel gradient في نهاية الصفحة
+- [x] **JBRSEO-3** — ClientsHero إعادة تصميم بعمودين B2C + B2B + نصوص SEO قوية
+- [x] **JBRSEO-4** — Footer CTA "هل تريد عملاء من جوجل بلا إعلانات؟ جبر SEO ↗"
+- [x] **JBRSEO-5** — Client page CTA "أعجبك ما رأيت؟" في نهاية كل صفحة عميل
+- [x] **JBRSEO-6** — Article footer CTA "تريد محتوى مثل هذا يجذب عملاء؟"
+
+### 🔴 HIGH — Admin: نصوص الهيرو من لوحة التحكم
+- [ ] **JBRSEO-ADMIN-1** — نصوص ClientsHero B2B يجب أن تأتي من الأدمن (DB) لا hardcoded
+  - الحقول المطلوبة: `heroHeadline`, `heroSubheadline`, `heroBullets[]`, `heroCtaText`, `heroCtaUrl`
+  - السبب: تحسين SEO مستمر — النصوص تحتاج A/B testing وتحديث دوري بكلمات مفتاحية متوافقة مع رانكينج مودونتي
+  - يُضاف لإعدادات الأدمن في قسم "إعدادات الصفحات العامة" أو Client Settings
+
+### 🟢 LOW — تحسينات مستقبلية
+- [ ] **JBRSEO-7** — صفحة `/about`: إضافة قسم "للشركات والأعمال" يشرح أن modonty منصة مفتوحة للنشر عبر jbrseo.com
+- [ ] **JBRSEO-8** — Analytics: تتبع النقرات على جميع CTAs الموجهة لـ jbrseo.com (data-track أو GA event) لقياس معدل التحويل
+
+---
+
 ## Modonty — Mobile Phase 2 (Mockup Ready ✅)
 
 > Mockup is in `design-preview/page.tsx`. These tasks transfer it to production.

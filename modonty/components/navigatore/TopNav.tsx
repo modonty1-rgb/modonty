@@ -28,6 +28,15 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
           <LogoNav />
           <SearchLink variant="compact" className="w-full" />
           <div className="flex items-center gap-2">
+            <a
+              href="https://www.jbrseo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-semibold bg-primary text-primary-foreground rounded-full px-3 py-1.5 leading-none hover:bg-primary/90 transition-colors whitespace-nowrap"
+              aria-label="عملاء بلا إعلانات — جبر SEO"
+            >
+              عملاء بلا إعلانات
+            </a>
             <NotificationsBell />
             <ChatTriggerButton variant="nav" />
             <UserMenu />

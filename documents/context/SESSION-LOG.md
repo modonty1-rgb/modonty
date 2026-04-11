@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (Profile Page Polish — v1.23.0)
+# Session Context — Last Updated: 2026-04-11 (jbr SEO Integration — v1.24.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,26 @@
 
 ## Current Versions
 - **admin**: v0.29.0
-- **modonty**: v1.23.0
+- **modonty**: v1.24.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 18 — jbr SEO Integration — Sales Funnel (2026-04-11)
+
+### What Was Done (modonty v1.24.0)
+
+**6 CTAs across modonty pointing to jbrseo.com:**
+- `DesktopUserAreaClient.tsx` + `TopNav.tsx` — Header: "عملاء بلا إعلانات ↗" ديسكتوب outline + موبايل solid
+- `app/clients/page.tsx` — `/clients` CTA gradient panel في نهاية الصفحة
+- `app/clients/components/clients-hero.tsx` — Hero إعادة تصميم بعمودين: B2C (قارئ) + B2B (صاحب عمل) بنصوص SEO قوية
+- `components/layout/Footer.tsx` — "هل تريد عملاء من جوجل بلا إعلانات؟ جبر SEO ↗"
+- `app/clients/[slug]/page.tsx` — "أعجبك ما رأيت؟" في نهاية كل صفحة عميل
+- `app/articles/[slug]/components/article-footer.tsx` — "تريد محتوى مثل هذا يجذب عملاء؟" في footer كل مقال
+
+**MASTER-TODO مُحدَّث:**
+- JBRSEO-ADMIN-1: نصوص الهيرو تأتي من الأدمن (مستقبل)
+- JBRSEO-7/8: about page + analytics (LOW)
 
 ---
 

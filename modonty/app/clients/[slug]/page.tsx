@@ -188,6 +188,22 @@ async function ClientPageContent({ params }: ClientPageProps) {
           engagement={engagement}
         />
         </div>
+
+        {/* JBRSEO-5: CTA — join as client */}
+        <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="font-semibold text-foreground">أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور</p>
+            <p className="text-sm text-muted-foreground mt-0.5">انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء</p>
+          </div>
+          <a
+            href="https://www.jbrseo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            عملاء بلا إعلانات <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </>
     );
   } catch (error) {

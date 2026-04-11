@@ -9,6 +9,19 @@ export function Footer() {
       role="contentinfo"
       className="border-t bg-card mt-auto container mx-auto max-w-[1128px] px-4 py-4 flex flex-col items-center gap-3"
     >
+      {/* jbr SEO CTA */}
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-muted-foreground">هل تريد عملاء من جوجل بلا إعلانات؟</span>
+        <a
+          href="https://www.jbrseo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+        >
+          جبر SEO <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
       {/* Quick links */}
       <nav
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
