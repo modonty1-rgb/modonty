@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
       }
     }
     return generateMetadataFromSEO({
-      title: client.seoTitle || client.name,
+      title: (client.seoTitle || client.name)?.slice(0, 51),
       description: client.seoDescription || `استكشف مقالات ${client.name}`,
       image: client.heroImageMedia?.url || client.logoMedia?.url || undefined,
       url: `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`,

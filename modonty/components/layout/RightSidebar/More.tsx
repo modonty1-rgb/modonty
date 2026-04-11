@@ -1,6 +1,6 @@
 import Link from "@/components/link";
 import { cn } from "@/lib/utils";
-import { IconFeed, IconInfo, IconNews, IconMessage } from "@/lib/icons";
+import { IconFeed, IconInfo, IconNews, IconMessage, IconHelpCircle } from "@/lib/icons";
 
 const linkClass = cn(
   "inline-flex items-center gap-1.5 w-full rounded px-2 py-1 text-xs text-muted-foreground",
@@ -26,6 +26,10 @@ export function More() {
       <Link href="/about" className={linkClass}>
         <IconInfo aria-hidden />
         من نحن
+      </Link>
+      <Link href="/help" className={linkClass}>
+        <IconHelpCircle aria-hidden />
+        مركز المساعدة
       </Link>
       <Link href="/news/subscribe" className={linkClass}>
         <IconNews aria-hidden />

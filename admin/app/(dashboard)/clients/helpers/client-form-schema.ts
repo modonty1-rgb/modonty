@@ -158,7 +158,7 @@ export const clientFormSchema = z
       .or(z.literal("")),
 
     // SEO
-    seoTitle: z.string().max(60, "SEO title must be less than 60 characters").optional().nullable().or(z.literal("")),
+    seoTitle: z.string().max(51, "SEO title must be 51 characters or less (final title in Google: 60 chars)").optional().nullable().or(z.literal("")),
     seoDescription: z
       .string()
       .max(160, "SEO description must be less than 160 characters")

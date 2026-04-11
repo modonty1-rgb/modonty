@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: ClientPhotosPageProps): Promi
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
   return {
-    title: `صور ${data.client.name}`,
+    title: `صور ${data.client.name}`.slice(0, 51),
     description: `معرض صور ومحتوى مرئي لـ ${data.client.name}`,
   };
 }

@@ -16,7 +16,7 @@ export function FeedContainer({ posts, currentCategorySlug }: FeedContainerProps
   return (
     <>
       <FeedDeferredUI />
-      <h1 className="sr-only">أحدث المقالات والمدونات - مودونتي</h1>
+      <h2 className="sr-only">أحدث المقالات والمدونات - مودونتي</h2>
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <Suspense fallback={<LeftSidebarSkeleton />}>

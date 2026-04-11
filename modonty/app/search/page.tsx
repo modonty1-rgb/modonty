@@ -54,7 +54,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   const scope = normalizeScope(params.type);
   const typeParam = scope !== "all" ? `&type=${scope}` : "";
   return generateMetadataFromSEO({
-    title: q ? `بحث: ${q}` : "بحث",
+    title: q ? `بحث: ${q.slice(0, 43)}` : "بحث",
     description: q
       ? `نتائج البحث عن "${q}" في مقالات وعملاء مودونتي`
       : "ابحث في مقالات وعملاء مدونة مودونتي",

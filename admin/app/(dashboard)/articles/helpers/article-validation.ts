@@ -44,7 +44,7 @@ export const articleFormSchema = z.object({
   featuredImageId: z.string().optional().nullable(),
   featuredImageAlt: z.string().optional().nullable(),
 
-  seoTitle: z.string().max(60, "عنوان SEO يجب أن يكون أقل من 60 حرف").optional(),
+  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional(),
   seoDescription: z.string().max(160, "وصف SEO يجب أن يكون أقل من 160 حرف").optional(),
   metaRobots: z.string().optional(),
 

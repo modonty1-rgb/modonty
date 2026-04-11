@@ -84,6 +84,14 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
   };
 }>;
 
+export async function getCategoryIdBySlug(slug: string): Promise<string | null> {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
+  const cat = await db.category.findUnique({ where: { slug }, select: { id: true } });
+  return cat?.id ?? null;
+}
+
 export async function getCategoriesWithCounts(): Promise<CategoryResponse[]> {
   "use cache";
   cacheTag("categories");

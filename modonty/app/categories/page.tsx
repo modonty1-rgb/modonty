@@ -16,7 +16,10 @@ import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getCategoriesPageSeo();
-  return metadata ?? {};
+  return {
+    description: "استعرض جميع تصنيفات مودونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.",
+    ...(metadata ?? {}),
+  };
 }
 
 export default async function CategoriesPage({ searchParams }: CategoryPageParams) {
@@ -61,7 +64,6 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
         <CategoriesHero totalCategories={totalCategories} totalArticles={totalArticles} />
 
         <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-          <h1 className="sr-only">الفئات</h1>
           {!search && !featured && (
             <section aria-labelledby="featured-categories-heading">
               <h2 id="featured-categories-heading" className="sr-only">

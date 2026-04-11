@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: ClientAboutPageProps): Promis
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
   return {
-    title: `معلومات عن ${data.client.name}`,
+    title: `معلومات عن ${data.client.name}`.slice(0, 51),
     description: data.client.description || `تفاصيل ومعلومات عن ${data.client.name}`,
   };
 }

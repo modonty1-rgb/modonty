@@ -190,13 +190,17 @@ export type CategoryHintKey =
 export type TagHintKey =
   | 'name'
   | 'slug'
-  | 'description';
+  | 'description'
+  | 'metaTitle'
+  | 'metaDescription';
 
 // Industries form hints
 export type IndustryHintKey =
   | 'name'
   | 'slug'
-  | 'description';
+  | 'description'
+  | 'metaTitle'
+  | 'metaDescription';
 
 // Clients form hints
 export type ClientHintKey =

@@ -13,7 +13,10 @@ interface HomePageProps {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getHomePageSeo();
-  return metadata ?? {};
+  return {
+    description: "مودونتي — منصة المحتوى العربي المتخصصة. اكتشف مقالات في التقنية والأعمال والتسويق والسياحة والأزياء من أبرز الكتّاب والخبراء العرب.",
+    ...(metadata ?? {}),
+  };
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
@@ -65,6 +68,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           }}
         />
       )}
+      <h1 className="sr-only">مودونتي — منصة المحتوى العربي</h1>
       <FeedContainer posts={posts} currentCategorySlug={currentCategorySlug} />
     </>
   );

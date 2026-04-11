@@ -1,0 +1,21 @@
+# Google Disavow File — modonty.com
+# Created: 2026-04-11
+# Issue: Spam backlink campaign from linkbooster.agency (detected via Ahrefs / SEMrush)
+# Status: READY — upload to GSC only if rankings drop or manual action is received
+#
+# How to upload:
+#   1. Go to: https://search.google.com/search-console/disavow-links?resource_id=sc-domain:modonty.com
+#   2. Click "Upload disavow list"
+#   3. Upload this file
+#
+# When to upload:
+#   - If you receive a "Manual action" notification in GSC → upload immediately
+#   - If core keyword rankings drop 10%+ within 2 weeks with no other explanation → upload
+#   - If Ahrefs/SEMrush shows 100+ new links from linkbooster.agency → upload
+#   - If no ranking drop after 4 weeks → no action needed (Google usually ignores spam links)
+#
+# References:
+#   - https://developers.google.com/search/docs/monitor-debug/links/disavow-links
+#   - https://support.google.com/webmasters/answer/2648487
+
+domain:linkbooster.agency

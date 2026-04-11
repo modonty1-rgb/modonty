@@ -12,7 +12,7 @@ type SitemapArticle = {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
 
-  const [articles, categories, clients, authors] = await Promise.all([
+  const [articles, categories, clients, authors, tags] = await Promise.all([
     db.article.findMany({
       where: {
         status: ArticleStatus.PUBLISHED,
@@ -47,6 +47,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         updatedAt: true,
       },
     }),
+    db.tag.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+    }),
   ]);
 
   // Google ignores priority and changeFrequency — omit both per official docs
@@ -72,13 +78,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: author.updatedAt,
   }));
 
-  // TODO: Add tag archive pages (/tags/[slug]) to sitemap once the route is created.
-  // Tags exist in DB but have no public page yet — needed for search engine discoverability.
+  const tagUrls: MetadataRoute.Sitemap = tags.map((tag) => ({
+    url: `${baseUrl}/tags/${tag.slug}`,
+    lastModified: tag.updatedAt,
+  }));
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/about`, lastModified: new Date() },
+    { url: `${baseUrl}/terms`, lastModified: new Date() },
     { url: `${baseUrl}/contact`, lastModified: new Date() },
-    { url: `${baseUrl}/subscribe`, lastModified: new Date() },
     { url: `${baseUrl}/news`, lastModified: new Date() },
     { url: `${baseUrl}/news/subscribe`, lastModified: new Date() },
     { url: `${baseUrl}/legal/user-agreement`, lastModified: new Date() },
@@ -88,16 +96,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/help`, lastModified: new Date() },
     { url: `${baseUrl}/help/feedback`, lastModified: new Date() },
     { url: `${baseUrl}/help/faq`, lastModified: new Date() },
+    // /subscribe is noindex — excluded from sitemap intentionally
   ];
 
   return [
     { url: baseUrl, lastModified: new Date() },
     { url: `${baseUrl}/categories`, lastModified: new Date() },
     { url: `${baseUrl}/clients`, lastModified: new Date() },
+    { url: `${baseUrl}/tags`, lastModified: new Date() },
     ...authorUrls,
     ...staticPages,
     ...articleUrls,
     ...categoryUrls,
     ...clientUrls,
+    ...tagUrls,
   ];
 }

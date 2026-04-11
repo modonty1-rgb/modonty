@@ -261,9 +261,10 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                   value={formData.seoTitle || ""}
                   onChange={(e) => updateField("seoTitle", e.target.value)}
                   placeholder="e.g., About Us - Modonty"
-                  hint="Title shown in Google search results (30-60 characters)"
+                  hint='Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)'
+                  maxLength={51}
                 />
-                <CharacterCounter current={(formData.seoTitle || "").length} min={30} max={60} className="mt-1 ms-1" />
+                <CharacterCounter current={(formData.seoTitle || "").length} min={30} max={51} className="mt-1 ms-1" />
               </div>
               <div>
                 <FormTextarea

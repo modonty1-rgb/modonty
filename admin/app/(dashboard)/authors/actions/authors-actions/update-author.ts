@@ -27,7 +27,7 @@ const updateAuthorSchema = z.object({
   expertiseAreas: z.array(z.string()).optional(),
   verificationStatus: z.boolean().optional(),
   memberOf: z.array(z.string()).optional(),
-  seoTitle: z.string().optional(),
+  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional(),
   seoDescription: z.string().optional(),
   socialImage: z.string().nullable().optional(),
   socialImageAlt: z.string().nullable().optional(),

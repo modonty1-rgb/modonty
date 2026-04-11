@@ -23,13 +23,14 @@ export function MetaTagsStep() {
             <Input
               value={formData.seoTitle || ''}
               onChange={(e) => updateField('seoTitle', e.target.value)}
-              placeholder="Optimized title for search engines (50-60 characters)"
+              placeholder="عنوان محسّن لمحركات البحث (الحد الأقصى 51 حرف)"
+              maxLength={51}
             />
             <div className="flex justify-between items-center">
               <p className="text-xs text-muted-foreground">
-                Optimize for 50-60 characters for better search visibility
+                الحد الأقصى 51 حرف — يُضاف &quot;- مودونتي&quot; تلقائياً (العنوان النهائي في جوجل: 60 حرف)
               </p>
-              <CharacterCounter current={(formData.seoTitle || '').length} max={60} />
+              <CharacterCounter current={(formData.seoTitle || '').length} max={51} />
             </div>
           </div>
 

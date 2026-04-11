@@ -9,7 +9,7 @@ export const articleServerSchema = z.object({
 
   // Optional strings
   excerpt: z.string().max(500).optional().nullable(),
-  seoTitle: z.string().max(120).optional().nullable(),
+  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional().nullable(),
   seoDescription: z.string().max(300).optional().nullable(),
   canonicalUrl: z.string().max(500).optional().nullable(),
   ogArticleAuthor: z.string().max(200).optional().nullable(),

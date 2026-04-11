@@ -22,6 +22,7 @@ export const UserAvatarButton = forwardRef<HTMLButtonElement, UserAvatarButtonPr
         className
       )}
       disabled={disabled}
+      aria-label={user.name || "ملف المستخدم"}
       {...props}
     >
       <Avatar className="h-8 w-8">

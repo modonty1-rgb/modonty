@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: ClientReviewsPageProps): Prom
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
   return {
-    title: `تقييمات ${data.client.name}`,
+    title: `تقييمات ${data.client.name}`.slice(0, 51),
     description: `آراء وتقييمات المستخدمين على محتوى ${data.client.name}`,
   };
 }

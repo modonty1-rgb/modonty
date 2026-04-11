@@ -85,20 +85,24 @@ export function TagForm({ initialData, tagId }: TagFormProps) {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormInput
-                  label="SEO Title"
-                  name="seoTitle"
-                  value={formData.seoTitle}
-                  onChange={(e) => updateSEOField("seoTitle", e.target.value)}
-                  hint={messages.hints.tag.slug}
-                />
+                <div>
+                  <FormInput
+                    label="SEO Title"
+                    name="seoTitle"
+                    value={formData.seoTitle}
+                    onChange={(e) => updateSEOField("seoTitle", e.target.value)}
+                    hint={messages.hints.tag.metaTitle}
+                    maxLength={51}
+                  />
+                  <CharacterCounter current={formData.seoTitle.length} max={51} className="mt-1 ms-1" />
+                </div>
                 <div>
                   <FormInput
                     label="SEO Description"
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
-                    hint={messages.hints.tag.name}
+                    hint={messages.hints.tag.metaDescription}
                   />
                   <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
                 </div>

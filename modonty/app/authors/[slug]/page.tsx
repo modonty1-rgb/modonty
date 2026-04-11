@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
-  const title = author.seoTitle || `${author.name} — Author`;
+  const title = (author.seoTitle || `${author.name} — Author`)?.slice(0, 51);
   const description = author.seoDescription || author.bio || `Articles by ${author.name}`;
 
   return {

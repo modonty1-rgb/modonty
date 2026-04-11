@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (SEO 100% Complete — v1.27.0)
+# Session Context — Last Updated: 2026-04-11 (SEMrush Audit Fixes — v1.29.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,44 @@
 ---
 
 ## Current Versions
-- **admin**: v0.29.0
-- **modonty**: v1.28.0
+- **admin**: v0.30.0
+- **modonty**: v1.29.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 23 — SEMrush Full Audit Fixes (2026-04-11 · modonty v1.29.0 · admin v0.30.0)
+
+### What Was Done
+
+**modonty v1.29.0**
+- `app/tags/[slug]/page.tsx` — strip `robots` field from stored DB `nextjsMetadata` (prevents stale `noindex` returning)
+- `modonty/.gitignore` — added `.env` + `.env.*` to prevent accidental secret leak to git
+- `modonty/.env` — cleaned: fixed comment (social vars are UI-only, NOT JSON-LD sameAs), removed duplicate GTM var, fixed all social URLs to canonical production forms
+- Multiple SEMR fixes (1→12 + AUDIT 1→4) all in this push — see `documents/tasks/modonty/SEMRUSH-AUDIT-TODO.md`
+
+**admin v0.30.0**
+- SEMR-2: `lib/seo/jsonld-processor.ts` — `fixAtKeywordsDeep()` recursive fix for nested `@type`/`@id` fields
+- SEMR-6: All SEO title schemas enforced `max(51)` across articles, categories, tags, industries, clients, authors, pages
+- `admin/lib/messages/` — updated ar/en/types
+
+**documents**
+- `documents/02-seo/disavow-linkbooster.txt` — Google Disavow file for linkbooster.agency (do NOT upload yet — monitor GSC first)
+- `documents/02-seo/AUDIT-4-BACKLINK-SPAM-GUIDE.md` — step-by-step guide for handling spam backlinks
+- `documents/tasks/modonty/SEMRUSH-AUDIT-TODO.md` — all SEMR fixes marked done
+
+### ⚠️ Pending Manual Action (CRITICAL — do this after push)
+
+**Admin Settings → Social URLs → Save/Regenerate JSON-LD:**
+The Organization sameAs in DB still has wrong URLs. Admin must update in Settings panel:
+- X/Twitter: `https://x.com/modonty`
+- LinkedIn: `https://www.linkedin.com/company/111692906/`
+- YouTube: `https://www.youtube.com/@modontycom`
+Then save → JSON-LD regenerates in DB automatically.
+
+### Remaining SEO Tasks
+- **AI-BOT-1/2/3** — identify 2 blocked pages for ChatGPT/Googlebot/Perplexity in SEMrush panel
+- **AUDIT-5** — bundle size 401kB → dynamic imports (explicitly deferred by user to last)
 
 ---
 

@@ -198,7 +198,7 @@ const hints = {
     title: 'Article title — appears in search results',
     slug: 'URL slug — affects SEO',
     content: 'Main article content',
-    metaTitle: 'Search engine title — 50-60 characters',
+    metaTitle: 'Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)',
     metaDescription: 'Summary description — 150-160 characters',
     focusKeyword: 'Target keyword',
     wordCount: 'Total word count',
@@ -220,7 +220,7 @@ const hints = {
     expertiseAreas: 'Comma-separated',
     credentials: 'Each credential on new line',
     memberOf: 'Comma-separated',
-    metaTitle: 'Title that appears in Google — 30-60 characters',
+    metaTitle: 'Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)',
     metaDescription: 'Description in search results — 120-160 characters',
   } satisfies Record<AuthorHintKey, string>,
 
@@ -229,7 +229,7 @@ const hints = {
     slug: 'URL slug — auto-generated',
     description: 'Category description',
     icon: 'Category icon',
-    metaTitle: 'Title that appears in Google — 50-60 characters',
+    metaTitle: 'Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)',
     metaDescription: 'Description in search results — 150-160 characters',
     metaKeywords: 'Used in SEO — recommended 50+ characters',
   } satisfies Record<CategoryHintKey, string>,
@@ -238,12 +238,16 @@ const hints = {
     name: 'Unique tag name',
     slug: 'URL slug — auto-generated',
     description: 'Tag description',
+    metaTitle: 'Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)',
+    metaDescription: 'Description in search results — 150-160 characters',
   } satisfies Record<TagHintKey, string>,
 
   industry: {
     name: 'Industry name',
     slug: 'URL slug — auto-generated',
     description: 'Industry description',
+    metaTitle: 'Max 51 chars — "- Modonty" is appended automatically (final Google title: 60 chars)',
+    metaDescription: 'Description in search results — 150-160 characters',
   } satisfies Record<IndustryHintKey, string>,
 
   client: {

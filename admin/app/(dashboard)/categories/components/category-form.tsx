@@ -103,13 +103,17 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormInput
-                  label="SEO Title"
-                  name="seoTitle"
-                  value={formData.seoTitle}
-                  onChange={(e) => updateSEOField("seoTitle", e.target.value)}
-                  hint={messages.hints.category.metaTitle}
-                />
+                <div>
+                  <FormInput
+                    label="SEO Title"
+                    name="seoTitle"
+                    value={formData.seoTitle}
+                    onChange={(e) => updateSEOField("seoTitle", e.target.value)}
+                    hint={messages.hints.category.metaTitle}
+                    maxLength={51}
+                  />
+                  <CharacterCounter current={formData.seoTitle.length} max={51} className="mt-1 ms-1" />
+                </div>
                 <div>
                   <FormInput
                     label="SEO Description"

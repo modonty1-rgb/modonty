@@ -19,7 +19,10 @@ const ClientsContent = dynamic(
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getClientsPageSeo();
-  return metadata ?? {};
+  return {
+    description: "اكتشف أبرز العلامات التجارية والشركات الناشرة على مودونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
+    ...(metadata ?? {}),
+  };
 }
 
 export default async function ClientsPage() {
@@ -52,7 +55,6 @@ export default async function ClientsPage() {
       <ClientsHero {...stats} />
 
       <div>
-        <h1 className="sr-only">العملاء</h1>
         {featuredClients.length > 0 && (
           <section aria-labelledby="featured-clients-heading">
             <h2 id="featured-clients-heading" className="sr-only">

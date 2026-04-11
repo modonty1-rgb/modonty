@@ -21,7 +21,7 @@ export const clientServerSchema = z.object({
   phone: z.string().max(50).optional().nullable(),
   password: z.string().max(100).optional().nullable(),
   contactType: z.string().max(100).optional().nullable(),
-  seoTitle: z.string().max(60).optional().nullable(),
+  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional().nullable(),
   seoDescription: z.string().max(160).optional().nullable(),
   description: z.string().max(1000).optional().nullable(),
   canonicalUrl: z.string().max(500).optional().nullable(),

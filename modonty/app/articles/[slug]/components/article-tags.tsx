@@ -1,6 +1,6 @@
 import Link from "@/components/link";
 import { Badge } from "@/components/ui/badge";
-import { IconClients, IconFolder, IconCategory } from "@/lib/icons";
+import { IconClients, IconFolder, IconCategory, IconHash } from "@/lib/icons";
 
 interface ArticleTagsProps {
   client: {
@@ -48,6 +48,14 @@ export function ArticleTags({ client, category, tags }: ArticleTagsProps) {
           </Badge>
         </Link>
       ))}
+      {tags.length > 0 && (
+        <Link href="/tags">
+          <Badge variant="secondary" className="text-sm flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+            <IconHash className="h-3.5 w-3.5" />
+            عرض كل الوسوم
+          </Badge>
+        </Link>
+      )}
     </div>
   );
 }

@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
     }
 
     return generateMetadataFromSEO({
-      title: category.seoTitle || category.name,
+      title: (category.seoTitle || category.name)?.slice(0, 51),
       description: category.seoDescription || category.description || `استكشف مقالات فئة ${category.name}`,
       keywords: [category.name],
       url: `/categories/${slug}`,

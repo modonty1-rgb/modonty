@@ -238,12 +238,16 @@ const hints = {
     name: 'اسم الوسم الفريد',
     slug: 'اختصار URL — يتم إنشاؤه تلقائياً',
     description: 'وصف الوسم',
+    metaTitle: 'الحد الأقصى 51 حرف — يُضاف "- مودونتي" تلقائياً (العنوان النهائي في جوجل: 60 حرف)',
+    metaDescription: 'وصف في نتائج البحث — 150-160 حرف',
   } satisfies Record<TagHintKey, string>,
 
   industry: {
     name: 'اسم الصناعة',
     slug: 'اختصار URL — يتم إنشاؤه تلقائياً',
     description: 'وصف الصناعة',
+    metaTitle: 'الحد الأقصى 51 حرف — يُضاف "- مودونتي" تلقائياً (العنوان النهائي في جوجل: 60 حرف)',
+    metaDescription: 'وصف في نتائج البحث — 150-160 حرف',
   } satisfies Record<IndustryHintKey, string>,
 
   client: {

@@ -20,9 +20,10 @@ function CtaSocialLinks({ socialLinks, clientId }: { socialLinks: ClientHeroSoci
           clientId={clientId}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={link.platform.name}
           className="text-muted-foreground hover:text-primary transition-colors"
         >
-          <span aria-label={link.platform.name}>{link.platform.icon}</span>
+          <span aria-hidden="true">{link.platform.icon}</span>
         </CtaTrackedLink>
       ))}
     </div>

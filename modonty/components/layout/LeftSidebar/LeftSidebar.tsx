@@ -1,6 +1,5 @@
-import { getCategoriesWithCounts, getCategoryAnalytics, getOverallCategoryAnalytics } from "@/app/api/helpers/category-queries";
+import { getCategoriesWithCounts, getCategoryAnalytics, getOverallCategoryAnalytics, getCategoryIdBySlug } from "@/app/api/helpers/category-queries";
 import type { CategoryAnalytics } from "@/lib/types";
-import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 import { isMobileRequest } from "../is-mobile-request";
 import { AnalyticsCard } from "./AnalyticsCard";
@@ -31,12 +30,9 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
     engagedBlogs: 0,
   };
   if (currentCategorySlug) {
-    const category = await db.category.findUnique({
-      where: { slug: currentCategorySlug },
-      select: { id: true },
-    });
-    if (category) {
-      stats = await getCategoryAnalytics(category.id);
+    const categoryId = await getCategoryIdBySlug(currentCategorySlug);
+    if (categoryId) {
+      stats = await getCategoryAnalytics(categoryId);
     }
   } else {
     stats = await getOverallCategoryAnalytics();

@@ -38,8 +38,8 @@ export function SEOSection({
   };
   
   const seoTitleHint = seoSettings
-    ? `عنوان SEO — الطول الأمثل ${seoSettings.seoTitleMin}-${seoSettings.seoTitleMax} حرف`
-    : "عنوان SEO — الطول الأمثل 30-60 حرف";
+    ? `عنوان SEO — الحد الأقصى 51 حرف (العنوان النهائي في جوجل: 60 حرف)`
+    : "عنوان SEO — الحد الأقصى 51 حرف (يُضاف '- مودونتي' تلقائياً)";
 
   const seoDescriptionHint = seoSettings
     ? `وصف SEO — الطول الأمثل ${seoSettings.seoDescriptionMin}-${seoSettings.seoDescriptionMax} حرف`
@@ -170,6 +170,7 @@ export function SEOSection({
                 error={errors.seoTitle?.message}
                 placeholder="e.g., Best Services in Saudi Arabia | Company Name"
                 hint={seoTitleHint}
+                maxLength={51}
               />
               {seoSettings && (
                 <div className="mt-1">

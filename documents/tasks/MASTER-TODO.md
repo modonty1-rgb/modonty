@@ -1,7 +1,7 @@
 # Master TODO — MODONTY
 
-> Last Updated: 2026-04-11
-> Versions: admin v0.29.0 | modonty v1.24.0
+> Last Updated: 2026-04-11 (SEMR-2/4/5/6/7/8/9 + AUDIT-2 done)
+> Versions: admin v0.29.0 | modonty v1.29.0
 
 ---
 
@@ -76,6 +76,61 @@
 - [ ] Add loading.tsx to help/faq, subscribe pages
 - [ ] Add sitemap entries for tag archive pages (/tags/[slug])
 
+### 🔴 HIGH — Site Audit Findings (SEObility + Ahrefs — 2026-04-11)
+> مصدر: تقرير SEObility على `https://www.modonty.com/` + Ahrefs free backlink checker
+
+- [x] **AUDIT-1** — **Homepage H1 missing** — ✅ Fixed: أُضيف `<h1 className="sr-only">مودونتي — منصة المحتوى العربي</h1>` في `app/page.tsx:68`. (modonty v1.29.0)
+- [x] **AUDIT-2** — **Response time 1.88s** — ✅ Fixed: `cacheLife("minutes")` → `"hours"` لـ articles feed + `getCategoryIdBySlug()` cached helper يحذف raw DB call في LeftSidebar. Admin revalidateTag يضمن الفريشنيس. (modonty)
+- [x] **AUDIT-3** — **Language not detected** — Not a real issue. `lang="ar" dir="rtl"` موجود في `app/layout.tsx:52`. SEObility كان crawler artifact (JS rendering disabled).
+- [ ] **AUDIT-4** — **Backlink audit** — Ahrefs: 18 backlinks من 11 موقع، أول رابط من `linkbooster.agency` (DR 72) بأنكور نص spam. يحتاج مراجعة للتأكد من عدم الضرر — يمكن استخدام Google Disavow إن لزم.
+- [ ] **AUDIT-5** — **File size 401 kB** — الهوم بيج تحمّل 401 KB HTML. يحتاج مراجعة bundle size وتقليل inline CSS أو بيانات مدمجة.
+
+> ✅ تقرير SEMrush مكتمل 2026-04-11 — تمت إضافة جميع المشاكل أدناه.
+
+### 🔴 CRITICAL — SEMrush Site Audit (2026-04-11)
+> تفاصيل كاملة + Work Order: [SEMRUSH-AUDIT-TODO.md](modonty/SEMRUSH-AUDIT-TODO.md)
+> مصدر: SEMrush Site Audit — 100 pages crawled — Site Health: 78% → Target: 90%+
+
+- [x] **SEMR-1** — **93 broken internal links** — ✅ Fixed: بناء `/tags/[slug]` page كاملة — `page.tsx` + `loading.tsx` + `error.tsx` + SEO JSON-LD. tsc zero errors. (modonty v1.29.0)
+- [x] **SEMR-2** — **85 invalid structured data items** — ✅ Fixed: `fixAtKeywordsDeep()` recursive في `jsonld-processor.ts` تصلح كل الـ nested objects + regenerate 23 مقال على production. Live test مؤكد. (admin + modonty)
+- [x] **SEMR-3** — **1,430 resources blocked in robots.txt** — ✅ Fixed: حذف `/_next/` من `*` Disallow rule في `app/robots.ts`. Googlebot لم يتأثر (له rule خاص). Bing وبقية المحركات تقدر ترندر الموقع الآن. (modonty v1.29.0)
+- [x] **SEMR-4** — **10 pages returned 4XX** — ✅ Fixed: بناء `/tags` page كاملة (`page.tsx` + `loading.tsx`). `/tags` و `/tags/[slug]` كلها 200. (modonty v1.x.x)
+- [x] **SEMR-5** — **10 incorrect pages in sitemap.xml** — ✅ Fixed: أضفنا `/tags` + جميع `/tags/[slug]` لـ `sitemap.ts` ديناميكياً. (modonty v1.x.x)
+
+### 🟡 HIGH — SEMrush Warnings (2026-04-11)
+
+- [x] **SEMR-6** — **15 pages: title tags too long** — ✅ Fixed: max(51) في جميع admin schemas + maxLength=51 على كل form inputs + slice(0,51) على كل modonty dynamic fallback titles.
+- [x] **SEMR-7** — **3 pages: no meta description** — ✅ Fixed: fallback descriptions ثابتة في `app/page.tsx` + `app/categories/page.tsx` + `app/clients/page.tsx`. (modonty)
+- [ ] **SEMR-7b** — **DB-driven fallback descriptions** — الـ fallback الحالي hardcoded في الكود. الأفضل: admin يُدخل "Default Site Description" في settings → يُستخدم كـ fallback لكل صفحة ما عندها description. يحتاج: (1) إضافة حقل `defaultDescription` في Settings schema بالأدمن، (2) تحديث `getHomePageSeo`/`getCategoriesPageSeo`/`getClientsPageSeo` تجيب هذا الحقل كـ fallback بدل الـ hardcoded string.
+- [x] **SEMR-8** — **5 pages: more than one H1 tag** — ✅ Fixed: `/categories` + `/clients` حذف sr-only h1 الزائد (hero components عندها visible h1). `FeedContainer` h1→h2 (homepage كان عنده اثنين بعد AUDIT-1). (modonty)
+- [x] **SEMR-9** — **7 broken external links** — ✅ Fixed: استبدال كل روابط demo/test (clients + authors sameAs) بروابط مودونتي الحقيقية. twitter.com→x.com. Settings LinkedIn/YouTube URLs cleaned. جميع الروابط 200. (DB)
+
+### 🟢 LOW — SEMrush Notices (2026-04-11)
+
+- [ ] **SEMR-10** — **20 links with no anchor text** — روابط بدون نص (icon-only buttons). يحتاج: إضافة `aria-label` أو نص مخفي للـ screen readers + SEO.
+- [ ] **SEMR-11** — **9 orphan pages** — 9 صفحات لها رابط داخلي واحد فقط. يحتاج: إضافة internal links لها من صفحات أخرى ذات صلة.
+- [ ] **SEMR-12** — **12 URLs with permanent redirect** — 12 redirect يمكن تنظيفها. منخفض الأولوية.
+
+> ⚠️ تم تجاهل: 58 low text-HTML ratio + 29 low word count → crawler artifacts (SEMrush بدون JS rendering يرى صفحات Next.js فارغة)
+> ⚠️ تم تجاهل: 13 pages blocked from crawling → intentional (admin, api routes)
+> ⚠️ Google-Extended blocked (98 pages) → intentional, نحمي المحتوى من AI training scrapers
+
+---
+
+### 🔴 HIGH — SEO Full-Circle Audit (Admin ↔ Modonty ↔ DB)
+> مراجعة شاملة لكل الـ SEO flow من الأدمن للموقع — لازم يتعمل مرة واحدة كـ "second pass" قبل أو بعد كل إصدار كبير
+
+- [ ] **SEO-FC1** — **Admin → JSON-LD re-check كامل**: مراجعة كل entity (Article, Category, Tag, Client, Author, Industry) — التأكد أن كل حقل موجود، كل `@type` صح، وكل URL مكتمل. الأداة: Google Rich Results Test على 3 مقالات حقيقية + 1 صفحة category + 1 صفحة client.
+- [ ] **SEO-FC2** — **Create flow**: إنشاء article/tag/category جديد في الأدمن → التحقق أن JSON-LD يُولَّد صح فوراً + أن الـ sitemap يشمله + أن الصفحة على modonty تعطي 200.
+- [ ] **SEO-FC3** — **Update flow**: تعديل title/description في الأدمن → التحقق أن `revalidatePath` شتغل + الـ metadata على modonty تحدّث + JSON-LD في الـ DB اتغيّر.
+- [ ] **SEO-FC4** — **Delete flow**: حذف مقال/وسم/فئة → التحقق أن الصفحة تعطي 404، الـ sitemap ما يعود يشملها، ولا broken links تشير لها.
+- [ ] **SEO-FC5** — **Metadata propagation**: تغيير Site Name أو Site Description في الأدمن Settings → التحقق أن الـ cascade وصل لكل الـ entities (Category, Tag, Client, Author) وليس فقط المقالات.
+- [ ] **SEO-FC6** — **robots.txt + sitemap.xml live test**: بعد كل push → فتح `/robots.txt` + `/sitemap.xml` مباشرة والتأكد من صحتهم قبل الإعلان عن الـ deploy.
+
+> ⚠️ هذه المهمة تُنفَّذ مرة واحدة كـ audit شامل، ثم تصبح checklist في كل push كبير.
+
+---
+
 ### SEO — Infinite Scroll Crawlability (Phase 2 — أسبوع 1-2 بعد الإطلاق)
 > الـ sitemap يكفي للـ indexing الآن. هذه تحسينات للـ internal links و link juice.
 - [ ] **SEO-INF1** — دعم `/?page=N` في `page.tsx`: السيرفر يرسل HTML مختلف لكل صفحة بناءً على `searchParams.page`
@@ -126,7 +181,7 @@
 ### FUTURE — Listing Pages (modonty)
 > ⚠️ Admin already generates + caches OG metadata for these pages (DB ready).
 > Pages need to be built in modonty to use the cache.
-- [ ] Build `/tags` listing page in modonty (cache exists in `tagsPageMetaTags`)
+- [x] Build `/tags` listing page in modonty — ✅ Done: `app/tags/page.tsx` + `loading.tsx` (modonty v1.x.x)
 - [ ] Build `/industries` listing page in modonty (cache exists in `industriesPageMetaTags`)
 - [ ] Build `/articles` listing page in modonty (cache exists in `articlesPageMetaTags`)
 
@@ -140,6 +195,7 @@
 - [x] **Article Editor — Featured Image preview cropped** — `thumbnail-image-view.tsx:161` fixed: `object-cover` → `object-contain`. Deployed in admin v0.28.0.
 - [ ] **"Featured" label unclear in articles** — two problems: (1) The "Featured Image" field label is ambiguous — better label: **"Cover Image"** or **"Hero Image"**. (2) The "Featured" checkbox in Publish step is vague — better label: **"Highlight on Homepage"** with clear description.
 - [ ] **Publish error message misleading** — when SEO score < 60%, toast shows "حدث خطأ في الخادم. جرب لاحقًا" — client thinks the system is broken. Real reason is their own SEO score. Fix: show specific message e.g. "لا يمكن النشر — نقاط SEO 51% (الحد الأدنى 60%). حسّن حقول SEO أولاً." Never show "server error" for a business rule validation.
+- [ ] **SEO Publish Gate — block publish if seoDescription is missing** — المقالة لا تُنشر إذا كان `seoDescription` فارغاً (أو أقل من 50 حرف). الهدف: منع مشكلة "صفحات بدون meta description" من تكرارها. يحتاج: إضافة validation في `publish-article-action.ts` + رسالة واضحة في الـ Publish step تقول ما هو ناقص.
 - [ ] **Media picker search not filtering** (OBS-001) — in the article editor "Select Featured Image" dialog, typing in the search box does not filter results. Search input is not triggering React state update.
 - [ ] **Media edit: no Client reassignment field** (OBS-002) — once uploaded, an image cannot be moved to a different client. The media edit form has no Client field. If uploaded to wrong client → inaccessible from article editors of other clients. Fix: add Client dropdown in `/media/[id]/edit`.
 - [ ] **Media upload: client assignment unclear** (OBS-004) — uploading from the global Media page auto-assigns to a client unpredictably. Should either require a client selection, or images without client should appear in all pickers as a "General" pool.

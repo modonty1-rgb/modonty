@@ -16,7 +16,7 @@ export const pageSchema = z.object({
   heroImage: z.string().optional(),
   heroImageAlt: z.string().optional(),
   heroImageCloudinaryPublicId: z.string().optional(),
-  seoTitle: z.string().optional(),
+  seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional(),
   seoDescription: z.string().optional(),
   metaRobots: z.union([metaRobotsEnum, z.literal("")]).optional(),
   googlebot: z.string().optional(),

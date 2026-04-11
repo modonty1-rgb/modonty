@@ -61,7 +61,7 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
 async function getArticlesCached(filters: ArticleFilters = {}) {
   "use cache";
   cacheTag("articles");
-  cacheLife("minutes");
+  cacheLife("hours"); // safe: admin revalidateTag("articles") fires on every publish/update/delete
 
   const {
     page = 1,
@@ -312,7 +312,7 @@ export async function getFeaturedArticles(limit: number = 10) {
 export async function getRecentArticles(limit: number = 10, excludeArticleId?: string) {
   "use cache";
   cacheTag("articles");
-  cacheLife("minutes");
+  cacheLife("hours"); // safe: admin revalidateTag("articles") handles freshness
   const articles = await db.article.findMany({
     where: {
       status: ArticleStatus.PUBLISHED,

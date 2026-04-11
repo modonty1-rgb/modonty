@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: ClientContactPageProps): Prom
   const data = await getClientPageData(slug);
   if (!data) return { title: "غير موجود" };
   return {
-    title: `تواصل مع ${data.client.name}`,
+    title: `تواصل مع ${data.client.name}`.slice(0, 51),
     description: `أرسل رسالة أو استفسار لـ ${data.client.name}`,
   };
 }

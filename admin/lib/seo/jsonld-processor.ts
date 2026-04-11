@@ -9,6 +9,26 @@ import * as jsonld from "jsonld";
 import type { JsonLdGraph } from "./knowledge-graph-generator";
 
 /**
+ * Recursively fix JSON-LD @ keywords after jsonld.compact() with Schema.org context.
+ * jsonld.compact() converts "@type" → "type" and "@id" → "id" at ALL nesting levels.
+ * This restores them to spec-compliant @ prefixes throughout the entire tree.
+ */
+function fixAtKeywordsDeep(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(fixAtKeywordsDeep);
+  }
+  if (value !== null && typeof value === "object") {
+    const fixed: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      const key = k === "id" ? "@id" : k === "type" ? "@type" : k;
+      fixed[key] = fixAtKeywordsDeep(v);
+    }
+    return fixed;
+  }
+  return value;
+}
+
+/**
  * Normalize JSON-LD to canonical form
  * Ensures consistent structure for storage and comparison
  * Uses expand + compact to normalize structure
@@ -39,18 +59,8 @@ export async function normalizeJsonLd(
     }
 
     // Fix: jsonld.compact() with Schema.org context converts @id → id and @type → type.
-    // Restore JSON-LD spec-compliant @ prefixes on all graph nodes.
-    if (result["@graph"] && Array.isArray(result["@graph"])) {
-      result["@graph"] = (result["@graph"] as Record<string, unknown>[]).map((node) => {
-        const fixed: Record<string, unknown> = {};
-        for (const [k, v] of Object.entries(node)) {
-          if (k === "id") fixed["@id"] = v;
-          else if (k === "type") fixed["@type"] = v;
-          else fixed[k] = v;
-        }
-        return fixed;
-      }) as JsonLdGraph["@graph"];
-    }
+    // Restore JSON-LD spec-compliant @ prefixes recursively (nested objects too).
+    result = fixAtKeywordsDeep(result) as JsonLdGraph;
 
     return result;
   } catch (error) {

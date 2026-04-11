@@ -30,6 +30,8 @@ export function Footer() {
         <Link href="/" className={linkClass}>الرئيسية</Link>
         <Link href="/trending" className={linkClass}>الرائجة</Link>
         <Link href="/clients" className={linkClass}>العملاء</Link>
+        <Link href="/tags" className={linkClass}>الوسوم</Link>
+        <Link href="/help" className={linkClass}>المساعدة</Link>
         <Link href="/about" className={linkClass}>عن مودونتي</Link>
       </nav>
 
@@ -38,6 +40,7 @@ export function Footer() {
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
         aria-label="روابط قانونية"
       >
+        <Link href="/terms" className={linkClass}>الشروط والأحكام</Link>
         <Link href="/legal/user-agreement" className={linkClass}>اتفاقية المستخدم</Link>
         <Link href="/legal/privacy-policy" className={linkClass}>سياسة الخصوصية</Link>
         <Link href="/legal/cookie-policy" className={linkClass}>سياسة ملفات تعريف الارتباط</Link>

@@ -41,6 +41,7 @@ interface FormInputProps {
   hint?: string;
   step?: string | number;
   autoComplete?: string;
+  maxLength?: number;
 }
 
 export function FormInput({
@@ -57,6 +58,7 @@ export function FormInput({
   hint,
   step,
   autoComplete,
+  maxLength,
 }: FormInputProps) {
   return (
     <FormField label={label} name={name} error={error} required={required} hint={hint}>
@@ -71,6 +73,7 @@ export function FormInput({
         readOnly={readOnly}
         step={step}
         autoComplete={autoComplete}
+        maxLength={maxLength}
         className={error ? "border-destructive" : ""}
       />
     </FormField>
