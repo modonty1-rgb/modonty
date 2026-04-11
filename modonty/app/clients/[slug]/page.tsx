@@ -158,23 +158,23 @@ async function ClientPageContent({ params }: ClientPageProps) {
 
     return (
       <>
+        {/* Organization JSON-LD — DB cache if available, fallback to live generation */}
         {cachedSeo?.jsonLdStructuredData ? (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: cachedSeo.jsonLdStructuredData }}
           />
         ) : (
-          <>
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-            />
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-            />
-          </>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
         )}
+        {/* BreadcrumbList JSON-LD — always rendered regardless of DB cache */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+        />
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">

@@ -6,6 +6,7 @@ type SitemapArticle = {
   slug: string;
   datePublished: Date | null;
   dateModified: Date | null;
+  featuredImage: { url: string } | null;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -24,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: true,
         datePublished: true,
         dateModified: true,
+        featuredImage: { select: { url: true } },
       },
       orderBy: { datePublished: "desc" },
     }),
@@ -48,9 +50,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   // Google ignores priority and changeFrequency — omit both per official docs
+  // images[] → Google Image Search indexing (Next.js official: MetadataRoute.Sitemap images property)
   const articleUrls: MetadataRoute.Sitemap = articles.map((article: SitemapArticle) => ({
     url: `${baseUrl}/articles/${article.slug}`,
     lastModified: article.dateModified || article.datePublished || new Date(),
+    ...(article.featuredImage?.url && { images: [article.featuredImage.url] }),
   }));
 
   const categoryUrls: MetadataRoute.Sitemap = categories.map((category) => ({
@@ -70,9 +74,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // TODO: Add tag archive pages (/tags/[slug]) to sitemap once the route is created.
   // Tags exist in DB but have no public page yet — needed for search engine discoverability.
-
-  // TODO: Create a dedicated image sitemap (app/image-sitemap.xml/route.ts) for article featured images.
-  // This improves discoverability in Google Image Search.
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/about`, lastModified: new Date() },

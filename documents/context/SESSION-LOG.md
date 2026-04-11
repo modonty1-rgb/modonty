@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (jbr SEO Integration — v1.24.0)
+# Session Context — Last Updated: 2026-04-11 (SEO 100% Complete — v1.27.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,60 @@
 
 ## Current Versions
 - **admin**: v0.29.0
-- **modonty**: v1.24.0
+- **modonty**: v1.28.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 22 — SEO 100% + Client BreadcrumbList Fix (2026-04-11 · v1.28.0)
+
+### What Was Done (modonty v1.28.0)
+
+**BUG FIX — Client pages BreadcrumbList regression:**
+- `app/clients/[slug]/page.tsx:159-177` — BreadcrumbList كان يُفقد عند وجود DB cache. الإصلاح: نقلنا `<script>` الـ BreadcrumbList خارج الـ conditional ليُرسَم دائماً بغض النظر عن الـ cache.
+- تم اكتشافه في الفحص الثاني (3 جولات تحقق قبل الرفع)
+
+**Verified:** tsc zero errors · 3 full audit passes · all 8 critical checkpoints confirmed
+
+---
+
+## ✅ Session 21 — SEO 100% Complete (2026-04-11 · v1.27.0)
+
+### What Was Done (modonty v1.27.0)
+
+**3 SEO gaps closed — full audit before advertising campaign:**
+- `app/articles/[slug]/page.tsx` — SEO-A2: live fallback `generateArticleStructuredData()` when DB cache empty — مقالات جديدة تأخذ JSON-LD فوراً
+- `app/authors/[slug]/page.tsx` — BreadcrumbList JSON-LD مضاف (Person schema كان موجود، breadcrumb كان مفقود)
+- `public/llms.txt` — رابط Terms of Service مصحّح: `/terms` → `/legal/user-agreement`
+
+**Verified:** tsc zero errors · all files read back · imports confirmed used
+
+---
+
+## ✅ Session 20 — Image Sitemap + SEO Dominance (2026-04-11 · v1.26.0)
+
+### What Was Done (modonty v1.26.0)
+
+- `app/sitemap.ts` — SEO-IMG1: أضفنا `featuredImage: { select: { url } }` لكل مقال + `images: [url]` في كل URL
+  - Google الآن يرى صور المقالات مباشرة في sitemap.xml → Google Images indexing
+  - الطريقة الرسمية: Next.js `MetadataRoute.Sitemap` `images[]` property (Context7 verified)
+  - حذفنا TODO القديم عن ملف منفصل — الحل الصحيح دائماً كان داخل sitemap.ts
+
+- `memory/project_seo_dominance_goal.md` — حفظنا هدف الهيمنة SEO كـ project memory دائم
+
+---
+
+## ✅ Session 19 — Launch Readiness Fixes (2026-04-11 · v1.25.0)
+
+### What Was Done (modonty v1.25.0)
+
+**4 launch blockers fixed before advertising campaign:**
+- `app/articles/[slug]/page.tsx` — SEO-A1: BreadcrumbList JSON-LD added (generateBreadcrumbStructuredData called, verified against Google Search official docs)
+- `app/api/subscribers/route.ts` — Rate limit: max 5 subscriptions per email per hour (429 response)
+- `next.config.ts` — HSTS header added: `max-age=63072000; includeSubDomains; preload` (verified against MDN)
+- `app/robots.ts` — Removed broken `image-sitemap.xml` reference (was causing 404 on Googlebot crawl)
+
+**Sources verified:** MDN (HSTS), Google Search Docs (BreadcrumbList), Next.js source (robots sitemap type), schema.org (BreadcrumbList format)
 
 ---
 

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { generateBreadcrumbStructuredData } from "@/lib/seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -133,11 +134,20 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
     jsonLdString = JSON.stringify(jsonLd);
   }
 
+  const breadcrumbJsonLd = generateBreadcrumbStructuredData([
+    { name: "الرئيسية", url: "/" },
+    { name: author.name, url: `/authors/${author.slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

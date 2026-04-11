@@ -1,7 +1,7 @@
 # Master TODO — MODONTY
 
 > Last Updated: 2026-04-11
-> Versions: admin v0.29.0 | modonty v1.22.0
+> Versions: admin v0.29.0 | modonty v1.24.0
 
 ---
 
@@ -84,7 +84,7 @@
 - [ ] **SEO-INF4** — canonical tag لكل `/?page=N` يشير لنفسه (لا للـ homepage)
 
 ### SEO — Image Sitemap (Phase 3 — مستقبلي)
-- [ ] **SEO-IMG1** — إنشاء `app/image-sitemap.xml/route.ts` يشمل كل الصور المنشورة للمقالات (يحسّن Google Image Search)
+- [x] **SEO-IMG1** — صور المقالات مضافة لـ `sitemap.ts` عبر `images[]` property (Next.js official — modonty v1.25.0)
 
 ---
 
@@ -118,8 +118,8 @@
 - [x] `clients`, `categories`, `authors/[slug]`, `trending`, `subscribe`, `users/profile`, `users/login`, `help`, `help/faq`
 
 ### 🔴 HIGH — SEO Article Structured Data (تفاصيل في SEO-ARTICLE-TODO.md)
-- [ ] **SEO-A1** — Breadcrumb JSON-LD مفقود من صفحة المقال (الدالة موجودة — غير مستدعاة)
-- [ ] **SEO-A2** — JSON-LD fallback غائب للمقالات بدون DB cache
+- [x] **SEO-A1** — Breadcrumb JSON-LD مضاف لصفحة المقال (modonty v1.25.0)
+- [x] **SEO-A2** — JSON-LD fallback للمقالات بدون DB cache — `generateArticleStructuredData` live fallback (modonty v1.27.0)
 - [ ] **SEO-A3** — `og:site_name` = اسم العميل بدل "مودونتي" ← يحتاج قرار
 - [ ] **SEO-A4** — صورة المقال في JSON-LD بدون width/height
 
@@ -169,6 +169,12 @@
   - الحقول المطلوبة: `heroHeadline`, `heroSubheadline`, `heroBullets[]`, `heroCtaText`, `heroCtaUrl`
   - السبب: تحسين SEO مستمر — النصوص تحتاج A/B testing وتحديث دوري بكلمات مفتاحية متوافقة مع رانكينج مودونتي
   - يُضاف لإعدادات الأدمن في قسم "إعدادات الصفحات العامة" أو Client Settings
+
+- [ ] **JBRSEO-ADMIN-2** — نصوص "مرحباً بك في مودونتي" في الفيد تأتي من الأدمن
+  - الموقع الحالي: `modonty/components/feed/FeedContainer.tsx:27-28` — hardcoded
+  - الحقول المطلوبة: `platformTagline` (العنوان) + `platformDescription` (الوصف الموسّع)
+  - يظهر في: صفحة الرئيسية (فيد المقالات) + صفحة العملاء (إن وجد)
+  - السبب: النص يمثّل هوية المنصة ويجب أن يكون قابلاً للتعديل دون deploy لتحسين SEO وتجربة المستخدم
 
 ### 🟢 LOW — تحسينات مستقبلية
 - [ ] **JBRSEO-7** — صفحة `/about`: إضافة قسم "للشركات والأعمال" يشرح أن modonty منصة مفتوحة للنشر عبر jbrseo.com

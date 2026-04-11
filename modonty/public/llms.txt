@@ -28,7 +28,7 @@ Modonty connects businesses with readers through high-quality content, structure
 
 ## Legal
 
-- [Terms of Service](https://modonty.com/terms)
+- [Terms of Service](https://modonty.com/legal/user-agreement)
 - [Privacy Policy](https://modonty.com/legal/privacy-policy)
 - [Cookie Policy](https://modonty.com/legal/cookie-policy)
 - [Copyright Policy](https://modonty.com/legal/copyright-policy)

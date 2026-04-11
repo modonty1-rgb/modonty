@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
-import { generateMetadataFromSEO } from "@/lib/seo";
+import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { GTMClientTracker } from "@/components/gtm/GTMClientTracker";
@@ -194,9 +194,20 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       try {
         jsonLdGraph = JSON.parse(article.jsonLdStructuredData);
       } catch {
-        // Invalid JSON-LD, continue without it
+        // Invalid JSON-LD, fall through to generate live
       }
     }
+    // SEO-A2: fallback — generate live when DB cache not yet built
+    if (!jsonLdGraph) {
+      jsonLdGraph = generateArticleStructuredData(article);
+    }
+
+    const breadcrumbJsonLd = generateBreadcrumbStructuredData([
+      { name: "الرئيسية", url: "/" },
+      { name: "العملاء", url: "/clients" },
+      { name: article.client.name, url: `/clients/${article.client.slug}` },
+      { name: article.title, url: `/articles/${article.slug}` },
+    ]);
 
     return (
       <>
@@ -209,6 +220,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
             }}
           />
         )}
+        {/* BreadcrumbList JSON-LD — SEO-A1 fix */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
 
         {article.client && (
           <GTMClientTracker

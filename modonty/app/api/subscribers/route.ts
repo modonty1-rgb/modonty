@@ -24,6 +24,18 @@ export async function POST(request: NextRequest) {
 
     const { email, clientId } = parsed.data;
 
+    // Rate limit: max 5 subscription attempts per email per hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentCount = await db.subscriber.count({
+      where: { email, subscribedAt: { gt: oneHourAgo } },
+    });
+    if (recentCount >= 5) {
+      return NextResponse.json(
+        { success: false, error: "حاول مرة أخرى لاحقاً" } as ApiResponse<never>,
+        { status: 429 }
+      );
+    }
+
     // Check if already subscribed for this client
     const existing = await db.subscriber.findFirst({
       where: {
