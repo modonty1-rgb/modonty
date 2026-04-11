@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (Sitemap + noindex fix — v1.29.2)
+# Session Context — Last Updated: 2026-04-11 (SocialCard DB fix — v1.29.3)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,19 +8,23 @@
 
 ## Current Versions
 - **admin**: v0.30.0
-- **modonty**: v1.29.2
+- **modonty**: v1.29.3
 - **console**: v0.1.2
 
 ---
 
-## ✅ Session 24 — Sitemap + noindex fix (2026-04-11 · modonty v1.29.2)
+## ✅ Session 24 — Sitemap + SocialCard DB fix (2026-04-11 · modonty v1.29.3)
 
 ### What Was Done
 
 **modonty v1.29.2**
 - `app/sitemap.ts` — removed `/news/subscribe` from sitemap (form page, not indexable)
 - `app/news/subscribe/page.tsx` — added `robots: { index: false, follow: false }` metadata
-- `modonty/package.json` — version bumped 1.29.0 → 1.29.2 (1.29.1 was a hotfix without bump)
+
+**modonty v1.29.3**
+- `components/layout/RightSidebar/SocialCard.tsx` — rewritten as async Server Component reading social URLs from DB (`settings.facebookUrl`, `twitterUrl`, etc.) with `cacheTag("settings")` — was incorrectly reading from `NEXT_PUBLIC_*` env vars
+- `app/articles/[slug]/components/sidebar/article-author-bio.tsx` — same fix: `getPlatformSocialLinks()` now async, reads from DB with cacheTag("settings")
+- Both files: removed all `NEXT_PUBLIC_SOCIAL_*` references
 
 ### Full Live Test Results (Pre-SEMrush)
 - ✅ `/tags` → 200 (was 404, fixed in v1.29.1)

@@ -1,5 +1,6 @@
+import { cacheTag, cacheLife } from "next/cache";
 import Link from "@/components/link";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { IconChevronLeft } from "@/lib/icons";
@@ -10,6 +11,7 @@ import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
 import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
+import { db } from "@/lib/db";
 import type { ComponentType, SVGProps } from "react";
 
 const platformSocialIconClass =
@@ -17,17 +19,38 @@ const platformSocialIconClass =
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
-function getPlatformSocialLinks(): { key: string; href: string; label: string; icon: IconComponent }[] {
-  const items: { key: string; href: string | undefined; label: string; icon: IconComponent }[] = [
-    { key: "facebook", href: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_URL, label: "فيسبوك", icon: SocialFacebookOutline },
-    { key: "linkedin", href: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN_URL, label: "لينكد إن", icon: Linkedin },
-    { key: "youtube", href: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL, label: "يوتيوب", icon: Youtube },
-    { key: "twitter", href: process.env.NEXT_PUBLIC_SOCIAL_TWITTER_X_URL, label: "إكس / تويتر", icon: Twitter },
-    { key: "instagram", href: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM_URL, label: "انستغرام", icon: Instagram },
-    { key: "tiktok", href: process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL, label: "تيك توك", icon: TiktokLogoLight },
-    { key: "snapchat", href: process.env.NEXT_PUBLIC_SOCIAL_SNAPCHAT_URL, label: "سناب شات", icon: RoundSnapchat },
-  ];
-  return items.filter((item): item is typeof item & { href: string } => !!item.href);
+const SOCIAL_CONFIG: { key: string; field: string; label: string; icon: IconComponent }[] = [
+  { key: "facebook",  field: "facebookUrl",  label: "فيسبوك",      icon: SocialFacebookOutline },
+  { key: "linkedin",  field: "linkedInUrl",  label: "لينكد إن",    icon: Linkedin },
+  { key: "youtube",   field: "youtubeUrl",   label: "يوتيوب",      icon: Youtube },
+  { key: "twitter",   field: "twitterUrl",   label: "إكس / تويتر", icon: Twitter },
+  { key: "instagram", field: "instagramUrl", label: "انستغرام",    icon: Instagram },
+  { key: "tiktok",    field: "tiktokUrl",    label: "تيك توك",     icon: TiktokLogoLight },
+  { key: "snapchat",  field: "snapchatUrl",  label: "سناب شات",    icon: RoundSnapchat },
+];
+
+async function getPlatformSocialLinks(): Promise<{ key: string; href: string; label: string; icon: IconComponent }[]> {
+  "use cache";
+  cacheTag("settings");
+  cacheLife("hours");
+
+  const settings = await db.settings.findFirst({
+    select: {
+      facebookUrl: true,
+      linkedInUrl: true,
+      youtubeUrl: true,
+      twitterUrl: true,
+      instagramUrl: true,
+      tiktokUrl: true,
+      snapchatUrl: true,
+    },
+  });
+
+  if (!settings) return [];
+
+  return SOCIAL_CONFIG
+    .map(({ key, field, label, icon }) => ({ key, href: (settings as Record<string, string | null>)[field] ?? "", label, icon }))
+    .filter(item => !!item.href);
 }
 
 interface ArticleAuthorBioProps {
@@ -45,14 +68,14 @@ interface ArticleAuthorBioProps {
   };
 }
 
-export function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
+export async function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
   const authorSocial: { key: string; href: string; label: string; icon: IconComponent }[] = [
     author.linkedIn ? { key: "author-linkedin", href: author.linkedIn, label: "لينكد إن الكاتب", icon: Linkedin } : null,
     author.twitter ? { key: "author-twitter", href: author.twitter, label: "إكس الكاتب", icon: Twitter } : null,
     author.facebook ? { key: "author-facebook", href: author.facebook, label: "فيسبوك الكاتب", icon: SocialFacebookOutline } : null,
   ].filter((item): item is NonNullable<typeof item> => item !== null);
 
-  const platformSocial = getPlatformSocialLinks();
+  const platformSocial = await getPlatformSocialLinks();
 
   return (
     <section className="my-0" aria-labelledby="author-heading">

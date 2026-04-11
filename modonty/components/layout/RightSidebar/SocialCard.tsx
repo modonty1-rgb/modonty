@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import Link from "@/components/link";
 import { SocialFacebookOutline } from "@/components/icons/facebook";
 import { Linkedin } from "@/components/icons/linkedin";
@@ -6,69 +7,51 @@ import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
 import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
+import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 import type { ComponentType, SVGProps } from "react";
+
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 const iconLinkClass =
   "inline-flex items-center justify-center p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors";
 
-type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+const SOCIAL_CONFIG: { key: string; field: string; label: string; icon: IconComponent }[] = [
+  { key: "facebook",  field: "facebookUrl",  label: "فيسبوك",       icon: SocialFacebookOutline },
+  { key: "linkedin",  field: "linkedInUrl",  label: "لينكد إن",     icon: Linkedin },
+  { key: "youtube",   field: "youtubeUrl",   label: "يوتيوب",       icon: Youtube },
+  { key: "twitter",   field: "twitterUrl",   label: "إكس / تويتر",  icon: Twitter },
+  { key: "instagram", field: "instagramUrl", label: "انستغرام",     icon: Instagram },
+  { key: "tiktok",    field: "tiktokUrl",    label: "تيك توك",      icon: TiktokLogoLight },
+  { key: "snapchat",  field: "snapchatUrl",  label: "سناب شات",     icon: RoundSnapchat },
+];
 
-function getSocialLinks(): {
-  key: string;
-  href: string;
-  label: string;
-  icon: IconComponent;
-}[] {
-  const items: { key: string; href: string | undefined; label: string; icon: IconComponent }[] = [
-    {
-      key: "facebook",
-      href: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_URL,
-      label: "فيسبوك",
-      icon: SocialFacebookOutline,
+async function getSocialLinks(): Promise<{ key: string; href: string; label: string; icon: IconComponent }[]> {
+  "use cache";
+  cacheTag("settings");
+  cacheLife("hours");
+
+  const settings = await db.settings.findFirst({
+    select: {
+      facebookUrl: true,
+      linkedInUrl: true,
+      youtubeUrl: true,
+      twitterUrl: true,
+      instagramUrl: true,
+      tiktokUrl: true,
+      snapchatUrl: true,
     },
-    {
-      key: "linkedin",
-      href: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN_URL,
-      label: "لينكد إن",
-      icon: Linkedin,
-    },
-    {
-      key: "youtube",
-      href: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL,
-      label: "يوتيوب",
-      icon: Youtube,
-    },
-    {
-      key: "twitter",
-      href: process.env.NEXT_PUBLIC_SOCIAL_TWITTER_X_URL,
-      label: "إكس / تويتر",
-      icon: Twitter,
-    },
-    {
-      key: "instagram",
-      href: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM_URL,
-      label: "انستغرام",
-      icon: Instagram,
-    },
-    {
-      key: "tiktok",
-      href: process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL,
-      label: "تيك توك",
-      icon: TiktokLogoLight,
-    },
-    {
-      key: "snapchat",
-      href: process.env.NEXT_PUBLIC_SOCIAL_SNAPCHAT_URL,
-      label: "سناب شات",
-      icon: RoundSnapchat,
-    },
-  ];
-  return items.filter((item): item is typeof item & { href: string } => !!item.href);
+  });
+
+  if (!settings) return [];
+
+  return SOCIAL_CONFIG
+    .map(({ key, field, label, icon }) => ({ key, href: (settings as Record<string, string | null>)[field] ?? "", label, icon }))
+    .filter(item => !!item.href);
 }
 
-export function SocialCard() {
-  const socialLinks = getSocialLinks();
+export async function SocialCard() {
+  const socialLinks = await getSocialLinks();
   if (socialLinks.length === 0) return null;
 
   return (
