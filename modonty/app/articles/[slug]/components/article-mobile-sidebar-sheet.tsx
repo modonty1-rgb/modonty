@@ -10,6 +10,7 @@ import {
 import { ArticleClientCard } from "./sidebar/article-client-card";
 import { ArticleAuthorBio } from "./sidebar/article-author-bio";
 import { ArticleTableOfContents } from "./sidebar/client-only-table-of-contents";
+import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 import { NewsletterCTA } from "./sidebar/newsletter-cta";
 import { CommentFormDialog } from "./comment-form-dialog";
 import { ArticleCitations } from "./sidebar/article-citations";
@@ -48,6 +49,7 @@ interface ArticleMobileSidebarSheetProps {
   articleId: string;
   articleSlug: string;
   userId?: string | null;
+  platformSocialLinks?: SocialLink[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -62,6 +64,7 @@ export function ArticleMobileSidebarSheet({
   articleId,
   articleSlug,
   userId,
+  platformSocialLinks = [],
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: ArticleMobileSidebarSheetProps) {
@@ -88,7 +91,7 @@ export function ArticleMobileSidebarSheet({
                 askClientProps={askClientProps ?? undefined}
               />
             )}
-            {author && <ArticleAuthorBio author={author} />}
+            {author && <ArticleAuthorBio author={author} platformSocialLinks={platformSocialLinks} />}
             <ArticleTableOfContents content={content} />
             <div className="[&>div]:mt-0 [&>div]:mb-0">
               <NewsletterCTA clientId={clientId} articleId={articleId} />

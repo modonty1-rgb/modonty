@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
+import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { GTMClientTracker } from "@/components/gtm/GTMClientTracker";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -176,9 +177,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const slug = decodeURIComponent(rawSlug);
 
   try {
-    const [session, articleDefaults] = await Promise.all([
+    const [session, articleDefaults, platformSocialLinks] = await Promise.all([
       auth(),
       getArticleDefaultsFromSettings(),
+      getPlatformSocialLinks(),
     ]);
     const userId = session?.user?.id;
 
@@ -385,7 +387,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               <aside className="hidden lg:block sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="جدول المحتويات">
                 <div className="flex flex-col gap-6">
                   <div className="[&_section]:my-0">
-                    <ArticleAuthorBio author={article.author} />
+                    <ArticleAuthorBio author={article.author} platformSocialLinks={platformSocialLinks} />
                   </div>
                   <ArticleTableOfContents content={article.content} />
                   {article.citations?.length ? (
@@ -442,6 +444,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 articleId: article.id,
                 articleSlug: article.slug,
                 userId,
+                platformSocialLinks,
               }}
             />
           </div>

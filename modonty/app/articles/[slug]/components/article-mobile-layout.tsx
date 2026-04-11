@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArticleMobileEngagementBar } from "./article-mobile-engagement-bar";
 import { ArticleMobileSidebarSheet } from "./article-mobile-sidebar-sheet";
+import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 
 interface ArticleMobileLayoutProps {
   barProps: {
@@ -52,6 +53,7 @@ interface ArticleMobileLayoutProps {
     articleId: string;
     articleSlug: string;
     userId?: string | null;
+    platformSocialLinks?: SocialLink[];
   };
 }
 

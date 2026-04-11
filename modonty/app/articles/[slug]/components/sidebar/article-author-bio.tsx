@@ -1,4 +1,3 @@
-import { cacheTag, cacheLife } from "next/cache";
 import Link from "@/components/link";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -6,52 +5,14 @@ import { Button } from "@/components/ui/button";
 import { IconChevronLeft } from "@/lib/icons";
 import { SocialFacebookOutline } from "@/components/icons/facebook";
 import { Linkedin } from "@/components/icons/linkedin";
-import { Youtube } from "@/components/icons/youtube";
 import { Twitter } from "@/components/icons/twitter";
-import { Instagram } from "@/components/icons/instagram";
-import { TiktokLogoLight } from "@/components/icons/tiktok";
-import { RoundSnapchat } from "@/components/icons/snapchat";
-import { db } from "@/lib/db";
+import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 import type { ComponentType, SVGProps } from "react";
 
 const platformSocialIconClass =
   "inline-flex shrink-0 items-center justify-center p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
-
-const SOCIAL_CONFIG: { key: string; field: string; label: string; icon: IconComponent }[] = [
-  { key: "facebook",  field: "facebookUrl",  label: "فيسبوك",      icon: SocialFacebookOutline },
-  { key: "linkedin",  field: "linkedInUrl",  label: "لينكد إن",    icon: Linkedin },
-  { key: "youtube",   field: "youtubeUrl",   label: "يوتيوب",      icon: Youtube },
-  { key: "twitter",   field: "twitterUrl",   label: "إكس / تويتر", icon: Twitter },
-  { key: "instagram", field: "instagramUrl", label: "انستغرام",    icon: Instagram },
-  { key: "tiktok",    field: "tiktokUrl",    label: "تيك توك",     icon: TiktokLogoLight },
-  { key: "snapchat",  field: "snapchatUrl",  label: "سناب شات",    icon: RoundSnapchat },
-];
-
-async function getPlatformSocialLinks(): Promise<{ key: string; href: string; label: string; icon: IconComponent }[]> {
-  "use cache";
-  cacheTag("settings");
-  cacheLife("hours");
-
-  const settings = await db.settings.findFirst({
-    select: {
-      facebookUrl: true,
-      linkedInUrl: true,
-      youtubeUrl: true,
-      twitterUrl: true,
-      instagramUrl: true,
-      tiktokUrl: true,
-      snapchatUrl: true,
-    },
-  });
-
-  if (!settings) return [];
-
-  return SOCIAL_CONFIG
-    .map(({ key, field, label, icon }) => ({ key, href: (settings as Record<string, string | null>)[field] ?? "", label, icon }))
-    .filter(item => !!item.href);
-}
 
 interface ArticleAuthorBioProps {
   author: {
@@ -66,16 +27,17 @@ interface ArticleAuthorBioProps {
     twitter: string | null;
     facebook: string | null;
   };
+  platformSocialLinks: SocialLink[];
 }
 
-export async function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
+export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorBioProps) {
   const authorSocial: { key: string; href: string; label: string; icon: IconComponent }[] = [
     author.linkedIn ? { key: "author-linkedin", href: author.linkedIn, label: "لينكد إن الكاتب", icon: Linkedin } : null,
     author.twitter ? { key: "author-twitter", href: author.twitter, label: "إكس الكاتب", icon: Twitter } : null,
     author.facebook ? { key: "author-facebook", href: author.facebook, label: "فيسبوك الكاتب", icon: SocialFacebookOutline } : null,
   ].filter((item): item is NonNullable<typeof item> => item !== null);
 
-  const platformSocial = await getPlatformSocialLinks();
+  const allSocial = [...authorSocial, ...platformSocialLinks];
 
   return (
     <section className="my-0" aria-labelledby="author-heading">
@@ -123,12 +85,12 @@ export async function ArticleAuthorBio({ author }: ArticleAuthorBioProps) {
         )}
 
         {/* Social + CTA */}
-        {(authorSocial.length > 0 || platformSocial.length > 0 || author.slug) && (
+        {(allSocial.length > 0 || author.slug) && (
           <>
             <div className="border-t border-border" />
             <div className="px-4 py-2 flex items-center justify-between gap-2">
               <nav className="flex flex-wrap gap-0.5" aria-label="تابعنا على وسائل التواصل">
-                {[...authorSocial, ...platformSocial].map(({ key, href, label, icon: Icon }) => (
+                {allSocial.map(({ key, href, label, icon: Icon }) => (
                   <Link
                     key={key}
                     href={href}
