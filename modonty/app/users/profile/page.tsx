@@ -3,17 +3,10 @@
 import { useSession } from "@/components/providers/SessionContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  IconUser,
-  IconEmail,
-  IconSaved,
-  IconUsers,
-  IconComment,
-  IconLike,
-} from "@/lib/icons";
+import { IconUser, IconEmail } from "@/lib/icons";
 import { ProfileTabs } from "./components/profile-tabs";
 import { ActivityFeed } from "./components/activity-feed";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -75,16 +68,12 @@ export default function ProfilePage() {
 
   if (status === "loading") {
     return (
-      <div className="-mt-16 min-h-screen bg-background">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto max-w-[1128px] px-4 py-8">
           <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-32 mb-4" />
-              <Skeleton className="h-10 w-full" />
-            </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="relative -mt-12 ms-6">
+                <div className="relative ms-6">
                   <Skeleton className="h-20 w-20 rounded-full" />
                 </div>
                 <div className="flex-1">
@@ -109,7 +98,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="-mt-16">
+    <div>
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -118,15 +107,10 @@ export default function ProfilePage() {
       />
       <div className="container mx-auto max-w-[1128px] px-4 py-8">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">الملف الشخصي</CardTitle>
-            <div className="pt-4">
-              <ProfileTabs />
-            </div>
-          </CardHeader>
           <CardContent className="space-y-6 pt-6">
+            <ProfileTabs />
             <div className="flex items-center gap-4 min-w-0">
-              <div className="relative -mt-12 ms-6">
+              <div className="relative ms-6">
                 <Avatar className="h-20 w-20 shrink-0">
                   <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
                   <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
@@ -162,129 +146,31 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-semibold mb-4">إحصائياتك</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Link href="/users/profile/comments">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-primary/10 p-3">
-                          <IconComment className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">التعليقات</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.commentsCount}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link href="/users/profile/liked">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-primary/10 p-3">
-                          <IconLike className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">الإعجابات</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.commentLikesCount}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link href="/users/profile/favorites">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-primary/10 p-3">
-                          <IconLike className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">إعجابات المقالات</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.articleLikesCount}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link href="/users/profile/disliked" className="hidden">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-destructive/10 p-3">
-                          <IconLike className="h-5 w-5 text-destructive" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">عدم الإعجاب</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.dislikesGiven}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link href="/users/profile/favorites">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-accent/10 p-3">
-                          <IconSaved className="h-5 w-5 text-accent" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">المقالات المحفوظة</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.favoritesCount}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link href="/users/profile/following">
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-primary/10 p-3">
-                          <IconUsers className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">العملاء المتابعون</p>
-                          {loadingStats ? (
-                            <Skeleton className="h-6 w-12 mt-1" />
-                          ) : (
-                            <p className="text-2xl font-bold">{stats.followingCount}</p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4 border-t pt-4">
+              {[
+                { href: "/users/profile/comments", label: "تعليق", value: stats.commentsCount },
+                { href: "/users/profile/liked", label: "إعجاب", value: stats.commentLikesCount },
+                { href: "/users/profile/favorites", label: "مقال محفوظ", value: stats.favoritesCount },
+                { href: "/users/profile/favorites", label: "إعجاب بمقال", value: stats.articleLikesCount },
+                { href: "/users/profile/following", label: "عميل متابَع", value: stats.followingCount },
+              ].map((stat, i, arr) => (
+                <div key={stat.label} className="flex items-center gap-6">
+                  <Link
+                    href={stat.href}
+                    className="flex flex-col items-center gap-0.5 hover:text-primary transition-colors group"
+                  >
+                    {loadingStats ? (
+                      <Skeleton className="h-7 w-8" />
+                    ) : (
+                      <span className="text-xl font-bold leading-none">{stat.value}</span>
+                    )}
+                    <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
+                      {stat.label}
+                    </span>
+                  </Link>
+                  {i < arr.length - 1 && <span className="h-8 w-px bg-border" />}
+                </div>
+              ))}
             </div>
 
             {session.user.id && <ActivityFeed userId={session.user.id} />}

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (Chatbot Phase 1 Complete — CHAT-1 to CHAT-5)
+# Session Context — Last Updated: 2026-04-11 (Profile Page Polish — v1.23.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,18 @@
 
 ## Current Versions
 - **admin**: v0.29.0
-- **modonty**: v1.22.0
+- **modonty**: v1.23.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 17 — Profile Page Polish (2026-04-11)
+
+### What Was Done (modonty v1.23.0)
+
+**Files changed**
+- `app/users/profile/layout.tsx` — removed hero gradient banner (`h-24 bg-gradient-to-r from-[#0e065a] to-[#3030ff]`)
+- `app/users/profile/page.tsx` — removed `CardHeader` block, removed `-mt-16`/`-mt-12` banner offsets, replaced 5 heavy stat cards with a single inline row of number+label items separated by dividers
 
 ---
 
