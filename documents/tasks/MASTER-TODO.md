@@ -1,7 +1,7 @@
 # Master TODO — MODONTY
 
 > Last Updated: 2026-04-11
-> Versions: admin v0.29.0 | modonty v1.20.0
+> Versions: admin v0.29.0 | modonty v1.22.0
 
 ---
 
@@ -163,6 +163,25 @@
 - [ ] **MOB5** — Newsletter overlay on the featured image
 - [ ] **MOB6** — Update the Sheet with full content
 - [ ] **MOB7** — Unify CTA text: "اسأل العميل" everywhere
+
+---
+
+## ✅ Chatbot — المرحلة 1 (modonty v1.22.0) — مكتملة 2026-04-11
+
+> تفاصيل كاملة: [CHATBOT-TODO.md](modonty/CHATBOT-TODO.md)
+
+- [x] **CHAT-1** — "اسأل العميل" بعد جواب الويب — بطاقة gradient + "اقرأ المقال" + AskClientDialog
+- [x] **CHAT-2** — اقتراح ذكي للفئة من أول رسالة (Cohere embed cosine similarity)
+- [x] **CHAT-3** — جواب من الويب → بطاقة أقرب مقال في الفئة (أعلى مشاهدات)
+- [x] **CHAT-4** — Trusted sources filter + UNTRUSTED_DOMAINS blacklist
+- [x] **CHAT-5** — Hard test 8 cases ✅ — scope threshold 0.52، empty msg fix، trusted domains fix
+
+## Chatbot — المرحلة 2 (Admin FAQ generation — بعد المرحلة 1)
+
+- [ ] **CHAT-FAQ1** — Admin: صفحة أسئلة المستخدمين مجمّعة حسب التكرار
+- [ ] **CHAT-FAQ2** — Admin: زر "حوّل لـ FAQ" → ArticleFAQ جديد
+- [ ] **CHAT-FAQ3** — Admin: filter حسب الفئة / العميل / المصدر
+- [ ] **CHAT-FAQ4** — modonty: FAQ المحوَّلة تظهر على صفحة المقال
 
 ---
 

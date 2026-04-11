@@ -5,7 +5,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { chunkArticleContent } from "@/lib/rag/chunk";
 import { retrieveFromChunks } from "@/lib/rag/retrieve";
-import { isOutOfScope } from "@/lib/rag/scope";
+import { isOutOfScope, isGreetingOrShortPleasantry } from "@/lib/rag/scope";
+import { buildCategoryDbPrompt, buildCategoryWebPrompt, hasTrustedContent } from "@/lib/rag/prompts";
 import { chatStream, type ChatMessage } from "@/lib/cohere";
 import { searchSerper } from "@/lib/serper";
 import { saveChatbotMessage } from "@/lib/chat/save-chatbot-message";
@@ -133,10 +134,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let { docs, topScore, topRerankScore } = await retrieveFromChunks(
-      lastUserMsg.content,
-      allChunks
-    );
+    // Identity/greeting questions — skip RAG, let Cohere answer from system prompt
+    const isIdentityQuestion = isGreetingOrShortPleasantry(lastUserMsg.content);
+
+    let { docs, topScore, topRerankScore } = isIdentityQuestion
+      ? { docs: [], topScore: 0, topRerankScore: 0 }
+      : await retrieveFromChunks(lastUserMsg.content, allChunks);
 
     if (process.env.NODE_ENV === "development") {
       console.debug("[chatbot-rag]", {
@@ -150,7 +153,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (docs.length > 0 && topRerankScore >= RERANK_REDIRECT_THRESHOLD) {
+    if (!isIdentityQuestion && docs.length > 0 && topRerankScore >= RERANK_REDIRECT_THRESHOLD) {
       const titleToArticle = new Map(scopeArticles.map((a) => [a.title, a]));
       const matchedArticles: { id: string; title: string; slug: string; excerpt: string | null; client: { name: string; slug: string } }[] = [];
       const seen = new Set<string>();
@@ -190,19 +193,58 @@ export async function POST(request: NextRequest) {
     }
 
     let serperSources: { title: string; link: string }[] = [];
-    if (docs.length === 0 || topRerankScore < RERANK_REDIRECT_THRESHOLD) {
+    let suggestedArticle: { id: string; title: string; slug: string; excerpt: string | null; client: { name: string; slug: string } } | null = null;
+
+    if (!isIdentityQuestion && (docs.length === 0 || topRerankScore < RERANK_REDIRECT_THRESHOLD)) {
       try {
         const serperQuery = `${lastUserMsg.content} ${category.name}`.trim();
         const serperResults = await searchSerper(serperQuery, 8);
+
+        // CHAT-4: trusted sources check — require at least 2 meaningful snippets
+        if (!hasTrustedContent(serperResults)) {
+          saveChatbotMessage({
+            userId: session.user.id,
+            userQuery: lastUserMsg.content,
+            assistantResponse: "لم أعثر على مصادر موثوقة كافية للإجابة على هذا السؤال.",
+            scopeType: "category",
+            categorySlug,
+            categoryId: category.id,
+            outcome: "outOfScope",
+          }).catch(() => {});
+          return NextResponse.json({
+            type: "noSources",
+            message: "لم أعثر على مصادر موثوقة كافية للإجابة على هذا السؤال.",
+          });
+        }
+
         serperSources = serperResults.map((r) => ({ title: r.title, link: r.link }));
         docs = serperResults.map((r, i) => ({
           id: `doc-web-${i}`,
           text: `${r.title}\n${r.snippet}\n${r.link}`,
         }));
+
+        // CHAT-3: fetch most-viewed article in this category to suggest after web answer
+        suggestedArticle = await db.article.findFirst({
+          where: {
+            categoryId: category.id,
+            status: ArticleStatus.PUBLISHED,
+            OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+          },
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            excerpt: true,
+            client: { select: { id: true, name: true, slug: true } },
+          },
+          orderBy: { views: { _count: "desc" } },
+        });
+
         if (process.env.NODE_ENV === "development") {
           console.debug("[chatbot-flow] source=Serper, outcome=stream", {
             serperCount: docs.length,
             sourcesCount: serperSources.length,
+            suggestedArticle: suggestedArticle?.slug,
             query: serperQuery.slice(0, 60),
           });
         }
@@ -216,13 +258,14 @@ export async function POST(request: NextRequest) {
       console.debug("[chatbot-flow] source=DB, outcome=stream", { docsCount: docs.length });
     }
 
-    const systemPrompt = docs.some((d) => d.id.startsWith("doc-web-"))
-      ? "أنت مساعد يتحدث العربية. أجب بناءً على المستندات المقدمة فقط. في نهاية الإجابة أضف: المصدر: نتائج البحث على الويب"
-      : "أنت مساعد يتحدث العربية. أجب بناءً على المستندات المقدمة فقط. إذا لم تجد إجابة في المستندات، قل ذلك بوضوح.";
+    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
+    const systemPrompt = usedWebSource
+      ? buildCategoryWebPrompt(category.name)
+      : buildCategoryDbPrompt(category.name);
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
-      ...messages,
+      ...messages.filter((m) => m.content.trim().length > 0),
     ];
 
     if (!wantStream) {
@@ -230,7 +273,6 @@ export async function POST(request: NextRequest) {
       const response = await chat(chatMessages, docs.length > 0 ? docs : undefined);
       const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
       const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";
-      const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
       saveChatbotMessage({
         userId: session.user.id,
         userQuery: lastUserMsg.content,
@@ -242,10 +284,13 @@ export async function POST(request: NextRequest) {
         source: usedWebSource ? "web" : "db",
         webSources: usedWebSource ? serperSources : undefined,
       }).catch(() => {});
-      return NextResponse.json({ type: "message", text });
+      return NextResponse.json({
+        type: "message",
+        text,
+        ...(usedWebSource && suggestedArticle && { suggestedArticle }),
+      });
     }
 
-    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
@@ -262,6 +307,7 @@ export async function POST(request: NextRequest) {
               JSON.stringify({
                 type: "done",
                 ...(usedWebSource && { source: "web", sources: serperSources }),
+                ...(usedWebSource && suggestedArticle && { suggestedArticle }),
               }) + "\n"
             )
           );

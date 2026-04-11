@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (User Account Polish + FAQ Reply Notification Fix)
+# Session Context — Last Updated: 2026-04-11 (Chatbot Phase 1 Complete — CHAT-1 to CHAT-5)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -10,6 +10,35 @@
 - **admin**: v0.29.0
 - **modonty**: v1.22.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 16 — Chatbot Phase 1 Complete (CHAT-1 → CHAT-5) (2026-04-11)
+
+### What Was Done (modonty v1.22.0)
+
+**1. New files**
+- `lib/rag/prompts.ts` — centralized prompt builder (4 prompts: category DB/web, article DB/web). Strict rules: persona, no hallucination, cite source, Arabic فصحى, 3 paragraphs max
+- `app/api/chatbot/suggest-category/route.ts` — Cohere embed cosine similarity → returns top category if score > 0.35
+
+**2. Modified files**
+- `app/api/chatbot/chat/route.ts` — added suggestedArticle (top-viewed in category after Serper), trusted sources check (hasTrustedContent), prompt from lib/rag/prompts
+- `app/api/articles/[slug]/chat/route.ts` — same trusted sources + prompt from lib/rag/prompts
+- `components/chatbot/ArticleChatbotContent.tsx` — full rewrite: auto-detect category (CHAT-2), "اسأل العميل" card after web answers (CHAT-1), suggested article card (CHAT-3), no-sources amber card (CHAT-4), input always visible
+
+**3. Bugs found and fixed during live test (CHAT-5)**
+- `ArticleChatbotContent.tsx:124` — empty-content suggestion message was sent to Cohere → 400 error. Fix: filter `m.content.trim().length > 0` before building history
+- `lib/rag/scope.ts` — OUT_OF_SCOPE_THRESHOLD raised 0.42 → 0.52 (cooking passed as in-scope at 0.42)
+- `lib/rag/prompts.ts` — `hasTrustedContent` added UNTRUSTED_DOMAINS blacklist (TikTok, YouTube, Instagram, etc.) — previously TikTok was accepted as "trusted"
+
+**4. Live test results (CHAT-5 — 8 cases)**
+- ✅ UI: input always visible, category chip, welcome message
+- ✅ CHAT-2: auto-detect "التسويق الرقمي" from first message
+- ✅ DB redirect: matched SEO article, redirect cards shown
+- ✅ Web answer: source cited + suggested article card + "اسأل العميل" button
+- ✅ Out-of-scope: cooking question rejected correctly
+- ✅ Article chatbot: no category needed, answers from article content
+- ✅ History tab: all sessions saved with timestamps
 
 ---
 
@@ -86,13 +115,16 @@
 ## 📋 What's Left
 
 ### MASTER-TODO
+- Chatbot Phase 2 (CHAT-FAQ1-4) — Admin FAQ generation from chat history
 - Email integration (Resend) — needs Resend subscription first
 - Mobile Phase 2 (MOB1-7) — mockup ready in `design-preview/page.tsx`
 - Admin auth actions — 13 remaining (contact-messages, faq, upload, etc.)
 - Admin UX improvements (media picker search, inline picker, etc.)
+- USR-N1 — faq_reply notification detail view in modonty
 
-### MODONTY-PUBLIC-TODO
-- ✅ ALL TASKS COMPLETE
+### CHATBOT-TODO
+- ✅ Phase 1 (CHAT-1 to CHAT-5) ALL COMPLETE
+- Phase 2 (CHAT-FAQ1-4) — Admin FAQ generation — not started
 
 ---
 

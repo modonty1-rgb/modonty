@@ -6,7 +6,8 @@ import { db } from "@/lib/db";
 import { getArticleForChat, getArticlesForOutOfScopeSearch } from "@/app/articles/[slug]/actions/article-data";
 import { chunkArticleContent } from "@/lib/rag/chunk";
 import { retrieveFromChunks } from "@/lib/rag/retrieve";
-import { isOutOfScope } from "@/lib/rag/scope";
+import { isOutOfScope, isGreetingOrShortPleasantry } from "@/lib/rag/scope";
+import { buildArticleDbPrompt, buildArticleWebPrompt, hasTrustedContent } from "@/lib/rag/prompts";
 import { chatStream, rerank, type ChatMessage } from "@/lib/cohere";
 import { searchSerper } from "@/lib/serper";
 import { saveChatbotMessage } from "@/lib/chat/save-chatbot-message";
@@ -93,6 +94,9 @@ export async function POST(
       const docStrings = candidates.map(
         (a) => `${a.title}\n${a.excerpt ?? a.content?.slice(0, 500) ?? ""}`
       );
+      if (docStrings.length === 0) {
+        return NextResponse.json({ type: "outOfScope", message: "سؤالك خارج نطاق هذا المقال." });
+      }
       const reranked = await rerank(lastUserMsg.content, docStrings, 5);
       const articles = reranked.map((r) => {
         const a = candidates[r.index];
@@ -124,9 +128,14 @@ export async function POST(
       });
     }
 
+    // Identity/greeting questions — skip RAG, let Cohere answer from system prompt
+    const isIdentityQuestion = isGreetingOrShortPleasantry(lastUserMsg.content);
+
     // In-scope: RAG
     const chunks = chunkArticleContent(article.content);
-    let { docs, topScore } = await retrieveFromChunks(lastUserMsg.content, chunks);
+    let { docs, topScore } = isIdentityQuestion
+      ? { docs: [], topScore: 0 }
+      : await retrieveFromChunks(lastUserMsg.content, chunks);
 
     if (process.env.NODE_ENV === "development") {
       console.debug("[article-chat-rag]", {
@@ -139,7 +148,7 @@ export async function POST(
       });
     }
 
-    if (docs.length === 0 || topScore < RELEVANCE_THRESHOLD) {
+    if (!isIdentityQuestion && (docs.length === 0 || topScore < RELEVANCE_THRESHOLD)) {
       const sameCategory = article.categoryId
         ? await db.article.findMany({
             where: {
@@ -204,9 +213,28 @@ export async function POST(
     }
 
     let serperSources: { title: string; link: string }[] = [];
-    if (docs.length === 0) {
+    if (!isIdentityQuestion && docs.length === 0) {
       try {
         const serperResults = await searchSerper(lastUserMsg.content, 8);
+
+        // Trusted sources check — require meaningful snippets
+        if (!hasTrustedContent(serperResults)) {
+          saveChatbotMessage({
+            userId: session.user.id,
+            userQuery: lastUserMsg.content,
+            assistantResponse: "لم أعثر على مصادر موثوقة كافية للإجابة على هذا السؤال.",
+            scopeType: "article",
+            articleSlug: decodedSlug,
+            articleId: article.id,
+            categoryId: article.categoryId ?? undefined,
+            outcome: "outOfScope",
+          }).catch(() => {});
+          return NextResponse.json({
+            type: "noSources",
+            message: "لم أعثر على مصادر موثوقة كافية للإجابة على هذا السؤال.",
+          });
+        }
+
         serperSources = serperResults.map((r) => ({ title: r.title, link: r.link }));
         docs = serperResults.map((r, i) => ({
           id: `doc-web-${i}`,
@@ -225,25 +253,21 @@ export async function POST(
       console.debug("[article-chat-flow] source=DB, outcome=stream", { docsCount: docs.length });
     }
 
-    const systemPrompt =
-      docs.some((d) => d.id.startsWith("doc-web-"))
-        ? "أنت مساعد يتحدث العربية. أجب بناءً على المستندات المقدمة فقط. في نهاية الإجابة أضف: المصدر: نتائج البحث على الويب"
-        : "أنت مساعد يتحدث العربية. أجب بناءً على المستندات المقدمة فقط. إذا لم تجد إجابة في المستندات، قل ذلك بوضوح.";
+    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
+    const systemPrompt = usedWebSource
+      ? buildArticleWebPrompt(article.category?.name ?? "")
+      : buildArticleDbPrompt(article.title, article.category?.name ?? "");
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
-      ...messages,
+      ...messages.filter((m) => m.content.trim().length > 0),
     ];
 
     if (!wantStream) {
       const { chat } = await import("@/lib/cohere");
       const response = await chat(chatMessages, docs.length > 0 ? docs : undefined);
       const msg = response as { text?: string; message?: { content?: Array<{ text?: string }> } };
-      const text =
-        msg.text ??
-        msg.message?.content?.[0]?.text ??
-        "";
-      const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
+      const text = msg.text ?? msg.message?.content?.[0]?.text ?? "";
       saveChatbotMessage({
         userId: session.user.id,
         userQuery: lastUserMsg.content,
@@ -259,7 +283,6 @@ export async function POST(
       return NextResponse.json({ type: "message", text });
     }
 
-    const usedWebSource = docs.some((d) => d.id.startsWith("doc-web-"));
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {

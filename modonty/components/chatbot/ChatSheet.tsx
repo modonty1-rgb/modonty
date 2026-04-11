@@ -212,6 +212,7 @@ export function ChatSheet() {
                 articleSlug={articleSlug}
                 userName={session.user.name ?? session.user.email ?? undefined}
                 userImage={session.user.image ?? undefined}
+                userEmail={session.user.email ?? undefined}
                 selectedCategory={selectedCategory}
                 onSelectedCategoryChange={setSelectedCategory}
               />
