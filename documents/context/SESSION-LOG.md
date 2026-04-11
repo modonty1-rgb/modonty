@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (SocialCard DB fix — v1.29.3)
+# Session Context — Last Updated: 2026-04-11 (Breadcrumb microdata fix — v1.29.6)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,26 @@
 
 ## Current Versions
 - **admin**: v0.30.0
-- **modonty**: v1.29.3
+- **modonty**: v1.29.6
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 25 — Breadcrumb structured data fix (2026-04-11 · modonty v1.29.6)
+
+### What Was Done
+
+**modonty v1.29.6**
+- `modonty/components/ui/breadcrumb.tsx` — removed ALL HTML microdata attributes (`itemScope`, `itemType`, `itemProp`) from `<ol>` and `<li>` elements
+- Root cause: component was outputting BOTH HTML microdata AND JSON-LD (`generateBreadcrumbStructuredData()`), causing Google to see duplicate BreadcrumbList — microdata version was missing `position` field
+- Fix: clean HTML only, JSON-LD remains the single source of truth for breadcrumb structured data
+- Impact: fixes 113 "Invalid items" in SEMrush structured data audit
+
+### ⚠️ Pending — Verify After Push
+1. **Google Rich Results Test** — test any article page (e.g., an article slug) → should now show 0 errors for BreadcrumbList
+2. **SEMrush rerun** — re-crawl modonty.com to confirm structured data errors drop from 113 to 0
+3. **9 incorrect pages in sitemap** — need to investigate which pages return errors
+4. **2 hreflang conflicts** — need to investigate
 
 ---
 
@@ -21,10 +39,15 @@
 - `app/sitemap.ts` — removed `/news/subscribe` from sitemap (form page, not indexable)
 - `app/news/subscribe/page.tsx` — added `robots: { index: false, follow: false }` metadata
 
-**modonty v1.29.3**
-- `components/layout/RightSidebar/SocialCard.tsx` — rewritten as async Server Component reading social URLs from DB (`settings.facebookUrl`, `twitterUrl`, etc.) with `cacheTag("settings")` — was incorrectly reading from `NEXT_PUBLIC_*` env vars
-- `app/articles/[slug]/components/sidebar/article-author-bio.tsx` — same fix: `getPlatformSocialLinks()` now async, reads from DB with cacheTag("settings")
-- Both files: removed all `NEXT_PUBLIC_SOCIAL_*` references
+**modonty v1.29.3 → v1.29.5** (SocialCard DB refactor — 3 hotfixes)
+- `lib/settings/get-platform-social-links.ts` — NEW: `"use cache"` file, returns `{ key, href, label }[]` from DB settings (no icon — not serializable across Server/Client boundary)
+- `SocialCard.tsx` — async Server Component, reads from DB via `getPlatformSocialLinks()`, maps key→icon locally
+- `article-author-bio.tsx` — accepts `platformSocialLinks: SocialLink[]` as prop, maps key→icon locally
+- `article-mobile-layout.tsx` + `article-mobile-sidebar-sheet.tsx` — pass `platformSocialLinks` through props chain
+- `page.tsx` — fetches `getPlatformSocialLinks()` in `Promise.all` and passes down
+
+**Full live test PASSED before SEMrush rerun:**
+- ✅ sameAs (7 correct), SocialCard (7 icons), H1s, meta descriptions, BreadcrumbList, robots.txt, sitemap, /tags 200
 
 ### Full Live Test Results (Pre-SEMrush)
 - ✅ `/tags` → 200 (was 404, fixed in v1.29.1)
