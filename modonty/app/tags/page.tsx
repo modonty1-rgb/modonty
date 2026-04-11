@@ -40,7 +40,7 @@ export default async function TagsPage() {
     orderBy: { name: "asc" },
   });
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
 
   const breadcrumbData = generateBreadcrumbStructuredData([
     { name: "الرئيسية", url: "/" },

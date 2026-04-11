@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return author.nextjsMetadata as Metadata;
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   const title = (author.seoTitle || `${author.name} — Author`)?.slice(0, 51);
   const description = author.seoDescription || author.bio || `Articles by ${author.name}`;
 
@@ -100,7 +100,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
   if (!author) notFound();
 
   const articles = await getAuthorArticles(author.id);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   // Use cached JSON-LD if available, otherwise generate live
   let jsonLdString: string;

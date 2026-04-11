@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
     const siteName = page.ogSiteName || "مودونتي";
     const title = page.seoTitle || page.title || "سياسة ملفات تعريف الارتباط";
     const description = page.seoDescription || "تعرف على كيفية استخدام منصة مودونتي لملفات تعريف الارتباط (Cookies)";

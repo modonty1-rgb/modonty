@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   const articles = await db.article.findMany({
     where: {

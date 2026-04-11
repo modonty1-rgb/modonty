@@ -145,7 +145,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
       "@type": "CollectionPage",
       name: category.name,
       description: category.description || category.seoDescription,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/categories/${slug}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/categories/${slug}`,
       mainEntity: {
         "@type": "ItemList",
         itemListElement: articles.slice(0, 10).map((article, index) => ({
@@ -155,7 +155,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
             "@type": "Article",
             headline: article.title,
             description: article.excerpt,
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/articles/${article.slug}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/articles/${article.slug}`,
             datePublished: article.publishedAt,
             author: {
               "@type": "Person",

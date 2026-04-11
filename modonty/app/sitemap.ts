@@ -10,7 +10,7 @@ type SitemapArticle = {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   const [articles, categories, clients, authors, tags] = await Promise.all([
     db.article.findMany({

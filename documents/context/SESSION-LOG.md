@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (Breadcrumb microdata fix — v1.29.6)
+# Session Context — Last Updated: 2026-04-11 (sitemap www fix — v1.29.7)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,24 @@
 
 ## Current Versions
 - **admin**: v0.30.0
-- **modonty**: v1.29.6
+- **modonty**: v1.29.7
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 26 — Sitemap www canonical fix (2026-04-11 · modonty v1.29.7)
+
+### What Was Done
+
+**modonty v1.29.7**
+- 15 files: replaced all `"https://modonty.com"` fallbacks → `"https://www.modonty.com"` (sitemap, robots, image-sitemap, all page metadata, lib/seo/index.ts)
+- Root cause: sitemap URLs used non-www → SEMrush flagged 9 "incorrect pages" as Redirect type errors
+- Fix: all NEXT_PUBLIC_SITE_URL fallbacks now use canonical www form
+- ⚠️ Also update Vercel env: `NEXT_PUBLIC_SITE_URL=https://www.modonty.com` (if currently set to non-www)
+
+### ⚠️ Pending — Verify After Push
+1. **SEMrush rerun** → "9 incorrect pages in sitemap.xml" should drop to 0
+2. Investigate: 4 broken internal links + 1 page 4XX + hreflang conflicts (2+1)
 
 ---
 

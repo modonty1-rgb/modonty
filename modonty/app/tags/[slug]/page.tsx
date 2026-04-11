@@ -144,7 +144,7 @@ export default async function TagPage({ params }: TagPageProps) {
       },
     }));
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://modonty.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
 
     const breadcrumbData = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },

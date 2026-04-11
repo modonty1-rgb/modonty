@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
     const siteName = page.ogSiteName || "مودونتي";
     const title = page.seoTitle || page.title || "اتفاقية المستخدم";
     const description = page.seoDescription || "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة";

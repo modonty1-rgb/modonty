@@ -27,7 +27,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"
   ),
   title: {
     default: "مودونتي - منصة المدونات متعددة العملاء",

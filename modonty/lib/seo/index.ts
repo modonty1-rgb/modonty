@@ -59,7 +59,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
   } = data;
 
   const fullTitle = title ? `${title} - ${siteName}` : siteName;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   let canonicalUrl: string;
   if (!url) {
     canonicalUrl = siteUrl;
@@ -173,7 +173,7 @@ export function generateStructuredData(data: {
   [key: string]: unknown;
 }): object {
   const { type, name, description, url, image, ...additionalData } = data;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   const baseSchema = {
     "@context": "https://schema.org",
@@ -189,7 +189,7 @@ export function generateStructuredData(data: {
 }
 
 export function generateBreadcrumbStructuredData(items: Array<{ name: string; url: string }>): object {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   return {
     "@context": "https://schema.org",
@@ -204,7 +204,7 @@ export function generateBreadcrumbStructuredData(items: Array<{ name: string; ur
 }
 
 export function generateArticleStructuredData(article: any) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   const articleUrl = article.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
 
   const structuredData: any = {
@@ -445,7 +445,7 @@ export function generateOrganizationStructuredData(client: any) {
 }
 
 export function generateFAQPageStructuredData(faqs: any[]) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   const faqPageUrl = `${siteUrl}/help/faq`;
 
   const structuredData: any = {
