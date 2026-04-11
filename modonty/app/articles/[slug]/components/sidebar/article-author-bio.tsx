@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { IconChevronLeft } from "@/lib/icons";
 import { SocialFacebookOutline } from "@/components/icons/facebook";
 import { Linkedin } from "@/components/icons/linkedin";
+import { Youtube } from "@/components/icons/youtube";
 import { Twitter } from "@/components/icons/twitter";
+import { Instagram } from "@/components/icons/instagram";
+import { TiktokLogoLight } from "@/components/icons/tiktok";
+import { RoundSnapchat } from "@/components/icons/snapchat";
 import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 import type { ComponentType, SVGProps } from "react";
 
@@ -13,6 +17,16 @@ const platformSocialIconClass =
   "inline-flex shrink-0 items-center justify-center p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
+const ICON_MAP: Record<string, IconComponent> = {
+  facebook:  SocialFacebookOutline,
+  linkedin:  Linkedin,
+  youtube:   Youtube,
+  twitter:   Twitter,
+  instagram: Instagram,
+  tiktok:    TiktokLogoLight,
+  snapchat:  RoundSnapchat,
+};
 
 interface ArticleAuthorBioProps {
   author: {
@@ -33,11 +47,9 @@ interface ArticleAuthorBioProps {
 export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorBioProps) {
   const authorSocial: { key: string; href: string; label: string; icon: IconComponent }[] = [
     author.linkedIn ? { key: "author-linkedin", href: author.linkedIn, label: "لينكد إن الكاتب", icon: Linkedin } : null,
-    author.twitter ? { key: "author-twitter", href: author.twitter, label: "إكس الكاتب", icon: Twitter } : null,
-    author.facebook ? { key: "author-facebook", href: author.facebook, label: "فيسبوك الكاتب", icon: SocialFacebookOutline } : null,
+    author.twitter  ? { key: "author-twitter",  href: author.twitter,  label: "إكس الكاتب",     icon: Twitter } : null,
+    author.facebook ? { key: "author-facebook", href: author.facebook, label: "فيسبوك الكاتب",  icon: SocialFacebookOutline } : null,
   ].filter((item): item is NonNullable<typeof item> => item !== null);
-
-  const allSocial = [...authorSocial, ...platformSocialLinks];
 
   return (
     <section className="my-0" aria-labelledby="author-heading">
@@ -85,12 +97,12 @@ export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorB
         )}
 
         {/* Social + CTA */}
-        {(allSocial.length > 0 || author.slug) && (
+        {(authorSocial.length > 0 || platformSocialLinks.length > 0 || author.slug) && (
           <>
             <div className="border-t border-border" />
             <div className="px-4 py-2 flex items-center justify-between gap-2">
               <nav className="flex flex-wrap gap-0.5" aria-label="تابعنا على وسائل التواصل">
-                {allSocial.map(({ key, href, label, icon: Icon }) => (
+                {authorSocial.map(({ key, href, label, icon: Icon }) => (
                   <Link
                     key={key}
                     href={href}
@@ -102,6 +114,22 @@ export function ArticleAuthorBio({ author, platformSocialLinks }: ArticleAuthorB
                     <Icon className="h-3.5 w-3.5" aria-hidden />
                   </Link>
                 ))}
+                {platformSocialLinks.map(({ key, href, label }) => {
+                  const Icon = ICON_MAP[key];
+                  if (!Icon) return null;
+                  return (
+                    <Link
+                      key={key}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={platformSocialIconClass}
+                      aria-label={label}
+                    >
+                      <Icon className="h-3.5 w-3.5" aria-hidden />
+                    </Link>
+                  );
+                })}
               </nav>
               {author.slug && (
                 <Button asChild size="sm" variant="outline" className="h-7 text-xs px-2 shrink-0">
