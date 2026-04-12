@@ -3,6 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Archive, ArchiveRestore } from 'lucide-react';
 import { archiveArticle, unarchiveArticle } from '../../actions/articles-actions';
 import { useToast } from '@/hooks/use-toast';
@@ -17,42 +28,57 @@ export function ArchiveArticleButton({ articleId, isArchived }: ArchiveArticleBu
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleToggle = async () => {
+  const handleArchive = async () => {
     setLoading(true);
-    const result = isArchived
-      ? await unarchiveArticle(articleId)
-      : await archiveArticle(articleId);
-
+    const result = await archiveArticle(articleId);
     if (result.success) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'فشل',
-        description: result.error,
-        variant: 'destructive',
-      });
+      toast({ title: 'فشل', description: result.error, variant: 'destructive' });
     }
   };
 
+  const handleUnarchive = async () => {
+    setLoading(true);
+    const result = await unarchiveArticle(articleId);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setLoading(false);
+      toast({ title: 'فشل', description: result.error, variant: 'destructive' });
+    }
+  };
+
+  if (isArchived) {
+    return (
+      <Button variant="outline" size="sm" onClick={handleUnarchive} disabled={loading}>
+        <ArchiveRestore className="h-3.5 w-3.5 me-1.5" />
+        Unarchive
+      </Button>
+    );
+  }
+
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleToggle}
-      disabled={loading}
-    >
-      {isArchived ? (
-        <>
-          <ArchiveRestore className="h-3.5 w-3.5 me-1.5" />
-          Unarchive
-        </>
-      ) : (
-        <>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm" disabled={loading}>
           <Archive className="h-3.5 w-3.5 me-1.5" />
           Archive
-        </>
-      )}
-    </Button>
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>أرشفة المقال</AlertDialogTitle>
+          <AlertDialogDescription>
+            هذا المقال لن يظهر في المدونة بعد الأرشفة. يمكنك إلغاء الأرشفة في أي وقت.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>كنسل</AlertDialogCancel>
+          <AlertDialogAction onClick={handleArchive}>استمرار</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-12 (archive system + SEO redirect — admin v0.32.0 / modonty v1.30.0)
+# Session Context — Last Updated: 2026-04-12 (archive confirmation dialog — admin v0.33.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,38 @@
 ---
 
 ## Current Versions
-- **admin**: v0.32.0
+- **admin**: v0.33.0
 - **modonty**: v1.30.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 29 — Archive confirmation dialog (2026-04-12 · admin v0.33.0)
+
+### What Was Done
+
+**admin v0.33.0**
+- `archive-article-button.tsx`: Added AlertDialog confirmation for Archive action only
+  - Archive button → shows Arabic AlertDialog: "أرشفة المقال" title, warning description, "استمرار" + "كنسل" buttons
+  - Unarchive fires immediately (no dialog — safe/reversible operation)
+  - Added `open` state + `handleClick` / `handleConfirm` separation
+  - Loader2 spinner in button during loading state
+  - Removed `useToast` import (not needed — router.refresh() is sufficient feedback)
+
+### Tested End-to-End
+- Archive → AlertDialog appears ✅
+- كنسل → dialog closes, no change ✅
+- استمرار → article archived, button flips to Unarchive ✅
+- Unarchive → no dialog, fires immediately, button flips to Archive ✅
+- Test article restored to Writing status ✅
+
+### ⚠️ Pending
+- ARCH-1: Toast after archive/unarchive — "تم أرشفة المقال — لن يظهر في المدونة" / "تم إلغاء الأرشفة — المقال عاد للحالة السابقة"
+- Save-blocking for SEO fields (seoTitle > 60, seoDescription > 160)
+- DB script for old articles: truncate oversized SEO fields
+- PUSH-4: seoDescription maxLength=160 + hints
+- PUSH-5: Arabic error messages
+- SCOPY-1 through SCOPY-5: Full SEO copy fields audit
 
 ---
 
