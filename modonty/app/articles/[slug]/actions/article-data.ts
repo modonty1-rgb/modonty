@@ -685,3 +685,12 @@ export async function getArticleFaqs(articleId: string) {
     (f): f is typeof f & { answer: string } => typeof f.answer === "string" && f.answer.length > 0
   );
 }
+
+/** Check if a slug belongs to an ARCHIVED article — used for SEO redirect (307) instead of 404. */
+export async function getArchivedArticleRedirectSlug(slug: string): Promise<string | null> {
+  const article = await db.article.findFirst({
+    where: { slug, status: ArticleStatus.ARCHIVED },
+    select: { id: true },
+  });
+  return article ? slug : null;
+}

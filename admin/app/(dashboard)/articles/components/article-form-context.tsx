@@ -1,6 +1,16 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
 import { slugify, generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
 import { SITE_NAME } from '@/lib/constants/site-name';
@@ -232,7 +242,10 @@ export function ArticleFormProvider({
     return initial;
   });
   const [isDirty, setIsDirty] = useState(false);
+  const isDirtyRef = useRef(false); // sync ref — read by link-click interceptor without stale closure
   const [isSaving, setIsSaving] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [pendingNavHref, setPendingNavHref] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   
@@ -280,18 +293,18 @@ export function ArticleFormProvider({
   const updateField = useCallback((field: keyof ArticleFormData, value: ArticleFormData[keyof ArticleFormData]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setIsDirty(true);
+    isDirtyRef.current = true;
     setErrors((prev) => {
       const next = { ...prev };
       delete next[field];
       return next;
     });
-    // Note: Store sync happens via debounced useEffect below
   }, []);
 
   const updateFields = useCallback((fields: Partial<ArticleFormData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
     setIsDirty(true);
-    // Note: Store sync happens via debounced useEffect below
+    isDirtyRef.current = true;
   }, []);
 
   const save = useCallback(async () => {
@@ -303,6 +316,7 @@ export function ArticleFormProvider({
         : await onSubmit(formData);
       if (result.success) {
         setIsDirty(false);
+        isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
         setErrors({});
         // Update updatedAt to match server — prevents optimistic locking conflict on next save
         if (result.article?.updatedAt) {
@@ -323,18 +337,33 @@ export function ArticleFormProvider({
     }
   }, [formData, onSubmit, articleId]);
 
-  // Unsaved changes warning — prevent accidental navigation
+  // Intercept in-app link clicks when dirty → show shadcn AlertDialog instead of native browser dialog.
+  // Reads isDirtyRef (sync) so this effect is stable and never re-registers.
   const isSavingRef = useRef(false);
   useEffect(() => {
-    if (!isDirty) return;
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      // Skip warning if we're in the middle of saving (redirect after save)
-      if (isSavingRef.current) return;
+    const handleLinkClick = (e: MouseEvent) => {
+      if (!isDirtyRef.current || isSavingRef.current) return;
+      const anchor = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || anchor.target === '_blank') return;
       e.preventDefault();
+      e.stopPropagation();
+      setPendingNavHref(href);
+      setShowUnsavedDialog(true);
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty]);
+    document.addEventListener('click', handleLinkClick, { capture: true });
+    return () => document.removeEventListener('click', handleLinkClick, { capture: true });
+  }, []); // stable — reads from refs only
+
+  const handleConfirmLeave = useCallback(() => {
+    setShowUnsavedDialog(false);
+    if (pendingNavHref) {
+      isDirtyRef.current = false; // user confirmed leave
+      setIsDirty(false);
+      window.location.href = pendingNavHref;
+    }
+  }, [pendingNavHref]);
 
   // Auto-save state
   const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
@@ -379,10 +408,11 @@ export function ArticleFormProvider({
   // Auto-fill logic (no setIsDirty — these are system-generated, not user changes)
   useEffect(() => {
     const newSlug = slugify(formData.title);
-    if (newSlug && newSlug !== formData.slug && !formData.slug) {
+    // New article: slug always follows title. Edit: only fill if still empty (never overwrite saved slug).
+    if (newSlug && newSlug !== formData.slug && (mode === 'new' || !formData.slug)) {
       setFormData((prev) => ({ ...prev, slug: newSlug }));
     }
-  }, [formData.title, formData.slug]);
+  }, [formData.title, formData.slug, mode]);
 
   // Auto-fill SEO title from title (if empty)
   useEffect(() => {
@@ -452,7 +482,8 @@ export function ArticleFormProvider({
   useEffect(() => {
     if (!formData.authorId && authors.length === 1 && mode === 'new') {
       setFormData((prev) => ({ ...prev, authorId: authors[0].id }));
-      setIsDirty(false); // Don't mark as dirty for auto-set singleton
+      setIsDirty(false);
+      isDirtyRef.current = false; // Don't mark as dirty for auto-set singleton
     }
   }, [formData.authorId, authors, mode]);
 
@@ -515,7 +546,30 @@ export function ArticleFormProvider({
     dbMetaAndJsonLd,
   };
 
-  return <ArticleFormContext.Provider value={value}>{children}</ArticleFormContext.Provider>;
+  return (
+    <>
+      <ArticleFormContext.Provider value={value}>{children}</ArticleFormContext.Provider>
+      <AlertDialog open={showUnsavedDialog} onOpenChange={setShowUnsavedDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تغييرات غير محفوظة</AlertDialogTitle>
+            <AlertDialogDescription>
+              لديك تغييرات غير محفوظة. إذا غادرت الآن ستُفقد التغييرات.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>البقاء في الصفحة</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmLeave}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              المغادرة
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
 }
 
 export function useArticleForm() {

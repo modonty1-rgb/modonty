@@ -11,8 +11,6 @@ import { format } from "date-fns";
 import {
   ArrowRight,
   Edit,
-  MoreHorizontal,
-  Trash2,
   FileText,
   Clock,
   Eye,
@@ -23,12 +21,8 @@ import {
   Settings,
   FolderOpen,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ArchiveArticleButton } from "./components/archive-article-button";
+import { ArticleStatus } from "@prisma/client";
 import { getStatusLabel, getStatusVariant } from "../helpers/status-utils";
 import { ArticleSEOScoreBadge } from "./components/article-seo-score-badge";
 import { ArticleViewFaqs } from "./components/article-view-faqs";
@@ -82,25 +76,15 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
                 Edit
               </Link>
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link href={`/articles/${a.id}/technical`}>
-                    <Settings className="h-4 w-4 me-2" />
-                    Technical Details
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive focus:text-destructive" disabled>
-                  <Trash2 className="h-4 w-4 me-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ArchiveArticleButton
+              articleId={a.id}
+              isArchived={a.status === ArticleStatus.ARCHIVED}
+            />
+            <Button variant="outline" size="icon" className="h-8 w-8" asChild>
+              <Link href={`/articles/${a.id}/technical`}>
+                <Settings className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

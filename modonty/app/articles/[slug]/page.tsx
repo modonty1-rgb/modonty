@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect, unstable_rethrow } from "next/navigation";
 import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
@@ -13,6 +13,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import {
   getArticleSlugsForStaticParams,
   getArticleBySlugMinimal,
+  getArchivedArticleRedirectSlug,
   getArticleForMetadata,
 } from "./actions";
 import {
@@ -186,6 +187,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
     const articleRaw = await getArticleBySlugMinimal(slug, userId);
     if (!articleRaw) {
+      // SEO: archived articles get 307 redirect to homepage instead of 404
+      // Redirect directly to / (not /articles which itself redirects) to avoid chain
+      const isArchived = await getArchivedArticleRedirectSlug(slug);
+      if (isArchived) redirect("/");
       notFound();
     }
     const article = { ...articleRaw, ...articleDefaults };
@@ -452,7 +457,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         </>
       </>
     );
-  } catch {
+  } catch (err) {
+    unstable_rethrow(err);
     notFound();
   }
 }

@@ -1,7 +1,41 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-12 (articles table: client avatar + sort by client/SEO/status — query optimization complete)
-> **الإصدار الحالي:** admin v0.29.0 | modonty v1.29.8
+> **آخر تحديث:** 2026-04-12 — archive system pushed + SEO 307 redirect for archived articles
+> **الإصدار الحالي:** admin v0.32.0 | modonty v1.30.0
 > المهام المنجزة في → [MASTER-DONE.md](MASTER-DONE.md)
+
+---
+
+## 🔴 CRITICAL — Admin: Push pending (article editor fixes)
+
+> هذه الإصلاحات جاهزة وتم اختبارها — تحتاج push واحد.
+
+- [x] **PUSH-1** — shadcn AlertDialog بالعربي بدل native "Leave site?" dialog ✅
+- [x] **PUSH-2** — unlock seoTitle — `max(200)` في `article-server-schema.ts` ✅ (كان محلولاً مسبقاً)
+- [x] **PUSH-3** — `maxLength={60}` على SEO Title + `maxLength={160}` على SEO Description ✅
+- [ ] **PUSH-4** — رسائل خطأ عربية واضحة بدل رسائل تقنية مخيفة (`update-article.ts`)
+- [ ] **PUSH-5** — toast يستخدم `save_failed` بدل `server_error` (`article-form-navigation.tsx`)
+- [x] **PUSH-6** — Title (H1) counter: `max={80}` + inline hint عند التجاوز (`basic-section.tsx`) ✅
+- [x] **PUSH-7** — Slug: يتابع التايتل في `mode=new`، مقفل في `mode=edit` (`article-form-context.tsx`) ✅
+- [x] **PUSH-8** — Slug section: badge full-width + URL preview `https://www.modonty.com/articles/[slug]` + تحذير > 50 حرف مع أنيميشن ✅
+
+---
+
+## 🔴 HIGH — Admin: SEO Copy Fields — جرد كامل
+
+> **الهدف:** التأكد أن كل الحقول النصية لـ SEO في الأدمن (title + description) متوافقة مع البيست براكتس.
+> **المعيار المتفق عليه:** SEO Title = 50–60 حرف | SEO Description = 120–160 حرف
+
+- [ ] **SCOPY-1** — جرد كل الصفحات التي تحتوي على `seoTitle` / `seoDescription` input في الأدمن
+  - مقالات (meta-tags-step) ✅ تم إصلاحه
+  - فئات (categories)
+  - وسوم (tags)
+  - عملاء (clients)
+  - صفحة الـ Settings (site-wide SEO)
+  - أي entity تانية عندها SEO fields
+- [ ] **SCOPY-2** — كل حقل `seoTitle` في الأدمن: `maxLength={60}` + `CharacterCounter max={60}` + placeholder عربي موحّد
+- [ ] **SCOPY-3** — كل حقل `seoDescription` في الأدمن: `maxLength={160}` + `CharacterCounter max={160}` + placeholder عربي موحّد
+- [ ] **SCOPY-4** — كل analyzer/validator يستخدم range 50–60 للعنوان و120–160 للوصف (لا قيم مختلفة في أماكن مختلفة)
+- [ ] **SCOPY-5** — server schemas: تأكد أن `max()` في Zod لا يحجب الحفظ (soft limit في الـ UI فقط، server يقبل الحفظ دائماً)
 
 ---
 

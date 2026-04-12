@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-12 (admin query perf + articles table — v0.31.0)
+# Session Context — Last Updated: 2026-04-12 (archive system + SEO redirect — admin v0.32.0 / modonty v1.30.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,40 @@
 ---
 
 ## Current Versions
-- **admin**: v0.31.0
-- **modonty**: v1.29.8
+- **admin**: v0.32.0
+- **modonty**: v1.30.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 28 — Archive system + SEO redirect + slug UX (2026-04-12 · admin v0.32.0 / modonty v1.30.0)
+
+### What Was Done
+
+**admin v0.32.0**
+- `archive-article.ts` (NEW): `archiveArticle()` + `unarchiveArticle()` server actions with auth guard, try/catch, revalidatePath + revalidateModontyTag
+- `archive-article-button.tsx` (NEW): Client component — toggles Archive/Unarchive with loading state, router.refresh() on success
+- `articles/[id]/page.tsx`: Removed ⋯ dropdown entirely. Added `[Edit] [Archive/Unarchive] [⚙️]` buttons directly in header. Removed delete. Added gear icon for Technical Details.
+- `basic-section.tsx`: Slug UX — hint above field, full URL preview (`https://www.modonty.com/articles/[slug]`), warning animation when > 50 chars, removed copy button, slug takes full width
+- `article-form-context.tsx`: Fixed slug auto-generation — slug now follows title only in `mode === 'new'` (was locking after first char)
+- `actions/index.ts`: Exported `archiveArticle`, `unarchiveArticle`
+
+**modonty v1.30.0**
+- `article-data.ts`: Added `getArchivedArticleRedirectSlug()` — lightweight query, ARCHIVED check only
+- `actions/index.ts`: Exported new function
+- `articles/[slug]/page.tsx`: ARCHIVED articles → `redirect("/")` (307 temporary, no chain) instead of 404. Used `unstable_rethrow` (official Next.js API) to re-throw NEXT_REDIRECT inside catch block.
+
+### SEO Decision Log
+- 307 (not 308/404/410) for archived content — reversible, Google keeps URL in index, re-discovers on unarchive
+- `unstable_rethrow` is the official Next.js pattern for redirect() inside try/catch
+- Redirect target: `/` directly (not `/articles` which has its own redirect → avoid chain)
+
+### ⚠️ Pending
+- Save-blocking for SEO fields (seoTitle > 60, seoDescription > 160) — user said "ممنوع نحفظ إذا تجاوز الحد"
+- DB script for old articles: truncate seoTitle > 60 to 59+"X", seoDescription > 160 to 159+"X"
+- PUSH-4: seoDescription maxLength=160 + hints
+- PUSH-5: Arabic error messages
+- SCOPY-1 through SCOPY-5: Full SEO copy fields audit
 
 ---
 

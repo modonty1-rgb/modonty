@@ -7,35 +7,21 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CharacterCounter } from '@/components/shared/character-counter';
 import { TagMultiSelect } from '../tag-multi-select';
 import { ClientLogoPreview } from '../client-logo-preview';
-import { Copy, Check, AlertCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
 
 export function BasicSection() {
   const { formData, updateField, errors, clients, categories, tags, authors } = useArticleForm();
-  const [slugCopied, setSlugCopied] = useState(false);
   const [logoModalOpen, setLogoModalOpen] = useState(false);
 
   // Find selected client with logo data
   const selectedClient = clients.find((c) => c.id === formData.clientId);
   const hasPublisherLogo = !!selectedClient?.logoMedia?.url;
-
-  const handleCopySlug = async () => {
-    if (formData.slug) {
-      try {
-        await navigator.clipboard.writeText(formData.slug);
-        setSlugCopied(true);
-        setTimeout(() => setSlugCopied(false), 2000);
-      } catch (error) {
-        // Ignore clipboard errors
-      }
-    }
-  };
 
   return (
     <Card>
@@ -122,11 +108,12 @@ export function BasicSection() {
               onChange={(e) => updateField('title', e.target.value)}
               className={errors.title?.[0] ? 'border-destructive' : ''}
             />
-            <div className="flex justify-between items-center mt-1.5">
-              <p className="text-xs text-muted-foreground">
-                Optimize for 50-60 characters for better search visibility
-              </p>
-              <CharacterCounter current={formData.title?.length || 0} max={60} />
+            <div className="flex justify-end mt-1.5">
+              <CharacterCounter
+                current={formData.title?.length || 0}
+                max={80}
+                aboveMaxHint="عنوان المقال أفضل إذا كان بين 60–80 حرف — قصير وواضح وجذاب"
+              />
             </div>
             {errors.title?.[0] && (
               <p className="text-sm text-destructive">{errors.title[0]}</p>
@@ -134,25 +121,28 @@ export function BasicSection() {
           </div>
 
           {formData.slug && (
-            <div className="flex items-center gap-2">
-              <Label>Slug</Label>
-              <Badge variant="outline" className="font-mono text-sm px-3 py-1.5">
-                {formData.slug}
-              </Badge>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleCopySlug}
-                className="h-8 w-8 p-0"
-              >
-                {slugCopied ? (
-                  <Check className="h-4 w-4 text-green-600" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-              <input type="hidden" name="slug" value={formData.slug} />
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                الرابط الدائم للمقال — يظهر في جوجل ولا يتغير بعد النشر
+              </p>
+              <div className="flex items-center gap-2">
+                <Label className="shrink-0">Slug</Label>
+                <Badge variant="outline" className="font-mono text-sm px-3 py-1.5 flex-1 justify-start truncate">
+                  {formData.slug}
+                </Badge>
+                <input type="hidden" name="slug" value={formData.slug} />
+              </div>
+              <p className="text-xs text-muted-foreground font-mono ps-1 truncate">
+                https://www.modonty.com/articles/{formData.slug}
+              </p>
+              {formData.slug.length > 50 && (
+                <div className="flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-300">
+                  <AlertTriangle className="h-3.5 w-3.5 text-destructive animate-pulse shrink-0" />
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                    الرابط طويل ({formData.slug.length} حرف) — أفضل نتائج SEO تحت 50 حرف
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

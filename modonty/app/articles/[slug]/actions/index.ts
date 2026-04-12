@@ -2,6 +2,7 @@ export {
   getArticleSlugsForStaticParams,
   getArticleBySlug,
   getArticleBySlugMinimal,
+  getArchivedArticleRedirectSlug,
   getRelatedArticlesByAuthor,
   getRelatedArticlesByClient,
   getRelatedArticlesByCategoryTags,
