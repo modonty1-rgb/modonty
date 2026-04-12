@@ -91,57 +91,40 @@ export async function getArticles(filters?: ArticleFilters) {
       }
     }
 
-    const articles = await db.article.findMany({
-      where: cleanWhere,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        content: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        datePublished: true,
-        scheduledAt: true,
-        wordCount: true,
-        contentDepth: true,
-        seoTitle: true,
-        seoDescription: true,
-        canonicalUrl: true,
-        jsonLdStructuredData: true,
-        featuredImageId: true,
-        authorId: true,
-        client: { select: { id: true, name: true } },
-        category: { select: { id: true, name: true } },
-        author: {
-          select: {
-            id: true,
-            name: true,
-          },
+    const [articles, settings] = await Promise.all([
+      db.article.findMany({
+        where: cleanWhere,
+        select: {
+          // Table display
+          id: true,
+          title: true,
+          status: true,
+          createdAt: true,
+          datePublished: true,
+          scheduledAt: true,
+          client: { select: { id: true, name: true, logoMedia: { select: { url: true, altText: true } } } },
+          category: { select: { id: true, name: true } },
+          // SEO score analyzer fields
+          slug: true,
+          excerpt: true,
+          wordCount: true,
+          contentDepth: true,
+          seoTitle: true,
+          seoDescription: true,
+          canonicalUrl: true,
+          jsonLdStructuredData: true,
+          featuredImageId: true,
+          authorId: true,
+          author: { select: { id: true, name: true } }, // name shown in category/tag views
+          featuredImage: { select: { id: true, altText: true } }, // no url/width/height
+          faqs: { select: { id: true } },            // only count needed
         },
-        featuredImage: {
-          select: {
-            id: true,
-            url: true,
-            altText: true,
-            width: true,
-            height: true,
-          },
-        },
-        faqs: {
-          select: {
-            id: true,
-            question: true,
-            answer: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50, // TODO: A75 — add full server-side pagination (skip/take + total count) for large datasets
-    });
+        orderBy: { createdAt: "desc" },
+        take: 50, // TODO: A75 — add full server-side pagination (skip/take + total count) for large datasets
+      }),
+      getAllSettings(),
+    ]);
 
-    const settings = await getAllSettings();
     const articleDefaults = getArticleDefaultsFromSettings(settings);
 
     const articleIds = articles
@@ -168,10 +151,8 @@ export async function getArticles(filters?: ArticleFilters) {
         title: article.title,
         slug: article.slug,
         excerpt: article.excerpt,
-        content: article.content,
         status: article.status,
         createdAt: article.createdAt,
-        updatedAt: article.updatedAt,
         datePublished: article.datePublished,
         scheduledAt: article.scheduledAt,
         wordCount: article.wordCount,
@@ -197,10 +178,8 @@ export async function getArticles(filters?: ArticleFilters) {
       title: article.title,
       slug: article.slug,
       excerpt: article.excerpt,
-      content: article.content,
       status: article.status,
       createdAt: article.createdAt,
-      updatedAt: article.updatedAt,
       datePublished: article.datePublished,
       scheduledAt: article.scheduledAt,
       wordCount: article.wordCount,

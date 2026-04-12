@@ -44,16 +44,19 @@ export async function getContactMessages(filters?: ContactMessageFilters) {
 
     const messages = await db.contactMessage.findMany({
       where,
-      include: {
-        client: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        subject: true,
+        status: true,
+        createdAt: true,
+        readAt: true,
+        repliedAt: true,
+        client: { select: { id: true, name: true, slug: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 200,
     });
 
     return messages;

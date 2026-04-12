@@ -3,6 +3,7 @@
 import { SortableValue } from "@/lib/types";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -48,6 +49,15 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const pageSize = 10;
 
+  // Pre-compute SEO scores once for sorting
+  const seoScores = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const article of articles) {
+      map.set(article.id, analyzeArticleSEO(article).percentage);
+    }
+    return map;
+  }, [articles]);
+
   const filteredData = useMemo(() => {
     const searchTerm = (externalSearch || "").toLowerCase();
     let result = articles.filter((article) => {
@@ -67,6 +77,15 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
         if (sortKey === "title") {
           aValue = a.title;
           bValue = b.title;
+        } else if (sortKey === "client") {
+          aValue = a.client?.name ?? "";
+          bValue = b.client?.name ?? "";
+        } else if (sortKey === "seo") {
+          aValue = seoScores.get(a.id) ?? 0;
+          bValue = seoScores.get(b.id) ?? 0;
+        } else if (sortKey === "status") {
+          aValue = a.status;
+          bValue = b.status;
         } else if (sortKey === "datePublished") {
           aValue = a.datePublished || a.scheduledAt || null;
           bValue = b.datePublished || b.scheduledAt || null;
@@ -78,6 +97,9 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
         if (aValue === null || aValue === undefined) return 1;
         if (bValue === null || bValue === undefined) return -1;
 
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return aValue - bValue;
+        }
         if (typeof aValue === "string" && typeof bValue === "string") {
           return aValue.localeCompare(bValue);
         }
@@ -93,7 +115,7 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
     }
 
     return result;
-  }, [articles, externalSearch, sortKey, sortDirection]);
+  }, [articles, externalSearch, sortKey, sortDirection, seoScores]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -131,6 +153,16 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
         <Table>
           <TableHeader>
             <TableRow>
+              {/* Client avatar column — sortable */}
+              <TableHead
+                className="w-[44px] cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort("client")}
+                title="Sort by client"
+              >
+                <div className="flex items-center justify-center">
+                  {getSortIcon("client")}
+                </div>
+              </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("title")}
@@ -140,8 +172,24 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
                   {getSortIcon("title")}
                 </div>
               </TableHead>
-              <TableHead className="w-[70px]">SEO</TableHead>
-              <TableHead className="w-[100px]">Status</TableHead>
+              <TableHead
+                className="w-[70px] cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort("seo")}
+              >
+                <div className="flex items-center">
+                  SEO
+                  {getSortIcon("seo")}
+                </div>
+              </TableHead>
+              <TableHead
+                className="w-[110px] cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort("status")}
+              >
+                <div className="flex items-center">
+                  Status
+                  {getSortIcon("status")}
+                </div>
+              </TableHead>
               <TableHead
                 className="w-[110px] cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("datePublished")}
@@ -156,7 +204,7 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No articles found</p>
                     <p className="text-xs">Try adjusting your filters or search terms</p>
@@ -172,6 +220,31 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
                     window.location.href = `/articles/${article.id}`;
                   }}
                 >
+                  {/* Client avatar */}
+                  <TableCell className="py-2 px-2" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className="h-8 w-8 rounded-full overflow-hidden flex items-center justify-center bg-muted border border-border flex-shrink-0 cursor-pointer"
+                      title={article.client?.name ?? "No client"}
+                      onClick={() => {
+                        if (article.client?.id) window.location.href = `/clients/${article.client.id}`;
+                      }}
+                    >
+                      {article.client?.logoMedia?.url ? (
+                        <Image
+                          src={article.client.logoMedia.url}
+                          alt={article.client.logoMedia.altText || article.client.name}
+                          width={32}
+                          height={32}
+                          className="object-contain w-full h-full"
+                        />
+                      ) : (
+                        <span className="text-xs font-semibold text-muted-foreground">
+                          {article.client?.name?.charAt(0).toUpperCase() ?? "?"}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
                   {/* Article info — title + client + category */}
                   <TableCell>
                     <div className="space-y-0.5">

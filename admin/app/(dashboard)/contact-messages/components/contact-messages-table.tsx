@@ -32,9 +32,10 @@ interface ContactMessage {
   name: string;
   email: string;
   subject: string;
-  message: string;
   status: string;
   createdAt: Date;
+  readAt?: Date | null;
+  repliedAt?: Date | null;
   client: {
     id: string;
     name: string;

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-11 (sitemap www fix — v1.29.7)
+# Session Context — Last Updated: 2026-04-12 (admin query perf + articles table — v0.31.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,29 @@
 ---
 
 ## Current Versions
-- **admin**: v0.30.0
-- **modonty**: v1.29.7
+- **admin**: v0.31.0
+- **modonty**: v1.29.8
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 27 — Admin query performance + articles table UX (2026-04-12 · admin v0.31.0)
+
+### What Was Done
+
+**admin v0.31.0**
+- `get-articles.ts`: removed `content` field from select (was causing 20.8s load), parallelized `getAllSettings()` with `Promise.all()`
+- `get-articles.ts`: reduced select to only fields needed by table + SEO analyzer — no full article body
+- `article-table.tsx`: added client avatar column (logo or initial fallback), sortable by client
+- `article-table.tsx`: enabled sort on SEO score and Status columns
+- `contact-messages-actions.ts`: changed from `include` to `select`, removed full `message` body field
+- `tags-actions.ts`: changed to explicit `select`, only fields used by table
+- `categories/get-categories.ts`: reduced select to minimal fields for list view
+- `article-view-types.ts`: made `content`, `updatedAt`, `featuredImage.url`, `logoMedia.altText` optional to support both list and detail views
+
+### ⚠️ Pending
+- User mentioned "ولسه في تعديل تاني على الارتكل" — another article change is coming, not specified yet
+- DB Query Audit (CRITICAL) added to MASTER-TODO — remaining queries in modonty/ and console/ still to audit
 
 ---
 

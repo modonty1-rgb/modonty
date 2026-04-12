@@ -5,12 +5,12 @@ export interface Article {
   title: string;
   slug: string;
   excerpt: string | null;
-  content: string;
+  content?: string | null;
   contentFormat?: string | null;
   status: ArticleStatus;
   featured?: boolean;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   datePublished: Date | null;
   scheduledAt?: Date | null;
   lastReviewed?: Date | null;
@@ -26,16 +26,16 @@ export interface Article {
   license?: string | null;
   featuredImage?: {
     id: string;
-    url: string;
+    url?: string;
     altText: string | null;
     width?: number | null;
     height?: number | null;
   } | null;
-  client: { id: string; name: string } | null;
+  client: { id: string; name: string; logoMedia?: { url: string; altText?: string | null } | null } | null;
   category: { id: string; name: string } | null;
   author: { id: string; name: string } | null;
   tags?: { tag: { id: string; name: string } }[];
-  faqs?: { id: string; question: string; answer: string | null }[];
+  faqs?: { id: string; question?: string; answer?: string | null }[];
   gallery?: {
     id: string;
     media: {

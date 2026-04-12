@@ -54,7 +54,12 @@ export async function getTags(filters?: TagFilters) {
 
     const tags = await db.tag.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        createdAt: true,
+        jsonLdLastGenerated: true,
         _count: { select: { articles: true } },
       },
       orderBy: { name: "asc" },

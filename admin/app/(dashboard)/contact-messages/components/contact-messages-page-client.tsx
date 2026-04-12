@@ -10,9 +10,10 @@ interface ContactMessage {
   name: string;
   email: string;
   subject: string;
-  message: string;
   status: string;
   createdAt: Date;
+  readAt?: Date | null;
+  repliedAt?: Date | null;
   client: {
     id: string;
     name: string;
@@ -45,7 +46,6 @@ export function ContactMessagesPageClient({ messages }: ContactMessagesPageClien
           message.name.toLowerCase().includes(searchTerm) ||
           message.email.toLowerCase().includes(searchTerm) ||
           message.subject.toLowerCase().includes(searchTerm) ||
-          message.message.toLowerCase().includes(searchTerm) ||
           message.client?.name.toLowerCase().includes(searchTerm)
         );
       });
