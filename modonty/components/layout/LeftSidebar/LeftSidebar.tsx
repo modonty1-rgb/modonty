@@ -15,9 +15,7 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
     return null;
   }
 
-  const categories = await getCategoriesWithCounts();
-
-  let stats: CategoryAnalytics = {
+  const defaultStats: CategoryAnalytics = {
     totalBlogs: 0,
     totalReactions: 0,
     averageEngagement: 0,
@@ -29,14 +27,18 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
     averageCommentsPerBlog: 0,
     engagedBlogs: 0,
   };
-  if (currentCategorySlug) {
-    const categoryId = await getCategoryIdBySlug(currentCategorySlug);
-    if (categoryId) {
-      stats = await getCategoryAnalytics(categoryId);
-    }
-  } else {
-    stats = await getOverallCategoryAnalytics();
-  }
+
+  const [categories, stats] = await Promise.all([
+    getCategoriesWithCounts(),
+    (async (): Promise<CategoryAnalytics> => {
+      if (currentCategorySlug) {
+        const categoryId = await getCategoryIdBySlug(currentCategorySlug);
+        if (categoryId) return getCategoryAnalytics(categoryId);
+        return defaultStats;
+      }
+      return getOverallCategoryAnalytics();
+    })(),
+  ]);
 
   const totalArticlesAll = categories.reduce((sum, c) => sum + c.articleCount, 0);
 

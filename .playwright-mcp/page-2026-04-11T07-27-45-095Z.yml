@@ -1,0 +1,460 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.29.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.29.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+          - navigation "Main navigation" [ref=e98]:
+            - link "Modonty Modonty" [ref=e99] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e101]
+              - generic [ref=e102]: Modonty
+            - generic [ref=e104]:
+              - link "Articles" [ref=e105] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e106]:
+                  - img
+                  - generic [ref=e107]: Articles
+              - link "Clients" [ref=e108] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e109]:
+                  - img
+                  - generic [ref=e110]: Clients
+              - link "Media" [ref=e111] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e112]:
+                  - img
+                  - generic [ref=e113]: Media
+          - generic [ref=e114]:
+            - link "4" [ref=e115] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e116]:
+                - img
+                - generic [ref=e117]: "4"
+            - button "M" [ref=e118] [cursor=pointer]:
+              - generic [ref=e120]: M
+      - generic [ref=e121]:
+        - generic [ref=e122]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e123]:
+          - button "Send Note" [ref=e124] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e125] [cursor=pointer]:
+            - img
+      - main [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading "Dashboard" [level=1] [ref=e130]
+              - paragraph [ref=e131]: Saturday, Apr 11, 2026
+            - link "New Article" [ref=e132] [cursor=pointer]:
+              - /url: /articles/new
+              - img
+              - text: New Article
+          - generic [ref=e133]:
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]: Active Clients
+                - img [ref=e139]
+              - generic [ref=e143]: "2"
+              - generic [ref=e144]:
+                - img [ref=e145]
+                - text: +100% vs last period
+            - generic [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]: Delivered This Month
+                - img [ref=e153]
+              - generic [ref=e156]:
+                - text: "2"
+                - generic [ref=e157]: / 12
+              - text: articles this month
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - generic [ref=e161]: Delivery Rate
+                - img [ref=e163]
+              - generic [ref=e166]: 17%
+            - generic [ref=e170]:
+              - generic [ref=e171]:
+                - generic [ref=e172]: Active Subscribers
+                - img [ref=e174]
+              - generic [ref=e177]: "6"
+              - generic [ref=e178]:
+                - img [ref=e179]
+                - text: +100% vs last period
+          - generic [ref=e182]:
+            - generic [ref=e184]:
+              - generic [ref=e185]:
+                - generic [ref=e186]: Views Today
+                - img [ref=e188]
+              - generic [ref=e191]: "14"
+              - generic [ref=e192]:
+                - generic [ref=e193]:
+                  - img [ref=e194]
+                  - text: "-48% vs yesterday"
+                - generic [ref=e197]: 81 this week
+            - generic [ref=e199]:
+              - generic [ref=e200]:
+                - generic [ref=e201]: Pending Comments
+                - img [ref=e203]
+              - generic [ref=e205]: "2"
+              - generic [ref=e206]:
+                - generic [ref=e207]: Modonty Admin — تعليق اختباري من Playwright — تحقق في Ad…
+                - generic [ref=e208]: زائر تجريبي — رد اختبار - سيناريو 12…
+                - link "Review all" [ref=e209] [cursor=pointer]:
+                  - /url: /articles?filter=pending-comments
+                  - text: Review all
+                  - img [ref=e210]
+            - generic [ref=e213]:
+              - generic [ref=e214]:
+                - generic [ref=e215]: New Messages
+                - img [ref=e217]
+              - generic [ref=e220]: "4"
+              - generic [ref=e221]:
+                - generic [ref=e222]: زائر تجريبي — رسالة اختبار 3
+                - generic [ref=e223]: زائر تجريبي — رسالة اختبار 2
+                - link "Open inbox" [ref=e224] [cursor=pointer]:
+                  - /url: /contact-messages
+                  - text: Open inbox
+                  - img [ref=e225]
+            - generic [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]: FAQ Questions
+                - img [ref=e232]
+              - generic [ref=e235]: "8"
+              - generic [ref=e236]:
+                - generic [ref=e237]: دليل SEO المتاجر الإ — سؤال اختبار - سيناريو 17…
+                - generic [ref=e238]: دليل SEO المتاجر الإ — هل أحتاج خبير SEO أم أستطيع فع…
+                - link "Answer questions" [ref=e239] [cursor=pointer]:
+                  - /url: /modonty/faq
+                  - text: Answer questions
+                  - img [ref=e240]
+          - generic [ref=e242]:
+            - generic [ref=e243]:
+              - generic [ref=e244]:
+                - generic [ref=e246]:
+                  - generic [ref=e247]: Monthly Delivery Progress
+                  - generic [ref=e248]: 2 active clients
+                - generic [ref=e249]:
+                  - generic [ref=e251]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e252] [cursor=pointer]:
+                      - /url: /clients/69d6665592f34b725bbddece
+                    - generic [ref=e253]:
+                      - generic [ref=e254]: 2 / 8
+                      - generic [ref=e255]: 25%
+                  - generic [ref=e259]:
+                    - link "عيادات بلسم الطبية" [ref=e260] [cursor=pointer]:
+                      - /url: /clients/69d6665792f34b725bbddecf
+                    - generic [ref=e261]:
+                      - generic [ref=e262]: 0 / 4
+                      - generic [ref=e263]: 0%
+              - generic [ref=e266]:
+                - generic [ref=e268]:
+                  - generic [ref=e269]: Articles
+                  - link "View all" [ref=e270] [cursor=pointer]:
+                    - /url: /articles
+                    - text: View all
+                    - img [ref=e271]
+                - generic [ref=e273]:
+                  - generic [ref=e274]:
+                    - link "1 Writing" [ref=e275] [cursor=pointer]:
+                      - /url: /articles?status=WRITING
+                      - generic [ref=e276]: "1"
+                      - generic [ref=e277]: Writing
+                    - link "0 Draft" [ref=e278] [cursor=pointer]:
+                      - /url: /articles?status=DRAFT
+                      - generic [ref=e279]: "0"
+                      - generic [ref=e280]: Draft
+                    - link "0 Scheduled" [ref=e281] [cursor=pointer]:
+                      - /url: /articles?status=SCHEDULED
+                      - generic [ref=e282]: "0"
+                      - generic [ref=e283]: Scheduled
+                    - link "2 Published" [ref=e284] [cursor=pointer]:
+                      - /url: /articles?status=PUBLISHED
+                      - generic [ref=e285]: "2"
+                      - generic [ref=e286]: Published
+                    - link "0 Archived" [ref=e287] [cursor=pointer]:
+                      - /url: /articles?status=ARCHIVED
+                      - generic [ref=e288]: "0"
+                      - generic [ref=e289]: Archived
+                  - generic [ref=e290]:
+                    - generic [ref=e291]:
+                      - generic [ref=e292]:
+                        - link "مستقبل التعليم الرقمي في السعودية" [ref=e293] [cursor=pointer]:
+                          - /url: /articles/69d6667992f34b725bbddee6
+                        - generic [ref=e294]:
+                          - generic [ref=e295]: متجر نوفا للإلكترونيات
+                          - generic [ref=e296]: ·
+                          - generic [ref=e297]: التسويق الرقمي
+                      - generic [ref=e298]:
+                        - img [ref=e299]
+                        - text: Writing
+                    - generic [ref=e302]:
+                      - generic [ref=e303]:
+                        - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e304] [cursor=pointer]:
+                          - /url: /articles/69d6666a92f34b725bbddeda
+                        - generic [ref=e305]:
+                          - generic [ref=e306]: متجر نوفا للإلكترونيات
+                          - generic [ref=e307]: ·
+                          - generic [ref=e308]: التسويق الرقمي
+                      - generic [ref=e309]:
+                        - img [ref=e310]
+                        - text: Published
+                    - generic [ref=e313]:
+                      - generic [ref=e314]:
+                        - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e315] [cursor=pointer]:
+                          - /url: /articles/69d6665b92f34b725bbdded0
+                        - generic [ref=e316]:
+                          - generic [ref=e317]: متجر نوفا للإلكترونيات
+                          - generic [ref=e318]: ·
+                          - generic [ref=e319]: التسويق الرقمي
+                      - generic [ref=e320]:
+                        - img [ref=e321]
+                        - text: Published
+              - generic [ref=e324]:
+                - generic [ref=e325]:
+                  - generic [ref=e326]: Visitor Engagement
+                  - paragraph [ref=e327]: All article interactions from visitors
+                - generic [ref=e328]:
+                  - generic [ref=e329]:
+                    - generic [ref=e330]:
+                      - img [ref=e331]
+                      - generic [ref=e333]: "0"
+                      - generic [ref=e334]: Likes
+                      - generic [ref=e335]: 0 today · 0 wk
+                    - generic [ref=e336]:
+                      - img [ref=e337]
+                      - generic [ref=e339]: "0"
+                      - generic [ref=e340]: Dislikes
+                      - generic [ref=e341]: 0 today · 0 wk
+                    - generic [ref=e342]:
+                      - img [ref=e343]
+                      - generic [ref=e345]: "2"
+                      - generic [ref=e346]: Favorites
+                      - generic [ref=e347]: 1 today · 2 wk
+                    - generic [ref=e348]:
+                      - img [ref=e349]
+                      - generic [ref=e351]: "0"
+                      - generic [ref=e352]: Comments
+                      - generic [ref=e353]: 0 today · 0 wk
+                    - generic [ref=e354]:
+                      - img [ref=e355]
+                      - generic [ref=e358]: "1"
+                      - generic [ref=e359]: Replies
+                    - generic [ref=e360]:
+                      - img [ref=e361]
+                      - generic [ref=e367]: "7"
+                      - generic [ref=e368]: Shares
+                      - generic [ref=e369]: 4 today · 7 wk
+                  - generic [ref=e370]:
+                    - paragraph [ref=e371]: Shares by platform — last 30 days
+                    - generic [ref=e372]:
+                      - generic [ref=e373]:
+                        - generic [ref=e375]: WhatsApp
+                        - generic [ref=e378]: "1"
+                        - generic [ref=e379]: 14%
+                      - generic [ref=e380]:
+                        - generic [ref=e382]: Other
+                        - generic [ref=e385]: "3"
+                        - generic [ref=e386]: 43%
+                      - generic [ref=e387]:
+                        - generic [ref=e389]: Copy Link
+                        - generic [ref=e392]: "1"
+                        - generic [ref=e393]: 14%
+                      - generic [ref=e394]:
+                        - generic [ref=e396]: Twitter / X
+                        - generic [ref=e399]: "2"
+                        - generic [ref=e400]: 29%
+                  - generic [ref=e401]:
+                    - paragraph [ref=e402]: Most shared articles — last 30 days
+                    - generic [ref=e403]:
+                      - generic [ref=e404]: "1"
+                      - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e405] [cursor=pointer]:
+                        - /url: /articles/69d6665b92f34b725bbdded0
+                      - generic [ref=e406]:
+                        - img [ref=e407]
+                        - generic [ref=e413]: "7"
+            - generic [ref=e414]:
+              - generic [ref=e415]:
+                - generic [ref=e417]: Quick Actions
+                - generic [ref=e418]:
+                  - link "New Article" [ref=e419] [cursor=pointer]:
+                    - /url: /articles/new
+                    - img
+                    - text: New Article
+                  - link "New Client" [ref=e420] [cursor=pointer]:
+                    - /url: /clients/new
+                    - img
+                    - text: New Client
+                  - link "Media" [ref=e421] [cursor=pointer]:
+                    - /url: /media
+                    - img
+                    - text: Media
+                  - link "SEO Overview" [ref=e422] [cursor=pointer]:
+                    - /url: /seo-overview
+                    - img
+                    - text: SEO Overview
+                  - link "Subscribers" [ref=e423] [cursor=pointer]:
+                    - /url: /subscribers
+                    - img
+                    - text: Subscribers
+                  - link "Admins" [ref=e424] [cursor=pointer]:
+                    - /url: /users
+                    - img
+                    - text: Admins
+              - generic [ref=e425]:
+                - generic [ref=e427]: Subscription Health
+                - generic [ref=e428]:
+                  - link "Active 2" [ref=e429] [cursor=pointer]:
+                    - /url: /clients?filter=active
+                    - generic [ref=e430]:
+                      - img [ref=e431]
+                      - generic [ref=e434]: Active
+                    - generic [ref=e435]: "2"
+                  - link "Expiring in 7 days 0" [ref=e436] [cursor=pointer]:
+                    - /url: /clients?filter=expiring
+                    - generic [ref=e437]:
+                      - img [ref=e438]
+                      - generic [ref=e441]: Expiring in 7 days
+                    - generic [ref=e442]: "0"
+                  - link "Overdue payments 0" [ref=e443] [cursor=pointer]:
+                    - /url: /clients?filter=overdue
+                    - generic [ref=e444]:
+                      - img [ref=e445]
+                      - generic [ref=e447]: Overdue payments
+                    - generic [ref=e448]: "0"
+                  - link "Expired 0" [ref=e449] [cursor=pointer]:
+                    - /url: /clients?filter=expired
+                    - generic [ref=e450]:
+                      - img [ref=e451]
+                      - generic [ref=e455]: Expired
+                    - generic [ref=e456]: "0"
+              - generic [ref=e457]:
+                - generic [ref=e459]: Recent Activity
+                - generic [ref=e461]:
+                  - generic [ref=e462]:
+                    - img [ref=e464]
+                    - generic [ref=e466]:
+                      - link "متجر نوفا للإلكترونيات" [ref=e467] [cursor=pointer]:
+                        - /url: /clients/69d6665592f34b725bbddece
+                      - generic [ref=e468]: about 9 hours ago
+                    - generic [ref=e469]: ACTIVE
+                  - generic [ref=e470]:
+                    - img [ref=e472]
+                    - generic [ref=e474]:
+                      - link "متجر نوفا للإلكترونيات" [ref=e475] [cursor=pointer]:
+                        - /url: /clients/69d6665592f34b725bbddece
+                      - generic [ref=e476]: about 9 hours ago
+                    - generic [ref=e477]: PAID
+                  - generic [ref=e478]:
+                    - img [ref=e480]
+                    - generic [ref=e482]:
+                      - link "عيادات بلسم الطبية" [ref=e483] [cursor=pointer]:
+                        - /url: /clients/69d6665792f34b725bbddecf
+                      - generic [ref=e484]: 2 days ago
+                    - generic [ref=e485]: ACTIVE
+                  - generic [ref=e486]:
+                    - img [ref=e488]
+                    - generic [ref=e490]:
+                      - link "عيادات بلسم الطبية" [ref=e491] [cursor=pointer]:
+                        - /url: /clients/69d6665792f34b725bbddecf
+                      - generic [ref=e492]: 2 days ago
+                    - generic [ref=e493]: PAID
+                  - generic [ref=e494]:
+                    - img [ref=e496]
+                    - generic [ref=e499]:
+                      - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e500] [cursor=pointer]:
+                        - /url: /articles/69d6666a92f34b725bbddeda
+                      - generic [ref=e501]: 3 days ago
+                  - generic [ref=e502]:
+                    - img [ref=e504]
+                    - generic [ref=e507]:
+                      - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e508] [cursor=pointer]:
+                        - /url: /articles/69d6665b92f34b725bbdded0
+                      - generic [ref=e509]: 3 days ago
+                  - generic [ref=e510]:
+                    - img [ref=e512]
+                    - generic [ref=e516]:
+                      - link "عيادات بلسم الطبية" [ref=e517] [cursor=pointer]:
+                        - /url: /clients/69d6665792f34b725bbddecf
+                      - generic [ref=e518]: 3 days ago
+                  - generic [ref=e519]:
+                    - img [ref=e521]
+                    - generic [ref=e525]:
+                      - link "متجر نوفا للإلكترونيات" [ref=e526] [cursor=pointer]:
+                        - /url: /clients/69d6665592f34b725bbddece
+                      - generic [ref=e527]: 3 days ago
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e533] [cursor=pointer]:
+    - img [ref=e534]
+  - alert [ref=e537]

@@ -3,5 +3,5 @@ import { MobileFooter } from "./MobileFooter";
 
 export async function MobileFooterWithFavorites() {
   const favoritesCount = await getFavoritesCountForNav();
-  return <MobileFooter activeSection="home" favoritesCount={favoritesCount} />;
+  return <MobileFooter favoritesCount={favoritesCount} />;
 }

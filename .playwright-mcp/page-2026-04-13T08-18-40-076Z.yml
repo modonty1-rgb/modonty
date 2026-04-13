@@ -1,0 +1,74 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e5]:
+        - navigation "تنقل الصفحة" [ref=e6]:
+          - list [ref=e7]:
+            - listitem [ref=e8]:
+              - link "الرئيسية الرئيسية" [ref=e9] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e10]
+                - generic [ref=e13]: الرئيسية
+            - listitem [ref=e14]:
+              - generic [ref=e16]: عن مدونتي
+        - generic [ref=e17]:
+          - heading "عن مدونتي" [level=1] [ref=e18]
+          - generic [ref=e19]:
+            - heading "عن مدونتي" [level=1] [ref=e20]
+            - paragraph [ref=e21]:
+              - strong [ref=e22]: مدونتي
+              - text: هي منصة سعودية متخصصة في تقديم خدمات تحسين محركات البحث (SEO) وصناعة المحتوى العربي الاحترافي.
+            - heading "رؤيتنا" [level=2] [ref=e23]
+            - paragraph [ref=e24]: نؤمن أن كل شركة عربية تستحق أن تظهر في الصفحة الأولى من جوجل. نحن نساعدك في بناء حضور رقمي قوي يجذب عملاءك المحتملين.
+            - heading "خدماتنا" [level=2] [ref=e25]
+            - list [ref=e26]:
+              - listitem [ref=e27]: تحسين محركات البحث SEO
+              - listitem [ref=e28]: كتابة المحتوى التسويقي
+              - listitem [ref=e29]: إدارة المدونات التجارية
+              - listitem [ref=e30]: تحليل المنافسين والكلمات المفتاحية
+    - contentinfo [ref=e31]:
+      - generic [ref=e32]:
+        - generic [ref=e33]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e34] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e35]: ↗
+      - navigation "روابط سريعة" [ref=e36]:
+        - link "الرئيسية" [ref=e37] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e38] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e39] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e40] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e41] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e42] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e43]:
+        - link "الشروط والأحكام" [ref=e44] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e45] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e46] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e47] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e48] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e49]: © 2026 مودونتي
+    - contentinfo [ref=e50]
+  - generic [ref=e56] [cursor=pointer]:
+    - button "Open issues overlay" [ref=e57]:
+      - img [ref=e59]
+      - generic [ref=e61]:
+        - generic [ref=e62]: "3"
+        - generic [ref=e63]: "4"
+      - generic [ref=e64]:
+        - text: Issue
+        - generic [ref=e65]: s
+    - button "Collapse issues badge" [ref=e66]:
+      - img [ref=e67]
+  - alert [ref=e69]

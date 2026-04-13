@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import Link from "@/components/link";
 import {
   Sheet,
@@ -8,7 +9,6 @@ import {
   SheetTitle,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import type { ComponentType } from "react";
 import {
   IconClose,
@@ -17,8 +17,11 @@ import {
   IconNotifications,
   IconHelpCircle,
   IconFaqQuestion,
+  IconCategories,
+  IconSaved,
+  IconChevronLeft,
 } from "@/lib/icons";
-import { NavLink } from "@/components/navigatore/nav-link";
+import { cn } from "@/lib/utils";
 import { navLinksConfig } from "@/components/navigatore/nav-links-config";
 
 interface MobileMenuProps {
@@ -26,82 +29,130 @@ interface MobileMenuProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface SheetLinkProps {
+  href: string;
+  icon?: ComponentType<{ className?: string }>;
+  label: string;
+  isActive?: boolean;
+  onClick: () => void;
+}
+
+function SheetLink({ href, icon: Icon, label, isActive, onClick }: SheetLinkProps) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 h-12 px-3 rounded-xl text-sm font-medium transition-all duration-200",
+        isActive
+          ? "text-primary bg-primary/10"
+          : "text-foreground hover:text-primary hover:bg-primary/5 active:bg-primary/10 active:scale-[0.98]"
+      )}
+    >
+      {Icon && (
+        <Icon
+          className={cn(
+            "h-5 w-5 shrink-0 transition-colors",
+            isActive ? "text-primary" : "text-muted-foreground"
+          )}
+        />
+      )}
+      <span className="flex-1">{label}</span>
+      <IconChevronLeft className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+    </Link>
+  );
+}
+
 export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
+  const pathname = usePathname();
+  const close = () => onOpenChange(false);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[280px] sm:w-[320px] [&>button:last-child]:hidden">
-        <SheetClose asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute left-4 top-4 z-50 h-8 w-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-          >
-            <IconClose className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
-        </SheetClose>
-        <SheetHeader className="pb-4 border-b border-border">
-          <SheetTitle className="text-right">القائمة</SheetTitle>
-        </SheetHeader>
-        
-        <div className="mt-6 space-y-6">
-          {/* Company Section */}
-          <section>
-            <h2 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
-              مدونتي
-            </h2>
-            <nav className="flex flex-col gap-2" aria-label="روابط مدونتي">
-              {navLinksConfig.company.map((link) => {
-                const iconMap: Record<string, ComponentType<{ className?: string }>> = {
-                  "/about": IconInfo,
-                  "/contact": IconEmail,
-                  "/subscribe": IconNotifications,
-                };
-                const Icon = iconMap[link.href];
-                return (
-                  <NavLink
-                    key={link.href}
-                    href={link.href}
-                    icon={Icon}
-                    label={link.label}
-                    onClick={() => onOpenChange(false)}
-                    className="w-full justify-start gap-3 h-11 px-2 rounded-md hover:bg-muted/50 transition-colors duration-200"
-                  />
-                );
-              })}
-            </nav>
-          </section>
+      <SheetContent side="right" className="w-[300px] sm:w-[320px] p-0 [&>button:last-child]:hidden">
 
-          <div className="border-t border-border" />
+        {/* Header */}
+        <SheetHeader className="flex flex-row items-center justify-between px-4 py-3 border-b border-border/60">
+          <SheetClose asChild>
+            <button
+              className="flex items-center justify-center h-11 w-11 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent active:scale-95 transition-all duration-200"
+              aria-label="إغلاق القائمة"
+            >
+              <IconClose className="h-5 w-5" />
+            </button>
+          </SheetClose>
+          <SheetTitle className="text-base font-bold">القائمة</SheetTitle>
+        </SheetHeader>
+
+        <div className="overflow-y-auto py-3 px-3 space-y-0.5">
+
+          {/* Browse Section */}
+          <p className="px-3 pt-3 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
+            تصفح
+          </p>
+          <SheetLink
+            href="/categories"
+            icon={IconCategories}
+            label="الفئات"
+            isActive={pathname === "/categories" || pathname.startsWith("/categories/")}
+            onClick={close}
+          />
+          <SheetLink
+            href="/users/profile/favorites"
+            icon={IconSaved}
+            label="المحفوظات"
+            isActive={pathname === "/users/profile/favorites"}
+            onClick={close}
+          />
+
+          <div className="my-2 mx-3 border-t border-border/40" />
+
+          {/* Company Section */}
+          <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
+            مودونتي
+          </p>
+          {navLinksConfig.company.map((link) => {
+            const iconMap: Record<string, ComponentType<{ className?: string }>> = {
+              "/about": IconInfo,
+              "/contact": IconEmail,
+              "/subscribe": IconNotifications,
+            };
+            return (
+              <SheetLink
+                key={link.href}
+                href={link.href}
+                icon={iconMap[link.href]}
+                label={link.label}
+                isActive={pathname === link.href}
+                onClick={close}
+              />
+            );
+          })}
+
+          <div className="my-2 mx-3 border-t border-border/40" />
 
           {/* Support Section */}
-          <section>
-            <h2 className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
-              الدعم
-            </h2>
-            <nav className="flex flex-col gap-2" aria-label="روابط الدعم">
-              {navLinksConfig.support
-                .filter((link) => link.href !== "/help/feedback")
-                .map((link) => {
-                  const iconMap: Record<string, ComponentType<{ className?: string }>> = {
-                    "/help": IconHelpCircle,
-                    "/help/faq": IconFaqQuestion,
-                  };
-                  const Icon = iconMap[link.href];
-                  return (
-                    <NavLink
-                      key={link.href}
-                      href={link.href}
-                      icon={Icon}
-                      label={link.label}
-                      onClick={() => onOpenChange(false)}
-                      className="w-full justify-start gap-3 h-11 px-2 rounded-md hover:bg-muted/50 transition-colors duration-200"
-                    />
-                  );
-                })}
-            </nav>
-          </section>
+          <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
+            الدعم
+          </p>
+          {navLinksConfig.support
+            .filter((link) => link.href !== "/help/feedback")
+            .map((link) => {
+              const iconMap: Record<string, ComponentType<{ className?: string }>> = {
+                "/help": IconHelpCircle,
+                "/help/faq": IconFaqQuestion,
+              };
+              return (
+                <SheetLink
+                  key={link.href}
+                  href={link.href}
+                  icon={iconMap[link.href]}
+                  label={link.label}
+                  isActive={pathname === link.href || pathname.startsWith(link.href + "/")}
+                  onClick={close}
+                />
+              );
+            })}
         </div>
       </SheetContent>
     </Sheet>

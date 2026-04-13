@@ -1,0 +1,363 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - search "بحث المقالات" [ref=e9] [cursor=pointer]:
+          - img [ref=e11]
+          - generic [ref=e14]: ابحث...
+        - generic [ref=e15]:
+          - link "عملاء بلا إعلانات — جبر SEO" [ref=e16] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+          - button "فتح المحادثة" [ref=e17] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e19] [cursor=pointer]:
+            - img
+    - main [ref=e20]:
+      - navigation "تنقل الصفحة" [ref=e21]:
+        - list [ref=e22]:
+          - listitem [ref=e23]:
+            - link "الرئيسية الرئيسية" [ref=e24] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e25]
+              - generic [ref=e28]: الرئيسية
+          - listitem [ref=e29]:
+            - generic [ref=e31]: الفئات
+      - generic [ref=e34]:
+        - heading "استكشف الفئات" [level=1] [ref=e35]
+        - paragraph [ref=e36]: تصفح مجموعة متنوعة من الفئات والمواضيع. اكتشف المحتوى الذي يهمك واستكشف مقالات جديدة.
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - img [ref=e40]
+            - generic [ref=e42]:
+              - paragraph [ref=e43]: "15"
+              - paragraph [ref=e44]: فئة متاحة
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: "21"
+              - paragraph [ref=e52]: مقال منشور
+      - generic [ref=e53]:
+        - region "الفئات المميزة" [ref=e54]:
+          - heading "الفئات المميزة" [level=2] [ref=e55]
+          - generic [ref=e56]:
+            - generic [ref=e57]:
+              - heading "الفئات المميزة" [level=2] [ref=e58]
+              - paragraph [ref=e59]: الفئات الأكثر نشاطًا ومحتوى
+            - generic [ref=e60]:
+              - link "SEO تحسين محركات البحث SEO تحسين محركات البحث رائج 11 مقال 2 هذا الأسبوع" [ref=e61] [cursor=pointer]:
+                - /url: /categories/seo-arabic
+                - generic [ref=e62]:
+                  - img "SEO تحسين محركات البحث" [ref=e64]
+                  - generic [ref=e66]:
+                    - heading "SEO تحسين محركات البحث" [level=3] [ref=e67]
+                    - generic [ref=e68]:
+                      - img [ref=e69]
+                      - generic [ref=e72]: رائج
+                  - generic [ref=e74]:
+                    - generic [ref=e75]:
+                      - generic [ref=e76]: "11"
+                      - generic [ref=e77]: مقال
+                    - generic [ref=e78]:
+                      - generic [ref=e79]: "2"
+                      - generic [ref=e80]: هذا الأسبوع
+              - link "الانشاءات والتعمير 5 مقال" [ref=e81] [cursor=pointer]:
+                - /url: /categories/الانشاءات-والتعمير
+                - generic [ref=e82]:
+                  - img [ref=e85]
+                  - heading "الانشاءات والتعمير" [level=3] [ref=e90]
+                  - generic [ref=e93]:
+                    - generic [ref=e94]: "5"
+                    - generic [ref=e95]: مقال
+              - link "العقارات والاستثمار العقارات والاستثمار رائج محتوى عقاري يستهدف أعلى ميزانيات التسويق 3 مقال 3 هذا الأسبوع" [ref=e96] [cursor=pointer]:
+                - /url: /categories/real-estate-investment
+                - generic [ref=e97]:
+                  - img "العقارات والاستثمار" [ref=e99]
+                  - generic [ref=e100]:
+                    - generic [ref=e101]:
+                      - heading "العقارات والاستثمار" [level=3] [ref=e102]
+                      - generic [ref=e103]:
+                        - img [ref=e104]
+                        - generic [ref=e107]: رائج
+                    - paragraph [ref=e108]: محتوى عقاري يستهدف أعلى ميزانيات التسويق
+                  - generic [ref=e110]:
+                    - generic [ref=e111]:
+                      - generic [ref=e112]: "3"
+                      - generic [ref=e113]: مقال
+                    - generic [ref=e114]:
+                      - generic [ref=e115]: "3"
+                      - generic [ref=e116]: هذا الأسبوع
+              - link "الصحة والعافية الصحة والعافية رائج محتوى صحي موثوق بحجم بحث مليون+ شهرياً 1 مقال 1 هذا الأسبوع" [ref=e117] [cursor=pointer]:
+                - /url: /categories/health-wellness
+                - generic [ref=e118]:
+                  - img "الصحة والعافية" [ref=e120]
+                  - generic [ref=e121]:
+                    - generic [ref=e122]:
+                      - heading "الصحة والعافية" [level=3] [ref=e123]
+                      - generic [ref=e124]:
+                        - img [ref=e125]
+                        - generic [ref=e128]: رائج
+                    - paragraph [ref=e129]: محتوى صحي موثوق بحجم بحث مليون+ شهرياً
+                  - generic [ref=e131]:
+                    - generic [ref=e132]:
+                      - generic [ref=e133]: "1"
+                      - generic [ref=e134]: مقال
+                    - generic [ref=e135]:
+                      - generic [ref=e136]: "1"
+                      - generic [ref=e137]: هذا الأسبوع
+        - region "جميع الفئات" [ref=e138]:
+          - heading "جميع الفئات" [level=2] [ref=e139]
+          - generic [ref=e140]:
+            - generic [ref=e142]:
+              - img [ref=e143]
+              - textbox "ابحث في الفئات..." [ref=e146]
+            - generic [ref=e147]:
+              - button "ترتيب" [ref=e148] [cursor=pointer]:
+                - img
+                - generic [ref=e149]: ترتيب
+              - generic [ref=e150]:
+                - button [ref=e151] [cursor=pointer]:
+                  - img
+                - button [ref=e152] [cursor=pointer]:
+                  - img
+          - generic [ref=e153]:
+            - link "SEO تحسين محركات البحث SEO تحسين محركات البحث رائج 11 مقال 2 هذا الأسبوع" [ref=e154] [cursor=pointer]:
+              - /url: /categories/seo-arabic
+              - generic [ref=e155]:
+                - img "SEO تحسين محركات البحث" [ref=e157]
+                - generic [ref=e159]:
+                  - heading "SEO تحسين محركات البحث" [level=3] [ref=e160]
+                  - generic [ref=e161]:
+                    - img [ref=e162]
+                    - generic [ref=e165]: رائج
+                - generic [ref=e167]:
+                  - generic [ref=e168]:
+                    - generic [ref=e169]: "11"
+                    - generic [ref=e170]: مقال
+                  - generic [ref=e171]:
+                    - generic [ref=e172]: "2"
+                    - generic [ref=e173]: هذا الأسبوع
+            - link "الانشاءات والتعمير 5 مقال" [ref=e174] [cursor=pointer]:
+              - /url: /categories/الانشاءات-والتعمير
+              - generic [ref=e175]:
+                - img [ref=e178]
+                - heading "الانشاءات والتعمير" [level=3] [ref=e183]
+                - generic [ref=e186]:
+                  - generic [ref=e187]: "5"
+                  - generic [ref=e188]: مقال
+            - link "العقارات والاستثمار العقارات والاستثمار رائج محتوى عقاري يستهدف أعلى ميزانيات التسويق 3 مقال 3 هذا الأسبوع" [ref=e189] [cursor=pointer]:
+              - /url: /categories/real-estate-investment
+              - generic [ref=e190]:
+                - img "العقارات والاستثمار" [ref=e192]
+                - generic [ref=e193]:
+                  - generic [ref=e194]:
+                    - heading "العقارات والاستثمار" [level=3] [ref=e195]
+                    - generic [ref=e196]:
+                      - img [ref=e197]
+                      - generic [ref=e200]: رائج
+                  - paragraph [ref=e201]: محتوى عقاري يستهدف أعلى ميزانيات التسويق
+                - generic [ref=e203]:
+                  - generic [ref=e204]:
+                    - generic [ref=e205]: "3"
+                    - generic [ref=e206]: مقال
+                  - generic [ref=e207]:
+                    - generic [ref=e208]: "3"
+                    - generic [ref=e209]: هذا الأسبوع
+            - link "الصحة والعافية الصحة والعافية رائج محتوى صحي موثوق بحجم بحث مليون+ شهرياً 1 مقال 1 هذا الأسبوع" [ref=e210] [cursor=pointer]:
+              - /url: /categories/health-wellness
+              - generic [ref=e211]:
+                - img "الصحة والعافية" [ref=e213]
+                - generic [ref=e214]:
+                  - generic [ref=e215]:
+                    - heading "الصحة والعافية" [level=3] [ref=e216]
+                    - generic [ref=e217]:
+                      - img [ref=e218]
+                      - generic [ref=e221]: رائج
+                  - paragraph [ref=e222]: محتوى صحي موثوق بحجم بحث مليون+ شهرياً
+                - generic [ref=e224]:
+                  - generic [ref=e225]:
+                    - generic [ref=e226]: "1"
+                    - generic [ref=e227]: مقال
+                  - generic [ref=e228]:
+                    - generic [ref=e229]: "1"
+                    - generic [ref=e230]: هذا الأسبوع
+            - link "التسويق الرقمي التسويق الرقمي 1 مقال" [ref=e231] [cursor=pointer]:
+              - /url: /categories/digital-marketing
+              - generic [ref=e232]:
+                - img "التسويق الرقمي" [ref=e234]
+                - heading "التسويق الرقمي" [level=3] [ref=e237]
+                - generic [ref=e240]:
+                  - generic [ref=e241]: "1"
+                  - generic [ref=e242]: مقال
+            - link "التعليم والتدريب محتوى تعليمي دائم الطلب 0 مقال" [ref=e243] [cursor=pointer]:
+              - /url: /categories/education-blog
+              - generic [ref=e244]:
+                - img [ref=e247]
+                - generic [ref=e250]:
+                  - heading "التعليم والتدريب" [level=3] [ref=e252]
+                  - paragraph [ref=e253]: محتوى تعليمي دائم الطلب
+                - generic [ref=e256]:
+                  - generic [ref=e257]: "0"
+                  - generic [ref=e258]: مقال
+            - link "السياحة والسفر محتوى سياحي بحجم بحث عالي 0 مقال" [ref=e259] [cursor=pointer]:
+              - /url: /categories/tourism-travel
+              - generic [ref=e260]:
+                - img [ref=e263]
+                - generic [ref=e266]:
+                  - heading "السياحة والسفر" [level=3] [ref=e268]
+                  - paragraph [ref=e269]: محتوى سياحي بحجم بحث عالي
+                - generic [ref=e272]:
+                  - generic [ref=e273]: "0"
+                  - generic [ref=e274]: مقال
+            - link "التمويل الشخصي أعلى CPC في السوق — كلمات بقيمة 7+ دولار 0 مقال" [ref=e275] [cursor=pointer]:
+              - /url: /categories/personal-finance
+              - generic [ref=e276]:
+                - img [ref=e279]
+                - generic [ref=e282]:
+                  - heading "التمويل الشخصي" [level=3] [ref=e284]
+                  - paragraph [ref=e285]: أعلى CPC في السوق — كلمات بقيمة 7+ دولار
+                - generic [ref=e288]:
+                  - generic [ref=e289]: "0"
+                  - generic [ref=e290]: مقال
+            - link "تصميم المواقع محتوى مرتبط مباشرة بخدمات مدونتي 0 مقال" [ref=e291] [cursor=pointer]:
+              - /url: /categories/web-design
+              - generic [ref=e292]:
+                - img [ref=e295]
+                - generic [ref=e298]:
+                  - heading "تصميم المواقع" [level=3] [ref=e300]
+                  - paragraph [ref=e301]: محتوى مرتبط مباشرة بخدمات مدونتي
+                - generic [ref=e304]:
+                  - generic [ref=e305]: "0"
+                  - generic [ref=e306]: مقال
+            - link "القانون وتأسيس الشركات محتوى قانوني — مكاتب المحاماة تدفع premium 0 مقال" [ref=e307] [cursor=pointer]:
+              - /url: /categories/legal-business
+              - generic [ref=e308]:
+                - img [ref=e311]
+                - generic [ref=e314]:
+                  - heading "القانون وتأسيس الشركات" [level=3] [ref=e316]
+                  - paragraph [ref=e317]: محتوى قانوني — مكاتب المحاماة تدفع premium
+                - generic [ref=e320]:
+                  - generic [ref=e321]: "0"
+                  - generic [ref=e322]: مقال
+            - link "الموضة والجمال حجم بحث ضخم بين الشباب في الخليج 0 مقال" [ref=e323] [cursor=pointer]:
+              - /url: /categories/fashion-beauty
+              - generic [ref=e324]:
+                - img [ref=e327]
+                - generic [ref=e330]:
+                  - heading "الموضة والجمال" [level=3] [ref=e332]
+                  - paragraph [ref=e333]: حجم بحث ضخم بين الشباب في الخليج
+                - generic [ref=e336]:
+                  - generic [ref=e337]: "0"
+                  - generic [ref=e338]: مقال
+            - link "المطاعم والطعام 1.22 مليون بحث شهري عن مطعم قريب 0 مقال" [ref=e339] [cursor=pointer]:
+              - /url: /categories/food-restaurants
+              - generic [ref=e340]:
+                - img [ref=e343]
+                - generic [ref=e346]:
+                  - heading "المطاعم والطعام" [level=3] [ref=e348]
+                  - paragraph [ref=e349]: 1.22 مليون بحث شهري عن مطعم قريب
+                - generic [ref=e352]:
+                  - generic [ref=e353]: "0"
+                  - generic [ref=e354]: مقال
+            - link "المحتوى والكتابة كل عميل يحتاج محتوى 0 مقال" [ref=e355] [cursor=pointer]:
+              - /url: /categories/content-writing
+              - generic [ref=e356]:
+                - img [ref=e359]
+                - generic [ref=e361]:
+                  - heading "المحتوى والكتابة" [level=3] [ref=e363]
+                  - paragraph [ref=e364]: كل عميل يحتاج محتوى
+                - generic [ref=e367]:
+                  - generic [ref=e368]: "0"
+                  - generic [ref=e369]: مقال
+            - link "ريادة الأعمال محتوى لرواد الأعمال والمؤسسين 0 مقال" [ref=e370] [cursor=pointer]:
+              - /url: /categories/entrepreneurship
+              - generic [ref=e371]:
+                - img [ref=e374]
+                - generic [ref=e377]:
+                  - heading "ريادة الأعمال" [level=3] [ref=e379]
+                  - paragraph [ref=e380]: محتوى لرواد الأعمال والمؤسسين
+                - generic [ref=e383]:
+                  - generic [ref=e384]: "0"
+                  - generic [ref=e385]: مقال
+            - link "التقنية والذكاء الاصطناعي 0 مقال" [ref=e386] [cursor=pointer]:
+              - /url: /categories/tech-ai-blog
+              - generic [ref=e387]:
+                - img [ref=e390]
+                - heading "التقنية والذكاء الاصطناعي" [level=3] [ref=e395]
+                - generic [ref=e398]:
+                  - generic [ref=e399]: "0"
+                  - generic [ref=e400]: مقال
+    - contentinfo [ref=e401]:
+      - generic [ref=e402]:
+        - generic [ref=e403]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e404] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e405]: ↗
+      - navigation "روابط سريعة" [ref=e406]:
+        - link "الرئيسية" [ref=e407] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e408] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e409] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e410] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e411] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e412] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e413]:
+        - link "الشروط والأحكام" [ref=e414] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e415] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e416] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e417] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e418] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e419]: © 2026 مودونتي
+    - contentinfo [ref=e420]:
+      - navigation "التنقل السفلي" [ref=e421]:
+        - link "الرئيسية" [ref=e422] [cursor=pointer]:
+          - /url: /
+          - img [ref=e424]
+          - generic [ref=e427]: الرئيسية
+        - link "الرائجة" [ref=e428] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e430]
+          - generic [ref=e433]: الرائجة
+        - link "الفئات" [ref=e434] [cursor=pointer]:
+          - /url: /categories
+          - img [ref=e436]
+          - generic [ref=e440]: الفئات
+        - link "العملاء" [ref=e441] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e443]
+          - generic [ref=e447]: العملاء
+        - link "المحفوظات" [ref=e448] [cursor=pointer]:
+          - /url: /users/profile/favorites
+          - img [ref=e450]
+          - generic [ref=e452]: المحفوظات
+        - button "Open menu" [ref=e453] [cursor=pointer]:
+          - img
+  - generic [ref=e458] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e459]:
+      - img [ref=e460]
+    - generic [ref=e463]:
+      - button "Open issues overlay" [ref=e464]:
+        - generic [ref=e465]:
+          - generic [ref=e466]: "3"
+          - generic [ref=e467]: "4"
+        - generic [ref=e468]:
+          - text: Issue
+          - generic [ref=e469]: s
+      - button "Collapse issues badge" [ref=e470]:
+        - img [ref=e471]
+  - alert [ref=e473]

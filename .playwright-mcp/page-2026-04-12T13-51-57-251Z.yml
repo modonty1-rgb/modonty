@@ -1,0 +1,340 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e259] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e260]: Dashboard
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+            - generic [ref=e261]: SEO Overview
+        - generic [ref=e262]:
+          - button "Content" [expanded] [ref=e263] [cursor=pointer]:
+            - generic [ref=e264]:
+              - img [ref=e265]
+              - generic [ref=e268]: Content
+            - img [ref=e269]
+          - generic [ref=e272]:
+            - link "Articles" [ref=e273] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e274]
+              - generic [ref=e277]: Articles
+            - link "Categories" [ref=e278] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e279]
+              - generic [ref=e281]: Categories
+            - link "Tags" [ref=e282] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e283]
+              - generic [ref=e286]: Tags
+            - link "Authors" [ref=e287] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e288]
+              - generic [ref=e290]: Authors
+            - link "Industries" [ref=e291] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e292]
+              - generic [ref=e294]: Industries
+        - button "Modonty Pages" [ref=e296] [cursor=pointer]:
+          - generic [ref=e297]:
+            - img [ref=e298]
+            - generic [ref=e300]: Modonty Pages
+          - img [ref=e301]
+        - button "Audience" [ref=e304] [cursor=pointer]:
+          - generic [ref=e305]:
+            - img [ref=e306]
+            - generic [ref=e309]: Audience
+          - img [ref=e310]
+        - button "System" [ref=e313] [cursor=pointer]:
+          - generic [ref=e314]:
+            - img [ref=e315]
+            - generic [ref=e318]: System
+          - img [ref=e319]
+      - generic [ref=e102]:
+        - link "Guidelines" [ref=e321] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e322]
+          - text: Guidelines
+        - generic [ref=e324]:
+          - button "Switch to dark mode" [ref=e325] [cursor=pointer]:
+            - img
+          - link "v0.31.0 ?" [ref=e326] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.31.0
+            - generic [ref=e327]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e328]:
+        - generic [ref=e329]:
+          - navigation "Breadcrumb" [ref=e331]:
+            - link "Go to dashboard" [ref=e332] [cursor=pointer]:
+              - /url: /
+              - img [ref=e333]
+            - generic [ref=e336]:
+              - img [ref=e337]
+              - link "Articles" [ref=e339] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e340]:
+              - img [ref=e341]
+              - generic [ref=e343]: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة والواقع المعاش في الحياة اليومية المعاصرة
+          - navigation "Main navigation" [ref=e345]:
+            - link "Modonty Modonty" [ref=e346] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e348]
+              - generic [ref=e349]: Modonty
+            - generic [ref=e351]:
+              - link "Articles" [ref=e352] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e353]:
+                  - img
+                  - generic [ref=e354]: Articles
+              - link "Clients" [ref=e355] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e356]:
+                  - img
+                  - generic [ref=e357]: Clients
+              - link "Media" [ref=e358] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e359]:
+                  - img
+                  - generic [ref=e360]: Media
+          - generic [ref=e361]:
+            - link "1" [ref=e362] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e363]:
+                - img
+                - generic [ref=e364]: "1"
+            - button "M" [ref=e365] [cursor=pointer]:
+              - generic [ref=e367]: M
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e368]:
+          - generic [ref=e370]:
+            - generic [ref=e371]:
+              - generic [ref=e372]:
+                - link [ref=e373] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e374]
+                - heading "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة والواقع المعاش في الحياة اليومية المعاصرة" [level=1] [ref=e376]
+              - generic [ref=e377]:
+                - generic [ref=e378]: عيادات بلسم الطبية
+                - generic [ref=e379]: ·
+                - generic [ref=e380]: الصحة والعافية
+                - generic [ref=e381]: ·
+                - generic [ref=e382]: Published
+                - generic [ref=e383]: ·
+                - generic [ref=e384]: Apr 7, 2026
+            - generic [ref=e385]:
+              - generic "Click to view full SEO guidance" [ref=e386] [cursor=pointer]: 100%
+              - link "Edit" [ref=e387] [cursor=pointer]:
+                - /url: /articles/69d4f72c769fbb50b610e3e8/edit
+                - img
+                - text: Edit
+              - button [ref=e388] [cursor=pointer]:
+                - img
+          - generic [ref=e389]:
+            - generic [ref=e390]:
+              - img [ref=e391]
+              - generic [ref=e394]: "455"
+              - text: words
+            - generic [ref=e395]:
+              - img [ref=e396]
+              - generic [ref=e399]: ~3 min read
+            - generic [ref=e400]:
+              - img [ref=e401]
+              - generic [ref=e404]: 2 views
+            - generic [ref=e405]:
+              - img [ref=e406]
+              - generic [ref=e408]: 0 comments
+            - generic [ref=e409]:
+              - img [ref=e410]
+              - generic [ref=e413]: تحليلات
+            - generic [ref=e414]:
+              - img [ref=e415]
+              - generic [ref=e417]: "Published: Apr 7, 2026"
+          - generic [ref=e420]:
+            - generic [ref=e421]:
+              - img "صح" [ref=e423]
+              - heading "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة والواقع المعاش في الحياة اليومية المعاصرة" [level=1] [ref=e424]
+              - paragraph [ref=e425]: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+              - generic [ref=e426]:
+                - generic [ref=e427]: Modonty
+                - generic [ref=e428]: Apr 7, 2026
+                - generic [ref=e429]: ~3 min read
+              - generic [ref=e430]:
+                - heading "لصورة الذهنية مقابل الواقع" [level=3] [ref=e431]:
+                  - strong [ref=e432]: لصورة الذهنية مقابل الواقع
+                - paragraph [ref=e433]: عندما نسمع كلمة "فلاح"، غالبًا ما تتشكل في أذهاننا صورة نمطية ترتبط بالبساطة وربما السطحية في التفكير. هذه الصورة، رغم انتشارها، تعكس فهمًا محدودًا لطبيعة هذه الشخصية. فالحقيقة أن الفلاح لا يمثل نموذجًا للتفكير السطحي، بل يعكس نمط حياة متوازن يحمل في داخله قدرًا كبيرًا من الحكمة والاستقرار النفسي.
+                - separator [ref=e434]
+                - 'heading "أولًا: دلالة كلمة \"فلاح\" بين السطحية والعمق" [level=3] [ref=e435]':
+                  - strong [ref=e436]: "أولًا: دلالة كلمة \"فلاح\" بين السطحية والعمق"
+                - paragraph [ref=e437]: كلمة "فلاح" كثيرًا ما تُستخدم لوصف سلوك بسيط أو غير معقد، وكأنها مرادف لغياب التفكير العميق. لكن هذا الربط يحتاج إلى إعادة نظر. فالبساطة في أفعال الفلاح لا تعني بالضرورة بساطة في التفكير، بل قد تكون نتيجة وعي عملي يركز على الجوهر بدلًا من التعقيد غير الضروري.
+                - paragraph [ref=e438]: في الواقع، هذه البساطة تخفي وراءها فلسفة حياة قائمة على الوضوح، والارتباط المباشر بالنتائج، والابتعاد عن التعقيد الذهني الذي يرهق الإنسان دون فائدة حقيقية.
+                - separator [ref=e439]
+                - 'heading "ثانيًا: الروتين اليومي للفلاح كنظام حياة متكامل" [level=3] [ref=e440]':
+                  - strong [ref=e441]: "ثانيًا: الروتين اليومي للفلاح كنظام حياة متكامل"
+                - paragraph [ref=e442]: يعيش الفلاح وفق نظام يومي واضح ومنظم، يبدأ مع شروق الشمس وينتهي مع غروبها. هذا الروتين ليس مجرد تكرار ممل، بل هو انسجام طبيعي مع إيقاع الحياة.
+                - list [ref=e443]:
+                  - listitem [ref=e444]:
+                    - paragraph [ref=e445]:
+                      - strong [ref=e446]: "بداية اليوم المبكرة:"
+                      - text: تمنح النشاط والتركيز
+                  - listitem [ref=e447]:
+                    - paragraph [ref=e448]:
+                      - strong [ref=e449]: "العمل البدني المنتظم:"
+                      - text: يعزز الصحة الجسدية والنفسية
+                  - listitem [ref=e450]:
+                    - paragraph [ref=e451]:
+                      - strong [ref=e452]: "الطعام الطبيعي:"
+                      - text: يدعم التوازن الصحي
+                  - listitem [ref=e453]:
+                    - paragraph [ref=e454]:
+                      - strong [ref=e455]: "النوم المنتظم:"
+                      - text: يحقق الراحة والاستشفاء
+                - paragraph [ref=e456]: هذا النمط اليومي يخلق حالة من الاستقرار، ويقلل من الفوضى التي يعاني منها كثير من الناس في الحياة الحديثة.
+                - separator [ref=e457]
+                - 'heading "ثالثًا: الراحة النفسية في قلب البساطة" [level=3] [ref=e458]':
+                  - strong [ref=e459]: "ثالثًا: الراحة النفسية في قلب البساطة"
+                - paragraph [ref=e460]: "رغم غياب مفاهيم مثل \"التنمية الذاتية\" أو \"إدارة التوتر\" في حياة الفلاح، إلا أنه يعيش حالة من الاتزان النفسي الملحوظ. هذه الراحة لا تأتي من فراغ، بل نتيجة عدة عوامل:"
+                - list [ref=e461]:
+                  - listitem [ref=e462]:
+                    - paragraph [ref=e463]:
+                      - strong [ref=e464]: "وضوح الأهداف اليومية:"
+                      - text: لا يوجد تشتت أو حيرة مستمرة
+                  - listitem [ref=e465]:
+                    - paragraph [ref=e466]:
+                      - strong [ref=e467]: "الإنجاز الملموس:"
+                      - text: الشعور اليومي بتحقيق نتائج حقيقية
+                  - listitem [ref=e468]:
+                    - paragraph [ref=e469]:
+                      - strong [ref=e470]: "قلة المقارنات الاجتماعية:"
+                      - text: تقليل الضغط النفسي
+                  - listitem [ref=e471]:
+                    - paragraph [ref=e472]:
+                      - strong [ref=e473]: "الارتباط بالطبيعة:"
+                      - text: تحسين المزاج وتقليل التوتر
+                - paragraph [ref=e474]: لهذا، نلاحظ أن الفلاح غالبًا ما يتمتع بصحة نفسية مستقرة، ولا يعاني من التعقيدات النفسية المنتشرة في المجتمعات الحديثة، باستثناء بعض الأمراض الجسدية البسيطة مثل الأنفلونزا.
+                - separator [ref=e475]
+                - 'heading "رابعًا: مقارنة بين الحياة البسيطة والحياة المعاصرة" [level=3] [ref=e476]':
+                  - strong [ref=e477]: "رابعًا: مقارنة بين الحياة البسيطة والحياة المعاصرة"
+                - paragraph [ref=e478]: "في المقابل، يعيش الإنسان الحديث في بيئة مليئة بالضغوط:"
+                - list [ref=e479]:
+                  - listitem [ref=e480]:
+                    - paragraph [ref=e481]: تعدد الخيارات والقرارات
+                  - listitem [ref=e482]:
+                    - paragraph [ref=e483]: السعي المستمر لتحقيق النجاح
+                  - listitem [ref=e484]:
+                    - paragraph [ref=e485]: المقارنات الاجتماعية عبر وسائل التواصل
+                  - listitem [ref=e486]:
+                    - paragraph [ref=e487]: التعرض الزائد للمعلومات
+                - paragraph [ref=e488]: "هذا التعقيد يجعل الإنسان أكثر عرضة للقلق والتوتر، رغم توفر وسائل الراحة. وهنا يظهر التناقض الواضح: البساطة التي نراها \"سطحية\" قد تكون في الحقيقة مصدرًا للراحة، بينما التعقيد الذي نعتبره \"تطورًا\" قد يكون سببًا في الإرهاق النفسي."
+                - separator [ref=e489]
+                - 'heading "خامسًا: ماذا يمكن أن نتعلم من عقلية الفلاح؟" [level=3] [ref=e490]':
+                  - strong [ref=e491]: "خامسًا: ماذا يمكن أن نتعلم من عقلية الفلاح؟"
+                - paragraph [ref=e492]: "لا يعني ذلك أن نعود إلى حياة الفلاح بالكامل، لكن يمكننا الاستفادة من بعض مبادئها:"
+                - list [ref=e493]:
+                  - listitem [ref=e494]:
+                    - paragraph [ref=e495]: تبسيط الروتين اليومي
+                  - listitem [ref=e496]:
+                    - paragraph [ref=e497]: التركيز على الإنجاز الواقعي
+                  - listitem [ref=e498]:
+                    - paragraph [ref=e499]: تقليل التشتت الذهني
+                  - listitem [ref=e500]:
+                    - paragraph [ref=e501]: إعادة الاتصال بالطبيعة
+                  - listitem [ref=e502]:
+                    - paragraph [ref=e503]: تقليل المقارنات مع الآخرين
+                - paragraph [ref=e504]: هذه العناصر يمكن أن تساعد في تحقيق توازن نفسي أفضل في حياتنا اليومية.
+                - separator [ref=e505]
+                - 'heading "خاتمة: إعادة تعريف البساطة" [level=3] [ref=e506]':
+                  - strong [ref=e507]: "خاتمة: إعادة تعريف البساطة"
+                - paragraph [ref=e508]: في النهاية، البساطة ليست مرادفًا للسطحية، بل قد تكون أحد أشكال الحكمة. عقلية الفلاح تقدم نموذجًا مختلفًا للحياة، نموذجًا قائمًا على التوازن، والوضوح، والراحة النفسية.
+                - paragraph [ref=e509]: ربما لا نعيش نفس تفاصيل حياته، لكننا بحاجة إلى إعادة التفكير في أسلوب حياتنا، والبحث عن تلك المساحة من البساطة التي تمنحنا السلام الداخلي في عالم يزداد تعقيدًا يومًا بعد يوم.
+              - generic [ref=e511]:
+                - generic [ref=e513]:
+                  - img [ref=e514]
+                  - generic [ref=e518]: Media Gallery
+                - generic [ref=e521] [cursor=pointer]:
+                  - img "صح" [ref=e522]
+                  - generic [ref=e524]:
+                    - generic [ref=e525]: صح
+                    - generic [ref=e526]:
+                      - generic [ref=e527]: 69d516114127873214782972
+                      - button "Copy Media ID" [ref=e528]:
+                        - img
+              - generic [ref=e530]:
+                - generic [ref=e532]:
+                  - img [ref=e533]
+                  - generic [ref=e536]: Frequently Asked Questions
+                - generic [ref=e537]:
+                  - generic [ref=e538]:
+                    - generic [ref=e539]:
+                      - generic [ref=e540]:
+                        - generic [ref=e541]: "س1:"
+                        - generic [ref=e542]: يعنى ايه فلاح
+                      - generic [ref=e543]:
+                        - generic [ref=e544]: 69dba34c17d700ce66c63567
+                        - button "Copy FAQ ID" [ref=e545] [cursor=pointer]:
+                          - img
+                    - paragraph [ref=e546]: الفلاح هو الى بياكلك
+                  - generic [ref=e547]:
+                    - generic [ref=e548]:
+                      - generic [ref=e550]: "س2:"
+                      - generic [ref=e551]:
+                        - generic [ref=e552]: 69dba34c17d700ce66c63568
+                        - button "Copy FAQ ID" [ref=e553] [cursor=pointer]:
+                          - img
+                    - paragraph
+              - generic [ref=e555]:
+                - generic [ref=e557]: M
+                - generic [ref=e558]:
+                  - paragraph [ref=e559]: Modonty
+                  - paragraph [ref=e560]: Modonty is a leading content platform providing high-quality articles and insights.
+            - generic [ref=e562]:
+              - generic [ref=e564]: جدول المحتويات
+              - navigation [ref=e566]:
+                - button "لصورة الذهنية مقابل الواقع" [ref=e567] [cursor=pointer]
+                - 'button "أولًا: دلالة كلمة \"فلاح\" بين السطحية والعمق" [ref=e568] [cursor=pointer]'
+                - 'button "ثانيًا: الروتين اليومي للفلاح كنظام حياة متكامل" [ref=e569] [cursor=pointer]'
+                - 'button "ثالثًا: الراحة النفسية في قلب البساطة" [ref=e570] [cursor=pointer]'
+                - 'button "رابعًا: مقارنة بين الحياة البسيطة والحياة المعاصرة" [ref=e571] [cursor=pointer]'
+                - 'button "خامسًا: ماذا يمكن أن نتعلم من عقلية الفلاح؟" [ref=e572] [cursor=pointer]'
+                - 'button "خاتمة: إعادة تعريف البساطة" [ref=e573] [cursor=pointer]'
+          - generic [ref=e574]:
+            - generic [ref=e576]:
+              - img [ref=e577]
+              - text: SEO Overview
+            - generic [ref=e580]:
+              - generic [ref=e581]:
+                - generic [ref=e582]:
+                  - paragraph [ref=e583]: SEO Title
+                  - paragraph [ref=e584]: عقلية الفلاح والروتين اليومى مابين | عيادات بلسم الطبية
+                - generic [ref=e585]:
+                  - paragraph [ref=e586]: SEO Description
+                  - paragraph [ref=e587]: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+                - generic [ref=e588]:
+                  - paragraph [ref=e589]: Canonical URL
+                  - paragraph [ref=e590]: https://modonty.com/articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                - generic [ref=e591]:
+                  - paragraph [ref=e592]: Slug
+                  - paragraph [ref=e593]: /عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+              - link "View Technical Details" [ref=e595] [cursor=pointer]:
+                - /url: /articles/69d4f72c769fbb50b610e3e8/technical
+                - button "View Technical Details" [ref=e596]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e254] [cursor=pointer]:
+    - img [ref=e255]
+  - alert [ref=e258]

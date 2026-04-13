@@ -85,14 +85,14 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
               <span className="text-2xl font-bold text-foreground">
                 {formatCategoryStats(category.articleCount)}
               </span>
-              <span className="text-xs text-muted-foreground">مقال</span>
+              <span className="text-sm text-muted-foreground">مقال</span>
             </div>
             {showTrending && (
               <div className="flex flex-col items-end">
                 <span className="text-sm font-semibold text-primary">
                   {category.recentArticleCount}
                 </span>
-                <span className="text-xs text-muted-foreground">هذا الأسبوع</span>
+                <span className="text-sm text-muted-foreground">هذا الأسبوع</span>
               </div>
             )}
           </div>

@@ -1,0 +1,115 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - search "بحث المقالات" [ref=e9] [cursor=pointer]:
+          - img [ref=e11]
+          - generic [ref=e14]: ابحث...
+        - generic [ref=e15]:
+          - link "عملاء بلا إعلانات — جبر SEO" [ref=e16] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+          - button "فتح المحادثة" [ref=e17] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e19] [cursor=pointer]:
+            - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - navigation "تنقل الصفحة" [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "الرئيسية الرئيسية" [ref=e25] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e26]
+                - generic [ref=e29]: الرئيسية
+            - listitem [ref=e30]:
+              - generic [ref=e32]: عن مدونتي
+        - generic [ref=e33]:
+          - heading "عن مدونتي" [level=1] [ref=e34]
+          - generic [ref=e35]:
+            - heading "عن مدونتي" [level=1] [ref=e36]
+            - paragraph [ref=e37]:
+              - strong [ref=e38]: مدونتي
+              - text: هي منصة سعودية متخصصة في تقديم خدمات تحسين محركات البحث (SEO) وصناعة المحتوى العربي الاحترافي.
+            - heading "رؤيتنا" [level=2] [ref=e39]
+            - paragraph [ref=e40]: نؤمن أن كل شركة عربية تستحق أن تظهر في الصفحة الأولى من جوجل. نحن نساعدك في بناء حضور رقمي قوي يجذب عملاءك المحتملين.
+            - heading "خدماتنا" [level=2] [ref=e41]
+            - list [ref=e42]:
+              - listitem [ref=e43]: تحسين محركات البحث SEO
+              - listitem [ref=e44]: كتابة المحتوى التسويقي
+              - listitem [ref=e45]: إدارة المدونات التجارية
+              - listitem [ref=e46]: تحليل المنافسين والكلمات المفتاحية
+    - contentinfo [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e50] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e51]: ↗
+      - navigation "روابط سريعة" [ref=e52]:
+        - link "الرئيسية" [ref=e53] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e54] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e55] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e56] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e57] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e58] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e59]:
+        - link "الشروط والأحكام" [ref=e60] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e61] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e62] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e63] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e64] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e65]: © 2026 مودونتي
+    - contentinfo [ref=e66]:
+      - navigation "التنقل السفلي" [ref=e67]:
+        - link "الرئيسية" [ref=e68] [cursor=pointer]:
+          - /url: /
+          - img [ref=e70]
+          - generic [ref=e73]: الرئيسية
+        - link "الرائجة" [ref=e74] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e76]
+          - generic [ref=e79]: الرائجة
+        - link "الفئات" [ref=e80] [cursor=pointer]:
+          - /url: /categories
+          - img [ref=e82]
+          - generic [ref=e86]: الفئات
+        - link "العملاء" [ref=e87] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e89]
+          - generic [ref=e93]: العملاء
+        - link "المحفوظات" [ref=e94] [cursor=pointer]:
+          - /url: /users/profile/favorites
+          - img [ref=e96]
+          - generic [ref=e98]: المحفوظات
+        - button "Open menu" [ref=e99] [cursor=pointer]:
+          - img
+  - generic [ref=e104] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e105]:
+      - img [ref=e106]
+    - generic [ref=e109]:
+      - button "Open issues overlay" [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e112]: "3"
+          - generic [ref=e113]: "4"
+        - generic [ref=e114]:
+          - text: Issue
+          - generic [ref=e115]: s
+      - button "Collapse issues badge" [ref=e116]:
+        - img [ref=e117]
+  - alert [ref=e119]

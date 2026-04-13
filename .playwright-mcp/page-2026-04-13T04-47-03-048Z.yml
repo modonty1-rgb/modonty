@@ -1,0 +1,89 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e5]:
+        - navigation "تنقل الصفحة" [ref=e7]:
+          - list [ref=e8]:
+            - listitem [ref=e9]:
+              - link "الرئيسية الرئيسية" [ref=e10] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e11]
+                - generic [ref=e14]: الرئيسية
+            - listitem [ref=e15]:
+              - img [ref=e16]
+              - img [ref=e19]
+            - listitem
+        - main [ref=e23]:
+          - article [ref=e26]:
+            - region [ref=e57]
+    - contentinfo [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e119]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e120] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e121]: ↗
+      - navigation "روابط سريعة" [ref=e122]:
+        - link "الرئيسية" [ref=e123] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e124] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e125] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e126] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e127] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e128] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e129]:
+        - link "الشروط والأحكام" [ref=e130] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e131] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e132] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e133] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e134] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e135]: © 2026 مودونتي
+    - contentinfo [ref=e136]:
+      - navigation "التنقل السفلي" [ref=e137]:
+        - link "الرئيسية" [ref=e138] [cursor=pointer]:
+          - /url: /
+          - img [ref=e140]
+          - generic [ref=e143]: الرئيسية
+        - link "الرائجة" [ref=e144] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e146]
+          - generic [ref=e149]: الرائجة
+        - link "الفئات" [ref=e150] [cursor=pointer]:
+          - /url: /categories
+          - img [ref=e152]
+          - generic [ref=e156]: الفئات
+        - link "العملاء" [ref=e157] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e159]
+          - generic [ref=e163]: العملاء
+        - link "المحفوظات" [ref=e164] [cursor=pointer]:
+          - /url: /users/profile/favorites
+          - img [ref=e166]
+          - generic [ref=e168]: المحفوظات
+        - button "Open menu" [ref=e169] [cursor=pointer]:
+          - img
+  - generic [ref=e174] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e175]:
+      - img [ref=e176]
+    - generic [ref=e179]:
+      - button "Open issues overlay" [ref=e180]:
+        - generic [ref=e181]:
+          - generic [ref=e182]: "4"
+          - generic [ref=e183]: "5"
+        - generic [ref=e184]:
+          - text: Issue
+          - generic [ref=e185]: s
+      - button "Collapse issues badge" [ref=e186]:
+        - img [ref=e187]
+  - alert [ref=e189]

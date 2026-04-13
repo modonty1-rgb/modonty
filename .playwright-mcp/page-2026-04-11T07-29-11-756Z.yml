@@ -1,0 +1,167 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "1 محفوظ المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - generic "1 محفوظ" [ref=e48]: "1"
+              - generic [ref=e49]: المحفوظات
+        - generic [ref=e50]:
+          - link "صندوق البريد" [ref=e51] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - button "M" [ref=e153] [cursor=pointer]:
+              - generic [ref=e155]: M
+            - button "فتح المحادثة" [ref=e59] [cursor=pointer]
+    - main [ref=e61]:
+      - heading "الإعدادات" [level=1] [ref=e63]
+      - navigation "تنقل الصفحة" [ref=e64]:
+        - list [ref=e65]:
+          - listitem [ref=e66]:
+            - link "الرئيسية الرئيسية" [ref=e67] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e68]
+              - generic [ref=e71]: الرئيسية
+          - listitem [ref=e72]:
+            - img [ref=e73]
+            - link "الملف الشخصي" [ref=e75] [cursor=pointer]:
+              - /url: /users/profile
+              - generic [ref=e76]: الملف الشخصي
+          - listitem [ref=e77]:
+            - generic [ref=e79]: الإعدادات
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - heading "الإعدادات" [level=3] [ref=e83]
+          - generic [ref=e86]:
+            - button "الملف الشخصي الملف الشخصي" [ref=e87] [cursor=pointer]:
+              - img
+              - generic [ref=e88]: الملف الشخصي
+              - generic [ref=e89]: الملف الشخصي
+            - button "الأمان الأمان" [ref=e90] [cursor=pointer]:
+              - img
+              - generic [ref=e91]: الأمان
+              - generic [ref=e92]: الأمان
+            - button "الإشعارات الإشعارات" [active] [ref=e93] [cursor=pointer]:
+              - img
+              - generic [ref=e94]: الإشعارات
+              - generic [ref=e95]: الإشعارات
+            - button "المظهر المظهر" [ref=e96] [cursor=pointer]:
+              - img
+              - generic [ref=e97]: المظهر
+              - generic [ref=e98]: المظهر
+            - button "التفضيلات التفضيلات" [ref=e99] [cursor=pointer]:
+              - img
+              - generic [ref=e100]: التفضيلات
+              - generic [ref=e101]: التفضيلات
+            - button "الخصوصية الخصوصية" [ref=e102] [cursor=pointer]:
+              - img
+              - generic [ref=e103]: الخصوصية
+              - generic [ref=e104]: الخصوصية
+            - button "الحذف الحذف" [ref=e105] [cursor=pointer]:
+              - img
+              - generic [ref=e106]: الحذف
+              - generic [ref=e107]: الحذف
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - heading "إعدادات الإشعارات" [level=3] [ref=e158]:
+              - img [ref=e159]
+              - text: إعدادات الإشعارات
+            - paragraph [ref=e162]: اختر كيف ومتى تريد تلقي الإشعارات
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - heading "إشعارات البريد الإلكتروني" [level=3] [ref=e165]
+              - generic [ref=e166]:
+                - generic [ref=e167]:
+                  - text: ردود على تعليقاتي
+                  - paragraph [ref=e168]: إرسال إشعار عند الرد على تعليقاتك
+                - switch [checked] [ref=e169] [cursor=pointer]
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - text: إعجابات على تعليقاتي
+                  - paragraph [ref=e172]: إرسال إشعار عند الإعجاب بتعليقاتك
+                - switch [checked] [ref=e173] [cursor=pointer]
+              - generic [ref=e174]:
+                - generic [ref=e175]:
+                  - text: إعجابات على مقالاتي
+                  - paragraph [ref=e176]: إرسال إشعار عند الإعجاب بمقالاتك
+                - switch [checked] [ref=e177] [cursor=pointer]
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - text: مقالات جديدة من المتابعين
+                  - paragraph [ref=e180]: إرسال إشعار عند نشر مقالات جديدة
+                - switch [checked] [ref=e181] [cursor=pointer]
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - text: ملخص أسبوعي
+                  - paragraph [ref=e184]: إرسال ملخص أسبوعي بنشاطك
+                - switch [ref=e185] [cursor=pointer]
+            - generic [ref=e186]:
+              - heading "إشعارات التطبيق" [level=3] [ref=e187]
+              - generic [ref=e188]:
+                - generic [ref=e189]:
+                  - text: الإشعارات داخل التطبيق
+                  - paragraph [ref=e190]: عرض الإشعارات داخل التطبيق
+                - switch [checked] [ref=e191] [cursor=pointer]
+              - generic [ref=e192]:
+                - generic [ref=e193]:
+                  - text: صوت الإشعارات
+                  - paragraph [ref=e194]: تشغيل صوت عند وصول إشعار
+                - switch [checked] [ref=e195] [cursor=pointer]
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - text: الإشعارات الفورية
+                  - paragraph [ref=e198]: إرسال إشعارات فورية للمتصفح
+                - switch [ref=e199] [cursor=pointer]
+            - button "حفظ التغييرات" [ref=e200] [cursor=pointer]
+    - contentinfo [ref=e131]:
+      - navigation "روابط سريعة" [ref=e132]:
+        - link "الرئيسية" [ref=e133] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e134] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e135] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e136] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e137]:
+        - link "اتفاقية المستخدم" [ref=e138] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e139] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e140] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e141] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e142]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e148] [cursor=pointer]:
+    - img [ref=e149]
+  - alert [ref=e152]

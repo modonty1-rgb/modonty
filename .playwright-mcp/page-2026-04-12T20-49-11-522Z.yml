@@ -1,0 +1,378 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+      - navigation:
+        - generic:
+          - link:
+            - /url: /
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /seo-overview
+            - img
+            - generic: SEO Overview
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: Content
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /articles
+                - img
+                - generic: Articles
+              - link:
+                - /url: /categories
+                - img
+                - generic: Categories
+              - link:
+                - /url: /tags
+                - img
+                - generic: Tags
+              - link:
+                - /url: /authors
+                - img
+                - generic: Authors
+              - link:
+                - /url: /industries
+                - img
+                - generic: Industries
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Modonty Pages
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Audience
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: System
+            - img
+      - generic:
+        - link:
+          - /url: /guidelines
+          - img
+          - text: Guidelines
+        - generic:
+          - button:
+            - img
+          - link:
+            - /url: /changelog
+            - text: v0.32.0
+            - generic: "?"
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - img
+              - generic:
+                - img
+                - link:
+                  - /url: /articles
+                  - text: Articles
+              - generic:
+                - img
+                - generic: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: Modonty
+              - generic:
+                - link:
+                  - /url: /articles
+                  - button:
+                    - img
+                    - generic: Articles
+                - link:
+                  - /url: /clients
+                  - button:
+                    - img
+                    - generic: Clients
+                - link:
+                  - /url: /media
+                  - button:
+                    - img
+                    - generic: Media
+          - generic:
+            - link:
+              - /url: /contact-messages
+              - button:
+                - img
+                - generic: "1"
+            - button:
+              - generic:
+                - generic: M
+      - generic:
+        - generic: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic:
+          - button:
+            - img
+            - text: Send Note
+          - button:
+            - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - link:
+                    - /url: /articles
+                    - img
+                  - heading [level=1]: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة
+                - generic:
+                  - generic: عيادات بلسم الطبية
+                  - generic: ·
+                  - generic: الصحة والعافية
+                  - generic: ·
+                  - generic: Writing
+                  - generic: ·
+                  - generic: Apr 7, 2026
+              - generic:
+                - generic: 100%
+                - link:
+                  - /url: /articles/69d4f72c769fbb50b610e3e8/edit
+                  - img
+                  - text: Edit
+                - button [expanded]:
+                  - img
+                  - text: Archive
+                - link:
+                  - /url: /articles/69d4f72c769fbb50b610e3e8/technical
+                  - img
+          - generic:
+            - generic:
+              - img
+              - generic: "455"
+              - text: words
+            - generic:
+              - img
+              - generic: ~3 min read
+            - generic:
+              - img
+              - generic: 2 views
+            - generic:
+              - img
+              - generic: 0 comments
+            - generic:
+              - img
+              - generic: تحليلات
+            - generic:
+              - img
+              - generic: "Published: Apr 7, 2026"
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                  - heading [level=1]: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة
+                  - paragraph: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+                  - generic:
+                    - generic: Modonty
+                    - generic: Apr 7, 2026
+                    - generic: ~3 min read
+                  - generic:
+                    - heading [level=3]:
+                      - strong: لصورة الذهنية مقابل الواقع
+                    - paragraph: عندما نسمع كلمة "فلاح"، غالبًا ما تتشكل في أذهاننا صورة نمطية ترتبط بالبساطة وربما السطحية في التفكير. هذه الصورة، رغم انتشارها، تعكس فهمًا محدودًا لطبيعة هذه الشخصية. فالحقيقة أن الفلاح لا يمثل نموذجًا للتفكير السطحي، بل يعكس نمط حياة متوازن يحمل في داخله قدرًا كبيرًا من الحكمة والاستقرار النفسي.
+                    - separator
+                    - heading [level=3]:
+                      - strong: "أولًا: دلالة كلمة \"فلاح\" بين السطحية والعمق"
+                    - paragraph: كلمة "فلاح" كثيرًا ما تُستخدم لوصف سلوك بسيط أو غير معقد، وكأنها مرادف لغياب التفكير العميق. لكن هذا الربط يحتاج إلى إعادة نظر. فالبساطة في أفعال الفلاح لا تعني بالضرورة بساطة في التفكير، بل قد تكون نتيجة وعي عملي يركز على الجوهر بدلًا من التعقيد غير الضروري.
+                    - paragraph: في الواقع، هذه البساطة تخفي وراءها فلسفة حياة قائمة على الوضوح، والارتباط المباشر بالنتائج، والابتعاد عن التعقيد الذهني الذي يرهق الإنسان دون فائدة حقيقية.
+                    - separator
+                    - heading [level=3]:
+                      - strong: "ثانيًا: الروتين اليومي للفلاح كنظام حياة متكامل"
+                    - paragraph: يعيش الفلاح وفق نظام يومي واضح ومنظم، يبدأ مع شروق الشمس وينتهي مع غروبها. هذا الروتين ليس مجرد تكرار ممل، بل هو انسجام طبيعي مع إيقاع الحياة.
+                    - list:
+                      - listitem:
+                        - paragraph:
+                          - strong: "بداية اليوم المبكرة:"
+                          - text: تمنح النشاط والتركيز
+                      - listitem:
+                        - paragraph:
+                          - strong: "العمل البدني المنتظم:"
+                          - text: يعزز الصحة الجسدية والنفسية
+                      - listitem:
+                        - paragraph:
+                          - strong: "الطعام الطبيعي:"
+                          - text: يدعم التوازن الصحي
+                      - listitem:
+                        - paragraph:
+                          - strong: "النوم المنتظم:"
+                          - text: يحقق الراحة والاستشفاء
+                    - paragraph: هذا النمط اليومي يخلق حالة من الاستقرار، ويقلل من الفوضى التي يعاني منها كثير من الناس في الحياة الحديثة.
+                    - separator
+                    - heading [level=3]:
+                      - strong: "ثالثًا: الراحة النفسية في قلب البساطة"
+                    - paragraph: "رغم غياب مفاهيم مثل \"التنمية الذاتية\" أو \"إدارة التوتر\" في حياة الفلاح، إلا أنه يعيش حالة من الاتزان النفسي الملحوظ. هذه الراحة لا تأتي من فراغ، بل نتيجة عدة عوامل:"
+                    - list:
+                      - listitem:
+                        - paragraph:
+                          - strong: "وضوح الأهداف اليومية:"
+                          - text: لا يوجد تشتت أو حيرة مستمرة
+                      - listitem:
+                        - paragraph:
+                          - strong: "الإنجاز الملموس:"
+                          - text: الشعور اليومي بتحقيق نتائج حقيقية
+                      - listitem:
+                        - paragraph:
+                          - strong: "قلة المقارنات الاجتماعية:"
+                          - text: تقليل الضغط النفسي
+                      - listitem:
+                        - paragraph:
+                          - strong: "الارتباط بالطبيعة:"
+                          - text: تحسين المزاج وتقليل التوتر
+                    - paragraph: لهذا، نلاحظ أن الفلاح غالبًا ما يتمتع بصحة نفسية مستقرة، ولا يعاني من التعقيدات النفسية المنتشرة في المجتمعات الحديثة، باستثناء بعض الأمراض الجسدية البسيطة مثل الأنفلونزا.
+                    - separator
+                    - heading [level=3]:
+                      - strong: "رابعًا: مقارنة بين الحياة البسيطة والحياة المعاصرة"
+                    - paragraph: "في المقابل، يعيش الإنسان الحديث في بيئة مليئة بالضغوط:"
+                    - list:
+                      - listitem:
+                        - paragraph: تعدد الخيارات والقرارات
+                      - listitem:
+                        - paragraph: السعي المستمر لتحقيق النجاح
+                      - listitem:
+                        - paragraph: المقارنات الاجتماعية عبر وسائل التواصل
+                      - listitem:
+                        - paragraph: التعرض الزائد للمعلومات
+                    - paragraph: "هذا التعقيد يجعل الإنسان أكثر عرضة للقلق والتوتر، رغم توفر وسائل الراحة. وهنا يظهر التناقض الواضح: البساطة التي نراها \"سطحية\" قد تكون في الحقيقة مصدرًا للراحة، بينما التعقيد الذي نعتبره \"تطورًا\" قد يكون سببًا في الإرهاق النفسي."
+                    - separator
+                    - heading [level=3]:
+                      - strong: "خامسًا: ماذا يمكن أن نتعلم من عقلية الفلاح؟"
+                    - paragraph: "لا يعني ذلك أن نعود إلى حياة الفلاح بالكامل، لكن يمكننا الاستفادة من بعض مبادئها:"
+                    - list:
+                      - listitem:
+                        - paragraph: تبسيط الروتين اليومي
+                      - listitem:
+                        - paragraph: التركيز على الإنجاز الواقعي
+                      - listitem:
+                        - paragraph: تقليل التشتت الذهني
+                      - listitem:
+                        - paragraph: إعادة الاتصال بالطبيعة
+                      - listitem:
+                        - paragraph: تقليل المقارنات مع الآخرين
+                    - paragraph: هذه العناصر يمكن أن تساعد في تحقيق توازن نفسي أفضل في حياتنا اليومية.
+                    - separator
+                    - heading [level=3]:
+                      - strong: "خاتمة: إعادة تعريف البساطة"
+                    - paragraph: في النهاية، البساطة ليست مرادفًا للسطحية، بل قد تكون أحد أشكال الحكمة. عقلية الفلاح تقدم نموذجًا مختلفًا للحياة، نموذجًا قائمًا على التوازن، والوضوح، والراحة النفسية.
+                    - paragraph: ربما لا نعيش نفس تفاصيل حياته، لكننا بحاجة إلى إعادة التفكير في أسلوب حياتنا، والبحث عن تلك المساحة من البساطة التي تمنحنا السلام الداخلي في عالم يزداد تعقيدًا يومًا بعد يوم.
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                          - generic: Media Gallery
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img
+                            - generic:
+                              - generic:
+                                - generic: صح
+                                - generic:
+                                  - generic: 69d516114127873214782972
+                                  - button:
+                                    - img
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                          - generic: Frequently Asked Questions
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: "س1:"
+                              - generic: يعنى ايه فلاح
+                            - generic:
+                              - generic: 69dba39217d700ce66c6356c
+                              - button:
+                                - img
+                          - paragraph: الفلاح هو الى بياكلك
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: "س2:"
+                            - generic:
+                              - generic: 69dba39217d700ce66c6356d
+                              - button:
+                                - img
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: M
+                      - generic:
+                        - paragraph: Modonty
+                        - paragraph: Modonty is a leading content platform providing high-quality articles and insights.
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: جدول المحتويات
+                    - generic:
+                      - navigation:
+                        - button: لصورة الذهنية مقابل الواقع
+                        - button: "أولًا: دلالة كلمة \"فلاح\" بين السطحية والعمق"
+                        - button: "ثانيًا: الروتين اليومي للفلاح كنظام حياة متكامل"
+                        - button: "ثالثًا: الراحة النفسية في قلب البساطة"
+                        - button: "رابعًا: مقارنة بين الحياة البسيطة والحياة المعاصرة"
+                        - button: "خامسًا: ماذا يمكن أن نتعلم من عقلية الفلاح؟"
+                        - button: "خاتمة: إعادة تعريف البساطة"
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - text: SEO Overview
+            - generic:
+              - generic:
+                - generic:
+                  - paragraph: SEO Title
+                  - paragraph: عقلية الفلاح والروتين اليومى مابين | عيادات بلسم الطبية
+                - generic:
+                  - paragraph: SEO Description
+                  - paragraph: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+                - generic:
+                  - paragraph: Canonical URL
+                  - paragraph: https://modonty.com/articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                - generic:
+                  - paragraph: Slug
+                  - paragraph: /عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+              - generic:
+                - link:
+                  - /url: /articles/69d4f72c769fbb50b610e3e8/technical
+                  - button:
+                    - img
+                    - text: View Technical Details
+  - list
+  - button "Open Next.js Dev Tools" [ref=e369] [cursor=pointer]:
+    - img [ref=e370]
+  - alert
+  - alertdialog "أرشفة المقال" [ref=e378]:
+    - generic [ref=e379]:
+      - heading "أرشفة المقال" [level=2] [ref=e380]
+      - paragraph [ref=e381]: هذا المقال لن يظهر في المدونة بعد الأرشفة. يمكنك إلغاء الأرشفة في أي وقت.
+    - generic [ref=e382]:
+      - button "كنسل" [active] [ref=e383] [cursor=pointer]
+      - button "استمرار" [ref=e384] [cursor=pointer]

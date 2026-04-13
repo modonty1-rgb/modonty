@@ -1,0 +1,528 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - heading "مودونتي — منصة المحتوى العربي" [level=1] [ref=e5]
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=2] [ref=e6]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: مرحباً بك في مودونتي
+          - paragraph [ref=e12]: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+        - region "آخر المقالات" [ref=e13]:
+          - heading "آخر المقالات" [level=2] [ref=e14]
+          - generic [ref=e15]:
+            - article [ref=e16]:
+              - generic [ref=e18]:
+                - generic [ref=e19]:
+                  - link "زيارة صفحة JBR SEO" [ref=e20] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e22]
+                  - generic [ref=e23]:
+                    - link "JBR SEO" [ref=e24] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e25]: JBR SEO
+                    - generic [ref=e27]:
+                      - time [ref=e29]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e30]: •
+                      - generic [ref=e31]: ⏱️ 4 دقيقة
+                - generic [ref=e32]:
+                  - img [ref=e33]
+                  - generic [ref=e36]: نسخة صوتية
+              - generic [ref=e37]:
+                - link "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e38] [cursor=pointer]:
+                  - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                  - heading "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e39]
+                - paragraph [ref=e40]: تعرف على صفحة نتائج البحث SERP وأنواعها مثل النتائج العضوية والإعلانات والنتائج المحلية والمقتطفات المميزة، وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+                - 'link "صورة مقال: ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e41] [cursor=pointer]':
+                  - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                  - img "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e43]
+                - link "اقرأ المزيد" [ref=e45] [cursor=pointer]:
+                  - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                  - text: اقرأ المزيد
+                  - img [ref=e46]
+                - generic [ref=e48]:
+                  - link "عرض المقال" [ref=e49] [cursor=pointer]:
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - generic [ref=e50]:
+                      - img [ref=e51]
+                      - text: "0"
+                    - generic [ref=e53]:
+                      - img [ref=e54]
+                      - text: "0"
+                    - generic [ref=e56]:
+                      - img [ref=e57]
+                      - text: "0"
+                    - generic [ref=e59]:
+                      - img [ref=e60]
+                      - text: "10"
+                  - link "مشاركة المقال" [ref=e63] [cursor=pointer]:
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - img [ref=e64]
+            - article [ref=e70]:
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - link "زيارة صفحة JBR SEO" [ref=e74] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e76]
+                  - generic [ref=e77]:
+                    - link "JBR SEO" [ref=e78] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e79]: JBR SEO
+                    - generic [ref=e81]:
+                      - time [ref=e83]: ٨ أبريل ٢٠٢٦
+                      - generic [ref=e84]: •
+                      - generic [ref=e85]: ⏱️ 4 دقيقة
+                - generic [ref=e86]:
+                  - img [ref=e87]
+                  - generic [ref=e90]: نسخة صوتية
+              - generic [ref=e91]:
+                - link "ماهو السيو؟ واهميتة فى التسويق الرقمى؟" [ref=e92] [cursor=pointer]:
+                  - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                  - heading "ماهو السيو؟ واهميتة فى التسويق الرقمى؟" [level=3] [ref=e93]
+                - paragraph [ref=e94]: تعرف على ما هو السيو من خلال دليلنا المبسط، تعلّم أساسيات تحسين محركات البحث، استراتيجيات زيادة ظهور موقعك، جذب المزيد من الزوار وفهم كيفية تحسين المحتوى بطريقة فعالة
+                - 'link "صورة مقال: ماهو السيو؟ واهميتة فى التسويق الرقمى؟" [ref=e95] [cursor=pointer]':
+                  - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                  - img "ماهو السيو؟ واهميتة فى التسويق الرقمى؟" [ref=e97]
+                - link "اقرأ المزيد" [ref=e99] [cursor=pointer]:
+                  - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                  - text: اقرأ المزيد
+                  - img [ref=e100]
+                - generic [ref=e102]:
+                  - link "عرض المقال" [ref=e103] [cursor=pointer]:
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - generic [ref=e104]:
+                      - img [ref=e105]
+                      - text: "0"
+                    - generic [ref=e107]:
+                      - img [ref=e108]
+                      - text: "0"
+                    - generic [ref=e110]:
+                      - img [ref=e111]
+                      - text: "0"
+                    - generic [ref=e113]:
+                      - img [ref=e114]
+                      - text: "7"
+                  - link "مشاركة المقال" [ref=e117] [cursor=pointer]:
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - img [ref=e118]
+            - article [ref=e124]:
+              - generic [ref=e126]:
+                - generic [ref=e127]:
+                  - link "زيارة صفحة JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e128] [cursor=pointer]:
+                    - /url: /clients/jabr-group-contracting-and-manufacturing
+                    - img "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e130]
+                  - generic [ref=e131]:
+                    - link "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e132] [cursor=pointer]:
+                      - /url: /clients/jabr-group-contracting-and-manufacturing
+                      - generic [ref=e133]: JABR GROUP CONTRACTING AND MANUFACTURING
+                    - generic [ref=e135]:
+                      - time [ref=e137]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e138]: •
+                      - generic [ref=e139]: ⏱️ 3 دقيقة
+                - generic [ref=e140]:
+                  - img [ref=e141]
+                  - generic [ref=e144]: نسخة صوتية
+              - generic [ref=e145]:
+                - link "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [ref=e146] [cursor=pointer]:
+                  - /url: /articles/مشاريع-تسليم-مفتاح-turnkey-كيف-تنفذ-مشروعك-بأعلى-كفاءة؟
+                  - heading "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [level=3] [ref=e147]
+                - paragraph [ref=e148]: مشاريع تسليم مفتاح (Turnkey) في السعودية لتنفيذ مشروعك بأعلى جودة وبأقل تكلفة ومخاطر. تعرّف على مزايا النظام وكيف تختار شركة مقاولات موثوقة لضمان تسليم سريع ونتائج احترافية
+                - 'link "صورة مقال: مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [ref=e149] [cursor=pointer]':
+                  - /url: /articles/مشاريع-تسليم-مفتاح-turnkey-كيف-تنفذ-مشروعك-بأعلى-كفاءة؟
+                  - img "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [ref=e151]
+                - link "اقرأ المزيد" [ref=e153] [cursor=pointer]:
+                  - /url: /articles/مشاريع-تسليم-مفتاح-turnkey-كيف-تنفذ-مشروعك-بأعلى-كفاءة؟
+                  - text: اقرأ المزيد
+                  - img [ref=e154]
+                - generic [ref=e156]:
+                  - link "عرض المقال" [ref=e157] [cursor=pointer]:
+                    - /url: /articles/مشاريع-تسليم-مفتاح-turnkey-كيف-تنفذ-مشروعك-بأعلى-كفاءة؟
+                    - generic [ref=e158]:
+                      - img [ref=e159]
+                      - text: "0"
+                    - generic [ref=e161]:
+                      - img [ref=e162]
+                      - text: "0"
+                    - generic [ref=e164]:
+                      - img [ref=e165]
+                      - text: "0"
+                    - generic [ref=e167]:
+                      - img [ref=e168]
+                      - text: "5"
+                  - link "مشاركة المقال" [ref=e171] [cursor=pointer]:
+                    - /url: /articles/مشاريع-تسليم-مفتاح-turnkey-كيف-تنفذ-مشروعك-بأعلى-كفاءة؟
+                    - img [ref=e172]
+            - article [ref=e178]:
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - link "زيارة صفحة JBR SEO" [ref=e182] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e184]
+                  - generic [ref=e185]:
+                    - link "JBR SEO" [ref=e186] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e187]: JBR SEO
+                    - generic [ref=e189]:
+                      - time [ref=e191]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e192]: •
+                      - generic [ref=e193]: ⏱️ 4 دقيقة
+                - generic [ref=e194]:
+                  - img [ref=e195]
+                  - generic [ref=e198]: نسخة صوتية
+              - generic [ref=e199]:
+                - link "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [ref=e200] [cursor=pointer]:
+                  - /url: /articles/ما-هو-on-page-seo-وكيف-تحسن-صفحات-موقعك-خطوة-بخطوة؟
+                  - heading "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [level=3] [ref=e201]
+                - paragraph [ref=e202]: "تعلم On-Page SEO لتحسين صفحات موقعك: اختيار عنوان واضح وكلمات مفتاحية، تنظيم المحتوى، إضافة صور وروابط داخلية، وتحسين سرعة وتجربة المستخدم لزيادة ظهور موقعك."
+                - 'link "صورة مقال: ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [ref=e203] [cursor=pointer]':
+                  - /url: /articles/ما-هو-on-page-seo-وكيف-تحسن-صفحات-موقعك-خطوة-بخطوة؟
+                  - img "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [ref=e205]
+                - link "اقرأ المزيد" [ref=e207] [cursor=pointer]:
+                  - /url: /articles/ما-هو-on-page-seo-وكيف-تحسن-صفحات-موقعك-خطوة-بخطوة؟
+                  - text: اقرأ المزيد
+                  - img [ref=e208]
+                - generic [ref=e210]:
+                  - link "عرض المقال" [ref=e211] [cursor=pointer]:
+                    - /url: /articles/ما-هو-on-page-seo-وكيف-تحسن-صفحات-موقعك-خطوة-بخطوة؟
+                    - generic [ref=e212]:
+                      - img [ref=e213]
+                      - text: "0"
+                    - generic [ref=e215]:
+                      - img [ref=e216]
+                      - text: "0"
+                    - generic [ref=e218]:
+                      - img [ref=e219]
+                      - text: "0"
+                    - generic [ref=e221]:
+                      - img [ref=e222]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e225] [cursor=pointer]:
+                    - /url: /articles/ما-هو-on-page-seo-وكيف-تحسن-صفحات-موقعك-خطوة-بخطوة؟
+                    - img [ref=e226]
+            - article [ref=e232]:
+              - generic [ref=e234]:
+                - generic [ref=e235]:
+                  - link "زيارة صفحة JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e236] [cursor=pointer]:
+                    - /url: /clients/jabr-group-contracting-and-manufacturing
+                    - img "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e238]
+                  - generic [ref=e239]:
+                    - link "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e240] [cursor=pointer]:
+                      - /url: /clients/jabr-group-contracting-and-manufacturing
+                      - generic [ref=e241]: JABR GROUP CONTRACTING AND MANUFACTURING
+                    - generic [ref=e243]:
+                      - time [ref=e245]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e246]: •
+                      - generic [ref=e247]: ⏱️ 3 دقيقة
+                - generic [ref=e248]:
+                  - img [ref=e249]
+                  - generic [ref=e252]: نسخة صوتية
+              - generic [ref=e253]:
+                - link "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e254] [cursor=pointer]:
+                  - /url: /articles/أعمال-mepالعمود-الفقري-لأي-مشروع-ناجح-في-السعودية
+                  - heading "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [level=3] [ref=e255]
+                - paragraph [ref=e256]: أعمال MEP في السعودية تشمل الأنظمة الميكانيكية والكهربائية والسباكة لضمان كفاءة التشغيل وجودة المشاريع. تعرّف على أهميتها وكيف تختار أفضل مقاول MEP محترف
+                - 'link "صورة مقال: أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e257] [cursor=pointer]':
+                  - /url: /articles/أعمال-mepالعمود-الفقري-لأي-مشروع-ناجح-في-السعودية
+                  - img "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e259]
+                - link "اقرأ المزيد" [ref=e261] [cursor=pointer]:
+                  - /url: /articles/أعمال-mepالعمود-الفقري-لأي-مشروع-ناجح-في-السعودية
+                  - text: اقرأ المزيد
+                  - img [ref=e262]
+                - generic [ref=e264]:
+                  - link "عرض المقال" [ref=e265] [cursor=pointer]:
+                    - /url: /articles/أعمال-mepالعمود-الفقري-لأي-مشروع-ناجح-في-السعودية
+                    - generic [ref=e266]:
+                      - img [ref=e267]
+                      - text: "0"
+                    - generic [ref=e269]:
+                      - img [ref=e270]
+                      - text: "0"
+                    - generic [ref=e272]:
+                      - img [ref=e273]
+                      - text: "0"
+                    - generic [ref=e275]:
+                      - img [ref=e276]
+                      - text: "1"
+                  - link "مشاركة المقال" [ref=e279] [cursor=pointer]:
+                    - /url: /articles/أعمال-mepالعمود-الفقري-لأي-مشروع-ناجح-في-السعودية
+                    - img [ref=e280]
+            - article [ref=e286]:
+              - generic [ref=e288]:
+                - generic [ref=e289]:
+                  - link "زيارة صفحة JBR SEO" [ref=e290] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e292]
+                  - generic [ref=e293]:
+                    - link "JBR SEO" [ref=e294] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e295]: JBR SEO
+                    - generic [ref=e297]:
+                      - time [ref=e299]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e300]: •
+                      - generic [ref=e301]: ⏱️ 3 دقيقة
+                - generic [ref=e302]:
+                  - img [ref=e303]
+                  - generic [ref=e306]: نسخة صوتية
+              - generic [ref=e307]:
+                - link "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e308] [cursor=pointer]:
+                  - /url: /articles/لماذا-لا-يظهر-موقعك-في-google؟-أهم-الأسباب-والحلول
+                  - heading "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [level=3] [ref=e309]
+                - paragraph [ref=e310]: اكتشف لماذا لا يظهر موقعك في Google وتعرف على أهم الأسباب مثل ضعف الفهرسة والمحتوى والمشاكل التقنية وقوة المنافسة مع خطوات عملية لحلها وتحسين ظهور موقعك
+                - 'link "صورة مقال: لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e311] [cursor=pointer]':
+                  - /url: /articles/لماذا-لا-يظهر-موقعك-في-google؟-أهم-الأسباب-والحلول
+                  - img "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e313]
+                - link "اقرأ المزيد" [ref=e315] [cursor=pointer]:
+                  - /url: /articles/لماذا-لا-يظهر-موقعك-في-google؟-أهم-الأسباب-والحلول
+                  - text: اقرأ المزيد
+                  - img [ref=e316]
+                - generic [ref=e318]:
+                  - link "عرض المقال" [ref=e319] [cursor=pointer]:
+                    - /url: /articles/لماذا-لا-يظهر-موقعك-في-google؟-أهم-الأسباب-والحلول
+                    - generic [ref=e320]:
+                      - img [ref=e321]
+                      - text: "0"
+                    - generic [ref=e323]:
+                      - img [ref=e324]
+                      - text: "0"
+                    - generic [ref=e326]:
+                      - img [ref=e327]
+                      - text: "0"
+                    - generic [ref=e329]:
+                      - img [ref=e330]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e333] [cursor=pointer]:
+                    - /url: /articles/لماذا-لا-يظهر-موقعك-في-google؟-أهم-الأسباب-والحلول
+                    - img [ref=e334]
+            - article [ref=e340]:
+              - generic [ref=e342]:
+                - generic [ref=e343]:
+                  - link "زيارة صفحة JBR SEO" [ref=e344] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e346]
+                  - generic [ref=e347]:
+                    - link "JBR SEO" [ref=e348] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e349]: JBR SEO
+                    - generic [ref=e351]:
+                      - time [ref=e353]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e354]: •
+                      - generic [ref=e355]: ⏱️ 3 دقيقة
+                - generic [ref=e356]:
+                  - img [ref=e357]
+                  - generic [ref=e360]: نسخة صوتية
+              - generic [ref=e361]:
+                - link "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث)" [ref=e362] [cursor=pointer]:
+                  - /url: /articles/كيف-يفكر-المستخدم-عندما-يبحث-في-google؟-فهم-نية-البحث
+                  - heading "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث)" [level=3] [ref=e363]
+                - paragraph [ref=e364]: اكتشف نية البحث (Search Intent) وكيف يفكر المستخدم عند البحث في Google، لتكتب محتوى يلبي هدفه بدقة يحسن ترتيب موقعك في محركات البحث ويجذب الزوار بشكل فعّال
+                - 'link "صورة مقال: كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث)" [ref=e365] [cursor=pointer]':
+                  - /url: /articles/كيف-يفكر-المستخدم-عندما-يبحث-في-google؟-فهم-نية-البحث
+                  - img "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث)" [ref=e367]
+                - link "اقرأ المزيد" [ref=e369] [cursor=pointer]:
+                  - /url: /articles/كيف-يفكر-المستخدم-عندما-يبحث-في-google؟-فهم-نية-البحث
+                  - text: اقرأ المزيد
+                  - img [ref=e370]
+                - generic [ref=e372]:
+                  - link "عرض المقال" [ref=e373] [cursor=pointer]:
+                    - /url: /articles/كيف-يفكر-المستخدم-عندما-يبحث-في-google؟-فهم-نية-البحث
+                    - generic [ref=e374]:
+                      - img [ref=e375]
+                      - text: "0"
+                    - generic [ref=e377]:
+                      - img [ref=e378]
+                      - text: "0"
+                    - generic [ref=e380]:
+                      - img [ref=e381]
+                      - text: "0"
+                    - generic [ref=e383]:
+                      - img [ref=e384]
+                      - text: "1"
+                  - link "مشاركة المقال" [ref=e387] [cursor=pointer]:
+                    - /url: /articles/كيف-يفكر-المستخدم-عندما-يبحث-في-google؟-فهم-نية-البحث
+                    - img [ref=e388]
+            - article [ref=e394]:
+              - generic [ref=e396]:
+                - generic [ref=e397]:
+                  - link "زيارة صفحة JBR SEO" [ref=e398] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e400]
+                  - generic [ref=e401]:
+                    - link "JBR SEO" [ref=e402] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e403]: JBR SEO
+                    - generic [ref=e405]:
+                      - time [ref=e407]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e408]: •
+                      - generic [ref=e409]: ⏱️ 3 دقيقة
+                - generic [ref=e410]:
+                  - img [ref=e411]
+                  - generic [ref=e414]: نسخة صوتية
+              - generic [ref=e415]:
+                - link "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e416] [cursor=pointer]:
+                  - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                  - heading "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [level=3] [ref=e417]
+                - paragraph [ref=e418]: تعرف على Technical SEO وأهميته لموقعك. حسن سرعة الموقع، التوافق مع الهاتف، الزحف والفهرسة، الأمان والروابط لتجعل محتواك قابلًا للظهور في Google وزيادة الزيارات.
+                - 'link "صورة مقال: ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e419] [cursor=pointer]':
+                  - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                  - img "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e421]
+                - link "اقرأ المزيد" [ref=e423] [cursor=pointer]:
+                  - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                  - text: اقرأ المزيد
+                  - img [ref=e424]
+                - generic [ref=e426]:
+                  - link "عرض المقال" [ref=e427] [cursor=pointer]:
+                    - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                    - generic [ref=e428]:
+                      - img [ref=e429]
+                      - text: "0"
+                    - generic [ref=e431]:
+                      - img [ref=e432]
+                      - text: "0"
+                    - generic [ref=e434]:
+                      - img [ref=e435]
+                      - text: "0"
+                    - generic [ref=e437]:
+                      - img [ref=e438]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e441] [cursor=pointer]:
+                    - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                    - img [ref=e442]
+            - article [ref=e448]:
+              - generic [ref=e450]:
+                - generic [ref=e451]:
+                  - link "زيارة صفحة JBR SEO" [ref=e452] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e454]
+                  - generic [ref=e455]:
+                    - link "JBR SEO" [ref=e456] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e457]: JBR SEO
+                    - generic [ref=e459]:
+                      - time [ref=e461]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e462]: •
+                      - generic [ref=e463]: ⏱️ 3 دقيقة
+                - generic [ref=e464]:
+                  - img [ref=e465]
+                  - generic [ref=e468]: نسخة صوتية
+              - generic [ref=e469]:
+                - link "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e470] [cursor=pointer]:
+                  - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                  - heading "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [level=3] [ref=e471]
+                - paragraph [ref=e472]: تعرف على الفرق بين SEO والإعلانات المدفوعة في محركات البحث من حيث السرعة والتكلفة والاستمرارية وكيف تختار أفضل استراتيجية لزيادة ظهور موقعك وتحقيق نتائج فعالة
+                - 'link "صورة مقال: ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e473] [cursor=pointer]':
+                  - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                  - img "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e475]
+                - link "اقرأ المزيد" [ref=e477] [cursor=pointer]:
+                  - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                  - text: اقرأ المزيد
+                  - img [ref=e478]
+                - generic [ref=e480]:
+                  - link "عرض المقال" [ref=e481] [cursor=pointer]:
+                    - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                    - generic [ref=e482]:
+                      - img [ref=e483]
+                      - text: "0"
+                    - generic [ref=e485]:
+                      - img [ref=e486]
+                      - text: "0"
+                    - generic [ref=e488]:
+                      - img [ref=e489]
+                      - text: "0"
+                    - generic [ref=e491]:
+                      - img [ref=e492]
+                      - text: "3"
+                  - link "مشاركة المقال" [ref=e495] [cursor=pointer]:
+                    - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                    - img [ref=e496]
+            - article [ref=e502]:
+              - generic [ref=e504]:
+                - generic [ref=e505]:
+                  - link "زيارة صفحة JBR SEO" [ref=e506] [cursor=pointer]:
+                    - /url: /clients/jbr-seo
+                    - img "JBR SEO" [ref=e508]
+                  - generic [ref=e509]:
+                    - link "JBR SEO" [ref=e510] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - generic [ref=e511]: JBR SEO
+                    - generic [ref=e513]:
+                      - time [ref=e515]: ٩ أبريل ٢٠٢٦
+                      - generic [ref=e516]: •
+                      - generic [ref=e517]: ⏱️ 3 دقيقة
+                - generic [ref=e518]:
+                  - img [ref=e519]
+                  - generic [ref=e522]: نسخة صوتية
+              - generic [ref=e523]:
+                - link "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟" [ref=e524] [cursor=pointer]:
+                  - /url: /articles/ماهى-محركات-البحث-مثل-google-ولماذا-لاتظهر-بعض-المواقع-فى-نتائج-البحث
+                  - heading "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟" [level=3] [ref=e525]
+                - paragraph [ref=e526]: محركات البحث مثل Google تساعد في الوصول للمعلومات بسرعة، لكن عدم ظهور بعض المواقع يرجع لضعف SEO أو قلة جودة المحتوى أو مشاكل في تهيئة الموقع تقنيًا
+                - 'link "صورة مقال: ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟" [ref=e527] [cursor=pointer]':
+                  - /url: /articles/ماهى-محركات-البحث-مثل-google-ولماذا-لاتظهر-بعض-المواقع-فى-نتائج-البحث
+                  - img "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟" [ref=e529]
+                - link "اقرأ المزيد" [ref=e531] [cursor=pointer]:
+                  - /url: /articles/ماهى-محركات-البحث-مثل-google-ولماذا-لاتظهر-بعض-المواقع-فى-نتائج-البحث
+                  - text: اقرأ المزيد
+                  - img [ref=e532]
+                - generic [ref=e534]:
+                  - link "عرض المقال" [ref=e535] [cursor=pointer]:
+                    - /url: /articles/ماهى-محركات-البحث-مثل-google-ولماذا-لاتظهر-بعض-المواقع-فى-نتائج-البحث
+                    - generic [ref=e536]:
+                      - img [ref=e537]
+                      - text: "0"
+                    - generic [ref=e539]:
+                      - img [ref=e540]
+                      - text: "0"
+                    - generic [ref=e542]:
+                      - img [ref=e543]
+                      - text: "0"
+                    - generic [ref=e545]:
+                      - img [ref=e546]
+                      - text: "3"
+                  - link "مشاركة المقال" [ref=e549] [cursor=pointer]:
+                    - /url: /articles/ماهى-محركات-البحث-مثل-google-ولماذا-لاتظهر-بعض-المواقع-فى-نتائج-البحث
+                    - img [ref=e550]
+    - contentinfo [ref=e556]:
+      - generic [ref=e557]:
+        - generic [ref=e558]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e559] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e560]: ↗
+      - navigation "روابط سريعة" [ref=e561]:
+        - link "الرئيسية" [ref=e562] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e563] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e564] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e565] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e566] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e567] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e568]:
+        - link "الشروط والأحكام" [ref=e569] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e570] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e571] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e572] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e573] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e574]: © 2026 مودونتي
+    - contentinfo [ref=e575]
+  - generic [ref=e581] [cursor=pointer]:
+    - button "Open issues overlay" [ref=e582]:
+      - img [ref=e584]
+      - generic [ref=e586]:
+        - generic [ref=e587]: "3"
+        - generic [ref=e588]: "4"
+      - generic [ref=e589]:
+        - text: Issue
+        - generic [ref=e590]: s
+    - button "Collapse issues badge" [ref=e591]:
+      - img [ref=e592]
+  - alert [ref=e594]

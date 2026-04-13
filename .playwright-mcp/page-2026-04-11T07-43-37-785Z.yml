@@ -1,0 +1,134 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "1 محفوظ المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - generic "1 محفوظ" [ref=e48]: "1"
+              - generic [ref=e49]: المحفوظات
+        - generic [ref=e50]:
+          - link "صندوق البريد" [ref=e51] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - button "M" [ref=e144] [cursor=pointer]:
+              - generic [ref=e146]: M
+            - button "فتح المحادثة" [ref=e59] [cursor=pointer]
+    - main [ref=e61]:
+      - heading "الإعدادات" [level=1] [ref=e63]
+      - navigation "تنقل الصفحة" [ref=e64]:
+        - list [ref=e65]:
+          - listitem [ref=e66]:
+            - link "الرئيسية الرئيسية" [ref=e67] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e68]
+              - generic [ref=e71]: الرئيسية
+          - listitem [ref=e72]:
+            - img [ref=e73]
+            - link "الملف الشخصي" [ref=e75] [cursor=pointer]:
+              - /url: /users/profile
+              - generic [ref=e76]: الملف الشخصي
+          - listitem [ref=e77]:
+            - generic [ref=e79]: الإعدادات
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - heading "الإعدادات" [level=3] [ref=e83]
+          - generic [ref=e86]:
+            - button "الملف الشخصي الملف الشخصي" [ref=e87] [cursor=pointer]:
+              - img
+              - generic [ref=e88]: الملف الشخصي
+              - generic [ref=e89]: الملف الشخصي
+            - button "الأمان الأمان" [ref=e90] [cursor=pointer]:
+              - img
+              - generic [ref=e91]: الأمان
+              - generic [ref=e92]: الأمان
+            - button "المظهر المظهر" [ref=e93] [cursor=pointer]:
+              - img
+              - generic [ref=e94]: المظهر
+              - generic [ref=e95]: المظهر
+            - button "الحساب الحساب" [active] [ref=e96] [cursor=pointer]:
+              - img
+              - generic [ref=e97]: الحساب
+              - generic [ref=e98]: الحساب
+        - generic [ref=e147]:
+          - generic [ref=e148]:
+            - generic [ref=e149]:
+              - heading "تصدير البيانات" [level=3] [ref=e150]:
+                - img [ref=e151]
+                - text: تصدير البيانات
+              - paragraph [ref=e154]: قم بتحميل نسخة من جميع بياناتك
+            - generic [ref=e155]:
+              - paragraph [ref=e156]: يمكنك تصدير جميع بياناتك بما في ذلك التعليقات والإعجابات والمحفوظات.
+              - button "تصدير البيانات" [ref=e157] [cursor=pointer]:
+                - img
+                - text: تصدير البيانات
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - heading "حذف الحساب" [level=3] [ref=e160]:
+                - img [ref=e161]
+                - text: حذف الحساب
+              - paragraph [ref=e164]: حذف حسابك بشكل دائم لا يمكن التراجع عنه
+            - generic [ref=e165]:
+              - generic [ref=e167]:
+                - img [ref=e168]
+                - generic [ref=e170]:
+                  - paragraph [ref=e171]: "تحذير: هذا الإجراء لا يمكن التراجع عنه"
+                  - paragraph [ref=e172]: "سيتم حذف جميع بياناتك بشكل دائم بما في ذلك:"
+                  - list [ref=e173]:
+                    - listitem [ref=e174]: جميع تعليقاتك
+                    - listitem [ref=e175]: جميع إعجاباتك ومحفوظاتك
+                    - listitem [ref=e176]: جميع إعداداتك وتفضيلاتك
+              - button "حذف الحساب" [ref=e177] [cursor=pointer]:
+                - img
+                - text: حذف الحساب
+    - contentinfo [ref=e122]:
+      - navigation "روابط سريعة" [ref=e123]:
+        - link "الرئيسية" [ref=e124] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e125] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e126] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e127] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e128]:
+        - link "اتفاقية المستخدم" [ref=e129] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e130] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e131] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e132] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e133]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e139] [cursor=pointer]:
+    - img [ref=e140]
+  - alert [ref=e143]

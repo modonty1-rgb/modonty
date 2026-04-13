@@ -22,6 +22,7 @@ interface FeaturedClientCardProps {
 export function FeaturedClientCard(props: FeaturedClientCardProps) {
   const isPremium = props.subscriptionTier === 'PREMIUM';
   const isPro = props.subscriptionTier === 'PRO';
+  const initials = props.name.split(" ").map(n => n[0]).join("").slice(0, 2);
   
   return (
     <Link 
@@ -39,7 +40,9 @@ export function FeaturedClientCard(props: FeaturedClientCardProps) {
             className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 bg-muted" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+            <span className="text-6xl font-bold text-primary/60 select-none">{initials}</span>
+          </div>
         )}
         
         {/* Gradient Overlay */}

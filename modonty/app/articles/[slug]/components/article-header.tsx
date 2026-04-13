@@ -26,7 +26,7 @@ export function ArticleHeader({
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
-      <h1 className="text-2xl md:text-3xl font-semibold mb-4">
+      <h1 className="text-2xl md:text-3xl font-semibold mb-4 break-words">
         {title}
       </h1>
 

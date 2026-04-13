@@ -12,7 +12,7 @@ export function MobileMenuTrigger({ onClick }: MobileMenuTriggerProps) {
     <Button
       variant="ghost"
       size="icon"
-      className="md:hidden min-h-11 min-w-11"
+      className="md:hidden min-h-11 min-w-11 rounded-xl"
       aria-label="Open menu"
       onClick={onClick}
     >

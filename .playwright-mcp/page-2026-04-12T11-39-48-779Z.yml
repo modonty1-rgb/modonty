@@ -1,0 +1,122 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [active] [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.30.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.30.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e553]:
+              - img [ref=e554]
+              - generic [ref=e556]: Articles
+          - navigation "Main navigation" [ref=e98]:
+            - link "Modonty Modonty" [ref=e99] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e101]
+              - generic [ref=e102]: Modonty
+            - generic [ref=e104]:
+              - link "Articles" [ref=e105] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e106]:
+                  - img
+                  - generic [ref=e107]: Articles
+              - link "Clients" [ref=e108] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e109]:
+                  - img
+                  - generic [ref=e110]: Clients
+              - link "Media" [ref=e111] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e112]:
+                  - img
+                  - generic [ref=e113]: Media
+          - generic [ref=e114]:
+            - link "1" [ref=e115] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e116]:
+                - img
+                - generic [ref=e117]: "1"
+            - button "M" [ref=e118] [cursor=pointer]:
+              - generic [ref=e120]: M
+      - generic [ref=e121]:
+        - generic [ref=e122]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e123]:
+          - button "Send Note" [ref=e124] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e125] [cursor=pointer]:
+            - img
+      - main [ref=e126]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e157] [cursor=pointer]:
+    - img [ref=e158]
+  - alert [ref=e161]

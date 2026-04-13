@@ -37,7 +37,7 @@ export function ArticleMobileEngagementBar({
 }: ArticleMobileEngagementBarProps) {
   return (
     <div
-      className="fixed bottom-16 inset-x-0 z-40 lg:hidden bg-background/95 backdrop-blur border-t p-4"
+      className="fixed bottom-20 inset-x-0 z-40 lg:hidden bg-background/95 backdrop-blur border-t p-4"
       role="toolbar"
       aria-label="مشاركة وتفاعل"
     >
@@ -53,6 +53,7 @@ export function ArticleMobileEngagementBar({
             initialUserDisliked={userDisliked}
             initialUserFavorited={userFavorited}
             compact
+            hideLoginHint
           />
         </div>
         <div className="flex items-center gap-3 shrink-0">

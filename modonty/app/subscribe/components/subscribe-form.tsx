@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { IconLoading, IconBell, IconCheckCircle } from "@/lib/icons";
+import { IconLoading, IconCheckCircle } from "@/lib/icons";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
@@ -50,10 +50,6 @@ export function SubscribeForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <IconBell className="h-5 w-5" />
-          اشترك في النشرة الإخبارية
-        </CardTitle>
         <CardDescription>
           احصل على آخر الأخبار والمقالات مباشرة في بريدك الإلكتروني
         </CardDescription>

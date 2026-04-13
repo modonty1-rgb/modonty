@@ -1,0 +1,81 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - link "عملاء بلا إعلانات — جبر SEO" [ref=e9] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: عملاء بلا إعلانات
+        - generic [ref=e13]:
+          - button "فتح المحادثة" [ref=e14] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e16] [cursor=pointer]:
+            - img
+    - main [ref=e17]
+    - contentinfo [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e46] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e47]: ↗
+      - navigation "روابط سريعة" [ref=e48]:
+        - link "الرئيسية" [ref=e49] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e50] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e51] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e52] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e53] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e54] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e55]:
+        - link "الشروط والأحكام" [ref=e56] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e57] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e58] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e59] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e60] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e61]: © 2026 مودونتي
+    - contentinfo [ref=e62]:
+      - navigation "التنقل السفلي" [ref=e63]:
+        - link "الرئيسية" [ref=e64] [cursor=pointer]:
+          - /url: /
+          - img [ref=e66]
+          - generic [ref=e69]: الرئيسية
+        - link "الرائجة" [ref=e70] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e72]
+          - generic [ref=e75]: الرائجة
+        - link "العملاء" [ref=e76] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e78]
+          - generic [ref=e82]: العملاء
+        - link "بحث المقالات" [ref=e83] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e84]
+          - generic [ref=e87]: بحث
+        - button "Open menu" [ref=e88] [cursor=pointer]:
+          - img
+  - generic [ref=e94] [cursor=pointer]:
+    - button "Open issues overlay" [ref=e95]:
+      - img [ref=e97]
+      - generic [ref=e99]:
+        - generic [ref=e100]: "3"
+        - generic [ref=e101]: "4"
+      - generic [ref=e102]:
+        - text: Issue
+        - generic [ref=e103]: s
+    - button "Collapse issues badge" [ref=e104]:
+      - img [ref=e105]
+  - alert [ref=e107]

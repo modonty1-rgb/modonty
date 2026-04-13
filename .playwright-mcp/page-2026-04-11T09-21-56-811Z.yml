@@ -1,0 +1,55 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - heading "تسجيل الدخول" [level=3] [ref=e8]
+          - paragraph [ref=e9]: سجل الدخول للتعليق والتفاعل مع المحتوى
+        - generic [ref=e10]:
+          - button "تسجيل الدخول بـ Google" [ref=e11] [cursor=pointer]:
+            - img
+            - text: تسجيل الدخول بـ Google
+          - generic [ref=e16]: أو
+          - generic [ref=e17]:
+            - generic [ref=e18]:
+              - text: البريد الإلكتروني
+              - textbox "البريد الإلكتروني" [ref=e19]:
+                - /placeholder: example@email.com
+                - text: modonty@modonty.com
+            - generic [ref=e20]:
+              - text: كلمة المرور
+              - textbox "كلمة المرور" [ref=e21]:
+                - /placeholder: ••••••••
+                - text: modonty12345678
+            - button "تسجيل الدخول" [ref=e22] [cursor=pointer]:
+              - img
+              - text: تسجيل الدخول
+          - generic [ref=e27]: أو
+          - generic [ref=e28]:
+            - text: ليس لديك حساب؟
+            - link "سجل الآن" [ref=e29] [cursor=pointer]:
+              - /url: /users/register
+    - contentinfo [ref=e30]:
+      - navigation "روابط سريعة" [ref=e31]:
+        - link "الرئيسية" [ref=e32] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e33] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e34] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e35] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e36]:
+        - link "اتفاقية المستخدم" [ref=e37] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e38] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e39] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e40] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e41]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e47] [cursor=pointer]:
+    - img [ref=e48]
+  - alert [ref=e51]

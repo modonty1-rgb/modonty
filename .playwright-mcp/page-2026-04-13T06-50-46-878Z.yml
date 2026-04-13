@@ -1,0 +1,231 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - link "عملاء بلا إعلانات — جبر SEO" [ref=e9] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: عملاء بلا إعلانات
+        - generic [ref=e13]:
+          - button "فتح المحادثة" [ref=e14] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e16] [cursor=pointer]:
+            - img
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - navigation "تنقل الصفحة" [ref=e19]:
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - link "الرئيسية الرئيسية" [ref=e22] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e23]
+                - generic [ref=e26]: الرئيسية
+            - listitem [ref=e27]:
+              - img [ref=e28]
+              - link "مركز المساعدة" [ref=e30] [cursor=pointer]:
+                - /url: /help
+                - generic [ref=e31]: مركز المساعدة
+            - listitem [ref=e32]:
+              - generic [ref=e34]: الأسئلة الشائعة
+        - generic [ref=e35]:
+          - heading "الأسئلة الشائعة" [level=1] [ref=e36]
+          - paragraph [ref=e37]: ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مودونتي
+        - generic [ref=e38]:
+          - link "العودة إلى مركز المساعدة" [ref=e39] [cursor=pointer]:
+            - /url: /help
+            - img
+            - text: العودة إلى مركز المساعدة
+          - link "اتصل بنا" [ref=e40] [cursor=pointer]:
+            - /url: /contact
+            - img
+            - text: اتصل بنا
+        - generic [ref=e42]:
+          - img [ref=e43]
+          - textbox "بحث في الأسئلة الشائعة" [ref=e46]:
+            - /placeholder: ابحث في الأسئلة الشائعة...
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: 59 سؤال متاح
+            - generic [ref=e51]: "آخر تحديث: ٤ أبريل ٢٠٢٦"
+          - generic [ref=e52]:
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e54] [cursor=pointer]:
+              - generic [ref=e55]:
+                - generic [ref=e56]: ما هي خدمات مدونتي؟
+                - generic [ref=e57]:
+                  - generic [ref=e58]:
+                    - img [ref=e59]
+                    - generic [ref=e61]: "0"
+                  - generic [ref=e62]:
+                    - img [ref=e63]
+                    - generic [ref=e65]: "0"
+              - img [ref=e66]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]:
+                - generic [ref=e71]: ما هي خدمات مدونتي؟
+                - generic [ref=e72]:
+                  - generic [ref=e73]:
+                    - img [ref=e74]
+                    - generic [ref=e76]: "0"
+                  - generic [ref=e77]:
+                    - img [ref=e78]
+                    - generic [ref=e80]: "0"
+              - img [ref=e81]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e84] [cursor=pointer]:
+              - generic [ref=e85]:
+                - generic [ref=e86]: ما هي خدمات مدونتي؟
+                - generic [ref=e87]:
+                  - generic [ref=e88]:
+                    - img [ref=e89]
+                    - generic [ref=e91]: "0"
+                  - generic [ref=e92]:
+                    - img [ref=e93]
+                    - generic [ref=e95]: "0"
+              - img [ref=e96]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e99] [cursor=pointer]:
+              - generic [ref=e100]:
+                - generic [ref=e101]: ما هي خدمات مدونتي؟
+                - generic [ref=e102]:
+                  - generic [ref=e103]:
+                    - img [ref=e104]
+                    - generic [ref=e106]: "0"
+                  - generic [ref=e107]:
+                    - img [ref=e108]
+                    - generic [ref=e110]: "0"
+              - img [ref=e111]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e114] [cursor=pointer]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: ما هي خدمات مدونتي؟
+                - generic [ref=e117]:
+                  - generic [ref=e118]:
+                    - img [ref=e119]
+                    - generic [ref=e121]: "0"
+                  - generic [ref=e122]:
+                    - img [ref=e123]
+                    - generic [ref=e125]: "0"
+              - img [ref=e126]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e129] [cursor=pointer]:
+              - generic [ref=e130]:
+                - generic [ref=e131]: ما هي خدمات مدونتي؟
+                - generic [ref=e132]:
+                  - generic [ref=e133]:
+                    - img [ref=e134]
+                    - generic [ref=e136]: "0"
+                  - generic [ref=e137]:
+                    - img [ref=e138]
+                    - generic [ref=e140]: "0"
+              - img [ref=e141]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e144] [cursor=pointer]:
+              - generic [ref=e145]:
+                - generic [ref=e146]: ما هي خدمات مدونتي؟
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - img [ref=e149]
+                    - generic [ref=e151]: "0"
+                  - generic [ref=e152]:
+                    - img [ref=e153]
+                    - generic [ref=e155]: "0"
+              - img [ref=e156]
+            - button "ما هي خدمات مدونتي؟ 0 0" [ref=e159] [cursor=pointer]:
+              - generic [ref=e160]:
+                - generic [ref=e161]: ما هي خدمات مدونتي؟
+                - generic [ref=e162]:
+                  - generic [ref=e163]:
+                    - img [ref=e164]
+                    - generic [ref=e166]: "0"
+                  - generic [ref=e167]:
+                    - img [ref=e168]
+                    - generic [ref=e170]: "0"
+              - img [ref=e171]
+            - button "ما هي خدمات مدونتي؟ 1 0" [ref=e174] [cursor=pointer]:
+              - generic [ref=e175]:
+                - generic [ref=e176]: ما هي خدمات مدونتي؟
+                - generic [ref=e177]:
+                  - generic [ref=e178]:
+                    - img [ref=e179]
+                    - generic [ref=e181]: "1"
+                  - generic [ref=e182]:
+                    - img [ref=e183]
+                    - generic [ref=e185]: "0"
+              - img [ref=e186]
+            - button "كم تكلفة خدمات SEO؟ 0 0" [ref=e189] [cursor=pointer]:
+              - generic [ref=e190]:
+                - generic [ref=e191]: كم تكلفة خدمات SEO؟
+                - generic [ref=e192]:
+                  - generic [ref=e193]:
+                    - img [ref=e194]
+                    - generic [ref=e196]: "0"
+                  - generic [ref=e197]:
+                    - img [ref=e198]
+                    - generic [ref=e200]: "0"
+              - img [ref=e201]
+          - generic [ref=e203]:
+            - button "الصفحة السابقة" [disabled] [ref=e204]: السابق
+            - generic [ref=e205]: صفحة 1 من 6
+            - button "الصفحة التالية" [ref=e206] [cursor=pointer]: التالي
+    - contentinfo [ref=e207]:
+      - generic [ref=e208]:
+        - generic [ref=e209]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e210] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e211]: ↗
+      - navigation "روابط سريعة" [ref=e212]:
+        - link "الرئيسية" [ref=e213] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e214] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e215] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e216] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e217] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e218] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e219]:
+        - link "الشروط والأحكام" [ref=e220] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e221] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e222] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e223] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e224] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e225]: © 2026 مودونتي
+    - contentinfo [ref=e226]:
+      - navigation "التنقل السفلي" [ref=e227]:
+        - link "الرئيسية" [ref=e228] [cursor=pointer]:
+          - /url: /
+          - img [ref=e230]
+          - generic [ref=e233]: الرئيسية
+        - link "الرائجة" [ref=e234] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e236]
+          - generic [ref=e239]: الرائجة
+        - link "العملاء" [ref=e240] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e242]
+          - generic [ref=e246]: العملاء
+        - link "بحث المقالات" [ref=e247] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e248]
+          - generic [ref=e251]: بحث
+        - button "Open menu" [ref=e252] [cursor=pointer]:
+          - img
+  - generic [ref=e258] [cursor=pointer]:
+    - button "Open issues overlay" [ref=e259]:
+      - img [ref=e261]
+      - generic [ref=e263]:
+        - generic [ref=e264]: "3"
+        - generic [ref=e265]: "4"
+      - generic [ref=e266]:
+        - text: Issue
+        - generic [ref=e267]: s
+    - button "Collapse issues badge" [ref=e268]:
+      - img [ref=e269]
+  - alert [ref=e271]

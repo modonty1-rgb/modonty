@@ -1,0 +1,415 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [active] [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.31.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.31.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e239]:
+        - generic [ref=e240]:
+          - navigation "Breadcrumb" [ref=e242]:
+            - link "Go to dashboard" [ref=e243] [cursor=pointer]:
+              - /url: /
+              - img [ref=e244]
+            - generic [ref=e247]:
+              - img [ref=e248]
+              - generic [ref=e384]: Articles
+          - navigation "Main navigation" [ref=e260]:
+            - link "Modonty Modonty" [ref=e261] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e263]
+              - generic [ref=e264]: Modonty
+            - generic [ref=e266]:
+              - link "Articles" [ref=e267] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e268]:
+                  - img
+                  - generic [ref=e269]: Articles
+              - link "Clients" [ref=e270] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e271]:
+                  - img
+                  - generic [ref=e272]: Clients
+              - link "Media" [ref=e273] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e274]:
+                  - img
+                  - generic [ref=e275]: Media
+          - generic [ref=e276]:
+            - link "1" [ref=e277] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e278]:
+                - img
+                - generic [ref=e279]: "1"
+            - button "M" [ref=e280] [cursor=pointer]:
+              - generic [ref=e282]: M
+      - generic [ref=e89]:
+        - generic [ref=e90]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e91]:
+          - button "Send Note" [ref=e92] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e93] [cursor=pointer]:
+            - img
+      - main [ref=e94]:
+        - generic [ref=e386]:
+          - generic [ref=e387]:
+            - generic [ref=e388]:
+              - heading "Articles (24)" [level=1] [ref=e389]:
+                - text: Articles
+                - generic [ref=e390]: (24)
+              - generic [ref=e391]:
+                - generic [ref=e392]:
+                  - img [ref=e393]
+                  - generic [ref=e396]: "24"
+                  - generic [ref=e397]: total
+                - generic [ref=e398]:
+                  - img [ref=e399]
+                  - generic [ref=e402]: "21"
+                  - generic [ref=e403]: published
+                - generic [ref=e404]:
+                  - img [ref=e405]
+                  - generic [ref=e408]: "0"
+                  - generic [ref=e409]: drafts
+                - generic [ref=e410]:
+                  - img [ref=e411]
+                  - generic [ref=e415]: 94%
+                  - generic [ref=e416]: SEO
+                - button "Details" [ref=e417] [cursor=pointer]:
+                  - img
+                  - generic [ref=e418]: Details
+            - generic [ref=e419]:
+              - button "Filters" [ref=e420] [cursor=pointer]:
+                - img
+                - text: Filters
+              - link "SEO Health" [ref=e421] [cursor=pointer]:
+                - /url: /seo-overview
+                - button "SEO Health" [ref=e422]:
+                  - img
+                  - text: SEO Health
+              - link "New Article" [ref=e423] [cursor=pointer]:
+                - /url: /articles/new
+                - button "New Article" [ref=e424]:
+                  - img
+                  - text: New Article
+          - generic [ref=e425]:
+            - generic [ref=e426]:
+              - img
+              - textbox "Search articles..." [ref=e427]
+            - generic [ref=e428]:
+              - generic [ref=e429] [cursor=pointer]: All
+              - generic [ref=e430] [cursor=pointer]: Writing
+              - generic [ref=e431] [cursor=pointer]: Draft
+              - generic [ref=e432] [cursor=pointer]: Scheduled
+              - generic [ref=e433] [cursor=pointer]: Published
+              - generic [ref=e434] [cursor=pointer]: Archived
+          - generic [ref=e435]:
+            - table [ref=e438]:
+              - rowgroup [ref=e439]:
+                - row "Article SEO Status Date" [ref=e440]:
+                  - columnheader "Sort by client" [ref=e441] [cursor=pointer]:
+                    - img [ref=e443]
+                  - columnheader "Article" [ref=e446] [cursor=pointer]:
+                    - generic [ref=e447]:
+                      - text: Article
+                      - img [ref=e448]
+                  - columnheader "SEO" [ref=e451] [cursor=pointer]:
+                    - generic [ref=e452]:
+                      - text: SEO
+                      - img [ref=e453]
+                  - columnheader "Status" [ref=e456] [cursor=pointer]:
+                    - generic [ref=e457]:
+                      - text: Status
+                      - img [ref=e458]
+                  - columnheader "Date" [ref=e461] [cursor=pointer]:
+                    - generic [ref=e462]:
+                      - text: Date
+                      - img [ref=e463]
+              - rowgroup [ref=e466]:
+                - row "JBR SEO Logo مقال تجريبي لاختبار النظام JBR SEO 44% Writing Apr 12, 2026" [ref=e467] [cursor=pointer]:
+                  - cell "JBR SEO Logo" [ref=e468]:
+                    - generic "JBR SEO" [ref=e469]:
+                      - img "JBR SEO Logo" [ref=e470]
+                  - cell "مقال تجريبي لاختبار النظام JBR SEO" [ref=e471]:
+                    - generic [ref=e472]:
+                      - link "مقال تجريبي لاختبار النظام" [ref=e473]:
+                        - /url: /articles/69dbacf417d700ce66c6356f
+                      - generic [ref=e475]: JBR SEO
+                  - cell "44%" [ref=e476]:
+                    - generic [ref=e477]: 44%
+                  - cell "Writing" [ref=e478]:
+                    - generic [ref=e479]: Writing
+                  - cell "Apr 12, 2026" [ref=e480]:
+                    - generic [ref=e481]: Apr 12, 2026
+                - row "جبر العقارية (logo) ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1 100% Published Apr 9, 2026" [ref=e482] [cursor=pointer]:
+                  - cell "جبر العقارية (logo)" [ref=e483]:
+                    - generic "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e484]:
+                      - img "جبر العقارية (logo)" [ref=e485]
+                  - cell "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1" [ref=e486]:
+                    - generic [ref=e487]:
+                      - link "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟" [ref=e488]:
+                        - /url: /articles/69d7a1d002d85d88d9cd3370
+                      - generic [ref=e489]:
+                        - generic [ref=e490]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e491]: ·
+                        - generic [ref=e492]:
+                          - img [ref=e493]
+                          - text: الانشاءات والتعمير
+                        - generic [ref=e495]: ·
+                        - generic [ref=e496]:
+                          - img [ref=e497]
+                          - text: "1"
+                  - cell "100%" [ref=e500]:
+                    - generic [ref=e501]: 100%
+                  - cell "Published" [ref=e502]:
+                    - generic [ref=e503]: Published
+                  - cell "Apr 9, 2026" [ref=e504]:
+                    - generic [ref=e505]: Apr 9, 2026
+                - row "جبر العقارية (logo) ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير 100% Published Apr 9, 2026" [ref=e506] [cursor=pointer]:
+                  - cell "جبر العقارية (logo)" [ref=e507]:
+                    - generic "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e508]:
+                      - img "جبر العقارية (logo)" [ref=e509]
+                  - cell "ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير" [ref=e510]:
+                    - generic [ref=e511]:
+                      - link "ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟" [ref=e512]:
+                        - /url: /articles/69d79ef702d85d88d9cd335a
+                      - generic [ref=e513]:
+                        - generic [ref=e514]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e515]: ·
+                        - generic [ref=e516]:
+                          - img [ref=e517]
+                          - text: الانشاءات والتعمير
+                  - cell "100%" [ref=e519]:
+                    - generic [ref=e520]: 100%
+                  - cell "Published" [ref=e521]:
+                    - generic [ref=e522]: Published
+                  - cell "Apr 9, 2026" [ref=e523]:
+                    - generic [ref=e524]: Apr 9, 2026
+                - row "جبر العقارية (logo) الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1 100% Published Apr 9, 2026" [ref=e525] [cursor=pointer]:
+                  - cell "جبر العقارية (logo)" [ref=e526]:
+                    - generic "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e527]:
+                      - img "جبر العقارية (logo)" [ref=e528]
+                  - cell "الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1" [ref=e529]:
+                    - generic [ref=e530]:
+                      - link "الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP" [ref=e531]:
+                        - /url: /articles/69d794f18ff8a195b09b1c0b
+                      - generic [ref=e532]:
+                        - generic [ref=e533]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e534]: ·
+                        - generic [ref=e535]:
+                          - img [ref=e536]
+                          - text: الانشاءات والتعمير
+                        - generic [ref=e538]: ·
+                        - generic [ref=e539]:
+                          - img [ref=e540]
+                          - text: "1"
+                  - cell "100%" [ref=e543]:
+                    - generic [ref=e544]: 100%
+                  - cell "Published" [ref=e545]:
+                    - generic [ref=e546]: Published
+                  - cell "Apr 9, 2026" [ref=e547]:
+                    - generic [ref=e548]: Apr 9, 2026
+                - row "جبر العقارية (logo) أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1 100% Published Apr 9, 2026" [ref=e549] [cursor=pointer]:
+                  - cell "جبر العقارية (logo)" [ref=e550]:
+                    - generic "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e551]:
+                      - img "جبر العقارية (logo)" [ref=e552]
+                  - cell "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 1" [ref=e553]:
+                    - generic [ref=e554]:
+                      - link "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e555]:
+                        - /url: /articles/69d7925a7307a53e597efb40
+                      - generic [ref=e556]:
+                        - generic [ref=e557]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e558]: ·
+                        - generic [ref=e559]:
+                          - img [ref=e560]
+                          - text: الانشاءات والتعمير
+                        - generic [ref=e562]: ·
+                        - generic [ref=e563]:
+                          - img [ref=e564]
+                          - text: "1"
+                  - cell "100%" [ref=e567]:
+                    - generic [ref=e568]: 100%
+                  - cell "Published" [ref=e569]:
+                    - generic [ref=e570]: Published
+                  - cell "Apr 9, 2026" [ref=e571]:
+                    - generic [ref=e572]: Apr 9, 2026
+                - row "جبر العقارية (logo) مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 5 100% Published Apr 9, 2026" [ref=e573] [cursor=pointer]:
+                  - cell "جبر العقارية (logo)" [ref=e574]:
+                    - generic "JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e575]:
+                      - img "جبر العقارية (logo)" [ref=e576]
+                  - cell "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟ JABR GROUP CONTRACTING AND MANUFACTURING · الانشاءات والتعمير · 5" [ref=e577]:
+                    - generic [ref=e578]:
+                      - link "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [ref=e579]:
+                        - /url: /articles/69d7903c7307a53e597efb35
+                      - generic [ref=e580]:
+                        - generic [ref=e581]: JABR GROUP CONTRACTING AND MANUFACTURING
+                        - generic [ref=e582]: ·
+                        - generic [ref=e583]:
+                          - img [ref=e584]
+                          - text: الانشاءات والتعمير
+                        - generic [ref=e586]: ·
+                        - generic [ref=e587]:
+                          - img [ref=e588]
+                          - text: "5"
+                  - cell "100%" [ref=e591]:
+                    - generic [ref=e592]: 100%
+                  - cell "Published" [ref=e593]:
+                    - generic [ref=e594]: Published
+                  - cell "Apr 9, 2026" [ref=e595]:
+                    - generic [ref=e596]: Apr 9, 2026
+                - row "JBR SEO Logo لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول) JBR SEO · SEO تحسين محركات البحث 100% Published Apr 9, 2026" [ref=e597] [cursor=pointer]:
+                  - cell "JBR SEO Logo" [ref=e598]:
+                    - generic "JBR SEO" [ref=e599]:
+                      - img "JBR SEO Logo" [ref=e600]
+                  - cell "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول) JBR SEO · SEO تحسين محركات البحث" [ref=e601]:
+                    - generic [ref=e602]:
+                      - link "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e603]:
+                        - /url: /articles/69d7836112cc08126dc69b1c
+                      - generic [ref=e604]:
+                        - generic [ref=e605]: JBR SEO
+                        - generic [ref=e606]: ·
+                        - generic [ref=e607]:
+                          - img [ref=e608]
+                          - text: SEO تحسين محركات البحث
+                  - cell "100%" [ref=e610]:
+                    - generic [ref=e611]: 100%
+                  - cell "Published" [ref=e612]:
+                    - generic [ref=e613]: Published
+                  - cell "Apr 9, 2026" [ref=e614]:
+                    - generic [ref=e615]: Apr 9, 2026
+                - row "JBR SEO Logo ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟ JBR SEO · SEO تحسين محركات البحث 100% Published Apr 9, 2026" [ref=e616] [cursor=pointer]:
+                  - cell "JBR SEO Logo" [ref=e617]:
+                    - generic "JBR SEO" [ref=e618]:
+                      - img "JBR SEO Logo" [ref=e619]
+                  - cell "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟ JBR SEO · SEO تحسين محركات البحث" [ref=e620]:
+                    - generic [ref=e621]:
+                      - link "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e622]:
+                        - /url: /articles/69d7809e69cf0ea93b914f66
+                      - generic [ref=e623]:
+                        - generic [ref=e624]: JBR SEO
+                        - generic [ref=e625]: ·
+                        - generic [ref=e626]:
+                          - img [ref=e627]
+                          - text: SEO تحسين محركات البحث
+                  - cell "100%" [ref=e629]:
+                    - generic [ref=e630]: 100%
+                  - cell "Published" [ref=e631]:
+                    - generic [ref=e632]: Published
+                  - cell "Apr 9, 2026" [ref=e633]:
+                    - generic [ref=e634]: Apr 9, 2026
+                - row "JBR SEO Logo ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟ JBR SEO · SEO تحسين محركات البحث 100% Published Apr 9, 2026" [ref=e635] [cursor=pointer]:
+                  - cell "JBR SEO Logo" [ref=e636]:
+                    - generic "JBR SEO" [ref=e637]:
+                      - img "JBR SEO Logo" [ref=e638]
+                  - cell "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟ JBR SEO · SEO تحسين محركات البحث" [ref=e639]:
+                    - generic [ref=e640]:
+                      - link "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e641]:
+                        - /url: /articles/69d778d43b998ae1cc77d83b
+                      - generic [ref=e642]:
+                        - generic [ref=e643]: JBR SEO
+                        - generic [ref=e644]: ·
+                        - generic [ref=e645]:
+                          - img [ref=e646]
+                          - text: SEO تحسين محركات البحث
+                  - cell "100%" [ref=e648]:
+                    - generic [ref=e649]: 100%
+                  - cell "Published" [ref=e650]:
+                    - generic [ref=e651]: Published
+                  - cell "Apr 9, 2026" [ref=e652]:
+                    - generic [ref=e653]: Apr 9, 2026
+                - row "JBR SEO Logo ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟ JBR SEO · SEO تحسين محركات البحث 100% Published Apr 9, 2026" [ref=e654] [cursor=pointer]:
+                  - cell "JBR SEO Logo" [ref=e655]:
+                    - generic "JBR SEO" [ref=e656]:
+                      - img "JBR SEO Logo" [ref=e657]
+                  - cell "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟ JBR SEO · SEO تحسين محركات البحث" [ref=e658]:
+                    - generic [ref=e659]:
+                      - link "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [ref=e660]:
+                        - /url: /articles/69d775b596d0983a19a0002f
+                      - generic [ref=e661]:
+                        - generic [ref=e662]: JBR SEO
+                        - generic [ref=e663]: ·
+                        - generic [ref=e664]:
+                          - img [ref=e665]
+                          - text: SEO تحسين محركات البحث
+                  - cell "100%" [ref=e667]:
+                    - generic [ref=e668]: 100%
+                  - cell "Published" [ref=e669]:
+                    - generic [ref=e670]: Published
+                  - cell "Apr 9, 2026" [ref=e671]:
+                    - generic [ref=e672]: Apr 9, 2026
+            - generic [ref=e673]:
+              - paragraph [ref=e674]: Showing 1 to 10 of 24 results
+              - generic [ref=e675]:
+                - button [disabled]:
+                  - img
+                - generic [ref=e676]: Page 1 of 3
+                - button [ref=e677] [cursor=pointer]:
+                  - img
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e234] [cursor=pointer]:
+    - img [ref=e235]
+  - alert [ref=e238]

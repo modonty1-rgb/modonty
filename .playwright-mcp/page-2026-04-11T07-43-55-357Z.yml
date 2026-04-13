@@ -1,0 +1,157 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "1 محفوظ المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - generic "1 محفوظ" [ref=e48]: "1"
+              - generic [ref=e49]: المحفوظات
+        - generic [ref=e50]:
+          - link "صندوق البريد" [ref=e51] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - button "M" [disabled] [ref=e56]:
+              - generic [ref=e58]: M
+            - button "فتح المحادثة" [ref=e59] [cursor=pointer]
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - navigation "تنقل الصفحة" [ref=e64]:
+          - list [ref=e65]:
+            - listitem [ref=e66]:
+              - link "الرئيسية الرئيسية" [ref=e67] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e68]
+                - generic [ref=e71]: الرئيسية
+            - listitem [ref=e72]:
+              - generic [ref=e74]: الملف الشخصي
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - heading "الملف الشخصي" [level=3] [ref=e78]
+            - generic [ref=e81]:
+              - link "نظرة عامة" [ref=e82] [cursor=pointer]:
+                - /url: /users/profile
+                - button "نظرة عامة" [ref=e83]:
+                  - img
+                  - generic [ref=e84]: نظرة عامة
+              - link "تعليقاتي" [ref=e85] [cursor=pointer]:
+                - /url: /users/profile/comments
+                - button "تعليقاتي" [ref=e86]:
+                  - img
+                  - generic [ref=e87]: تعليقاتي
+              - link "الإعجابات" [ref=e88] [cursor=pointer]:
+                - /url: /users/profile/liked
+                - button "الإعجابات" [ref=e89]:
+                  - img
+                  - generic [ref=e90]: الإعجابات
+              - link "المحفوظات" [ref=e91] [cursor=pointer]:
+                - /url: /users/profile/favorites
+                - button "المحفوظات" [ref=e92]:
+                  - img
+                  - generic [ref=e93]: المحفوظات
+              - link "المتابعون" [ref=e94] [cursor=pointer]:
+                - /url: /users/profile/following
+                - button "المتابعون" [ref=e95]:
+                  - img
+                  - generic [ref=e96]: المتابعون
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e101]: M
+              - generic [ref=e102]:
+                - heading "الملف الشخصي" [level=1] [ref=e103]
+                - heading "Modonty Admin" [level=2] [ref=e104]
+                - paragraph [ref=e105]: modonty@modonty.com
+            - generic [ref=e106]:
+              - generic [ref=e107]:
+                - img [ref=e108]
+                - generic [ref=e111]:
+                  - paragraph [ref=e112]: الاسم
+                  - paragraph [ref=e113]: Modonty Admin
+              - generic [ref=e114]:
+                - img [ref=e115]
+                - generic [ref=e118]:
+                  - paragraph [ref=e119]: البريد الإلكتروني
+                  - paragraph [ref=e120]: modonty@modonty.com
+            - generic [ref=e121]:
+              - heading "إحصائياتك" [level=3] [ref=e122]
+              - generic [ref=e123]:
+                - link "التعليقات" [ref=e124] [cursor=pointer]:
+                  - /url: /users/profile/comments
+                  - generic [ref=e127]:
+                    - img [ref=e129]
+                    - paragraph [ref=e132]: التعليقات
+                - link "الإعجابات" [ref=e134] [cursor=pointer]:
+                  - /url: /users/profile/liked
+                  - generic [ref=e137]:
+                    - img [ref=e139]
+                    - paragraph [ref=e142]: الإعجابات
+                - link "إعجابات المقالات" [ref=e144] [cursor=pointer]:
+                  - /url: /users/profile/favorites
+                  - generic [ref=e147]:
+                    - img [ref=e149]
+                    - paragraph [ref=e152]: إعجابات المقالات
+                - link "المقالات المحفوظة" [ref=e154] [cursor=pointer]:
+                  - /url: /users/profile/favorites
+                  - generic [ref=e157]:
+                    - img [ref=e159]
+                    - paragraph [ref=e162]: المقالات المحفوظة
+                - link "العملاء المتابعون" [ref=e164] [cursor=pointer]:
+                  - /url: /users/profile/following
+                  - generic [ref=e167]:
+                    - img [ref=e169]
+                    - paragraph [ref=e175]: العملاء المتابعون
+            - heading "النشاط الأخير" [level=3] [ref=e179]:
+              - img [ref=e180]
+              - text: النشاط الأخير
+            - paragraph [ref=e209]: انضم في ٨‏/٤‏/٢٠٢٦
+    - contentinfo [ref=e210]:
+      - navigation "روابط سريعة" [ref=e211]:
+        - link "الرئيسية" [ref=e212] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e213] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e214] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e215] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e216]:
+        - link "اتفاقية المستخدم" [ref=e217] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e218] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e219] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e220] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e221]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e227] [cursor=pointer]:
+    - img [ref=e228]
+  - alert [ref=e231]

@@ -1,0 +1,69 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e5]:
+        - navigation "تنقل الصفحة" [ref=e6]:
+          - list [ref=e7]:
+            - listitem [ref=e8]:
+              - link "الرئيسية الرئيسية" [ref=e9] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e10]
+                - generic [ref=e13]: الرئيسية
+            - listitem [ref=e14]:
+              - img [ref=e15]
+              - link "أخبار مودونتي" [ref=e17] [cursor=pointer]:
+                - /url: /news
+                - generic [ref=e18]: أخبار مودونتي
+            - listitem [ref=e19]:
+              - generic [ref=e21]: اشترك في النشرة
+        - heading "اشتراك في أخبار مودونتي" [level=1] [ref=e22]
+        - paragraph [ref=e23]:
+          - text: احصل على آخر الأخبار والمقالات مباشرة في بريدك الإلكتروني.
+          - link "عرض الأخبار" [ref=e24] [cursor=pointer]:
+            - /url: /news
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - heading "اشترك في النشرة الإخبارية" [level=3] [ref=e27]:
+              - img [ref=e28]
+              - text: اشترك في النشرة الإخبارية
+            - paragraph [ref=e31]: احصل على رؤى وتحديثات أسبوعية في بريدك الإلكتروني
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - text: البريد الإلكتروني
+              - textbox "البريد الإلكتروني" [ref=e35]:
+                - /placeholder: example@email.com
+            - button "اشترك الآن" [ref=e36] [cursor=pointer]
+    - contentinfo [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e40] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e41]: ↗
+      - navigation "روابط سريعة" [ref=e42]:
+        - link "الرئيسية" [ref=e43] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e44] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e45] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e46] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e47] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e48] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e49]:
+        - link "الشروط والأحكام" [ref=e50] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e51] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e52] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e53] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e54] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e55]: © 2026 مودونتي
+  - alert [ref=e56]

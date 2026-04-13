@@ -1,0 +1,711 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - img [ref=e46]
+              - generic [ref=e48]: المحفوظات
+        - generic [ref=e50]:
+          - link "عملاء بلا إعلانات" [ref=e51] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e52]: ↗
+          - button "تسجيل الدخول" [ref=e53] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e54] [cursor=pointer]
+    - main [ref=e56]:
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=1] [ref=e57]
+      - generic [ref=e59]:
+        - complementary "الشريط الجانبي الأيسر" [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - heading "تحليلات" [level=2] [ref=e67]
+              - generic [ref=e68]:
+                - generic [ref=e69]:
+                  - img [ref=e70]
+                  - generic [ref=e73]: المقالات
+                  - generic [ref=e76]: "21"
+                - generic [ref=e77]:
+                  - img [ref=e78]
+                  - generic [ref=e80]: التفاعلات الكلية
+                  - generic [ref=e83]: ٤
+                - generic [ref=e84]:
+                  - img [ref=e85]
+                  - generic [ref=e87]: متوسط لكل مقال
+                  - generic [ref=e89]: "0"
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - img [ref=e92]
+                  - generic [ref=e94]: إعجابات
+                  - generic [ref=e97]: ١
+                - generic [ref=e98]:
+                  - img [ref=e99]
+                  - generic [ref=e101]: تعليقات
+                  - generic [ref=e104]: ٣
+                - generic [ref=e105]:
+                  - img [ref=e106]
+                  - generic [ref=e109]: مشاهدات
+                  - generic [ref=e112]: ٤٤
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - heading "الفئات" [level=2] [ref=e116]
+                - link "جميع الفئات 21" [ref=e117] [cursor=pointer]:
+                  - /url: /
+                  - text: جميع الفئات
+                  - generic [ref=e118]: "21"
+              - generic [ref=e119]:
+                - link "SEO تحسين محركات البحث 11" [ref=e120] [cursor=pointer]:
+                  - /url: /?category=seo-arabic
+                  - generic [ref=e121]:
+                    - img [ref=e122]
+                    - generic [ref=e125]: SEO تحسين محركات البحث
+                  - generic [ref=e126]: "11"
+                - link "الانشاءات والتعمير 5" [ref=e127] [cursor=pointer]:
+                  - /url: /?category=الانشاءات-والتعمير
+                  - generic [ref=e128]:
+                    - img [ref=e129]
+                    - generic [ref=e132]: الانشاءات والتعمير
+                  - generic [ref=e133]: "5"
+                - link "التسويق الرقمي 1" [ref=e134] [cursor=pointer]:
+                  - /url: /?category=digital-marketing
+                  - generic [ref=e135]:
+                    - img [ref=e136]
+                    - generic [ref=e139]: التسويق الرقمي
+                  - generic [ref=e140]: "1"
+                - link "الصحة والعافية 1" [ref=e141] [cursor=pointer]:
+                  - /url: /?category=health-wellness
+                  - generic [ref=e142]:
+                    - img [ref=e143]
+                    - generic [ref=e146]: الصحة والعافية
+                  - generic [ref=e147]: "1"
+                - link "العقارات والاستثمار 3" [ref=e148] [cursor=pointer]:
+                  - /url: /?category=real-estate-investment
+                  - generic [ref=e149]:
+                    - img [ref=e150]
+                    - generic [ref=e153]: العقارات والاستثمار
+                  - generic [ref=e154]: "3"
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - paragraph [ref=e157]: مرحباً بك في مودونتي
+            - paragraph [ref=e158]: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+          - region "آخر المقالات" [ref=e159]:
+            - heading "آخر المقالات" [level=2] [ref=e160]
+            - generic [ref=e161]:
+              - article [ref=e162]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]:
+                    - link "زيارة صفحة أكاديمية المستقبل" [ref=e166] [cursor=pointer]:
+                      - /url: /clients/future-academy
+                      - img "أكاديمية المستقبل" [ref=e168]
+                    - generic [ref=e169]:
+                      - link "أكاديمية المستقبل" [ref=e170] [cursor=pointer]:
+                        - /url: /clients/future-academy
+                        - generic [ref=e171]: أكاديمية المستقبل
+                      - generic [ref=e173]:
+                        - time [ref=e175]: قبل 6 أيام
+                        - generic [ref=e176]: •
+                        - generic [ref=e177]: ⏱️ 11 دقيقة
+                  - generic [ref=e178]:
+                    - img [ref=e179]
+                    - generic [ref=e182]: نسخة صوتية
+                - generic [ref=e183]:
+                  - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e184] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e185]
+                  - paragraph [ref=e186]: دليل شامل لتحسين SEO المتاجر.
+                  - 'link "صورة مقال: دليل SEO المتاجر الإلكترونية 2025" [ref=e187] [cursor=pointer]':
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - img "دليل SEO المتاجر الإلكترونية 2025" [ref=e189]
+                  - link "اقرأ المزيد" [ref=e191] [cursor=pointer]:
+                    - /url: /articles/seo-guide-ecommerce-2025
+                    - text: اقرأ المزيد
+                    - img [ref=e192]
+                  - generic [ref=e194]:
+                    - link "عرض المقال" [ref=e195] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - generic [ref=e196]:
+                        - img [ref=e197]
+                        - text: "1"
+                      - generic [ref=e199]:
+                        - img [ref=e200]
+                        - text: "0"
+                      - generic [ref=e202]:
+                        - img [ref=e203]
+                        - text: "3"
+                      - generic [ref=e205]:
+                        - img [ref=e206]
+                        - text: "11"
+                    - link "مشاركة المقال" [ref=e209] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - img [ref=e210]
+                      - generic [ref=e216]: مشاركة
+              - article [ref=e217]:
+                - generic [ref=e219]:
+                  - generic [ref=e220]:
+                    - link "زيارة صفحة JBR SEO" [ref=e221] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e223]
+                    - generic [ref=e224]:
+                      - link "JBR SEO" [ref=e225] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e226]: JBR SEO
+                      - generic [ref=e228]:
+                        - time [ref=e230]: قبل يومين
+                        - generic [ref=e231]: •
+                        - generic [ref=e232]: ⏱️ 4 دقيقة
+                  - generic [ref=e233]:
+                    - img [ref=e234]
+                    - generic [ref=e237]: نسخة صوتية
+                - generic [ref=e238]:
+                  - link "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e239] [cursor=pointer]:
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - heading "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e240]
+                  - paragraph [ref=e241]: تعرف على صفحة نتائج البحث SERP وأنواعها مثل النتائج العضوية والإعلانات والنتائج المحلية والمقتطفات المميزة، وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+                  - 'link "صورة مقال: ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e242] [cursor=pointer]':
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - img "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e244]
+                  - link "اقرأ المزيد" [ref=e246] [cursor=pointer]:
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - text: اقرأ المزيد
+                    - img [ref=e247]
+                  - generic [ref=e249]:
+                    - link "عرض المقال" [ref=e250] [cursor=pointer]:
+                      - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                      - generic [ref=e251]:
+                        - img [ref=e252]
+                        - text: "0"
+                      - generic [ref=e254]:
+                        - img [ref=e255]
+                        - text: "0"
+                      - generic [ref=e257]:
+                        - img [ref=e258]
+                        - text: "0"
+                      - generic [ref=e260]:
+                        - img [ref=e261]
+                        - text: "7"
+                    - link "مشاركة المقال" [ref=e264] [cursor=pointer]:
+                      - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                      - img [ref=e265]
+                      - generic [ref=e271]: مشاركة
+              - article [ref=e272]:
+                - generic [ref=e274]:
+                  - generic [ref=e275]:
+                    - link "زيارة صفحة JBR SEO" [ref=e276] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e278]
+                    - generic [ref=e279]:
+                      - link "JBR SEO" [ref=e280] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e281]: JBR SEO
+                      - generic [ref=e283]:
+                        - time [ref=e285]: قبل 3 أيام
+                        - generic [ref=e286]: •
+                        - generic [ref=e287]: ⏱️ 4 دقيقة
+                  - generic [ref=e288]:
+                    - img [ref=e289]
+                    - generic [ref=e292]: نسخة صوتية
+                - generic [ref=e293]:
+                  - link "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e294] [cursor=pointer]:
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - heading "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [level=3] [ref=e295]
+                  - paragraph [ref=e296]: تعرف على ما هو السيو من خلال دليلنا المبسط، تعلّم أساسيات تحسين محركات البحث، استراتيجيات زيادة ظهور موقعك، جذب المزيد من الزوار وفهم كيفية تحسين المحتوى بطريقة فعالة
+                  - 'link "صورة مقال: ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e297] [cursor=pointer]':
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - img "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e299]
+                  - link "اقرأ المزيد" [ref=e301] [cursor=pointer]:
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - text: اقرأ المزيد
+                    - img [ref=e302]
+                  - generic [ref=e304]:
+                    - link "عرض المقال" [ref=e305] [cursor=pointer]:
+                      - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                      - generic [ref=e306]:
+                        - img [ref=e307]
+                        - text: "0"
+                      - generic [ref=e309]:
+                        - img [ref=e310]
+                        - text: "0"
+                      - generic [ref=e312]:
+                        - img [ref=e313]
+                        - text: "0"
+                      - generic [ref=e315]:
+                        - img [ref=e316]
+                        - text: "6"
+                    - link "مشاركة المقال" [ref=e319] [cursor=pointer]:
+                      - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                      - img [ref=e320]
+                      - generic [ref=e326]: مشاركة
+              - article [ref=e327]:
+                - generic [ref=e329]:
+                  - generic [ref=e330]:
+                    - link "زيارة صفحة عيادات بلسم الطبية" [ref=e331] [cursor=pointer]:
+                      - /url: /clients/balsam-medical
+                      - img "عيادات بلسم الطبية" [ref=e333]
+                    - generic [ref=e334]:
+                      - link "عيادات بلسم الطبية" [ref=e335] [cursor=pointer]:
+                        - /url: /clients/balsam-medical
+                        - generic [ref=e336]: عيادات بلسم الطبية
+                      - generic [ref=e338]:
+                        - time [ref=e340]: قبل 4 أيام
+                        - generic [ref=e341]: •
+                        - generic [ref=e342]: ⏱️ 3 دقيقة
+                  - generic [ref=e343]:
+                    - img [ref=e344]
+                    - generic [ref=e347]: نسخة صوتية
+                - generic [ref=e348]:
+                  - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e349] [cursor=pointer]:
+                    - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                    - heading "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [level=3] [ref=e350]
+                  - paragraph [ref=e351]: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+                  - 'link "صورة مقال: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e352] [cursor=pointer]':
+                    - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                    - img "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e354]
+                  - link "اقرأ المزيد" [ref=e356] [cursor=pointer]:
+                    - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                    - text: اقرأ المزيد
+                    - img [ref=e357]
+                  - generic [ref=e359]:
+                    - link "عرض المقال" [ref=e360] [cursor=pointer]:
+                      - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                      - generic [ref=e361]:
+                        - img [ref=e362]
+                        - text: "0"
+                      - generic [ref=e364]:
+                        - img [ref=e365]
+                        - text: "0"
+                      - generic [ref=e367]:
+                        - img [ref=e368]
+                        - text: "0"
+                      - generic [ref=e370]:
+                        - img [ref=e371]
+                        - text: "2"
+                    - link "مشاركة المقال" [ref=e374] [cursor=pointer]:
+                      - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                      - img [ref=e375]
+                      - generic [ref=e381]: مشاركة
+              - article [ref=e382]:
+                - generic [ref=e384]:
+                  - generic [ref=e385]:
+                    - link "زيارة صفحة أكاديمية المستقبل" [ref=e386] [cursor=pointer]:
+                      - /url: /clients/future-academy
+                      - img "أكاديمية المستقبل" [ref=e388]
+                    - generic [ref=e389]:
+                      - link "أكاديمية المستقبل" [ref=e390] [cursor=pointer]:
+                        - /url: /clients/future-academy
+                        - generic [ref=e391]: أكاديمية المستقبل
+                      - generic [ref=e393]:
+                        - time [ref=e395]: قبل 5 أيام
+                        - generic [ref=e396]: •
+                        - generic [ref=e397]: ⏱️ 4 دقيقة
+                  - generic [ref=e398]:
+                    - img [ref=e399]
+                    - generic [ref=e402]: نسخة صوتية
+                - generic [ref=e403]:
+                  - 'link "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e404] [cursor=pointer]':
+                    - /url: /articles/digital-education-future
+                    - 'heading "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [level=3] [ref=e405]'
+                  - paragraph [ref=e406]: دليل متكامل عن واقع ومستقبل التعليم الإلكتروني في المملكة العربية السعودية، يشمل الفرص والتحديات وأفضل المنصات التعليمية وتوقعات السوق حتى عام 2030 وما بعده.
+                  - 'link "صورة مقال: دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e407] [cursor=pointer]':
+                    - /url: /articles/digital-education-future
+                    - 'img "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e409]'
+                  - link "اقرأ المزيد" [ref=e411] [cursor=pointer]:
+                    - /url: /articles/digital-education-future
+                    - text: اقرأ المزيد
+                    - img [ref=e412]
+                  - generic [ref=e414]:
+                    - link "عرض المقال" [ref=e415] [cursor=pointer]:
+                      - /url: /articles/digital-education-future
+                      - generic [ref=e416]:
+                        - img [ref=e417]
+                        - text: "0"
+                      - generic [ref=e419]:
+                        - img [ref=e420]
+                        - text: "0"
+                      - generic [ref=e422]:
+                        - img [ref=e423]
+                        - text: "0"
+                      - generic [ref=e425]:
+                        - img [ref=e426]
+                        - text: "2"
+                    - link "مشاركة المقال" [ref=e429] [cursor=pointer]:
+                      - /url: /articles/digital-education-future
+                      - img [ref=e430]
+                      - generic [ref=e436]: مشاركة
+              - article [ref=e437]:
+                - generic [ref=e439]:
+                  - generic [ref=e440]:
+                    - link "زيارة صفحة أكاديمية المستقبل" [ref=e441] [cursor=pointer]:
+                      - /url: /clients/future-academy
+                      - img "أكاديمية المستقبل" [ref=e443]
+                    - generic [ref=e444]:
+                      - link "أكاديمية المستقبل" [ref=e445] [cursor=pointer]:
+                        - /url: /clients/future-academy
+                        - generic [ref=e446]: أكاديمية المستقبل
+                      - generic [ref=e448]:
+                        - time [ref=e450]: قبل 6 أيام
+                        - generic [ref=e451]: •
+                        - generic [ref=e452]: ⏱️ 2 دقيقة
+                  - generic [ref=e453]:
+                    - img [ref=e454]
+                    - generic [ref=e457]: نسخة صوتية
+                - generic [ref=e458]:
+                  - link "الذكاء الاصطناعي في الرعاية الصحية" [ref=e459] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-2025
+                    - heading "الذكاء الاصطناعي في الرعاية الصحية" [level=3] [ref=e460]
+                  - paragraph [ref=e461]: دليل شامل عن تطبيقات الذكاء الاصطناعي في القطاع الصحي السعودي، يشمل التشخيص المبكر، الطب عن بُعد، تحليل البيانات الطبية، والتحديات المستقبلية.
+                  - 'link "صورة مقال: الذكاء الاصطناعي في الرعاية الصحية" [ref=e462] [cursor=pointer]':
+                    - /url: /articles/ai-healthcare-2025
+                    - img "الذكاء الاصطناعي في الرعاية الصحية" [ref=e464]
+                  - link "اقرأ المزيد" [ref=e466] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-2025
+                    - text: اقرأ المزيد
+                    - img [ref=e467]
+                  - generic [ref=e469]:
+                    - link "عرض المقال" [ref=e470] [cursor=pointer]:
+                      - /url: /articles/ai-healthcare-2025
+                      - generic [ref=e471]:
+                        - img [ref=e472]
+                        - text: "0"
+                      - generic [ref=e474]:
+                        - img [ref=e475]
+                        - text: "0"
+                      - generic [ref=e477]:
+                        - img [ref=e478]
+                        - text: "0"
+                      - generic [ref=e480]:
+                        - img [ref=e481]
+                        - text: "1"
+                    - link "مشاركة المقال" [ref=e484] [cursor=pointer]:
+                      - /url: /articles/ai-healthcare-2025
+                      - img [ref=e485]
+                      - generic [ref=e491]: مشاركة
+              - article [ref=e492]:
+                - generic [ref=e494]:
+                  - generic [ref=e495]:
+                    - link "زيارة صفحة JBR SEO" [ref=e496] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e498]
+                    - generic [ref=e499]:
+                      - link "JBR SEO" [ref=e500] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e501]: JBR SEO
+                      - generic [ref=e503]:
+                        - time [ref=e505]: قبل يومين
+                        - generic [ref=e506]: •
+                        - generic [ref=e507]: ⏱️ 3 دقيقة
+                  - generic [ref=e508]:
+                    - img [ref=e509]
+                    - generic [ref=e512]: نسخة صوتية
+                - generic [ref=e513]:
+                  - link "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e514] [cursor=pointer]:
+                    - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                    - heading "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [level=3] [ref=e515]
+                  - paragraph [ref=e516]: تعرف على Technical SEO وأهميته لموقعك. حسن سرعة الموقع، التوافق مع الهاتف، الزحف والفهرسة، الأمان والروابط لتجعل محتواك قابلًا للظهور في Google وزيادة الزيارات.
+                  - 'link "صورة مقال: ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e517] [cursor=pointer]':
+                    - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                    - img "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e519]
+                  - link "اقرأ المزيد" [ref=e521] [cursor=pointer]:
+                    - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                    - text: اقرأ المزيد
+                    - img [ref=e522]
+                  - generic [ref=e524]:
+                    - link "عرض المقال" [ref=e525] [cursor=pointer]:
+                      - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                      - generic [ref=e526]:
+                        - img [ref=e527]
+                        - text: "0"
+                      - generic [ref=e529]:
+                        - img [ref=e530]
+                        - text: "0"
+                      - generic [ref=e532]:
+                        - img [ref=e533]
+                        - text: "0"
+                      - generic [ref=e535]:
+                        - img [ref=e536]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e539] [cursor=pointer]:
+                      - /url: /articles/ما-هو-technical-seo-ولماذا-هو-مهم-لنجاح-موقعك؟
+                      - img [ref=e540]
+                      - generic [ref=e546]: مشاركة
+              - article [ref=e547]:
+                - generic [ref=e549]:
+                  - generic [ref=e550]:
+                    - link "زيارة صفحة JBR SEO" [ref=e551] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e553]
+                    - generic [ref=e554]:
+                      - link "JBR SEO" [ref=e555] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e556]: JBR SEO
+                      - generic [ref=e558]:
+                        - time [ref=e560]: قبل يومين
+                        - generic [ref=e561]: •
+                        - generic [ref=e562]: ⏱️ 3 دقيقة
+                  - generic [ref=e563]:
+                    - img [ref=e564]
+                    - generic [ref=e567]: نسخة صوتية
+                - generic [ref=e568]:
+                  - link "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e569] [cursor=pointer]:
+                    - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                    - heading "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [level=3] [ref=e570]
+                  - paragraph [ref=e571]: تعرف على الفرق بين SEO والإعلانات المدفوعة في محركات البحث من حيث السرعة والتكلفة والاستمرارية وكيف تختار أفضل استراتيجية لزيادة ظهور موقعك وتحقيق نتائج فعالة
+                  - 'link "صورة مقال: ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e572] [cursor=pointer]':
+                    - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                    - img "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e574]
+                  - link "اقرأ المزيد" [ref=e576] [cursor=pointer]:
+                    - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                    - text: اقرأ المزيد
+                    - img [ref=e577]
+                  - generic [ref=e579]:
+                    - link "عرض المقال" [ref=e580] [cursor=pointer]:
+                      - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                      - generic [ref=e581]:
+                        - img [ref=e582]
+                        - text: "0"
+                      - generic [ref=e584]:
+                        - img [ref=e585]
+                        - text: "0"
+                      - generic [ref=e587]:
+                        - img [ref=e588]
+                        - text: "0"
+                      - generic [ref=e590]:
+                        - img [ref=e591]
+                        - text: "3"
+                    - link "مشاركة المقال" [ref=e594] [cursor=pointer]:
+                      - /url: /articles/ما-الفرق-بين-تحسين-محركات-البحث-seo-والإعلانات-المدفوعة-؟
+                      - img [ref=e595]
+                      - generic [ref=e601]: مشاركة
+              - article [ref=e602]:
+                - generic [ref=e604]:
+                  - generic [ref=e605]:
+                    - link "زيارة صفحة JBR SEO" [ref=e606] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e608]
+                    - generic [ref=e609]:
+                      - link "JBR SEO" [ref=e610] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e611]: JBR SEO
+                      - generic [ref=e613]:
+                        - time [ref=e615]: قبل يومين
+                        - generic [ref=e616]: •
+                        - generic [ref=e617]: ⏱️ 3 دقيقة
+                  - generic [ref=e618]:
+                    - img [ref=e619]
+                    - generic [ref=e622]: نسخة صوتية
+                - generic [ref=e623]:
+                  - link "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e624] [cursor=pointer]:
+                    - /url: /articles/ما-هو-link-building-وكيف-تبني-روابط-قوية-لظهورموقعك؟
+                    - heading "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [level=3] [ref=e625]
+                  - paragraph [ref=e626]: تعرف على Link Building وكيف تبني روابط قوية لموقعك تزيد ثقة Google بمحتواك وتحسن ترتيبه،مع طرق آمنة للحصول على روابط عالية الجودة وتجنب الروابط الضارة والمشبوهة
+                  - 'link "صورة مقال: ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e627] [cursor=pointer]':
+                    - /url: /articles/ما-هو-link-building-وكيف-تبني-روابط-قوية-لظهورموقعك؟
+                    - img "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e629]
+                  - link "اقرأ المزيد" [ref=e631] [cursor=pointer]:
+                    - /url: /articles/ما-هو-link-building-وكيف-تبني-روابط-قوية-لظهورموقعك؟
+                    - text: اقرأ المزيد
+                    - img [ref=e632]
+                  - generic [ref=e634]:
+                    - link "عرض المقال" [ref=e635] [cursor=pointer]:
+                      - /url: /articles/ما-هو-link-building-وكيف-تبني-روابط-قوية-لظهورموقعك؟
+                      - generic [ref=e636]:
+                        - img [ref=e637]
+                        - text: "0"
+                      - generic [ref=e639]:
+                        - img [ref=e640]
+                        - text: "0"
+                      - generic [ref=e642]:
+                        - img [ref=e643]
+                        - text: "0"
+                      - generic [ref=e645]:
+                        - img [ref=e646]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e649] [cursor=pointer]:
+                      - /url: /articles/ما-هو-link-building-وكيف-تبني-روابط-قوية-لظهورموقعك؟
+                      - img [ref=e650]
+                      - generic [ref=e656]: مشاركة
+              - article [ref=e657]:
+                - generic [ref=e659]:
+                  - generic [ref=e660]:
+                    - link "زيارة صفحة JBR SEO" [ref=e661] [cursor=pointer]:
+                      - /url: /clients/jbr-seo
+                      - img "JBR SEO" [ref=e663]
+                    - generic [ref=e664]:
+                      - link "JBR SEO" [ref=e665] [cursor=pointer]:
+                        - /url: /clients/jbr-seo
+                        - generic [ref=e666]: JBR SEO
+                      - generic [ref=e668]:
+                        - time [ref=e670]: قبل يومين
+                        - generic [ref=e671]: •
+                        - generic [ref=e672]: ⏱️ 4 دقيقة
+                  - generic [ref=e673]:
+                    - img [ref=e674]
+                    - generic [ref=e677]: نسخة صوتية
+                - generic [ref=e678]:
+                  - link "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟" [ref=e679] [cursor=pointer]:
+                    - /url: /articles/ما-هي-الكلمات-المفتاحية-keywords-وكيف-تختارها-لموقعك؟
+                    - heading "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟" [level=3] [ref=e680]
+                  - paragraph [ref=e681]: تعرف على الكلمات المفتاحية وأنواعها وأهميتها في تحسين محركات البحث SEO وكيف تختار الكلمات الصحيحة لموقعك لجذب الزوار وزيادة ظهورك في نتائج البحث بسهولة وفاعلية
+                  - 'link "صورة مقال: ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟" [ref=e682] [cursor=pointer]':
+                    - /url: /articles/ما-هي-الكلمات-المفتاحية-keywords-وكيف-تختارها-لموقعك؟
+                    - img "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟" [ref=e684]
+                  - link "اقرأ المزيد" [ref=e686] [cursor=pointer]:
+                    - /url: /articles/ما-هي-الكلمات-المفتاحية-keywords-وكيف-تختارها-لموقعك؟
+                    - text: اقرأ المزيد
+                    - img [ref=e687]
+                  - generic [ref=e689]:
+                    - link "عرض المقال" [ref=e690] [cursor=pointer]:
+                      - /url: /articles/ما-هي-الكلمات-المفتاحية-keywords-وكيف-تختارها-لموقعك؟
+                      - generic [ref=e691]:
+                        - img [ref=e692]
+                        - text: "0"
+                      - generic [ref=e694]:
+                        - img [ref=e695]
+                        - text: "0"
+                      - generic [ref=e697]:
+                        - img [ref=e698]
+                        - text: "0"
+                      - generic [ref=e700]:
+                        - img [ref=e701]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e704] [cursor=pointer]:
+                      - /url: /articles/ما-هي-الكلمات-المفتاحية-keywords-وكيف-تختارها-لموقعك؟
+                      - img [ref=e705]
+                      - generic [ref=e711]: مشاركة
+        - complementary "الشريط الجانبي الأيمن" [ref=e712]:
+          - generic [ref=e713]:
+            - complementary "تابعنا على وسائل التواصل" [ref=e714]:
+              - navigation "روابط وسائل التواصل الاجتماعي" [ref=e715]:
+                - link "فيسبوك" [ref=e716] [cursor=pointer]:
+                  - /url: https://www.facebook.com/profile.php?fb_profile_edit_entry_point=%7B%22click_point%22%3A%22edit_profile_button%22%2C%22feature%22%3A%22profile_header%22%7D&id=61585093180638&sk=about
+                  - img [ref=e717]
+                - link "لينكد إن" [ref=e719] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/111692906/admin/dashboard/
+                  - img [ref=e720]
+                - link "يوتيوب" [ref=e722] [cursor=pointer]:
+                  - /url: https://youtube.com/modonty
+                  - img [ref=e723]
+                - link "إكس / تويتر" [ref=e727] [cursor=pointer]:
+                  - /url: https://x.com/modonty
+                  - img [ref=e728]
+                - link "انستغرام" [ref=e730] [cursor=pointer]:
+                  - /url: https://www.instagram.com/modonty.sa
+                  - img [ref=e731]
+                - link "تيك توك" [ref=e736] [cursor=pointer]:
+                  - /url: https://www.tiktok.com/@modonty.ksa
+                  - img [ref=e737]
+                - link "سناب شات" [ref=e739] [cursor=pointer]:
+                  - /url: https://www.snapchat.com/@modonty
+                  - img [ref=e740]
+            - complementary "جديد مودونتي" [ref=e742]:
+              - generic [ref=e743]:
+                - heading "جديد مودونتي" [level=2] [ref=e744]
+                - generic [ref=e745]:
+                  - link "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e746] [cursor=pointer]:
+                    - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                    - heading "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e750]
+                  - link "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e751] [cursor=pointer]:
+                    - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                    - heading "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [level=3] [ref=e755]
+                  - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e756] [cursor=pointer]:
+                    - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                    - heading "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [level=3] [ref=e760]
+            - generic [ref=e762]:
+              - generic [ref=e763]:
+                - heading "شركاء النجاح" [level=2] [ref=e764]
+                - link "عرض الكل" [ref=e765] [cursor=pointer]:
+                  - /url: /clients
+                  - text: عرض الكل
+                  - img [ref=e766]
+              - generic [ref=e768]:
+                - link "JBR SEO JBR SEO ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e769] [cursor=pointer]:
+                  - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                  - img "JBR SEO" [ref=e771]
+                  - generic [ref=e772]:
+                    - paragraph [ref=e773]: JBR SEO
+                    - heading "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e774]
+                - link "JBR SEO JBR SEO ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e775] [cursor=pointer]:
+                  - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                  - img "JBR SEO" [ref=e777]
+                  - generic [ref=e778]:
+                    - paragraph [ref=e779]: JBR SEO
+                    - heading "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [level=3] [ref=e780]
+                - link "عيادات بلسم الطبية عيادات بلسم الطبية عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e781] [cursor=pointer]:
+                  - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                  - img "عيادات بلسم الطبية" [ref=e783]
+                  - generic [ref=e784]:
+                    - paragraph [ref=e785]: عيادات بلسم الطبية
+                    - heading "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [level=3] [ref=e786]
+            - complementary "المزيد" [ref=e787]:
+              - heading "المزيد" [level=2] [ref=e788]
+              - link "أخبار مودونتي" [ref=e789] [cursor=pointer]:
+                - /url: /news
+                - img [ref=e790]
+                - text: أخبار مودونتي
+              - link "من نحن" [ref=e794] [cursor=pointer]:
+                - /url: /about
+                - img [ref=e795]
+                - text: من نحن
+              - link "اشترك" [ref=e797] [cursor=pointer]:
+                - /url: /news/subscribe
+                - img [ref=e798]
+                - text: اشترك
+              - link "إرسال ملاحظات" [ref=e801] [cursor=pointer]:
+                - /url: /help/feedback
+                - img [ref=e802]
+                - text: إرسال ملاحظات
+    - contentinfo [ref=e804]:
+      - generic [ref=e805]:
+        - generic [ref=e806]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e807] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e808]: ↗
+      - navigation "روابط سريعة" [ref=e809]:
+        - link "الرئيسية" [ref=e810] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e811] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e812] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e813] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e814]:
+        - link "اتفاقية المستخدم" [ref=e815] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e816] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e817] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e818] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e819]: © 2026 مودونتي
+  - alert [ref=e820]

@@ -1,0 +1,348 @@
+- generic:
+  - generic:
+    - banner:
+      - link:
+        - /url: "#main-content"
+        - text: تخطى إلى المحتوى الرئيسي
+      - generic:
+        - generic:
+          - generic:
+            - link:
+              - /url: /
+              - img
+          - generic:
+            - search:
+              - generic:
+                - img
+              - generic: ابحث...
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: الرئيسية
+              - link:
+                - /url: /trending
+                - generic:
+                  - img
+                - generic: الرائجة
+              - link:
+                - /url: /categories
+                - generic:
+                  - img
+                - generic: الفئات
+              - link:
+                - /url: /clients
+                - generic:
+                  - img
+                - generic: العملاء
+              - link:
+                - /url: /users/profile/favorites
+                - generic:
+                  - img
+                - generic: المحفوظات
+          - generic:
+            - generic:
+              - button:
+                - img
+              - button
+    - main:
+      - button:
+        - img
+      - heading [level=1]: أحدث المقالات والمدونات - مودونتي
+      - generic:
+        - generic:
+          - complementary:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                    - heading [level=2]: تحليلات
+                  - generic:
+                    - generic:
+                      - img
+                      - generic: المقالات
+                      - generic: "2"
+                    - generic:
+                      - img
+                      - generic: التفاعلات الكلية
+                      - generic: ٧
+                    - generic:
+                      - img
+                      - generic: متوسط لكل مقال
+                      - generic: "4"
+                  - generic:
+                    - generic:
+                      - img
+                      - generic: إعجابات
+                      - generic: ٠
+                    - generic:
+                      - img
+                      - generic: تعليقات
+                      - generic: ٧
+                    - generic:
+                      - img
+                      - generic: مشاهدات
+                      - generic: ٨١
+              - generic:
+                - generic:
+                  - generic:
+                    - heading [level=2]: الفئات
+                    - link:
+                      - /url: /
+                      - text: جميع الفئات
+                      - generic: "2"
+                  - generic:
+                    - link:
+                      - /url: /?category=digital-marketing
+                      - generic:
+                        - img
+                        - generic: التسويق الرقمي
+                      - generic: "2"
+          - generic:
+            - generic:
+              - paragraph: مرحباً بك في مودونتي
+              - paragraph: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+            - region:
+              - heading [level=2]: آخر المقالات
+              - generic:
+                - article:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - link:
+                          - /url: /clients/nova-electronics
+                          - generic:
+                            - img
+                        - generic:
+                          - link:
+                            - /url: /clients/nova-electronics
+                            - generic: متجر نوفا للإلكترونيات
+                          - generic:
+                            - generic:
+                              - generic:
+                                - time: قبل يومين
+                              - generic: •
+                              - generic: ⏱️ 1 دقيقة
+                      - generic:
+                        - img
+                        - generic: نسخة صوتية
+                  - generic:
+                    - link:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - heading [level=3]: دليل SEO المتاجر الإلكترونية 2025
+                    - paragraph: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. استراتيجيات مجربة لزيادة الزيارات والمبيعات."
+                    - link:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - generic:
+                        - img
+                    - generic:
+                      - link:
+                        - /url: /articles/seo-guide-ecommerce-2025
+                        - text: اقرأ المزيد
+                        - img
+                    - generic:
+                      - link:
+                        - /url: /articles/seo-guide-ecommerce-2025
+                        - generic:
+                          - img
+                          - text: "0"
+                        - generic:
+                          - img
+                          - text: "2"
+                        - generic:
+                          - img
+                          - text: "7"
+                        - generic:
+                          - img
+                          - text: "59"
+                      - link:
+                        - /url: /articles/seo-guide-ecommerce-2025
+                        - img
+                        - generic: مشاركة
+                - article:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - link:
+                          - /url: /clients/nova-electronics
+                          - generic:
+                            - img
+                        - generic:
+                          - link:
+                            - /url: /clients/nova-electronics
+                            - generic: متجر نوفا للإلكترونيات
+                          - generic:
+                            - generic:
+                              - generic:
+                                - time: قبل يومين
+                              - generic: •
+                              - generic: ⏱️ 1 دقيقة
+                      - generic:
+                        - img
+                        - generic: نسخة صوتية
+                  - generic:
+                    - link:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - heading [level=3]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                    - paragraph: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+                    - link:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - generic:
+                        - img
+                    - generic:
+                      - link:
+                        - /url: /articles/ai-healthcare-saudi-2025
+                        - text: اقرأ المزيد
+                        - img
+                    - generic:
+                      - link:
+                        - /url: /articles/ai-healthcare-saudi-2025
+                        - generic:
+                          - img
+                          - text: "0"
+                        - generic:
+                          - img
+                          - text: "0"
+                        - generic:
+                          - img
+                          - text: "0"
+                        - generic:
+                          - img
+                          - text: "22"
+                      - link:
+                        - /url: /articles/ai-healthcare-saudi-2025
+                        - img
+                        - generic: مشاركة
+          - complementary:
+            - generic:
+              - complementary:
+                - navigation:
+                  - link:
+                    - /url: https://www.facebook.com/profile.php?fb_profile_edit_entry_point=%7B%22click_point%22%3A%22edit_profile_button%22%2C%22feature%22%3A%22profile_header%22%7D&id=61585093180638&sk=about
+                    - img
+                  - link:
+                    - /url: https://www.linkedin.com/company/111692906/admin/dashboard/
+                    - img
+                  - link:
+                    - /url: https://youtube.com/modonty
+                    - img
+                  - link:
+                    - /url: https://x.com/modonty
+                    - img
+                  - link:
+                    - /url: https://www.instagram.com/modonty.sa
+                    - img
+                  - link:
+                    - /url: https://www.tiktok.com/@modonty.ksa
+                    - img
+                  - link:
+                    - /url: https://www.snapchat.com/@modonty
+                    - img
+              - complementary:
+                - generic:
+                  - heading [level=2]: جديد مودونتي
+                  - generic:
+                    - link:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - generic:
+                        - generic:
+                          - heading [level=3]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                    - link:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - generic:
+                        - generic:
+                          - heading [level=3]: دليل SEO المتاجر الإلكترونية 2025
+              - generic:
+                - generic:
+                  - generic:
+                    - heading [level=2]: شركاء النجاح
+                    - link:
+                      - /url: /clients
+                      - text: عرض الكل
+                      - img
+                  - generic:
+                    - link:
+                      - /url: /articles/ai-healthcare-saudi-2025
+                      - generic:
+                        - img
+                      - generic:
+                        - paragraph: متجر نوفا للإلكترونيات
+                        - heading [level=3]: الذكاء الاصطناعي في الرعاية الصحية السعودية
+                    - link:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - generic:
+                        - img
+                      - generic:
+                        - paragraph: متجر نوفا للإلكترونيات
+                        - heading [level=3]: دليل SEO المتاجر الإلكترونية 2025
+              - complementary:
+                - heading [level=2]: المزيد
+                - link:
+                  - /url: /news
+                  - img
+                  - text: أخبار مودونتي
+                - link:
+                  - /url: /about
+                  - img
+                  - text: من نحن
+                - link:
+                  - /url: /news/subscribe
+                  - img
+                  - text: اشترك
+                - link:
+                  - /url: /help/feedback
+                  - img
+                  - text: إرسال ملاحظات
+    - contentinfo:
+      - navigation:
+        - link:
+          - /url: /
+          - text: الرئيسية
+        - link:
+          - /url: /trending
+          - text: الرائجة
+        - link:
+          - /url: /clients
+          - text: العملاء
+        - link:
+          - /url: /about
+          - text: عن مودونتي
+      - navigation:
+        - link:
+          - /url: /legal/user-agreement
+          - text: اتفاقية المستخدم
+        - link:
+          - /url: /legal/privacy-policy
+          - text: سياسة الخصوصية
+        - link:
+          - /url: /legal/cookie-policy
+          - text: سياسة ملفات تعريف الارتباط
+        - link:
+          - /url: /legal/copyright-policy
+          - text: سياسة حقوق النشر
+      - generic: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e47] [cursor=pointer]:
+    - img [ref=e48]
+  - alert: مدونتي | منصة المحتوى العربي الرائدة
+  - dialog "مدونتي الذكية تجريبي" [ref=e373]:
+    - banner "رأس المحادثة" [ref=e374]:
+      - generic [ref=e375]:
+        - img "مدونتي الذكية" [ref=e377]
+        - heading "مدونتي الذكية تجريبي" [level=2] [ref=e378]:
+          - generic [ref=e379]:
+            - generic [ref=e380]: مدونتي الذكية
+            - status "تجريبي" [ref=e381]
+    - generic [ref=e383]:
+      - img [ref=e385]
+      - heading "مدونتي الذكية بانتظارك تجريبي" [level=3] [ref=e388]:
+        - text: مدونتي الذكية بانتظارك
+        - generic [ref=e389]: تجريبي
+      - paragraph [ref=e390]: سجّل دخولك للاستفادة من محادثات ذكية حول مقالاتك المفضلة
+      - button "تسجيل الدخول" [active] [ref=e391] [cursor=pointer]:
+        - img
+        - text: تسجيل الدخول
+    - button "Close" [ref=e392] [cursor=pointer]:
+      - img [ref=e393]
+      - generic [ref=e396]: Close

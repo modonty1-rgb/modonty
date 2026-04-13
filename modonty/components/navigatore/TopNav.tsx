@@ -1,7 +1,6 @@
 import { ChatSheetContainer } from "@/components/chatbot/ChatSheetContainer";
 import { TopNavDesktop } from "./TopNavDesktop";
 import { LogoNav } from "@/components/navigatore/LogoNav";
-import { SearchLink } from "@/components/navigatore/SearchLink";
 import { ChatTriggerButton } from "@/components/chatbot/ChatTriggerButton";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { NotificationsBell } from "@/components/notifications/NotificationsBell";
@@ -23,20 +22,28 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
         تخطى إلى المحتوى الرئيسي
       </a>
       <div className="container mx-auto max-w-[1128px]">
-        {/* Mobile Layout: 3 columns (logo / search / actions) */}
-        <div className="grid md:hidden h-14 grid-cols-[auto,1fr,auto] items-center gap-3 px-4">
+        {/* Mobile Layout: 3 columns (logo | CTA | actions) */}
+        <div className="grid md:hidden h-14 grid-cols-[auto,1fr,auto] items-center gap-2 px-4">
+          {/* Col 1 — Logo */}
           <LogoNav />
-          <SearchLink variant="compact" className="w-full" />
-          <div className="flex items-center gap-2">
-            <a
-              href="https://www.jbrseo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] font-semibold bg-primary text-primary-foreground rounded-full px-3 py-1.5 leading-none hover:bg-primary/90 transition-colors whitespace-nowrap"
-              aria-label="عملاء بلا إعلانات — جبر SEO"
-            >
-              عملاء بلا إعلانات
-            </a>
+
+          {/* Col 2 — CTA fills center column */}
+          <a
+            href="https://www.jbrseo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full h-9 text-[11px] font-bold bg-gradient-to-l from-primary to-violet-600 text-white rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:brightness-105 active:scale-[0.97] transition-all"
+            aria-label="عملاء بلا إعلانات — جبر SEO"
+          >
+            <span className="relative flex h-1.5 w-1.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+            </span>
+            عملاء بلا إعلانات
+          </a>
+
+          {/* Col 3 — Actions */}
+          <div className="flex items-center justify-end gap-1.5">
             <NotificationsBell />
             <ChatTriggerButton variant="nav" />
             <UserMenu />
@@ -50,4 +57,3 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
     </header>
   );
 }
-

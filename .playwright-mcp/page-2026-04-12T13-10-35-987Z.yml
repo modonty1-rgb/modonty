@@ -1,0 +1,448 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.31.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.31.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: Articles 69d7a1d0...
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e130]:
+          - button "Send Note" [ref=e131] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e132] [cursor=pointer]:
+            - img
+      - main [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - link [ref=e139] [cursor=pointer]:
+                  - /url: /articles
+                  - img [ref=e140]
+                - heading "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟" [level=1] [ref=e142]
+              - generic [ref=e143]:
+                - generic [ref=e144]: JABR GROUP CONTRACTING AND MANUFACTURING
+                - generic [ref=e145]: ·
+                - generic [ref=e146]: الانشاءات والتعمير
+                - generic [ref=e147]: ·
+                - generic [ref=e148]: Published
+                - generic [ref=e149]: ·
+                - generic [ref=e150]: Apr 9, 2026
+            - generic [ref=e151]:
+              - generic "Click to view full SEO guidance" [ref=e152] [cursor=pointer]: 100%
+              - link "Edit" [ref=e153] [cursor=pointer]:
+                - /url: /articles/69d7a1d002d85d88d9cd3370/edit
+                - img
+                - text: Edit
+              - button [ref=e154] [cursor=pointer]:
+                - img
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - img [ref=e157]
+              - generic [ref=e160]: "446"
+              - text: words
+            - generic [ref=e161]:
+              - img [ref=e162]
+              - generic [ref=e165]: ~3 min read
+            - generic [ref=e166]:
+              - img [ref=e167]
+              - generic [ref=e170]: 1 views
+            - generic [ref=e171]:
+              - img [ref=e172]
+              - generic [ref=e174]: 0 comments
+            - generic [ref=e175]:
+              - img [ref=e176]
+              - generic [ref=e179]: الانظمة الكهروميكانيكية
+              - generic [ref=e180]: انظمة الحريق
+              - generic [ref=e181]: تنفيذ مشاريع كاملة
+              - generic [ref=e182]: عقارات
+              - generic [ref=e183]: رؤية 2030
+          - generic [ref=e187]:
+            - img "أنظمة مكافحة الحريق في السعودية ما هى الأنواع؟ المواصفات والمعايير؟" [ref=e189]
+            - heading "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟" [level=1] [ref=e190]
+            - paragraph [ref=e191]: "أنظمة مكافحة الحريق في السعودية: تعرّف على الأنواع المختلفة، المعايير المعتمدة مثل كود البناء السعودي وNFPA، وكيف تختار النظام المناسب لمشروعك وتقليل المخاطر"
+            - generic [ref=e192]:
+              - generic [ref=e193]: Modonty
+              - generic [ref=e194]: Apr 9, 2026
+              - generic [ref=e195]: ~3 min read
+            - generic [ref=e196]:
+              - paragraph [ref=e197]:
+                - strong [ref=e199]: أنظمة مكافحة الحريق في السعودية
+              - paragraph [ref=e200]:
+                - strong [ref=e202]: ما هى الأنواع؟ المواصفات والمعايير؟ وكيف تختار النظام المناسب لمشروعك؟
+              - paragraph [ref=e203]:
+                - strong [ref=e205]
+              - paragraph [ref=e206]:
+                - strong [ref=e208]: لماذا كل تلك الاسئلة عن نظام مكافحة الحريق؟ اهو مهم لتلك الدرجة ؟
+              - paragraph [ref=e209]:
+                - generic [ref=e210]:
+                  - text: في أي مشروع داخل السعودية، لا تقتصر أهمية السلامة على حماية الأصول فقط…
+                  - text: "بل تمتد إلى:"
+              - list [ref=e211]:
+                - listitem [ref=e212]:
+                  - paragraph [ref=e213]: حماية الأرواح
+                - listitem [ref=e214]:
+                  - paragraph [ref=e215]: الامتثال للأنظمة واللوائح
+                - listitem [ref=e216]:
+                  - paragraph [ref=e217]: تجنب الخسائر التشغيلية والقانونية
+              - paragraph [ref=e218]:
+                - generic [ref=e219]:
+                  - text: وهنا يأتي دور
+                  - strong [ref=e220]: أنظمة مكافحة الحريق
+                  - text: كأحد أهم الأنظمة التي لا يمكن التهاون في تصميمها أو تنفيذها.
+              - paragraph [ref=e221]: ارايت ! لماذا كل تلك الاسئلة ؟
+              - paragraph [ref=e222]: اذا هيا بنا نتعرف على انظمة مكافحة الحريق عن قرب ........
+              - paragraph [ref=e223]:
+                - strong [ref=e225]: ما هي أنظمة مكافحة الحريق؟
+              - paragraph [ref=e226]: "أنظمة مكافحة الحريق هي مجموعة من الأنظمة الهندسية المصممة لـ:"
+              - list [ref=e227]:
+                - listitem [ref=e228]:
+                  - paragraph [ref=e229]: اكتشاف الحريق مبكرًا
+                - listitem [ref=e230]:
+                  - paragraph [ref=e231]: السيطرة عليه
+                - listitem [ref=e232]:
+                  - paragraph [ref=e233]: إطفائه بأسرع وقت ممكن
+              - paragraph [ref=e234]: وذلك بهدف تقليل الأضرار وضمان سلامة الأفراد والمنشآت.
+              - paragraph [ref=e235]
+              - paragraph [ref=e236]:
+                - strong [ref=e238]: ماهى أنواع أنظمة مكافحة الحريق
+              - paragraph [ref=e239]:
+                - strong [ref=e241]: "اولا: أنظمة الرش الآلي (Sprinkler System)"
+              - list [ref=e242]:
+                - listitem [ref=e243]:
+                  - paragraph [ref=e244]: تعمل تلقائيًا عند ارتفاع درجة الحرارة
+                - listitem [ref=e245]:
+                  - paragraph [ref=e246]: مناسبة للمباني التجارية والمستودعات
+              - paragraph [ref=e247]
+              - paragraph [ref=e248]:
+                - strong [ref=e250]: "ثانيا: أنظمة الإطفاء بالغاز (FM200 / NOVEC)"
+              - list [ref=e251]:
+                - listitem [ref=e252]:
+                  - paragraph [ref=e253]: "تستخدم في:"
+                  - list [ref=e254]:
+                    - listitem [ref=e255]:
+                      - paragraph [ref=e256]: غرف السيرفرات
+                    - listitem [ref=e257]:
+                      - paragraph [ref=e258]: مراكز البيانات
+                - listitem [ref=e259]:
+                  - paragraph [ref=e260]: لا تسبب أضرار للمعدات
+                - listitem [ref=e261]:
+                  - paragraph [ref=e262]: مناسبة اكثر فى غرف التحكم والادارة
+              - paragraph [ref=e263]
+              - paragraph [ref=e264]:
+                - strong [ref=e266]: "ثالثا: أنظمة الإطفاء بالرغوة (Foam System)"
+              - list [ref=e267]:
+                - listitem [ref=e268]:
+                  - paragraph [ref=e269]: "تستخدم في:"
+                  - list [ref=e270]:
+                    - listitem [ref=e271]:
+                      - paragraph [ref=e272]: المصانع
+                    - listitem [ref=e273]:
+                      - paragraph [ref=e274]: منشآت النفط والغاز
+              - paragraph [ref=e275]
+              - paragraph [ref=e276]:
+                - strong [ref=e278]: "رابعا: أنظمة الإطفاء بثاني أكسيد الكربون (CO2)"
+              - list [ref=e279]:
+                - listitem [ref=e280]:
+                  - paragraph [ref=e281]: فعالة في الحرائق الصناعية
+                - listitem [ref=e282]:
+                  - paragraph [ref=e283]: تحتاج احتياطات خاصة للسلامة
+              - paragraph [ref=e284]
+              - paragraph [ref=e285]:
+                - strong [ref=e287]: "خامسا: أنظمة إنذار الحريق (Fire Alarm Systems)"
+              - list [ref=e288]:
+                - listitem [ref=e289]:
+                  - paragraph [ref=e290]: تكشف الحريق مبكرًا
+                - listitem [ref=e291]:
+                  - paragraph [ref=e292]: تنبه المستخدمين وتفعل أنظمة الإطفاء
+              - paragraph [ref=e293]: ارايت ! مع تعدد كل تلك الانظمة يظهر مدى الاهمية الحاسمة لذلك العنصر داخل منشأتك وبطبيعة كل منشأة يمكن اختيار النظام الاكثر امنا وفاعلية
+              - paragraph [ref=e294]:
+                - strong [ref=e296]: اذا لماذا تعتبر أنظمة الحريق عنصرًا حاسمًا؟
+              - paragraph [ref=e297]:
+                - strong [ref=e299]: 1. حماية الأرواح
+              - paragraph [ref=e300]: أولوية قصوى في أي مشروع
+              - paragraph [ref=e301]:
+                - strong [ref=e303]: 2. حماية الاستثمارات
+              - paragraph [ref=e304]: تقليل الخسائر المادية
+              - paragraph [ref=e305]:
+                - strong [ref=e307]: 3. الالتزام بالأنظمة السعودية
+              - paragraph [ref=e308]: "عدم الالتزام قد يؤدي إلى:"
+              - list [ref=e309]:
+                - listitem [ref=e310]:
+                  - paragraph [ref=e311]: إيقاف المشروع
+                - listitem [ref=e312]:
+                  - paragraph [ref=e313]: غرامات مالية
+              - paragraph [ref=e314]:
+                - strong [ref=e316]: 4. استمرارية التشغيل
+              - paragraph [ref=e317]: أي حريق يعنى توقف كامل في الأعمال وبالتالى وجود انظمة الحريق تساعد على الاكتشاف المبكر بل والسيطرة عليه قبل حدوث اضرار تسبب التوقف الكامل
+              - paragraph [ref=e318]
+              - paragraph [ref=e319]:
+                - strong [ref=e321]: اذا ماهى أهم معايير وأنظمة مكافحة الحريق في السعودية
+              - paragraph [ref=e322]: "لتنفيذ نظام مكافحة حريق بشكل صحيح، يجب الالتزام بـ:"
+              - paragraph [ref=e323]:
+                - strong [ref=e325]: 1. كود البناء السعودي (SBC)
+              - list [ref=e326]:
+                - listitem [ref=e327]:
+                  - paragraph [ref=e328]: يحدد اشتراطات السلامة في المباني
+              - paragraph [ref=e329]:
+                - strong [ref=e331]: 2. معايير الدفاع المدني السعودي
+              - list [ref=e332]:
+                - listitem [ref=e333]:
+                  - paragraph [ref=e334]: الموافقات والتراخيص
+                - listitem [ref=e335]:
+                  - paragraph [ref=e336]: اشتراطات التنفيذ
+              - paragraph [ref=e337]:
+                - strong [ref=e339]: 3. معاييرالجمعية الوطنية للحماية من الحرائق NFPA العالمية
+              - list [ref=e340]:
+                - listitem [ref=e341]:
+                  - paragraph [ref=e342]: تصميم أنظمة الحريق
+                - listitem [ref=e343]:
+                  - paragraph [ref=e344]: اختيار المعدات
+              - paragraph [ref=e345]
+              - paragraph [ref=e346]: وبالرغم من اهميتة انظمة الحريق والمعايير الا ان من الوارد حدوث اخطاء ولكن ماهى تلك الاخطاء؟
+              - paragraph [ref=e347]:
+                - strong [ref=e349]: أخطاء شائعة في تنفيذ أنظمة الحريق
+              - paragraph [ref=e350]: · تصميم غير مطابق للمعايير
+              - paragraph [ref=e351]: · اختيار نظام غير مناسب لطبيعة المشروع
+              - paragraph [ref=e352]: · تنفيذ بدون اعتماد من الدفاع المدني
+              - paragraph [ref=e353]: · ضعف الصيانة الدورية
+              - paragraph [ref=e354]: "ولان عنصر اختيار وتنفيذ انظمة الحريق احد اهم الانظمة ولا يمكن الاستهانة بها تكون النتيجة:"
+              - list [ref=e355]:
+                - listitem [ref=e356]:
+                  - paragraph [ref=e357]: رفض المشروع
+                - listitem [ref=e358]:
+                  - paragraph [ref=e359]: مخاطر عالية
+                - listitem [ref=e360]:
+                  - paragraph [ref=e361]: خسائر كبيرة
+              - paragraph [ref=e362]
+              - paragraph [ref=e363]:
+                - strong [ref=e365]: لذلك كيف تختار نظام مكافحة الحريق المناسب؟
+              - paragraph [ref=e366]: "يعتمد ذلك على:"
+              - list [ref=e367]:
+                - listitem [ref=e368]:
+                  - paragraph [ref=e369]: نوع المشروع (تجاري – صناعي – تقني)
+                - listitem [ref=e370]:
+                  - paragraph [ref=e371]: حجم المبنى
+                - listitem [ref=e372]:
+                  - paragraph [ref=e373]: طبيعة المخاطر
+                - listitem [ref=e374]:
+                  - paragraph [ref=e375]: متطلبات الدفاع المدني
+              - paragraph [ref=e376]:
+                - generic [ref=e377]:
+                  - text: لذلك من الضروري التعاقد مع
+                  - strong [ref=e378]: شركة أنظمة مكافحة حريق في السعودية
+                  - text: ذات خبرة.
+              - paragraph [ref=e379]
+              - paragraph [ref=e380]:
+                - strong [ref=e382]: وهنا العلاقة بين أنظمة الحريق وأعمال MEP(رابط المقال )
+              - paragraph [ref=e383]:
+                - generic [ref=e384]:
+                  - text: أنظمة مكافحة الحريق جزء أساسي من
+                  - strong [ref=e385]: أعمال MEP
+                  - text: "، ويجب أن تكون:"
+              - list [ref=e386]:
+                - listitem [ref=e387]:
+                  - paragraph [ref=e388]: متكاملة مع أنظمة التهوية والكهرباء
+                - listitem [ref=e389]:
+                  - paragraph [ref=e390]: مصممة ضمن مخطط المشروع
+                - listitem [ref=e391]:
+                  - paragraph [ref=e392]: منفذة تحت إشراف هندسي متخصص
+              - paragraph [ref=e393]
+              - paragraph [ref=e394]:
+                - strong [ref=e396]: عزيزى القارئ
+              - paragraph [ref=e397]: "\"الاستثمار في نظام مكافحة حريق احترافي ليس تكلفة… بل حماية لاستثمارك بالكامل\""
+              - paragraph [ref=e398]
+              - paragraph [ref=e399]:
+                - generic [ref=e400]:
+                  - strong [ref=e401]: لذلك
+                  - text: إذا كنت تبحث عن
+                  - strong [ref=e402]: شركة أنظمة مكافحة حريق في السعودية
+                  - text: لتنفيذ نظام مطابق للمعايير وبأعلى مستوى من الأمان،
+              - paragraph [ref=e403]: "تواصل معنا الآن للحصول على:"
+              - paragraph [ref=e404]: · دراسة مخاطر الحريق للمشروع
+              - paragraph [ref=e405]: · تصميم نظام معتمد من الدفاع المدني
+              - paragraph [ref=e406]: · عرض سعر وتنفيذ متكامل
+            - generic [ref=e408]:
+              - generic [ref=e410]:
+                - img [ref=e411]
+                - generic [ref=e415]: Media Gallery
+              - generic [ref=e418] [cursor=pointer]:
+                - img "أنظمة مكافحة الحريق في السعودية ما هى الأنواع؟ المواصفات والمعايير؟ وكيف تختار النظام المناسب لمشروعك؟" [ref=e419]
+                - generic [ref=e421]:
+                  - generic [ref=e422]: أنظمة مكافحة الحريق في السعودية ما هى الأنواع؟ المواصفات والمعايير؟ وكيف تختار النظام المناسب لمشروعك؟
+                  - generic [ref=e423]:
+                    - generic [ref=e424]: 69d7a1585a43aa72f5db6d3d
+                    - button "Copy Media ID" [ref=e425]:
+                      - img
+            - generic [ref=e427]:
+              - generic [ref=e429]:
+                - img [ref=e430]
+                - generic [ref=e433]: Frequently Asked Questions
+              - generic [ref=e434]:
+                - generic [ref=e435]:
+                  - generic [ref=e436]:
+                    - generic [ref=e437]:
+                      - generic [ref=e438]: "س1:"
+                      - generic [ref=e439]: ما أهمية أنظمة مكافحة الحريق في المشاريع بالسعودية؟
+                    - generic [ref=e440]:
+                      - generic [ref=e441]: 69d7a1f2e4a6936298c04d41
+                      - button "Copy FAQ ID" [ref=e442] [cursor=pointer]:
+                        - img
+                  - paragraph [ref=e443]: حماية الأرواح تقليل الخسائر المادية الالتزام باللوائح ضمان استمرارية التشغيل
+                - generic [ref=e444]:
+                  - generic [ref=e445]:
+                    - generic [ref=e446]:
+                      - generic [ref=e447]: "س2:"
+                      - generic [ref=e448]: هل أنظمة الحريق إلزامية في جميع المشاريع؟
+                    - generic [ref=e449]:
+                      - generic [ref=e450]: 69d7a1f2e4a6936298c04d42
+                      - button "Copy FAQ ID" [ref=e451] [cursor=pointer]:
+                        - img
+                  - paragraph [ref=e452]: نعم، معظم المشاريع في السعودية ملزمة بتركيب أنظمة مكافحة الحريق للحصول على التراخيص والموافقات الرسمية
+                - generic [ref=e453]:
+                  - generic [ref=e454]:
+                    - generic [ref=e455]:
+                      - generic [ref=e456]: "س3:"
+                      - generic [ref=e457]: هل الاستثمار في أنظمة مكافحة الحريق يوفر التكاليف؟
+                    - generic [ref=e458]:
+                      - generic [ref=e459]: 69d7a1f2e4a6936298c04d43
+                      - button "Copy FAQ ID" [ref=e460] [cursor=pointer]:
+                        - img
+                  - paragraph [ref=e461]: "نعم، لأنه: يقلل الخسائر المحتملة يحمي الأصول يمنع توقف التشغيل يضمن الامتثال للأنظمة"
+            - generic [ref=e463]:
+              - generic [ref=e465]: M
+              - generic [ref=e466]:
+                - paragraph [ref=e467]: Modonty
+                - paragraph [ref=e468]: Modonty is a leading content platform providing high-quality articles and insights.
+          - generic [ref=e470]:
+            - generic [ref=e472]:
+              - img [ref=e473]
+              - text: SEO Overview
+            - generic [ref=e476]:
+              - generic [ref=e477]:
+                - generic [ref=e478]:
+                  - paragraph [ref=e479]: SEO Title
+                  - paragraph [ref=e480]: ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟
+                - generic [ref=e481]:
+                  - paragraph [ref=e482]: SEO Description
+                  - paragraph [ref=e483]: "أنظمة مكافحة الحريق في السعودية: تعرّف على الأنواع المختلفة، المعايير المعتمدة مثل كود البناء السعودي وNFPA، وكيف تختار النظام المناسب لحماية مشروعك وتق..."
+                - generic [ref=e484]:
+                  - paragraph [ref=e485]: Canonical URL
+                  - paragraph [ref=e486]: https://modonty.com/articles/ماهى-أنظمة-مكافحة-الحريق-وكيف-تختار-النظام-المناسب-لمشروعك؟
+                - generic [ref=e487]:
+                  - paragraph [ref=e488]: Slug
+                  - paragraph [ref=e489]: /ماهى-أنظمة-مكافحة-الحريق-وكيف-تختار-النظام-المناسب-لمشروعك؟
+              - link "View Technical Details" [ref=e491] [cursor=pointer]:
+                - /url: /articles/69d7a1d002d85d88d9cd3370/technical
+                - button "View Technical Details" [ref=e492]:
+                  - img
+                  - text: View Technical Details
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e493]

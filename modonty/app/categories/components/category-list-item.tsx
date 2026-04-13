@@ -84,14 +84,14 @@ export function CategoryListItem({ category, preload = false }: CategoryListItem
                   <span className="text-xl font-bold text-foreground">
                     {formatCategoryStats(category.articleCount)}
                   </span>
-                  <span className="text-xs text-muted-foreground">مقال</span>
+                  <span className="text-sm text-muted-foreground">مقال</span>
                 </div>
                 {showTrending && (
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-primary">
                       {category.recentArticleCount}
                     </span>
-                    <span className="text-xs text-muted-foreground">هذا الأسبوع</span>
+                    <span className="text-sm text-muted-foreground">هذا الأسبوع</span>
                   </div>
                 )}
               </div>

@@ -1,0 +1,242 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.31.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.31.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e282] [cursor=pointer]:
+                - /url: /articles/69d4f72c769fbb50b610e3e8
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - generic [ref=e108]: Edit
+          - navigation "Main navigation" [ref=e110]:
+            - link "Modonty Modonty" [ref=e111] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e113]
+              - generic [ref=e114]: Modonty
+            - generic [ref=e116]:
+              - link "Articles" [ref=e117] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e118]:
+                  - img
+                  - generic [ref=e119]: Articles
+              - link "Clients" [ref=e120] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e121]:
+                  - img
+                  - generic [ref=e122]: Clients
+              - link "Media" [ref=e123] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e124]:
+                  - img
+                  - generic [ref=e125]: Media
+          - generic [ref=e126]:
+            - link "1" [ref=e283] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e284]:
+                - img
+                - generic [ref=e285]: "1"
+            - button "M" [ref=e129] [cursor=pointer]:
+              - generic [ref=e131]: M
+      - generic [ref=e132]:
+        - generic [ref=e133]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e134]:
+          - button "Send Note" [ref=e135] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e136] [cursor=pointer]:
+            - img
+      - main [ref=e137]:
+        - generic [ref=e286]:
+          - generic [ref=e289]:
+            - generic [ref=e290]:
+              - generic [ref=e291]:
+                - generic [ref=e292]: Step 1 of 5
+                - generic [ref=e293]: "SEO Health: 100%"
+                - generic [ref=e296]: Live Analysis
+              - generic [ref=e297]:
+                - generic [ref=e299]: 80% Complete
+                - generic [ref=e300]:
+                  - button "Update" [disabled]:
+                    - img
+                    - generic: Update
+            - 'generic "Overall progress: 80%" [ref=e304]'
+          - generic [ref=e308]:
+            - 'tabpanel "Basic: 100% complete. مكتمل ✓" [ref=e310]':
+              - generic [ref=e313]:
+                - generic [ref=e315]:
+                  - generic [ref=e316]:
+                    - generic [ref=e317]:
+                      - generic [ref=e318]: Client*
+                      - combobox "Client*" [ref=e319]:
+                        - option "Select a client"
+                        - option "JABR GROUP CONTRACTING AND MANUFACTURING"
+                        - option "JBR SEO"
+                        - option "Test Media Client"
+                        - option "أكاديمية المستقبل"
+                        - option "عيادات بلسم الطبية" [selected]
+                        - option "متجر نوفا للإلكترونيات"
+                    - generic [ref=e321]:
+                      - img "عيادات بلسم الطبية" [ref=e323]
+                      - generic [ref=e324]:
+                        - paragraph [ref=e325]: عيادات بلسم الطبية
+                        - generic [ref=e326]:
+                          - img [ref=e327]
+                          - generic [ref=e330]: Logo ready
+                  - generic [ref=e332]:
+                    - generic [ref=e333]: Category
+                    - combobox "Category" [ref=e334]:
+                      - option "None"
+                      - option "SEO تحسين محركات البحث"
+                      - option "الانشاءات والتعمير"
+                      - option "التسويق الرقمي"
+                      - option "التعليم والتدريب"
+                      - option "التقنية والذكاء الاصطناعي"
+                      - option "التمويل الشخصي"
+                      - option "السياحة والسفر"
+                      - option "الصحة والعافية" [selected]
+                      - option "العقارات والاستثمار"
+                      - option "القانون وتأسيس الشركات"
+                      - option "المحتوى والكتابة"
+                      - option "المطاعم والطعام"
+                      - option "الموضة والجمال"
+                      - option "تصميم المواقع"
+                      - option "ريادة الأعمال"
+                - generic [ref=e335]:
+                  - generic [ref=e336]:
+                    - generic [ref=e337]: Title*
+                    - textbox "Title*" [active] [ref=e338]: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة والواقع المعاش في الحياة اليومية المعاصرة
+                    - generic [ref=e339]:
+                      - paragraph [ref=e340]: Optimize for 50-60 characters for better search visibility
+                      - generic [ref=e342]: 92 / 60 maximum - Exceeds recommended
+                  - generic [ref=e343]:
+                    - generic [ref=e344]: Slug
+                    - generic [ref=e345]: عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                    - button [ref=e346] [cursor=pointer]:
+                      - img
+                  - generic [ref=e347]:
+                    - text: Excerpt
+                    - textbox "Excerpt" [ref=e348]: كلمة فلاح دايما مرتبطة بفعل بسيط او ربما فعل سطحى يدل على سطحية فكر العامل لكن ماذا يحمل فى طياته من راحة نفسية وعقلية دون الشعور بامراض عدا الانفلونزا
+                    - generic [ref=e349]:
+                      - paragraph [ref=e350]: Optimize for 150-160 characters for better search visibility
+                      - generic [ref=e352]: 151 / 160 maximum
+                  - generic [ref=e353]:
+                    - generic [ref=e354]: Tags
+                    - combobox [ref=e355] [cursor=pointer]:
+                      - generic [ref=e357]:
+                        - text: تحليلات
+                        - button "Remove تحليلات" [ref=e358]:
+                          - img
+                      - img
+                  - generic [ref=e359]:
+                    - text: Author
+                    - generic [ref=e360]:
+                      - generic [ref=e361]: Modonty
+                      - generic [ref=e362]: (Only author)
+            - tablist [ref=e365]:
+              - 'tab "Basic: 100% complete. مكتمل ✓" [selected] [ref=e366] [cursor=pointer]':
+                - generic [ref=e367]: "1"
+                - generic [ref=e368]: Basic
+                - generic [ref=e369]: 100%
+              - 'tab "Content: 100% complete. مكتمل ✓" [ref=e370] [cursor=pointer]':
+                - generic [ref=e371]: "2"
+                - generic [ref=e372]: Content
+                - generic [ref=e373]: 100%
+              - 'tab "SEO: 100% complete. مكتمل ✓" [ref=e374] [cursor=pointer]':
+                - generic [ref=e375]: "3"
+                - generic [ref=e376]: SEO
+                - generic [ref=e377]: 100%
+              - 'tab "FAQs & Related: 50% complete. اختياري: مقالات ذات صلة" [ref=e378] [cursor=pointer]':
+                - generic [ref=e379]: "4"
+                - generic [ref=e380]: FAQs & Related
+                - generic [ref=e381]: 50%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e382] [cursor=pointer]':
+                - generic [ref=e383]: "5"
+                - generic [ref=e384]: Publish
+                - generic [ref=e385]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e386] [cursor=pointer]:
+    - generic [ref=e389]:
+      - text: Rendering
+      - generic [ref=e390]:
+        - generic [ref=e391]: .
+        - generic [ref=e392]: .
+        - generic [ref=e393]: .
+  - alert [ref=e281]

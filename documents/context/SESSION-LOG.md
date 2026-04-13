@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-12 (archive confirmation dialog — admin v0.33.0)
+# Session Context — Last Updated: 2026-04-13 (mobile UX complete 18/18 + perf + admin editor — modonty v1.31.0 · admin v0.34.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,73 @@
 ---
 
 ## Current Versions
-- **admin**: v0.33.0
-- **modonty**: v1.30.0
+- **admin**: v0.34.0
+- **modonty**: v1.31.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 31 — Mobile UX complete + Performance + Admin editor (2026-04-13 · modonty v1.31.0 · admin v0.34.0)
+
+### What Was Done
+
+**modonty v1.31.0 — Mobile UX (MOB-001–018 ALL FIXED)**
+- `MobileFooter.tsx` → `"use client"` + `usePathname()` — active state always correct (MOB-012)
+- `MobileFooterWithFavorites.tsx` — removed stale `activeSection` prop
+- `TopNav.tsx` — `hidden sm:flex` on CTA pill, 3-column grid (MOB-002)
+- `users/login/page.tsx` — removed `min-h-screen`, replaced with `py-8 sm:py-24` (MOB-007)
+- `article-header.tsx` — `break-words` on `<h1>` for mixed Arabic/English (MOB-003)
+- `article-mobile-engagement-bar.tsx` — `bottom-16` → `bottom-20` + `hideLoginHint` (MOB-016/011)
+- `subscribe-form.tsx` — removed duplicate `CardTitle` (MOB-014)
+- `TrendingArticles.tsx` — always-present image container + `IconArticle` placeholder (MOB-018)
+- `enhanced-category-card.tsx` + `category-list-item.tsx` — `text-xs` → `text-sm` on labels (MOB-009)
+- `featured-client-card.tsx` — gradient + large initials fallback (MOB-010)
+- `about/page.tsx` — `prose-h2:border-t prose-h2:pt-6 prose-h2:mt-8` section dividers (MOB-015)
+- `articles/[slug]/page.tsx` — all `dynamic({ssr:false})` moved to `client-lazy.tsx` (perf)
+- `LeftSidebar.tsx` — `Promise.all` for parallel fetch (perf)
+- 11 new `loading.tsx` skeletons (subscribe, profile, help, faq, feedback, terms, 4×legal, news/subscribe)
+
+**admin v0.34.0 — Article Editor**
+- `article-server-schema.ts` — PUSH-2/3: unlock seoTitle max + limits
+- `update-article.ts` — mutation improvements
+- `article-form-navigation.tsx` — PUSH-5: toast uses `save_failed`
+- `meta-tags-step.tsx` — PUSH-3: `maxLength` on SEO fields
+
+**Cleanup**
+- Deleted ~35 old `.md` report files from root + subdirectories (never belonged in repo)
+
+### Live Test (2026-04-13 — 375×812px)
+✅ Login (no dead space) · ✅ Search active nav · ✅ Subscribe (1 title) · ✅ Trending (full cards) · ✅ Categories (14px labels) · ✅ Article toolbar clearance · ✅ 404 bottom nav · ✅ About section dividers
+
+### ⚠️ Pending
+- PUSH-4: رسائل خطأ عربية في `update-article.ts`
+- ARCH-1: Toast after archive/unarchive
+- SCOPY-1–5: SEO copy fields audit (admin)
+- Mobile Phase 2 (MOB1-7): mockup in design-preview/page.tsx
+
+---
+
+## ✅ Session 30 — Mobile navbar fix + CTA sticky banner (2026-04-13 · modonty v1.31.0)
+
+### What Was Done
+
+**modonty v1.31.0**
+- `TopNav.tsx`: Added `hidden sm:flex` to CTA pill — was causing navbar overflow at 375px (457px scrollWidth vs 375px viewport)
+  - Root cause: `whitespace-nowrap` pill + 3 icons forced navbar wider than viewport on all pages
+- `MobileFooter.tsx`: Added sticky CTA banner above bottom nav
+  - "🚀 عملاء بلا إعلانات من جوجل ↗" — links to jbrseo.com
+  - Visible on ALL pages, best UX pattern for mobile conversion
+- `layout.tsx`: Increased `pb-16` → `pb-28` to compensate for banner + nav height (~104px combined)
+
+### Tested
+- Homepage ✅ — navbar clean, banner visible above bottom nav
+- Clients page ✅ — layout fully aligned
+- Article page ✅ — banner + interaction toolbar don't conflict
+
+### ⚠️ Pending (mobile-ux-issues.md)
+- MOB-001: Broken slug `/articles/م` (homepage last card)
+- MOB-003: Article title overflow (mixed Arabic/English)
+- MOB-004–011: Remaining medium/low issues
 
 ---
 

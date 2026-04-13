@@ -51,7 +51,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="bg-background flex items-center justify-center px-4 py-8 sm:py-24">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">تسجيل الدخول</CardTitle>
@@ -111,6 +111,12 @@ export default function LoginPage() {
               <IconEmail className="h-5 w-5 mr-2" />
               {loading === "credentials" ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
             </Button>
+
+            <div className="text-center">
+              <Link href="/users/forgot-password" className="text-sm text-muted-foreground hover:text-primary">
+                نسيت كلمة المرور؟
+              </Link>
+            </div>
           </form>
 
           <div className="relative">

@@ -3,7 +3,7 @@ import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { IconTrending, IconViews, IconComment } from "@/lib/icons";
+import { IconTrending, IconViews, IconComment, IconArticle } from "@/lib/icons";
 
 interface TrendingArticle {
   id: string;
@@ -66,20 +66,25 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
               </div>
 
               {/* Featured Image */}
-              {article.image && (
-                <div className="aspect-video w-full overflow-hidden relative">
-                  <OptimizedImage
-                    src={article.image}
-                    alt={article.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    preload={index === 0}
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                </div>
-              )}
+              <div className="aspect-video w-full overflow-hidden relative bg-muted">
+                {article.image ? (
+                  <>
+                    <OptimizedImage
+                      src={article.image}
+                      alt={article.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      preload={index === 0}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <IconArticle className="h-10 w-10 text-muted-foreground/30" />
+                  </div>
+                )}
+              </div>
 
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2 mb-2">

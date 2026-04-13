@@ -1,0 +1,102 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e5]:
+        - navigation "تنقل الصفحة" [ref=e6]:
+          - list [ref=e7]:
+            - listitem [ref=e8]:
+              - link "الرئيسية الرئيسية" [ref=e9] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e10]
+                - generic [ref=e13]: الرئيسية
+            - listitem [ref=e14]:
+              - generic [ref=e16]: أخبار مودونتي
+        - generic [ref=e17]:
+          - heading "أخبار مودونتي" [level=1] [ref=e18]
+          - paragraph [ref=e19]: نقطة التجمع لكل ما هو جديد من مودونتي. اشترك في النشرة لتحصل على أهم الأخبار والمقالات في رسالة أسبوعية مختصرة.
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - heading "النشرة الإخبارية لأخبار مودونتي" [level=3] [ref=e22]:
+                - img [ref=e23]
+                - text: النشرة الإخبارية لأخبار مودونتي
+              - paragraph [ref=e26]: رسالة أسبوعية واحدة تجمع لك أبرز المقالات، التحديثات، ونصائح فريق مودونتي.
+            - generic [ref=e27]:
+              - list [ref=e28]:
+                - listitem [ref=e29]:
+                  - img [ref=e30]
+                  - generic [ref=e33]: ملخص أسبوعي لأبرز الأخبار والمقالات.
+                - listitem [ref=e34]:
+                  - img [ref=e35]
+                  - generic [ref=e38]: روابط مختارة تساعدك على المتابعة دون إضاعة الوقت.
+                - listitem [ref=e39]:
+                  - img [ref=e40]
+                  - generic [ref=e43]: لا بريد مزعج — يمكنك الإلغاء في أي وقت.
+              - link "اشترك في النشرة الآن" [ref=e44] [cursor=pointer]:
+                - /url: /news/subscribe
+                - text: اشترك في النشرة الآن
+                - img
+              - paragraph [ref=e45]: نحترم خصوصيتك. لن نشارك بريدك مع أي طرف ثالث، ويمكنك إلغاء الاشتراك بضغطة واحدة.
+          - region "من أحدث المقالات على مودونتي" [ref=e46]:
+            - heading "من أحدث المقالات على مودونتي" [level=2] [ref=e47]
+            - list [ref=e48]:
+              - listitem [ref=e49]:
+                - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e50] [cursor=pointer]:
+                  - /url: /articles/seo-guide-ecommerce-2025
+                  - generic [ref=e51]: دليل SEO المتاجر الإلكترونية 2025
+                  - img [ref=e52]
+              - listitem [ref=e54]:
+                - link "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e55] [cursor=pointer]:
+                  - /url: /articles/ما-هي-صفحات-نتائج-البحث-search-engine-results-page-serp-وكيف-يختار-google-ما-يعرضه-للمستخدم؟
+                  - generic [ref=e56]: ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟
+                  - img [ref=e57]
+              - listitem [ref=e59]:
+                - link "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e60] [cursor=pointer]:
+                  - /url: /articles/ماهو-السيو؟-واهميتة-فى-التسويق-الرقمى؟-دليلك-المبسط-للمعرفة
+                  - generic [ref=e61]: ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة
+                  - img [ref=e62]
+              - listitem [ref=e64]:
+                - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e65] [cursor=pointer]:
+                  - /url: /articles/عقلية-الفلاح-والروتين-اليومى-مابين-الفكرة-والحقيقة
+                  - generic [ref=e66]: عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة
+                  - img [ref=e67]
+              - listitem [ref=e69]:
+                - 'link "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e70] [cursor=pointer]':
+                  - /url: /articles/digital-education-future
+                  - generic [ref=e71]: "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026"
+                  - img [ref=e72]
+            - link "تصفح كل المقالات ←" [ref=e74] [cursor=pointer]:
+              - /url: /
+    - contentinfo [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e78] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e79]: ↗
+      - navigation "روابط سريعة" [ref=e80]:
+        - link "الرئيسية" [ref=e81] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e82] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e83] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e84] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e85] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e86] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e87]:
+        - link "الشروط والأحكام" [ref=e88] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e89] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e90] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e91] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e92] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e93]: © 2026 مودونتي
+  - alert [ref=e94]

@@ -54,7 +54,7 @@ export function ArticleFormNavigation() {
         }
       } else {
         toast({
-          title: messages.error.server_error,
+          title: messages.error.save_failed,
           description: result.error || messages.descriptions.article_save_error,
           variant: 'destructive',
         });
@@ -62,7 +62,7 @@ export function ArticleFormNavigation() {
     } catch (error) {
       toast({
         title: messages.error.save_failed,
-        description: error instanceof Error ? error.message : messages.descriptions.unexpected_error,
+        description: messages.descriptions.unexpected_error,
         variant: 'destructive',
       });
     }

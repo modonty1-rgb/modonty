@@ -165,12 +165,9 @@ async function AboutContent() {
             />
           </div>
         )}
-        <div className="prose prose-sm max-w-none">
+        <div className="prose prose-sm max-w-none prose-h2:text-foreground prose-h2:font-bold prose-h2:border-t prose-h2:border-border prose-h2:pt-6 prose-h2:mt-8 prose-h3:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground">
           <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
-          <div
-            className="space-y-6 text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: pageContent }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: pageContent }} />
         </div>
       </div>
     </>

@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - navigation "تنقل الصفحة" [ref=e5]:
+        - list [ref=e6]:
+          - listitem [ref=e7]:
+            - link "الرئيسية الرئيسية" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e9]
+              - generic [ref=e12]: الرئيسية
+          - listitem [ref=e13]:
+            - generic [ref=e15]: العملاء
+    - contentinfo [ref=e202]:
+      - generic [ref=e203]:
+        - generic [ref=e204]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e205] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e206]: ↗
+      - navigation "روابط سريعة" [ref=e207]:
+        - link "الرئيسية" [ref=e208] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e209] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e210] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e211] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e212] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e213] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e214]:
+        - link "الشروط والأحكام" [ref=e215] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e216] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e217] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e218] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e219] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e220]: © 2026 مودونتي
+    - contentinfo [ref=e221]
+  - generic [ref=e227] [cursor=pointer]:
+    - button "Open issues overlay" [ref=e228]:
+      - img [ref=e230]
+      - generic [ref=e232]:
+        - generic [ref=e233]: "3"
+        - generic [ref=e234]: "4"
+      - generic [ref=e235]:
+        - text: Issue
+        - generic [ref=e236]: s
+    - button "Collapse issues badge" [ref=e237]:
+      - img [ref=e238]
+  - alert [ref=e240]

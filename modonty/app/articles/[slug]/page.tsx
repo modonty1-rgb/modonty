@@ -1,13 +1,11 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound, redirect, unstable_rethrow } from "next/navigation";
-import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { sanitizeHtml } from "@/lib/sanitize-html";
-import { GTMClientTracker } from "@/components/gtm/GTMClientTracker";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 
 import {
@@ -36,16 +34,16 @@ import {
   ArticleSidebarEngagement,
   ArticleClientCard,
   CommentFormDialog,
-  ArticleMobileLayout,
 } from "./components";
-import { ArticleViewTracker } from "./components/article-view-tracker";
-import { ArticleBodyLinkTracker } from "./components/article-body-link-tracker";
+// Client-only lazy wrappers — ssr:false must live in a 'use client' file
+import {
+  GTMClientTracker,
+  ArticleViewTracker,
+  ArticleBodyLinkTracker,
+  ArticleMobileLayout,
+  NewsletterCTA,
+} from "./components/client-lazy";
 import ArticleLoading from "./loading";
-
-const NewsletterCTA = dynamic(
-  () => import("./components/sidebar/newsletter-cta").then((mod) => ({ default: mod.NewsletterCTA })),
-  { ssr: true }
-);
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;

@@ -1,0 +1,159 @@
+- generic [ref=e1]:
+  - generic [ref=e5]:
+    - navigation "Main" [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e15]:
+          - link "Search ⌥⌃1" [ref=e16] [cursor=pointer]:
+            - /url: /
+            - img [ref=e18]
+            - generic [ref=e20]: Search
+            - generic [ref=e22]: ⌥⌃1
+          - link "Computer ⌥⌃2" [ref=e23] [cursor=pointer]:
+            - /url: /computer/new
+            - img [ref=e27]
+            - generic [ref=e32]: Computer
+            - generic [ref=e34]: ⌥⌃2
+        - generic [ref=e35]:
+          - button "New thread Ctrl I" [ref=e37] [cursor=pointer]:
+            - generic [ref=e38]:
+              - img [ref=e44]
+              - generic [ref=e46]: New thread
+              - generic [ref=e48]: Ctrl I
+          - generic [ref=e49]:
+            - generic [ref=e51]:
+              - link "History" [ref=e52] [cursor=pointer]:
+                - /url: /library
+                - generic [ref=e53]:
+                  - img [ref=e58]
+                  - generic [ref=e60]: History
+              - link "Discover" [ref=e61] [cursor=pointer]:
+                - /url: /discover
+                - generic [ref=e62]:
+                  - img [ref=e67]
+                  - generic [ref=e69]: Discover
+              - link "Spaces" [ref=e70] [cursor=pointer]:
+                - /url: /spaces
+                - generic [ref=e71]:
+                  - img [ref=e76]
+                  - generic [ref=e78]: Spaces
+              - link "Finance" [ref=e79] [cursor=pointer]:
+                - /url: /finance
+                - generic [ref=e80]:
+                  - img [ref=e85]
+                  - generic [ref=e87]: Finance
+              - link "Health" [ref=e88] [cursor=pointer]:
+                - /url: /health
+                - generic [ref=e89]:
+                  - img [ref=e94]
+                  - generic [ref=e96]: Health
+              - button "More" [ref=e97] [cursor=pointer]:
+                - generic [ref=e98]:
+                  - img [ref=e103]
+                  - generic [ref=e105]: More
+            - generic [ref=e111]:
+              - button "History" [ref=e113] [cursor=pointer]:
+                - text: History
+                - img [ref=e114]
+              - generic [ref=e116]: Recent and active threads will appear here.
+    - main [ref=e122]:
+      - generic [ref=e129]:
+        - generic:
+          - generic:
+            - img "Perplexity" [ref=e132]
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic:
+                  - img "Perplexity Computer"
+        - generic [ref=e142]:
+          - generic [ref=e144]:
+            - textbox [ref=e145]:
+              - paragraph [ref=e146]
+            - generic:
+              - generic: Ask anything…
+          - generic [ref=e148]:
+            - button "Add files or tools" [ref=e149] [cursor=pointer]:
+              - img [ref=e152]
+            - button "Computer" [ref=e156] [cursor=pointer]:
+              - generic [ref=e158]:
+                - img [ref=e160]
+                - img [ref=e163]
+              - generic [ref=e165]: Computer
+              - img [ref=e167]
+          - generic [ref=e169]:
+            - button "Model" [ref=e171] [cursor=pointer]:
+              - generic [ref=e172]: Model
+              - img [ref=e174]
+            - button "Dictation" [ref=e178] [cursor=pointer]:
+              - img [ref=e181]
+            - button "Use voice mode" [ref=e184] [cursor=pointer]:
+              - img [ref=e187]
+        - generic [ref=e192]:
+          - generic [ref=e193]:
+            - img [ref=e194]
+            - button "Try Computer" [ref=e197] [cursor=pointer]:
+              - generic [ref=e198]: Try Computer
+            - button [ref=e199] [cursor=pointer]:
+              - img [ref=e200]
+          - generic [ref=e206]:
+            - tablist "Primer query categories" [ref=e209]:
+              - tab "Navigate my taxes New" [selected] [ref=e210] [cursor=pointer]:
+                - img [ref=e211]
+                - text: Navigate my taxes
+                - generic [ref=e214]: New
+              - tab "Build a business" [ref=e215] [cursor=pointer]:
+                - img [ref=e216]
+                - text: Build a business
+              - tab "Help me learn" [ref=e218] [cursor=pointer]:
+                - img [ref=e219]
+                - text: Help me learn
+              - tab "Lead generation" [ref=e221] [cursor=pointer]:
+                - img [ref=e222]
+                - text: Lead generation
+              - tab "Recruiting" [ref=e224] [cursor=pointer]:
+                - img [ref=e225]
+                - text: Recruiting
+              - tab "Organize my life" [ref=e227] [cursor=pointer]:
+                - img [ref=e228]
+                - text: Organize my life
+              - tab "Monitor the situation" [ref=e230] [cursor=pointer]:
+                - img [ref=e231]
+                - text: Monitor the situation
+              - tab "Create a prototype" [ref=e233] [cursor=pointer]:
+                - img [ref=e234]
+                - text: Create a prototype
+            - generic [ref=e239]:
+              - button "Prepare my 2025 taxes for my review" [ref=e240] [cursor=pointer]:
+                - generic [ref=e241]: Prepare my 2025 taxes for my review
+                - img [ref=e242]
+              - button "Calculate my 2025 self-employment tax and estimated payments" [ref=e244] [cursor=pointer]:
+                - generic [ref=e245]: Calculate my 2025 self-employment tax and estimated payments
+                - img [ref=e246]
+              - button "How should I report my stock compensation when filing my taxes?" [ref=e248] [cursor=pointer]:
+                - generic [ref=e249]: How should I report my stock compensation when filing my taxes?
+                - img [ref=e250]
+              - button "Review my prepared 2025 tax return for errors" [ref=e252] [cursor=pointer]:
+                - generic [ref=e253]: Review my prepared 2025 tax return for errors
+                - img [ref=e254]
+              - button "Maximize my 2025 tax deductions as a small business owner" [ref=e256] [cursor=pointer]:
+                - generic [ref=e257]: Maximize my 2025 tax deductions as a small business owner
+                - img [ref=e258]
+  - generic [ref=e260]:
+    - heading "Cookie Policy" [level=2] [ref=e261]
+    - paragraph [ref=e262]: This website uses third party cookies to serve you relevant ads and provide personalization.
+  - dialog "Cookie Policy":
+    - generic [ref=e263]:
+      - generic [ref=e264]:
+        - img [ref=e265]
+        - generic [ref=e267]: Cookie Policy
+      - generic [ref=e268]:
+        - text: This website uses third party cookies to serve you relevant ads and provide personalization by remembering your location. You may opt out from these cookies by selecting the "Opt out" button below. If you have a Perplexity account, you may opt out of the "sale" or "sharing" of your data
+        - link "here" [ref=e269] [cursor=pointer]:
+          - /url: https://www.perplexity.ai/hub/legal/privacy-policy
+        - text: .
+      - generic [ref=e270]:
+        - button "Opt out" [active] [ref=e271] [cursor=pointer]:
+          - generic [ref=e273]: Opt out
+        - button "Got it" [ref=e274] [cursor=pointer]:
+          - generic [ref=e276]: Got it

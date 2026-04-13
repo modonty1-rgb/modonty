@@ -1,0 +1,350 @@
+- generic [ref=e2]:
+  - link "Skip to content" [ref=e3] [cursor=pointer]:
+    - /url: "#primary"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Seobility logo" [ref=e7] [cursor=pointer]:
+        - /url: https://www.seobility.net/en/
+        - img "Seobility logo" [ref=e9]
+      - navigation [ref=e10]:
+        - list [ref=e12]:
+          - listitem [ref=e13]:
+            - link "Features & Use Cases" [ref=e14] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e15]:
+            - link "Pricing" [ref=e16] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/pricing/
+          - listitem [ref=e17]:
+            - link "Resources" [ref=e18] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e19]:
+            - link "EN" [ref=e20] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/seocheck/check/?url=modonty.com
+              - img [ref=e22]
+              - text: EN
+      - generic [ref=e26]:
+        - link "Log in" [ref=e27] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/login?locale=en
+        - link "Try it free" [ref=e28] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/register?locale=en
+  - paragraph [ref=e31]:
+    - generic [ref=e32]:
+      - link "Home" [ref=e34] [cursor=pointer]:
+        - /url: https://www.seobility.net/en/
+      - generic [ref=e35]: 
+      - text: SEO Checker (results)
+  - generic [ref=e36]:
+    - generic [ref=e37]:
+      - generic [ref=e39]:
+        - text: 
+        - list [ref=e40]:
+          - listitem [ref=e41]:
+            - link "SEO Checker" [ref=e42] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/seocheck/
+          - listitem [ref=e43]:
+            - link "Ranking Checker" [ref=e44] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/rankingcheck/
+          - listitem [ref=e45]:
+            - link "Backlink Checker" [ref=e46] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/backlinkchecker/
+          - listitem [ref=e47]:
+            - link "Keyword Research" [ref=e48] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/keyword-research-tool/
+          - listitem [ref=e49]:
+            - link "Snippet Generator" [ref=e50] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/serp-snippet-generator/
+          - listitem [ref=e51]:
+            - link "TF*IDF Tool" [ref=e52] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/tf-idf-keyword-tool/
+          - listitem [ref=e53]:
+            - link "Redirect Checker" [ref=e54] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/redirectcheck/
+          - listitem [ref=e55]:
+            - link "SEO Compare" [ref=e56] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/seocompare/
+          - listitem [ref=e57]:
+            - link "Keyword Checker" [ref=e58] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/keywordcheck/
+        - generic [ref=e60] [cursor=pointer]:
+          - generic [ref=e61]: More
+          - generic [ref=e62]: 
+      - img [ref=e63]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - heading "SEO Checker" [level=1] [ref=e67]
+          - generic [ref=e69]:
+            - button "Share Share Icon" [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]:
+                - text: Share
+                - img "Share Icon" [ref=e73]
+            - button "PDF Download Icon" [ref=e74] [cursor=pointer]:
+              - link "PDF Download Icon" [ref=e75]:
+                - /url: https://www.seobility.net/en/pricing/
+                - text: PDF
+                - img "Download Icon" [ref=e76]
+        - paragraph [ref=e77]: Analyze any web page for technical errors and on-page SEO problems, and get tips on how to optimize it.
+        - text:         
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - img [ref=e81]
+            - strong [ref=e84]: Need more checks per day?
+            - generic [ref=e85]: (Unlock 50 daily queries with Seobility Premium!)
+          - button "Learn more" [ref=e86] [cursor=pointer]
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - generic [ref=e89]:
+              - generic [ref=e90]: Plan
+              - generic [ref=e91]: Checks per day
+              - generic [ref=e92]: Cost
+              - generic [ref=e93]: Unlock
+            - generic [ref=e94]:
+              - generic [ref=e95]: Basic
+              - generic [ref=e96]: "5"
+              - generic [ref=e97]: Free forever
+              - link "Sign up for free" [ref=e99] [cursor=pointer]:
+                - /url: https://app.seobility.net/user/register?productid=0
+            - generic [ref=e100]:
+              - generic [ref=e101]: Premium
+              - generic [ref=e102]: "50"
+              - generic [ref=e103]: $50.00 / month
+              - link "Try it free for 14 days" [ref=e105] [cursor=pointer]:
+                - /url: https://app.seobility.net/user/register
+            - generic [ref=e106]:
+              - generic [ref=e107]: Agency
+              - generic [ref=e108]: "200"
+              - generic [ref=e109]: $200.00 / month
+              - link "Sign up now" [ref=e111] [cursor=pointer]:
+                - /url: https://app.seobility.net/user/register?productid=2&payinterval=1
+          - paragraph
+          - paragraph [ref=e112]:
+            - text: Questions? Contact us anytime at
+            - link "support@seobility.net" [ref=e113] [cursor=pointer]:
+              - /url: mailto:support@seobility.net
+            - text: – we’re happy to help!
+          - paragraph [ref=e114]
+          - paragraph [ref=e115]: Prices exclude VAT where applicable.
+          - paragraph
+    - main [ref=e116]:
+      - generic [ref=e122]:
+        - generic [ref=e125]:
+          - heading "Check page" [level=3] [ref=e127]
+          - generic [ref=e129]:
+            - paragraph [ref=e131]: You have 3 of 3 checks left today
+            - button [ref=e134] [cursor=pointer]:
+              - img [ref=e136]
+        - generic [ref=e139]:
+          - generic [ref=e141]:
+            - generic [ref=e143]:
+              - generic [ref=e144]: Page URL
+              - button [ref=e148] [cursor=pointer]:
+                - img [ref=e150]
+            - textbox "https://example.com" [ref=e154]: modonty.com
+          - generic [ref=e155]:
+            - separator [ref=e156]
+            - generic [ref=e157]:
+              - generic [ref=e159]:
+                - generic [ref=e160]: Crawl mode
+                - button [ref=e164] [cursor=pointer]:
+                  - img [ref=e166]
+              - generic [ref=e168]:
+                - generic [ref=e170]:
+                  - radio "Standard (without JavaScript)" [checked] [ref=e172] [cursor=pointer]
+                  - generic [ref=e173] [cursor=pointer]: Standard (without JavaScript)
+                - generic [ref=e175]:
+                  - radio "Chrome (JavaScript enabled)" [ref=e177] [cursor=pointer]
+                  - generic [ref=e178] [cursor=pointer]: Chrome (JavaScript enabled)
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - generic [ref=e182]:
+                    - generic [ref=e183]: "HTTP authentication: Username"
+                    - button [ref=e187] [cursor=pointer]:
+                      - img [ref=e189]
+                  - textbox "Username" [ref=e193]
+                - generic [ref=e194]:
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: "HTTP authentication: Password"
+                    - button [ref=e201] [cursor=pointer]:
+                      - img [ref=e203]
+                  - textbox "Password" [ref=e207]
+              - separator [ref=e208]
+          - generic [ref=e209]:
+            - button "Analyze web page" [ref=e210] [cursor=pointer]:
+              - generic [ref=e211]: Analyze web page
+            - button [ref=e212] [cursor=pointer]:
+              - img [ref=e214]
+    - generic [ref=e217]:
+      - generic [ref=e218]:
+        - text: Start your 14-day trial now!
+        - heading "Seobility Premium" [level=2] [ref=e220]
+        - paragraph [ref=e221]: "Analyze more than just one URL and unlock all features of our SEO software suite:"
+        - list [ref=e222]:
+          - listitem [ref=e223]:
+            - generic [ref=e224]: 
+            - text: Comprehensive SEO audit for your entire website
+          - listitem [ref=e225]:
+            - generic [ref=e226]: 
+            - text: Ranking Monitoring
+          - listitem [ref=e227]:
+            - generic [ref=e228]: 
+            - text: Backlink Monitoring & Analysis
+          - listitem [ref=e229]:
+            - generic [ref=e230]: 
+            - text: Competitor Analysis
+          - listitem [ref=e231]:
+            - generic [ref=e232]: 
+            - text: And more!
+        - generic [ref=e233]:
+          - generic [ref=e234]:
+            - generic [ref=e235]: Free 14-day trial
+            - generic [ref=e237]:
+              - checkbox [checked]
+          - generic [ref=e239]: FREE
+        - generic [ref=e240]:
+          - text: Price per month
+          - generic [ref=e241]: $50
+          - paragraph [ref=e242]: Can be canceled at any time! Automatically renews to our monthly Premium plan for $50/month.
+        - link "Start free trial" [ref=e243] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/register?productid=1&payinterval=1
+      - generic [ref=e244]:
+        - img "Seobility Website Audit" [ref=e246]
+        - img "G2 High Performer SEO Tools Spring 2026" [ref=e247]
+    - contentinfo [ref=e248]:
+      - generic [ref=e249]:
+        - img "Seobility Logo" [ref=e250]
+        - generic [ref=e251]:
+          - link "Contact us" [ref=e252] [cursor=pointer]:
+            - /url: /en/contact/
+            - button "Contact us" [ref=e253]
+          - generic [ref=e254]: Seobility GmbH, Willy-Brandt-Platz 16, 90402 Nuremberg, Germany
+        - generic [ref=e256]:
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - text: Features
+              - navigation "Footer Menu 3" [ref=e260]:
+                - list [ref=e262]:
+                  - listitem [ref=e263]:
+                    - link "Website Audit" [ref=e264] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/website-audit/
+                  - listitem [ref=e265]:
+                    - link "Ranking Monitoring" [ref=e266] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/ranking-monitoring/
+                  - listitem [ref=e267]:
+                    - link "Backlink Monitoring" [ref=e268] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/backlink-monitoring/
+                  - listitem [ref=e269]:
+                    - link "Competitor Analysis" [ref=e270] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/seo-competitor-analysis-tools/
+                  - listitem [ref=e271]:
+                    - link "Keyword Research & Content Tools" [ref=e272] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/seo-content-tools/
+                  - listitem [ref=e273]:
+                    - link "Uptime Monitoring" [ref=e274] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/uptime-monitoring/
+            - generic [ref=e275]:
+              - text: Use Cases
+              - navigation "Footer Menu 2" [ref=e277]:
+                - list [ref=e279]:
+                  - listitem [ref=e280]:
+                    - link "Seobility for Businesses" [ref=e281] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/seobility-for-businesses/
+                  - listitem [ref=e282]:
+                    - link "Seobility for Agencies & Freelancers" [ref=e283] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/seo-software-for-agencies-and-freelancers/
+                  - listitem [ref=e284]:
+                    - link "Seobility for Local Businesses" [ref=e285] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/seo-tool-for-local-businesses/
+          - generic [ref=e287]:
+            - text: Free SEO Tools
+            - navigation "Footer Menu 3" [ref=e289]:
+              - list [ref=e291]:
+                - listitem [ref=e292]:
+                  - link "SEO Checker" [ref=e293] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seocheck/
+                - listitem [ref=e294]:
+                  - link "Ranking Checker" [ref=e295] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/rankingcheck/
+                - listitem [ref=e296]:
+                  - link "Backlink Checker" [ref=e297] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/backlinkchecker/
+                - listitem [ref=e298]:
+                  - link "Keyword Research Tool" [ref=e299] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/keyword-research-tool/
+                - listitem [ref=e300]:
+                  - link "TF*IDF Tool" [ref=e301] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/tf-idf-keyword-tool/
+                - listitem [ref=e302]:
+                  - link "Redirect Checker" [ref=e303] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/redirectcheck/
+                - listitem [ref=e304]:
+                  - link "SERP Snippet Generator" [ref=e305] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/serp-snippet-generator/
+                - listitem [ref=e306]:
+                  - link "Keyword Checker" [ref=e307] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/keywordcheck/
+                - listitem [ref=e308]:
+                  - link "SEO Compare" [ref=e309] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seocompare/
+          - generic [ref=e310]:
+            - generic [ref=e311]:
+              - text: Seobility
+              - navigation "Footer Menu 1" [ref=e313]:
+                - list [ref=e315]:
+                  - listitem [ref=e316]:
+                    - link "Plans & Pricing" [ref=e317] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/pricing/
+                  - listitem [ref=e318]:
+                    - link "Seobility Team" [ref=e319] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/team/
+                  - listitem [ref=e320]:
+                    - link "Contact" [ref=e321] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/contact/
+                  - listitem [ref=e322]:
+                    - link "Seobility Customers" [ref=e323] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/customers/
+                  - listitem [ref=e324]:
+                    - link "Affiliate Program" [ref=e325] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/affiliates/
+                  - listitem [ref=e326]:
+                    - link "Entity & Relational Grounding Data" [ref=e327] [cursor=pointer]:
+                      - /url: https://seobility.net/ai/ai.html
+            - generic [ref=e328]:
+              - text: Resources
+              - navigation "Footer Menu Resources" [ref=e330]:
+                - list [ref=e332]:
+                  - listitem [ref=e333]:
+                    - link "Blog" [ref=e334] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/blog/
+                  - listitem [ref=e335]:
+                    - link "Wiki" [ref=e336] [cursor=pointer]:
+                      - /url: /en/wiki
+                  - listitem [ref=e337]:
+                    - link "FAQ" [ref=e338] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/faq/
+                  - listitem [ref=e339]:
+                    - link "Seobility Beginner’s Guide" [ref=e340] [cursor=pointer]:
+                      - /url: https://www.seobility.net/en/blog/seobility-beginners-guide/
+          - generic [ref=e342]:
+            - text: Legal
+            - navigation "Footer Menu Legal" [ref=e344]:
+              - list [ref=e346]:
+                - listitem [ref=e347]:
+                  - link "Terms & Conditions" [ref=e348] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/terms/
+                - listitem [ref=e349]:
+                  - link "Privacy" [ref=e350] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/privacy/
+                - listitem [ref=e351]:
+                  - link "Imprint" [ref=e352] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/imprint/
+      - generic [ref=e354]:
+        - generic [ref=e355]: © 2026 - Seobility.net
+        - generic [ref=e356]:
+          - link "LinkedIn" [ref=e357] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/seobility-seo-tool/
+            - generic [ref=e358]: 
+          - link "Facebook" [ref=e359] [cursor=pointer]:
+            - /url: https://www.facebook.com/seobility.net/
+            - generic [ref=e360]: 
+          - link "Instagram" [ref=e361] [cursor=pointer]:
+            - /url: https://www.instagram.com/seobility/
+            - generic [ref=e362]: 

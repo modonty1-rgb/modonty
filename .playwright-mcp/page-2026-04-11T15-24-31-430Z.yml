@@ -1,0 +1,866 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - navigation "Breadcrumb" [ref=e111]:
+            - link "Go to dashboard" [ref=e112] [cursor=pointer]:
+              - /url: /
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e119]: Seo-overview
+          - navigation "Main navigation" [ref=e121]:
+            - link "Modonty Modonty" [ref=e122] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e124]
+              - generic [ref=e125]: Modonty
+            - generic [ref=e127]:
+              - link "Articles" [ref=e128] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e129]:
+                  - img
+                  - generic [ref=e130]: Articles
+              - link "Clients" [ref=e131] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e132]:
+                  - img
+                  - generic [ref=e133]: Clients
+              - link "Media" [ref=e134] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e135]:
+                  - img
+                  - generic [ref=e136]: Media
+          - generic [ref=e137]:
+            - link "1" [ref=e138] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e139]:
+                - img
+                - generic [ref=e140]: "1"
+            - button "M" [ref=e141] [cursor=pointer]:
+              - generic [ref=e143]: M
+      - generic [ref=e144]:
+        - generic [ref=e145]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e146]:
+          - button "Send Note" [ref=e147] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e148] [cursor=pointer]:
+            - img
+      - main [ref=e149]:
+        - generic [ref=e197]:
+          - generic [ref=e199]:
+            - heading "SEO Overview" [level=1] [ref=e200]
+            - paragraph [ref=e201]: Review SEO status for all pages and articles — meta tags, JSON-LD, and scores
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - generic [ref=e206]:
+                - img [ref=e208]
+                - generic [ref=e210]:
+                  - paragraph [ref=e211]: 9 of 14 pages have SEO data
+                  - paragraph [ref=e212]: 5 pages still need content or SEO generation
+                - generic [ref=e213]:
+                  - generic [ref=e214]:
+                    - paragraph [ref=e215]:
+                      - text: "9"
+                      - generic [ref=e216]: /14
+                    - paragraph [ref=e217]: Meta Tags
+                  - generic [ref=e218]:
+                    - paragraph [ref=e219]:
+                      - text: "9"
+                      - generic [ref=e220]: /14
+                    - paragraph [ref=e221]: JSON-LD
+              - button "Regenerate All (14 pages)" [ref=e223] [cursor=pointer]:
+                - img
+                - text: Regenerate All (14 pages)
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - generic [ref=e226]:
+                    - img [ref=e227]
+                    - generic [ref=e230]: List Pages
+                    - generic [ref=e231]: "8"
+                  - paragraph [ref=e232]: Home, Clients, Categories, Trending, Tags, Industries, Articles
+                - table [ref=e235]:
+                  - rowgroup [ref=e236]:
+                    - row "Page Meta Tags JSON-LD SEO Title Last Generated Actions" [ref=e237]:
+                      - columnheader "Page" [ref=e238]
+                      - columnheader "Meta Tags" [ref=e239]
+                      - columnheader "JSON-LD" [ref=e240]
+                      - columnheader "SEO Title" [ref=e241]
+                      - columnheader "Last Generated" [ref=e242]
+                      - columnheader "Actions" [ref=e243]
+                  - rowgroup [ref=e244]:
+                    - row "Home modonty.com/ Generated Generated مدونتي | شركة صناعة محتوى تسويقي و SEO في مصر والسعودية ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1148]:
+                      - cell "Home modonty.com/" [ref=e246]:
+                        - generic [ref=e247]:
+                          - img [ref=e248]
+                          - generic [ref=e251]:
+                            - paragraph [ref=e252]: Home
+                            - paragraph [ref=e253]: modonty.com/
+                      - cell "Generated" [ref=e254]:
+                        - generic [ref=e255]:
+                          - img [ref=e256]
+                          - text: Generated
+                      - cell "Generated" [ref=e259]:
+                        - generic [ref=e260]:
+                          - img [ref=e261]
+                          - text: Generated
+                      - cell "مدونتي | شركة صناعة محتوى تسويقي و SEO في مصر والسعودية" [ref=e264]:
+                        - paragraph [ref=e266]: مدونتي | شركة صناعة محتوى تسويقي و SEO في مصر والسعودية
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1149]
+                      - cell [ref=e268]:
+                        - button "Regenerate SEO" [ref=e270] [cursor=pointer]:
+                          - img
+                    - row "Clients modonty.com/clients Generated Generated العملاء — شركاء النجاح | مدونتي ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1150]:
+                      - cell "Clients modonty.com/clients" [ref=e272]:
+                        - generic [ref=e273]:
+                          - img [ref=e274]
+                          - generic [ref=e277]:
+                            - paragraph [ref=e278]: Clients
+                            - paragraph [ref=e279]: modonty.com/clients
+                      - cell "Generated" [ref=e280]:
+                        - generic [ref=e281]:
+                          - img [ref=e282]
+                          - text: Generated
+                      - cell "Generated" [ref=e285]:
+                        - generic [ref=e286]:
+                          - img [ref=e287]
+                          - text: Generated
+                      - cell "العملاء — شركاء النجاح | مدونتي" [ref=e290]:
+                        - paragraph [ref=e292]: العملاء — شركاء النجاح | مدونتي
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1151]
+                      - cell [ref=e294]:
+                        - button "Regenerate SEO" [ref=e296] [cursor=pointer]:
+                          - img
+                    - row "Categories modonty.com/categories Generated Generated التصنيفات — تصفح المقالات حسب التخصص | مدونتي ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1152]:
+                      - cell "Categories modonty.com/categories" [ref=e298]:
+                        - generic [ref=e299]:
+                          - img [ref=e300]
+                          - generic [ref=e303]:
+                            - paragraph [ref=e304]: Categories
+                            - paragraph [ref=e305]: modonty.com/categories
+                      - cell "Generated" [ref=e306]:
+                        - generic [ref=e307]:
+                          - img [ref=e308]
+                          - text: Generated
+                      - cell "Generated" [ref=e311]:
+                        - generic [ref=e312]:
+                          - img [ref=e313]
+                          - text: Generated
+                      - cell "التصنيفات — تصفح المقالات حسب التخصص | مدونتي" [ref=e316]:
+                        - paragraph [ref=e318]: التصنيفات — تصفح المقالات حسب التخصص | مدونتي
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1153]
+                      - cell [ref=e320]:
+                        - button "Regenerate SEO" [ref=e322] [cursor=pointer]:
+                          - img
+                    - row "Trending modonty.com/trending Generated Generated الرائج — المقالات الأكثر قراءة | مدونتي ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1154]:
+                      - cell "Trending modonty.com/trending" [ref=e324]:
+                        - generic [ref=e325]:
+                          - img [ref=e326]
+                          - generic [ref=e329]:
+                            - paragraph [ref=e330]: Trending
+                            - paragraph [ref=e331]: modonty.com/trending
+                      - cell "Generated" [ref=e332]:
+                        - generic [ref=e333]:
+                          - img [ref=e334]
+                          - text: Generated
+                      - cell "Generated" [ref=e337]:
+                        - generic [ref=e338]:
+                          - img [ref=e339]
+                          - text: Generated
+                      - cell "الرائج — المقالات الأكثر قراءة | مدونتي" [ref=e342]:
+                        - paragraph [ref=e344]: الرائج — المقالات الأكثر قراءة | مدونتي
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1155]
+                      - cell [ref=e346]:
+                        - button "Regenerate SEO" [ref=e348] [cursor=pointer]:
+                          - img
+                    - row "Tags modonty.com/tags Generated Generated التاجات — المواضيع الرائجة | مدونتي ٩ أبريل ٢٠٢٦، ٠٢:٥٩ م" [ref=e349]:
+                      - cell "Tags modonty.com/tags" [ref=e350]:
+                        - generic [ref=e351]:
+                          - img [ref=e352]
+                          - generic [ref=e355]:
+                            - paragraph [ref=e356]: Tags
+                            - paragraph [ref=e357]: modonty.com/tags
+                      - cell "Generated" [ref=e358]:
+                        - generic [ref=e359]:
+                          - img [ref=e360]
+                          - text: Generated
+                      - cell "Generated" [ref=e363]:
+                        - generic [ref=e364]:
+                          - img [ref=e365]
+                          - text: Generated
+                      - cell "التاجات — المواضيع الرائجة | مدونتي" [ref=e368]:
+                        - paragraph [ref=e370]: التاجات — المواضيع الرائجة | مدونتي
+                      - cell "٩ أبريل ٢٠٢٦، ٠٢:٥٩ م" [ref=e371]
+                      - cell [ref=e372]:
+                        - button "Regenerate SEO" [ref=e374] [cursor=pointer]:
+                          - img
+                    - row "Industries modonty.com/industries Generated Generated القطاعات — الصناعات التي نخدمها | مدونتي ٩ أبريل ٢٠٢٦، ٠٢:٥٩ م" [ref=e375]:
+                      - cell "Industries modonty.com/industries" [ref=e376]:
+                        - generic [ref=e377]:
+                          - img [ref=e378]
+                          - generic [ref=e381]:
+                            - paragraph [ref=e382]: Industries
+                            - paragraph [ref=e383]: modonty.com/industries
+                      - cell "Generated" [ref=e384]:
+                        - generic [ref=e385]:
+                          - img [ref=e386]
+                          - text: Generated
+                      - cell "Generated" [ref=e389]:
+                        - generic [ref=e390]:
+                          - img [ref=e391]
+                          - text: Generated
+                      - cell "القطاعات — الصناعات التي نخدمها | مدونتي" [ref=e394]:
+                        - paragraph [ref=e396]: القطاعات — الصناعات التي نخدمها | مدونتي
+                      - cell "٩ أبريل ٢٠٢٦، ٠٢:٥٩ م" [ref=e397]
+                      - cell [ref=e398]:
+                        - button "Regenerate SEO" [ref=e400] [cursor=pointer]:
+                          - img
+                    - row "Articles modonty.com/articles Generated Generated المقالات — محتوى عربي احترافي | مدونتي ١٠ أبريل ٢٠٢٦، ٠٢:٤٨ م" [ref=e401]:
+                      - cell "Articles modonty.com/articles" [ref=e402]:
+                        - generic [ref=e403]:
+                          - img [ref=e404]
+                          - generic [ref=e407]:
+                            - paragraph [ref=e408]: Articles
+                            - paragraph [ref=e409]: modonty.com/articles
+                      - cell "Generated" [ref=e410]:
+                        - generic [ref=e411]:
+                          - img [ref=e412]
+                          - text: Generated
+                      - cell "Generated" [ref=e415]:
+                        - generic [ref=e416]:
+                          - img [ref=e417]
+                          - text: Generated
+                      - cell "المقالات — محتوى عربي احترافي | مدونتي" [ref=e420]:
+                        - paragraph [ref=e422]: المقالات — محتوى عربي احترافي | مدونتي
+                      - cell "١٠ أبريل ٢٠٢٦، ٠٢:٤٨ م" [ref=e423]
+                      - cell [ref=e424]:
+                        - button "Regenerate SEO" [ref=e426] [cursor=pointer]:
+                          - img
+                    - row "FAQ modonty.com/help/faq Pending Pending — —" [ref=e427]:
+                      - cell "FAQ modonty.com/help/faq" [ref=e428]:
+                        - generic [ref=e429]:
+                          - img [ref=e430]
+                          - generic [ref=e433]:
+                            - paragraph [ref=e434]: FAQ
+                            - paragraph [ref=e435]: modonty.com/help/faq
+                      - cell "Pending" [ref=e436]:
+                        - generic [ref=e437]:
+                          - img [ref=e438]
+                          - text: Pending
+                      - cell "Pending" [ref=e441]:
+                        - generic [ref=e442]:
+                          - img [ref=e443]
+                          - text: Pending
+                      - cell "—" [ref=e446]:
+                        - generic [ref=e447]: —
+                      - cell "—" [ref=e448]
+                      - cell [ref=e449]:
+                        - button "Regenerate SEO" [ref=e451] [cursor=pointer]:
+                          - img
+              - generic [ref=e452]:
+                - generic [ref=e453]:
+                  - generic [ref=e454]:
+                    - img [ref=e455]
+                    - generic [ref=e458]: Content Pages
+                    - generic [ref=e459]: "6"
+                  - paragraph [ref=e460]: About, Terms, Privacy Policy, Cookie Policy, Copyright Policy, User Agreement
+                - table [ref=e463]:
+                  - rowgroup [ref=e464]:
+                    - row "Page Meta Tags JSON-LD SEO Title Last Generated Actions" [ref=e465]:
+                      - columnheader "Page" [ref=e466]
+                      - columnheader "Meta Tags" [ref=e467]
+                      - columnheader "JSON-LD" [ref=e468]
+                      - columnheader "SEO Title" [ref=e469]
+                      - columnheader "Last Generated" [ref=e470]
+                      - columnheader "Actions" [ref=e471]
+                  - rowgroup [ref=e472]:
+                    - row "About modonty.com/about Generated Generated عن مدونتي — منصة SEO عربية متخصصة ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1156]:
+                      - cell "About modonty.com/about" [ref=e474]:
+                        - generic [ref=e475]:
+                          - img [ref=e476]
+                          - generic [ref=e479]:
+                            - paragraph [ref=e480]: About
+                            - paragraph [ref=e481]: modonty.com/about
+                      - cell "Generated" [ref=e482]:
+                        - generic [ref=e483]:
+                          - img [ref=e484]
+                          - text: Generated
+                      - cell "Generated" [ref=e487]:
+                        - generic [ref=e488]:
+                          - img [ref=e489]
+                          - text: Generated
+                      - cell "عن مدونتي — منصة SEO عربية متخصصة" [ref=e492]:
+                        - paragraph [ref=e494]: عن مدونتي — منصة SEO عربية متخصصة
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1157]
+                      - cell [ref=e496]:
+                        - generic [ref=e497]:
+                          - button "Regenerate SEO" [ref=e498] [cursor=pointer]:
+                            - img
+                          - link [ref=e499] [cursor=pointer]:
+                            - /url: /modonty/pages/about
+                            - img
+                    - row "Terms of Service modonty.com/terms Generated Generated الشروط والأحكام — مدونتي ١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1158]:
+                      - cell "Terms of Service modonty.com/terms" [ref=e501]:
+                        - generic [ref=e502]:
+                          - img [ref=e503]
+                          - generic [ref=e506]:
+                            - paragraph [ref=e507]: Terms of Service
+                            - paragraph [ref=e508]: modonty.com/terms
+                      - cell "Generated" [ref=e509]:
+                        - generic [ref=e510]:
+                          - img [ref=e511]
+                          - text: Generated
+                      - cell "Generated" [ref=e514]:
+                        - generic [ref=e515]:
+                          - img [ref=e516]
+                          - text: Generated
+                      - cell "الشروط والأحكام — مدونتي" [ref=e519]:
+                        - paragraph [ref=e521]: الشروط والأحكام — مدونتي
+                      - cell "١١ أبريل ٢٠٢٦، ٠٦:٢٠ م" [ref=e1159]
+                      - cell [ref=e523]:
+                        - generic [ref=e524]:
+                          - button "Regenerate SEO" [ref=e525] [cursor=pointer]:
+                            - img
+                          - link [ref=e526] [cursor=pointer]:
+                            - /url: /modonty/pages/terms
+                            - img
+                    - row "User Agreement modonty.com/legal/user-agreement Pending Pending — —" [ref=e527]:
+                      - cell "User Agreement modonty.com/legal/user-agreement" [ref=e528]:
+                        - generic [ref=e529]:
+                          - img [ref=e530]
+                          - generic [ref=e533]:
+                            - paragraph [ref=e534]: User Agreement
+                            - paragraph [ref=e535]: modonty.com/legal/user-agreement
+                      - cell "Pending" [ref=e536]:
+                        - generic [ref=e537]:
+                          - img [ref=e538]
+                          - text: Pending
+                      - cell "Pending" [ref=e541]:
+                        - generic [ref=e542]:
+                          - img [ref=e543]
+                          - text: Pending
+                      - cell "—" [ref=e546]:
+                        - generic [ref=e547]: —
+                      - cell "—" [ref=e548]
+                      - cell [ref=e549]:
+                        - generic [ref=e550]:
+                          - button "Regenerate SEO" [ref=e551] [cursor=pointer]:
+                            - img
+                          - link [ref=e552] [cursor=pointer]:
+                            - /url: /modonty/pages/user-agreement
+                            - img
+                    - row "Privacy Policy modonty.com/legal/privacy-policy Pending Pending — —" [ref=e553]:
+                      - cell "Privacy Policy modonty.com/legal/privacy-policy" [ref=e554]:
+                        - generic [ref=e555]:
+                          - img [ref=e556]
+                          - generic [ref=e559]:
+                            - paragraph [ref=e560]: Privacy Policy
+                            - paragraph [ref=e561]: modonty.com/legal/privacy-policy
+                      - cell "Pending" [ref=e562]:
+                        - generic [ref=e563]:
+                          - img [ref=e564]
+                          - text: Pending
+                      - cell "Pending" [ref=e567]:
+                        - generic [ref=e568]:
+                          - img [ref=e569]
+                          - text: Pending
+                      - cell "—" [ref=e572]:
+                        - generic [ref=e573]: —
+                      - cell "—" [ref=e574]
+                      - cell [ref=e575]:
+                        - generic [ref=e576]:
+                          - button "Regenerate SEO" [ref=e577] [cursor=pointer]:
+                            - img
+                          - link [ref=e578] [cursor=pointer]:
+                            - /url: /modonty/pages/privacy-policy
+                            - img
+                    - row "Cookie Policy modonty.com/legal/cookie-policy Pending Pending — —" [ref=e579]:
+                      - cell "Cookie Policy modonty.com/legal/cookie-policy" [ref=e580]:
+                        - generic [ref=e581]:
+                          - img [ref=e582]
+                          - generic [ref=e585]:
+                            - paragraph [ref=e586]: Cookie Policy
+                            - paragraph [ref=e587]: modonty.com/legal/cookie-policy
+                      - cell "Pending" [ref=e588]:
+                        - generic [ref=e589]:
+                          - img [ref=e590]
+                          - text: Pending
+                      - cell "Pending" [ref=e593]:
+                        - generic [ref=e594]:
+                          - img [ref=e595]
+                          - text: Pending
+                      - cell "—" [ref=e598]:
+                        - generic [ref=e599]: —
+                      - cell "—" [ref=e600]
+                      - cell [ref=e601]:
+                        - generic [ref=e602]:
+                          - button "Regenerate SEO" [ref=e603] [cursor=pointer]:
+                            - img
+                          - link [ref=e604] [cursor=pointer]:
+                            - /url: /modonty/pages/cookie-policy
+                            - img
+                    - row "Copyright Policy modonty.com/legal/copyright-policy Pending Pending — —" [ref=e605]:
+                      - cell "Copyright Policy modonty.com/legal/copyright-policy" [ref=e606]:
+                        - generic [ref=e607]:
+                          - img [ref=e608]
+                          - generic [ref=e611]:
+                            - paragraph [ref=e612]: Copyright Policy
+                            - paragraph [ref=e613]: modonty.com/legal/copyright-policy
+                      - cell "Pending" [ref=e614]:
+                        - generic [ref=e615]:
+                          - img [ref=e616]
+                          - text: Pending
+                      - cell "Pending" [ref=e619]:
+                        - generic [ref=e620]:
+                          - img [ref=e621]
+                          - text: Pending
+                      - cell "—" [ref=e624]:
+                        - generic [ref=e625]: —
+                      - cell "—" [ref=e626]
+                      - cell [ref=e627]:
+                        - generic [ref=e628]:
+                          - button "Regenerate SEO" [ref=e629] [cursor=pointer]:
+                            - img
+                          - link [ref=e630] [cursor=pointer]:
+                            - /url: /modonty/pages/copyright-policy
+                            - img
+            - generic [ref=e631]:
+              - generic [ref=e633]:
+                - generic [ref=e634]:
+                  - img [ref=e635]
+                  - generic [ref=e638]: Articles SEO Health
+                  - generic [ref=e639]: "23"
+                - generic [ref=e640]:
+                  - generic [ref=e643]: 0 below 60%
+                  - generic [ref=e646]: 1 60-80%
+                  - generic [ref=e649]: 22 above 80%
+              - generic [ref=e650]:
+                - generic [ref=e654]:
+                  - generic [ref=e656]: Select articles to fix
+                  - generic [ref=e657]:
+                    - button "Select All Below 80% (1)" [ref=e658] [cursor=pointer]:
+                      - img
+                      - text: Select All Below 80% (1)
+                    - button "Fix Selected (0)" [disabled]:
+                      - img
+                      - text: Fix Selected (0)
+                - table [ref=e661]:
+                  - rowgroup [ref=e662]:
+                    - row "Article Score Status Missing Words" [ref=e663]:
+                      - columnheader [ref=e664]:
+                        - checkbox [ref=e665] [cursor=pointer]
+                      - columnheader "Article" [ref=e666]
+                      - columnheader "Score" [ref=e667]
+                      - columnheader "Status" [ref=e668]
+                      - columnheader "Missing" [ref=e669]
+                      - columnheader "Words" [ref=e670]
+                  - rowgroup [ref=e671]:
+                    - row "دليل SEO المتاجر الإلكترونية 2025 أكاديمية المستقبل 71% Published All good 2,010" [ref=e672]:
+                      - cell [ref=e673]:
+                        - checkbox [ref=e674] [cursor=pointer]
+                      - cell "دليل SEO المتاجر الإلكترونية 2025 أكاديمية المستقبل" [ref=e675]:
+                        - generic [ref=e676]:
+                          - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e677] [cursor=pointer]:
+                            - /url: /articles/69d163ba4e8bf3f470aff0e4
+                          - paragraph [ref=e678]: أكاديمية المستقبل
+                      - cell "71%" [ref=e679]:
+                        - generic [ref=e680]: 71%
+                      - cell "Published" [ref=e681]:
+                        - generic [ref=e682]: Published
+                      - cell "All good" [ref=e683]
+                      - cell "2,010" [ref=e684]
+                    - row "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1 أكاديمية المستقبل 80% Writing Image 239" [ref=e685]:
+                      - cell [ref=e686]:
+                        - checkbox [ref=e687] [cursor=pointer]
+                      - cell "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1 أكاديمية المستقبل" [ref=e688]:
+                        - generic [ref=e689]:
+                          - link "لماذا أصبحت المهارات الرقمية هي الاستثمار الأذكى في مستقبلك؟ 1" [ref=e690] [cursor=pointer]:
+                            - /url: /articles/69d37ed891005fa8473183c8
+                          - paragraph [ref=e691]: أكاديمية المستقبل
+                      - cell "80%" [ref=e692]:
+                        - generic [ref=e693]: 80%
+                      - cell "Writing" [ref=e694]:
+                        - generic [ref=e695]: Writing
+                      - cell "Image" [ref=e696]:
+                        - generic [ref=e698]:
+                          - img [ref=e699]
+                          - text: Image
+                      - cell "239" [ref=e706]
+                    - row "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026 أكاديمية المستقبل 88% Writing All good 161" [ref=e707]:
+                      - cell [ref=e708]:
+                        - checkbox [ref=e709] [cursor=pointer]
+                      - cell "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026 أكاديمية المستقبل" [ref=e710]:
+                        - generic [ref=e711]:
+                          - link "أفضل 10 أدوات ذكاء اصطناعي للتسويق الرقمي في 2026" [ref=e712] [cursor=pointer]:
+                            - /url: /articles/69d2e3bc83864877b03eddfb
+                          - paragraph [ref=e713]: أكاديمية المستقبل
+                      - cell "88%" [ref=e714]:
+                        - generic [ref=e715]: 88%
+                      - cell "Writing" [ref=e716]:
+                        - generic [ref=e717]: Writing
+                      - cell "All good" [ref=e718]
+                      - cell "161" [ref=e719]
+                    - 'row "اختبار خالد: دليل تحسين تجربة المستخدم 1 أكاديمية المستقبل 88% Published All good 177" [ref=e720]':
+                      - cell [ref=e721]:
+                        - checkbox [ref=e722] [cursor=pointer]
+                      - 'cell "اختبار خالد: دليل تحسين تجربة المستخدم 1 أكاديمية المستقبل" [ref=e723]':
+                        - generic [ref=e724]:
+                          - 'link "اختبار خالد: دليل تحسين تجربة المستخدم 1" [ref=e725] [cursor=pointer]':
+                            - /url: /articles/69d2f9090d73480fcbf3050e
+                          - paragraph [ref=e726]: أكاديمية المستقبل
+                      - cell "88%" [ref=e727]:
+                        - generic [ref=e728]: 88%
+                      - cell "Published" [ref=e729]:
+                        - generic [ref=e730]: Published
+                      - cell "All good" [ref=e731]
+                      - cell "177" [ref=e732]
+                    - row "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟ JBR SEO 92% Published All good 489" [ref=e733]:
+                      - cell [ref=e734]:
+                        - checkbox [ref=e735] [cursor=pointer]
+                      - cell "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟ JBR SEO" [ref=e736]:
+                        - generic [ref=e737]:
+                          - link "ماهى محركات البحث مثل Google؟ ولماذا لاتظهر بعض المواقع فى نتائج البحث؟" [ref=e738] [cursor=pointer]:
+                            - /url: /articles/69d74957bcbae09689d031ac
+                          - paragraph [ref=e739]: JBR SEO
+                      - cell "92%" [ref=e740]:
+                        - generic [ref=e741]: 92%
+                      - cell "Published" [ref=e742]:
+                        - generic [ref=e743]: Published
+                      - cell "All good" [ref=e744]
+                      - cell "489" [ref=e745]
+                    - row "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟ JBR SEO 95% Published All good 746" [ref=e746]:
+                      - cell [ref=e747]:
+                        - checkbox [ref=e748] [cursor=pointer]
+                      - cell "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟ JBR SEO" [ref=e749]:
+                        - generic [ref=e750]:
+                          - link "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [ref=e751] [cursor=pointer]:
+                            - /url: /articles/69d74e213bebabbaa003ff64
+                          - paragraph [ref=e752]: JBR SEO
+                      - cell "95%" [ref=e753]:
+                        - generic [ref=e754]: 95%
+                      - cell "Published" [ref=e755]:
+                        - generic [ref=e756]: Published
+                      - cell "All good" [ref=e757]
+                      - cell "746" [ref=e758]
+                    - row "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة JBR SEO 100% Published All good 737" [ref=e759]:
+                      - cell [ref=e760]:
+                        - checkbox [ref=e761] [cursor=pointer]
+                      - cell "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة JBR SEO" [ref=e762]:
+                        - generic [ref=e763]:
+                          - link "ماهو السيو؟ واهميتة فى التسويق الرقمى؟ دليلك المبسط للمعرفة" [ref=e764] [cursor=pointer]:
+                            - /url: /articles/69d6830820251ee8497527b4
+                          - paragraph [ref=e765]: JBR SEO
+                      - cell "100%" [ref=e766]:
+                        - generic [ref=e767]: 100%
+                      - cell "Published" [ref=e768]:
+                        - generic [ref=e769]: Published
+                      - cell "All good" [ref=e770]
+                      - cell "737" [ref=e771]
+                    - row "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول) JBR SEO 100% Published All good 414" [ref=e772]:
+                      - cell [ref=e773]:
+                        - checkbox [ref=e774] [cursor=pointer]
+                      - cell "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول) JBR SEO" [ref=e775]:
+                        - generic [ref=e776]:
+                          - link "لماذا لا يظهر موقعك في Google؟ (أهم الأسباب والحلول)" [ref=e777] [cursor=pointer]:
+                            - /url: /articles/69d7836112cc08126dc69b1c
+                          - paragraph [ref=e778]: JBR SEO
+                      - cell "100%" [ref=e779]:
+                        - generic [ref=e780]: 100%
+                      - cell "Published" [ref=e781]:
+                        - generic [ref=e782]: Published
+                      - cell "All good" [ref=e783]
+                      - cell "414" [ref=e784]
+                    - row "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟ JBR SEO 100% Published All good 492" [ref=e785]:
+                      - cell [ref=e786]:
+                        - checkbox [ref=e787] [cursor=pointer]
+                      - cell "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟ JBR SEO" [ref=e788]:
+                        - generic [ref=e789]:
+                          - link "ما هو Link Building وكيف تبني روابط قوية لظهورموقعك؟" [ref=e790] [cursor=pointer]:
+                            - /url: /articles/69d7809e69cf0ea93b914f66
+                          - paragraph [ref=e791]: JBR SEO
+                      - cell "100%" [ref=e792]:
+                        - generic [ref=e793]: 100%
+                      - cell "Published" [ref=e794]:
+                        - generic [ref=e795]: Published
+                      - cell "All good" [ref=e796]
+                      - cell "492" [ref=e797]
+                    - row "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟ JBR SEO 100% Published All good 584" [ref=e798]:
+                      - cell [ref=e799]:
+                        - checkbox [ref=e800] [cursor=pointer]
+                      - cell "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟ JBR SEO" [ref=e801]:
+                        - generic [ref=e802]:
+                          - link "ما هو Technical SEO ولماذا هو مهم لنجاح موقعك؟" [ref=e803] [cursor=pointer]:
+                            - /url: /articles/69d778d43b998ae1cc77d83b
+                          - paragraph [ref=e804]: JBR SEO
+                      - cell "100%" [ref=e805]:
+                        - generic [ref=e806]: 100%
+                      - cell "Published" [ref=e807]:
+                        - generic [ref=e808]: Published
+                      - cell "All good" [ref=e809]
+                      - cell "584" [ref=e810]
+                    - row "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟ JBR SEO 100% Published All good 694" [ref=e811]:
+                      - cell [ref=e812]:
+                        - checkbox [ref=e813] [cursor=pointer]
+                      - cell "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟ JBR SEO" [ref=e814]:
+                        - generic [ref=e815]:
+                          - link "ما هو On-Page SEO وكيف تحسن صفحات موقعك خطوة بخطوة؟" [ref=e816] [cursor=pointer]:
+                            - /url: /articles/69d775b596d0983a19a0002f
+                          - paragraph [ref=e817]: JBR SEO
+                      - cell "100%" [ref=e818]:
+                        - generic [ref=e819]: 100%
+                      - cell "Published" [ref=e820]:
+                        - generic [ref=e821]: Published
+                      - cell "All good" [ref=e822]
+                      - cell "694" [ref=e823]
+                    - row "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث) JBR SEO 100% Published All good 450" [ref=e824]:
+                      - cell [ref=e825]:
+                        - checkbox [ref=e826] [cursor=pointer]
+                      - cell "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث) JBR SEO" [ref=e827]:
+                        - generic [ref=e828]:
+                          - link "كيف يفكر المستخدم عندما يبحث في Google؟ (فهم نية البحث)" [ref=e829] [cursor=pointer]:
+                            - /url: /articles/69d7693ec67ccdcd88199738
+                          - paragraph [ref=e830]: JBR SEO
+                      - cell "100%" [ref=e831]:
+                        - generic [ref=e832]: 100%
+                      - cell "Published" [ref=e833]:
+                        - generic [ref=e834]: Published
+                      - cell "All good" [ref=e835]
+                      - cell "450" [ref=e836]
+                    - row "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟ JBR SEO 100% Published All good 765" [ref=e837]:
+                      - cell [ref=e838]:
+                        - checkbox [ref=e839] [cursor=pointer]
+                      - cell "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟ JBR SEO" [ref=e840]:
+                        - generic [ref=e841]:
+                          - link "ما هي الكلمات المفتاحية (Keywords) وكيف تختارها لموقعك؟" [ref=e842] [cursor=pointer]:
+                            - /url: /articles/69d76605e645e0beffdc7d6b
+                          - paragraph [ref=e843]: JBR SEO
+                      - cell "100%" [ref=e844]:
+                        - generic [ref=e845]: 100%
+                      - cell "Published" [ref=e846]:
+                        - generic [ref=e847]: Published
+                      - cell "All good" [ref=e848]
+                      - cell "765" [ref=e849]
+                    - row "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟ JBR SEO 100% Published All good 506" [ref=e850]:
+                      - cell [ref=e851]:
+                        - checkbox [ref=e852] [cursor=pointer]
+                      - cell "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟ JBR SEO" [ref=e853]:
+                        - generic [ref=e854]:
+                          - link "ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة ؟" [ref=e855] [cursor=pointer]:
+                            - /url: /articles/69d762994d3d12fdbd730d07
+                          - paragraph [ref=e856]: JBR SEO
+                      - cell "100%" [ref=e857]:
+                        - generic [ref=e858]: 100%
+                      - cell "Published" [ref=e859]:
+                        - generic [ref=e860]: Published
+                      - cell "All good" [ref=e861]
+                      - cell "506" [ref=e862]
+                    - row "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟ JABR GROUP CONTRACTING AND MANUFACTURING 100% Published All good 490" [ref=e863]:
+                      - cell [ref=e864]:
+                        - checkbox [ref=e865] [cursor=pointer]
+                      - cell "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟ JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e866]:
+                        - generic [ref=e867]:
+                          - link "مشاريع تسليم مفتاح (Turnkey) كيف تنفذ مشروعك بأعلى كفاءة؟" [ref=e868] [cursor=pointer]:
+                            - /url: /articles/69d7903c7307a53e597efb35
+                          - paragraph [ref=e869]: JABR GROUP CONTRACTING AND MANUFACTURING
+                      - cell "100%" [ref=e870]:
+                        - generic [ref=e871]: 100%
+                      - cell "Published" [ref=e872]:
+                        - generic [ref=e873]: Published
+                      - cell "All good" [ref=e874]
+                      - cell "490" [ref=e875]
+                    - row "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟ JABR GROUP CONTRACTING AND MANUFACTURING 100% Published All good 446" [ref=e876]:
+                      - cell [ref=e877]:
+                        - checkbox [ref=e878] [cursor=pointer]
+                      - cell "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟ JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e879]:
+                        - generic [ref=e880]:
+                          - link "ماهى أنظمة مكافحة الحريق وكيف تختار النظام المناسب لمشروعك؟" [ref=e881] [cursor=pointer]:
+                            - /url: /articles/69d7a1d002d85d88d9cd3370
+                          - paragraph [ref=e882]: JABR GROUP CONTRACTING AND MANUFACTURING
+                      - cell "100%" [ref=e883]:
+                        - generic [ref=e884]: 100%
+                      - cell "Published" [ref=e885]:
+                        - generic [ref=e886]: Published
+                      - cell "All good" [ref=e887]
+                      - cell "446" [ref=e888]
+                    - row "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة عيادات بلسم الطبية 100% Published All good 455" [ref=e889]:
+                      - cell [ref=e890]:
+                        - checkbox [ref=e891] [cursor=pointer]
+                      - cell "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة عيادات بلسم الطبية" [ref=e892]:
+                        - generic [ref=e893]:
+                          - link "عقلية الفلاح والروتين اليومى مابين الفكرة والحقيقة" [ref=e894] [cursor=pointer]:
+                            - /url: /articles/69d4f72c769fbb50b610e3e8
+                          - paragraph [ref=e895]: عيادات بلسم الطبية
+                      - cell "100%" [ref=e896]:
+                        - generic [ref=e897]: 100%
+                      - cell "Published" [ref=e898]:
+                        - generic [ref=e899]: Published
+                      - cell "All good" [ref=e900]
+                      - cell "455" [ref=e901]
+                    - row "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة أكاديمية المستقبل 100% Published All good 753" [ref=e902]:
+                      - cell [ref=e903]:
+                        - checkbox [ref=e904] [cursor=pointer]
+                      - cell "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة أكاديمية المستقبل" [ref=e905]:
+                        - generic [ref=e906]:
+                          - link "ازاى اكسب 10000 دولار شهريا وانا نايم فى البيت بسهولة" [ref=e907] [cursor=pointer]:
+                            - /url: /articles/69d37e1b4a51c01e57968963
+                          - paragraph [ref=e908]: أكاديمية المستقبل
+                      - cell "100%" [ref=e909]:
+                        - generic [ref=e910]: 100%
+                      - cell "Published" [ref=e911]:
+                        - generic [ref=e912]: Published
+                      - cell "All good" [ref=e913]
+                      - cell "753" [ref=e914]
+                    - row "ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟ JABR GROUP CONTRACTING AND MANUFACTURING 100% Published All good 392" [ref=e915]:
+                      - cell [ref=e916]:
+                        - checkbox [ref=e917] [cursor=pointer]
+                      - cell "ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟ JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e918]:
+                        - generic [ref=e919]:
+                          - link "ما هو نظام HVAC؟ وكيف يؤثر على كفاءة المباني في السعودية؟" [ref=e920] [cursor=pointer]:
+                            - /url: /articles/69d79ef702d85d88d9cd335a
+                          - paragraph [ref=e921]: JABR GROUP CONTRACTING AND MANUFACTURING
+                      - cell "100%" [ref=e922]:
+                        - generic [ref=e923]: 100%
+                      - cell "Published" [ref=e924]:
+                        - generic [ref=e925]: Published
+                      - cell "All good" [ref=e926]
+                      - cell "392" [ref=e927]
+                    - 'row "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026 أكاديمية المستقبل 100% Published All good 750" [ref=e928]':
+                      - cell [ref=e929]:
+                        - checkbox [ref=e930] [cursor=pointer]
+                      - 'cell "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026 أكاديمية المستقبل" [ref=e931]':
+                        - generic [ref=e932]:
+                          - 'link "دليل شامل: مستقبل التعليم الرقمي في السعودية 2026" [ref=e933] [cursor=pointer]':
+                            - /url: /articles/69d163ea4e8bf3f470aff0ee
+                          - paragraph [ref=e934]: أكاديمية المستقبل
+                      - cell "100%" [ref=e935]:
+                        - generic [ref=e936]: 100%
+                      - cell "Published" [ref=e937]:
+                        - generic [ref=e938]: Published
+                      - cell "All good" [ref=e939]
+                      - cell "750" [ref=e940]
+                    - row "الذكاء الاصطناعي في الرعاية الصحية أكاديمية المستقبل 100% Published All good 300" [ref=e941]:
+                      - cell [ref=e942]:
+                        - checkbox [ref=e943] [cursor=pointer]
+                      - cell "الذكاء الاصطناعي في الرعاية الصحية أكاديمية المستقبل" [ref=e944]:
+                        - generic [ref=e945]:
+                          - link "الذكاء الاصطناعي في الرعاية الصحية" [ref=e946] [cursor=pointer]:
+                            - /url: /articles/69d163d24e8bf3f470aff0e9
+                          - paragraph [ref=e947]: أكاديمية المستقبل
+                      - cell "100%" [ref=e948]:
+                        - generic [ref=e949]: 100%
+                      - cell "Published" [ref=e950]:
+                        - generic [ref=e951]: Published
+                      - cell "All good" [ref=e952]
+                      - cell "300" [ref=e953]
+                    - row "الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP JABR GROUP CONTRACTING AND MANUFACTURING 100% Published All good 403" [ref=e954]:
+                      - cell [ref=e955]:
+                        - checkbox [ref=e956] [cursor=pointer]
+                      - cell "الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e957]:
+                        - generic [ref=e958]:
+                          - link "الفرق بين الأعمال المدنية Civil والأعمال الكهروميكانيكيةMEP" [ref=e959] [cursor=pointer]:
+                            - /url: /articles/69d794f18ff8a195b09b1c0b
+                          - paragraph [ref=e960]: JABR GROUP CONTRACTING AND MANUFACTURING
+                      - cell "100%" [ref=e961]:
+                        - generic [ref=e962]: 100%
+                      - cell "Published" [ref=e963]:
+                        - generic [ref=e964]: Published
+                      - cell "All good" [ref=e965]
+                      - cell "403" [ref=e966]
+                    - row "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية JABR GROUP CONTRACTING AND MANUFACTURING 100% Published All good 402" [ref=e967]:
+                      - cell [ref=e968]:
+                        - checkbox [ref=e969] [cursor=pointer]
+                      - cell "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية JABR GROUP CONTRACTING AND MANUFACTURING" [ref=e970]:
+                        - generic [ref=e971]:
+                          - link "أعمال MEPالعمود الفقري لأي مشروع ناجح في السعودية" [ref=e972] [cursor=pointer]:
+                            - /url: /articles/69d7925a7307a53e597efb40
+                          - paragraph [ref=e973]: JABR GROUP CONTRACTING AND MANUFACTURING
+                      - cell "100%" [ref=e974]:
+                        - generic [ref=e975]: 100%
+                      - cell "Published" [ref=e976]:
+                        - generic [ref=e977]: Published
+                      - cell "All good" [ref=e978]
+                      - cell "402" [ref=e979]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e192] [cursor=pointer]:
+    - img [ref=e193]
+  - alert [ref=e196]

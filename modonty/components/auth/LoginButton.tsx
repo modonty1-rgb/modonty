@@ -8,12 +8,12 @@ export function LoginButton() {
   return (
     <Button
       onClick={() => signIn()}
-      variant="outline"
+      variant="ghost"
       size="icon"
-      className="h-10 w-10"
+      className="h-11 w-11 rounded-xl"
       aria-label="تسجيل الدخول"
     >
-      <IconLogin className="h-4 w-4" />
+      <IconLogin className="h-5 w-5" />
     </Button>
   );
 }

@@ -1,7 +1,17 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-12 — archive system pushed + SEO 307 redirect for archived articles
-> **الإصدار الحالي:** admin v0.32.0 | modonty v1.30.0
+> **آخر تحديث:** 2026-04-13 — Mobile UX complete (MOB-001–018 all fixed) | modonty v1.31.0
+> **الإصدار الحالي:** admin v0.33.0 | modonty v1.31.0
 > المهام المنجزة في → [MASTER-DONE.md](MASTER-DONE.md)
+
+---
+
+## 🟡 MEDIUM — Admin: Archive toast notification
+
+- [ ] **ARCH-1** — بعد الضغط على Archive أو Unarchive، يطلع toast رسالة تأكيد:
+  - Archive → `"تم أرشفة المقال — لن يظهر في المدونة"`
+  - Unarchive → `"تم إلغاء الأرشفة — المقال عاد للحالة السابقة"`
+  - File: `admin/app/(dashboard)/articles/[id]/components/archive-article-button.tsx`
+  - ✅ Dialog تأكيد تم عمله (admin v0.33.0) — الـ toast لسه باقي
 
 ---
 

@@ -1,0 +1,112 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - search "بحث المقالات" [ref=e9] [cursor=pointer]:
+          - img [ref=e11]
+          - generic [ref=e14]: ابحث...
+        - generic [ref=e15]:
+          - link "عملاء بلا إعلانات — جبر SEO" [ref=e16] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+          - button "فتح المحادثة" [ref=e17] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e19] [cursor=pointer]:
+            - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - navigation "تنقل الصفحة" [ref=e22]:
+          - list [ref=e23]:
+            - listitem [ref=e24]:
+              - link "الرئيسية الرئيسية" [ref=e25] [cursor=pointer]:
+                - /url: /
+                - img "الرئيسية" [ref=e26]
+                - generic [ref=e29]: الرئيسية
+            - listitem [ref=e30]:
+              - generic [ref=e32]: الشروط والأحكام
+        - generic [ref=e33]:
+          - heading "الشروط والأحكام" [level=1] [ref=e34]
+          - paragraph [ref=e35]: "آخر تحديث:"
+          - generic [ref=e36]:
+            - heading "الشروط والأحكام" [level=1] [ref=e37]
+            - paragraph [ref=e38]: "آخر تحديث: مارس 2025"
+            - heading "1. القبول بالشروط" [level=2] [ref=e39]
+            - paragraph [ref=e40]: باستخدامك لمنصة مدونتي فإنك توافق على هذه الشروط والأحكام. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام المنصة.
+            - heading "2. الخدمات المقدمة" [level=2] [ref=e41]
+            - paragraph [ref=e42]: تقدم مدونتي خدمات تحسين محركات البحث وصناعة المحتوى للشركات. تشمل الخدمات كتابة المقالات وتحليل الكلمات المفتاحية وتقارير الأداء.
+            - heading "3. الملكية الفكرية" [level=2] [ref=e43]
+            - paragraph [ref=e44]: جميع المحتويات المنشورة على المنصة محمية بموجب قوانين حقوق النشر. لا يجوز نسخ أو إعادة نشر أي محتوى بدون إذن كتابي مسبق.
+    - contentinfo [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e48] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e49]: ↗
+      - navigation "روابط سريعة" [ref=e50]:
+        - link "الرئيسية" [ref=e51] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e52] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e53] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e54] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e55] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e56] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e57]:
+        - link "الشروط والأحكام" [ref=e58] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e59] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e60] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e61] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e62] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e63]: © 2026 مودونتي
+    - contentinfo [ref=e64]:
+      - navigation "التنقل السفلي" [ref=e65]:
+        - link "الرئيسية" [ref=e66] [cursor=pointer]:
+          - /url: /
+          - img [ref=e68]
+          - generic [ref=e71]: الرئيسية
+        - link "الرائجة" [ref=e72] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e74]
+          - generic [ref=e77]: الرائجة
+        - link "الفئات" [ref=e78] [cursor=pointer]:
+          - /url: /categories
+          - img [ref=e80]
+          - generic [ref=e84]: الفئات
+        - link "العملاء" [ref=e85] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e87]
+          - generic [ref=e91]: العملاء
+        - link "المحفوظات" [ref=e92] [cursor=pointer]:
+          - /url: /users/profile/favorites
+          - img [ref=e94]
+          - generic [ref=e96]: المحفوظات
+        - button "Open menu" [ref=e97] [cursor=pointer]:
+          - img
+  - generic [ref=e102] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e103]:
+      - img [ref=e104]
+    - generic [ref=e107]:
+      - button "Open issues overlay" [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]: "3"
+          - generic [ref=e111]: "4"
+        - generic [ref=e112]:
+          - text: Issue
+          - generic [ref=e113]: s
+      - button "Collapse issues badge" [ref=e114]:
+        - img [ref=e115]
+  - alert [ref=e117]

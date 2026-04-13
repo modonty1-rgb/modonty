@@ -23,14 +23,14 @@ export function MetaTagsStep() {
             <Input
               value={formData.seoTitle || ''}
               onChange={(e) => updateField('seoTitle', e.target.value)}
-              placeholder="عنوان محسّن لمحركات البحث (الحد الأقصى 51 حرف)"
-              maxLength={51}
+              placeholder="عنوان محسّن لمحركات البحث (50–60 حرف)"
+              maxLength={60}
             />
             <div className="flex justify-between items-center">
               <p className="text-xs text-muted-foreground">
-                الحد الأقصى 51 حرف — يُضاف &quot;- مودونتي&quot; تلقائياً (العنوان النهائي في جوجل: 60 حرف)
+                أفضل نطاق: 50–60 حرف — معيار Semrush وGoogle
               </p>
-              <CharacterCounter current={(formData.seoTitle || '').length} max={51} />
+              <CharacterCounter current={(formData.seoTitle || '').length} max={60} />
             </div>
           </div>
 
@@ -39,12 +39,13 @@ export function MetaTagsStep() {
             <Textarea
               value={formData.seoDescription || ''}
               onChange={(e) => updateField('seoDescription', e.target.value)}
-              placeholder="Meta description for search results (150-160 characters)"
+              placeholder="وصف محسّن لمحركات البحث (120–160 حرف)"
               rows={3}
+              maxLength={160}
             />
             <div className="flex justify-between items-center">
               <p className="text-xs text-muted-foreground">
-                Optimize for 150-160 characters for better search visibility
+                أفضل نطاق: 120–160 حرف — معيار Semrush وGoogle
               </p>
               <CharacterCounter current={(formData.seoDescription || '').length} max={160} />
             </div>

@@ -1,0 +1,356 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Switch to dark mode" [ref=e106] [cursor=pointer]:
+          - img
+    - generic [ref=e107]:
+      - generic [ref=e108]:
+        - generic [ref=e109]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e110]:
+          - button "Send Note" [ref=e111] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e112] [cursor=pointer]:
+            - img
+      - main [ref=e113]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]:
+                - heading "Categories" [level=1] [ref=e118]
+                - paragraph [ref=e119]: Manage all categories in the system
+              - generic [ref=e120]:
+                - generic [ref=e121]:
+                  - img [ref=e122]
+                  - text: 15 total
+                - generic [ref=e127]:
+                  - img [ref=e128]
+                  - text: 5 with articles
+            - generic [ref=e131]:
+              - button "Revalidate All SEO" [ref=e132] [cursor=pointer]:
+                - img
+                - text: Revalidate All
+              - link "New Category" [ref=e133] [cursor=pointer]:
+                - /url: /categories/new
+                - button "New Category" [ref=e134]:
+                  - img
+                  - text: New Category
+          - generic [ref=e136]:
+            - table [ref=e139]:
+              - rowgroup [ref=e140]:
+                - row "Name Parent Articles SEO Created Actions" [ref=e141]:
+                  - columnheader "Name" [ref=e142] [cursor=pointer]:
+                    - generic [ref=e143]:
+                      - text: Name
+                      - img [ref=e144]
+                  - columnheader "Parent" [ref=e147] [cursor=pointer]:
+                    - generic [ref=e148]:
+                      - text: Parent
+                      - img [ref=e149]
+                  - columnheader "Articles" [ref=e152] [cursor=pointer]:
+                    - generic [ref=e153]:
+                      - text: Articles
+                      - img [ref=e154]
+                  - columnheader "SEO" [ref=e157]
+                  - columnheader "Created" [ref=e158] [cursor=pointer]:
+                    - generic [ref=e159]:
+                      - text: Created
+                      - img [ref=e160]
+                  - columnheader "Actions" [ref=e163]
+              - rowgroup [ref=e164]:
+                - row "SEO تحسين محركات البحث seo-arabic التسويق الرقمي 12 Cached Apr 4, 2026 View Edit Delete" [ref=e165] [cursor=pointer]:
+                  - cell "SEO تحسين محركات البحث seo-arabic" [ref=e166]:
+                    - generic [ref=e167]:
+                      - text: SEO تحسين محركات البحث
+                      - paragraph [ref=e168]: seo-arabic
+                  - cell "التسويق الرقمي" [ref=e169]
+                  - cell "12" [ref=e170]:
+                    - generic [ref=e171]: "12"
+                  - cell "Cached" [ref=e172]:
+                    - generic [ref=e173]:
+                      - img [ref=e174]
+                      - generic [ref=e177]: Cached
+                  - cell "Apr 4, 2026" [ref=e178]
+                  - cell "View Edit Delete" [ref=e179]:
+                    - generic [ref=e180]:
+                      - button "View" [ref=e181]:
+                        - img
+                      - button "Edit" [ref=e182]:
+                        - img
+                      - button "Delete" [ref=e183]:
+                        - img
+                - row "الانشاءات والتعمير الانشاءات-والتعمير — 5 Cached Apr 9, 2026 View Edit Delete" [ref=e184] [cursor=pointer]:
+                  - cell "الانشاءات والتعمير الانشاءات-والتعمير" [ref=e185]:
+                    - generic [ref=e186]:
+                      - text: الانشاءات والتعمير
+                      - paragraph [ref=e187]: الانشاءات-والتعمير
+                  - cell "—" [ref=e188]
+                  - cell "5" [ref=e189]:
+                    - generic [ref=e190]: "5"
+                  - cell "Cached" [ref=e191]:
+                    - generic [ref=e192]:
+                      - img [ref=e193]
+                      - generic [ref=e196]: Cached
+                  - cell "Apr 9, 2026" [ref=e197]
+                  - cell "View Edit Delete" [ref=e198]:
+                    - generic [ref=e199]:
+                      - button "View" [ref=e200]:
+                        - img
+                      - button "Edit" [ref=e201]:
+                        - img
+                      - button "Delete" [ref=e202]:
+                        - img
+                - row "التسويق الرقمي digital-marketing — 1 Cached Apr 4, 2026 View Edit Delete" [ref=e203] [cursor=pointer]:
+                  - cell "التسويق الرقمي digital-marketing" [ref=e204]:
+                    - generic [ref=e205]:
+                      - text: التسويق الرقمي
+                      - paragraph [ref=e206]: digital-marketing
+                  - cell "—" [ref=e207]
+                  - cell "1" [ref=e208]:
+                    - generic [ref=e209]: "1"
+                  - cell "Cached" [ref=e210]:
+                    - generic [ref=e211]:
+                      - img [ref=e212]
+                      - generic [ref=e215]: Cached
+                  - cell "Apr 4, 2026" [ref=e216]
+                  - cell "View Edit Delete" [ref=e217]:
+                    - generic [ref=e218]:
+                      - button "View" [ref=e219]:
+                        - img
+                      - button "Edit" [ref=e220]:
+                        - img
+                      - button "Delete" [ref=e221]:
+                        - img
+                - row "التعليم والتدريب education-blog — 1 Cached Apr 3, 2026 View Edit Delete" [ref=e222] [cursor=pointer]:
+                  - cell "التعليم والتدريب education-blog" [ref=e223]:
+                    - generic [ref=e224]:
+                      - text: التعليم والتدريب
+                      - paragraph [ref=e225]: education-blog
+                  - cell "—" [ref=e226]
+                  - cell "1" [ref=e227]:
+                    - generic [ref=e228]: "1"
+                  - cell "Cached" [ref=e229]:
+                    - generic [ref=e230]:
+                      - img [ref=e231]
+                      - generic [ref=e234]: Cached
+                  - cell "Apr 3, 2026" [ref=e235]
+                  - cell "View Edit Delete" [ref=e236]:
+                    - generic [ref=e237]:
+                      - button "View" [ref=e238]:
+                        - img
+                      - button "Edit" [ref=e239]:
+                        - img
+                      - button "Delete" [ref=e240]:
+                        - img
+                - row "التقنية والذكاء الاصطناعي tech-ai-blog — 0 Cached Apr 4, 2026 View Edit Delete" [ref=e241] [cursor=pointer]:
+                  - cell "التقنية والذكاء الاصطناعي tech-ai-blog" [ref=e242]:
+                    - generic [ref=e243]:
+                      - text: التقنية والذكاء الاصطناعي
+                      - paragraph [ref=e244]: tech-ai-blog
+                  - cell "—" [ref=e245]
+                  - cell "0" [ref=e246]:
+                    - generic [ref=e247]: "0"
+                  - cell "Cached" [ref=e248]:
+                    - generic [ref=e249]:
+                      - img [ref=e250]
+                      - generic [ref=e253]: Cached
+                  - cell "Apr 4, 2026" [ref=e254]
+                  - cell "View Edit Delete" [ref=e255]:
+                    - generic [ref=e256]:
+                      - button "View" [ref=e257]:
+                        - img
+                      - button "Edit" [ref=e258]:
+                        - img
+                      - button "Delete" [ref=e259]:
+                        - img
+                - row "التمويل الشخصي personal-finance — 0 Cached Apr 3, 2026 View Edit Delete" [ref=e260] [cursor=pointer]:
+                  - cell "التمويل الشخصي personal-finance" [ref=e261]:
+                    - generic [ref=e262]:
+                      - text: التمويل الشخصي
+                      - paragraph [ref=e263]: personal-finance
+                  - cell "—" [ref=e264]
+                  - cell "0" [ref=e265]:
+                    - generic [ref=e266]: "0"
+                  - cell "Cached" [ref=e267]:
+                    - generic [ref=e268]:
+                      - img [ref=e269]
+                      - generic [ref=e272]: Cached
+                  - cell "Apr 3, 2026" [ref=e273]
+                  - cell "View Edit Delete" [ref=e274]:
+                    - generic [ref=e275]:
+                      - button "View" [ref=e276]:
+                        - img
+                      - button "Edit" [ref=e277]:
+                        - img
+                      - button "Delete" [ref=e278]:
+                        - img
+                - row "السياحة والسفر tourism-travel — 0 Cached Apr 3, 2026 View Edit Delete" [ref=e279] [cursor=pointer]:
+                  - cell "السياحة والسفر tourism-travel" [ref=e280]:
+                    - generic [ref=e281]:
+                      - text: السياحة والسفر
+                      - paragraph [ref=e282]: tourism-travel
+                  - cell "—" [ref=e283]
+                  - cell "0" [ref=e284]:
+                    - generic [ref=e285]: "0"
+                  - cell "Cached" [ref=e286]:
+                    - generic [ref=e287]:
+                      - img [ref=e288]
+                      - generic [ref=e291]: Cached
+                  - cell "Apr 3, 2026" [ref=e292]
+                  - cell "View Edit Delete" [ref=e293]:
+                    - generic [ref=e294]:
+                      - button "View" [ref=e295]:
+                        - img
+                      - button "Edit" [ref=e296]:
+                        - img
+                      - button "Delete" [ref=e297]:
+                        - img
+                - row "الصحة والعافية health-wellness — 1 Cached Apr 4, 2026 View Edit Delete" [ref=e298] [cursor=pointer]:
+                  - cell "الصحة والعافية health-wellness" [ref=e299]:
+                    - generic [ref=e300]:
+                      - text: الصحة والعافية
+                      - paragraph [ref=e301]: health-wellness
+                  - cell "—" [ref=e302]
+                  - cell "1" [ref=e303]:
+                    - generic [ref=e304]: "1"
+                  - cell "Cached" [ref=e305]:
+                    - generic [ref=e306]:
+                      - img [ref=e307]
+                      - generic [ref=e310]: Cached
+                  - cell "Apr 4, 2026" [ref=e311]
+                  - cell "View Edit Delete" [ref=e312]:
+                    - generic [ref=e313]:
+                      - button "View" [ref=e314]:
+                        - img
+                      - button "Edit" [ref=e315]:
+                        - img
+                      - button "Delete" [ref=e316]:
+                        - img
+                - row "العقارات والاستثمار real-estate-investment — 3 Cached Apr 3, 2026 View Edit Delete" [ref=e317] [cursor=pointer]:
+                  - cell "العقارات والاستثمار real-estate-investment" [ref=e318]:
+                    - generic [ref=e319]:
+                      - text: العقارات والاستثمار
+                      - paragraph [ref=e320]: real-estate-investment
+                  - cell "—" [ref=e321]
+                  - cell "3" [ref=e322]:
+                    - generic [ref=e323]: "3"
+                  - cell "Cached" [ref=e324]:
+                    - generic [ref=e325]:
+                      - img [ref=e326]
+                      - generic [ref=e329]: Cached
+                  - cell "Apr 3, 2026" [ref=e330]
+                  - cell "View Edit Delete" [ref=e331]:
+                    - generic [ref=e332]:
+                      - button "View" [ref=e333]:
+                        - img
+                      - button "Edit" [ref=e334]:
+                        - img
+                      - button "Delete" [ref=e335]:
+                        - img
+                - row "القانون وتأسيس الشركات legal-business — 0 Cached Apr 3, 2026 View Edit Delete" [ref=e336] [cursor=pointer]:
+                  - cell "القانون وتأسيس الشركات legal-business" [ref=e337]:
+                    - generic [ref=e338]:
+                      - text: القانون وتأسيس الشركات
+                      - paragraph [ref=e339]: legal-business
+                  - cell "—" [ref=e340]
+                  - cell "0" [ref=e341]:
+                    - generic [ref=e342]: "0"
+                  - cell "Cached" [ref=e343]:
+                    - generic [ref=e344]:
+                      - img [ref=e345]
+                      - generic [ref=e348]: Cached
+                  - cell "Apr 3, 2026" [ref=e349]
+                  - cell "View Edit Delete" [ref=e350]:
+                    - generic [ref=e351]:
+                      - button "View" [ref=e352]:
+                        - img
+                      - button "Edit" [ref=e353]:
+                        - img
+                      - button "Delete" [ref=e354]:
+                        - img
+            - generic [ref=e355]:
+              - paragraph [ref=e356]: 1–10 of 15
+              - generic [ref=e357]:
+                - button "Previous page" [disabled]:
+                  - img
+                - generic [ref=e358]: 1 / 2
+                - button "Next page" [ref=e359] [cursor=pointer]:
+                  - img
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e360]

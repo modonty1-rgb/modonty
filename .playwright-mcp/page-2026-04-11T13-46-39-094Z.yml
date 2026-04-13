@@ -1,0 +1,149 @@
+- generic [ref=e1]:
+  - generic [ref=e5]:
+    - navigation "Main" [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e15]:
+          - link "Search ⌥⌃1" [ref=e16] [cursor=pointer]:
+            - /url: /
+            - img [ref=e18]
+            - generic [ref=e20]: Search
+            - generic [ref=e22]: ⌥⌃1
+          - link "Computer ⌥⌃2" [ref=e23] [cursor=pointer]:
+            - /url: /computer/new
+            - img [ref=e27]
+            - generic [ref=e32]: Computer
+            - generic [ref=e34]: ⌥⌃2
+        - generic [ref=e35]:
+          - button "New thread Ctrl I" [ref=e37] [cursor=pointer]:
+            - generic [ref=e38]:
+              - img [ref=e44]
+              - generic [ref=e46]: New thread
+              - generic [ref=e48]: Ctrl I
+          - generic [ref=e49]:
+            - generic [ref=e51]:
+              - link "History" [ref=e52] [cursor=pointer]:
+                - /url: /library
+                - generic [ref=e53]:
+                  - img [ref=e58]
+                  - generic [ref=e60]: History
+              - link "Discover" [ref=e61] [cursor=pointer]:
+                - /url: /discover
+                - generic [ref=e62]:
+                  - img [ref=e67]
+                  - generic [ref=e69]: Discover
+              - link "Spaces" [ref=e70] [cursor=pointer]:
+                - /url: /spaces
+                - generic [ref=e71]:
+                  - img [ref=e76]
+                  - generic [ref=e78]: Spaces
+              - link "Finance" [ref=e79] [cursor=pointer]:
+                - /url: /finance
+                - generic [ref=e80]:
+                  - img [ref=e85]
+                  - generic [ref=e87]: Finance
+              - link "Health" [ref=e88] [cursor=pointer]:
+                - /url: /health
+                - generic [ref=e89]:
+                  - img [ref=e94]
+                  - generic [ref=e96]: Health
+              - button "More" [ref=e97] [cursor=pointer]:
+                - generic [ref=e98]:
+                  - img [ref=e103]
+                  - generic [ref=e105]: More
+            - generic [ref=e111]:
+              - button "History" [ref=e113] [cursor=pointer]:
+                - text: History
+                - img [ref=e114]
+              - generic [ref=e116]: Recent and active threads will appear here.
+        - button "Sign In" [ref=e127] [cursor=pointer]:
+          - generic [ref=e128]:
+            - generic [ref=e130]:
+              - img [ref=e133]
+              - generic [ref=e136]: Sign In
+            - generic:
+              - img
+    - main [ref=e141]:
+      - generic [ref=e148]:
+        - generic:
+          - generic:
+            - img "Perplexity" [ref=e151]
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic:
+                  - img "Perplexity Computer"
+        - generic [ref=e161]:
+          - generic [ref=e163]:
+            - textbox [active] [ref=e164]:
+              - paragraph [ref=e165]
+            - generic:
+              - generic: Ask anything…
+          - generic [ref=e167]:
+            - button "Add files or tools" [ref=e168] [cursor=pointer]:
+              - img [ref=e171]
+            - button "Computer" [ref=e175] [cursor=pointer]:
+              - generic [ref=e177]:
+                - img [ref=e179]
+                - img [ref=e182]
+              - generic [ref=e184]: Computer
+              - img [ref=e186]
+          - generic [ref=e188]:
+            - button "Model" [ref=e190] [cursor=pointer]:
+              - generic [ref=e191]: Model
+              - img [ref=e193]
+            - button "Dictation" [ref=e197] [cursor=pointer]:
+              - img [ref=e200]
+            - button "Use voice mode" [ref=e203] [cursor=pointer]:
+              - img [ref=e206]
+        - generic [ref=e211]:
+          - generic [ref=e212]:
+            - img [ref=e213]
+            - button "Try Computer" [ref=e216] [cursor=pointer]:
+              - generic [ref=e217]: Try Computer
+            - button [ref=e218] [cursor=pointer]:
+              - img [ref=e219]
+          - generic [ref=e225]:
+            - tablist "Primer query categories" [ref=e228]:
+              - tab "Navigate my taxes New" [selected] [ref=e229] [cursor=pointer]:
+                - img [ref=e230]
+                - text: Navigate my taxes
+                - generic [ref=e233]: New
+              - tab "Organize my life" [ref=e234] [cursor=pointer]:
+                - img [ref=e235]
+                - text: Organize my life
+              - tab "Monitor the situation" [ref=e237] [cursor=pointer]:
+                - img [ref=e238]
+                - text: Monitor the situation
+              - tab "Help me learn" [ref=e240] [cursor=pointer]:
+                - img [ref=e241]
+                - text: Help me learn
+              - tab "Lead generation" [ref=e243] [cursor=pointer]:
+                - img [ref=e244]
+                - text: Lead generation
+              - tab "Create a prototype" [ref=e246] [cursor=pointer]:
+                - img [ref=e247]
+                - text: Create a prototype
+              - tab "Recruiting" [ref=e249] [cursor=pointer]:
+                - img [ref=e250]
+                - text: Recruiting
+              - tab "Build a business" [ref=e252] [cursor=pointer]:
+                - img [ref=e253]
+                - text: Build a business
+            - generic [ref=e258]:
+              - button "Prepare my 2025 taxes for my review" [ref=e259] [cursor=pointer]:
+                - generic [ref=e260]: Prepare my 2025 taxes for my review
+                - img [ref=e261]
+              - button "Review my crypto transactions last year and walk me through the tax implications" [ref=e263] [cursor=pointer]:
+                - generic [ref=e264]: Review my crypto transactions last year and walk me through the tax implications
+                - img [ref=e265]
+              - button "Maximize my 2025 tax deductions as a small business owner" [ref=e267] [cursor=pointer]:
+                - generic [ref=e268]: Maximize my 2025 tax deductions as a small business owner
+                - img [ref=e269]
+              - button "Review my prepared 2025 tax return for errors" [ref=e271] [cursor=pointer]:
+                - generic [ref=e272]: Review my prepared 2025 tax return for errors
+                - img [ref=e273]
+              - button "I got married this year — should we file jointly or separately?" [ref=e275] [cursor=pointer]:
+                - generic [ref=e276]: I got married this year — should we file jointly or separately?
+                - img [ref=e277]
+  - listbox "Typeahead menu"

@@ -1,0 +1,27 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - button "تخطى إلى المحتوى" [ref=e3] [cursor=pointer]:
+      - generic [ref=e5]: تخطى إلى المحتوى
+    - button "ملاحظات حول إمكانية وصول ذوي الاحتياجات الخاصة" [ref=e6] [cursor=pointer]:
+      - generic [ref=e8]: ملاحظات حول إمكانية وصول ذوي الاحتياجات الخاصة
+    - generic [ref=e9]:
+      - link "العودة إلى بحث Bing‏" [ref=e10] [cursor=pointer]:
+        - /url: /?FORM=Z9FD1
+        - heading "العودة إلى بحث Bing‏" [level=1] [ref=e11]
+      - search [ref=e12]:
+        - button "بحث" [ref=e15] [cursor=pointer]
+        - searchbox "أدخل بحثك هنا - ستظهر اقتراحات البحث أثناء قيامك بالكتابة" [ref=e17]: site:modonty.com
+        - button "بحث باستخدام صورة" [ref=e22] [cursor=pointer]
+        - status [ref=e24]
+    - complementary "تفضيلات ومكافآت الحساب" [ref=e25]:
+      - button "Microsoft Rewards" [ref=e26] [cursor=pointer]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: Rewards
+          - img [ref=e31]
+      - link "تسجيل الدخول" [ref=e43] [cursor=pointer]:
+        - /url: javascript:void(0)
+        - generic "تسجيل الدخول" [ref=e44]
+    - generic [ref=e45]:
+      - generic [ref=e46]: خطوة واحدة أخيرة
+      - generic [ref=e47]: الرجاء حل التحدي أدناه للمتابعة
+  - dialog "Quick Search"

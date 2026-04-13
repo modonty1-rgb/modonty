@@ -1,0 +1,526 @@
+- generic [ref=e2]:
+  - link "Skip to content" [ref=e3] [cursor=pointer]:
+    - /url: "#primary"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Seobility logo" [ref=e7] [cursor=pointer]:
+        - /url: https://www.seobility.net/en/
+        - img "Seobility logo" [ref=e9]
+      - navigation [ref=e10]:
+        - list [ref=e12]:
+          - listitem [ref=e13]:
+            - link "Features & Use Cases" [ref=e14] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e15]:
+            - link "Pricing" [ref=e16] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/pricing/
+          - listitem [ref=e17]:
+            - link "Resources" [ref=e18] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e19]:
+            - link "EN" [ref=e20] [cursor=pointer]:
+              - /url: https://www.seobility.net/en/seocheck/
+              - img [ref=e22]
+              - text: EN
+      - generic [ref=e26]:
+        - link "Log in" [ref=e27] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/login
+        - link "Try it free" [ref=e28] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/register
+  - main [ref=e29]:
+    - paragraph [ref=e32]:
+      - generic [ref=e33]:
+        - link "Home" [ref=e35] [cursor=pointer]:
+          - /url: https://www.seobility.net/en/
+        - text: SEO Checker
+    - generic [ref=e36]:
+      - list [ref=e39]:
+        - listitem [ref=e40]:
+          - link "SEO Checker" [ref=e41] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/seocheck/
+        - listitem [ref=e42]:
+          - link "Ranking Checker" [ref=e43] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/rankingcheck/
+        - listitem [ref=e44]:
+          - link "Backlink Checker" [ref=e45] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/backlinkchecker/
+        - listitem [ref=e46]:
+          - link "Keyword Research" [ref=e47] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/keyword-research-tool/
+        - listitem [ref=e48]:
+          - link "Snippet Generator" [ref=e49] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/serp-snippet-generator/
+        - listitem [ref=e50]:
+          - link "TF*IDF Tool" [ref=e51] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/tf-idf-keyword-tool/
+        - listitem [ref=e52]:
+          - link "Redirect Checker" [ref=e53] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/redirectcheck/
+        - listitem [ref=e54]:
+          - link "SEO Compare" [ref=e55] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/seocompare/
+        - listitem [ref=e56]:
+          - link "Keyword Checker" [ref=e57] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/keywordcheck/
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - heading "Free SEO Checker" [level=1] [ref=e60]:
+            - text: Free
+            - strong [ref=e61]: SEO Checker
+          - heading "Test your website with Seobility's SEO Checker!" [level=2] [ref=e62]
+          - paragraph [ref=e63]: Complying with search engine guidelines – and making your content accessible to both traditional crawlers and AI bots – is essential for sustainable visibility. The Seobility SEO Checker analyzes your website and provides clear recommendations to improve performance in search engines and AI answer engines.
+        - generic [ref=e65]:
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69] [cursor=pointer]: URL 
+              - textbox "URL " [ref=e70]:
+                - /placeholder: https://example.com/subpage
+            - generic [ref=e71]:
+              - button "Analyze Website" [ref=e72] [cursor=pointer]
+              - button [ref=e73] [cursor=pointer]
+          - generic [ref=e74]: You have 0 of max checks left today.
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - heading "Looking for a complete website audit?" [level=2] [ref=e80]
+        - paragraph [ref=e81]:
+          - text: The free SEO Checker analyzes a single URL. With the
+          - strong [ref=e82]: Seobility Website Audit
+          - text: ", you can crawl and analyze your entire website."
+        - list [ref=e83]:
+          - listitem [ref=e84]: Detect technical errors and crawl issues
+          - listitem [ref=e86]: Analyze site structure & internal linking
+          - listitem [ref=e88]: Optimize on-page SEO across your domain
+          - listitem [ref=e90]: Get detailed reports with actionable recommendations
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: Free 14-day trial
+            - generic [ref=e96] [cursor=pointer]:
+              - checkbox [checked]
+          - generic [ref=e98]: FREE
+        - generic [ref=e99]:
+          - text: Price per month
+          - generic [ref=e100]: $50
+          - paragraph [ref=e101]: Can be canceled at any time! Automatically renews to our monthly Premium plan for $50/month.
+        - link "Start free trial" [ref=e102] [cursor=pointer]:
+          - /url: https://app.seobility.net/user/register?productid=1&payinterval=1
+        - link "About the Website Audit" [ref=e103] [cursor=pointer]:
+          - /url: https://www.seobility.net/en/website-audit/
+      - generic [ref=e104]:
+        - img "Seobility Website Audit" [ref=e106]
+        - img "G2 High Performer badge" [ref=e107]
+    - generic [ref=e108]:
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - heading "Free website checker" [level=2] [ref=e112]:
+            - text: Free
+            - strong [ref=e113]: website checker
+          - generic [ref=e114]: Get a quick overview of your website optimization
+          - generic [ref=e115]:
+            - paragraph [ref=e116]:
+              - text: Analyze any web page with Seobility’s free SEO Checker to uncover
+              - strong [ref=e117]: technical errors and on-page SEO issues
+              - text: that limit organic rankings or reduce visibility in AI answer engines (LLM-based search tools like ChatGPT and Perplexity).
+            - paragraph [ref=e118]
+            - paragraph [ref=e119]:
+              - strong [ref=e120]: "What you get:"
+            - list [ref=e121]:
+              - listitem [ref=e122]: Overall SEO score summarizing how well your page is currently optimized
+              - listitem [ref=e123]: Individual sub scores for meta-information, page quality, page & link structure, server configuration, and external signals
+              - listitem [ref=e124]: A prioritized task list with clear recommendations based on your SEO check results
+            - paragraph [ref=e125]
+            - paragraph [ref=e126]:
+              - text: The report highlights the
+              - strong [ref=e127]: highest-impact issues
+              - text: first so you can start with changes that deliver quick, measurable improvements.
+        - img "free website checker" [ref=e130]
+      - generic [ref=e132]:
+        - img "meta information" [ref=e135]
+        - generic [ref=e136]:
+          - heading "Meta information" [level=2] [ref=e137]:
+            - strong [ref=e138]: Meta
+            - text: information
+          - generic [ref=e139]: Help search engines and AI models understand your pages
+          - generic [ref=e140]:
+            - paragraph [ref=e141]: Meta-information helps search engines like Google correctly interpret, categorize, and display your content in search results.
+            - paragraph [ref=e142]
+            - paragraph [ref=e143]: "The Seobility SEO Checker flags metadata issues, such as:"
+            - list [ref=e144]:
+              - listitem [ref=e145]:
+                - text: Overly short, long, or missing meta titles and
+                - link "descriptions" [ref=e146] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/blog/meta-descriptions/
+              - listitem [ref=e147]:
+                - link "meta tags" [ref=e148] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Meta_Tags
+                - text: that block indexing (noindex / nofollow)
+              - listitem [ref=e149]:
+                - text: missing or incorrect
+                - link "canonical links" [ref=e150] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Canonical_Tag
+              - listitem [ref=e151]:
+                - text: inconsistent
+                - link "language declarations" [ref=e152] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Declaring_language_in_HTML
+              - listitem [ref=e153]:
+                - text: Unclear or problematic
+                - link "domain names" [ref=e154] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Domain_for_SEO
+                - text: and
+                - link "page URLs" [ref=e155] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/SEO-friendly_URLs
+      - generic [ref=e157]:
+        - generic [ref=e158]:
+          - heading "Page quality" [level=2] [ref=e159]:
+            - text: Page
+            - strong [ref=e160]: quality
+          - generic [ref=e161]: Create content that performs and gets cited
+          - generic [ref=e162]:
+            - paragraph [ref=e163]: High-quality, well-structured content is a core ranking factor for search engines like Google and is also more likely to be used in AI-generated answers.
+            - paragraph [ref=e164]
+            - paragraph [ref=e165]: "The SEO Checker helps you identify page quality issues such as:"
+            - list [ref=e166]:
+              - listitem [ref=e167]: Pages with too little text
+              - listitem [ref=e168]:
+                - link "Duplicate" [ref=e169] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Duplicate_Content
+                - text: or highly similar content
+              - listitem [ref=e170]:
+                - text: Outdated HTML elements such as
+                - link "framesets" [ref=e171] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Frames_and_framesets
+              - listitem [ref=e172]:
+                - text: Poor
+                - link "mobile optimization" [ref=e173] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Mobile_Optimization
+              - listitem [ref=e174]:
+                - text: Images without descriptive
+                - link "alt attributes" [ref=e175] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/ALT_Attributes
+              - listitem [ref=e176]: Ads or overlays that discrupt content access
+        - img "page quality" [ref=e179]
+      - generic [ref=e181]:
+        - img "page and link structure" [ref=e184]
+        - generic [ref=e185]:
+          - heading "Page and link structure" [level=2] [ref=e186]:
+            - text: Page and
+            - strong [ref=e187]: link structure
+          - generic [ref=e188]: Improve crawlability for machines
+          - generic [ref=e189]:
+            - paragraph [ref=e190]: Search engines and AI crawlers prefer websites that are easy to navigate and logically structured.
+            - paragraph [ref=e191]
+            - paragraph [ref=e192]: "The SEO Checker detects issues that make it difficult for crawlers to analyze your website, including:"
+            - list [ref=e193]:
+              - listitem [ref=e194]:
+                - text: Missing, empty or overly long or short
+                - link "H1 headings" [ref=e195] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/H1-H6_headings
+              - listitem [ref=e196]: Incorrect heading hierarchy
+              - listitem [ref=e197]:
+                - link "Internal links" [ref=e198] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/Internal_Linking
+                - text: with dynamic parameters
+              - listitem [ref=e199]: duplicate anchor texts of internal links
+              - listitem [ref=e200]:
+                - text: Imbalanced internal and
+                - link "external linking" [ref=e201] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/External_Links
+      - generic [ref=e203]:
+        - generic [ref=e204]:
+          - heading "Server configuration" [level=2] [ref=e205]:
+            - strong [ref=e206]: Server
+            - text: configuration
+          - generic [ref=e207]: Ensure a fast, error-free technical setup
+          - generic [ref=e208]:
+            - paragraph [ref=e209]: A clean technical foundation supports smooth crawling by search engine bots and AI crawlers. Fast-loading, error-free pages reduce friction for users and machines alike.
+            - paragraph [ref=e210]
+            - paragraph [ref=e211]: "The SEO Checker scans for server errors and other technical issues like:"
+            - list [ref=e212]:
+              - listitem [ref=e213]:
+                - text: Incorrect
+                - link "redirect between www and non-www subdomains" [ref=e214] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/redirectcheck/
+              - listitem [ref=e215]:
+                - link "HTTP header" [ref=e216] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/wiki/HTTP_headers
+                - text: misconfigurations
+              - listitem [ref=e217]: Slow server reponse times
+              - listitem [ref=e218]: Excessive CSS or JavaScript requests
+              - listitem [ref=e219]: Oversized HTML files
+        - img "server configuration" [ref=e222]
+      - generic [ref=e224]:
+        - img "external factors" [ref=e227]
+        - generic [ref=e228]:
+          - heading "External factors" [level=2] [ref=e229]:
+            - strong [ref=e230]: External
+            - text: factors
+          - generic [ref=e231]: Strengthen trust and authority signals
+          - generic [ref=e232]:
+            - paragraph [ref=e233]:
+              - text: SEO and
+              - link "AEO" [ref=e234] [cursor=pointer]:
+                - /url: https://www.seobility.net/en/wiki/answer-engine-optimization/
+              - text: are not only about on-page optimization. External signals, especially
+              - link "backlinks" [ref=e235] [cursor=pointer]:
+                - /url: https://www.seobility.net/en/wiki/Backlinks/
+              - text: (also called “inbound links”), strongly influence Google rankings and citation likelihood in AI tools.
+            - paragraph [ref=e236]
+            - paragraph [ref=e237]: The SEO Checker will tell you if your page has a weak backlink profile.
+    - generic [ref=e239]:
+      - generic [ref=e240]: SEO Checker
+      - heading "Frequently asked questions" [level=2] [ref=e241]:
+        - paragraph [ref=e242]:
+          - text: Frequently asked
+          - strong [ref=e243]: questions
+      - generic [ref=e244]:
+        - generic [ref=e245]:
+          - button "What is the Seobility SEO Checker?" [ref=e246] [cursor=pointer]:
+            - generic [ref=e247]: What is the Seobility SEO Checker?
+          - generic:
+            - paragraph [ref=e248]
+            - paragraph [ref=e249]: The Seobility SEO checker is a tool that scans any web page for technical errors, on-page SEO issues, and optimization gaps that affect search engine rankings and AI visibility.
+            - paragraph [ref=e250]
+        - generic [ref=e251]:
+          - button "How does the SEO Checker work?" [ref=e252] [cursor=pointer]:
+            - generic [ref=e253]: How does the SEO Checker work?
+          - generic:
+            - paragraph [ref=e254]
+            - paragraph [ref=e255]:
+              - text: The Seobility SEO checker crawls the entered URL like a search engine bot and
+              - strong [ref=e256]: evaluates over 200 SEO-relevant factors
+              - text: across metadata, content quality, structure, technical setup, and external signals.
+            - paragraph [ref=e257]
+            - paragraph [ref=e258]: It then calculates an SEO score for your page which reflects how well the page is currently optimized for Google and other search engines. It also displays a list of issues found on the page.
+            - paragraph [ref=e259]
+        - generic [ref=e260]:
+          - button "What is an SEO score?" [ref=e261] [cursor=pointer]:
+            - generic [ref=e262]: What is an SEO score?
+          - generic:
+            - paragraph [ref=e263]
+            - paragraph [ref=e264]: "The SEO score shows how well a page follows best practices:"
+            - paragraph [ref=e265]
+            - list [ref=e266]:
+              - listitem [ref=e267]:
+                - strong [ref=e268]: 80%+
+                - text: ": Strong SEO foundation"
+              - listitem [ref=e269]:
+                - strong [ref=e270]: 30 – 79%
+                - text: ": Optimization potential"
+              - listitem [ref=e271]:
+                - strong [ref=e272]: Below 30%
+                - text: ": Critical issues requiring action"
+            - paragraph [ref=e273]
+        - generic [ref=e274]:
+          - button "Can I download my SEO report?" [ref=e275] [cursor=pointer]:
+            - generic [ref=e276]: Can I download my SEO report?
+          - generic:
+            - paragraph [ref=e277]
+            - paragraph [ref=e278]: Yes. Premium users can export branded PDF reports (short or full versions of the SEO Checker results), including their company logo.
+            - paragraph [ref=e279]
+            - paragraph [ref=e280]:
+              - text: Please visit our
+              - link "pricing page" [ref=e281] [cursor=pointer]:
+                - /url: https://www.seobility.net/en/pricing/
+              - text: for more information about our plans.
+            - paragraph [ref=e282]
+        - generic [ref=e283]:
+          - button "How do I improve my SEO score?" [ref=e284] [cursor=pointer]:
+            - generic [ref=e285]: How do I improve my SEO score?
+          - generic:
+            - paragraph [ref=e286]
+            - paragraph [ref=e287]: Follow the prioritized task list generated by the SEO Checker and focus first on high-impact issues on your website (displayed in red).
+            - paragraph [ref=e288]
+        - generic [ref=e289]:
+          - button "Can I check keyword rankings on Google too?" [ref=e290] [cursor=pointer]:
+            - generic [ref=e291]: Can I check keyword rankings on Google too?
+          - generic:
+            - paragraph [ref=e292]
+            - paragraph [ref=e293]:
+              - text: Yes. Use
+              - link "Seobility’s Ranking Checker" [ref=e294] [cursor=pointer]:
+                - /url: https://www.seobility.net/en/rankingcheck/
+              - text: to check your site’s keyword positions and compare your performance on Google against competitors.
+            - paragraph [ref=e295]
+    - generic [ref=e296]:
+      - heading "More free SEO tools" [level=2] [ref=e297]
+      - paragraph [ref=e298]: Try all of these tools for free and without registration!
+      - generic [ref=e299]:
+        - generic [ref=e300]:
+          - heading "On-Page & Technical SEO" [level=3] [ref=e301]
+          - link "SEO Checker external" [ref=e302] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/seocheck/
+            - text: SEO Checker
+            - img "external" [ref=e303]
+          - link "Keyword Checker external" [ref=e304] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/keywordcheck/
+            - text: Keyword Checker
+            - img "external" [ref=e305]
+          - link "SEO Compare external" [ref=e306] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/seocompare/
+            - text: SEO Compare
+            - img "external" [ref=e307]
+          - link "Redirect Checker external" [ref=e308] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/redirectcheck/
+            - text: Redirect Checker
+            - img "external" [ref=e309]
+        - generic [ref=e310]:
+          - heading "Off-Page & SERPs" [level=3] [ref=e311]
+          - link "Backlink Checker external" [ref=e312] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/backlinkchecker/
+            - text: Backlink Checker
+            - img "external" [ref=e313]
+          - link "Ranking Checker external" [ref=e314] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/rankingcheck/
+            - text: Ranking Checker
+            - img "external" [ref=e315]
+          - link "SERP Snippet Generator external" [ref=e316] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/serp-snippet-generator/
+            - text: SERP Snippet Generator
+            - img "external" [ref=e317]
+        - generic [ref=e318]:
+          - heading "Keyword Research & Content" [level=3] [ref=e319]
+          - link "Keyword Research Tool external" [ref=e320] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/keyword-research-tool/
+            - text: Keyword Research Tool
+            - img "external" [ref=e321]
+          - link "TF*IDF Tool external" [ref=e322] [cursor=pointer]:
+            - /url: https://www.seobility.net/en/tf-idf-keyword-tool/
+            - text: TF*IDF Tool
+            - img "external" [ref=e323]
+      - img "Screenshot" [ref=e325]
+  - contentinfo [ref=e326]:
+    - generic [ref=e327]:
+      - img "Seobility Logo" [ref=e328]
+      - generic [ref=e329]:
+        - link "Contact us" [ref=e330] [cursor=pointer]:
+          - /url: /en/contact/
+          - button "Contact us" [ref=e331]
+        - generic [ref=e332]: Seobility GmbH, Willy-Brandt-Platz 16, 90402 Nuremberg, Germany
+      - generic [ref=e334]:
+        - generic [ref=e335]:
+          - generic [ref=e336]:
+            - text: Features
+            - navigation "Footer Menu 3" [ref=e338]:
+              - list [ref=e340]:
+                - listitem [ref=e341]:
+                  - link "Website Audit" [ref=e342] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/website-audit/
+                - listitem [ref=e343]:
+                  - link "Ranking Monitoring" [ref=e344] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/ranking-monitoring/
+                - listitem [ref=e345]:
+                  - link "Backlink Monitoring" [ref=e346] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/backlink-monitoring/
+                - listitem [ref=e347]:
+                  - link "Competitor Analysis" [ref=e348] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seo-competitor-analysis-tools/
+                - listitem [ref=e349]:
+                  - link "Keyword Research & Content Tools" [ref=e350] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seo-content-tools/
+                - listitem [ref=e351]:
+                  - link "Uptime Monitoring" [ref=e352] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/uptime-monitoring/
+          - generic [ref=e353]:
+            - text: Use Cases
+            - navigation "Footer Menu 2" [ref=e355]:
+              - list [ref=e357]:
+                - listitem [ref=e358]:
+                  - link "Seobility for Businesses" [ref=e359] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seobility-for-businesses/
+                - listitem [ref=e360]:
+                  - link "Seobility for Agencies & Freelancers" [ref=e361] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seo-software-for-agencies-and-freelancers/
+                - listitem [ref=e362]:
+                  - link "Seobility for Local Businesses" [ref=e363] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/seo-tool-for-local-businesses/
+        - generic [ref=e365]:
+          - text: Free SEO Tools
+          - navigation "Footer Menu 3" [ref=e367]:
+            - list [ref=e369]:
+              - listitem [ref=e370]:
+                - link "SEO Checker" [ref=e371] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/seocheck/
+              - listitem [ref=e372]:
+                - link "Ranking Checker" [ref=e373] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/rankingcheck/
+              - listitem [ref=e374]:
+                - link "Backlink Checker" [ref=e375] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/backlinkchecker/
+              - listitem [ref=e376]:
+                - link "Keyword Research Tool" [ref=e377] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/keyword-research-tool/
+              - listitem [ref=e378]:
+                - link "TF*IDF Tool" [ref=e379] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/tf-idf-keyword-tool/
+              - listitem [ref=e380]:
+                - link "Redirect Checker" [ref=e381] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/redirectcheck/
+              - listitem [ref=e382]:
+                - link "SERP Snippet Generator" [ref=e383] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/serp-snippet-generator/
+              - listitem [ref=e384]:
+                - link "Keyword Checker" [ref=e385] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/keywordcheck/
+              - listitem [ref=e386]:
+                - link "SEO Compare" [ref=e387] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/seocompare/
+        - generic [ref=e388]:
+          - generic [ref=e389]:
+            - text: Seobility
+            - navigation "Footer Menu 1" [ref=e391]:
+              - list [ref=e393]:
+                - listitem [ref=e394]:
+                  - link "Plans & Pricing" [ref=e395] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/pricing/
+                - listitem [ref=e396]:
+                  - link "Seobility Team" [ref=e397] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/team/
+                - listitem [ref=e398]:
+                  - link "Contact" [ref=e399] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/contact/
+                - listitem [ref=e400]:
+                  - link "Seobility Customers" [ref=e401] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/customers/
+                - listitem [ref=e402]:
+                  - link "Affiliate Program" [ref=e403] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/affiliates/
+                - listitem [ref=e404]:
+                  - link "Entity & Relational Grounding Data" [ref=e405] [cursor=pointer]:
+                    - /url: https://seobility.net/ai/ai.html
+          - generic [ref=e406]:
+            - text: Resources
+            - navigation "Footer Menu Resources" [ref=e408]:
+              - list [ref=e410]:
+                - listitem [ref=e411]:
+                  - link "Blog" [ref=e412] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/blog/
+                - listitem [ref=e413]:
+                  - link "Wiki" [ref=e414] [cursor=pointer]:
+                    - /url: /en/wiki
+                - listitem [ref=e415]:
+                  - link "FAQ" [ref=e416] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/faq/
+                - listitem [ref=e417]:
+                  - link "Seobility Beginner’s Guide" [ref=e418] [cursor=pointer]:
+                    - /url: https://www.seobility.net/en/blog/seobility-beginners-guide/
+        - generic [ref=e420]:
+          - text: Legal
+          - navigation "Footer Menu Legal" [ref=e422]:
+            - list [ref=e424]:
+              - listitem [ref=e425]:
+                - link "Terms & Conditions" [ref=e426] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/terms/
+              - listitem [ref=e427]:
+                - link "Privacy" [ref=e428] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/privacy/
+              - listitem [ref=e429]:
+                - link "Imprint" [ref=e430] [cursor=pointer]:
+                  - /url: https://www.seobility.net/en/imprint/
+    - generic [ref=e432]:
+      - generic [ref=e433]: © 2025 - Seobility.net
+      - generic:
+        - link "LinkedIn":
+          - /url: https://www.linkedin.com/company/seobility-seo-tool/
+        - link "Facebook":
+          - /url: https://www.facebook.com/seobility.net/
+        - link "Instagram":
+          - /url: https://www.instagram.com/seobility/

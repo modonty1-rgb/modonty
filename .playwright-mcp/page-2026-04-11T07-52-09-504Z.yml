@@ -1,0 +1,96 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "1 محفوظ المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - generic "1 محفوظ" [ref=e48]: "1"
+              - generic [ref=e49]: المحفوظات
+        - generic [ref=e50]:
+          - link "صندوق البريد" [ref=e51] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e52]
+          - generic [ref=e55]:
+            - button "M" [ref=e109] [cursor=pointer]:
+              - generic [ref=e111]: M
+            - button "فتح المحادثة" [ref=e59] [cursor=pointer]
+    - main [ref=e61]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - heading "تسجيل الدخول" [level=3] [ref=e65]
+          - paragraph [ref=e66]: سجل الدخول للتعليق والتفاعل مع المحتوى
+        - generic [ref=e67]:
+          - button "تسجيل الدخول بـ Google" [disabled]:
+            - img
+            - text: تسجيل الدخول بـ Google
+          - generic [ref=e73]: أو
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - text: البريد الإلكتروني
+              - textbox "البريد الإلكتروني" [ref=e76]:
+                - /placeholder: example@email.com
+                - text: modonty@modonty.com
+            - generic [ref=e77]:
+              - text: كلمة المرور
+              - textbox "كلمة المرور" [ref=e78]:
+                - /placeholder: ••••••••
+                - text: modonty12345678
+            - button "جاري تسجيل الدخول..." [disabled]:
+              - img
+              - text: جاري تسجيل الدخول...
+          - generic [ref=e84]: أو
+          - generic [ref=e85]:
+            - text: ليس لديك حساب؟
+            - link "سجل الآن" [ref=e86] [cursor=pointer]:
+              - /url: /users/register
+    - contentinfo [ref=e87]:
+      - navigation "روابط سريعة" [ref=e88]:
+        - link "الرئيسية" [ref=e89] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e90] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e91] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e92] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e93]:
+        - link "اتفاقية المستخدم" [ref=e94] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e95] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e96] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e97] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e98]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e104] [cursor=pointer]:
+    - img [ref=e105]
+  - alert [ref=e108]

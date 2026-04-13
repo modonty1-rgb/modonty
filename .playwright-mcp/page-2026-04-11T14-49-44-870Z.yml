@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - generic [ref=e6]:
+        - complementary [ref=e7]
+        - generic [ref=e14]:
+          - heading "جاري تحميل آخر المقالات" [level=2] [ref=e15]
+          - article [ref=e16]
+          - article [ref=e26]
+          - article [ref=e36]
+          - article [ref=e46]
+        - complementary [ref=e56]
+    - contentinfo [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e84] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e85]: ↗
+      - navigation "روابط سريعة" [ref=e86]:
+        - link "الرئيسية" [ref=e87] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e88] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e89] [cursor=pointer]:
+          - /url: /clients
+        - link "عن مودونتي" [ref=e90] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e91]:
+        - link "اتفاقية المستخدم" [ref=e92] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e93] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e94] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e95] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e96]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e102] [cursor=pointer]:
+    - img [ref=e103]
+  - alert [ref=e106]

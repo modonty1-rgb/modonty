@@ -57,7 +57,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     // Optimistic locking: reject if another user modified the article
     if (data.updatedAt && existingArticle.updatedAt.getTime() !== new Date(data.updatedAt).getTime()) {
-      return { success: false, error: "This article was modified by another user. Please refresh and try again." };
+      return { success: false, error: "تم تعديل المقال بواسطة مستخدم آخر — يرجى تحديث الصفحة والمحاولة مجدداً" };
     }
 
     // Snapshot current version before overwriting
@@ -78,7 +78,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       if (!isValidTransition(existingArticle.status, data.status)) {
         return {
           success: false,
-          error: `Cannot transition from ${existingArticle.status} to ${data.status}`,
+          error: `لا يمكن تغيير الحالة من "${existingArticle.status}" إلى "${data.status}" — تأكد من اتباع تسلسل الحالات الصحيح`,
         };
       }
     }
@@ -178,8 +178,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     ) {
       return {
         success: false,
-        error:
-          "Invalid status value. Status must be a valid ArticleStatus enum value.",
+        error: "قيمة الحالة غير صالحة — يرجى إعادة تحميل الصفحة والمحاولة مجدداً",
       };
     }
 

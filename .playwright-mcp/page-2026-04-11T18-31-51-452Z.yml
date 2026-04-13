@@ -1,0 +1,180 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - img [ref=e46]
+              - generic [ref=e48]: المحفوظات
+        - generic [ref=e50]:
+          - link "عملاء بلا إعلانات" [ref=e51] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e52]: ↗
+          - button "تسجيل الدخول" [ref=e53] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e54] [cursor=pointer]
+    - main [ref=e56]:
+      - navigation "تنقل الصفحة" [ref=e57]:
+        - list [ref=e58]:
+          - listitem [ref=e59]:
+            - link "الرئيسية الرئيسية" [ref=e60] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e61]
+              - generic [ref=e64]: الرئيسية
+          - listitem [ref=e65]:
+            - generic [ref=e67]: الوسوم
+      - generic [ref=e69]:
+        - heading "الوسوم" [level=1] [ref=e70]
+        - paragraph [ref=e71]: تصفح جميع الوسوم واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات
+        - paragraph [ref=e72]: 23 وسم
+      - generic [ref=e73]:
+        - heading "جميع الوسوم" [level=2] [ref=e74]
+        - generic [ref=e75]:
+          - link "SEO 10" [ref=e76] [cursor=pointer]:
+            - /url: /tags/seo
+            - generic [ref=e77]: SEO
+            - generic [ref=e78]: "10"
+          - link "أفضل شركة سيو في الرياض 10" [ref=e79] [cursor=pointer]:
+            - /url: /tags/أفضل-شركة-سيو-في-الرياض
+            - generic [ref=e80]: أفضل شركة سيو في الرياض
+            - generic [ref=e81]: "10"
+          - link "الانظمة الكهروميكانيكية 5" [ref=e82] [cursor=pointer]:
+            - /url: /tags/الانظمة-الكهروميكانيكية
+            - generic [ref=e83]: الانظمة الكهروميكانيكية
+            - generic [ref=e84]: "5"
+          - link "العناية بالشعر" [ref=e85] [cursor=pointer]:
+            - /url: /tags/العناية-بالشعر
+            - generic [ref=e86]: العناية بالشعر
+          - link "انظمة الحريق 5" [ref=e87] [cursor=pointer]:
+            - /url: /tags/انظمة-الحريق
+            - generic [ref=e88]: انظمة الحريق
+            - generic [ref=e89]: "5"
+          - link "تجارة إلكترونية 3" [ref=e90] [cursor=pointer]:
+            - /url: /tags/ecom-tag
+            - generic [ref=e91]: تجارة إلكترونية
+            - generic [ref=e92]: "3"
+          - link "تحسين الظهور في جوجل 10" [ref=e93] [cursor=pointer]:
+            - /url: /tags/تحسين-الظهور-في-جوجل
+            - generic [ref=e94]: تحسين الظهور في جوجل
+            - generic [ref=e95]: "10"
+          - link "تحسين ترتيب الموقع 10" [ref=e96] [cursor=pointer]:
+            - /url: /tags/تحسين-ترتيب-الموقع
+            - generic [ref=e97]: تحسين ترتيب الموقع
+            - generic [ref=e98]: "10"
+          - link "تحليلات 5" [ref=e99] [cursor=pointer]:
+            - /url: /tags/analytics
+            - generic [ref=e100]: تحليلات
+            - generic [ref=e101]: "5"
+          - link "تحويل الزوار إلى عملاء 10" [ref=e102] [cursor=pointer]:
+            - /url: /tags/تحويل-الزوار-إلى-عملاء
+            - generic [ref=e103]: تحويل الزوار إلى عملاء
+            - generic [ref=e104]: "10"
+          - link "تسويق رقمي 5" [ref=e105] [cursor=pointer]:
+            - /url: /tags/digital-marketing-tag
+            - generic [ref=e106]: تسويق رقمي
+            - generic [ref=e107]: "5"
+          - link "تصميم 1" [ref=e108] [cursor=pointer]:
+            - /url: /tags/design
+            - generic [ref=e109]: تصميم
+            - generic [ref=e110]: "1"
+          - link "تنفيذ مشاريع كاملة 5" [ref=e111] [cursor=pointer]:
+            - /url: /tags/تنفيذ-مشاريع-كاملة
+            - generic [ref=e112]: تنفيذ مشاريع كاملة
+            - generic [ref=e113]: "5"
+          - link "جوجل 12" [ref=e114] [cursor=pointer]:
+            - /url: /tags/google
+            - generic [ref=e115]: جوجل
+            - generic [ref=e116]: "12"
+          - link "ذكاء اصطناعي 1" [ref=e117] [cursor=pointer]:
+            - /url: /tags/ai
+            - generic [ref=e118]: ذكاء اصطناعي
+            - generic [ref=e119]: "1"
+          - link "رؤية 2030 3" [ref=e120] [cursor=pointer]:
+            - /url: /tags/vision-2030
+            - generic [ref=e121]: رؤية 2030
+            - generic [ref=e122]: "3"
+          - link "ريادة أعمال 1" [ref=e123] [cursor=pointer]:
+            - /url: /tags/startup
+            - generic [ref=e124]: ريادة أعمال
+            - generic [ref=e125]: "1"
+          - link "زيادة المبيعات أونلاين 10" [ref=e126] [cursor=pointer]:
+            - /url: /tags/زيادة-المبيعات-أونلاين
+            - generic [ref=e127]: زيادة المبيعات أونلاين
+            - generic [ref=e128]: "10"
+          - link "سوشال ميديا" [ref=e129] [cursor=pointer]:
+            - /url: /tags/social-media
+            - generic [ref=e130]: سوشال ميديا
+          - link "عقارات 4" [ref=e131] [cursor=pointer]:
+            - /url: /tags/real-estate-tag
+            - generic [ref=e132]: عقارات
+            - generic [ref=e133]: "4"
+          - link "محتوى 12" [ref=e134] [cursor=pointer]:
+            - /url: /tags/content
+            - generic [ref=e135]: محتوى
+            - generic [ref=e136]: "12"
+          - link "مستحضرات تجميل" [ref=e137] [cursor=pointer]:
+            - /url: /tags/مستحضرات-تجميل
+            - generic [ref=e138]: مستحضرات تجميل
+          - link "منتجات العناية بالبشرة" [ref=e139] [cursor=pointer]:
+            - /url: /tags/منتجات-العناية-بالبشرة
+            - generic [ref=e140]: منتجات العناية بالبشرة
+    - contentinfo [ref=e141]:
+      - generic [ref=e142]:
+        - generic [ref=e143]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e144] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e145]: ↗
+      - navigation "روابط سريعة" [ref=e146]:
+        - link "الرئيسية" [ref=e147] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e148] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e149] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e150] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e151] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e152] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e153]:
+        - link "الشروط والأحكام" [ref=e154] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e155] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e156] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e157] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e158] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e159]: © 2026 مودونتي
+  - alert [ref=e160]

@@ -23,7 +23,7 @@ export function LogoNav({ className }: LogoNavProps) {
         loading="eager"
         fetchPriority="high"
         sizes="120px"
-        className={`object-contain h-10 w-[120px] min-h-10 min-w-[120px] ${className ?? ""}`}
+        className={`object-contain h-9 w-[100px] md:h-10 md:w-[120px] ${className ?? ""}`}
       />
     </Link>
   );

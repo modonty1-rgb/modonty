@@ -1,0 +1,213 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.31.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.31.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e130]:
+          - button "Send Note" [ref=e131] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e132] [cursor=pointer]:
+            - img
+      - main [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]: Step 1 of 5
+                - generic [ref=e141]: "SEO Health: 0%"
+                - generic [ref=e144]: Live Analysis
+              - generic [ref=e145]:
+                - generic [ref=e147]: 20% Complete
+                - button "Save Draft" [ref=e149] [cursor=pointer]:
+                  - img
+                  - generic [ref=e150]: Save Draft
+            - 'generic "Overall progress: 20%" [ref=e152]'
+          - generic [ref=e156]:
+            - 'tabpanel "Basic: 33% complete. مطلوب: عنوان المقال، الرابط المختصر، العميل · اختياري: التصنيف، ملخص المقال، الوسوم" [ref=e158]':
+              - generic [ref=e161]:
+                - generic [ref=e163]:
+                  - generic [ref=e165]:
+                    - generic [ref=e166]: Client*
+                    - combobox "Client*" [ref=e167]:
+                      - option "Select a client" [selected]
+                      - option "JABR GROUP CONTRACTING AND MANUFACTURING"
+                      - option "JBR SEO"
+                      - option "Test Media Client"
+                      - option "أكاديمية المستقبل"
+                      - option "عيادات بلسم الطبية"
+                      - option "متجر نوفا للإلكترونيات"
+                  - generic [ref=e169]:
+                    - generic [ref=e170]: Category
+                    - combobox "Category" [ref=e171]:
+                      - option "None" [selected]
+                      - option "SEO تحسين محركات البحث"
+                      - option "الانشاءات والتعمير"
+                      - option "التسويق الرقمي"
+                      - option "التعليم والتدريب"
+                      - option "التقنية والذكاء الاصطناعي"
+                      - option "التمويل الشخصي"
+                      - option "السياحة والسفر"
+                      - option "الصحة والعافية"
+                      - option "العقارات والاستثمار"
+                      - option "القانون وتأسيس الشركات"
+                      - option "المحتوى والكتابة"
+                      - option "المطاعم والطعام"
+                      - option "الموضة والجمال"
+                      - option "تصميم المواقع"
+                      - option "ريادة الأعمال"
+                - generic [ref=e172]:
+                  - generic [ref=e173]:
+                    - generic [ref=e174]: Title*
+                    - textbox "Title*" [ref=e175]
+                    - generic [ref=e178]: 0 / 80 maximum
+                  - generic [ref=e179]:
+                    - text: Excerpt
+                    - textbox "Excerpt" [ref=e180]
+                    - generic [ref=e181]:
+                      - paragraph [ref=e182]: Optimize for 150-160 characters for better search visibility
+                      - generic [ref=e184]: 0 / 160 maximum
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Tags
+                    - combobox [ref=e187] [cursor=pointer]:
+                      - generic [ref=e189]: Select tags
+                      - img
+                  - generic [ref=e190]:
+                    - text: Author
+                    - generic [ref=e191]:
+                      - generic [ref=e192]: Modonty
+                      - generic [ref=e193]: (Only author)
+            - tablist [ref=e196]:
+              - 'tab "Basic: 33% complete. مطلوب: عنوان المقال، الرابط المختصر، العميل · اختياري: التصنيف، ملخص المقال، الوسوم" [selected] [ref=e197] [cursor=pointer]':
+                - generic [ref=e198]: "1"
+                - generic [ref=e199]: Basic
+                - generic [ref=e200]: 33%
+              - 'tab "Content: 30% complete. مطلوب: محتوى المقال · اختياري: عدد الكلمات، وقت القراءة، عمق المحتوى، النص المستخرج، صورة المقال الرئيسية، معرض الصور" [ref=e201] [cursor=pointer]':
+                - generic [ref=e202]: "2"
+                - generic [ref=e203]: Content
+                - generic [ref=e204]: 30%
+              - 'tab "SEO: 18% complete. العنوان والوصف: مفقود — أضف عنوان في تبويب SEO · العنوان والوصف: مفقود — أضف وصف في تبويب SEO · المحتوى: المقال فارغ — أضف محتوى · المحتوى: مفقود — أضف ملخص للمقال · الصور: مفقودة — أضف صورة من تبويب المحتوى · البيانات المهيكلة: أكمل العنوان والوصف والرابط الأساسي · البيانات المهيكلة: ينقص: العنوان، تاريخ النشر، الرابط الأساسي، وصف البحث · الإعدادات التقنية: مفقود — مطلوب لمنع تكرار المحتوى · الإعدادات التقنية: مفقود · التواصل الاجتماعي: أضف عنوان ووصف في الإعدادات" [ref=e205] [cursor=pointer]':
+                - img [ref=e207]
+                - generic [ref=e209]: SEO
+                - generic [ref=e210]: 18%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e211] [cursor=pointer]':
+                - generic [ref=e212]: "4"
+                - generic [ref=e213]: FAQs & Related
+                - generic [ref=e214]: 0%
+              - 'tab "Publish: 38% complete. اختياري: موعد النشر، الرابط الأساسي، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e215] [cursor=pointer]':
+                - generic [ref=e216]: "5"
+                - generic [ref=e217]: Publish
+                - generic [ref=e218]: 38%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e224] [cursor=pointer]:
+    - img [ref=e225]
+  - alert [ref=e228]

@@ -1,0 +1,86 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "الفئات" [ref=e30] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e32]
+              - generic [ref=e36]: الفئات
+            - link "العملاء" [ref=e37] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e39]
+              - generic [ref=e43]: العملاء
+            - link "المحفوظات" [ref=e44] [cursor=pointer]:
+              - /url: /users/profile/favorites
+              - img [ref=e46]
+              - generic [ref=e48]: المحفوظات
+        - generic [ref=e50]:
+          - link "عملاء بلا إعلانات" [ref=e51] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e52]: ↗
+          - button "تسجيل الدخول" [ref=e53] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e54] [cursor=pointer]
+    - main [ref=e56]:
+      - navigation "تنقل الصفحة" [ref=e57]:
+        - list [ref=e58]:
+          - listitem [ref=e59]:
+            - link "الرئيسية الرئيسية" [ref=e60] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e61]
+              - generic [ref=e64]: الرئيسية
+          - listitem [ref=e65]:
+            - generic [ref=e67]: العملاء
+      - complementary [ref=e90]
+    - contentinfo [ref=e256]:
+      - generic [ref=e257]:
+        - generic [ref=e258]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e259] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e260]: ↗
+      - navigation "روابط سريعة" [ref=e261]:
+        - link "الرئيسية" [ref=e262] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e263] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e264] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e265] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e266] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e267] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e268]:
+        - link "الشروط والأحكام" [ref=e269] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e270] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e271] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e272] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e273] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e274]: © 2026 مودونتي
+  - alert [ref=e275]
