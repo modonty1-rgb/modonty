@@ -1,7 +1,75 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-13 — Mobile UX complete (MOB-001–018 all fixed) | modonty v1.31.0
-> **الإصدار الحالي:** admin v0.33.0 | modonty v1.31.0
+> **آخر تحديث:** 2026-04-13 — QAUDIT-M1 تشخيص + PostCard redesign + Client page review added
+> **الإصدار الحالي:** admin v0.34.0 | modonty v1.31.0 | console v0.1.2
 > المهام المنجزة في → [MASTER-DONE.md](MASTER-DONE.md)
+
+---
+
+## 🔴 HIGH — Modonty: صفحة العميل — مراجعة UI/UX شاملة
+
+> **فحص مباشر:** 2026-04-13 | Desktop 1280px + Mobile 375px
+> **الملف الرئيسي:** `modonty/app/clients/[slug]/page.tsx` + مكوناته
+
+### 🔴 Critical
+
+- [ ] **CP-1** — **Hero banner: نص ثابت Hardcoded**
+  - النص الحالي: "الدليل الشامل لـ SEO..." و"رحلتك لتصدر الصفحة الأولى..." — مكتوب مباشرة في الكود
+  - المطلوب: يأتي من DB (مرتبط بـ JBRSEO-ADMIN-1 الموجود في الـ backlog)
+  - كل عميل يحتاج hero text خاص به — حالياً كل العملاء يعرضون نفس النص
+
+- [ ] **CP-2** — **وصف العميل بالإنجليزية**
+  - "Jabr SEO is a digital marketing agency specialized in Search Engine Optimization..." — إنجليزي في منصة عربية
+  - يتكرر مرتين: في profile section + في sidebar "ملخص الأعمال" — تكرار غير ضروري
+  - المطلوب: الوصف العربي أولاً (من DB `description` field) أو على الأقل RTL-aware layout
+
+- [ ] **CP-3** — **Mobile hero: مضغوط وغير مقروء**
+  - على 375px الـ hero banner مضغوط جداً — النص يكاد لا يُقرأ
+  - المطلوب: تقليل ارتفاع الـ hero على موبايل + زيادة حجم الخط + تحسين contrast
+
+### 🟡 Medium — UX
+
+- [ ] **CP-4** — **Tabs navigation: تسميات مقطوعة على موبايل**
+  - "المتاب" بدلاً من "المتابعون" — النص ينقطع داخل الـ tab button
+  - المطلوب: horizontal scroll ناعم + عدم قطع التسميات
+
+- [ ] **CP-5** — **Sidebar "ملخص الأعمال": تكرار + قيمة منخفضة**
+  - يعرض نفس نص الوصف الموجود في الـ profile section مباشرة فوقه
+  - المقترح: إزالة التكرار — اعرض بدله: إحصائيات العميل (مقالات / مشاهدات / تفاعل) بشكل visual
+
+- [ ] **CP-6** — **Sidebar "الصور": صغير جداً ومحدود**
+  - 4 thumbnails صغيرة جداً — لا تعطي قيمة بصرية حقيقية
+  - المقترح: gallery بـ hover preview أو إزالته من الـ sidebar وإضافته في تاب "الصور" فقط
+
+- [ ] **CP-7** — **Stats row: تصميم ضعيف**
+  - "متابع: ١٠٠ مقال: ١٠ مشاهدة: ١٠٠٠" — كل شيء على سطر واحد inline بدون فصل بصري
+  - المقترح: grid صغيرة (3 خانات) مع أيقونة + رقم كبير + تسمية صغيرة تحته
+
+- [ ] **CP-8** — **لا يوجد تحديد للـ feed المعروض**
+  - المستخدم يدخل الصفحة ولا يعرف إذا كان يرى "الأحدث" أو "الأكثر مشاهدة" أو "المختارة"
+  - المطلوب: heading فوق الـ feed "أحدث المقالات" + عدد النتائج
+
+- [ ] **CP-9** — **زر "متابعة": بدون feedback واضح**
+  - بعد الضغط على متابعة لا يتغير شيء بصري واضح (لا animation، لا تغيير في النص)
+  - المطلوب: toggle state واضح "متابعة ← إلغاء المتابعة" + optimistic update
+
+- [ ] **CP-10** — **Mobile: Bottom nav يعرض "العملاء" كـ active**
+  - على صفحة تفاصيل العميل، الـ bottom nav يضيء تاب "العملاء" — صحيح
+  - لكن لا يوجد back button للرجوع لقائمة العملاء من الـ bottom nav
+  - المقترح: breadcrumb مرئي على موبايل فوق الـ hero أو back arrow
+
+### 🟢 Low
+
+- [ ] **CP-11** — **تاب "الريلز" و"الإعجابات": غير ملائمة لعملاء B2B**
+  - Reels وLikes كتبويبات رئيسية في صفحة عميل B2B تبدو غريبة
+  - المقترح: تقييم الحذف أو إخفاء التابات الفارغة تلقائياً (`articleCount === 0 → hidden`)
+
+- [ ] **CP-12** — **شارة التوثق ✓ غير بارزة بما يكفي**
+  - الشارة الخضراء صغيرة ومدمجة مع الاسم
+  - المقترح: pill بارز أكثر "موثق ✓" بجانب الاسم
+
+- [ ] **CP-13** — **زر "مشاركة" بدون تسمية**
+  - أيقونة share بدون نص — على mobile المستخدم لا يعرف وظيفته
+  - المطلوب: `aria-label` + tooltip عند hover أو إضافة نص "مشاركة" على desktop
 
 ---
 
@@ -77,7 +145,50 @@
 - [ ] **QAUDIT-A5** — `dashboard` queries — analytics + stats queries بدون حد `take`
 
 ### Modonty — queries لم تُراجع
-- [ ] **QAUDIT-M1** — `getArticles` في الـ feed — هل يجلب `content` كاملاً أم فقط `excerpt`؟
+
+#### 🔴 CRITICAL — QAUDIT-M1: `getArticles` في الـ feed — تشخيص مكتمل
+
+> **التاريخ:** 2026-04-13 | **الملف:** `modonty/app/api/helpers/article-queries.ts`
+> **الحالة:** ✅ مشخَّص — ينتظر الإصلاح
+
+**المشكلة الجذرية:**
+`getArticlesCached` يستخدم `include` على الـ Article بدون `select` على المستوى الأعلى، مما يجعل Prisma يجلب **كل حقول الـ MongoDB Document** لكل مقال في الـ feed.
+
+**الحقول التي تُجلب ولا تُستخدم في الـ feed:**
+
+| الحقل | الحجم | الاستخدام في Feed |
+|---|---|---|
+| `content` | ~5-20KB/مقال | ❌ لا — `mapArticleToResponse` يمررها، الـ feed يتجاهلها |
+| `jsonLdStructuredData` | ~2-5KB/مقال | ❌ لا |
+| `articleBodyText` | ~3-10KB/مقال | ❌ لا |
+| `nextjsMetadata` | ~1-2KB/مقال | ❌ لا |
+| `jsonLdValidationReport` | ~1KB/مقال | ❌ لا |
+| `breadcrumbPath` | JSON array | ❌ لا |
+| `semanticKeywords` | JSON array | ❌ لا |
+| `seoTitle, seoDescription, canonicalUrl` | ~300 chars | ❌ لا |
+| `ogArticle*` (3 fields) | قليل | ❌ لا |
+| `citations, seoKeywords` | String arrays | ❌ لا |
+| `author.bio` | نص | ❌ لا — الـ Feed يستخدم الاسم والصورة فقط |
+| `author.slug` | string | ❌ لا — غير موجود في FeedPost |
+| `featuredImage.altText` | string | ❌ لا — الـ Feed يستخدم URL فقط |
+| `wordCount` | int | ❌ لا |
+
+**الهدر التقديري:**
+- ~15-40KB لكل مقال × 20 مقال لكل صفحة = **300KB - 800KB** تُجلب من MongoDB وتُرمى فوراً
+- هذا يحدث في: feed الرئيسية + loadMore + كل صفحة تستخدم `getArticles`
+
+**ملاحظة مهمة:** `getArticleBySlug` (صفحة المقال الكاملة) **يبقى بدون تغيير** — يحتاج `content` وحقول SEO كاملة.
+
+**الإصلاح المطلوب:**
+- الملف الوحيد: `modonty/app/api/helpers/article-queries.ts`
+- استبدال `include` بـ `select` في 4 functions: `getArticlesCached`, `getFeaturedArticles`, `getRecentArticles`, `getTrendingArticles`
+- إضافة: `feedArticleSelect` const + `FeedArticlePayload` type + `mapFeedArticleToResponse`
+- **لا يحتاج تغيير في أي component** — فقط الـ query layer
+
+- [ ] **QAUDIT-M1-FIX** — تطبيق الإصلاح: `select` بدل `include` في الـ 4 feed functions
+  - File: `modonty/app/api/helpers/article-queries.ts`
+  - الحقول المطلوبة: `id, title, slug, excerpt, datePublished, createdAt, featured, readingTimeMinutes` + relations
+
 - [ ] **QAUDIT-M2** — `getComments` — هل يجلب حقول غير ضرورية؟
 - [ ] **QAUDIT-M3** — `getFaqs` في صفحة المقال — هل يجلب أكثر من المطلوب؟
 - [ ] **QAUDIT-M4** — `getRelatedArticles` — مراجعة الـ select

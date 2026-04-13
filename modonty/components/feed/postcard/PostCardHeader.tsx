@@ -1,6 +1,5 @@
 import Link from "@/components/link";
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { IconCheckCircle } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 import { PostCardAvatar } from "./PostCardAvatar";
 
@@ -28,43 +27,36 @@ export function PostCardHeader({ post, index, hideClient }: PostCardProps) {
   );
 
   return (
-    <header className="flex items-start justify-between">
-      <div className="flex items-start gap-3">
-        {!hideClient && (
-          <PostCardAvatar
-            clientSlug={post.clientSlug}
-            clientName={post.clientName}
-            clientLogo={post.clientLogo}
-            index={index}
-          />
-        )}
-        <div className="flex-1 min-w-0">
-          {!hideClient ? (
-            <>
-              <Link
-                href={`/clients/${encodeURIComponent(post.clientSlug)}`}
-                className="font-semibold text-sm hover:text-primary hover:underline"
+    <div className="flex items-start gap-3">
+      {!hideClient && (
+        <PostCardAvatar
+          clientSlug={post.clientSlug}
+          clientName={post.clientName}
+          clientLogo={post.clientLogo}
+          index={index}
+        />
+      )}
+      <div className="flex-1 min-w-0">
+        {!hideClient ? (
+          <>
+            <Link
+              href={`/clients/${encodeURIComponent(post.clientSlug)}`}
+              className="relative z-10 font-semibold text-sm hover:text-primary hover:underline"
+            >
+              <span
+                itemProp="publisher"
+                itemScope
+                itemType="https://schema.org/Organization"
               >
-                <span
-                  itemProp="publisher"
-                  itemScope
-                  itemType="https://schema.org/Organization"
-                >
-                  <span itemProp="name">{post.clientName}</span>
-                </span>
-              </Link>
-              <div className="flex items-center gap-2 mt-1">{metaRow}</div>
-            </>
-          ) : (
-            metaRow
-          )}
-        </div>
+                <span itemProp="name">{post.clientName}</span>
+              </span>
+            </Link>
+            <div className="flex items-center gap-2 mt-1">{metaRow}</div>
+          </>
+        ) : (
+          metaRow
+        )}
       </div>
-      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
-        <IconCheckCircle className="h-3 w-3" />
-        <span>نسخة صوتية</span>
-      </span>
-    </header>
+    </div>
   );
 }
-

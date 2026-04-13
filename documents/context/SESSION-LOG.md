@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-13 (mobile UX complete 18/18 + perf + admin editor — modonty v1.31.0 · admin v0.34.0)
+# Session Context — Last Updated: 2026-04-13 (PostCard redesign — modonty v1.32.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,39 @@
 
 ## Current Versions
 - **admin**: v0.34.0
-- **modonty**: v1.31.0
+- **modonty**: v1.32.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 32 — PostCard UX Redesign (2026-04-13 · modonty v1.32.0)
+
+### What Was Done
+
+**modonty v1.32.0 — PostCard complete redesign (NNG + ALF + WCAG compliant)**
+
+- `modonty/lib/types.ts` — Added `hasAudio?: boolean` to `FeedPost` + `ArticleResponse`
+- `PostCard.tsx` — Image first layout, `relative group overflow-hidden`, removed header wrapper
+- `PostCardHeroImage.tsx` — Removed `<Link>` wrapper, `group-hover:scale-105` on image, conditional teal audio badge (`post.hasAudio`)
+- `PostCardBody.tsx` — Removed image, fixed critical bug (`post.content` full body → `post.excerpt ?? post.content` + `line-clamp-2`), stretched-link title (`after:absolute after:inset-0`), "اقرأ المزيد" as `aria-hidden` visual indicator
+- `PostCardHeader.tsx` — Removed unconditional audio badge, `relative z-10` on client link
+- `PostCardFooter.tsx` — Stats as plain div (not link), share as `relative z-10 CtaTrackedLink`
+
+### Critical Bug Fixed
+`PostCardBody` was using `post.content` (full article HTML body, ~5-20KB) with NO `line-clamp` as the excerpt — sending megabytes to the browser on every feed load. Fixed to `post.excerpt ?? post.content` + `line-clamp-2`.
+
+### Architecture Notes
+- Whole card clickable: stretched-link via `after:absolute after:inset-0` on title `<a>` — needs `article` to have `relative`
+- 4 interactive elements with `relative z-10` sit above stretched overlay: client link, "اقرأ المزيد" (aria-hidden, pointer-events-none), stats div, share button
+- `hasAudio` not in DB yet — badge shows only when `post.hasAudio === true` (never currently)
+- `getArticles` over-fetch issue logged in MASTER-TODO as QAUDIT-M1-FIX (uses `include` → fetches all article fields including content, jsonLd, etc — ~300-800KB wasted per query)
+
+### Pages Tested
+Homepage feed, Trending, Client page (hideClient mode), Search, Article page — desktop + mobile 375px. All pass.
+
+### Pending (next session)
+- QAUDIT-M1-FIX: Change `getArticlesCached` + 3 other feed queries from `include` to `select` — biggest performance win remaining
+- Client page UI/UX review: 13 items added to MASTER-TODO (CP-1 through CP-13)
 
 ---
 

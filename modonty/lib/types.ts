@@ -25,6 +25,7 @@ export interface ArticleResponse {
   content?: string;
   image?: string;
   publishedAt: string;
+  hasAudio?: boolean;
   author: {
     id: string;
     name: string;
@@ -74,6 +75,7 @@ export interface FeedPost {
   clientId?: string;
   clientLogo?: string;
   readingTimeMinutes?: number;
+  hasAudio?: boolean;
   author: {
     id: string;
     name: string;

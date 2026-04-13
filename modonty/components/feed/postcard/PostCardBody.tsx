@@ -1,51 +1,48 @@
-import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { highlightQuery } from "@/lib/highlight-query";
-import type { PostCardProps } from "./PostCard.types";
-import { PostCardHeroImage } from "./PostCardHeroImage";
 import { IconChevronLeft } from "@/lib/icons";
+import type { PostCardProps } from "./PostCard.types";
 
-export function PostCardBody({ post, isLcp, index, highlightQuery: query }: PostCardProps) {
+export function PostCardBody({ post, highlightQuery: query }: PostCardProps) {
+  const rawExcerpt = post.excerpt ?? post.content;
   const titleContent = query ? highlightQuery(post.title, query) : post.title;
-  const bodyContent = query ? highlightQuery(post.content, query) : post.content;
+  const excerptContent = query ? highlightQuery(rawExcerpt, query) : rawExcerpt;
 
   return (
     <>
       {post.title && (
-        <Link href={`/articles/${post.slug}`} className="block">
-          <h3
-            itemProp="headline"
-            className="mb-1 font-semibold text-base hover:text-primary transition-colors line-clamp-2 min-h-[2.8rem]"
+        // Stretched-link: the after pseudo-element fills the relative <article> container,
+        // making the entire card clickable while keeping other z-10 elements interactive.
+        <h3
+          itemProp="headline"
+          className="font-semibold text-base line-clamp-2 min-h-[2.8rem] break-words hyphens-auto"
+        >
+          <CtaTrackedLink
+            href={`/articles/${post.slug}`}
+            label="Feed card – عنوان المقال"
+            type="LINK"
+            articleId={post.id}
+            clientId={post.clientId}
+            className="hover:text-primary transition-colors after:absolute after:inset-0 after:content-['']"
           >
             {titleContent}
-          </h3>
-        </Link>
+          </CtaTrackedLink>
+        </h3>
       )}
       <p
         itemProp="description"
-        className="text-sm text-foreground leading-relaxed whitespace-pre-line"
+        className="text-sm text-muted-foreground leading-relaxed line-clamp-2"
       >
-        {bodyContent}
+        {excerptContent}
       </p>
-
-      <PostCardHeroImage
-        post={post}
-        isLcp={isLcp}
-        index={index}
-        articleTitle={post.title}
-      />
       <div className="flex items-center justify-end">
-        <CtaTrackedLink
-          href={`/articles/${post.slug}`}
-          label="اقرأ المزيد"
-          type="LINK"
-          articleId={post.id}
-          clientId={post.clientId}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+        <span
+          aria-hidden="true"
+          className="relative z-10 inline-flex items-center gap-1 text-sm font-semibold text-primary pointer-events-none"
         >
           اقرأ المزيد
-          <IconChevronLeft className="h-4 w-4" aria-hidden />
-        </CtaTrackedLink>
+          <IconChevronLeft className="h-4 w-4" />
+        </span>
       </div>
     </>
   );
