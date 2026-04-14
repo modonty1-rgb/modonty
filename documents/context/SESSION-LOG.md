@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-13 (PostCard redesign — modonty v1.32.0)
+# Session Context — Last Updated: 2026-04-15 (Designer guidelines — admin v0.35.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,37 @@
 ---
 
 ## Current Versions
-- **admin**: v0.34.0
+- **admin**: v0.35.0
 - **modonty**: v1.32.0
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 33 — Designer Image Guidelines Complete (2026-04-15 · admin v0.35.0)
+
+### What Was Done
+
+**admin v0.35.0 — Designer guidelines for media/images**
+
+- `admin/app/(public)/guidelines/media/page.tsx` — Simplified: removed wireframes/clutter, kept 3 focused sections: golden rule table + safe zone diagram + preview launchers + categories & industries text. All 5 image specs (article, logo, author, client cover, category).
+- `admin/app/(public)/guidelines/media/article-preview/page.tsx` — Full modonty article page mockup with ImagePlaceholder components showing exact upload dimensions at every image location.
+- `admin/app/(public)/guidelines/media/client-preview/page.tsx` — NEW: Full client page mockup: hero cover 2400×400, logo 500×500 (80-112px), articles grid 1920×1080, photos tab (same image as 1:1 square).
+- `admin/app/(public)/guidelines/media/postcard-preview/page.tsx` — NEW: PostCard feed grid mockup: article image 1920×1080 (aspect-video), client logo 500×500 (40px circle).
+- `admin/app/(public)/guidelines/page.tsx` — Added author avatar upload dimension (500×500) to quick reference table.
+
+### Dimensions — 100% verified from modonty source code
+| Image | Upload | Display |
+|---|---|---|
+| Article Featured Image | 1920×1080 | aspect-video (16:9) |
+| Client Logo | 500×500 | 40px postcard / 80-112px client page |
+| Author Avatar | 500×500 | various circles |
+| Client Hero Cover | 2400×400 | aspect-[6/1] |
+| Gallery Image | 1200×675 | aspect-video |
+| Category Social Image | 600×600 | square + 16:9 depending on context |
+| Industries | text only | no images |
+
+### Live Test
+All 4 pages rendered correctly in browser (Playwright). Zero TSC errors on both apps.
 
 ---
 
