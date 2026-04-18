@@ -1,0 +1,146 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - heading "PostCard — Mockup Comparison" [level=1] [ref=e3]
+    - paragraph [ref=e4]: مقارنة التصميم الحالي مقابل التصميم المقترح — Desktop + Mobile
+  - generic [ref=e5]:
+    - heading "🖥️ Desktop View (1280px)" [level=2] [ref=e6]:
+      - generic [ref=e7]: 🖥️
+      - text: Desktop View (1280px)
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: ❌ الحالي
+        - generic [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - generic [ref=e15]: J
+              - generic [ref=e16]:
+                - text: JBR SEO
+                - generic [ref=e17]:
+                  - generic [ref=e18]: قبل 4 أيام
+                  - generic [ref=e19]: •
+                  - generic [ref=e20]: ⏱️ 4 دقيقة
+            - generic [ref=e21]: ✓ نسخة صوتية
+          - generic [ref=e22]:
+            - heading "ما هي صفحات نتائج البحث (Search Engine Results Page \"SERP\") وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e23]
+            - paragraph [ref=e24]: تعرف على صفحة نتائج البحث SERP وأنواعها مثل النتائج العضوية والإعلانات والنتائج المحلية والمقتطفات المميزة، وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+            - img "صورة المقال" [ref=e26]
+            - link "اقرأ المزيد ‹" [ref=e28] [cursor=pointer]:
+              - /url: "#"
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: 👍 0
+              - generic [ref=e33]: 🔖 0
+              - generic [ref=e34]: 💬 0
+              - generic [ref=e35]: 👁 12
+            - button "↗ مشاركة" [ref=e36] [cursor=pointer]
+        - generic [ref=e37]:
+          - paragraph [ref=e38]: ⚠️ الصورة تحت النص — ترتيب خاطئ
+          - paragraph [ref=e39]: ⚠️ لا يوجد category badge
+          - paragraph [ref=e40]: ⚠️ الـ excerpt طويل جداً (3 أسطر)
+          - paragraph [ref=e41]: ⚠️ "نسخة صوتية" أيقونة ✓ غير معبّرة
+      - generic [ref=e42]:
+        - generic [ref=e43]: ✅ المقترح
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]:
+            - img "ما هي صفحات نتائج البحث" [ref=e46]
+            - generic [ref=e47]: تحسين محركات البحث
+            - generic [ref=e48]: 🎧 صوتي
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - generic [ref=e52]: J
+              - generic [ref=e53]: JBR SEO
+            - generic [ref=e54]:
+              - generic [ref=e55]: قبل 4 أيام
+              - generic [ref=e56]: •
+              - generic [ref=e57]: 4 دقيقة
+          - generic [ref=e58]:
+            - heading "ما هي صفحات نتائج البحث (Search Engine Results Page \"SERP\") وكيف يختار Google ما يعرضه للمستخدم؟" [level=3] [ref=e59]
+            - paragraph [ref=e60]: تعرف على صفحة نتائج البحث SERP وأنواعها وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: 👍 0
+              - generic [ref=e65]: 🔖 0
+              - generic [ref=e66]: 💬 0
+              - generic [ref=e67]: 👁 12
+            - button "↗ مشاركة" [ref=e68]
+        - generic [ref=e69]:
+          - paragraph [ref=e70]: ✅ الصورة أولاً — image-first scanning
+          - paragraph [ref=e71]: ✅ Category badge على الصورة
+          - paragraph [ref=e72]: ✅ Audio badge بأيقونة 🎧 واضحة
+          - paragraph [ref=e73]: ✅ Excerpt سطرين فقط
+          - paragraph [ref=e74]: ✅ الكارد كاملاً قابل للضغط
+          - paragraph [ref=e75]: "✅ hover: scale على الصورة + لون العنوان"
+  - generic [ref=e76]:
+    - heading "📱 Mobile View (375px)" [level=2] [ref=e77]:
+      - generic [ref=e78]: 📱
+      - text: Mobile View (375px)
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - generic [ref=e81]: ❌ الحالي
+        - generic [ref=e82]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: J
+              - generic [ref=e87]:
+                - text: JBR SEO
+                - generic [ref=e88]:
+                  - generic [ref=e89]: قبل 4 أيام
+                  - generic [ref=e90]: •
+                  - generic [ref=e91]: 4 دقيقة
+            - generic [ref=e92]: ✓ صوتي
+          - generic [ref=e93]:
+            - heading "ما هي صفحات نتائج البحث (Search Engine Results Page \"SERP\") وكيف يختار..." [level=3] [ref=e94]
+            - paragraph [ref=e95]: تعرف على صفحة نتائج البحث SERP وأنواعها وكيف يختار Google أفضل النتائج.
+            - link "اقرأ المزيد ‹" [ref=e98] [cursor=pointer]:
+              - /url: "#"
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - generic [ref=e102]: 👍 0
+              - generic [ref=e103]: 🔖 0
+              - generic [ref=e104]: 💬 0
+              - generic [ref=e105]: 👁 12
+            - generic [ref=e106]: ↗
+      - generic [ref=e107]:
+        - generic [ref=e108]: ✅ المقترح
+        - generic [ref=e109] [cursor=pointer]:
+          - generic [ref=e110]:
+            - img "صورة المقال" [ref=e111]
+            - generic [ref=e112]: SEO
+            - generic [ref=e113]: 🎧
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - generic [ref=e117]: J
+                - generic [ref=e118]: JBR SEO
+              - generic [ref=e119]: قبل 4 أيام · 4 د
+            - heading "ما هي صفحات نتائج البحث (Search Engine Results Page \"SERP\") وكيف يختار Google؟" [level=3] [ref=e120]
+            - paragraph [ref=e121]: تعرف على SERP وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: 👍 0
+              - generic [ref=e126]: 💬 0
+              - generic [ref=e127]: 👁 12
+            - button "↗ مشاركة" [ref=e128]
+  - generic [ref=e129]:
+    - heading "📋 ملخص التغييرات" [level=2] [ref=e130]
+    - generic [ref=e131]:
+      - generic [ref=e132]:
+        - generic [ref=e133]: 🔴 Critical (2)
+        - list [ref=e134]:
+          - listitem [ref=e135]: "• CARD-1: صورة للأعلى"
+          - listitem [ref=e136]: "• CARD-2: كارد كاملاً clickable"
+      - generic [ref=e137]:
+        - generic [ref=e138]: 🟡 High (5)
+        - list [ref=e139]:
+          - listitem [ref=e140]: "• CARD-3: border/shadow"
+          - listitem [ref=e141]: "• CARD-4: Category badge"
+          - listitem [ref=e142]: "• CARD-5: CTA واضح"
+          - listitem [ref=e143]: "• CARD-6: title overflow fix"
+          - listitem [ref=e144]: "• CARD-11: excerpt سطرين"
+      - generic [ref=e145]:
+        - generic [ref=e146]: 🟢 Medium (4)
+        - list [ref=e147]:
+          - listitem [ref=e148]: "• CARD-7: hover effect"
+          - listitem [ref=e149]: "• CARD-8: stats + share layout"
+          - listitem [ref=e150]: "• CARD-9: audio badge 🎧"
+          - listitem [ref=e151]: "• CARD-12: semantic HTML"

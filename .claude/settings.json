@@ -1,0 +1,78 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/w2nad/AppData/Local/Temp/claude/c--Users-w2nad-Desktop-dreamToApp-MODONTY/8f403441-dada-4806-a21e-4eed2d3a5e50/tasks/**)",
+      "Bash(nohup bash:*)",
+      "Bash(node -e ':*)",
+      "Bash(find /c/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty/app/clients/[slug]/components -type f -name \"*.tsx\")",
+      "Read(//c/Users/w2nad/Desktop/dreamToApp/dataLayer/prisma/schema/**)",
+      "Read(//c/Users/w2nad/Desktop/dreamToApp/**)",
+      "Bash(pnpm --filter admin tsc --noEmit)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(mkdir -p /c/Users/w2nad/Desktop/dreamToApp/remotion-studio)",
+      "Bash(pnpm create:*)",
+      "Bash(pnpm run:*)",
+      "Bash(node -e \"const p=require\\('C:/Users/w2nad/AppData/Roaming/npm/node_modules/@upstash/context7-mcp/package.json'\\); console.log\\('bin:', JSON.stringify\\(p.bin\\)\\); console.log\\('main:', p.main\\)\")",
+      "Bash(node \"C:/Users/w2nad/AppData/Roaming/npm/node_modules/@playwright/mcp/cli.js\" --version)",
+      "mcp__claude_ai_Google_Drive__list_recent_files",
+      "Read(//c/Users/w2nad/AppData/Roaming/Python/Python313/Scripts/**)",
+      "Bash(curl -s -o /dev/null -w \"modonty: %{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\" http://localhost:3002)",
+      "Bash(node -e ' *)",
+      "Bash(taskkill /F /IM node.exe /T)",
+      "Bash(curl -s -o /dev/null -w \"modonty: %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3002)",
+      "Bash(tasklist /FI \"IMAGENAME eq node.exe\" /FO TABLE)",
+      "Bash(where code-review-graph *)",
+      "Bash(pip3 show *)",
+      "Bash(python -m pip show code-review-graph)",
+      "Bash(pip uninstall *)",
+      "Bash(python -m pip uninstall code-review-graph -y)",
+      "Bash(where python3 *)",
+      "Read(//c/Users/w2nad/AppData/Local/Programs/**)",
+      "Bash(\"/c/Users/w2nad/AppData/Roaming/Python/Python313/Scripts/code-review-graph.exe\" --version)",
+      "Read(//c/Users/w2nad/AppData/Roaming/Python/Python313//**)",
+      "Read(//c/Python313//**)",
+      "Read(//c/Users/w2nad/**)",
+      "Read(//c/Python313/**)",
+      "Bash(py -3.13 -m pip --version)",
+      "Bash(py -3 -m pip --version)",
+      "Read(//c/Windows/**)",
+      "Read(//c/Program Files/Python313/**)",
+      "Bash(\"/c/Users/w2nad/AppData/Local/Microsoft/WindowsApps/python.exe\" -m pip show code-review-graph)"
+    ],
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "\\tmp",
+      "C:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\.next\\dev",
+      "C:\\Users\\w2nad\\Desktop\\dreamToApp\\remotion-studio\\src",
+      "C:\\Users\\w2nad\\.claude"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "code-review-graph update --skip-flows",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "code-review-graph status",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

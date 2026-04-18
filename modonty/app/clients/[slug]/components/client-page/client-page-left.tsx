@@ -2,25 +2,46 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { ClientAbout } from "../client-about";
 import { ClientContact } from "../client-contact";
-import { IconBriefcase, IconRead, IconClients, IconCalendar, IconUsers } from "@/lib/icons";
-import type { ClientPageClient } from "./types";
+import { IconRead, IconClients, IconCalendar, IconUsers, IconArticle, IconAnalytics, IconViews } from "@/lib/icons";
+import type { ClientPageClient, ClientPageStats } from "./types";
 
 interface ClientPageLeftProps {
   client: ClientPageClient;
+  stats?: ClientPageStats;
 }
 
-export function ClientPageLeft({ client }: ClientPageLeftProps) {
+export function ClientPageLeft({ client, stats }: ClientPageLeftProps) {
   return (
     <div className="w-full min-w-0 order-2 lg:order-1 space-y-4 pt-4">
-      {client.businessBrief && (
+      {stats && (
         <Card>
           <CardHeader>
-            <CardTitleWithIcon title="ملخص الأعمال" icon={IconBriefcase} />
+            <CardTitleWithIcon title="إحصائيات" icon={IconAnalytics} />
           </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed text-sm">
-              {client.businessBrief}
-            </p>
+          <CardContent className="pb-4">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
+                <IconArticle className="h-4 w-4 text-primary" />
+                <span className="text-lg font-bold tabular-nums leading-none">
+                  {new Intl.NumberFormat("ar-SA").format(stats.articlesCount)}
+                </span>
+                <span className="text-xs text-muted-foreground">مقال</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
+                <IconUsers className="h-4 w-4 text-primary" />
+                <span className="text-lg font-bold tabular-nums leading-none">
+                  {new Intl.NumberFormat("ar-SA").format(stats.followers)}
+                </span>
+                <span className="text-xs text-muted-foreground">متابع</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
+                <IconViews className="h-4 w-4 text-primary" />
+                <span className="text-lg font-bold tabular-nums leading-none">
+                  {new Intl.NumberFormat("ar-SA").format(stats.totalViews)}
+                </span>
+                <span className="text-xs text-muted-foreground">مشاهدة</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}

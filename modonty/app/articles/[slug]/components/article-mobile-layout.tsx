@@ -54,6 +54,7 @@ interface ArticleMobileLayoutProps {
     articleSlug: string;
     userId?: string | null;
     platformSocialLinks?: SocialLink[];
+    newsletterCtaText?: string | null;
   };
 }
 

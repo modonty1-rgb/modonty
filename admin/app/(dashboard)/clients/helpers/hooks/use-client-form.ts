@@ -158,6 +158,7 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
         licenseAuthority: data.licenseAuthority || null,
         alternateName: data.alternateName || null,
         slogan: data.slogan || null,
+        newsletterCtaText: data.newsletterCtaText || null,
         organizationType: data.organizationType || null,
         parentOrganizationId: data.parentOrganizationId || null,
         twitterCard: data.twitterCard && data.twitterCard !== "auto" ? data.twitterCard : null,

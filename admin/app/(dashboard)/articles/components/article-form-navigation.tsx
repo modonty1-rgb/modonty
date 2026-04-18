@@ -54,7 +54,7 @@ export function ArticleFormNavigation() {
         }
       } else {
         toast({
-          title: messages.error.save_failed,
+          title: result.error ? messages.error.cannot_publish : messages.error.save_failed,
           description: result.error || messages.descriptions.article_save_error,
           variant: 'destructive',
         });

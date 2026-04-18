@@ -1,0 +1,173 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e151] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e152]: Dashboard
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+            - generic [ref=e153]: SEO Overview
+        - generic [ref=e154]:
+          - button "Content" [expanded] [ref=e155] [cursor=pointer]:
+            - generic [ref=e156]:
+              - img [ref=e157]
+              - generic [ref=e160]: Content
+            - img [ref=e161]
+          - generic [ref=e164]:
+            - link "Articles" [ref=e165] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e166]
+              - generic [ref=e169]: Articles
+            - link "Categories" [ref=e170] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e171]
+              - generic [ref=e173]: Categories
+            - link "Tags" [ref=e174] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e175]
+              - generic [ref=e178]: Tags
+            - link "Authors" [ref=e179] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e180]
+              - generic [ref=e182]: Authors
+            - link "Industries" [ref=e183] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e184]
+              - generic [ref=e186]: Industries
+        - button "Modonty Pages" [ref=e188] [cursor=pointer]:
+          - generic [ref=e189]:
+            - img [ref=e190]
+            - generic [ref=e192]: Modonty Pages
+          - img [ref=e193]
+        - button "Audience" [ref=e196] [cursor=pointer]:
+          - generic [ref=e197]:
+            - img [ref=e198]
+            - generic [ref=e201]: Audience
+          - img [ref=e202]
+        - button "System" [ref=e205] [cursor=pointer]:
+          - generic [ref=e206]:
+            - img [ref=e207]
+            - generic [ref=e210]: System
+          - img [ref=e211]
+      - generic [ref=e102]:
+        - link "Guidelines" [ref=e213] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e214]
+          - text: Guidelines
+        - generic [ref=e216]:
+          - button "Switch to dark mode" [ref=e217] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e218] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e219]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e220]:
+        - generic [ref=e221]:
+          - navigation "Breadcrumb" [ref=e223]:
+            - link "Go to dashboard" [ref=e224] [cursor=pointer]:
+              - /url: /
+              - img [ref=e225]
+            - generic [ref=e228]:
+              - img [ref=e229]
+              - link "Media" [ref=e231] [cursor=pointer]:
+                - /url: /media
+            - generic [ref=e232]:
+              - img [ref=e233]
+              - generic [ref=e235]: Upload
+          - navigation "Main navigation" [ref=e237]:
+            - link "Modonty Modonty" [ref=e238] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e240]
+              - generic [ref=e241]: Modonty
+            - generic [ref=e243]:
+              - link "Articles" [ref=e244] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e245]:
+                  - img
+                  - generic [ref=e246]: Articles
+              - link "Clients" [ref=e247] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e248]:
+                  - img
+                  - generic [ref=e249]: Clients
+              - link "Media" [ref=e250] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e251]:
+                  - img
+                  - generic [ref=e252]: Media
+          - generic [ref=e253]:
+            - link "1" [ref=e254] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e255]:
+                - img
+                - generic [ref=e256]: "1"
+            - button "M" [ref=e257] [cursor=pointer]:
+              - generic [ref=e259]: M
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - link "Back" [ref=e117] [cursor=pointer]:
+              - /url: /media
+              - button "Back" [ref=e118]:
+                - img
+                - text: Back
+            - generic [ref=e119]:
+              - heading "Upload Media" [level=1] [ref=e120]
+              - paragraph [ref=e121]: Upload media files with drag-and-drop support
+          - generic [ref=e122]:
+            - generic [ref=e125]:
+              - text: Client *
+              - combobox "Client *" [ref=e260] [cursor=pointer]:
+                - generic: Modonty — Platform Assets
+                - img [ref=e261]
+              - paragraph [ref=e129]: General images appear in all client media pickers. Client images appear only for that client.
+            - generic [ref=e283]:
+              - generic [ref=e286]:
+                - text: Preview
+                - generic [ref=e288] [cursor=pointer]:
+                  - img "Selected image" [ref=e289]
+                  - paragraph [ref=e292]: Click to replace
+              - generic [ref=e295]:
+                - heading "SEO Details" [level=4] [ref=e296]
+                - generic [ref=e297]:
+                  - generic [ref=e298]: Alt Text *
+                  - textbox "Alt Text *" [ref=e299]:
+                    - /placeholder: Describe the image content...
+                  - paragraph [ref=e300]: Required. Helps search engines and visitors understand the image.
+                - generic [ref=e301]:
+                  - text: Title
+                  - textbox "Title" [ref=e302]:
+                    - /placeholder: Image title (optional)
+                - generic [ref=e303]:
+                  - text: Description
+                  - textbox "Description" [ref=e304]:
+                    - /placeholder: Detailed description (optional)
+              - generic [ref=e306]:
+                - generic [ref=e309]:
+                  - img [ref=e310]
+                  - paragraph [ref=e312]: Additional fields (Caption, Credit, License, Location) can be edited after saving from the media library.
+                - generic [ref=e314]:
+                  - button "Save to Media Library" [disabled]:
+                    - img
+                    - text: Save to Media Library
+                  - paragraph [ref=e315]: Alt text is required to save
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e147] [cursor=pointer]:
+    - img [ref=e148]
+  - alert [ref=e263]

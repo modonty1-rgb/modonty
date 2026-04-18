@@ -80,6 +80,9 @@ export async function buildTagJsonLd(tag: TagData, s: SeoSettings) {
         inLanguage: s.inLanguage,
         isPartOf: { "@id": `${s.siteUrl}#website` },
         publisher: { "@id": `${s.siteUrl}#organization` },
+        ...(tag.socialImage && {
+          image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt || title },
+        }),
       },
       {
         "@type": "BreadcrumbList",

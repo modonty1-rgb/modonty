@@ -1,0 +1,256 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - heading "Database Overview" [level=1] [ref=e117]
+            - paragraph [ref=e118]: Live snapshot of all your data — 170 total records
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e123]:
+                - img [ref=e125]
+                - generic [ref=e129]:
+                  - paragraph [ref=e130]: "170"
+                  - paragraph [ref=e131]: Total Records
+              - generic [ref=e134]:
+                - img [ref=e136]
+                - generic [ref=e138]:
+                  - paragraph [ref=e139]: "23"
+                  - paragraph [ref=e140]: Data Tables
+              - generic [ref=e143]:
+                - img [ref=e145]
+                - generic [ref=e148]:
+                  - paragraph [ref=e149]: 07:11 PM
+                  - paragraph [ref=e150]: Apr 17, 2026
+              - generic [ref=e153]:
+                - img [ref=e155]
+                - generic [ref=e157]:
+                  - paragraph [ref=e158]: Free Tier
+                  - paragraph [ref=e159]: No auto-backup
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]:
+                  - paragraph [ref=e165]: Backup
+                  - paragraph [ref=e166]: Save a full copy of all your data to your machine.
+                - button "Backup Now" [ref=e167] [cursor=pointer]:
+                  - img
+                  - text: Backup Now
+              - generic [ref=e169]:
+                - generic [ref=e170]:
+                  - paragraph [ref=e171]: Restore
+                  - paragraph [ref=e172]: Replace current data with a previous backup. A safety copy is saved first.
+                - button "Restore" [ref=e173] [cursor=pointer]:
+                  - img
+                  - text: Restore
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - heading "Core" [level=2] [ref=e176]
+                - generic [ref=e177]: 6 records
+              - table [ref=e180]:
+                - rowgroup [ref=e181]:
+                  - row "Data Records" [ref=e182]:
+                    - columnheader "Data" [ref=e183]
+                    - columnheader "Records" [ref=e184]
+                - rowgroup [ref=e185]:
+                  - row "Admins 2" [ref=e186]:
+                    - cell "Admins" [ref=e187]
+                    - cell "2" [ref=e188]
+                  - row "Clients 4" [ref=e189]:
+                    - cell "Clients" [ref=e190]
+                    - cell "4" [ref=e191]
+            - generic [ref=e192]:
+              - generic [ref=e193]:
+                - heading "Content" [level=2] [ref=e194]
+                - generic [ref=e195]: 40 records
+              - table [ref=e198]:
+                - rowgroup [ref=e199]:
+                  - row "Data Records" [ref=e200]:
+                    - columnheader "Data" [ref=e201]
+                    - columnheader "Records" [ref=e202]
+                - rowgroup [ref=e203]:
+                  - row "All Articles 6" [ref=e204]:
+                    - cell "All Articles" [ref=e205]
+                    - cell "6" [ref=e206]
+                  - row "Published 3" [ref=e207]:
+                    - cell "Published" [ref=e208]
+                    - cell "3" [ref=e209]
+                  - row "Drafts & Writing 3" [ref=e210]:
+                    - cell "Drafts & Writing" [ref=e211]
+                    - cell "3" [ref=e212]
+                  - row "Categories 4" [ref=e213]:
+                    - cell "Categories" [ref=e214]
+                    - cell "4" [ref=e215]
+                  - row "Tags 5" [ref=e216]:
+                    - cell "Tags" [ref=e217]
+                    - cell "5" [ref=e218]
+                  - row "Authors 1" [ref=e219]:
+                    - cell "Authors" [ref=e220]
+                    - cell "1" [ref=e221]
+                  - row "Industries 4" [ref=e222]:
+                    - cell "Industries" [ref=e223]
+                    - cell "4" [ref=e224]
+                  - row "Media Files 14" [ref=e225]:
+                    - cell "Media Files" [ref=e226]
+                    - cell "14" [ref=e227]
+            - generic [ref=e228]:
+              - generic [ref=e229]:
+                - heading "Audience" [level=2] [ref=e230]
+                - generic [ref=e231]: 18 records
+              - table [ref=e234]:
+                - rowgroup [ref=e235]:
+                  - row "Data Records" [ref=e236]:
+                    - columnheader "Data" [ref=e237]
+                    - columnheader "Records" [ref=e238]
+                - rowgroup [ref=e239]:
+                  - row "Client Subscribers 6" [ref=e240]:
+                    - cell "Client Subscribers" [ref=e241]
+                    - cell "6" [ref=e242]
+                  - row "Newsletter Subscribers 0" [ref=e243]:
+                    - cell "Newsletter Subscribers" [ref=e244]
+                    - cell "0" [ref=e245]
+                  - row "Contact Messages 5" [ref=e246]:
+                    - cell "Contact Messages" [ref=e247]
+                    - cell "5" [ref=e248]
+                  - row "Comments 7" [ref=e249]:
+                    - cell "Comments" [ref=e250]
+                    - cell "7" [ref=e251]
+            - generic [ref=e252]:
+              - generic [ref=e253]:
+                - heading "Analytics" [level=2] [ref=e254]
+                - generic [ref=e255]: 101 records
+              - table [ref=e258]:
+                - rowgroup [ref=e259]:
+                  - row "Data Records" [ref=e260]:
+                    - columnheader "Data" [ref=e261]
+                    - columnheader "Records" [ref=e262]
+                - rowgroup [ref=e263]:
+                  - row "Article Views 83" [ref=e264]:
+                    - cell "Article Views" [ref=e265]
+                    - cell "83" [ref=e266]
+                  - row "Likes 0" [ref=e267]:
+                    - cell "Likes" [ref=e268]
+                    - cell "0" [ref=e269]
+                  - row "Favorites 2" [ref=e270]:
+                    - cell "Favorites" [ref=e271]
+                    - cell "2" [ref=e272]
+                  - row "Shares 7" [ref=e273]:
+                    - cell "Shares" [ref=e274]
+                    - cell "7" [ref=e275]
+                  - row "Conversions 8" [ref=e276]:
+                    - cell "Conversions" [ref=e277]
+                    - cell "8" [ref=e278]
+                  - row "Leads 1" [ref=e279]:
+                    - cell "Leads" [ref=e280]
+                    - cell "1" [ref=e281]
+                  - row "Campaigns 0" [ref=e282]:
+                    - cell "Campaigns" [ref=e283]
+                    - cell "0" [ref=e284]
+            - generic [ref=e285]:
+              - generic [ref=e286]:
+                - heading "System" [level=2] [ref=e287]
+                - generic [ref=e288]: 5 records
+              - table [ref=e291]:
+                - rowgroup [ref=e292]:
+                  - row "Data Records" [ref=e293]:
+                    - columnheader "Data" [ref=e294]
+                    - columnheader "Records" [ref=e295]
+                - rowgroup [ref=e296]:
+                  - row "Settings 1" [ref=e297]:
+                    - cell "Settings" [ref=e298]
+                    - cell "1" [ref=e299]
+                  - row "Subscription Plans 4" [ref=e300]:
+                    - cell "Subscription Plans" [ref=e301]
+                    - cell "4" [ref=e302]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e308] [cursor=pointer]:
+    - img [ref=e309]
+  - alert [ref=e312]

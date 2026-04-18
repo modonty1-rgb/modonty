@@ -25,7 +25,7 @@ import NextImage from "next/image";
 import { Loader2, Search, Upload, RefreshCw } from "lucide-react";
 import { getMedia, type MediaFilters } from "@/app/(dashboard)/media/actions/media-actions";
 import Link from "next/link";
-import { MediaType } from "@prisma/client";
+import { MediaType, MediaScope } from "@prisma/client";
 import { getMediaTypeLabel, getMediaTypeBadgeVariant } from "@/app/(dashboard)/media/helpers/media-utils";
 
 interface Media {
@@ -50,6 +50,7 @@ interface MediaPickerDialogProps {
   onOpenChange: (open: boolean) => void;
   clientId: string | null;
   onSelect: (media: { url: string; altText: string | null; mediaId: string; width?: number | null; height?: number | null }) => void;
+  defaultScope?: MediaScope | "client";
 }
 
 export function MediaPickerDialog({
@@ -57,29 +58,37 @@ export function MediaPickerDialog({
   onOpenChange,
   clientId,
   onSelect,
+  defaultScope,
 }: MediaPickerDialogProps) {
   const router = useRouter();
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<MediaType | "all">("all");
+  const [scopeFilter, setScopeFilter] = useState<MediaScope | "client">(defaultScope ?? "client");
 
   useEffect(() => {
-    if (open && clientId) {
+    const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
+    if (open && (clientId || isPlatformMode)) {
       loadMedia();
     }
-  }, [open, clientId, typeFilter]);
+  }, [open, clientId, typeFilter, scopeFilter]);
 
   const loadMedia = async () => {
-    if (!clientId) return;
+    const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
+    if (!clientId && !isPlatformMode) return;
 
     setLoading(true);
     try {
-      const filters: MediaFilters = {
-        clientId,
-        mimeType: "image",
-        type: typeFilter !== "all" ? typeFilter : undefined,
-      };
+      const filters: MediaFilters =
+        scopeFilter === "PLATFORM"
+          ? { scope: "PLATFORM", mimeType: "image", type: typeFilter !== "all" ? typeFilter : undefined }
+          : {
+              clientId: clientId ?? undefined,
+              includeGeneral: scopeFilter === "client" || scopeFilter === "GENERAL",
+              mimeType: "image",
+              type: typeFilter !== "all" ? typeFilter : undefined,
+            };
       const result = await getMedia(filters);
       setMedia(result.items as Media[]);
     } catch (error) {
@@ -132,7 +141,8 @@ export function MediaPickerDialog({
     return item.url;
   };
 
-  if (!clientId) {
+  const isPlatformMode = scopeFilter === "PLATFORM" || defaultScope === "PLATFORM";
+  if (!clientId && !isPlatformMode) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
@@ -171,7 +181,21 @@ export function MediaPickerDialog({
                 className="pl-9 h-9"
               />
             </div>
-            <div className="w-[160px] shrink-0">
+            <div className="w-[150px] shrink-0">
+              <Select
+                value={scopeFilter}
+                onValueChange={(value) => setScopeFilter(value as MediaScope | "client")}
+              >
+                <SelectTrigger className="h-9 w-full">
+                  <SelectValue placeholder="Source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="client">Client + General</SelectItem>
+                  <SelectItem value="PLATFORM">Modonty Platform</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-[130px] shrink-0">
               <Select
                 value={typeFilter}
                 onValueChange={(value) => setTypeFilter(value as MediaType | "all")}
@@ -189,6 +213,12 @@ export function MediaPickerDialog({
                 </SelectContent>
               </Select>
             </div>
+            <Link href={`/media/upload?clientId=${clientId}`} target="_blank" className="shrink-0">
+              <Button type="button" variant="outline" size="sm" className="h-9 gap-1.5">
+                <Upload className="h-3.5 w-3.5" />
+                Upload
+              </Button>
+            </Link>
             <Button
               type="button"
               variant="outline"
@@ -239,6 +269,7 @@ export function MediaPickerDialog({
                             alt={item.altText || item.filename}
                             fill
                             className="object-cover"
+                            unoptimized
                           />
                         </div>
                         <div className="p-3 space-y-2">

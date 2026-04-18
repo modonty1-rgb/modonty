@@ -1,9 +1,11 @@
 import { getCategoriesWithCounts, getCategoryAnalytics, getOverallCategoryAnalytics, getCategoryIdBySlug } from "@/app/api/helpers/category-queries";
+import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { getTagsWithCounts } from "@/app/api/helpers/tag-queries";
 import type { CategoryAnalytics } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { isMobileRequest } from "../is-mobile-request";
 import { AnalyticsCard } from "./AnalyticsCard";
-import { CategoriesCard } from "./CategoriesCard";
+import { DiscoveryCard } from "./DiscoveryCard";
 
 interface LeftSidebarProps {
   currentCategorySlug?: string;
@@ -28,8 +30,10 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
     engagedBlogs: 0,
   };
 
-  const [categories, stats] = await Promise.all([
+  const [categories, industries, tags, stats] = await Promise.all([
     getCategoriesWithCounts(),
+    getIndustriesWithCounts(),
+    getTagsWithCounts(),
     (async (): Promise<CategoryAnalytics> => {
       if (currentCategorySlug) {
         const categoryId = await getCategoryIdBySlug(currentCategorySlug);
@@ -46,16 +50,18 @@ export async function LeftSidebar({ currentCategorySlug, className }: LeftSideba
     <aside
       aria-label="الشريط الجانبي الأيسر"
       className={cn(
-        "hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]",
+        "hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100dvh-5rem)] overflow-hidden",
         className
       )}
     >
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col gap-4">
         <AnalyticsCard stats={stats} />
-        <CategoriesCard
+        <DiscoveryCard
           categories={categories}
           currentCategorySlug={currentCategorySlug}
           totalArticlesAll={totalArticlesAll}
+          industries={industries}
+          tags={tags}
         />
       </div>
     </aside>

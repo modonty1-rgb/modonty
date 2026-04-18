@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
 import { FormInput, FormField, FormSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
-import { Link2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link2, RefreshCw } from "lucide-react";
 import { BusinessBriefSection } from "./business-brief-section";
+import { SlugChangeDialog } from "../slug-change-dialog";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
 interface BasicInfoSectionProps {
@@ -13,6 +16,7 @@ interface BasicInfoSectionProps {
   industries?: Array<{ id: string; name: string }>;
   isEditMode?: boolean;
   siteUrl?: string | null;
+  clientId?: string;
 }
 
 export function BasicInfoSection({
@@ -20,7 +24,9 @@ export function BasicInfoSection({
   industries = [],
   isEditMode = false,
   siteUrl = null,
+  clientId,
 }: BasicInfoSectionProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { watch, formState: { errors } } = form;
   const slug = watch("slug");
   const name = watch("name");
@@ -87,6 +93,41 @@ export function BasicInfoSection({
               <div className="text-xs text-muted-foreground">
                 {siteUrl}/clients/{slug}
               </div>
+            )}
+            {isEditMode && (
+              <div className="flex items-start gap-2 rounded-md bg-yellow-500/8 border border-yellow-500/20 px-3 py-2">
+                <div className="flex-1" dir="rtl">
+                  <span className="mt-0.5 text-yellow-500 shrink-0">⚠ </span>
+                  <span className="text-[11px] text-yellow-600 dark:text-yellow-400 leading-relaxed">
+                    <span className="font-semibold">الرابط مقفّل نهائياً.</span>{" "}
+                    تم تحديده عند الإنشاء ولا يمكن تغييره — هو الرابط الرسمي لصفحة العميل على جوجل. تغيير الاسم <span className="font-semibold">لا يؤثر</span> على الرابط.
+                  </span>
+                </div>
+                {clientId && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 h-7 text-[11px] border-yellow-500/30 text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-600"
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    <RefreshCw className="h-3 w-3 me-1" />
+                    Change
+                  </Button>
+                )}
+              </div>
+            )}
+            {isEditMode && clientId && (
+              <SlugChangeDialog
+                clientId={clientId}
+                currentSlug={slug ?? ""}
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                onSuccess={(newName, newSlug) => {
+                  form.setValue("name", newName, { shouldValidate: true });
+                  form.setValue("slug", newSlug, { shouldValidate: true });
+                }}
+              />
             )}
           </div>
         </FormField>

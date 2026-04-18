@@ -451,6 +451,27 @@ export function SettingsFormV2() {
               </div>
             </div>
 
+            {/* Feed Banner — Homepage (violet) */}
+            <div className="rounded-lg border border-violet-500/20 bg-violet-500/5 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-violet-400">Feed Banner <span className="font-normal text-muted-foreground">(Homepage)</span></p>
+              <Field label="Tagline" value={settings.platformTagline || ""} onChange={(v) => set("platformTagline", v)} placeholder="مرحباً بك في مودونتي" />
+              <Field label="Description" value={settings.platformDescription || ""} onChange={(v) => set("platformDescription", v)} placeholder="منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين..." multiline />
+            </div>
+
+            {/* Hero B2B Panel — Clients page (amber) */}
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-amber-400">Hero B2B Panel <span className="font-normal text-muted-foreground">(Clients page)</span></p>
+              <Field label="Label" value={settings.b2bLabel || ""} onChange={(v) => set("b2bLabel", v)} placeholder="لأصحاب الأعمال والشركات" />
+              <Field label="Headline" value={settings.b2bHeadline || ""} onChange={(v) => set("b2bHeadline", v)} placeholder="عملاؤك يبحثون عنك على جوجل" />
+              <Field label="Bullet 1" value={settings.b2bBullet1 || ""} onChange={(v) => set("b2bBullet1", v)} placeholder="ظهور مضمون على جوجل بمحتوى يُقنع..." />
+              <Field label="Bullet 2" value={settings.b2bBullet2 || ""} onChange={(v) => set("b2bBullet2", v)} placeholder="عملاء جاهزون للشراء — بلا ميزانية..." />
+              <Field label="Bullet 3" value={settings.b2bBullet3 || ""} onChange={(v) => set("b2bBullet3", v)} placeholder="نتائج تقيسها: زيارات، مشاهدات..." />
+              <div className="grid grid-cols-2 gap-2.5">
+                <Field label="CTA Text" value={settings.b2bCtaText || ""} onChange={(v) => set("b2bCtaText", v)} placeholder="عملاء بلا إعلانات" />
+                <Field label="CTA URL" value={settings.b2bCtaUrl || ""} onChange={(v) => set("b2bCtaUrl", v)} placeholder="https://www.jbrseo.com" />
+              </div>
+            </div>
+
           </div>
 
           {/* ── Column 2: Homepage SEO + Analytics + Social Profiles ── */}

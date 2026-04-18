@@ -61,7 +61,7 @@ export function NewsletterSubscribeForm() {
       {error && (
         <p className="text-xs text-destructive">{error}</p>
       )}
-      <Button type="submit" className="w-full h-9 text-sm" disabled={isSubmitting}>
+      <Button type="submit" className="w-full h-9 text-sm bg-accent text-accent-foreground hover:bg-accent/90 transition-colors border-0" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
             <IconLoading className="h-3.5 w-3.5 animate-spin shrink-0" />

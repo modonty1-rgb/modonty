@@ -200,6 +200,9 @@ const initialFormData: ArticleFormData = {
   // E-E-A-T Enhancement
   citations: [],
 
+  // Audio
+  audioUrl: null,
+
   // SEO keywords the article is based on (reference)
   seoKeywords: [],
   

@@ -1,9 +1,12 @@
 import { Suspense, ReactNode } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
+import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { IconChevronRight } from "@/lib/icons";
 import { ClientHero } from "./components/hero/client-hero";
 import { ClientStickyProvider } from "./components/client-tabs-nav";
+import { ALL_TAB_ITEMS } from "./components/client-tab-items";
 import { getClientPageData } from "./helpers/client-page-data";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
@@ -28,6 +31,14 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
 
   const { client, stats } = data;
 
+  const hiddenSet = new Set([
+    ...(client._count.articles === 0 ? ["reels"] : []),
+    ...(stats.followers === 0 ? ["likes"] : []),
+  ]);
+  const tabItems = ALL_TAB_ITEMS.filter(
+    (item) => item.segment === null || !hiddenSet.has(item.segment)
+  );
+
   return (
     <>
       <GTMClientTracker
@@ -39,12 +50,23 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
         pageTitle={client.seoTitle || client.name}
       />
 
+      {/* Mobile-only back button — breadcrumb hidden on sm: */}
+      <Link
+        href="/clients"
+        className="sm:hidden flex items-center gap-1 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="رجوع إلى قائمة العملاء"
+      >
+        <IconChevronRight className="h-4 w-4 rtl:rotate-0" aria-hidden />
+        العملاء
+      </Link>
+
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
           { label: "العملاء", href: "/clients" },
           { label: client.name },
         ]}
+        className="hidden sm:block"
       />
 
       <ClientHero
@@ -58,7 +80,7 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
       />
 
       <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-        <ClientStickyProvider clientSlug={client.slug} clientName={client.name} clientId={client.id}>
+        <ClientStickyProvider clientSlug={client.slug} clientName={client.name} clientId={client.id} items={tabItems}>
           <Suspense fallback={<div className="h-64 bg-muted rounded-md animate-pulse" />}>
             {children}
           </Suspense>

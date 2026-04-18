@@ -348,3 +348,38 @@ export async function getClientBySlug(slug: string) {
     articles: client.articles || [],
   };
 }
+
+export interface SidebarClient {
+  id: string;
+  name: string;
+  slug: string;
+  logo?: string;
+  industry?: string;
+}
+
+export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]> {
+  "use cache";
+  cacheTag("clients");
+  cacheLife("hours");
+
+  const clients = await db.client.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoMedia: { select: { url: true } },
+      industry:  { select: { name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+
+  return clients.map(c => ({
+    id:       c.id,
+    name:     c.name,
+    slug:     c.slug,
+    logo:     c.logoMedia?.url || undefined,
+    industry: c.industry?.name || undefined,
+  }));
+}
+

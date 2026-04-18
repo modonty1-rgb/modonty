@@ -12,7 +12,7 @@ export function newsletterWelcomeEmail({ email }: NewsletterWelcomeParams): {
   const unsubscribeUrl = `https://modonty.com/unsubscribe?email=${encodeURIComponent(email)}`;
 
   const content = `
-    ${heading("أهلاً بك في نشرة مودونتي! 📬")}
+    ${heading("أهلاً بك في منصة مودونتي! 📬")}
     ${paragraph("شكراً لاشتراكك! ستصلك أحدث المقالات الطبية والنصائح الصحية من متخصصين معتمدين في السعودية والخليج.")}
     ${divider()}
     ${paragraph("توقّع منّا:")}
@@ -29,8 +29,8 @@ export function newsletterWelcomeEmail({ email }: NewsletterWelcomeParams): {
   `;
 
   return {
-    subject: "أهلاً بك في نشرة مودونتي 📬",
+    subject: "أهلاً بك في منصة مودونتي 📬",
     html: baseTemplate(content, "مرحباً بك — ستصلك أحدث المقالات الطبية الموثوقة"),
-    text: `أهلاً،\n\nشكراً لاشتراكك في نشرة مودونتي!\n\nستصلك أحدث المقالات الطبية أسبوعياً.\n\nاقرأ المقالات: https://modonty.com\n\nلإلغاء الاشتراك: ${unsubscribeUrl}\n\n— فريق مودونتي`,
+    text: `أهلاً،\n\nشكراً لاشتراكك في منصة مودونتي!\n\nستصلك أحدث المقالات الطبية أسبوعياً.\n\nاقرأ المقالات: https://modonty.com\n\nلإلغاء الاشتراك: ${unsubscribeUrl}\n\n— فريق مودونتي`,
   };
 }

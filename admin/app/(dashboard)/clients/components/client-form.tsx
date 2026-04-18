@@ -213,7 +213,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">
                       <div className="space-y-6">
-                        <BasicInfoSection form={form} industries={industries} isEditMode />
+                        <BasicInfoSection form={form} industries={industries} isEditMode clientId={clientId} />
                         <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} />
                       </div>
                     </AccordionContent>

@@ -1,0 +1,227 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link "4" [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e124]:
+                - img
+                - generic [ref=e125]: "4"
+            - button "M" [ref=e126] [cursor=pointer]:
+              - generic [ref=e128]: M
+      - generic [ref=e129]:
+        - generic [ref=e130]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e131]:
+          - button "Send Note" [ref=e132] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e133] [cursor=pointer]:
+            - img
+      - main [ref=e134]:
+        - generic [ref=e189]:
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - generic [ref=e195]: Step 5 of 5
+                - generic [ref=e196]: "SEO Health: 63%"
+                - generic [ref=e199]: Live Analysis
+              - generic [ref=e200]:
+                - generic [ref=e202]: 52% Complete
+                - button "Save Draft" [ref=e204] [cursor=pointer]:
+                  - img
+                  - generic [ref=e205]: Save Draft
+            - 'generic "Overall progress: 52%" [ref=e443]'
+          - generic [ref=e211]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e444]':
+              - generic [ref=e446]:
+                - generic [ref=e447]:
+                  - generic [ref=e448]: Publication Settings
+                  - generic [ref=e449]: Control status, scheduling, and review dates for this article.
+                - generic [ref=e450]:
+                  - region "Status & visibility" [ref=e451]:
+                    - heading "Status & visibility" [level=3] [ref=e452]
+                    - generic [ref=e453]
+                  - region "Scheduling" [ref=e462]:
+                    - heading "Scheduling" [level=3] [ref=e463]
+                    - generic [ref=e464]
+                  - generic [ref=e471]:
+                    - text: Date Published
+                    - textbox "Date Published" [disabled] [ref=e472]
+                    - paragraph [ref=e473]: Automatically set when the article is published.
+              - generic [ref=e476]:
+                - text: Citations
+                - paragraph [ref=e477]: External authoritative source URLs for E-E-A-T.
+                - generic [ref=e478]:
+                  - textbox "Add citation URL" [ref=e479]:
+                    - /placeholder: https://...
+                  - button "Add" [ref=e480] [cursor=pointer]:
+                    - img
+                    - text: Add
+                  - button "Extract" [ref=e481] [cursor=pointer]:
+                    - img
+                    - text: Extract
+              - generic [ref=e482]:
+                - generic [ref=e484]:
+                  - generic [ref=e485]: Technical SEO Guidance
+                  - generic [ref=e486]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e489]:
+                    - generic [ref=e490]
+                    - generic [ref=e499]
+                - generic [ref=e553]:
+                  - generic [ref=e554]: Technical SEO Guidance
+                  - generic [ref=e555]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e558]:
+                    - generic [ref=e559]
+                    - generic [ref=e568]
+                - generic [ref=e621]:
+                  - generic [ref=e623] [cursor=pointer]:
+                    - generic [ref=e624]
+                    - img [ref=e628]
+                  - generic [ref=e631]:
+                    - generic [ref=e632]
+                    - generic [ref=e671]
+                - generic [ref=e677]:
+                  - generic [ref=e679]: SEO Metadata Summary
+                  - table [ref=e682]:
+                    - rowgroup [ref=e683]
+                    - rowgroup [ref=e688]
+              - generic [ref=e774]:
+                - generic [ref=e776]:
+                  - img [ref=e777]
+                  - text: MetaTag & JSON-LD
+                - generic [ref=e780]:
+                  - generic [ref=e781]:
+                    - generic [ref=e782]
+                    - code [ref=e788]: "{ \"title\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant - Al Bayt Restaurant\", \"description\": \"اكتشف أشهر وصفات المطبخ السعودي التقليدي وطرق إعدادها خطوة بخطوة. من الكبسة والمندي إلى الجريش والمطازيز، دليل شامل للطهي السعودي الأصيل.\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي\" }, \"openGraph\": { \"title\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant - Al Bayt Restaurant\", \"description\": \"اكتشف أشهر وصفات المطبخ السعودي التقليدي وطرق إعدادها خطوة بخطوة. من الكبسة والمندي إلى الجريش والمطازيز، دليل شامل للطهي السعودي الأصيل.\", \"url\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي\", \"siteName\": \"Al Bayt Restaurant\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"modifiedTime\": \"2026-04-16T17:32:50.368Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant - Al Bayt Restaurant\", \"description\": \"اكتشف أشهر وصفات المطبخ السعودي التقليدي وطرق إعدادها خطوة بخطوة. من الكبسة والمندي إلى الجريش والمطازيز، دليل شامل للطهي السعودي الأصيل.\", \"images\": [ \"http://localhost:3000/og-image.jpg\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                    - generic [ref=e789]
+                  - generic [ref=e795]:
+                    - generic [ref=e796]
+                    - code [ref=e803]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي#article\", \"headline\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant\", \"description\": \"اكتشف أشهر وصفات المطبخ السعودي التقليدي وطرق إعدادها خطوة بخطوة. من الكبسة والمندي إلى الجريش والمطازيز، دليل شامل للطهي السعودي الأصيل.\", \"datePublished\": \"2026-04-16T17:32:50.368Z\", \"dateModified\": \"2026-04-16T17:32:50.368Z\", \"author\": { \"@id\": \"http://localhost:3000/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"wordCount\": 49, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي\", \"url\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي\", \"name\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant\", \"description\": \"اكتشف أشهر وصفات المطبخ السعودي التقليدي وطرق إعدادها خطوة بخطوة. من الكبسة والمندي إلى الجريش والمطازيز، دليل شامل للطهي السعودي الأصيل.\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3000/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"وصفات المطبخ السعودي: دليل الطهي | Al Bayt Restaurant\", \"item\": \"http://localhost:3000/articles/%D9%88%D8%B5%D9%81%D8%A7%D8%AA-%D8%A7%D9%84%D9%85%D8%B7%D8%A8%D8%AE-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A-%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D9%84%D8%B7%D9%87%D9%8A-%D8%A7%D9%84%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A\" } ], \"@id\": \"http://localhost:3000/articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3000/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                    - generic [ref=e804]
+            - tablist [ref=e251]:
+              - 'tab "Basic: 67% complete. اختياري: التصنيف، ملخص المقال، الوسوم" [ref=e300] [cursor=pointer]':
+                - img [ref=e359]
+                - generic [ref=e254]: Basic
+                - generic [ref=e255]: 67%
+              - 'tab "Content: 80% complete. اختياري: صورة المقال الرئيسية، معرض الصور" [ref=e405] [cursor=pointer]':
+                - img [ref=e439]
+                - generic [ref=e258]: Content
+                - generic [ref=e259]: 80%
+              - 'tab "SEO: 63% complete. المحتوى: 49 كلمة — أضف محتوى أكثر (الحد الأدنى 300) · المحتوى: مفقود — أضف ملخص للمقال · الصور: مفقودة — أضف صورة من تبويب المحتوى · الإعدادات التقنية: استخدم https://" [ref=e442] [cursor=pointer]':
+                - img [ref=e262]
+                - generic [ref=e264]: SEO
+                - generic [ref=e265]: 63%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e266] [cursor=pointer]':
+                - img [ref=e812]
+                - generic [ref=e268]: FAQs & Related
+                - generic [ref=e269]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [active] [selected] [ref=e302] [cursor=pointer]':
+                - generic [ref=e271]: "5"
+                - generic [ref=e272]: Publish
+                - generic [ref=e273]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e184] [cursor=pointer]:
+    - img [ref=e185]
+  - alert [ref=e188]

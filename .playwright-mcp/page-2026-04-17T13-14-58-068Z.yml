@@ -1,0 +1,235 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e42] [cursor=pointer]
+    - main [ref=e44]:
+      - navigation "تنقل الصفحة" [ref=e45]:
+        - list [ref=e46]:
+          - listitem [ref=e47]:
+            - link "الرئيسية الرئيسية" [ref=e48] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e49]
+              - generic [ref=e52]: الرئيسية
+          - listitem [ref=e53]:
+            - img [ref=e54]
+            - link "العملاء" [ref=e56] [cursor=pointer]:
+              - /url: /clients
+              - generic [ref=e57]: العملاء
+          - listitem [ref=e58]:
+            - generic [ref=e60]: شركة الاختبار
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e66]: شا
+          - generic [ref=e67]:
+            - heading "شركة الاختبار موثق" [level=1] [ref=e68]:
+              - text: شركة الاختبار
+              - img "موثق" [ref=e69]
+            - paragraph [ref=e72]: TechVision Solutions is a leading technology company in Saudi Arabia specializing in software development, cloud infrastructure, and digital transformation for enterprises and government entities.
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - img [ref=e75]
+                - generic [ref=e80]: ٠
+                - text: متابع
+              - generic [ref=e82]:
+                - img [ref=e83]
+                - generic [ref=e86]: ٠
+                - text: مقال
+              - generic [ref=e88]:
+                - img [ref=e89]
+                - generic [ref=e92]: ١
+                - text: مشاهدة
+        - button "متابعة" [ref=e97] [cursor=pointer]:
+          - img
+          - generic [ref=e98]: متابعة
+      - main [ref=e99]:
+        - navigation "أقسام صفحة العميل" [ref=e100]:
+          - list [ref=e103]:
+            - listitem [ref=e104]:
+              - link "الكل" [ref=e105] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1
+                - generic [ref=e106]: الكل
+            - listitem [ref=e107]:
+              - link "حول" [ref=e108] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/about
+                - generic [ref=e109]: حول
+            - listitem [ref=e110]:
+              - link "تواصل مع الشركة" [ref=e111] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/contact
+                - generic [ref=e112]: تواصل مع الشركة
+            - listitem [ref=e113]:
+              - link "الصور" [ref=e114] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/photos
+                - generic [ref=e115]: الصور
+            - listitem [ref=e116]:
+              - link "المتابعون" [ref=e117] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/followers
+                - generic [ref=e118]: المتابعون
+            - listitem [ref=e119]:
+              - link "التقييمات" [ref=e120] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/reviews
+                - generic [ref=e121]: التقييمات
+            - listitem [ref=e122]:
+              - link "الريلز" [ref=e123] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/reels
+                - generic [ref=e124]: الريلز
+            - listitem [ref=e125]:
+              - link "الإعجابات" [ref=e126] [cursor=pointer]:
+                - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/likes
+                - generic [ref=e127]: الإعجابات
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - heading "إحصائيات" [level=3] [ref=e132]:
+                - img [ref=e133]
+                - text: إحصائيات
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - img [ref=e138]
+                  - generic [ref=e141]: ٠
+                  - generic [ref=e142]: مقال
+                - generic [ref=e143]:
+                  - img [ref=e144]
+                  - generic [ref=e149]: ٠
+                  - generic [ref=e150]: متابع
+                - generic [ref=e151]:
+                  - img [ref=e152]
+                  - generic [ref=e155]: ١
+                  - generic [ref=e156]: مشاهدة
+            - heading "معلومات الشركة" [level=3] [ref=e159]:
+              - img [ref=e160]
+              - text: معلومات الشركة
+            - generic [ref=e165]:
+              - heading "معلومات الاتصال" [level=3] [ref=e167]:
+                - img [ref=e168]
+                - text: معلومات الاتصال
+              - generic [ref=e171]:
+                - img [ref=e172]
+                - generic [ref=e176]:
+                  - link "البريد الإلكتروني" [ref=e177] [cursor=pointer]:
+                    - /url: mailto:info@techvision.sa
+                  - button "نسخ البريد الإلكتروني" [ref=e178] [cursor=pointer]:
+                    - img
+          - region "أحدث المقالات" [ref=e180]:
+            - heading "أحدث المقالات" [level=2] [ref=e182]
+            - generic [ref=e183]:
+              - img [ref=e185]
+              - heading "لا توجد مقالات حتى الآن" [level=3] [ref=e188]
+              - paragraph [ref=e189]: لم ينشر شركة الاختبار أي مقالات حتى الآن. تصفح المحتوى الآخر أو عد لاحقاً.
+              - generic [ref=e190]:
+                - link "تصفح العملاء" [ref=e191] [cursor=pointer]:
+                  - /url: /clients
+                  - button "تصفح العملاء" [ref=e192]
+                - link "الرئيسية" [ref=e193] [cursor=pointer]:
+                  - /url: /
+                  - button "الرئيسية" [ref=e194]
+          - generic [ref=e195]:
+            - generic [ref=e196]:
+              - heading "المتابعون" [level=3] [ref=e198]:
+                - img [ref=e199]
+                - text: المتابعون
+              - generic [ref=e204]:
+                - paragraph [ref=e205]: لا يوجد متابعون بعد. عند بدء متابعة هذا العميل، ستظهر الحسابات هنا.
+                - link "عرض المتابعين" [ref=e206] [cursor=pointer]:
+                  - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/followers
+            - generic [ref=e207]:
+              - heading "التقييمات" [level=3] [ref=e209]:
+                - img [ref=e210]
+                - text: التقييمات
+              - generic [ref=e212]:
+                - paragraph [ref=e213]: لا توجد تقييمات منشورة بعد لمحتوى شركة الاختبار. عند إضافة تعليقات على مقالات هذا العميل ستظهر هنا.
+                - link "عرض التقييمات" [ref=e214] [cursor=pointer]:
+                  - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/reviews
+            - generic [ref=e215]:
+              - heading "الإعجابات" [level=3] [ref=e217]:
+                - img [ref=e218]
+                - text: الإعجابات
+              - generic [ref=e220]:
+                - paragraph [ref=e221]: لا توجد تفاعلات إعجاب كافية بعد لعرضها. عند زيادة متابعي شركة الاختبار وتفاعلهم مع المقالات، ستظهر الإحصاءات هنا.
+                - link "عرض الإعجابات" [ref=e222] [cursor=pointer]:
+                  - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1/likes
+            - region "عملاء مشابهون":
+              - heading "عملاء مشابهون" [level=2] [ref=e223]
+        - generic [ref=e224]:
+          - generic [ref=e225]:
+            - paragraph [ref=e226]: أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور
+            - paragraph [ref=e227]: انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء
+          - link "عملاء بلا إعلانات" [ref=e228] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e229]: ↗
+    - contentinfo [ref=e230]:
+      - generic [ref=e231]:
+        - generic [ref=e232]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e233] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e234]: ↗
+      - navigation "روابط سريعة" [ref=e235]:
+        - link "الرئيسية" [ref=e236] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e237] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e238] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e239] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e240] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e241] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e242]:
+        - link "الشروط والأحكام" [ref=e243] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e244] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e245] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e246] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e247] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e248]: © 2026 مودونتي
+  - generic [ref=e253] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e254]:
+      - img [ref=e255]
+    - generic [ref=e258]:
+      - button "Open issues overlay" [ref=e259]:
+        - generic [ref=e260]:
+          - generic [ref=e261]: "3"
+          - generic [ref=e262]: "4"
+        - generic [ref=e263]:
+          - text: Issue
+          - generic [ref=e264]: s
+      - button "Collapse issues badge" [ref=e265]:
+        - img [ref=e266]
+  - alert [ref=e268]

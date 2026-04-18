@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 const subscribeSchema = z.object({
   email: z.string().email().max(254),
@@ -52,16 +53,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Create subscriber
-    await db.subscriber.create({
-      data: {
-        email,
-        clientId,
-        subscribed: true,
-        subscribedAt: new Date(),
-        consentGiven: true,
-        consentDate: new Date(),
-      },
-    });
+    const [newSubscriber, client] = await Promise.all([
+      db.subscriber.create({
+        data: {
+          email,
+          clientId,
+          subscribed: true,
+          subscribedAt: new Date(),
+          consentGiven: true,
+          consentDate: new Date(),
+        },
+      }),
+      db.client.findUnique({ where: { id: clientId }, select: { name: true } }),
+    ]);
+    void newSubscriber;
+
+    // Notify Telegram group — non-blocking
+    const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
+    sendTelegramMessage(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
 
     const sessionId = await getOrCreateSessionId();
     await createConversion({

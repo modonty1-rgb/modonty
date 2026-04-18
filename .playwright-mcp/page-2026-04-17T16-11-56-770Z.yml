@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Expand sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+        - generic [ref=e19]:
+          - link "Articles" [ref=e21] [cursor=pointer]:
+            - /url: /articles
+            - img [ref=e22]
+          - link "Categories" [ref=e25] [cursor=pointer]:
+            - /url: /categories
+            - img [ref=e26]
+          - link "Tags" [ref=e28] [cursor=pointer]:
+            - /url: /tags
+            - img [ref=e29]
+          - link "Authors" [ref=e32] [cursor=pointer]:
+            - /url: /authors
+            - img [ref=e33]
+          - link "Industries" [ref=e35] [cursor=pointer]:
+            - /url: /industries
+            - img [ref=e36]
+        - generic [ref=e38]:
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /modonty/pages/about
+            - img [ref=e41]
+          - link "FAQ" [ref=e43] [cursor=pointer]:
+            - /url: /modonty/faq
+            - img [ref=e44]
+          - link "Terms" [ref=e47] [cursor=pointer]:
+            - /url: /modonty/pages/terms
+            - img [ref=e48]
+          - link "User Agreement" [ref=e52] [cursor=pointer]:
+            - /url: /modonty/pages/user-agreement
+            - img [ref=e53]
+          - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+            - /url: /modonty/pages/privacy-policy
+            - img [ref=e59]
+          - link "Cookie Policy" [ref=e62] [cursor=pointer]:
+            - /url: /modonty/pages/cookie-policy
+            - img [ref=e63]
+          - link "Copyright" [ref=e65] [cursor=pointer]:
+            - /url: /modonty/pages/copyright-policy
+            - img [ref=e66]
+        - generic [ref=e69]:
+          - link "Subscribers" [ref=e71] [cursor=pointer]:
+            - /url: /subscribers
+            - img [ref=e72]
+          - link "Analytics" [ref=e75] [cursor=pointer]:
+            - /url: /analytics
+            - img [ref=e76]
+        - generic [ref=e78]:
+          - link "Admins" [ref=e80] [cursor=pointer]:
+            - /url: /users
+            - img [ref=e81]
+          - link "Plans & Pricing" [ref=e86] [cursor=pointer]:
+            - /url: /subscription-tiers
+            - img [ref=e87]
+          - link "Export Data" [ref=e89] [cursor=pointer]:
+            - /url: /export-data
+            - img [ref=e90]
+          - link "Database" [ref=e93] [cursor=pointer]:
+            - /url: /database
+            - img [ref=e94]
+          - link "Settings" [ref=e98] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e99]
+      - generic [ref=e102]:
+        - link [ref=e103] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e104]
+        - button "Toggle theme" [ref=e106] [cursor=pointer]:
+          - img
+          - generic [ref=e107]: Toggle theme
+    - generic [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - heading "Database Seeder" [level=1] [ref=e117]
+            - paragraph [ref=e118]: Configure and trigger realistic data seeding for development and QA
+          - generic [ref=e120]:
+            - generic [ref=e122]: Article Seeding
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - generic [ref=e125]: Number of articles
+                - spinbutton "Number of articles" [ref=e126]: "10"
+              - generic [ref=e127]:
+                - generic [ref=e128]:
+                  - checkbox "Use OpenAI to generate realistic content (requires OPENAI_API_KEY)" [ref=e129] [cursor=pointer]
+                  - checkbox
+                  - generic [ref=e130]: Use OpenAI to generate realistic content (requires OPENAI_API_KEY)
+                - paragraph [ref=e131]: When enabled, ALL data (clients, industries, categories, articles, etc.) will be generated using OpenAI based on your industry brief. If it fails, the seed will fall back to local templates.
+                - generic [ref=e132]:
+                  - button "Test OpenAI" [ref=e133] [cursor=pointer]
+                  - button "Test Unsplash" [ref=e134] [cursor=pointer]
+                  - button "Test NewsAPI" [ref=e135] [cursor=pointer]
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - checkbox "Use NewsAPI to fetch real article titles (requires NEWS_API_KEY)" [ref=e138] [cursor=pointer]
+                  - checkbox
+                  - generic [ref=e139]: Use NewsAPI to fetch real article titles (requires NEWS_API_KEY)
+                - paragraph [ref=e140]: When enabled, article titles will be fetched from NewsAPI.org (Arabic articles). Tags will be extracted from NewsAPI articles and merged with OpenAI/templates. If it fails, the seed will fall back to OpenAI/templates.
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - checkbox "Clear database before seeding (recommended)" [checked] [ref=e143] [cursor=pointer]:
+                    - generic:
+                      - img
+                  - checkbox [checked]
+                  - generic [ref=e144]: Clear database before seeding (recommended)
+                - paragraph [ref=e145]: When checked, the database will be cleared before seeding. Uncheck to append new data to existing data.
+              - button "Complete Data Generation Summary" [ref=e148] [cursor=pointer]:
+                - paragraph [ref=e149]: Complete Data Generation Summary
+                - img [ref=e150]
+              - generic [ref=e153]:
+                - button "Create Client Seed" [ref=e154] [cursor=pointer]
+                - button "Test Client + Media" [ref=e155] [cursor=pointer]
+                - button "Create Article" [ref=e156] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e162] [cursor=pointer]:
+    - img [ref=e163]
+  - alert [ref=e166]

@@ -212,7 +212,15 @@ export function generateArticleStructuredData(article: any) {
     "@type": "Article",
     headline: article.title,
     description: article.seoDescription || article.excerpt || "",
-    image: article.featuredImage?.url || article.ogImage || undefined,
+    image: article.featuredImage?.url
+      ? {
+          "@type": "ImageObject",
+          url: article.featuredImage.url,
+          ...(article.featuredImage.width && { width: article.featuredImage.width }),
+          ...(article.featuredImage.height && { height: article.featuredImage.height }),
+          ...(article.featuredImage.altText && { name: article.featuredImage.altText }),
+        }
+      : undefined,
     datePublished: article.datePublished?.toISOString(),
     dateModified: article.dateModified?.toISOString() || article.updatedAt?.toISOString(),
     author: {

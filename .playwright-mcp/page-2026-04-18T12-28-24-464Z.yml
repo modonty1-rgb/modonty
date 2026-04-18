@@ -1,0 +1,236 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Categories" [ref=e100] [cursor=pointer]:
+                - /url: /categories
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: Categories 69e3785f...
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e124]:
+                - img
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e130]:
+          - button "Send Note" [ref=e131] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e132] [cursor=pointer]:
+            - img
+      - main [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - heading "Category Details" [level=1] [ref=e137]
+              - paragraph [ref=e138]: View category information and articles
+            - generic [ref=e139]:
+              - button "Revalidate SEO" [ref=e140] [cursor=pointer]:
+                - img
+                - text: Revalidate SEO
+              - button "Delete" [ref=e141] [cursor=pointer]:
+                - img
+                - text: Delete
+          - generic [ref=e142]:
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - heading "تجريبي - اختبار المنصة" [level=1] [ref=e146]
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - img [ref=e149]
+                    - generic [ref=e152]:
+                      - generic [ref=e153]: 10%
+                      - generic [ref=e154]: 10/100
+                  - generic [ref=e155]:
+                    - link "Back" [ref=e156] [cursor=pointer]:
+                      - /url: /categories
+                    - link "Edit" [ref=e157] [cursor=pointer]:
+                      - /url: /categories/69e3785f9d6bf0c504e819c9/edit
+              - generic [ref=e159]:
+                - button "Basic Information" [expanded] [ref=e160] [cursor=pointer]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: Basic Information
+                    - img [ref=e163]
+                - generic [ref=e166]:
+                  - generic [ref=e167]:
+                    - paragraph [ref=e168]: Name
+                    - paragraph [ref=e169]: تجريبي - اختبار المنصة
+                  - generic [ref=e170]:
+                    - paragraph [ref=e171]: Slug
+                    - paragraph [ref=e172]: تجريبي-اختبار-المنصة
+                  - generic [ref=e173]:
+                    - paragraph [ref=e174]: Total Articles
+                    - link "0 articles" [ref=e175] [cursor=pointer]:
+                      - /url: /articles?categoryId=69e3785f9d6bf0c504e819c9
+                  - generic [ref=e176]:
+                    - paragraph [ref=e177]: Created
+                    - paragraph [ref=e178]: Apr 18, 2026
+                  - generic [ref=e179]:
+                    - paragraph [ref=e180]: Last Updated
+                    - paragraph [ref=e181]: Apr 18, 2026
+              - generic [ref=e183]:
+                - button "SEO" [expanded] [ref=e184] [cursor=pointer]:
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: SEO
+                    - img [ref=e187]
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - paragraph [ref=e192]: Social Image
+                    - generic [ref=e193]:
+                      - img "صورة تجريبية - أصول منصة مودونتي" [ref=e195]
+                      - generic [ref=e196]:
+                        - paragraph [ref=e197]: Alt Text
+                        - paragraph [ref=e198]: صورة تجريبية - أصول منصة مودونتي
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: ✅ SEO Cache Generated
+                    - generic [ref=e202]: 2026-04-18T12:26:09.259Z
+                  - generic [ref=e203]:
+                    - paragraph [ref=e204]: JSON-LD Structured Data
+                    - generic [ref=e205]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"CollectionPage\", \"@id\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\", \"name\": \"تجريبي - اختبار المنصة\", \"description\": \"تصفح مقالات تجريبي - اختبار المنصة\", \"url\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\", \"inLanguage\": \"ar-SA\", \"isPartOf\": { \"@id\": \"https://modonty.com#website\" }, \"publisher\": { \"@id\": \"https://modonty.com#organization\" } }, { \"@type\": \"BreadcrumbList\", \"@id\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة#breadcrumb\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://modonty.com\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Categories\", \"item\": \"https://modonty.com/categories\" }, { \"@type\": \"ListItem\", \"position\": 3, \"name\": \"تجريبي - اختبار المنصة\", \"item\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\" } ] }, { \"@type\": \"DefinedTerm\", \"@id\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة#term\", \"name\": \"تجريبي - اختبار المنصة\", \"description\": \"تصفح مقالات تجريبي - اختبار المنصة\", \"url\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\" }, { \"@type\": \"Organization\", \"@id\": \"https://modonty.com#organization\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\" }, { \"@type\": \"WebSite\", \"@id\": \"https://modonty.com#website\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\" } ] }"
+                  - generic [ref=e206]:
+                    - paragraph [ref=e207]: Next.js Metadata (Meta Tags)
+                    - generic [ref=e208]: "{ \"title\": \"تجريبي - اختبار المنصة\", \"description\": \"تصفح مقالات تجريبي - اختبار المنصة\", \"robots\": \"index, follow\", \"alternates\": { \"canonical\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\", \"languages\": { \"ar-SA\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\" } }, \"openGraph\": { \"title\": \"تجريبي - اختبار المنصة\", \"description\": \"تصفح مقالات تجريبي - اختبار المنصة\", \"type\": \"website\", \"url\": \"https://modonty.com/categories/تجريبي-اختبار-المنصة\", \"siteName\": \"Modonty\", \"locale\": \"ar_SA\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1776514968/modonty/img-4b55mwph7.png\", \"alt\": \"صورة تجريبية - أصول منصة مودونتي\" } ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"تجريبي - اختبار المنصة\", \"description\": \"تصفح مقالات تجريبي - اختبار المنصة\", \"images\": [ \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1776514968/modonty/img-4b55mwph7.png\" ] } }"
+            - generic [ref=e209]:
+              - generic [ref=e211]:
+                - generic [ref=e212]: Articles
+                - link "View All Articles" [ref=e213] [cursor=pointer]:
+                  - /url: /articles?categoryId=69e3785f9d6bf0c504e819c9
+              - generic [ref=e215]:
+                - generic [ref=e217]:
+                  - img [ref=e218]
+                  - textbox "Search articles..." [ref=e221]
+                - table [ref=e224]:
+                  - rowgroup [ref=e225]:
+                    - row "Title Client Author Status Views Published Actions" [ref=e226]:
+                      - columnheader "Title" [ref=e227] [cursor=pointer]:
+                        - generic [ref=e228]:
+                          - text: Title
+                          - img [ref=e229]
+                      - columnheader "Client" [ref=e232] [cursor=pointer]:
+                        - generic [ref=e233]:
+                          - text: Client
+                          - img [ref=e234]
+                      - columnheader "Author" [ref=e237] [cursor=pointer]:
+                        - generic [ref=e238]:
+                          - text: Author
+                          - img [ref=e239]
+                      - columnheader "Status" [ref=e242]
+                      - columnheader "Views" [ref=e243] [cursor=pointer]:
+                        - generic [ref=e244]:
+                          - text: Views
+                          - img [ref=e245]
+                      - columnheader "Published" [ref=e248] [cursor=pointer]:
+                        - generic [ref=e249]:
+                          - text: Published
+                          - img [ref=e250]
+                      - columnheader "Actions" [ref=e253]
+                  - rowgroup [ref=e254]:
+                    - row "No articles found Try adjusting your search terms" [ref=e255]:
+                      - cell "No articles found Try adjusting your search terms" [ref=e256]:
+                        - generic [ref=e257]:
+                          - paragraph [ref=e258]: No articles found
+                          - paragraph [ref=e259]: Try adjusting your search terms
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e265] [cursor=pointer]:
+    - img [ref=e266]
+  - alert [ref=e269]

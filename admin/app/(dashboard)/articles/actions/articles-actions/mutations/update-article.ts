@@ -110,7 +110,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       if (seoResult.percentage < MIN_SEO_SCORE) {
         return {
           success: false,
-          error: `SEO score is ${seoResult.percentage}% — minimum ${MIN_SEO_SCORE}% required to publish. Improve SEO fields before publishing.`,
+          error: `نقاط SEO ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. حسّن حقول SEO قبل النشر.`,
         };
       }
 
@@ -217,6 +217,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
             : ([] as Prisma.InputJsonValue),
         seoKeywords: data.seoKeywords ?? [],
         citations: data.citations ?? [],
+        audioUrl: data.audioUrl || null,
       },
     });
 

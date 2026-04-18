@@ -144,14 +144,14 @@ During any live test session:
 ## Pending — Move to MASTER-TODO
 
 - [ ] OBS-008 → Navbar CTA pill hidden on mobile
-- [ ] OBS-009 → Article title overflow (mixed Arabic/English)
+- [x] OBS-009 → ✅ Already fixed: article-header.tsx has `break-words`
 - [ ] OBS-010 → 🔴 CRITICAL: Broken slug in article card (/articles/م)
-- [ ] OBS-011 → Bottom nav covers page content (missing pb)
+- [x] OBS-011 → ✅ Already fixed: layout.tsx has `pb-16 md:pb-0`
 - [ ] OBS-012 → Categories: no article count visible
 - [ ] OBS-013 → Trending: no thumbnails in cards
 - [ ] OBS-014 → Clients: card alignment issues
 - [ ] OBS-015 → Login: excess top space
-- [ ] OBS-016 → 404: no bottom nav
+- [x] OBS-016 → ✅ Already fixed: not-found.tsx uses root layout which includes MobileFooterWithFavorites
 - [ ] OBS-017 → Terms: text clipping
 - [ ] OBS-018 → Article: interaction bar spacing
 
@@ -164,4 +164,61 @@ During any live test session:
 - [ ] OBS-004 → Media upload: clarify client assignment flow
 - [ ] OBS-005 → Media edit: aspect ratio indicator in preview
 > OBS-003 already in MASTER-TODO
+
+---
+
+## Session: 2026-04-17 — Client Page Hero + Admin Media Live Test
+
+### OBS-019 🟡 MEDIUM — Edit Hero Image dialog: لا يوجد زر "Upload" أو "Change" واضح
+- **Where:** Admin → Clients list → Edit media → Edit Hero Image dialog
+- **What:** الـ dialog يعرض الصورة الحالية لكن ما في زر واضح لتغييرها. المستخدم يحتاج يضغط على الصورة نفسها لفتح الـ media picker — سلوك غير واضح.
+- **Expected:** زر "Change Image" أو "Select Different Image" واضح أسفل أو فوق الصورة
+
+### OBS-020 🟢 LOW — Edit Hero Image: "No alt text" warning بدون حقل إدخال
+- **Where:** Admin → Edit Hero Image dialog
+- **What:** يظهر "No alt text" كـ warning على الصورة لكن ما في حقل لإدخال الـ alt text في هذا الـ dialog
+- **Expected:** حقل alt text أو رابط لصفحة تعديل الصورة
+
+### OBS-021 🔴 HIGH — Media picker في الـ hero dialog يعرض General images فقط
+- **Where:** Admin → Edit Hero Image → Select Media dialog
+- **What:** الـ picker يعرض صور "General" (مش مخصصة لأي عميل). صور العميل الخاصة لا تظهر في الـ picker لأنها مرتبطة بعميل مختلف أو غير موجودة.
+- **Impact:** الأدمن يضطر يرفع صورة عامة ثم يعينها للعميل — سير عمل معقد
+
+### OBS-022 🟡 MEDIUM — Select Media dialog: لا يوجد زر "Upload New"
+- **Where:** Admin → Edit Hero Image → Select Media dialog
+- **What:** الـ dialog يعرض فقط الصور الموجودة. لو ما في صور، الأدمن عاجز عن رفع صورة جديدة من هنا.
+- **Expected:** زر "Upload New Image" داخل الـ dialog
+
+### OBS-023 🟡 MEDIUM — لا يوجد toast بعد "Save Hero Image"
+- **Where:** Admin → Edit Hero Image dialog → بعد الضغط على Save
+- **What:** الـ dialog يغلق بدون أي toast أو confirmation message. المستخدم ما يعرف إذا اتحفظت الصورة أو لأ.
+- **Expected:** Toast "تم تحديث صورة الغلاف بنجاح"
+
+### OBS-025 🟡 MEDIUM — Tagline يعرض "SA" بدل "السعودية" في صفحة العميل
+- **Where:** modonty → صفحة العميل → hero tagline
+- **What:** الـ tagline يعرض "الرعاية الصحية · الرياض، SA" — "SA" هو country code إنجليزي
+- **File suspect:** `modonty/app/clients/[slug]/components/hero/utils.tsx` — `getTagline()` يستخدم `addressCountry` مباشرة
+- **Expected:** "السعودية" أو ترجمة الـ country code للعربية
+
+---
+
+## Pending (new) — Move to MASTER-TODO
+
+- [ ] OBS-019 → Admin: Edit Hero dialog — no obvious "Change" affordance
+- [ ] OBS-020 → Admin: No alt text field in Edit Hero dialog
+- [ ] OBS-021 → Admin: Media picker shows General only, not client-specific
+- [ ] OBS-022 → Admin: No Upload button in Select Media dialog
+- [ ] OBS-023 → Admin: No toast after Save Hero Image
+- [x] OBS-025 → ✅ FIXED (Session 40): `localizeCountry()` exported from utils.tsx + used in hero-meta.tsx:53
+
+---
+
+## Session: 2026-04-17 — Live Test CP-10 (Mobile 375px)
+
+### OBS-026 🟡 MEDIUM — CP-7 regression: Hero stats row wraps to 2 lines on mobile
+- **Where:** Client page hero — stats row (متابع · مقال · مشاهدة)
+- **What:** `flex-wrap` causes stats to break to two lines at 375px — "مقال · متابع" on line 1, "مشاهدة" on line 2
+- **File:** `modonty/app/clients/[slug]/components/hero/hero-meta.tsx`
+- **Fix:** Remove `flex-wrap`, add `overflow-x-hidden`, reduce `gap-3` to `gap-2`, use `text-xs` on mobile
+- **Logged as:** CP-14 in MASTER-TODO
 

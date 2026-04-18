@@ -1,0 +1,106 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - link "عملاء بلا إعلانات — جبر SEO" [ref=e9] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: عملاء بلا إعلانات
+        - generic [ref=e13]:
+          - button "فتح المحادثة" [ref=e14] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - img [ref=e25]
+          - heading "الصفحة غير موجودة" [level=3] [ref=e28]
+        - generic [ref=e29]:
+          - paragraph [ref=e30]: عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.
+          - paragraph [ref=e31]: يرجى التحقق من الرابط أو العودة إلى الصفحة الرئيسية.
+          - generic [ref=e32]:
+            - link "الصفحة الرئيسية" [ref=e33] [cursor=pointer]:
+              - /url: /
+              - button "الصفحة الرئيسية" [ref=e34]:
+                - img [ref=e35]
+                - text: الصفحة الرئيسية
+            - link "الفئات" [ref=e38] [cursor=pointer]:
+              - /url: /categories
+              - button "الفئات" [ref=e39]:
+                - img [ref=e40]
+                - text: الفئات
+            - link "العملاء" [ref=e42] [cursor=pointer]:
+              - /url: /clients
+              - button "العملاء" [ref=e43]:
+                - img [ref=e44]
+                - text: العملاء
+    - contentinfo [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e51] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e52]: ↗
+      - navigation "روابط سريعة" [ref=e53]:
+        - link "الرئيسية" [ref=e54] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e55] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e56] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e57] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e58] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e59] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e60]:
+        - link "الشروط والأحكام" [ref=e61] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e62] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e63] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e64] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e65] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e66]: © 2026 مودونتي
+    - contentinfo [ref=e67]:
+      - navigation "التنقل السفلي" [ref=e68]:
+        - link "الرئيسية" [ref=e69] [cursor=pointer]:
+          - /url: /
+          - img [ref=e71]
+          - generic [ref=e74]: الرئيسية
+        - link "الرائجة" [ref=e75] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e77]
+          - generic [ref=e80]: الرائجة
+        - link "العملاء" [ref=e81] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e83]
+          - generic [ref=e87]: العملاء
+        - link "بحث المقالات" [ref=e88] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e89]
+          - generic [ref=e92]: بحث
+        - button "Open menu" [ref=e93] [cursor=pointer]:
+          - img [ref=e94]
+  - generic [ref=e102] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e103]:
+      - img [ref=e104]
+    - generic [ref=e107]:
+      - button "Open issues overlay" [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]: "4"
+          - generic [ref=e111]: "5"
+        - generic [ref=e112]:
+          - text: Issue
+          - generic [ref=e113]: s
+      - button "Collapse issues badge" [ref=e114]:
+        - img [ref=e115]
+  - alert [ref=e117]

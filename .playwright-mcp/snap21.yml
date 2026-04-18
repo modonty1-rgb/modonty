@@ -1,0 +1,155 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e235] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e236]: Dashboard
+          - link "SEO Overview" [ref=e14] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e15]
+            - generic [ref=e237]: SEO Overview
+        - generic [ref=e238]:
+          - button "Content" [expanded] [ref=e239] [cursor=pointer]:
+            - generic [ref=e240]:
+              - img [ref=e241]
+              - generic [ref=e244]: Content
+            - img [ref=e245]
+          - generic [ref=e248]:
+            - link "Articles" [ref=e249] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e250]
+              - generic [ref=e253]: Articles
+            - link "Categories" [ref=e254] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e255]
+              - generic [ref=e257]: Categories
+            - link "Tags" [ref=e258] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e259]
+              - generic [ref=e262]: Tags
+            - link "Authors" [ref=e263] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e264]
+              - generic [ref=e266]: Authors
+            - link "Industries" [ref=e267] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e268]
+              - generic [ref=e270]: Industries
+        - button "Modonty Pages" [ref=e272] [cursor=pointer]:
+          - generic [ref=e273]:
+            - img [ref=e274]
+            - generic [ref=e276]: Modonty Pages
+          - img [ref=e277]
+        - button "Audience" [ref=e280] [cursor=pointer]:
+          - generic [ref=e281]:
+            - img [ref=e282]
+            - generic [ref=e285]: Audience
+          - img [ref=e286]
+        - button "System" [ref=e289] [cursor=pointer]:
+          - generic [ref=e290]:
+            - img [ref=e291]
+            - generic [ref=e294]: System
+          - img [ref=e295]
+      - generic [ref=e102]:
+        - link "Guidelines" [ref=e297] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e298]
+          - text: Guidelines
+        - generic [ref=e300]:
+          - button "Switch to light mode" [ref=e301] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e302] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e303]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e304]:
+        - generic [ref=e305]:
+          - navigation "Breadcrumb" [ref=e307]:
+            - link "Go to dashboard" [ref=e308] [cursor=pointer]:
+              - /url: /
+              - img [ref=e309]
+            - generic [ref=e312]:
+              - img [ref=e313]
+              - link "Clients" [ref=e315] [cursor=pointer]:
+                - /url: /clients
+            - generic [ref=e316]:
+              - img [ref=e317]
+              - link "Al Bayt Restaurant" [ref=e319] [cursor=pointer]:
+                - /url: /clients/69e117cce02db6d1c328ee2b
+            - generic [ref=e320]:
+              - img [ref=e321]
+              - generic [ref=e323]: Edit
+          - navigation "Main navigation" [ref=e325]:
+            - link "Modonty Modonty" [ref=e326] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e328]
+              - generic [ref=e329]: Modonty
+            - generic [ref=e331]:
+              - link "Articles" [ref=e332] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e333]
+              - link "Clients" [ref=e335] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e336]
+              - link "Media" [ref=e338] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e339]
+          - generic [ref=e341]:
+            - link "4" [ref=e342] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e343]:
+                - img
+                - generic [ref=e344]: "4"
+            - button "M" [ref=e345] [cursor=pointer]:
+              - generic [ref=e347]: M
+      - generic [ref=e109]:
+        - generic [ref=e110]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e111]:
+          - button "Send Note" [ref=e112] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e113] [cursor=pointer]:
+            - img
+      - main [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e117]:
+            - heading "Edit Client" [level=1] [ref=e118]
+            - generic [ref=e350] [cursor=pointer]:
+              - generic [ref=e351]:
+                - img [ref=e352]
+                - generic [ref=e356]: SEO
+              - generic [ref=e360]:
+                - generic [ref=e361]
+                - generic [ref=e377]: 12%
+            - button "Update Client" [ref=e379] [cursor=pointer]:
+              - img
+              - text: Update Client
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: "Required:"
+              - generic [ref=e126]: Client Name
+              - generic [ref=e127]: Email
+              - generic [ref=e128]: Business Brief
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - heading "Client Info https://modonty.com/clients/al-bayt-restaurant" [level=3] [ref=e131]
+                - region "Client Info https://modonty.com/clients/al-bayt-restaurant" [ref=e138]
+              - heading "Company Profile" [level=3] [ref=e207]:
+                - button "Company Profile" [ref=e208] [cursor=pointer]
+              - heading "SEO Details" [level=3] [ref=e212]:
+                - button "SEO Details" [ref=e213] [cursor=pointer]
+              - heading "SEO Validation" [level=3] [ref=e217]:
+                - button "SEO Validation" [ref=e218] [cursor=pointer]
+              - heading "Settings" [level=3] [ref=e222]:
+                - button "Settings" [ref=e223] [cursor=pointer]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e231] [cursor=pointer]:
+    - img [ref=e232]
+  - alert [ref=e385]

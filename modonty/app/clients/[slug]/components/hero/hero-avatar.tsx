@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { AvatarFallback } from "@/components/ui/avatar";
 import type { ClientHeroClient } from "./types";
 
 interface HeroAvatarProps {
@@ -19,9 +18,9 @@ export function HeroAvatar({ client, initials }: HeroAvatarProps) {
           sizes="(max-width: 768px) 80px, 112px"
         />
       ) : (
-        <AvatarFallback className="text-xl md:text-2xl font-bold bg-primary text-primary-foreground w-full h-full flex items-center justify-center rounded-full">
+        <span className="text-xl md:text-2xl font-bold bg-primary text-primary-foreground w-full h-full flex items-center justify-center rounded-full">
           {initials}
-        </AvatarFallback>
+        </span>
       )}
     </div>
   );

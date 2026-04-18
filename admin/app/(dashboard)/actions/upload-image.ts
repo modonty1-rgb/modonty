@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { ImageUploadData } from "@/components/shared/deferred-image-upload";
 import { generateSEOFileName, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 
@@ -26,6 +27,7 @@ interface UploadImageParams {
 export async function uploadImage(
   params: UploadImageParams
 ): Promise<{ success: boolean; result?: ImageUploadResult; error?: string }> {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   const { imageData, tableName, urlFieldName, altFieldName, slug, name, recordId, initialId } = params;
 
   if (!imageData?.file) {

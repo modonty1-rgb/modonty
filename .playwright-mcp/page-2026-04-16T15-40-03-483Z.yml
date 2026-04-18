@@ -1,0 +1,495 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link "4" [ref=e233] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e234]:
+                - img
+                - generic [ref=e235]: "4"
+            - button "M" [ref=e125] [cursor=pointer]:
+              - generic [ref=e127]: M
+      - generic [ref=e128]:
+        - generic [ref=e129]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e130]:
+          - button "Send Note" [ref=e131] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e132] [cursor=pointer]:
+            - img
+      - main [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]: Step 5 of 5
+                - generic [ref=e141]: "SEO Health: 75%"
+                - generic [ref=e144]: Live Analysis
+              - generic [ref=e145]:
+                - generic [ref=e147]: 47% Complete
+                - button "Save Draft" [ref=e149] [cursor=pointer]:
+                  - img
+                  - generic [ref=e150]: Save Draft
+            - 'generic "Overall progress: 47%" [ref=e271]'
+          - generic [ref=e156]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e272]':
+              - generic [ref=e274]:
+                - generic [ref=e275]:
+                  - generic [ref=e276]: Publication Settings
+                  - generic [ref=e277]: Control status, scheduling, and review dates for this article.
+                - generic [ref=e278]:
+                  - region "Status & visibility" [ref=e279]:
+                    - heading "Status & visibility" [level=3] [ref=e280]
+                    - generic [ref=e281]:
+                      - generic [ref=e282]:
+                        - generic [ref=e283]:
+                          - checkbox "Featured" [ref=e284] [cursor=pointer]
+                          - generic [ref=e285] [cursor=pointer]: Featured
+                        - paragraph [ref=e286]: Highlight this article in featured sections (e.g. homepage, trending) and give it higher sitemap priority (0.8).
+                      - generic [ref=e287]:
+                        - generic [ref=e288]: Status
+                        - combobox "Status" [ref=e289]:
+                          - option "Writing" [selected]
+                          - option "Draft"
+                          - option "Scheduled"
+                          - option "Published"
+                          - option "Archived"
+                  - region "Scheduling" [ref=e290]:
+                    - heading "Scheduling" [level=3] [ref=e291]
+                    - generic [ref=e292]:
+                      - generic [ref=e293]:
+                        - text: Scheduled At
+                        - textbox "Scheduled At" [ref=e294]
+                        - paragraph [ref=e295]: Leave empty to publish immediately or use status Draft.
+                      - generic [ref=e296]:
+                        - text: Last Reviewed
+                        - textbox "Last Reviewed" [ref=e297]
+                        - paragraph [ref=e298]: When content was last reviewed for accuracy.
+                  - generic [ref=e299]:
+                    - text: Date Published
+                    - textbox "Date Published" [disabled] [ref=e300]
+                    - paragraph [ref=e301]: Automatically set when the article is published.
+              - generic [ref=e304]:
+                - text: Citations
+                - paragraph [ref=e305]: External authoritative source URLs for E-E-A-T.
+                - generic [ref=e306]:
+                  - textbox "Add citation URL" [ref=e307]:
+                    - /placeholder: https://...
+                  - button "Add" [ref=e308] [cursor=pointer]:
+                    - img
+                    - text: Add
+                  - button "Extract" [disabled]:
+                    - img
+                    - text: Extract
+              - generic [ref=e309]:
+                - generic [ref=e311]:
+                  - generic [ref=e312]: Technical SEO Guidance
+                  - generic [ref=e313]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e316]:
+                    - generic [ref=e317]:
+                      - generic [ref=e318]:
+                        - heading "Overall SEO Score" [level=3] [ref=e319]
+                        - paragraph [ref=e320]: Based on 2025 SEO best practices
+                      - generic [ref=e321]:
+                        - generic [ref=e322]: 75%
+                        - generic [ref=e323]: Good
+                    - generic [ref=e326]:
+                      - generic [ref=e327]:
+                        - generic [ref=e328]:
+                          - img [ref=e329]
+                          - generic [ref=e332]: Meta Tags
+                        - generic [ref=e333]:
+                          - generic [ref=e334]: 100%
+                          - generic [ref=e335]: 3/3
+                      - generic [ref=e336]:
+                        - generic [ref=e337]:
+                          - img [ref=e338]
+                          - generic [ref=e340]: Content
+                        - generic [ref=e341]:
+                          - generic [ref=e342]: 50%
+                          - generic [ref=e343]: 1/2
+                      - generic [ref=e344]:
+                        - generic [ref=e345]:
+                          - img [ref=e346]
+                          - generic [ref=e348]: Images
+                        - generic [ref=e349]:
+                          - generic [ref=e350]: 50%
+                          - generic [ref=e351]: 1/2
+                      - generic [ref=e352]:
+                        - generic [ref=e353]:
+                          - img [ref=e354]
+                          - generic [ref=e357]: Structured Data
+                        - generic [ref=e358]:
+                          - generic [ref=e359]: 100%
+                          - generic [ref=e360]: 2/2
+                      - generic [ref=e361]:
+                        - generic [ref=e362]:
+                          - img [ref=e363]
+                          - generic [ref=e365]: Technical
+                        - generic [ref=e366]:
+                          - generic [ref=e367]: 50%
+                          - generic [ref=e368]: 1/2
+                      - generic [ref=e369]:
+                        - generic [ref=e370]:
+                          - img [ref=e371]
+                          - generic [ref=e374]: Mobile
+                        - generic [ref=e375]:
+                          - generic [ref=e376]: 100%
+                          - generic [ref=e377]: 2/2
+                - generic [ref=e380]:
+                  - generic [ref=e381]: Technical SEO Guidance
+                  - generic [ref=e382]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e385]:
+                    - generic [ref=e386]:
+                      - generic [ref=e387]:
+                        - heading "Overall SEO Score" [level=3] [ref=e388]
+                        - paragraph [ref=e389]: Based on 2025 SEO best practices
+                      - generic [ref=e390]:
+                        - generic [ref=e391]: 75%
+                        - generic [ref=e392]: Good
+                    - generic [ref=e395]:
+                      - generic [ref=e396]:
+                        - generic [ref=e397]:
+                          - img [ref=e398]
+                          - generic [ref=e401]: Meta Tags
+                        - generic [ref=e402]:
+                          - generic [ref=e403]: 100%
+                          - generic [ref=e404]: 3/3
+                      - generic [ref=e405]:
+                        - generic [ref=e406]:
+                          - img [ref=e407]
+                          - generic [ref=e409]: Content
+                        - generic [ref=e410]:
+                          - generic [ref=e411]: 50%
+                          - generic [ref=e412]: 1/2
+                      - generic [ref=e413]:
+                        - generic [ref=e414]:
+                          - img [ref=e415]
+                          - generic [ref=e417]: Images
+                        - generic [ref=e418]:
+                          - generic [ref=e419]: 50%
+                          - generic [ref=e420]: 1/2
+                      - generic [ref=e421]:
+                        - generic [ref=e422]:
+                          - img [ref=e423]
+                          - generic [ref=e426]: Structured Data
+                        - generic [ref=e427]:
+                          - generic [ref=e428]: 100%
+                          - generic [ref=e429]: 2/2
+                      - generic [ref=e430]:
+                        - generic [ref=e431]:
+                          - img [ref=e432]
+                          - generic [ref=e434]: Technical
+                        - generic [ref=e435]:
+                          - generic [ref=e436]: 50%
+                          - generic [ref=e437]: 1/2
+                      - generic [ref=e438]:
+                        - generic [ref=e439]:
+                          - img [ref=e440]
+                          - generic [ref=e443]: Mobile
+                        - generic [ref=e444]:
+                          - generic [ref=e445]: 100%
+                          - generic [ref=e446]: 2/2
+                - generic [ref=e448]:
+                  - generic [ref=e450] [cursor=pointer]:
+                    - generic [ref=e451]:
+                      - img [ref=e452]
+                      - text: Search & Social Previews
+                    - img [ref=e455]
+                  - generic [ref=e458]:
+                    - generic [ref=e459]:
+                      - generic [ref=e460]:
+                        - heading "Google" [level=4] [ref=e461]:
+                          - img [ref=e462]
+                          - text: Google
+                        - generic [ref=e465]:
+                          - generic [ref=e466]: http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia
+                          - generic [ref=e467] [cursor=pointer]: How TechVision is Transforming | TechVision Solutions
+                          - generic [ref=e468]: TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...
+                      - generic [ref=e469]:
+                        - heading "Facebook" [level=4] [ref=e470]:
+                          - img [ref=e471]
+                          - text: Facebook
+                        - generic [ref=e474]:
+                          - img [ref=e476]
+                          - generic [ref=e480]:
+                            - generic [ref=e481]: مودونتي
+                            - generic [ref=e482]: How TechVision is Transforming | TechVision Solutions
+                            - generic [ref=e483]: TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...
+                      - generic [ref=e484]:
+                        - heading "Twitter" [level=4] [ref=e485]:
+                          - img [ref=e486]
+                          - text: Twitter
+                        - generic [ref=e488]:
+                          - img [ref=e490]
+                          - generic [ref=e494]:
+                            - generic [ref=e495]: How TechVision is Transforming | TechVision Solutions
+                            - generic [ref=e496]: TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...
+                            - generic [ref=e497]: http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia
+                    - generic [ref=e498]:
+                      - img [ref=e499]
+                      - generic [ref=e503]: Add a featured image in Media step for better social sharing
+                - generic [ref=e504]:
+                  - generic [ref=e506]: SEO Metadata Summary
+                  - table [ref=e509]:
+                    - rowgroup [ref=e510]:
+                      - row "Name SOT Value" [ref=e511]:
+                        - columnheader "Name" [ref=e512]
+                        - columnheader "SOT" [ref=e513]
+                        - columnheader "Value" [ref=e514]
+                    - rowgroup [ref=e515]:
+                      - row "Canonical URL Article slug http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia" [ref=e516]:
+                        - cell "Canonical URL" [ref=e517]
+                        - cell "Article slug" [ref=e518]
+                        - cell "http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia" [ref=e519]
+                      - row "OG Title SEO title How TechVision is Transforming | TechVision Solutions" [ref=e520]:
+                        - cell "OG Title" [ref=e521]
+                        - cell "SEO title" [ref=e522]
+                        - cell "How TechVision is Transforming | TechVision Solutions" [ref=e523]
+                      - row "OG Description SEO description TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr..." [ref=e524]:
+                        - cell "OG Description" [ref=e525]
+                        - cell "SEO description" [ref=e526]
+                        - cell "TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr..." [ref=e527]
+                      - row "OG URL Canonical URL http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia" [ref=e528]:
+                        - cell "OG URL" [ref=e529]
+                        - cell "Canonical URL" [ref=e530]
+                        - cell "http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia" [ref=e531]
+                      - row "OG Site Name Client name TechVision Solutions" [ref=e532]:
+                        - cell "OG Site Name" [ref=e533]
+                        - cell "Client name" [ref=e534]
+                        - cell "TechVision Solutions" [ref=e535]
+                      - row "OG Article Section Category —" [ref=e536]:
+                        - cell "OG Article Section" [ref=e537]
+                        - cell "Category" [ref=e538]
+                        - cell "—" [ref=e539]
+                      - row "OG Article Tags Article tags —" [ref=e540]:
+                        - cell "OG Article Tags" [ref=e541]
+                        - cell "Article tags" [ref=e542]
+                        - cell "—" [ref=e543]
+                      - row "Twitter Title SEO title How TechVision is Transforming | TechVision Solutions" [ref=e544]:
+                        - cell "Twitter Title" [ref=e545]
+                        - cell "SEO title" [ref=e546]
+                        - cell "How TechVision is Transforming | TechVision Solutions" [ref=e547]
+                      - row "Twitter Description SEO description TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr..." [ref=e548]:
+                        - cell "Twitter Description" [ref=e549]
+                        - cell "SEO description" [ref=e550]
+                        - cell "TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr..." [ref=e551]
+                      - row "Language Settings ar-SA" [ref=e552]:
+                        - cell "Language" [ref=e553]
+                        - cell "Settings" [ref=e554]
+                        - cell "ar-SA" [ref=e555]
+                      - row "Content format Settings rich_text" [ref=e556]:
+                        - cell "Content format" [ref=e557]
+                        - cell "Settings" [ref=e558]
+                        - cell "rich_text" [ref=e559]
+                      - row "OG Type Settings website" [ref=e560]:
+                        - cell "OG Type" [ref=e561]
+                        - cell "Settings" [ref=e562]
+                        - cell "website" [ref=e563]
+                      - row "OG Locale Settings ar_SA" [ref=e564]:
+                        - cell "OG Locale" [ref=e565]
+                        - cell "Settings" [ref=e566]
+                        - cell "ar_SA" [ref=e567]
+                      - row "Twitter Card Settings summary_large_image" [ref=e568]:
+                        - cell "Twitter Card" [ref=e569]
+                        - cell "Settings" [ref=e570]
+                        - cell "summary_large_image" [ref=e571]
+                      - row "Twitter Site Settings —" [ref=e572]:
+                        - cell "Twitter Site" [ref=e573]
+                        - cell "Settings" [ref=e574]
+                        - cell "—" [ref=e575]
+                      - row "Twitter Creator Settings —" [ref=e576]:
+                        - cell "Twitter Creator" [ref=e577]
+                        - cell "Settings" [ref=e578]
+                        - cell "—" [ref=e579]
+                      - row "Accessible for free Settings Yes" [ref=e580]:
+                        - cell "Accessible for free" [ref=e581]
+                        - cell "Settings" [ref=e582]
+                        - cell "Yes" [ref=e583]
+                      - row "License Settings https://creativecommons.org/licenses/by/4.0/" [ref=e584]:
+                        - cell "License" [ref=e585]
+                        - cell "Settings" [ref=e586]
+                        - cell "https://creativecommons.org/licenses/by/4.0/" [ref=e587]
+                      - row "Meta Robots Settings index, follow" [ref=e588]:
+                        - cell "Meta Robots" [ref=e589]
+                        - cell "Settings" [ref=e590]
+                        - cell "index, follow" [ref=e591]
+                      - row "Sitemap Priority Settings 0.5" [ref=e592]:
+                        - cell "Sitemap Priority" [ref=e593]
+                        - cell "Settings" [ref=e594]
+                        - cell "0.5" [ref=e595]
+                      - row "Sitemap Change Freq Settings daily" [ref=e596]:
+                        - cell "Sitemap Change Freq" [ref=e597]
+                        - cell "Settings" [ref=e598]
+                        - cell "daily" [ref=e599]
+              - generic [ref=e601]:
+                - generic [ref=e603]:
+                  - img [ref=e604]
+                  - text: MetaTag & JSON-LD
+                - generic [ref=e607]:
+                  - generic [ref=e608]:
+                    - generic [ref=e609]:
+                      - heading "Metadata JSON" [level=4] [ref=e610]
+                      - generic [ref=e611]:
+                        - button "Inspect" [ref=e612] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e613] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e615]: "{ \"title\": \"How TechVision is Transforming | TechVision Solutions - TechVision Solutions\", \"description\": \"TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\" }, \"openGraph\": { \"title\": \"How TechVision is Transforming | TechVision Solutions - TechVision Solutions\", \"description\": \"TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...\", \"url\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\", \"siteName\": \"TechVision Solutions\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"How TechVision is Transforming | TechVision Solutions\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"modifiedTime\": \"2026-04-16T15:40:02.073Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"How TechVision is Transforming | TechVision Solutions - TechVision Solutions\", \"description\": \"TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...\", \"images\": [ \"http://localhost:3000/og-image.jpg\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                    - generic [ref=e616]:
+                      - paragraph [ref=e617]: "To reach 100% MetaTag coverage for this article, consider:"
+                      - list [ref=e618]:
+                        - listitem [ref=e619]: Add a publish or scheduled date so Open Graph can include article:published_time.
+                        - listitem [ref=e620]: Assign a category/section so Open Graph can include article:section.
+                        - listitem [ref=e621]: Add article tags or SEO keywords so Open Graph can include article:tag list.
+                  - generic [ref=e622]:
+                    - generic [ref=e623]:
+                      - heading "JSON-LD Preview" [level=4] [ref=e624]
+                      - generic [ref=e625]:
+                        - button "التحقق" [ref=e626] [cursor=pointer]:
+                          - img
+                          - text: التحقق
+                        - button "Inspect" [ref=e627] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e628] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e630]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia#article\", \"headline\": \"How TechVision is Transforming | TechVision Solutions\", \"description\": \"TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...\", \"datePublished\": \"2026-04-16T15:40:02.075Z\", \"dateModified\": \"2026-04-16T15:40:02.075Z\", \"author\": { \"@id\": \"http://localhost:3000/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3000/clients/techvision-solutions#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\", \"url\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\", \"name\": \"How TechVision is Transforming | TechVision Solutions\", \"description\": \"TechVision Solutions leads the charge in enterprise digital transformation, delivering cloud-native platforms and AI-powered tools for government and pr...\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"TechVision Solutions\", \"url\": \"http://localhost:3000\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3000/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"How TechVision is Transforming | TechVision Solutions\", \"item\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia\" } ], \"@id\": \"http://localhost:3000/articles/how-techvision-is-transforming-digital-infrastructure-in-saudi-arabia#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3000/clients/techvision-solutions#organization\", \"name\": \"TechVision Solutions\", \"url\": \"http://localhost:3000\" }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3000/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                    - generic [ref=e631]:
+                      - paragraph [ref=e632]: "To reach 100% JSON-LD coverage for this article, consider:"
+                      - list [ref=e633]:
+                        - listitem [ref=e634]: Add a publish or scheduled date so JSON-LD can include a reliable datePublished.
+                        - listitem [ref=e635]: Set an explicit modified date so JSON-LD can include a stable dateModified.
+                        - listitem [ref=e636]: Assign a category/section so JSON-LD can set articleSection.
+                        - listitem [ref=e637]: Add article tags or SEO keywords so JSON-LD can include keywords.
+                        - listitem [ref=e638]: Choose a featured image so JSON-LD can include a hero ImageObject.
+            - tablist [ref=e196]:
+              - 'tab "Basic: 78% complete. اختياري: التصنيف، الوسوم" [ref=e268] [cursor=pointer]':
+                - img [ref=e639]
+                - generic [ref=e199]: Basic
+                - generic [ref=e200]: 78%
+              - 'tab "Content: 30% complete. مطلوب: محتوى المقال · اختياري: عدد الكلمات، وقت القراءة، عمق المحتوى، النص المستخرج، صورة المقال الرئيسية، معرض الصور" [ref=e201] [cursor=pointer]':
+                - img [ref=e641]
+                - generic [ref=e203]: Content
+                - generic [ref=e204]: 30%
+              - 'tab "SEO: 75% complete. المحتوى: المقال فارغ — أضف محتوى · الصور: مفقودة — أضف صورة من تبويب المحتوى · الإعدادات التقنية: استخدم https://" [ref=e269] [cursor=pointer]':
+                - img [ref=e207]
+                - generic [ref=e209]: SEO
+                - generic [ref=e210]: 75%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e211] [cursor=pointer]':
+                - img [ref=e643]
+                - generic [ref=e213]: FAQs & Related
+                - generic [ref=e214]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [active] [selected] [ref=e270] [cursor=pointer]':
+                - generic [ref=e216]: "5"
+                - generic [ref=e217]: Publish
+                - generic [ref=e218]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e237] [cursor=pointer]:
+    - img [ref=e238]
+  - alert [ref=e232]

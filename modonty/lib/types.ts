@@ -38,6 +38,7 @@ export interface ArticleResponse {
     name: string;
     slug: string;
     logo?: string;
+    industry?: string;
   };
   category?: {
     id: string;

@@ -14,56 +14,54 @@ interface ArticleTableOfContentsProps {
   content: string;
 }
 
-export function ArticleTableOfContents({ content }: ArticleTableOfContentsProps) {
+export function ArticleTableOfContents({ content: _ }: ArticleTableOfContentsProps) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
+  // Read headings from the live DOM and inject IDs if missing
   useEffect(() => {
-    // Parse headings from HTML content
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
-    const headingElements = doc.querySelectorAll("h2, h3, h4");
-    
-    const extractedHeadings: Heading[] = [];
-    headingElements.forEach((heading) => {
-      const id = heading.id || heading.textContent?.toLowerCase().replace(/\s+/g, "-") || "";
-      if (id) {
-        extractedHeadings.push({
-          id,
-          text: heading.textContent || "",
-          level: parseInt(heading.tagName.charAt(1)),
-        });
+    const articleContent = document.getElementById("article-content");
+    if (!articleContent) return;
+
+    const headingEls = articleContent.querySelectorAll<HTMLElement>("h2, h3, h4");
+    const extracted: Heading[] = [];
+
+    headingEls.forEach((el, index) => {
+      if (!el.id) {
+        el.id = `toc-${index}`;
       }
+      extracted.push({
+        id: el.id,
+        text: el.textContent || "",
+        level: parseInt(el.tagName.charAt(1)),
+      });
     });
 
-    setHeadings(extractedHeadings);
-  }, [content]);
+    setHeadings(extracted);
+  }, []);
 
   useEffect(() => {
     if (headings.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
+        // Pick the topmost visible heading
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
       },
-      { rootMargin: "-20% 0% -35% 0%" }
+      { rootMargin: "-10% 0% -60% 0%" }
     );
 
-    headings.forEach((heading) => {
-      const element = document.getElementById(heading.id);
-      if (element) observer.observe(element);
+    headings.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
     });
 
-    return () => {
-      headings.forEach((heading) => {
-        const element = document.getElementById(heading.id);
-        if (element) observer.unobserve(element);
-      });
-    };
+    return () => observer.disconnect();
   }, [headings]);
 
   if (headings.length === 0) {
@@ -72,21 +70,13 @@ export function ArticleTableOfContents({ content }: ArticleTableOfContentsProps)
 
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
+    if (!element) return;
+    const offsetPosition = element.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
   };
 
   return (
     <Card className="min-w-0">
-      {/* Header */}
       <div className="px-4 py-3 bg-muted/40 rounded-t-lg">
         <span className="text-xs font-semibold text-muted-foreground tracking-tight">جدول المحتويات</span>
       </div>
@@ -102,7 +92,7 @@ export function ArticleTableOfContents({ content }: ArticleTableOfContentsProps)
                 heading.level === 3 && "pr-3",
                 heading.level === 4 && "pr-6",
                 activeId === heading.id
-                  ? "text-primary font-medium"
+                  ? "text-primary font-semibold"
                   : "text-muted-foreground"
               )}
             >

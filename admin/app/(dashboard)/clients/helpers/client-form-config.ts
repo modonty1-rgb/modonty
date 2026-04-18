@@ -196,6 +196,7 @@ export const clientFormSections: FormSectionConfig[] = [
     description: "Classification, organization details, and additional metadata",
     icon: "Plus",
     fields: [
+      "newsletterCtaText",
     ],
     required: [],
     priority: "secondary",

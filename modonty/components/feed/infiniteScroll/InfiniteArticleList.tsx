@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { PostCard } from "@/components/feed/postcard/PostCard";
 import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 import { loadMoreArticles } from "@/app/actions/article-actions";
@@ -20,15 +21,18 @@ interface InfiniteArticleListProps {
   initialPosts: FeedPost[];
   initialStartIndex?: number;
   categorySlug?: string;
+  initialPage?: number;
 }
 
 export function InfiniteArticleList({
   initialPosts,
   initialStartIndex = 0,
   categorySlug,
+  initialPage = 1,
 }: InfiniteArticleListProps) {
+  const searchParams = useSearchParams();
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(false);
@@ -60,6 +64,10 @@ export function InfiniteArticleList({
         setPosts((prev) => [...prev, ...result.articles]);
         setPage(nextPage);
         setHasMore(result.hasMore);
+        // SEO-INF3: update URL so the current scroll position is bookmarkable/shareable
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", String(nextPage));
+        window.history.pushState(null, "", `?${params.toString()}`);
       } else {
         setHasMore(false);
       }
@@ -76,10 +84,10 @@ export function InfiniteArticleList({
   useEffect(() => {
     ignoredRef.current = false;
     setPosts([]);
-    setPage(1);
+    setPage(initialPage);
     setHasMore(true);
     setError(false);
-  }, [categorySlug]);
+  }, [categorySlug, initialPage]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;

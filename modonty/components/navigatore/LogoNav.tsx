@@ -12,7 +12,7 @@ export function LogoNav({ className }: LogoNavProps) {
   return (
     <Link
       href="/"
-      className="inline-block shrink-0"
+      className="inline-block shrink-0 transition-transform duration-200 hover:scale-[1.03]"
       aria-label="مودونتي - الصفحة الرئيسية"
     >
       <Image

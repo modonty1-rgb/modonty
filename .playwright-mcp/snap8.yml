@@ -1,0 +1,95 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+            - generic [ref=e97]
+            - generic [ref=e101]
+            - generic [ref=e105]
+          - navigation "Main navigation" [ref=e110]:
+            - link "Modonty Modonty" [ref=e111] [cursor=pointer]:
+              - /url: /
+            - generic [ref=e116]
+          - generic [ref=e126]:
+            - link "4" [ref=e287] [cursor=pointer]:
+              - /url: /contact-messages
+            - button "M" [ref=e129] [cursor=pointer]
+      - generic [ref=e132]:
+        - generic [ref=e133]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e134]:
+          - button "Send Note" [ref=e135] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e136] [cursor=pointer]:
+            - img
+      - main [ref=e137]:
+        - generic [ref=e290]:
+          - generic [ref=e293]:
+            - generic [ref=e294]
+            - 'generic "Overall progress: 52%" [ref=e308]'
+          - generic [ref=e312]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e400]'
+            - tablist [ref=e373]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e396] [cursor=pointer]:
+    - img [ref=e397]
+  - alert [ref=e285]

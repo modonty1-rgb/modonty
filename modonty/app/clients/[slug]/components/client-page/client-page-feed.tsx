@@ -15,9 +15,16 @@ export function ClientPageFeed({ posts, clientName, clientId, relatedClientsCoun
   return (
     <div className="w-full min-w-0 lg:max-w-[600px] order-1 lg:order-2 space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
       <section aria-labelledby="client-articles-heading" className="space-y-4">
-        <h2 id="client-articles-heading" className="sr-only">
-          المقالات
-        </h2>
+        <div className="flex items-center justify-between gap-3 pt-4">
+          <h2 id="client-articles-heading" className="text-base font-bold text-foreground">
+            أحدث المقالات
+          </h2>
+          {posts.length > 0 && (
+            <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground tabular-nums">
+              {new Intl.NumberFormat("ar-SA").format(posts.length)}
+            </span>
+          )}
+        </div>
         {posts.length > 0 ? (
           <div className="space-y-4">
             {posts.map((post, index) => (

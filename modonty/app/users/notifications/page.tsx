@@ -46,14 +46,24 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
 
   let selectedNotification = null;
   let contactMessage = null;
+  let faqReply: { question: string; answer: string | null; article: { title: string; slug: string } } | null = null;
   let notificationsList = notifications;
 
   if (selectedId) {
     selectedNotification = await db.notification.findFirst({
       where: { id: selectedId, userId },
     });
-    if (selectedNotification) {
-      if (selectedNotification.relatedId) {
+    if (selectedNotification?.relatedId) {
+      if (selectedNotification.type === "faq_reply") {
+        faqReply = await db.articleFAQ.findFirst({
+          where: { id: selectedNotification.relatedId },
+          select: {
+            question: true,
+            answer: true,
+            article: { select: { title: true, slug: true } },
+          },
+        });
+      } else {
         contactMessage = await db.contactMessage.findFirst({
           where: { id: selectedNotification.relatedId, userId },
         });
@@ -62,9 +72,8 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
   }
 
   let client = null;
-  if (selectedNotification && contactMessage) {
-    const clientId =
-      selectedNotification.clientId ?? contactMessage.clientId ?? null;
+  if (selectedNotification) {
+    const clientId = selectedNotification.clientId ?? contactMessage?.clientId ?? null;
     if (clientId) {
       client = await db.client.findUnique({
         where: { id: clientId },
@@ -73,7 +82,7 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
     }
   }
 
-  const showDetail = selectedNotification && contactMessage;
+  const showDetail = selectedNotification && (contactMessage || faqReply);
 
   const filteredList =
     tab === TAB_NEW
@@ -175,6 +184,56 @@ export default async function NotificationsPage({ searchParams }: NotificationsP
               <p className="text-center text-sm text-muted-foreground py-12">
                 اختر رسالة لعرض التفاصيل
               </p>
+            ) : faqReply ? (
+              <div className="space-y-4">
+                {client && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">من</p>
+                    {client.slug ? (
+                      <CtaTrackedLink
+                        href={`/clients/${encodeURIComponent(client.slug)}`}
+                        label="Visit client from notification"
+                        type="LINK"
+                        clientId={client.id}
+                        className="font-medium text-primary underline hover:opacity-80 transition-opacity"
+                      >
+                        {client.name}
+                      </CtaTrackedLink>
+                    ) : (
+                      <p className="font-medium text-foreground">{client.name}</p>
+                    )}
+                  </div>
+                )}
+                {faqReply.article && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">المقال</p>
+                    <Link
+                      href={`/articles/${faqReply.article.slug}`}
+                      className="text-sm text-primary underline hover:opacity-80 transition-opacity"
+                    >
+                      {faqReply.article.title}
+                    </Link>
+                  </div>
+                )}
+                <div className="border-t border-border pt-4">
+                  <p className="text-sm text-muted-foreground mb-2">سؤالك</p>
+                  <div className="p-4 rounded-lg bg-muted">
+                    <p className="text-sm text-foreground leading-relaxed">{faqReply.question}</p>
+                  </div>
+                </div>
+                {faqReply.answer && (
+                  <div className="border-t border-border pt-4">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      الرد{client ? ` من ${client.name}` : ""}
+                    </p>
+                    <div className="p-4 rounded-lg bg-muted">
+                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                        {faqReply.answer}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : contactMessage ? (
               <div className="space-y-4">
                 <div className="space-y-3">

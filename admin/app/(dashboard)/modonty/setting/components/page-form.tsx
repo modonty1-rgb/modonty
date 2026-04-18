@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
-import { CloudinaryImageInput } from "@/components/shared/cloudinary-image-input";
+import { MediaImageField } from "@/components/shared/media-image-field";
 import { RichTextEditor } from "@/app/(dashboard)/articles/components/rich-text-editor";
 import { Save, Loader2, RefreshCw, Eye, FileText, Clock } from "lucide-react";
 import { useState } from "react";
@@ -293,15 +293,14 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
               </div>
             </CardHeader>
             <CardContent>
-              <CloudinaryImageInput
+              <MediaImageField
+                label="Hero & Social Image"
                 imageUrl={formData.heroImage || ""}
                 altText={formData.heroImageAlt || ""}
-                onImageUrlChange={(url) => {
+                onImageChange={(url, alt) => {
                   updateField("heroImage", url);
                   updateField("socialImage", url);
                   updateField("ogImage", url);
-                }}
-                onAltTextChange={(alt) => {
                   updateField("heroImageAlt", alt);
                   updateField("socialImageAlt", alt);
                 }}
@@ -312,6 +311,7 @@ export function PageForm({ slug, pageLabel, pageDescription, initialData, onRege
                   updateField("socialImageAlt", "");
                   updateField("ogImage", "");
                 }}
+                scope="PLATFORM"
               />
               <p className="text-xs text-muted-foreground mt-2">
                 Used as hero image and shared on social media

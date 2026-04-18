@@ -39,7 +39,12 @@ export async function getIndustries(filters?: IndustryFilters) {
 
     const industries = await db.industry.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        createdAt: true,
+        jsonLdLastGenerated: true,
         _count: { select: { clients: true } },
       },
       orderBy: { name: "asc" },

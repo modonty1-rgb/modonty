@@ -1,0 +1,414 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - button "Content" [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]:
+            - img [ref=e24]
+            - generic [ref=e27]: Content
+          - img [ref=e28]
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]:
+                  - img
+                  - generic [ref=e115]: Articles
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]:
+                  - img
+                  - generic [ref=e118]: Clients
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]:
+                  - img
+                  - generic [ref=e121]: Media
+          - generic [ref=e122]:
+            - link "4" [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e124]:
+                - img
+                - generic [ref=e125]: "4"
+            - button "M" [ref=e126] [cursor=pointer]:
+              - generic [ref=e128]: M
+      - generic [ref=e129]:
+        - generic [ref=e130]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e131]:
+          - button "Send Note" [ref=e132] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e133] [cursor=pointer]:
+            - img
+      - main [ref=e134]:
+        - generic [ref=e193]:
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - generic [ref=e198]:
+                - generic [ref=e199]: Step 5 of 5
+                - generic [ref=e200]: "SEO Health: 34%"
+                - generic [ref=e203]: Live Analysis
+              - generic [ref=e204]:
+                - generic [ref=e206]: 46% Complete
+                - button "Save Draft" [ref=e208] [cursor=pointer]:
+                  - img
+                  - generic [ref=e209]: Save Draft
+            - 'generic "Overall progress: 46%" [ref=e391]'
+          - generic [ref=e215]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e439]':
+              - generic [ref=e441]:
+                - generic [ref=e442]:
+                  - generic [ref=e443]: Publication Settings
+                  - generic [ref=e444]: Control status, scheduling, and review dates for this article.
+                - generic [ref=e445]:
+                  - region "Status & visibility" [ref=e446]:
+                    - heading "Status & visibility" [level=3] [ref=e447]
+                    - generic [ref=e448]:
+                      - generic [ref=e449]:
+                        - generic [ref=e450]:
+                          - checkbox "Featured" [ref=e451] [cursor=pointer]
+                          - generic [ref=e452] [cursor=pointer]: Featured
+                        - paragraph [ref=e453]: Highlight this article in featured sections (e.g. homepage, trending) and give it higher sitemap priority (0.8).
+                      - generic [ref=e454]:
+                        - generic [ref=e455]: Status
+                        - combobox "Status" [ref=e456]:
+                          - option "Writing"
+                          - option "Draft"
+                          - option "Scheduled"
+                          - option "Published" [selected]
+                          - option "Archived"
+                  - region "Scheduling" [ref=e457]:
+                    - heading "Scheduling" [level=3] [ref=e458]
+                    - generic [ref=e459]:
+                      - generic [ref=e460]:
+                        - text: Scheduled At
+                        - textbox "Scheduled At" [ref=e461]
+                        - paragraph [ref=e462]: Leave empty to publish immediately or use status Draft.
+                      - generic [ref=e463]:
+                        - text: Last Reviewed
+                        - textbox "Last Reviewed" [ref=e464]
+                        - paragraph [ref=e465]: When content was last reviewed for accuracy.
+                  - generic [ref=e466]:
+                    - text: Date Published
+                    - textbox "Date Published" [disabled] [ref=e467]
+                    - paragraph [ref=e468]: Automatically set when the article is published.
+              - generic [ref=e471]:
+                - text: Citations
+                - paragraph [ref=e472]: External authoritative source URLs for E-E-A-T.
+                - generic [ref=e473]:
+                  - textbox "Add citation URL" [ref=e474]:
+                    - /placeholder: https://...
+                  - button "Add" [ref=e475] [cursor=pointer]:
+                    - img
+                    - text: Add
+                  - button "Extract" [ref=e476] [cursor=pointer]:
+                    - img
+                    - text: Extract
+              - generic [ref=e477]:
+                - generic [ref=e479]:
+                  - generic [ref=e480]: Technical SEO Guidance
+                  - generic [ref=e481]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e484]:
+                    - generic [ref=e485]:
+                      - generic [ref=e486]:
+                        - heading "Overall SEO Score" [level=3] [ref=e487]
+                        - paragraph [ref=e488]: Based on 2025 SEO best practices
+                      - generic [ref=e489]:
+                        - generic [ref=e490]: 34%
+                        - generic [ref=e491]: Needs Improvement
+                    - generic [ref=e494]:
+                      - generic [ref=e495]:
+                        - generic [ref=e496]:
+                          - img [ref=e497]
+                          - generic [ref=e499]: Meta Tags
+                        - generic [ref=e500]:
+                          - generic [ref=e501]: 67%
+                          - generic [ref=e502]: 2/3
+                      - generic [ref=e503]:
+                        - generic [ref=e504]:
+                          - img [ref=e505]
+                          - generic [ref=e507]: Content
+                        - generic [ref=e508]:
+                          - generic [ref=e509]: 0%
+                          - generic [ref=e510]: 0/2
+                      - generic [ref=e511]:
+                        - generic [ref=e512]:
+                          - img [ref=e513]
+                          - generic [ref=e515]: Images
+                        - generic [ref=e516]:
+                          - generic [ref=e517]: 50%
+                          - generic [ref=e518]: 1/2
+                      - generic [ref=e519]:
+                        - generic [ref=e520]:
+                          - img [ref=e521]
+                          - generic [ref=e523]: Structured Data
+                        - generic [ref=e524]:
+                          - generic [ref=e525]: 0%
+                          - generic [ref=e526]: 0/2
+                      - generic [ref=e527]:
+                        - generic [ref=e528]:
+                          - img [ref=e529]
+                          - generic [ref=e531]: Technical
+                        - generic [ref=e532]:
+                          - generic [ref=e533]: 50%
+                          - generic [ref=e534]: 1/2
+                      - generic [ref=e535]:
+                        - generic [ref=e536]:
+                          - img [ref=e537]
+                          - generic [ref=e540]: Mobile
+                        - generic [ref=e541]:
+                          - generic [ref=e542]: 100%
+                          - generic [ref=e543]: 2/2
+                - generic [ref=e546]:
+                  - generic [ref=e547]: Technical SEO Guidance
+                  - generic [ref=e548]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e551]:
+                    - generic [ref=e552]:
+                      - generic [ref=e553]:
+                        - heading "Overall SEO Score" [level=3] [ref=e554]
+                        - paragraph [ref=e555]: Based on 2025 SEO best practices
+                      - generic [ref=e556]:
+                        - generic [ref=e557]: 34%
+                        - generic [ref=e558]: Needs Improvement
+                    - generic [ref=e561]:
+                      - generic [ref=e562]:
+                        - generic [ref=e563]:
+                          - img [ref=e564]
+                          - generic [ref=e566]: Meta Tags
+                        - generic [ref=e567]:
+                          - generic [ref=e568]: 67%
+                          - generic [ref=e569]: 2/3
+                      - generic [ref=e570]:
+                        - generic [ref=e571]:
+                          - img [ref=e572]
+                          - generic [ref=e574]: Content
+                        - generic [ref=e575]:
+                          - generic [ref=e576]: 0%
+                          - generic [ref=e577]: 0/2
+                      - generic [ref=e578]:
+                        - generic [ref=e579]:
+                          - img [ref=e580]
+                          - generic [ref=e582]: Images
+                        - generic [ref=e583]:
+                          - generic [ref=e584]: 50%
+                          - generic [ref=e585]: 1/2
+                      - generic [ref=e586]:
+                        - generic [ref=e587]:
+                          - img [ref=e588]
+                          - generic [ref=e590]: Structured Data
+                        - generic [ref=e591]:
+                          - generic [ref=e592]: 0%
+                          - generic [ref=e593]: 0/2
+                      - generic [ref=e594]:
+                        - generic [ref=e595]:
+                          - img [ref=e596]
+                          - generic [ref=e598]: Technical
+                        - generic [ref=e599]:
+                          - generic [ref=e600]: 50%
+                          - generic [ref=e601]: 1/2
+                      - generic [ref=e602]:
+                        - generic [ref=e603]:
+                          - img [ref=e604]
+                          - generic [ref=e607]: Mobile
+                        - generic [ref=e608]:
+                          - generic [ref=e609]: 100%
+                          - generic [ref=e610]: 2/2
+                - generic [ref=e612]:
+                  - generic [ref=e614] [cursor=pointer]:
+                    - generic [ref=e615]:
+                      - img [ref=e616]
+                      - text: Search & Social Previews
+                    - img [ref=e619]
+                  - generic [ref=e623]:
+                    - img [ref=e624]
+                    - generic [ref=e626]: Add SEO title and description in Meta Tags step to see previews
+                - generic [ref=e627]:
+                  - generic [ref=e629]: SEO Metadata Summary
+                  - table [ref=e632]:
+                    - rowgroup [ref=e633]:
+                      - row "Name SOT Value" [ref=e634]:
+                        - columnheader "Name" [ref=e635]
+                        - columnheader "SOT" [ref=e636]
+                        - columnheader "Value" [ref=e637]
+                    - rowgroup [ref=e638]:
+                      - row "Canonical URL Article slug http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e639]:
+                        - cell "Canonical URL" [ref=e640]
+                        - cell "Article slug" [ref=e641]
+                        - cell "http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e642]
+                      - row "OG Title SEO title أفضل أطباق المطبخ السعودي التقليدي" [ref=e643]:
+                        - cell "OG Title" [ref=e644]
+                        - cell "SEO title" [ref=e645]
+                        - cell "أفضل أطباق المطبخ السعودي التقليدي" [ref=e646]
+                      - row "OG Description SEO description —" [ref=e647]:
+                        - cell "OG Description" [ref=e648]
+                        - cell "SEO description" [ref=e649]
+                        - cell "—" [ref=e650]
+                      - row "OG URL Canonical URL http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e651]:
+                        - cell "OG URL" [ref=e652]
+                        - cell "Canonical URL" [ref=e653]
+                        - cell "http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e654]
+                      - row "OG Site Name Client name Al Bayt Restaurant" [ref=e655]:
+                        - cell "OG Site Name" [ref=e656]
+                        - cell "Client name" [ref=e657]
+                        - cell "Al Bayt Restaurant" [ref=e658]
+                      - row "OG Article Section Category —" [ref=e659]:
+                        - cell "OG Article Section" [ref=e660]
+                        - cell "Category" [ref=e661]
+                        - cell "—" [ref=e662]
+                      - row "OG Article Tags Article tags —" [ref=e663]:
+                        - cell "OG Article Tags" [ref=e664]
+                        - cell "Article tags" [ref=e665]
+                        - cell "—" [ref=e666]
+                      - row "Twitter Title SEO title أفضل أطباق المطبخ السعودي التقليدي" [ref=e667]:
+                        - cell "Twitter Title" [ref=e668]
+                        - cell "SEO title" [ref=e669]
+                        - cell "أفضل أطباق المطبخ السعودي التقليدي" [ref=e670]
+                      - row "Twitter Description SEO description —" [ref=e671]:
+                        - cell "Twitter Description" [ref=e672]
+                        - cell "SEO description" [ref=e673]
+                        - cell "—" [ref=e674]
+                      - row "Language Settings ar-SA" [ref=e675]:
+                        - cell "Language" [ref=e676]
+                        - cell "Settings" [ref=e677]
+                        - cell "ar-SA" [ref=e678]
+                      - row "Content format Settings rich_text" [ref=e679]:
+                        - cell "Content format" [ref=e680]
+                        - cell "Settings" [ref=e681]
+                        - cell "rich_text" [ref=e682]
+                      - row "OG Type Settings website" [ref=e683]:
+                        - cell "OG Type" [ref=e684]
+                        - cell "Settings" [ref=e685]
+                        - cell "website" [ref=e686]
+                      - row "OG Locale Settings ar_SA" [ref=e687]:
+                        - cell "OG Locale" [ref=e688]
+                        - cell "Settings" [ref=e689]
+                        - cell "ar_SA" [ref=e690]
+                      - row "Twitter Card Settings summary_large_image" [ref=e691]:
+                        - cell "Twitter Card" [ref=e692]
+                        - cell "Settings" [ref=e693]
+                        - cell "summary_large_image" [ref=e694]
+                      - row "Twitter Site Settings —" [ref=e695]:
+                        - cell "Twitter Site" [ref=e696]
+                        - cell "Settings" [ref=e697]
+                        - cell "—" [ref=e698]
+                      - row "Twitter Creator Settings —" [ref=e699]:
+                        - cell "Twitter Creator" [ref=e700]
+                        - cell "Settings" [ref=e701]
+                        - cell "—" [ref=e702]
+                      - row "Accessible for free Settings Yes" [ref=e703]:
+                        - cell "Accessible for free" [ref=e704]
+                        - cell "Settings" [ref=e705]
+                        - cell "Yes" [ref=e706]
+                      - row "License Settings https://creativecommons.org/licenses/by/4.0/" [ref=e707]:
+                        - cell "License" [ref=e708]
+                        - cell "Settings" [ref=e709]
+                        - cell "https://creativecommons.org/licenses/by/4.0/" [ref=e710]
+                      - row "Meta Robots Settings index, follow" [ref=e711]:
+                        - cell "Meta Robots" [ref=e712]
+                        - cell "Settings" [ref=e713]
+                        - cell "index, follow" [ref=e714]
+                      - row "Sitemap Priority Settings 0.5" [ref=e715]:
+                        - cell "Sitemap Priority" [ref=e716]
+                        - cell "Settings" [ref=e717]
+                        - cell "0.5" [ref=e718]
+                      - row "Sitemap Change Freq Settings daily" [ref=e719]:
+                        - cell "Sitemap Change Freq" [ref=e720]
+                        - cell "Settings" [ref=e721]
+                        - cell "daily" [ref=e722]
+              - generic [ref=e724]:
+                - generic [ref=e726]:
+                  - img [ref=e727]
+                  - text: MetaTag & JSON-LD
+                - generic [ref=e731]:
+                  - img [ref=e732]
+                  - generic [ref=e734]: Add SEO title and description in Meta Tags step to see meta tags and metadata object
+            - tablist [ref=e255]:
+              - 'tab "Basic: 67% complete. اختياري: التصنيف، ملخص المقال، الوسوم" [ref=e310] [cursor=pointer]':
+                - img [ref=e389]
+                - generic [ref=e258]: Basic
+                - generic [ref=e259]: 67%
+              - 'tab "Content: 80% complete. اختياري: صورة المقال الرئيسية، معرض الصور" [ref=e437] [cursor=pointer]':
+                - img [ref=e735]
+                - generic [ref=e262]: Content
+                - generic [ref=e263]: 80%
+              - 'tab "SEO: 34% complete. العنوان والوصف: مفقود — أضف وصف في تبويب SEO · المحتوى: 53 كلمة — أضف محتوى أكثر (الحد الأدنى 300) · المحتوى: مفقود — أضف ملخص للمقال · الصور: مفقودة — أضف صورة من تبويب المحتوى · البيانات المهيكلة: أكمل العنوان والوصف والرابط الأساسي · البيانات المهيكلة: ينقص: تاريخ النشر، وصف البحث · الإعدادات التقنية: استخدم https://" [ref=e438] [cursor=pointer]':
+                - img [ref=e266]
+                - generic [ref=e268]: SEO
+                - generic [ref=e269]: 34%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e270] [cursor=pointer]':
+                - img [ref=e737]
+                - generic [ref=e272]: FAQs & Related
+                - generic [ref=e273]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [selected] [ref=e292] [cursor=pointer]':
+                - generic [ref=e275]: "5"
+                - generic [ref=e276]: Publish
+                - generic [ref=e277]: 50%
+  - region "Notifications (F8)":
+    - list [ref=e740]:
+      - listitem [ref=e756]:
+        - generic [ref=e757]:
+          - img [ref=e758]
+          - generic [ref=e762]:
+            - generic [ref=e763]: فشل الحفظ
+            - generic [ref=e764]: SEO score is 34% — minimum 60% required to publish. Improve SEO fields before publishing.
+        - button [ref=e765] [cursor=pointer]:
+          - img [ref=e766]
+  - button "Open Next.js Dev Tools" [ref=e278] [cursor=pointer]:
+    - img [ref=e279]
+  - alert [ref=e192]

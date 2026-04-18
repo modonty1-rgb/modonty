@@ -15,6 +15,7 @@ export type ArticleDefaultsFromSettings = {
   isAccessibleForFree: boolean;
   alternateLanguages: unknown;
   contentFormat: string;
+  siteName: string;
 };
 
 // Article defaults from Settings (SOT). Used when Article no longer stores the 12 fields.
@@ -39,6 +40,7 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
       isAccessibleForFree: true,
       alternateLanguages: undefined,
       contentFormat: "rich_text",
+      siteName: "مودونتي",
     };
   }
   return {
@@ -55,6 +57,7 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
     isAccessibleForFree: settings.defaultIsAccessibleForFree ?? true,
     alternateLanguages: settings.defaultAlternateLanguages ?? undefined,
     contentFormat: settings.defaultContentFormat?.trim() || "rich_text",
+    siteName: settings.siteName?.trim() || "مودونتي",
   };
 }
 

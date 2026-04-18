@@ -29,6 +29,7 @@ export async function loadMoreArticles(page: number, categorySlug?: string): Pro
       clientSlug: article.client.slug,
       clientLogo: article.client.logo,
       readingTimeMinutes: article.readingTimeMinutes,
+      hasAudio: article.hasAudio,
       author: {
         id: article.author.id,
         name: article.author.name || "Modonty",

@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import NextImage from "next/image";
 import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
-import { MediaType } from "@prisma/client";
+import { MediaType, MediaScope } from "@prisma/client";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
 import { getCloudinaryErrorMessage } from "../../components/upload-zone/utils/error-handler";
 
@@ -45,6 +45,7 @@ interface Media {
   contentLocation: string | null;
   cloudinaryPublicId: string | null;
   type: MediaType;
+  scope: MediaScope;
   client?: {
     id: string;
     name: string;
@@ -52,11 +53,18 @@ interface Media {
   };
 }
 
-interface EditMediaFormProps {
-  media: Media;
+interface Client {
+  id: string;
+  name: string;
+  slug: string;
 }
 
-export function EditMediaForm({ media }: EditMediaFormProps) {
+interface EditMediaFormProps {
+  media: Media;
+  clients: Client[];
+}
+
+export function EditMediaForm({ media, clients }: EditMediaFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -72,6 +80,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
     credit: media.credit || "مدونتي",
     license: media.license || "All Rights Reserved",
     creator: media.creator || "",
+    clientId: media.scope === "PLATFORM" ? "modonty" : media.client?.id || "none",
   });
 
   useEffect(() => {
@@ -230,7 +239,13 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         }
       }
 
+      const resolvedScope: MediaScope =
+        formData.clientId === "modonty" ? "PLATFORM" :
+        formData.clientId === "none" ? "GENERAL" : "CLIENT";
+      const resolvedClientId = (formData.clientId === "none" || formData.clientId === "modonty") ? null : formData.clientId;
+
       const result = await updateMedia(media.id, {
+        scope: resolvedScope,
         type: formData.type,
         altText: formData.altText.trim(),
         title: formData.title.trim() || undefined,
@@ -238,6 +253,7 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
         credit: formData.credit.trim() || undefined,
         creator: formData.creator.trim() || undefined,
         license: formData.license || undefined,
+        clientId: resolvedClientId,
         cloudinaryPublicId: newCloudinaryPublicId,
         cloudinaryVersion: newCloudinaryVersion,
         cloudinarySignature: newCloudinarySignature,
@@ -306,6 +322,31 @@ export function EditMediaForm({ media }: EditMediaFormProps) {
                       <SelectItem value="TWITTER_IMAGE">Twitter Image</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Client */}
+                <div className="space-y-2">
+                  <Label htmlFor="clientId">Client</Label>
+                  <Select
+                    value={formData.clientId}
+                    onValueChange={(value) => setFormData({ ...formData, clientId: value })}
+                  >
+                    <SelectTrigger id="clientId">
+                      <SelectValue placeholder="Select a client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">General (no client)</SelectItem>
+                      <SelectItem value="modonty">Modonty — Platform Assets</SelectItem>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Assigns this image to a client. General images appear in all client media pickers.
+                  </p>
                 </div>
 
                 {/* Alt Text */}

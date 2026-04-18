@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e37]:
+          - link "صندوق البريد" [ref=e38] [cursor=pointer]:
+            - /url: /users/notifications
+            - img [ref=e39]
+          - generic [ref=e42]:
+            - link "عملاء بلا إعلانات" [ref=e43] [cursor=pointer]:
+              - /url: https://www.jbrseo.com
+              - text: عملاء بلا إعلانات
+              - generic [ref=e44]: ↗
+            - button "اختبار التحقق" [disabled] [ref=e45]:
+              - generic [ref=e47]: ا
+            - button "فتح المحادثة" [ref=e48] [cursor=pointer]
+    - main [ref=e50]:
+      - generic [ref=e52]:
+        - generic [ref=e53]: ✗
+        - heading "تعذّر التفعيل" [level=1] [ref=e54]
+        - paragraph [ref=e55]: الرابط غير صالح أو تم استخدامه مسبقاً.
+        - link "تسجيل الدخول" [ref=e56] [cursor=pointer]:
+          - /url: /users/login
+    - contentinfo [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e60] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e61]: ↗
+      - navigation "روابط سريعة" [ref=e62]:
+        - link "الرئيسية" [ref=e63] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e64] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e65] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e66] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e67] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e68] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e69]:
+        - link "الشروط والأحكام" [ref=e70] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e71] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e72] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e73] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e74] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e75]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e81] [cursor=pointer]:
+    - generic [ref=e84]:
+      - text: Compiling
+      - generic [ref=e85]:
+        - generic [ref=e86]: .
+        - generic [ref=e87]: .
+        - generic [ref=e88]: .
+  - alert [ref=e89]

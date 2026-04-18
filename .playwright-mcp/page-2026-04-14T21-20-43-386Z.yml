@@ -1,0 +1,180 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e9]:
+            - paragraph [ref=e10]: Modonty
+            - paragraph [ref=e11]: Team Guidelines
+        - link "Admin Sign In →" [ref=e12] [cursor=pointer]:
+          - /url: /login
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - link "Guidelines" [ref=e16] [cursor=pointer]:
+            - /url: /guidelines
+            - img [ref=e17]
+            - text: Guidelines
+          - img [ref=e19]
+          - generic [ref=e21]: Media & Image Standards
+        - generic [ref=e22]:
+          - heading "Media & Image Standards" [level=1] [ref=e23]
+          - paragraph [ref=e24]: مرجع سريع لفريق التصميم — المقاسات وأماكن الصور
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - img [ref=e29]
+            - generic [ref=e32]:
+              - paragraph [ref=e33]: ارفع مرة واحدة — وخلّ الموقع يتولى الباقي
+              - paragraph [ref=e34]:
+                - text: الموقع متصل بـ Cloudinary. ارفع الصورة بأعلى جودة عندك، وهو يضغطها ويغيّر حجمها حسب كل مكان لوحده.
+                - strong [ref=e35]: ما تحتاج تسوّي نسخ.
+          - table [ref=e37]:
+            - rowgroup [ref=e38]:
+              - row "نوع الصورة ارفعها بهذا المقاس الفورمات ملاحظة" [ref=e39]:
+                - columnheader "نوع الصورة" [ref=e40]
+                - columnheader "ارفعها بهذا المقاس" [ref=e41]
+                - columnheader "الفورمات" [ref=e42]
+                - columnheader "ملاحظة" [ref=e43]
+            - rowgroup [ref=e44]:
+              - row "صورة المقال16:9 1920 × 1080 WebP / JPG PNG بخلفية شفافة" [ref=e45]:
+                - cell "صورة المقال16:9" [ref=e46]
+                - cell "1920 × 1080" [ref=e47]:
+                  - code [ref=e48]: 1920 × 1080
+                - cell "WebP / JPG" [ref=e49]:
+                  - code [ref=e50]: WebP / JPG
+                - cell "PNG بخلفية شفافة" [ref=e51]
+              - row "لوجو العميل1:1 500 × 500 PNG شفاف ⚠️ PNG بخلفية شفافة إلزامي" [ref=e52]:
+                - cell "لوجو العميل1:1" [ref=e53]
+                - cell "500 × 500" [ref=e54]:
+                  - code [ref=e55]: 500 × 500
+                - cell "PNG شفاف" [ref=e56]:
+                  - code [ref=e57]: PNG شفاف
+                - cell "⚠️ PNG بخلفية شفافة إلزامي" [ref=e58]:
+                  - generic [ref=e59]: ⚠️ PNG بخلفية شفافة إلزامي
+              - row "صورة الكاتب1:1 500 × 500 JPG / PNG الوجه في المنتصف" [ref=e60]:
+                - cell "صورة الكاتب1:1" [ref=e61]
+                - cell "500 × 500" [ref=e62]:
+                  - code [ref=e63]: 500 × 500
+                - cell "JPG / PNG" [ref=e64]:
+                  - code [ref=e65]: JPG / PNG
+                - cell "الوجه في المنتصف" [ref=e66]
+              - row "غلاف صفحة العميل6:1 2400 × 400 WebP / JPG ⚠️ لا تحط نصوص داخل الصورة" [ref=e67]:
+                - cell "غلاف صفحة العميل6:1" [ref=e68]
+                - cell "2400 × 400" [ref=e69]:
+                  - code [ref=e70]: 2400 × 400
+                - cell "WebP / JPG" [ref=e71]:
+                  - code [ref=e72]: WebP / JPG
+                - cell "⚠️ لا تحط نصوص داخل الصورة" [ref=e73]:
+                  - generic [ref=e74]: ⚠️ لا تحط نصوص داخل الصورة
+              - row "صورة الفئة1:1 600 × 600 WebP / JPG تظهر مربعاً وكـ 16:9 — المنتصف آمن دائماً" [ref=e75]:
+                - cell "صورة الفئة1:1" [ref=e76]
+                - cell "600 × 600" [ref=e77]:
+                  - code [ref=e78]: 600 × 600
+                - cell "WebP / JPG" [ref=e79]:
+                  - code [ref=e80]: WebP / JPG
+                - cell "تظهر مربعاً وكـ 16:9 — المنتصف آمن دائماً" [ref=e81]
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - img [ref=e85]
+              - generic [ref=e88]: المنطقة الآمنة — Safe Zone
+            - paragraph [ref=e89]: نفس الصورة تطلع في أماكن مختلفة بأشكال مختلفة — اللي يهمك حطّه في المنتصف دايماً
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - paragraph [ref=e93]: صورة المقال الرئيسية — 16:9
+              - generic [ref=e94]:
+                - generic [ref=e95]: 1920×1080
+                - generic [ref=e101]: ✓ آمن دائماً
+              - generic [ref=e102]:
+                - generic [ref=e103]: تُقطع في القوائم
+                - generic [ref=e105]: تُقطع كمربع
+                - generic [ref=e107]: آمن
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - paragraph [ref=e111]: صورة المقال
+                - list [ref=e112]:
+                  - listitem [ref=e113]:
+                    - text: "• في صفحة المقال: تطلع"
+                    - strong [ref=e114]: كاملة
+                    - text: 16:9 ما تنقص منها شيء
+                  - listitem [ref=e115]: "• في البطاقات والقوائم: الجوانب تتقطع شوي"
+                  - listitem [ref=e116]:
+                    - text: "• في الشريط الجانبي وصفحة العميل: تتقطع"
+                    - strong [ref=e117]: مربع كامل
+                  - listitem [ref=e118]: ⚠️ الوجه أو الشيء المهم — في المنتصف دايماً
+              - generic [ref=e119]:
+                - paragraph [ref=e120]: اللوجو وصور الكتّاب
+                - list [ref=e121]:
+                  - listitem [ref=e122]:
+                    - text: • تطلع
+                    - strong [ref=e123]: كاملة
+                    - text: دايماً بدون قص — بس بأحجام مختلفة حسب المكان
+                  - listitem [ref=e124]: • من دائرة صغيرة 24px لأفاتار صفحة العميل 112px
+                  - listitem [ref=e125]: ⚠️ الشعار في المنتصف وحوله مسافة من كل جهة
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - generic [ref=e128]: شوف وين تطلع كل صورة
+            - paragraph [ref=e129]: نفس تصميم الموقع — بس في مكان كل صورة مكتوب المقاس بالضبط
+          - generic [ref=e131]:
+            - link "متاح الآن صفحة المقال Article Page صورة Hero، صورة الكاتب، غلاف العميل، اللوجو، المعرض — كل شيء موضّح بالمقاس" [ref=e132] [cursor=pointer]:
+              - /url: /guidelines/media/article-preview
+              - generic [ref=e133]:
+                - generic [ref=e134]: متاح الآن
+                - img [ref=e135]
+              - generic [ref=e139]:
+                - paragraph [ref=e140]: صفحة المقال
+                - paragraph [ref=e141]: Article Page
+              - paragraph [ref=e142]: صورة Hero، صورة الكاتب، غلاف العميل، اللوجو، المعرض — كل شيء موضّح بالمقاس
+            - link "متاح الآن صفحة العميل Client Page الغلاف العريض، اللوجو الكبير، المقالات، وتبويب الصور المربعة" [ref=e143] [cursor=pointer]:
+              - /url: /guidelines/media/client-preview
+              - generic [ref=e144]:
+                - generic [ref=e145]: متاح الآن
+                - img [ref=e146]
+              - generic [ref=e150]:
+                - paragraph [ref=e151]: صفحة العميل
+                - paragraph [ref=e152]: Client Page
+              - paragraph [ref=e153]: الغلاف العريض، اللوجو الكبير، المقالات، وتبويب الصور المربعة
+            - link "متاح الآن بطاقة المقال PostCard صورة المقال 16:9 واللوجو الصغير اللي يطلع في كل كارت" [ref=e154] [cursor=pointer]:
+              - /url: /guidelines/media/postcard-preview
+              - generic [ref=e155]:
+                - generic [ref=e156]: متاح الآن
+                - img [ref=e157]
+              - generic [ref=e161]:
+                - paragraph [ref=e162]: بطاقة المقال
+                - paragraph [ref=e163]: PostCard
+              - paragraph [ref=e164]: صورة المقال 16:9 واللوجو الصغير اللي يطلع في كل كارت
+        - generic [ref=e165]:
+          - generic [ref=e167]: الفئات والصناعات — Categories & Industries
+          - generic [ref=e168]:
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e171]: صورة الفئة — Category Image
+                - generic [ref=e172]: اختياري
+              - table [ref=e174]:
+                - rowgroup [ref=e175]:
+                  - row "المقاس للرفع 600 × 600 — مربع 1:1" [ref=e176]:
+                    - cell "المقاس للرفع" [ref=e177]
+                    - cell "600 × 600 — مربع 1:1" [ref=e178]:
+                      - code [ref=e179]: 600 × 600
+                      - text: — مربع 1:1
+                  - row "الفورمات WebP / JPG" [ref=e180]:
+                    - cell "الفورمات" [ref=e181]
+                    - cell "WebP / JPG" [ref=e182]
+                  - row "أين تظهر في قائمة الفئات كمربع — في بطاقة الفئة كـ 16:9 — في رأس الصفحة تتغير حسب الشاشة" [ref=e183]:
+                    - cell "أين تظهر" [ref=e184]
+                    - cell "في قائمة الفئات كمربع — في بطاقة الفئة كـ 16:9 — في رأس الصفحة تتغير حسب الشاشة" [ref=e185]
+                  - row "المنطقة الآمنة ⚠️ اللي يهمك حطّه في المنتصف — الصورة تطلع مرة مربع ومرة 16:9" [ref=e186]:
+                    - cell "المنطقة الآمنة" [ref=e187]
+                    - cell "⚠️ اللي يهمك حطّه في المنتصف — الصورة تطلع مرة مربع ومرة 16:9" [ref=e188]
+              - paragraph [ref=e189]: لو ما رفعت صورة — الموقع يعرض أيقونة الفئة مع خلفية ملوّنة وتطلع كويس. الصورة تحسين مش شرط.
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - generic [ref=e193]: الصناعات — Industries
+                - generic [ref=e194]: نص فقط — لا صور
+              - paragraph [ref=e195]: الصناعات نص بس — اسم ورابط. ما فيها صور خالص. تطلع كأزرار فلتر في صفحة العملاء وخلاص.
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e201] [cursor=pointer]:
+    - img [ref=e202]
+  - alert [ref=e205]

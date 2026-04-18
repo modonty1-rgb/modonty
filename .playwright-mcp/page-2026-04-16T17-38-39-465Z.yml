@@ -1,0 +1,259 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e42] [cursor=pointer]
+    - main [ref=e44]:
+      - navigation "تنقل الصفحة" [ref=e45]:
+        - list [ref=e46]:
+          - listitem [ref=e47]:
+            - link "الرئيسية الرئيسية" [ref=e48] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e49]
+              - generic [ref=e52]: الرئيسية
+          - listitem [ref=e53]:
+            - img [ref=e54]
+            - link "العملاء" [ref=e56] [cursor=pointer]:
+              - /url: /clients
+              - generic [ref=e57]: العملاء
+          - listitem [ref=e58]:
+            - generic [ref=e60]: Al Bayt Restaurant
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e66]: AB
+          - generic [ref=e67]:
+            - heading "Al Bayt Restaurant موثق" [level=1] [ref=e68]:
+              - text: Al Bayt Restaurant
+              - img "موثق" [ref=e69]
+            - paragraph [ref=e72]: مطعم البيت السعودي هو وجهة طعام أصيلة تقدم أشهى المأكولات السعودية التقليدية في أجواء عائلية دافئة. نحرص على تقديم تجربة طعام لا تُنسى مع أفضل مكونات طازجة ووصفات موروثة.
+            - paragraph [ref=e73]: ٠ متابع · ٢ مقال · ٠ مشاهدة
+        - button "متابعة" [ref=e78] [cursor=pointer]:
+          - img
+          - text: متابعة
+      - main [ref=e79]:
+        - navigation "أقسام صفحة العميل" [ref=e80]:
+          - list [ref=e82]:
+            - listitem [ref=e83]:
+              - link "الكل" [ref=e84] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant
+            - listitem [ref=e85]:
+              - link "حول" [ref=e86] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/about
+            - listitem [ref=e87]:
+              - link "تواصل مع الشركة" [ref=e88] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/contact
+            - listitem [ref=e89]:
+              - link "الصور" [ref=e90] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/photos
+            - listitem [ref=e91]:
+              - link "المتابعون" [ref=e92] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/followers
+            - listitem [ref=e93]:
+              - link "التقييمات" [ref=e94] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/reviews
+            - listitem [ref=e95]:
+              - link "الريلز" [ref=e96] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/reels
+            - listitem [ref=e97]:
+              - link "الإعجابات" [ref=e98] [cursor=pointer]:
+                - /url: /clients/al-bayt-restaurant/likes
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - heading "ملخص الأعمال" [level=3] [ref=e103]:
+                - img [ref=e104]
+                - text: ملخص الأعمال
+              - paragraph [ref=e108]: مطعم البيت السعودي هو وجهة طعام أصيلة تقدم أشهى المأكولات السعودية التقليدية في أجواء عائلية دافئة. نحرص على تقديم تجربة طعام لا تُنسى مع أفضل مكونات طازجة ووصفات موروثة.
+            - heading "معلومات الشركة" [level=3] [ref=e111]:
+              - img [ref=e112]
+              - text: معلومات الشركة
+            - generic [ref=e117]:
+              - heading "معلومات الاتصال" [level=3] [ref=e119]:
+                - img [ref=e120]
+                - text: معلومات الاتصال
+              - generic [ref=e123]:
+                - img [ref=e124]
+                - generic [ref=e128]:
+                  - link "البريد الإلكتروني" [ref=e129] [cursor=pointer]:
+                    - /url: mailto:albayt@test.sa
+                  - button "نسخ البريد الإلكتروني" [ref=e130] [cursor=pointer]:
+                    - img
+          - region "المقالات" [ref=e132]:
+            - heading "المقالات" [level=2] [ref=e133]
+            - generic [ref=e134]:
+              - article [ref=e135]:
+                - img [ref=e137]
+                - generic [ref=e140]:
+                  - generic [ref=e143]:
+                    - time [ref=e145]: ١٦ أبريل ٢٠٢٦
+                    - generic [ref=e146]: •
+                    - generic [ref=e147]: ⏱️ 1 دقيقة
+                  - 'heading "وصفات المطبخ السعودي: دليل الطهي التقليدي" [level=3] [ref=e148]':
+                    - 'link "وصفات المطبخ السعودي: دليل الطهي التقليدي" [ref=e149] [cursor=pointer]':
+                      - /url: /articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي
+                  - paragraph
+                  - generic [ref=e150]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e151]:
+                    - generic [ref=e152]:
+                      - generic [ref=e153]:
+                        - img [ref=e154]
+                        - text: "0"
+                      - generic [ref=e156]:
+                        - img [ref=e157]
+                        - text: "0"
+                      - generic [ref=e159]:
+                        - img [ref=e160]
+                        - text: "0"
+                      - generic [ref=e163]:
+                        - img [ref=e164]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e166] [cursor=pointer]:
+                      - /url: /articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي
+                      - img [ref=e167]
+                      - generic [ref=e173]: مشاركة
+              - article [ref=e174]:
+                - img [ref=e176]
+                - generic [ref=e179]:
+                  - generic [ref=e182]:
+                    - time [ref=e184]: ١٦ أبريل ٢٠٢٦
+                    - generic [ref=e185]: •
+                    - generic [ref=e186]: ⏱️ 1 دقيقة
+                  - heading "أفضل أطباق المطبخ السعودي التقليدي" [level=3] [ref=e187]:
+                    - link "أفضل أطباق المطبخ السعودي التقليدي" [ref=e188] [cursor=pointer]:
+                      - /url: /articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                  - paragraph
+                  - generic [ref=e189]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e190]:
+                    - generic [ref=e191]:
+                      - generic [ref=e192]:
+                        - img [ref=e193]
+                        - text: "0"
+                      - generic [ref=e195]:
+                        - img [ref=e196]
+                        - text: "0"
+                      - generic [ref=e198]:
+                        - img [ref=e199]
+                        - text: "0"
+                      - generic [ref=e202]:
+                        - img [ref=e203]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e205] [cursor=pointer]:
+                      - /url: /articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                      - img [ref=e206]
+                      - generic [ref=e212]: مشاركة
+          - generic [ref=e213]:
+            - generic [ref=e214]:
+              - heading "المتابعون" [level=3] [ref=e216]:
+                - img [ref=e217]
+                - text: المتابعون
+              - generic [ref=e222]:
+                - paragraph [ref=e223]: لا يوجد متابعون بعد. عند بدء متابعة هذا العميل، ستظهر الحسابات هنا.
+                - link "عرض المتابعين" [ref=e224] [cursor=pointer]:
+                  - /url: /clients/al-bayt-restaurant/followers
+            - generic [ref=e225]:
+              - heading "التقييمات" [level=3] [ref=e227]:
+                - img [ref=e228]
+                - text: التقييمات
+              - generic [ref=e230]:
+                - paragraph [ref=e231]: لا توجد تقييمات منشورة بعد لمحتوى Al Bayt Restaurant. عند إضافة تعليقات على مقالات هذا العميل ستظهر هنا.
+                - link "عرض التقييمات" [ref=e232] [cursor=pointer]:
+                  - /url: /clients/al-bayt-restaurant/reviews
+            - generic [ref=e233]:
+              - heading "الإعجابات" [level=3] [ref=e235]:
+                - img [ref=e236]
+                - text: الإعجابات
+              - generic [ref=e238]:
+                - paragraph [ref=e239]: لا توجد تفاعلات إعجاب كافية بعد لعرضها. عند زيادة متابعي Al Bayt Restaurant وتفاعلهم مع المقالات، ستظهر الإحصاءات هنا.
+                - link "عرض الإعجابات" [ref=e240] [cursor=pointer]:
+                  - /url: /clients/al-bayt-restaurant/likes
+            - region "عملاء مشابهون":
+              - heading "عملاء مشابهون" [level=2] [ref=e241]
+        - generic [ref=e242]:
+          - generic [ref=e243]:
+            - paragraph [ref=e244]: أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور
+            - paragraph [ref=e245]: انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء
+          - link "عملاء بلا إعلانات" [ref=e246] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e247]: ↗
+    - contentinfo [ref=e248]:
+      - generic [ref=e249]:
+        - generic [ref=e250]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e251] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e252]: ↗
+      - navigation "روابط سريعة" [ref=e253]:
+        - link "الرئيسية" [ref=e254] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e255] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e256] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e257] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e258] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e259] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e260]:
+        - link "الشروط والأحكام" [ref=e261] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e262] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e263] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e264] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e265] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e266]: © 2026 مودونتي
+  - generic [ref=e271] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e272]:
+      - img [ref=e273]
+    - generic [ref=e276]:
+      - button "Open issues overlay" [ref=e277]:
+        - generic [ref=e278]:
+          - generic [ref=e279]: "3"
+          - generic [ref=e280]: "4"
+        - generic [ref=e281]:
+          - text: Issue
+          - generic [ref=e282]: s
+      - button "Collapse issues badge" [ref=e283]:
+        - img [ref=e284]
+  - alert [ref=e286]

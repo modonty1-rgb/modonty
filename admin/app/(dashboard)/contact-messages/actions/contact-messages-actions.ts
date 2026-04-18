@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
 
 export interface ContactMessageFilters {
   status?: string;
@@ -91,6 +92,7 @@ export async function getContactMessageById(id: string) {
 }
 
 export async function updateContactMessageStatus(id: string, status: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const updateData: any = {
       status,
@@ -120,6 +122,7 @@ export async function updateContactMessageStatus(id: string, status: string) {
 }
 
 export async function markAsRead(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const message = await db.contactMessage.update({
       where: { id },
@@ -140,6 +143,7 @@ export async function markAsRead(id: string) {
 }
 
 export async function markAsReplied(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const message = await db.contactMessage.update({
       where: { id },
@@ -160,6 +164,7 @@ export async function markAsReplied(id: string) {
 }
 
 export async function deleteContactMessage(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     await db.contactMessage.delete({ where: { id } });
     revalidatePath("/contact-messages");

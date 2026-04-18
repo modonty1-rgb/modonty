@@ -15,6 +15,7 @@ import type { FeedPost } from "@/lib/types";
 import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/client-page";
 import { ClientViewTracker } from "./components/client-view-tracker";
 import ClientLoading from "./loading";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -178,7 +179,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
-          <ClientPageLeft client={client} />
+          <ClientPageLeft client={client} stats={{ articlesCount: client._count.articles, followers: stats.followers, totalViews: stats.totalViews }} />
           <ClientPageFeed posts={posts} clientName={client.name} clientId={client.id} relatedClientsCount={relatedClients.length} />
           <ClientPageRight
           client={client}
@@ -195,14 +196,16 @@ async function ClientPageContent({ params }: ClientPageProps) {
             <p className="font-semibold text-foreground">أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور</p>
             <p className="text-sm text-muted-foreground mt-0.5">انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء</p>
           </div>
-          <a
+          <CtaTrackedLink
             href="https://www.jbrseo.com"
             target="_blank"
             rel="noopener noreferrer"
+            label="Client Page CTA — عملاء بلا إعلانات"
+            type="BANNER"
             className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             عملاء بلا إعلانات <span aria-hidden="true">↗</span>
-          </a>
+          </CtaTrackedLink>
         </div>
       </>
     );

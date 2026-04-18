@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e243]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e244] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e246]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e248] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e249]
+        - generic [ref=e250]:
+          - search "بحث المقالات" [ref=e251] [cursor=pointer]:
+            - img [ref=e253]
+            - generic [ref=e256]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e257]:
+            - link "الرئيسية" [ref=e258] [cursor=pointer]:
+              - /url: /
+            - link "الرائجة" [ref=e264] [cursor=pointer]:
+              - /url: /trending
+            - link "العملاء" [ref=e270] [cursor=pointer]:
+              - /url: /clients
+        - generic [ref=e278]:
+          - link "عملاء بلا إعلانات" [ref=e279] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e280]: ↗
+          - button "تسجيل الدخول" [ref=e281] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e282] [cursor=pointer]
+    - main [ref=e4]:
+      - navigation "تنقل الصفحة" [ref=e284]:
+        - list [ref=e285]:
+          - listitem [ref=e286]:
+            - link "الرئيسية الرئيسية" [ref=e287] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e292]:
+            - img [ref=e293]
+            - link "العملاء" [ref=e295] [cursor=pointer]:
+              - /url: /clients
+          - listitem [ref=e297]:
+            - generic [ref=e299]: عيادات بلسم الطبية
+      - generic [ref=e300]:
+        - img "غلاف عيادات بلسم الطبية" [ref=e303]
+        - generic [ref=e305]:
+          - generic [ref=e306]:
+            - img "عيادات بلسم الطبية" [ref=e308]
+            - generic [ref=e309]
+          - generic [ref=e337]:
+            - button "مشاركة" [ref=e338] [cursor=pointer]
+            - button "متابعة" [ref=e339] [cursor=pointer]
+      - main [ref=e341]:
+        - navigation "أقسام صفحة العميل" [ref=e342]:
+          - list [ref=e345]:
+            - listitem [ref=e346]
+            - listitem [ref=e349]
+            - listitem [ref=e352]
+            - listitem [ref=e355]
+            - listitem [ref=e358]
+            - listitem [ref=e361]
+            - listitem [ref=e364]
+            - listitem [ref=e367]
+        - generic [ref=e370]:
+          - generic [ref=e371]:
+            - generic [ref=e372]
+            - generic [ref=e399]
+            - generic [ref=e406]
+            - generic [ref=e422]
+          - region "أحدث المقالات" [ref=e437]:
+            - heading "أحدث المقالات" [level=2] [ref=e439]
+            - generic [ref=e440]
+          - generic [ref=e452]:
+            - generic [ref=e453]
+            - generic [ref=e464]
+            - generic [ref=e472]
+            - region "عملاء مشابهون"
+        - generic [ref=e481]:
+          - generic [ref=e482]:
+            - paragraph [ref=e483]: أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور
+            - paragraph [ref=e484]: انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء
+          - link "عملاء بلا إعلانات" [ref=e485] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e486]: ↗
+    - contentinfo [ref=e204]:
+      - generic [ref=e205]:
+        - generic [ref=e206]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e207] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e208]: ↗
+      - navigation "روابط سريعة" [ref=e209]:
+        - link "الرئيسية" [ref=e210] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e211] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e212] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e213] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e214] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e215] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e216]:
+        - link "الشروط والأحكام" [ref=e217] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e218] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e219] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e220] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e221] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e222]: © 2026 مودونتي
+  - generic [ref=e227] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e228]:
+      - img [ref=e229]
+    - generic [ref=e232]:
+      - button "Open issues overlay" [ref=e233]:
+        - generic [ref=e234]:
+          - generic [ref=e235]: "3"
+          - generic [ref=e236]: "4"
+        - generic [ref=e237]:
+          - text: Issue
+          - generic [ref=e238]: s
+      - button "Collapse issues badge" [ref=e239]:
+        - img [ref=e240]
+  - alert [ref=e242]

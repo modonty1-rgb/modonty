@@ -1,0 +1,100 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e42] [cursor=pointer]
+    - main [ref=e44]:
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - heading "تسجيل الدخول" [level=3] [ref=e48]
+          - paragraph [ref=e49]: سجل الدخول للتعليق والتفاعل مع المحتوى
+        - generic [ref=e50]:
+          - button "تسجيل الدخول بـ Google" [ref=e51] [cursor=pointer]:
+            - img
+            - text: تسجيل الدخول بـ Google
+          - generic [ref=e56]: أو
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - text: البريد الإلكتروني
+              - textbox "البريد الإلكتروني" [ref=e59]:
+                - /placeholder: example@email.com
+                - text: modonty@modonty.com
+            - generic [ref=e60]:
+              - text: كلمة المرور
+              - textbox "كلمة المرور" [ref=e61]:
+                - /placeholder: ••••••••
+                - text: modonty12345678
+            - button "تسجيل الدخول" [ref=e62] [cursor=pointer]:
+              - img
+              - text: تسجيل الدخول
+            - link "نسيت كلمة المرور؟" [ref=e64] [cursor=pointer]:
+              - /url: /users/forgot-password
+          - generic [ref=e69]: أو
+          - generic [ref=e70]:
+            - text: ليس لديك حساب؟
+            - link "سجل الآن" [ref=e71] [cursor=pointer]:
+              - /url: /users/register
+    - contentinfo [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e75] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e76]: ↗
+      - navigation "روابط سريعة" [ref=e77]:
+        - link "الرئيسية" [ref=e78] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e79] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e80] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e81] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e82] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e83] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e84]:
+        - link "الشروط والأحكام" [ref=e85] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e86] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e87] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e88] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e89] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e90]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e96] [cursor=pointer]:
+    - img [ref=e97]
+  - alert [ref=e100]

@@ -1,4 +1,3 @@
-import { ClientPhotosPreview } from "../client-photos-preview";
 import { ClientReviewsPreview } from "../client-reviews-preview";
 import { ClientFollowersPreview } from "../client-followers-preview";
 import { ClientLikesPreview } from "../client-likes-preview";
@@ -30,7 +29,6 @@ interface ClientPageRightProps {
 export function ClientPageRight({ client, relatedClients, reviews, followers, engagement }: ClientPageRightProps) {
   return (
     <div className="w-full min-w-0 order-3 space-y-6 pt-4">
-      <ClientPhotosPreview articles={client.articles ?? []} clientId={client.id} />
       <ClientFollowersPreview
         followers={followers}
         clientSlug={client.slug}

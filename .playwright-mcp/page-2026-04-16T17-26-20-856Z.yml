@@ -1,0 +1,757 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - link "أفضل أطباق المطبخ السعودي التقليدي" [ref=e286] [cursor=pointer]:
+                - /url: /articles/69e11b20e02db6d1c328ee2c
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - generic [ref=e108]: Edit
+          - navigation "Main navigation" [ref=e110]:
+            - link "Modonty Modonty" [ref=e111] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e113]
+              - generic [ref=e114]: Modonty
+            - generic [ref=e116]:
+              - link "Articles" [ref=e117] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e118]:
+                  - img
+                  - generic [ref=e119]: Articles
+              - link "Clients" [ref=e120] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e121]:
+                  - img
+                  - generic [ref=e122]: Clients
+              - link "Media" [ref=e123] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e124]:
+                  - img
+                  - generic [ref=e125]: Media
+          - generic [ref=e126]:
+            - link "4" [ref=e287] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e288]:
+                - img
+                - generic [ref=e289]: "4"
+            - button "M" [ref=e129] [cursor=pointer]:
+              - generic [ref=e131]: M
+      - generic [ref=e132]:
+        - generic [ref=e133]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e134]:
+          - button "Send Note" [ref=e135] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e136] [cursor=pointer]:
+            - img
+      - main [ref=e137]:
+        - generic [ref=e290]:
+          - generic [ref=e293]:
+            - generic [ref=e294]:
+              - generic [ref=e295]:
+                - generic [ref=e296]: Step 5 of 5
+                - generic [ref=e297]: "SEO Health: 63%"
+                - generic [ref=e300]: Live Analysis
+              - generic [ref=e301]:
+                - generic [ref=e303]: 52% Complete
+                - button "Update" [ref=e305] [cursor=pointer]:
+                  - img
+                  - generic [ref=e306]: Update
+            - 'generic "Overall progress: 52%" [ref=e308]'
+          - generic [ref=e312]:
+            - 'tabpanel "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e400]':
+              - generic [ref=e402]:
+                - generic [ref=e403]:
+                  - generic [ref=e404]: Publication Settings
+                  - generic [ref=e405]: Control status, scheduling, and review dates for this article.
+                - generic [ref=e406]:
+                  - region "Status & visibility" [ref=e407]:
+                    - heading "Status & visibility" [level=3] [ref=e408]
+                    - generic [ref=e409]:
+                      - generic [ref=e410]:
+                        - generic [ref=e411]:
+                          - checkbox "Featured" [ref=e412] [cursor=pointer]
+                          - generic [ref=e413] [cursor=pointer]: Featured
+                        - paragraph [ref=e414]: Highlight this article in featured sections (e.g. homepage, trending) and give it higher sitemap priority (0.8).
+                      - generic [ref=e415]:
+                        - generic [ref=e416]: Status
+                        - combobox "Status" [ref=e417]:
+                          - option "Writing" [selected]
+                          - option "Draft"
+                          - option "Scheduled"
+                          - option "Published"
+                          - option "Archived"
+                  - region "Scheduling" [ref=e418]:
+                    - heading "Scheduling" [level=3] [ref=e419]
+                    - generic [ref=e420]:
+                      - generic [ref=e421]:
+                        - text: Scheduled At
+                        - textbox "Scheduled At" [ref=e422]
+                        - paragraph [ref=e423]: Leave empty to publish immediately or use status Draft.
+                      - generic [ref=e424]:
+                        - text: Last Reviewed
+                        - textbox "Last Reviewed" [ref=e425]
+                        - paragraph [ref=e426]: When content was last reviewed for accuracy.
+                  - generic [ref=e427]:
+                    - text: Date Published
+                    - textbox "Date Published" [disabled] [ref=e428]: 2026-04-16T17:23
+                    - paragraph [ref=e429]: Automatically set when the article is published.
+              - generic [ref=e432]:
+                - text: Citations
+                - paragraph [ref=e433]: External authoritative source URLs for E-E-A-T.
+                - generic [ref=e434]:
+                  - textbox "Add citation URL" [ref=e435]:
+                    - /placeholder: https://...
+                  - button "Add" [ref=e436] [cursor=pointer]:
+                    - img
+                    - text: Add
+                  - button "Extract" [ref=e437] [cursor=pointer]:
+                    - img
+                    - text: Extract
+              - generic [ref=e438]:
+                - generic [ref=e440]:
+                  - generic [ref=e441]: Technical SEO Guidance
+                  - generic [ref=e442]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e445]:
+                    - generic [ref=e446]:
+                      - generic [ref=e447]:
+                        - heading "Overall SEO Score" [level=3] [ref=e448]
+                        - paragraph [ref=e449]: Based on 2025 SEO best practices
+                      - generic [ref=e450]:
+                        - generic [ref=e451]: 63%
+                        - generic [ref=e452]: Good
+                    - generic [ref=e455]:
+                      - generic [ref=e456]:
+                        - generic [ref=e457]:
+                          - img [ref=e458]
+                          - generic [ref=e461]: Meta Tags
+                        - generic [ref=e462]:
+                          - generic [ref=e463]: 100%
+                          - generic [ref=e464]: 3/3
+                      - generic [ref=e465]:
+                        - generic [ref=e466]:
+                          - img [ref=e467]
+                          - generic [ref=e469]: Content
+                        - generic [ref=e470]:
+                          - generic [ref=e471]: 0%
+                          - generic [ref=e472]: 0/2
+                      - generic [ref=e473]:
+                        - generic [ref=e474]:
+                          - img [ref=e475]
+                          - generic [ref=e477]: Images
+                        - generic [ref=e478]:
+                          - generic [ref=e479]: 50%
+                          - generic [ref=e480]: 1/2
+                      - generic [ref=e481]:
+                        - generic [ref=e482]:
+                          - img [ref=e483]
+                          - generic [ref=e486]: Structured Data
+                        - generic [ref=e487]:
+                          - generic [ref=e488]: 100%
+                          - generic [ref=e489]: 2/2
+                      - generic [ref=e490]:
+                        - generic [ref=e491]:
+                          - img [ref=e492]
+                          - generic [ref=e494]: Technical
+                        - generic [ref=e495]:
+                          - generic [ref=e496]: 50%
+                          - generic [ref=e497]: 1/2
+                      - generic [ref=e498]:
+                        - generic [ref=e499]:
+                          - img [ref=e500]
+                          - generic [ref=e503]: Mobile
+                        - generic [ref=e504]:
+                          - generic [ref=e505]: 100%
+                          - generic [ref=e506]: 2/2
+                - generic [ref=e509]:
+                  - generic [ref=e510]: Technical SEO Guidance
+                  - generic [ref=e511]: Real-time analysis of your article against 2025 SEO best practices
+                  - generic [ref=e514]:
+                    - generic [ref=e515]:
+                      - generic [ref=e516]:
+                        - heading "Overall SEO Score" [level=3] [ref=e517]
+                        - paragraph [ref=e518]: Based on 2025 SEO best practices
+                      - generic [ref=e519]:
+                        - generic [ref=e520]: 63%
+                        - generic [ref=e521]: Good
+                    - generic [ref=e524]:
+                      - generic [ref=e525]:
+                        - generic [ref=e526]:
+                          - img [ref=e527]
+                          - generic [ref=e530]: Meta Tags
+                        - generic [ref=e531]:
+                          - generic [ref=e532]: 100%
+                          - generic [ref=e533]: 3/3
+                      - generic [ref=e534]:
+                        - generic [ref=e535]:
+                          - img [ref=e536]
+                          - generic [ref=e538]: Content
+                        - generic [ref=e539]:
+                          - generic [ref=e540]: 0%
+                          - generic [ref=e541]: 0/2
+                      - generic [ref=e542]:
+                        - generic [ref=e543]:
+                          - img [ref=e544]
+                          - generic [ref=e546]: Images
+                        - generic [ref=e547]:
+                          - generic [ref=e548]: 50%
+                          - generic [ref=e549]: 1/2
+                      - generic [ref=e550]:
+                        - generic [ref=e551]:
+                          - img [ref=e552]
+                          - generic [ref=e555]: Structured Data
+                        - generic [ref=e556]:
+                          - generic [ref=e557]: 100%
+                          - generic [ref=e558]: 2/2
+                      - generic [ref=e559]:
+                        - generic [ref=e560]:
+                          - img [ref=e561]
+                          - generic [ref=e563]: Technical
+                        - generic [ref=e564]:
+                          - generic [ref=e565]: 50%
+                          - generic [ref=e566]: 1/2
+                      - generic [ref=e567]:
+                        - generic [ref=e568]:
+                          - img [ref=e569]
+                          - generic [ref=e572]: Mobile
+                        - generic [ref=e573]:
+                          - generic [ref=e574]: 100%
+                          - generic [ref=e575]: 2/2
+                - generic [ref=e577]:
+                  - generic [ref=e579] [cursor=pointer]:
+                    - generic [ref=e580]:
+                      - img [ref=e581]
+                      - text: Search & Social Previews
+                    - img [ref=e584]
+                  - generic [ref=e587]:
+                    - generic [ref=e588]:
+                      - generic [ref=e589]:
+                        - heading "Google" [level=4] [ref=e590]:
+                          - img [ref=e591]
+                          - text: Google
+                        - generic [ref=e594]:
+                          - generic [ref=e595]: http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                          - generic [ref=e596] [cursor=pointer]: أفضل أطباق المطبخ السعودي التقليدي
+                          - generic [ref=e597]: تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.
+                      - generic [ref=e598]:
+                        - heading "Facebook" [level=4] [ref=e599]:
+                          - img [ref=e600]
+                          - text: Facebook
+                        - generic [ref=e603]:
+                          - img [ref=e605]
+                          - generic [ref=e609]:
+                            - generic [ref=e610]: مودونتي
+                            - generic [ref=e611]: أفضل أطباق المطبخ السعودي التقليدي
+                            - generic [ref=e612]: تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.
+                      - generic [ref=e613]:
+                        - heading "Twitter" [level=4] [ref=e614]:
+                          - img [ref=e615]
+                          - text: Twitter
+                        - generic [ref=e617]:
+                          - img [ref=e619]
+                          - generic [ref=e623]:
+                            - generic [ref=e624]: أفضل أطباق المطبخ السعودي التقليدي
+                            - generic [ref=e625]: تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.
+                            - generic [ref=e626]: http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                    - generic [ref=e627]:
+                      - img [ref=e628]
+                      - generic [ref=e632]: Add a featured image in Media step for better social sharing
+                - generic [ref=e633]:
+                  - generic [ref=e635]: SEO Metadata Summary
+                  - table [ref=e638]:
+                    - rowgroup [ref=e639]:
+                      - row "Name SOT Value" [ref=e640]:
+                        - columnheader "Name" [ref=e641]
+                        - columnheader "SOT" [ref=e642]
+                        - columnheader "Value" [ref=e643]
+                    - rowgroup [ref=e644]:
+                      - row "Canonical URL Article slug http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e645]:
+                        - cell "Canonical URL" [ref=e646]
+                        - cell "Article slug" [ref=e647]
+                        - cell "http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e648]
+                      - row "OG Title SEO title أفضل أطباق المطبخ السعودي التقليدي" [ref=e649]:
+                        - cell "OG Title" [ref=e650]
+                        - cell "SEO title" [ref=e651]
+                        - cell "أفضل أطباق المطبخ السعودي التقليدي" [ref=e652]
+                      - row "OG Description SEO description تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل." [ref=e653]:
+                        - cell "OG Description" [ref=e654]
+                        - cell "SEO description" [ref=e655]
+                        - cell "تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل." [ref=e656]
+                      - row "OG URL Canonical URL http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e657]:
+                        - cell "OG URL" [ref=e658]
+                        - cell "Canonical URL" [ref=e659]
+                        - cell "http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي" [ref=e660]
+                      - row "OG Site Name Client name Al Bayt Restaurant" [ref=e661]:
+                        - cell "OG Site Name" [ref=e662]
+                        - cell "Client name" [ref=e663]
+                        - cell "Al Bayt Restaurant" [ref=e664]
+                      - row "OG Article Section Category —" [ref=e665]:
+                        - cell "OG Article Section" [ref=e666]
+                        - cell "Category" [ref=e667]
+                        - cell "—" [ref=e668]
+                      - row "OG Article Tags Article tags —" [ref=e669]:
+                        - cell "OG Article Tags" [ref=e670]
+                        - cell "Article tags" [ref=e671]
+                        - cell "—" [ref=e672]
+                      - row "Twitter Title SEO title أفضل أطباق المطبخ السعودي التقليدي" [ref=e673]:
+                        - cell "Twitter Title" [ref=e674]
+                        - cell "SEO title" [ref=e675]
+                        - cell "أفضل أطباق المطبخ السعودي التقليدي" [ref=e676]
+                      - row "Twitter Description SEO description تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل." [ref=e677]:
+                        - cell "Twitter Description" [ref=e678]
+                        - cell "SEO description" [ref=e679]
+                        - cell "تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل." [ref=e680]
+                      - row "Language Settings ar-SA" [ref=e681]:
+                        - cell "Language" [ref=e682]
+                        - cell "Settings" [ref=e683]
+                        - cell "ar-SA" [ref=e684]
+                      - row "Content format Settings rich_text" [ref=e685]:
+                        - cell "Content format" [ref=e686]
+                        - cell "Settings" [ref=e687]
+                        - cell "rich_text" [ref=e688]
+                      - row "OG Type Settings website" [ref=e689]:
+                        - cell "OG Type" [ref=e690]
+                        - cell "Settings" [ref=e691]
+                        - cell "website" [ref=e692]
+                      - row "OG Locale Settings ar_SA" [ref=e693]:
+                        - cell "OG Locale" [ref=e694]
+                        - cell "Settings" [ref=e695]
+                        - cell "ar_SA" [ref=e696]
+                      - row "Twitter Card Settings summary_large_image" [ref=e697]:
+                        - cell "Twitter Card" [ref=e698]
+                        - cell "Settings" [ref=e699]
+                        - cell "summary_large_image" [ref=e700]
+                      - row "Twitter Site Settings —" [ref=e701]:
+                        - cell "Twitter Site" [ref=e702]
+                        - cell "Settings" [ref=e703]
+                        - cell "—" [ref=e704]
+                      - row "Twitter Creator Settings —" [ref=e705]:
+                        - cell "Twitter Creator" [ref=e706]
+                        - cell "Settings" [ref=e707]
+                        - cell "—" [ref=e708]
+                      - row "Accessible for free Settings Yes" [ref=e709]:
+                        - cell "Accessible for free" [ref=e710]
+                        - cell "Settings" [ref=e711]
+                        - cell "Yes" [ref=e712]
+                      - row "License Settings https://creativecommons.org/licenses/by/4.0/" [ref=e713]:
+                        - cell "License" [ref=e714]
+                        - cell "Settings" [ref=e715]
+                        - cell "https://creativecommons.org/licenses/by/4.0/" [ref=e716]
+                      - row "Meta Robots Settings index, follow" [ref=e717]:
+                        - cell "Meta Robots" [ref=e718]
+                        - cell "Settings" [ref=e719]
+                        - cell "index, follow" [ref=e720]
+                      - row "Sitemap Priority Settings 0.5" [ref=e721]:
+                        - cell "Sitemap Priority" [ref=e722]
+                        - cell "Settings" [ref=e723]
+                        - cell "0.5" [ref=e724]
+                      - row "Sitemap Change Freq Settings daily" [ref=e725]:
+                        - cell "Sitemap Change Freq" [ref=e726]
+                        - cell "Settings" [ref=e727]
+                        - cell "daily" [ref=e728]
+              - generic [ref=e730]:
+                - generic [ref=e732]:
+                  - img [ref=e733]
+                  - text: MetaTag & JSON-LD
+                - generic [ref=e736]:
+                  - generic [ref=e737]:
+                    - generic [ref=e738]:
+                      - heading "Metadata JSON" [level=4] [ref=e739]
+                      - generic [ref=e740]:
+                        - button "Inspect" [ref=e741] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e742] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e744]: "{ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"openGraph\": { \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"siteName\": \"Al Bayt Restaurant\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-16T17:23:44.702Z\", \"modifiedTime\": \"2026-04-16T17:23:44.704Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"images\": [ \"http://localhost:3000/og-image.jpg\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                    - generic [ref=e745]:
+                      - paragraph [ref=e746]: "To reach 100% MetaTag coverage for this article, consider:"
+                      - list [ref=e747]:
+                        - listitem [ref=e748]: Assign a category/section so Open Graph can include article:section.
+                        - listitem [ref=e749]: Add article tags or SEO keywords so Open Graph can include article:tag list.
+                  - generic [ref=e750]:
+                    - generic [ref=e751]:
+                      - heading "JSON-LD Preview" [level=4] [ref=e752]
+                      - generic [ref=e753]:
+                        - button "التحقق" [ref=e754] [cursor=pointer]:
+                          - img
+                          - text: التحقق
+                        - button "Inspect" [ref=e755] [cursor=pointer]:
+                          - img
+                          - text: Inspect
+                        - button "Copy" [ref=e756] [cursor=pointer]:
+                          - img
+                          - text: Copy
+                    - code [ref=e758]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\", \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"datePublished\": \"2026-04-16T17:23:44.702Z\", \"dateModified\": \"2026-04-16T17:23:44.704Z\", \"author\": { \"@id\": \"http://localhost:3000/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"wordCount\": 53, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3000/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"item\": \"http://localhost:3000/articles/%D8%A3%D9%81%D8%B6%D9%84-%D8%A3%D8%B7%D8%A8%D8%A7%D9%82-%D8%A7%D9%84%D9%85%D8%B7%D8%A8%D8%AE-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A-%D8%A7%D9%84%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A\" } ], \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3000/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                    - generic [ref=e759]:
+                      - paragraph [ref=e760]: "To reach 100% JSON-LD coverage for this article, consider:"
+                      - list [ref=e761]:
+                        - listitem [ref=e762]: Assign a category/section so JSON-LD can set articleSection.
+                        - listitem [ref=e763]: Add article tags or SEO keywords so JSON-LD can include keywords.
+                        - listitem [ref=e764]: Choose a featured image so JSON-LD can include a hero ImageObject.
+                  - generic [ref=e765]:
+                    - heading "Metadata from DB (last saved)" [level=4] [ref=e766]:
+                      - img [ref=e767]
+                      - text: Metadata from DB (last saved)
+                    - button "Copy" [ref=e772] [cursor=pointer]:
+                      - img
+                      - text: Copy
+                    - code [ref=e774]: "{ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"openGraph\": { \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"siteName\": \"Al Bayt Restaurant\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-16T17:23:44.702Z\", \"modifiedTime\": \"2026-04-16T17:23:44.704Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                  - generic [ref=e775]:
+                    - heading "JSON-LD from DB (last saved)" [level=4] [ref=e776]:
+                      - img [ref=e777]
+                      - text: JSON-LD from DB (last saved)
+                    - button "Copy" [ref=e782] [cursor=pointer]:
+                      - img
+                      - text: Copy
+                    - code [ref=e784]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"@type\": \"WebPage\", \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" }, \"dateModified\": \"2026-04-16T20:23:45+03:00\", \"datePublished\": \"2026-04-16T20:23:44+03:00\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"inLanguage\": \"ar\", \"isPartOf\": { \"@id\": \"http://localhost:3000#website\", \"@type\": \"WebSite\", \"name\": \"مودونتي\", \"url\": \"http://localhost:3000\" }, \"mainEntity\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\" }, \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\", \"@type\": \"Article\", \"author\": { \"@id\": \"http://localhost:3000/authors/modonty#person\" }, \"dateModified\": \"2026-04-16T20:23:45+03:00\", \"datePublished\": \"2026-04-16T20:23:44+03:00\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"image\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#primary-image\", \"@type\": \"ImageObject\", \"contentUrl\": \"http://localhost:3000/og-image.jpg\", \"representativeOfPage\": true, \"url\": \"http://localhost:3000/og-image.jpg\" }, \"inLanguage\": \"ar\", \"isAccessibleForFree\": true, \"mainEntityOfPage\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"publisher\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\" }, \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"wordCount\": 53 }, { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"@type\": \"Organization\", \"contactPoint\": { \"@type\": \"ContactPoint\", \"areaServed\": \"SA\", \"availableLanguage\": [ \"Arabic\", \"English\" ], \"email\": \"albayt@test.sa\" }, \"name\": \"Al Bayt Restaurant\" }, { \"@id\": \"http://localhost:3000/authors/modonty#person\", \"@type\": \"Person\", \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\", \"worksFor\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"@type\": \"Organization\", \"name\": \"Al Bayt Restaurant\" } }, { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\", \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"item\": \"http://localhost:3000\", \"name\": \"الرئيسية\", \"position\": 1 }, { \"@type\": \"ListItem\", \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"position\": 2 } ] } ] }"
+                  - generic [ref=e785]:
+                    - generic [ref=e786]:
+                      - 'heading "Diff: Form vs DB" [level=4] [ref=e787]':
+                        - img [ref=e788]
+                        - text: "Diff: Form vs DB"
+                      - generic [ref=e793]:
+                        - generic [ref=e794]:
+                          - strong [ref=e795]: Form
+                          - text: = current preview (not saved)
+                        - generic [ref=e796]: ·
+                        - generic [ref=e797]:
+                          - strong [ref=e798]: DB
+                          - text: = last saved in database
+                        - generic [ref=e799]: ·
+                        - generic [ref=e800]: Save article to write Form → DB
+                    - generic [ref=e801]:
+                      - generic [ref=e802]:
+                        - generic [ref=e803]: Metadata
+                        - generic [ref=e804]: Different — ogTitle, twitterTitle
+                      - generic [ref=e805]:
+                        - button "Show what changed (side-by-side + line diff)" [expanded] [ref=e806] [cursor=pointer]:
+                          - img
+                          - text: Show what changed (side-by-side + line diff)
+                        - generic [ref=e807]:
+                          - generic [ref=e808]:
+                            - generic [ref=e809]:
+                              - paragraph [ref=e810]: Form (unsaved)
+                              - code [ref=e812]: "{ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"openGraph\": { \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"siteName\": \"Al Bayt Restaurant\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-16T17:23:44.702Z\", \"modifiedTime\": \"2026-04-16T17:23:44.704Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"images\": [ \"http://localhost:3000/og-image.jpg\" ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                            - generic [ref=e813]:
+                              - paragraph [ref=e814]: DB (saved)
+                              - code [ref=e816]: "{ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"alternates\": { \"canonical\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"openGraph\": { \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"siteName\": \"Al Bayt Restaurant\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"width\": 1200, \"height\": 630, \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"locale\": \"ar_SA\", \"type\": \"article\", \"publishedTime\": \"2026-04-16T17:23:44.702Z\", \"modifiedTime\": \"2026-04-16T17:23:44.704Z\", \"authors\": [ \"Modonty\" ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"images\": [ { \"url\": \"http://localhost:3000/og-image.jpg\", \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\" } ], \"creator\": \"Modonty\" }, \"robots\": { \"index\": true, \"follow\": true, \"googleBot\": { \"index\": true, \"follow\": true, \"max-video-preview\": -1, \"max-image-preview\": \"large\", \"max-snippet\": -1 } } }"
+                          - generic [ref=e817]:
+                            - paragraph [ref=e818]: Line diff
+                            - generic [ref=e819]:
+                              - generic [ref=e820]: "{"
+                              - generic [ref=e821]: "\"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\","
+                              - generic [ref=e822]: "\"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e823]: "\"alternates\": {"
+                              - generic [ref=e824]: "\"canonical\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\""
+                              - generic [ref=e825]: "},"
+                              - generic [ref=e826]: "\"openGraph\": {"
+                              - generic [ref=e827]: "+ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\","
+                              - generic [ref=e828]: "− \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e829]: "\"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e830]: "\"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e831]: "\"siteName\": \"Al Bayt Restaurant\","
+                              - generic [ref=e832]: "\"images\": ["
+                              - generic [ref=e833]: "{"
+                              - generic [ref=e834]: "\"url\": \"http://localhost:3000/og-image.jpg\","
+                              - generic [ref=e835]: "\"width\": 1200,"
+                              - generic [ref=e836]: "\"height\": 630,"
+                              - generic [ref=e837]: "\"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\""
+                              - generic [ref=e838]: "}"
+                              - generic [ref=e839]: "],"
+                              - generic [ref=e840]: "\"locale\": \"ar_SA\","
+                              - generic [ref=e841]: "\"type\": \"article\","
+                              - generic [ref=e842]: "\"publishedTime\": \"2026-04-16T17:23:44.702Z\","
+                              - generic [ref=e843]: "\"modifiedTime\": \"2026-04-16T17:23:44.704Z\","
+                              - generic [ref=e844]: "\"authors\": ["
+                              - generic [ref=e845]: "\"Modonty\""
+                              - generic [ref=e846]: "]"
+                              - generic [ref=e847]: "},"
+                              - generic [ref=e848]: "\"twitter\": {"
+                              - generic [ref=e849]: "\"card\": \"summary_large_image\","
+                              - generic [ref=e850]: "+ \"title\": \"أفضل أطباق المطبخ السعودي التقليدي - Al Bayt Restaurant\","
+                              - generic [ref=e851]: "− \"title\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e852]: "\"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e853]: "\"images\": ["
+                              - generic [ref=e854]: + "http://localhost:3000/og-image.jpg"
+                              - generic [ref=e855]: "− {"
+                              - generic [ref=e856]: "− \"url\": \"http://localhost:3000/og-image.jpg\","
+                              - generic [ref=e857]: "− \"alt\": \"أفضل أطباق المطبخ السعودي التقليدي\""
+                              - generic [ref=e858]: "− }"
+                              - generic [ref=e859]: "],"
+                              - generic [ref=e860]: "\"creator\": \"Modonty\""
+                              - generic [ref=e861]: "},"
+                              - generic [ref=e862]: "\"robots\": {"
+                              - generic [ref=e863]: "\"index\": true,"
+                              - generic [ref=e864]: "\"follow\": true,"
+                              - generic [ref=e865]: "\"googleBot\": {"
+                              - generic [ref=e866]: "\"index\": true,"
+                              - generic [ref=e867]: "\"follow\": true,"
+                              - generic [ref=e868]: "\"max-video-preview\": -1,"
+                              - generic [ref=e869]: "\"max-image-preview\": \"large\","
+                              - generic [ref=e870]: "\"max-snippet\": -1"
+                              - generic [ref=e871]: "}"
+                              - generic [ref=e872]: "}"
+                              - generic [ref=e873]: "}"
+                    - generic [ref=e874]:
+                      - generic [ref=e875]:
+                        - generic [ref=e876]: JSON-LD
+                        - generic [ref=e877]: Different — datePublished, hasImage
+                      - generic [ref=e878]:
+                        - button "Show what changed (side-by-side + line diff)" [expanded] [ref=e879] [cursor=pointer]:
+                          - img
+                          - text: Show what changed (side-by-side + line diff)
+                        - generic [ref=e880]:
+                          - generic [ref=e881]:
+                            - generic [ref=e882]:
+                              - paragraph [ref=e883]: Form (unsaved)
+                              - code [ref=e885]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"Article\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\", \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"datePublished\": \"2026-04-16T17:23:44.702Z\", \"dateModified\": \"2026-04-16T17:23:44.704Z\", \"author\": { \"@id\": \"http://localhost:3000/authors/default-author#person\" }, \"publisher\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\" }, \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, \"inLanguage\": \"ar-SA\", \"isAccessibleForFree\": true, \"wordCount\": 53, \"license\": \"https://creativecommons.org/licenses/by/4.0/\" }, { \"@type\": \"WebPage\", \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"isPartOf\": { \"@type\": \"WebSite\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" } }, { \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"الرئيسية\", \"item\": \"http://localhost:3000/\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"item\": \"http://localhost:3000/articles/%D8%A3%D9%81%D8%B6%D9%84-%D8%A3%D8%B7%D8%A8%D8%A7%D9%82-%D8%A7%D9%84%D9%85%D8%B7%D8%A8%D8%AE-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A-%D8%A7%D9%84%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A\" } ], \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" }, { \"@type\": \"Organization\", \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"name\": \"Al Bayt Restaurant\", \"url\": \"http://localhost:3000\" }, { \"@type\": \"Person\", \"@id\": \"http://localhost:3000/authors/default-author#person\", \"name\": \"Modonty\" } ] }"
+                            - generic [ref=e886]:
+                              - paragraph [ref=e887]: DB (saved)
+                              - code [ref=e889]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"@type\": \"WebPage\", \"breadcrumb\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\" }, \"dateModified\": \"2026-04-16T20:23:45+03:00\", \"datePublished\": \"2026-04-16T20:23:44+03:00\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"inLanguage\": \"ar\", \"isPartOf\": { \"@id\": \"http://localhost:3000#website\", \"@type\": \"WebSite\", \"name\": \"مودونتي\", \"url\": \"http://localhost:3000\" }, \"mainEntity\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\" }, \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\" }, { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\", \"@type\": \"Article\", \"author\": { \"@id\": \"http://localhost:3000/authors/modonty#person\" }, \"dateModified\": \"2026-04-16T20:23:45+03:00\", \"datePublished\": \"2026-04-16T20:23:44+03:00\", \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\", \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"image\": { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#primary-image\", \"@type\": \"ImageObject\", \"contentUrl\": \"http://localhost:3000/og-image.jpg\", \"representativeOfPage\": true, \"url\": \"http://localhost:3000/og-image.jpg\" }, \"inLanguage\": \"ar\", \"isAccessibleForFree\": true, \"mainEntityOfPage\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"publisher\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\" }, \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\", \"wordCount\": 53 }, { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"@type\": \"Organization\", \"contactPoint\": { \"@type\": \"ContactPoint\", \"areaServed\": \"SA\", \"availableLanguage\": [ \"Arabic\", \"English\" ], \"email\": \"albayt@test.sa\" }, \"name\": \"Al Bayt Restaurant\" }, { \"@id\": \"http://localhost:3000/authors/modonty#person\", \"@type\": \"Person\", \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\", \"worksFor\": { \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\", \"@type\": \"Organization\", \"name\": \"Al Bayt Restaurant\" } }, { \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\", \"@type\": \"BreadcrumbList\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"item\": \"http://localhost:3000\", \"name\": \"الرئيسية\", \"position\": 1 }, { \"@type\": \"ListItem\", \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\", \"position\": 2 } ] } ] }"
+                          - generic [ref=e890]:
+                            - paragraph [ref=e891]: Line diff
+                            - generic [ref=e892]:
+                              - generic [ref=e893]: "{"
+                              - generic [ref=e894]: "\"@context\": \"https://schema.org\","
+                              - generic [ref=e895]: "\"@graph\": ["
+                              - generic [ref=e896]: "{"
+                              - generic [ref=e897]: "+ \"@type\": \"Article\","
+                              - generic [ref=e898]: "+ \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\","
+                              - generic [ref=e899]: "+ \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e900]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e901]: "− \"@type\": \"WebPage\","
+                              - generic [ref=e902]: "− \"breadcrumb\": {"
+                              - generic [ref=e903]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\""
+                              - generic [ref=e904]: "− },"
+                              - generic [ref=e905]: "− \"dateModified\": \"2026-04-16T20:23:45+03:00\","
+                              - generic [ref=e906]: "− \"datePublished\": \"2026-04-16T20:23:44+03:00\","
+                              - generic [ref=e907]: "\"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e908]: "+ \"datePublished\": \"2026-04-16T17:23:44.702Z\","
+                              - generic [ref=e909]: "+ \"dateModified\": \"2026-04-16T17:23:44.704Z\","
+                              - generic [ref=e910]: "− \"inLanguage\": \"ar\","
+                              - generic [ref=e911]: "− \"isPartOf\": {"
+                              - generic [ref=e912]: "− \"@id\": \"http://localhost:3000#website\","
+                              - generic [ref=e913]: "− \"@type\": \"WebSite\","
+                              - generic [ref=e914]: "− \"name\": \"مودونتي\","
+                              - generic [ref=e915]: "− \"url\": \"http://localhost:3000\""
+                              - generic [ref=e916]: "− },"
+                              - generic [ref=e917]: "− \"mainEntity\": {"
+                              - generic [ref=e918]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\""
+                              - generic [ref=e919]: "− },"
+                              - generic [ref=e920]: "− \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e921]: "− \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\""
+                              - generic [ref=e922]: "− },"
+                              - generic [ref=e923]: "− {"
+                              - generic [ref=e924]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#article\","
+                              - generic [ref=e925]: "− \"@type\": \"Article\","
+                              - generic [ref=e926]: "\"author\": {"
+                              - generic [ref=e927]: "+ \"@id\": \"http://localhost:3000/authors/default-author#person\""
+                              - generic [ref=e928]: "− \"@id\": \"http://localhost:3000/authors/modonty#person\""
+                              - generic [ref=e929]: "− },"
+                              - generic [ref=e930]: "− \"dateModified\": \"2026-04-16T20:23:45+03:00\","
+                              - generic [ref=e931]: "− \"datePublished\": \"2026-04-16T20:23:44+03:00\","
+                              - generic [ref=e932]: "− \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e933]: "− \"headline\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e934]: "− \"image\": {"
+                              - generic [ref=e935]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#primary-image\","
+                              - generic [ref=e936]: "− \"@type\": \"ImageObject\","
+                              - generic [ref=e937]: "− \"contentUrl\": \"http://localhost:3000/og-image.jpg\","
+                              - generic [ref=e938]: "− \"representativeOfPage\": true,"
+                              - generic [ref=e939]: "− \"url\": \"http://localhost:3000/og-image.jpg\""
+                              - generic [ref=e940]: "},"
+                              - generic [ref=e941]: "− \"inLanguage\": \"ar\","
+                              - generic [ref=e942]: "− \"isAccessibleForFree\": true,"
+                              - generic [ref=e943]: "− \"mainEntityOfPage\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e944]: "\"publisher\": {"
+                              - generic [ref=e945]: "\"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\""
+                              - generic [ref=e946]: "+ },"
+                              - generic [ref=e947]: "+ \"mainEntityOfPage\": {"
+                              - generic [ref=e948]: "+ \"@type\": \"WebPage\","
+                              - generic [ref=e949]: "+ \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\""
+                              - generic [ref=e950]: "},"
+                              - generic [ref=e951]: "+ \"inLanguage\": \"ar-SA\","
+                              - generic [ref=e952]: "+ \"isAccessibleForFree\": true,"
+                              - generic [ref=e953]: "+ \"wordCount\": 53,"
+                              - generic [ref=e954]: "+ \"license\": \"https://creativecommons.org/licenses/by/4.0/\""
+                              - generic [ref=e955]: "− \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e956]: "− \"wordCount\": 53"
+                              - generic [ref=e957]: "},"
+                              - generic [ref=e958]: "{"
+                              - generic [ref=e959]: "+ \"@type\": \"WebPage\","
+                              - generic [ref=e960]: "+ \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e961]: "+ \"url\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي\","
+                              - generic [ref=e962]: "+ \"name\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e963]: "+ \"description\": \"تعرّف على أشهر أطباق المطبخ السعودي التقليدي وأكثرها شعبية، من الكبسة والمندي إلى الجريش والهريس. دليل شامل لعشاق الطعام السعودي الأصيل.\","
+                              - generic [ref=e964]: "+ \"isPartOf\": {"
+                              - generic [ref=e965]: "+ \"@type\": \"WebSite\","
+                              - generic [ref=e966]: "+ \"name\": \"Al Bayt Restaurant\","
+                              - generic [ref=e967]: "+ \"url\": \"http://localhost:3000\""
+                              - generic [ref=e968]: "− \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\","
+                              - generic [ref=e969]: "− \"@type\": \"Organization\","
+                              - generic [ref=e970]: "− \"contactPoint\": {"
+                              - generic [ref=e971]: "− \"@type\": \"ContactPoint\","
+                              - generic [ref=e972]: "− \"areaServed\": \"SA\","
+                              - generic [ref=e973]: "− \"availableLanguage\": ["
+                              - generic [ref=e974]: − "Arabic",
+                              - generic [ref=e975]: − "English"
+                              - generic [ref=e976]: − ],
+                              - generic [ref=e977]: "− \"email\": \"albayt@test.sa\""
+                              - generic [ref=e978]: "},"
+                              - generic [ref=e979]: "+ \"breadcrumb\": {"
+                              - generic [ref=e980]: "+ \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\""
+                              - generic [ref=e981]: "− \"name\": \"Al Bayt Restaurant\""
+                              - generic [ref=e982]: "− },"
+                              - generic [ref=e983]: "− {"
+                              - generic [ref=e984]: "− \"@id\": \"http://localhost:3000/authors/modonty#person\","
+                              - generic [ref=e985]: "− \"@type\": \"Person\","
+                              - generic [ref=e986]: "− \"description\": \"Modonty is a leading content platform providing high-quality articles and insights.\","
+                              - generic [ref=e987]: "− \"name\": \"Modonty\","
+                              - generic [ref=e988]: "− \"url\": \"https://modonty.com\","
+                              - generic [ref=e989]: "− \"worksFor\": {"
+                              - generic [ref=e990]: "− \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\","
+                              - generic [ref=e991]: "− \"@type\": \"Organization\","
+                              - generic [ref=e992]: "− \"name\": \"Al Bayt Restaurant\""
+                              - generic [ref=e993]: "}"
+                              - generic [ref=e994]: "},"
+                              - generic [ref=e995]: "{"
+                              - generic [ref=e996]: "− \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\","
+                              - generic [ref=e997]: "\"@type\": \"BreadcrumbList\","
+                              - generic [ref=e998]: "\"itemListElement\": ["
+                              - generic [ref=e999]: "{"
+                              - generic [ref=e1000]: "\"@type\": \"ListItem\","
+                              - generic [ref=e1001]: "+ \"position\": 1,"
+                              - generic [ref=e1002]: "− \"item\": \"http://localhost:3000\","
+                              - generic [ref=e1003]: "\"name\": \"الرئيسية\","
+                              - generic [ref=e1004]: "+ \"item\": \"http://localhost:3000/\""
+                              - generic [ref=e1005]: "− \"position\": 1"
+                              - generic [ref=e1006]: "},"
+                              - generic [ref=e1007]: "{"
+                              - generic [ref=e1008]: "\"@type\": \"ListItem\","
+                              - generic [ref=e1009]: "+ \"position\": 2,"
+                              - generic [ref=e1010]: "\"name\": \"أفضل أطباق المطبخ السعودي التقليدي\","
+                              - generic [ref=e1011]: "+ \"item\": \"http://localhost:3000/articles/%D8%A3%D9%81%D8%B6%D9%84-%D8%A3%D8%B7%D8%A8%D8%A7%D9%82-%D8%A7%D9%84%D9%85%D8%B7%D8%A8%D8%AE-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A-%D8%A7%D9%84%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A\""
+                              - generic [ref=e1012]: "− \"position\": 2"
+                              - generic [ref=e1013]: "}"
+                              - generic [ref=e1014]: + ],
+                              - generic [ref=e1015]: "+ \"@id\": \"http://localhost:3000/articles/أفضل-أطباق-المطبخ-السعودي-التقليدي#breadcrumb\""
+                              - generic [ref=e1016]: "+ },"
+                              - generic [ref=e1017]: "+ {"
+                              - generic [ref=e1018]: "+ \"@type\": \"Organization\","
+                              - generic [ref=e1019]: "+ \"@id\": \"http://localhost:3000/clients/al-bayt-restaurant#organization\","
+                              - generic [ref=e1020]: "+ \"name\": \"Al Bayt Restaurant\","
+                              - generic [ref=e1021]: "+ \"url\": \"http://localhost:3000\""
+                              - generic [ref=e1022]: "+ },"
+                              - generic [ref=e1023]: "+ {"
+                              - generic [ref=e1024]: "+ \"@type\": \"Person\","
+                              - generic [ref=e1025]: "+ \"@id\": \"http://localhost:3000/authors/default-author#person\","
+                              - generic [ref=e1026]: "+ \"name\": \"Modonty\""
+                              - generic [ref=e1027]: − ]
+                              - generic [ref=e1028]: "}"
+                              - generic [ref=e1029]: "]"
+                              - generic [ref=e1030]: "}"
+            - tablist [ref=e373]:
+              - 'tab "Basic: 67% complete. اختياري: التصنيف، ملخص المقال، الوسوم" [ref=e374] [cursor=pointer]':
+                - img [ref=e1031]
+                - generic [ref=e376]: Basic
+                - generic [ref=e377]: 67%
+              - 'tab "Content: 80% complete. اختياري: صورة المقال الرئيسية، معرض الصور" [ref=e378] [cursor=pointer]':
+                - img [ref=e1033]
+                - generic [ref=e380]: Content
+                - generic [ref=e381]: 80%
+              - 'tab "SEO: 63% complete. المحتوى: 53 كلمة — أضف محتوى أكثر (الحد الأدنى 300) · المحتوى: مفقود — أضف ملخص للمقال · الصور: مفقودة — أضف صورة من تبويب المحتوى · الإعدادات التقنية: استخدم https://" [ref=e382] [cursor=pointer]':
+                - img [ref=e384]
+                - generic [ref=e386]: SEO
+                - generic [ref=e387]: 63%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e388] [cursor=pointer]':
+                - img [ref=e1035]
+                - generic [ref=e390]: FAQs & Related
+                - generic [ref=e391]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [active] [selected] [ref=e392] [cursor=pointer]':
+                - generic [ref=e393]: "5"
+                - generic [ref=e394]: Publish
+                - generic [ref=e395]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e396] [cursor=pointer]:
+    - img [ref=e397]
+  - alert [ref=e285]

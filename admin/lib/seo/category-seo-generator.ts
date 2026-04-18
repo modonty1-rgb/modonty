@@ -80,6 +80,9 @@ export async function buildCategoryJsonLd(category: CategoryData, s: SeoSettings
         inLanguage: s.inLanguage,
         isPartOf: { "@id": `${s.siteUrl}#website` },
         publisher: { "@id": `${s.siteUrl}#organization` },
+        ...(category.socialImage && {
+          image: { "@type": "ImageObject", url: category.socialImage, description: category.socialImageAlt || title },
+        }),
       },
       {
         "@type": "BreadcrumbList",

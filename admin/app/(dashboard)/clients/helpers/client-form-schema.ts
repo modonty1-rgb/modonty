@@ -274,6 +274,7 @@ export const clientFormSchema = z
       .nullable()
       .or(z.literal("")),
     slogan: z.string().max(200, "Slogan must be less than 200 characters").optional().nullable().or(z.literal("")),
+    newsletterCtaText: z.string().max(300, "Newsletter CTA must be less than 300 characters").optional().nullable().or(z.literal("")),
     keywords: stringArraySchema,
     knowsLanguage: stringArraySchema,
     organizationType: organizationTypeSchema,

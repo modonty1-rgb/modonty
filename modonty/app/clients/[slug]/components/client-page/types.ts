@@ -29,6 +29,12 @@ export interface ClientPageClient {
   }>;
 }
 
+export interface ClientPageStats {
+  articlesCount: number;
+  followers: number;
+  totalViews: number;
+}
+
 export interface ClientPageRelatedClient {
   id: string;
   name: string;

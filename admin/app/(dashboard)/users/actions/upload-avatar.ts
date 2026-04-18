@@ -1,8 +1,11 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+
 export async function uploadAvatar(
   formData: FormData
 ): Promise<{ success: boolean; url?: string; error?: string }> {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const file = formData.get("file") as File | null;
     const name = (formData.get("name") as string) || "admin";

@@ -43,23 +43,27 @@ export function useCloudinaryUpload({
       return;
     }
 
-    // Validate client exists
-    const selectedClient = clients.find((c) => c.id === clientId);
-    if (!selectedClient) {
-      const errorMsg = "Client not found. Please select a valid client.";
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === fileId
-            ? { ...f, status: "error", error: errorMsg }
-            : f
-        )
-      );
-      toast({
-        title: messages.error.server_error,
-        description: errorMsg,
-        variant: "destructive",
-      });
-      return;
+    // Validate client exists (skip for "none" = General, "modonty" = Platform)
+    const isGeneral = clientId === "none" || clientId === "";
+    const isPlatform = clientId === "modonty";
+    if (!isGeneral && !isPlatform) {
+      const selectedClient = clients.find((c) => c.id === clientId);
+      if (!selectedClient) {
+        const errorMsg = "Client not found. Please select a valid client.";
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? { ...f, status: "error", error: errorMsg }
+              : f
+          )
+        );
+        toast({
+          title: messages.error.server_error,
+          description: errorMsg,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Generate SEO-friendly public_id from alt text/title
@@ -70,10 +74,7 @@ export function useCloudinaryUpload({
       undefined
     );
 
-    // Build folder structure: clients/[clientId]
-    // Use client ID (immutable) instead of slug (can change) for stable folder structure
-    // Use asset_folder for Media Library organization (works in both Fixed and Dynamic modes)
-    const folderPath = `clients/${clientId}`;
+    const folderPath = isPlatform ? "modonty" : isGeneral ? "general" : `clients/${clientId}`;
     const publicId = generateCloudinaryPublicId(seoFileName, folderPath);
 
     // Validate public_id format

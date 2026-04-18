@@ -1,0 +1,243 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+          - button "فتح المحادثة" [ref=e45] [cursor=pointer]
+    - main [ref=e47]:
+      - navigation "تنقل الصفحة" [ref=e48]:
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "الرئيسية الرئيسية" [ref=e51] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e52]
+              - generic [ref=e55]: الرئيسية
+          - listitem [ref=e56]:
+            - img [ref=e57]
+            - link "العملاء" [ref=e59] [cursor=pointer]:
+              - /url: /clients
+              - generic [ref=e60]: العملاء
+          - listitem [ref=e61]:
+            - generic [ref=e63]: عيادات بلسم الطبية
+      - generic [ref=e64]:
+        - img "غلاف عيادات بلسم الطبية" [ref=e67]
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - img "عيادات بلسم الطبية" [ref=e72]
+            - generic [ref=e73]:
+              - heading "عيادات بلسم الطبية موثق" [level=1] [ref=e74]:
+                - text: عيادات بلسم الطبية
+                - img "موثق" [ref=e75]
+              - paragraph [ref=e78]: الرعاية الصحية · الرياض، السعودية
+              - generic [ref=e79]:
+                - generic [ref=e80]:
+                  - img [ref=e81]
+                  - generic [ref=e86]: ٠
+                  - text: متابع
+                - generic [ref=e88]:
+                  - img [ref=e89]
+                  - generic [ref=e92]: ٠
+                  - text: مقال
+                - generic [ref=e94]:
+                  - img [ref=e95]
+                  - generic [ref=e98]: ٤
+                  - text: مشاهدة
+          - generic [ref=e101]:
+            - button "مشاركة" [ref=e102] [cursor=pointer]:
+              - img [ref=e103]
+            - button "متابعة" [ref=e109] [cursor=pointer]:
+              - img [ref=e110]
+              - generic [ref=e115]: متابعة
+      - main [ref=e116]:
+        - navigation "أقسام صفحة العميل" [ref=e117]:
+          - list [ref=e120]:
+            - listitem [ref=e121]:
+              - link "الكل" [ref=e122] [cursor=pointer]:
+                - /url: /clients/balsam-medical
+                - generic [ref=e123]: الكل
+            - listitem [ref=e124]:
+              - link "حول" [ref=e125] [cursor=pointer]:
+                - /url: /clients/balsam-medical/about
+                - generic [ref=e126]: حول
+            - listitem [ref=e127]:
+              - link "تواصل مع الشركة" [ref=e128] [cursor=pointer]:
+                - /url: /clients/balsam-medical/contact
+                - generic [ref=e129]: تواصل مع الشركة
+            - listitem [ref=e130]:
+              - link "الصور" [ref=e131] [cursor=pointer]:
+                - /url: /clients/balsam-medical/photos
+                - generic [ref=e132]: الصور
+            - listitem [ref=e133]:
+              - link "المتابعون" [ref=e134] [cursor=pointer]:
+                - /url: /clients/balsam-medical/followers
+                - generic [ref=e135]: المتابعون
+            - listitem [ref=e136]:
+              - link "التقييمات" [ref=e137] [cursor=pointer]:
+                - /url: /clients/balsam-medical/reviews
+                - generic [ref=e138]: التقييمات
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - heading "إحصائيات" [level=3] [ref=e143]:
+                - img [ref=e144]
+                - text: إحصائيات
+              - generic [ref=e147]:
+                - generic [ref=e148]:
+                  - img [ref=e149]
+                  - generic [ref=e152]: ٠
+                  - generic [ref=e153]: مقال
+                - generic [ref=e154]:
+                  - img [ref=e155]
+                  - generic [ref=e160]: ٠
+                  - generic [ref=e161]: متابع
+                - generic [ref=e162]:
+                  - img [ref=e163]
+                  - generic [ref=e166]: ٤
+                  - generic [ref=e167]: مشاهدة
+            - generic [ref=e168]:
+              - heading "نبذة عن عيادات بلسم الطبية" [level=3] [ref=e170]:
+                - img [ref=e171]
+                - text: نبذة عن عيادات بلسم الطبية
+              - paragraph [ref=e174]: رعاية صحية متميزة.
+            - generic [ref=e175]:
+              - heading "معلومات الشركة" [level=3] [ref=e177]:
+                - img [ref=e178]
+                - text: معلومات الشركة
+              - generic [ref=e183]:
+                - img [ref=e184]
+                - generic [ref=e188]:
+                  - paragraph [ref=e189]: الصناعة
+                  - paragraph [ref=e190]: الرعاية الصحية
+            - generic [ref=e191]:
+              - heading "معلومات الاتصال" [level=3] [ref=e193]:
+                - img [ref=e194]
+                - text: معلومات الاتصال
+              - generic [ref=e197]:
+                - img [ref=e198]
+                - generic [ref=e202]:
+                  - link "البريد الإلكتروني" [ref=e203] [cursor=pointer]:
+                    - /url: mailto:info@balsam-medical.sa
+                  - button "نسخ البريد الإلكتروني" [ref=e204] [cursor=pointer]:
+                    - img [ref=e205]
+          - region "أحدث المقالات" [ref=e209]:
+            - heading "أحدث المقالات" [level=2] [ref=e211]
+            - generic [ref=e212]:
+              - img [ref=e214]
+              - heading "لا توجد مقالات حتى الآن" [level=3] [ref=e217]
+              - paragraph [ref=e218]: لم ينشر عيادات بلسم الطبية أي مقالات حتى الآن. تصفح المحتوى الآخر أو عد لاحقاً.
+              - generic [ref=e219]:
+                - link "تصفح العملاء" [ref=e220] [cursor=pointer]:
+                  - /url: /clients
+                  - button "تصفح العملاء" [ref=e221]
+                - link "الرئيسية" [ref=e222] [cursor=pointer]:
+                  - /url: /
+                  - button "الرئيسية" [ref=e223]
+          - generic [ref=e224]:
+            - generic [ref=e225]:
+              - heading "المتابعون" [level=3] [ref=e227]:
+                - img [ref=e228]
+                - text: المتابعون
+              - generic [ref=e233]:
+                - paragraph [ref=e234]: لا يوجد متابعون بعد. عند بدء متابعة هذا العميل، ستظهر الحسابات هنا.
+                - link "عرض المتابعين" [ref=e235] [cursor=pointer]:
+                  - /url: /clients/balsam-medical/followers
+            - generic [ref=e236]:
+              - heading "التقييمات" [level=3] [ref=e238]:
+                - img [ref=e239]
+                - text: التقييمات
+              - generic [ref=e241]:
+                - paragraph [ref=e242]: لا توجد تقييمات منشورة بعد لمحتوى عيادات بلسم الطبية. عند إضافة تعليقات على مقالات هذا العميل ستظهر هنا.
+                - link "عرض التقييمات" [ref=e243] [cursor=pointer]:
+                  - /url: /clients/balsam-medical/reviews
+            - generic [ref=e244]:
+              - heading "الإعجابات" [level=3] [ref=e246]:
+                - img [ref=e247]
+                - text: الإعجابات
+              - generic [ref=e249]:
+                - paragraph [ref=e250]: لا توجد تفاعلات إعجاب كافية بعد لعرضها. عند زيادة متابعي عيادات بلسم الطبية وتفاعلهم مع المقالات، ستظهر الإحصاءات هنا.
+                - link "عرض الإعجابات" [ref=e251] [cursor=pointer]:
+                  - /url: /clients/balsam-medical/likes
+            - region "عملاء مشابهون":
+              - heading "عملاء مشابهون" [level=2] [ref=e252]
+        - generic [ref=e253]:
+          - generic [ref=e254]:
+            - paragraph [ref=e255]: أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور
+            - paragraph [ref=e256]: انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء
+          - link "عملاء بلا إعلانات" [ref=e257] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e258]: ↗
+    - contentinfo [ref=e259]:
+      - generic [ref=e260]:
+        - generic [ref=e261]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e262] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e263]: ↗
+      - navigation "روابط سريعة" [ref=e264]:
+        - link "الرئيسية" [ref=e265] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e266] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e267] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e268] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e269] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e270] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e271]:
+        - link "الشروط والأحكام" [ref=e272] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e273] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e274] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e275] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e276] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e277]: © 2026 مودونتي
+  - generic [ref=e282] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e283]:
+      - img [ref=e284]
+    - generic [ref=e287]:
+      - button "Open issues overlay" [ref=e288]:
+        - generic [ref=e289]:
+          - generic [ref=e290]: "3"
+          - generic [ref=e291]: "4"
+        - generic [ref=e292]:
+          - text: Issue
+          - generic [ref=e293]: s
+      - button "Collapse issues badge" [ref=e294]:
+        - img [ref=e295]
+  - alert [ref=e297]

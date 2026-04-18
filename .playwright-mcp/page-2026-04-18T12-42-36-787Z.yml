@@ -1,0 +1,276 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - generic [ref=e89]:
+        - generic [ref=e90]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e91]:
+          - button "Send Note" [ref=e92] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e93] [cursor=pointer]:
+            - img
+      - main [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - heading "Category Details" [level=1] [ref=e98]
+              - paragraph [ref=e99]: View category information and articles
+            - generic [ref=e100]:
+              - button "Revalidate SEO" [ref=e101] [cursor=pointer]:
+                - img
+                - text: Revalidate SEO
+              - button "Delete" [ref=e102] [cursor=pointer]:
+                - img
+                - text: Delete
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - heading "التسويق الرقمي" [level=1] [ref=e107]
+                - generic [ref=e108]:
+                  - generic [ref=e109]:
+                    - img [ref=e110]
+                    - generic [ref=e113]:
+                      - generic [ref=e114]: 30%
+                      - generic [ref=e115]: 30/100
+                  - generic [ref=e116]:
+                    - link "Back" [ref=e117] [cursor=pointer]:
+                      - /url: /categories
+                    - link "Edit" [ref=e118] [cursor=pointer]:
+                      - /url: /categories/69e25ee5559192db66f7294e/edit
+              - generic [ref=e120]:
+                - button "Basic Information" [expanded] [ref=e121] [cursor=pointer]:
+                  - generic [ref=e122]:
+                    - generic [ref=e123]: Basic Information
+                    - img [ref=e124]
+                - generic [ref=e127]:
+                  - generic [ref=e128]:
+                    - paragraph [ref=e129]: Name
+                    - paragraph [ref=e130]: التسويق الرقمي
+                  - generic [ref=e131]:
+                    - paragraph [ref=e132]: Slug
+                    - paragraph [ref=e133]: digital-marketing
+                  - generic [ref=e134]:
+                    - paragraph [ref=e135]: Total Articles
+                    - link "7 articles" [ref=e136] [cursor=pointer]:
+                      - /url: /articles?categoryId=69e25ee5559192db66f7294e
+                  - generic [ref=e137]:
+                    - paragraph [ref=e138]: Child Categories
+                    - paragraph [ref=e139]: "1"
+                  - generic [ref=e140]:
+                    - paragraph [ref=e141]: Created
+                    - paragraph [ref=e142]: Apr 17, 2026
+                  - generic [ref=e143]:
+                    - paragraph [ref=e144]: Last Updated
+                    - paragraph [ref=e145]: Apr 18, 2026
+              - generic [ref=e147]:
+                - button "SEO" [expanded] [ref=e148] [cursor=pointer]:
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: SEO
+                    - img [ref=e151]
+                - generic [ref=e154]:
+                  - generic [ref=e155]:
+                    - paragraph [ref=e156]: SEO Title
+                    - paragraph [ref=e157]: التسويق الرقمي — استراتيجيات SEO
+                  - generic [ref=e158]:
+                    - paragraph [ref=e159]: SEO Description
+                    - paragraph [ref=e160]: أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.
+                  - generic [ref=e161]:
+                    - paragraph [ref=e162]: Social Image
+                    - generic [ref=e163]:
+                      - img "صورة تجريبية - أصول منصة مودونتي" [ref=e165]
+                      - generic [ref=e166]:
+                        - paragraph [ref=e167]: Alt Text
+                        - paragraph [ref=e168]: صورة تجريبية - أصول منصة مودونتي
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: ✅ SEO Cache Generated
+                    - generic [ref=e172]: 2026-04-18T12:29:58.737Z
+                  - generic [ref=e173]:
+                    - paragraph [ref=e174]: JSON-LD Structured Data
+                    - generic [ref=e175]: "{ \"@context\": \"https://schema.org\", \"@graph\": [ { \"@type\": \"CollectionPage\", \"@id\": \"https://modonty.com/categories/digital-marketing\", \"name\": \"التسويق الرقمي — استراتيجيات SEO\", \"description\": \"أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.\", \"url\": \"https://modonty.com/categories/digital-marketing\", \"inLanguage\": \"ar-SA\", \"isPartOf\": { \"@id\": \"https://modonty.com#website\" }, \"publisher\": { \"@id\": \"https://modonty.com#organization\" } }, { \"@type\": \"BreadcrumbList\", \"@id\": \"https://modonty.com/categories/digital-marketing#breadcrumb\", \"itemListElement\": [ { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://modonty.com\" }, { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Categories\", \"item\": \"https://modonty.com/categories\" }, { \"@type\": \"ListItem\", \"position\": 3, \"name\": \"التسويق الرقمي\", \"item\": \"https://modonty.com/categories/digital-marketing\" } ] }, { \"@type\": \"DefinedTerm\", \"@id\": \"https://modonty.com/categories/digital-marketing#term\", \"name\": \"التسويق الرقمي\", \"description\": \"أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.\", \"url\": \"https://modonty.com/categories/digital-marketing\" }, { \"@type\": \"Organization\", \"@id\": \"https://modonty.com#organization\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\" }, { \"@type\": \"WebSite\", \"@id\": \"https://modonty.com#website\", \"name\": \"Modonty\", \"url\": \"https://modonty.com\" } ] }"
+                  - generic [ref=e176]:
+                    - paragraph [ref=e177]: Next.js Metadata (Meta Tags)
+                    - generic [ref=e178]: "{ \"title\": \"التسويق الرقمي — استراتيجيات SEO\", \"description\": \"أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.\", \"robots\": \"index, follow\", \"alternates\": { \"canonical\": \"https://modonty.com/categories/digital-marketing\", \"languages\": { \"ar-SA\": \"https://modonty.com/categories/digital-marketing\" } }, \"openGraph\": { \"title\": \"التسويق الرقمي — استراتيجيات SEO\", \"description\": \"أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.\", \"type\": \"website\", \"url\": \"https://modonty.com/categories/digital-marketing\", \"siteName\": \"Modonty\", \"locale\": \"ar_SA\", \"images\": [ { \"url\": \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1776514968/modonty/img-4b55mwph7.png\", \"alt\": \"صورة تجريبية - أصول منصة مودونتي\" } ] }, \"twitter\": { \"card\": \"summary_large_image\", \"title\": \"التسويق الرقمي — استراتيجيات SEO\", \"description\": \"أحدث استراتيجيات التسويق الرقمي لزيادة الزيارات والمبيعات.\", \"images\": [ \"https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_auto/v1776514968/modonty/img-4b55mwph7.png\" ] } }"
+            - generic [ref=e179]:
+              - generic [ref=e181]:
+                - generic [ref=e182]: Articles
+                - link "View All Articles" [ref=e183] [cursor=pointer]:
+                  - /url: /articles?categoryId=69e25ee5559192db66f7294e
+              - generic [ref=e185]:
+                - generic [ref=e187]:
+                  - img [ref=e188]
+                  - textbox "Search articles..." [ref=e191]
+                - table [ref=e194]:
+                  - rowgroup [ref=e195]:
+                    - row "Title Client Author Status Views Published Actions" [ref=e196]:
+                      - columnheader "Title" [ref=e197] [cursor=pointer]:
+                        - generic [ref=e198]:
+                          - text: Title
+                          - img [ref=e199]
+                      - columnheader "Client" [ref=e202] [cursor=pointer]:
+                        - generic [ref=e203]:
+                          - text: Client
+                          - img [ref=e204]
+                      - columnheader "Author" [ref=e207] [cursor=pointer]:
+                        - generic [ref=e208]:
+                          - text: Author
+                          - img [ref=e209]
+                      - columnheader "Status" [ref=e212]
+                      - columnheader "Views" [ref=e213] [cursor=pointer]:
+                        - generic [ref=e214]:
+                          - text: Views
+                          - img [ref=e215]
+                      - columnheader "Published" [ref=e218] [cursor=pointer]:
+                        - generic [ref=e219]:
+                          - text: Published
+                          - img [ref=e220]
+                      - columnheader "Actions" [ref=e223]
+                  - rowgroup [ref=e224]:
+                    - row "بناء روابط خلفية عربية عالية الجودة شركة الاختبار Modonty Draft 0 -" [ref=e225]:
+                      - cell "بناء روابط خلفية عربية عالية الجودة" [ref=e226]:
+                        - link "بناء روابط خلفية عربية عالية الجودة" [ref=e227] [cursor=pointer]:
+                          - /url: /articles/69e262e9559192db66f72a2a
+                      - cell "شركة الاختبار" [ref=e228]
+                      - cell "Modonty" [ref=e229]
+                      - cell "Draft" [ref=e230]:
+                        - generic [ref=e231]: Draft
+                      - cell "0" [ref=e232]
+                      - cell "-" [ref=e233]
+                      - cell [ref=e234]
+                    - row "الفاتورة الإلكترونية ZATCA للمتاجر السعودية شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e235]:
+                      - cell "الفاتورة الإلكترونية ZATCA للمتاجر السعودية" [ref=e236]:
+                        - link "الفاتورة الإلكترونية ZATCA للمتاجر السعودية" [ref=e237] [cursor=pointer]:
+                          - /url: /articles/69e262b1559192db66f72a0a
+                      - cell "شركة الاختبار" [ref=e238]
+                      - cell "Modonty" [ref=e239]
+                      - cell "Published" [ref=e240]:
+                        - generic [ref=e241]: Published
+                      - cell "0" [ref=e242]
+                      - cell "Apr 17, 2026" [ref=e243]
+                      - cell [ref=e244]
+                    - row "البث المباشر والتجارة الإلكترونية في السعودية شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e245]:
+                      - cell "البث المباشر والتجارة الإلكترونية في السعودية" [ref=e246]:
+                        - link "البث المباشر والتجارة الإلكترونية في السعودية" [ref=e247] [cursor=pointer]:
+                          - /url: /articles/69e26274559192db66f729ea
+                      - cell "شركة الاختبار" [ref=e248]
+                      - cell "Modonty" [ref=e249]
+                      - cell "Published" [ref=e250]:
+                        - generic [ref=e251]: Published
+                      - cell "0" [ref=e252]
+                      - cell "Apr 17, 2026" [ref=e253]
+                      - cell [ref=e254]
+                    - row "تسويق المحتوى للعيادات والمراكز الطبية شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e255]:
+                      - cell "تسويق المحتوى للعيادات والمراكز الطبية" [ref=e256]:
+                        - link "تسويق المحتوى للعيادات والمراكز الطبية" [ref=e257] [cursor=pointer]:
+                          - /url: /articles/69e2623b559192db66f729ca
+                      - cell "شركة الاختبار" [ref=e258]
+                      - cell "Modonty" [ref=e259]
+                      - cell "Published" [ref=e260]:
+                        - generic [ref=e261]: Published
+                      - cell "0" [ref=e262]
+                      - cell "Apr 17, 2026" [ref=e263]
+                      - cell [ref=e264]
+                    - row "الصحة النفسية في بيئة العمل السعودية شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e265]:
+                      - cell "الصحة النفسية في بيئة العمل السعودية" [ref=e266]:
+                        - link "الصحة النفسية في بيئة العمل السعودية" [ref=e267] [cursor=pointer]:
+                          - /url: /articles/69e26204559192db66f729aa
+                      - cell "شركة الاختبار" [ref=e268]
+                      - cell "Modonty" [ref=e269]
+                      - cell "Published" [ref=e270]:
+                        - generic [ref=e271]: Published
+                      - cell "0" [ref=e272]
+                      - cell "Apr 17, 2026" [ref=e273]
+                      - cell [ref=e274]
+                    - row "أفضل أدوات SEO المجانية لعام 2025 شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e275]:
+                      - cell "أفضل أدوات SEO المجانية لعام 2025" [ref=e276]:
+                        - link "أفضل أدوات SEO المجانية لعام 2025" [ref=e277] [cursor=pointer]:
+                          - /url: /articles/69e261c8559192db66f7298a
+                      - cell "شركة الاختبار" [ref=e278]
+                      - cell "Modonty" [ref=e279]
+                      - cell "Published" [ref=e280]:
+                        - generic [ref=e281]: Published
+                      - cell "0" [ref=e282]
+                      - cell "Apr 17, 2026" [ref=e283]
+                      - cell [ref=e284]
+                    - row "دليل SEO المتاجر الإلكترونية 2025 شركة الاختبار Modonty Published 0 Apr 17, 2026" [ref=e285]:
+                      - cell "دليل SEO المتاجر الإلكترونية 2025" [ref=e286]:
+                        - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e287] [cursor=pointer]:
+                          - /url: /articles/69e2618e559192db66f72966
+                      - cell "شركة الاختبار" [ref=e288]
+                      - cell "Modonty" [ref=e289]
+                      - cell "Published" [ref=e290]:
+                        - generic [ref=e291]: Published
+                      - cell "0" [ref=e292]
+                      - cell "Apr 17, 2026" [ref=e293]
+                      - cell [ref=e294]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e300] [cursor=pointer]:
+    - img [ref=e301]
+  - alert [ref=e304]

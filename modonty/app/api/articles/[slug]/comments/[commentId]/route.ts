@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { CommentStatus, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
+import { sendEmail } from "@/lib/email/resend-client";
+import { commentReplyEmail } from "@/lib/email/templates/comment-reply";
 
 export async function POST(
   request: NextRequest,
@@ -26,7 +28,7 @@ export async function POST(
         slug: decodedSlug,
         status: ArticleStatus.PUBLISHED,
       },
-      select: { id: true },
+      select: { id: true, title: true },
     });
 
     if (!article) {
@@ -43,7 +45,10 @@ export async function POST(
         articleId: article.id,
         status: CommentStatus.APPROVED,
       },
-      select: { id: true },
+      select: {
+        id: true,
+        author: { select: { id: true, name: true, email: true } },
+      },
     });
 
     if (!parentComment) {
@@ -98,6 +103,25 @@ export async function POST(
         createdAt: true,
       },
     });
+
+    // Notify parent comment author (non-blocking, skip if same user)
+    const parentAuthor = parentComment.author;
+    if (
+      parentAuthor?.email &&
+      parentAuthor.id !== session.user.id
+    ) {
+      const articleUrl = `https://modonty.com/articles/${decodedSlug}`;
+      const emailPayload = commentReplyEmail({
+        userName: parentAuthor.name ?? parentAuthor.email,
+        articleTitle: article.title,
+        articleUrl,
+        replyAuthor: session.user.name ?? "مستخدم",
+        replyContent: trimmedContent,
+      });
+      sendEmail({ to: parentAuthor.email, ...emailPayload }).catch((err) =>
+        console.error("[comments/reply] Reply notification failed:", err)
+      );
+    }
 
     return NextResponse.json({
       success: true,

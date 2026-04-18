@@ -1,0 +1,124 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e9]:
+            - paragraph [ref=e10]: Modonty
+            - paragraph [ref=e11]: Team Guidelines
+        - link "Admin Sign In →" [ref=e12] [cursor=pointer]:
+          - /url: /login
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e17]: معاينة للمصمم
+            - generic [ref=e18]:
+              - text: بطاقة المقال (PostCard) — أماكن الصور بالمقاسات الحقيقية
+              - generic [ref=e19]:
+                - text: ارفع كل صورة
+                - strong [ref=e20]: مرة واحدة
+                - text: بأعلى جودة — النظام يعرضها بالحجم الصح تلقائياً في كل مكان
+          - link "رجوع" [ref=e21] [cursor=pointer]:
+            - /url: /guidelines/media
+            - img [ref=e22]
+            - text: رجوع
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]: modonty
+            - navigation [ref=e27]:
+              - generic [ref=e28]: الرئيسية
+              - generic [ref=e29]: المقالات
+              - generic [ref=e30]: العملاء
+          - generic [ref=e32]: ابحث ...
+        - main [ref=e33]:
+          - generic [ref=e34]:
+            - heading "أحدث المقالات" [level=2] [ref=e35]
+            - paragraph [ref=e36]: "كل بطاقة تحتوي على صورتين: صورة المقال (16:9) + لوجو العميل (دائرة)"
+          - generic [ref=e37]:
+            - article [ref=e38]:
+              - generic [ref=e39]:
+                - generic [ref=e40]: Featured Image
+                - generic [ref=e41]: 1920 × 1080
+                - generic [ref=e42]: نسبة 16:9
+                - generic [ref=e43]: "⚠️ أول كارت: LCP — أعلى أولوية"
+              - generic [ref=e44]:
+                - generic [ref=e45]:
+                  - generic [ref=e46]:
+                    - generic [ref=e47]: 500×500
+                    - generic [ref=e48]: 1:1
+                  - generic [ref=e49]:
+                    - generic [ref=e50]: JBR SEO
+                    - generic [ref=e51]: ·
+                    - generic [ref=e52]: تسويق رقمي
+                - heading "كيف تبني استراتيجية تسويق محتوى تُحقق نتائج ملموسة على محركات البحث" [level=3] [ref=e53]
+                - paragraph [ref=e54]: اختيار الكلمات المفتاحية الصحيحة هو حجر الأساس في أي استراتيجية تسويق رقمي ناجحة. لا يكفي أن تكتب محتوى جيداً بل يجب أن يصل إلى جمهورك.
+                - generic [ref=e55]:
+                  - generic [ref=e56]:
+                    - img [ref=e57]
+                    - text: ٤ دقائق قراءة
+                  - generic [ref=e60]:
+                    - img [ref=e61]
+                    - text: ٢٣٤
+            - article [ref=e64]:
+              - generic [ref=e65]:
+                - generic [ref=e66]: Featured Image
+                - generic [ref=e67]: 1920 × 1080
+                - generic [ref=e68]: نسبة 16:9
+              - generic [ref=e69]:
+                - generic [ref=e70]:
+                  - generic [ref=e71]:
+                    - generic [ref=e72]: 500×500
+                    - generic [ref=e73]: 1:1
+                  - generic [ref=e74]:
+                    - generic [ref=e75]: Modonty
+                    - generic [ref=e76]: ·
+                    - generic [ref=e77]: SEO
+                - heading "دليل المبتدئ الشامل لتحسين محركات البحث وبناء حضور رقمي قوي" [level=3] [ref=e78]
+                - paragraph [ref=e79]: تحسين محركات البحث ليس سراً — هو منهجية واضحة تبدأ بفهم ما يبحث عنه جمهورك وتنتهي بمحتوى يجيب على أسئلتهم بشكل أفضل من المنافسين.
+                - generic [ref=e80]:
+                  - generic [ref=e81]:
+                    - img [ref=e82]
+                    - text: ٦ دقائق قراءة
+                  - generic [ref=e85]:
+                    - img [ref=e86]
+                    - text: ١٢٧
+            - article [ref=e89]:
+              - generic [ref=e90]:
+                - generic [ref=e91]: Featured Image
+                - generic [ref=e92]: 1920 × 1080
+                - generic [ref=e93]: نسبة 16:9
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - generic [ref=e96]:
+                    - generic [ref=e97]: 500×500
+                    - generic [ref=e98]: 1:1
+                  - generic [ref=e99]:
+                    - generic [ref=e100]: JBR SEO
+                    - generic [ref=e101]: ·
+                    - generic [ref=e102]: أدوات
+                - heading "أفضل أدوات التسويق الرقمي للشركات الصغيرة في السوق السعودي" [level=3] [ref=e103]
+                - paragraph [ref=e104]: السوق السعودي له خصائص فريدة تختلف عن باقي الأسواق العربية. فهم هذه الخصائص يمنحك ميزة تنافسية حقيقية على منافسيك.
+                - generic [ref=e105]:
+                  - generic [ref=e106]:
+                    - img [ref=e107]
+                    - text: ٥ دقائق قراءة
+                  - generic [ref=e110]:
+                    - img [ref=e111]
+                    - text: ٨٩
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - paragraph [ref=e116]: صورة المقال — Featured Image
+              - paragraph [ref=e117]: 1920 × 1080
+              - paragraph [ref=e118]: نسبة 16:9 — تظهر كاملة في الكارت بدون قص جانبي
+              - paragraph [ref=e119]: ⚠️ نفس هذه الصورة تظهر كمربع 1:1 في الشريط الجانبي للمقال
+            - generic [ref=e120]:
+              - paragraph [ref=e121]: لوجو العميل في الكارت
+              - paragraph [ref=e122]: 500 × 500
+              - paragraph [ref=e123]: دائرة 40×40px — النظام يطلب 96px من Cloudinary لجودة أفضل
+              - paragraph [ref=e124]: ⚠️ PNG بخلفية شفافة إلزامي — JPG يظهر مربع أبيض
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e130] [cursor=pointer]:
+    - img [ref=e131]

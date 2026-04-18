@@ -15,10 +15,10 @@ export function DesktopNavItem({ icon: Icon, label, href, active = false, badge 
     <Link
       href={href}
       className={cn(
-        "relative flex flex-col items-center justify-center px-3 py-1.5 text-xs hover:text-primary transition-colors h-14 border-b-2",
+        "relative flex flex-col items-center justify-center px-3 py-1.5 text-xs transition-colors duration-150 h-14 border-b-2 hover:text-primary hover:bg-muted/50",
         active
-          ? "text-primary border-primary transition-colors duration-150"
-          : "text-muted-foreground border-transparent transition-colors duration-150",
+          ? "text-primary border-primary bg-primary/[0.07]"
+          : "text-muted-foreground border-transparent",
       )}
     >
       <span className="relative inline-flex">

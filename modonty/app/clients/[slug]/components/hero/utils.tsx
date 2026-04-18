@@ -11,9 +11,9 @@ export function getSocialPlatform(url: string): { name: string; icon: ReactEleme
 
 export function getCoverImage(client: {
   heroImageMedia?: { url: string } | null;
-  logoMedia?: { url: string } | null;
 }): string | undefined {
-  return client.heroImageMedia?.url || client.logoMedia?.url;
+  // Only use dedicated cover image — logo is not suitable for 6:1 banner ratio
+  return client.heroImageMedia?.url;
 }
 
 export function getInitials(name: string): string {
@@ -25,18 +25,36 @@ export function getInitials(name: string): string {
     .toUpperCase();
 }
 
+const COUNTRY_CODES: Record<string, string> = {
+  SA: "السعودية",
+  AE: "الإمارات",
+  EG: "مصر",
+  KW: "الكويت",
+  QA: "قطر",
+  BH: "البحرين",
+  OM: "عُمان",
+  JO: "الأردن",
+  LB: "لبنان",
+};
+
+export function localizeCountry(code: string | null | undefined): string | null {
+  if (!code) return null;
+  return COUNTRY_CODES[code.toUpperCase()] ?? code;
+}
+
 export function getTagline(client: {
-  businessBrief?: string | null;
+  slogan?: string | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
   addressCountry?: string | null;
 }): string | null {
-  const location = [client.addressCity, client.addressRegion, client.addressCountry]
+  const country = localizeCountry(client.addressCountry);
+  const location = [client.addressCity, client.addressRegion, country]
     .filter(Boolean)
     .join("، ");
   return (
-    client.businessBrief ||
+    client.slogan ||
     [client.industry?.name, location].filter(Boolean).join(" · ") ||
     null
   );

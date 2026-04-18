@@ -51,6 +51,7 @@ export function mapInitialDataToFormData(
     licenseAuthority: "",
     alternateName: "",
     slogan: "",
+    newsletterCtaText: "",
     canonicalUrl: "",
   };
 
@@ -121,6 +122,7 @@ export function mapInitialDataToFormData(
     // Additional Properties
     alternateName: initialData.alternateName || null,
     slogan: initialData.slogan || null,
+    newsletterCtaText: initialData.newsletterCtaText || null,
     keywords: initialData.keywords || [],
     knowsLanguage: initialData.knowsLanguage || [],
     organizationType: initialData.organizationType || null,

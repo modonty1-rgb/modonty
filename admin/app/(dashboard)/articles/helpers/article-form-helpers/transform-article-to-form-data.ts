@@ -102,6 +102,9 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     // E-E-A-T Enhancement
     citations: article.citations || [],
 
+    // Audio
+    audioUrl: article.audioUrl || null,
+
     // SEO keywords the article is based on (reference)
     seoKeywords: article.seoKeywords ?? [],
 

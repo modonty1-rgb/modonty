@@ -1,0 +1,216 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - link "عملاء بلا إعلانات — جبر SEO" [ref=e9] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: عملاء بلا إعلانات
+        - generic [ref=e13]:
+          - button "فتح المحادثة" [ref=e14] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+    - main [ref=e20]:
+      - heading "مودونتي — منصة المحتوى العربي" [level=1] [ref=e21]
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=2] [ref=e22]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: مرحباً بك في مودونتي
+          - paragraph [ref=e28]: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+        - region "آخر المقالات" [ref=e29]:
+          - heading "آخر المقالات" [level=2] [ref=e30]
+          - generic [ref=e31]:
+            - article [ref=e32]:
+              - generic [ref=e33]:
+                - img [ref=e34]
+                - generic [ref=e37]: Al Bayt Restaurant - Updated
+              - generic [ref=e38]:
+                - generic [ref=e39]:
+                  - link "زيارة صفحة Al Bayt Restaurant - Updated" [ref=e40] [cursor=pointer]:
+                    - /url: /clients/al-bayt-restaurant
+                    - generic [ref=e42]: AB
+                  - generic [ref=e43]:
+                    - link "Al Bayt Restaurant - Updated" [ref=e44] [cursor=pointer]:
+                      - /url: /clients/al-bayt-restaurant
+                      - generic [ref=e45]: Al Bayt Restaurant - Updated
+                    - generic [ref=e47]:
+                      - time [ref=e49]: ١٦ أبريل ٢٠٢٦
+                      - generic [ref=e50]: •
+                      - generic [ref=e51]: ⏱️ 1 دقيقة
+                - 'heading "وصفات المطبخ السعودي: دليل الطهي التقليدي" [level=3] [ref=e52]':
+                  - 'link "وصفات المطبخ السعودي: دليل الطهي التقليدي" [ref=e53] [cursor=pointer]':
+                    - /url: /articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي
+                - paragraph
+                - generic [ref=e54]:
+                  - generic:
+                    - text: اقرأ المزيد
+                    - img
+                - generic [ref=e55]:
+                  - generic [ref=e56]:
+                    - generic [ref=e57]:
+                      - img [ref=e58]
+                      - text: "0"
+                    - generic [ref=e60]:
+                      - img [ref=e61]
+                      - text: "0"
+                    - generic [ref=e63]:
+                      - img [ref=e64]
+                      - text: "0"
+                    - generic [ref=e67]:
+                      - img [ref=e68]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e70] [cursor=pointer]:
+                    - /url: /articles/وصفات-المطبخ-السعودي-دليل-الطهي-التقليدي
+                    - img [ref=e71]
+            - article [ref=e77]:
+              - generic [ref=e78]:
+                - img [ref=e79]
+                - generic [ref=e82]: Al Bayt Restaurant - Updated
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - link "زيارة صفحة Al Bayt Restaurant - Updated" [ref=e85] [cursor=pointer]:
+                    - /url: /clients/al-bayt-restaurant
+                    - generic [ref=e87]: AB
+                  - generic [ref=e88]:
+                    - link "Al Bayt Restaurant - Updated" [ref=e89] [cursor=pointer]:
+                      - /url: /clients/al-bayt-restaurant
+                      - generic [ref=e90]: Al Bayt Restaurant - Updated
+                    - generic [ref=e92]:
+                      - time [ref=e94]: ١٦ أبريل ٢٠٢٦
+                      - generic [ref=e95]: •
+                      - generic [ref=e96]: ⏱️ 1 دقيقة
+                - heading "أفضل أطباق المطبخ السعودي التقليدي" [level=3] [ref=e97]:
+                  - link "أفضل أطباق المطبخ السعودي التقليدي" [ref=e98] [cursor=pointer]:
+                    - /url: /articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                - paragraph
+                - generic [ref=e99]:
+                  - generic:
+                    - text: اقرأ المزيد
+                    - img
+                - generic [ref=e100]:
+                  - generic [ref=e101]:
+                    - generic [ref=e102]:
+                      - img [ref=e103]
+                      - text: "0"
+                    - generic [ref=e105]:
+                      - img [ref=e106]
+                      - text: "0"
+                    - generic [ref=e108]:
+                      - img [ref=e109]
+                      - text: "0"
+                    - generic [ref=e112]:
+                      - img [ref=e113]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e115] [cursor=pointer]:
+                    - /url: /articles/أفضل-أطباق-المطبخ-السعودي-التقليدي
+                    - img [ref=e116]
+            - article [ref=e122]:
+              - img "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e124]
+              - generic [ref=e125]:
+                - generic [ref=e126]:
+                  - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e127] [cursor=pointer]:
+                    - /url: /clients/nova-electronics
+                    - img "متجر نوفا للإلكترونيات" [ref=e129]
+                  - generic [ref=e130]:
+                    - link "متجر نوفا للإلكترونيات" [ref=e131] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e132]: متجر نوفا للإلكترونيات
+                    - generic [ref=e134]:
+                      - time [ref=e136]: ٨ أبريل ٢٠٢٦
+                      - generic [ref=e137]: •
+                      - generic [ref=e138]: ⏱️ 1 دقيقة
+                - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية" [level=3] [ref=e139]:
+                  - link "الذكاء الاصطناعي في الرعاية الصحية السعودية" [ref=e140] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                - paragraph [ref=e141]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: من التشخيص بالأشعة إلى التطبيب عن بُعد. تطبيقات حقيقية ونتائج مذهلة في مستشفيات المملكة."
+                - generic [ref=e142]:
+                  - generic:
+                    - text: اقرأ المزيد
+                    - img
+                - generic [ref=e143]:
+                  - generic [ref=e144]:
+                    - generic [ref=e145]:
+                      - img [ref=e146]
+                      - text: "0"
+                    - generic [ref=e148]:
+                      - img [ref=e149]
+                      - text: "0"
+                    - generic [ref=e151]:
+                      - img [ref=e152]
+                      - text: "24"
+                    - generic [ref=e155]:
+                      - img [ref=e156]
+                      - text: "0"
+                  - link "مشاركة المقال" [ref=e158] [cursor=pointer]:
+                    - /url: /articles/ai-healthcare-saudi-2025
+                    - img [ref=e159]
+    - contentinfo [ref=e165]:
+      - generic [ref=e166]:
+        - generic [ref=e167]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e168] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e169]: ↗
+      - navigation "روابط سريعة" [ref=e170]:
+        - link "الرئيسية" [ref=e171] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e172] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e173] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e174] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e175] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e176] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e177]:
+        - link "الشروط والأحكام" [ref=e178] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e179] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e180] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e181] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e182] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e183]: © 2026 مودونتي
+    - contentinfo [ref=e184]:
+      - navigation "التنقل السفلي" [ref=e185]:
+        - link "الرئيسية" [ref=e186] [cursor=pointer]:
+          - /url: /
+          - img [ref=e188]
+          - generic [ref=e191]: الرئيسية
+        - link "الرائجة" [ref=e192] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e194]
+          - generic [ref=e197]: الرائجة
+        - link "العملاء" [ref=e198] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e200]
+          - generic [ref=e204]: العملاء
+        - link "بحث المقالات" [ref=e205] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e206]
+          - generic [ref=e209]: بحث
+        - button "Open menu" [ref=e210] [cursor=pointer]:
+          - img [ref=e211]
+  - generic [ref=e219] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e220]:
+      - img [ref=e221]
+    - generic [ref=e224]:
+      - button "Open issues overlay" [ref=e225]:
+        - generic [ref=e226]:
+          - generic [ref=e227]: "3"
+          - generic [ref=e228]: "4"
+        - generic [ref=e229]:
+          - text: Issue
+          - generic [ref=e230]: s
+      - button "Collapse issues badge" [ref=e231]:
+        - img [ref=e232]
+  - alert [ref=e234]

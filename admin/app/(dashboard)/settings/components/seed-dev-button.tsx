@@ -20,7 +20,7 @@ const SECTIONS: { id: SeedSection; label: string; description: string }[] = [
   { id: "tags", label: "Tags", description: "5 tags" },
   { id: "industries", label: "Industries", description: "5 industries" },
   { id: "clients", label: "Clients", description: "2 clients with full data" },
-  { id: "articles", label: "Articles", description: "3 articles (published + draft)" },
+  { id: "articles", label: "Articles", description: "25 articles (21 published + 4 drafts, all topics)" },
   { id: "faqs", label: "FAQs", description: "3 FAQs" },
   { id: "interactions", label: "Interactions", description: "Comments, views, likes, subscribers" },
 ];

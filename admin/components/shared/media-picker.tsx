@@ -159,30 +159,7 @@ export function MediaPicker({
                       target.style.display = "none";
                     }}
                   />
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
-                    <div className="opacity-0 hover:opacity-100 transition-opacity flex gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setDialogOpen(true)}
-                        disabled={isDisabled}
-                      >
-                        Change
-                      </Button>
-                      {onClear && (
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          onClick={handleClear}
-                          disabled={isDisabled}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
                   {showAltOverlay && (
                     <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 flex items-center justify-between gap-2">
                       <p className="text-[11px] text-white truncate flex-1">
@@ -222,6 +199,32 @@ export function MediaPicker({
                 </div>
               )}
             </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setDialogOpen(true)}
+              disabled={isDisabled}
+              className="flex-1"
+            >
+              <Pencil className="h-3.5 w-3.5 mr-1.5" />
+              Change Image
+            </Button>
+            {onClear && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleClear}
+                disabled={isDisabled}
+                className="text-destructive hover:text-destructive"
+              >
+                <X className="h-3.5 w-3.5 mr-1.5" />
+                Remove
+              </Button>
+            )}
           </div>
           {showUrlField && (
             <Input

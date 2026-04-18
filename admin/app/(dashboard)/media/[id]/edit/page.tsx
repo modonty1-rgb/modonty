@@ -1,4 +1,5 @@
 import { getMediaById } from "../../actions/media-actions";
+import { getClients } from "../../actions/get-clients";
 import { notFound } from "next/navigation";
 import { EditMediaForm } from "./edit-media-form";
 
@@ -8,7 +9,7 @@ export default async function EditMediaPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const media = await getMediaById(id);
+  const [media, clients] = await Promise.all([getMediaById(id), getClients()]);
 
   if (!media) {
     notFound();
@@ -19,5 +20,5 @@ export default async function EditMediaPage({
     client: media.client || undefined,
   };
 
-  return <EditMediaForm media={transformedMedia} />;
+  return <EditMediaForm media={transformedMedia} clients={clients} />;
 }

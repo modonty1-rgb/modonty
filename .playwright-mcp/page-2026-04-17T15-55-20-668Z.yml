@@ -1,0 +1,406 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e42] [cursor=pointer]
+    - main [ref=e44]:
+      - navigation "تنقل الصفحة" [ref=e45]:
+        - list [ref=e46]:
+          - listitem [ref=e47]:
+            - link "الرئيسية الرئيسية" [ref=e48] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e49]
+              - generic [ref=e52]: الرئيسية
+          - listitem [ref=e53]:
+            - generic [ref=e55]: العملاء
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - heading "دليل أفضل الشركات والخبراء في السوق العربي" [level=1] [ref=e60]:
+            - text: دليل أفضل الشركات
+            - text: والخبراء في السوق العربي
+          - paragraph [ref=e61]: اكتشف شركات موثوقة تشارك خبرتها وتساعدك في اتخاذ قرارات أذكى
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: "4"
+              - generic [ref=e65]: شركة موثوقة
+            - generic [ref=e67]:
+              - generic [ref=e68]: "2"
+              - generic [ref=e69]: صناعة
+            - generic [ref=e71]:
+              - generic [ref=e72]: "3"
+              - generic [ref=e73]: مقال خبراء
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - paragraph [ref=e76]: لأصحاب الأعمال والشركات
+            - heading "عملاؤك يبحثون عنك على جوجل — هل يجدونك؟" [level=2] [ref=e77]:
+              - generic [ref=e78]: عملاؤك يبحثون عنك
+              - text: على جوجل — هل يجدونك؟
+          - list [ref=e79]:
+            - listitem [ref=e80]:
+              - generic [ref=e81]: ✓
+              - text: ظهور مضمون على جوجل بمحتوى يُقنع قبل أن تتكلم
+            - listitem [ref=e82]:
+              - generic [ref=e83]: ✓
+              - text: عملاء جاهزون للشراء — بلا ميزانية إعلانية تتوقف
+            - listitem [ref=e84]:
+              - generic [ref=e85]: ✓
+              - text: "نتائج تقيسها: زيارات، مشاهدات، استفسارات حقيقية"
+          - link "عملاء بلا إعلانات" [ref=e86] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e87]: ↗
+      - generic [ref=e88]:
+        - region "العملاء المميزون" [ref=e89]:
+          - heading "العملاء المميزون" [level=2] [ref=e90]
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - img [ref=e94]
+              - heading "عملاء مميزون" [level=2] [ref=e96]
+            - region [ref=e98]:
+              - group [ref=e101]:
+                - link "متجر نوفا للإلكترونيات موثق متجر نوفا للإلكترونيات التجارة الإلكترونية 1 مقالات 24 3" [ref=e102] [cursor=pointer]:
+                  - /url: /clients/nova-electronics
+                  - generic [ref=e103]:
+                    - img "متجر نوفا للإلكترونيات" [ref=e104]
+                    - generic [ref=e106]:
+                      - generic [ref=e108]:
+                        - img [ref=e109]
+                        - text: موثق
+                      - generic [ref=e112]:
+                        - generic [ref=e113]:
+                          - heading "متجر نوفا للإلكترونيات" [level=3] [ref=e114]
+                          - generic [ref=e116]: التجارة الإلكترونية
+                        - generic [ref=e117]:
+                          - generic [ref=e118]:
+                            - img [ref=e119]
+                            - generic [ref=e122]: 1 مقالات
+                          - generic [ref=e123]:
+                            - img [ref=e124]
+                            - generic [ref=e127]: "24"
+                          - generic [ref=e128]:
+                            - img [ref=e129]
+                            - generic [ref=e134]: "3"
+              - button "Previous slide" [disabled]:
+                - img
+                - generic: Previous slide
+              - button "Next slide" [disabled]:
+                - img
+                - generic: Next slide
+        - region "جميع العملاء" [ref=e135]:
+          - heading "جميع العملاء" [level=2] [ref=e136]
+          - generic [ref=e138]:
+            - heading "تصفح حسب الصناعة" [level=3] [ref=e139]
+            - generic [ref=e140]:
+              - button "الكل" [ref=e141] [cursor=pointer]
+              - button "التجارة الإلكترونية 1" [ref=e142] [cursor=pointer]:
+                - text: التجارة الإلكترونية
+                - generic [ref=e143]: "1"
+              - button "الرعاية الصحية 1" [ref=e144] [cursor=pointer]:
+                - text: الرعاية الصحية
+                - generic [ref=e145]: "1"
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - paragraph [ref=e149]: 4 من 4 شركة
+              - generic [ref=e150]:
+                - button "الأبجدي (أ-ي)" [ref=e151] [cursor=pointer]:
+                  - img
+                  - generic [ref=e152]: الأبجدي (أ-ي)
+                - generic [ref=e153]:
+                  - button "عرض شبكي" [ref=e154] [cursor=pointer]:
+                    - img
+                  - button "عرض قائمة" [ref=e155] [cursor=pointer]:
+                    - img
+            - generic [ref=e156]:
+              - complementary [ref=e157]:
+                - generic [ref=e159]:
+                  - generic [ref=e160]:
+                    - heading "تصفية النتائج" [level=3] [ref=e161]
+                    - button "مسح الكل" [ref=e162] [cursor=pointer]
+                  - generic [ref=e163]:
+                    - heading "الصناعة" [level=4] [ref=e164]
+                    - generic [ref=e165]:
+                      - generic [ref=e166] [cursor=pointer]:
+                        - checkbox "التجارة الإلكترونية (1)" [ref=e167]
+                        - checkbox
+                        - generic [ref=e168]: التجارة الإلكترونية
+                        - generic [ref=e169]: (1)
+                      - generic [ref=e170] [cursor=pointer]:
+                        - checkbox "الرعاية الصحية (1)" [ref=e171]
+                        - checkbox
+                        - generic [ref=e172]: الرعاية الصحية
+                        - generic [ref=e173]: (1)
+                  - generic [ref=e174]:
+                    - heading "عدد المقالات" [level=4] [ref=e175]
+                    - generic [ref=e179]:
+                      - generic [ref=e180]: "0"
+                      - generic [ref=e181]: 50+
+              - generic [ref=e183]:
+                - link "شركة الاختبار - 0 مقالات" [ref=e184] [cursor=pointer]:
+                  - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1
+                  - article "شركة الاختبار - 0 مقالات" [ref=e185]:
+                    - generic [ref=e186]:
+                      - generic [ref=e189]: شا
+                      - heading "شركة الاختبار" [level=3] [ref=e191]
+                      - generic [ref=e192]: عميل جديد
+                    - group "مقاييس الأداء" [ref=e194]:
+                      - generic [ref=e195]:
+                        - generic [ref=e196]:
+                          - generic [ref=e197]:
+                            - img [ref=e198]
+                            - generic [ref=e201]: مقالات
+                          - paragraph [ref=e202]: "0"
+                        - generic [ref=e203]:
+                          - generic [ref=e204]:
+                            - img [ref=e205]
+                            - generic [ref=e208]: مشاهدات
+                          - paragraph [ref=e209]: لا توجد بعد
+                        - generic [ref=e210]:
+                          - generic [ref=e211]:
+                            - img [ref=e212]
+                            - generic [ref=e217]: مشتركون
+                          - paragraph [ref=e218]: "0"
+                        - generic [ref=e219]:
+                          - generic [ref=e220]:
+                            - img [ref=e221]
+                            - generic [ref=e224]: التفاعل
+                          - generic [ref=e225]:
+                            - paragraph [ref=e226]: "0"
+                            - generic [ref=e227]: منخفض
+                      - generic [ref=e229]:
+                        - generic [ref=e230]:
+                          - img [ref=e231]
+                          - generic [ref=e233]: "0"
+                          - generic [ref=e234]: تعليقات
+                        - generic [ref=e235]:
+                          - img [ref=e236]
+                          - generic [ref=e238]: "0"
+                          - generic [ref=e239]: إعجاب
+                        - generic [ref=e240]:
+                          - img [ref=e241]
+                          - generic [ref=e243]: "0"
+                          - generic [ref=e244]: مفضلة
+                    - button "عرض الملف" [ref=e246]
+                - link "عيادات بلسم الطبية - 0 مقالات" [ref=e247] [cursor=pointer]:
+                  - /url: /clients/balsam-medical
+                  - article "عيادات بلسم الطبية - 0 مقالات" [ref=e248]:
+                    - generic [ref=e249]:
+                      - img "عيادات بلسم الطبية" [ref=e252]
+                      - heading "عيادات بلسم الطبية" [level=3] [ref=e254]
+                      - generic [ref=e255]: الرعاية الصحية
+                      - generic [ref=e256]: عميل جديد
+                    - generic [ref=e257]:
+                      - paragraph [ref=e258]: رعاية صحية متميزة.
+                      - group "مقاييس الأداء" [ref=e259]:
+                        - generic [ref=e260]:
+                          - generic [ref=e261]:
+                            - generic [ref=e262]:
+                              - img [ref=e263]
+                              - generic [ref=e266]: مقالات
+                            - paragraph [ref=e267]: "0"
+                          - generic [ref=e268]:
+                            - generic [ref=e269]:
+                              - img [ref=e270]
+                              - generic [ref=e273]: مشاهدات
+                            - paragraph [ref=e274]: لا توجد بعد
+                          - generic [ref=e275]:
+                            - generic [ref=e276]:
+                              - img [ref=e277]
+                              - generic [ref=e282]: مشتركون
+                            - paragraph [ref=e283]: "0"
+                          - generic [ref=e284]:
+                            - generic [ref=e285]:
+                              - img [ref=e286]
+                              - generic [ref=e289]: التفاعل
+                            - generic [ref=e290]:
+                              - paragraph [ref=e291]: "0"
+                              - generic [ref=e292]: منخفض
+                        - generic [ref=e294]:
+                          - generic [ref=e295]:
+                            - img [ref=e296]
+                            - generic [ref=e298]: "0"
+                            - generic [ref=e299]: تعليقات
+                          - generic [ref=e300]:
+                            - img [ref=e301]
+                            - generic [ref=e303]: "0"
+                            - generic [ref=e304]: إعجاب
+                          - generic [ref=e305]:
+                            - img [ref=e306]
+                            - generic [ref=e308]: "0"
+                            - generic [ref=e309]: مفضلة
+                    - button "عرض الملف" [ref=e311]
+                - link "متجر نوفا للإلكترونيات - 1 مقالات" [ref=e312] [cursor=pointer]:
+                  - /url: /clients/nova-electronics
+                  - article "متجر نوفا للإلكترونيات - 1 مقالات" [ref=e313]:
+                    - generic [ref=e314]:
+                      - generic [ref=e315]:
+                        - img "متجر نوفا للإلكترونيات" [ref=e317]
+                        - img [ref=e319]
+                      - heading "متجر نوفا للإلكترونيات" [level=3] [ref=e323]
+                      - generic [ref=e324]: التجارة الإلكترونية
+                    - generic [ref=e325]:
+                      - paragraph [ref=e326]: أحدث الأجهزة الإلكترونية.
+                      - group "مقاييس الأداء" [ref=e327]:
+                        - generic [ref=e328]:
+                          - generic [ref=e329]:
+                            - generic [ref=e330]:
+                              - img [ref=e331]
+                              - generic [ref=e334]: مقالات
+                            - paragraph [ref=e335]: "1"
+                          - generic [ref=e336]:
+                            - generic [ref=e337]:
+                              - img [ref=e338]
+                              - generic [ref=e341]: مشاهدات
+                            - paragraph [ref=e342]: "24"
+                          - generic [ref=e343]:
+                            - generic [ref=e344]:
+                              - img [ref=e345]
+                              - generic [ref=e350]: مشتركون
+                            - paragraph [ref=e351]: "3"
+                          - generic [ref=e352]:
+                            - generic [ref=e353]:
+                              - img [ref=e354]
+                              - generic [ref=e357]: التفاعل
+                            - generic [ref=e358]:
+                              - paragraph [ref=e359]: "0"
+                              - generic [ref=e360]: منخفض
+                        - generic [ref=e362]:
+                          - generic [ref=e363]:
+                            - img [ref=e364]
+                            - generic [ref=e366]: "0"
+                            - generic [ref=e367]: تعليقات
+                          - generic [ref=e368]:
+                            - img [ref=e369]
+                            - generic [ref=e371]: "0"
+                            - generic [ref=e372]: إعجاب
+                          - generic [ref=e373]:
+                            - img [ref=e374]
+                            - generic [ref=e376]: "0"
+                            - generic [ref=e377]: مفضلة
+                    - button "عرض الملف" [ref=e379]
+                - link "Al Bayt Restaurant - Updated - 2 مقالات" [ref=e380] [cursor=pointer]:
+                  - /url: /clients/al-bayt-restaurant
+                  - article "Al Bayt Restaurant - Updated - 2 مقالات" [ref=e381]:
+                    - generic [ref=e382]:
+                      - generic [ref=e385]: AB
+                      - heading "Al Bayt Restaurant - Updated" [level=3] [ref=e387]
+                    - group "مقاييس الأداء" [ref=e389]:
+                      - generic [ref=e390]:
+                        - generic [ref=e391]:
+                          - generic [ref=e392]:
+                            - img [ref=e393]
+                            - generic [ref=e396]: مقالات
+                          - paragraph [ref=e397]: "2"
+                        - generic [ref=e398]:
+                          - generic [ref=e399]:
+                            - img [ref=e400]
+                            - generic [ref=e403]: مشاهدات
+                          - paragraph [ref=e404]: لا توجد بعد
+                        - generic [ref=e405]:
+                          - generic [ref=e406]:
+                            - img [ref=e407]
+                            - generic [ref=e412]: مشتركون
+                          - paragraph [ref=e413]: "0"
+                        - generic [ref=e414]:
+                          - generic [ref=e415]:
+                            - img [ref=e416]
+                            - generic [ref=e419]: التفاعل
+                          - generic [ref=e420]:
+                            - paragraph [ref=e421]: "0"
+                            - generic [ref=e422]: منخفض
+                      - generic [ref=e424]:
+                        - generic [ref=e425]:
+                          - img [ref=e426]
+                          - generic [ref=e428]: "0"
+                          - generic [ref=e429]: تعليقات
+                        - generic [ref=e430]:
+                          - img [ref=e431]
+                          - generic [ref=e433]: "0"
+                          - generic [ref=e434]: إعجاب
+                        - generic [ref=e435]:
+                          - img [ref=e436]
+                          - generic [ref=e438]: "0"
+                          - generic [ref=e439]: مفضلة
+                    - button "عرض الملف" [ref=e441]
+        - region "هل تريد عملاء من جوجل — بدون إعلانات؟" [ref=e442]:
+          - generic [ref=e443]:
+            - heading "هل تريد عملاء من جوجل — بدون إعلانات؟" [level=2] [ref=e444]
+            - paragraph [ref=e445]: انضم لعملاء مودونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
+            - link "عملاء بلا إعلانات" [ref=e446] [cursor=pointer]:
+              - /url: https://www.jbrseo.com
+              - text: عملاء بلا إعلانات
+              - generic [ref=e447]: ↗
+    - contentinfo [ref=e448]:
+      - generic [ref=e449]:
+        - generic [ref=e450]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e451] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e452]: ↗
+      - navigation "روابط سريعة" [ref=e453]:
+        - link "الرئيسية" [ref=e454] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e455] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e456] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e457] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e458] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e459] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e460]:
+        - link "الشروط والأحكام" [ref=e461] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e462] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e463] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e464] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e465] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e466]: © 2026 مودونتي
+  - generic [ref=e471] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e472]:
+      - img [ref=e473]
+    - generic [ref=e476]:
+      - button "Open issues overlay" [ref=e477]:
+        - generic [ref=e478]:
+          - generic [ref=e479]: "3"
+          - generic [ref=e480]: "4"
+        - generic [ref=e481]:
+          - text: Issue
+          - generic [ref=e482]: s
+      - button "Collapse issues badge" [ref=e483]:
+        - img [ref=e484]
+  - alert [ref=e486]

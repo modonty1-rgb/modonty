@@ -80,6 +80,9 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
         inLanguage: s.inLanguage,
         isPartOf: { "@id": `${s.siteUrl}#website` },
         publisher: { "@id": `${s.siteUrl}#organization` },
+        ...(industry.socialImage && {
+          image: { "@type": "ImageObject", url: industry.socialImage, description: industry.socialImageAlt || title },
+        }),
       },
       {
         "@type": "BreadcrumbList",

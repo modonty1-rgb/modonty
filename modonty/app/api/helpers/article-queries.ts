@@ -22,6 +22,11 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
             url: true;
           };
         };
+        industry: {
+          select: {
+            name: true;
+          };
+        };
       };
     };
     author: {
@@ -57,6 +62,110 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
     };
   };
 }>;
+
+// Feed-only select — excludes heavy fields (content, jsonLd, articleBodyText, metadata, etc.)
+const feedArticleSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  excerpt: true,
+  datePublished: true,
+  createdAt: true,
+  featured: true,
+  readingTimeMinutes: true,
+  wordCount: true,
+  client: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoMedia: {
+        select: { url: true },
+      },
+      industry: {
+        select: { name: true },
+      },
+    },
+  },
+  author: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+    },
+  },
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  },
+  featuredImage: {
+    select: {
+      url: true,
+      altText: true,
+    },
+  },
+  audioUrl: true,
+  _count: {
+    select: {
+      likes: true,
+      dislikes: true,
+      favorites: true,
+      comments: true,
+      views: true,
+    },
+  },
+} satisfies Prisma.ArticleSelect;
+
+type FeedArticlePayload = Prisma.ArticleGetPayload<{ select: typeof feedArticleSelect }>;
+
+function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse {
+  return {
+    id: article.id,
+    title: article.title,
+    slug: article.slug,
+    excerpt: article.excerpt || undefined,
+    image: article.featuredImage?.url,
+    publishedAt: (article.datePublished || article.createdAt).toISOString(),
+    author: {
+      id: article.author.id,
+      name: article.author.name || "Modonty",
+      image: article.author.image || undefined,
+    },
+    client: {
+      id: article.client.id,
+      name: article.client.name,
+      slug: article.client.slug,
+      logo: article.client.logoMedia?.url || undefined,
+      industry: article.client.industry?.name || undefined,
+    },
+    category: article.category
+      ? {
+          id: article.category.id,
+          name: article.category.name,
+          slug: article.category.slug,
+        }
+      : undefined,
+    featuredImage: article.featuredImage
+      ? {
+          url: article.featuredImage.url,
+          altText: article.featuredImage.altText || undefined,
+        }
+      : undefined,
+    interactions: {
+      likes: article._count?.likes || 0,
+      dislikes: article._count?.dislikes || 0,
+      comments: article._count?.comments || 0,
+      favorites: article._count?.favorites || 0,
+      views: article._count?.views || 0,
+    },
+    readingTimeMinutes: article.readingTimeMinutes || undefined,
+    wordCount: article.wordCount || undefined,
+    hasAudio: !!article.audioUrl,
+  };
+}
 
 async function getArticlesCached(filters: ArticleFilters = {}) {
   "use cache";
@@ -116,51 +225,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
   const [articles, total] = await Promise.all([
     db.article.findMany({
       where,
-      include: {
-        client: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logoMedia: {
-              select: {
-                url: true,
-              },
-            },
-          },
-        },
-        author: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            bio: true,
-            image: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        featuredImage: {
-          select: {
-            url: true,
-            altText: true,
-          },
-        },
-        _count: {
-          select: {
-            likes: true,
-            dislikes: true,
-            favorites: true,
-            comments: true,
-            views: true,
-          },
-        },
-      },
+      select: feedArticleSelect,
       orderBy,
       skip: (page - 1) * limit,
       take: limit,
@@ -169,7 +234,7 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
   ]);
 
   return {
-    articles: articles.map(mapArticleToResponse),
+    articles: articles.map(mapFeedArticleToResponse),
     pagination: {
       page,
       limit,
@@ -203,6 +268,9 @@ export const getArticleBySlug = cache(async (slug: string) => {
             select: {
               url: true,
             },
+          },
+          industry: {
+            select: { name: true },
           },
         },
       },
@@ -257,56 +325,12 @@ export async function getFeaturedArticles(limit: number = 10) {
         { datePublished: { lte: new Date() } },
       ],
     },
-    include: {
-      client: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logoMedia: {
-            select: {
-              url: true,
-            },
-          },
-        },
-      },
-      author: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          bio: true,
-          image: true,
-        },
-      },
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-      featuredImage: {
-        select: {
-          url: true,
-          altText: true,
-        },
-      },
-      _count: {
-        select: {
-          likes: true,
-          dislikes: true,
-          favorites: true,
-          comments: true,
-          views: true,
-        },
-      },
-    },
+    select: feedArticleSelect,
     orderBy: { datePublished: "desc" },
     take: limit,
   });
 
-  return articles.map(mapArticleToResponse);
+  return articles.map(mapFeedArticleToResponse);
 }
 
 export async function getRecentArticles(limit: number = 10, excludeArticleId?: string) {
@@ -322,56 +346,12 @@ export async function getRecentArticles(limit: number = 10, excludeArticleId?: s
       ],
       ...(excludeArticleId && { id: { not: excludeArticleId } }),
     },
-    include: {
-      client: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logoMedia: {
-            select: {
-              url: true,
-            },
-          },
-        },
-      },
-      author: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          bio: true,
-          image: true,
-        },
-      },
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-      featuredImage: {
-        select: {
-          url: true,
-          altText: true,
-        },
-      },
-      _count: {
-        select: {
-          likes: true,
-          dislikes: true,
-          favorites: true,
-          comments: true,
-          views: true,
-        },
-      },
-    },
+    select: feedArticleSelect,
     orderBy: { datePublished: "desc" },
     take: limit,
   });
 
-  return articles.map(mapArticleToResponse);
+  return articles.map(mapFeedArticleToResponse);
 }
 
 /**
@@ -390,51 +370,7 @@ export const getTrendingArticles = cache(async (limit: number = 10, days: number
       ],
       createdAt: { gte: timeRange },
     },
-    include: {
-      client: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logoMedia: {
-            select: {
-              url: true,
-            },
-          },
-        },
-      },
-      author: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          bio: true,
-          image: true,
-        },
-      },
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-      featuredImage: {
-        select: {
-          url: true,
-          altText: true,
-        },
-      },
-      _count: {
-        select: {
-          likes: true,
-          dislikes: true,
-          favorites: true,
-          comments: true,
-          views: true,
-        },
-      },
-    },
+    select: feedArticleSelect,
     take: 100, // Fetch more for scoring
   });
 
@@ -460,7 +396,7 @@ export const getTrendingArticles = cache(async (limit: number = 10, days: number
   const topTrending = articlesWithScores
     .sort((a, b) => b.trendingScore - a.trendingScore)
     .slice(0, limit)
-    .map((item) => mapArticleToResponse(item.article));
+    .map((item) => mapFeedArticleToResponse(item.article));
 
   return topTrending;
 });
@@ -486,6 +422,7 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
       name: article.client.name,
       slug: article.client.slug,
       logo: article.client.logoMedia?.url || undefined,
+      industry: article.client.industry?.name || undefined,
     },
     category: article.category
       ? {

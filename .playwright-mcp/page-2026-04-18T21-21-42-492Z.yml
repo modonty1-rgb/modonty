@@ -1,0 +1,567 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e9]
+        - generic [ref=e10]:
+          - search "بحث المقالات" [ref=e11] [cursor=pointer]:
+            - img [ref=e13]
+            - generic [ref=e16]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e17]:
+            - link "الرئيسية" [ref=e18] [cursor=pointer]:
+              - /url: /
+              - img [ref=e20]
+              - generic [ref=e23]: الرئيسية
+            - link "الرائجة" [ref=e24] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e26]
+              - generic [ref=e29]: الرائجة
+            - link "العملاء" [ref=e30] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e32]
+              - generic [ref=e36]: العملاء
+        - generic [ref=e38]:
+          - link "عملاء بلا إعلانات" [ref=e39] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e40]: ↗
+          - button "تسجيل الدخول" [ref=e41] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e42] [cursor=pointer]
+    - main [ref=e44]:
+      - navigation "تنقل الصفحة" [ref=e45]:
+        - list [ref=e46]:
+          - listitem [ref=e47]:
+            - link "الرئيسية الرئيسية" [ref=e48] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e49]
+              - generic [ref=e52]: الرئيسية
+          - listitem [ref=e53]:
+            - img [ref=e54]
+            - link "الوسوم" [ref=e56] [cursor=pointer]:
+              - /url: /tags
+              - generic [ref=e57]: الوسوم
+          - listitem [ref=e58]:
+            - generic [ref=e60]: SEO
+      - generic [ref=e62]:
+        - heading "SEO" [level=1] [ref=e63]
+        - paragraph [ref=e64]: 16 مقال
+      - region "مقالات SEO" [ref=e66]:
+        - heading "مقالات SEO" [level=2] [ref=e67]
+        - generic [ref=e68]:
+          - 'link "ك متجر نوفا للإلكترونيات • 3 دقائق كيف تختار كلماتك المفتاحية بذكاء كيف تختار الكلمات المفتاحية بذكاء: معادلة حجم البحث ونية الشراء والصعوبة. Long-tail keywords للنتائج السريعة. Modonty أمس 0 0 0 0" [ref=e69] [cursor=pointer]':
+            - /url: /articles/smart-keyword-research-arabic
+            - generic [ref=e70]:
+              - generic [ref=e72]: ك
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - generic [ref=e75]: متجر نوفا للإلكترونيات
+                  - generic [ref=e76]: •
+                  - generic [ref=e77]:
+                    - img [ref=e78]
+                    - generic [ref=e81]: 3 دقائق
+                - heading "كيف تختار كلماتك المفتاحية بذكاء" [level=3] [ref=e82]
+                - paragraph [ref=e83]: "كيف تختار الكلمات المفتاحية بذكاء: معادلة حجم البحث ونية الشراء والصعوبة. Long-tail keywords للنتائج السريعة."
+              - generic [ref=e85]:
+                - generic [ref=e87]: Modonty
+                - generic [ref=e88]: أمس
+              - generic [ref=e91]:
+                - generic [ref=e92]:
+                  - img [ref=e93]
+                  - generic [ref=e96]: "0"
+                - generic [ref=e97]:
+                  - img [ref=e98]
+                  - generic [ref=e100]: "0"
+                - generic [ref=e101]:
+                  - img [ref=e102]
+                  - generic [ref=e104]: "0"
+                - generic [ref=e105]:
+                  - img [ref=e106]
+                  - generic [ref=e108]: "0"
+          - link "ش Al Bayt Restaurant - Updated • 3 دقائق شهادة الجودة ISO وتأثيرها على ظهورك في جوجل هل شهادات الجودة ISO تحسّن ظهورك في جوجل؟ الإجابة التفصيلية عن تأثير الاعتمادية والمصداقية على SEO وE-E-A-T. Modonty أمس 0 0 0 0" [ref=e109] [cursor=pointer]:
+            - /url: /articles/iso-certification-seo-impact
+            - generic [ref=e110]:
+              - generic [ref=e112]: ش
+              - generic [ref=e113]:
+                - generic [ref=e114]:
+                  - generic [ref=e115]: Al Bayt Restaurant - Updated
+                  - generic [ref=e116]: •
+                  - generic [ref=e117]:
+                    - img [ref=e118]
+                    - generic [ref=e121]: 3 دقائق
+                - heading "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل" [level=3] [ref=e122]
+                - paragraph [ref=e123]: هل شهادات الجودة ISO تحسّن ظهورك في جوجل؟ الإجابة التفصيلية عن تأثير الاعتمادية والمصداقية على SEO وE-E-A-T.
+              - generic [ref=e125]:
+                - generic [ref=e127]: Modonty
+                - generic [ref=e128]: أمس
+              - generic [ref=e131]:
+                - generic [ref=e132]:
+                  - img [ref=e133]
+                  - generic [ref=e136]: "0"
+                - generic [ref=e137]:
+                  - img [ref=e138]
+                  - generic [ref=e140]: "0"
+                - generic [ref=e141]:
+                  - img [ref=e142]
+                  - generic [ref=e144]: "0"
+                - generic [ref=e145]:
+                  - img [ref=e146]
+                  - generic [ref=e148]: "0"
+          - 'link "ا عيادات بلسم الطبية • 3 دقائق التسويق عبر المؤثرين في السعودية: دليل الشركات دليل التسويق عبر المؤثرين في السعودية: اختيار المؤثر الصحيح، قياس النتائج، وتجنب الأخطاء الشائعة. Micro-influencers أكثر فاعلية. Modonty أمس 0 0 0 0" [ref=e149] [cursor=pointer]':
+            - /url: /articles/influencer-marketing-saudi-brands
+            - generic [ref=e150]:
+              - generic [ref=e152]: ا
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - generic [ref=e155]: عيادات بلسم الطبية
+                  - generic [ref=e156]: •
+                  - generic [ref=e157]:
+                    - img [ref=e158]
+                    - generic [ref=e161]: 3 دقائق
+                - 'heading "التسويق عبر المؤثرين في السعودية: دليل الشركات" [level=3] [ref=e162]'
+                - paragraph [ref=e163]: "دليل التسويق عبر المؤثرين في السعودية: اختيار المؤثر الصحيح، قياس النتائج، وتجنب الأخطاء الشائعة. Micro-influencers أكثر فاعلية."
+              - generic [ref=e165]:
+                - generic [ref=e167]: Modonty
+                - generic [ref=e168]: أمس
+              - generic [ref=e171]:
+                - generic [ref=e172]:
+                  - img [ref=e173]
+                  - generic [ref=e176]: "0"
+                - generic [ref=e177]:
+                  - img [ref=e178]
+                  - generic [ref=e180]: "0"
+                - generic [ref=e181]:
+                  - img [ref=e182]
+                  - generic [ref=e184]: "0"
+                - generic [ref=e185]:
+                  - img [ref=e186]
+                  - generic [ref=e188]: "0"
+          - 'link "ك متجر نوفا للإلكترونيات • 3 دقائق كيف تربح من الكتابة الحرة في السعودية كيف تربح من الكتابة الحرة في السعودية: من 5,000 إلى 25,000 ريال شهرياً. بناء المحفظة واختيار المجال والبدء في منصات العمل الحر. Modonty أمس 0 0 0 0" [ref=e189] [cursor=pointer]':
+            - /url: /articles/freelance-writing-income-saudi
+            - generic [ref=e190]:
+              - generic [ref=e192]: ك
+              - generic [ref=e193]:
+                - generic [ref=e194]:
+                  - generic [ref=e195]: متجر نوفا للإلكترونيات
+                  - generic [ref=e196]: •
+                  - generic [ref=e197]:
+                    - img [ref=e198]
+                    - generic [ref=e201]: 3 دقائق
+                - heading "كيف تربح من الكتابة الحرة في السعودية" [level=3] [ref=e202]
+                - paragraph [ref=e203]: "كيف تربح من الكتابة الحرة في السعودية: من 5,000 إلى 25,000 ريال شهرياً. بناء المحفظة واختيار المجال والبدء في منصات العمل الحر."
+              - generic [ref=e205]:
+                - generic [ref=e207]: Modonty
+                - generic [ref=e208]: أمس
+              - generic [ref=e211]:
+                - generic [ref=e212]:
+                  - img [ref=e213]
+                  - generic [ref=e216]: "0"
+                - generic [ref=e217]:
+                  - img [ref=e218]
+                  - generic [ref=e220]: "0"
+                - generic [ref=e221]:
+                  - img [ref=e222]
+                  - generic [ref=e224]: "0"
+                - generic [ref=e225]:
+                  - img [ref=e226]
+                  - generic [ref=e228]: "0"
+          - 'link "ا شركة الاختبار • 3 دقائق البث المباشر والتجارة الإلكترونية في السعودية Live Commerce في السعودية: كيف تبيع عبر البث المباشر على سناب وإنستغرام وتيك توك؟ استراتيجيات مجربة من تجربة الصين. Modonty أمس 0 0 0 0" [ref=e229] [cursor=pointer]':
+            - /url: /articles/live-commerce-saudi-market
+            - generic [ref=e230]:
+              - generic [ref=e232]: ا
+              - generic [ref=e233]:
+                - generic [ref=e234]:
+                  - generic [ref=e235]: شركة الاختبار
+                  - generic [ref=e236]: •
+                  - generic [ref=e237]:
+                    - img [ref=e238]
+                    - generic [ref=e241]: 3 دقائق
+                - heading "البث المباشر والتجارة الإلكترونية في السعودية" [level=3] [ref=e242]
+                - paragraph [ref=e243]: "Live Commerce في السعودية: كيف تبيع عبر البث المباشر على سناب وإنستغرام وتيك توك؟ استراتيجيات مجربة من تجربة الصين."
+              - generic [ref=e245]:
+                - generic [ref=e247]: Modonty
+                - generic [ref=e248]: أمس
+              - generic [ref=e251]:
+                - generic [ref=e252]:
+                  - img [ref=e253]
+                  - generic [ref=e256]: "0"
+                - generic [ref=e257]:
+                  - img [ref=e258]
+                  - generic [ref=e260]: "0"
+                - generic [ref=e261]:
+                  - img [ref=e262]
+                  - generic [ref=e264]: "0"
+                - generic [ref=e265]:
+                  - img [ref=e266]
+                  - generic [ref=e268]: "0"
+          - 'link "ك عيادات بلسم الطبية • 3 دقائق كتابة وصف المنتج الذي يبيع كيف تكتب وصف منتج يحوّل الزائر إلى مشتري: الصيغة الفعّالة للتجارة الإلكترونية. ركز على الفائدة لا المواصفات. Modonty أمس 0 0 0 0" [ref=e269] [cursor=pointer]':
+            - /url: /articles/product-description-that-sells
+            - generic [ref=e270]:
+              - generic [ref=e272]: ك
+              - generic [ref=e273]:
+                - generic [ref=e274]:
+                  - generic [ref=e275]: عيادات بلسم الطبية
+                  - generic [ref=e276]: •
+                  - generic [ref=e277]:
+                    - img [ref=e278]
+                    - generic [ref=e281]: 3 دقائق
+                - heading "كتابة وصف المنتج الذي يبيع" [level=3] [ref=e282]
+                - paragraph [ref=e283]: "كيف تكتب وصف منتج يحوّل الزائر إلى مشتري: الصيغة الفعّالة للتجارة الإلكترونية. ركز على الفائدة لا المواصفات."
+              - generic [ref=e285]:
+                - generic [ref=e287]: Modonty
+                - generic [ref=e288]: أمس
+              - generic [ref=e291]:
+                - generic [ref=e292]:
+                  - img [ref=e293]
+                  - generic [ref=e296]: "0"
+                - generic [ref=e297]:
+                  - img [ref=e298]
+                  - generic [ref=e300]: "0"
+                - generic [ref=e301]:
+                  - img [ref=e302]
+                  - generic [ref=e304]: "0"
+                - generic [ref=e305]:
+                  - img [ref=e306]
+                  - generic [ref=e308]: "0"
+          - 'link "ا Al Bayt Restaurant - Updated • 3 دقائق التجارة الاجتماعية: البيع عبر سناب وإنستغرام كيف تبيع عبر سناب وإنستغرام في السعودية: Instagram Shopping وSnapchat Ads والمؤثرين. 60% من الشباب يشتري من السوشيال ميديا. Modonty أمس 0 0 0 0" [ref=e309] [cursor=pointer]':
+            - /url: /articles/social-commerce-snap-instagram-saudi
+            - generic [ref=e310]:
+              - generic [ref=e312]: ا
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - generic [ref=e315]: Al Bayt Restaurant - Updated
+                  - generic [ref=e316]: •
+                  - generic [ref=e317]:
+                    - img [ref=e318]
+                    - generic [ref=e321]: 3 دقائق
+                - 'heading "التجارة الاجتماعية: البيع عبر سناب وإنستغرام" [level=3] [ref=e322]'
+                - paragraph [ref=e323]: "كيف تبيع عبر سناب وإنستغرام في السعودية: Instagram Shopping وSnapchat Ads والمؤثرين. 60% من الشباب يشتري من السوشيال ميديا."
+              - generic [ref=e325]:
+                - generic [ref=e327]: Modonty
+                - generic [ref=e328]: أمس
+              - generic [ref=e331]:
+                - generic [ref=e332]:
+                  - img [ref=e333]
+                  - generic [ref=e336]: "0"
+                - generic [ref=e337]:
+                  - img [ref=e338]
+                  - generic [ref=e340]: "0"
+                - generic [ref=e341]:
+                  - img [ref=e342]
+                  - generic [ref=e344]: "0"
+                - generic [ref=e345]:
+                  - img [ref=e346]
+                  - generic [ref=e348]: "0"
+          - 'link "ت شركة الاختبار • 3 دقائق تسويق المحتوى للعيادات والمراكز الطبية تسويق المحتوى للعيادات: كيف تبني ثقة المرضى عبر المقالات الصحية والفيديوهات؟ استراتيجية E-E-A-T لظهور أعلى في جوجل. Modonty أمس 0 0 0 0" [ref=e349] [cursor=pointer]':
+            - /url: /articles/content-marketing-medical-centers
+            - generic [ref=e350]:
+              - generic [ref=e352]: ت
+              - generic [ref=e353]:
+                - generic [ref=e354]:
+                  - generic [ref=e355]: شركة الاختبار
+                  - generic [ref=e356]: •
+                  - generic [ref=e357]:
+                    - img [ref=e358]
+                    - generic [ref=e361]: 3 دقائق
+                - heading "تسويق المحتوى للعيادات والمراكز الطبية" [level=3] [ref=e362]
+                - paragraph [ref=e363]: "تسويق المحتوى للعيادات: كيف تبني ثقة المرضى عبر المقالات الصحية والفيديوهات؟ استراتيجية E-E-A-T لظهور أعلى في جوجل."
+              - generic [ref=e365]:
+                - generic [ref=e367]: Modonty
+                - generic [ref=e368]: أمس
+              - generic [ref=e371]:
+                - generic [ref=e372]:
+                  - img [ref=e373]
+                  - generic [ref=e376]: "0"
+                - generic [ref=e377]:
+                  - img [ref=e378]
+                  - generic [ref=e380]: "0"
+                - generic [ref=e381]:
+                  - img [ref=e382]
+                  - generic [ref=e384]: "0"
+                - generic [ref=e385]:
+                  - img [ref=e386]
+                  - generic [ref=e388]: "0"
+          - 'link "ب متجر نوفا للإلكترونيات • 3 دقائق برامج الولاء في المتاجر السعودية برامج الولاء في التجارة الإلكترونية السعودية: لماذا تحتاجها، أفضل النماذج، وكيف تبني برنامجاً يحافظ على عملائك. Modonty أمس 0 0 0 0" [ref=e389] [cursor=pointer]':
+            - /url: /articles/loyalty-programs-saudi-ecommerce
+            - generic [ref=e390]:
+              - generic [ref=e392]: ب
+              - generic [ref=e393]:
+                - generic [ref=e394]:
+                  - generic [ref=e395]: متجر نوفا للإلكترونيات
+                  - generic [ref=e396]: •
+                  - generic [ref=e397]:
+                    - img [ref=e398]
+                    - generic [ref=e401]: 3 دقائق
+                - heading "برامج الولاء في المتاجر السعودية" [level=3] [ref=e402]
+                - paragraph [ref=e403]: "برامج الولاء في التجارة الإلكترونية السعودية: لماذا تحتاجها، أفضل النماذج، وكيف تبني برنامجاً يحافظ على عملائك."
+              - generic [ref=e405]:
+                - generic [ref=e407]: Modonty
+                - generic [ref=e408]: أمس
+              - generic [ref=e411]:
+                - generic [ref=e412]:
+                  - img [ref=e413]
+                  - generic [ref=e416]: "0"
+                - generic [ref=e417]:
+                  - img [ref=e418]
+                  - generic [ref=e420]: "0"
+                - generic [ref=e421]:
+                  - img [ref=e422]
+                  - generic [ref=e424]: "0"
+                - generic [ref=e425]:
+                  - img [ref=e426]
+                  - generic [ref=e428]: "0"
+          - 'link "ت Al Bayt Restaurant - Updated • 3 دقائق تحسين تجربة المستخدم لزيادة المبيعات كيف تحسن تجربة المستخدم لزيادة مبيعات متجرك: تبسيط الدفع، تسريع التحميل، وتحسين الجوال. استراتيجيات ROI مضمونة. Modonty أمس 0 0 0 0" [ref=e429] [cursor=pointer]':
+            - /url: /articles/ux-improve-sales-ecommerce
+            - generic [ref=e430]:
+              - generic [ref=e432]: ت
+              - generic [ref=e433]:
+                - generic [ref=e434]:
+                  - generic [ref=e435]: Al Bayt Restaurant - Updated
+                  - generic [ref=e436]: •
+                  - generic [ref=e437]:
+                    - img [ref=e438]
+                    - generic [ref=e441]: 3 دقائق
+                - heading "تحسين تجربة المستخدم لزيادة المبيعات" [level=3] [ref=e442]
+                - paragraph [ref=e443]: "كيف تحسن تجربة المستخدم لزيادة مبيعات متجرك: تبسيط الدفع، تسريع التحميل، وتحسين الجوال. استراتيجيات ROI مضمونة."
+              - generic [ref=e445]:
+                - generic [ref=e447]: Modonty
+                - generic [ref=e448]: أمس
+              - generic [ref=e451]:
+                - generic [ref=e452]:
+                  - img [ref=e453]
+                  - generic [ref=e456]: "0"
+                - generic [ref=e457]:
+                  - img [ref=e458]
+                  - generic [ref=e460]: "0"
+                - generic [ref=e461]:
+                  - img [ref=e462]
+                  - generic [ref=e464]: "0"
+                - generic [ref=e465]:
+                  - img [ref=e466]
+                  - generic [ref=e468]: "0"
+          - 'link "ك عيادات بلسم الطبية • 3 دقائق كيف تختار منصة التجارة الإلكترونية المناسبة مقارنة شاملة بين منصات التجارة الإلكترونية: Shopify وSalla وZid وWooCommerce. اختر المنصة المناسبة لأعمالك في السعودية. Modonty أمس 0 0 0 0" [ref=e469] [cursor=pointer]':
+            - /url: /articles/choose-ecommerce-platform-2025
+            - generic [ref=e470]:
+              - generic [ref=e472]: ك
+              - generic [ref=e473]:
+                - generic [ref=e474]:
+                  - generic [ref=e475]: عيادات بلسم الطبية
+                  - generic [ref=e476]: •
+                  - generic [ref=e477]:
+                    - img [ref=e478]
+                    - generic [ref=e481]: 3 دقائق
+                - heading "كيف تختار منصة التجارة الإلكترونية المناسبة" [level=3] [ref=e482]
+                - paragraph [ref=e483]: "مقارنة شاملة بين منصات التجارة الإلكترونية: Shopify وSalla وZid وWooCommerce. اختر المنصة المناسبة لأعمالك في السعودية."
+              - generic [ref=e485]:
+                - generic [ref=e487]: Modonty
+                - generic [ref=e488]: أمس
+              - generic [ref=e491]:
+                - generic [ref=e492]:
+                  - img [ref=e493]
+                  - generic [ref=e496]: "0"
+                - generic [ref=e497]:
+                  - img [ref=e498]
+                  - generic [ref=e500]: "0"
+                - generic [ref=e501]:
+                  - img [ref=e502]
+                  - generic [ref=e504]: "0"
+                - generic [ref=e505]:
+                  - img [ref=e506]
+                  - generic [ref=e508]: "0"
+          - 'link "ت متجر نوفا للإلكترونيات • 3 دقائق تسويق عيادتك الطبية عبر الإنترنت كيف تسوّق عيادتك الطبية رقمياً: Google My Business، المحتوى التعليمي، وإدارة التقييمات. دليل عملي للأطباء. Modonty أمس 0 0 0 0" [ref=e509] [cursor=pointer]':
+            - /url: /articles/medical-clinic-digital-marketing
+            - generic [ref=e510]:
+              - generic [ref=e512]: ت
+              - generic [ref=e513]:
+                - generic [ref=e514]:
+                  - generic [ref=e515]: متجر نوفا للإلكترونيات
+                  - generic [ref=e516]: •
+                  - generic [ref=e517]:
+                    - img [ref=e518]
+                    - generic [ref=e521]: 3 دقائق
+                - heading "تسويق عيادتك الطبية عبر الإنترنت" [level=3] [ref=e522]
+                - paragraph [ref=e523]: "كيف تسوّق عيادتك الطبية رقمياً: Google My Business، المحتوى التعليمي، وإدارة التقييمات. دليل عملي للأطباء."
+              - generic [ref=e525]:
+                - generic [ref=e527]: Modonty
+                - generic [ref=e528]: أمس
+              - generic [ref=e531]:
+                - generic [ref=e532]:
+                  - img [ref=e533]
+                  - generic [ref=e536]: "0"
+                - generic [ref=e537]:
+                  - img [ref=e538]
+                  - generic [ref=e540]: "0"
+                - generic [ref=e541]:
+                  - img [ref=e542]
+                  - generic [ref=e544]: "0"
+                - generic [ref=e545]:
+                  - img [ref=e546]
+                  - generic [ref=e548]: "0"
+          - 'link "أ شركة الاختبار • 3 دقائق أفضل أدوات SEO المجانية لعام 2025 أفضل أدوات SEO المجانية في 2025: Google Search Console، Ahrefs، وأدوات بحث الكلمات. كل ما تحتاجه دون أن تدفع قرشاً. Modonty أمس 0 0 0 0" [ref=e549] [cursor=pointer]':
+            - /url: /articles/best-free-seo-tools-2025
+            - generic [ref=e550]:
+              - generic [ref=e552]: أ
+              - generic [ref=e553]:
+                - generic [ref=e554]:
+                  - generic [ref=e555]: شركة الاختبار
+                  - generic [ref=e556]: •
+                  - generic [ref=e557]:
+                    - img [ref=e558]
+                    - generic [ref=e561]: 3 دقائق
+                - heading "أفضل أدوات SEO المجانية لعام 2025" [level=3] [ref=e562]
+                - paragraph [ref=e563]: "أفضل أدوات SEO المجانية في 2025: Google Search Console، Ahrefs، وأدوات بحث الكلمات. كل ما تحتاجه دون أن تدفع قرشاً."
+              - generic [ref=e565]:
+                - generic [ref=e567]: Modonty
+                - generic [ref=e568]: أمس
+              - generic [ref=e571]:
+                - generic [ref=e572]:
+                  - img [ref=e573]
+                  - generic [ref=e576]: "0"
+                - generic [ref=e577]:
+                  - img [ref=e578]
+                  - generic [ref=e580]: "0"
+                - generic [ref=e581]:
+                  - img [ref=e582]
+                  - generic [ref=e584]: "0"
+                - generic [ref=e585]:
+                  - img [ref=e586]
+                  - generic [ref=e588]: "0"
+          - 'link "ك عيادات بلسم الطبية • 3 دقائق كيف تبني استراتيجية محتوى ناجحة في 2025 دليلك الكامل لبناء استراتيجية محتوى ناجحة: تحديد الجمهور، اختيار القنوات، وقياس النتائج. خطوات مجربة لنمو مستدام. Modonty أمس 0 0 0 0" [ref=e589] [cursor=pointer]':
+            - /url: /articles/content-strategy-guide-2025
+            - generic [ref=e590]:
+              - generic [ref=e592]: ك
+              - generic [ref=e593]:
+                - generic [ref=e594]:
+                  - generic [ref=e595]: عيادات بلسم الطبية
+                  - generic [ref=e596]: •
+                  - generic [ref=e597]:
+                    - img [ref=e598]
+                    - generic [ref=e601]: 3 دقائق
+                - heading "كيف تبني استراتيجية محتوى ناجحة في 2025" [level=3] [ref=e602]
+                - paragraph [ref=e603]: "دليلك الكامل لبناء استراتيجية محتوى ناجحة: تحديد الجمهور، اختيار القنوات، وقياس النتائج. خطوات مجربة لنمو مستدام."
+              - generic [ref=e605]:
+                - generic [ref=e607]: Modonty
+                - generic [ref=e608]: أمس
+              - generic [ref=e611]:
+                - generic [ref=e612]:
+                  - img [ref=e613]
+                  - generic [ref=e616]: "0"
+                - generic [ref=e617]:
+                  - img [ref=e618]
+                  - generic [ref=e620]: "0"
+                - generic [ref=e621]:
+                  - img [ref=e622]
+                  - generic [ref=e624]: "0"
+                - generic [ref=e625]:
+                  - img [ref=e626]
+                  - generic [ref=e628]: "0"
+          - 'link "ا Al Bayt Restaurant - Updated • 4 دقائق الذكاء الاصطناعي في الرعاية الصحية السعودية كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: التشخيص بالأشعة، التطبيب عن بُعد، ونتائج مذهلة. Modonty أمس 0 0 0 0" [ref=e629] [cursor=pointer]':
+            - /url: /articles/ai-healthcare-saudi-2025
+            - generic [ref=e630]:
+              - generic [ref=e632]: ا
+              - generic [ref=e633]:
+                - generic [ref=e634]:
+                  - generic [ref=e635]: Al Bayt Restaurant - Updated
+                  - generic [ref=e636]: •
+                  - generic [ref=e637]:
+                    - img [ref=e638]
+                    - generic [ref=e641]: 4 دقائق
+                - heading "الذكاء الاصطناعي في الرعاية الصحية السعودية" [level=3] [ref=e642]
+                - paragraph [ref=e643]: "كيف يُحدث الذكاء الاصطناعي ثورة في الرعاية الصحية السعودية: التشخيص بالأشعة، التطبيب عن بُعد، ونتائج مذهلة."
+              - generic [ref=e645]:
+                - generic [ref=e647]: Modonty
+                - generic [ref=e648]: أمس
+              - generic [ref=e651]:
+                - generic [ref=e652]:
+                  - img [ref=e653]
+                  - generic [ref=e656]: "0"
+                - generic [ref=e657]:
+                  - img [ref=e658]
+                  - generic [ref=e660]: "0"
+                - generic [ref=e661]:
+                  - img [ref=e662]
+                  - generic [ref=e664]: "0"
+                - generic [ref=e665]:
+                  - img [ref=e666]
+                  - generic [ref=e668]: "0"
+          - 'link "د شركة الاختبار • 4 دقائق دليل SEO المتاجر الإلكترونية 2025 دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع. Modonty أمس 0 0 0 0" [ref=e669] [cursor=pointer]':
+            - /url: /articles/seo-guide-ecommerce-2025
+            - generic [ref=e670]:
+              - generic [ref=e672]: د
+              - generic [ref=e673]:
+                - generic [ref=e674]:
+                  - generic [ref=e675]: شركة الاختبار
+                  - generic [ref=e676]: •
+                  - generic [ref=e677]:
+                    - img [ref=e678]
+                    - generic [ref=e681]: 4 دقائق
+                - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e682]
+                - paragraph [ref=e683]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع."
+              - generic [ref=e685]:
+                - generic [ref=e687]: Modonty
+                - generic [ref=e688]: أمس
+              - generic [ref=e691]:
+                - generic [ref=e692]:
+                  - img [ref=e693]
+                  - generic [ref=e696]: "0"
+                - generic [ref=e697]:
+                  - img [ref=e698]
+                  - generic [ref=e700]: "0"
+                - generic [ref=e701]:
+                  - img [ref=e702]
+                  - generic [ref=e704]: "0"
+                - generic [ref=e705]:
+                  - img [ref=e706]
+                  - generic [ref=e708]: "0"
+    - contentinfo [ref=e709]:
+      - generic [ref=e710]:
+        - generic [ref=e711]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e712] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e713]: ↗
+      - navigation "روابط سريعة" [ref=e714]:
+        - link "الرئيسية" [ref=e715] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e716] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e717] [cursor=pointer]:
+          - /url: /clients
+        - link "الصناعات" [ref=e718] [cursor=pointer]:
+          - /url: /industries
+        - link "الوسوم" [ref=e719] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e720] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e721] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e722]:
+        - link "الشروط والأحكام" [ref=e723] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e724] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e725] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e726] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e727] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e728]: © 2026 مودونتي
+  - generic [ref=e733] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e734]:
+      - img [ref=e735]
+    - generic [ref=e738]:
+      - button "Open issues overlay" [ref=e739]:
+        - generic [ref=e740]:
+          - generic [ref=e741]: "3"
+          - generic [ref=e742]: "4"
+        - generic [ref=e743]:
+          - text: Issue
+          - generic [ref=e744]: s
+      - button "Collapse issues badge" [ref=e745]:
+        - img [ref=e746]
+  - alert [ref=e748]

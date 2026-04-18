@@ -68,6 +68,15 @@ export interface ModontySettings {
   industriesSeoDescription: string | null;
   articlesSeoTitle: string | null;
   articlesSeoDescription: string | null;
+  b2bLabel: string | null;
+  b2bHeadline: string | null;
+  b2bBullet1: string | null;
+  b2bBullet2: string | null;
+  b2bBullet3: string | null;
+  b2bCtaText: string | null;
+  b2bCtaUrl: string | null;
+  platformTagline: string | null;
+  platformDescription: string | null;
 }
 
 export interface SettingsJsonLdCache {
@@ -293,6 +302,15 @@ const DEFAULT_SETTINGS: AllSettings = {
   articlesPageJsonLdStructuredData: null,
   articlesPageJsonLdLastGenerated: null,
   articlesPageJsonLdValidationReport: null,
+  b2bLabel: null,
+  b2bHeadline: null,
+  b2bBullet1: null,
+  b2bBullet2: null,
+  b2bBullet3: null,
+  b2bCtaText: null,
+  b2bCtaUrl: null,
+  platformTagline: null,
+  platformDescription: null,
 };
 
 /** Build Organization sameAs array from Settings social URLs (for JSON-LD). Falls back to [] if none set. */
@@ -435,6 +453,15 @@ export async function getAllSettings(): Promise<AllSettings> {
         industriesSeoDescription: (newSettings as Record<string, unknown>).industriesSeoDescription as string | null,
         articlesSeoTitle: (newSettings as Record<string, unknown>).articlesSeoTitle as string | null,
         articlesSeoDescription: (newSettings as Record<string, unknown>).articlesSeoDescription as string | null,
+        b2bLabel: newSettings.b2bLabel,
+        b2bHeadline: newSettings.b2bHeadline,
+        b2bBullet1: newSettings.b2bBullet1,
+        b2bBullet2: newSettings.b2bBullet2,
+        b2bBullet3: newSettings.b2bBullet3,
+        b2bCtaText: newSettings.b2bCtaText,
+        b2bCtaUrl: newSettings.b2bCtaUrl,
+        platformTagline: (newSettings as Record<string, unknown>).platformTagline as string | null ?? null,
+        platformDescription: (newSettings as Record<string, unknown>).platformDescription as string | null ?? null,
         jsonLdStructuredData: newSettings.jsonLdStructuredData,
         jsonLdLastGenerated: newSettings.jsonLdLastGenerated,
         jsonLdValidationReport: (newSettings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -558,6 +585,15 @@ export async function getAllSettings(): Promise<AllSettings> {
       industriesSeoDescription: (settings as Record<string, unknown>).industriesSeoDescription as string | null ?? null,
       articlesSeoTitle: (settings as Record<string, unknown>).articlesSeoTitle as string | null ?? null,
       articlesSeoDescription: (settings as Record<string, unknown>).articlesSeoDescription as string | null ?? null,
+      b2bLabel: settings.b2bLabel,
+      b2bHeadline: settings.b2bHeadline,
+      b2bBullet1: settings.b2bBullet1,
+      b2bBullet2: settings.b2bBullet2,
+      b2bBullet3: settings.b2bBullet3,
+      b2bCtaText: settings.b2bCtaText,
+      b2bCtaUrl: settings.b2bCtaUrl,
+      platformTagline: (settings as Record<string, unknown>).platformTagline as string | null ?? null,
+      platformDescription: (settings as Record<string, unknown>).platformDescription as string | null ?? null,
       jsonLdStructuredData: settings.jsonLdStructuredData,
       jsonLdLastGenerated: settings.jsonLdLastGenerated,
       jsonLdValidationReport: (settings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -822,6 +858,15 @@ export async function saveModontySettings(data: Partial<ModontySettings>): Promi
         industriesSeoDescription: data.industriesSeoDescription,
         articlesSeoTitle: data.articlesSeoTitle,
         articlesSeoDescription: data.articlesSeoDescription,
+        b2bLabel: data.b2bLabel,
+        b2bHeadline: data.b2bHeadline,
+        b2bBullet1: data.b2bBullet1,
+        b2bBullet2: data.b2bBullet2,
+        b2bBullet3: data.b2bBullet3,
+        b2bCtaText: data.b2bCtaText,
+        b2bCtaUrl: data.b2bCtaUrl,
+        platformTagline: data.platformTagline,
+        platformDescription: data.platformDescription,
       },
     });
     revalidatePath("/settings");

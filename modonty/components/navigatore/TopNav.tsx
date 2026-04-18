@@ -4,6 +4,8 @@ import { LogoNav } from "@/components/navigatore/LogoNav";
 import { ChatTriggerButton } from "@/components/chatbot/ChatTriggerButton";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { NotificationsBell } from "@/components/notifications/NotificationsBell";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
 
 export type NavSection = "home" | "trending" | "categories" | "clients" | "none";
 
@@ -14,7 +16,7 @@ interface TopNavProps {
 
 export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-card/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90 dark:supports-[backdrop-filter]:bg-card/90 shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-accent/20 bg-white/95 dark:bg-card/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90 dark:supports-[backdrop-filter]:bg-card/90 shadow-sm">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:start-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md focus:text-sm font-medium"
@@ -28,11 +30,13 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
           <LogoNav />
 
           {/* Col 2 — CTA fills center column */}
-          <a
+          <CtaTrackedLink
             href="https://www.jbrseo.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full h-9 text-[11px] font-bold bg-gradient-to-l from-primary to-violet-600 text-white rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:brightness-105 active:scale-[0.97] transition-all"
+            label="Header Mobile CTA — عملاء بلا إعلانات"
+            type="BUTTON"
+            className="flex items-center justify-center gap-2 w-full h-9 text-[11px] font-bold bg-accent/15 text-accent rounded-full border border-accent/30 active:scale-[0.97] transition-all hover:bg-accent/25"
             aria-label="عملاء بلا إعلانات — جبر SEO"
           >
             <span className="relative flex h-1.5 w-1.5 shrink-0">
@@ -40,7 +44,7 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
             </span>
             عملاء بلا إعلانات
-          </a>
+          </CtaTrackedLink>
 
           {/* Col 3 — Actions */}
           <div className="flex items-center justify-end gap-1.5">
@@ -54,6 +58,7 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
         <TopNavDesktop activeSection={activeSection} favoritesCount={favoritesCount} />
       </div>
       <ChatSheetContainer />
+      <ScrollProgress />
     </header>
   );
 }

@@ -36,11 +36,13 @@ export function ClientSelector({
               Loading clients...
             </div>
           ) : (
-            <Select value={clientId} onValueChange={onClientChange} required>
+            <Select value={clientId} onValueChange={onClientChange}>
               <SelectTrigger id="client-select" className="w-full">
-                <SelectValue placeholder="Select a client" />
+                <SelectValue placeholder="Select a client (required)" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">General — no client (visible to all)</SelectItem>
+                <SelectItem value="modonty">Modonty — Platform Assets</SelectItem>
                 {clients.map((client) => (
                   <SelectItem key={client.id} value={client.id}>
                     {client.name}
@@ -50,7 +52,7 @@ export function ClientSelector({
             </Select>
           )}
           <p className="text-xs text-muted-foreground">
-            All uploaded media will be associated with the selected client.
+            General images appear in all client media pickers. Client images appear only for that client.
           </p>
         </div>
       </CardContent>

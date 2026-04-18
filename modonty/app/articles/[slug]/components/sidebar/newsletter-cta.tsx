@@ -11,9 +11,10 @@ import { trackCtaClick } from "@/lib/cta-tracking";
 interface NewsletterCTAProps {
   clientId: string;
   articleId?: string;
+  ctaText?: string | null;
 }
 
-export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
+export function NewsletterCTA({ clientId, articleId, ctaText }: NewsletterCTAProps) {
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -75,6 +76,9 @@ export function NewsletterCTA({ clientId, articleId }: NewsletterCTAProps) {
       </div>
       <div className="border-b border-border" />
       <CardContent className="p-4 flex flex-col gap-3">
+        {ctaText && (
+          <p className="text-xs text-muted-foreground leading-relaxed">{ctaText}</p>
+        )}
         {subscribed ? (
           <p className="text-sm text-muted-foreground">
             {alreadySubscribed ? "أنت مشترك مسبقاً في هذه النشرة." : "شكراً لك! تم الاشتراك بنجاح."}

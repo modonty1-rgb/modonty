@@ -18,7 +18,7 @@ export function HeroCover({ clientName, coverImage }: HeroCoverProps) {
     >
       {coverImage && (
         <>
-          <div className="relative w-full aspect-[6/1]">
+          <div className="relative w-full aspect-[3/1] sm:aspect-[4/1] md:aspect-[6/1]">
             <OptimizedImage
               src={coverImage}
               alt={`غلاف ${clientName}`}

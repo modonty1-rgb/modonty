@@ -1,0 +1,160 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Articles" [ref=e100] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e104]: New
+          - navigation "Main navigation" [ref=e106]:
+            - link "Modonty Modonty" [ref=e107] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e109]
+              - generic [ref=e110]: Modonty
+            - generic [ref=e112]:
+              - link "Articles" [ref=e113] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e114]
+              - link "Clients" [ref=e116] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e117]
+              - link "Media" [ref=e119] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e120]
+          - generic [ref=e122]:
+            - link "4" [ref=e123] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e124]:
+                - img
+                - generic [ref=e125]: "4"
+            - button "M" [ref=e126] [cursor=pointer]:
+              - generic [ref=e128]: M
+      - generic [ref=e129]:
+        - generic [ref=e130]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e131]:
+          - button "Send Note" [ref=e132] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e133] [cursor=pointer]:
+            - img
+      - main [ref=e134]:
+        - generic [ref=e189]:
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - generic [ref=e194]:
+                - generic [ref=e195]: Step 2 of 5
+                - generic [ref=e196]: "SEO Health: 34%"
+                - generic [ref=e199]: Live Analysis
+              - generic [ref=e200]:
+                - generic [ref=e202]: 36% Complete
+                - button "Save Draft" [ref=e204] [cursor=pointer]
+            - 'generic "Overall progress: 36%" [ref=e303]'
+          - generic [ref=e211]:
+            - 'tabpanel "Content: 30% complete. مطلوب: محتوى المقال · اختياري: عدد الكلمات، وقت القراءة، عمق المحتوى، النص المستخرج، صورة المقال الرئيسية، معرض الصور" [ref=e304]':
+              - generic [ref=e307]:
+                - generic [ref=e308]
+                - generic [ref=e313]
+              - generic [ref=e349]:
+                - generic [ref=e350]
+                - generic [ref=e353]
+            - tablist [ref=e251]:
+              - 'tab "Basic: 67% complete. اختياري: التصنيف، ملخص المقال، الوسوم" [ref=e300] [cursor=pointer]':
+                - img [ref=e359]
+                - generic [ref=e254]: Basic
+                - generic [ref=e255]: 67%
+              - 'tab "Content: 30% complete. مطلوب: محتوى المقال · اختياري: عدد الكلمات، وقت القراءة، عمق المحتوى، النص المستخرج، صورة المقال الرئيسية، معرض الصور" [active] [selected] [ref=e256] [cursor=pointer]':
+                - generic [ref=e257]: "2"
+                - generic [ref=e258]: Content
+                - generic [ref=e259]: 30%
+              - 'tab "SEO: 34% complete. العنوان والوصف: مفقود — أضف وصف في تبويب SEO · المحتوى: المقال فارغ — أضف محتوى · المحتوى: مفقود — أضف ملخص للمقال · الصور: مفقودة — أضف صورة من تبويب المحتوى · البيانات المهيكلة: أكمل العنوان والوصف والرابط الأساسي · البيانات المهيكلة: ينقص: تاريخ النشر، وصف البحث · الإعدادات التقنية: استخدم https://" [ref=e301] [cursor=pointer]':
+                - img [ref=e262]
+                - generic [ref=e264]: SEO
+                - generic [ref=e265]: 34%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e266] [cursor=pointer]':
+                - generic [ref=e267]: "4"
+                - generic [ref=e268]: FAQs & Related
+                - generic [ref=e269]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e302] [cursor=pointer]':
+                - generic [ref=e271]: "5"
+                - generic [ref=e272]: Publish
+                - generic [ref=e273]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e184] [cursor=pointer]:
+    - img [ref=e185]
+  - alert [ref=e188]

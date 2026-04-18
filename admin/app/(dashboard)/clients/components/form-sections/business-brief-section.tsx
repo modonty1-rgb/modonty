@@ -17,6 +17,7 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
   const { setValue, watch, formState: { errors } } = form;
   const businessBrief = useWatch({ control: form.control, name: "businessBrief" }) || "";
   const slogan = watch("slogan");
+  const newsletterCtaText = watch("newsletterCtaText");
 
   return (
     <div className="space-y-4">
@@ -71,6 +72,26 @@ export function BusinessBriefSection({ form, showHeader = true }: BusinessBriefS
                 max={100}
                 className="ml-1"
                 aboveMaxHint="Exceeds recommended limit (100 chars). Keep it short and clear for better recall (Schema.org best practices)."
+              />
+            </div>
+          )}
+        </div>
+        <div>
+          <FormInput
+            name="newsletterCtaText"
+            label="Newsletter CTA Text"
+            value={newsletterCtaText || ""}
+            onChange={(e) => form.setValue("newsletterCtaText", e.target.value || null, { shouldValidate: true })}
+            error={errors.newsletterCtaText?.message}
+            placeholder="e.g., اشترك للحصول على أحدث المقالات في مجال الرعاية الصحية"
+            hint="Displayed in the newsletter subscription box on article pages."
+          />
+          {newsletterCtaText && (
+            <div className="mt-1">
+              <CharacterCounter
+                current={newsletterCtaText.length}
+                max={300}
+                aboveMaxHint="Exceeds limit (300 chars)."
               />
             </div>
           )}

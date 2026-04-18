@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import NextImage from "next/image";
+import Link from "@/components/link";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
@@ -168,6 +170,36 @@ async function AboutContent() {
         <div className="prose prose-sm max-w-none prose-h2:text-foreground prose-h2:font-bold prose-h2:border-t prose-h2:border-border prose-h2:pt-6 prose-h2:mt-8 prose-h3:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground">
           <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
           <div dangerouslySetInnerHTML={{ __html: pageContent }} />
+        </div>
+
+        {/* B2B section — JBRSEO-7 */}
+        <div className="mt-12 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-primary/20 p-8">
+          <h2 className="text-2xl font-bold text-foreground mb-3">للشركات والأعمال</h2>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            هل تريد عملاء من جوجل بدون إعلانات؟ مودونتي تُنشئ لك محتوى SEO احترافياً يظهر في أعلى نتائج البحث ويجذب عملاء حقيقيين.
+          </p>
+          <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
+            {[
+              "محتوى مُحسَّن لمحركات البحث يبني سلطتك الرقمية",
+              "مقالات تستهدف كلماتك المفتاحية وتجلب زيارات عضوية مستمرة",
+              "نتائج قابلة للقياس — ترتيب أعلى، ثقة أكثر، مبيعات أكبر",
+            ].map((point) => (
+              <li key={point} className="flex items-start gap-3">
+                <span className="mt-0.5 h-5 w-5 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 text-xs font-bold">✓</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+          <CtaTrackedLink
+            href="https://www.jbrseo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            label="About Page B2B CTA — ابدأ مع جبر SEO"
+            type="BUTTON"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            ابدأ مع جبر SEO ↗
+          </CtaTrackedLink>
         </div>
       </div>
     </>

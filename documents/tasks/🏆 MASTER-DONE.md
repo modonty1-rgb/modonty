@@ -1,7 +1,19 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-13
+> **آخر تحديث:** 2026-04-18 (Session 40 — OBS-025 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 40 — Modonty UX Fixes (2026-04-18)
+
+- [x] **OBS-025** — Client hero "SA" → "السعودية": exported `localizeCountry()` from `utils.tsx` + used in `hero-meta.tsx:53`
+
+### Verified already fixed (no code change needed)
+- [x] **OBS-009** — Article title overflow (break-words) — confirmed in `article-header.tsx`
+- [x] **OBS-011** — Bottom nav covers content — confirmed `pb-16 md:pb-0` in `layout.tsx`
+- [x] **OBS-016** — 404 missing bottom nav — confirmed root layout includes `MobileFooterWithFavorites`
+- [x] **OBS-026/CP-14** — Hero stats row wraps on mobile — confirmed `flex-nowrap` + `shrink-0` in `hero-meta.tsx`
 
 ---
 
@@ -358,7 +370,185 @@
 
 ---
 
+## 20. Modonty + Admin — إصلاحات 2026-04-17
+
+- [x] **QAUDIT-M1-FIX** — `select` بدل `include` في 4 feed functions (`getArticlesCached`, `getFeaturedArticles`, `getRecentArticles`, `getTrendingArticles`) — توفير ~300-800KB لكل طلب feed — File: `modonty/app/api/helpers/article-queries.ts`
+- [x] **FEED-1** — PostCard no-image placeholder: شعار العميل (opacity-30) بدل المربع الفارغ — File: `modonty/components/feed/postcard/PostCardHeroImage.tsx`
+- [x] **OTP-AUDIT-3** — Rate limiting (3 requests/10min) + `crypto.randomInt` بدل `Math.random()` — File: `admin/app/(dashboard)/clients/actions/clients-actions/slug-change-otp.ts`
+- [x] **AvatarFallback crash** — hero-avatar.tsx: `AvatarFallback` → `span` — 2026-04-16
+- [x] **create-article.ts finalStatus bug** — WRITING hardcoded → ديناميكي — 2026-04-16
+- [x] **CP-3** ✅ 2026-04-17 — Hero cover aspect ratio: `aspect-[6/1]` → `aspect-[3/1] sm:aspect-[4/1] md:aspect-[6/1]` — موبايل 62px → 125px — File: `hero-cover.tsx`
+- [x] **OBS-025** ✅ 2026-04-17 — Country code "SA" → "السعودية" عبر `localizeCountry()` map — File: `hero/utils.tsx`
+- [x] **CP-4** ✅ 2026-04-17 — Tabs: `shortLabel` للـ "تواصل" + gradient fade edges + padding مضغوط — File: `client-tabs-nav.tsx`
+- [x] **CP-5** ✅ 2026-04-17 — Sidebar: استبدل "ملخص الأعمال" بـ grid إحصائيات (مقال · متابع · مشاهدة) مع `Intl.NumberFormat("ar-SA")` — Files: `client-page-left.tsx`, `types.ts`, `page.tsx`
+- [x] **CP-7** ✅ 2026-04-17 — Hero stats row: icon + bold number + label + faint dividers بدل plain text dots — File: `hero-meta.tsx`
+- [x] **CP-8** ✅ 2026-04-17 — Feed heading "أحدث المقالات" + count badge (يظهر فقط إذا posts > 0) — File: `client-page-feed.tsx`
+- [x] **CP-9** ✅ 2026-04-17 — Follow button: brand teal (accent) + bold "✓ متابَع" عند المتابعة، hover → destructive red "إلغاء المتابعة" — File: `client-follow-button.tsx`
+- [x] **CP-10** ✅ 2026-04-17 — Mobile back button "العملاء ›" (`sm:hidden`) + breadcrumb `hidden sm:block` — File: `layout.tsx`
+- [x] **CP-14** ✅ 2026-04-17 — Hero stats row regression: `flex-nowrap` + `text-xs sm:text-sm` + `shrink-0` على كل stat — File: `hero-meta.tsx`
+- [x] **CP-6** ✅ 2026-04-17 — Sidebar "الصور": removed `ClientPhotosPreview` from `client-page-right.tsx` — photos only in dedicated tab — File: `client-page-right.tsx`
+- [x] **CP-11** ✅ 2026-04-17 — إخفاء تابات "الريلز" و"الإعجابات" تلقائياً — filter in `layout.tsx` (Server Component), `ALL_TAB_ITEMS` in shared `client-tab-items.ts` — Files: `layout.tsx`, `client-tabs-nav.tsx`, `client-tab-items.ts`
+- [x] **CP-12** ✅ 2026-04-17 — شارة التوثق: `h-5 w-5 md:h-6 md:w-6` → `h-6 w-6 md:h-7 md:w-7` — File: `hero-name-row.tsx`
+- [x] **CP-13** ✅ 2026-04-17 — Share button: `aria-label="مشاركة"` already present in `ShareButtons.tsx` — VERIFIED ✓
+- [x] **CP-2** ✅ 2026-04-17 — Hero tagline showed English `businessBrief` on Arabic public page — fixed: `getTagline()` now uses `slogan` (short Arabic motto) → falls back to `industry · location` — Files: `hero/types.ts`, `hero/utils.tsx`
+- [x] **ARCH-1** ✅ 2026-04-17 — Archive/Unarchive buttons had no feedback — added toast: "تم أرشفة المقال / تم إلغاء الأرشفة" — File: `archive-article-button.tsx`
+- [x] **PUSH-4** ✅ 2026-04-17 — SEO gate error was English: `"SEO score is X%..."` → Arabic: `"نقاط SEO X% — الحد الأدنى 60%..."` — File: `update-article.ts`
+- [x] **PUSH-5** ✅ 2026-04-17 — VERIFIED already uses `messages.error.save_failed` in both error cases — no change needed — File: `article-form-navigation.tsx`
+- [x] **A9** ✅ 2026-04-17 — VERIFIED: "اقرأ المزيد" is `aria-hidden="true"` (correct stretched-link pattern — title link is the accessible element) — no change needed
+- [x] **QAUDIT-M2** ✅ 2026-04-17 — VERIFIED: `getArticleComments` uses lean `commentSelect` (id, content, createdAt, status, parentId, author: {id,name,image}, _count) — no change needed
+- [x] **QAUDIT-M3** ✅ 2026-04-17 — VERIFIED: `getArticleFaqs` uses explicit `select: {id, question, answer, position}` — no change needed
+- [x] **QAUDIT-M4** ✅ 2026-04-17 — VERIFIED: all 3 related article functions use proper `select:` + `take: 6`. Bonus: fixed `getArticleBySlug` — `client: { include: ... }` → `client: { select: {id, name, slug, description, logoMedia, heroImageMedia} }` — File: `article-data.ts`
+- [x] **SEO-A4** ✅ 2026-04-17 — Article image in JSON-LD was a plain URL string → now proper `ImageObject` `{@type, url, width, height, name}` — Fixed in 2 places: `admin/helpers/article-seo-config/generate-article-structured-data.ts` + `modonty/lib/seo/index.ts`
+- [x] **OBS-023** ✅ 2026-04-17 — VERIFIED: toast already present in `ClientHeroModal.handleSave` — no change needed
+- [x] **USR-N1** ✅ 2026-04-17 — `faq_reply` notification showed "اختر رسالة" because `relatedId` was never saved + no FAQ render path. Fix: (1) added `relatedId: faq.id` in console's `replyToQuestion` action. (2) Added `faq_reply` case in modonty notifications page — fetches `ArticleFAQ` and renders question + answer + article link — Files: `console/questions/actions/question-actions.ts`, `modonty/app/users/notifications/page.tsx`
+- [x] **MOB7** ✅ 2026-04-17 — VERIFIED: `AskClientDialog` already receives `clientName` prop everywhere (sidebar card line 111, chatbot line 526) and renders `اسأل ${clientName} مباشرةً` dynamically — no change needed
+- [x] **A8** ✅ 2026-04-17 — TOC active class wasn't working because headings had no IDs in the live DOM (TipTap doesn't inject them). Fix: read headings from `#article-content` live DOM + inject `toc-N` IDs if missing → IntersectionObserver can now observe them. Also improved: picks topmost visible heading in callback. File: `modonty/app/articles/[slug]/components/sidebar/article-table-of-contents.tsx`
+- [x] **JBRSEO-7** ✅ 2026-04-17 — Added B2B section "للشركات والأعمال" to `/about` page — gradient card with 3 value bullets + "ابدأ مع جبر SEO ↗" CTA → jbrseo.com. Live tested ✅ — File: `modonty/app/about/page.tsx`
+- [x] **SEO-INF1/2/3/4** ✅ 2026-04-17 — SEO Infinite Scroll: (1) `/?page=N` SSR support — loads N×10 articles so crawlers see full context. (2) Hidden `<a rel="prev/next">` links for page discovery. (3) `pushState` via `window.history.pushState(null,'',?page=N)` after each batch (official Next.js pattern with `useSearchParams`). (4) Dynamic canonical per page: `/?page=1`→`/`, `/?page=N`→`/?page=N`. Verified: canonical + prev/next links all correct in browser. Files: `page.tsx`, `FeedContainer.tsx`, `InfiniteArticleListOnView.tsx`, `InfiniteArticleList.tsx`
+- [x] **CP-1 + JBRSEO-ADMIN-1** ✅ 2026-04-17 — Hero B2B Panel on `/clients` page made fully dynamic from admin settings. (1) 7 new fields in Prisma `Settings` model (`b2bLabel`, `b2bHeadline`, `b2bBullet1-3`, `b2bCtaText`, `b2bCtaUrl`). (2) Admin UI: amber "Hero B2B Panel" section added to Settings → Modonty tab (Column 1, below Contact & Location). (3) `getB2bPanelSettings()` helper in `modonty/lib/seo/clients-page-seo.ts`. (4) `ClientsHero` reads from DB props with hardcoded Arabic fallbacks so page never breaks. Note: modonty has its own local `@prisma/client` — must run `pnpm prisma generate` in `modonty/` after schema changes. Live tested ✅ — Files: `schema.prisma`, `settings-actions.ts`, `settings-form-v2.tsx`, `clients-page-seo.ts`, `clients/page.tsx`, `clients-hero.tsx`
+
+---
+
+## 34. Session 37 — SEO + UX + DB + Telegram (2026-04-18)
+
+- [x] **SEO-A3** ✅ — `og:site_name` كان يستخدم اسم العميل بدل اسم المنصة → `siteName: articleDefaults.siteName` من `get-article-defaults-from-settings.ts` → "مودونتي". File: `modonty/app/articles/[slug]/page.tsx`
+- [x] **UX-3** ✅ — Media edit: إضافة Client dropdown في edit-media-form.tsx — يظهر بين Media Type وAlt Text — يسمح بإعادة تعيين الصورة لعميل آخر. Files: `media/[id]/edit/page.tsx`, `edit-media-form.tsx`, `update-media.ts`
+- [x] **UX-4 / OBS-004** ✅ — Media upload: حُذف auto-select أول عميل → المستخدم يختار يدوياً. أضيف "General — no client (visible to all)" كأول خيار. `isGeneral` check يتجاوز client validation ويستخدم folder `general/`. Files: `use-upload-zone.ts`, `client-selector.tsx`, `use-cloudinary-upload.ts`, `create-media.ts`
+- [x] **OTP-AUDIT-2** ✅ — MongoDB TTL index على `SlugChangeOtp.expiresAt`: script جديد `scripts/setup-ttl-indexes.ts` — تم تشغيله على dev DB ✅. **TODO PROD**: تشغيله على production DB قبل go-live.
+- [x] **TG-SUB-1/2/3** ✅ — Telegram notifications: `modonty/lib/telegram.ts` (helper). إشعار عند: newsletter subscribe (`/api/news/subscribe`) + client subscriber (`/api/subscribers`) + user registration (`register-actions.ts`). Live tested ✅. Env vars في `.env.local`. **TODO**: إضافتهم في Vercel قبل push.
+
+---
+
+## 35. Session 38 — MEDIA-MOD (MediaScope enum) (2026-04-18)
+
+- [x] **MEDIA-MOD-1** ✅ — `enum MediaScope { CLIENT | GENERAL | PLATFORM }` + `scope MediaScope @default(GENERAL)` في Prisma schema + 2 indexes + `pnpm prisma generate` ✅
+- [x] **MEDIA-MOD-2** ✅ — `create-media.ts` + `update-media.ts`: يقبلان `scope?: MediaScope` ويحفظانه في DB
+- [x] **MEDIA-MOD-3** ✅ — `get-media.ts`: scope-first filter — PLATFORM مستثنى من default list — `includeGeneral` يضيف `scope: GENERAL` فقط
+- [x] **MEDIA-MOD-4** ✅ — Upload: `clientId === "modonty"` → `scope: PLATFORM, clientId: null, folder: "modonty/"`. `clientId === "none"` → `scope: GENERAL, clientId: null, folder: "general/"`. Files: `use-cloudinary-upload.ts`, `use-upload-zone.ts`, `client-selector.tsx`
+- [x] **MEDIA-MOD-5** ✅ — Edit media form: `scope === "PLATFORM"` → init `clientId = "modonty"` في dropdown + resolves قبل الحفظ. File: `edit-media-form.tsx`
+- [x] **MEDIA-MOD-6** ✅ — `media-picker-dialog.tsx`: `defaultScope` prop + "Client + General" vs "Modonty Platform" scope dropdown — platform mode guard (no clientId needed)
+- [x] **MEDIA-MOD-7** ✅ — `MediaImageField` component جديد: image preview + hover remove + "Pick from Media Library" / "Change Image" — يفتح `MediaPickerDialog` بـ `defaultScope`. File: `admin/components/shared/media-image-field.tsx`
+- [x] **MEDIA-MOD-8** ✅ — Category/Industry/Tag/Modonty-page forms: كل `CloudinaryImageInput` استُبدل بـ `MediaImageField(scope=PLATFORM)`. Zero manual URL inputs remaining. Files: `category-form.tsx`, `industry-form.tsx`, `tag-form.tsx`, `page-form.tsx`
+- [x] **JSON-LD-IMG** ✅ — `CollectionPage.image: ImageObject` أُضيف في: `category-seo-generator.ts` + `industry-seo-generator.ts` + `tag-seo-generator.ts` (admin cached generators) + `categories/[slug]/page.tsx` + `tags/[slug]/page.tsx` (fallback inline). Verified: `og:image` ✅ · `twitter:image` ✅ · `JSON-LD CollectionPage.image` ✅ على modonty.com
+- [x] Full flow verified: Upload PLATFORM → Category picker → Save → modonty.com all 3 signals updated ✅
+- [x] TSC admin ✅ · TSC modonty ✅
+
+---
+
 ## ملاحظة للمرجعية
 
 > كل ما فوق تم نشره على production وهو يعمل الآن على modonty.com، admin.modonty.com، وconsole.modonty.com.
-> آخر إصدار مُنجز: **admin v0.29.0 | modonty v1.29.8** (2026-04-11)
+> آخر إصدار مُنجز: **admin v0.35.0 | modonty v1.32.0** (2026-04-17)
+> آخر عمل منجز (لم يُنشر بعد): **admin v0.36.0 | modonty v1.33.0** — Session 37+38 — NO PUSH YET
+
+---
+
+## 21. Email System — كل 6 Templates مكتملة (2026-04-17)
+
+- [x] **Newsletter Welcome** — `newsletter-welcome.ts` → `/api/news/subscribe` — live tested: Primary inbox ✅
+- [x] **USR-R1 + Password Reset** — `password-reset.ts` → password reset flow — live tested ✅
+- [x] **USR-R2 + EMAIL-1: Email Verification** — `email-verification.ts` → `register-actions.ts` + `/users/verify-email` page — live tested: `emailVerified` set, token deleted ✅
+- [x] **EMAIL-2: Welcome** — `welcome.ts` → `register-actions.ts` — live tested: Primary inbox ✅
+- [x] **EMAIL-3 + USR-L1: Comment Reply** — `comment-reply.ts` → `[commentId]/route.ts` — self-notification guard added — live tested: Primary inbox ✅
+- [x] **EMAIL-4: FAQ Reply** — `faq-reply.ts` → console `question-actions.ts::replyToQuestion()` — wired + TSC 0 errors ✅
+
+---
+
+## 22. Admin Security — Auth on Server Actions (2026-04-17)
+
+- [x] `contact-messages-actions.ts` — delete, updateStatus, markAsRead, markAsReplied
+- [x] `faq-actions.ts` — create, update, delete, reorder, toggleStatus
+- [x] `upload-image.ts` — uploadImage
+- [x] `upload-avatar.ts` — uploadAvatar
+- [x] `send-feedback.ts` — sendFeedback
+- [x] `cascade-all-seo.ts` — cascadeSettingsToAllEntities
+- [x] **OTP-AUDIT-3** — Rate limiting (3/10min) + `crypto.randomInt` بدل `Math.random()`
+
+---
+
+## 23. Admin UX Fixes (2026-04-17)
+
+- [x] **SEED-CLEANUP** — حُذف `/settings/seed` + `/api/seed` + `seed-mock-data.ts`
+- [x] **Media Gallery** — `object-cover` → `object-contain` في `media-grid.tsx:337`
+- [x] **Article detail preview** — `object-cover` → `object-contain bg-muted` في `articles/[id]/page.tsx:141`
+
+---
+
+## 24. JBRSEO-ADMIN-2 — Feed Banner from DB (2026-04-18)
+
+- [x] Added `platformTagline` + `platformDescription` to Prisma Settings model
+- [x] Added to `ModontySettings` interface, `DEFAULT_SETTINGS`, `getAllSettings()`, `saveModontySettings()` in settings-actions.ts
+- [x] Added "Feed Banner" section (violet) in admin Settings → Modonty tab Column 1
+- [x] Created `modonty/lib/settings/get-feed-banner-settings.ts` — cached lean helper
+- [x] `modonty/app/page.tsx` fetches via `Promise.all` and passes props to `FeedContainer`
+- [x] `FeedContainer` uses DB values with Arabic fallbacks — never breaks if null
+- [x] TSC admin + modonty: zero errors ✅
+- [x] Note: `pnpm prisma generate` required after VS Code restart (Windows DLL lock)
+
+---
+
+## 25. SEO Copy Fields — SCOPY-1→5 (2026-04-18)
+
+- [x] **SCOPY-1** — Audit: author/industry/tag/category forms + shared seo-fields.tsx
+- [x] **SCOPY-2** — `seoTitle`: `maxLength={51}→{60}`, `CharacterCounter min={50} max={60}` — 4 forms + seo-fields.tsx
+- [x] **SCOPY-3** — `seoDescription`: `FormInput→FormTextarea rows={3}`, `CharacterCounter min={120} max={160}` — 4 forms + seo-fields.tsx
+- [x] **SCOPY-4** — Analyzer range enforced via CharacterCounter (50–60 title, 120–160 description) on all forms
+- [x] **SCOPY-5** — Zod schemas: `max(51)→max(200)` for seoTitle, `max(300)→max(500)` for seoDescription — soft limit, no save blocking — update-author.ts + 3 server schemas
+
+---
+
+## 26. صفحات ناقصة — HP1 (2026-04-18)
+
+- [x] **HP1** ✅ — `/articles` listing page: قُرر أن الـ homepage هي feed المقالات. redirect 308 موجود في `modonty/next.config.ts` — `{ source: '/articles', destination: '/', permanent: true }`. المهمة لم تكن تحتاج بناء — الـ redirect كافٍ.
+
+---
+
+## 27. Article Page UX — MB1 + A7 (2026-04-18)
+
+- [x] **MB1** ✅ 2026-04-18 — Newsletter CTA text editable from admin: `newsletterCtaText String?` on Client model (schema done). Admin: new "Newsletter CTA Text" field in client form Business Brief section (`business-brief-section.tsx`) + wired through `use-client-form.ts`, `update-client-grouped.ts`, `client-form-config.ts`, Zod schema. Modonty: `getArticleBySlug` selects `newsletterCtaText`, `NewsletterCTA` accepts `ctaText` prop and renders it when set. Flows to both desktop sidebar and mobile sheet. TSC zero errors ✅
+
+- [x] **A7** ✅ 2026-04-18 — Audio version player + badge: `audioUrl String?` already in schema. Admin: "Audio Version URL" input added to Media section in article editor (`media-section.tsx`); field added to `ArticleFormData`, `initialFormData`, `transformArticleToFormData`, Zod schema (`article-server-schema.ts`); saved in both `create-article.ts` + `update-article.ts`. Modonty: `audioUrl: true` added to `feedArticleSelect`; `hasAudio: !!article.audioUrl` in `mapFeedArticleToResponse`; `hasAudio` passed through in `page.tsx` + `article-actions.ts`; article page shows `🎧 نسخة صوتية` badge + native `<audio controls>` player below featured image when `audioUrl` is set. TSC both apps zero errors ✅
+
+---
+
+## 29. JBRSEO-8 — CTA Click Tracking (2026-04-18)
+
+- [x] **JBRSEO-8** ✅ 2026-04-18 — GA4 event tracking on all jbrseo.com CTAs across modonty. Replaced plain `<a>` / `<Link>` tags with `CtaTrackedLink` (or `trackCtaClick` onClick for Button asChild case) in 8 files: `TopNav.tsx` (mobile pill), `DesktopUserAreaClient.tsx` (desktop header button — onClick pattern), `Footer.tsx` (footer link), `article-footer.tsx`, `about/page.tsx`, `clients/page.tsx` (bottom CTA), `clients-hero.tsx` (B2B panel), `clients/[slug]/page.tsx` (join CTA). Each link has a unique `label` + `type` for GA4 segmentation. TSC both apps zero errors ✅. Live-tested all 5 locations via MCP Playwright ✅.
+
+---
+
+## 30. QAUDIT-A1→A5 — Admin Query Audit (2026-04-18)
+
+- [x] **QAUDIT-A1** ✅ — `getFAQs()` + `getActiveFAQs()` in `faq-actions.ts`: added `faqListSelect` const with `{ id, question, answer, position, isActive, seoTitle }` — eliminated full-row fetch for listing. `getFAQById` kept as-is (edit form needs all fields).
+- [x] **QAUDIT-A2** ✅ — `getAuthors()` — already optimal (returns singleton array, uses `.count()` only). No change needed.
+- [x] **QAUDIT-A3** ✅ — `getIndustries()` in `get-industries.ts`: changed `include: { _count }` to explicit `select: { id, name, slug, createdAt, jsonLdLastGenerated, _count: { clients } }` — removed over-fetching of description, seoTitle, seoDescription, and all other fields.
+- [x] **QAUDIT-A4** ✅ — `getMedia()` — already has `take: perPage` pagination + selective `include`. No change needed.
+- [x] **QAUDIT-A5** ✅ — Four analytics/stats queries fixed: `getViewsTrendData()` → `take: 50000`; `getArticles()` (analytics) → `take: 1000`; `getClients()` (analytics) → `select: { id, name }` + `take: 1000`; `getIndustriesStats()` findMany → `take: 500`. Admin TSC zero errors ✅.
+
+---
+
+## 31. Admin UX Fixes — OBS batch (2026-04-18)
+
+- [x] **OBS-001** ✅ — Media picker search: verified already reactive client-side (`filteredMedia` derived from `search` state in `media-picker-dialog.tsx`). No code change needed.
+- [x] **OBS-019** ✅ — Edit Hero dialog "Change" button: removed hover-only opacity overlay in `media-picker.tsx`; added always-visible "Change Image" + "Remove" button row below the image preview. `media-picker.tsx` updated.
+- [x] **OBS-021** ✅ — Media picker shows General only: added `includeGeneral?: boolean` to `MediaFilters` type; updated `get-media.ts` to use `OR [clientId = X, clientId = null]` when `includeGeneral: true`; `media-picker-dialog.tsx` now passes `includeGeneral: true` — client images + General images both appear. **Follow-up fix:** added `unoptimized` to `NextImage` in picker grid — seed records with `example.com` URLs were crashing `next/image` (hostname not in `next.config.js`). Live test ✅ zero errors.
+- [x] **OBS-022** ✅ — No Upload button in Select Media dialog: added "Upload" link button to the picker toolbar (always visible, opens upload page in new tab with `clientId` pre-filled). `media-picker-dialog.tsx` updated.
+- [x] **OBS-025** ✅ — "SA" country code: already fixed in previous session. `utils.tsx` in client hero has `COUNTRY_CODES` map with `SA → "السعودية"` + `localizeCountry()`. Verified and marked done.
+
+---
+
+## 32. Admin UX Fixes — Publish errors + SEO gate (2026-04-18)
+
+- [x] **UX-1** ✅ — Misleading publish error toast: `save-article-button.tsx` + `article-form-navigation.tsx` — toast title now uses `cannot_publish` ("لا يمكن النشر") when `result.error` exists, instead of generic `server_error`. `create-article.ts` SEO gate error translated to Arabic (matches `publish-article.ts` style).
+- [x] **UX-2** ✅ — SEO Publish Gate (`seoDescription`): `publish-article.ts` `validateArticleData` — changed `seoDescription` check from soft warning → hard `errors.push` when empty or < 50 chars. Blocks publish with message: "وصف SEO مطلوب ولا يقل عن 50 حرفاً للنشر". TSC zero errors ✅.
+
+---
+
+## 33. SEO Full-Circle Verification — FC6/FC2/FC3 (2026-04-18)
+
+- [x] **SEO-FC6** ✅ — `/robots.txt` verified: Allow /, Disallow /api/ /admin/ /users/login/ /users/profile/, AI bots blocked (GPTBot/ClaudeBot/CCBot etc), Sitemap URL correct. `/sitemap.xml` verified: 56 URLs including all published articles, static pages, clients, categories, tags. Both working on dev server ✅.
+- [x] **SEO-FC2** ✅ — Create flow: Article page returns 200 ✅. JSON-LD present (2 scripts: WebPage + BreadcrumbList) ✅. Article appears in sitemap ✅. `generateAndSaveJsonLd` called after publish in `publish-article.ts` ✅.
+- [x] **SEO-FC3** ✅ — Update flow: `update-article.ts` calls both `generateAndSaveNextjsMetadata` and `generateAndSaveJsonLd` after every update ✅. Modonty article page reads stored JSON-LD from `article.jsonLdStructuredData` with fresh-generate fallback ✅.
+- [x] **SEO-FC5** ✅ — Site Name cascade verified by code review: `saveSiteSettings()` + `saveOrganizationSettings()` both call `cascadeSettingsToAllEntities()` in background. Cascade regenerates JSON-LD + metadata for ALL articles, clients, categories, tags, industries, and listing pages. Fully implemented in `cascade-all-seo.ts`.
+- [x] **SEO-FC4** ✅ — Archive/delete flow verified by code review: sitemap only includes `status: PUBLISHED` ✅. Archive action calls `revalidatePath` + `revalidateModontyTag("articles")` ✅. Archived article URL returns 307 redirect → `/` (not 404 — intentional UX to keep users on site; 307 = temporary, appropriate for re-archivable content) ✅.
+- [x] **NEXT_PUBLIC_SITE_URL fix** ✅ — `admin/.env.local` had wrong value `http://localhost:3000` (admin port). Fixed to `http://localhost:3001` (modonty dev server). Production Vercel task added: must set `NEXT_PUBLIC_SITE_URL=https://www.modonty.com` — affects JSON-LD `@id`, canonical URLs, cache revalidation across 15+ SEO files.

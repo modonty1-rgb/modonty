@@ -1,0 +1,483 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e4] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e6]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e8]
+        - link "عملاء بلا إعلانات — جبر SEO" [ref=e9] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: عملاء بلا إعلانات
+        - generic [ref=e13]:
+          - button "فتح المحادثة" [ref=e14] [cursor=pointer]
+          - button "تسجيل الدخول" [ref=e16] [cursor=pointer]:
+            - img
+    - main [ref=e17]:
+      - navigation "تنقل الصفحة" [ref=e19]:
+        - list [ref=e20]:
+          - listitem [ref=e21]:
+            - link "الرئيسية الرئيسية" [ref=e22] [cursor=pointer]:
+              - /url: /
+              - img "الرئيسية" [ref=e23]
+              - generic [ref=e26]: الرئيسية
+          - listitem [ref=e27]:
+            - img [ref=e28]
+            - img [ref=e31]
+          - listitem [ref=e35]:
+            - generic [ref=e37]: ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟
+      - article [ref=e41]:
+        - generic [ref=e42]:
+          - heading "ما هي صفحات نتائج البحث (Search Engine Results Page “SERP”) وكيف يختار Google ما يعرضه للمستخدم؟" [level=1] [ref=e43]
+          - paragraph [ref=e44]: تعرف على صفحة نتائج البحث SERP وأنواعها مثل النتائج العضوية والإعلانات والنتائج المحلية والمقتطفات المميزة، وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+          - generic [ref=e45]:
+            - generic [ref=e47]: Modonty
+            - time [ref=e48]: ٩ أبريل ٢٠٢٦
+            - generic [ref=e49]: ⏱️ 4 دقيقة قراءة
+            - generic [ref=e50]: 📝 733 كلمة
+            - generic [ref=e51]:
+              - img [ref=e52]
+              - generic [ref=e55]: ١٢
+        - img "صورة تعرّف ماهو ال SERP وتأثيرة في الظهور على جوجل" [ref=e57]
+        - generic [ref=e58]:
+          - link "JBR SEO" [ref=e59] [cursor=pointer]:
+            - /url: /clients/jbr-seo
+            - generic [ref=e60]:
+              - img [ref=e61]
+              - text: JBR SEO
+          - link "SEO تحسين محركات البحث" [ref=e65] [cursor=pointer]:
+            - /url: /categories/seo-arabic
+            - generic [ref=e66]:
+              - img [ref=e67]
+              - text: SEO تحسين محركات البحث
+          - link "أفضل شركة سيو في الرياض" [ref=e69] [cursor=pointer]:
+            - /url: /tags/أفضل-شركة-سيو-في-الرياض
+            - generic [ref=e70]:
+              - img [ref=e71]
+              - text: أفضل شركة سيو في الرياض
+          - link "SEO" [ref=e74] [cursor=pointer]:
+            - /url: /tags/seo
+            - generic [ref=e75]:
+              - img [ref=e76]
+              - text: SEO
+          - link "تحسين الظهور في جوجل" [ref=e79] [cursor=pointer]:
+            - /url: /tags/تحسين-الظهور-في-جوجل
+            - generic [ref=e80]:
+              - img [ref=e81]
+              - text: تحسين الظهور في جوجل
+          - link "تحسين ترتيب الموقع" [ref=e84] [cursor=pointer]:
+            - /url: /tags/تحسين-ترتيب-الموقع
+            - generic [ref=e85]:
+              - img [ref=e86]
+              - text: تحسين ترتيب الموقع
+          - link "تحويل الزوار إلى عملاء" [ref=e89] [cursor=pointer]:
+            - /url: /tags/تحويل-الزوار-إلى-عملاء
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - text: تحويل الزوار إلى عملاء
+          - link "تحليلات" [ref=e94] [cursor=pointer]:
+            - /url: /tags/analytics
+            - generic [ref=e95]:
+              - img [ref=e96]
+              - text: تحليلات
+          - link "تسويق رقمي" [ref=e99] [cursor=pointer]:
+            - /url: /tags/digital-marketing-tag
+            - generic [ref=e100]:
+              - img [ref=e101]
+              - text: تسويق رقمي
+          - link "جوجل" [ref=e104] [cursor=pointer]:
+            - /url: /tags/google
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - text: جوجل
+          - link "زيادة المبيعات أونلاين" [ref=e109] [cursor=pointer]:
+            - /url: /tags/زيادة-المبيعات-أونلاين
+            - generic [ref=e110]:
+              - img [ref=e111]
+              - text: زيادة المبيعات أونلاين
+          - link "محتوى" [ref=e114] [cursor=pointer]:
+            - /url: /tags/content
+            - generic [ref=e115]:
+              - img [ref=e116]
+              - text: محتوى
+          - link "عرض كل الوسوم" [ref=e119] [cursor=pointer]:
+            - /url: /tags
+            - generic [ref=e120]:
+              - img [ref=e121]
+              - text: عرض كل الوسوم
+        - button "انتقل إلى الأسئلة الشائعة" [ref=e126] [cursor=pointer]:
+          - img [ref=e127]
+          - generic [ref=e130]: ٥
+        - generic [ref=e131]:
+          - paragraph
+          - paragraph [ref=e132]:
+            - strong [ref=e134]: ما هي صفحات نتائج البحث (Search Engine Results Page “ SERP”) وكيف يختار Google ما يعرضه للمستخدم؟
+          - paragraph [ref=e135]: "عندما تكتب أي كلمة في محرك البحث مثل:ماهو SEOتظهر أمامك صفحة مليئة بالنتائج هذه الصفحة تسمى:"
+          - paragraph [ref=e136]:
+            - generic [ref=e137]:
+              - strong [ref=e138]: صفحة نتائج محرك البحث
+              - text: أو ما يعرف اختصارًا بـ
+            - text: “
+            - generic [ref=e139]:
+              - strong [ref=e140]: SERP
+              - text: ”
+          - paragraph [ref=e141]:
+            - generic [ref=e142]:
+              - text: فهم هذه الصفحة مهم جدًا لأي شخص يعمل في تحسين محركات البحث، لأن الهدف الأساسي من SEO هو
+              - strong [ref=e143]: الظهور في هذه الصفحة وفي أفضل مكان ممكن داخلها
+              - text: .
+          - paragraph [ref=e144]
+          - paragraph [ref=e145]:
+            - strong [ref=e147]: ما هي صفحة نتائج محرك البحث " SERP"؟
+          - paragraph [ref=e148]: "\"SERP\" هي الصفحة التي يعرضها محرك البحث بعد إدخال كلمة البحث وهذه الصفحة لا تحتوي فقط على روابط للمواقع الالكترونية فقط بل قد تحتوي على عناصر كثيرة مثل:"
+          - list [ref=e149]:
+            - listitem [ref=e150]:
+              - paragraph [ref=e151]: نتائج عضوية
+            - listitem [ref=e152]:
+              - paragraph [ref=e153]: إعلانات
+            - listitem [ref=e154]:
+              - paragraph [ref=e155]: صور
+            - listitem [ref=e156]:
+              - paragraph [ref=e157]: فيديوهات
+            - listitem [ref=e158]:
+              - paragraph [ref=e159]: خرائط
+            - listitem [ref=e160]:
+              - paragraph [ref=e161]: أسئلة شائعة
+          - paragraph [ref=e162]: كل هذه العناصر تساعد المستخدم في العثور على المعلومات بسرعة.
+          - paragraph [ref=e163]
+          - paragraph [ref=e164]:
+            - strong [ref=e166]: أنواع النتائج في SERP
+          - paragraph [ref=e167]: صفحة النتائج ليست نوعًا واحدًا من النتائج بل تتكون عادة من عدة عناصر معا وليس عنصر واحد وكل تلك العناصر مرتبطة بكلمة ونية البحث . هيا بنا نتعرف على تلك العناصر ...........
+          - paragraph [ref=e168]
+          - paragraph [ref=e169]:
+            - strong [ref=e171]: النتائج العضوية (Organic Results)
+          - paragraph [ref=e172]:
+            - generic [ref=e173]:
+              - text: هذه هي النتائج الطبيعية التي تظهر بسبب تحسين محركات البحث
+              - strong [ref=e174]: SEO
+              - text: وليس بسبب الإعلانات او بمعنى اخر هى تلك المواقع التى تتمتع بثقة محركات البحث نتيجة ثقة الباحث او المستخدم وبذلك تحصل تلك الصفحات على ترتيب جيد . ومن هنا ياتى السؤال كيف حصلت تلك الصفحات على الترتيب الجيد ؟
+          - paragraph [ref=e175]: "المواقع التي تظهر هنا حصلت على ترتيب جيد لأن محرك البحث يرى أنها:"
+          - list [ref=e176]:
+            - listitem [ref=e177]:
+              - paragraph [ref=e178]: مفيدة
+            - listitem [ref=e179]:
+              - paragraph [ref=e180]: مرتبطة بموضوع البحث
+            - listitem [ref=e181]:
+              - paragraph [ref=e182]: تقدم محتوى جيد
+            - listitem [ref=e183]:
+              - paragraph [ref=e184]: لا تعتمد الاطالة او استهلاك الوقت بدون فائدة
+            - listitem [ref=e185]:
+              - paragraph [ref=e186]: تقدم تجربة سهلة و سريعة للمستخدم
+          - paragraph [ref=e187]: هذه النتائج هي الهدف الأساسي لمعظم استراتيجيات SEO
+          - paragraph [ref=e188]
+          - paragraph [ref=e189]:
+            - strong [ref=e191]: الإعلانات المدفوعة (Sponsored)
+          - paragraph [ref=e192]:
+            - generic [ref=e193]:
+              - text: في أعلى الصفحة غالبًا ستجد نتائج مكتوب بجانبها كلمة "
+              - strong [ref=e194]: Ad
+              - text: أو
+              - strong [ref=e195]: Sponsored"
+          - paragraph [ref=e196]: هذه النتائج هي إعلانات مدفوعة الشركات تدفع المال لمحرك البحث حتى تظهر في العديد من الاماكن ولكن الذى يهمنا هى تلك التى تظهر فى اعلى صفحة Google والهدف طبعا هو الحصول على انتباه المستخدم والدخول لتلك المواقع وبالرغم من تلك الميزة الا انه عندما تتوقف عن الدفع تختفى تلك الصفحات.
+          - paragraph [ref=e197]
+          - paragraph [ref=e198]:
+            - strong [ref=e200]: النتائج المحلية (Local Results)
+          - paragraph [ref=e201]: عندما يبحث المستخدم عن شيء قريب منه مثل "مطعم " او " عيادة طبية " او مركز للتسوق " يعرض محرك البحث خريطة مع عدة أماكن قريبة.
+          - paragraph [ref=e202]:
+            - generic [ref=e203]:
+              - text: هذه النتائج تسمى "
+              - strong [ref=e204]: Local Pack"
+          - paragraph [ref=e205]: "وهي مهمة جدًا للشركات المحلية مثل:"
+          - list [ref=e206]:
+            - listitem [ref=e207]:
+              - paragraph [ref=e208]: المطاعم
+            - listitem [ref=e209]:
+              - paragraph [ref=e210]: العيادات
+            - listitem [ref=e211]:
+              - paragraph [ref=e212]: المتاجر
+            - listitem [ref=e213]:
+              - paragraph [ref=e214]: مراكز التسوق
+            - listitem [ref=e215]:
+              - paragraph [ref=e216]: الخدمات المنزلية
+          - paragraph [ref=e217]: ولكن كيف تظهر تلك الاماكن على صفحات Google ولماذا تلك الاماكن او المواقع بالتحديد ؟؟
+          - paragraph [ref=e218]:
+            - generic [ref=e219]:
+              - text: واجابة هذا السؤال فى كلمة واحدة وهى
+              - strong [ref=e220]: Google Business Profile
+          - paragraph [ref=e221]: Google Business Profile هو ملف مجاني توفره Google للشركات حتى تظهر في نتائج البحث والخرائط.
+          - paragraph [ref=e222]: "هذا الملف يحتوي على معلومات مثل:"
+          - list [ref=e223]:
+            - listitem [ref=e224]:
+              - paragraph [ref=e225]: اسم الشركة
+            - listitem [ref=e226]:
+              - paragraph [ref=e227]: العنوان
+            - listitem [ref=e228]:
+              - paragraph [ref=e229]: رقم الهاتف
+            - listitem [ref=e230]:
+              - paragraph [ref=e231]: موقع الويب
+            - listitem [ref=e232]:
+              - paragraph [ref=e233]: ساعات العمل
+            - listitem [ref=e234]:
+              - paragraph [ref=e235]: الصور
+            - listitem [ref=e236]:
+              - paragraph [ref=e237]: تقييمات العملاء
+          - paragraph [ref=e238]: عندما يبحث المستخدم عن خدمة محلية، يعتمد Google بشكل كبير على هذه المعلومات لعرض الشركات المناسبة.
+          - paragraph [ref=e239]:
+            - generic [ref=e240]:
+              - text: وبالتالى فان
+              - strong [ref=e241]: الظهور في Local Pack
+              - text: هو أحد أكثر الأماكن التي تحصل على نقرات مجانية في نتائج البحث.
+          - paragraph [ref=e242]
+          - paragraph [ref=e243]
+          - paragraph [ref=e244]:
+            - strong [ref=e246]: المقتطفات المميزة (Featured Snippets)
+          - paragraph [ref=e247]:
+            - generic [ref=e248]:
+              - text: أحيانًا يظهر في أعلى الصفحة صندوق يحتوي على إجابة مختصرة للسؤال هذا يسمى"
+              - strong [ref=e249]: Featured Snippet"
+          - paragraph [ref=e250]:
+            - strong [ref=e252]: "مثال:"
+          - paragraph [ref=e253]: إذا بحثت عن ما هو “SEO”
+          - paragraph [ref=e254]: قد يعرض Google فقرة قصيرة من أحد المواقع تجيب على السؤال مباشرة.
+          - paragraph [ref=e255]:
+            - generic [ref=e256]:
+              - text: الظهور هنا يمنح الموقع
+              - strong [ref=e257]: ظهورًا قويًا جدًا
+              - text: . وهنا يظهر السؤال كيف يختارGoogle او محركات البحث تلك
+              - strong [ref=e258]: Snippets
+              - text: ؟
+          - paragraph [ref=e259]: "في الماضي كانت العملية تعتمد بشكل كبير على:"
+          - list [ref=e260]:
+            - listitem [ref=e261]:
+              - paragraph [ref=e262]: الكلمات المفتاحية
+            - listitem [ref=e263]:
+              - paragraph [ref=e264]: بنية الصفحة
+            - listitem [ref=e265]:
+              - paragraph [ref=e266]: ترتيب الموقع
+          - paragraph [ref=e267]:
+            - generic [ref=e268]:
+              - text: لكن اليوم أصبح
+              - strong [ref=e269]: الذكاء الاصطناعي
+              - text: يلعب دورًا كبيرًا في فهم المحتوى تستخدم
+            - text: "Google أنظمة ذكاء اصطناعي AI تعمل على :"
+          - list [ref=e270]:
+            - listitem [ref=e271]:
+              - paragraph [ref=e272]: فهم اللغة الطبيعية
+            - listitem [ref=e273]:
+              - paragraph [ref=e274]: تحليل سياق السؤال
+            - listitem [ref=e275]:
+              - paragraph [ref=e276]: تحديد أفضل إجابة مختصرة
+          - paragraph [ref=e277]:
+            - generic [ref=e278]:
+              - text: هذه الأنظمة تساعد محرك البحث على
+              - strong [ref=e279]: اختيار الفقرة الأكثر وضوحًا وإفادة للمستخدم
+            - text: .
+          - paragraph [ref=e280]:
+            - text: وبالتالى فان تلك المقتطفات المميزة "
+            - strong [ref=e281]: Featured Snippets
+            - generic [ref=e282]:
+              - strong [ref=e283]: "\""
+              - text: هي صناديق إجابة تظهر في أعلى نتائج البحث. تستخدم محركات البحث تقنيات الذكاء الاصطناعى
+            - text: AI لفهم السؤال واختيار أفضل إجابة من بين صفحات الإنترنت.
+          - paragraph [ref=e284]:
+            - strong [ref=e286]: لذلك كتابة محتوى واضح ومنظم يزيد فرصة ظهور موقعك في هذه المقتطفات.
+          - paragraph [ref=e287]
+          - paragraph [ref=e288]:
+            - strong [ref=e290]: كيف يقرر Google ما يظهر في SERP؟
+          - paragraph [ref=e291]: محركات البحث تستخدم خوارزميات معقدة لتحليل الصفحات وتحديد أيها الأنسب لعرضها.
+          - paragraph [ref=e292]: "بعض العوامل المهمة التي تؤثر في هذا القرار تشمل:"
+          - list [ref=e293]:
+            - listitem [ref=e294]:
+              - paragraph [ref=e295]: جودة المحتوى
+            - listitem [ref=e296]:
+              - paragraph [ref=e297]: الكلمات المفتاحية
+            - listitem [ref=e298]:
+              - paragraph [ref=e299]: الروابط الخارجية
+            - listitem [ref=e300]:
+              - paragraph [ref=e301]: تجربة المستخدم
+            - listitem [ref=e302]:
+              - paragraph [ref=e303]: سرعة الموقع
+          - paragraph [ref=e304]: كل هذه العوامل تساعد محرك البحث على تحديد أي صفحة تقدم أفضل إجابة للمستخدم ولكن يبقى سؤال اخر وهو؟
+          - paragraph [ref=e305]
+          - paragraph [ref=e306]:
+            - strong [ref=e308]: لماذا تختلف نتائج البحث من شخص لآخر؟
+          - paragraph [ref=e309]: قد يلاحظ بعض المستخدمين أن النتائج تختلف أحيانًا.
+          - paragraph [ref=e310]: "ذلك لأن محركات البحث قد تعتمد على عدة عوامل مثل:"
+          - list [ref=e311]:
+            - listitem [ref=e312]:
+              - paragraph [ref=e313]: الموقع الجغرافى
+            - listitem [ref=e314]:
+              - paragraph [ref=e315]: اللغة المستخدمة
+            - listitem [ref=e316]:
+              - paragraph [ref=e317]: نطاق البحث
+            - listitem [ref=e318]:
+              - paragraph [ref=e319]: نوع الجهاز المستخدم
+            - listitem [ref=e320]:
+              - paragraph [ref=e321]: نية باحث
+            - listitem [ref=e322]:
+              - paragraph [ref=e323]: سجل البحث
+          - paragraph [ref=e324]: هذه العوامل تساعد في تقديم نتائج أكثر ملاءمة لكل مستخدم.
+          - paragraph [ref=e325]
+          - paragraph [ref=e326]:
+            - strong [ref=e328]: لماذا فهم SERP مهم في SEO؟
+          - paragraph [ref=e329]: "لأن فهم شكل صفحة النتائج يساعدك على:"
+          - list [ref=e330]:
+            - listitem [ref=e331]:
+              - paragraph [ref=e332]: معرفة نوع المحتوى الذي يريده المستخدم
+            - listitem [ref=e333]:
+              - paragraph [ref=e334]: فهم المنافسين في نفس المجال
+            - listitem [ref=e335]:
+              - paragraph [ref=e336]: تحسين المقال ليظهر في النتائج المناسبة
+          - paragraph [ref=e337]: فمثلًا، إذا كانت نتائج البحث تحتوي على فيديوهات فقد يكون من المفيد إنشاء فيديو أيضًا وربما تكون الصورة ابلغ من 1000 كلمة .
+          - paragraph [ref=e338]
+          - paragraph [ref=e339]:
+            - generic [ref=e340]:
+              - text: لذلك عزيزى القارئ فى كل مكان فان
+              - strong [ref=e341]: الخلاصة
+          - paragraph [ref=e342]: صفحة نتائج محركات البحث"SERP" هي الصفحة التي يعرضها محرك البحث بعد إدخال كلمة البحث.
+          - paragraph [ref=e343]: "تحتوي هذه الصفحة على أنواع مختلفة من النتائج مثل:"
+          - list [ref=e344]:
+            - listitem [ref=e345]:
+              - paragraph [ref=e346]: النتائج العضوية
+            - listitem [ref=e347]:
+              - paragraph [ref=e348]: الإعلانات
+            - listitem [ref=e349]:
+              - paragraph [ref=e350]: النتائج المحلية
+            - listitem [ref=e351]:
+              - paragraph [ref=e352]: المقتطفات المميزة
+          - paragraph [ref=e353]: فهم كيفية عمل هذه الصفحة يساعدك على تحسين محتوى موقعك ليظهر في أفضل مكان ممكن داخل نتائج البحث.
+          - paragraph [ref=e354]: "في المقال القادم سنتحدث عن موضوع مهمالا وهو :"
+          - paragraph [ref=e355]:
+            - strong [ref=e357]: ما الفرق بين تحسين محركات البحث SEO والإعلانات المدفوعة؟
+          - paragraph [ref=e358]
+        - region "معرض الصور" [ref=e359]:
+          - heading "معرض الصور" [level=2] [ref=e360]
+          - generic [ref=e361]:
+            - generic [ref=e362]:
+              - img "كيف ترتب موقعك فى محركات البحث" [ref=e364]
+              - paragraph [ref=e366]: كيف ترتب موقعك فى محركات البحث
+            - generic [ref=e367]:
+              - img "اسرار جوجل للوصول للقمة" [ref=e369]
+              - paragraph [ref=e371]: اسرار جوجل للوصول للقمة
+        - region "الأسئلة الشائعة (5)" [ref=e372]:
+          - button "الأسئلة الشائعة (5) انقر لعرض الأسئلة" [ref=e375] [cursor=pointer]:
+            - generic [ref=e376]:
+              - heading "الأسئلة الشائعة (5)" [level=2] [ref=e377]
+              - generic [ref=e378]: انقر لعرض الأسئلة
+            - img [ref=e380]
+        - generic [ref=e385]:
+          - button "التعليقات (٠) انقر للإخفاء" [expanded] [ref=e386] [cursor=pointer]:
+            - generic [ref=e388]:
+              - heading "التعليقات (٠)" [level=2] [ref=e389]
+              - generic [ref=e390]: انقر للإخفاء
+            - img [ref=e392]
+          - paragraph [ref=e396]: لا توجد تعليقات بعد. كن أول من يعلق!
+        - region "المزيد من Modonty" [ref=e397]:
+          - button "المزيد من Modonty انقر للإخفاء" [expanded] [ref=e401] [cursor=pointer]:
+            - generic [ref=e402]:
+              - generic [ref=e403]:
+                - img [ref=e404]
+                - heading "المزيد من Modonty" [level=2] [ref=e407]
+              - generic [ref=e408]: انقر للإخفاء
+            - img [ref=e410]
+        - region "المزيد من JBR SEO" [ref=e414]:
+          - button "المزيد من JBR SEO انقر للإخفاء" [expanded] [ref=e418] [cursor=pointer]:
+            - generic [ref=e419]:
+              - generic [ref=e420]:
+                - img [ref=e421]
+                - heading "المزيد من JBR SEO" [level=2] [ref=e424]
+              - generic [ref=e425]: انقر للإخفاء
+            - img [ref=e427]
+        - region "مقالات قد تهمك" [ref=e431]:
+          - button "مقالات قد تهمك انقر للإخفاء" [expanded] [ref=e435] [cursor=pointer]:
+            - generic [ref=e436]:
+              - generic [ref=e437]:
+                - img [ref=e438]
+                - heading "مقالات قد تهمك" [level=2] [ref=e441]
+              - generic [ref=e442]: انقر للإخفاء
+            - img [ref=e444]
+        - generic [ref=e448]:
+          - generic [ref=e450]:
+            - paragraph [ref=e451]:
+              - text: نشر بواسطة
+              - link "JBR SEO" [ref=e452] [cursor=pointer]:
+                - /url: /clients/jbr-seo
+            - paragraph [ref=e453]: "آخر تحديث: ١٣ أبريل ٢٠٢٦"
+            - paragraph [ref=e454]: "عمق المحتوى: medium"
+            - paragraph [ref=e455]:
+              - text: "الرخصة:"
+              - link "https://creativecommons.org/licenses/by/4.0/" [ref=e456] [cursor=pointer]:
+                - /url: https://creativecommons.org/licenses/by/4.0/
+          - generic [ref=e457]:
+            - paragraph [ref=e458]: تريد محتوى مثل هذا يجذب عملاء لنشاطك من جوجل؟
+            - link "عملاء بلا إعلانات" [ref=e459] [cursor=pointer]:
+              - /url: https://www.jbrseo.com
+              - text: عملاء بلا إعلانات
+              - generic [ref=e460]: ↗
+    - contentinfo [ref=e461]:
+      - generic [ref=e462]:
+        - generic [ref=e463]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e464] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e465]: ↗
+      - navigation "روابط سريعة" [ref=e466]:
+        - link "الرئيسية" [ref=e467] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e468] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e469] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e470] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e471] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e472] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e473]:
+        - link "الشروط والأحكام" [ref=e474] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e475] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e476] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e477] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e478] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e479]: © 2026 مودونتي
+    - contentinfo [ref=e480]:
+      - navigation "التنقل السفلي" [ref=e481]:
+        - link "الرئيسية" [ref=e482] [cursor=pointer]:
+          - /url: /
+          - img [ref=e484]
+          - generic [ref=e487]: الرئيسية
+        - link "الرائجة" [ref=e488] [cursor=pointer]:
+          - /url: /trending
+          - img [ref=e490]
+          - generic [ref=e493]: الرائجة
+        - link "العملاء" [ref=e494] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e496]
+          - generic [ref=e500]: العملاء
+        - link "بحث المقالات" [ref=e501] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e502]
+          - generic [ref=e505]: بحث
+        - button "Open menu" [ref=e506] [cursor=pointer]:
+          - img
+  - generic [ref=e511] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e512]:
+      - img [ref=e513]
+    - generic [ref=e516]:
+      - button "Open issues overlay" [ref=e517]:
+        - generic [ref=e518]:
+          - generic [ref=e519]: "4"
+          - generic [ref=e520]: "5"
+        - generic [ref=e521]:
+          - text: Issue
+          - generic [ref=e522]: s
+      - button "Collapse issues badge" [ref=e523]:
+        - img [ref=e524]
+  - alert [ref=e526]

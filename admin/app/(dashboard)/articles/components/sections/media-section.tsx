@@ -10,6 +10,7 @@ import { MediaPickerDialog } from '@/components/shared/media-picker-dialog';
 import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
 import { ThumbnailImageView } from '@/components/shared/thumbnail-image-view';
 import { Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface FeaturedMedia {
   id: string;
@@ -139,6 +140,21 @@ export function MediaSection() {
             clientId={formData.clientId}
             onSelect={handleSelectMedia}
           />
+        </div>
+
+        {/* Audio Version */}
+        <div className="border-t pt-6 space-y-2">
+          <Label htmlFor="audioUrl">Audio Version URL</Label>
+          <Input
+            id="audioUrl"
+            type="url"
+            placeholder="https://..."
+            value={formData.audioUrl || ''}
+            onChange={(e) => updateField('audioUrl', e.target.value || null)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Displays "نسخة صوتية" badge + audio player on the article page
+          </p>
         </div>
 
         {/* Gallery */}

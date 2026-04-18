@@ -1,5 +1,6 @@
 import Link from "@/components/link";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 const linkClass =
   "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
 
@@ -12,14 +13,16 @@ export function Footer() {
       {/* jbr SEO CTA */}
       <div className="flex items-center gap-2 text-xs">
         <span className="text-muted-foreground">هل تريد عملاء من جوجل بلا إعلانات؟</span>
-        <a
+        <CtaTrackedLink
           href="https://www.jbrseo.com"
           target="_blank"
           rel="noopener noreferrer"
+          label="Footer CTA — جبر SEO"
+          type="LINK"
           className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
         >
           جبر SEO <span aria-hidden="true">↗</span>
-        </a>
+        </CtaTrackedLink>
       </div>
 
       {/* Quick links */}
@@ -30,6 +33,7 @@ export function Footer() {
         <Link href="/" className={linkClass}>الرئيسية</Link>
         <Link href="/trending" className={linkClass}>الرائجة</Link>
         <Link href="/clients" className={linkClass}>العملاء</Link>
+        <Link href="/industries" className={linkClass}>الصناعات</Link>
         <Link href="/tags" className={linkClass}>الوسوم</Link>
         <Link href="/help" className={linkClass}>المساعدة</Link>
         <Link href="/about" className={linkClass}>عن مودونتي</Link>

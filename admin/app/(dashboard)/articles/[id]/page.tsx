@@ -133,12 +133,12 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
             <div className="flex-1 min-w-0 max-w-3xl mx-auto">
               {/* Featured Image */}
               {a.featuredImage?.url && (
-                <div className="aspect-video overflow-hidden rounded-lg mb-6 relative">
+                <div className="aspect-video overflow-hidden rounded-lg mb-6 relative bg-muted">
                   <Image
                     src={a.featuredImage.url}
                     alt={a.featuredImage.altText || a.title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 768px) 100vw, 800px"
                   />
                 </div>

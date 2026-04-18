@@ -4,7 +4,8 @@ import { getClientsWithCounts, getClientPageStats } from "@/app/api/helpers/clie
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientsHero } from "./components/clients-hero";
-import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
+import { getClientsPageSeo, getB2bPanelSettings } from "@/lib/seo/clients-page-seo";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 // Dynamic imports for client components (code splitting + SSR where possible)
 const FeaturedClients = dynamic(
@@ -26,11 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ClientsPage() {
-  const [{ jsonLd: storedJsonLd }, clients, stats, industries] = await Promise.all([
+  const [{ jsonLd: storedJsonLd }, clients, stats, industries, b2b] = await Promise.all([
     getClientsPageSeo(),
     getClientsWithCounts(),
     getClientPageStats(),
     getIndustriesWithCounts(),
+    getB2bPanelSettings(),
   ]);
 
   const featuredClients = clients
@@ -52,7 +54,7 @@ export default async function ClientsPage() {
         ]}
       />
 
-      <ClientsHero {...stats} />
+      <ClientsHero {...stats} b2b={b2b} />
 
       <div>
         {featuredClients.length > 0 && (
@@ -87,15 +89,17 @@ export default async function ClientsPage() {
             <p className="relative mt-3 text-base text-primary-foreground/80 sm:text-lg">
               انضم لعملاء مودونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
             </p>
-            <a
+            <CtaTrackedLink
               href="https://www.jbrseo.com"
               target="_blank"
               rel="noopener noreferrer"
+              label="Clients Page Bottom CTA — عملاء بلا إعلانات"
+              type="BANNER"
               className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-bold text-primary shadow-md hover:bg-white/90 transition-colors"
             >
               عملاء بلا إعلانات
               <span aria-hidden="true">↗</span>
-            </a>
+            </CtaTrackedLink>
           </div>
         </section>
       </div>

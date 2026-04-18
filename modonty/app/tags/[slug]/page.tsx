@@ -72,6 +72,8 @@ export default async function TagPage({ params }: TagPageProps) {
           name: true,
           slug: true,
           description: true,
+          socialImage: true,
+          socialImageAlt: true,
           jsonLdStructuredData: true,
         },
       }),
@@ -158,6 +160,9 @@ export default async function TagPage({ params }: TagPageProps) {
       name: `مقالات وسم: ${tag.name}`,
       description: tag.description ?? `مقالات مصنّفة تحت وسم ${tag.name}`,
       url: `${siteUrl}/tags/${decodedSlug}`,
+      ...(tag.socialImage && {
+        image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt || tag.name },
+      }),
       mainEntity: {
         "@type": "ItemList",
         itemListElement: articles.slice(0, 10).map((article, index) => ({

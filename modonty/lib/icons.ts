@@ -26,6 +26,7 @@ export { TrendingUp       as IconTrending      } from 'lucide-react';
 export { Tags             as IconCategories    } from 'lucide-react';
 export { Tag              as IconCategory      } from 'lucide-react';
 export { Building2        as IconClients       } from 'lucide-react';
+export { Factory          as IconIndustry      } from 'lucide-react';
 export { Bookmark         as IconSaved         } from 'lucide-react';
 export { Bell             as IconNotifications } from 'lucide-react';
 export { Search           as IconSearch        } from 'lucide-react';

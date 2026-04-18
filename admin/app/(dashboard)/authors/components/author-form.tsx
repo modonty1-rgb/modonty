@@ -198,8 +198,8 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
               {/* Divider */}
               <div className="border-t" />
 
-              {/* SEO — inline */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* SEO */}
+              <div className="space-y-3">
                 <div>
                   <FormInput
                     label="SEO Title"
@@ -207,19 +207,20 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
                     value={formData.seoTitle}
                     onChange={(e) => updateSEOField("seoTitle", e.target.value)}
                     hint={messages.hints.author.metaTitle}
-                    maxLength={51}
+                    maxLength={60}
                   />
-                  <CharacterCounter current={formData.seoTitle.length} max={51} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoTitle.length} min={50} max={60} className="mt-1 ms-1" />
                 </div>
                 <div>
-                  <FormInput
+                  <FormTextarea
                     label="SEO Description"
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
                     hint={messages.hints.author.metaDescription}
+                    rows={3}
                   />
-                  <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoDescription.length} min={120} max={160} className="mt-1 ms-1" />
                 </div>
               </div>
             </CardContent>

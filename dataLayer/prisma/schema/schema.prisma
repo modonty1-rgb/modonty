@@ -65,6 +65,12 @@ enum MediaType {
   GENERAL
 }
 
+enum MediaScope {
+  CLIENT   // Belongs to a specific client
+  GENERAL  // No client — visible in all pickers
+  PLATFORM // Modonty platform assets (categories, logos, OG images)
+}
+
 enum CommentStatus {
   PENDING
   APPROVED
@@ -150,6 +156,9 @@ model User {
   passwordResetExpires  DateTime? // typically 1h from request
   role                  UserRole @default(EDITOR)
   avatar   String? // Keep for compatibility, prefer using 'image'
+
+  // Email notification preferences (USR-R3)
+  notificationPreferences Json? // { commentReply: true, faqReply: true, newsletter: true }
 
   // Links to clients (for client users)
   clientAccess String[] @db.ObjectId // Array of client IDs this user can access
@@ -344,6 +353,7 @@ model Client {
   // Additional Properties
   alternateName                String? // Alternative names (Arabic name, trade name, etc.)
   slogan                       String? // Company slogan/motto
+  newsletterCtaText            String? // Custom newsletter CTA text on article page (MB1)
   keywords                     String[] // Keywords for classification
   knowsLanguage                String[] // Languages: ["Arabic", "English"]
   organizationType             String? // Subtype: Organization, Corporation, LocalBusiness, NonProfit, etc.
@@ -688,6 +698,7 @@ model Article {
   slug          String
   excerpt       String?
   content String // Article body (markdown/HTML)
+  audioUrl      String? // Audio version URL (A7)
 
   // Relationships
   clientId   String    @db.ObjectId
@@ -909,6 +920,10 @@ model Media {
   clientId String? @db.ObjectId
   client   Client? @relation("ClientMedia", fields: [clientId], references: [id], onDelete: Cascade)
 
+  // Scope: CLIENT | GENERAL | PLATFORM
+  // Existing records without this field default to GENERAL on read
+  scope MediaScope @default(GENERAL)
+
   // Media type classification
   type MediaType @default(GENERAL)
 
@@ -926,6 +941,8 @@ model Media {
   @@index([clientId])
   @@index([clientId, createdAt])
   @@index([clientId, type])
+  @@index([scope])
+  @@index([clientId, scope])
   @@index([filename])
   @@map("media")
 }
@@ -1037,6 +1054,7 @@ model ArticleFAQ {
 
   submittedByName  String? // Set for reader submissions
   submittedByEmail String? // Set for reader submissions
+  source           String? @default("manual") // "manual" | "chatbot" | "user" (CHAT-FAQ2)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1896,6 +1914,19 @@ model Settings {
   faqSeoTitle                  String?
   faqSeoDescription            String?
 
+  // Clients page — Hero B2B panel (CP-1 / JBRSEO-ADMIN-1)
+  b2bLabel    String?  // e.g. "لأصحاب الأعمال والشركات"
+  b2bHeadline String?  // e.g. "عملاؤك يبحثون عنك على جوجل"
+  b2bBullet1  String?
+  b2bBullet2  String?
+  b2bBullet3  String?
+  b2bCtaText  String?  // e.g. "عملاء بلا إعلانات"
+  b2bCtaUrl   String?  // e.g. "https://www.jbrseo.com"
+
+  // Homepage feed banner (JBRSEO-ADMIN-2)
+  platformTagline     String?  // e.g. "مرحباً بك في مودونتي"
+  platformDescription String?  // e.g. "منصة المحتوى العربي — اكتشف مقالات..."
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2155,4 +2186,16 @@ model AdminNoteReply {
 
   @@index([noteId, createdAt])
   @@map("admin_note_replies")
+}
+
+model SlugChangeOtp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId  String   @db.ObjectId
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([clientId, expiresAt])
+  @@map("slug_change_otps")
 }

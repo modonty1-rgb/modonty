@@ -145,7 +145,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       imageAlt,
       url: urlForMetadata,
       type: "article",
-      siteName: articleForGeneration.client.name,
+      siteName: articleDefaults.siteName,
       locale: articleDefaults.ogLocale || "ar_SA",
       localeAlternate: ["ar_EG", "en_US"],
       publishedTime: articleForGeneration.datePublished || undefined,
@@ -258,7 +258,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
             <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
               {/* Left sidebar – مشاركة وتفاعل + العميل */}
-              <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="مشاركة وتفاعل">
+              <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100dvh-4rem)]" role="complementary" aria-label="مشاركة وتفاعل">
                 <div className="flex flex-col gap-6">
                   {article.client ? (
                     <ArticleClientCard
@@ -310,6 +310,22 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                       image={article.featuredImage}
                       title={article.title}
                     />
+                  )}
+
+                  {article.audioUrl && (
+                    <div className="my-4 rounded-lg border border-border bg-muted/30 p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                          🎧 نسخة صوتية
+                        </span>
+                      </div>
+                      <audio
+                        controls
+                        src={article.audioUrl}
+                        className="w-full h-10"
+                        preload="none"
+                      />
+                    </div>
                   )}
 
                   <ArticleTags
@@ -387,7 +403,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               </div>
 
               {/* Right sidebar – Author → TOC → Newsletter */}
-              <aside className="hidden lg:block sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]" role="complementary" aria-label="جدول المحتويات">
+              <aside className="hidden lg:block sticky top-[3.5rem] self-start h-[calc(100dvh-4rem)]" role="complementary" aria-label="جدول المحتويات">
                 <div className="flex flex-col gap-6">
                   <div className="[&_section]:my-0">
                     <ArticleAuthorBio author={article.author} platformSocialLinks={platformSocialLinks} />
@@ -399,7 +415,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     </div>
                   ) : null}
                   <div className="[&>div]:mt-0 [&>div]:mb-0">
-                    <NewsletterCTA clientId={article.clientId} articleId={article.id} />
+                    <NewsletterCTA clientId={article.clientId} articleId={article.id} ctaText={article.client?.newsletterCtaText} />
                   </div>
                   <CommentFormDialog
                     articleId={article.id}
@@ -448,6 +464,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 articleSlug: article.slug,
                 userId,
                 platformSocialLinks,
+                newsletterCtaText: article.client?.newsletterCtaText,
               }}
             />
           </div>

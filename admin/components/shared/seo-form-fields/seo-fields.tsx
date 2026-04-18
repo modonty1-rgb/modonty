@@ -47,13 +47,19 @@ export function SEOFields({
         </CardHeader>
         <CollapsibleContent>
           <CardContent className="space-y-4">
-        <FormInput
-          label="SEO Title"
-          name="seoTitle"
-          value={seoTitle}
-          onChange={(e) => onSeoTitleChange(e.target.value)}
-          hint="SEO title shown in search results (50-60 characters optimal)"
-        />
+        <div>
+          <FormInput
+            label="SEO Title"
+            name="seoTitle"
+            value={seoTitle}
+            onChange={(e) => onSeoTitleChange(e.target.value)}
+            hint="SEO title shown in search results (50-60 characters optimal)"
+            maxLength={60}
+          />
+          <div className="mt-1">
+            <CharacterCounter current={seoTitle.length} min={50} max={60} className="ms-1" />
+          </div>
+        </div>
         <div>
           <FormTextarea
             label="SEO Description"
@@ -61,14 +67,10 @@ export function SEOFields({
             value={seoDescription}
             onChange={(e) => onSeoDescriptionChange(e.target.value)}
             rows={3}
-            hint="SEO description shown in search results (150-160 characters)"
+            hint="SEO description shown in search results (120-160 characters)"
           />
           <div className="mt-1">
-            <CharacterCounter
-              current={seoDescription.length}
-              max={160}
-              className="ms-1"
-            />
+            <CharacterCounter current={seoDescription.length} min={120} max={160} className="ms-1" />
           </div>
         </div>
         {showCanonical && (

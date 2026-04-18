@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
-import { CloudinaryImageInput } from "@/components/shared/cloudinary-image-input";
+import { MediaImageField } from "@/components/shared/media-image-field";
 import { Industry } from "@prisma/client";
 import { useIndustryForm } from "../helpers/hooks/use-industry-form";
 import { Save, ArrowLeft } from "lucide-react";
@@ -84,7 +84,7 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div>
                   <FormInput
                     label="SEO Title"
@@ -92,19 +92,20 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
                     value={formData.seoTitle}
                     onChange={(e) => updateSEOField("seoTitle", e.target.value)}
                     hint={messages.hints.industry.metaTitle}
-                    maxLength={51}
+                    maxLength={60}
                   />
-                  <CharacterCounter current={formData.seoTitle.length} max={51} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoTitle.length} min={50} max={60} className="mt-1 ms-1" />
                 </div>
                 <div>
-                  <FormInput
+                  <FormTextarea
                     label="SEO Description"
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
                     hint={messages.hints.industry.metaDescription}
+                    rows={3}
                   />
-                  <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoDescription.length} min={120} max={160} className="mt-1 ms-1" />
                 </div>
               </div>
             </CardContent>
@@ -121,15 +122,19 @@ export function IndustryForm({ initialData, industryId }: IndustryFormProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <CloudinaryImageInput
+              <MediaImageField
+                label="Social Image"
                 imageUrl={formData.socialImage}
                 altText={formData.socialImageAlt}
-                onImageUrlChange={(url) => updateImageField("socialImage", url)}
-                onAltTextChange={(alt) => updateImageField("socialImageAlt", alt)}
+                onImageChange={(url, alt) => {
+                  updateImageField("socialImage", url);
+                  updateImageField("socialImageAlt", alt);
+                }}
                 onRemove={() => {
                   updateImageField("socialImage", "");
                   updateImageField("socialImageAlt", "");
                 }}
+                scope="PLATFORM"
               />
             </CardContent>
           </Card>

@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
+import { auth } from "@/lib/auth";
 
 const FEEDBACK_EMAIL = "modonty1@gmail.com";
 
@@ -10,6 +11,7 @@ export async function sendFeedback(data: {
   message: string;
   page: string;
 }): Promise<{ success: boolean; error?: string }> {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     if (!data.name?.trim()) return { success: false, error: "Please select your name" };
     if (!data.message?.trim()) return { success: false, error: "Please write a message" };

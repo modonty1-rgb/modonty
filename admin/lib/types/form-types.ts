@@ -108,6 +108,9 @@ export interface ArticleFormData {
   // E-E-A-T Enhancement
   citations?: string[];
 
+  // Audio
+  audioUrl?: string | null;
+
   // SEO keywords the article is based on (reference)
   seoKeywords?: string[];
   
@@ -214,6 +217,7 @@ export interface ClientFormData {
   // Additional Properties
   alternateName?: string | null;
   slogan?: string | null;
+  newsletterCtaText?: string | null;
   keywords?: string[];
   knowsLanguage?: string[];
   organizationType?: string | null;

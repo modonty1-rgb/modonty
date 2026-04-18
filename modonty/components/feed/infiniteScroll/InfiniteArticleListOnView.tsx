@@ -16,11 +16,13 @@ const InfiniteArticleList = dynamic(
 interface InfiniteArticleListOnViewProps {
   initialStartIndex: number;
   categorySlug?: string;
+  initialPage?: number;
 }
 
 export function InfiniteArticleListOnView({
   initialStartIndex,
   categorySlug,
+  initialPage = 1,
 }: InfiniteArticleListOnViewProps) {
   const [shouldRender, setShouldRender] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -55,6 +57,7 @@ export function InfiniteArticleListOnView({
           initialPosts={[]}
           initialStartIndex={initialStartIndex}
           categorySlug={categorySlug}
+          initialPage={initialPage}
         />
       ) : null}
     </div>

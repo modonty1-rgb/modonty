@@ -146,6 +146,9 @@ export default async function CategoryDetailPage({ params, searchParams }: Categ
       name: category.name,
       description: category.description || category.seoDescription,
       url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/categories/${slug}`,
+      ...(category.socialImage && {
+        image: { "@type": "ImageObject", url: category.socialImage, description: category.socialImageAlt || category.name },
+      }),
       mainEntity: {
         "@type": "ItemList",
         itemListElement: articles.slice(0, 10).map((article, index) => ({

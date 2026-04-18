@@ -10,8 +10,24 @@ export interface CtaClickPayload {
   scrollDepth?: number;
 }
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, unknown>[];
+  }
+}
+
 export function trackCtaClick(payload: CtaClickPayload): void {
   try {
+    if (typeof window !== "undefined" && Array.isArray(window.dataLayer)) {
+      window.dataLayer.push({
+        event: "cta_click",
+        cta_label: payload.label,
+        cta_type: payload.type,
+        cta_target_url: payload.targetUrl,
+        ...(payload.articleId && { cta_article_id: payload.articleId }),
+        ...(payload.clientId && { cta_client_id: payload.clientId }),
+      });
+    }
     fetch("/api/track/cta-click", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

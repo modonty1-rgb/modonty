@@ -1,0 +1,367 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+      - navigation:
+        - generic:
+          - link:
+            - /url: /
+            - img
+            - generic: Dashboard
+          - link:
+            - /url: /seo-overview
+            - img
+            - generic: SEO Overview
+        - generic:
+          - button [expanded]:
+            - generic:
+              - img
+              - generic: Content
+            - img
+          - generic:
+            - generic:
+              - link:
+                - /url: /articles
+                - img
+                - generic: Articles
+              - link:
+                - /url: /categories
+                - img
+                - generic: Categories
+              - link:
+                - /url: /tags
+                - img
+                - generic: Tags
+              - link:
+                - /url: /authors
+                - img
+                - generic: Authors
+              - link:
+                - /url: /industries
+                - img
+                - generic: Industries
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Modonty Pages
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: Audience
+            - img
+        - generic:
+          - button:
+            - generic:
+              - img
+              - generic: System
+            - img
+      - generic:
+        - link:
+          - /url: /guidelines
+          - img
+          - text: Guidelines
+        - generic:
+          - button:
+            - img
+          - link:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic: "?"
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - img
+              - generic:
+                - img
+                - generic: Clients
+          - generic:
+            - navigation:
+              - link:
+                - /url: /
+                - generic:
+                  - img
+                - generic: Modonty
+              - generic:
+                - link:
+                  - /url: /articles
+                  - button:
+                    - img
+                    - generic: Articles
+                - link:
+                  - /url: /clients
+                  - button:
+                    - img
+                    - generic: Clients
+                - link:
+                  - /url: /media
+                  - button:
+                    - img
+                    - generic: Media
+          - generic:
+            - link:
+              - /url: /contact-messages
+              - button:
+                - img
+                - generic: "4"
+            - button:
+              - generic:
+                - generic: M
+      - generic:
+        - generic: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic:
+          - button:
+            - img
+            - text: Send Note
+          - button:
+            - img
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]:
+                  - text: Clients
+                  - generic: (4)
+                - generic:
+                  - generic: 4 total
+                  - generic: 17% delivery
+                  - generic: 73% SEO
+              - generic:
+                - button:
+                  - img
+                  - text: Filters
+                - link:
+                  - /url: /clients/new
+                  - button:
+                    - img
+                    - text: New Client
+            - generic:
+              - generic:
+                - img
+                - textbox:
+                  - /placeholder: Search clients...
+          - generic:
+            - generic:
+              - generic:
+                - table:
+                  - rowgroup:
+                    - row:
+                      - columnheader:
+                        - generic:
+                          - text: Name
+                          - img
+                      - columnheader:
+                        - generic:
+                          - text: Plan
+                          - img
+                      - columnheader: Status
+                      - columnheader:
+                        - generic:
+                          - img
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader:
+                        - generic:
+                          - img
+                      - columnheader: Actions
+                  - rowgroup:
+                    - row:
+                      - cell:
+                        - generic:
+                          - button:
+                            - generic: A
+                          - generic:
+                            - link:
+                              - /url: /clients/69e117cce02db6d1c328ee2b
+                              - text: Al Bayt Restaurant - Updated
+                            - generic: albayt@test.sa
+                      - cell: Standard
+                      - cell: Pending
+                      - cell: "2"
+                      - cell:
+                        - generic: 2/4
+                      - cell: —
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img:
+                            - generic: 12%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69e117cce02db6d1c328ee2b/edit
+                            - img
+                          - link:
+                            - /url: /clients/69e117cce02db6d1c328ee2b/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69e117cce02db6d1c328ee2b
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - button:
+                            - generic: ش
+                          - generic:
+                            - link:
+                              - /url: /clients/69e10270fb65671d5efcd0f6
+                              - text: شركة الاختبار
+                            - generic: info@techvision.sa
+                      - cell: Standard
+                      - cell: Pending
+                      - cell: "0"
+                      - cell:
+                        - generic: 0/4
+                      - cell: —
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img:
+                            - generic: 12%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69e10270fb65671d5efcd0f6/edit
+                            - img
+                          - link:
+                            - /url: /clients/69e10270fb65671d5efcd0f6/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69e10270fb65671d5efcd0f6
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - button:
+                            - img
+                          - generic:
+                            - link:
+                              - /url: /clients/69d6665792f34b725bbddecf
+                              - text: عيادات بلسم الطبية
+                            - generic: info@balsam-medical.sa
+                      - cell: Standard
+                      - cell: Active
+                      - cell: "0"
+                      - cell:
+                        - generic: 0/4
+                      - cell: —
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img:
+                            - generic: 52%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d6665792f34b725bbddecf/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d6665792f34b725bbddecf/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d6665792f34b725bbddecf
+                            - img
+                    - row:
+                      - cell:
+                        - generic:
+                          - button:
+                            - img
+                          - generic:
+                            - link:
+                              - /url: /clients/69d6665592f34b725bbddece
+                              - text: متجر نوفا للإلكترونيات
+                            - generic: info@nova-electronics.sa
+                      - cell: Pro
+                      - cell: Active
+                      - cell: "2"
+                      - cell:
+                        - generic: 2/8
+                      - cell: —
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img
+                      - cell:
+                        - generic:
+                          - img:
+                            - generic: 47%
+                      - cell:
+                        - generic:
+                          - link:
+                            - /url: /clients/69d6665592f34b725bbddece/edit
+                            - img
+                          - link:
+                            - /url: /clients/69d6665592f34b725bbddece/seo
+                            - generic: S
+                          - button:
+                            - img
+                          - link:
+                            - /url: /clients/69d6665592f34b725bbddece
+                            - img
+  - list
+  - button "Open Next.js Dev Tools" [ref=e110] [cursor=pointer]:
+    - img [ref=e111]
+  - alert
+  - dialog "Edit Hero Image" [ref=e376]:
+    - generic [ref=e377]:
+      - heading "Edit Hero Image" [level=2] [ref=e378]
+      - paragraph [ref=e379]: "Upload a hero image for this client. Recommended: 1200×630px or 1200×400px."
+    - generic [ref=e380]:
+      - generic [ref=e381]: "Hero Image(Recommended: 1200×630px or 1200×400px)"
+      - generic [ref=e384]:
+        - img "Selected media" [ref=e385]
+        - generic [ref=e387]:
+          - button "Change" [active] [ref=e388] [cursor=pointer]
+          - button [ref=e389] [cursor=pointer]:
+            - img
+        - paragraph [ref=e391]: No alt text
+    - generic [ref=e392]:
+      - button "Cancel" [ref=e393] [cursor=pointer]
+      - button "Save Hero Image" [ref=e394] [cursor=pointer]
+    - button "Close" [ref=e395] [cursor=pointer]:
+      - img [ref=e396]
+      - generic [ref=e399]: Close

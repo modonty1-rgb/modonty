@@ -1,0 +1,401 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to dark mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - generic [ref=e100]: Articles
+          - navigation "Main navigation" [ref=e102]:
+            - link "Modonty Modonty" [ref=e103] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e105]
+              - generic [ref=e106]: Modonty
+            - generic [ref=e108]:
+              - link "Articles" [ref=e109] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e110]:
+                  - img
+                  - generic [ref=e111]: Articles
+              - link "Clients" [ref=e112] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e113]:
+                  - img
+                  - generic [ref=e114]: Clients
+              - link "Media" [ref=e115] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e116]:
+                  - img
+                  - generic [ref=e117]: Media
+          - generic [ref=e118]:
+            - link [ref=e119] [cursor=pointer]:
+              - /url: /contact-messages
+              - button [ref=e120]:
+                - img
+            - button "M" [ref=e121] [cursor=pointer]:
+              - generic [ref=e123]: M
+      - generic [ref=e124]:
+        - generic [ref=e125]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e126]:
+          - button "Send Note" [ref=e127] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e128] [cursor=pointer]:
+            - img
+      - main [ref=e129]:
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - heading "Articles (30)" [level=1] [ref=e134]:
+                - text: Articles
+                - generic [ref=e135]: (30)
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - img [ref=e138]
+                  - generic [ref=e141]: "30"
+                  - generic [ref=e142]: total
+                - generic [ref=e143]:
+                  - img [ref=e144]
+                  - generic [ref=e147]: "26"
+                  - generic [ref=e148]: published
+                - generic [ref=e149]:
+                  - img [ref=e150]
+                  - generic [ref=e153]: "3"
+                  - generic [ref=e154]: drafts
+                - generic [ref=e155]:
+                  - img [ref=e156]
+                  - generic [ref=e160]: 81%
+                  - generic [ref=e161]: SEO
+                - button "Details" [ref=e162] [cursor=pointer]:
+                  - img
+                  - generic [ref=e163]: Details
+            - generic [ref=e164]:
+              - button "Filters" [ref=e165] [cursor=pointer]:
+                - img
+                - text: Filters
+              - link "SEO Health" [ref=e166] [cursor=pointer]:
+                - /url: /seo-overview
+                - button "SEO Health" [ref=e167]:
+                  - img
+                  - text: SEO Health
+              - link "New Article" [ref=e168] [cursor=pointer]:
+                - /url: /articles/new
+                - button "New Article" [ref=e169]:
+                  - img
+                  - text: New Article
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - img
+              - textbox "Search articles..." [ref=e172]
+            - generic [ref=e173]:
+              - generic [ref=e174] [cursor=pointer]: All
+              - generic [ref=e175] [cursor=pointer]: Writing
+              - generic [ref=e176] [cursor=pointer]: Draft
+              - generic [ref=e177] [cursor=pointer]: Scheduled
+              - generic [ref=e178] [cursor=pointer]: Published
+              - generic [ref=e179] [cursor=pointer]: Archived
+          - generic [ref=e180]:
+            - table [ref=e183]:
+              - rowgroup [ref=e184]:
+                - row "Article SEO Status Date" [ref=e185]:
+                  - columnheader "Sort by client" [ref=e186] [cursor=pointer]:
+                    - img [ref=e188]
+                  - columnheader "Article" [ref=e191] [cursor=pointer]:
+                    - generic [ref=e192]:
+                      - text: Article
+                      - img [ref=e193]
+                  - columnheader "SEO" [ref=e196] [cursor=pointer]:
+                    - generic [ref=e197]:
+                      - text: SEO
+                      - img [ref=e198]
+                  - columnheader "Status" [ref=e201] [cursor=pointer]:
+                    - generic [ref=e202]:
+                      - text: Status
+                      - img [ref=e203]
+                  - columnheader "Date" [ref=e206] [cursor=pointer]:
+                    - generic [ref=e207]:
+                      - text: Date
+                      - img [ref=e208]
+              - rowgroup [ref=e211]:
+                - row "م صحة القلب والوقاية من الأمراض المزمنة متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي 79% Draft Apr 17, 2026" [ref=e212] [cursor=pointer]:
+                  - cell "م" [ref=e213]:
+                    - generic "متجر نوفا للإلكترونيات" [ref=e214]:
+                      - generic [ref=e215]: م
+                  - cell "صحة القلب والوقاية من الأمراض المزمنة متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي" [ref=e216]:
+                    - generic [ref=e217]:
+                      - link "صحة القلب والوقاية من الأمراض المزمنة" [ref=e218]:
+                        - /url: /articles/69e262f6559192db66f72a32
+                      - generic [ref=e219]:
+                        - generic [ref=e220]: متجر نوفا للإلكترونيات
+                        - generic [ref=e221]: ·
+                        - generic [ref=e222]:
+                          - img [ref=e223]
+                          - text: التقنية والذكاء الاصطناعي
+                  - cell "79%" [ref=e225]:
+                    - generic [ref=e226]: 79%
+                  - cell "Draft" [ref=e227]:
+                    - generic [ref=e228]: Draft
+                  - cell "Apr 17, 2026" [ref=e229]:
+                    - generic [ref=e230]: Apr 17, 2026
+                - row "A التحليلات الرقمية لقياس نجاح متجرك Al Bayt Restaurant - Updated · التجارة الإلكترونية 88% Draft Apr 17, 2026" [ref=e231] [cursor=pointer]:
+                  - cell "A" [ref=e232]:
+                    - generic "Al Bayt Restaurant - Updated" [ref=e233]:
+                      - generic [ref=e234]: A
+                  - cell "التحليلات الرقمية لقياس نجاح متجرك Al Bayt Restaurant - Updated · التجارة الإلكترونية" [ref=e235]:
+                    - generic [ref=e236]:
+                      - link "التحليلات الرقمية لقياس نجاح متجرك" [ref=e237]:
+                        - /url: /articles/69e262f0559192db66f72a2e
+                      - generic [ref=e238]:
+                        - generic [ref=e239]: Al Bayt Restaurant - Updated
+                        - generic [ref=e240]: ·
+                        - generic [ref=e241]:
+                          - img [ref=e242]
+                          - text: التجارة الإلكترونية
+                  - cell "88%" [ref=e244]:
+                    - generic [ref=e245]: 88%
+                  - cell "Draft" [ref=e246]:
+                    - generic [ref=e247]: Draft
+                  - cell "Apr 17, 2026" [ref=e248]:
+                    - generic [ref=e249]: Apr 17, 2026
+                - row "ش بناء روابط خلفية عربية عالية الجودة شركة الاختبار · التسويق الرقمي 79% Draft Apr 17, 2026" [ref=e250] [cursor=pointer]:
+                  - cell "ش" [ref=e251]:
+                    - generic "شركة الاختبار" [ref=e252]:
+                      - generic [ref=e253]: ش
+                  - cell "بناء روابط خلفية عربية عالية الجودة شركة الاختبار · التسويق الرقمي" [ref=e254]:
+                    - generic [ref=e255]:
+                      - link "بناء روابط خلفية عربية عالية الجودة" [ref=e256]:
+                        - /url: /articles/69e262e9559192db66f72a2a
+                      - generic [ref=e257]:
+                        - generic [ref=e258]: شركة الاختبار
+                        - generic [ref=e259]: ·
+                        - generic [ref=e260]:
+                          - img [ref=e261]
+                          - text: التسويق الرقمي
+                  - cell "79%" [ref=e263]:
+                    - generic [ref=e264]: 79%
+                  - cell "Draft" [ref=e265]:
+                    - generic [ref=e266]: Draft
+                  - cell "Apr 17, 2026" [ref=e267]:
+                    - generic [ref=e268]: Apr 17, 2026
+                - row "ع نصائح لتسريع موقعك وتحسين Core Web Vitals عيادات بلسم الطبية · SEO تحسين محركات البحث 79% Published Apr 17, 2026" [ref=e269] [cursor=pointer]:
+                  - cell "ع" [ref=e270]:
+                    - generic "عيادات بلسم الطبية" [ref=e271]:
+                      - generic [ref=e272]: ع
+                  - cell "نصائح لتسريع موقعك وتحسين Core Web Vitals عيادات بلسم الطبية · SEO تحسين محركات البحث" [ref=e273]:
+                    - generic [ref=e274]:
+                      - link "نصائح لتسريع موقعك وتحسين Core Web Vitals" [ref=e275]:
+                        - /url: /articles/69e262dc559192db66f72a22
+                      - generic [ref=e276]:
+                        - generic [ref=e277]: عيادات بلسم الطبية
+                        - generic [ref=e278]: ·
+                        - generic [ref=e279]:
+                          - img [ref=e280]
+                          - text: SEO تحسين محركات البحث
+                  - cell "79%" [ref=e282]:
+                    - generic [ref=e283]: 79%
+                  - cell "Published" [ref=e284]:
+                    - generic [ref=e285]: Published
+                  - cell "Apr 17, 2026" [ref=e286]:
+                    - generic [ref=e287]: Apr 17, 2026
+                - row "م كيف تختار كلماتك المفتاحية بذكاء متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي 88% Published Apr 17, 2026" [ref=e288] [cursor=pointer]:
+                  - cell "م" [ref=e289]:
+                    - generic "متجر نوفا للإلكترونيات" [ref=e290]:
+                      - generic [ref=e291]: م
+                  - cell "كيف تختار كلماتك المفتاحية بذكاء متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي" [ref=e292]:
+                    - generic [ref=e293]:
+                      - link "كيف تختار كلماتك المفتاحية بذكاء" [ref=e294]:
+                        - /url: /articles/69e262ce559192db66f72a1a
+                      - generic [ref=e295]:
+                        - generic [ref=e296]: متجر نوفا للإلكترونيات
+                        - generic [ref=e297]: ·
+                        - generic [ref=e298]:
+                          - img [ref=e299]
+                          - text: التقنية والذكاء الاصطناعي
+                  - cell "88%" [ref=e301]:
+                    - generic [ref=e302]: 88%
+                  - cell "Published" [ref=e303]:
+                    - generic [ref=e304]: Published
+                  - cell "Apr 17, 2026" [ref=e305]:
+                    - generic [ref=e306]: Apr 17, 2026
+                - row "A شهادة الجودة ISO وتأثيرها على ظهورك في جوجل Al Bayt Restaurant - Updated · التجارة الإلكترونية 79% Published Apr 17, 2026" [ref=e307] [cursor=pointer]:
+                  - cell "A" [ref=e308]:
+                    - generic "Al Bayt Restaurant - Updated" [ref=e309]:
+                      - generic [ref=e310]: A
+                  - cell "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل Al Bayt Restaurant - Updated · التجارة الإلكترونية" [ref=e311]:
+                    - generic [ref=e312]:
+                      - link "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل" [ref=e313]:
+                        - /url: /articles/69e262c0559192db66f72a12
+                      - generic [ref=e314]:
+                        - generic [ref=e315]: Al Bayt Restaurant - Updated
+                        - generic [ref=e316]: ·
+                        - generic [ref=e317]:
+                          - img [ref=e318]
+                          - text: التجارة الإلكترونية
+                  - cell "79%" [ref=e320]:
+                    - generic [ref=e321]: 79%
+                  - cell "Published" [ref=e322]:
+                    - generic [ref=e323]: Published
+                  - cell "Apr 17, 2026" [ref=e324]:
+                    - generic [ref=e325]: Apr 17, 2026
+                - row "ش الفاتورة الإلكترونية ZATCA للمتاجر السعودية شركة الاختبار · التسويق الرقمي 79% Published Apr 17, 2026" [ref=e326] [cursor=pointer]:
+                  - cell "ش" [ref=e327]:
+                    - generic "شركة الاختبار" [ref=e328]:
+                      - generic [ref=e329]: ش
+                  - cell "الفاتورة الإلكترونية ZATCA للمتاجر السعودية شركة الاختبار · التسويق الرقمي" [ref=e330]:
+                    - generic [ref=e331]:
+                      - link "الفاتورة الإلكترونية ZATCA للمتاجر السعودية" [ref=e332]:
+                        - /url: /articles/69e262b1559192db66f72a0a
+                      - generic [ref=e333]:
+                        - generic [ref=e334]: شركة الاختبار
+                        - generic [ref=e335]: ·
+                        - generic [ref=e336]:
+                          - img [ref=e337]
+                          - text: التسويق الرقمي
+                  - cell "79%" [ref=e339]:
+                    - generic [ref=e340]: 79%
+                  - cell "Published" [ref=e341]:
+                    - generic [ref=e342]: Published
+                  - cell "Apr 17, 2026" [ref=e343]:
+                    - generic [ref=e344]: Apr 17, 2026
+                - 'row "ع التسويق عبر المؤثرين في السعودية: دليل الشركات عيادات بلسم الطبية · SEO تحسين محركات البحث 88% Published Apr 17, 2026" [ref=e345] [cursor=pointer]':
+                  - cell "ع" [ref=e346]:
+                    - generic "عيادات بلسم الطبية" [ref=e347]:
+                      - generic [ref=e348]: ع
+                  - 'cell "التسويق عبر المؤثرين في السعودية: دليل الشركات عيادات بلسم الطبية · SEO تحسين محركات البحث" [ref=e349]':
+                    - generic [ref=e350]:
+                      - 'link "التسويق عبر المؤثرين في السعودية: دليل الشركات" [ref=e351]':
+                        - /url: /articles/69e262a2559192db66f72a02
+                      - generic [ref=e352]:
+                        - generic [ref=e353]: عيادات بلسم الطبية
+                        - generic [ref=e354]: ·
+                        - generic [ref=e355]:
+                          - img [ref=e356]
+                          - text: SEO تحسين محركات البحث
+                  - cell "88%" [ref=e358]:
+                    - generic [ref=e359]: 88%
+                  - cell "Published" [ref=e360]:
+                    - generic [ref=e361]: Published
+                  - cell "Apr 17, 2026" [ref=e362]:
+                    - generic [ref=e363]: Apr 17, 2026
+                - row "م كيف تربح من الكتابة الحرة في السعودية متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي 88% Published Apr 17, 2026" [ref=e364] [cursor=pointer]:
+                  - cell "م" [ref=e365]:
+                    - generic "متجر نوفا للإلكترونيات" [ref=e366]:
+                      - generic [ref=e367]: م
+                  - cell "كيف تربح من الكتابة الحرة في السعودية متجر نوفا للإلكترونيات · التقنية والذكاء الاصطناعي" [ref=e368]:
+                    - generic [ref=e369]:
+                      - link "كيف تربح من الكتابة الحرة في السعودية" [ref=e370]:
+                        - /url: /articles/69e26293559192db66f729fa
+                      - generic [ref=e371]:
+                        - generic [ref=e372]: متجر نوفا للإلكترونيات
+                        - generic [ref=e373]: ·
+                        - generic [ref=e374]:
+                          - img [ref=e375]
+                          - text: التقنية والذكاء الاصطناعي
+                  - cell "88%" [ref=e377]:
+                    - generic [ref=e378]: 88%
+                  - cell "Published" [ref=e379]:
+                    - generic [ref=e380]: Published
+                  - cell "Apr 17, 2026" [ref=e381]:
+                    - generic [ref=e382]: Apr 17, 2026
+                - row "A أمن المعلومات للشركات السعودية الصغيرة Al Bayt Restaurant - Updated · التجارة الإلكترونية 88% Published Apr 17, 2026" [ref=e383] [cursor=pointer]:
+                  - cell "A" [ref=e384]:
+                    - generic "Al Bayt Restaurant - Updated" [ref=e385]:
+                      - generic [ref=e386]: A
+                  - cell "أمن المعلومات للشركات السعودية الصغيرة Al Bayt Restaurant - Updated · التجارة الإلكترونية" [ref=e387]:
+                    - generic [ref=e388]:
+                      - link "أمن المعلومات للشركات السعودية الصغيرة" [ref=e389]:
+                        - /url: /articles/69e26284559192db66f729f2
+                      - generic [ref=e390]:
+                        - generic [ref=e391]: Al Bayt Restaurant - Updated
+                        - generic [ref=e392]: ·
+                        - generic [ref=e393]:
+                          - img [ref=e394]
+                          - text: التجارة الإلكترونية
+                  - cell "88%" [ref=e396]:
+                    - generic [ref=e397]: 88%
+                  - cell "Published" [ref=e398]:
+                    - generic [ref=e399]: Published
+                  - cell "Apr 17, 2026" [ref=e400]:
+                    - generic [ref=e401]: Apr 17, 2026
+            - generic [ref=e402]:
+              - paragraph [ref=e403]: Showing 1 to 10 of 30 results
+              - generic [ref=e404]:
+                - button [disabled]:
+                  - img
+                - generic [ref=e405]: Page 1 of 3
+                - button [ref=e406] [cursor=pointer]:
+                  - img
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e407]

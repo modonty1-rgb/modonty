@@ -1,11 +1,8 @@
-import { getRecentArticles } from "@/app/api/helpers/article-queries";
+import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
 import { cn } from "@/lib/utils";
 import { isMobileRequest } from "../is-mobile-request";
-import { ModontyCard } from "./ModontyCard";
+import { FollowCard } from "./FollowCard";
 import { NewClientsCard } from "./NewClientsCard";
-import { SocialCard } from "./SocialCard";
-import { More } from "./More";
-import type { RightSidebarArticle } from "./types";
 
 interface RightSidebarProps {
   className?: string;
@@ -16,21 +13,19 @@ export async function RightSidebar({ className }: RightSidebarProps) {
     return null;
   }
 
-  const suggestedArticles = await getRecentArticles(3) as RightSidebarArticle[];
+  const clients = await getClientsForSidebar(20);
 
   return (
     <aside
       aria-label="الشريط الجانبي الأيمن"
       className={cn(
-        "hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)]",
+        "hidden lg:block w-[300px] sticky top-[3.5rem] self-start h-[calc(100dvh-5rem)] overflow-hidden",
         className
       )}
     >
-      <div className="flex h-full flex-col space-y-4">
-        <SocialCard />
-        <ModontyCard articles={suggestedArticles} />
-        <NewClientsCard articles={suggestedArticles} />
-        <More />
+      <div className="flex flex-col gap-4">
+        <FollowCard />
+        <NewClientsCard clients={clients} />
       </div>
     </aside>
   );

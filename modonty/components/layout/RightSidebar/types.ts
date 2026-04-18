@@ -3,5 +3,5 @@ export interface RightSidebarArticle {
   title: string;
   excerpt: string | null;
   slug: string;
-  client: { name: string; logo?: string };
+  client: { name: string; slug: string; logo?: string; industry?: string };
 }

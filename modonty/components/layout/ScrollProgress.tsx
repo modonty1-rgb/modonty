@@ -37,7 +37,7 @@ export function ScrollProgress({ className }: ScrollProgressProps) {
       className={cn("fixed left-0 right-0 top-14 z-40 h-1 bg-muted", className)}
     >
       <div
-        className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-150 ease-out"
+        className="h-full bg-accent transition-all duration-150 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

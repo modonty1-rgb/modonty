@@ -57,9 +57,8 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
       setClients(clientsList);
       if (initialClientId && clientsList.some((c) => c.id === initialClientId)) {
         setClientId(initialClientId);
-      } else if (clientsList.length > 0) {
-        setClientId(clientsList[0].id);
       }
+      // Do NOT auto-select — user must consciously pick a client (OBS-004 fix)
       setIsLoadingClients(false);
     };
     loadClients();
@@ -234,11 +233,15 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
         resourceType
       );
 
+      const resolvedClientId = (clientId === "none" || clientId === "modonty") ? null : clientId;
+      const resolvedScope = clientId === "modonty" ? "PLATFORM" : clientId === "none" ? "GENERAL" : "CLIENT";
+
       const mediaResult = await createMedia({
         filename: uploadFile.file.name,
         url: optimizedUrl,
         mimeType: uploadFile.file.type,
-        clientId,
+        clientId: resolvedClientId,
+        scope: resolvedScope as import("@prisma/client").MediaScope,
         fileSize: uploadFile.file.size,
         width: fileWidth,
         height: fileHeight,

@@ -35,6 +35,7 @@ export async function getViewsTrendData(filters?: {
         sessionId: true,
       },
       orderBy: { timestamp: "asc" },
+      take: 50000,
     });
 
     const grouped = analytics.reduce((acc, record) => {

@@ -29,7 +29,7 @@ export default function HomeLoading() {
               </article>
             ))}
           </div>
-          <aside className="hidden lg:flex flex-col w-[300px] sticky top-[3.5rem] self-start h-[calc(100vh-4rem)] space-y-4">
+          <aside className="hidden lg:flex flex-col w-[300px] sticky top-[3.5rem] self-start h-[calc(100dvh-4rem)] space-y-4">
             <div className={`${card} flex justify-center gap-2`}><div className={`${pulse} h-8 w-8 rounded-md`} /><div className={`${pulse} h-8 w-8 rounded-md`} /><div className={`${pulse} h-8 w-8 rounded-md`} /></div>
             <div className={card}><div className={`${pulse} h-3 w-20 mb-1`} /><div className={`${pulse} h-3 w-full`} /><div className={`${pulse} h-3 w-full`} /><div className={`${pulse} h-3 w-4/5`} /></div>
             <div className={`${card} flex-1 min-h-0 flex flex-col gap-2`}><div className={`${pulse} h-3 w-24`} />{[1,2,3].map(i=> <div key={i} className="flex gap-3"><div className={`${pulse} h-7 w-7 rounded-full shrink-0`} /><div className={`${pulse} h-3 flex-1`} /></div>)}</div>

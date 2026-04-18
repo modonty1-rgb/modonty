@@ -3,7 +3,7 @@ export interface ClientHeroClient {
   name: string;
   slug: string;
   legalName?: string | null;
-  businessBrief?: string | null;
+  slogan?: string | null;
   logoMedia?: { url: string } | null;
   heroImageMedia?: { url: string } | null;
   url?: string | null;

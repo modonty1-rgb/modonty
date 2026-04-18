@@ -36,7 +36,13 @@ export function generateArticleStructuredData(data: Record<string, unknown>): Re
   }
   const featuredImage = data.featuredImage as MediaRelation;
   if (featuredImage?.url) {
-    structuredData.image = featuredImage.url as string;
+    structuredData.image = {
+      "@type": "ImageObject",
+      url: featuredImage.url,
+      ...(featuredImage.width && { width: featuredImage.width }),
+      ...(featuredImage.height && { height: featuredImage.height }),
+      ...(featuredImage.altText && { name: featuredImage.altText }),
+    };
   }
   if (data.datePublished) {
     structuredData.datePublished = getDateString(data.datePublished);

@@ -25,9 +25,24 @@ export function PostCardHeroImage({
 
   if (!post.image) {
     return (
-      <div className="relative w-full aspect-video overflow-hidden bg-muted flex items-center justify-center">
+      <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-muted/80 to-muted/40 flex flex-col items-center justify-center gap-2">
         {audioBadge}
-        <IconArticle className="h-10 w-10 text-muted-foreground/30" />
+        {post.clientLogo ? (
+          <Image
+            src={optimizeCloudinaryUrl(post.clientLogo, false)}
+            alt={post.clientName}
+            width={64}
+            height={64}
+            className="object-contain opacity-60"
+          />
+        ) : (
+          <>
+            <IconArticle className="h-8 w-8 text-muted-foreground/50" />
+            <span className="text-xs font-medium text-muted-foreground/70 text-center px-4 line-clamp-1">
+              {post.clientName}
+            </span>
+          </>
+        )}
       </div>
     );
   }

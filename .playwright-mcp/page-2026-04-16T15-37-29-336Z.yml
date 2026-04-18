@@ -1,0 +1,196 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e22]:
+    - complementary [ref=e23]:
+      - button "Collapse sidebar" [ref=e25] [cursor=pointer]:
+        - img
+      - navigation [ref=e26]:
+        - generic [ref=e27]:
+          - link "Dashboard" [ref=e28] [cursor=pointer]:
+            - /url: /
+            - img [ref=e29]
+            - generic [ref=e34]: Dashboard
+          - link "SEO Overview" [ref=e35] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e36]
+            - generic [ref=e39]: SEO Overview
+        - generic [ref=e41]:
+          - button "Content" [expanded] [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - generic [ref=e47]: Content
+            - img [ref=e48]
+          - generic [ref=e51]:
+            - link "Articles" [ref=e52] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e53]
+              - generic [ref=e56]: Articles
+            - link "Categories" [ref=e57] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e58]
+              - generic [ref=e60]: Categories
+            - link "Tags" [ref=e61] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e62]
+              - generic [ref=e65]: Tags
+            - link "Authors" [ref=e66] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e67]
+              - generic [ref=e69]: Authors
+            - link "Industries" [ref=e70] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e71]
+              - generic [ref=e73]: Industries
+        - button "Modonty Pages" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - generic [ref=e79]: Modonty Pages
+          - img [ref=e80]
+        - button "Audience" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e88]: Audience
+          - img [ref=e89]
+        - button "System" [ref=e92] [cursor=pointer]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - generic [ref=e97]: System
+          - img [ref=e98]
+      - generic [ref=e100]:
+        - link "Guidelines" [ref=e101] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e102]
+          - text: Guidelines
+        - generic [ref=e104]:
+          - button "Switch to light mode" [ref=e105] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e106] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e107]: "?"
+    - generic [ref=e108]:
+      - banner [ref=e109]:
+        - generic [ref=e110]:
+          - navigation "Breadcrumb" [ref=e112]:
+            - link "Go to dashboard" [ref=e113] [cursor=pointer]:
+              - /url: /
+              - img [ref=e114]
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - link "Clients" [ref=e306] [cursor=pointer]:
+                - /url: /clients
+            - generic [ref=e307]:
+              - img [ref=e308]
+              - generic [ref=e310]: New
+          - navigation "Main navigation" [ref=e122]:
+            - link "Modonty Modonty" [ref=e123] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e125]
+              - generic [ref=e126]: Modonty
+            - generic [ref=e128]:
+              - link "Articles" [ref=e129] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e130]:
+                  - img
+                  - generic [ref=e131]: Articles
+              - link "Clients" [ref=e132] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e133]:
+                  - img
+                  - generic [ref=e134]: Clients
+              - link "Media" [ref=e135] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e136]:
+                  - img
+                  - generic [ref=e137]: Media
+          - generic [ref=e138]:
+            - link "4" [ref=e139] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "4" [ref=e140]:
+                - img
+                - generic [ref=e141]: "4"
+            - button "M" [ref=e142] [cursor=pointer]:
+              - generic [ref=e144]: M
+      - generic [ref=e145]:
+        - generic [ref=e146]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e147]:
+          - button "Send Note" [ref=e148] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e149] [cursor=pointer]:
+            - img
+      - main [ref=e150]:
+        - generic [ref=e311]:
+          - generic [ref=e313]:
+            - heading "Create Client" [level=1] [ref=e314]
+            - button "Create Client" [ref=e316] [cursor=pointer]:
+              - img
+              - text: Create Client
+          - generic [ref=e323]:
+            - generic [ref=e324]:
+              - generic [ref=e325]:
+                - generic [ref=e326]:
+                  - generic [ref=e327]: Name*
+                  - textbox "Name*" [ref=e328]
+                  - paragraph [ref=e329]: يظهر في المقالات والمحتوى المنشور
+                - generic [ref=e330]:
+                  - generic [ref=e331]: Slug
+                  - generic [ref=e333]:
+                    - img [ref=e334]
+                    - generic [ref=e337]: Auto-generated from name...
+                    - generic [ref=e338]: auto
+                  - paragraph [ref=e339]: يُنشأ تلقائياً من الاسم — يُستخدم في روابط الصفحات
+              - generic [ref=e340]:
+                - generic [ref=e341]:
+                  - paragraph [ref=e342]: بيانات دخول العميل
+                  - paragraph [ref=e343]: يتم إرسال هذه البيانات للعميل للدخول على لوحة التحكم الخاصة به وإدارة محتواه.
+                - generic [ref=e344]:
+                  - generic [ref=e345]:
+                    - generic [ref=e346]: Email — Username*
+                    - textbox "Email — Username*" [ref=e347]
+                  - generic [ref=e348]:
+                    - generic [ref=e349]: Password*
+                    - textbox "Password*" [ref=e350]:
+                      - /placeholder: Enter password
+              - generic [ref=e351]:
+                - generic [ref=e352]:
+                  - generic [ref=e353]: Phone
+                  - textbox "Phone" [ref=e354]:
+                    - /placeholder: +966 11 123 4567
+                  - paragraph [ref=e355]: رقم الهاتف الرئيسي للتواصل
+                - generic [ref=e356]:
+                  - generic [ref=e357]: Contact Type
+                  - combobox [ref=e358] [cursor=pointer]:
+                    - generic: Select type
+                    - img [ref=e359]
+                  - combobox [ref=e361]
+                  - paragraph [ref=e362]: نوع التواصل في Schema.org ContactPoint
+                - generic [ref=e363]:
+                  - generic [ref=e364]: Website URL
+                  - textbox "Website URL" [ref=e365]:
+                    - /placeholder: https://www.example.com
+                  - paragraph [ref=e366]: Website — used in backlinks and SEO data
+              - generic [ref=e368]:
+                - generic [ref=e369]:
+                  - generic [ref=e370]: Business Brief*
+                  - textbox "Describe the client's business, products/services, target audience, and unique selling points. (Minimum 100 characters)" [ref=e371]
+                  - generic [ref=e373]:
+                    - generic [ref=e374]: 0 / 100 minimum
+                    - status [ref=e375]: At least 100 characters recommended for a clear business brief for writers and adequate Schema.org description.
+                - generic [ref=e377]:
+                  - generic [ref=e378]: Slogan
+                  - textbox "Slogan" [ref=e379]:
+                    - /placeholder: e.g., Innovation Beyond Boundaries
+                  - paragraph [ref=e380]: شعار الشركة — يظهر في بيانات SEO — حد أقصى 100 حرف
+            - generic [ref=e382]:
+              - button "Basic 1,200" [ref=e383] [cursor=pointer]
+              - button "Premium 9,600" [ref=e384] [cursor=pointer]
+              - button "Pro 4,800" [ref=e385] [cursor=pointer]
+              - button "Standard 2,400" [ref=e386] [cursor=pointer]
+              - spinbutton [ref=e387]
+              - textbox [ref=e388]
+              - textbox [ref=e389]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e17] [cursor=pointer]:
+    - img [ref=e18]
+  - alert [ref=e21]

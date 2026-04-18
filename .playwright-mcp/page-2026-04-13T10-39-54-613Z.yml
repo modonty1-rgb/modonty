@@ -1,0 +1,143 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - img [ref=e4]:
+      - generic [ref=e6]: م
+    - generic [ref=e7]:
+      - paragraph [ref=e8]: Modonty — Article Card
+      - paragraph [ref=e9]: قبل وبعد · Desktop + Mobile · ألوان البراند الرسمية
+  - paragraph [ref=e10]: 🖥 Desktop View
+  - generic [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]: ❌ الحالي
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e17]: J
+            - generic [ref=e18]:
+              - paragraph [ref=e19]: JBR SEO
+              - paragraph [ref=e20]: قبل 4 أيام · 4 دقائق
+          - generic [ref=e21]: ✓ نسخة صوتية
+        - generic [ref=e22]:
+          - paragraph [ref=e23]: ما هي صفحات نتائج البحث (Search Engine Results Page "SERP") وكيف يختار Google ما يعرضه للمستخدم؟
+          - paragraph [ref=e24]: تعرّف على SERP وأنواعها مثل النتائج العضوية والإعلانات والنتائج المحلية، وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+        - img [ref=e26]:
+          - generic [ref=e37]: SERP
+          - generic [ref=e38]: نتائج البحث
+        - generic [ref=e39]: اقرأ المزيد ‹
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]: 👍 ٢٤
+            - generic [ref=e43]: 💬 ٧
+            - generic [ref=e44]: 🔖 ٣
+            - generic [ref=e45]: 👁 ١٫٢ك
+          - generic [ref=e46]: ↗ مشاركة
+      - generic [ref=e47]:
+        - paragraph [ref=e48]: ⚠ الصورة تحت النص — مخالف NNG / image-first rule
+        - paragraph [ref=e49]: ⚠ Stats مدفونة في footer — لا أحد يراها
+        - paragraph [ref=e50]: "⚠ Excerpt 3 أسطر — طويل جداً (ALF: max 40-60 كلمة)"
+        - paragraph [ref=e51]: ⚠ أيقونة ✓ لا تعبّر عن الصوت
+    - generic [ref=e52]:
+      - generic [ref=e53]: ✅ المقترح — مبني على NNG + WCAG + YouTube/Medium pattern
+      - generic [ref=e54] [cursor=pointer]:
+        - generic [ref=e55]:
+          - img "ما هي صفحة SERP" [ref=e56]
+          - generic [ref=e57]: 🎧 صوتي
+          - generic [ref=e58]: تحسين محركات البحث
+        - generic [ref=e59]:
+          - generic [ref=e60]: J
+          - generic [ref=e61]: JBR SEO
+          - generic [ref=e62]: ·
+          - generic [ref=e63]: قبل 4 أيام
+          - generic [ref=e64]: ·
+          - generic [ref=e65]: 4 دقائق
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: ما هي صفحات نتائج البحث (Search Engine Results Page "SERP") وكيف يختار Google ما يعرضه للمستخدم؟
+          - paragraph [ref=e68]: تعرّف على صفحات نتائج البحث SERP وأنواعها، وكيف يستخدم Google خوارزمياته لاختيار أفضل النتائج بناءً على نية المستخدم وعوامل التصنيف المختلفة.
+          - paragraph [ref=e69]:
+            - text: اقرأ المزيد
+            - img [ref=e70]
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - img [ref=e75]
+              - text: ٢٤
+            - generic [ref=e77]:
+              - img [ref=e78]
+              - text: ٧
+            - generic [ref=e80]:
+              - img [ref=e81]
+              - text: ١٫٢ك
+          - button "مشاركة" [ref=e84]:
+            - img [ref=e85]
+            - text: مشاركة
+      - generic [ref=e87]:
+        - paragraph [ref=e88]: "✓ صورة أولاً — NNG: \"image must be the largest visual element\""
+        - paragraph [ref=e89]: ✓ Badges solid فقط — WCAG 4.5:1 مضمون على أي صورة حقيقية
+        - paragraph [ref=e90]: "✓ Excerpt سطرين = 40-60 كلمة — ALF: \"limit to 40-60 words for scanability\""
+        - paragraph [ref=e91]: ✓ "اقرأ المزيد" visual CTA — مهمة للجمهور العربي
+        - paragraph [ref=e92]: "✓ Action bar: stats + share صف واحد — YouTube / Medium / LinkedIn pattern"
+        - paragraph [ref=e93]: "✓ Hover: كارد يرتفع + صورة تكبر — ALF: \"animate transitions smoothly\""
+        - paragraph [ref=e94]: "✓ كارد كاملاً clickable — NNG: Fitts' Law, larger target = easier"
+  - paragraph [ref=e95]: 📱 Mobile 375px
+  - generic [ref=e96]:
+    - generic [ref=e97]:
+      - generic [ref=e98]: ❌ الحالي
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - generic [ref=e101]: J
+          - generic [ref=e102]:
+            - paragraph [ref=e103]: JBR SEO
+            - paragraph [ref=e104]: قبل 4 أيام · 4 دقائق
+        - generic [ref=e105]:
+          - paragraph [ref=e106]: ما هي صفحات نتائج البحث (Search Engine Results Page "SERP") وكيف يختار Google؟
+          - paragraph [ref=e107]: تعرّف على SERP وأنواعها وكيف يختار Google أفضل النتائج وفق نية المستخدم.
+        - img [ref=e109]:
+          - generic [ref=e116]: SERP
+        - generic [ref=e117]:
+          - generic [ref=e118]:
+            - generic [ref=e119]: 👍 ٢٤
+            - generic [ref=e120]: 💬 ٧
+            - generic [ref=e121]: 👁 ١٫٢ك
+          - generic [ref=e122]: ↗
+      - paragraph [ref=e123]: ⚠ نفس مشاكل الـ desktop
+    - generic [ref=e124]:
+      - generic [ref=e125]: ✅ المقترح
+      - generic [ref=e126] [cursor=pointer]:
+        - generic [ref=e127]:
+          - img "SERP article" [ref=e128]
+          - generic [ref=e129]: 🎧 صوتي
+          - generic [ref=e130]: SEO
+        - generic [ref=e131]:
+          - generic [ref=e132]: J
+          - generic [ref=e133]: JBR SEO
+          - generic [ref=e134]: ·
+          - generic [ref=e135]: قبل 4 أيام · 4 د
+        - generic [ref=e136]:
+          - paragraph [ref=e137]: ما هي صفحات نتائج البحث (Search Engine Results Page "SERP") وكيف يختار Google؟
+          - paragraph [ref=e138]: تعرّف على SERP وكيف يستخدم Google خوارزمياته لاختيار أفضل النتائج بناءً على نية المستخدم.
+          - paragraph [ref=e139]:
+            - text: اقرأ المزيد
+            - img [ref=e140]
+        - generic [ref=e142]:
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - img [ref=e145]
+              - text: ٢٤
+            - generic [ref=e147]:
+              - img [ref=e148]
+              - text: ٧
+            - generic [ref=e150]:
+              - img [ref=e151]
+              - text: ١٫٢ك
+          - button [ref=e154]:
+            - img [ref=e155]
+      - paragraph [ref=e157]: ✓ نفس التحسينات · touch target 44px · break-words
+  - generic [ref=e158]:
+    - paragraph [ref=e159]: "📚 المصادر التي يستند إليها هذا التصميم:"
+    - generic [ref=e160]:
+      - paragraph [ref=e161]: ✓ NNG — image first, drop shadow = clickability
+      - paragraph [ref=e162]: ✓ NNG — no text overlay on images (WCAG risk)
+      - paragraph [ref=e163]: ✓ ALF — excerpt max 40-60 words
+      - paragraph [ref=e164]: ✓ WCAG — solid bg only = 4.5:1 guaranteed
+      - paragraph [ref=e165]: ✓ YouTube / Medium — action bar below content
+      - paragraph [ref=e166]: ✓ Apple/Google — touch target 44px mobile

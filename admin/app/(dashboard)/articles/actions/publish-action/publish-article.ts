@@ -44,11 +44,9 @@ async function validateArticleData(formData: ArticleFormData): Promise<{
     warnings.push("SEO title is recommended for better search visibility");
   }
 
-  if (!formData.seoDescription) {
-    warnings.push("SEO description is recommended for better search visibility");
-  }
-
-  if (formData.seoDescription && formData.seoDescription.length > 160) {
+  if (!formData.seoDescription || formData.seoDescription.trim().length < 50) {
+    errors.push("وصف SEO مطلوب ولا يقل عن 50 حرفاً للنشر");
+  } else if (formData.seoDescription.length > 160) {
     warnings.push(
       "SEO description should be 155-160 characters for optimal display"
     );

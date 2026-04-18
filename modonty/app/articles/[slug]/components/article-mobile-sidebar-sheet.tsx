@@ -50,6 +50,7 @@ interface ArticleMobileSidebarSheetProps {
   articleSlug: string;
   userId?: string | null;
   platformSocialLinks?: SocialLink[];
+  newsletterCtaText?: string | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -65,6 +66,7 @@ export function ArticleMobileSidebarSheet({
   articleSlug,
   userId,
   platformSocialLinks = [],
+  newsletterCtaText,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: ArticleMobileSidebarSheetProps) {
@@ -94,7 +96,7 @@ export function ArticleMobileSidebarSheet({
             {author && <ArticleAuthorBio author={author} platformSocialLinks={platformSocialLinks} />}
             <ArticleTableOfContents content={content} />
             <div className="[&>div]:mt-0 [&>div]:mb-0">
-              <NewsletterCTA clientId={clientId} articleId={articleId} />
+              <NewsletterCTA clientId={clientId} articleId={articleId} ctaText={newsletterCtaText} />
             </div>
             <CommentFormDialog
               articleId={articleId}

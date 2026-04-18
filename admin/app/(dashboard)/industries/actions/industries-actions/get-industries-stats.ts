@@ -40,6 +40,7 @@ export async function getIndustriesStats() {
           seoDescription: true,
           canonicalUrl: true,
         },
+        take: 500,
       }),
     ]);
 

@@ -19,6 +19,9 @@ export const articleServerSchema = z.object({
   categoryId: z.string().optional().nullable(),
   featuredImageId: z.string().optional().nullable(),
 
+  // Audio
+  audioUrl: z.string().url().optional().nullable().or(z.literal("")),
+
   // Optional arrays
   tags: z.array(z.string()).optional(),
   citations: z.array(z.string()).optional(),

@@ -1,0 +1,225 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Dashboard" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img [ref=e9]
+            - generic [ref=e14]: Dashboard
+          - link "SEO Overview" [ref=e15] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e16]
+            - generic [ref=e19]: SEO Overview
+        - generic [ref=e21]:
+          - button "Content" [expanded] [ref=e22] [cursor=pointer]:
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - generic [ref=e27]: Content
+            - img [ref=e28]
+          - generic [ref=e31]:
+            - link "Articles" [ref=e32] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e33]
+              - generic [ref=e36]: Articles
+            - link "Categories" [ref=e37] [cursor=pointer]:
+              - /url: /categories
+              - img [ref=e38]
+              - generic [ref=e40]: Categories
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /tags
+              - img [ref=e42]
+              - generic [ref=e45]: Tags
+            - link "Authors" [ref=e46] [cursor=pointer]:
+              - /url: /authors
+              - img [ref=e47]
+              - generic [ref=e49]: Authors
+            - link "Industries" [ref=e50] [cursor=pointer]:
+              - /url: /industries
+              - img [ref=e51]
+              - generic [ref=e53]: Industries
+        - button "Modonty Pages" [ref=e55] [cursor=pointer]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Modonty Pages
+          - img [ref=e60]
+        - button "Audience" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e68]: Audience
+          - img [ref=e69]
+        - button "System" [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e77]: System
+          - img [ref=e78]
+      - generic [ref=e80]:
+        - link "Guidelines" [ref=e81] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e82]
+          - text: Guidelines
+        - generic [ref=e84]:
+          - button "Switch to light mode" [ref=e85] [cursor=pointer]:
+            - img
+          - link "v0.35.0 ?" [ref=e86] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.35.0
+            - generic [ref=e87]: "?"
+    - generic [ref=e88]:
+      - banner [ref=e89]:
+        - generic [ref=e90]:
+          - navigation "Breadcrumb" [ref=e92]:
+            - link "Go to dashboard" [ref=e93] [cursor=pointer]:
+              - /url: /
+              - img [ref=e94]
+            - generic [ref=e97]:
+              - img [ref=e98]
+              - link "Clients" [ref=e366] [cursor=pointer]:
+                - /url: /clients
+            - generic [ref=e367]:
+              - img [ref=e368]
+              - generic [ref=e370]: متجر نوفا للإلكترونيات
+          - navigation "Main navigation" [ref=e102]:
+            - link "Modonty Modonty" [ref=e103] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e105]
+              - generic [ref=e106]: Modonty
+            - generic [ref=e108]:
+              - link "Articles" [ref=e109] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e110]:
+                  - img
+                  - generic [ref=e111]: Articles
+              - link "Clients" [ref=e112] [cursor=pointer]:
+                - /url: /clients
+                - button "Clients" [ref=e113]:
+                  - img
+                  - generic [ref=e114]: Clients
+              - link "Media" [ref=e115] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e116]:
+                  - img
+                  - generic [ref=e117]: Media
+          - generic [ref=e118]:
+            - link "1" [ref=e119] [cursor=pointer]:
+              - /url: /contact-messages
+              - button "1" [ref=e120]:
+                - img
+                - generic [ref=e121]: "1"
+            - button "M" [ref=e122] [cursor=pointer]:
+              - generic [ref=e124]: M
+      - generic [ref=e125]:
+        - generic [ref=e126]: This system is in beta. If something is unclear, broken, or confusing — let us know.
+        - generic [ref=e127]:
+          - button "Send Note" [ref=e128] [cursor=pointer]:
+            - img
+            - text: Send Note
+          - button "Close banner" [ref=e129] [cursor=pointer]:
+            - img
+      - main [ref=e130]:
+        - generic [ref=e371]:
+          - generic [ref=e372]:
+            - generic [ref=e373]:
+              - generic [ref=e374]: 🏢
+              - generic [ref=e375]:
+                - heading "متجر نوفا للإلكترونيات" [level=1] [ref=e376]
+                - paragraph [ref=e377]: nova-electronics
+              - generic [ref=e378]:
+                - generic [ref=e379]: Active
+                - generic [ref=e380]: Paid
+                - generic [ref=e381]: Pro
+            - generic [ref=e382]:
+              - generic [ref=e386]: 70%
+              - link "← Back" [ref=e387] [cursor=pointer]:
+                - /url: /clients
+              - link "✎ Edit" [ref=e388] [cursor=pointer]:
+                - /url: /clients/69e26183559192db66f72964/edit
+              - button "Delete client" [ref=e389] [cursor=pointer]:
+                - img
+                - text: Delete
+          - generic [ref=e390]:
+            - generic [ref=e391]:
+              - generic [ref=e392]: 70%
+              - generic [ref=e393]: SEO
+            - generic [ref=e394]:
+              - heading "SEO data incomplete" [level=3] [ref=e395]
+              - paragraph [ref=e396]: Add SEO data to improve client visibility in search results
+            - link "Setup SEO" [ref=e397] [cursor=pointer]:
+              - /url: /clients/69e26183559192db66f72964/seo
+          - generic [ref=e399]:
+            - tablist [ref=e400]:
+              - tab "Overview" [selected] [ref=e401] [cursor=pointer]
+              - tab "Details" [ref=e402] [cursor=pointer]
+              - tab "Content" [ref=e403] [cursor=pointer]
+            - tabpanel "Overview" [ref=e404]:
+              - generic [ref=e405]:
+                - generic [ref=e407]: Profile
+                - generic [ref=e409]:
+                  - generic [ref=e410]:
+                    - paragraph [ref=e411]: Email
+                    - link "info@nova-electronics.sa" [ref=e413] [cursor=pointer]:
+                      - /url: mailto:info@nova-electronics.sa
+                  - generic [ref=e414]:
+                    - paragraph [ref=e415]: Phone
+                    - generic [ref=e416]: —
+                  - generic [ref=e417]:
+                    - paragraph [ref=e418]: Website
+                    - generic [ref=e419]: —
+                  - generic [ref=e420]:
+                    - paragraph [ref=e421]: Industry
+                    - generic [ref=e422]: التجارة الإلكترونية
+              - generic [ref=e423]:
+                - generic [ref=e424]:
+                  - generic [ref=e425]: Subscription
+                  - generic [ref=e426]: Active
+                - generic [ref=e428]:
+                  - generic [ref=e429]:
+                    - paragraph [ref=e430]: Plan
+                    - generic [ref=e432]: Pro
+                  - generic [ref=e433]:
+                    - paragraph [ref=e434]: Articles/Month
+                    - generic [ref=e435]: "8"
+                  - generic [ref=e436]:
+                    - paragraph [ref=e437]: Status
+                    - generic [ref=e438]: ACTIVE
+                  - generic [ref=e439]:
+                    - paragraph [ref=e440]: Payment
+                    - generic [ref=e441]: PAID
+              - generic [ref=e442]:
+                - generic [ref=e443]:
+                  - generic [ref=e444]: Delivery This Month
+                  - generic [ref=e445]: Behind
+                - generic [ref=e447]:
+                  - generic [ref=e448]:
+                    - paragraph [ref=e449]: Total Articles
+                    - link "7" [ref=e451] [cursor=pointer]:
+                      - /url: /articles?clientId=69e26183559192db66f72964
+                  - generic [ref=e452]:
+                    - paragraph [ref=e453]: This Month
+                    - generic [ref=e455]:
+                      - text: "6"
+                      - generic [ref=e456]: / 8
+                  - generic [ref=e457]:
+                    - paragraph [ref=e458]: Rate
+                    - generic [ref=e459]: 75%
+              - generic [ref=e460]:
+                - generic [ref=e461]:
+                  - generic [ref=e462]: SEO
+                  - generic [ref=e463]: Needs work
+                - generic [ref=e465]:
+                  - generic [ref=e466]:
+                    - paragraph [ref=e467]: Metadata
+                    - generic [ref=e468]: ✓ Generated
+                  - generic [ref=e469]:
+                    - paragraph [ref=e470]: JSON-LD
+                    - generic [ref=e472]: 1 errors
+                  - generic [ref=e473]:
+                    - paragraph [ref=e474]: SEO Title
+                    - generic [ref=e475]: متجر نوفا
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e361] [cursor=pointer]:
+    - img [ref=e362]
+  - alert [ref=e365]

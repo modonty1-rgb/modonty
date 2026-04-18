@@ -21,10 +21,24 @@ export async function getMedia(filters?: MediaFilters) {
   try {
     const whereConditions: Prisma.MediaWhereInput[] = [];
 
-    whereConditions.push({ clientId: { not: null } });
-
-    if (filters?.clientId && filters.clientId !== "all") {
-      whereConditions.push({ clientId: filters.clientId });
+    if (filters?.scope) {
+      whereConditions.push({ scope: filters.scope });
+    } else if (filters?.clientId && filters.clientId !== "all") {
+      const orClauses: import("@prisma/client").Prisma.MediaWhereInput[] = [
+        { clientId: filters.clientId },
+      ];
+      if (filters.includeGeneral) {
+        orClauses.push({ scope: "GENERAL", clientId: null });
+      }
+      if (filters.includePlatform) {
+        orClauses.push({ scope: "PLATFORM", clientId: null });
+      }
+      whereConditions.push(orClauses.length === 1 ? orClauses[0] : { OR: orClauses });
+    } else {
+      // Default list: show CLIENT + GENERAL, exclude PLATFORM unless explicitly requested
+      if (!filters?.includePlatform) {
+        whereConditions.push({ scope: { not: "PLATFORM" } });
+      }
     }
 
     if (filters?.mimeType) {

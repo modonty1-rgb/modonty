@@ -2,11 +2,12 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { MediaType } from "@prisma/client";
+import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
 
 interface UpdateMediaData {
+  scope?: MediaScope;
   type?: MediaType;
   altText?: string;
   caption?: string;
@@ -15,6 +16,7 @@ interface UpdateMediaData {
   description?: string;
   license?: string;
   creator?: string;
+  clientId?: string | null;
   dateCreated?: Date;
   geoLatitude?: number;
   geoLongitude?: number;
@@ -39,6 +41,7 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
     const media = await db.media.update({
       where: { id },
       data: {
+        ...(data.scope !== undefined ? { scope: data.scope } : {}),
         type: data.type,
         altText: data.altText,
         caption: data.caption,
@@ -47,6 +50,7 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
         description: data.description,
         license: data.license,
         creator: data.creator,
+        ...(data.clientId !== undefined ? { clientId: data.clientId } : {}),
         dateCreated: data.dateCreated,
         geoLatitude: data.geoLatitude,
         geoLongitude: data.geoLongitude,

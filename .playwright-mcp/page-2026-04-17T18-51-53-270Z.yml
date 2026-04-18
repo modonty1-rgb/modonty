@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e57]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e58] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e60]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e62] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e63]
+        - generic [ref=e64]:
+          - search "بحث المقالات" [ref=e65] [cursor=pointer]:
+            - img [ref=e67]
+            - generic [ref=e70]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e71]:
+            - link "الرئيسية" [ref=e72] [cursor=pointer]:
+              - /url: /
+              - img [ref=e74]
+              - generic [ref=e77]: الرئيسية
+            - link "الرائجة" [ref=e78] [cursor=pointer]:
+              - /url: /trending
+              - img [ref=e80]
+              - generic [ref=e83]: الرائجة
+            - link "العملاء" [ref=e84] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e86]
+              - generic [ref=e90]: العملاء
+        - generic [ref=e92]:
+          - link "عملاء بلا إعلانات" [ref=e93] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e94]: ↗
+          - button "تسجيل الدخول" [ref=e95] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e96] [cursor=pointer]
+    - main [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - heading "إنشاء حساب جديد" [level=3] [ref=e8]
+          - paragraph [ref=e9]: سجل حساباً جديداً للتعليق والتفاعل مع المحتوى
+        - generic [ref=e10]:
+          - generic [ref=e11]:
+            - generic [ref=e12]:
+              - text: الاسم
+              - textbox "الاسم" [ref=e13]:
+                - /placeholder: اسمك الكامل
+                - text: اختبار التحقق
+            - generic [ref=e14]:
+              - text: البريد الإلكتروني
+              - textbox "البريد الإلكتروني" [ref=e15]:
+                - /placeholder: example@email.com
+                - text: modonty1+verify1@gmail.com
+            - generic [ref=e16]:
+              - text: كلمة المرور
+              - textbox "كلمة المرور" [ref=e17]:
+                - /placeholder: ••••••••
+                - text: TestPass123!
+            - generic [ref=e18]:
+              - text: تأكيد كلمة المرور
+              - textbox "تأكيد كلمة المرور" [ref=e19]:
+                - /placeholder: ••••••••
+                - text: TestPass123!
+            - button "إنشاء حساب" [ref=e20] [cursor=pointer]:
+              - img
+              - text: إنشاء حساب
+          - generic [ref=e25]: أو
+          - generic [ref=e26]:
+            - text: لديك حساب بالفعل؟
+            - link "تسجيل الدخول" [ref=e27] [cursor=pointer]:
+              - /url: /users/login
+    - contentinfo [ref=e28]:
+      - generic [ref=e29]:
+        - generic [ref=e30]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e31] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e32]: ↗
+      - navigation "روابط سريعة" [ref=e33]:
+        - link "الرئيسية" [ref=e34] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e35] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e36] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e37] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e38] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e39] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e40]:
+        - link "الشروط والأحكام" [ref=e41] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e42] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e43] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e44] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e45] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e46]: © 2026 مودونتي
+  - button "Open Next.js Dev Tools" [ref=e98] [cursor=pointer]:
+    - generic [ref=e101]:
+      - text: Compiling
+      - generic [ref=e102]:
+        - generic [ref=e103]: .
+        - generic [ref=e104]: .
+        - generic [ref=e105]: .
+  - alert [ref=e56]

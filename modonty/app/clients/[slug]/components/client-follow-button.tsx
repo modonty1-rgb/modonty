@@ -103,16 +103,26 @@ export function ClientFollowButton({
       variant={isFollowing ? "default" : variant}
       onClick={handleFollow}
       disabled={loading}
-      className={`gap-2 ${className}`}
+      className={`gap-2 group transition-colors ${
+        isFollowing
+          ? "bg-accent text-accent-foreground border-accent hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
+          : ""
+      } ${className}`}
     >
       {loading ? (
         <IconLoading className="h-4 w-4 animate-spin" />
       ) : isFollowing ? (
-        <IconCheck className="h-4 w-4" />
+        <>
+          <IconCheck className="h-4 w-4 group-hover:hidden" />
+          <span className="group-hover:hidden">متابَع</span>
+          <span className="hidden group-hover:inline">إلغاء المتابعة</span>
+        </>
       ) : (
-        <IconUsers className="h-4 w-4" />
+        <>
+          <IconUsers className="h-4 w-4" />
+          <span>متابعة</span>
+        </>
       )}
-      {isFollowing ? "متابع" : "متابعة"}
     </Button>
   );
 }

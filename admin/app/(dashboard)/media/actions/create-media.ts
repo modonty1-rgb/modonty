@@ -2,14 +2,15 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { MediaType } from "@prisma/client";
+import { MediaType, MediaScope } from "@prisma/client";
 import { auth } from "@/lib/auth";
 
 interface CreateMediaData {
   filename: string;
   url: string;
   mimeType: string;
-  clientId: string; // REQUIRED
+  clientId: string | null;
+  scope?: MediaScope;
   type?: MediaType;
   fileSize?: number;
   width?: number;
@@ -82,14 +83,15 @@ export async function createMedia(data: CreateMediaData) {
       return { success: false, error: "Alt text is required for SEO and accessibility." };
     }
 
-    // Validate clientId exists
-    const client = await db.client.findUnique({
-      where: { id: data.clientId },
-      select: { id: true },
-    });
-
-    if (!client) {
-      return { success: false, error: "Invalid client ID. Client not found." };
+    // Validate clientId exists (skip for General / no client)
+    if (data.clientId) {
+      const client = await db.client.findUnique({
+        where: { id: data.clientId },
+        select: { id: true },
+      });
+      if (!client) {
+        return { success: false, error: "Invalid client ID. Client not found." };
+      }
     }
 
     // Validate file type
@@ -115,6 +117,7 @@ export async function createMedia(data: CreateMediaData) {
         url: data.url,
         mimeType: data.mimeType,
         clientId: data.clientId,
+        scope: data.scope ?? "GENERAL",
         type: data.type || "GENERAL",
         fileSize: data.fileSize,
         width: data.width,

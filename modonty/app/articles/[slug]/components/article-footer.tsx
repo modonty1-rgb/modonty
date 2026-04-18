@@ -1,5 +1,6 @@
 import Link from "@/components/link";
 import { RelativeTime } from "@/components/date/RelativeTime";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 interface ArticleFooterProps {
   client: {
@@ -67,14 +68,16 @@ export function ArticleFooter({
         <p className="text-sm text-muted-foreground">
           تريد محتوى مثل هذا يجذب عملاء لنشاطك من جوجل؟
         </p>
-        <a
+        <CtaTrackedLink
           href="https://www.jbrseo.com"
           target="_blank"
           rel="noopener noreferrer"
+          label="Article Footer CTA — عملاء بلا إعلانات"
+          type="BANNER"
           className="shrink-0 text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1"
         >
           عملاء بلا إعلانات <span aria-hidden="true">↗</span>
-        </a>
+        </CtaTrackedLink>
       </div>
     </footer>
   );

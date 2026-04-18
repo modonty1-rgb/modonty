@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FormInput, FormTextarea, FormNativeSelect } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import { CategoryWithRelations } from "@/lib/types";
-import { CloudinaryImageInput } from "@/components/shared/cloudinary-image-input";
+import { MediaImageField } from "@/components/shared/media-image-field";
 import { useCategoryForm } from "../helpers/hooks/use-category-form";
 import { Save, ArrowLeft } from "lucide-react";
 
@@ -102,7 +102,7 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div>
                   <FormInput
                     label="SEO Title"
@@ -110,19 +110,20 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
                     value={formData.seoTitle}
                     onChange={(e) => updateSEOField("seoTitle", e.target.value)}
                     hint={messages.hints.category.metaTitle}
-                    maxLength={51}
+                    maxLength={60}
                   />
-                  <CharacterCounter current={formData.seoTitle.length} max={51} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoTitle.length} min={50} max={60} className="mt-1 ms-1" />
                 </div>
                 <div>
-                  <FormInput
+                  <FormTextarea
                     label="SEO Description"
                     name="seoDescription"
                     value={formData.seoDescription}
                     onChange={(e) => updateSEOField("seoDescription", e.target.value)}
                     hint={messages.hints.category.metaDescription}
+                    rows={3}
                   />
-                  <CharacterCounter current={formData.seoDescription.length} max={160} className="mt-1 ms-1" />
+                  <CharacterCounter current={formData.seoDescription.length} min={120} max={160} className="mt-1 ms-1" />
                 </div>
               </div>
             </CardContent>
@@ -139,15 +140,19 @@ export function CategoryForm({ initialData, categories, categoryId }: CategoryFo
               </div>
             </CardHeader>
             <CardContent>
-              <CloudinaryImageInput
+              <MediaImageField
+                label="Social Image"
                 imageUrl={formData.socialImage}
                 altText={formData.socialImageAlt}
-                onImageUrlChange={(url) => updateImageField("socialImage", url)}
-                onAltTextChange={(alt) => updateImageField("socialImageAlt", alt)}
+                onImageChange={(url, alt) => {
+                  updateImageField("socialImage", url);
+                  updateImageField("socialImageAlt", alt);
+                }}
                 onRemove={() => {
                   updateImageField("socialImage", "");
                   updateImageField("socialImageAlt", "");
                 }}
+                scope="PLATFORM"
               />
             </CardContent>
           </Card>

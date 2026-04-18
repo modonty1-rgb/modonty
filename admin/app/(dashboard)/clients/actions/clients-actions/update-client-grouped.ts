@@ -118,16 +118,8 @@ export async function updateRequiredFields(
       return { success: false, error: "Client not found", groupName: "required" };
     }
 
-    // Validate slug uniqueness if changed
-    if (data.slug && data.slug !== client.slug) {
-      const existingClient = await db.client.findUnique({
-        where: { slug: data.slug.trim() },
-        select: { id: true },
-      });
-      if (existingClient && existingClient.id !== clientId) {
-        return { success: false, error: "This slug is already in use", groupName: "required" };
-      }
-    }
+    // Slug is immutable after creation — always keep original to protect SEO
+    data.slug = client.slug;
 
     // Handle subscription tier logic
     let articlesPerMonth = data.articlesPerMonth ?? client.articlesPerMonth;
@@ -596,6 +588,7 @@ export async function updateAdditionalFields(
         parentOrganizationId: true,
         alternateName: true,
         slogan: true,
+        newsletterCtaText: true,
         keywords: true,
         knowsLanguage: true,
       },
@@ -613,6 +606,7 @@ export async function updateAdditionalFields(
       parentOrganizationId: data.parentOrganizationId ?? null,
       alternateName: data.alternateName ?? null,
       slogan: data.slogan ?? null,
+      newsletterCtaText: data.newsletterCtaText ?? null,
       keywords: data.keywords ?? [],
       knowsLanguage: data.knowsLanguage ?? [],
     };

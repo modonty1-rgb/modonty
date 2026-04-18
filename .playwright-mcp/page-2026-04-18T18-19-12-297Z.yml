@@ -1,0 +1,565 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]
+    - main [ref=e4]:
+      - heading "مودونتي — منصة المحتوى العربي" [level=1] [ref=e5]
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=2] [ref=e6]
+      - generic [ref=e8]:
+        - complementary "الشريط الجانبي الأيسر" [ref=e9]:
+          - generic [ref=e10]:
+            - generic [ref=e12]:
+              - generic [ref=e13]:
+                - generic [ref=e14]:
+                  - img [ref=e15]
+                  - heading "تحليلات" [level=2] [ref=e17]
+                - button "عرض التفاصيل" [ref=e18] [cursor=pointer]:
+                  - text: المزيد
+                  - img [ref=e19]
+              - generic [ref=e21]:
+                - generic [ref=e22]:
+                  - generic [ref=e23]:
+                    - img [ref=e24]
+                    - generic [ref=e27]: "26"
+                  - generic [ref=e28]: المقالات
+                - generic [ref=e29]:
+                  - generic [ref=e30]:
+                    - img [ref=e31]
+                    - generic [ref=e34]: ٢
+                  - generic [ref=e35]: مشاهدات
+                - generic [ref=e36]:
+                  - generic [ref=e37]:
+                    - img [ref=e38]
+                    - generic [ref=e40]: ٠
+                  - generic [ref=e41]: تفاعلات
+            - generic [ref=e43]:
+              - generic [ref=e44]:
+                - heading "الفئات" [level=2] [ref=e45]
+                - link "جميع الفئات 24" [ref=e46] [cursor=pointer]:
+                  - /url: /
+                  - text: جميع الفئات
+                  - generic [ref=e47]: "24"
+              - generic [ref=e48]:
+                - link "SEO تحسين محركات البحث 6" [ref=e49] [cursor=pointer]:
+                  - /url: /?category=seo-arabic
+                  - generic [ref=e50]:
+                    - img [ref=e51]
+                    - generic [ref=e54]: SEO تحسين محركات البحث
+                  - generic [ref=e55]: "6"
+                - link "التجارة الإلكترونية 6" [ref=e56] [cursor=pointer]:
+                  - /url: /?category=ecommerce-tips
+                  - generic [ref=e57]:
+                    - img [ref=e58]
+                    - generic [ref=e61]: التجارة الإلكترونية
+                  - generic [ref=e62]: "6"
+                - link "التسويق الرقمي 6" [ref=e63] [cursor=pointer]:
+                  - /url: /?category=digital-marketing
+                  - generic [ref=e64]:
+                    - img [ref=e65]
+                    - generic [ref=e68]: التسويق الرقمي
+                  - generic [ref=e69]: "6"
+              - button "المزيد (1)" [ref=e70] [cursor=pointer]:
+                - text: المزيد (1)
+                - img [ref=e71]
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - heading "الصناعات" [level=2] [ref=e76]
+                - link "عرض الكل" [ref=e77] [cursor=pointer]:
+                  - /url: /industries
+              - link "التجارة الإلكترونية 1" [ref=e78] [cursor=pointer]:
+                - /url: /industries
+                - generic [ref=e79]:
+                  - img [ref=e80]
+                  - generic [ref=e82]: التجارة الإلكترونية
+                - generic [ref=e83]: "1"
+              - link "الرعاية الصحية 1" [ref=e84] [cursor=pointer]:
+                - /url: /industries
+                - generic [ref=e85]:
+                  - img [ref=e86]
+                  - generic [ref=e88]: الرعاية الصحية
+                - generic [ref=e89]: "1"
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - paragraph [ref=e92]: مرحباً بك في مودونتي
+            - paragraph [ref=e93]: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+          - region "آخر المقالات" [ref=e94]:
+            - heading "آخر المقالات" [level=2] [ref=e95]
+            - generic [ref=e96]:
+              - article [ref=e97]:
+                - generic [ref=e98]:
+                  - img [ref=e99]
+                  - generic [ref=e102]: شركة الاختبار
+                - generic [ref=e103]:
+                  - generic [ref=e104]:
+                    - link "زيارة صفحة شركة الاختبار" [ref=e105] [cursor=pointer]:
+                      - /url: /clients/شركة-الاختبار
+                      - generic [ref=e107]: شا
+                    - generic [ref=e108]:
+                      - link "شركة الاختبار" [ref=e109] [cursor=pointer]:
+                        - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1
+                        - generic [ref=e110]: شركة الاختبار
+                      - generic [ref=e112]:
+                        - time [ref=e114]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e115]: •
+                        - generic [ref=e116]: ⏱️ 4 دقيقة
+                  - heading "دليل SEO المتاجر الإلكترونية 2025" [level=3] [ref=e117]:
+                    - link "دليل SEO المتاجر الإلكترونية 2025" [ref=e118] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                  - paragraph [ref=e119]: "دليل شامل لتحسين SEO المتاجر الإلكترونية: من بحث الكلمات المفتاحية إلى تحسين صفحات المنتجات وسرعة الموقع."
+                  - generic [ref=e120]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e121]:
+                    - generic [ref=e122]:
+                      - generic [ref=e123]:
+                        - img [ref=e124]
+                        - text: "0"
+                      - generic [ref=e126]:
+                        - img [ref=e127]
+                        - text: "0"
+                      - generic [ref=e129]:
+                        - img [ref=e130]
+                        - text: "0"
+                      - generic [ref=e133]:
+                        - img [ref=e134]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e136] [cursor=pointer]:
+                      - /url: /articles/seo-guide-ecommerce-2025
+                      - img [ref=e137]
+                      - generic [ref=e143]: مشاركة
+              - article [ref=e144]:
+                - generic [ref=e145]:
+                  - img [ref=e146]
+                  - generic [ref=e149]: عيادات بلسم الطبية
+                - generic [ref=e150]:
+                  - generic [ref=e151]:
+                    - link "زيارة صفحة عيادات بلسم الطبية" [ref=e152] [cursor=pointer]:
+                      - /url: /clients/balsam-medical
+                      - generic [ref=e154]: عب
+                    - generic [ref=e155]:
+                      - link "عيادات بلسم الطبية" [ref=e156] [cursor=pointer]:
+                        - /url: /clients/balsam-medical
+                        - generic [ref=e157]: عيادات بلسم الطبية
+                      - generic [ref=e159]:
+                        - time [ref=e161]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e162]: •
+                        - generic [ref=e163]: ⏱️ 3 دقيقة
+                  - heading "نصائح لتسريع موقعك وتحسين Core Web Vitals" [level=3] [ref=e164]:
+                    - link "نصائح لتسريع موقعك وتحسين Core Web Vitals" [ref=e165] [cursor=pointer]:
+                      - /url: /articles/speed-optimize-core-web-vitals
+                  - paragraph [ref=e166]: "تسريع موقعك لتحسين ترتيب جوجل: Core Web Vitals شرح مبسط وحلول عملية. LCP وFID وCLS وكيفية تحسينها."
+                  - generic [ref=e167]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e168]:
+                    - generic [ref=e169]:
+                      - generic [ref=e170]:
+                        - img [ref=e171]
+                        - text: "0"
+                      - generic [ref=e173]:
+                        - img [ref=e174]
+                        - text: "0"
+                      - generic [ref=e176]:
+                        - img [ref=e177]
+                        - text: "2"
+                      - generic [ref=e180]:
+                        - img [ref=e181]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e183] [cursor=pointer]:
+                      - /url: /articles/speed-optimize-core-web-vitals
+                      - img [ref=e184]
+                      - generic [ref=e190]: مشاركة
+              - article [ref=e191]:
+                - generic [ref=e192]:
+                  - img [ref=e193]
+                  - generic [ref=e196]: متجر نوفا للإلكترونيات
+                - generic [ref=e197]:
+                  - generic [ref=e198]:
+                    - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e199] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e201]: من
+                    - generic [ref=e202]:
+                      - link "متجر نوفا للإلكترونيات" [ref=e203] [cursor=pointer]:
+                        - /url: /clients/nova-electronics
+                        - generic [ref=e204]: متجر نوفا للإلكترونيات
+                      - generic [ref=e206]:
+                        - time [ref=e208]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e209]: •
+                        - generic [ref=e210]: ⏱️ 3 دقيقة
+                  - heading "كيف تختار كلماتك المفتاحية بذكاء" [level=3] [ref=e211]:
+                    - link "كيف تختار كلماتك المفتاحية بذكاء" [ref=e212] [cursor=pointer]:
+                      - /url: /articles/smart-keyword-research-arabic
+                  - paragraph [ref=e213]: "كيف تختار الكلمات المفتاحية بذكاء: معادلة حجم البحث ونية الشراء والصعوبة. Long-tail keywords للنتائج السريعة."
+                  - generic [ref=e214]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e215]:
+                    - generic [ref=e216]:
+                      - generic [ref=e217]:
+                        - img [ref=e218]
+                        - text: "0"
+                      - generic [ref=e220]:
+                        - img [ref=e221]
+                        - text: "0"
+                      - generic [ref=e223]:
+                        - img [ref=e224]
+                        - text: "0"
+                      - generic [ref=e227]:
+                        - img [ref=e228]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e230] [cursor=pointer]:
+                      - /url: /articles/smart-keyword-research-arabic
+                      - img [ref=e231]
+                      - generic [ref=e237]: مشاركة
+              - article [ref=e238]:
+                - generic [ref=e239]:
+                  - img [ref=e240]
+                  - generic [ref=e243]: Al Bayt Restaurant - Updated
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - link "زيارة صفحة Al Bayt Restaurant - Updated" [ref=e246] [cursor=pointer]:
+                      - /url: /clients/al-bayt-restaurant
+                      - generic [ref=e248]: AB
+                    - generic [ref=e249]:
+                      - link "Al Bayt Restaurant - Updated" [ref=e250] [cursor=pointer]:
+                        - /url: /clients/al-bayt-restaurant
+                        - generic [ref=e251]: Al Bayt Restaurant - Updated
+                      - generic [ref=e253]:
+                        - time [ref=e255]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e256]: •
+                        - generic [ref=e257]: ⏱️ 3 دقيقة
+                  - heading "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل" [level=3] [ref=e258]:
+                    - link "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل" [ref=e259] [cursor=pointer]:
+                      - /url: /articles/iso-certification-seo-impact
+                  - paragraph [ref=e260]: هل شهادات الجودة ISO تحسّن ظهورك في جوجل؟ الإجابة التفصيلية عن تأثير الاعتمادية والمصداقية على SEO وE-E-A-T.
+                  - generic [ref=e261]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e262]:
+                    - generic [ref=e263]:
+                      - generic [ref=e264]:
+                        - img [ref=e265]
+                        - text: "0"
+                      - generic [ref=e267]:
+                        - img [ref=e268]
+                        - text: "0"
+                      - generic [ref=e270]:
+                        - img [ref=e271]
+                        - text: "0"
+                      - generic [ref=e274]:
+                        - img [ref=e275]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e277] [cursor=pointer]:
+                      - /url: /articles/iso-certification-seo-impact
+                      - img [ref=e278]
+                      - generic [ref=e284]: مشاركة
+              - article [ref=e285]:
+                - generic [ref=e286]:
+                  - img [ref=e287]
+                  - generic [ref=e290]: شركة الاختبار
+                - generic [ref=e291]:
+                  - generic [ref=e292]:
+                    - link "زيارة صفحة شركة الاختبار" [ref=e293] [cursor=pointer]:
+                      - /url: /clients/شركة-الاختبار
+                      - generic [ref=e295]: شا
+                    - generic [ref=e296]:
+                      - link "شركة الاختبار" [ref=e297] [cursor=pointer]:
+                        - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1
+                        - generic [ref=e298]: شركة الاختبار
+                      - generic [ref=e300]:
+                        - time [ref=e302]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e303]: •
+                        - generic [ref=e304]: ⏱️ 3 دقيقة
+                  - heading "الفاتورة الإلكترونية ZATCA للمتاجر السعودية" [level=3] [ref=e305]:
+                    - link "الفاتورة الإلكترونية ZATCA للمتاجر السعودية" [ref=e306] [cursor=pointer]:
+                      - /url: /articles/zatca-e-invoicing-guide-saudi
+                  - paragraph [ref=e307]: "دليل الفوترة الإلكترونية ZATCA للمتاجر: المتطلبات، المراحل، والأنظمة المتوافقة. تجنب الغرامات وتأكد من الامتثال الكامل."
+                  - generic [ref=e308]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e309]:
+                    - generic [ref=e310]:
+                      - generic [ref=e311]:
+                        - img [ref=e312]
+                        - text: "0"
+                      - generic [ref=e314]:
+                        - img [ref=e315]
+                        - text: "0"
+                      - generic [ref=e317]:
+                        - img [ref=e318]
+                        - text: "0"
+                      - generic [ref=e321]:
+                        - img [ref=e322]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e324] [cursor=pointer]:
+                      - /url: /articles/zatca-e-invoicing-guide-saudi
+                      - img [ref=e325]
+                      - generic [ref=e331]: مشاركة
+              - article [ref=e332]:
+                - generic [ref=e333]:
+                  - img [ref=e334]
+                  - generic [ref=e337]: عيادات بلسم الطبية
+                - generic [ref=e338]:
+                  - generic [ref=e339]:
+                    - link "زيارة صفحة عيادات بلسم الطبية" [ref=e340] [cursor=pointer]:
+                      - /url: /clients/balsam-medical
+                      - generic [ref=e342]: عب
+                    - generic [ref=e343]:
+                      - link "عيادات بلسم الطبية" [ref=e344] [cursor=pointer]:
+                        - /url: /clients/balsam-medical
+                        - generic [ref=e345]: عيادات بلسم الطبية
+                      - generic [ref=e347]:
+                        - time [ref=e349]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e350]: •
+                        - generic [ref=e351]: ⏱️ 3 دقيقة
+                  - 'heading "التسويق عبر المؤثرين في السعودية: دليل الشركات" [level=3] [ref=e352]':
+                    - 'link "التسويق عبر المؤثرين في السعودية: دليل الشركات" [ref=e353] [cursor=pointer]':
+                      - /url: /articles/influencer-marketing-saudi-brands
+                  - paragraph [ref=e354]: "دليل التسويق عبر المؤثرين في السعودية: اختيار المؤثر الصحيح، قياس النتائج، وتجنب الأخطاء الشائعة. Micro-influencers أكثر فاعلية."
+                  - generic [ref=e355]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e356]:
+                    - generic [ref=e357]:
+                      - generic [ref=e358]:
+                        - img [ref=e359]
+                        - text: "0"
+                      - generic [ref=e361]:
+                        - img [ref=e362]
+                        - text: "0"
+                      - generic [ref=e364]:
+                        - img [ref=e365]
+                        - text: "0"
+                      - generic [ref=e368]:
+                        - img [ref=e369]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e371] [cursor=pointer]:
+                      - /url: /articles/influencer-marketing-saudi-brands
+                      - img [ref=e372]
+                      - generic [ref=e378]: مشاركة
+              - article [ref=e379]:
+                - generic [ref=e380]:
+                  - img [ref=e381]
+                  - generic [ref=e384]: متجر نوفا للإلكترونيات
+                - generic [ref=e385]:
+                  - generic [ref=e386]:
+                    - link "زيارة صفحة متجر نوفا للإلكترونيات" [ref=e387] [cursor=pointer]:
+                      - /url: /clients/nova-electronics
+                      - generic [ref=e389]: من
+                    - generic [ref=e390]:
+                      - link "متجر نوفا للإلكترونيات" [ref=e391] [cursor=pointer]:
+                        - /url: /clients/nova-electronics
+                        - generic [ref=e392]: متجر نوفا للإلكترونيات
+                      - generic [ref=e394]:
+                        - time [ref=e396]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e397]: •
+                        - generic [ref=e398]: ⏱️ 3 دقيقة
+                  - heading "كيف تربح من الكتابة الحرة في السعودية" [level=3] [ref=e399]:
+                    - link "كيف تربح من الكتابة الحرة في السعودية" [ref=e400] [cursor=pointer]:
+                      - /url: /articles/freelance-writing-income-saudi
+                  - paragraph [ref=e401]: "كيف تربح من الكتابة الحرة في السعودية: من 5,000 إلى 25,000 ريال شهرياً. بناء المحفظة واختيار المجال والبدء في منصات العمل الحر."
+                  - generic [ref=e402]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e403]:
+                    - generic [ref=e404]:
+                      - generic [ref=e405]:
+                        - img [ref=e406]
+                        - text: "0"
+                      - generic [ref=e408]:
+                        - img [ref=e409]
+                        - text: "0"
+                      - generic [ref=e411]:
+                        - img [ref=e412]
+                        - text: "0"
+                      - generic [ref=e415]:
+                        - img [ref=e416]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e418] [cursor=pointer]:
+                      - /url: /articles/freelance-writing-income-saudi
+                      - img [ref=e419]
+                      - generic [ref=e425]: مشاركة
+              - article [ref=e426]:
+                - generic [ref=e427]:
+                  - img [ref=e428]
+                  - generic [ref=e431]: Al Bayt Restaurant - Updated
+                - generic [ref=e432]:
+                  - generic [ref=e433]:
+                    - link "زيارة صفحة Al Bayt Restaurant - Updated" [ref=e434] [cursor=pointer]:
+                      - /url: /clients/al-bayt-restaurant
+                      - generic [ref=e436]: AB
+                    - generic [ref=e437]:
+                      - link "Al Bayt Restaurant - Updated" [ref=e438] [cursor=pointer]:
+                        - /url: /clients/al-bayt-restaurant
+                        - generic [ref=e439]: Al Bayt Restaurant - Updated
+                      - generic [ref=e441]:
+                        - time [ref=e443]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e444]: •
+                        - generic [ref=e445]: ⏱️ 3 دقيقة
+                  - heading "أمن المعلومات للشركات السعودية الصغيرة" [level=3] [ref=e446]:
+                    - link "أمن المعلومات للشركات السعودية الصغيرة" [ref=e447] [cursor=pointer]:
+                      - /url: /articles/cybersecurity-small-business-saudi
+                  - paragraph [ref=e448]: "أمن المعلومات للشركات الصغيرة: 43% من الهجمات تستهدفك. خطوات الحماية الأساسية وكيف تقلل مخاطر الاختراق بتكلفة منخفضة."
+                  - generic [ref=e449]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e450]:
+                    - generic [ref=e451]:
+                      - generic [ref=e452]:
+                        - img [ref=e453]
+                        - text: "0"
+                      - generic [ref=e455]:
+                        - img [ref=e456]
+                        - text: "0"
+                      - generic [ref=e458]:
+                        - img [ref=e459]
+                        - text: "0"
+                      - generic [ref=e462]:
+                        - img [ref=e463]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e465] [cursor=pointer]:
+                      - /url: /articles/cybersecurity-small-business-saudi
+                      - img [ref=e466]
+                      - generic [ref=e472]: مشاركة
+              - article [ref=e473]:
+                - generic [ref=e474]:
+                  - img [ref=e475]
+                  - generic [ref=e478]: شركة الاختبار
+                - generic [ref=e479]:
+                  - generic [ref=e480]:
+                    - link "زيارة صفحة شركة الاختبار" [ref=e481] [cursor=pointer]:
+                      - /url: /clients/شركة-الاختبار
+                      - generic [ref=e483]: شا
+                    - generic [ref=e484]:
+                      - link "شركة الاختبار" [ref=e485] [cursor=pointer]:
+                        - /url: /clients/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1
+                        - generic [ref=e486]: شركة الاختبار
+                      - generic [ref=e488]:
+                        - time [ref=e490]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e491]: •
+                        - generic [ref=e492]: ⏱️ 3 دقيقة
+                  - heading "البث المباشر والتجارة الإلكترونية في السعودية" [level=3] [ref=e493]:
+                    - link "البث المباشر والتجارة الإلكترونية في السعودية" [ref=e494] [cursor=pointer]:
+                      - /url: /articles/live-commerce-saudi-market
+                  - paragraph [ref=e495]: "Live Commerce في السعودية: كيف تبيع عبر البث المباشر على سناب وإنستغرام وتيك توك؟ استراتيجيات مجربة من تجربة الصين."
+                  - generic [ref=e496]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e497]:
+                    - generic [ref=e498]:
+                      - generic [ref=e499]:
+                        - img [ref=e500]
+                        - text: "0"
+                      - generic [ref=e502]:
+                        - img [ref=e503]
+                        - text: "0"
+                      - generic [ref=e505]:
+                        - img [ref=e506]
+                        - text: "0"
+                      - generic [ref=e509]:
+                        - img [ref=e510]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e512] [cursor=pointer]:
+                      - /url: /articles/live-commerce-saudi-market
+                      - img [ref=e513]
+                      - generic [ref=e519]: مشاركة
+              - article [ref=e520]:
+                - generic [ref=e521]:
+                  - img [ref=e522]
+                  - generic [ref=e525]: عيادات بلسم الطبية
+                - generic [ref=e526]:
+                  - generic [ref=e527]:
+                    - link "زيارة صفحة عيادات بلسم الطبية" [ref=e528] [cursor=pointer]:
+                      - /url: /clients/balsam-medical
+                      - generic [ref=e530]: عب
+                    - generic [ref=e531]:
+                      - link "عيادات بلسم الطبية" [ref=e532] [cursor=pointer]:
+                        - /url: /clients/balsam-medical
+                        - generic [ref=e533]: عيادات بلسم الطبية
+                      - generic [ref=e535]:
+                        - time [ref=e537]: ١٧ أبريل ٢٠٢٦
+                        - generic [ref=e538]: •
+                        - generic [ref=e539]: ⏱️ 3 دقيقة
+                  - heading "كتابة وصف المنتج الذي يبيع" [level=3] [ref=e540]:
+                    - link "كتابة وصف المنتج الذي يبيع" [ref=e541] [cursor=pointer]:
+                      - /url: /articles/product-description-that-sells
+                  - paragraph [ref=e542]: "كيف تكتب وصف منتج يحوّل الزائر إلى مشتري: الصيغة الفعّالة للتجارة الإلكترونية. ركز على الفائدة لا المواصفات."
+                  - generic [ref=e543]:
+                    - generic:
+                      - text: اقرأ المزيد
+                      - img
+                  - generic [ref=e544]:
+                    - generic [ref=e545]:
+                      - generic [ref=e546]:
+                        - img [ref=e547]
+                        - text: "0"
+                      - generic [ref=e549]:
+                        - img [ref=e550]
+                        - text: "0"
+                      - generic [ref=e552]:
+                        - img [ref=e553]
+                        - text: "0"
+                      - generic [ref=e556]:
+                        - img [ref=e557]
+                        - text: "0"
+                    - link "مشاركة المقال" [ref=e559] [cursor=pointer]:
+                      - /url: /articles/product-description-that-sells
+                      - img [ref=e560]
+                      - generic [ref=e566]: مشاركة
+        - complementary [ref=e567]
+    - contentinfo [ref=e607]:
+      - generic [ref=e608]:
+        - generic [ref=e609]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e610] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e611]: ↗
+      - navigation "روابط سريعة" [ref=e612]:
+        - link "الرئيسية" [ref=e613] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e614] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e615] [cursor=pointer]:
+          - /url: /clients
+        - link "الصناعات" [ref=e616] [cursor=pointer]:
+          - /url: /industries
+        - link "الوسوم" [ref=e617] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e618] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e619] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e620]:
+        - link "الشروط والأحكام" [ref=e621] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e622] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e623] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e624] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e625] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e626]: © 2026 مودونتي
+  - generic [ref=e631] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e632]:
+      - img [ref=e633]
+    - generic [ref=e636]:
+      - button "Open issues overlay" [ref=e637]:
+        - generic [ref=e638]:
+          - generic [ref=e639]: "3"
+          - generic [ref=e640]: "4"
+        - generic [ref=e641]:
+          - text: Issue
+          - generic [ref=e642]: s
+      - button "Collapse issues badge" [ref=e643]:
+        - img [ref=e644]
+  - alert [ref=e646]

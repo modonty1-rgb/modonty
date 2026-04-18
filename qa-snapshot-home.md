@@ -1,0 +1,97 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e120]:
+      - link "تخطى إلى المحتوى الرئيسي" [ref=e121] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e123]:
+        - link "مودونتي - الصفحة الرئيسية" [ref=e125] [cursor=pointer]:
+          - /url: /
+          - img "مودونتي" [ref=e126]
+        - generic [ref=e127]:
+          - search "بحث المقالات" [ref=e128] [cursor=pointer]:
+            - img [ref=e130]
+            - generic [ref=e133]: ابحث...
+          - navigation "التنقل الرئيسي" [ref=e134]:
+            - link "الرئيسية" [ref=e135] [cursor=pointer]:
+              - /url: /
+            - link "الرائجة" [ref=e141] [cursor=pointer]:
+              - /url: /trending
+            - link "العملاء" [ref=e147] [cursor=pointer]:
+              - /url: /clients
+        - generic [ref=e155]:
+          - link "عملاء بلا إعلانات" [ref=e156] [cursor=pointer]:
+            - /url: https://www.jbrseo.com
+            - text: عملاء بلا إعلانات
+            - generic [ref=e157]: ↗
+          - button "تسجيل الدخول" [ref=e158] [cursor=pointer]:
+            - img
+          - button "فتح المحادثة" [ref=e159] [cursor=pointer]
+    - main [ref=e4]:
+      - heading "مودونتي — منصة المحتوى العربي" [level=1] [ref=e161]
+      - button "العودة للأعلى":
+        - img
+      - heading "أحدث المقالات والمدونات - مودونتي" [level=2] [ref=e163]
+      - generic [ref=e165]:
+        - complementary "الشريط الجانبي الأيسر" [ref=e166]:
+          - generic [ref=e167]:
+            - generic [ref=e169]
+            - generic [ref=e217]
+        - generic [ref=e237]:
+          - generic [ref=e238]:
+            - paragraph [ref=e239]: مرحباً بك في مودونتي
+            - paragraph [ref=e240]: منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة.
+          - region "آخر المقالات" [ref=e241]:
+            - heading "آخر المقالات" [level=2] [ref=e242]
+            - generic [ref=e243]
+        - complementary "الشريط الجانبي الأيمن" [ref=e684]:
+          - generic [ref=e685]:
+            - complementary "تابعنا على وسائل التواصل" [ref=e686]
+            - complementary "جديد مودونتي" [ref=e714]
+            - generic [ref=e734]
+            - complementary "المزيد" [ref=e759]
+    - contentinfo [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]: هل تريد عملاء من جوجل بلا إعلانات؟
+        - link "جبر SEO" [ref=e84] [cursor=pointer]:
+          - /url: https://www.jbrseo.com
+          - text: جبر SEO
+          - generic [ref=e85]: ↗
+      - navigation "روابط سريعة" [ref=e86]:
+        - link "الرئيسية" [ref=e87] [cursor=pointer]:
+          - /url: /
+        - link "الرائجة" [ref=e88] [cursor=pointer]:
+          - /url: /trending
+        - link "العملاء" [ref=e89] [cursor=pointer]:
+          - /url: /clients
+        - link "الوسوم" [ref=e90] [cursor=pointer]:
+          - /url: /tags
+        - link "المساعدة" [ref=e91] [cursor=pointer]:
+          - /url: /help
+        - link "عن مودونتي" [ref=e92] [cursor=pointer]:
+          - /url: /about
+      - navigation "روابط قانونية" [ref=e93]:
+        - link "الشروط والأحكام" [ref=e94] [cursor=pointer]:
+          - /url: /terms
+        - link "اتفاقية المستخدم" [ref=e95] [cursor=pointer]:
+          - /url: /legal/user-agreement
+        - link "سياسة الخصوصية" [ref=e96] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+        - link "سياسة ملفات تعريف الارتباط" [ref=e97] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - link "سياسة حقوق النشر" [ref=e98] [cursor=pointer]:
+          - /url: /legal/copyright-policy
+      - generic [ref=e99]: © 2026 مودونتي
+  - generic [ref=e104] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e105]:
+      - img [ref=e106]
+    - generic [ref=e109]:
+      - button "Open issues overlay" [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e112]: "3"
+          - generic [ref=e113]: "4"
+        - generic [ref=e114]:
+          - text: Issue
+          - generic [ref=e115]: s
+      - button "Collapse issues badge" [ref=e116]:
+        - img [ref=e117]
+  - alert [ref=e119]

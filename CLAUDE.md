@@ -1,3 +1,5 @@
+<!-- code-review-graph: ALWAYS use the code-review-graph MCP tools BEFORE using Grep/Glob/Read to navigate the codebase. -->
+
 <system_instructions>
 
 <identity>

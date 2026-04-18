@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
+import { sendEmail } from "@/lib/email/resend-client";
+import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,15 +30,27 @@ export async function POST(request: NextRequest) {
       } as ApiResponse<{ message: string }>);
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     await db.newsSubscriber.create({
       data: {
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         subscribed: true,
         subscribedAt: new Date(),
         consentGiven: true,
         consentDate: new Date(),
       },
     });
+
+    // Notify Telegram group — non-blocking
+    const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
+    sendTelegramMessage(`🔔 <b>مشترك جديد — نشرة مودونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
+
+    // Send welcome email — non-blocking, failure doesn't affect subscription
+    const welcomeEmail = newsletterWelcomeEmail({ email: normalizedEmail });
+    sendEmail({ to: normalizedEmail, ...welcomeEmail }).catch((err) =>
+      console.error("[news/subscribe] Welcome email failed:", err)
+    );
 
     const sessionId = await getOrCreateSessionId();
     await createConversion({

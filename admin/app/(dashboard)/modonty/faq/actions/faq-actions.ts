@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { auth } from "@/lib/auth";
 import { previewPageSeo, savePageSeo } from "@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo";
 
 async function regenerateFaqSeoCache() {
@@ -16,9 +17,19 @@ async function regenerateFaqSeoCache() {
   }
 }
 
+const faqListSelect = {
+  id: true,
+  question: true,
+  answer: true,
+  position: true,
+  isActive: true,
+  seoTitle: true,
+} as const;
+
 export async function getFAQs() {
   try {
     const faqs = await db.fAQ.findMany({
+      select: faqListSelect,
       orderBy: { position: "asc" },
     });
     return faqs;
@@ -32,6 +43,7 @@ export async function getActiveFAQs() {
   try {
     const faqs = await db.fAQ.findMany({
       where: { isActive: true },
+      select: faqListSelect,
       orderBy: { position: "asc" },
     });
     return faqs;
@@ -73,6 +85,7 @@ export async function createFAQ(data: {
   createdBy?: string;
 }) {
   try {
+    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
     if (!data.question?.trim()) return { success: false, error: "السؤال مطلوب" };
     if (!data.answer?.trim()) return { success: false, error: "الإجابة مطلوبة" };
 
@@ -141,6 +154,7 @@ export async function updateFAQ(
     updatedBy?: string;
   }
 ) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     // Auto-update lastReviewed if content changed
     const updateData: any = { ...data };
@@ -165,6 +179,7 @@ export async function updateFAQ(
 }
 
 export async function deleteFAQ(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     await db.fAQ.delete({ where: { id } });
     revalidatePath("/modonty/faq");
@@ -179,6 +194,7 @@ export async function deleteFAQ(id: string) {
 }
 
 export async function reorderFAQs(ids: string[]) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const updates = ids.map((id, index) => ({
       where: { id },
@@ -199,6 +215,7 @@ export async function reorderFAQs(ids: string[]) {
 }
 
 export async function toggleFAQStatus(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const faq = await db.fAQ.findUnique({ where: { id }, select: { isActive: true } });
     if (!faq) {
@@ -222,6 +239,7 @@ export async function toggleFAQStatus(id: string) {
 }
 
 export async function updateLastReviewed(id: string) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     const faq = await db.fAQ.update({
       where: { id },
@@ -240,6 +258,7 @@ export async function updateLastReviewed(id: string) {
 }
 
 export async function bulkUpdatePositions(updates: Array<{ id: string; position: number }>) {
+  const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
   try {
     await Promise.all(
       updates.map((update) =>

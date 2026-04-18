@@ -56,7 +56,7 @@ export async function createArticle(data: ArticleFormData) {
       if (seoResult.percentage < MIN_SEO_SCORE) {
         return {
           success: false,
-          error: `SEO score is ${seoResult.percentage}% — minimum ${MIN_SEO_SCORE}% required to publish. Improve SEO fields before publishing.`,
+          error: `نقاط SEO الحالية ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. يرجى تحسين حقول SEO (العنوان، الوصف، الصورة) قبل النشر.`,
         };
       }
     }
@@ -117,7 +117,7 @@ export async function createArticle(data: ArticleFormData) {
 
     const sitemapPriority = data.sitemapPriority || (data.featured ? 0.8 : 0.5);
 
-    const finalStatus = ArticleStatus.WRITING;
+    const finalStatus = data.status ?? ArticleStatus.WRITING;
 
     const sanitizedContent = sanitizeHtmlContent(data.content);
 
@@ -153,6 +153,7 @@ export async function createArticle(data: ArticleFormData) {
             : undefined,
         seoKeywords: data.seoKeywords ?? [],
         citations: data.citations ?? [],
+        audioUrl: data.audioUrl || null,
       },
     });
 

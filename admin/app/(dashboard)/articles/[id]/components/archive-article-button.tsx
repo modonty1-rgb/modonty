@@ -32,6 +32,7 @@ export function ArchiveArticleButton({ articleId, isArchived }: ArchiveArticleBu
     setLoading(true);
     const result = await archiveArticle(articleId);
     if (result.success) {
+      toast({ title: 'تم أرشفة المقال', description: 'لن يظهر في المدونة — يمكنك إلغاء الأرشفة في أي وقت.' });
       router.refresh();
     } else {
       setLoading(false);
@@ -43,6 +44,7 @@ export function ArchiveArticleButton({ articleId, isArchived }: ArchiveArticleBu
     setLoading(true);
     const result = await unarchiveArticle(articleId);
     if (result.success) {
+      toast({ title: 'تم إلغاء الأرشفة', description: 'المقال متاح الآن في المدونة.' });
       router.refresh();
     } else {
       setLoading(false);

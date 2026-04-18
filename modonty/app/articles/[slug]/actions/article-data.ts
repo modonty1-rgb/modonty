@@ -115,17 +115,14 @@ export async function getArticleBySlug(slug: string, userId?: string) {
         favorites: { where: { userId }, take: 1, select: { id: true } },
       }),
       client: {
-        include: {
-          logoMedia: {
-            select: {
-              url: true,
-            },
-          },
-          heroImageMedia: {
-            select: {
-              url: true,
-            },
-          },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          newsletterCtaText: true,
+          logoMedia: { select: { url: true } },
+          heroImageMedia: { select: { url: true } },
         },
       },
       author: {

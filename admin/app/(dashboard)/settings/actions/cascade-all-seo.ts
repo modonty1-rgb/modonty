@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 /**
@@ -19,6 +20,9 @@ export async function cascadeSettingsToAllEntities(): Promise<{
   industries: { total: number; successful: number };
   listings: boolean;
 }> {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   // 1. Categories, Tags, Industries — batch regenerate
   const [
     { batchGenerateCategorySeo },
