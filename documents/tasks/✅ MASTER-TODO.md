@@ -13,6 +13,7 @@
 - [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_ADMIN_CHAT_ID` to Vercel env vars (modonty)
 - [ ] Run `setup-ttl-indexes.ts` on PROD DB
 - [ ] Verify Vercel build + modonty.com + admin.modonty.com live
+- [ ] Add `.playwright-mcp/` to `.gitignore` (dev artifacts committed accidentally)
 
 ---
 

@@ -12,9 +12,9 @@
 
 - [x] ✅ `pnpm tsc --noEmit` في `/modonty` → **zero errors**
 - [x] ✅ `pnpm tsc --noEmit` في `/admin` → **zero errors**
-- [ ] Version bump: `modonty/package.json` → `1.33.0`
-- [ ] Version bump: `admin/package.json` → `0.36.0`
-- [ ] `bash scripts/backup.sh` → backup ناجح
+- [x] ✅ Version bump: `modonty/package.json` → `1.33.0`
+- [x] ✅ Version bump: `admin/package.json` → `0.36.0`
+- [x] ✅ `bash scripts/backup.sh` → 59 collections, 2.2M
 - [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_ADMIN_CHAT_ID` إلى Vercel env vars (modonty)
 
 ---
