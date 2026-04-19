@@ -1,18 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { MobileMenu } from "@/components/navigatore/MobileMenu";
+import dynamic from "next/dynamic";
 import { MobileMenuTrigger } from "@/components/navigatore/MobileMenuTrigger";
+
+const MobileMenu = dynamic(
+  () => import("@/components/navigatore/MobileMenu").then((m) => ({ default: m.MobileMenu })),
+  { ssr: false }
+);
 
 export function MobileMenuClient() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const handleOpen = () => {
+    setMounted(true);
+    setMenuOpen(true);
+  };
 
   return (
     <>
-      <MobileMenuTrigger onClick={() => setMenuOpen(true)} />
-      <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} />
+      <MobileMenuTrigger onClick={handleOpen} />
+      {mounted && <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} />}
     </>
   );
 }
-
-

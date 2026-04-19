@@ -1,7 +1,70 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-18 (Session 40 — OBS-025 ✅)
+> **آخر تحديث:** 2026-04-19 (Sessions 41–47 — admin v0.36.0 + modonty v1.34.0 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 47 — modonty v1.34.0 (2026-04-19) ✅ PUSHED
+
+### MODONTY — Performance
+- [x] ScrollProgress duplicate render fixed (TopNav → FeedDeferredUI only)
+- [x] MobileMenu lazy loading — dynamic(ssr:false) + mounted state
+- [x] FollowCard social icons → Server Component (7 SVGs out of client bundle)
+- [x] Social icons unified to filled style (LinkedIn, YouTube, Instagram updated)
+- [x] Twitter/X icon dark mode fix — fill="currentColor"
+- [x] FollowCard icon spacing — gap-1 + p-0.5
+- [x] FollowCardClient.tsx deleted (dead code)
+- [x] CLIENT-COMPONENTS.md created — full audit of 35 client components
+- [x] Social links synced to modonty_dev DB
+
+---
+
+## Sessions 41–46 — admin v0.36.0 + modonty v1.33.0 (2026-04-19) ✅ PUSHED
+
+### MODONTY
+- [x] `/industries` listing page — page.tsx + loading.tsx + getIndustriesWithCounts updated
+- [x] `/industries/[slug]` detail pages — TSC fix: `SubscriptionStatus`, `logoMedia`, `slogan`
+- [x] DiscoveryCard tabs — categories/industries/tags links 100% verified
+- [x] Navbar 7 improvements — active bg, kbd shortcut, logo hover, teal border, ScrollProgress solid, ghost CTA, mobile CTA no gradient
+- [x] LeftSidebar width 240px → 300px
+- [x] AnalyticsCard 3×2 grid compact layout
+- [x] CategoriesCard collapse (top 3 + "المزيد")
+- [x] IndustriesCard added to LeftSidebar
+- [x] NewClientsCard — Radix ScrollArea, 16+ clients, RTL scrollbar, "استكشف" link
+- [x] `vh` → `dvh` global replace (6 files)
+- [x] Homepage pagination `?page=N` + SEO prev/next canonical
+- [x] feedBanner `platformTagline` + `platformDescription` editable from Settings
+- [x] Register + Newsletter — Telegram notifications + welcome email (non-blocking)
+- [x] feedArticleSelect performance optimization
+- [x] SEO ImageObject in Article structured data
+- [x] Notifications page — faqReply support
+- [x] Vercel build fix — added `@radix-ui/react-scroll-area` to modonty/package.json
+- [x] Telegram env vars added to Vercel (user confirmed)
+- [x] modonty.com production verified — homepage, industries, navbar ✅
+
+### ADMIN
+- [x] Seed files deleted — 5,000+ lines dev-only code removed
+- [x] publish-article — SEO description min 50 chars required
+- [x] Article editor — Arabic SEO error messages, `audioUrl` field
+- [x] Client form — SlugChangeDialog + locked slug warning
+- [x] create-media — allows `clientId: null` (General scope)
+- [x] SEO generators — category/industry/tag auto-generation
+- [x] Analytics — `getClients()` select + take optimization
+- [x] Media picker simplified overlay (hover cleaner)
+
+### SCHEMA
+- [x] `MediaScope` enum + `Media.scope @default(GENERAL)`
+- [x] `User.notificationPreferences Json?`
+- [x] `Client.newsletterCtaText String?`
+- [x] `Article.audioUrl String?`
+- [x] `ArticleFAQ.source String?`
+- [x] `Settings` b2b + platformTagline/Description fields
+- [x] New model: `SlugChangeOtp`
+- [x] New indexes: `Media[scope]`, `Media[clientId, scope]`
+
+### POST-PUSH
+- [x] OTP-AUDIT-4 — Telegram Bot token confirmed in Vercel env vars ✅
 
 ---
 

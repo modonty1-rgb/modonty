@@ -5,8 +5,6 @@ import { ChatTriggerButton } from "@/components/chatbot/ChatTriggerButton";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { NotificationsBell } from "@/components/notifications/NotificationsBell";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { ScrollProgress } from "@/components/layout/ScrollProgress";
-
 export type NavSection = "home" | "trending" | "categories" | "clients" | "none";
 
 interface TopNavProps {
@@ -58,7 +56,6 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
         <TopNavDesktop activeSection={activeSection} favoritesCount={favoritesCount} />
       </div>
       <ChatSheetContainer />
-      <ScrollProgress />
     </header>
   );
 }
