@@ -25,6 +25,10 @@ const AccountSettings = dynamic(
   () => import("./components/account-settings").then((m) => ({ default: m.AccountSettings })),
   { ssr: false }
 );
+const NotificationsSettings = dynamic(
+  () => import("./components/notifications-settings").then((m) => ({ default: m.NotificationsSettings })),
+  { ssr: false }
+);
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -57,6 +61,8 @@ export default function SettingsPage() {
         return <SecuritySettings />;
       case "appearance":
         return <PreferencesSettings />;
+      case "notifications":
+        return <NotificationsSettings />;
       case "account":
         return <AccountSettings />;
       default:

@@ -1,7 +1,44 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-20 (Session 51 — modonty v1.37.0 ✅)
+> **آخر تحديث:** 2026-04-20 (Session 53 — modonty v1.39.0 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 53 — modonty v1.39.0 (2026-04-20) ✅
+
+### MODONTY — USR-R3: Notification Settings (full fix)
+- [x] **Server Action** — `updateNotificationSettings`: `data: {}` → `data: { notificationPreferences: settings }` — now actually writes to DB
+- [x] **GET API** — `/api/users/[id]/settings`: reads `notificationPreferences` from DB, merges with defaults — user sees their saved settings on load
+- [x] **Settings tab** — added "الإشعارات" tab (IconBell) to `settings-tabs.tsx` — grid updated to `sm:grid-cols-5`
+- [x] **renderSection()** — added `case "notifications": return <NotificationsSettings />` + dynamic import in `settings/page.tsx`
+- [x] **Email guard** — comment reply route: fetches `notificationPreferences` on parent author, skips email if `emailCommentReplies === false`
+- [x] **OBS-027** — `getIndustriesWithCounts`: `_count.clients` now filters `ACTIVE` only — listing matches detail count
+
+### Key files changed (Session 53)
+- `modonty/app/users/profile/settings/actions/settings-actions.ts`
+- `modonty/app/api/users/[id]/settings/route.ts`
+- `modonty/app/users/profile/settings/components/settings-tabs.tsx`
+- `modonty/app/users/profile/settings/page.tsx`
+- `modonty/app/api/articles/[slug]/comments/[commentId]/route.ts`
+- `modonty/app/api/helpers/industry-queries.ts`
+
+---
+
+## Session 52 — modonty v1.38.0 (2026-04-20) ✅ PUSHED
+
+### MODONTY — Announcement Bar + Navbar Cleanup + OBS-027 fix
+- [x] **AnnouncementBar** — `components/navigatore/AnnouncementBar.tsx` (NEW): full-width teal bar above header on mobile only (`md:hidden`), pulsing dot, links to jbrseo.com, dismissible via localStorage key `modonty_announcement_v1`
+- [x] **Mobile navbar cleanup** — `TopNav.tsx`: removed CTA pill from center, simplified to `flex justify-between`: Logo | [Bell + Chat + User]
+- [x] **OBS-027** — Industries count mismatch fixed: `getIndustriesWithCounts()` now filters `_count.clients` by `subscriptionStatus: ACTIVE` — listing and detail now consistent
+- [x] **`.playwright-mcp/` + `*.png`** added to `.gitignore`
+
+### Key files changed (Session 52)
+- `modonty/components/navigatore/AnnouncementBar.tsx` (NEW)
+- `modonty/components/navigatore/TopNav.tsx`
+- `modonty/app/layout.tsx`
+- `modonty/app/api/helpers/industry-queries.ts`
+- `.gitignore`
 
 ---
 

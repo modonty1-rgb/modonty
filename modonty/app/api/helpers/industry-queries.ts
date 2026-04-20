@@ -15,7 +15,7 @@ export async function getIndustriesWithCounts() {
       description: true,
       socialImage: true,
       socialImageAlt: true,
-      _count: { select: { clients: true } },
+      _count: { select: { clients: { where: { subscriptionStatus: SubscriptionStatus.ACTIVE } } } },
     },
     orderBy: { name: "asc" },
   });

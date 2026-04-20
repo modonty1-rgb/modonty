@@ -47,7 +47,7 @@ export async function POST(
       },
       select: {
         id: true,
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, name: true, email: true, notificationPreferences: true } },
       },
     });
 
@@ -104,11 +104,14 @@ export async function POST(
       },
     });
 
-    // Notify parent comment author (non-blocking, skip if same user)
+    // Notify parent comment author (non-blocking, skip if same user or opted out)
     const parentAuthor = parentComment.author;
+    const prefs = parentAuthor?.notificationPreferences as Record<string, boolean> | null;
+    const emailAllowed = prefs?.emailCommentReplies !== false;
     if (
       parentAuthor?.email &&
-      parentAuthor.id !== session.user.id
+      parentAuthor.id !== session.user.id &&
+      emailAllowed
     ) {
       const articleUrl = `https://modonty.com/articles/${decodedSlug}`;
       const emailPayload = commentReplyEmail({

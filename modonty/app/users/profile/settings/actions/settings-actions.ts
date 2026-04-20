@@ -161,9 +161,7 @@ export async function updateNotificationSettings(
 
     await db.user.update({
       where: { id: userId },
-      data: {
-        // Store notification settings
-      },
+      data: { notificationPreferences: settings },
     });
 
     revalidatePath("/users/profile/settings");

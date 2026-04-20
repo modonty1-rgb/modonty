@@ -7,6 +7,7 @@ import {
   IconShield,
   IconTheme,
   IconDelete,
+  IconBell,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,7 @@ export function SettingsTabs() {
   const tabs = [
     { value: "profile", label: "الملف الشخصي", icon: IconUser },
     { value: "security", label: "الأمان", icon: IconShield },
+    { value: "notifications", label: "الإشعارات", icon: IconBell },
     { value: "appearance", label: "المظهر", icon: IconTheme },
     { value: "account", label: "الحساب", icon: IconDelete },
   ];
@@ -30,7 +32,7 @@ export function SettingsTabs() {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 bg-muted rounded-lg">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-5 gap-1.5 p-1.5 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = section === tab.value;

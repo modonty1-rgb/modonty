@@ -20,7 +20,12 @@ export async function GET(
 
     const user = await db.user.findUnique({
       where: { id: userId },
-      include: {
+      select: {
+        name: true,
+        email: true,
+        image: true,
+        password: true,
+        notificationPreferences: true,
         accounts: {
           select: {
             id: true,
@@ -39,6 +44,19 @@ export async function GET(
       );
     }
 
+    const defaultNotifications = {
+      emailCommentReplies: true,
+      emailCommentLikes: true,
+      emailArticleLikes: true,
+      emailNewArticles: true,
+      emailWeeklyDigest: false,
+      inAppNotifications: true,
+      notificationSound: true,
+      pushNotifications: false,
+    };
+
+    const stored = user.notificationPreferences as Record<string, boolean> | null;
+
     const settings = {
       profile: {
         name: user.name,
@@ -54,16 +72,7 @@ export async function GET(
         showLikes: true,
         showFavorites: true,
       },
-      notifications: {
-        emailCommentReplies: true,
-        emailCommentLikes: true,
-        emailArticleLikes: true,
-        emailNewArticles: true,
-        emailWeeklyDigest: false,
-        inAppNotifications: true,
-        notificationSound: true,
-        pushNotifications: false,
-      },
+      notifications: stored ? { ...defaultNotifications, ...stored } : defaultNotifications,
       preferences: {
         theme: "system",
         language: "ar",

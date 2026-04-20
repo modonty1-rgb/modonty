@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 52 — modonty v1.38.0 ✅)
-> **الإصدار الحالي:** admin v0.36.0 | modonty v1.38.0 | console v0.1.2
+> **آخر تحديث:** 2026-04-20 (Session 53 — modonty v1.39.0 ✅)
+> **الإصدار الحالي:** admin v0.36.0 | modonty v1.39.0 | console v0.1.2
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -9,16 +9,7 @@
 
 - [ ] Verify `admin.modonty.com` live and accessible
 - [ ] Run `setup-ttl-indexes.ts` on PROD DB
-- [ ] Add `.playwright-mcp/` to `.gitignore`
-
----
-
-# 🔴 CRITICAL
-
-- [ ] **OBS-027** — Industries listing shows "12 شركات" but detail shows "0 شركة موثوقة"
-  - Listing counts ALL clients; detail filters `subscriptionStatus: ACTIVE` only
-  - **Fix A (quick):** Set production clients to `subscriptionStatus: ACTIVE` in Admin
-  - **Fix B (correct):** Align listing query to count ACTIVE clients only
+- [x] Add `.playwright-mcp/` to `.gitignore` ✅ Session 52
 
 ---
 
@@ -52,7 +43,7 @@
 
 ## 🔴 HIGH
 
-- [ ] **USR-R3** — Notification Settings UI — schema done (`notificationPreferences Json?`) — يحتاج settings UI + email guard
+- [x] **USR-R3** — Notification Settings UI ✅ Session 53 — tab + renderSection + DB persist + GET reads DB + email guard on comment reply
 
 ## 🟡 MEDIUM — RightSidebar
 
