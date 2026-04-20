@@ -16,7 +16,7 @@ export function AnnouncementBar() {
   if (!visible) return null;
 
   return (
-    <div className="w-full bg-accent text-white">
+    <div className="md:hidden w-full bg-accent text-white">
       <div className="container mx-auto max-w-[1128px] flex items-center h-9 px-4 gap-2">
         {/* balance spacer */}
         <div className="w-6 shrink-0" aria-hidden />
