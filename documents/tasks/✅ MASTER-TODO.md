@@ -41,7 +41,6 @@
 
 ## 🟡 MEDIUM — متفرقات
 
-- [ ] **SEMR-7b** — `defaultDescription` في Settings
 - [ ] **"Featured" label** — "Cover Image" + "Highlight on Homepage"
 
 ---

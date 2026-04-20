@@ -1,5 +1,5 @@
 # NICE TO HAVE — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 57)
+> **آخر تحديث:** 2026-04-20 (Session 58)
 > مهام غير عاجلة — تحسينات مستقبلية لا تؤثر على أول عميل
 
 ---
@@ -7,6 +7,7 @@
 # 🛠️ ADMIN
 
 - [ ] **UX-5** — رفع صورة inline داخل محرر المقال بدون مغادرة الصفحة (upload + select featured image inline)
+- [ ] **SEMR-7b** — `defaultDescription` في Settings — fallback description لأي صفحة ما عندها meta description مخصصة
 - [ ] **OTP-AUDIT-1** — جرد الأماكن التي تحتاج 2FA (two-factor authentication audit)
 - [ ] Centralize all toast messages in one JSON file
 - [ ] Split view preview for articles (write on left, preview on right)
