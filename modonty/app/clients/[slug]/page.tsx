@@ -183,7 +183,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
-          <ClientPageLeft client={client} stats={{ articlesCount: client._count.articles, followers: stats.followers, totalViews: stats.totalViews }} />
+          <ClientPageLeft client={client} />
           <ClientPageFeed posts={posts} clientName={client.name} clientId={client.id} relatedClientsCount={relatedClients.length} />
           <ClientPageRight
           client={client}
