@@ -1,7 +1,20 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-21 (Session 62 — PERF-006 complete ✅)
+> **آخر تحديث:** 2026-04-21 (Session 63 — PERF-003 Won't Fix ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 63 — PERF-003 Investigation (2026-04-21) ✅ — Won't Fix
+
+### MODONTY — Bundle Analysis
+- [x] **PERF-003** — Ran `ANALYZE=true pnpm build --webpack` → bundle analyzer report generated
+  - polyfills chunk: 109.9 KB raw / 38.7 KB gzipped — includes Symbol/Map/Set/fetch polyfills
+  - Root cause: Next.js framework built-in polyfill bundle — no config option to remove
+  - `browserslist` already optimal: `["chrome 111", "edge 111", "firefox 111", "safari 16.4"]`
+  - Official docs confirm: zero config to skip polyfills in Next.js
+  - Modern browsers download the file but the polyfill code is runtime no-op (feature detection inside)
+  - **Decision: Won't Fix — Framework Limitation**
 
 ---
 

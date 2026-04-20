@@ -39,3 +39,11 @@ export const ArticleFeaturedImageNewsletter = dynamic(
     })),
   { ssr: false }
 );
+
+export const ArticleSidebarEngagement = dynamic(
+  () =>
+    import("./sidebar/article-sidebar-engagement").then((m) => ({
+      default: m.ArticleSidebarEngagement,
+    })),
+  { ssr: false }
+);

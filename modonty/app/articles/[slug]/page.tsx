@@ -32,7 +32,6 @@ import {
   RelatedArticles,
   ReadingProgressBar,
   ArticleTableOfContents,
-  ArticleSidebarEngagement,
   ArticleClientCard,
   CommentFormDialog,
 } from "./components";
@@ -44,6 +43,7 @@ import {
   ArticleMobileLayout,
   NewsletterCTA,
   ArticleFeaturedImageNewsletter,
+  ArticleSidebarEngagement,
 } from "./components/client-lazy";
 import ArticleLoading from "./loading";
 

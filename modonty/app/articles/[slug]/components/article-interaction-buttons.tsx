@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { IconLike, IconDislike, IconSaved, IconLoading } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
@@ -44,7 +43,6 @@ export function ArticleInteractionButtons({
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -53,8 +51,6 @@ export function ArticleInteractionButtons({
   const [userFavorited, setUserFavorited] = useState(initialUserFavorited);
   const [loading, setLoading] = useState<string | null>(null);
   const isPending = useRef(false);
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     setLikes(initialLikes);
@@ -195,28 +191,6 @@ export function ArticleInteractionButtons({
     : compact
       ? "h-8 px-1.5 gap-0.5 text-xs shrink-0 active:scale-95 transition-transform duration-100"
       : "text-sm min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 active:scale-95 transition-transform duration-100";
-
-  if (!mounted) {
-    if (vertical) {
-      return (
-        <div className="flex items-center gap-1" aria-hidden>
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex flex-col items-center gap-0.5 px-3 py-1.5">
-              <Skeleton className="h-4 w-4 rounded" />
-              <Skeleton className="h-3 w-4 rounded" />
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return (
-      <div className={`flex items-center ${compact ? "gap-2" : "gap-2 md:gap-3"}`} aria-hidden>
-        {(hideDislike ? [0, 1] : [0, 1, 2]).map((i) => (
-          <Skeleton key={i} className={compact ? "h-8 w-10 rounded-md" : "h-9 w-14 rounded-md"} />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-2 min-w-0">
