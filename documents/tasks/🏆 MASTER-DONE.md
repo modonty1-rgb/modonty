@@ -1,7 +1,27 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-21 (Session 63 — PERF-003 Won't Fix ✅)
+> **آخر تحديث:** 2026-04-21 (Session 63 — PERF-008 fixed ✅ + PERF-003 Won't Fix ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 63 — PERF-008 + PERF-003 (2026-04-21) ✅ — modonty v1.41.1
+
+### MODONTY — PERF-008: Article page TBT fix
+- [x] **PERF-008** — Defer `ArticleSidebarEngagement` to `ssr: false` via `client-lazy.tsx`
+  - Root cause: eager hydration of sidebar added 2 extra synchronous re-renders on mount (mounted guard + value-sync useEffect)
+  - Fix: added `ArticleSidebarEngagement` to `client-lazy.tsx` with `ssr: false` — matches `ArticleMobileLayout` pattern
+  - Updated `page.tsx` import source: components → client-lazy
+  - Removed `mounted` guard from `ArticleInteractionButtons` (both usages now `ssr: false`, no hydration mismatch possible)
+  - Removed `Skeleton` import (no longer needed)
+  - Live test ✅: sidebar renders, like/dislike/save all work correctly with correct count updates
+  - `next.config.ts`: removed `@next/bundle-analyzer` wrapper (cleanup)
+
+### Key files (Session 63 — PERF-008)
+- `modonty/app/articles/[slug]/components/client-lazy.tsx` — ArticleSidebarEngagement added
+- `modonty/app/articles/[slug]/page.tsx` — import moved to client-lazy
+- `modonty/app/articles/[slug]/components/article-interaction-buttons.tsx` — mounted guard removed
+- `modonty/next.config.ts` — bundle analyzer wrapper removed
 
 ---
 
