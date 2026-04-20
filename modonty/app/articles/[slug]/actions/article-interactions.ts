@@ -13,39 +13,50 @@ export async function likeArticle(articleId: string, articleSlug: string) {
 
     const userId = session.user.id;
 
-    // Check-exists-first pattern to avoid race conditions
     const existing = await db.articleLike.findFirst({
       where: { articleId, userId },
       select: { id: true },
     });
 
+    let updated;
     if (existing) {
-      await db.articleLike.delete({ where: { id: existing.id } }).catch(() => {
-        // Already deleted by concurrent request — safe to ignore
+      // Unlike: remove like, decrement counter
+      await db.articleLike.delete({ where: { id: existing.id } }).catch(() => {});
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: { likesCount: { decrement: 1 } },
+        select: { likesCount: true, dislikesCount: true },
       });
     } else {
+      // Like: remove any existing dislike, create like, update counters
+      const existingDislike = await db.articleDislike.findFirst({
+        where: { articleId, userId },
+        select: { id: true },
+      });
       await db.articleDislike.deleteMany({ where: { articleId, userId } });
       await db.articleLike.create({
         data: { articleId, userId, sessionId: `user:${userId}` },
       }).catch((e: unknown) => {
         const err = e as { code?: string; message?: string };
-        const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
-        if (!isUniqueViolation) throw e;
+        const isUnique = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+        if (!isUnique) throw e;
+      });
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: {
+          likesCount: { increment: 1 },
+          ...(existingDislike ? { dislikesCount: { decrement: 1 } } : {}),
+        },
+        select: { likesCount: true, dislikesCount: true },
       });
     }
 
-    const [likes, dislikes] = await Promise.all([
-      db.articleLike.count({ where: { articleId } }),
-      db.articleDislike.count({ where: { articleId } }),
-    ]);
-
     revalidatePath(`/articles/${articleSlug}`);
-
     return {
       success: true,
-      data: { likes, dislikes, liked: !existing },
+      data: { likes: updated.likesCount, dislikes: updated.dislikesCount, liked: !existing },
     };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Failed to update like" };
   }
 }
@@ -59,39 +70,50 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
 
     const userId = session.user.id;
 
-    // Check-exists-first pattern to avoid race conditions
     const existing = await db.articleDislike.findFirst({
       where: { articleId, userId },
       select: { id: true },
     });
 
+    let updated;
     if (existing) {
-      await db.articleDislike.delete({ where: { id: existing.id } }).catch(() => {
-        // Already deleted by concurrent request — safe to ignore
+      // Undislike: remove dislike, decrement counter
+      await db.articleDislike.delete({ where: { id: existing.id } }).catch(() => {});
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: { dislikesCount: { decrement: 1 } },
+        select: { likesCount: true, dislikesCount: true },
       });
     } else {
+      // Dislike: remove any existing like, create dislike, update counters
+      const existingLike = await db.articleLike.findFirst({
+        where: { articleId, userId },
+        select: { id: true },
+      });
       await db.articleLike.deleteMany({ where: { articleId, userId } });
       await db.articleDislike.create({
         data: { articleId, userId, sessionId: `user:${userId}` },
       }).catch((e: unknown) => {
         const err = e as { code?: string; message?: string };
-        const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
-        if (!isUniqueViolation) throw e;
+        const isUnique = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+        if (!isUnique) throw e;
+      });
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: {
+          dislikesCount: { increment: 1 },
+          ...(existingLike ? { likesCount: { decrement: 1 } } : {}),
+        },
+        select: { likesCount: true, dislikesCount: true },
       });
     }
 
-    const [likes, dislikes] = await Promise.all([
-      db.articleLike.count({ where: { articleId } }),
-      db.articleDislike.count({ where: { articleId } }),
-    ]);
-
     revalidatePath(`/articles/${articleSlug}`);
-
     return {
       success: true,
-      data: { likes, dislikes, disliked: !existing },
+      data: { likes: updated.likesCount, dislikes: updated.dislikesCount, disliked: !existing },
     };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Failed to update dislike" };
   }
 }
@@ -105,35 +127,40 @@ export async function favoriteArticle(articleId: string, articleSlug: string) {
 
     const userId = session.user.id;
 
-    // Check-exists-first pattern to avoid race conditions
     const existing = await db.articleFavorite.findFirst({
       where: { articleId, userId },
       select: { id: true },
     });
 
+    let updated;
     if (existing) {
-      await db.articleFavorite.delete({ where: { id: existing.id } }).catch(() => {
-        // Already deleted by concurrent request — safe to ignore
+      await db.articleFavorite.delete({ where: { id: existing.id } }).catch(() => {});
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: { favoritesCount: { decrement: 1 } },
+        select: { favoritesCount: true },
       });
     } else {
       await db.articleFavorite.create({
         data: { articleId, userId },
       }).catch((e: unknown) => {
         const err = e as { code?: string; message?: string };
-        const isUniqueViolation = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
-        if (!isUniqueViolation) throw e;
+        const isUnique = err?.code === "P2002" || (typeof err?.message === "string" && err.message.includes("Unique constraint failed"));
+        if (!isUnique) throw e;
+      });
+      updated = await db.article.update({
+        where: { id: articleId },
+        data: { favoritesCount: { increment: 1 } },
+        select: { favoritesCount: true },
       });
     }
 
-    const favorites = await db.articleFavorite.count({ where: { articleId } });
-
     revalidatePath(`/articles/${articleSlug}`);
-
     return {
       success: true,
-      data: { favorites, favorited: !existing },
+      data: { favorites: updated.favoritesCount, favorited: !existing },
     };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Failed to update favorite" };
   }
 }

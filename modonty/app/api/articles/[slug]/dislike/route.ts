@@ -29,14 +29,8 @@ export async function POST(
       );
     }
 
-    // Check if already disliked
     const existing = await db.articleDislike.findUnique({
-      where: {
-        articleId_userId: {
-          articleId: article.id,
-          userId: session.user.id,
-        },
-      },
+      where: { articleId_userId: { articleId: article.id, userId: session.user.id } },
     });
 
     if (existing) {
@@ -46,41 +40,27 @@ export async function POST(
       );
     }
 
-    // Remove like if exists
-    await db.articleLike.deleteMany({
-      where: {
-        articleId: article.id,
-        userId: session.user.id,
-      },
+    const deletedLikes = await db.articleLike.deleteMany({
+      where: { articleId: article.id, userId: session.user.id },
     });
+    const hadLike = deletedLikes.count > 0;
 
-    // Create dislike
     await db.articleDislike.create({
-      data: {
-        articleId: article.id,
-        userId: session.user.id,
-        sessionId: `user:${session.user.id}`,
-      },
+      data: { articleId: article.id, userId: session.user.id, sessionId: `user:${session.user.id}` },
     });
 
-    const counts = await db.article.findUnique({
+    const updated = await db.article.update({
       where: { id: article.id },
-      select: {
-        _count: {
-          select: {
-            likes: true,
-            dislikes: true,
-          },
-        },
+      data: {
+        dislikesCount: { increment: 1 },
+        ...(hadLike ? { likesCount: { decrement: 1 } } : {}),
       },
+      select: { likesCount: true, dislikesCount: true },
     });
 
     return NextResponse.json({
       success: true,
-      data: {
-        likes: counts?._count.likes || 0,
-        dislikes: counts?._count.dislikes || 0,
-      },
+      data: { likes: updated.likesCount, dislikes: updated.dislikesCount },
     } as ApiResponse<{ likes: number; dislikes: number }>);
   } catch (error) {
     console.error("Error disliking article:", error);
@@ -117,31 +97,27 @@ export async function DELETE(
       );
     }
 
-    await db.articleDislike.deleteMany({
-      where: {
-        articleId: article.id,
-        userId: session.user.id,
-      },
+    const deleted = await db.articleDislike.deleteMany({
+      where: { articleId: article.id, userId: session.user.id },
     });
 
-    const counts = await db.article.findUnique({
-      where: { id: article.id },
-      select: {
-        _count: {
-          select: {
-            likes: true,
-            dislikes: true,
-          },
-        },
-      },
-    });
+    let updated;
+    if (deleted.count > 0) {
+      updated = await db.article.update({
+        where: { id: article.id },
+        data: { dislikesCount: { decrement: 1 } },
+        select: { likesCount: true, dislikesCount: true },
+      });
+    } else {
+      updated = await db.article.findUnique({
+        where: { id: article.id },
+        select: { likesCount: true, dislikesCount: true },
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      data: {
-        likes: counts?._count.likes || 0,
-        dislikes: counts?._count.dislikes || 0,
-      },
+      data: { likes: updated?.likesCount ?? 0, dislikes: updated?.dislikesCount ?? 0 },
     } as ApiResponse<{ likes: number; dislikes: number }>);
   } catch (error) {
     console.error("Error undisliking article:", error);

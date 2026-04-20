@@ -29,14 +29,8 @@ export async function POST(
       );
     }
 
-    // Check if already favorited
     const existing = await db.articleFavorite.findUnique({
-      where: {
-        articleId_userId: {
-          articleId: article.id,
-          userId: session.user.id,
-        },
-      },
+      where: { articleId_userId: { articleId: article.id, userId: session.user.id } },
     });
 
     if (existing) {
@@ -46,30 +40,19 @@ export async function POST(
       );
     }
 
-    // Create favorite
     await db.articleFavorite.create({
-      data: {
-        articleId: article.id,
-        userId: session.user.id,
-      },
+      data: { articleId: article.id, userId: session.user.id },
     });
 
-    const counts = await db.article.findUnique({
+    const updated = await db.article.update({
       where: { id: article.id },
-      select: {
-        _count: {
-          select: {
-            favorites: true,
-          },
-        },
-      },
+      data: { favoritesCount: { increment: 1 } },
+      select: { favoritesCount: true },
     });
 
     return NextResponse.json({
       success: true,
-      data: {
-        favorites: counts?._count.favorites || 0,
-      },
+      data: { favorites: updated.favoritesCount },
     } as ApiResponse<{ favorites: number }>);
   } catch (error) {
     console.error("Error favoriting article:", error);
@@ -106,29 +89,27 @@ export async function DELETE(
       );
     }
 
-    await db.articleFavorite.deleteMany({
-      where: {
-        articleId: article.id,
-        userId: session.user.id,
-      },
+    const deleted = await db.articleFavorite.deleteMany({
+      where: { articleId: article.id, userId: session.user.id },
     });
 
-    const counts = await db.article.findUnique({
-      where: { id: article.id },
-      select: {
-        _count: {
-          select: {
-            favorites: true,
-          },
-        },
-      },
-    });
+    let updated;
+    if (deleted.count > 0) {
+      updated = await db.article.update({
+        where: { id: article.id },
+        data: { favoritesCount: { decrement: 1 } },
+        select: { favoritesCount: true },
+      });
+    } else {
+      updated = await db.article.findUnique({
+        where: { id: article.id },
+        select: { favoritesCount: true },
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      data: {
-        favorites: counts?._count.favorites || 0,
-      },
+      data: { favorites: updated?.favoritesCount ?? 0 },
     } as ApiResponse<{ favorites: number }>);
   } catch (error) {
     console.error("Error unfavoriting article:", error);

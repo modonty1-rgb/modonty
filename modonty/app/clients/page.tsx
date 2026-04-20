@@ -1,21 +1,11 @@
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { getClientsWithCounts, getClientPageStats } from "@/app/api/helpers/client-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientsHero } from "./components/clients-hero";
 import { getClientsPageSeo, getB2bPanelSettings } from "@/lib/seo/clients-page-seo";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-
-const FeaturedClients = dynamic(
-  () => import("./components/featured-clients").then((mod) => ({ default: mod.FeaturedClients })),
-  { ssr: false }
-);
-
-const ClientsContent = dynamic(
-  () => import("./components/clients-content").then((mod) => ({ default: mod.ClientsContent })),
-  { ssr: false }
-);
+import { ClientsSection } from "./components/clients-section";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getClientsPageSeo();
@@ -56,24 +46,11 @@ export default async function ClientsPage() {
       <ClientsHero {...stats} b2b={b2b} />
 
       <div>
-        {featuredClients.length > 0 && (
-          <section aria-labelledby="featured-clients-heading">
-            <h2 id="featured-clients-heading" className="sr-only">
-              العملاء المميزون
-            </h2>
-            <FeaturedClients clients={featuredClients} />
-          </section>
-        )}
-
-        <section aria-labelledby="all-clients-heading">
-          <h2 id="all-clients-heading" className="sr-only">
-            جميع العملاء
-          </h2>
-          <ClientsContent
-            initialClients={clients}
-            industries={industries}
-          />
-        </section>
+        <ClientsSection
+          featuredClients={featuredClients}
+          allClients={clients}
+          industries={industries}
+        />
 
         {/* JBRSEO-2: CTA — join as client */}
         <section aria-labelledby="join-cta-heading" className="container mx-auto max-w-[1128px] px-4 py-12 mt-4">

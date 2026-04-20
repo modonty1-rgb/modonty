@@ -110,7 +110,7 @@ export function InfiniteArticleList({
     loadMore();
   };
 
-  const showEmptyState = posts.length === 0 && initialStartIndex === 0;
+  const showEmptyState = posts.length === 0 && initialStartIndex === 0 && !loading && !hasMore;
 
   return (
     <>

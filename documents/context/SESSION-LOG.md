@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 58 — Email Templates Preview / admin v0.39.0)
+# Session Context — Last Updated: 2026-04-21 (Session 62 — PERF-006 article-data.ts fix + full live test)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,75 @@
 ---
 
 ## Current Versions
-- **admin**: v0.39.0 ✅ (pushed 2026-04-20)
-- **modonty**: v1.40.0 ✅ (pushed 2026-04-20)
+- **admin**: v0.40.0 🔄 (ready to push)
+- **modonty**: v1.41.0 🔄 (ready to push)
 - **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## 🔄 Session 62 — READY TO PUSH (PERF-006 complete + full live test ✅)
+
+### Summary
+Fixed final gap in PERF-006: `getArticleBySlugMinimal` in `article-data.ts` was still using `_count` for the 5 interaction fields. Fixed by:
+1. Replacing `_count: { likes, dislikes, favorites, comments, views, faqs }` with `_count: { faqs }` only + auto-included scalar fields
+2. Reconstructing `_count` shape from scalar fields in the return value (page.tsx needs zero changes)
+3. Updated `article-manual-related.tsx` related articles type + JSX to use `likesCount/dislikesCount/commentsCount` directly
+
+Full live test confirmed all 8 interaction scenarios: like, unlike, dislike, like-while-disliked, dislike-while-liked, favorite, unfavorite. UI + DB in sync in every case.
+
+### Files changed (Session 62)
+**modonty:**
+- `app/articles/[slug]/actions/article-data.ts` — getArticleBySlugMinimal: _count → scalar fields (keep _count.faqs only)
+- `app/articles/[slug]/components/article-manual-related.tsx` — updated prop type + JSX counters
+
+### Notes for next agent
+- PERF-006 is 100% complete. All paths read from scalar fields.
+- article-data.ts returns reconstructed _count shape so page.tsx (307-395) still works unchanged
+- Full live test passed: all counter scenarios verified UI=DB
+
+---
+
+## 🔄 Session 61 — READY TO PUSH (PERF-006 + PERF-007)
+
+### Summary
+PERF-006: Denormalized interaction counts on Article model. 5 new scalar fields replace 5+ COUNT(*) queries per article load. All interaction endpoints (like, dislike, favorite, view, comment-approve) now atomically increment/decrement counters. All query helpers updated to read direct fields. Admin Recalculation card added (Settings → System tab). Verified: recalculation ran on 30 articles, API returns real counts.
+
+PERF-007: Homepage ISR — removed `isMobileRequest()` from sidebars (was calling headers() → force-dynamic), added `"use cache"` + `cacheLife("minutes")` at page level, moved category filter client-side via new `CategoryFeedSection` component.
+
+### Files changed (Session 61)
+**modonty:**
+- `app/page.tsx` — "use cache" + cacheLife + cacheTag (PERF-007)
+- `app/articles/[slug]/actions/article-interactions.ts` — full rewrite with atomic counters
+- `app/api/articles/[slug]/like/route.ts` — atomic counter update
+- `app/api/articles/[slug]/dislike/route.ts` — atomic counter update
+- `app/api/articles/[slug]/favorite/route.ts` — atomic counter update
+- `app/api/articles/[slug]/view/route.ts` — parallel viewsCount increment
+- `app/api/helpers/article-queries.ts` — replaced _count with direct fields
+- `app/api/helpers/interaction-queries.ts` — replaced _count, eliminated articleView.groupBy
+- `app/api/helpers/client-queries.ts` — replaced article _count
+- `app/api/helpers/category-queries.ts` — replaced article _count + viewsCount orderBy
+- `components/feed/CategoryFeedSection.tsx` (NEW — PERF-007)
+- `components/feed/FeedContainer.tsx` — uses CategoryFeedSection
+- `components/layout/LeftSidebar/LeftSidebar.tsx` — removed isMobileRequest
+- `components/layout/RightSidebar/RightSidebar.tsx` — removed isMobileRequest
+- `components/layout/LeftSidebar/DiscoveryCard.tsx` — useSearchParams for category detection
+- `components/feed/infiniteScroll/InfiniteArticleList.tsx` — showEmptyState flash fix
+- `app/clients/components/clients-section.tsx` — ssr:false hydration fix
+
+**admin:**
+- `app/(dashboard)/settings/actions/recalculate-article-counts.ts` (NEW)
+- `app/(dashboard)/settings/components/settings-form-v2.tsx` — RecalculationCard added
+
+**console:**
+- `app/(dashboard)/dashboard/comments/actions/comment-actions.ts` — commentsCount sync
+
+**dataLayer:**
+- `prisma/schema/schema.prisma` — 5 new fields: likesCount, dislikesCount, commentsCount, favoritesCount, viewsCount
+
+### Notes for next agent
+- Run recalculation card (Settings → System) on PRODUCTION after first deploy to populate counts for existing articles
+- `AnalyticsCard` on homepage reads from `getOverallCategoryAnalytics()` which now uses denormalized counts ✅
+- All 3 apps TSC zero errors ✅
 
 ---
 

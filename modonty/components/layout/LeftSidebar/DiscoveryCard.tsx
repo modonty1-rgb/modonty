@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,7 +15,6 @@ interface Tag      { id: string; name: string; slug: string; articleCount: numbe
 
 interface DiscoveryCardProps {
   categories: CategoryResponse[];
-  currentCategorySlug?: string;
   totalArticlesAll: number;
   industries: Industry[];
   tags: Tag[];
@@ -24,7 +24,9 @@ const rowClass = "flex min-w-0 items-center justify-between gap-2 px-2 py-1.5 ro
 
 const triggerClass = "flex-1 text-[11px] h-6 gap-1 data-[state=active]:text-accent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:bg-transparent";
 
-export function DiscoveryCard({ categories, currentCategorySlug, totalArticlesAll, industries, tags }: DiscoveryCardProps) {
+export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }: DiscoveryCardProps) {
+  const searchParams = useSearchParams();
+  const currentCategorySlug = searchParams.get('category') ?? undefined;
   const activeCategories = [...categories.filter(c => c.articleCount > 0)].sort((a, b) => b.articleCount - a.articleCount);
   const sortedIndustries = [...industries].sort((a, b) => b.clientCount - a.clientCount);
   const sortedTags       = [...tags].sort((a, b) => b.articleCount - a.articleCount);

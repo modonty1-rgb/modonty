@@ -23,6 +23,7 @@ import {
   type AllSettings,
 } from "../actions/settings-actions";
 import { applyTechnicalDefaults } from "../actions/seed-technical-defaults";
+import { recalculateArticleCounts } from "../actions/recalculate-article-counts";
 
 // ─── Best Practice Info per field ───
 interface BestPractice {
@@ -627,6 +628,9 @@ export function SettingsFormV2() {
             </table>
           </div>
         </div>
+
+        {/* Interaction Counts Recalculation (purple) */}
+        <RecalculationCard />
       </TabsContent>
 
       {/* ═══════════════════════════════════════════════ */}
@@ -704,5 +708,53 @@ export function SettingsFormV2() {
         );
       })}
     </Tabs>
+  );
+}
+
+function RecalculationCard() {
+  const [isRunning, setIsRunning] = useState(false);
+  const [result, setResult] = useState<{ articlesUpdated?: number; error?: string } | null>(null);
+
+  async function handleRecalculate() {
+    setIsRunning(true);
+    setResult(null);
+    const res = await recalculateArticleCounts();
+    setIsRunning(false);
+    if (res.success) {
+      setResult({ articlesUpdated: res.articlesUpdated });
+    } else {
+      setResult({ error: res.error });
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <p className="text-xs font-medium text-purple-400">Interaction Counts — Recalculation</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            Recalculates likesCount / dislikesCount / commentsCount / favoritesCount / viewsCount
+            from actual relation records. Run after a data migration or if counts drift.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRecalculate}
+          disabled={isRunning}
+          className="gap-2 shrink-0 ms-4"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRunning ? "animate-spin" : ""}`} />
+          {isRunning ? "Recalculating..." : "Recalculate"}
+        </Button>
+      </div>
+      {result && (
+        <p className={`text-[10px] mt-1 ${result.error ? "text-red-400" : "text-green-400"}`}>
+          {result.error
+            ? `Error: ${result.error}`
+            : `Done — updated ${result.articlesUpdated} articles`}
+        </p>
+      )}
+    </div>
   );
 }

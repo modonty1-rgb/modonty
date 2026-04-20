@@ -89,30 +89,29 @@ export async function POST(
       return NextResponse.json({ ok: true, analyticsId: null });
     }
 
-    await db.articleView.create({
-      data: {
-        articleId: article.id,
-        userId,
-        sessionId,
-        referrer,
-        userAgent,
-        ipAddress,
-      },
-    });
-
-    const analytics = await db.analytics.create({
-      data: {
-        articleId: article.id,
-        clientId: article.clientId ?? undefined,
-        sessionId,
-        userId,
-        source,
-        referrerDomain,
-        searchEngine,
-        userAgent,
-        ipAddress,
-      },
-    });
+    const [, analytics] = await Promise.all([
+      db.articleView.create({
+        data: { articleId: article.id, userId, sessionId, referrer, userAgent, ipAddress },
+      }),
+      db.analytics.create({
+        data: {
+          articleId: article.id,
+          clientId: article.clientId ?? undefined,
+          sessionId,
+          userId,
+          source,
+          referrerDomain,
+          searchEngine,
+          userAgent,
+          ipAddress,
+        },
+      }),
+      db.article.update({
+        where: { id: article.id },
+        data: { viewsCount: { increment: 1 } },
+        select: { id: true },
+      }),
+    ]);
 
     return NextResponse.json({ ok: true, analyticsId: analytics.id });
   } catch (err) {

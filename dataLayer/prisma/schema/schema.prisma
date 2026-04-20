@@ -777,6 +777,13 @@ model Article {
   nextjsMetadata Json? // Cached Next.js Metadata object
   nextjsMetadataLastGenerated DateTime? // When metadata was last generated
 
+  // Denormalized interaction counts (updated atomically with each interaction)
+  likesCount     Int @default(0)
+  dislikesCount  Int @default(0)
+  commentsCount  Int @default(0)
+  favoritesCount Int @default(0)
+  viewsCount     Int @default(0)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

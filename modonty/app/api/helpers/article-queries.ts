@@ -51,15 +51,6 @@ type ArticleWithRelations = Prisma.ArticleGetPayload<{
         altText: true;
       };
     };
-    _count: {
-      select: {
-        likes: true;
-        dislikes: true;
-        favorites: true;
-        comments: true;
-        views: true;
-      };
-    };
   };
 }>;
 
@@ -108,15 +99,11 @@ const feedArticleSelect = {
     },
   },
   audioUrl: true,
-  _count: {
-    select: {
-      likes: true,
-      dislikes: true,
-      favorites: true,
-      comments: true,
-      views: true,
-    },
-  },
+  likesCount: true,
+  dislikesCount: true,
+  favoritesCount: true,
+  commentsCount: true,
+  viewsCount: true,
 } satisfies Prisma.ArticleSelect;
 
 type FeedArticlePayload = Prisma.ArticleGetPayload<{ select: typeof feedArticleSelect }>;
@@ -155,11 +142,11 @@ function mapFeedArticleToResponse(article: FeedArticlePayload): ArticleResponse 
         }
       : undefined,
     interactions: {
-      likes: article._count?.likes || 0,
-      dislikes: article._count?.dislikes || 0,
-      comments: article._count?.comments || 0,
-      favorites: article._count?.favorites || 0,
-      views: article._count?.views || 0,
+      likes: article.likesCount || 0,
+      dislikes: article.dislikesCount || 0,
+      comments: article.commentsCount || 0,
+      favorites: article.favoritesCount || 0,
+      views: article.viewsCount || 0,
     },
     readingTimeMinutes: article.readingTimeMinutes || undefined,
     wordCount: article.wordCount || undefined,
@@ -296,15 +283,6 @@ export const getArticleBySlug = cache(async (slug: string) => {
           altText: true,
         },
       },
-      _count: {
-        select: {
-          likes: true,
-          dislikes: true,
-          favorites: true,
-          comments: true,
-          views: true,
-        },
-      },
     },
   });
 
@@ -378,10 +356,10 @@ export const getTrendingArticles = cache(async (limit: number = 10, days: number
   const articlesWithScores = articles.map((article) => {
     const trendingData = calculateTrendingScore(
       {
-        views: article._count?.views || 0,
-        likes: article._count?.likes || 0,
-        comments: article._count?.comments || 0,
-        favorites: article._count?.favorites || 0,
+        views: article.viewsCount || 0,
+        likes: article.likesCount || 0,
+        comments: article.commentsCount || 0,
+        favorites: article.favoritesCount || 0,
       },
       article.createdAt
     );
@@ -438,11 +416,11 @@ function mapArticleToResponse(article: ArticleWithRelations): ArticleResponse {
         }
       : undefined,
     interactions: {
-      likes: article._count?.likes || 0,
-      dislikes: article._count?.dislikes || 0,
-      comments: article._count?.comments || 0,
-      favorites: article._count?.favorites || 0,
-      views: article._count?.views || 0,
+      likes: article.likesCount || 0,
+      dislikes: article.dislikesCount || 0,
+      comments: article.commentsCount || 0,
+      favorites: article.favoritesCount || 0,
+      views: article.viewsCount || 0,
     },
     readingTimeMinutes: article.readingTimeMinutes || undefined,
     wordCount: article.wordCount || undefined,

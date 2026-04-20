@@ -1,7 +1,56 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-20 (Session 58 — Email Templates Preview ✅)
+> **آخر تحديث:** 2026-04-21 (Session 62 — PERF-006 complete ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 62 — PERF-006 Final Fix (2026-04-21) ✅ — modonty v1.41.0 | admin v0.40.0
+
+### MODONTY — article-data.ts: آخر نقطة في PERF-006
+- [x] `getArticleBySlugMinimal` في `article-data.ts` — كانت لا تزال تستخدم `_count` للـ 5 interaction fields
+  - استبدلت `_count: { likes, dislikes, favorites, comments, views, faqs }` بـ `_count: { faqs }` فقط + scalar fields تلقائية
+  - إعادة بناء `_count` من الـ scalars في الـ return value حتى لا يتغير `page.tsx`
+  - تحديث `article-manual-related.tsx`: type + JSX يستخدم `likesCount/dislikesCount/commentsCount` مباشرة
+- [x] Full live UI test — كل 8 حالات تفاعل تعمل بشكل صحيح، UI = DB في كل حالة
+
+### Key files (Session 62)
+- `modonty/app/articles/[slug]/actions/article-data.ts` — getArticleBySlugMinimal: _count → scalar fields
+- `modonty/app/articles/[slug]/components/article-manual-related.tsx` — prop type + JSX counters
+
+---
+
+## Session 61 — PERF-006 + PERF-007 (2026-04-21) ✅ — modonty v1.41.0 | admin v0.40.0
+
+### MODONTY + ADMIN — Performance (Denormalized Counts)
+- [x] **PERF-006** — Denormalize interaction counts on Article — eliminates 5+ COUNT queries per article load
+  - Schema: added `likesCount`, `dislikesCount`, `commentsCount`, `favoritesCount`, `viewsCount` to Article model
+  - All interaction endpoints updated atomically: `article-interactions.ts`, `like/route.ts`, `dislike/route.ts`, `favorite/route.ts`, `view/route.ts`
+  - Console `comment-actions.ts` updated: approve increments commentsCount, reject/delete decrements
+  - All queries updated: `article-queries.ts`, `interaction-queries.ts`, `client-queries.ts`, `category-queries.ts`
+  - Admin Recalculation card added to Settings → System tab
+  - Live test: recalculation ran on 30 articles, `/interactions` API returns real counts ✅
+- [x] **PERF-007** — ISR for homepage — removed `isMobileRequest()` from sidebars, added `"use cache"` + `cacheLife("minutes")`, moved category filter client-side via `CategoryFeedSection`
+  - HTML stream: 2.8s → ~300ms
+
+### Key files (Session 61)
+- `modonty/app/articles/[slug]/actions/article-interactions.ts` — full rewrite
+- `modonty/app/api/articles/[slug]/like/route.ts` — atomic counter update
+- `modonty/app/api/articles/[slug]/dislike/route.ts` — atomic counter update
+- `modonty/app/api/articles/[slug]/favorite/route.ts` — atomic counter update
+- `modonty/app/api/articles/[slug]/view/route.ts` — parallel viewsCount increment
+- `console/app/(dashboard)/dashboard/comments/actions/comment-actions.ts` — commentsCount sync
+- `modonty/app/api/helpers/article-queries.ts` — replaced _count with direct fields
+- `modonty/app/api/helpers/interaction-queries.ts` — replaced _count with direct fields
+- `modonty/app/api/helpers/client-queries.ts` — replaced article _count with direct fields
+- `modonty/app/api/helpers/category-queries.ts` — replaced article _count + viewsCount orderBy
+- `admin/app/(dashboard)/settings/actions/recalculate-article-counts.ts` (NEW)
+- `admin/app/(dashboard)/settings/components/settings-form-v2.tsx` — RecalculationCard added
+- `dataLayer/prisma/schema/schema.prisma` — 5 new fields on Article
+- `modonty/app/page.tsx` — "use cache" + cacheLife + cacheTag
+- `modonty/components/feed/CategoryFeedSection.tsx` (NEW)
+- `modonty/components/layout/LeftSidebar/LeftSidebar.tsx` — removed isMobileRequest
+- `modonty/components/layout/RightSidebar/RightSidebar.tsx` — removed isMobileRequest
 
 ---
 

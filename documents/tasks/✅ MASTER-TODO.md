@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 59 — PERF-004 ✅)
-> **الإصدار الحالي:** admin v0.39.0 | modonty v1.40.1 | console v0.2.0
+> **آخر تحديث:** 2026-04-21 (Session 62 — PERF-006 article-data.ts fix ✅ + full live test ✅)
+> **الإصدار الحالي:** admin v0.40.0 | modonty v1.41.0 | console v0.2.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -16,11 +16,11 @@
 ## 🔴 HIGH — سرعة التحميل
 
 - [ ] **PERF-003** — Legacy JavaScript 14 KiB — vendor polyfills غير ضرورية — يحتاج `ANALYZE=true pnpm build`
-- [ ] **PERF-006** — Denormalize interaction counts في Article document — أضف `likesCount/commentsCount/viewsCount` مباشرة على Article
-  - **Impact:** HTML stream 2.8s → ~300ms
-- [ ] **PERF-007** — ISR للـ homepage — category/page filter لـ client-side + `revalidate = 300`
-  - **Impact:** LCP فوري من edge cache
 - [ ] **PERF-008** — Article page TBT 250ms — Forced reflow من JS أثناء الـ render
+  - ⚠️ يحتاج Chrome DevTools Performance trace أولاً (Reload + record → Long Tasks)
+  - Radix CollapsibleContent مستبعد (يستخدم ResizeObserver async)
+  - المشتبه بهم: ArticleInteractionButtons (eager + 3 useEffects)، hydration cost للـ content
+  - لا تنفذ أي تعديل قبل الـ trace
 
 ---
 

@@ -1,22 +1,19 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { LeftSidebar } from "@/components/layout/LeftSidebar";
-import { RightSidebar } from "@/components/layout/RightSidebar";
+import { LeftSidebar } from "@/components/layout/LeftSidebar/LeftSidebar";
+import { RightSidebar } from "@/components/layout/RightSidebar/RightSidebar";
 import { LeftSidebarSkeleton, RightSidebarSkeleton } from "@/components/layout/SidebarSkeletons";
 import { FeedDeferredUI } from "@/components/feed/FeedDeferredUI";
-import { PostCard } from "@/components/feed/postcard/PostCard";
-import { InfiniteArticleListOnView } from "@/components/feed/infiniteScroll/InfiniteArticleListOnView";
+import { CategoryFeedSection } from "@/components/feed/CategoryFeedSection";
 import type { FeedPost } from "@/lib/types";
 
 interface FeedContainerProps {
   posts: FeedPost[];
-  currentCategorySlug?: string;
-  initialPage?: number;
   platformTagline?: string | null;
   platformDescription?: string | null;
 }
 
-export function FeedContainer({ posts, currentCategorySlug, initialPage = 1, platformTagline, platformDescription }: FeedContainerProps) {
+export function FeedContainer({ posts, platformTagline, platformDescription }: FeedContainerProps) {
   return (
     <>
       <FeedDeferredUI />
@@ -24,7 +21,7 @@ export function FeedContainer({ posts, currentCategorySlug, initialPage = 1, pla
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <Suspense fallback={<LeftSidebarSkeleton />}>
-            <LeftSidebar currentCategorySlug={currentCategorySlug} />
+            <LeftSidebar />
           </Suspense>
           <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
             <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 border-t-2 border-t-accent flex items-center justify-between gap-3">
@@ -47,23 +44,9 @@ export function FeedContainer({ posts, currentCategorySlug, initialPage = 1, pla
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>
-              {posts.length > 0 && (
-                <div className="space-y-4">
-                  {posts.map((post, index) => (
-                    <PostCard
-                      key={post.id}
-                      post={post}
-                      index={index}
-                      className="animate-in fade-in duration-300"
-                    />
-                  ))}
-                </div>
-              )}
-              <InfiniteArticleListOnView
-                initialStartIndex={posts.length}
-                categorySlug={currentCategorySlug}
-                initialPage={initialPage}
-              />
+              <Suspense>
+                <CategoryFeedSection serverPosts={posts} />
+              </Suspense>
             </section>
           </div>
           <Suspense fallback={<RightSidebarSkeleton />}>

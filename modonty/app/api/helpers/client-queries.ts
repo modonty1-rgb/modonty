@@ -5,7 +5,7 @@
 
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus, CommentStatus } from "@prisma/client";
+import { Prisma, ArticleStatus } from "@prisma/client";
 import type { ClientResponse } from "@/lib/types";
 
 type ClientWithArticles = Prisma.ClientGetPayload<{
@@ -85,19 +85,11 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
           datePublished: { lte: new Date() },
         },
         select: {
-          _count: {
-            select: {
-              views: true,
-              comments: {
-                where: {
-                  status: CommentStatus.APPROVED,
-                },
-              },
-              likes: true,
-              dislikes: true,
-              favorites: true,
-            },
-          },
+          viewsCount: true,
+          commentsCount: true,
+          likesCount: true,
+          dislikesCount: true,
+          favoritesCount: true,
         },
       },
     },
@@ -108,12 +100,12 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
 
   return clients.map((client) => {
     const articles = client.articles || [];
-    
-    const viewsCount = articles.reduce((sum, article) => sum + (article._count?.views || 0), 0);
-    const commentsCount = articles.reduce((sum, article) => sum + (article._count?.comments || 0), 0);
-    const likesCount = articles.reduce((sum, article) => sum + (article._count?.likes || 0), 0);
-    const dislikesCount = articles.reduce((sum, article) => sum + (article._count?.dislikes || 0), 0);
-    const favoritesCount = articles.reduce((sum, article) => sum + (article._count?.favorites || 0), 0);
+
+    const viewsCount = articles.reduce((sum, article) => sum + (article.viewsCount || 0), 0);
+    const commentsCount = articles.reduce((sum, article) => sum + (article.commentsCount || 0), 0);
+    const likesCount = articles.reduce((sum, article) => sum + (article.likesCount || 0), 0);
+    const dislikesCount = articles.reduce((sum, article) => sum + (article.dislikesCount || 0), 0);
+    const favoritesCount = articles.reduce((sum, article) => sum + (article.favoritesCount || 0), 0);
 
     return {
       id: client.id,
@@ -209,15 +201,11 @@ export async function getClientsSearch(
           datePublished: { lte: new Date() },
         },
         select: {
-          _count: {
-            select: {
-              views: true,
-              comments: { where: { status: CommentStatus.APPROVED } },
-              likes: true,
-              dislikes: true,
-              favorites: true,
-            },
-          },
+          viewsCount: true,
+          commentsCount: true,
+          likesCount: true,
+          dislikesCount: true,
+          favoritesCount: true,
         },
       },
     },
@@ -226,11 +214,11 @@ export async function getClientsSearch(
   });
   return clients.map((client) => {
     const articles = client.articles || [];
-    const viewsCount = articles.reduce((sum, a) => sum + (a._count?.views || 0), 0);
-    const commentsCount = articles.reduce((sum, a) => sum + (a._count?.comments || 0), 0);
-    const likesCount = articles.reduce((sum, a) => sum + (a._count?.likes || 0), 0);
-    const dislikesCount = articles.reduce((sum, a) => sum + (a._count?.dislikes || 0), 0);
-    const favoritesCount = articles.reduce((sum, a) => sum + (a._count?.favorites || 0), 0);
+    const viewsCount = articles.reduce((sum, a) => sum + (a.viewsCount || 0), 0);
+    const commentsCount = articles.reduce((sum, a) => sum + (a.commentsCount || 0), 0);
+    const likesCount = articles.reduce((sum, a) => sum + (a.likesCount || 0), 0);
+    const dislikesCount = articles.reduce((sum, a) => sum + (a.dislikesCount || 0), 0);
+    const favoritesCount = articles.reduce((sum, a) => sum + (a.favoritesCount || 0), 0);
     return {
       id: client.id,
       name: client.name,

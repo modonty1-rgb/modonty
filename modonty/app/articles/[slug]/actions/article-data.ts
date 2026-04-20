@@ -334,21 +334,15 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
               createdAt: true,
               featuredImage: { select: { url: true, altText: true } },
               client: { select: { name: true, slug: true } },
-              _count: { select: { likes: true, dislikes: true, comments: true, faqs: true } },
+              likesCount: true,
+              dislikesCount: true,
+              commentsCount: true,
+              _count: { select: { faqs: true } },
             },
           },
         },
       },
-      _count: {
-        select: {
-          likes: true,
-          dislikes: true,
-          favorites: true,
-          comments: true,
-          views: true,
-          faqs: true,
-        },
-      },
+      _count: { select: { faqs: true } },
     },
   });
 
@@ -357,7 +351,7 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
   const userLiked = (article.likes?.length ?? 0) > 0;
   const userDisliked = (article.dislikes?.length ?? 0) > 0;
   const userFavorited = (article.favorites?.length ?? 0) > 0;
-  const { likes, dislikes, favorites, ...rest } = article;
+  const { likes, dislikes, favorites, likesCount, dislikesCount, favoritesCount, commentsCount, viewsCount, _count, ...rest } = article;
 
   return {
     ...rest,
@@ -366,6 +360,14 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
     userLiked,
     userDisliked,
     userFavorited,
+    _count: {
+      faqs: _count.faqs,
+      likes: likesCount,
+      dislikes: dislikesCount,
+      favorites: favoritesCount,
+      comments: commentsCount,
+      views: viewsCount,
+    },
   };
 }
 

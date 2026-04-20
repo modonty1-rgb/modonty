@@ -32,10 +32,10 @@ interface ArticleManualRelatedProps {
         name: string;
         slug: string;
       };
+      likesCount: number;
+      dislikesCount: number;
+      commentsCount: number;
       _count: {
-        likes: number;
-        dislikes: number;
-        comments: number;
         faqs: number;
       };
     };
@@ -81,15 +81,15 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="flex items-center gap-1" aria-label="الإعجابات">
                     <IconLike className="h-3.5 w-3.5 shrink-0" />
-                    <span className="tabular-nums">{related._count.likes.toLocaleString("ar-SA")}</span>
+                    <span className="tabular-nums">{related.likesCount.toLocaleString("ar-SA")}</span>
                   </span>
                   <span className="flex items-center gap-1 hidden" aria-label="عدم الإعجاب" aria-hidden>
                     <IconLike className="h-3.5 w-3.5 shrink-0" />
-                    <span className="tabular-nums">{related._count.dislikes.toLocaleString("ar-SA")}</span>
+                    <span className="tabular-nums">{related.dislikesCount.toLocaleString("ar-SA")}</span>
                   </span>
                   <span className="flex items-center gap-1" aria-label="التعليقات">
                     <IconComment className="h-3.5 w-3.5 shrink-0" />
-                    <span className="tabular-nums">{related._count.comments.toLocaleString("ar-SA")}</span>
+                    <span className="tabular-nums">{related.commentsCount.toLocaleString("ar-SA")}</span>
                   </span>
                   <span className="flex items-center gap-1" aria-label="الأسئلة">
                     <IconHelp className="h-3.5 w-3.5 shrink-0" />

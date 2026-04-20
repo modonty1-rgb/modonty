@@ -73,14 +73,6 @@ type ArticleWithClientLogo = Prisma.ArticleGetPayload<{
         altText: true;
       };
     };
-    _count: {
-      select: {
-        likes: true;
-        comments: true;
-        favorites: true;
-        views: true;
-      };
-    };
   };
 }>;
 
@@ -205,16 +197,12 @@ export async function getCategoryAnalytics(categoryId: string): Promise<Category
       status: ArticleStatus.PUBLISHED,
       datePublished: { lte: new Date() },
     },
-    include: {
-      _count: {
-        select: {
-          likes: true,
-          comments: true,
-          dislikes: true,
-          favorites: true,
-          views: true,
-        },
-      },
+    select: {
+      likesCount: true,
+      dislikesCount: true,
+      commentsCount: true,
+      favoritesCount: true,
+      viewsCount: true,
     },
   });
 
@@ -228,11 +216,11 @@ export async function getCategoryAnalytics(categoryId: string): Promise<Category
   let engagedBlogs = 0;
 
   for (const article of articles) {
-    const likes = article._count?.likes || 0;
-    const comments = article._count?.comments || 0;
-    const dislikes = article._count?.dislikes || 0;
-    const favorites = article._count?.favorites || 0;
-    const views = article._count?.views || 0;
+    const likes = article.likesCount || 0;
+    const comments = article.commentsCount || 0;
+    const dislikes = article.dislikesCount || 0;
+    const favorites = article.favoritesCount || 0;
+    const views = article.viewsCount || 0;
 
     totalLikes += likes;
     totalComments += comments;
@@ -273,16 +261,12 @@ export async function getOverallCategoryAnalytics(): Promise<CategoryAnalytics> 
       status: ArticleStatus.PUBLISHED,
       datePublished: { lte: new Date() },
     },
-    include: {
-      _count: {
-        select: {
-          likes: true,
-          comments: true,
-          dislikes: true,
-          favorites: true,
-          views: true,
-        },
-      },
+    select: {
+      likesCount: true,
+      dislikesCount: true,
+      commentsCount: true,
+      favoritesCount: true,
+      viewsCount: true,
     },
   });
 
@@ -296,11 +280,11 @@ export async function getOverallCategoryAnalytics(): Promise<CategoryAnalytics> 
   let engagedBlogs = 0;
 
   for (const article of articles) {
-    const likes = article._count?.likes || 0;
-    const comments = article._count?.comments || 0;
-    const dislikes = article._count?.dislikes || 0;
-    const favorites = article._count?.favorites || 0;
-    const views = article._count?.views || 0;
+    const likes = article.likesCount || 0;
+    const comments = article.commentsCount || 0;
+    const dislikes = article.dislikesCount || 0;
+    const favorites = article.favoritesCount || 0;
+    const views = article.viewsCount || 0;
 
     totalLikes += likes;
     totalComments += comments;
@@ -355,19 +339,15 @@ export const getCategoriesEnhanced = unstable_cache(
         articles: {
           where: {
             status: ArticleStatus.PUBLISHED,
-            datePublished: { 
+            datePublished: {
               gte: sevenDaysAgo,
-              lte: new Date() 
+              lte: new Date(),
             },
           },
           select: {
-            _count: {
-              select: {
-                likes: true,
-                comments: true,
-                favorites: true,
-              },
-            },
+            likesCount: true,
+            commentsCount: true,
+            favoritesCount: true,
           },
         },
       },
@@ -378,10 +358,10 @@ export const getCategoriesEnhanced = unstable_cache(
       const recentArticleCount = category.articles?.length || 0;
       
       const totalEngagement = category.articles?.reduce((sum, article) => {
-        return sum + 
-          (article._count?.likes || 0) + 
-          (article._count?.comments || 0) + 
-          (article._count?.favorites || 0);
+        return sum +
+          (article.likesCount || 0) +
+          (article.commentsCount || 0) +
+          (article.favoritesCount || 0);
       }, 0) || 0;
 
       return {
@@ -475,7 +455,7 @@ export const getCategoryArticlesEnhanced = unstable_cache(
     if (sortBy === 'oldest') {
       orderBy = { datePublished: 'asc' };
     } else if (sortBy === 'popular') {
-      orderBy = { views: { _count: 'desc' } };
+      orderBy = { viewsCount: 'desc' };
     }
 
     const articles: ArticleWithClientLogo[] = await db.article.findMany({
@@ -508,14 +488,6 @@ export const getCategoryArticlesEnhanced = unstable_cache(
           select: {
             url: true,
             altText: true,
-          },
-        },
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-            favorites: true,
-            views: true,
           },
         },
       },
@@ -551,11 +523,11 @@ export const getCategoryArticlesEnhanced = unstable_cache(
         altText: article.featuredImage.altText || undefined,
       } : undefined,
       interactions: {
-        likes: article._count.likes,
-        dislikes: 0,
-        comments: article._count.comments,
-        favorites: article._count.favorites,
-        views: article._count.views,
+        likes: article.likesCount || 0,
+        dislikes: article.dislikesCount || 0,
+        comments: article.commentsCount || 0,
+        favorites: article.favoritesCount || 0,
+        views: article.viewsCount || 0,
       },
       readingTimeMinutes: article.readingTimeMinutes || undefined,
       wordCount: article.wordCount || undefined,

@@ -1,6 +1,5 @@
 import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
 import { cn } from "@/lib/utils";
-import { isMobileRequest } from "../is-mobile-request";
 import { FollowCard } from "./FollowCard";
 import { NewClientsCard } from "./NewClientsCard";
 
@@ -9,10 +8,6 @@ interface RightSidebarProps {
 }
 
 export async function RightSidebar({ className }: RightSidebarProps) {
-  if (await isMobileRequest()) {
-    return null;
-  }
-
   const clients = await getClientsForSidebar(20);
 
   return (
