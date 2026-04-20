@@ -8,6 +8,7 @@ import { GTMContainer } from "@/components/gtm/GTMContainer";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
 import { MobileFooterWithFavorites } from "@/components/navigatore/MobileFooterWithFavorites";
+import { AnnouncementBar } from "@/components/navigatore/AnnouncementBar";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -74,6 +75,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <SessionProviderWrapper>
               <div className="min-h-screen flex flex-col">
+                <AnnouncementBar />
                 <Suspense fallback={<header className="h-14 border-b bg-card" />}>
                   <TopNavWithFavorites />
                 </Suspense>

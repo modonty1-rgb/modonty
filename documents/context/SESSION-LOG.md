@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 51 — Client Page UX/UI Overhaul v1.37.0)
+# Session Context — Last Updated: 2026-04-20 (Session 52 — Announcement Bar + Navbar Cleanup v1.38.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,23 @@
 
 ## Current Versions
 - **admin**: v0.36.0 ✅ (pushed 2026-04-19)
-- **modonty**: v1.37.0 ✅ (pushed 2026-04-20)
+- **modonty**: v1.38.0 ✅ (pushed 2026-04-20)
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 52 — PUSHED 2026-04-20 (modonty v1.38.0)
+
+### modonty changes — Announcement Bar + Navbar Cleanup
+- **AnnouncementBar** — new `components/navigatore/AnnouncementBar.tsx`: full-width teal bar above header, pulsing dot, links to jbrseo.com, dismissible via localStorage (`modonty_announcement_v1`), renders above `TopNavWithFavorites` in root layout
+- **Mobile navbar cleanup** — `TopNav.tsx`: removed CTA pill from center column, simplified to `flex justify-between`: Logo | [Bell + Chat + User]
+- **Result:** navbar clean and professional on mobile — logo dominant, max 3 action icons
+
+### Key files changed (Session 52)
+- `modonty/components/navigatore/AnnouncementBar.tsx` (NEW)
+- `modonty/components/navigatore/TopNav.tsx`
+- `modonty/app/layout.tsx`
+- `modonty/package.json` → v1.38.0
 
 ---
 

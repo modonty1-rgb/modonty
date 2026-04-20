@@ -1,7 +1,46 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-20 (Session 50 — modonty v1.36.0 ✅)
+> **آخر تحديث:** 2026-04-20 (Session 51 — modonty v1.37.0 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 51 — modonty v1.37.0 (2026-04-20) ✅ PUSHED
+
+### MODONTY — Client Page UX/UI Overhaul (CP-15 to CP-25)
+- [x] **CP-15** — Hero CTA: added "اسأل العميل" primary button → `/clients/[slug]/contact` (`hero-cta.tsx`)
+- [x] **CP-16** — Hero Cover fallback: dot pattern + full client name watermark + bottom fade gradient (`hero-cover.tsx`)
+- [x] **CP-17** — Hero Social Links: redesigned as pill buttons with icon + platform name label (`hero-cta.tsx`)
+- [x] **CP-18** — Left Sidebar: removed duplicate Stats Card (already shown in hero) (`client-page-left.tsx`)
+- [x] **CP-19** — Right Sidebar: removed empty-state cards when followers=0 / reviews=0 (`client-page-right.tsx`)
+- [x] **CP-20** — Left Sidebar: reordered — description (نبذة) first, then company info (`client-page-left.tsx`)
+- [x] **CP-21** — Feed: featured first article card — `aspect-[16/7]` image, `text-xl` title, `line-clamp-3` excerpt, `border-primary/20` (`PostCard.types.ts`, `PostCard.tsx`, `PostCardHeroImage.tsx`, `PostCardBody.tsx`, `client-page-feed.tsx`)
+- [x] **CP-22** — Left Sidebar: newsletter subscription card — email input → `/api/subscribers`, success/error states (`client-newsletter-card.tsx` NEW)
+- [x] **CP-23** — Mobile: scroll-aware sticky FAB "اسأل العميل" — appears after 300px scroll, `fixed bottom-16`, `lg:hidden` (`client-mobile-cta.tsx` NEW + `layout.tsx`)
+- [x] **CP-24** — Tab Nav: fade gradient on edges for hidden tabs on mobile — already implemented, confirmed working on 375px
+- [x] **CP-25** — Tab Nav: icon + shortLabel on mobile, text-only on desktop — `TAB_ICON_MAP` in Client Component, `TabNavLink` updated (`client-tab-items.ts`, `client-tabs-nav.tsx`)
+- [x] **OBS-034 fix** — Featured card no-image: always `aspect-video` regardless of `featured` prop (avoids oversized placeholder)
+
+### Key files changed (Session 51)
+- `modonty/app/clients/[slug]/components/hero/hero-cover.tsx`
+- `modonty/app/clients/[slug]/components/hero/hero-cta.tsx`
+- `modonty/app/clients/[slug]/components/client-page/client-page-left.tsx`
+- `modonty/app/clients/[slug]/components/client-newsletter-card.tsx` (NEW)
+- `modonty/app/clients/[slug]/components/client-mobile-cta.tsx` (NEW)
+- `modonty/app/clients/[slug]/components/client-tab-items.ts`
+- `modonty/app/clients/[slug]/components/client-tabs-nav.tsx`
+- `modonty/app/clients/[slug]/layout.tsx`
+- `modonty/components/feed/postcard/PostCard.tsx`
+- `modonty/components/feed/postcard/PostCard.types.ts`
+- `modonty/components/feed/postcard/PostCardHeroImage.tsx`
+- `modonty/components/feed/postcard/PostCardBody.tsx`
+- `modonty/app/clients/[slug]/components/client-page/client-page-feed.tsx`
+
+### Live Test — Production (Session 51)
+- [x] Mobile 375px: hero cover watermark ✅, FAB after scroll ✅, tab icons ✅, newsletter card ✅
+- [x] Desktop 1280px: tabs text-only ✅, featured card larger ✅
+- [x] All pages reviewed: homepage, article, categories, clients, trending, industries, search ✅
+- [x] TSC zero errors ✅ | Vercel build ✅ (hotfix fd5191e for missing page.tsx staged change)
 
 ---
 

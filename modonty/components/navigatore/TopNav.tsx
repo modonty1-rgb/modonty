@@ -4,7 +4,6 @@ import { LogoNav } from "@/components/navigatore/LogoNav";
 import { ChatTriggerButton } from "@/components/chatbot/ChatTriggerButton";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { NotificationsBell } from "@/components/notifications/NotificationsBell";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
 export type NavSection = "home" | "trending" | "categories" | "clients" | "none";
 
 interface TopNavProps {
@@ -22,30 +21,10 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
         تخطى إلى المحتوى الرئيسي
       </a>
       <div className="container mx-auto max-w-[1128px]">
-        {/* Mobile Layout: 3 columns (logo | CTA | actions) */}
-        <div className="grid md:hidden h-14 grid-cols-[auto,1fr,auto] items-center gap-2 px-4">
-          {/* Col 1 — Logo */}
+        {/* Mobile Layout: Logo | Actions */}
+        <div className="flex md:hidden h-14 items-center justify-between px-4">
           <LogoNav />
-
-          {/* Col 2 — CTA fills center column */}
-          <CtaTrackedLink
-            href="https://www.jbrseo.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            label="Header Mobile CTA — عملاء بلا إعلانات"
-            type="BUTTON"
-            className="flex items-center justify-center gap-2 w-full h-9 text-[11px] font-bold bg-accent/15 text-accent rounded-full border border-accent/30 active:scale-[0.97] transition-all hover:bg-accent/25"
-            aria-label="عملاء بلا إعلانات — جبر SEO"
-          >
-            <span className="relative flex h-1.5 w-1.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
-            </span>
-            عملاء بلا إعلانات
-          </CtaTrackedLink>
-
-          {/* Col 3 — Actions */}
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center gap-1.5">
             <NotificationsBell />
             <ChatTriggerButton variant="nav" />
             <UserMenu />

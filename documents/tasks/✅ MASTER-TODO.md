@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 51 — CP-15 to CP-24 all done ✅)
-> **الإصدار الحالي:** admin v0.36.0 | modonty v1.37.0 | console v0.1.2
+> **آخر تحديث:** 2026-04-20 (Session 52 — modonty v1.38.0 ✅)
+> **الإصدار الحالي:** admin v0.36.0 | modonty v1.38.0 | console v0.1.2
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -61,38 +61,6 @@
 ## 🟡 MEDIUM — Mobile Phase 2
 
 > ✅ MOB2–MOB6 مكتملة — نُقلت إلى MASTER-DONE (Session 50 / v1.36.0)
-
-## 🔴 HIGH — Client Page UX/UI Overhaul (CP-15–24) ✅ COMPLETE v1.37.0
-> الخطة الكاملة في → [CP-15-25-PLAN.md](CP-15-25-PLAN.md) | ✅ Done in Session 51
-
-## 🟡 MEDIUM — Tab Nav Icons (CP-25)
-- [x] **CP-25** — Tab Nav: icons + shortLabels على mobile ✅ Session 51
-  - `client-tab-items.ts` — shortLabels لكل الـ tabs
-  - `client-tabs-nav.tsx` — `TAB_ICON_MAP` client-side + icon + shortLabel في `TabNavLink`
-  - Icon pattern: icon فوق + text صغير 10px تحت — desktop: text فقط
-
-- [x] **CP-15** — Hero: أضف "اسأل العميل" كـ primary CTA بجانب Follow ✅ Session 51
-  - `hero-cta.tsx` — Link button → `/clients/[slug]/contact`
-- [x] **CP-16** — Hero Cover: branded gradient fallback لما ما في cover image ✅ Session 51
-  - File: `hero-cover.tsx` — dot pattern + watermark initial + bottom fade
-- [x] **CP-17** — Hero Social Links: أكبر + label text (X · LinkedIn) ✅ Session 51
-  - File: `hero-cta.tsx` — pill buttons with icon + name label
-- [x] **CP-18** — Left Sidebar: احذف Stats Card المكررة (موجودة في Hero) ✅ Session 51
-  - `client-page-left.tsx` — removed stats card + `stats` prop
-- [x] **CP-19** — Right Sidebar: إخفاء empty state cards (followers=0, reviews=0) ✅ Session 51
-  - `client-page-right.tsx` — removed `showEmptyState` prop
-- [x] **CP-20** — Left Sidebar: إعادة ترتيب — نبذة أولاً قبل معلومات الشركة ✅ Session 51
-  - `client-page-left.tsx` — description card comes first
-- [x] **CP-21** — Feed: Featured first article card (أكبر + صورة كاملة) ✅ Session 51
-  - Files: `PostCard.types.ts` + `PostCard.tsx` + `PostCardHeroImage.tsx` + `PostCardBody.tsx` + `client-page-feed.tsx`
-  - aspect-[16/7] image + text-xl title + line-clamp-3 excerpt + border-primary/20 card
-- [x] **CP-22** — Left Sidebar: Newsletter subscription card ✅ Session 51
-  - Files: `client-newsletter-card.tsx` (new) + `client-page-left.tsx`
-  - Calls existing `/api/subscribers` — email input + success/error states
-- [x] **CP-23** — Mobile: Sticky "اسأل العميل" FAB (فوق bottom nav) ✅ Session 51
-  - File: `client-mobile-cta.tsx` (new) + `layout.tsx` — fixed bottom-16, lg:hidden pill
-- [x] **CP-24** — Tab Nav: fade gradient indicator للـ hidden tabs على mobile ✅ Session 51
-  - Already implemented in `client-tabs-nav.tsx` — confirmed working on 375px
 
 ## 🟡 MEDIUM — Chatbot Phase 2
 
