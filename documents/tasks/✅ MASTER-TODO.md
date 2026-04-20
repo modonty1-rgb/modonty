@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 58 — label fixes ✅)
+> **آخر تحديث:** 2026-04-20 (Session 59 — QAUDIT-C1 ✅)
 > **الإصدار الحالي:** admin v0.39.0 | modonty v1.40.0 | console v0.2.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
@@ -39,17 +39,7 @@
 
 # 🛠️ ADMIN
 
-## 🟡 MEDIUM — متفرقات
-
-
 ---
-
-# 📊 CONSOLE
-
-## 🟡 MEDIUM — QA (قبل أول عميل)
-
-- [ ] **QAUDIT-C1** — مراجعة شاملة لكل queries
-  - Dashboard: C1–C5 · Analytics: C7/C10–C12/C14 · Leads: C15–C17 · Moderation: C22–C30
 
 ---
 
