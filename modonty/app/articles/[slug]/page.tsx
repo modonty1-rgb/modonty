@@ -42,6 +42,7 @@ import {
   ArticleBodyLinkTracker,
   ArticleMobileLayout,
   NewsletterCTA,
+  ArticleFeaturedImageNewsletter,
 } from "./components/client-lazy";
 import ArticleLoading from "./loading";
 
@@ -263,6 +264,52 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
         <>
           <ReadingProgressBar />
+          {/* Bar before breadcrumb — sticky top-14 kicks in immediately from scrollY=0 */}
+          <ArticleMobileLayout
+            barProps={{
+              title: article.title,
+              articleId: article.id,
+              articleSlug: article.slug,
+              clientId: article.clientId ?? undefined,
+              clientLogo: article.client?.logoMedia?.url ?? null,
+              clientName: article.client?.name ?? null,
+              clientSlug: article.client?.slug ?? null,
+              articleTitle: article.title,
+              user: session?.user
+                ? { name: session.user.name ?? null, email: session.user.email ?? null }
+                : null,
+              commentsCount: article._count.comments,
+              likes: article._count.likes,
+              dislikes: article._count.dislikes,
+              favorites: article._count.favorites,
+              userLiked: article.userLiked,
+              userDisliked: article.userDisliked,
+              userFavorited: article.userFavorited,
+            }}
+            sheetProps={{
+              client: article.client,
+              askClientProps: article.client
+                ? {
+                    articleId: article.id,
+                    clientId: article.clientId,
+                    articleTitle: article.title,
+                    user: session?.user
+                      ? {
+                          name: session.user.name ?? null,
+                          email: session.user.email ?? null,
+                        }
+                      : null,
+                  }
+                : null,
+              content: article.content,
+              citations: article.citations,
+              clientId: article.clientId,
+              articleId: article.id,
+              articleTitle: article.title,
+              platformSocialLinks,
+              newsletterCtaText: article.client?.newsletterCtaText,
+            }}
+          />
           <Breadcrumb
             items={[
               { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -271,7 +318,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
               { label: article.title },
             ]}
           />
-          <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-40 lg:pb-8 flex-1">
+          <div className="container mx-auto max-w-[1128px] px-4 sm:px-6 lg:px-8 py-6 md:py-8 pb-20 lg:pb-8 flex-1">
             <div className="flex flex-col lg:grid lg:grid-cols-[240px_1fr_280px] lg:items-start gap-6 md:gap-8">
               {/* Left sidebar – مشاركة وتفاعل + العميل */}
               <aside className="hidden lg:block w-[240px] sticky top-[3.5rem] self-start h-[calc(100dvh-4rem)]" role="complementary" aria-label="مشاركة وتفاعل">
@@ -319,13 +366,23 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     readingTimeMinutes={article.readingTimeMinutes}
                     wordCount={article.wordCount}
                     views={article._count.views}
+                    questionsCount={article._count.faqs}
                   />
 
                   {article.featuredImage && (
                     <ArticleFeaturedImage
                       image={article.featuredImage}
                       title={article.title}
-                    />
+                    >
+                      {article.client && (
+                        <ArticleFeaturedImageNewsletter
+                          clientId={article.clientId}
+                          clientName={article.client.name}
+                          articleId={article.id}
+                          ctaText={article.client.newsletterCtaText}
+                        />
+                      )}
+                    </ArticleFeaturedImage>
                   )}
 
                   {article.audioUrl && (
@@ -349,13 +406,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     category={article.category}
                     tags={article.tags}
                   />
-
-                  <div className="lg:hidden mb-4">
-                    <ArticleEngagementMetrics
-                      comments={article._count.comments}
-                      questions={article._count.faqs}
-                    />
-                  </div>
 
                   <div
                     id="article-content"
@@ -442,47 +492,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 </div>
               </aside>
             </div>
-
-            <ArticleMobileLayout
-              barProps={{
-                title: article.title,
-                articleId: article.id,
-                articleSlug: article.slug,
-                clientId: article.clientId ?? undefined,
-                userId,
-                likes: article._count.likes,
-                dislikes: article._count.dislikes,
-                favorites: article._count.favorites,
-                userLiked: article.userLiked,
-                userDisliked: article.userDisliked,
-                userFavorited: article.userFavorited,
-              }}
-              sheetProps={{
-                client: article.client,
-                askClientProps: article.client
-                  ? {
-                      articleId: article.id,
-                      clientId: article.clientId,
-                      articleTitle: article.title,
-                      user: session?.user
-                        ? {
-                            name: session.user.name ?? null,
-                            email: session.user.email ?? null,
-                          }
-                        : null,
-                    }
-                  : null,
-                author: article.author,
-                content: article.content,
-                citations: article.citations,
-                clientId: article.clientId,
-                articleId: article.id,
-                articleSlug: article.slug,
-                userId,
-                platformSocialLinks,
-                newsletterCtaText: article.client?.newsletterCtaText,
-              }}
-            />
           </div>
 
         </>

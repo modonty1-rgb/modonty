@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-21 (Session 49 — SEO fixes push)
+# Session Context — Last Updated: 2026-04-20 (Session 50 — Mobile Phase 2 push)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,34 @@
 
 ## Current Versions
 - **admin**: v0.36.0 ✅ (pushed 2026-04-19)
-- **modonty**: v1.35.0 ✅ (pushed 2026-04-21)
+- **modonty**: v1.36.0 ✅ (pushed 2026-04-20)
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 50 — PUSHED 2026-04-20 (modonty v1.36.0)
+
+### modonty changes — Mobile Article Phase 2 (MOB2–MOB6)
+- **MOB2** — Mobile bar Zone 1: client avatar (h-7 w-7 ring) + "اسأل العميل" trigger-only button
+- **MOB3** — Mobile bar Zone 1: "اشترك في النشرة" button (triggers ClientNewsletter overlay)
+- **MOB4** — `article-header.tsx`: added views count + questions count to meta row on mobile
+- **MOB5** — `article-page-client.tsx` + `article-mobile-layout.tsx`: newsletter overlay on featured image (MOB5)
+- **MOB6** — Sheet updated with full content: client card + TOC + related articles + newsletter
+- **`hideDislike` prop** — `ArticleInteractionButtons`: new optional `hideDislike` prop, hides dislike button in compact/mobile mode
+- **2-row bar layout** — outer bar uses `flex-col` so Zone1 (client row) and Zone2 (icons row) each have their own full-width row
+- **Sticky fix** — `ArticleMobileLayout` moved BEFORE `<Breadcrumb>` in DOM in `page.tsx` so `sticky top-14` activates immediately at scrollY=0
+
+### Live test (Session 50) — 100% PASS
+- Mobile 375px: like ✅, save ✅, ask client dialog (pre-filled) ✅, newsletter dialog (pre-filled) ✅, sheet ✅
+- Mobile 320px: no overflow, all icons visible ✅
+- Desktop 1280px: bar hidden (lg:hidden), sidebar intact, 3-col layout ✅
+- Console: 0 errors, 4 warnings (pre-existing Radix aria-describedby advisory) ✅
+
+### Pending (next session)
+- SEO-007: Verify canonical www in production
+- PERF-003/004/006/007: Bundle + LCP fixes
+- OBS-027: Industries listing vs detail count mismatch
+- USR-R3: Notification Settings UI
 
 ---
 

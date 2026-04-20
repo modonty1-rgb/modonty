@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-21 (Session 49)
-> **الإصدار الحالي:** admin v0.36.0 | modonty v1.35.0 | console v0.1.2
+> **آخر تحديث:** 2026-04-20 (Session 50)
+> **الإصدار الحالي:** admin v0.36.0 | modonty v1.36.0 | console v0.1.2
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -10,8 +10,6 @@
 - [ ] Verify `admin.modonty.com` live and accessible
 - [ ] Run `setup-ttl-indexes.ts` on PROD DB
 - [ ] Add `.playwright-mcp/` to `.gitignore`
-- [x] **SEO-004** — Admin Settings → Site URL → `https://www.modonty.com` ✅
-- [x] **SEO-005** — Vercel Dashboard → `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` في admin + modonty projects ✅
 
 ---
 
@@ -26,57 +24,30 @@
 
 # 🌐 MODONTY — Public Site
 
-## 🔴 HIGH — SEO Fixes (Session 48)
+## 🔴 HIGH — Performance
 
-- [x] **SEO-001** — Article canonical truncated + no www → always regenerate canonical from current siteUrl+slug, even when using stored nextjsMetadata ✅
-- [x] **SEO-002** — Client detail canonical no www → added www normalization regex in `clients/[slug]/page.tsx` ✅
-- [x] **SEO-003** — Client detail meta description missing → added fallback description from seoDescription or default string ✅
-- [x] **SEO-004** — Admin Settings → Site URL → `https://www.modonty.com` ✅
-- [x] **SEO-005** — Vercel `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` (admin + modonty projects) ✅
-
-## 🔴 HIGH — Performance (PageSpeed Session 48)
-
-- [x] **PERF-001** — Clients page Accessibility: added `aria-label` to 2 icon buttons (`clients-content.tsx:90` + `client-card-external-link.tsx`) ✅
-- [x] **PERF-002** — Homepage LCP: removed invalid `preload` combination from `OptimizedImage.tsx` + `PostCardHeroImage.tsx` — now uses `loading="eager"` + `fetchPriority="high"` per Next.js 16 App Router docs ✅
 - [ ] **PERF-003** — Legacy JavaScript 14 KiB across all pages — vendor dependency ships unnecessary polyfills (Array.at, flat, Object.fromEntries etc.) — needs `ANALYZE=true pnpm build` to identify chunk
 - [ ] **PERF-004** — Unused JavaScript 24-27 KiB (clients/industries pages) — bundle analyzer needed
-- [x] **PERF-005** — Article pages CAN be tested via PageSpeed — use double-encoded Arabic URL format (encode the `%` signs again) → PageSpeed accepted it ✅
-  - **Result (Session 49, Mobile):** Performance **87** · Accessibility **100** · Best Practices **100** · SEO **100**
-  - FCP 1.1s · LCP 3.2s · TBT 250ms · CLS 0 · Speed Index 3.9s
-  - Same LCP bottleneck as homepage (server streaming) + TBT 250ms from forced reflow + legacy JS
-
 - [ ] **PERF-008** — Article page TBT 250ms — Forced reflow from JavaScript querying layout properties
   - PageSpeed flagged: "Forced reflow" + "Minimize main-thread work"
   - Likely source: article body renderer or TOC component calling `offsetWidth` / `getBoundingClientRect` during render
   - Fix: identify the offending component via Chrome DevTools Performance tab → defer layout reads with `requestAnimationFrame`
 
-## 🔴 HIGH — SEO Fixes (Session 49 Live Test)
-
-- [x] **SEO-006** — hreflang tags MISSING on article pages → added `languages: { ar, "x-default" }` to stored metadata early-return path in `articles/[slug]/page.tsx` ✅
-
-- [ ] **SEO-007** — **Article canonical still missing www in production** — live test shows `https://modonty.com/articles/...` instead of `https://www.modonty.com/articles/...`
-  - SEO-001 code fix exists locally but **not pushed to production** yet
-  - OR `NEXT_PUBLIC_SITE_URL` in Vercel is `https://modonty.com` and our regex isn't catching it
-  - **Action required:** Push SEO-001 fix + verify `NEXT_PUBLIC_SITE_URL` in Vercel = `https://www.modonty.com`
-
-## 🔴 HIGH — LCP Speed Fix (Session 49)
+## 🔴 HIGH — LCP Speed Fix
 
 > **Root cause (confirmed via live timing):** TTFB = 65ms ✅ · HTML stream = **2771ms** 🔴
-> The server takes ~2.8s to compute and stream the homepage HTML before the browser can paint the LCP image.
-> Cause: `getArticles()` runs `_count` aggregation on 5 collections (likes/dislikes/favorites/comments/views) per article — heavy MongoDB join, blocks rendering.
-> The `"use cache"` with `cacheLife("hours")` helps when warm, but `revalidateTag("articles")` on every admin publish clears it.
+> `getArticles()` runs `_count` aggregation on 5 collections per article — heavy MongoDB join, blocks rendering.
+> `"use cache"` + `cacheLife("hours")` helps when warm, but `revalidateTag("articles")` on every admin publish clears it.
 
-- [ ] **PERF-006** — **[Option B — Correct Fix]** Denormalize interaction counts into Article document
+- [ ] **PERF-006** — **[Correct Fix]** Denormalize interaction counts into Article document
   - Add `likesCount`, `dislikesCount`, `favoritesCount`, `commentsCount`, `viewsCount` fields directly on Article
-  - Update these fields (increment/decrement) when interactions happen — replaces all `_count` queries in the feed
-  - Feed query becomes ~10× faster — no aggregation joins
-  - Files: `modonty/app/api/helpers/article-queries.ts` · `admin` interaction handlers · Prisma schema
-  - **Impact:** Reduces homepage HTML stream from 2.8s → estimated ~300ms → LCP ~500ms
+  - Update fields on interaction — replaces all `_count` aggregation queries in the feed
+  - Files: `modonty/app/api/helpers/article-queries.ts` · admin interaction handlers · Prisma schema
+  - **Impact:** Homepage HTML stream 2.8s → ~300ms → LCP ~500ms
 
-- [ ] **PERF-007** — **[Option A — Quick]** Enable ISR for base homepage `/`
-  - Requires removing `searchParams` from the top-level page fetch (move category/page filter to client-side URL state)
-  - `export const revalidate = 300` on `page.tsx` → Vercel pre-renders at edge → real users get <100ms
-  - This is a refactor of the FeedContainer to handle category filtering client-side
+- [ ] **PERF-007** — **[Quick Fix]** Enable ISR for base homepage `/`
+  - Requires moving category/page filter to client-side URL state (remove `searchParams` from top-level fetch)
+  - `export const revalidate = 300` → Vercel pre-renders at edge → real users get <100ms
   - **Impact:** PageSpeed and real users both see instant LCP from edge cache
 
 ## 🔴 HIGH
@@ -89,11 +60,11 @@
 
 ## 🟡 MEDIUM — Mobile Phase 2
 
-- [ ] **MOB2** — أضف client avatar + "اسأل العميل" في Zone 1
-- [ ] **MOB3** — أضف Newsletter trigger في الشريط
-- [ ] **MOB4** — أضف views + questions في meta row
-- [ ] **MOB5** — Newsletter overlay على الصورة الرئيسية
-- [ ] **MOB6** — حدّث الـ Sheet بالمحتوى الكامل
+- [x] **MOB2** — أضف client avatar + "اسأل العميل" في Zone 1 ✅ v1.36.0
+- [x] **MOB3** — أضف Newsletter trigger في الشريط ✅ v1.36.0
+- [x] **MOB4** — أضف views + questions في meta row ✅ v1.36.0
+- [x] **MOB5** — Newsletter overlay على الصورة الرئيسية ✅ v1.36.0
+- [x] **MOB6** — حدّث الـ Sheet بالمحتوى الكامل ✅ v1.36.0
 
 ## 🟡 MEDIUM — Chatbot Phase 2
 
@@ -147,23 +118,7 @@
 
 - [ ] **AUTH_SECRET** → Vercel env vars
 - [ ] **NEXTAUTH_URL** → `https://www.modonty.com`
-- [ ] **NEXT_PUBLIC_SITE_URL** → `https://www.modonty.com`
 - [ ] **SEMrush** → "Rerun Campaign" بعد آخر deploy (الهدف: ≥ 90%)
-
----
-
----
-
-## ✅ DONE — Session 47 (2026-04-19)
-- [x] **ScrollProgress duplicate render fixed** — removed direct import+render from TopNav.tsx, now only via FeedDeferredUI (ssr:false). Verified: 1 element in DOM ✅
-- [x] **MobileMenu lazy loading** — MobileMenuClient now uses dynamic(ssr:false) + mounted state. MobileMenu JS loads only on first menu click. Verified: menuInDOM=false before click, dialog opens correctly after ✅
-- [x] **FollowCard social icons → Server** — 7 social SVGs removed from client bundle. FollowCard.tsx (Server) renders icons. FollowCardInteractive.tsx (new Client) handles form + expand only. Verified: all elements render correctly ✅
-- [x] **Social icons → filled style** — LinkedIn, YouTube, Instagram changed from stroke to fill. All 7 icons now consistent filled style ✅
-- [x] **Twitter/X dark mode fix** — fill="currentColor" added to SVG path ✅
-- [x] **FollowCard icon spacing** — gap-1 + p-0.5 (was gap-0.5 + p-1) ✅
-- [x] **FollowCardClient.tsx deleted** — dead code removed ✅
-- [x] **Social links synced to modonty_dev** — all 7 platform URLs copied from production DB ✅
-- [x] **Client Components audit** — CLIENT-COMPONENTS.md created, 35 components reviewed, 1 deletable (done) ✅
 
 ---
 

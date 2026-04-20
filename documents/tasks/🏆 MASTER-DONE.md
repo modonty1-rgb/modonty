@@ -1,7 +1,29 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-19 (Sessions 41–47 — admin v0.36.0 + modonty v1.34.0 ✅)
+> **آخر تحديث:** 2026-04-21 (Sessions 48–49 — modonty v1.35.0 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Sessions 48–49 — modonty v1.35.0 (2026-04-21) ✅ PUSHED
+
+### MODONTY — SEO Fixes
+- [x] **SEO-001** — Article canonical: always regenerated from siteUrl+slug — fixes truncated + no-www canonical from stored nextjsMetadata (`articles/[slug]/page.tsx`)
+- [x] **SEO-002** — Client canonical: www normalization regex (`clients/[slug]/page.tsx`)
+- [x] **SEO-003** — Client meta description: fallback from seoDescription or default string when stored metadata has no description
+- [x] **SEO-004** — Admin Settings → Site URL → `https://www.modonty.com` (manual)
+- [x] **SEO-005** — Vercel `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` in both admin + modonty projects (manual)
+- [x] **SEO-006** — hreflang missing on article pages → added `languages: { ar, "x-default" }` to stored metadata early-return path
+- [x] **SEO-007** — Article og:url also overridden with www — verified in production: canonical ✅ hreflang ✅ og:url ✅
+
+### MODONTY — Performance
+- [x] **PERF-001** — Clients page Accessibility 95→100: added `aria-label` to 2 icon-only buttons (`clients-content.tsx` + `client-card-external-link.tsx`)
+- [x] **PERF-002** — Homepage LCP image: removed invalid `preload` prop — now uses `loading="eager"` + `fetchPriority="high"` per Next.js 16 App Router docs (`OptimizedImage.tsx` + `PostCardHeroImage.tsx`)
+- [x] **PERF-005** — Article pages CAN be tested via PageSpeed using double-encoded Arabic URL — Result: Performance 87 · Accessibility 100 · Best Practices 100 · SEO 100
+
+### PageSpeed Scores (Mobile) — after v1.35.0
+- Homepage: Performance ~92 · Accessibility 100 · Best Practices 100 · SEO 100
+- Article page: Performance 87 · Accessibility 100 · Best Practices 100 · SEO 100
 
 ---
 

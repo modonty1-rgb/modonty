@@ -44,6 +44,11 @@ const ARTICLE = {
   tags: ["ذكاء اصطناعي", "الصحة", "رؤية 2030", "SEO"],
   image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&q=80",
   stats: { likes: 48, dislikes: 2, favorites: 31, views: 2140, comments: 4, questions: 3 },
+  citations: [
+    "منظمة الصحة العالمية — تقرير الذكاء الاصطناعي في الرعاية الصحية 2025",
+    "هيئة الصحة السعودية — الاستراتيجية الوطنية للتحول الرقمي الصحي",
+    "المجلة الطبية السعودية، العدد 42، 2025",
+  ],
 };
 
 const TOC_ITEMS = [
@@ -134,6 +139,21 @@ function useActiveSection(ids: string[]) {
     return () => obs.disconnect();
   }, [ids]);
   return active;
+}
+
+function useHideOnScroll() {
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  useEffect(() => {
+    const update = () => {
+      const curr = window.scrollY;
+      setVisible(curr < lastScrollY.current || curr < 80);
+      lastScrollY.current = curr;
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return visible;
 }
 
 // ─── Atom Components ─────────────────────────────────────────────────────────
@@ -565,9 +585,10 @@ function FeaturedImageWithNewsletter() {
 function MobileArticleBar({ onComment, onOpenSheet, onOpenNewsletter }: { onComment: () => void; onOpenSheet: () => void; onOpenNewsletter: () => void }) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const barVisible = useHideOnScroll();
 
   return (
-    <div className="lg:hidden sticky top-14 z-[55] bg-background/95 backdrop-blur-sm border-b border-border/60 px-3 py-1.5 flex items-center gap-1">
+    <div className={`lg:hidden sticky top-14 z-[45] bg-background/95 backdrop-blur-sm border-b border-border/60 px-3 py-1.5 flex items-center gap-1 transition-transform duration-300 ease-in-out ${barVisible ? "translate-y-0" : "-translate-y-full"}`}>
 
       {/* ── Zone 1: Client ── */}
       <Link href={`/clients/${ARTICLE.client.slug}`} className="shrink-0">
@@ -624,6 +645,24 @@ function MobileArticleBar({ onComment, onOpenSheet, onOpenNewsletter }: { onComm
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      </button>
+
+      {/* ── Share ── */}
+      <button
+        type="button"
+        onClick={() => {
+          if (typeof navigator !== "undefined" && "share" in navigator) {
+            (navigator as Navigator & { share: (d: object) => Promise<void> }).share({ title: ARTICLE.title, url: window.location.href });
+          } else {
+            void (navigator as Navigator).clipboard?.writeText(window.location.href);
+          }
+        }}
+        className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-muted/50 transition-colors"
+        aria-label="مشاركة المقال"
+      >
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
         </svg>
       </button>
 
@@ -769,6 +808,20 @@ function MobileSidebarSheet({ open, onClose }: { open: boolean; onClose: () => v
                 </button>
               ))}
             </nav>
+          </div>
+
+          <div className="h-px bg-border/40" />
+
+          {/* ── 6. Citations ── */}
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground mb-3">المصادر والمراجع</p>
+            <ul className="space-y-2">
+              {ARTICLE.citations.map((citation, i) => (
+                <li key={i} className="text-xs text-muted-foreground leading-relaxed">
+                  {i + 1}. {citation}
+                </li>
+              ))}
+            </ul>
           </div>
 
         </div>

@@ -1,5 +1,5 @@
 import { RelativeTime } from "@/components/date/RelativeTime";
-import { IconViews } from "@/lib/icons";
+import { IconViews, IconHelp } from "@/lib/icons";
 
 interface ArticleHeaderProps {
   title: string;
@@ -12,6 +12,7 @@ interface ArticleHeaderProps {
   readingTimeMinutes: number | null;
   wordCount: number | null;
   views?: number;
+  questionsCount?: number;
 }
 
 export function ArticleHeader({
@@ -23,6 +24,7 @@ export function ArticleHeader({
   readingTimeMinutes,
   wordCount,
   views,
+  questionsCount,
 }: ArticleHeaderProps) {
   return (
     <header className="mb-6 md:mb-8">
@@ -53,6 +55,16 @@ export function ArticleHeader({
             <IconViews className="h-3.5 w-3.5 shrink-0" />
             <span className="tabular-nums">{views.toLocaleString('ar-SA')}</span>
           </span>
+        )}
+        {questionsCount !== undefined && questionsCount > 0 && (
+          <a
+            href="#article-faq"
+            className="flex items-center gap-1 hover:text-primary transition-colors"
+            aria-label="انتقل إلى الأسئلة الشائعة"
+          >
+            <IconHelp className="h-3.5 w-3.5 shrink-0" />
+            <span className="tabular-nums">{questionsCount.toLocaleString('ar-SA')}</span>
+          </a>
         )}
       </div>
 

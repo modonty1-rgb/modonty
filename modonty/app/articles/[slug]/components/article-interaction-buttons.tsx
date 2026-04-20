@@ -24,6 +24,8 @@ interface ArticleInteractionButtonsProps {
   vertical?: boolean;
   /** Hide the "login to interact" hint (when shown elsewhere) */
   hideLoginHint?: boolean;
+  /** Hide the dislike button (e.g. mobile engagement bar) */
+  hideDislike?: boolean;
 }
 
 export function ArticleInteractionButtons({
@@ -38,6 +40,7 @@ export function ArticleInteractionButtons({
   compact = false,
   vertical = false,
   hideLoginHint = false,
+  hideDislike = false,
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -208,7 +211,7 @@ export function ArticleInteractionButtons({
     }
     return (
       <div className={`flex items-center ${compact ? "gap-2" : "gap-2 md:gap-3"}`} aria-hidden>
-        {[0, 1, 2].map((i) => (
+        {(hideDislike ? [0, 1] : [0, 1, 2]).map((i) => (
           <Skeleton key={i} className={compact ? "h-8 w-10 rounded-md" : "h-9 w-14 rounded-md"} />
         ))}
       </div>
@@ -244,6 +247,7 @@ export function ArticleInteractionButtons({
         )}
         <span className={vertical ? "text-xs tabular-nums leading-none" : compact ? "text-xs tabular-nums" : "ml-1"}>{likes}</span>
       </Button>
+      {!hideDislike && (
       <Button
         variant={userDisliked ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
@@ -259,6 +263,7 @@ export function ArticleInteractionButtons({
         )}
         <span className={vertical ? "text-xs tabular-nums leading-none" : compact ? "text-xs tabular-nums" : "ml-1"}>{dislikes}</span>
       </Button>
+      )}
       <Button
         variant={userFavorited ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}

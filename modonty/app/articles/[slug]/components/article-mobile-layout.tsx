@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { ArticleMobileEngagementBar } from "./article-mobile-engagement-bar";
 import { ArticleMobileSidebarSheet } from "./article-mobile-sidebar-sheet";
+import { NewsletterCTA } from "./sidebar/newsletter-cta";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { SocialLink } from "@/lib/settings/get-platform-social-links";
 
 interface ArticleMobileLayoutProps {
@@ -11,7 +18,12 @@ interface ArticleMobileLayoutProps {
     articleId: string;
     articleSlug: string;
     clientId?: string;
-    userId?: string | null;
+    clientLogo?: string | null;
+    clientName?: string | null;
+    clientSlug?: string | null;
+    articleTitle?: string;
+    user?: { name: string | null; email: string | null } | null;
+    commentsCount?: number;
     likes: number;
     dislikes: number;
     favorites: number;
@@ -35,24 +47,11 @@ interface ArticleMobileLayoutProps {
       articleTitle?: string;
       user: { name: string | null; email: string | null } | null;
     } | null;
-    author?: {
-      name: string;
-      slug: string | null;
-      image: string | null;
-      jobTitle: string | null;
-      bio: string | null;
-      credentials: string[];
-      expertiseAreas: string[];
-      linkedIn: string | null;
-      twitter: string | null;
-      facebook: string | null;
-    } | null;
     content: string;
     citations?: string[];
     clientId: string;
     articleId: string;
-    articleSlug: string;
-    userId?: string | null;
+    articleTitle?: string;
     platformSocialLinks?: SocialLink[];
     newsletterCtaText?: string | null;
   };
@@ -60,18 +59,32 @@ interface ArticleMobileLayoutProps {
 
 export function ArticleMobileLayout({ barProps, sheetProps }: ArticleMobileLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
 
   return (
     <>
       <ArticleMobileEngagementBar
         {...barProps}
         onOpenSidebar={() => setSidebarOpen(true)}
+        onOpenNewsletter={() => setNewsletterOpen(true)}
       />
       <ArticleMobileSidebarSheet
         {...sheetProps}
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
       />
+      <Dialog open={newsletterOpen} onOpenChange={setNewsletterOpen}>
+        <DialogContent className="sm:max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>اشترك في النشرة</DialogTitle>
+          </DialogHeader>
+          <NewsletterCTA
+            clientId={sheetProps.clientId}
+            articleId={sheetProps.articleId}
+            ctaText={sheetProps.newsletterCtaText}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

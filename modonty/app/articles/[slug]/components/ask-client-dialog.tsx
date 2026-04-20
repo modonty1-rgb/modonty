@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "@/components/link";
@@ -40,6 +41,12 @@ interface AskClientDialogProps {
   pendingFaqs?: PendingFaq[];
   /** When true, render content only (no Card) for embedding inside another card */
   embedInCard?: boolean;
+  /** Override the trigger button className (e.g. compact size for the mobile bar) */
+  triggerClassName?: string;
+  /** Override the trigger button label (e.g. short "اسأل العميل" for the mobile bar) */
+  triggerLabel?: string;
+  /** When true, render ONLY the dialog trigger button — no Card or pending-FAQ wrapper */
+  triggerOnly?: boolean;
 }
 
 export function AskClientDialog({
@@ -50,6 +57,9 @@ export function AskClientDialog({
   user,
   pendingFaqs: pendingFaqsProp,
   embedInCard = false,
+  triggerClassName,
+  triggerLabel,
+  triggerOnly = false,
 }: AskClientDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -124,6 +134,102 @@ export function AskClientDialog({
     router.refresh();
   };
 
+  const mainDialog = (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (next) {
+          trackCtaClick({
+            type: "FORM",
+            label: clientName ? `تواصل مع ${clientName}` : "اسأل العميل",
+            targetUrl: "#",
+            articleId,
+            clientId,
+          });
+        }
+        setOpen(next);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className={cn("w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm", triggerClassName)}
+          type="button"
+        >
+          {triggerLabel ?? (clientName ? `اسأل ${clientName} مباشرةً` : "اسأل العميل")}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md" dir="rtl">
+        <DialogHeader>
+          <DialogTitle>{clientName ? `تواصل مع ${clientName}` : "اسأل العميل"}</DialogTitle>
+          <DialogDescription>
+            {articleTitle ? `اطرح سؤالك حول: ${articleTitle}` : "اطرح سؤالك وسيتم الرد عليه لاحقاً."}
+          </DialogDescription>
+        </DialogHeader>
+        {!isLoggedIn ? (
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">
+              يجب تسجيل الدخول لطرح سؤال.
+            </p>
+            <Button asChild variant="default" className="w-full">
+              <Link href="/users/login">تسجيل الدخول</Link>
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {submitError && (
+              <p className="text-sm text-destructive bg-destructive/10 p-2 rounded-md">{submitError}</p>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="ask-name">الاسم</Label>
+              <Input
+                id="ask-name"
+                {...register("name")}
+                placeholder="الاسم"
+                className="text-right bg-muted"
+                readOnly
+                disabled
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ask-email">البريد الإلكتروني</Label>
+              <Input
+                id="ask-email"
+                type="email"
+                {...register("email")}
+                placeholder="example@email.com"
+                className="text-right bg-muted"
+                readOnly
+                disabled
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ask-question">السؤال</Label>
+              <Textarea
+                id="ask-question"
+                {...register("question")}
+                placeholder="اكتب سؤالك هنا..."
+                rows={4}
+                className="text-right resize-none"
+              />
+              {errors.question && (
+                <p className="text-sm text-destructive">{errors.question.message}</p>
+              )}
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
+                إلغاء
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "جاري الإرسال..." : "إرسال السؤال"}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+
   const content = (
     <>
       {isLoggedIn && (
@@ -172,101 +278,11 @@ export function AskClientDialog({
           </DialogContent>
         </Dialog>
       )}
-      <Dialog
-        open={open}
-        onOpenChange={(next) => {
-          if (next) {
-            trackCtaClick({
-              type: "FORM",
-              label: clientName ? `تواصل مع ${clientName}` : "اسأل العميل",
-              targetUrl: "#",
-              articleId,
-              clientId,
-            });
-          }
-          setOpen(next);
-        }}
-      >
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full h-auto py-2 whitespace-normal justify-center bg-amber-500 border-amber-500 text-black font-semibold hover:bg-amber-400 hover:border-amber-400 shadow-sm"
-            type="button"
-          >
-            {clientName ? `اسأل ${clientName} مباشرةً` : "اسأل العميل"}
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md" dir="rtl">
-          <DialogHeader>
-            <DialogTitle>{clientName ? `تواصل مع ${clientName}` : "اسأل العميل"}</DialogTitle>
-            <DialogDescription>
-              {articleTitle ? `اطرح سؤالك حول: ${articleTitle}` : "اطرح سؤالك وسيتم الرد عليه لاحقاً."}
-            </DialogDescription>
-          </DialogHeader>
-          {!isLoggedIn ? (
-            <div className="space-y-4 py-2">
-              <p className="text-sm text-muted-foreground">
-                يجب تسجيل الدخول لطرح سؤال.
-              </p>
-              <Button asChild variant="default" className="w-full">
-                <Link href="/users/login">تسجيل الدخول</Link>
-              </Button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {submitError && (
-                <p className="text-sm text-destructive bg-destructive/10 p-2 rounded-md">{submitError}</p>
-              )}
-              <div className="space-y-2">
-                <Label htmlFor="ask-name">الاسم</Label>
-                <Input
-                  id="ask-name"
-                  {...register("name")}
-                  placeholder="الاسم"
-                  className="text-right bg-muted"
-                  readOnly
-                  disabled
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="ask-email">البريد الإلكتروني</Label>
-                <Input
-                  id="ask-email"
-                  type="email"
-                  {...register("email")}
-                  placeholder="example@email.com"
-                  className="text-right bg-muted"
-                  readOnly
-                  disabled
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="ask-question">السؤال</Label>
-                <Textarea
-                  id="ask-question"
-                  {...register("question")}
-                  placeholder="اكتب سؤالك هنا..."
-                  rows={4}
-                  className="text-right resize-none"
-                />
-                {errors.question && (
-                  <p className="text-sm text-destructive">{errors.question.message}</p>
-                )}
-              </div>
-              <DialogFooter className="gap-2 sm:gap-0">
-                <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
-                  إلغاء
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "جاري الإرسال..." : "إرسال السؤال"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
+      {mainDialog}
     </>
   );
+
+  if (triggerOnly) return mainDialog;
 
   if (embedInCard) {
     return (

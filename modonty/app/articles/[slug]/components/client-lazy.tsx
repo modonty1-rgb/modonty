@@ -31,3 +31,11 @@ export const NewsletterCTA = dynamic(
   () => import("./sidebar/newsletter-cta").then((m) => ({ default: m.NewsletterCTA })),
   { ssr: false }
 );
+
+export const ArticleFeaturedImageNewsletter = dynamic(
+  () =>
+    import("./article-featured-image-newsletter").then((m) => ({
+      default: m.ArticleFeaturedImageNewsletter,
+    })),
+  { ssr: false }
+);

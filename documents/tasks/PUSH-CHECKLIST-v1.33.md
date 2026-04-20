@@ -80,11 +80,19 @@
 
 ## ✅ POST-PUSH (بعد الـ push)
 
-- [ ] Vercel build يكتمل بدون errors
-- [ ] `modonty.com` يفتح تمام
+- [x] ✅ Vercel build يكتمل بدون errors (بعد fix scroll-area)
+- [x] ✅ `modonty.com` يفتح تمام — articles، navbar، sidebar كلها شغالة
 - [ ] `admin.modonty.com` يفتح تمام
-- [ ] `/industries` page تعمل على production
+- [x] ✅ `/industries` listing page تعمل على production — تعرض "12 شركات"
+- [x] ✅ `/industries/tourism-hospitality` detail page تعمل — لكن **0 شركات** (data issue)
 - [ ] Run `setup-ttl-indexes.ts` على PROD DB
+
+## ⚠️ OBS-027 — Industries listing vs detail inconsistency
+- **Listing page** يعرض "12 شركات" (يعدّ كل العملاء)
+- **Detail page** يعرض "0 شركة موثوقة" (يفلتر `ACTIVE` فقط)
+- **السبب:** العملاء في production ليسوا `subscriptionStatus: ACTIVE`
+- **الحل A:** غيّر status العملاء في Admin → ACTIVE
+- **الحل B:** عدّل listing query ليعدّ ACTIVE فقط (consistent)
 
 ---
 
