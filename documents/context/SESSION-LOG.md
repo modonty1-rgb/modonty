@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 57 — Database Health Tools / admin v0.38.0)
+# Session Context — Last Updated: 2026-04-20 (Session 58 — Email Templates Preview / admin v0.39.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,26 @@
 ---
 
 ## Current Versions
-- **admin**: v0.38.0 ✅ (pushed 2026-04-20)
+- **admin**: v0.39.0 ✅ (pushed 2026-04-20)
 - **modonty**: v1.40.0 ✅ (pushed 2026-04-20)
 - **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## ✅ Session 58 — PUSHED 2026-04-20 (Email Templates Preview — admin v0.39.0)
+
+### Summary
+New `/emails` page in admin: preview all 8 email templates (6 modonty user-facing + 2 admin) with mock Arabic data in an iframe. "Send Test" button sends a test email with `[TEST]` prefix to modonty1@gmail.com. Nav item added to sidebar under System.
+
+### Files changed
+- `admin/lib/email/templates/base.ts` — added `warningBox()`
+- `admin/lib/email/templates/{welcome,email-verification,password-reset,comment-reply,faq-reply,newsletter-welcome}.ts` (NEW — 6 files)
+- `admin/app/(dashboard)/emails/actions/preview-email.ts` (NEW)
+- `admin/app/(dashboard)/emails/components/email-preview-client.tsx` (NEW)
+- `admin/app/(dashboard)/emails/page.tsx` (NEW)
+- `admin/app/(dashboard)/emails/loading.tsx` (NEW)
+- `admin/components/admin/sidebar.tsx` — added Email Templates
+- `admin/package.json` — bumped to v0.39.0
 
 ---
 

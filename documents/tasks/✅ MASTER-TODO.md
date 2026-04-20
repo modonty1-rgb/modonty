@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 57 — Database Health Tools ✅ — pushed)
-> **الإصدار الحالي:** admin v0.38.0 | modonty v1.40.0 | console v0.2.0
+> **آخر تحديث:** 2026-04-20 (Session 58 — Email Templates Preview ✅)
+> **الإصدار الحالي:** admin v0.39.0 | modonty v1.40.0 | console v0.2.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -41,7 +41,6 @@
 
 ## 🟡 MEDIUM — متفرقات
 
-- [ ] **EMAIL-PREVIEW-1** — صفحة `/modonty/emails` — preview + Send Test لكل قوالب الإيميل
 - [ ] **SEMR-7b** — `defaultDescription` في Settings
 - [ ] **"Featured" label** — "Cover Image" + "Highlight on Homepage"
 

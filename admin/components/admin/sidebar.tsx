@@ -106,6 +106,7 @@ const menuGroups: MenuGroup[] = [
       { icon: CreditCard, label: "Plans & Pricing", href: "/subscription-tiers" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
+      { icon: Mail, label: "Email Templates", href: "/emails" },
       { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },

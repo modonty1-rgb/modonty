@@ -1,7 +1,33 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-20 (Session 57 — Database Health Tools ✅)
+> **آخر تحديث:** 2026-04-20 (Session 58 — Email Templates Preview ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 58 — Email Templates Preview (2026-04-20) ✅ — admin v0.39.0
+
+### ADMIN — `/emails` page
+- [x] **EMAIL-PREVIEW-1** — صفحة `/emails` مع preview + Send Test لكل 8 قوالب إيميل
+  - 6 Modonty templates: welcome, email-verification, password-reset, comment-reply, faq-reply, newsletter-welcome
+  - 2 Admin templates: article-pending, article-published
+  - iframe preview with mock Arabic data
+  - Send Test → sends to modonty1@gmail.com with `[TEST]` prefix
+  - Sidebar nav item added under System
+
+### Key files (Session 58)
+- `admin/lib/email/templates/base.ts` — added `warningBox()`
+- `admin/lib/email/templates/welcome.ts` (NEW)
+- `admin/lib/email/templates/email-verification.ts` (NEW)
+- `admin/lib/email/templates/password-reset.ts` (NEW)
+- `admin/lib/email/templates/comment-reply.ts` (NEW)
+- `admin/lib/email/templates/faq-reply.ts` (NEW)
+- `admin/lib/email/templates/newsletter-welcome.ts` (NEW)
+- `admin/app/(dashboard)/emails/actions/preview-email.ts` (NEW)
+- `admin/app/(dashboard)/emails/components/email-preview-client.tsx` (NEW)
+- `admin/app/(dashboard)/emails/page.tsx` (NEW)
+- `admin/app/(dashboard)/emails/loading.tsx` (NEW)
+- `admin/components/admin/sidebar.tsx` — added Email Templates nav
 
 ---
 
