@@ -7,15 +7,14 @@ import { ClientsHero } from "./components/clients-hero";
 import { getClientsPageSeo, getB2bPanelSettings } from "@/lib/seo/clients-page-seo";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
-// Dynamic imports for client components (code splitting + SSR where possible)
 const FeaturedClients = dynamic(
   () => import("./components/featured-clients").then((mod) => ({ default: mod.FeaturedClients })),
-  { ssr: true }
+  { ssr: false }
 );
 
 const ClientsContent = dynamic(
   () => import("./components/clients-content").then((mod) => ({ default: mod.ClientsContent })),
-  { ssr: true }
+  { ssr: false }
 );
 
 export async function generateMetadata(): Promise<Metadata> {

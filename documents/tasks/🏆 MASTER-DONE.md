@@ -5,6 +5,17 @@
 
 ---
 
+## Session 59 — PERF-004 + QAUDIT-C1 (2026-04-20) ✅ — modonty v1.40.1
+
+### MODONTY — Performance
+- [x] **PERF-004** — Unused JS 24-27 KiB on /clients: `ssr: true` → `ssr: false` for FeaturedClients + ClientsContent dynamic imports
+  - File: `modonty/app/clients/page.tsx` — 2-line fix
+
+### CONSOLE — Security Audit
+- [x] **QAUDIT-C1** — 150+ queries across 20+ files — all filter by clientId — ✅ SAFE
+
+---
+
 ## Session 59 — QAUDIT-C1 Security Audit (2026-04-20) ✅ — console v0.2.0
 
 ### CONSOLE — Security Audit
