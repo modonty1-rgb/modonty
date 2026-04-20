@@ -141,7 +141,14 @@
       "Bash(node -e ' *)",
       "Bash(DATABASE_URL=\"mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty_dev?retryWrites=true&w=majority&appName=modonty-cluster\" pnpm tsx ../scripts/seed-ui-test-data.ts)",
       "Bash(find c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin -name \"slug-change-dialog*\")",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(pkill -f \"next\")",
+      "Bash(kill -9 7312)",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill *)",
+      "Bash(curl -s \"https://www.modonty.com/\")",
+      "Bash(curl -s -I \"https://www.modonty.com/\")",
+      "Bash(node -e \"const d=require\\('C:/Users/w2nad/AppData/Local/Temp/psi.json'\\); console.log\\(JSON.stringify\\(d.error,null,2\\)\\)\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

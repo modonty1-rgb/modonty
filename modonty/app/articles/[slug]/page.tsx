@@ -13,6 +13,7 @@ import {
   getArticleBySlugMinimal,
   getArchivedArticleRedirectSlug,
   getArticleForMetadata,
+  getArticleFaqs,
 } from "./actions";
 import {
   ArticleHeader,
@@ -210,6 +211,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     }
     const article = { ...articleRaw, ...articleDefaults };
 
+    // Fetch FAQs for FAQPage JSON-LD if article has published FAQs
+    const articleFaqsForJsonLd = articleRaw._count.faqs > 0
+      ? await getArticleFaqs(articleRaw.id)
+      : [];
+
     // Get cached JSON-LD from database (Phase 6)
     let jsonLdGraph: object | null = null;
     if (article.jsonLdStructuredData) {
@@ -247,6 +253,26 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
+        {/* FAQPage JSON-LD — injected when article has published FAQs */}
+        {articleFaqsForJsonLd.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": articleFaqsForJsonLd.map((faq) => ({
+                  "@type": "Question",
+                  "name": faq.question,
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faq.answer,
+                  },
+                })),
+              }),
+            }}
+          />
+        )}
 
         {article.client && (
           <GTMClientTracker

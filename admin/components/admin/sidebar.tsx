@@ -40,6 +40,7 @@ import {
   ChevronRight,
   ChevronDown,
   BookOpen,
+  MessageSquare,
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Mail, label: "Subscribers", href: "/subscribers" },
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
+      { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
     ],
   },
   {

@@ -9,6 +9,7 @@ import { getClientReviewsBySlug } from "./helpers/client-reviews";
 import { getClientFollowers } from "./helpers/client-followers";
 import { getClientEngagementBySlug } from "./helpers/client-engagement";
 import { articleToFeedPost } from "./helpers/article-to-feed-post";
+import { getClientPublishedFaqs } from "./helpers/client-faqs";
 import { getArticles } from "@/app/api/helpers/article-queries";
 import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { FeedPost } from "@/lib/types";
@@ -112,7 +113,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, articlesResult, reviewsData, followers, engagementData, cachedSeo] = await Promise.all([
+    const [data, articlesResult, reviewsData, followers, engagementData, cachedSeo, clientFaqs] = await Promise.all([
       getClientPageData(slug),
       getArticles({ page: 1, limit: FEED_PAGE_SIZE, client: decodedSlug }),
       getClientReviewsBySlug(slug),
@@ -122,6 +123,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         where: { slug: decodedSlug },
         select: { jsonLdStructuredData: true },
       }),
+      getClientPublishedFaqs(decodedSlug),
     ]);
 
     if (!data) {
@@ -180,6 +182,26 @@ async function ClientPageContent({ params }: ClientPageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
         />
+        {/* FAQPage JSON-LD — only when client has published FAQs */}
+        {clientFaqs.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": clientFaqs.map((faq) => ({
+                  "@type": "Question",
+                  "name": faq.question,
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faq.answer,
+                  },
+                })),
+              }),
+            }}
+          />
+        )}
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
@@ -193,6 +215,39 @@ async function ClientPageContent({ params }: ClientPageProps) {
           engagement={engagement}
         />
         </div>
+
+        {/* FAQ Section — aggregated published FAQs across all client articles */}
+        {clientFaqs.length > 0 && (
+          <section className="mt-10" aria-labelledby="client-faqs-heading">
+            <h2 id="client-faqs-heading" className="text-xl font-semibold text-foreground mb-4">
+              الأسئلة الشائعة
+            </h2>
+            <div className="space-y-3">
+              {clientFaqs.map((faq) => (
+                <details
+                  key={faq.id}
+                  className="group rounded-lg border border-border bg-card"
+                >
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-foreground select-none list-none [&::-webkit-details-marker]:hidden">
+                    <span>{faq.question}</span>
+                    <span className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true">
+                      ▾
+                    </span>
+                  </summary>
+                  <div className="border-t border-border px-4 py-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
+                    <a
+                      href={`/articles/${faq.articleSlug}`}
+                      className="mt-2 inline-block text-xs text-primary hover:underline"
+                    >
+                      اقرأ المقال: {faq.articleTitle}
+                    </a>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* JBRSEO-5: CTA — join as client */}
         <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">

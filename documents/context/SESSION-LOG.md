@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 52 — Announcement Bar + Navbar Cleanup v1.38.0)
+# Session Context — Last Updated: 2026-04-20 (Session 53 — FAQ System v1.40.0 / admin v0.37.0 / console v0.2.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,52 @@
 ---
 
 ## Current Versions
-- **admin**: v0.36.0 ✅ (pushed 2026-04-19)
-- **modonty**: v1.38.0 ✅ (pushed 2026-04-20)
-- **console**: v0.1.2
+- **admin**: v0.37.0 ✅ (pushed 2026-04-20)
+- **modonty**: v1.40.0 ✅ (pushed 2026-04-20)
+- **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## ✅ Session 53 — PUSHED 2026-04-20 (FAQ System — 3-phase)
+
+### Summary
+Full FAQ workflow: Admin sends → Client approves in Console → Published on modonty + FAQPage JSON-LD for Google Featured Snippets.
+
+### Phase 1 — Admin changes
+- `convertToArticleFaq` now saves `status: "PENDING"` instead of `PUBLISHED`
+- Button/dialog text: "Convert to FAQ" → "Send to Client for Approval"
+- Toast message updated accordingly
+
+### Phase 2 — Console `/dashboard/faqs` (NEW page + actions)
+- `console/app/(dashboard)/dashboard/faqs/page.tsx` — server component, stat cards (pending/published/total)
+- `console/app/(dashboard)/dashboard/faqs/components/faqs-table.tsx` — filter tabs, edit answer textarea, approve/reject buttons
+- `console/app/(dashboard)/dashboard/faqs/helpers/faq-queries.ts` — `getClientFaqs`, `getFaqStats`, `formatFaqDate`
+- `console/app/(dashboard)/dashboard/faqs/actions/faq-actions.ts` — `approveFaq` (sets PUBLISHED), `rejectFaq` (sets REJECTED)
+- `console/lib/ar.ts` — added `faqs` section + `nav.faqs`
+- `console/app/(dashboard)/layout.tsx` — added `getFaqStats`, passes `pendingFaqsCount`
+- `console/app/(dashboard)/components/sidebar.tsx` + `mobile-sidebar.tsx` — added FAQs nav item with badge
+- `console/app/(dashboard)/components/dashboard-layout-client.tsx` — added `pendingFaqsCount` prop
+
+### Phase 3 — Modonty client + article pages
+- `modonty/app/clients/[slug]/helpers/client-faqs.ts` (NEW) — `getClientPublishedFaqs()`, fetches PUBLISHED FAQs across all client articles
+- `modonty/app/clients/[slug]/page.tsx` — added FAQ section with `<details>/<summary>` accordion + FAQPage JSON-LD
+- `modonty/app/articles/[slug]/actions/index.ts` — exported `getArticleFaqs`
+- `modonty/app/articles/[slug]/page.tsx` — added FAQPage JSON-LD block when article has published FAQs
+
+### Prisma schema
+- Added `REJECTED` to `ArticleFAQStatus` enum in `dataLayer/prisma/schema/schema.prisma`
+- Ran `prisma generate` on both admin and console
+
+### Key files changed (Session 53)
+- `admin/app/(dashboard)/chatbot-questions/actions/chatbot-questions-actions.ts`
+- `admin/app/(dashboard)/chatbot-questions/components/chatbot-questions-client.tsx`
+- `console/app/(dashboard)/dashboard/faqs/` (NEW — page, components, helpers, actions)
+- `console/lib/ar.ts`, layout.tsx, sidebar.tsx, mobile-sidebar.tsx, dashboard-layout-client.tsx
+- `modonty/app/clients/[slug]/helpers/client-faqs.ts` (NEW)
+- `modonty/app/clients/[slug]/page.tsx`
+- `modonty/app/articles/[slug]/actions/index.ts`
+- `modonty/app/articles/[slug]/page.tsx`
+- `dataLayer/prisma/schema/schema.prisma`
 
 ---
 

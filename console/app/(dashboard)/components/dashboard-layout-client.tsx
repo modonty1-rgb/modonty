@@ -14,6 +14,7 @@ interface DashboardLayoutClientProps {
   subscribersCount: number;
   leadsCount: number;
   pendingSupportCount: number;
+  pendingFaqsCount: number;
   children: React.ReactNode;
 }
 
@@ -25,6 +26,7 @@ export function DashboardLayoutClient({
   subscribersCount,
   leadsCount,
   pendingSupportCount,
+  pendingFaqsCount,
   children,
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -37,6 +39,7 @@ export function DashboardLayoutClient({
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
+        pendingFaqsCount={pendingFaqsCount}
         isCollapsed={isSidebarCollapsed}
         onCollapsedChange={setIsSidebarCollapsed}
       />
@@ -45,6 +48,7 @@ export function DashboardLayoutClient({
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
+        pendingFaqsCount={pendingFaqsCount}
         isOpen={isMobileOpen}
         onOpenChange={setIsMobileOpen}
       />

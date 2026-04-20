@@ -8,6 +8,7 @@ export {
   getRelatedArticlesByCategoryTags,
   getArticleForChat,
   getArticlesForOutOfScopeSearch,
+  getArticleFaqs,
 } from "./article-data";
 export { getArticleForMetadata } from "./article-metadata";
 export {

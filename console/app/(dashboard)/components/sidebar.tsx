@@ -15,6 +15,7 @@ import {
   LogOut,
   Building2,
   ClipboardList,
+  MessageCircleQuestion,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface SidebarProps {
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;
+  pendingFaqsCount: number;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
@@ -34,6 +36,7 @@ export function Sidebar({
   pendingArticlesCount,
   subscribersCount,
   leadsCount,
+  pendingFaqsCount,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
 }: SidebarProps) {
@@ -133,6 +136,13 @@ export function Sidebar({
           icon={Target}
           label={ar.nav.leads}
           badge={leadsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/faqs"
+          icon={MessageCircleQuestion}
+          label={ar.nav.faqs}
+          badge={pendingFaqsCount}
           isCollapsed={isCollapsed}
         />
       </nav>

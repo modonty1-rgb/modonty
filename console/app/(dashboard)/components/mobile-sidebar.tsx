@@ -14,6 +14,7 @@ import {
   LogOut,
   Building2,
   ClipboardList,
+  MessageCircleQuestion,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ interface MobileSidebarProps {
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;
+  pendingFaqsCount: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -38,6 +40,7 @@ export function MobileSidebar({
   pendingArticlesCount,
   subscribersCount,
   leadsCount,
+  pendingFaqsCount,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -107,6 +110,13 @@ export function MobileSidebar({
             icon={Target}
             label={ar.nav.leads}
             badge={leadsCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/faqs"
+            icon={MessageCircleQuestion}
+            label={ar.nav.faqs}
+            badge={pendingFaqsCount}
             isCollapsed={false}
           />
         </nav>

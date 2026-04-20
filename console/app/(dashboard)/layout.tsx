@@ -8,6 +8,7 @@ import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question
 import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-queries";
 import { getLeadsCount } from "./dashboard/leads/helpers/lead-queries";
 import { getNewSupportMessagesCount } from "./dashboard/support/helpers/support-queries-enhanced";
+import { getFaqStats } from "./dashboard/faqs/helpers/faq-queries";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const clientName = (session as { clientName?: string }).clientName ?? ar.common.clientFallback;
 
-  const [pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, pendingSupportCount] =
+  const [pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, pendingSupportCount, faqStats] =
     await Promise.all([
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
@@ -38,7 +39,9 @@ export default async function DashboardLayout({
       getSubscribersCount(clientId),
       getLeadsCount(clientId),
       getNewSupportMessagesCount(clientId),
+      getFaqStats(clientId),
     ]);
+  const pendingFaqsCount = faqStats.pending;
 
   return (
     <DashboardLayoutClient
@@ -49,6 +52,7 @@ export default async function DashboardLayout({
       subscribersCount={subscribersCount}
       leadsCount={leadsCount}
       pendingSupportCount={pendingSupportCount}
+      pendingFaqsCount={pendingFaqsCount}
     >
       {children}
     </DashboardLayoutClient>

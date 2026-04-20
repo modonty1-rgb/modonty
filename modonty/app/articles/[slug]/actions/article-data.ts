@@ -668,6 +668,7 @@ export async function getArticleFaqs(articleId: string) {
   const faqs = await db.articleFAQ.findMany({
     where: {
       articleId,
+      status: "PUBLISHED",
       AND: [{ answer: { not: null } }, { answer: { not: "" } }],
     },
     orderBy: { position: "asc" },

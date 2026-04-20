@@ -1,7 +1,72 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-20 (Session 53 — modonty v1.39.0 ✅)
+> **آخر تحديث:** 2026-04-20 (Session 56 — FAQ Workflow ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 56 — FAQ Workflow (2026-04-20) ✅ — admin v0.37.0 | modonty v1.40.0 | console v0.2.0
+
+### نظرة عامة
+نظام FAQ كامل 3 مراحل: Admin يرسل → العميل يوافق في Console → ينشر على modonty مع FAQPage JSON-LD لـ Google Featured Snippets.
+
+### ADMIN — Phase 1
+- [x] **FAQ-FLOW-1** — `convertToArticleFaq` يحفظ `status: PENDING` بدل PUBLISHED
+- [x] **FAQ-FLOW-2** — Button/dialog/toast: "Send to Client for Approval" بدل "Convert to FAQ"
+
+### CONSOLE — Phase 2 (صفحة جديدة كاملة)
+- [x] **FAQ-FLOW-3** — `/dashboard/faqs` — stat cards (pending/published/total) + filter tabs (الكل/بانتظار/منشورة/مرفوضة)
+- [x] **FAQ-FLOW-4** — `approveFaq` + `rejectFaq` server actions مع ownership check
+- [x] **FAQ-FLOW-5** — Sidebar badge للـ pending count — يتحدث تلقائياً
+- [x] **FAQ-FLOW-6** — "تعديل الإجابة" textarea لتعديل الإجابة قبل النشر
+- [x] **FAQ-FLOW-7** — Prisma: أضيف `REJECTED` لـ `ArticleFAQStatus` enum
+
+### MODONTY — Phase 3
+- [x] **FAQ-FLOW-8** — Client page: قسم "الأسئلة الشائعة" بـ `<details>/<summary>` accordion
+- [x] **FAQ-FLOW-9** — Client page: FAQPage JSON-LD ← Google Featured Snippets
+- [x] **FAQ-FLOW-10** — Article page: FAQPage JSON-LD عند وجود FAQs منشورة
+
+### Key files (Session 56)
+- `admin/app/(dashboard)/chatbot-questions/actions/chatbot-questions-actions.ts`
+- `admin/app/(dashboard)/chatbot-questions/components/chatbot-questions-client.tsx`
+- `console/app/(dashboard)/dashboard/faqs/` (NEW — page, components, helpers, actions)
+- `console/lib/ar.ts` + layout.tsx + sidebar.tsx + mobile-sidebar.tsx + dashboard-layout-client.tsx
+- `modonty/app/clients/[slug]/helpers/client-faqs.ts` (NEW)
+- `modonty/app/clients/[slug]/page.tsx`
+- `modonty/app/articles/[slug]/actions/index.ts` + `page.tsx`
+- `dataLayer/prisma/schema/schema.prisma`
+
+---
+
+## Session 55 — CHAT-FAQ1–4 (2026-04-20) ✅
+
+### ADMIN — Chatbot Questions Page
+- [x] **CHAT-FAQ1** — Admin `/chatbot-questions`: صفحة تعرض كل أسئلة الـ chatbot مجمّعة حسب التكرار — stats row (Total / Unique / Converted)
+- [x] **CHAT-FAQ2** — زر "Convert to FAQ" بـ dialog يحمّل السؤال والإجابة جاهزين للتعديل ثم ينشر على المقال مباشرةً
+- [x] **CHAT-FAQ3** — فلتر scope (All/Article/Category) + source (All/Web/DB) + search bar
+- [x] **CHAT-FAQ4** — Modonty: `getArticleFaqs` fix — يفلتر `status: PUBLISHED` فقط → الـ FAQs المحوَّلة تظهر تلقائياً على المقال
+
+### Key files changed (Session 55)
+- `admin/app/(dashboard)/chatbot-questions/page.tsx` (NEW)
+- `admin/app/(dashboard)/chatbot-questions/loading.tsx` (NEW)
+- `admin/app/(dashboard)/chatbot-questions/actions/chatbot-questions-actions.ts` (NEW)
+- `admin/app/(dashboard)/chatbot-questions/components/chatbot-questions-client.tsx` (NEW)
+- `admin/components/admin/sidebar.tsx` — added "Chatbot Questions" under Audience
+- `modonty/app/articles/[slug]/actions/article-data.ts` — added `status: "PUBLISHED"` filter to `getArticleFaqs`
+
+---
+
+## Session 54 — modonty v1.40.0 (2026-04-20) ✅
+
+### MODONTY — جديد مودونتي + Coming Soon page
+- [x] **SIDEBAR-MOD1 → /whats-new** — بدل كارت sidebar، تحوّل لصفحة Coming Soon كاملة + pill link في بنر الهوم
+- [x] **FeedContainer banner** — أضيف "جديد مودونتي" animated pill link يوصل لـ `/whats-new`
+- [x] **`/whats-new` page** — Coming Soon: hero + badge + pulsing dot + 5 upcoming features grid + mystery card + "العودة للرئيسية" CTA (`app/whats-new/page.tsx` + `loading.tsx`)
+
+### Key files changed (Session 54)
+- `modonty/components/feed/FeedContainer.tsx`
+- `modonty/app/whats-new/page.tsx` (NEW)
+- `modonty/app/whats-new/loading.tsx` (NEW)
 
 ---
 
