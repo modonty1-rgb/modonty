@@ -12,6 +12,7 @@ export function ClientCardExternalLink({ url }: ClientCardExternalLinkProps) {
     <Button
       size="sm"
       variant="outline"
+      aria-label="زيارة الموقع الرسمي"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

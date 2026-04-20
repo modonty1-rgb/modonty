@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-19 (Session 47)
-> **الإصدار الحالي:** admin v0.36.0 | modonty v1.33.0 | console v0.1.2
+> **آخر تحديث:** 2026-04-21 (Session 49)
+> **الإصدار الحالي:** admin v0.36.0 | modonty v1.35.0 | console v0.1.2
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -10,6 +10,8 @@
 - [ ] Verify `admin.modonty.com` live and accessible
 - [ ] Run `setup-ttl-indexes.ts` on PROD DB
 - [ ] Add `.playwright-mcp/` to `.gitignore`
+- [x] **SEO-004** — Admin Settings → Site URL → `https://www.modonty.com` ✅
+- [x] **SEO-005** — Vercel Dashboard → `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` في admin + modonty projects ✅
 
 ---
 
@@ -23,6 +25,59 @@
 ---
 
 # 🌐 MODONTY — Public Site
+
+## 🔴 HIGH — SEO Fixes (Session 48)
+
+- [x] **SEO-001** — Article canonical truncated + no www → always regenerate canonical from current siteUrl+slug, even when using stored nextjsMetadata ✅
+- [x] **SEO-002** — Client detail canonical no www → added www normalization regex in `clients/[slug]/page.tsx` ✅
+- [x] **SEO-003** — Client detail meta description missing → added fallback description from seoDescription or default string ✅
+- [x] **SEO-004** — Admin Settings → Site URL → `https://www.modonty.com` ✅
+- [x] **SEO-005** — Vercel `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` (admin + modonty projects) ✅
+
+## 🔴 HIGH — Performance (PageSpeed Session 48)
+
+- [x] **PERF-001** — Clients page Accessibility: added `aria-label` to 2 icon buttons (`clients-content.tsx:90` + `client-card-external-link.tsx`) ✅
+- [x] **PERF-002** — Homepage LCP: removed invalid `preload` combination from `OptimizedImage.tsx` + `PostCardHeroImage.tsx` — now uses `loading="eager"` + `fetchPriority="high"` per Next.js 16 App Router docs ✅
+- [ ] **PERF-003** — Legacy JavaScript 14 KiB across all pages — vendor dependency ships unnecessary polyfills (Array.at, flat, Object.fromEntries etc.) — needs `ANALYZE=true pnpm build` to identify chunk
+- [ ] **PERF-004** — Unused JavaScript 24-27 KiB (clients/industries pages) — bundle analyzer needed
+- [x] **PERF-005** — Article pages CAN be tested via PageSpeed — use double-encoded Arabic URL format (encode the `%` signs again) → PageSpeed accepted it ✅
+  - **Result (Session 49, Mobile):** Performance **87** · Accessibility **100** · Best Practices **100** · SEO **100**
+  - FCP 1.1s · LCP 3.2s · TBT 250ms · CLS 0 · Speed Index 3.9s
+  - Same LCP bottleneck as homepage (server streaming) + TBT 250ms from forced reflow + legacy JS
+
+- [ ] **PERF-008** — Article page TBT 250ms — Forced reflow from JavaScript querying layout properties
+  - PageSpeed flagged: "Forced reflow" + "Minimize main-thread work"
+  - Likely source: article body renderer or TOC component calling `offsetWidth` / `getBoundingClientRect` during render
+  - Fix: identify the offending component via Chrome DevTools Performance tab → defer layout reads with `requestAnimationFrame`
+
+## 🔴 HIGH — SEO Fixes (Session 49 Live Test)
+
+- [x] **SEO-006** — hreflang tags MISSING on article pages → added `languages: { ar, "x-default" }` to stored metadata early-return path in `articles/[slug]/page.tsx` ✅
+
+- [ ] **SEO-007** — **Article canonical still missing www in production** — live test shows `https://modonty.com/articles/...` instead of `https://www.modonty.com/articles/...`
+  - SEO-001 code fix exists locally but **not pushed to production** yet
+  - OR `NEXT_PUBLIC_SITE_URL` in Vercel is `https://modonty.com` and our regex isn't catching it
+  - **Action required:** Push SEO-001 fix + verify `NEXT_PUBLIC_SITE_URL` in Vercel = `https://www.modonty.com`
+
+## 🔴 HIGH — LCP Speed Fix (Session 49)
+
+> **Root cause (confirmed via live timing):** TTFB = 65ms ✅ · HTML stream = **2771ms** 🔴
+> The server takes ~2.8s to compute and stream the homepage HTML before the browser can paint the LCP image.
+> Cause: `getArticles()` runs `_count` aggregation on 5 collections (likes/dislikes/favorites/comments/views) per article — heavy MongoDB join, blocks rendering.
+> The `"use cache"` with `cacheLife("hours")` helps when warm, but `revalidateTag("articles")` on every admin publish clears it.
+
+- [ ] **PERF-006** — **[Option B — Correct Fix]** Denormalize interaction counts into Article document
+  - Add `likesCount`, `dislikesCount`, `favoritesCount`, `commentsCount`, `viewsCount` fields directly on Article
+  - Update these fields (increment/decrement) when interactions happen — replaces all `_count` queries in the feed
+  - Feed query becomes ~10× faster — no aggregation joins
+  - Files: `modonty/app/api/helpers/article-queries.ts` · `admin` interaction handlers · Prisma schema
+  - **Impact:** Reduces homepage HTML stream from 2.8s → estimated ~300ms → LCP ~500ms
+
+- [ ] **PERF-007** — **[Option A — Quick]** Enable ISR for base homepage `/`
+  - Requires removing `searchParams` from the top-level page fetch (move category/page filter to client-side URL state)
+  - `export const revalidate = 300` on `page.tsx` → Vercel pre-renders at edge → real users get <100ms
+  - This is a refactor of the FeedContainer to handle category filtering client-side
+  - **Impact:** PageSpeed and real users both see instant LCP from edge cache
 
 ## 🔴 HIGH
 

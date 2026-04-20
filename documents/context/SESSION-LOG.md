@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-19 (Session 47 — performance push)
+# Session Context — Last Updated: 2026-04-21 (Session 49 — SEO fixes push)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,30 @@
 
 ## Current Versions
 - **admin**: v0.36.0 ✅ (pushed 2026-04-19)
-- **modonty**: v1.34.0 ✅ (pushed 2026-04-19)
+- **modonty**: v1.35.0 ✅ (pushed 2026-04-21)
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 49 — PUSHED 2026-04-21 (modonty v1.35.0)
+
+### modonty changes
+- **SEO-001** — Article canonical: always regenerated from current siteUrl+slug (fixes truncated + no-www canonical from stored nextjsMetadata)
+- **SEO-002** — Client canonical: www normalization regex in `clients/[slug]/page.tsx`
+- **SEO-003** — Client meta description: added fallback from seoDescription or default string when stored metadata has no description
+- **SEO-006** — Article hreflang: added `languages: { ar, "x-default" }` to stored metadata early-return path
+- **PERF-001** — Clients page Accessibility 100: added `aria-label` to 2 icon-only buttons
+- **PERF-002** — Homepage LCP: removed invalid `preload` prop combination — now uses `loading="eager"` + `fetchPriority="high"` only
+
+### Manual actions done (not code)
+- SEO-004: Admin Settings → Site URL → `https://www.modonty.com`
+- SEO-005: Vercel env var `NEXT_PUBLIC_SITE_URL` = `https://www.modonty.com` (admin + modonty projects)
+
+### Pending (next session)
+- SEO-007: Verify canonical www in production after this push
+- PERF-003/004: Bundle analyzer (legacy JS + unused JS)
+- PERF-006/007: LCP speed fix (denormalize counts OR ISR)
+- OBS-027: Industries listing vs detail count mismatch
 
 ---
 
@@ -27,6 +49,10 @@
 
 ### PageSpeed baseline (mobile) — before this push
 - Performance: 95 | Accessibility: 100 | Best Practices: 100 | SEO: 100
+
+### PageSpeed after push (mobile) — 2026-04-19
+- Performance: 93 | Accessibility: 100 | Best Practices: 100 | SEO: 100
+- Note: -2 is within normal ±5 variance. LCP 3.1s + Speed Index 5.6s are the main suspects (above-fold image). No regression.
 
 ---
 

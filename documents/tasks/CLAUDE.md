@@ -200,6 +200,13 @@ During any live test session:
 - **File suspect:** `modonty/app/clients/[slug]/components/hero/utils.tsx` — `getTagline()` يستخدم `addressCountry` مباشرة
 - **Expected:** "السعودية" أو ترجمة الـ country code للعربية
 
+### OBS-027 🟡 MEDIUM — Industries listing vs detail inconsistency (Production)
+- **Where:** `/industries` listing → `/industries/tourism-hospitality`
+- **What:** Listing shows "12 شركات" but detail shows "0 شركة موثوقة"
+- **Root cause:** Listing counts ALL clients; detail filters `subscriptionStatus: ACTIVE` only. Production clients have non-ACTIVE status.
+- **Fix A:** Update clients in Admin → `subscriptionStatus: ACTIVE`
+- **Fix B:** Align listing query to count ACTIVE only (prevents misleading count)
+
 ---
 
 ## Pending (new) — Move to MASTER-TODO
@@ -210,6 +217,50 @@ During any live test session:
 - [ ] OBS-022 → Admin: No Upload button in Select Media dialog
 - [ ] OBS-023 → Admin: No toast after Save Hero Image
 - [x] OBS-025 → ✅ FIXED (Session 40): `localizeCountry()` exported from utils.tsx + used in hero-meta.tsx:53
+
+---
+
+## Session: 2026-04-20 — PageSpeed Audit (3 pages)
+
+### OBS-028 🔴 HIGH — Clients page: Accessibility 95 — unnamed buttons
+- **Where:** `/clients` page — mobile PageSpeed audit
+- **What:** `Buttons do not have an accessible name` — icon buttons missing `aria-label`
+- **Score impact:** Accessibility 95 instead of 100
+- **File suspect:** Client card component or NewClientsCard — any icon-only `<button>` without `aria-label`
+- **Fix:** Add `aria-label` to all icon-only buttons on clients page
+
+### OBS-029 🟡 MEDIUM — Homepage LCP 3.0s — above-fold feed images
+- **Where:** `/` homepage — mobile PageSpeed
+- **What:** LCP consistently 3.0s. Main culprit: first article card image in the feed. No `priority` prop on above-fold images.
+- **Impact:** Directly caps Performance score at ~92 on mobile
+- **Fix:** Add `priority` to the first 2-3 article feed images (or LCP image specifically)
+
+### OBS-030 🟢 LOW — ~~Article pages cannot be tested via PageSpeed~~ — RESOLVED
+- **Update (Session 49):** Article pages CAN be tested via PageSpeed using double-encoded URL format (encode the `%` signs in the Arabic slug again). PageSpeed accepted it and returned scores.
+
+---
+
+## Session: 2026-04-20 — Article Live Test + PageSpeed (Session 49)
+
+### OBS-031 🔴 HIGH — Article page: hreflang tags MISSING
+- **Where:** `/articles/[slug]` — `<head>`
+- **What:** Live test confirmed `link[hreflang="ar"]` = MISSING, `link[hreflang="x-default"]` = MISSING. No hreflang at all.
+- **Root cause:** Stored `nextjsMetadata` in DB doesn't include hreflang. Our SEO-001 fix only overrides `alternates.canonical` — forgot `alternates.languages`
+- **File:** `modonty/app/articles/[slug]/page.tsx` — stored metadata early-return block
+- **Impact:** Google doesn't know article is Arabic-language content → Arabic rankings suffer
+- **Fix:** Add `languages: { ar: canonicalUrl, "x-default": canonicalUrl }` to the `alternates` override alongside the canonical fix
+- **Logged as:** SEO-006 in MASTER-TODO
+
+### OBS-032 🔴 HIGH — Article canonical still missing www in PRODUCTION
+- **Where:** `/articles/[slug]` — `link[rel="canonical"]`
+- **What:** Live production shows `https://modonty.com/articles/...` (no www). SEO-001 code fix exists locally but was not pushed, OR `NEXT_PUBLIC_SITE_URL` in Vercel is still `https://modonty.com`
+- **Logged as:** SEO-007 in MASTER-TODO
+
+### OBS-033 🟡 MEDIUM — Article page TBT 250ms — Forced reflow
+- **Where:** `/articles/[slug]` — mobile PageSpeed audit
+- **What:** Total Blocking Time = 250ms. Failed audits include "Forced reflow" (JS querying layout properties like offsetWidth/getBoundingClientRect during render). Also "Minimize main-thread work".
+- **Impact:** Delays interactivity, hurts INP score
+- **Fix:** Identify which component triggers forced reflow — likely the article body renderer or TOC component
 
 ---
 

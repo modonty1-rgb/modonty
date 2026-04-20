@@ -63,7 +63,9 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         select: { siteUrl: true },
       }),
     ]);
-    const siteUrl = (settings?.siteUrl || "https://www.modonty.com").replace(/\/$/, "");
+    const rawSiteUrl = settings?.siteUrl || "https://www.modonty.com";
+    // Normalize: modonty.com → www.modonty.com
+    const siteUrl = rawSiteUrl.replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com").replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`;
 
     if (cached?.nextjsMetadata) {
@@ -71,6 +73,8 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
       if (stored.title) {
         return {
           ...stored,
+          // Always regenerate description — stored value may be empty
+          description: (stored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مودونتي`,
           openGraph: {
             ...(stored.openGraph as object | undefined),
             url: canonicalUrl,

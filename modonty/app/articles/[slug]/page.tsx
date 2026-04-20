@@ -86,7 +86,19 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     if (article.nextjsMetadata) {
       try {
         const stored = article.nextjsMetadata as Metadata;
-        if (stored.title) return stored;
+        if (stored.title) {
+          // Always regenerate canonical + hreflang — stored values may be stale/truncated/wrong-domain
+          const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
+          const canonicalUrl = `${siteUrl}/articles/${slug}`;
+          return {
+            ...stored,
+            alternates: {
+              ...(stored.alternates as object | undefined),
+              canonical: canonicalUrl,
+              languages: { ar: canonicalUrl, "x-default": canonicalUrl },
+            },
+          };
+        }
       } catch {
         // fall through to generation
       }
@@ -104,7 +116,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const imageAlt =
       articleForGeneration.featuredImage?.altText || title || undefined;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
 
     let canonicalInput: string | undefined = articleForGeneration.canonicalUrl || undefined;
 

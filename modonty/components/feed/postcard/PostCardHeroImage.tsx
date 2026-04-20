@@ -58,7 +58,6 @@ export function PostCardHeroImage({
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-105"
         sizes={lcp ? LCP_SIZES : DEFAULT_SIZES}
-        preload={lcp}
         loading={lcp ? "eager" : "lazy"}
         fetchPriority={lcp ? "high" : "auto"}
         quality={75}

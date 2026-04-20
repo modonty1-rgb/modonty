@@ -87,7 +87,7 @@ export function ClientsContent({ initialClients, industries }: ClientsContentPro
             
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="md:hidden">
+                <Button variant="outline" size="sm" className="md:hidden" aria-label="فلترة العملاء">
                   <IconFilters className="h-4 w-4" />
                 </Button>
               </SheetTrigger>

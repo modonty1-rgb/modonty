@@ -117,7 +117,6 @@ export function OptimizedImage({
       height={!fill ? height : undefined}
       className={className}
       style={style}
-      preload={shouldPreload}
       loading={shouldPreload ? "eager" : (loading ?? "lazy")}
       fetchPriority={isHighPriority ? "high" : fetchPriority ?? "auto"}
       quality={resolvedQuality}
