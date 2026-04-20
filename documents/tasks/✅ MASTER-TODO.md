@@ -39,10 +39,6 @@
 
 # 🛠️ ADMIN
 
-## 🟡 MEDIUM — محرر المقالات
-
-- [ ] **UX-5** — رفع صورة بدون مغادرة صفحة المقال — upload + select inline
-
 ## 🟡 MEDIUM — متفرقات
 
 - [ ] **EMAIL-PREVIEW-1** — صفحة `/modonty/emails` — preview + Send Test لكل قوالب الإيميل
