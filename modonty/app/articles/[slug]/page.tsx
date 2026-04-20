@@ -92,6 +92,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
           const canonicalUrl = `${siteUrl}/articles/${slug}`;
           return {
             ...stored,
+            openGraph: {
+              ...(stored.openGraph as object | undefined),
+              url: canonicalUrl,
+            },
             alternates: {
               ...(stored.alternates as object | undefined),
               canonical: canonicalUrl,
