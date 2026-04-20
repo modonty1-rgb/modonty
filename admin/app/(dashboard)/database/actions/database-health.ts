@@ -10,10 +10,12 @@ interface TableInfo {
   group: string;
 }
 
-interface DatabaseHealth {
+export interface DatabaseHealth {
   tables: TableInfo[];
   totalRecords: number;
   lastChecked: string;
+  storageMB: number;
+  collectionsCount: number;
 }
 
 export async function getDatabaseHealth(): Promise<DatabaseHealth> {
@@ -95,9 +97,22 @@ export async function getDatabaseHealth(): Promise<DatabaseHealth> {
 
   const totalRecords = tables.reduce((sum, t) => sum + t.count, 0);
 
+  let storageMB = 0;
+  let collectionsCount = 0;
+  try {
+    const stats = (await db.$runCommandRaw({ dbStats: 1 })) as unknown as {
+      dataSize?: number;
+      collections?: number;
+    };
+    storageMB = Math.round(((stats.dataSize ?? 0) / 1024 / 1024) * 10) / 10;
+    collectionsCount = stats.collections ?? 0;
+  } catch { /* Atlas free tier may restrict dbStats */ }
+
   return {
     tables,
     totalRecords,
     lastChecked: new Date().toISOString(),
+    storageMB,
+    collectionsCount,
   };
 }

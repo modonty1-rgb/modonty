@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 53 — FAQ System v1.40.0 / admin v0.37.0 / console v0.2.0)
+# Session Context — Last Updated: 2026-04-20 (Session 57 — Database Health Tools / admin v0.38.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,33 @@
 ---
 
 ## Current Versions
-- **admin**: v0.37.0 ✅ (pushed 2026-04-20)
+- **admin**: v0.38.0 ✅ (pushed 2026-04-20)
 - **modonty**: v1.40.0 ✅ (pushed 2026-04-20)
 - **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## ✅ Session 57 — PUSHED 2026-04-20 (Database Health Tools — admin v0.38.0)
+
+### Summary
+Complete `/database` health page in admin with 9 tools: DB Stats (storageMB), Orphan Cleaner, TTL Index Health (with Create buttons), Slug Integrity, Broken References, Session Cleaner, Stale Article Versions, Collection Sizes, Duplicate Slug Scanner. All DB-1–DB-9 done. OTP-AUDIT-1 moved to NICE-TO-HAVE.
+
+### Files changed
+- `admin/app/(dashboard)/database/actions/database-health.ts` — added `storageMB`, `collectionsCount` via `$runCommandRaw({ dbStats: 1 })`
+- `admin/app/(dashboard)/database/actions/orphan-cleaner.ts` (NEW) — unused media count + clean expired OTPs
+- `admin/app/(dashboard)/database/actions/index-health.ts` (NEW) — TTL index check + `createTTLIndex()` server action
+- `admin/app/(dashboard)/database/actions/slug-integrity.ts` (NEW) — empty slugs across 6 entity types
+- `admin/app/(dashboard)/database/actions/broken-references.ts` (NEW) — articles with broken authorId/categoryId/featuredImageId
+- `admin/app/(dashboard)/database/actions/session-cleaner.ts` (NEW) — expired NextAuth sessions + verification tokens
+- `admin/app/(dashboard)/database/actions/stale-versions.ts` (NEW) — article versions older than 30/90 days
+- `admin/app/(dashboard)/database/actions/collection-sizes.ts` (NEW) — per-collection MB breakdown via `collStats`
+- `admin/app/(dashboard)/database/actions/duplicate-slugs.ts` (NEW) — cross-client slug reuse detection via aggregateRaw
+- `admin/app/(dashboard)/database/components/db-tools-section.tsx` (NEW) — full client component with useTransition + all 9 tool cards
+- `admin/app/(dashboard)/database/components/database-overview.tsx` — updated to show storageMB
+- `admin/app/(dashboard)/database/page.tsx` — Promise.all for 9 parallel fetches
+- `admin/package.json` — bumped to v0.38.0
+- `documents/tasks/✅ MASTER-TODO.md` — DB section all marked done, OTP-AUDIT-1 removed
+- `documents/tasks/💡 NICE-TO-HAVE.md` — added OTP-AUDIT-1
 
 ---
 

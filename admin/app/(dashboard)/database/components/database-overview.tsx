@@ -39,6 +39,8 @@ interface DatabaseHealth {
   tables: TableInfo[];
   totalRecords: number;
   lastChecked: string;
+  storageMB: number;
+  collectionsCount: number;
 }
 
 const groups = ["Core", "Content", "Audience", "Analytics", "System"];
@@ -117,8 +119,12 @@ export function DatabaseOverview({ health, isLocal }: { health: DatabaseHealth; 
                 <HardDrive className="h-5 w-5 text-blue-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{health.tables.length}</p>
-                <p className="text-xs text-muted-foreground">Data Tables</p>
+                <p className="text-2xl font-bold">
+                  {health.storageMB > 0 ? `${health.storageMB}` : health.tables.length}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {health.storageMB > 0 ? "Storage MB" : "Data Tables"}
+                </p>
               </div>
             </div>
           </CardContent>
