@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 57 — Database Health Tools ✅)
+> **آخر تحديث:** 2026-04-20 (Session 57 — Database Health Tools ✅ — pushed)
 > **الإصدار الحالي:** admin v0.38.0 | modonty v1.40.0 | console v0.2.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
@@ -38,18 +38,6 @@
 ---
 
 # 🛠️ ADMIN
-
-## 🟡 MEDIUM — DB ✅ كلها منجزة
-
-- [x] **DB-1** — DB Stats card — storage MB + collections count via `$runCommandRaw({ dbStats: 1 })`
-- [x] **DB-2** — Orphan Cleaner — unused media count + expired OTPs clean button
-- [x] **DB-3** — Index Health Check — TTL indexes + **Create button** مباشر في الصفحة
-- [x] **DB-4** — Slug Integrity Check — empty slugs across all 6 entity types
-- [x] **DB-5** — Broken References Scanner — missing author / category / featured image per article
-- [x] **DB-6** — Session Cleaner — expired NextAuth sessions + verification tokens
-- [x] **DB-7** — Article Version History — stale versions older than 30/90 days + clean button
-- [x] **DB-8** — Collection Sizes — per-collection MB breakdown with visual bar
-- [x] **DB-9** — Duplicate Slug Scanner — cross-client slug reuse detection
 
 ## 🟡 MEDIUM — محرر المقالات
 
