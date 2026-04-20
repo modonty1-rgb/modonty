@@ -5,6 +5,13 @@
 
 ---
 
+## Session 58 — Label fixes + Email Templates Preview (2026-04-20) ✅ — admin v0.39.0
+
+### Label renames
+- [x] **"Featured" label** — `media-section.tsx`: "Featured Image" → "Cover Image" · `settings-step.tsx`: "Featured" → "Highlight on Homepage" · `meta-section.tsx`: "مميز" → "إبراز على الرئيسية"
+
+---
+
 ## Session 58 — Email Templates Preview (2026-04-20) ✅ — admin v0.39.0
 
 ### ADMIN — `/emails` page

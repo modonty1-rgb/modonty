@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-20 (Session 58 — Email Templates Preview ✅)
+> **آخر تحديث:** 2026-04-20 (Session 58 — label fixes ✅)
 > **الإصدار الحالي:** admin v0.39.0 | modonty v1.40.0 | console v0.2.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
@@ -41,7 +41,6 @@
 
 ## 🟡 MEDIUM — متفرقات
 
-- [ ] **"Featured" label** — "Cover Image" + "Highlight on Homepage"
 
 ---
 

@@ -60,7 +60,7 @@ export function MetaSection() {
             className="rounded"
           />
           <Label htmlFor="featured" className="cursor-pointer">
-            مميز
+            إبراز على الرئيسية
           </Label>
           {formData.featured && (
             <Badge variant="default" className="ml-2">

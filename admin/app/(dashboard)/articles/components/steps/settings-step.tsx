@@ -41,7 +41,7 @@ export function SettingsStep() {
                     aria-describedby="featured-desc"
                   />
                   <Label htmlFor="featured" className="cursor-pointer font-normal">
-                    Featured
+                    Highlight on Homepage
                   </Label>
                   {formData.featured && (
                     <Badge variant="default" className="ml-2">
@@ -50,7 +50,7 @@ export function SettingsStep() {
                   )}
                 </div>
                 <p id="featured-desc" className="text-xs text-muted-foreground">
-                  Highlight this article in featured sections (e.g. homepage, trending) and give it higher sitemap priority (0.8).
+                  Show this article in featured sections (homepage, trending) and boost sitemap priority to 0.8.
                 </p>
               </div>
               <FormNativeSelect

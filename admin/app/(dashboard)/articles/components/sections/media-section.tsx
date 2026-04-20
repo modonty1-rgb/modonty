@@ -90,9 +90,9 @@ export function MediaSection() {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
-        {/* Featured Image */}
+        {/* Cover Image */}
         <div className="space-y-4">
-          <Label>Featured Image</Label>
+          <Label>Cover Image</Label>
 
           {!formData.clientId ? (
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
