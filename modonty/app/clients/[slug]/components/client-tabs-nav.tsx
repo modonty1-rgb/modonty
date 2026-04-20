@@ -3,12 +3,24 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "@/components/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { IconCheckCircle } from "@/lib/icons";
+import { IconCheckCircle, IconGrid, IconInfo, IconPhone, IconImage, IconUsers, IconPlay, IconLike, IconFeatured } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { trackCtaClick } from "@/lib/cta-tracking";
 import { ClientScrollProgress } from "./client-scroll-progress";
 import type { TabItem } from "./client-tab-items";
 import { ALL_TAB_ITEMS } from "./client-tab-items";
+import type { LucideIcon } from "lucide-react";
+
+const TAB_ICON_MAP: Record<string, LucideIcon> = {
+  "":          IconGrid,
+  "about":     IconInfo,
+  "contact":   IconPhone,
+  "photos":    IconImage,
+  "followers": IconUsers,
+  "reviews":   IconFeatured,
+  "reels":     IconPlay,
+  "likes":     IconLike,
+};
 
 // -----------------------------------------------------------------------------
 // Types & Constants
@@ -82,7 +94,9 @@ interface TabNavLinkProps {
   clientId?: string;
 }
 
-function TabNavLink({ label, shortLabel, href, isActive, activeRef, clientId }: TabNavLinkProps) {
+function TabNavLink({ segment, label, shortLabel, href, isActive, activeRef, clientId }: TabNavLinkProps) {
+  const Icon = TAB_ICON_MAP[segment ?? ""];
+
   const handleClick = () => {
     if (clientId) {
       trackCtaClick({ type: "LINK", label: `Tab – ${label}`, targetUrl: href, clientId });
@@ -105,7 +119,12 @@ function TabNavLink({ label, shortLabel, href, isActive, activeRef, clientId }: 
         )}
         onClick={handleClick}
       >
-        <span className="sm:hidden">{shortLabel ?? label}</span>
+        {/* Mobile: icon + shortLabel */}
+        <span className="sm:hidden inline-flex flex-col items-center gap-0.5">
+          {Icon && <Icon className="h-4 w-4" aria-hidden />}
+          <span className="text-[10px] leading-none">{shortLabel ?? label}</span>
+        </span>
+        {/* Desktop: text only */}
         <span className="hidden sm:inline">{label}</span>
       </Link>
     </li>

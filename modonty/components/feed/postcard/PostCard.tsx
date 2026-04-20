@@ -5,7 +5,7 @@ import { PostCardBody } from "./PostCardBody";
 import { PostCardFooter } from "./PostCardFooter";
 import { PostCardHeroImage } from "./PostCardHeroImage";
 
-export function PostCard({ className, index, isLcp, hideClient, ...rest }: PostCardProps) {
+export function PostCard({ className, index, isLcp, hideClient, featured, ...rest }: PostCardProps) {
   const effectiveIsLcp = isLcp ?? (index === 0);
 
   return (
@@ -13,21 +13,18 @@ export function PostCard({ className, index, isLcp, hideClient, ...rest }: PostC
       itemScope
       itemType="https://schema.org/Article"
       className={cn(
-        // relative: anchor for stretched-link pseudo-element
-        // group: enables group-hover:scale-105 on the image
-        // overflow-hidden: clips image to rounded corners
-        "relative group rounded-lg border border-border bg-card text-card-foreground shadow-sm overflow-hidden transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md",
+        "relative group rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md",
+        featured ? "border-primary/20 shadow-primary/5" : "border-border",
         className
       )}
     >
-      {/* Image — full width, touches card edges, no padding */}
       <PostCardHeroImage
         post={rest.post}
         isLcp={effectiveIsLcp}
         index={index}
         articleTitle={rest.post.title}
+        featured={featured}
       />
-      {/* Meta + content */}
       <div className="p-4 space-y-3">
         <PostCardHeader post={rest.post} index={index} hideClient={hideClient} />
         <PostCardBody
@@ -35,6 +32,7 @@ export function PostCard({ className, index, isLcp, hideClient, ...rest }: PostC
           isLcp={effectiveIsLcp}
           index={index}
           highlightQuery={rest.highlightQuery}
+          featured={featured}
         />
         <PostCardFooter post={rest.post} />
       </div>

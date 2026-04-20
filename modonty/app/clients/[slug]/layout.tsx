@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconChevronRight } from "@/lib/icons";
 import { ClientHero } from "./components/hero/client-hero";
 import { ClientStickyProvider } from "./components/client-tabs-nav";
+import { ClientMobileCta } from "./components/client-mobile-cta";
 import { ALL_TAB_ITEMS } from "./components/client-tab-items";
 import { getClientPageData } from "./helpers/client-page-data";
 
@@ -86,6 +87,7 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
           </Suspense>
         </ClientStickyProvider>
       </main>
+      <ClientMobileCta clientSlug={client.slug} />
     </>
   );
 }

@@ -2,50 +2,17 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { ClientAbout } from "../client-about";
 import { ClientContact } from "../client-contact";
-import { IconRead, IconClients, IconCalendar, IconUsers, IconArticle, IconAnalytics, IconViews } from "@/lib/icons";
-import type { ClientPageClient, ClientPageStats } from "./types";
+import { ClientNewsletterCard } from "../client-newsletter-card";
+import { IconRead, IconClients, IconCalendar, IconUsers } from "@/lib/icons";
+import type { ClientPageClient } from "./types";
 
 interface ClientPageLeftProps {
   client: ClientPageClient;
-  stats?: ClientPageStats;
 }
 
-export function ClientPageLeft({ client, stats }: ClientPageLeftProps) {
+export function ClientPageLeft({ client }: ClientPageLeftProps) {
   return (
     <div className="w-full min-w-0 order-2 lg:order-1 space-y-4 pt-4">
-      {stats && (
-        <Card>
-          <CardHeader>
-            <CardTitleWithIcon title="إحصائيات" icon={IconAnalytics} />
-          </CardHeader>
-          <CardContent className="pb-4">
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
-                <IconArticle className="h-4 w-4 text-primary" />
-                <span className="text-lg font-bold tabular-nums leading-none">
-                  {new Intl.NumberFormat("ar-SA").format(stats.articlesCount)}
-                </span>
-                <span className="text-xs text-muted-foreground">مقال</span>
-              </div>
-              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
-                <IconUsers className="h-4 w-4 text-primary" />
-                <span className="text-lg font-bold tabular-nums leading-none">
-                  {new Intl.NumberFormat("ar-SA").format(stats.followers)}
-                </span>
-                <span className="text-xs text-muted-foreground">متابع</span>
-              </div>
-              <div className="flex flex-col items-center gap-1 rounded-lg bg-muted/40 py-3 px-1">
-                <IconViews className="h-4 w-4 text-primary" />
-                <span className="text-lg font-bold tabular-nums leading-none">
-                  {new Intl.NumberFormat("ar-SA").format(stats.totalViews)}
-                </span>
-                <span className="text-xs text-muted-foreground">مشاهدة</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {(client.description || client.seoDescription) && (
         <Card>
           <CardHeader>
@@ -123,6 +90,7 @@ export function ClientPageLeft({ client, stats }: ClientPageLeftProps) {
         </CardContent>
       </Card>
 
+      <ClientNewsletterCard clientId={client.id} clientName={client.name} />
       <ClientContact client={client} />
       <ClientAbout client={client} />
     </div>

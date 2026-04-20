@@ -10,6 +10,7 @@ export function PostCardHeroImage({
   post,
   index,
   isLcp,
+  featured,
 }: PostCardProps) {
   const lcp = isLcp ?? (index === 0);
 
@@ -50,7 +51,7 @@ export function PostCardHeroImage({
   const optimizedSrc = optimizeCloudinaryUrl(post.image, lcp);
 
   return (
-    <div className="relative w-full aspect-video overflow-hidden">
+    <div className={`relative w-full overflow-hidden ${featured ? "aspect-[16/7]" : "aspect-video"}`}>
       {audioBadge}
       <Image
         src={optimizedSrc}

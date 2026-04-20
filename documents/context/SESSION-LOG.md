@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-20 (Session 50 — Mobile Phase 2 push)
+# Session Context — Last Updated: 2026-04-20 (Session 51 — Client Page UX/UI Overhaul v1.37.0)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -8,8 +8,43 @@
 
 ## Current Versions
 - **admin**: v0.36.0 ✅ (pushed 2026-04-19)
-- **modonty**: v1.36.0 ✅ (pushed 2026-04-20)
+- **modonty**: v1.37.0 ✅ (pushed 2026-04-20)
 - **console**: v0.1.2
+
+---
+
+## ✅ Session 51 — PUSHED 2026-04-20 (modonty v1.37.0)
+
+### modonty changes — Client Page UX/UI Overhaul (CP-15–24) + Tab Nav Icons (CP-25)
+- **CP-16** — `hero-cover.tsx`: full client name watermark بدل الحرف الأول، dot pattern، bottom fade
+- **CP-17** — `hero-cta.tsx`: social links → pill buttons (icon + platform name)
+- **CP-21** — `PostCard` featured mode: aspect-[16/7] image + text-xl title + line-clamp-3 excerpt + border-primary/20 — first article on client page
+- **CP-22** — `client-newsletter-card.tsx` (new): email subscribe card in left sidebar — calls `/api/subscribers`
+- **CP-23** — `client-mobile-cta.tsx` (new): sticky FAB "اسأل العميل" — appears after 300px scroll, lg:hidden
+- **CP-24** — Tab Nav fade: confirmed already implemented — working ✅
+- **CP-25** — `client-tab-items.ts` + `client-tabs-nav.tsx`: TAB_ICON_MAP client-side, icon + shortLabel on mobile, text only on desktop
+- **FAB fix** — scroll-aware: hidden at top (hero visible), appears after 300px
+- **Featured card placeholder fix** — no-image featured card uses aspect-video (not 16/7) to avoid oversized placeholder
+
+### Key files changed (Session 51)
+- `modonty/app/clients/[slug]/components/hero/hero-cover.tsx`
+- `modonty/app/clients/[slug]/components/hero/hero-cta.tsx`
+- `modonty/app/clients/[slug]/components/client-page/client-page-left.tsx`
+- `modonty/app/clients/[slug]/components/client-newsletter-card.tsx` (NEW)
+- `modonty/app/clients/[slug]/components/client-mobile-cta.tsx` (NEW)
+- `modonty/app/clients/[slug]/components/client-tab-items.ts`
+- `modonty/app/clients/[slug]/components/client-tabs-nav.tsx`
+- `modonty/app/clients/[slug]/layout.tsx`
+- `modonty/components/feed/postcard/PostCard.tsx`
+- `modonty/components/feed/postcard/PostCard.types.ts`
+- `modonty/components/feed/postcard/PostCardHeroImage.tsx`
+- `modonty/components/feed/postcard/PostCardBody.tsx`
+- `modonty/app/clients/[slug]/components/client-page/client-page-feed.tsx`
+
+### Live test (Session 51) — PASS
+- Mobile 375px: hero cover watermark ✅, FAB appears after scroll ✅, tab icons ✅, newsletter card ✅
+- Desktop 1280px: tabs text-only (no icons) ✅, featured card larger ✅
+- All pages reviewed: homepage, article, categories, clients, trending, industries, search — all clean ✅
 
 ---
 

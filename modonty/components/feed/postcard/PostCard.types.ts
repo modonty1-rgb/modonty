@@ -11,5 +11,7 @@ export interface PostCardProps {
   highlightQuery?: string;
   /** Passed to hero image link for accessible name. */
   articleTitle?: string;
+  /** When true, renders as a larger hero card (first article on client page). */
+  featured?: boolean;
 }
 

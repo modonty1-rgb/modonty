@@ -28,13 +28,14 @@ export function ClientPageFeed({ posts, clientName, clientId, relatedClientsCoun
         {posts.length > 0 ? (
           <div className="space-y-4">
             {posts.map((post, index) => (
-<PostCard
-                      key={post.id}
-                      post={post}
-                      index={index}
-                      hideClient
-                      className="animate-in fade-in duration-300"
-                    />
+              <PostCard
+                key={post.id}
+                post={post}
+                index={index}
+                hideClient
+                featured={index === 0}
+                className="animate-in fade-in duration-300"
+              />
             ))}
           </div>
         ) : (

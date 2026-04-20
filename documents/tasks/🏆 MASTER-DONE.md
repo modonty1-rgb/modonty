@@ -1,7 +1,31 @@
 # DONE — كل المهام المنجزة
-> **آخر تحديث:** 2026-04-21 (Sessions 48–49 — modonty v1.35.0 ✅)
+> **آخر تحديث:** 2026-04-20 (Session 50 — modonty v1.36.0 ✅)
 > ملف مرجعي جامع لكل ما أُنجز عبر تاريخ المشروع.
 > مرتّب بأقسام — كل قسم يمثل منطقة عمل مستقلة.
+
+---
+
+## Session 50 — modonty v1.36.0 (2026-04-20) ✅ PUSHED
+
+### MODONTY — Mobile Article Phase 2 (MOB2–MOB6)
+- [x] **MOB2** — Mobile bar Zone 1: client avatar (h-7 w-7 ring) + "اسأل العميل" trigger-only button (pre-filled when logged in)
+- [x] **MOB3** — Mobile bar Zone 1: "اشترك في النشرة" button → triggers ClientNewsletter overlay
+- [x] **MOB4** — `article-header.tsx`: views + questions count في meta row (mobile)
+- [x] **MOB5** — `article-featured-image-newsletter.tsx`: newsletter overlay على الصورة الرئيسية
+- [x] **MOB6** — Sheet (`article-mobile-sidebar-sheet.tsx`): محتوى كامل — client card + TOC + related articles + newsletter
+- [x] **hideDislike prop** — `ArticleInteractionButtons`: optional `hideDislike` — يخفي dislike في mobile compact mode
+- [x] **2-row bar layout** — `flex-col` في الـ bar → Zone1 (client row) + Zone2 (icons row) كل واحدة على سطر مستقل
+- [x] **Sticky fix** — `ArticleMobileLayout` نُقل قبل `<Breadcrumb>` في DOM → `sticky top-14` يشتغل من scrollY=0 مباشرة
+
+### Live Test — Production (Session 50)
+- [x] Mobile 375px: like ✅, save ✅, اسأل العميل (pre-filled) ✅, اشترك في النشرة ✅, sheet ✅
+- [x] Mobile 320px: لا overflow، كل الأيقونات ظاهرة ✅
+- [x] Desktop 1280px: bar مخفي (lg:hidden)، sidebar سليم ✅
+- [x] Console: 0 errors ✅
+
+### PageSpeed Scores (Mobile) — after v1.36.0
+- Article page: **Performance 92** · Accessibility 100 · Best Practices 100 · SEO 100
+- FCP 1.1s ✅ · LCP 2.7s 🟡 · TBT **80ms** ✅ (كان 250ms) · CLS 0.087 ✅
 
 ---
 

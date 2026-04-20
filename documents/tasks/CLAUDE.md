@@ -155,6 +155,12 @@ During any live test session:
 - [ ] OBS-017 → Terms: text clipping
 - [ ] OBS-018 → Article: interaction bar spacing
 
+### OBS-034 🟡 MEDIUM — Featured card placeholder بدون صورة: نسبة 16:7 كبيرة جداً
+- **Where:** Client page feed — أول كارت مقال لما ما في featured image
+- **What:** الـ aspect-[16/7] الواسع يجعل placeholder area ضخمة وفارغة على mobile — تأخذ مساحة كبيرة بدون قيمة بصرية
+- **Fix:** عند `featured=true` وما في صورة → استخدم aspect-video عادي (16:9) بدل 16:7، أو أصغّر placeholder height
+- **File:** `PostCardHeroImage.tsx` — شرط `featured && !post.image`
+
 ---
 
 ## Pending — Move to MASTER-TODO (from previous session)

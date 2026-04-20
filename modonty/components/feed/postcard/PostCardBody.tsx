@@ -3,7 +3,7 @@ import { highlightQuery } from "@/lib/highlight-query";
 import { IconChevronLeft } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
-export function PostCardBody({ post, highlightQuery: query }: PostCardProps) {
+export function PostCardBody({ post, highlightQuery: query, featured }: PostCardProps) {
   const rawExcerpt = post.excerpt ?? post.content;
   const titleContent = query ? highlightQuery(post.title, query) : post.title;
   const excerptContent = query ? highlightQuery(rawExcerpt, query) : rawExcerpt;
@@ -15,7 +15,7 @@ export function PostCardBody({ post, highlightQuery: query }: PostCardProps) {
         // making the entire card clickable while keeping other z-10 elements interactive.
         <h3
           itemProp="headline"
-          className="font-semibold text-base line-clamp-2 min-h-[2.8rem] break-words hyphens-auto"
+          className={`font-semibold break-words hyphens-auto ${featured ? "text-xl line-clamp-3" : "text-base line-clamp-2 min-h-[2.8rem]"}`}
         >
           <CtaTrackedLink
             href={`/articles/${post.slug}`}
@@ -31,7 +31,7 @@ export function PostCardBody({ post, highlightQuery: query }: PostCardProps) {
       )}
       <p
         itemProp="description"
-        className="text-sm text-muted-foreground leading-relaxed line-clamp-2"
+        className={`text-sm text-muted-foreground leading-relaxed ${featured ? "line-clamp-3" : "line-clamp-2"}`}
       >
         {excerptContent}
       </p>

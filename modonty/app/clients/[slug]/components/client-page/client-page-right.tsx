@@ -33,14 +33,12 @@ export function ClientPageRight({ client, relatedClients, reviews, followers, en
         followers={followers}
         clientSlug={client.slug}
         clientId={client.id}
-        showEmptyState
       />
       <ClientReviewsPreview
         reviews={reviews}
         clientSlug={client.slug}
         clientName={client.name}
         clientId={client.id}
-        showEmptyState
       />
       <ClientLikesPreview
         followersCount={engagement.followersCount}
@@ -49,7 +47,6 @@ export function ClientPageRight({ client, relatedClients, reviews, followers, en
         clientSlug={client.slug}
         clientName={client.name}
         clientId={client.id}
-        showEmptyState
       />
       <section aria-labelledby="client-related-heading">
         <h2 id="client-related-heading" className="sr-only">
