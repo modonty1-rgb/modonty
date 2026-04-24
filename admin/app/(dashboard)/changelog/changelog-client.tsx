@@ -23,6 +23,7 @@ import {
   Clock,
   User,
   Globe,
+  GitCommit,
 } from "lucide-react";
 import { createAdminNote, replyToNote } from "./actions";
 
@@ -35,6 +36,8 @@ const TEAM_MEMBERS = [
   "Mustafa",
   "Ahmed",
 ];
+
+type FilterType = "all" | "feature" | "fix" | "improve";
 
 interface ChangelogItem {
   type: "fix" | "feature" | "improve";
@@ -67,64 +70,146 @@ interface AdminNote {
 
 function ItemIcon({ type }: { type: string }) {
   switch (type) {
-    case "fix":
-      return <Bug className="h-3.5 w-3.5 text-red-500" />;
-    case "feature":
-      return <Sparkles className="h-3.5 w-3.5 text-emerald-500" />;
-    case "improve":
-      return <Zap className="h-3.5 w-3.5 text-amber-500" />;
-    default:
-      return null;
+    case "fix":     return <Bug      className="h-3.5 w-3.5 text-red-500" />;
+    case "feature": return <Sparkles className="h-3.5 w-3.5 text-emerald-500" />;
+    case "improve": return <Zap      className="h-3.5 w-3.5 text-amber-500" />;
+    default:        return null;
   }
 }
 
 function ItemBadge({ type }: { type: string }) {
   switch (type) {
-    case "fix":
-      return <Badge variant="secondary" className="text-[10px] bg-red-500/10 text-red-500">إصلاح</Badge>;
-    case "feature":
-      return <Badge variant="secondary" className="text-[10px] bg-emerald-500/10 text-emerald-500">جديد</Badge>;
-    case "improve":
-      return <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-500">تحسين</Badge>;
-    default:
-      return null;
+    case "fix":     return <Badge variant="secondary" className="text-[10px] bg-red-500/10 text-red-500 shrink-0">إصلاح</Badge>;
+    case "feature": return <Badge variant="secondary" className="text-[10px] bg-emerald-500/10 text-emerald-500 shrink-0">جديد</Badge>;
+    case "improve": return <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-500 shrink-0">تحسين</Badge>;
+    default:        return null;
   }
 }
 
 function formatDate(date: string) {
   const d = new Date(date);
-  const formatted = d.toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return d.toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
+}
 
-  // Add emoji based on time of day
+function formatDateFull(date: string) {
+  const d = new Date(date);
+  const formatted = d.toLocaleDateString("ar-SA", {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
   const hour = d.getHours();
-  if (hour >= 0 && hour < 5) return `🌙 ${formatted}`;      // فجر / سهر
-  if (hour >= 5 && hour < 7) return `🌅 ${formatted}`;       // فجر مبكر
-  if (hour >= 7 && hour < 12) return `☀️ ${formatted}`;      // صباح
-  if (hour >= 12 && hour < 17) return `🌤️ ${formatted}`;     // ظهر
-  if (hour >= 17 && hour < 20) return `🌇 ${formatted}`;     // مساء
-  if (hour >= 20 && hour < 23) return `🌙 ${formatted}`;     // ليل
-  return `💤 ${formatted}`;                                    // متأخر جداً
+  if (hour >= 0  && hour < 5)  return `🌙 ${formatted}`;
+  if (hour >= 5  && hour < 7)  return `🌅 ${formatted}`;
+  if (hour >= 7  && hour < 12) return `☀️ ${formatted}`;
+  if (hour >= 12 && hour < 17) return `🌤️ ${formatted}`;
+  if (hour >= 17 && hour < 20) return `🌇 ${formatted}`;
+  if (hour >= 20 && hour < 23) return `🌙 ${formatted}`;
+  return `💤 ${formatted}`;
+}
+
+function StatsBar({ changelogs }: { changelogs: Changelog[] }) {
+  const allItems = changelogs.flatMap((c) => c.items as ChangelogItem[]);
+  const features  = allItems.filter((i) => i.type === "feature").length;
+  const fixes     = allItems.filter((i) => i.type === "fix").length;
+  const improves  = allItems.filter((i) => i.type === "improve").length;
+
+  return (
+    <div className="flex flex-wrap gap-3 mb-6 text-sm">
+      <div className="flex items-center gap-1.5 bg-muted/50 rounded-lg px-3 py-1.5">
+        <GitCommit className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="font-medium">{changelogs.length}</span>
+        <span className="text-muted-foreground">إصدار</span>
+      </div>
+      <div className="flex items-center gap-1.5 bg-emerald-500/10 rounded-lg px-3 py-1.5">
+        <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+        <span className="font-medium text-emerald-600">{features}</span>
+        <span className="text-muted-foreground">ميزة جديدة</span>
+      </div>
+      <div className="flex items-center gap-1.5 bg-red-500/10 rounded-lg px-3 py-1.5">
+        <Bug className="h-3.5 w-3.5 text-red-500" />
+        <span className="font-medium text-red-600">{fixes}</span>
+        <span className="text-muted-foreground">إصلاح</span>
+      </div>
+      <div className="flex items-center gap-1.5 bg-amber-500/10 rounded-lg px-3 py-1.5">
+        <Zap className="h-3.5 w-3.5 text-amber-500" />
+        <span className="font-medium text-amber-600">{improves}</span>
+        <span className="text-muted-foreground">تحسين</span>
+      </div>
+    </div>
+  );
+}
+
+function FilterBar({ active, onChange }: { active: FilterType; onChange: (v: FilterType) => void }) {
+  const filters: { value: FilterType; label: string }[] = [
+    { value: "all",     label: "الكل" },
+    { value: "feature", label: "✨ جديد" },
+    { value: "fix",     label: "🔧 إصلاح" },
+    { value: "improve", label: "⚡ تحسين" },
+  ];
+  return (
+    <div className="flex gap-2 mb-5 flex-wrap">
+      {filters.map((f) => (
+        <button
+          key={f.value}
+          onClick={() => onChange(f.value)}
+          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+            active === f.value
+              ? "bg-primary text-primary-foreground border-primary"
+              : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+          }`}
+        >
+          {f.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ChangelogCard({ log, isCurrent }: { log: Changelog; isCurrent: boolean }) {
+  return (
+    <div className={`border rounded-lg p-5 space-y-3 transition-colors ${
+      isCurrent ? "border-primary/40 bg-primary/5" : ""
+    }`}>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <Badge className={`text-sm font-mono ${isCurrent ? "bg-primary" : ""}`}>
+            v{log.version}
+          </Badge>
+          {isCurrent && (
+            <Badge variant="outline" className="text-[10px] text-primary border-primary/40">
+              الإصدار الحالي
+            </Badge>
+          )}
+          <h3 className="font-semibold text-sm">{log.title}</h3>
+        </div>
+        <span className="text-xs text-muted-foreground shrink-0">{formatDate(log.createdAt)}</span>
+      </div>
+      <div className="space-y-1.5">
+        {(log.items as ChangelogItem[]).map((item, i) => (
+          <div key={i} className="flex items-start gap-2">
+            <div className="mt-0.5 shrink-0"><ItemIcon type={item.type} /></div>
+            <ItemBadge type={item.type} />
+            <span className="text-sm leading-relaxed">{item.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function NoteCard({ note }: { note: AdminNote }) {
-  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyOpen,   setReplyOpen]   = useState(false);
   const [replyAuthor, setReplyAuthor] = useState("");
-  const [replyMessage, setReplyMessage] = useState("");
-  const [sending, setSending] = useState(false);
+  const [replyMsg,    setReplyMsg]    = useState("");
+  const [sending,     setSending]     = useState(false);
   const router = useRouter();
 
   const handleReply = async () => {
-    if (!replyAuthor || !replyMessage.trim()) return;
+    if (!replyAuthor || !replyMsg.trim()) return;
     setSending(true);
-    await replyToNote({ noteId: note.id, author: replyAuthor, message: replyMessage.trim() });
+    await replyToNote({ noteId: note.id, author: replyAuthor, message: replyMsg.trim() });
     setSending(false);
-    setReplyMessage("");
+    setReplyMsg("");
     setReplyOpen(false);
     router.refresh();
   };
@@ -140,7 +225,7 @@ function NoteCard({ note }: { note: AdminNote }) {
             <p className="text-sm font-semibold">{note.author}</p>
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
               <Clock className="h-3 w-3" />
-              {formatDate(note.createdAt)}
+              {formatDateFull(note.createdAt)}
               {note.page && (
                 <>
                   <Globe className="h-3 w-3" />
@@ -154,14 +239,13 @@ function NoteCard({ note }: { note: AdminNote }) {
 
       <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
 
-      {/* Replies */}
       {note.replies.length > 0 && (
         <div className="ps-6 border-s-2 border-muted space-y-3 mt-3">
           {note.replies.map((reply) => (
             <div key={reply.id} className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold">{reply.author}</span>
-                <span className="text-[10px] text-muted-foreground">{formatDate(reply.createdAt)}</span>
+                <span className="text-[10px] text-muted-foreground">{formatDateFull(reply.createdAt)}</span>
               </div>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{reply.message}</p>
             </div>
@@ -169,7 +253,6 @@ function NoteCard({ note }: { note: AdminNote }) {
         </div>
       )}
 
-      {/* Reply form */}
       {replyOpen ? (
         <div className="space-y-2 pt-2 border-t">
           <Select value={replyAuthor} onValueChange={setReplyAuthor}>
@@ -183,15 +266,15 @@ function NoteCard({ note }: { note: AdminNote }) {
             </SelectContent>
           </Select>
           <Textarea
-            value={replyMessage}
-            onChange={(e) => setReplyMessage(e.target.value)}
+            value={replyMsg}
+            onChange={(e) => setReplyMsg(e.target.value)}
             placeholder="اكتب ردك..."
             rows={2}
             className="text-sm"
           />
           <div className="flex gap-2 justify-end">
             <Button variant="outline" size="sm" onClick={() => setReplyOpen(false)}>إلغاء</Button>
-            <Button size="sm" onClick={handleReply} disabled={!replyAuthor || !replyMessage.trim() || sending}>
+            <Button size="sm" onClick={handleReply} disabled={!replyAuthor || !replyMsg.trim() || sending}>
               {sending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
               <span className="ms-1">رد</span>
             </Button>
@@ -214,10 +297,19 @@ export function ChangelogClient({
   changelogs: Changelog[];
   notes: AdminNote[];
 }) {
-  const [noteAuthor, setNoteAuthor] = useState("");
+  const [filter,      setFilter]      = useState<FilterType>("all");
+  const [noteAuthor,  setNoteAuthor]  = useState("");
   const [noteMessage, setNoteMessage] = useState("");
-  const [sending, setSending] = useState(false);
+  const [sending,     setSending]     = useState(false);
   const router = useRouter();
+
+  const currentVersion = changelogs[0]?.version;
+
+  const filtered = filter === "all"
+    ? changelogs
+    : changelogs.filter((c) =>
+        (c.items as ChangelogItem[]).some((i) => i.type === filter)
+      );
 
   const handleNewNote = async () => {
     if (!noteAuthor || !noteMessage.trim()) return;
@@ -230,7 +322,8 @@ export function ChangelogClient({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">سجل التحديثات والملاحظات</h1>
+      <h1 className="text-2xl font-semibold mb-2">سجل التحديثات والملاحظات</h1>
+      <p className="text-sm text-muted-foreground mb-6">تاريخ كامل لكل إصدار — مرتّب من الأحدث للأقدم</p>
 
       <Tabs defaultValue="changelog" className="w-full">
         <TabsList className="w-full mb-6">
@@ -243,38 +336,29 @@ export function ChangelogClient({
         </TabsList>
 
         {/* Changelog Tab */}
-        <TabsContent value="changelog" className="space-y-6">
-          {changelogs.length === 0 ? (
+        <TabsContent value="changelog" className="space-y-4">
+          <StatsBar changelogs={changelogs} />
+          <FilterBar active={filter} onChange={setFilter} />
+
+          {filtered.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p>لا توجد تحديثات بعد</p>
+              <p>لا توجد نتائج لهذا الفلتر</p>
             </div>
           ) : (
-            changelogs.map((log) => (
-              <div key={log.id} className="border rounded-lg p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Badge className="text-sm font-mono">v{log.version}</Badge>
-                    <h3 className="font-semibold">{log.title}</h3>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{formatDate(log.createdAt)}</span>
-                </div>
-                <div className="space-y-2">
-                  {(log.items as ChangelogItem[]).map((item, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <ItemIcon type={item.type} />
-                      <ItemBadge type={item.type} />
-                      <span className="text-sm">{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
+            <div className="space-y-4">
+              {filtered.map((log) => (
+                <ChangelogCard
+                  key={log.id}
+                  log={log}
+                  isCurrent={log.version === currentVersion}
+                />
+              ))}
+            </div>
           )}
         </TabsContent>
 
         {/* Notes Tab */}
         <TabsContent value="notes" className="space-y-4">
-          {/* New note form */}
           <div className="border rounded-lg p-4 space-y-3 bg-muted/30">
             <h3 className="text-sm font-semibold">ملاحظة جديدة</h3>
             <Select value={noteAuthor} onValueChange={setNoteAuthor}>
@@ -301,7 +385,6 @@ export function ChangelogClient({
             </div>
           </div>
 
-          {/* Notes list */}
           {notes.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p>لا توجد ملاحظات بعد — كن أول من يكتب!</p>

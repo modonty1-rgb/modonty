@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "0.41.0",
+  "version": "0.41.1",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -13,7 +13,13 @@
     "postinstall": "npx prisma generate",
     "add-admin": "tsx scripts/add-admin-user.ts",
     "seed:settings": "node scripts/seed-settings-from-env.js",
-    "seed:seo-defaults": "tsx scripts/fill-settings-seo-defaults.ts"
+    "seed:seo-defaults": "tsx scripts/fill-settings-seo-defaults.ts",
+    "changelog:sync": "tsx scripts/changelog-sync.ts",
+    "changelog:sync:local": "tsx scripts/changelog-sync.ts --local",
+    "changelog:sync:prod": "tsx scripts/changelog-sync.ts --prod",
+    "changelog:reset": "tsx scripts/changelog-sync.ts --reset",
+    "changelog:reset:local": "tsx scripts/changelog-sync.ts --local --reset",
+    "changelog:reset:prod": "tsx scripts/changelog-sync.ts --prod --reset"
   },
   "dependencies": {
     "@adobe/structured-data-validator": "^1.5.0",

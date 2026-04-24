@@ -1,6 +1,8 @@
 import { getChangelogs, getAdminNotes } from "./actions";
 import { ChangelogClient } from "./changelog-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChangelogPage() {
   const [changelogs, notes] = await Promise.all([
     getChangelogs(),

@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-24 (Session 64 — Global Error Logging System)
+# Session Context — Last Updated: 2026-04-24 (Session 65 — Changelog system overhaul ✅)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,54 @@
 ---
 
 ## Current Versions
-- **admin**: v0.41.0 ✅ (pushed 2026-04-24)
+- **admin**: v0.41.1 ✅ (pushed 2026-04-24)
 - **modonty**: v1.41.1 ✅ (pushed 2026-04-21)
 - **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## ✅ Session 65 — PUSHED 2026-04-24 (Changelog system overhaul — admin v0.41.1)
+
+### Summary
+Complete overhaul of the changelog system — scripts, data, and UI.
+
+**Root bug found & fixed:** pnpm auto-loads `.env` before scripts run, so `dotenv.config()` was silently ignored (DATABASE_URL already set to production). Fix: `{ override: true }` in all `dotenv.config()` calls. Scripts were writing to production instead of local all along.
+
+**What changed:**
+- `changelog-sync.ts` — unified SOT script derived from git log with real release dates
+  - `--reset` flag: clears DB and re-inserts with correct dates
+  - Default (no flag): writes to BOTH local + production simultaneously
+  - `--local` / `--prod` for single-target
+- Both DBs reset and re-seeded with 41 clean entries, correct dates from git log
+- `changelog-client.tsx` — enhanced UI: stats bar, type filter, current version badge
+- `actions.ts` — semantic version sort (not createdAt) so order is always correct
+- `page.tsx` — added `force-dynamic`
+
+**New script commands:**
+```
+pnpm changelog:sync              → sync missing to BOTH DBs (use every push)
+pnpm changelog:sync:local/prod   → single target
+pnpm changelog:reset             → clear + re-insert BOTH DBs
+pnpm changelog:reset:local/prod  → single target reset
+```
+
+**Workflow from now on:** When pushing a new version, add its entry to the CHANGELOG array in `changelog-sync.ts`, then run `pnpm changelog:sync`.
+
+### Files changed (Session 65)
+**admin:**
+- `scripts/changelog-sync.ts` (NEW — unified SOT script)
+- `scripts/changelog-local.ts` (NEW — legacy single-target, kept for reference)
+- `scripts/changelog-prod.ts` (NEW — legacy single-target, kept for reference)
+- `app/(dashboard)/changelog/actions.ts` — semantic sort + noStore
+- `app/(dashboard)/changelog/changelog-client.tsx` — stats bar + filter + current badge
+- `app/(dashboard)/changelog/page.tsx` — force-dynamic
+- `package.json` — new changelog:sync/reset scripts
+
+### Notes for next agent
+- **DB state**: Both `modonty_dev` and `modonty` have 41 clean entries, correct dates ✅
+- **Next push workflow**: Add new entry to CHANGELOG array in `scripts/changelog-sync.ts`, then `pnpm changelog:sync`
+- **pnpm env bug**: pnpm auto-loads `.env` before scripts — always use `{ override: true }` in `dotenv.config()` for scripts that need `.env.local`
+- **Next task**: "Important real-world task outside admin" — user will specify at start of next session
 
 ---
 
@@ -52,22 +97,22 @@ Built a fully internal error logging system for the admin app — no external se
 - `prisma/schema/schema.prisma` — added SystemError model
 
 ### Notes for next agent
-- Error logging is production-only (requires INTERNAL_LOG_SECRET on Vercel)
-- Test by triggering the Telegram OTP slug-change error on production → check System → Error Logs
-- Next phase: GTM → Console+Google in Admin → Article writing automation
+- Error logging fully verified in production ✅
+- Telegram OTP for slug change: was broken (missing TELEGRAM_BOT_TOKEN + TELEGRAM_ADMIN_CHAT_ID on Vercel) → now fixed
+- Vercel env vars confirmed set: INTERNAL_LOG_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_ADMIN_CHAT_ID
 
 ---
 
 ## ✅ Session 63 — PUSHED 2026-04-21 (PERF-008 + PERF-003 + bundle analyzer cleanup)
 
 ### Summary
-- **PERF-008**: Deferred `ArticleSidebarEngagement` to `ssr: false` (was hydrating eagerly on main thread → TBT 250ms). Removed `mounted` guard from `ArticleInteractionButtons` (safe: both usages are now `ssr: false`). Live test confirmed all interactions work: like, dislike, save ✅
-- **PERF-003**: Bundle analyzer investigation via `ANALYZE=true npx next build --webpack`. polyfills = 38.7 KB gzipped (core-js v3.38.1, framework-level). No Next.js config to skip. browserslist already optimal. **Won't Fix** — framework limitation.
-- **Bundle analyzer cleanup**: Removed `@next/bundle-analyzer` wrapper from `next.config.ts` — exports `nextConfig` directly now.
+- **PERF-008**: Deferred `ArticleSidebarEngagement` to `ssr: false`
+- **PERF-003**: Bundle analyzer investigation — Won't Fix (framework limitation)
+- **Bundle analyzer cleanup**: Removed `@next/bundle-analyzer` wrapper from `next.config.ts`
 
 ### Files changed (Session 63)
 **modonty:**
-- `app/articles/[slug]/components/client-lazy.tsx` — added `ArticleSidebarEngagement` as `ssr: false` dynamic import
-- `app/articles/[slug]/page.tsx` — moved `ArticleSidebarEngagement` import to `client-lazy`
-- `app/articles/[slug]/components/article-interaction-buttons.tsx` — removed `mounted` guard + Skeleton fallback
-- `next.config.ts` — removed `@next/bundle-analyzer` wrapper, exports `nextConfig` directly
+- `app/articles/[slug]/components/client-lazy.tsx`
+- `app/articles/[slug]/page.tsx`
+- `app/articles/[slug]/components/article-interaction-buttons.tsx`
+- `next.config.ts`

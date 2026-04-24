@@ -1,12 +1,20 @@
 "use server";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
 // ─── Changelog ───
 
 export async function getChangelogs() {
-  return db.changelog.findMany({ orderBy: { createdAt: "desc" } });
+  noStore();
+  const all = await db.changelog.findMany();
+  return all.sort((a, b) => {
+    const parse = (v: string) => v.replace(/^v/, "").split(".").map(Number);
+    const [a1, a2, a3] = parse(a.version);
+    const [b1, b2, b3] = parse(b.version);
+    return (b1 - a1) || (b2 - a2) || (b3 - a3);
+  });
 }
 
 export async function createChangelog(data: {
