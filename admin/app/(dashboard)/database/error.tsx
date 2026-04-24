@@ -1,19 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { PageError } from "@/components/admin/page-error";
 
-export default function DatabaseError({ reset }: { reset: () => void }) {
-  return (
-    <div className="max-w-[1200px] mx-auto py-20">
-      <div className="flex flex-col items-center text-center space-y-4">
-        <AlertCircle className="h-12 w-12 text-destructive/50" />
-        <h2 className="text-xl font-semibold">Could not load database info</h2>
-        <p className="text-muted-foreground text-sm max-w-md">
-          There might be a connection issue. Please try again.
-        </p>
-        <Button onClick={reset}>Try Again</Button>
-      </div>
-    </div>
-  );
+export default function DatabaseError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return <PageError error={error} reset={reset} title="Could not load database info" />;
 }

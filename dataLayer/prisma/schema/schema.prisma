@@ -2207,3 +2207,18 @@ model SlugChangeOtp {
   @@index([clientId, expiresAt])
   @@map("slug_change_otps")
 }
+
+model SystemError {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  message    String
+  digest     String?
+  path       String
+  method     String
+  routePath  String
+  routeType  String
+  source     String
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("system_errors")
+}

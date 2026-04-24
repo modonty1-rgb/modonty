@@ -41,6 +41,7 @@ import {
   ChevronDown,
   BookOpen,
   MessageSquare,
+  ShieldAlert,
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
       { icon: Mail, label: "Email Templates", href: "/emails" },
+      { icon: ShieldAlert, label: "Error Logs", href: "/system-errors" },
       { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },

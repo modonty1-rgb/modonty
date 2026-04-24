@@ -1,19 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { PageError } from "@/components/admin/page-error";
 
-export default function ArticlesError({ reset }: { reset: () => void }) {
-  return (
-    <div className="p-4 sm:p-6 py-20">
-      <div className="flex flex-col items-center text-center space-y-4">
-        <AlertCircle className="h-12 w-12 text-destructive/50" />
-        <h2 className="text-xl font-semibold">Something went wrong</h2>
-        <p className="text-muted-foreground text-sm max-w-md">
-          Failed to load articles. Please try again.
-        </p>
-        <Button onClick={reset}>Try Again</Button>
-      </div>
-    </div>
-  );
+export default function ArticlesError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return <PageError error={error} reset={reset} title="Could not load articles" />;
 }

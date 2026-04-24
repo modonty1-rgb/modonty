@@ -23,6 +23,7 @@ const routeLabels: Record<string, string> = {
   analytics: 'Analytics',
   settings: 'Settings',
   'export-data': 'Export Data',
+  'system-errors': 'Error Logs',
   guidelines: 'Guidelines',
   new: 'New',
   edit: 'Edit',
