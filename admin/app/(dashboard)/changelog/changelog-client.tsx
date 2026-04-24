@@ -24,6 +24,7 @@ import {
   User,
   Globe,
   GitCommit,
+  RefreshCw,
 } from "lucide-react";
 import { createAdminNote, replyToNote } from "./actions";
 
@@ -165,7 +166,11 @@ function FilterBar({ active, onChange }: { active: FilterType; onChange: (v: Fil
   );
 }
 
-function ChangelogCard({ log, isCurrent }: { log: Changelog; isCurrent: boolean }) {
+function ChangelogCard({ log, isCurrent, filter }: { log: Changelog; isCurrent: boolean; filter: FilterType }) {
+  const visibleItems = filter === "all"
+    ? (log.items as ChangelogItem[])
+    : (log.items as ChangelogItem[]).filter((i) => i.type === filter);
+
   return (
     <div className={`border rounded-lg p-5 space-y-3 transition-colors ${
       isCurrent ? "border-primary/40 bg-primary/5" : ""
@@ -185,7 +190,7 @@ function ChangelogCard({ log, isCurrent }: { log: Changelog; isCurrent: boolean 
         <span className="text-xs text-muted-foreground shrink-0">{formatDate(log.createdAt)}</span>
       </div>
       <div className="space-y-1.5">
-        {(log.items as ChangelogItem[]).map((item, i) => (
+        {visibleItems.map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <div className="mt-0.5 shrink-0"><ItemIcon type={item.type} /></div>
             <ItemBadge type={item.type} />
@@ -301,7 +306,15 @@ export function ChangelogClient({
   const [noteAuthor,  setNoteAuthor]  = useState("");
   const [noteMessage, setNoteMessage] = useState("");
   const [sending,     setSending]     = useState(false);
+  const [refreshing,  setRefreshing]  = useState(false);
   const router = useRouter();
+
+  const handleHardRefresh = async () => {
+    setRefreshing(true);
+    router.refresh();
+    await new Promise((r) => setTimeout(r, 800));
+    setRefreshing(false);
+  };
 
   const currentVersion = changelogs[0]?.version;
 
@@ -322,7 +335,19 @@ export function ChangelogClient({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-2">سجل التحديثات والملاحظات</h1>
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <h1 className="text-2xl font-semibold">سجل التحديثات والملاحظات</h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleHardRefresh}
+          disabled={refreshing}
+          className="shrink-0 gap-1.5"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+          Hard Refresh
+        </Button>
+      </div>
       <p className="text-sm text-muted-foreground mb-6">تاريخ كامل لكل إصدار — مرتّب من الأحدث للأقدم</p>
 
       <Tabs defaultValue="changelog" className="w-full">
@@ -351,6 +376,7 @@ export function ChangelogClient({
                   key={log.id}
                   log={log}
                   isCurrent={log.version === currentVersion}
+                  filter={filter}
                 />
               ))}
             </div>

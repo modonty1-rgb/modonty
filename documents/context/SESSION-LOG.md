@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-24 (Session 65 — Changelog system overhaul ✅)
+# Session Context — Last Updated: 2026-04-24 (Session 66 — Changelog filter fix ✅)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -7,9 +7,24 @@
 ---
 
 ## Current Versions
-- **admin**: v0.41.1 ✅ (pushed 2026-04-24)
+- **admin**: v0.42.0 ✅ (pushed 2026-04-24)
 - **modonty**: v1.41.1 ✅ (pushed 2026-04-21)
 - **console**: v0.2.0 ✅ (pushed 2026-04-20)
+
+---
+
+## ✅ Session 66 — PUSHED 2026-04-24 (Changelog filter fix — admin v0.42.0)
+
+### Summary
+Two fixes to changelog page:
+1. Filter now hides non-matching items WITHIN each card (not just the cards themselves)
+2. Added "Hard Refresh" button (top-right) that calls `router.refresh()` with spin animation
+
+### Files changed (Session 66)
+**admin:**
+- `app/(dashboard)/changelog/changelog-client.tsx` — filter prop on ChangelogCard + Hard Refresh button
+- `scripts/changelog-sync.ts` — added v0.42.0 entry
+- `package.json` — version bump 0.41.1 → 0.42.0
 
 ---
 
