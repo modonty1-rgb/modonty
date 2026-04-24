@@ -405,6 +405,17 @@ const CHANGELOG: Entry[] = [
       { type: "fix",     text: "إصلاح OTP التحقق عبر تيليجرام — متغيرات البيئة كانت ناقصة في Vercel" },
     ],
   },
+  {
+    version: "0.41.1",
+    releasedAt: "2026-04-24",
+    title: "تحسين نظام سجل التحديثات",
+    items: [
+      { type: "feature", text: "script موحّد يزامن قاعدتَي البيانات (local + production) في أمر واحد" },
+      { type: "improve", text: "تواريخ الإصدارات الحقيقية مأخوذة من git log — لا مزيد من تواريخ الإدخال العشوائية" },
+      { type: "improve", text: "صفحة سجل التحديثات: stats bar + فلتر حسب النوع + badge الإصدار الحالي" },
+      { type: "fix",     text: "إصلاح bug pnpm يحمّل .env قبل الـ scripts — أضيف override: true في dotenv.config" },
+    ],
+  },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
