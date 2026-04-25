@@ -2222,3 +2222,29 @@ model SystemError {
   @@index([createdAt])
   @@map("system_errors")
 }
+
+// Cache table for Google Search Console URL Inspection results.
+// Avoids hitting the 2,000/day API quota — refresh on demand or every 7 days.
+model GscUrlInspection {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  url             String   @unique
+  verdict         String? // PASS · FAIL · NEUTRAL · PARTIAL
+  coverageState   String? // e.g. "Submitted and indexed"
+  robotsTxtState  String? // ALLOWED · DISALLOWED
+  indexingState   String? // INDEXING_ALLOWED · BLOCKED_BY_META_TAG · etc.
+  pageFetchState  String? // SUCCESSFUL · SOFT_404 · BLOCKED_ROBOTS_TXT · etc.
+  userCanonical   String? // canonical declared by us
+  googleCanonical String? // canonical chosen by Google
+  mobileVerdict   String? // PASS · FAIL · NEUTRAL
+  mobileIssues    String[] // list of issue types
+  lastCrawlTime   DateTime?
+  crawledAs       String? // DESKTOP · MOBILE
+  sitemap         String[] // sitemap URLs that include this URL
+  rawJson         Json?
+  inspectedAt     DateTime @default(now())
+  expiresAt       DateTime
+
+  @@index([expiresAt])
+  @@index([verdict])
+  @@map("gsc_url_inspections")
+}

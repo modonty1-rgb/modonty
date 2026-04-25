@@ -1043,8 +1043,24 @@ export async function getEngagementQueue() {
           id: true,
           question: true,
           createdAt: true,
-          article: { select: { id: true, title: true } },
+          articleId: true,
         },
+      }).then(async (faqs) => {
+        if (faqs.length === 0) return [];
+        const articleIds = faqs.map((f) => f.articleId);
+        const articles = await db.article.findMany({
+          where: { id: { in: articleIds } },
+          select: { id: true, title: true },
+        });
+        const articleMap = new Map(articles.map((a) => [a.id, a]));
+        return faqs
+          .filter((f) => articleMap.has(f.articleId))
+          .map((f) => ({
+            id: f.id,
+            question: f.question,
+            createdAt: f.createdAt,
+            article: articleMap.get(f.articleId)!,
+          }));
       }),
     ]);
 

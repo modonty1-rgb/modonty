@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { notFound, redirect, unstable_rethrow } from "next/navigation";
+import { notFound, unstable_rethrow } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
@@ -11,7 +11,6 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import {
   getArticleSlugsForStaticParams,
   getArticleBySlugMinimal,
-  getArchivedArticleRedirectSlug,
   getArticleForMetadata,
   getArticleFaqs,
 } from "./actions";
@@ -203,10 +202,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
     const articleRaw = await getArticleBySlugMinimal(slug, userId);
     if (!articleRaw) {
-      // SEO: archived articles get 307 redirect to homepage instead of 404
-      // Redirect directly to / (not /articles which itself redirects) to avoid chain
-      const isArchived = await getArchivedArticleRedirectSlug(slug);
-      if (isArchived) redirect("/");
+      // Archived → 410 handled by proxy.ts (Next.js 16 — proxy runs before page).
+      // Reaching here means slug genuinely doesn't exist → 404.
       notFound();
     }
     const article = { ...articleRaw, ...articleDefaults };

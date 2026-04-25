@@ -116,6 +116,7 @@ const menuGroups: MenuGroup[] = [
 
 const topItems: MenuItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: Search, label: "Search Console", href: "/search-console" },
   { icon: Search, label: "SEO Overview", href: "/seo-overview" },
 ];
 

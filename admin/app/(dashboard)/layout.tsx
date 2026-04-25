@@ -33,7 +33,7 @@ export default async function DashboardLayout({
           <div className="flex-1 flex flex-col overflow-hidden">
             <Header />
             <FeedbackBanner />
-            <main className="flex-1 overflow-y-auto">{children}</main>
+            <main className="flex-1 overflow-y-auto scrollbar-thin">{children}</main>
           </div>
         </div>
       </SidebarProvider>

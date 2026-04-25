@@ -39,14 +39,39 @@
       "Bash(py -3 -m pip --version)",
       "Read(//c/Windows/**)",
       "Read(//c/Program Files/Python313/**)",
-      "Bash(\"/c/Users/w2nad/AppData/Local/Microsoft/WindowsApps/python.exe\" -m pip show code-review-graph)"
+      "Bash(\"/c/Users/w2nad/AppData/Local/Microsoft/WindowsApps/python.exe\" -m pip show code-review-graph)",
+      "Bash(curl -s http://localhost:3000/ -o /dev/null -w \"%{http_code}\")",
+      "Bash(cmd /c \"set DATABASE_URL\")",
+      "Bash(pnpm changelog:reset:local)",
+      "Bash(pnpm changelog:reset:prod)",
+      "Bash(pnpm changelog:sync)",
+      "Bash(node -e \"const fs=require\\('fs'\\); const b64=fs.readFileSync\\('modonty-a505af207db6.json'\\).toString\\('base64'\\); console.log\\(b64.substring\\(0,50\\)+'...'\\); console.log\\('LENGTH:',b64.length\\);\")",
+      "Bash(powershell -Command \"[Convert]::ToBase64String\\([IO.File]::ReadAllBytes\\('C:\\\\Users\\\\w2nad\\\\Desktop\\\\dreamToApp\\\\Claude-cowroker\\\\modonty-a505af207db6.json'\\)\\)\")",
+      "Bash(powershell -Command \"\\([Convert]::ToBase64String\\([IO.File]::ReadAllBytes\\('C:\\\\Users\\\\w2nad\\\\Desktop\\\\dreamToApp\\\\Claude-cowroker\\\\modonty-a505af207db6.json'\\)\\)\\).Length\")",
+      "Bash(nslookup -type=TXT modonty.com 8.8.8.8)",
+      "Bash(pnpm --version)",
+      "Bash(pnpm env *)",
+      "Bash(pnpm --filter @modonty/database db:generate)",
+      "Bash(npx --yes tsc --noEmit --pretty false)",
+      "Bash(grep -B 2 -A 30 \"interface Schema..SearchAnalyticsQueryRequest\\\\|SearchAnalyticsQueryRequest {\" \"c:/Users/w2nad/Desktop/dreamToApp/MODONTY/node_modules/.pnpm/googleapis@170.1.0/node_modules/googleapis/build/src/apis/webmasters/v3.d.ts\")",
+      "Bash(grep -B 2 -A 30 'Schema$ApiDataRow\\\\b\\\\|interface Schema..ApiDataRow ' c:/Users/w2nad/Desktop/dreamToApp/MODONTY/node_modules/.pnpm/googleapis@170.1.0/node_modules/googleapis/build/src/apis/webmasters/v3.d.ts)",
+      "WebFetch(domain:support.google.com)",
+      "Bash(grep -B 1 -A 12 'Schema$UrlNotification\\\\|URL_UPDATED\\\\|URL_DELETED' c:/Users/w2nad/Desktop/dreamToApp/MODONTY/node_modules/.pnpm/googleapis@170.1.0/node_modules/googleapis/build/src/apis/indexing/v3.d.ts)",
+      "Bash(git mv *)",
+      "Bash(cmd.exe //c \"move seo search-console\")",
+      "Bash(cmd.exe //c \"rename seo search-console\")",
+      "Bash(cmd.exe //c \"taskkill /F /IM node.exe\")",
+      "Bash(pnpm --filter dataLayer prisma:generate)",
+      "Bash(./node_modules/.bin/tsc --noEmit)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "\\tmp",
       "C:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\.next\\dev",
       "C:\\Users\\w2nad\\Desktop\\dreamToApp\\remotion-studio\\src",
-      "C:\\Users\\w2nad\\.claude"
+      "C:\\Users\\w2nad\\.claude",
+      "C:\\Users\\w2nad\\Desktop\\dreamToApp\\Claude-cowroker",
+      "c:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\admin\\app\\(dashboard)\\inbox\\[articleId]"
     ]
   },
   "hooks": {

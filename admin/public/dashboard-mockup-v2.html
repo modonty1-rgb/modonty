@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Modonty Admin — Dashboard v2 (Source-Grouped)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', sans-serif; background: #0a0e1a; color: #e2e8f0; }
+    .glass { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(148, 163, 184, 0.1); }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .section-gsc { border-top: 3px solid #3b82f6; }
+    .section-ga4 { border-top: 3px solid #06b6d4; }
+    .section-db { border-top: 3px solid #10b981; }
+    .sparkline { height: 40px; width: 100%; }
+    .kpi-card { transition: all 0.2s; }
+    .kpi-card:hover { transform: translateY(-2px); border-color: rgba(99, 102, 241, 0.5); }
+    .mark-source { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center font-bold">M</div>
+        <div>
+          <div class="font-bold text-base">Modonty Admin</div>
+          <div class="text-xs text-slate-400">Dashboard · لوحة التحكم</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1 bg-slate-800 rounded-lg p-1 text-sm">
+          <button class="px-3 py-1 rounded-md text-slate-400 hover:text-white">اليوم</button>
+          <button class="px-3 py-1 rounded-md bg-blue-600 text-white">7 أيام</button>
+          <button class="px-3 py-1 rounded-md text-slate-400 hover:text-white">28 يوم</button>
+          <button class="px-3 py-1 rounded-md text-slate-400 hover:text-white">90 يوم</button>
+        </div>
+        <button class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white" title="تحديث">↻</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-6 space-y-6">
+
+    <!-- ALERT BAR (cross-source urgent) -->
+    <div class="glass rounded-xl p-4 border-r-4 border-red-500 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-xl">⚠</div>
+        <div>
+          <div class="font-bold text-red-400">تنبيه: Clicks انخفضت 28% عن الأسبوع الماضي</div>
+          <div class="text-sm text-slate-400">قد يكون core update من Google — يحتاج مراجعة</div>
+        </div>
+      </div>
+      <button class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm font-bold hover:bg-red-500/30">افحص الآن ←</button>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SECTION 1: SEARCH CONSOLE -->
+    <!-- ============================================================== -->
+    <section class="glass rounded-xl section-gsc overflow-hidden">
+
+      <!-- Section Header -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-2xl">🔍</div>
+          <div>
+            <div class="font-extrabold text-lg">Search Console</div>
+            <div class="text-xs text-slate-400">كيف Google يرى موقعك · آخر تحديث منذ 12 دقيقة</div>
+          </div>
+        </div>
+        <a class="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-bold hover:bg-blue-500/20 cursor-pointer">افتح SEO الكامل ←</a>
+      </div>
+
+      <!-- KPIs Strip -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 border-b border-slate-800">
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">Clicks</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-blue-300">8,742</div>
+            <div class="text-xs text-emerald-400 font-bold">↑ 12%</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,15 15,18 30,12 45,16 60,10 75,14 90,8 100,5" stroke="#3b82f6" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">Impressions</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-blue-300">142K</div>
+            <div class="text-xs text-emerald-400 font-bold">↑ 8%</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,18 15,15 30,12 45,14 60,8 75,10 90,6 100,4" stroke="#3b82f6" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">CTR</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-blue-300">6.2<span class="text-base">%</span></div>
+            <div class="text-xs text-amber-400 font-bold">→ 0%</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,15 15,14 30,16 45,15 60,14 75,16 90,15 100,15" stroke="#3b82f6" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">متوسط الترتيب</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-blue-300">12.4</div>
+            <div class="text-xs text-emerald-400 font-bold">↑ 2.3</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,5 15,8 30,12 45,15 60,18 75,20 90,22 100,25" stroke="#3b82f6" stroke-width="2" fill="none"/></svg>
+        </div>
+      </div>
+
+      <!-- Top Lists + Action Box + Mini Activity -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 p-5">
+
+        <!-- Top Queries -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">أفضل 5 كلمات</div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="text-slate-200 truncate">دليل SEO 2026</span>
+              <span class="text-blue-400 font-bold">412</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="text-slate-200 truncate">Core Web Vitals</span>
+              <span class="text-blue-400 font-bold">287</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="text-slate-200 truncate">ما هو SERP</span>
+              <span class="text-blue-400 font-bold">156</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="text-slate-200 truncate">schema markup عربي</span>
+              <span class="text-blue-400 font-bold">98</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="text-slate-200 truncate">backlinks للمواقع العربية</span>
+              <span class="text-blue-400 font-bold">74</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items (GSC-specific) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">يحتاج اهتمامك</div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 cursor-pointer hover:bg-red-500/15">
+              <span class="text-red-400">🔴</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-red-300">صفحة لم تُفهرس بعد 24 ساعة</div>
+                <div class="text-xs text-slate-400 mt-0.5">"دليل SEO 2026" — اطلب فهرسة</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 cursor-pointer hover:bg-amber-500/15">
+              <span class="text-amber-400">⚡</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-amber-300">CTR ضعيف — صفحة "ما هو SERP"</div>
+                <div class="text-xs text-slate-400 mt-0.5">2,400 imp · 12 click فقط (0.5%)</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 cursor-pointer hover:bg-blue-500/15">
+              <span class="text-blue-400">💡</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-blue-300">فرصة محتوى جديد</div>
+                <div class="text-xs text-slate-400 mt-0.5">"schema markup عربي" — لا يوجد مقال</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Activity (GSC) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">آخر الأحداث (GSC)</div>
+          <div class="space-y-3 text-sm">
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">11:48</span>
+              <div class="flex-1">
+                <span class="text-emerald-400">✓</span>
+                <span class="text-slate-300">صفحة فُهرست</span>
+                <div class="text-xs text-slate-500 mt-0.5">/articles/seo-2026</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">10:30</span>
+              <div class="flex-1">
+                <span class="text-blue-400">📤</span>
+                <span class="text-slate-300">Sitemap submitted</span>
+                <div class="text-xs text-slate-500 mt-0.5">151 URL</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">09:05</span>
+              <div class="flex-1">
+                <span class="text-emerald-400">📈</span>
+                <span class="text-slate-300">CWV تحسّن</span>
+                <div class="text-xs text-slate-500 mt-0.5">LCP: 2.8s → 2.1s</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SECTION 2: GTM / GA4 ANALYTICS -->
+    <!-- ============================================================== -->
+    <section class="glass rounded-xl section-ga4 overflow-hidden">
+
+      <!-- Section Header -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl">📊</div>
+          <div>
+            <div class="font-extrabold text-lg flex items-center gap-2">
+              GTM / GA4 Analytics
+              <span class="flex items-center gap-1 text-xs text-emerald-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+                LIVE
+              </span>
+            </div>
+            <div class="text-xs text-slate-400">تفاعل المستخدمين الفعلي · آخر تحديث منذ 32 ثانية</div>
+          </div>
+        </div>
+        <a class="px-4 py-2 bg-cyan-500/10 text-cyan-400 rounded-lg text-sm font-bold hover:bg-cyan-500/20 cursor-pointer">افتح Analytics ←</a>
+      </div>
+
+      <!-- KPIs Strip -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 border-b border-slate-800">
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-cyan-500/20 cursor-pointer">
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-xs text-slate-400">زائر نشط الآن</div>
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></div>
+          </div>
+          <div class="text-2xl font-extrabold text-cyan-300">47</div>
+          <div class="mt-2 text-xs text-slate-400">14 موبايل · 33 ديسك توب</div>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">Sessions اليوم</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-cyan-300">1,847</div>
+            <div class="text-xs text-emerald-400 font-bold">↑ 18%</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,20 15,18 30,15 45,12 60,10 75,8 90,6 100,4" stroke="#06b6d4" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">Bounce Rate</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-cyan-300">42<span class="text-base">%</span></div>
+            <div class="text-xs text-emerald-400 font-bold">↓ 3%</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,8 15,10 30,12 45,15 60,14 75,18 90,20 100,22" stroke="#06b6d4" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">متوسط الجلسة</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-cyan-300">3:42</div>
+            <div class="text-xs text-emerald-400 font-bold">↑ 22s</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,18 15,16 30,14 45,12 60,10 75,8 90,6 100,4" stroke="#06b6d4" stroke-width="2" fill="none"/></svg>
+        </div>
+      </div>
+
+      <!-- Top Sources + Action Box + Mini Activity -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 p-5">
+
+        <!-- Top Traffic Sources -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">مصادر الزوار</div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="flex items-center gap-2"><span class="text-blue-400">🔍</span><span>Google Organic</span></span>
+              <span class="text-cyan-400 font-bold">68%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="flex items-center gap-2"><span class="text-purple-400">↗</span><span>Direct</span></span>
+              <span class="text-cyan-400 font-bold">14%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="flex items-center gap-2"><span class="text-sky-400">𝕏</span><span>Twitter</span></span>
+              <span class="text-cyan-400 font-bold">9%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="flex items-center gap-2"><span class="text-blue-500">f</span><span>Facebook</span></span>
+              <span class="text-cyan-400 font-bold">6%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <span class="flex items-center gap-2"><span class="text-pink-400">📷</span><span>Instagram</span></span>
+              <span class="text-cyan-400 font-bold">3%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items (GA4-specific) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">يحتاج اهتمامك</div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 cursor-pointer">
+              <span class="text-emerald-400">🔥</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-emerald-300">قفزة في الزوار من Twitter</div>
+                <div class="text-xs text-slate-400 mt-0.5">+150 زائر في 30 دقيقة — مقال CWV</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 cursor-pointer">
+              <span class="text-amber-400">⚠</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-amber-300">Bounce rate عالي على صفحة</div>
+                <div class="text-xs text-slate-400 mt-0.5">"backlinks دليل" — 89% bounce</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 cursor-pointer">
+              <span class="text-cyan-400">📍</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-cyan-300">دولة جديدة في الزوار</div>
+                <div class="text-xs text-slate-400 mt-0.5">المغرب — 42 زائر اليوم (جديد)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Activity (GA4 real-time) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">حي الآن</div>
+          <div class="space-y-3 text-sm">
+            <div class="p-2 rounded bg-slate-800/30">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-300">/articles/seo-2026</span>
+                <span class="text-cyan-400 font-bold">12 نشط</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">من Twitter</div>
+            </div>
+            <div class="p-2 rounded bg-slate-800/30">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-300">/articles/cwv</span>
+                <span class="text-cyan-400 font-bold">8 نشط</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">من Google</div>
+            </div>
+            <div class="p-2 rounded bg-slate-800/30">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-300">/clients/balsam</span>
+                <span class="text-cyan-400 font-bold">5 نشط</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">Direct</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SECTION 3: DATABASE / CONTENT -->
+    <!-- ============================================================== -->
+    <section class="glass rounded-xl section-db overflow-hidden">
+
+      <!-- Section Header -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-2xl">💾</div>
+          <div>
+            <div class="font-extrabold text-lg">Content & Operations</div>
+            <div class="text-xs text-slate-400">المحتوى · المشتركون · العملاء · live</div>
+          </div>
+        </div>
+        <a class="px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-bold hover:bg-emerald-500/20 cursor-pointer">افتح المحتوى ←</a>
+      </div>
+
+      <!-- KPIs Strip -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 border-b border-slate-800">
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">مقالات الشهر</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-emerald-300">12<span class="text-base text-slate-500">/12</span></div>
+            <div class="text-xs text-emerald-400 font-bold">100%</div>
+          </div>
+          <div class="mt-2 h-1.5 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width: 100%"></div></div>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">المشتركون</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-emerald-300">2,847</div>
+            <div class="text-xs text-emerald-400 font-bold">+24</div>
+          </div>
+          <svg class="sparkline mt-2" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,25 15,22 30,20 45,15 60,18 75,12 90,8 100,6" stroke="#10b981" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">عملاء نشطون</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-emerald-300">16</div>
+            <div class="text-xs text-emerald-400 font-bold">+1</div>
+          </div>
+          <div class="mt-2 text-xs text-slate-400">14 PRO · 2 BASIC</div>
+        </div>
+        <div class="kpi-card p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 cursor-pointer">
+          <div class="text-xs text-slate-400 mb-1">في الانتظار</div>
+          <div class="flex items-end justify-between">
+            <div class="text-2xl font-extrabold text-emerald-300">8</div>
+            <div class="text-xs text-amber-400 font-bold">!</div>
+          </div>
+          <div class="mt-2 text-xs text-slate-400">5 FAQs · 2 رسائل · 1 تعليق</div>
+        </div>
+      </div>
+
+      <!-- Top Articles + Action Box + Mini Activity -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 p-5">
+
+        <!-- Top Articles -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">أعلى المقالات تفاعلاً</div>
+          <div class="space-y-2">
+            <div class="p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-200 truncate flex-1 ml-2">دليل SEO الكامل 2026</span>
+                <span class="text-emerald-400 font-bold text-xs">2,847 👁</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">142 ❤ · 38 🔖 · 12 💬</div>
+            </div>
+            <div class="p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-200 truncate flex-1 ml-2">Core Web Vitals دليل</span>
+                <span class="text-emerald-400 font-bold text-xs">1,624 👁</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">98 ❤ · 24 🔖 · 8 💬</div>
+            </div>
+            <div class="p-2 rounded hover:bg-slate-800/50 cursor-pointer">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-200 truncate flex-1 ml-2">ما هي SERP</span>
+                <span class="text-emerald-400 font-bold text-xs">1,012 👁</span>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">61 ❤ · 18 🔖 · 4 💬</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items (DB-specific) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">يحتاج اهتمامك</div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 cursor-pointer">
+              <span class="text-amber-400">❓</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-amber-300">5 أسئلة FAQ تنتظر الرد</div>
+                <div class="text-xs text-slate-400 mt-0.5">أقدمها من 3 أيام</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 cursor-pointer">
+              <span class="text-blue-400">✉</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-blue-300">2 رسالة جديدة في الوارد</div>
+                <div class="text-xs text-slate-400 mt-0.5">من العملاء — لم تُقرأ</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 cursor-pointer">
+              <span class="text-emerald-400">💬</span>
+              <div class="flex-1 text-sm">
+                <div class="font-bold text-emerald-300">تعليق ينتظر الموافقة</div>
+                <div class="text-xs text-slate-400 mt-0.5">على "ما هو SERP"</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Activity (DB) -->
+        <div>
+          <div class="text-xs text-slate-400 font-bold mb-3 uppercase tracking-wider">آخر الأحداث</div>
+          <div class="space-y-3 text-sm">
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">14:32</span>
+              <div class="flex-1">
+                <span class="text-emerald-400">✓</span>
+                <span class="text-slate-300">مقال نُشر</span>
+                <div class="text-xs text-slate-500 mt-0.5">"كيف تبني استراتيجية SEO"</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">10:22</span>
+              <div class="flex-1">
+                <span class="text-pink-400">✉</span>
+                <span class="text-slate-300">12 اشتراك جديد</span>
+                <div class="text-xs text-slate-500 mt-0.5">من inline form</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-slate-500 text-xs w-12 mt-0.5">08:15</span>
+              <div class="flex-1">
+                <span class="text-blue-400">👤</span>
+                <span class="text-slate-300">عميل جديد</span>
+                <div class="text-xs text-slate-500 mt-0.5">عيادة الأمل · PRO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- ATOMIC ARTICLE PAGE PREVIEW (THE GOLDEN IDEA) -->
+    <!-- ============================================================== -->
+    <section class="mt-10">
+      <div class="text-center mb-4">
+        <div class="text-xs text-amber-400 font-bold uppercase tracking-wider">🎯 الفكرة الذهبية</div>
+        <div class="text-lg font-bold mt-1">صفحة المقال (atomic) — كل المصادر في مكان واحد</div>
+        <div class="text-sm text-slate-400 mt-1">/articles/[id]</div>
+      </div>
+
+      <div class="glass rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-800">
+          <div>
+            <div class="text-xs text-slate-500">/articles/seo-2026</div>
+            <div class="text-xl font-bold mt-1">دليل SEO الكامل لعام 2026</div>
+            <div class="text-xs text-slate-400 mt-1">سارة العتيبي · فئة: تسويق · نُشر منذ 6 أيام</div>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">PUBLISHED</span>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <div class="mark-source bg-emerald-500/30 text-emerald-300 inline-block mb-2">DB</div>
+            <div class="text-3xl font-extrabold text-emerald-300">2,847</div>
+            <div class="text-xs text-slate-400 mt-1">مشاهدة</div>
+            <div class="text-xs text-slate-500 mt-2">142 ❤ · 38 🔖 · 12 💬</div>
+          </div>
+          <div class="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+            <div class="mark-source bg-blue-500/30 text-blue-300 inline-block mb-2">GSC</div>
+            <div class="text-3xl font-extrabold text-blue-300">1,124</div>
+            <div class="text-xs text-slate-400 mt-1">click من Google</div>
+            <div class="text-xs text-slate-500 mt-2">8,420 imp · CTR 13% · pos 4.2</div>
+          </div>
+          <div class="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+            <div class="mark-source bg-cyan-500/30 text-cyan-300 inline-block mb-2">GA4</div>
+            <div class="text-3xl font-extrabold text-cyan-300">3:42</div>
+            <div class="text-xs text-slate-400 mt-1">متوسط القراءة</div>
+            <div class="text-xs text-slate-500 mt-2">bounce 32% · 2.4 صفحة/جلسة</div>
+          </div>
+          <div class="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <div class="mark-source bg-amber-500/30 text-amber-300 inline-block mb-2">PageSpeed</div>
+            <div class="text-3xl font-extrabold text-amber-300">94</div>
+            <div class="text-xs text-slate-400 mt-1">أداء (موبايل)</div>
+            <div class="text-xs text-slate-500 mt-2">LCP 2.1s · CLS 0.05 · INP 120ms</div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 rounded-lg bg-gradient-to-r from-blue-500/10 to-emerald-500/10 border border-slate-700/50">
+          <div class="text-sm text-slate-300 flex items-start gap-2">
+            <span>💡</span>
+            <div>
+              <strong class="text-amber-400">قبل:</strong> الأدمن يفتح GA4 + GSC + PageSpeed + Admin = 4 لوحات لمعرفة أداء مقال واحد ·
+              <br>
+              <strong class="text-emerald-400">بعد:</strong> كل شيء هنا في صفحة واحدة. صفحة المقال نفسها = لوحة تحكم كاملة لها.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="text-center text-slate-500 text-xs mt-10 pb-8">
+      Mockup v2 — Source-Grouped Architecture · ٣ أقسام مستقلة + Atomic Article Page<br>
+      التصميم النهائي يحتاج موافقتك قبل البدء بالـ code
+    </div>
+
+  </main>
+
+</body>
+</html>
