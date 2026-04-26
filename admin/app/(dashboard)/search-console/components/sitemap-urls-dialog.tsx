@@ -107,7 +107,7 @@ export function SitemapUrlsDialog({ open, onOpenChange, sitemapUrl }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[85vh] flex flex-col p-0 gap-0">
+      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-6 pt-6 pb-3 border-b">
           <DialogTitle className="flex items-center gap-2 text-lg">
             <FileText className="h-5 w-5 text-blue-500" />

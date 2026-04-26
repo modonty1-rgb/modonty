@@ -7,16 +7,23 @@ import { Loader2, Search, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { bulkInspectAction } from "../actions/seo-actions";
 
-export function InspectBulkButton({ totalArticles }: { totalArticles: number }) {
+interface Props {
+  /** URLs to inspect — coverage table URLs ∪ all PUBLISHED articles (deduped). */
+  urls: string[];
+}
+
+export function InspectBulkButton({ urls }: Props) {
   const { toast } = useToast();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [confirm, setConfirm] = useState(false);
   const [forceRefresh, setForceRefresh] = useState(false);
 
+  const total = urls.length;
+
   const run = () => {
     startTransition(async () => {
-      const res = await bulkInspectAction({ forceRefresh });
+      const res = await bulkInspectAction({ urls, forceRefresh });
       setConfirm(false);
       if (res.ok) {
         toast({
@@ -39,11 +46,11 @@ export function InspectBulkButton({ totalArticles }: { totalArticles: number }) 
       <button
         type="button"
         onClick={() => setConfirm(true)}
-        disabled={pending}
+        disabled={pending || total === 0}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 text-xs font-medium disabled:opacity-50 transition-colors"
       >
         {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
-        Inspect all PUBLISHED ({totalArticles})
+        Inspect all URLs ({total})
       </button>
 
       {confirm && (
@@ -54,8 +61,10 @@ export function InspectBulkButton({ totalArticles }: { totalArticles: number }) 
               <div className="flex-1">
                 <h3 className="font-bold">Bulk inspect URLs</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Inspect {totalArticles} PUBLISHED article{totalArticles === 1 ? "" : "s"}.
-                  Each call counts toward the 2,000/day URL Inspection quota. Cached results (&lt; 7 days) are reused.
+                  Inspect <strong>{total}</strong> URL{total === 1 ? "" : "s"} — all rows in the coverage table plus every PUBLISHED article (deduplicated).
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Each call counts toward the 2,000/day URL Inspection quota. Cached results (&lt; 7 days) are reused unless force refresh is checked.
                 </p>
                 <label className="flex items-center gap-2 mt-3 text-xs">
                   <input
@@ -80,7 +89,7 @@ export function InspectBulkButton({ totalArticles }: { totalArticles: number }) 
               <button
                 type="button"
                 onClick={run}
-                disabled={pending}
+                disabled={pending || total === 0}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}

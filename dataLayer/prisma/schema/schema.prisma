@@ -2248,3 +2248,22 @@ model GscUrlInspection {
   @@index([verdict])
   @@map("gsc_url_inspections")
 }
+
+/// Tracks manual GSC requests (Removal tool + URL Inspection "Request Indexing").
+/// Two-step state:
+/// `openedAt` = user clicked the deep-link button (intent only — Google may not have received it).
+/// `doneAt`   = user explicitly clicked "Mark done" after submitting in GSC (confirmed action).
+/// One row per (url, type) — same URL can have both REMOVAL and INDEXING requests at different times.
+model GscManualRequest {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  url            String
+  type           String    @default("REMOVAL") // "REMOVAL" | "INDEXING"
+  openedAt       DateTime  @default(now())
+  openedByUserId String?
+  doneAt         DateTime?
+  doneByUserId   String?
+
+  @@unique([url, type])
+  @@index([type, doneAt])
+  @@map("gsc_removal_requests")
+}

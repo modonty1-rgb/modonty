@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-26 (Session 68 — /search-console: SC-UI-01 sitemap drill-down · SC-UI-02 filter pills · OBS-052 robots path tester · OBS-053 image sitemap card · OBS-054 GSC verdict column · OBS-055 one-click submit image sitemap)
+> **آخر تحديث:** 2026-04-26 (Session 69 — admin v0.43.0 ready: backup done, changelog added local+prod, awaiting user push confirmation. · OBS-109)
 > **🎯 Master plan:** [Perfect-SEO-Plan.md](Perfect-SEO-Plan.md) — 108 task across 13 phases · ~33 يوم عمل · يستبدل **الجزء الميكانيكي** من SEO Specialist (95%) · لا يستبدل الـ Strategy/Content/Backlinks (الـ 80% من النجاح الفعلي) · راجع قسم "Reality Check" في الملف للحقيقة الكاملة
 > **خطة Dashboard rebuild:** [Dashboard-Action-Plan.md](Dashboard-Action-Plan.md) · [Mockup v2](../../admin/public/dashboard-mockup-v2.html)
 > **خطة URL Lifecycle & Coverage:** [URL-Lifecycle-Plan.md](URL-Lifecycle-Plan.md) — 22 task across 3 phases
@@ -22,6 +22,24 @@
   - `admin/app/(dashboard)/search-console/actions/sitemap-urls-action.ts` — auth-checked server action
   - `admin/app/(dashboard)/search-console/components/sitemap-urls-dialog.tsx` — searchable dialog with type filter chips (Articles/Categories/Tags/Authors/Clients/Industries/Static/Home/Other), per-row last-modified, opens in new tab on click
 - [x] Wired into `sitemap-manager.tsx` — count is now a blue clickable button with hover state
+
+### SC-UI-04 ✅ DONE (2026-04-26) — Indexing API removal: bug fix + dedup via getMetadata (no DB)
+- [x] **Bug fixed:** `notifyDeleted` was sending `type: "URL_REMOVED"` but Google's Indexing API v3 enum is `URL_UPDATED | URL_DELETED`. Calls were being silently rejected (UI clicks never reached Google). Confirmed via `urlNotifications.getMetadata` — target URL still showed 404 after click.
+- [x] **Source for the fix:** Google Indexing API v3 Discovery Document (`https://indexing.googleapis.com/$discovery/rest?version=v3`) + official "Using the API" page.
+- [x] **Dedup design — no DB needed:** Google's `urlNotifications.getMetadata` is the source of truth for "already sent". Uses separate read quota.
+  - `lib/gsc/indexing.ts` → new `getRemovalMetadata(url)` + `getRemovalMetadataBulk(urls)` helpers
+  - `notifyDeleted(url)` does pre-check via getMetadata; if `latestRemove` exists → returns `{ ok: true, alreadySent: true }` without consuming write quota
+  - `page.tsx` fetches metadata for all 11 URLs in parallel (Promise.allSettled)
+  - `RemovalRow` shows green "Sent · DD MMM YYYY" badge instead of the button when already sent (full transparency — row stays visible, opacity 60%)
+  - Card header shows split count: "X pending" + "Y already sent" (emerald badge)
+  - Toast on click distinguishes: "Sent to Google" vs "Already sent earlier" (no quota used)
+- [x] **No DB schema change.** Zero drift risk. Google IS the audit log.
+
+### SC-UI-03 ✅ DONE (2026-04-26) — Bulk "Remove X URLs from Google" button removed from Removal Queue
+- [x] **Why:** User decision — removals are sensitive (irreversible, consumes Indexing API quota). Per-URL only ensures conscious confirmation per URL.
+- [x] **What removed:** `<SeoBulkActions />` usage from `admin/app/(dashboard)/search-console/page.tsx`. Bulk button no longer renders above the Removal Queue table.
+- [x] **Kept intact (per user request "الباقي خليه زي ما هو"):** `seo-bulk-actions.tsx` component file, `notifyGoogleDeletedBulkAction` server action, `notifyDeletedBatch` lib function — all preserved as orphan/utility code in case bulk path is needed later from elsewhere.
+- [x] **Per-URL flow remains:** "Notify deleted" button on each row in the Removal Queue table (via `SeoRowAction`) — one URL at a time.
 
 ### SC-UI-02 ✅ DONE + REVISED (2026-04-26) — Coverage & Tech Health filter pills inside table card
 - [x] **First attempt (reverted):** clicked stats scroll to table. User feedback: "bad UX — يضيّعني في الصفحة"

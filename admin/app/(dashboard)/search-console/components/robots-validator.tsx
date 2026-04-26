@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Bot, Loader2, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import {
+  Bot,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +16,12 @@ import { useToast } from "@/hooks/use-toast";
 
 import {
   fetchRobotsTxtAction,
-  checkRobotsPathAction,
+  runRobotsAuditAction,
+  type AuditResult,
 } from "../actions/robots-actions";
+
+import { RobotsAuditDialog } from "./robots-audit-dialog";
+import { RobotsTxtDialog } from "./robots-txt-dialog";
 
 interface FetchedRobots {
   url: string;
@@ -19,24 +30,54 @@ interface FetchedRobots {
   fetchedAt: string;
 }
 
-interface CheckResult {
-  allowed: boolean;
-  matchedRule?: string;
-  matchedUserAgent?: string;
+interface AuditState {
+  results: AuditResult[];
+  passed: number;
+  failed: number;
+  fetchedAt: string;
 }
-
-const USER_AGENTS = ["Googlebot", "Googlebot-Image", "Googlebot-News", "Bingbot", "*"];
 
 export function RobotsValidator() {
   const { toast } = useToast();
   const [robots, setRobots] = useState<FetchedRobots | null>(null);
-  const [path, setPath] = useState("/articles/example");
-  const [userAgent, setUserAgent] = useState("Googlebot");
-  const [result, setResult] = useState<CheckResult | null>(null);
+  const [audit, setAudit] = useState<AuditState | null>(null);
   const [fetching, startFetch] = useTransition();
-  const [checking, startCheck] = useTransition();
+  const [auditing, startAudit] = useTransition();
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [robotsOpen, setRobotsOpen] = useState(false);
 
-  const fetchRobots = () => {
+  const runAudit = () => {
+    setAuditOpen(true);
+    startAudit(async () => {
+      const res = await runRobotsAuditAction();
+      if (res.ok && res.results) {
+        setAudit({
+          results: res.results,
+          passed: res.passed ?? 0,
+          failed: res.failed ?? 0,
+          fetchedAt: res.fetchedAt ?? new Date().toISOString(),
+        });
+        if ((res.failed ?? 0) === 0) {
+          toast({
+            title: "Audit passed",
+            description: `All ${res.passed} checks ok — robots.txt is configured correctly.`,
+          });
+        } else {
+          toast({
+            title: `${res.failed} issue${res.failed === 1 ? "" : "s"} found`,
+            description: "Review the failed checks in the dialog.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        setAuditOpen(false);
+        toast({ title: "Audit failed", description: res.error, variant: "destructive" });
+      }
+    });
+  };
+
+  const viewRobots = () => {
+    setRobotsOpen(true);
     startFetch(async () => {
       const res = await fetchRobotsTxtAction();
       if (res.ok && res.content !== undefined) {
@@ -47,24 +88,8 @@ export function RobotsValidator() {
           fetchedAt: res.fetchedAt ?? new Date().toISOString(),
         });
       } else {
+        setRobotsOpen(false);
         toast({ title: "Fetch failed", description: res.error, variant: "destructive" });
-      }
-    });
-  };
-
-  const runCheck = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!path.trim()) return;
-    startCheck(async () => {
-      const res = await checkRobotsPathAction(path, userAgent);
-      if (res.ok) {
-        setResult({
-          allowed: res.allowed ?? true,
-          matchedRule: res.matchedRule,
-          matchedUserAgent: res.matchedUserAgent,
-        });
-      } else {
-        toast({ title: "Check failed", description: res.error, variant: "destructive" });
       }
     });
   };
@@ -76,124 +101,79 @@ export function RobotsValidator() {
           <div className="flex items-center gap-2">
             <Bot className="h-4 w-4 text-violet-500" />
             <CardTitle className="text-base">Robots.txt</CardTitle>
-            {robots && (
+            {audit && (
               <Badge
-                variant="secondary"
-                className={`text-xs ${robots.status === 200 ? "bg-emerald-500/15 text-emerald-600" : "bg-red-500/15 text-red-600"}`}
-              >
-                {robots.status}
-              </Badge>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={fetchRobots}
-            disabled={fetching}
-            className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-md border hover:bg-muted disabled:opacity-50"
-          >
-            {fetching ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
-            {robots ? "Re-fetch" : "View robots.txt"}
-          </button>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Test a path — always visible (action self-fetches robots.txt) */}
-        <form onSubmit={runCheck} className="space-y-3">
-          <div className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">
-            Test a path
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              value={path}
-              onChange={(e) => setPath(e.target.value)}
-              placeholder="/articles/example"
-              disabled={checking}
-              className="flex-1 px-3 py-2 rounded-md border bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-            />
-            <select
-              value={userAgent}
-              onChange={(e) => setUserAgent(e.target.value)}
-              disabled={checking}
-              className="px-3 py-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-            >
-              {USER_AGENTS.map((ua) => (
-                <option key={ua} value={ua}>
-                  {ua}
-                </option>
-              ))}
-            </select>
-            <button
-              type="submit"
-              disabled={checking || !path.trim()}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-md bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium disabled:opacity-50"
-            >
-              {checking && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Check
-            </button>
-          </div>
-
-          {result && (
-            <div
-              className={`p-3 rounded-md border ${
-                result.allowed
-                  ? "bg-emerald-500/10 border-emerald-500/20"
-                  : "bg-red-500/10 border-red-500/20"
-              }`}
-            >
-              <div
-                className={`flex items-center gap-2 font-bold text-sm ${
-                  result.allowed ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                className={`text-xs ${
+                  audit.failed === 0
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
+                    : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/20"
                 }`}
               >
-                {result.allowed ? (
+                {audit.failed === 0 ? (
                   <>
-                    <CheckCircle2 className="h-4 w-4" />
-                    ALLOWED
+                    <CheckCircle2 className="h-3 w-3 me-1" />
+                    {audit.passed}/{audit.results.length} pass
                   </>
                 ) : (
                   <>
-                    <XCircle className="h-4 w-4" />
-                    BLOCKED
+                    <XCircle className="h-3 w-3 me-1" />
+                    {audit.failed} failed
                   </>
                 )}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
-                {result.matchedUserAgent && (
-                  <div>
-                    <strong>User-agent group:</strong> <span className="font-mono">{result.matchedUserAgent}</span>
-                  </div>
-                )}
-                {result.matchedRule && (
-                  <div>
-                    <strong>Matched rule:</strong> <span className="font-mono">{result.matchedRule}</span>
-                  </div>
-                )}
-                {!result.matchedRule && (
-                  <div>No specific rule matched — default behavior applies.</div>
-                )}
-              </div>
-            </div>
-          )}
-        </form>
-
-        {/* View raw robots.txt — optional, on demand */}
-        {robots && (
-          <div className="space-y-2 border-t pt-4">
-            <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
-              <span>URL:</span>
-              <a href={robots.url} target="_blank" rel="noopener noreferrer" className="font-mono hover:text-foreground">
-                {robots.url}
-              </a>
-              <span>·</span>
-              <span>fetched {new Date(robots.fetchedAt).toLocaleTimeString()}</span>
-            </div>
-            <pre className="p-3 rounded-md border bg-muted/30 text-xs font-mono overflow-x-auto max-h-64 overflow-y-auto leading-relaxed">
-              {robots.content || "(empty)"}
-            </pre>
+              </Badge>
+            )}
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={runAudit}
+              disabled={auditing}
+              className="text-xs inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-violet-600 hover:bg-violet-700 text-white font-medium disabled:opacity-50"
+            >
+              {auditing ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <ShieldCheck className="h-3 w-3" />
+              )}
+              {audit ? "Re-run audit" : "Run robots audit"}
+            </button>
+            <button
+              type="button"
+              onClick={viewRobots}
+              disabled={fetching}
+              className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-md border hover:bg-muted disabled:opacity-50"
+            >
+              {fetching ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+              View robots.txt
+            </button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          Click <strong>Run robots audit</strong> to test 19 critical paths automatically — public pages, admin areas, AI search bots, and AI training bots. Click{" "}
+          <strong>View robots.txt</strong> to see the live file content.
+        </p>
+        {audit && (
+          <p className="text-xs text-muted-foreground mt-2 italic">
+            Last audit: {audit.passed}/{audit.results.length} passed at{" "}
+            {new Date(audit.fetchedAt).toLocaleTimeString("en-US")}.
+          </p>
         )}
       </CardContent>
+
+      <RobotsAuditDialog
+        open={auditOpen}
+        onOpenChange={setAuditOpen}
+        loading={auditing}
+        audit={audit}
+      />
+      <RobotsTxtDialog
+        open={robotsOpen}
+        onOpenChange={setRobotsOpen}
+        loading={fetching}
+        robots={robots}
+      />
     </Card>
   );
 }

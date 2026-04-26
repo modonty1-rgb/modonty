@@ -11,24 +11,13 @@ import {
   requestIndexingBatch,
   type IndexingResult,
 } from "@/lib/gsc/indexing";
-import {
-  inspectWithCache,
-  refreshInspection,
-  bulkInspect,
-  type InspectionRecord,
-} from "@/lib/gsc/inspection-cache";
+import { bulkInspect } from "@/lib/gsc/inspection-cache";
 import { SITE_BASE_URL } from "@/lib/gsc/client";
 
 interface ActionResponse {
   ok: boolean;
   result?: IndexingResult;
   results?: IndexingResult[];
-  error?: string;
-}
-
-interface InspectionResponse {
-  ok: boolean;
-  record?: InspectionRecord;
   error?: string;
 }
 
@@ -91,23 +80,6 @@ export async function requestIndexingBulkAction(urls: string[]): Promise<ActionR
     return { ok: true, results };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Bulk indexing failed" };
-  }
-}
-
-/** Inspect a single URL — uses cache if fresh; force refresh on demand. */
-export async function inspectUrlAction(
-  url: string,
-  options: { forceRefresh?: boolean } = {},
-): Promise<InspectionResponse> {
-  try {
-    await requireAuth();
-    const record = options.forceRefresh
-      ? await refreshInspection(url)
-      : await inspectWithCache(url);
-    revalidateTag("gsc-dashboard", "max");
-    return { ok: true, record };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Inspection failed" };
   }
 }
 

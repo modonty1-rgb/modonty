@@ -20,16 +20,20 @@ import { Badge } from "@/components/ui/badge";
 
 import { db } from "@/lib/db";
 import { getCachedTopPages } from "@/lib/gsc/cached";
-import { analyzeGscCoverage } from "@/lib/gsc/coverage";
+import { analyzeGscCoverage, getAllPublishedArticles } from "@/lib/gsc/coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
+import { SITE_BASE_URL } from "@/lib/gsc/client";
+import {
+  getRemovalTrackStates,
+  type RemovalTrackState,
+} from "./actions/removal-tracking-actions";
 
 import { SeoRowAction } from "./components/seo-row-action";
-import { SeoBulkActions } from "./components/seo-bulk-actions";
 import { InspectBulkButton } from "./components/inspect-bulk-button";
-import { InspectRowButton } from "./components/inspect-row-button";
 import { SitemapManager } from "./components/sitemap-manager";
 import { ImageSitemapCard } from "./components/image-sitemap-card";
 import { RobotsValidator } from "./components/robots-validator";
+import { PendingIndexingCard } from "./components/pending-indexing-card";
 import { DataSourcesNote } from "./components/data-sources-note";
 
 import type { DbStatus, EnrichedPage, PathType } from "@/lib/gsc/coverage";
@@ -76,13 +80,24 @@ export default async function SearchConsolePage({
       ? filterParam
       : "all";
 
-  const [topPages, publishedCount] = await Promise.all([
+  const [topPages, publishedArticles] = await Promise.all([
     getCachedTopPages(28, 100).catch(() => []),
-    db.article.count({ where: { status: "PUBLISHED" } }),
+    getAllPublishedArticles(),
   ]);
 
-  const { pages, summary } = await analyzeGscCoverage(topPages);
+  const { pages, summary, pendingIndexing } = await analyzeGscCoverage(
+    topPages,
+    publishedArticles,
+  );
   const inspectionMap = await getCachedInspectionsByUrls(pages.map((p) => p.url));
+
+  // Union of GSC coverage URLs + all PUBLISHED articles (deduped)
+  const inspectableUrls = Array.from(
+    new Set([
+      ...pages.map((p) => p.url),
+      ...publishedArticles.map((a) => `${SITE_BASE_URL}/articles/${a.slug}`),
+    ]),
+  );
 
   // Tech health summary
   let canonicalIssues = 0;
@@ -121,32 +136,14 @@ export default async function SearchConsolePage({
     return b.clicks - a.clicks;
   });
 
-  const visible = sorted.filter((page) => {
-    if (filter === "all") return true;
-    if (filter === "live") return page.dbStatus === "PUBLISHED";
-    if (filter === "archived") return page.dbStatus === "ARCHIVED";
-    if (filter === "missing") return page.dbStatus === "missing";
-    const i = inspectionMap.get(page.url);
-    if (!i) return false;
-    if (filter === "canonical") {
-      return (
-        !!i.userCanonical &&
-        !!i.googleCanonical &&
-        i.userCanonical !== i.googleCanonical
-      );
-    }
-    if (filter === "robots") return i.robotsTxtState === "DISALLOWED";
-    if (filter === "mobile") return i.mobileVerdict === "FAIL";
-    if (filter === "soft404") return i.pageFetchState === "SOFT_404";
-    return true;
-  });
+  // Removal Queue = only URLs that need to be removed (missing in DB or archived)
+  // Sort by impressions DESC — highest reach first (most urgent to remove)
+  const visible = sorted
+    .filter((page) => page.dbStatus === "missing" || page.dbStatus === "ARCHIVED")
+    .sort((a, b) => b.impressions - a.impressions);
 
-  const missingUrls = pages
-    .filter((p) => p.dbStatus === "missing" || p.dbStatus === "ARCHIVED")
-    .map((p) => p.url);
-  const unindexedUrls = pages
-    .filter((p) => p.dbStatus === "PUBLISHED" && p.impressions === 0)
-    .map((p) => p.url);
+  // Removal tracking: opened (intent) + done (confirmed). Stored in our DB since Google doesn't expose Removals data.
+  const removalTrackStates = await getRemovalTrackStates(visible.map((p) => p.url));
 
   return (
     <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-6">
@@ -162,7 +159,7 @@ export default async function SearchConsolePage({
             </p>
           </div>
         </div>
-        <InspectBulkButton totalArticles={publishedCount} />
+        <InspectBulkButton urls={inspectableUrls} />
       </div>
 
       <Card>
@@ -249,87 +246,78 @@ export default async function SearchConsolePage({
         </CardContent>
       </Card>
 
+      <PendingIndexingCard pendingIndexing={pendingIndexing} />
+
       <SitemapManager />
       <ImageSitemapCard />
       <RobotsValidator />
 
       <Card>
-        <CardHeader className="pb-3 space-y-3">
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-base">Indexed pages — coverage + tech health</CardTitle>
-              <Badge variant="secondary" className="text-xs">
-                last 28 days · top 100
-              </Badge>
+            <div className="flex items-center gap-2 flex-wrap">
+              <CardTitle className="text-base">Removal Queue</CardTitle>
+              {(() => {
+                const doneCount = visible.filter((p) => removalTrackStates.get(p.url)?.doneAt).length;
+                const openedCount = visible.filter(
+                  (p) => removalTrackStates.get(p.url)?.openedAt && !removalTrackStates.get(p.url)?.doneAt,
+                ).length;
+                const pendingCount = visible.length - doneCount - openedCount;
+                return (
+                  <>
+                    {pendingCount > 0 && (
+                      <Badge variant="secondary" className="text-xs">
+                        {pendingCount} pending
+                      </Badge>
+                    )}
+                    {openedCount > 0 && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                      >
+                        {openedCount} awaiting submit
+                      </Badge>
+                    )}
+                    {doneCount > 0 && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                      >
+                        {doneCount} done
+                      </Badge>
+                    )}
+                  </>
+                );
+              })()}
             </div>
             <p className="text-xs text-muted-foreground">
-              Sorted by status urgency, then by clicks
+              Sorted by reach. Click &ldquo;Remove in GSC&rdquo;, submit in Google, then come back and click &ldquo;Mark done&rdquo;.
             </p>
-          </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground uppercase tracking-wider me-1">
-              <Filter className="h-3 w-3" />
-              Filter
-            </span>
-            <FilterPill href={filterHref(filter, "all")} active={filter === "all"} count={sorted.length}>
-              All
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "live")} active={filter === "live"} count={summary.live} tone="emerald">
-              Live
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "archived")} active={filter === "archived"} count={summary.archived} tone="amber">
-              Archived
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "missing")} active={filter === "missing"} count={summary.missing} tone="red">
-              Missing
-            </FilterPill>
-            <span className="mx-1 h-4 w-px bg-border" />
-            <FilterPill href={filterHref(filter, "canonical")} active={filter === "canonical"} count={canonicalIssues} tone="amber" disabled={canonicalIssues === 0}>
-              Canonical
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "robots")} active={filter === "robots"} count={robotsBlocked} tone="red" disabled={robotsBlocked === 0}>
-              Robots
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "mobile")} active={filter === "mobile"} count={mobileFailures} tone="red" disabled={mobileFailures === 0}>
-              Mobile
-            </FilterPill>
-            <FilterPill href={filterHref(filter, "soft404")} active={filter === "soft404"} count={softFourOhFour} tone="amber" disabled={softFourOhFour === 0}>
-              Soft 404
-            </FilterPill>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <SeoBulkActions missingUrls={missingUrls} unindexedUrls={unindexedUrls} />
           {visible.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
-              {filter === "all"
-                ? "No GSC data available yet."
-                : `No URLs match the "${FILTER_LABELS[filter]}" filter.`}
+              ✅ Clean — no URLs need removal right now.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b bg-muted/30">
                   <tr>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider w-8" />
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">URL</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">DB Status</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">GSC Verdict</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Canonical</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Robots</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Mobile</th>
-                    <th className="text-end px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Clicks</th>
-                    <th className="text-end px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Imp.</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Last Crawl</th>
-                    <th className="text-start px-3 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Action</th>
+                    <th className="text-start px-4 py-2.5 font-medium text-muted-foreground text-xs uppercase tracking-wider w-10">#</th>
+                    <th className="text-start px-4 py-2.5 font-medium text-muted-foreground text-xs uppercase tracking-wider">URL</th>
+                    <th className="text-end px-4 py-2.5 font-medium text-muted-foreground text-xs uppercase tracking-wider w-32">Reach (28d)</th>
+                    <th className="text-start px-4 py-2.5 font-medium text-muted-foreground text-xs uppercase tracking-wider w-44">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {visible.map((page, i) => (
-                    <CoverageRow
+                    <RemovalRow
                       key={`${page.url}-${i}`}
                       page={page}
-                      inspection={inspectionMap.get(page.url) ?? null}
+                      index={i + 1}
+                      trackState={removalTrackStates.get(page.url) ?? null}
                     />
                   ))}
                 </tbody>
@@ -521,6 +509,71 @@ function StatusIcon({ status }: { status: DbStatus }) {
   return <FileText className="h-4 w-4 text-muted-foreground" />;
 }
 
+function RemovalRow({
+  page,
+  index,
+  trackState,
+}: {
+  page: EnrichedPage;
+  index: number;
+  trackState: RemovalTrackState | null;
+}) {
+  const decoded = (() => {
+    try {
+      return decodeURIComponent(page.path);
+    } catch {
+      return page.path;
+    }
+  })();
+
+  const reach = page.impressions;
+  const isHotReach = reach >= 50;
+  const reachCls = isHotReach
+    ? "text-red-600 dark:text-red-400 font-bold"
+    : reach >= 10
+      ? "text-amber-600 dark:text-amber-400"
+      : "text-muted-foreground";
+
+  const statusBadge = page.dbStatus === "missing"
+    ? { label: "Missing", cls: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/20" }
+    : { label: "Archived", cls: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20" };
+
+  const isDone = !!trackState?.doneAt;
+
+  return (
+    <tr className={`hover:bg-muted/40 ${isDone ? "opacity-60" : ""}`}>
+      <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">{index}</td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span
+            className={`inline-flex items-center px-1.5 py-0.5 rounded-full border text-[10px] font-bold shrink-0 ${statusBadge.cls}`}
+          >
+            {statusBadge.label}
+          </span>
+          <a
+            href={page.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            dir="ltr"
+            className="font-mono text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 min-w-0"
+            title={decoded}
+          >
+            <span className="truncate max-w-[400px]">{decoded}</span>
+            <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />
+          </a>
+        </div>
+      </td>
+      <td className={`px-4 py-3 text-end tabular-nums ${reachCls}`}>
+        {isHotReach && <span className="me-1">🔥</span>}
+        {reach.toLocaleString("en-US")}
+      </td>
+      <td className="px-4 py-3">
+        <SeoRowAction url={page.url} action="delete" trackState={trackState} />
+      </td>
+    </tr>
+  );
+}
+
 function CoverageRow({
   page,
   inspection,
@@ -641,12 +694,8 @@ function CoverageRow({
       </td>
       <td className="px-3 py-3">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <InspectRowButton url={page.url} />
           {(page.dbStatus === "missing" || page.dbStatus === "ARCHIVED") && (
             <SeoRowAction url={page.url} action="delete" />
-          )}
-          {page.dbStatus === "PUBLISHED" && page.impressions === 0 && (
-            <SeoRowAction url={page.url} action="index" />
           )}
           {page.articleId && (
             <Link
