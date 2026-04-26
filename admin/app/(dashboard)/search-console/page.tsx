@@ -30,6 +30,8 @@ import {
 
 import { SeoRowAction } from "./components/seo-row-action";
 import { InspectBulkButton } from "./components/inspect-bulk-button";
+import { TechHealthStat } from "./components/tech-health-stat";
+import type { TechHealthIssue } from "./components/tech-health-dialog";
 import { SitemapManager } from "./components/sitemap-manager";
 import { ImageSitemapCard } from "./components/image-sitemap-card";
 import { RobotsValidator } from "./components/robots-validator";
@@ -99,11 +101,11 @@ export default async function SearchConsolePage({
     ]),
   );
 
-  // Tech health summary
-  let canonicalIssues = 0;
-  let robotsBlocked = 0;
-  let mobileFailures = 0;
-  let softFourOhFour = 0;
+  // Tech health summary + per-issue URL lists for drill-down dialogs
+  const canonicalList: TechHealthIssue[] = [];
+  const robotsList: TechHealthIssue[] = [];
+  const mobileList: TechHealthIssue[] = [];
+  const soft404List: TechHealthIssue[] = [];
   let inspectedCount = 0;
 
   for (const page of pages) {
@@ -114,11 +116,35 @@ export default async function SearchConsolePage({
       i.userCanonical &&
       i.googleCanonical &&
       i.userCanonical !== i.googleCanonical
-    ) canonicalIssues += 1;
-    if (i.robotsTxtState === "DISALLOWED") robotsBlocked += 1;
-    if (i.mobileVerdict === "FAIL") mobileFailures += 1;
-    if (i.pageFetchState === "SOFT_404") softFourOhFour += 1;
+    ) {
+      canonicalList.push({
+        url: page.url,
+        userCanonical: i.userCanonical,
+        googleCanonical: i.googleCanonical,
+      });
+    }
+    if (i.robotsTxtState === "DISALLOWED") {
+      robotsList.push({ url: page.url, robotsTxtState: i.robotsTxtState });
+    }
+    if (i.mobileVerdict === "FAIL") {
+      mobileList.push({
+        url: page.url,
+        mobileVerdict: i.mobileVerdict,
+        mobileIssues: i.mobileIssues,
+      });
+    }
+    if (i.pageFetchState === "SOFT_404") {
+      soft404List.push({
+        url: page.url,
+        pageFetchState: i.pageFetchState,
+        coverageState: i.coverageState,
+      });
+    }
   }
+  const canonicalIssues = canonicalList.length;
+  const robotsBlocked = robotsList.length;
+  const mobileFailures = mobileList.length;
+  const softFourOhFour = soft404List.length;
 
   const order: Record<DbStatus, number> = {
     missing: 0,
@@ -211,30 +237,10 @@ export default async function SearchConsolePage({
                 </span>
               </h2>
               <div className="grid grid-cols-4 gap-2">
-                <Stat
-                  label="Canonical"
-                  value={canonicalIssues}
-                  accent={canonicalIssues > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}
-                  icon={<Link2 className="h-3 w-3 text-amber-500" />}
-                />
-                <Stat
-                  label="Robots"
-                  value={robotsBlocked}
-                  accent={robotsBlocked > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}
-                  icon={<ShieldAlert className="h-3 w-3 text-red-500" />}
-                />
-                <Stat
-                  label="Mobile"
-                  value={mobileFailures}
-                  accent={mobileFailures > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}
-                  icon={<Smartphone className="h-3 w-3 text-red-500" />}
-                />
-                <Stat
-                  label="Soft 404"
-                  value={softFourOhFour}
-                  accent={softFourOhFour > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}
-                  icon={<AlertCircle className="h-3 w-3 text-amber-500" />}
-                />
+                <TechHealthStat kind="canonical" count={canonicalIssues} issues={canonicalList} />
+                <TechHealthStat kind="robots" count={robotsBlocked} issues={robotsList} />
+                <TechHealthStat kind="mobile" count={mobileFailures} issues={mobileList} />
+                <TechHealthStat kind="soft404" count={softFourOhFour} issues={soft404List} />
               </div>
               {inspectedCount === 0 && (
                 <p className="text-[10px] text-muted-foreground mt-2">

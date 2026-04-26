@@ -81,7 +81,13 @@
       "mcp__chrome-devtools__close_page",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:9222/json/version)",
       "Bash(\"C:/Program Files/Google/Chrome/Application/chrome.exe\" --remote-debugging-port=9222 --user-data-dir=\"C:/Users/w2nad/chrome-mcp-profile\")",
-      "Bash(curl -s http://127.0.0.1:9222/json/version)"
+      "Bash(curl -s http://127.0.0.1:9222/json/version)",
+      "Bash(curl -s -o /dev/null -w \"homepage: %{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"deleted-article: %{http_code}\\\\n\" \"http://localhost:3001/articles/this-slug-does-not-exist-anywhere-in-db-12345\")",
+      "Bash(curl -s -o /dev/null -w \"kosmera-39 \\(was in queue\\): %{http_code}\\\\n\" \"http://localhost:3001/articles/النموذج-الأولي-الأول-من-kosmera-سيعرض-عالميًا-في-ces-2026،-مع-إعادة-تعريف-سيارة-السوبر-الكهربائية-الذكية-البوابة-39\")",
+      "Bash(curl -sI \"http://localhost:3001/articles/النموذج-الأولي-الأول-من-kosmera-سيعرض-عالميًا-في-ces-2026،-مع-إعادة-تعريف-سيارة-السوبر-الكهربائية-الذكية-البوابة-39\")",
+      "Bash(curl -sIL \"http://localhost:3001/articles/النموذج-الأولي-الأول-من-kosmera-سيعرض-عالميًا-في-ces-2026،-مع-إعادة-تعريف-سيارة-السوبر-الكهربائية-الذكية-البوابة-39\")",
+      "Bash(curl -s -o /dev/null -w 'kosmera-39 \\(encoded\\): %{http_code}\\\\n' http://localhost:3001/articles/%D8%A7%D9%84%D9%86%D9%85%D9%88%D8%B0%D8%AC-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%8A-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D9%85%D9%86-kosmera-%D8%B3%D9%8A%D8%B9%D8%B1%D8%B6-%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D9%8B%D8%A7-%D9%81%D9%8A-ces-2026%D8%8C-%D9%85%D8%B9-%D8%A5%D8%B9%D8%A7%D8%AF%D8%A9-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%B3%D9%8A%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D8%B3%D9%88%D8%A8%D8%B1-%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D8%A7%D8%A6%D9%8A%D8%A9-%D8%A7%D9%84%D8%B0%D9%83%D9%8A%D8%A9-%D8%A7%D9%84%D8%A8%D9%88%D8%A7%D8%A8%D8%A9-39)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

@@ -10,15 +10,13 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 
 // ─── UPDATE THIS BEFORE EVERY PUSH ───────────────────────────────────────────
 const entry = {
-  version: "0.43.0",
-  title: "Removal Queue + Stage 14 — تتبع طلبات GSC اليدوية",
+  version: "1.42.0",
+  title: "modonty proxy — 410 Gone للمقالات المحذوفة + drill-down dialog",
   items: [
-    { type: "feature" as const, text: "Removal Queue: زر 'Remove in GSC' يفتح Google Search Console مع نسخ الـ URL — يتبع 3 حالات (pending → opened → done)" },
-    { type: "feature" as const, text: "Stage 14 في الـ pipeline: زر 'Request indexing in GSC' يفتح URL Inspection مع تعبئة الـ URL تلقائياً — نفس آلية الـ 3 حالات" },
-    { type: "feature" as const, text: "DB tracking عبر model GscManualRequest: يحفظ openedAt و doneAt مع زر undo للتراجع — يميّز بين REMOVAL و INDEXING" },
-    { type: "feature" as const, text: "رسائل واضحة لحكم Google: PASS = على Google · NEUTRAL = صحيحة لكن لم تُفهرس بعد · FAIL = فيها مشكلة" },
-    { type: "fix" as const, text: "تصحيح الـ encoding للـ URL عند النسخ — يطابق الصيغة التي يعرضها GSC تماماً" },
-    { type: "fix" as const, text: "إثبات أن Indexing API لا يعمل لمحتوى modonty (سياسة Google: JobPosting + BroadcastEvent فقط) — استبدلنا الزر بـ deep-link لـ GSC" },
+    { type: "feature" as const, text: "modonty proxy.ts: أي article slug غير موجود كـ PUBLISHED (محذوف، مؤرشف، مسودة) يرجع 410 Gone — Google يحذفه من الفهرس أسرع بكثير من noindex" },
+    { type: "feature" as const, text: "drill-down dialog في Search Console: ضغطة على Canonical/Robots/Mobile/Soft 404 تفتح قائمة الـ URLs المتأثرة مع التفاصيل الكاملة (declared vs Google's choice)" },
+    { type: "fix" as const, text: "كشفت drill-down مشكلة canonical حقيقية: الموقع يعلن canonical بدون www بينما Google اختار www — يحتاج توحيد لاحقاً" },
+    { type: "fix" as const, text: "كشفت double-encoding في URLs الـ clients (%25D8 بدل %D8) — يحتاج إصلاح في canonical generator" },
   ],
 };
 // ─────────────────────────────────────────────────────────────────────────────

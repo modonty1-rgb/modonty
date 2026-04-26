@@ -23,6 +23,72 @@ During any live test session:
 
 ## Session: 2026-04-26 — Search Console UI polish (Session 69)
 
+### OBS-115 ✅ DONE — proxy.ts returns 410 for any non-PUBLISHED slug
+- **User direction:** "do it" — fix the gap where deleted-from-DB slugs returned 200 + noindex instead of 410.
+- **Approach:** flipped `archive-cache.ts` from "list of archived slugs" to "list of published slugs". Anything NOT in the published set (archived, draft, scheduled, or completely deleted) now returns 410 in `proxy.ts`.
+  - Removed `isArchivedSlug` (dead — was only called by old proxy logic)
+  - New `isPublishedSlug` with same 5-min `unstable_cache` + tag `published-slugs`
+  - Defensive: cache failure defaults to "published = true" so a transient DB blip doesn't 410 a live article
+- **proxy.ts** simplified: one rule, one decision.
+- **Live test (modonty dev, port 3001):**
+  - homepage `/` → 200 ✅
+  - random non-existent slug → **410** ✅
+  - encoded Arabic URL (kosmera-39, was in Removal Queue) → **410** ✅
+- **Earlier curl 308 was a bash/curl encoding artefact, not a proxy issue.**
+- modonty `pnpm tsc --noEmit` clean.
+- **Awaiting:** push confirmation for modonty v1.42.0 (version bump + backup + changelog + commit + push).
+
+### OBS-114 ✅ VERIFIED (re-read full docs) — Indexing API rejects non-JobPosting submissions
+- **User direction:** "راجع الوثيقة 200%" — re-read all 4 official Google Indexing API doc pages.
+- **Verbatim from "Get notification status" docs page:** "The `GET` request doesn't tell you when Google indexes or removes a URL; it only returns whether you successfully submitted a request."
+- **Implication:** getMetadata is **instant feedback on submission acceptance**, not processing status. If submission was accepted, `latest_update`/`latest_remove` shows up immediately. If 404 → Google rejected the submission.
+- **Our test results re-interpreted with this understanding:**
+  - publish URL_DELETED → 200 OK with empty metadata (no `latestRemove`)
+  - getMetadata immediately after → 404
+  - **Conclusion:** Google did NOT accept our submission. The HTTP 200 was misleading; the absence of notify_time + the 404 are the real signals.
+- **Why:** Per docs, Indexing API "can only be used to crawl pages with either `JobPosting` or `BroadcastEvent` embedded in a `VideoObject`." Modonty articles don't have those schemas → rejected.
+- **Manual GSC flow (already built) is the correct path** — no programmatic alternative exists.
+
+### OBS-113 ✅ DONE — Click-to-drill-down dialog for Technical Health stats (and bugs revealed)
+- **User direction:** "اديني خاصية لما أضغط على الرقم اعرض لي dialogue وريني فين الـ canonical هذا، فين المشكلة من فين جاية عشان أعرف أعالجها"
+- **Built:**
+  - `tech-health-dialog.tsx` — generic dialog supporting 4 kinds: canonical / robots / mobile / soft404. Each row shows the offending URL + the relevant fields (declared vs Google canonical, robots state, mobile issues, soft 404 details) plus an in-context fix hint.
+  - `tech-health-stat.tsx` — clickable stat block. Disabled when count = 0. Tooltip explains what clicking does.
+  - `page.tsx` — replaced the old `<Stat>` invocations with `<TechHealthStat>` and computes per-issue URL lists in one pass.
+- **Live test:** clicked Canonical "3" → dialog opened → real data displayed.
+- **Bugs revealed by the new drill-down:**
+  1. **Canonical www mismatch** — site declares `https://modonty.com/...` but Google chose `https://www.modonty.com/...`. SEO inconsistency: the canonical generator should match the public hostname.
+  2. **Double-encoded client URLs** — declared canonical contains `%25D8%25...` (encode-of-encode). Bug in client-page canonical generation.
+- **Decision pending:** ship the drill-down feature first (admin v0.43.1) or fix the underlying canonical bugs first?
+
+### OBS-112 ⚠️ Production env var issue — GSC_MODONTY_KEY_BASE64 missing
+- **Symptom:** Toast on production: "Failed to load sitemaps · GSC_MODONTY_KEY_BASE64 is..."
+- **Effects on production right now:**
+  - Coverage card shows 0/0 (couldn't reach GSC API to count URLs)
+  - Sitemap card shows the error
+  - Pending Indexing renders (uses DB cache, not live API call)
+- **Earlier mistake:** I claimed in OBS-111 that production was clean. Actually the empty queue was because GSC API failed silently — the queue had no data to populate. Real cause is missing env var, not "clean" state.
+- **Fix (user-side, Vercel Dashboard):**
+  1. Settings → Environment Variables → `GSC_MODONTY_KEY_BASE64`
+  2. Paste the same value from local `admin/.env.local`
+  3. Verify scope = Production (not just Preview)
+  4. Redeploy latest commit (`dd99016`)
+- **Also verify on Vercel:** `GSC_MODONTY_PROPERTY`, `GOOGLE_PAGESPEED_API_KEY`, `DATABASE_URL`, `NEXT_PUBLIC_SITE_BASE_URL` all set for Production scope.
+
+### OBS-111 ✅ PRODUCTION LIVE TEST — v0.43.0 verified on admin.modonty.com
+- Tested via Playwright on production:
+  - `https://admin.modonty.com/search-console` → loads, "Clean — no URLs need removal" empty state shown (production DB has all GSC URLs in sync, vs local where 11 are missing)
+  - `https://admin.modonty.com/search-console/pipeline/[id]` → loads, Stage 14 "Request Indexing" header + "Locked until all 13 stages return ✓ ready" + disabled Locked button
+  - Console: zero functional errors. One harmless 404 prefetch on `/search-console/pipeline?_rsc=...` (Next.js auto-prefetched a parent route, not from our code).
+- v0.43.0 is fully live and healthy. Vercel auto-deploy from `dd99016` succeeded.
+
+### OBS-110 ✅ SHIPPED — admin v0.43.0 pushed to main (dd99016)
+- Cleaned API keys from `.claude/settings.json` before commit (would have leaked Browserbase + Gemini keys to git history).
+- Excluded root-level debug `*.md` snapshot files (still untracked, harmless).
+- Commit `dd99016`: "admin v0.43.0: Removal Queue + Stage 14 with 3-state manual GSC tracking" — included all session 68/69 changes (search-console, pipeline, components, lib/seo, debug scripts).
+- Push: `5711d73..dd99016 main -> main` to github.com:modonty1-rgb/modonty.git → Vercel auto-deploy triggered.
+- ⚠️ User reminder pending: rotate Browserbase + Gemini keys (exposed in chat logs and old settings.json).
+
 ### OBS-109 ✅ DONE — Pre-push prep complete for admin v0.43.0
 - Bumped `admin/package.json` 0.42.0 → 0.43.0.
 - Updated `admin/scripts/add-changelog.ts` with v0.43.0 entry (6 items: Removal Queue 3-state, Stage 14 indexing, GscManualRequest model, plain-English verdicts, encoding fix, Indexing API limit findings).
