@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ImageIcon } from "lucide-react";
 import { MediaWithStats } from "../helpers/media-queries";
+import { ar } from "@/lib/ar";
 
 interface MediaGalleryProps {
   clientId: string;
@@ -23,41 +24,41 @@ export function MediaGallery({ clientId, media }: MediaGalleryProps) {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle className="text-lg">Media Gallery</CardTitle>
+            <CardTitle className="text-lg">{ar.media.mediaGallery}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {filteredMedia.length} files
+              {filteredMedia.length} {ar.media.files}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={filter === "all" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All
+              {ar.media.all}
             </Button>
             <Button
               variant={filter === "logo" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("logo")}
             >
-              Logos
+              {ar.media.logos}
             </Button>
             <Button
               variant={filter === "post" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("post")}
             >
-              Posts
+              {ar.media.posts}
             </Button>
             <Button
               variant={filter === "ogimage" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("ogimage")}
             >
-              OG Images
+              {ar.media.ogImages}
             </Button>
           </div>
         </div>
@@ -66,7 +67,7 @@ export function MediaGallery({ clientId, media }: MediaGalleryProps) {
         {filteredMedia.length === 0 ? (
           <div className="text-center py-12">
             <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">No media found</p>
+            <p className="text-sm text-muted-foreground">{ar.media.noMedia}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -87,7 +88,9 @@ export function MediaGallery({ clientId, media }: MediaGalleryProps) {
                     {item.filename}
                   </p>
                   <p className="text-white/80 text-xs">
-                    Used in {item.usageCount} place(s)
+                    {item.usageCount === 0
+                      ? ar.media.notUsed
+                      : ar.media.usedInPlaces.replace("{n}", String(item.usageCount))}
                   </p>
                 </div>
               </div>

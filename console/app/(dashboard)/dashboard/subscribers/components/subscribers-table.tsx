@@ -83,16 +83,16 @@ export function SubscribersTable({
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg">{s.subscribersList}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredSubscribers.length} {s.subscribersCount}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button size="sm" onClick={handleExport} disabled={exporting}>
-              <Download className="h-3 w-3 me-2" />
+              <Download className="h-3.5 w-3.5 me-2" />
               {s.exportCsv}
             </Button>
             <Button
@@ -185,33 +185,42 @@ export function SubscribersTable({
                       {new Date(subscriber.subscribedAt).toLocaleDateString("ar-SA")}
                     </td>
                     <td className="py-3 px-2 text-end">
-                      <div className="flex gap-1 justify-end">
+                      <div className="flex gap-2 justify-end">
                         {subscriber.subscribed ? (
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => handleUnsubscribe(subscriber.id)}
                             disabled={updating === subscriber.id}
+                            aria-label={s.unsubscribed}
+                            title={s.unsubscribed}
+                            className="h-10 w-10"
                           >
-                            <UserX className="h-3 w-3" />
+                            <UserX className="h-4 w-4" />
                           </Button>
                         ) : (
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="ghost"
                             onClick={() => handleResubscribe(subscriber.id)}
                             disabled={updating === subscriber.id}
+                            aria-label={s.active}
+                            title={s.active}
+                            className="h-10 w-10"
                           >
-                            <UserCheck className="h-3 w-3" />
+                            <UserCheck className="h-4 w-4" />
                           </Button>
                         )}
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleDelete(subscriber.id)}
                           disabled={updating === subscriber.id}
+                          aria-label={s.actions}
+                          title={s.actions}
+                          className="h-10 w-10"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </td>

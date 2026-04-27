@@ -61,11 +61,26 @@ export default async function SettingsPage() {
         <CardContent>
           <p className="text-lg font-semibold text-foreground">{tierName}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            {clientSubscription?.subscriptionStatus} · {clientSubscription?.paymentStatus}
+            {(() => {
+              const s = String(clientSubscription?.subscriptionStatus || "").toUpperCase();
+              if (s === "ACTIVE") return ar.dashboard.subStatusActive;
+              if (s === "INACTIVE") return ar.dashboard.subStatusInactive;
+              if (s === "EXPIRED") return ar.dashboard.subStatusExpired;
+              if (s === "CANCELLED" || s === "CANCELED") return ar.dashboard.subStatusCancelled;
+              return clientSubscription?.subscriptionStatus;
+            })()}
+            {" · "}
+            {(() => {
+              const p = String(clientSubscription?.paymentStatus || "").toUpperCase();
+              if (p === "PAID") return ar.dashboard.paymentPaid;
+              if (p === "UNPAID") return ar.dashboard.paymentUnpaid;
+              if (p === "PENDING") return ar.dashboard.paymentPending;
+              return clientSubscription?.paymentStatus;
+            })()}
           </p>
           {price != null && (
             <p className="text-xs text-muted-foreground mt-1">
-              {Number(price).toLocaleString()} SAR/year
+              {Number(price).toLocaleString()} {ar.dashboard.currencySar} / {ar.dashboard.perYear}
             </p>
           )}
           {(clientSubscription?.subscriptionStartDate ?? clientSubscription?.subscriptionEndDate) && (

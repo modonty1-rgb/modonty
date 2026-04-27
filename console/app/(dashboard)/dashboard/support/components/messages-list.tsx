@@ -102,7 +102,7 @@ export function MessagesList({ messages, clientId }: MessagesListProps) {
               {filteredMessages.length}
             </span>
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className="flex flex-wrap gap-2 mt-4">
             <Button
               variant={filter === "all" ? "default" : "outline"}
               size="sm"

@@ -65,7 +65,7 @@ function HelpCollapsible({ label, helpContent }: { label: string; helpContent: s
       <CollapsibleTrigger asChild>
         <button
           type="button"
-          className="flex w-full items-center justify-between gap-2 text-start text-sm font-normal text-foreground hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          className="flex w-full items-center justify-between gap-2 py-2 text-start text-sm font-normal text-foreground hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded min-h-[40px]"
         >
           <span className="min-w-0 flex-1">{label}</span>
           <span className="inline-flex shrink-0 items-center gap-1.5 text-muted-foreground text-xs leading-none">

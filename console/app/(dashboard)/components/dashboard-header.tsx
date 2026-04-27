@@ -33,7 +33,15 @@ const routeLabels: Record<string, string> = {
 
 function getNavTitle(pathname: string): string {
   const base = pathname.replace(/\/$/, "") || "/dashboard";
-  return routeLabels[base] ?? ar.nav.dashboard;
+  if (routeLabels[base]) return routeLabels[base];
+  // Try parent paths (e.g., /dashboard/seo/intake → /dashboard/seo)
+  const segments = base.split("/");
+  while (segments.length > 1) {
+    segments.pop();
+    const parent = segments.join("/");
+    if (routeLabels[parent]) return routeLabels[parent];
+  }
+  return ar.nav.dashboard;
 }
 
 export function DashboardHeader({
@@ -51,21 +59,21 @@ export function DashboardHeader({
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
-      <nav className="flex h-14 items-center justify-between gap-4 px-4 lg:px-6" aria-label="Main">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+      <nav className="flex h-14 items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 lg:px-6" aria-label="Main">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           <Button
             type="button"
             variant="ghost"
             size="icon"
             onClick={onMenuClick}
             aria-label={ar.header.openMenu}
-            className="lg:hidden shrink-0"
+            className="lg:hidden shrink-0 h-10 w-10"
           >
             <Menu className="h-5 w-5" />
           </Button>
           <Link
             href="/dashboard"
-            className="text-lg font-semibold text-foreground shrink-0 hover:opacity-80"
+            className="hidden sm:inline-block text-lg font-semibold text-foreground shrink-0 hover:opacity-80"
           >
             Modonty
           </Link>
@@ -74,7 +82,7 @@ export function DashboardHeader({
           </span>
           <Link
             href="/dashboard"
-            className="truncate text-sm font-medium text-foreground hover:opacity-80 underline-offset-4 hover:underline"
+            className="hidden sm:inline-block truncate text-sm font-medium text-foreground hover:opacity-80 underline-offset-4 hover:underline"
           >
             {ar.nav.dashboard}
           </Link>
@@ -88,10 +96,15 @@ export function DashboardHeader({
               </span>
             </>
           )}
+          {(pathname === "/dashboard" || pathname === "/dashboard/") && (
+            <span className="sm:hidden truncate text-base font-semibold text-foreground">
+              {ar.nav.dashboard}
+            </span>
+          )}
         </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <Link href="/dashboard" title={ar.nav.dashboard}>
-            <Button type="button" variant="ghost" size="icon" className="h-9 w-9">
+        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <Link href="/dashboard" title={ar.nav.dashboard} className="hidden sm:inline-block">
+            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
               <LayoutDashboard className="h-4 w-4" />
             </Button>
           </Link>
@@ -100,7 +113,7 @@ export function DashboardHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-9 w-9", isAnalytics && "bg-primary/10 text-primary")}
+              className={cn("h-10 w-10", isAnalytics && "bg-primary/10 text-primary")}
             >
               <BarChart3 className="h-4 w-4" />
             </Button>
@@ -114,7 +127,7 @@ export function DashboardHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-9 w-9", isComments && "bg-primary/10 text-primary")}
+              className={cn("h-10 w-10", isComments && "bg-primary/10 text-primary")}
             >
               <MessageSquare className="h-4 w-4" />
             </Button>
@@ -133,7 +146,7 @@ export function DashboardHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-9 w-9", isQuestions && "bg-primary/10 text-primary")}
+              className={cn("h-10 w-10", isQuestions && "bg-primary/10 text-primary")}
             >
               <HelpCircle className="h-4 w-4" />
             </Button>
@@ -152,7 +165,7 @@ export function DashboardHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("h-9 w-9", isSupport && "bg-primary/10 text-primary")}
+              className={cn("h-10 w-10", isSupport && "bg-primary/10 text-primary")}
             >
               <Bell className="h-4 w-4" />
             </Button>
@@ -162,8 +175,8 @@ export function DashboardHeader({
               </span>
             )}
           </Link>
-          <Link href="/dashboard/settings" title={ar.nav.settings}>
-            <Button type="button" variant="ghost" size="icon" className="h-9 w-9">
+          <Link href="/dashboard/settings" title={ar.nav.settings} className="hidden sm:inline-block">
+            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
               <Settings className="h-4 w-4" />
             </Button>
           </Link>

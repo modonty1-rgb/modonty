@@ -12,7 +12,10 @@ export const clientServerSchema = z.object({
     .string()
     .min(1, "Slug is required")
     .max(200, "Slug is too long")
-    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+    .regex(
+      /^[\u0600-\u06FFa-z0-9_-]+$/,
+      "Slug must contain only Arabic letters, lowercase Latin letters, numbers, hyphens, or underscores"
+    ),
   email: z.string().email("Invalid email address"),
 
   // Optional string fields — passthrough with max length

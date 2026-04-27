@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateProfile } from "../actions/profile-actions";
+import { cn } from "@/lib/utils";
 
 type ProfileInitial = {
   name: string;
@@ -205,19 +206,24 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
     }
   }
 
-  const field = (k: keyof typeof form, label: string, opts?: { type?: string; placeholder?: string }) => (
-    <div key={String(k)} className="space-y-2">
-      <Label htmlFor={String(k)}>{label}</Label>
-      <Input
-        id={String(k)}
-        type={opts?.type ?? "text"}
-        value={typeof form[k] === "string" || typeof form[k] === "number" ? form[k] : ""}
-        onChange={(e) => update(k, e.target.value)}
-        placeholder={opts?.placeholder}
-        disabled={loading}
-      />
-    </div>
-  );
+  const field = (k: keyof typeof form, label: string, opts?: { type?: string; placeholder?: string }) => {
+    const isLtr = opts?.type === "url" || opts?.type === "email" || opts?.type === "tel" || opts?.type === "number";
+    return (
+      <div key={String(k)} className="space-y-2">
+        <Label htmlFor={String(k)}>{label}</Label>
+        <Input
+          id={String(k)}
+          type={opts?.type ?? "text"}
+          value={typeof form[k] === "string" || typeof form[k] === "number" ? form[k] : ""}
+          onChange={(e) => update(k, e.target.value)}
+          placeholder={opts?.placeholder}
+          disabled={loading}
+          dir={isLtr ? "ltr" : undefined}
+          className={isLtr ? "text-start" : undefined}
+        />
+      </div>
+    );
+  };
 
   const select = (k: "industryId", label: string) => (
     <div key={String(k)} className="space-y-2">
@@ -253,14 +259,14 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
     label: string,
     hint?: string
   ) => (
-    <div key={String(k)} className="space-y-2">
+    <div key={String(k)} className="space-y-2 lg:col-span-2">
       <Label htmlFor={String(k)}>{label}</Label>
       <Textarea
         id={String(k)}
         value={form[k]}
         onChange={(e) => update(k, e.target.value)}
         disabled={loading}
-        rows={k === "sameAs" ? 3 : 3}
+        rows={3}
         placeholder={hint}
       />
     </div>
@@ -278,7 +284,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <CardHeader>
           <CardTitle className="text-base">{ar.profile.basicInfo}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("name", ar.profile.name)}
           {field("legalName", ar.profile.legalName)}
           {field("alternateName", ar.profile.alternateName)}
@@ -292,7 +298,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <CardHeader>
           <CardTitle className="text-base">{ar.profile.contactInfo}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("email", ar.settings.email, { type: "email", placeholder: ar.settings.placeholderEmail })}
           {field("phone", ar.settings.phone, { placeholder: ar.settings.placeholderPhone })}
           {field("contactType", ar.profile.contactType)}
@@ -303,7 +309,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <CardHeader>
           <CardTitle className="text-base">{ar.profile.address}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("addressStreet", ar.profile.addressStreet)}
           {field("addressCity", ar.profile.addressCity)}
           {field("addressCountry", ar.profile.addressCountry)}
@@ -319,7 +325,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <CardHeader>
           <CardTitle className="text-base">{ar.profile.saudiGulf}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("commercialRegistrationNumber", ar.profile.commercialRegistrationNumber)}
           {field("vatID", ar.profile.vatID)}
           {field("taxID", ar.profile.taxID)}
@@ -331,7 +337,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <CardHeader>
           <CardTitle className="text-base">{ar.profile.business}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {select("industryId", ar.profile.industry)}
           {field("organizationType", ar.profile.organizationType)}
           {field("foundingDate", ar.profile.foundingDate, { type: "date" })}

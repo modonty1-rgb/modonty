@@ -86,9 +86,19 @@ export default async function ContentPage() {
                       {a.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {a.category?.name ?? "—"} · {a.status} ·{" "}
+                      {a.category?.name ?? "—"} ·{" "}
+                      {(() => {
+                        const s = String(a.status || "").toUpperCase();
+                        if (s === "PUBLISHED") return ar.articles.statusPublished;
+                        if (s === "DRAFT") return ar.articles.statusDraft;
+                        if (s === "SCHEDULED") return ar.articles.statusScheduled;
+                        if (s === "WRITING") return ar.articles.statusWriting;
+                        if (s === "ARCHIVED") return ar.articles.statusArchived;
+                        return a.status;
+                      })()}
+                      {" · "}
                       {a.datePublished
-                        ? new Date(a.datePublished).toLocaleDateString()
+                        ? new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "long", day: "numeric" }).format(new Date(a.datePublished))
                         : "—"}
                     </p>
                   </div>

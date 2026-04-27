@@ -10,13 +10,16 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 
 // ─── UPDATE THIS BEFORE EVERY PUSH ───────────────────────────────────────────
 const entry = {
-  version: "1.42.0",
-  title: "modonty proxy — 410 Gone للمقالات المحذوفة + drill-down dialog",
+  version: "0.3.0",
+  title: "console v0.3.0 — overhaul شامل: نصوص بسيطة + تصميم متجاوب + سكرول واحد",
   items: [
-    { type: "feature" as const, text: "modonty proxy.ts: أي article slug غير موجود كـ PUBLISHED (محذوف، مؤرشف، مسودة) يرجع 410 Gone — Google يحذفه من الفهرس أسرع بكثير من noindex" },
-    { type: "feature" as const, text: "drill-down dialog في Search Console: ضغطة على Canonical/Robots/Mobile/Soft 404 تفتح قائمة الـ URLs المتأثرة مع التفاصيل الكاملة (declared vs Google's choice)" },
-    { type: "fix" as const, text: "كشفت drill-down مشكلة canonical حقيقية: الموقع يعلن canonical بدون www بينما Google اختار www — يحتاج توحيد لاحقاً" },
-    { type: "fix" as const, text: "كشفت double-encoding في URLs الـ clients (%25D8 بدل %D8) — يحتاج إصلاح في canonical generator" },
+    { type: "feature" as const, text: "console: تبسيط كل المصطلحات التقنية (JSON-LD/Schema/UTM/GTM/Staging/LCP/CLS/INP/TTFB/TBT) إلى عربي وصفي يفهمه صاحب النشاط — 28 بند COPY + 2 جارجون بصري + 7 إصلاحات إضافية" },
+    { type: "feature" as const, text: "console: تصميم metaجاوب 100% عبر 375 / 768 / 1366 — header موبايل بدون قص الشعار، profile form 2-col على Desktop، media filter wrap، Top Articles chart مُعاد بناؤه" },
+    { type: "fix" as const, text: "console: إزالة الـ scrollbars المتداخلة (html + main scroll → الآن scroll واحد فقط على مستوى الصفحة)" },
+    { type: "fix" as const, text: "console: dir=ltr للحقول URL/email/tel/number — يحلّ مشكلة `/https://...`" },
+    { type: "fix" as const, text: "console: action buttons في الجداول 40px + aria-label (WCAG touch target + a11y)" },
+    { type: "fix" as const, text: "console: getNavTitle يدعم subpaths (e.g. /seo/intake → معلومات مهمة)" },
+    { type: "fix" as const, text: "admin v0.43.2: slug regex يقبل العربية (`\\u0600-\\u06FF`) — يحل bug تعطّل تحديث العملاء بـ slug عربي" },
   ],
 };
 // ─────────────────────────────────────────────────────────────────────────────

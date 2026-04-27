@@ -30,14 +30,14 @@ export function LeadsTable({ leads }: LeadsTableProps) {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg">{l.leadsOverview}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredLeads.length} {l.leadsCount}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={filter === "all" ? "default" : "outline"}
               size="sm"

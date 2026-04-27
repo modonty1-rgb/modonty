@@ -246,7 +246,7 @@ export function IntakeTab({
             )}
           </div>
           <h1 className="text-2xl font-semibold leading-tight text-foreground mt-2 text-right">{ar.nav.seo}</h1>
-          <p className="text-sm text-muted-foreground mt-1 text-right">إدارة بيانات SEO واستمارة الاستقبال والمنافسين والكلمات المفتاحية</p>
+          <p className="text-sm text-muted-foreground mt-1 text-right">معلومات مشروعك والمنافسين والكلمات لمساعدتنا في كتابة محتوى أقوى لك</p>
           <p className="text-base leading-relaxed text-foreground mt-2 text-right">
             {ar.seo.heroDescription}
           </p>

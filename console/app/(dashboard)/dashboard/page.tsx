@@ -119,7 +119,7 @@ export default async function DashboardPage() {
               title={ar.dashboard.engagementScore}
               value={stats.analytics.engagementScore}
               subLines={[
-                `Avg time: ${Math.round(stats.analytics.avgTimeOnPage)}s · Scroll: ${Math.round(stats.analytics.avgScrollDepth)}%`,
+                `${ar.dashboard.avgTime}: ${Math.round(stats.analytics.avgTimeOnPage)}ث · ${ar.dashboard.scroll}: ${Math.round(stats.analytics.avgScrollDepth)}%`,
               ]}
             />
           </div>
@@ -129,8 +129,8 @@ export default async function DashboardPage() {
               title={ar.dashboard.activeUsers}
               value={stats.engagement.activeUsers7d.toLocaleString()}
               subLines={[
-                `7d · ${stats.engagement.activeUsers30d.toLocaleString()} (30d)`,
-                `Return rate: ${stats.engagement.returnVisitorRate.toFixed(1)}%`,
+                `${ar.dashboard.days7} · ${stats.engagement.activeUsers30d.toLocaleString()} (${ar.dashboard.days30})`,
+                `${ar.dashboard.returnRate}: ${stats.engagement.returnVisitorRate.toFixed(1)}%`,
               ]}
             />
           </div>

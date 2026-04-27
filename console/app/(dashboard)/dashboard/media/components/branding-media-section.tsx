@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
+import { ar } from "@/lib/ar";
 
 interface BrandingMediaSectionProps {
   clientId: string;
@@ -22,20 +23,20 @@ export function BrandingMediaSection({
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Branding Assets</CardTitle>
+        <CardTitle className="text-lg">{ar.media.brandingAssets}</CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
-          View your logo and social media images
+          {ar.media.viewLogoSocial}
         </p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-foreground">Logo</h3>
+            <h3 className="text-sm font-medium text-foreground">{ar.media.logo}</h3>
             <div className="aspect-video rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center">
               {brandingMedia.logo ? (
                 <Image
                   src={brandingMedia.logo.url}
-                  alt="Logo"
+                  alt={ar.media.logo}
                   width={200}
                   height={200}
                   className="object-contain"
@@ -48,13 +49,13 @@ export function BrandingMediaSection({
 
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-foreground">
-              Open Graph Image
+              {ar.media.openGraphImage}
             </h3>
             <div className="aspect-video rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center">
               {brandingMedia.ogImage ? (
                 <Image
                   src={brandingMedia.ogImage.url}
-                  alt="OG Image"
+                  alt={ar.media.openGraphImage}
                   width={400}
                   height={200}
                   className="object-cover"
@@ -67,13 +68,13 @@ export function BrandingMediaSection({
 
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-foreground">
-              Twitter Card Image
+              {ar.media.twitterCardImage}
             </h3>
             <div className="aspect-video rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center">
               {brandingMedia.twitterImage ? (
                 <Image
                   src={brandingMedia.twitterImage.url}
-                  alt="Twitter Image"
+                  alt={ar.media.twitterCardImage}
                   width={400}
                   height={200}
                   className="object-cover"

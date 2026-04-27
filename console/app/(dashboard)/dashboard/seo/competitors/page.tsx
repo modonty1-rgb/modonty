@@ -18,7 +18,7 @@ export default async function SeoCompetitorsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">{ar.nav.seo}</h1>
-        <p className="text-muted-foreground mt-1">إدارة بيانات SEO واستمارة الاستقبال والمنافسين والكلمات المفتاحية</p>
+        <p className="text-muted-foreground mt-1">معلومات مشروعك والمنافسين والكلمات لمساعدتنا في كتابة محتوى أقوى لك</p>
       </div>
       <SeoSubNav />
       <CompetitorsTab clientId={clientId} competitors={data.competitors} />

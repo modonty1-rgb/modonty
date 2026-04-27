@@ -18,8 +18,8 @@ export default function ArticleStatsError({
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-12 text-center">
       <AlertCircle className="h-10 w-10 text-destructive" />
-      <p className="text-base font-medium">تعذّر تحميل إحصائيات المقال</p>
-      <p className="text-sm text-muted-foreground">حدث خطأ أثناء جلب البيانات. يرجى المحاولة مرة أخرى.</p>
+      <p className="text-base font-medium">ما تم تحميل إحصائيات المقال</p>
+      <p className="text-sm text-muted-foreground">حدث خطأ أثناء جلب البيانات. جرّب مرة أخرى.</p>
       <Button variant="outline" size="sm" onClick={reset}>
         إعادة المحاولة
       </Button>

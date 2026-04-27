@@ -10,14 +10,26 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { TrafficSourceData } from "../helpers/dashboard-queries";
+import { ar } from "@/lib/ar";
 
 interface TrafficChartProps {
   data: TrafficSourceData[];
 }
 
+const sourceLabel = (raw: string): string => {
+  const key = raw.toLowerCase();
+  const a = ar.analytics;
+  if (key.includes("organic") || key.includes("google") || key.includes("search")) return a.sourceOrganic;
+  if (key.includes("direct")) return a.sourceDirect;
+  if (key.includes("referral") || key.includes("referrer")) return a.sourceReferral;
+  if (key.includes("social") || key.includes("facebook") || key.includes("twitter") || key.includes("instagram") || key.includes("linkedin")) return a.sourceSocial;
+  if (key.includes("paid") || key.includes("ads") || key.includes("ad")) return a.sourcePaid;
+  return raw || a.sourceUnknown;
+};
+
 export function TrafficChart({ data }: TrafficChartProps) {
   const chartData = data.map((d) => ({
-    name: d.source.toLowerCase(),
+    name: sourceLabel(d.source),
     count: d.count,
     percentage: d.percentage.toFixed(1),
   }));

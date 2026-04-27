@@ -58,6 +58,16 @@ export default async function AnalyticsPage() {
 
   const a = ar.analytics;
 
+  const sourceLabel = (raw: string): string => {
+    const key = raw.toLowerCase();
+    if (key.includes("organic") || key.includes("google") || key.includes("search")) return a.sourceOrganic;
+    if (key.includes("direct")) return a.sourceDirect;
+    if (key.includes("referral") || key.includes("referrer")) return a.sourceReferral;
+    if (key.includes("social") || key.includes("facebook") || key.includes("twitter") || key.includes("instagram") || key.includes("linkedin")) return a.sourceSocial;
+    if (key.includes("paid") || key.includes("ads") || key.includes("ad")) return a.sourcePaid;
+    return raw || a.sourceUnknown;
+  };
+
   return (
     <div className="space-y-8">
       <section aria-labelledby="analytics-heading">
@@ -116,7 +126,7 @@ export default async function AnalyticsPage() {
             <CardContent>
               <AnalyticsProgressList
                 items={trafficSources.map((s) => ({
-                  label: s.source,
+                  label: sourceLabel(s.source),
                   count: s.count,
                   percentage: s.percentage,
                 }))}
@@ -422,8 +432,16 @@ export default async function AnalyticsPage() {
                       <p className="text-sm font-medium text-foreground truncate">
                         {item.label ?? item.type}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5 capitalize">
-                        {item.type.replace(/_/g, " ").toLowerCase()}
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {(() => {
+                          const t = String(item.type || "").toUpperCase();
+                          if (t === "BUTTON") return a.ctaTypeButton;
+                          if (t === "LINK") return a.ctaTypeLink;
+                          if (t === "FORM") return a.ctaTypeForm;
+                          if (t === "BANNER") return a.ctaTypeBanner;
+                          if (t === "POPUP") return a.ctaTypePopup;
+                          return item.type.replace(/_/g, " ").toLowerCase();
+                        })()}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">

@@ -65,7 +65,7 @@ export function QuestionsTable({ questions, clientId }: QuestionsTableProps) {
               {filtered.length} {q.questionsCount}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={filter === "all" ? "default" : "outline"}
               size="sm"

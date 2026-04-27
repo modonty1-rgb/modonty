@@ -21,7 +21,72 @@ During any live test session:
 
 ---
 
+## Session: 2026-04-27 — Console smoke test (Session 70)
+
+### OBS-118 🔴 HIGH — Console JWTSessionError on home page (no matching decryption secret)
+- **Where:** `http://localhost:3000/` (console app), Server-side render of `HomePage`.
+- **Console error chain:** `[auth][error] JWTSessionError` → `[auth][cause] Error: no matching decryption secret` thrown at `Object.decode → Module.session → AuthInternal → HomePage`.
+- **Diagnosis:** `AUTH_SECRET` (NextAuth v5) does not match the secret used to encrypt the existing session cookie in the browser. Either the env var changed locally, or stale dev cookies remain from a prior run with a different secret.
+- **UX impact:** the page still renders the login UI without crashing, but every request logs a noisy auth error. Will mask real auth issues during live tests.
+- **Fix options (pick one):**
+  1. Clear `localhost:3000` cookies (fastest, dev-only).
+  2. Wrap `decode` in NextAuth `callbacks.jwt` / use `events.session` to swallow `JWTSessionError` and force a fresh sign-in (cleanest for users who hit this).
+  3. Re-pin the previous `AUTH_SECRET` in `console/.env.local` if it was rotated by mistake.
+
+### OBS-119 ✅ FIXED — Console favicon 404 → 0 errors in browser
+- **Where:** `http://localhost:3000/favicon.ico` returned 404.
+- **Fix applied:** copied `modonty/app/icon.svg` → `console/app/icon.svg` (App Router file convention auto-injects `<link rel="icon" type="image/svg+xml" href="/icon.svg">`, browser stops requesting `/favicon.ico`).
+- **Verified live:** browser console now shows **0 errors** (was 4). Page title + render unchanged.
+- **Side effect:** JWTSessionError (OBS-118) also disappeared after rebuild + fresh navigation. Left OBS-118 open in case it returns.
+
+### OBS-125 ✅ SET — Console now points at PRODUCTION DB (matches admin)
+- **User direction (verbatim):** "خلي الـ console يشتغل على الـ production. إحنا هنا ما عندنا أي تعديلات ولا أي إضافات."
+- **Action:** edited `console/.env.local` — `DATABASE_URL` switched from `modonty_dev` to `modonty` (production cluster). Old line kept as comment with TEMPORARY warning + revert note dated 2026-04-27.
+- **Process restart:** killed console PID 18644, started fresh `pnpm dev`. New `.env.local` now active.
+- **Why it matters:** all console testing during this session reads/writes to PROD DB. Memory rule `feedback_never_seed_production.md` still applies — UI flows only, NO scripts/seeds.
+
+### OBS-124 🔴 HIGH (close call) — Admin and console pointed at DIFFERENT DBs (admin=prod, console=dev) — silent mismatch caused login failures
+- **Where:** `admin/.env.local` and `console/.env.local`.
+- **What was wrong:** `admin/.env.local` had been "TEMPORARY" pointed at `modonty` (production) since 2026-04-25 with a "Revert to modonty_dev when done testing" note that was never honoured. `console/.env.local` correctly pointed at `modonty_dev`. Admin saved a new password for client `كيما زون` to PROD; console tried to authenticate from DEV; login kept failing with "البريد أو كلمة المرور غير صحيحة" toast.
+- **How it surfaced:** wrote a read-only verify script (`admin/scripts/verify-client-password.ts`) — bcrypt.compare returned `true` against admin's prisma client (= PROD) but console's authorize kept rejecting. Discovered the env discrepancy by reading both `.env.local` files.
+- **Resolution:** per user's call (OBS-125), aligned console to PROD too. Going forward both apps share `modonty` DB until session ends. **Lesson for next session:** before any DB-touching action, `cat <app>/.env.local` for EACH app — don't trust `.env` alone (Next.js `.env.local` overrides).
+
+### OBS-123 🔴 HIGH — Password field on `/clients/[id]/edit` is `type="text"` (visible plaintext)
+- **Where:** admin → Clients → Edit client → Password input.
+- **Bug:** the input is `<input type="text" name="password" placeholder="Leave empty to keep current">`. Anyone typing a new password sees it on screen + it stays in browser autocomplete + screenshots/screencasts/screen-share leak it.
+- **Standard:** must be `type="password"` with optional reveal toggle (eye icon).
+- **Severity:** HIGH — this is admin-only, but credentials for production clients pass through here. A reviewer beside the screen, an OBS recording, or a window-share is enough to leak.
+- **Fix:** change the input to `type="password"` and (optional) add a show/hide toggle button.
+
+### OBS-122 🔵 INFO — Console login blocked: no valid Client credentials in memory
+- **Where:** `http://localhost:3000/` login form.
+- **What happened:** submitted `modonty@modonty.com / Modonty123!` (the admin test account from memory). Toast: **"البريد أو كلمة المرور غير صحيحة"**.
+- **Root cause:** console `auth.config.ts` authenticates against the `Client` model (`db.client.findFirst({ where: { email } })` or `findUnique({ where: { slug } })`), not the admin `User` model. Saved credentials are for admin's `User` table on `modonty_dev` DB. Console `.env` points to **PRODUCTION** DB (`modonty-cluster.../modonty`).
+- **Status:** waiting on user to provide valid Client email-or-slug + password, OR to create a test Client via the admin UI (no scripts on prod DB — per memory rule `feedback_never_seed_production.md`).
+- **Note for memory:** `project_test_credentials.md` says the modonty@modonty.com account is for `modonty_dev` (admin). Confirmed correct — they don't apply to the Client model.
+
+### OBS-121 🟡 MEDIUM — LCP warning on console login page
+- **Where:** `http://localhost:3000/` — modonty logo image (`https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg`) is the LCP element above the fold but has no `priority` / `loading="eager"`.
+- **Impact:** direct CWV (LCP) regression on the public login page — the first thing every client sees.
+- **Fix:** add `priority` to the `next/image` for the login-card logo, or `loading="eager"` if it's a plain `<img>`.
+
+### OBS-120 ✅ SMOKE — Console login page renders cleanly
+- Page title: `بوابة العملاء - مودونتي` ✅
+- RTL layout intact, modonty logo visible, login card on the right (RTL-correct).
+- Form pre-fills `modonty@modonty.com` / `Modonty123!` (browser autofill, expected dev behaviour).
+- Two info cards present: "أدخل زميلاً واحصل على 5 مقالات مجانية" referral card + 4 feature tiles.
+- Screenshot: `console-home-2026-04-27.png`.
+
+---
+
 ## Session: 2026-04-26 — Search Console UI polish (Session 69)
+
+### OBS-116 ✅ SHIPPED — modonty v1.42.0 + admin v0.43.1 pushed (8a6b59c)
+- Bumped: modonty 1.41.1 → 1.42.0; admin 0.43.0 → 0.43.1.
+- Backup script: 12 backups maintained.
+- Changelog v1.42.0 added to LOCAL + PROD DBs (visible in admin sidebar after Vercel deploy).
+- Excluded from commit: root-level debug *.md snapshot files (still untracked, harmless).
+- Push: `dd99016..8a6b59c main -> main`. Vercel auto-deploy triggered for both modonty and admin.
 
 ### OBS-115 ✅ DONE — proxy.ts returns 410 for any non-PUBLISHED slug
 - **User direction:** "do it" — fix the gap where deleted-from-DB slugs returned 200 + noindex instead of 410.

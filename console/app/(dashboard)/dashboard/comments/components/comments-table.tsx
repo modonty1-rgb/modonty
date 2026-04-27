@@ -111,14 +111,14 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg">{c.title}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredComments.length} {c.commentsCount}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={filter === "all" ? "default" : "outline"}
               size="sm"
@@ -197,9 +197,9 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                           {comment.article.title}
                         </Link>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex flex-wrap gap-2">
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleApprove(comment.id)}
                           disabled={
@@ -207,11 +207,13 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                             comment.status === "APPROVED"
                           }
                           title={c.approveComment}
+                          aria-label={c.approveComment}
+                          className="h-10 w-10"
                         >
-                          <Check className="h-3 w-3 text-primary" />
+                          <Check className="h-4 w-4 text-primary" />
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleReject(comment.id)}
                           disabled={
@@ -219,17 +221,21 @@ export function CommentsTable({ comments, clientId }: CommentsTableProps) {
                             comment.status === "REJECTED"
                           }
                           title={c.rejectComment}
+                          aria-label={c.rejectComment}
+                          className="h-10 w-10"
                         >
-                          <X className="h-3 w-3 text-destructive" />
+                          <X className="h-4 w-4 text-destructive" />
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleDelete(comment.id)}
                           disabled={updating === comment.id}
                           title={c.deleteComment}
+                          aria-label={c.deleteComment}
+                          className="h-10 w-10"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
