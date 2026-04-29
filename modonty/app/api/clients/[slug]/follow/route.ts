@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 export async function GET(
   request: NextRequest,
@@ -87,6 +88,16 @@ export async function POST(
       );
     }
 
+    const existing = await db.clientLike.findUnique({
+      where: {
+        clientId_userId: {
+          clientId: client.id,
+          userId: session.user.id,
+        },
+      },
+      select: { id: true },
+    });
+
     await db.clientLike.upsert({
       where: {
         clientId_userId: {
@@ -104,6 +115,19 @@ export async function POST(
     const followersCount = await db.clientLike.count({
       where: { clientId: client.id }
     });
+
+    if (!existing) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(client.id, "clientFollow", {
+        meta: { المتابع: session.user.name ?? session.user.email ?? "زائر" },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,

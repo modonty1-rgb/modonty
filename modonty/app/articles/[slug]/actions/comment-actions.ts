@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 function sanitizeComment(content: string): string {
   const trimmed = content.trim();
@@ -71,6 +72,26 @@ export async function submitComment(
 
     revalidatePath(`/articles/${articleSlug}`);
 
+    // Telegram notification (non-blocking)
+    db.article
+      .findUnique({
+        where: { id: articleId },
+        select: { clientId: true, title: true },
+      })
+      .then((art) => {
+        if (art?.clientId) {
+          notifyTelegram(art.clientId, "commentNew", {
+            title: art.title,
+            body: `${comment.author?.name ?? "زائر"}: ${content}`,
+            link: {
+              label: "مراجعة من اللوحة",
+              url: `https://console.modonty.com/dashboard/comments`,
+            },
+          });
+        }
+      })
+      .catch(() => {});
+
     return {
       success: true,
       data: comment,
@@ -137,6 +158,21 @@ export async function submitReply(
 
     revalidatePath(`/articles/${articleSlug}`);
 
+    db.article
+      .findUnique({
+        where: { id: articleId },
+        select: { clientId: true, title: true },
+      })
+      .then((art) => {
+        if (art?.clientId) {
+          notifyTelegram(art.clientId, "commentReply", {
+            title: art.title,
+            body: `${reply.author?.name ?? "زائر"}: ${content}`,
+          });
+        }
+      })
+      .catch(() => {});
+
     return {
       success: true,
       data: reply,
@@ -196,6 +232,22 @@ export async function likeComment(commentId: string, articleSlug: string) {
 
     revalidatePath(`/articles/${articleSlug}`);
 
+    if (!existingLike) {
+      db.comment
+        .findUnique({
+          where: { id: commentId },
+          select: { article: { select: { clientId: true, title: true } } },
+        })
+        .then((c) => {
+          if (c?.article?.clientId) {
+            notifyTelegram(c.article.clientId, "commentLike", {
+              title: c.article.title,
+            });
+          }
+        })
+        .catch(() => {});
+    }
+
     return {
       success: true,
       data: { likes, dislikes, liked: !existingLike },
@@ -254,6 +306,22 @@ export async function dislikeComment(commentId: string, articleSlug: string) {
     ]);
 
     revalidatePath(`/articles/${articleSlug}`);
+
+    if (!existingDislike) {
+      db.comment
+        .findUnique({
+          where: { id: commentId },
+          select: { article: { select: { clientId: true, title: true } } },
+        })
+        .then((c) => {
+          if (c?.article?.clientId) {
+            notifyTelegram(c.article.clientId, "commentDislike", {
+              title: c.article.title,
+            });
+          }
+        })
+        .catch(() => {});
+    }
 
     return {
       success: true,

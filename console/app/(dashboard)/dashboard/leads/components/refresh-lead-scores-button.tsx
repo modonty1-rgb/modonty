@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ar } from "@/lib/ar";
 import { refreshLeadScores } from "../actions/refresh-lead-scores";
@@ -14,10 +15,16 @@ export function RefreshLeadScoresButton() {
 
   function handleClick() {
     startTransition(async () => {
-      const result = await refreshLeadScores();
-      if (result.ok) {
-        router.refresh();
+      const res = await refreshLeadScores();
+      if (!res.ok) {
+        toast.error(res.error || l.refreshScoresError);
+        return;
       }
+      const message = l.refreshSuccess
+        .replace("{n}", String(res.result.processed))
+        .replace("{d}", String(res.result.deletedStale));
+      toast.success(message);
+      router.refresh();
     });
   }
 

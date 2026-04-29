@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface DashboardLayoutClientProps {
   clientName: string;
+  clientLogoUrl: string | null;
   pendingArticlesCount: number;
   pendingCommentsCount: number;
   pendingQuestionsCount: number;
@@ -15,11 +16,13 @@ interface DashboardLayoutClientProps {
   leadsCount: number;
   pendingSupportCount: number;
   pendingFaqsCount: number;
+  pendingClientCommentsCount: number;
   children: React.ReactNode;
 }
 
 export function DashboardLayoutClient({
   clientName,
+  clientLogoUrl,
   pendingArticlesCount,
   pendingCommentsCount,
   pendingQuestionsCount,
@@ -27,6 +30,7 @@ export function DashboardLayoutClient({
   leadsCount,
   pendingSupportCount,
   pendingFaqsCount,
+  pendingClientCommentsCount,
   children,
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -36,19 +40,23 @@ export function DashboardLayoutClient({
     <div className="min-h-screen bg-background">
       <Sidebar
         clientName={clientName}
+        clientLogoUrl={clientLogoUrl}
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
         pendingFaqsCount={pendingFaqsCount}
+        pendingClientCommentsCount={pendingClientCommentsCount}
         isCollapsed={isSidebarCollapsed}
         onCollapsedChange={setIsSidebarCollapsed}
       />
       <MobileSidebar
         clientName={clientName}
+        clientLogoUrl={clientLogoUrl}
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
         pendingFaqsCount={pendingFaqsCount}
+        pendingClientCommentsCount={pendingClientCommentsCount}
         isOpen={isMobileOpen}
         onOpenChange={setIsMobileOpen}
       />

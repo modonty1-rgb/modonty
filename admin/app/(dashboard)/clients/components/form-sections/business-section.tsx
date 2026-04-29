@@ -2,9 +2,9 @@
 
 import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
-import { FormInput, FormTextarea, FormNativeSelect } from "@/components/admin/form-field";
+import { FormTextarea, FormNativeSelect } from "@/components/admin/form-field";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 
 interface BusinessSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
@@ -14,7 +14,6 @@ interface BusinessSectionProps {
 
 export function BusinessSection({
   form,
-  industries = [],
   clients = [],
 }: BusinessSectionProps) {
   const {
@@ -22,7 +21,7 @@ export function BusinessSection({
     setValue,
     formState: { errors },
   } = form;
-  const hasAudienceErrors = Boolean(errors.targetAudience || errors.contentPriorities);
+  const hasContentErrors = Boolean(errors.contentPriorities);
 
   return (
     <div className="space-y-3">
@@ -46,26 +45,26 @@ export function BusinessSection({
         </FormNativeSelect>
       </div>
 
+      {/* Strategy moved to client-managed intake — admin no longer edits target audience here */}
+      <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+        <Info className="h-4 w-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
+        <div>
+          <strong>Strategy is client-managed.</strong> Target audience, brand voice, forbidden keywords/claims,
+          SEO goals, etc. are now edited by the client through the console intake form. View them on the
+          client&apos;s detail page (read-only mirror via <code className="px-1 rounded bg-blue-100">client.intake</code>).
+        </div>
+      </div>
+
       <div className="space-y-3">
         <div className="flex items-center gap-2 w-full mb-1">
           <h3 className="text-xs font-extrabold text-foreground tracking-wide uppercase whitespace-nowrap">
-            Audience & content
+            Content priorities
           </h3>
-          {hasAudienceErrors && (
+          {hasContentErrors && (
             <AlertCircle className="h-3 w-3 text-destructive" aria-hidden="true" />
           )}
           <div className="h-px w-full bg-border ml-2" />
         </div>
-        <FormTextarea
-          label="Target Audience"
-          name="targetAudience"
-          value={watch("targetAudience") || ""}
-          onChange={(e) => setValue("targetAudience", e.target.value || null, { shouldValidate: true })}
-          rows={3}
-          error={errors.targetAudience?.message}
-          placeholder="Describe the target audience for this client"
-          hint={messages.hints.client.businessType}
-        />
         <FormTextarea
           label="Content Priorities (comma-separated)"
           name="contentPriorities"

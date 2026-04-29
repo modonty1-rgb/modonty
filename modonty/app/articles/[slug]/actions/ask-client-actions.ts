@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ArticleStatus, ArticleFAQStatus } from "@prisma/client";
 import { askClientSchema, type AskClientFormData } from "../helpers/schemas/ask-client-schema";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 function sanitizeText(text: string): string {
   return text
@@ -33,7 +34,7 @@ export async function submitAskClient(
 
   const article = await db.article.findFirst({
     where: { id: articleId, status: ArticleStatus.PUBLISHED },
-    select: { id: true, slug: true },
+    select: { id: true, slug: true, title: true, clientId: true },
   });
   if (!article) {
     return { success: false, error: "المقال غير متاح أو غير منشور" };
@@ -77,6 +78,18 @@ export async function submitAskClient(
   });
 
   revalidatePath(`/articles/${article.slug}`);
+
+  if (article.clientId) {
+    notifyTelegram(article.clientId, "askClientQuestion", {
+      title: article.title,
+      body: `${submittedByName}: ${parsed.data.question.trim()}`,
+      meta: { "البريد": submittedByEmail },
+      link: {
+        label: "الرد من اللوحة",
+        url: "https://console.modonty.com/dashboard/questions",
+      },
+    }).catch(() => {});
+  }
 
   return { success: true };
 }

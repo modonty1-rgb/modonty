@@ -5,16 +5,18 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { ar } from "@/lib/ar";
 import {
-  FileText,
-  FileEdit,
-  Image,
-  TrendingUp,
-  Users,
-  Target,
+  Newspaper,
+  PenLine,
+  Images,
+  Megaphone,
+  Mail,
+  UserPlus,
   LogOut,
   Building2,
-  ClipboardList,
-  MessageCircleQuestion,
+  Sparkles,
+  HelpCircle,
+  Quote,
+  Activity,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -27,20 +29,24 @@ import {
 
 interface MobileSidebarProps {
   clientName: string;
+  clientLogoUrl: string | null;
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;
   pendingFaqsCount: number;
+  pendingClientCommentsCount: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function MobileSidebar({
   clientName,
+  clientLogoUrl,
   pendingArticlesCount,
   subscribersCount,
   leadsCount,
   pendingFaqsCount,
+  pendingClientCommentsCount,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -54,8 +60,18 @@ export function MobileSidebar({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-64 p-0">
         <SheetHeader className="border-b border-border p-4">
-          <SheetTitle className="text-start font-semibold text-foreground">
-            Modonty
+          <SheetTitle className="flex items-center gap-2 text-start">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
+              {clientLogoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={clientLogoUrl} alt={clientName} className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-sm font-semibold">
+                  {clientName.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <span className="truncate text-sm font-semibold text-foreground">{clientName}</span>
           </SheetTitle>
         </SheetHeader>
 
@@ -68,72 +84,73 @@ export function MobileSidebar({
           />
           <SidebarNavItem
             href="/dashboard/seo"
-            icon={ClipboardList}
+            icon={Sparkles}
             label={ar.nav.seo}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/articles"
-            icon={FileText}
+            icon={Newspaper}
             label={ar.nav.articles}
             badge={pendingArticlesCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/content"
-            icon={FileEdit}
+            icon={PenLine}
             label={ar.nav.content}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/media"
-            icon={Image}
+            icon={Images}
             label={ar.nav.media}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/campaigns"
-            icon={TrendingUp}
+            icon={Megaphone}
             label={ar.nav.campaigns}
             badgeLabel={ar.campaigns.beta}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/subscribers"
-            icon={Users}
+            icon={Mail}
             label={ar.nav.subscribers}
             badge={subscribersCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/leads"
-            icon={Target}
+            icon={UserPlus}
             label={ar.nav.leads}
             badge={leadsCount}
             isCollapsed={false}
           />
           <SidebarNavItem
             href="/dashboard/faqs"
-            icon={MessageCircleQuestion}
+            icon={HelpCircle}
             label={ar.nav.faqs}
             badge={pendingFaqsCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/client-comments"
+            icon={Quote}
+            label={ar.nav.clientComments}
+            badge={pendingClientCommentsCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/site-health"
+            icon={Activity}
+            label={ar.nav.siteHealth}
             isCollapsed={false}
           />
         </nav>
 
         <div className="border-t border-border p-3">
-          <div className="mb-2 flex items-center gap-3 px-3 py-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <span className="text-xs font-semibold">
-                {clientName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-foreground truncate">
-                {clientName}
-              </p>
-            </div>
-          </div>
           <Button
             variant="ghost"
             size="sm"

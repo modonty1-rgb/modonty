@@ -1,107 +1,81 @@
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ar } from "@/lib/ar";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Info } from "lucide-react";
 import { SettingsForm } from "./components/settings-form";
 import { ChangePasswordForm } from "./components/change-password-form";
+import {
+  SubscriptionCard,
+  type SubscriptionData,
+} from "./components/subscription-card";
+import { TelegramCard } from "./components/telegram-card";
+import type { NotificationPreferences } from "./actions/settings-actions";
+import type { TelegramEventPreferences } from "@/lib/telegram/events";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   const session = await auth();
   const clientId = (session as { clientId?: string })?.clientId;
-  if (!clientId) return null;
+  if (!clientId) redirect("/");
 
-  const [client, clientSubscription] = await Promise.all([
-    db.client.findUnique({
-      where: { id: clientId },
-      select: { notificationPreferences: true },
-    }),
-    db.client.findUnique({
-      where: { id: clientId },
-      select: {
-        subscriptionTier: true,
-        subscriptionStatus: true,
-        paymentStatus: true,
-        subscriptionStartDate: true,
-        subscriptionEndDate: true,
-        subscriptionTierConfig: { select: { name: true, price: true } },
-      },
-    }),
-  ]);
-  if (!client) return null;
+  const client = await db.client.findUnique({
+    where: { id: clientId },
+    select: {
+      notificationPreferences: true,
+      subscriptionTier: true,
+      subscriptionStatus: true,
+      paymentStatus: true,
+      subscriptionStartDate: true,
+      subscriptionEndDate: true,
+      subscriptionTierConfig: { select: { name: true, price: true } },
+      telegramChatId: true,
+      telegramConnectedAt: true,
+      telegramEventPreferences: true,
+    },
+  });
+  if (!client) redirect("/");
 
-  const prefs = client.notificationPreferences as Record<string, unknown> | null;
-  const tier = clientSubscription?.subscriptionTierConfig;
-  const tierName = tier?.name ?? clientSubscription?.subscriptionTier ?? "—";
-  const price = tier?.price ?? null;
+  const s = ar.settings;
+  const prefs =
+    (client.notificationPreferences as NotificationPreferences | null) ?? null;
+
+  const tier = client.subscriptionTierConfig;
+  const subscription: SubscriptionData = {
+    tierName: tier?.name ?? client.subscriptionTier ?? "—",
+    status: client.subscriptionStatus ?? null,
+    paymentStatus: client.paymentStatus ?? null,
+    startDate: client.subscriptionStartDate ?? null,
+    endDate: client.subscriptionEndDate ?? null,
+    priceSar: tier?.price ?? null,
+  };
+
+  const tgPrefs =
+    (client.telegramEventPreferences as TelegramEventPreferences | null) ?? null;
+  const botUsername = process.env.TELEGRAM_BOT_USERNAME ?? null;
 
   return (
     <div className="space-y-6">
-      <div>
+      <header>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          {ar.nav.settings}
+          {s.pageTitle}
         </h1>
-        <p className="text-muted-foreground mt-1">
-          {ar.settings.notificationsDesc}
-        </p>
-      </div>
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+          <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+          <p className="text-xs leading-relaxed text-foreground">{s.pageHint}</p>
+        </div>
+      </header>
 
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-medium">{ar.dashboard.subscription}</CardTitle>
-          <CardDescription className="text-xs">{ar.dashboard.currentPlan}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-lg font-semibold text-foreground">{tierName}</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {(() => {
-              const s = String(clientSubscription?.subscriptionStatus || "").toUpperCase();
-              if (s === "ACTIVE") return ar.dashboard.subStatusActive;
-              if (s === "INACTIVE") return ar.dashboard.subStatusInactive;
-              if (s === "EXPIRED") return ar.dashboard.subStatusExpired;
-              if (s === "CANCELLED" || s === "CANCELED") return ar.dashboard.subStatusCancelled;
-              return clientSubscription?.subscriptionStatus;
-            })()}
-            {" · "}
-            {(() => {
-              const p = String(clientSubscription?.paymentStatus || "").toUpperCase();
-              if (p === "PAID") return ar.dashboard.paymentPaid;
-              if (p === "UNPAID") return ar.dashboard.paymentUnpaid;
-              if (p === "PENDING") return ar.dashboard.paymentPending;
-              return clientSubscription?.paymentStatus;
-            })()}
-          </p>
-          {price != null && (
-            <p className="text-xs text-muted-foreground mt-1">
-              {Number(price).toLocaleString()} {ar.dashboard.currencySar} / {ar.dashboard.perYear}
-            </p>
-          )}
-          {(clientSubscription?.subscriptionStartDate ?? clientSubscription?.subscriptionEndDate) && (
-            <p className="text-xs text-muted-foreground mt-1">
-              {clientSubscription?.subscriptionStartDate && clientSubscription?.subscriptionEndDate
-                ? `${new Date(clientSubscription.subscriptionStartDate).toLocaleDateString()} – ${new Date(clientSubscription.subscriptionEndDate).toLocaleDateString()}`
-                : clientSubscription?.subscriptionStartDate
-                  ? `من ${new Date(clientSubscription.subscriptionStartDate).toLocaleDateString()}`
-                  : clientSubscription?.subscriptionEndDate
-                    ? `حتى ${new Date(clientSubscription.subscriptionEndDate).toLocaleDateString()}`
-                    : null}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <SettingsForm
-        clientId={clientId}
-        initial={{ notificationPreferences: prefs ?? undefined }}
+      <SubscriptionCard data={subscription} />
+      <SettingsForm initial={prefs} />
+      <TelegramCard
+        isConnected={!!client.telegramChatId}
+        connectedAt={client.telegramConnectedAt ?? null}
+        initialPrefs={tgPrefs}
+        botUsername={botUsername}
       />
-      <ChangePasswordForm clientId={clientId} />
+      <ChangePasswordForm />
     </div>
   );
 }

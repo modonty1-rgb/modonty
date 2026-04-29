@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 export async function POST(
   req: NextRequest,
@@ -77,6 +78,27 @@ export async function POST(
       db.commentDislike.count({ where: { commentId } }),
     ]);
 
+    if (!existingLike) {
+      const ip =
+        req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        req.headers.get("x-real-ip") ||
+        null;
+      db.comment
+        .findUnique({
+          where: { id: commentId },
+          select: { article: { select: { clientId: true, title: true } } },
+        })
+        .then((c) => {
+          if (c?.article?.clientId) {
+            notifyTelegram(c.article.clientId, "commentLike", {
+              title: c.article.title,
+              ipAddress: ip,
+              headers: req.headers,
+            }).catch(() => {});
+          }
+        })
+        .catch(() => {});
+    }
 
     const responseData = {
       success: true,

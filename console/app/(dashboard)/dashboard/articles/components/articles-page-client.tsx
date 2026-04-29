@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ArticleCard } from "./article-card";
 import { FileText, CheckCircle, List } from "lucide-react";
 import type { ArticleWithAllData } from "../helpers/article-queries";
@@ -21,6 +16,7 @@ interface ArticlesPageClientProps {
   allArticles: ArticleWithAllData[];
   pendingCount: number;
   initialTab: string;
+  siteUrl: string;
 }
 
 export function ArticlesPageClient({
@@ -29,6 +25,7 @@ export function ArticlesPageClient({
   allArticles,
   pendingCount,
   initialTab,
+  siteUrl,
 }: ArticlesPageClientProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -109,7 +106,7 @@ export function ArticlesPageClient({
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {activeTabData.articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard key={article.id} article={article} siteUrl={siteUrl} />
             ))}
           </div>
         )}

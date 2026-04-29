@@ -93,10 +93,10 @@ export const clientFormSections: FormSectionConfig[] = [
   },
   {
     id: "business",
-    title: "Audience",
-    description: "Target audience and content priorities",
+    title: "Content priorities",
+    description: "SEO keyword priorities (audience/strategy moved to client intake)",
     icon: "Building2",
-    fields: ["targetAudience", "contentPriorities"],
+    fields: ["contentPriorities"],
     required: [],
     priority: "secondary",
     availableInCreate: true,

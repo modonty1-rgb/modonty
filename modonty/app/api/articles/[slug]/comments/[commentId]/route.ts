@@ -5,6 +5,7 @@ import { CommentStatus, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { sendEmail } from "@/lib/email/resend-client";
 import { commentReplyEmail } from "@/lib/email/templates/comment-reply";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 export async function POST(
   request: NextRequest,
@@ -28,7 +29,7 @@ export async function POST(
         slug: decodedSlug,
         status: ArticleStatus.PUBLISHED,
       },
-      select: { id: true, title: true },
+      select: { id: true, title: true, clientId: true },
     });
 
     if (!article) {
@@ -124,6 +125,24 @@ export async function POST(
       sendEmail({ to: parentAuthor.email, ...emailPayload }).catch((err) =>
         console.error("[comments/reply] Reply notification failed:", err)
       );
+    }
+
+    if (article.clientId) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(article.clientId, "commentReply", {
+        title: article.title,
+        body: `${session.user.name ?? "زائر"}: ${trimmedContent}`,
+        link: {
+          label: "مراجعة من اللوحة",
+          url: "https://console.modonty.com/dashboard/comments",
+        },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
     }
 
     return NextResponse.json({

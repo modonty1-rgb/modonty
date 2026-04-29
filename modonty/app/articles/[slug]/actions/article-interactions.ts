@@ -3,6 +3,29 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { notifyTelegram } from "@/lib/telegram/notify";
+import type { TelegramEventKey } from "@/lib/telegram/events";
+
+function fireTelegram(
+  articleId: string,
+  eventKey: TelegramEventKey,
+  actorName: string | null
+): void {
+  db.article
+    .findUnique({
+      where: { id: articleId },
+      select: { clientId: true, title: true },
+    })
+    .then((art) => {
+      if (art?.clientId) {
+        notifyTelegram(art.clientId, eventKey, {
+          title: art.title,
+          meta: actorName ? { من: actorName } : undefined,
+        });
+      }
+    })
+    .catch(() => {});
+}
 
 export async function likeArticle(articleId: string, articleSlug: string) {
   try {
@@ -52,6 +75,9 @@ export async function likeArticle(articleId: string, articleSlug: string) {
     }
 
     revalidatePath(`/articles/${articleSlug}`);
+    if (!existing) {
+      fireTelegram(articleId, "articleLike", session.user.name ?? null);
+    }
     return {
       success: true,
       data: { likes: updated.likesCount, dislikes: updated.dislikesCount, liked: !existing },
@@ -109,6 +135,9 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
     }
 
     revalidatePath(`/articles/${articleSlug}`);
+    if (!existing) {
+      fireTelegram(articleId, "articleDislike", session.user.name ?? null);
+    }
     return {
       success: true,
       data: { likes: updated.likesCount, dislikes: updated.dislikesCount, disliked: !existing },
@@ -156,6 +185,9 @@ export async function favoriteArticle(articleId: string, articleSlug: string) {
     }
 
     revalidatePath(`/articles/${articleSlug}`);
+    if (!existing) {
+      fireTelegram(articleId, "articleFavorite", session.user.name ?? null);
+    }
     return {
       success: true,
       data: { favorites: updated.favoritesCount, favorited: !existing },

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { ArticleStatus, TrafficSource } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -47,7 +48,7 @@ export async function POST(
 
     const article = await db.article.findFirst({
       where: { slug: decodedSlug, status: ArticleStatus.PUBLISHED },
-      select: { id: true, clientId: true },
+      select: { id: true, clientId: true, title: true },
     });
 
     if (!article) {
@@ -112,6 +113,14 @@ export async function POST(
         select: { id: true },
       }),
     ]);
+
+    if (article.clientId) {
+      notifyTelegram(article.clientId, "articleView", {
+        title: article.title,
+        ipAddress,
+        headers: headersList,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ ok: true, analyticsId: analytics.id });
   } catch (err) {

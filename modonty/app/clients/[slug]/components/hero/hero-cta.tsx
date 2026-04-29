@@ -3,6 +3,7 @@ import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { ClientFollowButton } from "../client-follow-button";
+import { ClientFavoriteButton } from "../client-favorite-button";
 import { ShareClientButtonWrapper } from "../share-client-button-wrapper";
 import { IconMessage } from "@/lib/icons";
 import type { ClientHeroClient, ClientHeroStats, ClientHeroSocialLink } from "./types";
@@ -55,6 +56,12 @@ function CtaShareAndFollow({
         clientSlug={client.slug}
         initialIsFollowing={initialIsFollowing}
         initialFollowersCount={stats.followers}
+        variant="outline"
+        size="default"
+        className="flex-1 md:flex-none"
+      />
+      <ClientFavoriteButton
+        clientSlug={client.slug}
         variant="outline"
         size="default"
         className="flex-1 md:flex-none"

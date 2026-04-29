@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 interface ContactMessageData {
   name: string;
@@ -63,6 +64,19 @@ export async function submitContactMessage(data: ContactMessageData) {
       userAgent: data.userAgent,
       referrer: data.referrer,
     });
+
+    if (resolvedClientId) {
+      notifyTelegram(resolvedClientId, "supportMessage", {
+        title: data.subject,
+        body: `${data.name}: ${data.message}`,
+        meta: { "البريد": data.email },
+        link: {
+          label: "الرد من اللوحة",
+          url: "https://console.modonty.com/dashboard/support",
+        },
+        ipAddress: data.ipAddress ?? null,
+      }).catch(() => {});
+    }
 
     return { success: true, message: "تم إرسال الرسالة بنجاح" };
   } catch (error) {

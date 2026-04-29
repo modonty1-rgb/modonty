@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-27 (Session 70 — Console Phase 1 ✅ Copy + Phase 2 ✅ Responsive (header/profile/media/charts/tables across 3 viewports). Pending: 4 HIGH security in [CONSOLE-TODO.md](CONSOLE-TODO.md))
+> **آخر تحديث:** 2026-04-29 (Session 73 — Pre-push health check ✅ · 3 apps TSC zero errors · 3 apps build success · `verify-client-password.ts` (security risk) محذوف · بانتظار OK للـ version bumps + backup + changelog + push)
 > **🎯 Master plan:** [Perfect-SEO-Plan.md](Perfect-SEO-Plan.md) — 108 task across 13 phases · ~33 يوم عمل · يستبدل **الجزء الميكانيكي** من SEO Specialist (95%) · لا يستبدل الـ Strategy/Content/Backlinks (الـ 80% من النجاح الفعلي) · راجع قسم "Reality Check" في الملف للحقيقة الكاملة
 > **خطة Dashboard rebuild:** [Dashboard-Action-Plan.md](Dashboard-Action-Plan.md) · [Mockup v2](../../admin/public/dashboard-mockup-v2.html)
 > **خطة URL Lifecycle & Coverage:** [URL-Lifecycle-Plan.md](URL-Lifecycle-Plan.md) — 22 task across 3 phases
@@ -9,6 +9,52 @@
 ---
 
 > 🟢 LOW items → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
+
+---
+
+## 🧹 Repo Cleanup (Session 73 — 2026-04-29)
+
+### CLEAN-01 🟡 PARTIAL — `test-prisma-connection.ts` محذوف · Atlas rotation معلّقة
+- [x] حُذف من الـ working tree (2026-04-29)
+- [ ] ⚠️ لا يزال في git history (commit `493d4e5`) — قرار المستخدم: تأجيل لحين تغيير Atlas account
+- [ ] **معلّق:** غيّر MongoDB Atlas password متى ما تجهز + حدّث 3 ملفات `.env.local` + Vercel envs
+
+### CLEAN-02 ✅ DONE — Build cache cleanup (وفّر ~1.4 GB)
+- [x] حُذف `admin/.next/` (975 MB) + `modonty/.next/` (376 MB) + `console/.next/`
+
+### CLEAN-03 ✅ DONE — Test artifacts
+- [x] حُذف `test-results/` + `modonty/test-results/` + `admin/logs/`
+- [x] حُذف `modonty/performance-home.png`
+- [x] حُذف `test-screenshots/` (14 MB · 178 ملف)
+
+### CLEAN-04 ✅ DONE — Backups مقلّصة لآخر 5
+- [x] من 16 → 5 احتياطيات (وفّر ~19 MB)
+
+### CLEAN-05 ✅ DONE — Scripts قديمة مؤرشفة
+- [x] `admin/scripts/` → 20 script منقولة إلى `documents/_archive/old-scripts/admin/`
+- [x] `modonty/scripts/` → 12 script منقولة إلى `documents/_archive/old-scripts/modonty/`
+- [x] `scripts/fix-broken-slug.mjs` محذوف (نسخة مكررة من .ts)
+- [x] `admin/check-db.ts` + `admin/verify-db.ts` محذوفة
+
+### CLEAN-07 ✅ DONE — تنظيف `documents/_archive/` (شامل + إلغاء)
+- [x] **Phase 1 (HIGH):** 10 ملفات stub/duplicate/raw-output
+- [x] **Phase 2 (MEDIUM):** 9 pipeline/UI snapshots + مجلد `old-scripts/` كامل (31 ملف)
+- [x] **Phase 3 (one-time reports):** 31 ملف summaries/worklogs/reviews/migration guides
+- [x] **Phase 4 (flatten + review):** subdirs منبسطة + حذف 48 ملف PRDs/audits/plans لميزات منفّذة
+- [x] **Phase 5 (final):** اكتشاف 4 ملفات مكررة مع `MODONTY-MASTER-REFERENCE` + `BUSINESS-OVERVIEW` + `02-seo/SEO-STRUCTURED-DATA-METADATA-REFERENCE` → حذف
+- [x] `DESIGN_SYSTEM.md` (1277 سطر) نُقل إلى `07-design-ui/` (مكانه الطبيعي)
+- [x] `shared.md` → `documents/implementation-plans/SHARED_ENV_MIGRATION_PLAN.md`
+- [x] **مجلد `_archive/` اختفى بالكامل** ✨
+- **النتيجة:** أرشيف من 150 ملف → **0 (الفولدر محذوف)** — كل المحتوى القيّم في مكانه الصحيح أو مكرر معروف
+
+### CLEAN-06 ✅ DONE — Root configs منظّفة
+- [x] `clients-table.yml` → `documents/_archive/`
+- [x] `ga4.txt` → `documents/03-analytics-gtm/ga4.txt`
+- [x] `mockup/` → `documents/07-design-ui/mockups/`
+- [x] `compass-connections.json` → نُقل خارج الـ repo (`%USERPROFILE%\modonty-personal\`)
+- [x] `nextjs.yml` → قرار المستخدم: **يبقى** (Cursor IDE rules قديم، مرجوع له في `.cursor/rules/article-creation-perfection-rules.md`)
+
+> **التقرير المختصر:** [REPO-CLEANUP-AUDIT.md](../audits/REPO-CLEANUP-AUDIT.md) — متبقّي 3 بنود فقط (ga4.txt fix · Atlas rotation · nextjs.yml check)
 
 ---
 

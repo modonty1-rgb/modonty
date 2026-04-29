@@ -129,10 +129,10 @@ export default async function ArticleStatsPage({
       </div>
 
       {/* Comments */}
-      <CommentsTable comments={comments} clientId={clientId} />
+      <CommentsTable comments={comments} />
 
       {/* Questions */}
-      <QuestionsTable questions={questions} clientId={clientId} />
+      <QuestionsTable questions={questions} />
     </div>
   );
 }

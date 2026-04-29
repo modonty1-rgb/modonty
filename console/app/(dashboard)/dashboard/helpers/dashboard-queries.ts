@@ -17,10 +17,15 @@ export interface DashboardStats {
     monthlyQuota: number;
     totalArticles: number;
     totalSubscribers: number;
+    newSubscribersThisMonth: number;
   };
   analytics: {
     views7d: number;
+    views7dPrev: number; // days 8-14 ago — for WoW trend
+    views7dTrendPct: number; // % change vs prev period
     views30d: number;
+    views30dPrev: number; // days 31-60 ago — for MoM trend
+    views30dTrendPct: number;
     viewsAllTime: number;
     engagementScore: number;
     avgTimeOnPage: number;
@@ -46,6 +51,11 @@ export interface DashboardStats {
     total: number;
     rate: number;
   };
+}
+
+function trendPct(current: number, previous: number): number {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return Math.round(((current - previous) / previous) * 100);
 }
 
 export interface TopArticle {
@@ -77,16 +87,23 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const sevenDaysAgo = new Date(now);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const fourteenDaysAgo = new Date(now);
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
   const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const sixtyDaysAgo = new Date(now);
+  sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
   const [
     client,
     monthlyPublished,
     totalArticles,
     subscribers,
+    newSubscribersThisMonth,
     views7d,
+    views7dPrev,
     views30d,
+    views30dPrev,
     viewsAllTime,
     engagementData,
     interactions,
@@ -111,24 +128,32 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
       },
     }),
     db.subscriber.count({
-      where: {
-        clientId,
-        subscribed: true,
-      },
+      where: { clientId, subscribed: true },
+    }),
+    db.subscriber.count({
+      where: { clientId, subscribed: true, subscribedAt: { gte: startOfMonth } },
     }),
     // BUG-07 fix: count article + client page views to match Analytics page
     Promise.all([
       db.articleView.count({ where: { article: { clientId }, createdAt: { gte: sevenDaysAgo } } }),
       db.clientView.count({ where: { clientId, createdAt: { gte: sevenDaysAgo } } }),
     ]).then(([a, c]) => a + c),
+    // Previous 7-day window (days 8-14 ago) for WoW trend
+    Promise.all([
+      db.articleView.count({ where: { article: { clientId }, createdAt: { gte: fourteenDaysAgo, lt: sevenDaysAgo } } }),
+      db.clientView.count({ where: { clientId, createdAt: { gte: fourteenDaysAgo, lt: sevenDaysAgo } } }),
+    ]).then(([a, c]) => a + c),
     Promise.all([
       db.articleView.count({ where: { article: { clientId }, createdAt: { gte: thirtyDaysAgo } } }),
       db.clientView.count({ where: { clientId, createdAt: { gte: thirtyDaysAgo } } }),
     ]).then(([a, c]) => a + c),
+    // Previous 30-day window (days 31-60 ago) for MoM trend
+    Promise.all([
+      db.articleView.count({ where: { article: { clientId }, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
+      db.clientView.count({ where: { clientId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
+    ]).then(([a, c]) => a + c),
     db.articleView.count({
-      where: {
-        article: { clientId },
-      },
+      where: { article: { clientId } },
     }),
     db.analytics.aggregate({
       where: {
@@ -293,10 +318,15 @@ export async function getDashboardStats(clientId: string): Promise<DashboardStat
       monthlyQuota: client.articlesPerMonth ?? 0,
       totalArticles,
       totalSubscribers: subscribers,
+      newSubscribersThisMonth,
     },
     analytics: {
       views7d,
+      views7dPrev,
+      views7dTrendPct: trendPct(views7d, views7dPrev),
       views30d,
+      views30dPrev,
+      views30dTrendPct: trendPct(views30d, views30dPrev),
       viewsAllTime,
       engagementScore,
       avgTimeOnPage,

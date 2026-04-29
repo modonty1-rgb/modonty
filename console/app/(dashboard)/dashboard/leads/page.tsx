@@ -1,129 +1,116 @@
 import { auth } from "@/lib/auth";
-import { ar } from "@/lib/ar";
 import { redirect } from "next/navigation";
-import { getLeads, getLeadStats } from "./helpers/lead-queries";
+import { ar } from "@/lib/ar";
+import {
+  getLeads,
+  getLeadStats,
+  getLeadsLastRefreshedAt,
+  type LeadStats,
+} from "./helpers/lead-queries";
 import { LeadsTable } from "./components/leads-table";
 import { RefreshLeadScoresButton } from "./components/refresh-lead-scores-button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, Flame, TrendingUp, Snowflake, Award } from "lucide-react";
+import { KpiInfoCard } from "./components/kpi-info-card";
+import { Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+function timeAgoArabic(d: Date | null): string {
+  if (!d) return ar.leads.never;
+  const ar_ = ar.leads;
+  const diffMs = Date.now() - new Date(d).getTime();
+  const min = Math.floor(diffMs / 60_000);
+  if (min < 1) return ar_.refreshedJustNow;
+  if (min < 60) return ar_.refreshedMinutesAgo.replace("{n}", String(min));
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return ar_.refreshedHoursAgo.replace("{n}", String(hr));
+  const day = Math.floor(hr / 24);
+  return ar_.refreshedDaysAgo.replace("{n}", String(day));
+}
 
 export default async function LeadsPage() {
   const session = await auth();
   const clientId = (session as { clientId?: string })?.clientId;
+  if (!clientId) redirect("/");
 
-  if (!clientId) {
-    redirect("/");
-  }
-
-  const [leads, stats] = await Promise.all([
+  const [leads, stats, lastRefreshedAt] = await Promise.all([
     getLeads(clientId),
     getLeadStats(clientId),
+    getLeadsLastRefreshedAt(clientId),
   ]);
 
   const l = ar.leads;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold leading-tight text-foreground">
             {l.title}
           </h1>
-          <p className="text-muted-foreground mt-1">
-            {l.trackQualify}
-          </p>
+          <p className="text-muted-foreground mt-1">{l.trackQualify}</p>
         </div>
-        <RefreshLeadScoresButton />
-      </div>
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            {l.lastRefreshed}: {timeAgoArabic(lastRefreshedAt)}
+          </span>
+          <RefreshLeadScoresButton />
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-destructive" />
-              <CardTitle className="text-base font-medium">{l.hotLeads}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">{stats.hot}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {l.highEngagement}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{l.warmLeads}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.warm}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {l.moderateEngagement}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Snowflake className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-base font-medium">{l.coldLeads}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.cold}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {l.lowEngagement}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Award className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{l.qualified}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.qualified}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {l.readyForOutreach}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base font-medium">{l.avgScore}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold text-foreground">
-              {stats.avgScore}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {l.outOf100}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <KpiGrid stats={stats} />
 
       <LeadsTable leads={leads} />
+    </div>
+  );
+}
+
+// ─── KPI Grid ────────────────────────────────────────────────────────
+
+function KpiGrid({ stats }: { stats: LeadStats }) {
+  const l = ar.leads;
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+      <KpiInfoCard
+        iconKey="flame"
+        tone="red"
+        label={l.hotLeads}
+        value={stats.hot}
+        hint={l.highEngagement}
+        infoKey="high"
+      />
+      <KpiInfoCard
+        iconKey="trending-up"
+        tone="amber"
+        label={l.warmLeads}
+        value={stats.warm}
+        hint={l.moderateEngagement}
+        infoKey="medium"
+      />
+      <KpiInfoCard
+        iconKey="snowflake"
+        tone="slate"
+        label={l.coldLeads}
+        value={stats.cold}
+        hint={l.lowEngagement}
+        infoKey="low"
+      />
+      <KpiInfoCard
+        iconKey="award"
+        tone="primary"
+        label={l.qualified}
+        value={stats.qualified}
+        hint={l.readyForOutreach}
+        infoKey="qualified"
+      />
+      <KpiInfoCard
+        iconKey="target"
+        tone="muted"
+        label={l.avgScore}
+        value={stats.avgScore}
+        hint={l.outOf100}
+        infoKey="avg"
+      />
     </div>
   );
 }

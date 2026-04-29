@@ -101,6 +101,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         slug: true,
         forbiddenKeywords: true,
         forbiddenClaims: true,
+        intake: true,
       },
     });
 

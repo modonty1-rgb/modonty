@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import type { ConversionType } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -48,4 +49,14 @@ export async function createConversion(data: CreateConversionData): Promise<void
       referrer: data.referrer ?? undefined,
     },
   });
+
+  if (data.clientId) {
+    notifyTelegram(data.clientId, "conversion", {
+      meta: {
+        النوع: String(data.type),
+        ...(data.value ? { القيمة: `${data.value} ${data.currency ?? ""}` } : {}),
+      },
+      ipAddress: data.ipAddress ?? null,
+    }).catch(() => {});
+  }
 }

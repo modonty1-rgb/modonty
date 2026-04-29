@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -66,6 +67,17 @@ export async function POST(
         sessionId,
       },
     });
+
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("cf-connecting-ip") ||
+      null;
+    notifyTelegram(client.id, "clientShare", {
+      meta: { المنصة: sharePlatform },
+      ipAddress: ip,
+      headers: request.headers,
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,

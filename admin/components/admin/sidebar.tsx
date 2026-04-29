@@ -42,6 +42,7 @@ import {
   BookOpen,
   MessageSquare,
   ShieldAlert,
+  Megaphone,
 } from "lucide-react";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
@@ -96,6 +97,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Mail, label: "Subscribers", href: "/subscribers" },
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
+      { icon: Megaphone, label: "Campaign Leads", href: "/campaigns/leads" },
     ],
   },
   {

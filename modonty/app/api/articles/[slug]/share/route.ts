@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const SHARE_RATE_LIMIT = 10;
 const SHARE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -67,6 +68,20 @@ export async function POST(
         sessionId: sessionId ?? undefined,
       },
     });
+
+    if (article.clientId) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(article.clientId, "articleShare", {
+        title: slug,
+        meta: { المنصة: sharePlatform },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,

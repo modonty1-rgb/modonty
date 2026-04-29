@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { CTAType } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -54,6 +55,20 @@ export async function POST(request: Request) {
         scrollDepth: typeof scrollDepth === "number" ? scrollDepth : undefined,
       },
     });
+
+    if (typeof clientId === "string" && clientId) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(clientId, "articleCtaClick", {
+        title: typeof label === "string" ? label : undefined,
+        meta: { النوع: type, الهدف: typeof targetUrl === "string" ? targetUrl : undefined },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

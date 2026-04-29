@@ -1,123 +1,227 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { ar } from "@/lib/ar";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, KeyRound } from "lucide-react";
 import { changePassword } from "../actions/change-password-action";
 
-interface ChangePasswordFormProps {
-  clientId: string;
+type StrengthLevel = "weak" | "medium" | "strong";
+
+function gradePassword(pw: string): { level: StrengthLevel; score: number } {
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  if (score <= 2) return { level: "weak", score };
+  if (score <= 3) return { level: "medium", score };
+  return { level: "strong", score };
 }
 
-export function ChangePasswordForm({ clientId }: ChangePasswordFormProps) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+export function ChangePasswordForm() {
+  const s = ar.settings;
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const strength = useMemo(() => gradePassword(newPassword), [newPassword]);
+  const showStrength = newPassword.length > 0;
+  const mismatch =
+    confirmPassword.length > 0 && newPassword !== confirmPassword;
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
-    setSuccess(false);
     if (newPassword !== confirmPassword) {
-      setError(ar.settings.passwordsMismatch);
+      toast.error(s.passwordsMismatch);
       return;
     }
     if (newPassword.length < 8) {
-      setError(ar.settings.passwordMinLength);
+      toast.error(s.passwordMinLength);
       return;
     }
-    setLoading(true);
-    try {
-      const res = await changePassword(clientId, currentPassword, newPassword);
+    startTransition(async () => {
+      const res = await changePassword(currentPassword, newPassword);
       if (res.success) {
-        setSuccess(true);
+        toast.success(s.passwordChanged);
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        router.refresh();
       } else {
-        setError(
-          res.error === "wrongPassword"
-            ? ar.settings.wrongPassword
-            : res.error ?? ar.settings.updateFailed
-        );
+        toast.error(res.error || s.updateFailed);
       }
-    } catch {
-      setError(ar.settings.somethingWrong);
-    } finally {
-      setLoading(false);
-    }
+    });
   }
 
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">{ar.settings.changePassword}</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <KeyRound className="h-4 w-4 text-primary" />
+          {s.passwordCard}
+        </CardTitle>
+        <CardDescription>{s.passwordHint}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="p-3 text-sm text-green-600 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-md">
-              {ar.settings.passwordChanged}
-            </div>
-          )}
+          <PasswordField
+            id="currentPassword"
+            label={s.currentPassword}
+            value={currentPassword}
+            onChange={setCurrentPassword}
+            visible={showCurrent}
+            toggle={() => setShowCurrent((v) => !v)}
+            disabled={isPending}
+          />
+
           <div className="space-y-2">
-            <Label htmlFor="currentPassword">{ar.settings.currentPassword}</Label>
-            <Input
-              id="currentPassword"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              disabled={loading}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">{ar.settings.newPassword}</Label>
-            <Input
+            <PasswordField
               id="newPassword"
-              type="password"
+              label={s.newPassword}
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              disabled={loading}
-              required
+              onChange={setNewPassword}
+              visible={showNew}
+              toggle={() => setShowNew((v) => !v)}
+              disabled={isPending}
               minLength={8}
             />
+            {showStrength && <StrengthMeter level={strength.level} />}
           </div>
+
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{ar.settings.confirmPassword}</Label>
-            <Input
+            <PasswordField
               id="confirmPassword"
-              type="password"
+              label={s.confirmPassword}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={loading}
-              required
+              onChange={setConfirmPassword}
+              visible={showConfirm}
+              toggle={() => setShowConfirm((v) => !v)}
+              disabled={isPending}
+              error={mismatch ? s.passwordsMismatch : undefined}
             />
           </div>
-          <Button type="submit" disabled={loading}>
-            {loading ? ar.settings.saving : ar.settings.save}
-          </Button>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={
+                isPending ||
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword ||
+                mismatch
+              }
+            >
+              {isPending ? s.saving : s.changePassword}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+function PasswordField({
+  id,
+  label,
+  value,
+  onChange,
+  visible,
+  toggle,
+  disabled,
+  minLength,
+  error,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  visible: boolean;
+  toggle: () => void;
+  disabled: boolean;
+  minLength?: number;
+  error?: string;
+}) {
+  const s = ar.settings;
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
+        <Input
+          id={id}
+          type={visible ? "text" : "password"}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          required
+          minLength={minLength}
+          className="pe-10"
+        />
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={visible ? s.hidePassword : s.showPassword}
+          className="absolute end-2 top-1/2 -translate-y-1/2 grid h-7 w-7 place-items-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          tabIndex={-1}
+        >
+          {visible ? (
+            <EyeOff className="h-4 w-4" />
+          ) : (
+            <Eye className="h-4 w-4" />
+          )}
+        </button>
+      </div>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
+function StrengthMeter({ level }: { level: StrengthLevel }) {
+  const s = ar.settings;
+  const cfg = {
+    weak: {
+      label: s.strengthWeak,
+      classes: "bg-red-500",
+      width: "w-1/3",
+      text: "text-red-600",
+    },
+    medium: {
+      label: s.strengthMedium,
+      classes: "bg-amber-500",
+      width: "w-2/3",
+      text: "text-amber-600",
+    },
+    strong: {
+      label: s.strengthStrong,
+      classes: "bg-emerald-500",
+      width: "w-full",
+      text: "text-emerald-600",
+    },
+  }[level];
+
+  return (
+    <div className="space-y-1">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className={`h-full transition-all ${cfg.classes} ${cfg.width}`}
+        />
+      </div>
+      <p className={`text-xs ${cfg.text}`}>{cfg.label}</p>
+    </div>
   );
 }

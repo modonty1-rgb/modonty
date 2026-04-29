@@ -1,6 +1,11 @@
 import { db } from "@/lib/db";
 import { MediaType } from "@prisma/client";
 
+export interface MediaUsageRef {
+  type: "article" | "logo" | "heroImage";
+  label: string;
+}
+
 export interface MediaWithStats {
   id: string;
   filename: string;
@@ -17,6 +22,7 @@ export interface MediaWithStats {
   createdAt: Date;
   updatedAt: Date;
   usageCount: number;
+  usageRefs: MediaUsageRef[];
 }
 
 export async function getClientMedia(
@@ -35,10 +41,11 @@ export async function getClientMedia(
 
   const mediaWithStats = await Promise.all(
     media.map(async (m) => {
-      const usageCount = await getMediaUsageCount(m.id);
+      const usageRefs = await getMediaUsageDetails(m.id);
       return {
         ...m,
-        usageCount,
+        usageCount: usageRefs.length,
+        usageRefs,
       };
     })
   );
@@ -60,6 +67,30 @@ export async function getMediaUsageCount(mediaId: string): Promise<number> {
   ]);
 
   return articleCount + logoCount + heroImageCount;
+}
+
+/** Returns a list of WHERE this media is used (article titles + branding slots). */
+export async function getMediaUsageDetails(mediaId: string): Promise<MediaUsageRef[]> {
+  const [articles, asLogo, asHero] = await Promise.all([
+    db.article.findMany({
+      where: { featuredImageId: mediaId },
+      select: { title: true },
+    }),
+    db.client.findMany({
+      where: { logoMediaId: mediaId },
+      select: { name: true },
+    }),
+    db.client.findMany({
+      where: { heroImageMediaId: mediaId },
+      select: { name: true },
+    }),
+  ]);
+
+  const refs: MediaUsageRef[] = [];
+  for (const a of articles) refs.push({ type: "article", label: a.title });
+  for (const c of asLogo) refs.push({ type: "logo", label: `شعار ${c.name}` });
+  for (const c of asHero) refs.push({ type: "heroImage", label: `صورة الغلاف لـ ${c.name}` });
+  return refs;
 }
 
 export async function getClientBrandingMedia(clientId: string) {

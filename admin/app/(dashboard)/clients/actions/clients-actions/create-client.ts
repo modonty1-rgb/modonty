@@ -94,7 +94,6 @@ export async function createClient(data: ClientFormData) {
       "description",
       "canonicalUrl",
       "businessBrief",
-      "targetAudience",
       "contentPriorities",
       "foundingDate",
       "addressStreet",
@@ -138,16 +137,25 @@ export async function createClient(data: ClientFormData) {
       "priceRange",
       "openingHoursSpecification",
       "googleBusinessProfileUrl",
-      "forbiddenKeywords",
-      "forbiddenClaims",
-      "competitiveMentionsAllowed",
     ];
+    // Strategy fields removed (Plan B): targetAudience, forbiddenKeywords, forbiddenClaims,
+    // competitiveMentionsAllowed — these are now client-managed via console intake.
 
     const cleanData: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (key in clientData) {
         cleanData[key] = clientData[key];
       }
+    }
+
+    // Bootstrap intake JSON with businessBrief so the unified strategy bundle is non-empty from creation.
+    if (typeof cleanData.businessBrief === "string" && cleanData.businessBrief.trim()) {
+      cleanData.intake = {
+        version: 1,
+        business: { brief: cleanData.businessBrief },
+        updatedAt: new Date().toISOString(),
+      };
+      cleanData.intakeUpdatedAt = new Date();
     }
 
     // Handle relations — verify each ID exists before connecting

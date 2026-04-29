@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 
+export type ContactStatus = "new" | "read" | "replied" | "archived";
+
 export interface ContactMessageWithDetails {
   id: string;
   name: string;
@@ -17,6 +19,14 @@ export interface ContactMessageWithDetails {
   repliedAt: Date | null;
 }
 
+export interface MessageStats {
+  total: number;
+  new: number;
+  read: number;
+  replied: number;
+  archived: number;
+}
+
 export async function getContactMessages(
   clientId: string,
   status?: string
@@ -26,10 +36,25 @@ export async function getContactMessages(
       clientId,
       ...(status && status !== "all" && { status }),
     },
-    orderBy: {
-      createdAt: "desc",
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      subject: true,
+      message: true,
+      status: true,
+      replyBody: true,
+      ipAddress: true,
+      userAgent: true,
+      referrer: true,
+      createdAt: true,
+      updatedAt: true,
+      readAt: true,
+      repliedAt: true,
     },
-  }) as Promise<ContactMessageWithDetails[]>;
+    orderBy: { createdAt: "desc" },
+    take: 200,
+  });
 }
 
 export async function getNewSupportMessagesCount(clientId: string): Promise<number> {
@@ -38,24 +63,14 @@ export async function getNewSupportMessagesCount(clientId: string): Promise<numb
   });
 }
 
-export async function getMessageStats(clientId: string) {
+export async function getMessageStats(clientId: string): Promise<MessageStats> {
   const [total, newMessages, readMessages, repliedMessages, archivedMessages] =
     await Promise.all([
-      db.contactMessage.count({
-        where: { clientId },
-      }),
-      db.contactMessage.count({
-        where: { clientId, status: "new" },
-      }),
-      db.contactMessage.count({
-        where: { clientId, status: "read" },
-      }),
-      db.contactMessage.count({
-        where: { clientId, status: "replied" },
-      }),
-      db.contactMessage.count({
-        where: { clientId, status: "archived" },
-      }),
+      db.contactMessage.count({ where: { clientId } }),
+      db.contactMessage.count({ where: { clientId, status: "new" } }),
+      db.contactMessage.count({ where: { clientId, status: "read" } }),
+      db.contactMessage.count({ where: { clientId, status: "replied" } }),
+      db.contactMessage.count({ where: { clientId, status: "archived" } }),
     ]);
 
   return {
@@ -65,21 +80,4 @@ export async function getMessageStats(clientId: string) {
     replied: repliedMessages,
     archived: archivedMessages,
   };
-}
-
-export async function searchMessages(clientId: string, query: string) {
-  return db.contactMessage.findMany({
-    where: {
-      clientId,
-      OR: [
-        { name: { contains: query, mode: "insensitive" } },
-        { email: { contains: query, mode: "insensitive" } },
-        { subject: { contains: query, mode: "insensitive" } },
-        { message: { contains: query, mode: "insensitive" } },
-      ],
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
 }

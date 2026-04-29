@@ -39,8 +39,33 @@ interface ArticleForAudit extends Omit<Article, "jsonLdValidationReport"> {
 }
 
 export interface ClientForCompliance {
-  forbiddenKeywords?: string[];
-  forbiddenClaims?: string[];
+  // Legacy scattered fields (Phase 4 will remove). Kept for fallback during migration.
+  forbiddenKeywords?: string[] | null;
+  forbiddenClaims?: string[] | null;
+  // Unified intake JSON (new source of truth) — typed as unknown because Prisma returns JsonValue.
+  intake?: unknown;
+}
+
+/** Safely read string[] from intake.policy.<key> JSON value. */
+function readPolicyArray(intake: unknown, key: "forbiddenKeywords" | "forbiddenClaims"): string[] | null {
+  if (!intake || typeof intake !== "object") return null;
+  const policy = (intake as Record<string, unknown>).policy;
+  if (!policy || typeof policy !== "object") return null;
+  const arr = (policy as Record<string, unknown>)[key];
+  if (!Array.isArray(arr)) return null;
+  return arr.filter((x): x is string => typeof x === "string");
+}
+
+/** Resolve forbidden keywords from intake first, fallback to legacy field. */
+function resolveForbiddenKeywords(client: ClientForCompliance | null | undefined): string[] {
+  if (!client) return [];
+  return readPolicyArray(client.intake, "forbiddenKeywords") ?? client.forbiddenKeywords ?? [];
+}
+
+/** Resolve forbidden claims from intake first, fallback to legacy field. */
+function resolveForbiddenClaims(client: ClientForCompliance | null | undefined): string[] {
+  if (!client) return [];
+  return readPolicyArray(client.intake, "forbiddenClaims") ?? client.forbiddenClaims ?? [];
 }
 
 function scanForbidden(
@@ -289,7 +314,11 @@ export function auditBeforePublish(
   }
 
   // === COMPLIANCE CHECKS (client forbidden keywords/claims) ===
-  if (client?.forbiddenKeywords?.length) {
+  // Reads from intake.policy first, falls back to legacy fields.
+  const resolvedKeywords = resolveForbiddenKeywords(client);
+  const resolvedClaims = resolveForbiddenClaims(client);
+
+  if (resolvedKeywords.length) {
     const texts = [
       article.title ?? "",
       article.content ?? "",
@@ -297,7 +326,7 @@ export function auditBeforePublish(
       article.seoDescription ?? "",
       article.excerpt ?? "",
     ].join(" ");
-    const found = scanForbidden(texts, client.forbiddenKeywords);
+    const found = scanForbidden(texts, resolvedKeywords);
     for (const kw of found) {
       blocking.push({
         code: "FORBIDDEN_KEYWORD",
@@ -308,7 +337,7 @@ export function auditBeforePublish(
     }
   }
 
-  if (client?.forbiddenClaims?.length) {
+  if (resolvedClaims.length) {
     const texts = [
       article.title ?? "",
       article.content ?? "",
@@ -316,7 +345,7 @@ export function auditBeforePublish(
       article.seoDescription ?? "",
       article.excerpt ?? "",
     ].join(" ");
-    const found = scanForbidden(texts, client.forbiddenClaims);
+    const found = scanForbidden(texts, resolvedClaims);
     for (const claim of found) {
       blocking.push({
         code: "FORBIDDEN_CLAIM",
@@ -369,8 +398,12 @@ export function checkCompliance(
     data.excerpt ?? "",
   ].join(" ");
 
-  if (client.forbiddenKeywords?.length) {
-    const found = scanForbidden(texts, client.forbiddenKeywords);
+  // Resolve from intake.policy first, fallback to legacy fields.
+  const resolvedKeywords = resolveForbiddenKeywords(client);
+  const resolvedClaims = resolveForbiddenClaims(client);
+
+  if (resolvedKeywords.length) {
+    const found = scanForbidden(texts, resolvedKeywords);
     for (const kw of found) {
       issues.push({
         code: "FORBIDDEN_KEYWORD",
@@ -381,8 +414,8 @@ export function checkCompliance(
     }
   }
 
-  if (client.forbiddenClaims?.length) {
-    const found = scanForbidden(texts, client.forbiddenClaims);
+  if (resolvedClaims.length) {
+    const found = scanForbidden(texts, resolvedClaims);
     for (const claim of found) {
       issues.push({
         code: "FORBIDDEN_CLAIM",

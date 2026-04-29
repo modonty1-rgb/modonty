@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import type { CommentWithDetails } from "../../../comments/helpers/comment-queries";
 import type { VisitorQuestionWithDetails } from "../../../questions/helpers/question-queries";
-import { formatQuestionDate } from "../../../questions/helpers/question-queries";
 
 export interface ArticleStats {
   viewsCount: number;
@@ -65,6 +64,7 @@ export async function getArticleQuestions(
       question: true,
       answer: true,
       status: true,
+      source: true,
       submittedByName: true,
       submittedByEmail: true,
       createdAt: true,
@@ -72,8 +72,5 @@ export async function getArticleQuestions(
       article: { select: { id: true, title: true, slug: true } },
     },
   });
-  return list.map((item) => ({
-    ...item,
-    createdAtFormatted: formatQuestionDate(item.createdAt),
-  })) as VisitorQuestionWithDetails[];
+  return list as VisitorQuestionWithDetails[];
 }

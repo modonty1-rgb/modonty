@@ -36,23 +36,10 @@ export default async function ProfilePage() {
         taxID: true,
         legalForm: true,
         industryId: true,
-        targetAudience: true,
         organizationType: true,
         foundingDate: true,
-        businessBrief: true,
         sameAs: true,
         canonicalUrl: true,
-        technicalProfile: true,
-        seoGoals: true,
-        seoMetrics: true,
-        linkBuildingPolicy: true,
-        brandGuidelines: true,
-        contentTone: true,
-        complianceConstraints: true,
-        googleBusinessProfileUrl: true,
-        forbiddenKeywords: true,
-        forbiddenClaims: true,
-        competitiveMentionsAllowed: true,
       },
     }),
     db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
@@ -61,49 +48,17 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <header>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
           {ar.profile.title}
         </h1>
         <p className="text-muted-foreground mt-1">
           {ar.profile.description}
         </p>
-      </div>
+      </header>
       <ProfileForm
         clientId={clientId}
-        initial={{
-          ...client,
-          technicalProfile:
-            client.technicalProfile != null &&
-            typeof client.technicalProfile === "object" &&
-            !Array.isArray(client.technicalProfile)
-              ? (client.technicalProfile as Record<string, unknown>)
-              : null,
-          seoGoals:
-            client.seoGoals != null &&
-            typeof client.seoGoals === "object" &&
-            !Array.isArray(client.seoGoals)
-              ? (client.seoGoals as Record<string, unknown>)
-              : null,
-          seoMetrics:
-            client.seoMetrics != null &&
-            typeof client.seoMetrics === "object" &&
-            !Array.isArray(client.seoMetrics)
-              ? (client.seoMetrics as Record<string, unknown>)
-              : null,
-          brandGuidelines:
-            client.brandGuidelines != null &&
-            typeof client.brandGuidelines === "object" &&
-            !Array.isArray(client.brandGuidelines)
-              ? (client.brandGuidelines as Record<string, unknown>)
-              : null,
-          complianceConstraints:
-            client.complianceConstraints != null &&
-            typeof client.complianceConstraints === "object" &&
-            !Array.isArray(client.complianceConstraints)
-              ? (client.complianceConstraints as Record<string, unknown>)
-              : null,
-        }}
+        initial={client}
         industries={industries}
       />
     </div>

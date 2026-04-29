@@ -164,6 +164,24 @@ export async function updateRequiredFields(
       return { success: true, groupName: "required", fieldsUpdated: 0 };
     }
 
+    // Mirror businessBrief into intake.business.brief so the unified JSON stays in sync.
+    if ("businessBrief" in updateData) {
+      const current = await db.client.findUnique({
+        where: { id: clientId },
+        select: { intake: true },
+      });
+      const cur = (current?.intake as Record<string, unknown> | null) ?? {};
+      const business = (cur.business as Record<string, unknown> | undefined) ?? {};
+      const next: Record<string, unknown> = {
+        ...cur,
+        version: 1,
+        business: { ...business, brief: data.businessBrief ?? null },
+        updatedAt: new Date().toISOString(),
+      };
+      updateData.intake = next;
+      updateData.intakeUpdatedAt = new Date();
+    }
+
     await db.client.update({
       where: { id: clientId },
       data: updateData,
@@ -232,7 +250,6 @@ export async function updateBusinessFields(
       select: {
         legalName: true,
         industryId: true,
-        targetAudience: true,
         contentPriorities: true,
         foundingDate: true,
         organizationType: true,
@@ -243,10 +260,10 @@ export async function updateBusinessFields(
       return { success: false, error: "Client not found", groupName: "business" };
     }
 
+    // targetAudience is now client-managed via intake (Plan B). Admin form no longer writes it.
     const newData: Record<string, unknown> = {
       legalName: data.legalName ?? null,
       industryId: data.industryId ?? null,
-      targetAudience: data.targetAudience ?? null,
       contentPriorities: data.contentPriorities ?? [],
       foundingDate: normalizeDate(data.foundingDate),
       organizationType: data.organizationType ?? null,

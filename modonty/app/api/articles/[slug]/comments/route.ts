@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { CommentStatus, ArticleStatus } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const COMMENT_COOLDOWN_MS = 60_000;
 
@@ -168,7 +169,7 @@ export async function POST(
         slug: decodedSlug,
         status: ArticleStatus.PUBLISHED,
       },
-      select: { id: true },
+      select: { id: true, clientId: true, title: true },
     });
 
     if (!article) {
@@ -221,6 +222,24 @@ export async function POST(
         createdAt: true,
       },
     });
+
+    if (article.clientId) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(article.clientId, "commentNew", {
+        title: article.title,
+        body: `${session.user.name ?? "زائر"}: ${trimmedContent}`,
+        link: {
+          label: "مراجعة من اللوحة",
+          url: "https://console.modonty.com/dashboard/comments",
+        },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,

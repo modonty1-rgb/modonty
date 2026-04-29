@@ -1,23 +1,37 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { messages } from "@/lib/messages";
 
-export async function approveComment(commentId: string, clientId: string) {
+type Result = { success: true } | { success: false; error: string };
+type BulkResult =
+  | { success: true; count: number }
+  | { success: false; error: string };
+
+async function getClientId(): Promise<string | null> {
+  const session = await auth();
+  return (session as { clientId?: string })?.clientId ?? null;
+}
+
+async function ensureOwnedComment(commentId: string, clientId: string) {
+  return db.comment.findFirst({
+    where: { id: commentId, article: { clientId } },
+    select: { id: true, status: true, articleId: true },
+  });
+}
+
+export async function approveComment(commentId: string): Promise<Result> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+
   try {
-    const comment = await db.comment.findFirst({
-      where: { id: commentId, article: { clientId } },
-      select: { id: true, status: true, articleId: true },
-    });
+    const owned = await ensureOwnedComment(commentId, clientId);
+    if (!owned) return { success: false, error: messages.error.notFound };
 
-    if (!comment) {
-      return { success: false, error: messages.error.notFound };
-    }
-
-    const wasNotApproved = comment.status !== CommentStatus.APPROVED;
-
+    const wasNotApproved = owned.status !== CommentStatus.APPROVED;
     await db.comment.update({
       where: { id: commentId },
       data: { status: CommentStatus.APPROVED },
@@ -25,32 +39,27 @@ export async function approveComment(commentId: string, clientId: string) {
 
     if (wasNotApproved) {
       await db.article.update({
-        where: { id: comment.articleId },
+        where: { id: owned.articleId },
         data: { commentsCount: { increment: 1 } },
         select: { id: true },
       });
     }
-
     revalidatePath("/dashboard/comments");
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function rejectComment(commentId: string, clientId: string) {
+export async function rejectComment(commentId: string): Promise<Result> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+
   try {
-    const comment = await db.comment.findFirst({
-      where: { id: commentId, article: { clientId } },
-      select: { id: true, status: true, articleId: true },
-    });
+    const owned = await ensureOwnedComment(commentId, clientId);
+    if (!owned) return { success: false, error: messages.error.notFound };
 
-    if (!comment) {
-      return { success: false, error: messages.error.notFound };
-    }
-
-    const wasApproved = comment.status === CommentStatus.APPROVED;
-
+    const wasApproved = owned.status === CommentStatus.APPROVED;
     await db.comment.update({
       where: { id: commentId },
       data: { status: CommentStatus.REJECTED },
@@ -58,33 +67,27 @@ export async function rejectComment(commentId: string, clientId: string) {
 
     if (wasApproved) {
       await db.article.update({
-        where: { id: comment.articleId },
+        where: { id: owned.articleId },
         data: { commentsCount: { decrement: 1 } },
         select: { id: true },
       });
     }
-
     revalidatePath("/dashboard/comments");
     return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Rejection failed";
-    return { success: false, error: message };
+  } catch {
+    return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function deleteComment(commentId: string, clientId: string) {
+export async function deleteComment(commentId: string): Promise<Result> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+
   try {
-    const comment = await db.comment.findFirst({
-      where: { id: commentId, article: { clientId } },
-      select: { id: true, status: true, articleId: true },
-    });
+    const owned = await ensureOwnedComment(commentId, clientId);
+    if (!owned) return { success: false, error: messages.error.notFound };
 
-    if (!comment) {
-      return { success: false, error: messages.error.notFound };
-    }
-
-    const wasApproved = comment.status === CommentStatus.APPROVED;
-
+    const wasApproved = owned.status === CommentStatus.APPROVED;
     await db.comment.update({
       where: { id: commentId },
       data: { status: CommentStatus.DELETED },
@@ -92,34 +95,60 @@ export async function deleteComment(commentId: string, clientId: string) {
 
     if (wasApproved) {
       await db.article.update({
-        where: { id: comment.articleId },
+        where: { id: owned.articleId },
         data: { commentsCount: { decrement: 1 } },
         select: { id: true },
       });
     }
-
     revalidatePath("/dashboard/comments");
     return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Delete failed";
-    return { success: false, error: message };
+  } catch {
+    return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function bulkApproveComments(commentIds: string[], clientId: string) {
+/** Restore a REJECTED or DELETED comment back to PENDING for re-review. */
+export async function restoreCommentAction(commentId: string): Promise<Result> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+
   try {
-    // Find comments not yet approved — these will gain APPROVED status
+    const owned = await ensureOwnedComment(commentId, clientId);
+    if (!owned) return { success: false, error: messages.error.notFound };
+
+    await db.comment.update({
+      where: { id: commentId },
+      data: { status: CommentStatus.PENDING },
+    });
+    revalidatePath("/dashboard/comments");
+    return { success: true };
+  } catch {
+    return { success: false, error: messages.error.serverError };
+  }
+}
+
+// ─── Bulk actions ────────────────────────────────────────────────────
+
+export async function bulkApproveComments(ids: string[]): Promise<BulkResult> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+  if (ids.length === 0) return { success: true, count: 0 };
+
+  try {
     const toApprove = await db.comment.findMany({
-      where: { id: { in: commentIds }, article: { clientId }, status: { not: CommentStatus.APPROVED } },
+      where: {
+        id: { in: ids },
+        article: { clientId },
+        status: { not: CommentStatus.APPROVED },
+      },
       select: { articleId: true },
     });
 
-    await db.comment.updateMany({
-      where: { id: { in: commentIds }, article: { clientId } },
+    const result = await db.comment.updateMany({
+      where: { id: { in: ids }, article: { clientId } },
       data: { status: CommentStatus.APPROVED },
     });
 
-    // Group by articleId and increment per-article commentsCount
     const countsByArticle = toApprove.reduce<Record<string, number>>((acc, c) => {
       acc[c.articleId] = (acc[c.articleId] ?? 0) + 1;
       return acc;
@@ -136,27 +165,32 @@ export async function bulkApproveComments(commentIds: string[], clientId: string
     );
 
     revalidatePath("/dashboard/comments");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Bulk approval failed";
-    return { success: false, error: message };
+    return { success: true, count: result.count };
+  } catch {
+    return { success: false, error: messages.error.serverError };
   }
 }
 
-export async function bulkRejectComments(commentIds: string[], clientId: string) {
+export async function bulkRejectComments(ids: string[]): Promise<BulkResult> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+  if (ids.length === 0) return { success: true, count: 0 };
+
   try {
-    // Find comments that are currently approved — these will lose APPROVED status
     const toReject = await db.comment.findMany({
-      where: { id: { in: commentIds }, article: { clientId }, status: CommentStatus.APPROVED },
+      where: {
+        id: { in: ids },
+        article: { clientId },
+        status: CommentStatus.APPROVED,
+      },
       select: { articleId: true },
     });
 
-    await db.comment.updateMany({
-      where: { id: { in: commentIds }, article: { clientId } },
+    const result = await db.comment.updateMany({
+      where: { id: { in: ids }, article: { clientId } },
       data: { status: CommentStatus.REJECTED },
     });
 
-    // Group by articleId and decrement per-article commentsCount
     const countsByArticle = toReject.reduce<Record<string, number>>((acc, c) => {
       acc[c.articleId] = (acc[c.articleId] ?? 0) + 1;
       return acc;
@@ -173,9 +207,8 @@ export async function bulkRejectComments(commentIds: string[], clientId: string)
     );
 
     revalidatePath("/dashboard/comments");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Bulk rejection failed";
-    return { success: false, error: message };
+    return { success: true, count: result.count };
+  } catch {
+    return { success: false, error: messages.error.serverError };
   }
 }

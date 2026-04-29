@@ -5,6 +5,7 @@ import type { ApiResponse } from "@/lib/types";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const subscribeSchema = z.object({
   email: z.string().email().max(254),
@@ -68,9 +69,21 @@ export async function POST(request: NextRequest) {
     ]);
     void newSubscriber;
 
-    // Notify Telegram group — non-blocking
+    // Notify Telegram group (admin) — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
     sendTelegramMessage(`🔔 <b>مشترك جديد</b>\n📧 ${email}\n🏢 ${client?.name || clientId}\n📅 ${now}`).catch(() => null);
+
+    // Notify Client's Telegram (per-client) — non-blocking
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("cf-connecting-ip") ||
+      null;
+    notifyTelegram(clientId, "clientSubscribe", {
+      meta: { البريد: email },
+      ipAddress: ip,
+      headers: request.headers,
+    }).catch(() => {});
 
     const sessionId = await getOrCreateSessionId();
     await createConversion({

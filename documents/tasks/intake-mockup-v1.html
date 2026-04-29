@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>استمارة المعلومات الجديدة — Mockup v1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body { font-family: 'Tajawal', sans-serif; }
+      .pill-input:checked + label { background:#7c3aed; color:#fff; border-color:#7c3aed; }
+      .seg:checked + label { background:#0f172a; color:#fff; }
+      .counter { font-variant-numeric: tabular-nums; }
+      details > summary { list-style: none; cursor: pointer; }
+      details > summary::-webkit-details-marker { display: none; }
+      .pulse-dot {
+        width: 10px; height: 10px; border-radius: 999px; background:#10b981;
+        box-shadow: 0 0 0 0 rgba(16,185,129,.7); animation: pulse 1.6s infinite;
+      }
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(16,185,129,.7); }
+        70% { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+        100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-900 text-slate-800">
+    <!-- Top bar -->
+    <header class="bg-white border-b sticky top-0 z-30">
+      <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-violet-600 text-white grid place-items-center font-bold">م</div>
+          <div>
+            <div class="text-sm font-bold">استمارة معلومات نشاطك</div>
+            <div class="text-xs text-slate-500">~ 17 دقيقة · 24 سؤال + ملف</div>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 hidden sm:block">حفظ تلقائي ✓</div>
+      </div>
+      <!-- Progress -->
+      <div class="max-w-3xl mx-auto px-4 pb-3">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="px-2 py-1 rounded-full bg-violet-100 text-violet-800 font-bold">A</span>
+          <div class="h-1.5 flex-1 bg-slate-200 rounded-full overflow-hidden">
+            <div class="h-full w-1/4 bg-violet-500"></div>
+          </div>
+          <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-600">B</span>
+          <div class="h-1.5 flex-1 bg-slate-200 rounded-full"></div>
+          <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-600">C</span>
+          <div class="h-1.5 flex-1 bg-slate-200 rounded-full"></div>
+          <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-600">D</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-6 space-y-10">
+      <!-- Intro card -->
+      <section class="bg-white border rounded-2xl p-5 shadow-sm">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl">👋</div>
+          <div>
+            <h1 class="text-lg font-bold mb-1">عرّفنا على نشاطك في 17 دقيقة</h1>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              المعلومات هذه تستخدمها مودونتي لكتابة محتوى يمثلك بصدق. كل ما إجاباتك تكون من قلب تجربتك،
+              المحتوى يطلع أقوى. ما عندنا أسئلة فنية — كل سؤال تقدر تجاوبه أنت.
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">✓ حفظ تلقائي</span>
+              <span class="px-2 py-1 rounded bg-amber-50 text-amber-700 border border-amber-200">✓ تقدر ترجع تكمل بعدين</span>
+              <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200">✓ خصوصية كاملة</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= القسم A ======================= -->
+      <section class="space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-violet-100 text-violet-700 grid place-items-center font-bold">A</div>
+          <div>
+            <h2 class="font-bold text-white">نشاطك وخبرتك</h2>
+            <p class="text-xs text-slate-400">5 أسئلة · ~4 دقائق</p>
+          </div>
+        </div>
+
+        <!-- A1 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">A1. صف نشاطك في 3 أسطر</label>
+          <p class="text-xs text-slate-500 mb-3">ما تقدمه + لمن + ما يميزك عن غيرك</p>
+          <textarea
+            rows="3"
+            maxlength="500"
+            placeholder="مثال: كيما زون مصنع مستحضرات تجميل في السعودية. نخدم العلامات التجارية والموزعين بحلول صناعية مبتكرة. نتميز بالجودة العالية + الإنتاج المحلي + التصميم المخصص."
+            class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-violet-300 outline-none"
+            oninput="this.parentNode.querySelector('.counter').textContent = this.value.length + ' / 500'"
+          ></textarea>
+          <div class="text-xs text-slate-400 mt-1 counter">0 / 500</div>
+        </div>
+
+        <!-- A2 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">A2. ما خبرتك أو ما يثبت أنك مرجع في مجالك؟</label>
+          <p class="text-xs text-slate-500 mb-3">سنوات + شهادات + جوائز + عملاء بارزين</p>
+          <textarea
+            rows="3"
+            maxlength="600"
+            placeholder="مثال: 15 سنة خبرة، شهادة ISO 22716، عملنا مع 200+ علامة، حاصلون على جائزة جودة 2023..."
+            class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-violet-300 outline-none"
+            oninput="this.parentNode.querySelector('.counter').textContent = this.value.length + ' / 600'"
+          ></textarea>
+          <div class="text-xs text-slate-400 mt-1 counter">0 / 600</div>
+        </div>
+
+        <!-- A3 — Wizard "ساعدني أبدأ": 4 أسئلة قصيرة → AI يكتب الفقرة -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1 text-slate-800">A3. القصة الإنسانية وراء نشاطك</label>
+          <p class="text-xs text-slate-500 mb-3">إيش الشي اللي بدّاك تبدأ؟ القصة تخلي محتواك صادق وحقيقي.</p>
+
+          <textarea
+            id="a3-textarea"
+            rows="4"
+            maxlength="500"
+            placeholder="مثال: بدأت في مطبخ بيتي 2010 عندما لاحظت أن المنتجات المستوردة لا تناسب البشرة الخليجية..."
+            class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-violet-300 outline-none text-slate-800"
+          ></textarea>
+
+          <button
+            type="button"
+            onclick="document.getElementById('a3-wizard').classList.toggle('hidden')"
+            class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 text-sm font-medium hover:bg-violet-100"
+          >
+            <span>✨</span> ساعدني أبدأ — 4 أسئلة قصيرة
+          </button>
+
+          <div id="a3-wizard" class="hidden mt-4 p-4 bg-violet-50 border border-violet-200 rounded-xl space-y-3">
+            <div class="text-sm font-bold text-violet-900">جاوب على 4 أسئلة قصيرة وأنا أقترح لك الفقرة</div>
+
+            <div>
+              <label class="text-xs font-medium text-violet-900">1. متى بدأت؟</label>
+              <input type="text" placeholder="مثال: 2010" class="w-full border rounded-lg p-2 text-sm mt-1 text-slate-800" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-violet-900">2. ليش بدأت؟ (سطر واحد)</label>
+              <input type="text" placeholder="مثال: لاحظت غلاء المنتجات المستوردة" class="w-full border rounded-lg p-2 text-sm mt-1 text-slate-800" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-violet-900">3. إيش الفجوة اللي شفتها في السوق؟</label>
+              <input type="text" placeholder="مثال: ما في منتجات تناسب بشرة الخليج" class="w-full border rounded-lg p-2 text-sm mt-1 text-slate-800" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-violet-900">4. إيش يميّز طريقتك اليوم؟</label>
+              <input type="text" placeholder="مثال: مكونات محلية + إنتاج صغير مخصص" class="w-full border rounded-lg p-2 text-sm mt-1 text-slate-800" />
+            </div>
+
+            <button
+              type="button"
+              class="w-full py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold hover:bg-violet-700"
+            >
+              ✨ اقترح لي فقرة
+            </button>
+            <p class="text-xs text-violet-700 text-center">الفقرة المقترحة تظهر في خانة الكتابة فوق — تقدر تعدّلها براحتك.</p>
+          </div>
+        </div>
+
+        <!-- A4 — Multiselect -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">A4. ما المواسم التي تتغير فيها أعمالك؟</label>
+          <p class="text-xs text-slate-500 mb-3">اضغط على ما يطبّق على نشاطك (ممكن تختار أكثر من واحد)</p>
+          <div class="flex flex-wrap gap-2">
+            <template id="pill-tpl"></template>
+            <span class="pill">رمضان</span>
+            <span class="pill">العيد</span>
+            <span class="pill">الصيف</span>
+            <span class="pill">العودة للمدارس</span>
+            <span class="pill">نهاية السنة</span>
+            <span class="pill">الجمعة البيضاء</span>
+            <span class="pill">لا تأثير موسمي</span>
+          </div>
+        </div>
+
+        <!-- A5 — Multiselect + PDF -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">A5. كيف تحب محتواك يكون نبرته؟</label>
+          <p class="text-xs text-slate-500 mb-3">اختر حتى 5 صفات (ضغطة واحدة على كل وحدة)</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill">ودّي ومحادثة</span>
+            <span class="pill">رسمي ومحترف</span>
+            <span class="pill">علمي ومدروس</span>
+            <span class="pill">بسيط ومباشر</span>
+            <span class="pill">فكاهي ومرح</span>
+            <span class="pill">فاخر ومتميّز</span>
+            <span class="pill">تعليمي ومرشد</span>
+          </div>
+          <div class="mt-4 border-2 border-dashed rounded-xl p-4 text-center text-sm text-slate-500 cursor-pointer hover:bg-slate-50">
+            📎 ارفع Brand Guidelines PDF (اختياري)
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= القسم B ======================= -->
+      <section class="space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 grid place-items-center font-bold">B</div>
+          <div>
+            <h2 class="font-bold text-white">عملاؤك ومشاكلهم</h2>
+            <p class="text-xs text-slate-400">5 أسئلة · ~5 دقائق</p>
+          </div>
+        </div>
+
+        <!-- B1 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">B1. صف عميلك المثالي في جملة</label>
+          <p class="text-xs text-slate-500 mb-3">السن + المهنة + المدينة + ما يميّزه</p>
+          <textarea
+            rows="2"
+            maxlength="300"
+            placeholder="مثال: صاحبة محل تجميل، 28-45 سنة، مدن خليجية كبرى، تبحث عن منتجات حلال + تصميم عربي + هامش ربح جيد."
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- B2 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">B2. ما المشكلة الكبرى التي يأتيك العميل ليحلها معك؟</label>
+          <textarea
+            rows="2"
+            maxlength="200"
+            placeholder="مثال: العميل تعب من المنتجات المستوردة الباهظة + لا تناسب جلد العميل الخليجي + توقفها متكرر."
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- B3 — تحسين: 10 اعتراضات شائعة + خانة "أخرى" -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">B3. ما المخاوف الشائعة قبل أن يشتري منك العميل؟</label>
+          <p class="text-xs text-slate-500 mb-3">اضغط على المخاوف اللي تتكرر مع عملائك (اختر حتى 5)</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill">السعر مرتفع</span>
+            <span class="pill">الجودة غير ثابتة</span>
+            <span class="pill">الكمية الدنيا عالية</span>
+            <span class="pill">مدة التوصيل طويلة</span>
+            <span class="pill">صعوبة الاسترجاع</span>
+            <span class="pill">عدم وضوح التواصل</span>
+            <span class="pill">قلّة الخبرة المثبتة</span>
+            <span class="pill">عدم وجود ضمان</span>
+            <span class="pill">صعوبة التخصيص</span>
+            <span class="pill">شك في المصداقية</span>
+          </div>
+          <textarea
+            rows="2"
+            placeholder="مخاوف أخرى يقولها عملاؤك بكلماتهم (اختياري)"
+            class="w-full border rounded-xl p-3 text-sm mt-3"
+          ></textarea>
+        </div>
+
+        <!-- B4 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">B4. أهم 5-10 أسئلة يكررها عملاؤك</label>
+          <p class="text-xs text-slate-500 mb-3">سؤال في كل سطر — كما يقولها العميل بكلماته</p>
+          <textarea
+            rows="6"
+            placeholder="مثال:&#10;كم أقل كمية تطلبون؟&#10;هل تنتجون بشعار خاص؟&#10;كم مدة التصنيع؟&#10;هل عندكم شحن للإمارات؟"
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+          <div class="mt-3 p-3 bg-blue-50 rounded-lg text-xs text-blue-800">
+            💡 الأسئلة هذه نحوّلها لمقالات Q&A تظهر في نتائج Google مباشرة
+          </div>
+        </div>
+
+        <!-- B5 — Multiselect -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">B5. في أي مرحلة يصلك العميل عادة؟</label>
+          <p class="text-xs text-slate-500 mb-3">اختر مرحلة أو أكثر</p>
+          <div class="space-y-2">
+            <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-medium text-sm">لا يعرف أن الخدمة موجودة</div>
+                <div class="text-xs text-slate-500">يحتاج شرح مبسّط من الصفر</div>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-medium text-sm">يقارن بين الخيارات</div>
+                <div class="text-xs text-slate-500">يحتاج مقارنات + دليل اختيار</div>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-medium text-sm">جاهز للشراء</div>
+                <div class="text-xs text-slate-500">يحتاج طمأنة + سهولة طلب</div>
+              </div>
+            </label>
+            <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" class="mt-1" />
+              <div>
+                <div class="font-medium text-sm">خليط من الكل</div>
+                <div class="text-xs text-slate-500">محتوى متنوع لكل المراحل</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= القسم C ======================= -->
+      <section class="space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 grid place-items-center font-bold">C</div>
+          <div>
+            <h2 class="font-bold text-white">أهدافك ومحتواك</h2>
+            <p class="text-xs text-slate-400">7 أسئلة · ~5 دقائق</p>
+          </div>
+        </div>
+
+        <!-- C1 — رتب حسب الأولوية -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C1. أهم 3 نتائج تتمنى المحتوى يحققها لك</label>
+          <p class="text-xs text-slate-500 mb-3">اختر الأولوية الأولى ثم الثانية ثم الثالثة (1 = الأهم)</p>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">زيادة الاستفسارات والاتصالات</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">رفع المبيعات</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">بناء الثقة والاحترافية</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">استهداف عملاء بمستوى أعلى</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">الظهور في كلمات بحث محددة</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border rounded-xl">
+              <select class="border rounded-lg p-1 text-sm font-bold w-14 text-center">
+                <option>—</option><option>1</option><option>2</option><option>3</option>
+              </select>
+              <span class="text-sm">الربط مع شركات أخرى</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- C2 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C2. ما أهم خدمة/منتج تركّز عليه في 6 شهور القادمة؟</label>
+          <textarea
+            rows="2"
+            maxlength="200"
+            placeholder="مثال: خط منتجات Hair Care الجديد + توسعة لـ 3 فروع جدد"
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- C3 — تحسين: مواضيع جاهزة للقطاع -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C3. مواضيع تتمنى محتوى عنها</label>
+          <p class="text-xs text-slate-500 mb-3">
+            اخترنا لك 12 موضوع شائع في مجالك. اضغط على اللي يهمّك + أضف مواضيعك الخاصة
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="pill">كيف أختار شريك تصنيع؟</span>
+            <span class="pill">الفرق بين الحلال وغير الحلال</span>
+            <span class="pill">دليل التعبئة بأفضل المواد</span>
+            <span class="pill">تكاليف بدء خط إنتاج</span>
+            <span class="pill">شهادات الجودة المطلوبة</span>
+            <span class="pill">كيف تختار التغليف المناسب</span>
+            <span class="pill">دليل التسعير الذكي</span>
+            <span class="pill">قصص نجاح لعلامات محلية</span>
+            <span class="pill">أخطاء شائعة في التصنيع</span>
+            <span class="pill">مقارنة المصانع المحلية والمستوردة</span>
+            <span class="pill">دليل الاتفاقيات والعقود</span>
+            <span class="pill">أحدث صيحات السوق الخليجي</span>
+          </div>
+          <textarea
+            rows="3"
+            placeholder="مواضيعك الخاصة (سطر لكل موضوع)"
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- C4 — تحسين: قائمة جاهزة + textarea -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C4. ما الممنوعات في محتواك؟</label>
+          <p class="text-xs text-slate-500 mb-3">اضغط على ما يطبّق + أضف تفاصيل خاصة</p>
+          <div class="space-y-2 mb-4">
+            <label class="flex items-center gap-3 p-2 border rounded-lg cursor-pointer">
+              <input type="checkbox" />
+              <span class="text-sm">لا نذكر منافسينا بالاسم</span>
+            </label>
+            <label class="flex items-center gap-3 p-2 border rounded-lg cursor-pointer">
+              <input type="checkbox" />
+              <span class="text-sm">لا ادعاءات صحية بدون مرجع موثوق</span>
+            </label>
+            <label class="flex items-center gap-3 p-2 border rounded-lg cursor-pointer">
+              <input type="checkbox" />
+              <span class="text-sm">لا أسعار في المقالات (نوجهه للعرض)</span>
+            </label>
+            <label class="flex items-center gap-3 p-2 border rounded-lg cursor-pointer">
+              <input type="checkbox" />
+              <span class="text-sm">لا محتوى سياسي أو ديني</span>
+            </label>
+            <label class="flex items-center gap-3 p-2 border rounded-lg cursor-pointer">
+              <input type="checkbox" />
+              <span class="text-sm">لا مبالغة في الوعود</span>
+            </label>
+          </div>
+          <textarea
+            rows="2"
+            placeholder="ممنوعات خاصة بنشاطك (اختياري)"
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- C5 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C5. هل لديك بيانات/شهادات/أرقام نقدر نستخدمها؟</label>
+          <p class="text-xs text-slate-500 mb-3">أرقام حقيقية تخلي محتواك أقوى ويتقدم في Google</p>
+          <textarea
+            rows="3"
+            placeholder="مثال: عملاء راضون 95% / 200+ علامة عملت معنا / شهادات OEM..."
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+          <div class="mt-3 border-2 border-dashed rounded-xl p-4 text-center text-sm text-slate-500 cursor-pointer hover:bg-slate-50">
+            📎 ارفع شهادات / تقارير / case studies (اختياري)
+          </div>
+        </div>
+
+        <!-- C6 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C6. ما الـ CTA المفضل في نهاية المقالات؟</label>
+          <p class="text-xs text-slate-500 mb-3">إيش تبغى العميل يسوي بعد ما يقرأ المقال؟</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">📞 اتصال / واتساب</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">📝 نموذج تواصل</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">📅 حجز موعد / استشارة</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">📧 اشتراك في النشرة</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">🛒 صفحة منتج محدد</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="cta" />
+              <span class="text-sm">📚 فقط تثقيف (بدون CTA)</span>
+            </label>
+          </div>
+          <input
+            type="text"
+            placeholder="تفاصيل التواصل (مثلاً: واتساب +9665XXXXXXX)"
+            class="w-full border rounded-xl p-3 text-sm mt-3"
+          />
+        </div>
+
+        <!-- C7 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">C7. مصادر تفضّل أن نستشهد بها؟ <span class="text-slate-400 text-xs font-normal">(اختياري)</span></label>
+          <textarea
+            rows="2"
+            placeholder="مثال: WHO، وزارة الصحة السعودية، Statista، Harvard Business Review..."
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- ======================= القسم D ======================= -->
+      <section class="space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 grid place-items-center font-bold">D</div>
+          <div>
+            <h2 class="font-bold text-white">تواجدك والمنافسة</h2>
+            <p class="text-xs text-slate-400">5 أسئلة · ~3 دقائق</p>
+          </div>
+        </div>
+
+        <!-- D1 — Hybrid -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">D1. هل لديك فرع أو مكتب فعلي؟</label>
+          <div class="space-y-2 mb-3">
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="d1" onchange="document.getElementById('d1-cities').classList.add('hidden')" />
+              <span class="text-sm">لا، أونلاين فقط</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="d1" onchange="document.getElementById('d1-cities').classList.remove('hidden')" />
+              <span class="text-sm">نعم، فرع واحد</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="radio" name="d1" onchange="document.getElementById('d1-cities').classList.remove('hidden')" />
+              <span class="text-sm">نعم، عدة فروع</span>
+            </label>
+          </div>
+          <div id="d1-cities" class="hidden">
+            <label class="block text-sm font-medium mb-2">ما المدن التي تخدمها فعلياً؟</label>
+            <div class="flex flex-wrap gap-2">
+              <span class="pill">الرياض</span>
+              <span class="pill">جدة</span>
+              <span class="pill">الدمام</span>
+              <span class="pill">الخبر</span>
+              <span class="pill">مكة</span>
+              <span class="pill">المدينة</span>
+              <span class="pill">الطائف</span>
+              <span class="pill">القصيم</span>
+              <span class="pill">أبها</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- D2 -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">D2. هل لديك متجر إلكتروني؟</label>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <label class="text-center p-3 border rounded-xl cursor-pointer text-sm">
+              <input type="radio" name="d2" class="sr-only" />لا
+            </label>
+            <label class="text-center p-3 border rounded-xl cursor-pointer text-sm">
+              <input type="radio" name="d2" class="sr-only" />1-50
+            </label>
+            <label class="text-center p-3 border rounded-xl cursor-pointer text-sm">
+              <input type="radio" name="d2" class="sr-only" />51-200
+            </label>
+            <label class="text-center p-3 border rounded-xl cursor-pointer text-sm">
+              <input type="radio" name="d2" class="sr-only" />201-1000
+            </label>
+            <label class="text-center p-3 border rounded-xl cursor-pointer text-sm">
+              <input type="radio" name="d2" class="sr-only" />+1000
+            </label>
+          </div>
+        </div>
+
+        <!-- D3 — Repeater مع placeholders -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">D3. أقوى 3 منافسين عندك</label>
+          <p class="text-xs text-slate-500 mb-3">سنحلل مواقعهم ونعرف فين يتفوقون عليك</p>
+          <div class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl">
+              <input type="text" placeholder="اسم المنافس 1" class="border rounded-lg p-2 text-sm" />
+              <input type="url" placeholder="https://..." dir="ltr" class="border rounded-lg p-2 text-sm" />
+              <input type="text" placeholder="ما يفعلونه أفضل منك" class="border rounded-lg p-2 text-sm" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl">
+              <input type="text" placeholder="اسم المنافس 2" class="border rounded-lg p-2 text-sm" />
+              <input type="url" placeholder="https://..." dir="ltr" class="border rounded-lg p-2 text-sm" />
+              <input type="text" placeholder="ما يفعلونه أفضل منك" class="border rounded-lg p-2 text-sm" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl">
+              <input type="text" placeholder="اسم المنافس 3" class="border rounded-lg p-2 text-sm" />
+              <input type="url" placeholder="https://..." dir="ltr" class="border rounded-lg p-2 text-sm" />
+              <input type="text" placeholder="ما يفعلونه أفضل منك" class="border rounded-lg p-2 text-sm" />
+            </div>
+          </div>
+        </div>
+
+        <!-- D4 — اختياري -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">D4. الفجوات اللي تشوفها <span class="text-slate-400 text-xs font-normal">(اختياري)</span></label>
+          <p class="text-xs text-slate-500 mb-3">إيش الشي اللي عند المنافسين وما عندك أنت؟</p>
+          <textarea
+            rows="2"
+            placeholder="مثال: عندهم مدونة فعّالة + صور احترافية + ضمانات أوضح"
+            class="w-full border rounded-xl p-3 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- D5 — Checklist -->
+        <div class="bg-white border rounded-2xl p-5">
+          <label class="block font-bold mb-1">D5. حسابات Google المفعّلة عندك</label>
+          <p class="text-xs text-slate-500 mb-3">تفعيلها يوفّر علينا 33 سؤال فني — نستخرجها آلياً</p>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" />
+              <div class="flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Google Analytics 4
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" />
+              <div class="flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Google Search Console
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" />
+              <div class="flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Google My Business
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" />
+              <div class="flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Google Tag Manager
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 bg-amber-50/30">
+              <input type="checkbox" />
+              <span class="text-sm text-amber-800">🤝 لا أعرف / محتاج مساعدة</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= ملف رفع شامل ======================= -->
+      <section class="bg-gradient-to-br from-violet-50 to-blue-50 border border-violet-200 rounded-2xl p-5">
+        <h3 class="font-bold mb-2">📎 أي ملف يساعدنا نفهمك أكثر</h3>
+        <p class="text-xs text-slate-600 mb-3">
+          Brand guidelines · لوجو · شهادات · صور · فيديوهات · GA4 export · style guide
+        </p>
+        <div class="border-2 border-dashed border-violet-300 rounded-xl p-6 text-center text-sm text-slate-600 bg-white cursor-pointer hover:bg-violet-50">
+          اسحب الملفات هنا أو اضغط للرفع
+        </div>
+      </section>
+
+      <!-- YMYL Conditional Demo Toggle -->
+      <section class="bg-white border rounded-2xl p-5">
+        <details>
+          <summary class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="pulse-dot"></span>
+              <div>
+                <div class="font-bold text-sm">سؤال إضافي يظهر للقطاعات الحساسة</div>
+                <div class="text-xs text-slate-500">طبي · صحة · مالي · قانوني · تأمين · دواء · تجميل طبي</div>
+              </div>
+            </div>
+            <span class="text-xs text-violet-600">عرض ▾</span>
+          </summary>
+          <div class="mt-4 pt-4 border-t space-y-3">
+            <label class="block font-bold text-sm">YMYL-1. من يراجع المحتوى قبل النشر؟</label>
+            <p class="text-xs text-slate-500">شخص مرخّص يضمن صحة المعلومات الطبية/المالية/القانونية</p>
+            <input type="text" placeholder="الاسم الكامل" class="w-full border rounded-xl p-3 text-sm" />
+            <input type="text" placeholder="المؤهل / الترخيص (مثلاً: طبيب أسنان مرخّص رقم 12345)" class="w-full border rounded-xl p-3 text-sm" />
+            <input type="url" dir="ltr" placeholder="https://linkedin.com/in/... (اختياري)" class="w-full border rounded-xl p-3 text-sm" />
+          </div>
+        </details>
+      </section>
+
+      <!-- Submit -->
+      <section class="bg-white border rounded-2xl p-5 sticky bottom-4 shadow-lg">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <div class="text-sm font-bold">جاهز ترسل؟</div>
+            <div class="text-xs text-slate-500">تقدر ترجع بعدين تعدّل أي إجابة</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-4 py-2 rounded-xl border text-sm">حفظ مسودة</button>
+            <button class="px-5 py-2 rounded-xl bg-violet-600 text-white text-sm font-bold hover:bg-violet-700">
+              إرسال الاستمارة
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <p class="text-center text-xs text-slate-400 py-4">
+        Mockup v1 · 24 سؤال + 1 مشروط (YMYL) · بناءً على NEW-INTAKE.md
+      </p>
+    </main>
+
+    <style>
+      .pill {
+        padding: 6px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        font-size: 13px;
+        cursor: pointer;
+        background: #fff;
+        transition: all 0.15s;
+      }
+      .pill:hover { background:#f8fafc; }
+      .pill.on { background:#7c3aed; color:#fff; border-color:#7c3aed; }
+    </style>
+
+    <script>
+      // toggle pill on click (multiselect mock behaviour)
+      document.querySelectorAll('.pill').forEach((el) => {
+        el.addEventListener('click', () => el.classList.toggle('on'));
+      });
+    </script>
+  </body>
+</html>

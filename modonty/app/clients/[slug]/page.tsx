@@ -15,6 +15,7 @@ import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { FeedPost } from "@/lib/types";
 import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/client-page";
 import { ClientViewTracker } from "./components/client-view-tracker";
+import { ClientCommentsSection } from "./components/client-comments-section";
 import ClientLoading from "./loading";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
@@ -248,6 +249,9 @@ async function ClientPageContent({ params }: ClientPageProps) {
             </div>
           </section>
         )}
+
+        {/* Client Comments Section (آراء حول الشركة) */}
+        <ClientCommentsSection clientSlug={client.slug} clientName={client.name} />
 
         {/* JBRSEO-5: CTA — join as client */}
         <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">

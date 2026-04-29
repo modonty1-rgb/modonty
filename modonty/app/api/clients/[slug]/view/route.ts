@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -69,6 +70,25 @@ export async function POST(
         ipAddress,
       },
     });
+
+    const formatReferrer = (r: string | null): string => {
+      if (!r) return "مباشر";
+      try {
+        const u = new URL(r);
+        return `${u.hostname}${decodeURIComponent(u.pathname)}`;
+      } catch {
+        try {
+          return decodeURIComponent(r);
+        } catch {
+          return r;
+        }
+      }
+    };
+    notifyTelegram(client.id, "clientView", {
+      meta: { من: formatReferrer(referrer) },
+      ipAddress,
+      headers: headersList,
+    }).catch(() => {});
 
     return NextResponse.json({ ok: true });
   } catch (err) {

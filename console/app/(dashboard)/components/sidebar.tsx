@@ -5,17 +5,19 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ar } from "@/lib/ar";
 import {
-  FileText,
-  FileEdit,
-  Image,
-  TrendingUp,
-  Users,
-  Target,
+  Newspaper,
+  PenLine,
+  Images,
+  Megaphone,
+  Mail,
+  UserPlus,
   ChevronLeft,
   LogOut,
   Building2,
-  ClipboardList,
-  MessageCircleQuestion,
+  Sparkles,
+  HelpCircle,
+  Quote,
+  Activity,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -23,20 +25,24 @@ import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   clientName: string;
+  clientLogoUrl: string | null;
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;
   pendingFaqsCount: number;
+  pendingClientCommentsCount: number;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export function Sidebar({
   clientName,
+  clientLogoUrl,
   pendingArticlesCount,
   subscribersCount,
   leadsCount,
   pendingFaqsCount,
+  pendingClientCommentsCount,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
 }: SidebarProps) {
@@ -59,21 +65,42 @@ export function Sidebar({
         isCollapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex h-14 items-center justify-between border-b border-border px-3">
-        <Link
-          href="/dashboard"
-          className={cn(
-            "font-semibold text-foreground transition-opacity hover:opacity-80",
-            isCollapsed && "hidden"
-          )}
-        >
-          Modonty
-        </Link>
+      <div
+        className={cn(
+          "flex h-16 items-center gap-2 border-b border-border px-3",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}
+      >
+        {!isCollapsed && (
+          <Link
+            href="/dashboard"
+            className="flex min-w-0 items-center gap-2 transition-opacity hover:opacity-80"
+            aria-label={clientName}
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
+              {clientLogoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={clientLogoUrl}
+                  alt={clientName}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-sm font-semibold">
+                  {clientName.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <span className="truncate text-sm font-semibold text-foreground">
+              {clientName}
+            </span>
+          </Link>
+        )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!isCollapsed)}
-          className="h-8 w-8"
+          className="h-8 w-8 shrink-0"
           aria-label={isCollapsed ? ar.nav.expandSidebar : ar.nav.collapseSidebar}
         >
           <ChevronLeft
@@ -85,7 +112,7 @@ export function Sidebar({
         </Button>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
         <SidebarNavItem
           href="/dashboard/profile"
           icon={Building2}
@@ -94,79 +121,73 @@ export function Sidebar({
         />
         <SidebarNavItem
           href="/dashboard/seo"
-          icon={ClipboardList}
+          icon={Sparkles}
           label={ar.nav.seo}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/articles"
-          icon={FileText}
+          icon={Newspaper}
           label={ar.nav.articles}
           badge={pendingArticlesCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/content"
-          icon={FileEdit}
+          icon={PenLine}
           label={ar.nav.content}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/media"
-          icon={Image}
+          icon={Images}
           label={ar.nav.media}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/campaigns"
-          icon={TrendingUp}
+          icon={Megaphone}
           label={ar.nav.campaigns}
           badgeLabel={ar.campaigns.beta}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/subscribers"
-          icon={Users}
+          icon={Mail}
           label={ar.nav.subscribers}
           badge={subscribersCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/leads"
-          icon={Target}
+          icon={UserPlus}
           label={ar.nav.leads}
           badge={leadsCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
           href="/dashboard/faqs"
-          icon={MessageCircleQuestion}
+          icon={HelpCircle}
           label={ar.nav.faqs}
           badge={pendingFaqsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/client-comments"
+          icon={Quote}
+          label={ar.nav.clientComments}
+          badge={pendingClientCommentsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/site-health"
+          icon={Activity}
+          label={ar.nav.siteHealth}
           isCollapsed={isCollapsed}
         />
       </nav>
 
       <div className="border-t border-border p-3">
-        <div
-          className={cn(
-            "mb-2 flex items-center gap-3 px-3 py-2",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <span className="text-xs font-semibold">
-              {clientName.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-foreground truncate">
-                {clientName}
-              </p>
-            </div>
-          )}
-        </div>
         <Button
           variant="ghost"
           size="sm"

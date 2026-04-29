@@ -25,61 +25,39 @@ export interface LeadWithDetails {
   } | null;
 }
 
-export async function getLeads(
-  clientId: string,
-  qualificationLevel?: string
-): Promise<LeadWithDetails[]> {
-  const leads = await db.leadScoring.findMany({
-    where: {
-      clientId,
-      ...(qualificationLevel && { qualificationLevel }),
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-    },
-    orderBy: {
-      engagementScore: "desc",
-    },
-    take: 100,
-  });
+export interface LeadStats {
+  total: number;
+  qualified: number;
+  hot: number;
+  warm: number;
+  cold: number;
+  avgScore: number;
+}
 
+const PAGE_LIMIT = 200;
+
+export async function getLeads(clientId: string): Promise<LeadWithDetails[]> {
+  const leads = await db.leadScoring.findMany({
+    where: { clientId },
+    include: {
+      user: { select: { id: true, name: true, email: true } },
+    },
+    orderBy: { engagementScore: "desc" },
+    take: PAGE_LIMIT,
+  });
   return leads as LeadWithDetails[];
 }
 
-export async function getLeadsCount(clientId: string): Promise<number> {
-  return db.leadScoring.count({
-    where: { clientId },
-  });
-}
-
-export async function getLeadStats(clientId: string) {
-  const [total, qualified, hot, warm, cold, avgScore] = await Promise.all([
-    db.leadScoring.count({
-      where: { clientId },
-    }),
-    db.leadScoring.count({
-      where: { clientId, isQualified: true },
-    }),
-    db.leadScoring.count({
-      where: { clientId, qualificationLevel: "HOT" },
-    }),
-    db.leadScoring.count({
-      where: { clientId, qualificationLevel: "WARM" },
-    }),
-    db.leadScoring.count({
-      where: { clientId, qualificationLevel: "COLD" },
-    }),
+export async function getLeadStats(clientId: string): Promise<LeadStats> {
+  const [total, qualified, hot, warm, cold, avgScoreAgg] = await Promise.all([
+    db.leadScoring.count({ where: { clientId } }),
+    db.leadScoring.count({ where: { clientId, isQualified: true } }),
+    db.leadScoring.count({ where: { clientId, qualificationLevel: "HOT" } }),
+    db.leadScoring.count({ where: { clientId, qualificationLevel: "WARM" } }),
+    db.leadScoring.count({ where: { clientId, qualificationLevel: "COLD" } }),
     db.leadScoring.aggregate({
       where: { clientId },
-      _avg: {
-        engagementScore: true,
-      },
+      _avg: { engagementScore: true },
     }),
   ]);
 
@@ -89,27 +67,26 @@ export async function getLeadStats(clientId: string) {
     hot,
     warm,
     cold,
-    avgScore: Math.round(avgScore._avg.engagementScore || 0),
+    avgScore: Math.round(avgScoreAgg._avg.engagementScore || 0),
   };
 }
 
-export async function getTopLeads(clientId: string, limit: number = 10) {
-  return db.leadScoring.findMany({
-    where: {
-      clientId,
-      isQualified: true,
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
-    orderBy: {
-      engagementScore: "desc",
-    },
-    take: limit,
+/** Returns the most recent `updatedAt` across this client's leads — used as
+ *  a "last refreshed" indicator on the page header. */
+export async function getLeadsLastRefreshedAt(
+  clientId: string
+): Promise<Date | null> {
+  const top = await db.leadScoring.findFirst({
+    where: { clientId },
+    orderBy: { updatedAt: "desc" },
+    select: { updatedAt: true },
+  });
+  return top?.updatedAt ?? null;
+}
+
+/** Sidebar badge — count of qualified leads (≥ 60). Layout calls this. */
+export async function getLeadsCount(clientId: string): Promise<number> {
+  return db.leadScoring.count({
+    where: { clientId, isQualified: true },
   });
 }

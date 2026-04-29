@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { ArticleStatus, LinkType } from "@prisma/client";
+import { notifyTelegram } from "@/lib/telegram/notify";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
 
     const article = await db.article.findFirst({
       where: { id: articleId, status: ArticleStatus.PUBLISHED },
-      select: { id: true },
+      select: { id: true, clientId: true, title: true },
     });
     if (!article) {
       return NextResponse.json({ ok: false }, { status: 404 });
@@ -59,6 +60,23 @@ export async function POST(request: Request) {
         userId,
       },
     });
+
+    if (article.clientId) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        request.headers.get("x-real-ip") ||
+        request.headers.get("cf-connecting-ip") ||
+        null;
+      notifyTelegram(article.clientId, "articleLinkClick", {
+        title: article.title,
+        meta: {
+          الرابط: linkDomain ?? linkUrl,
+          النص: typeof linkText === "string" ? linkText.slice(0, 100) : undefined,
+        },
+        ipAddress: ip,
+        headers: request.headers,
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

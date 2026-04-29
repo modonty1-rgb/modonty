@@ -85,7 +85,7 @@ export async function publishArticleById(
     if (article.clientId) {
       const client = await db.client.findUnique({
         where: { id: article.clientId },
-        select: { forbiddenKeywords: true, forbiddenClaims: true },
+        select: { forbiddenKeywords: true, forbiddenClaims: true, intake: true },
       });
       const compliance = checkCompliance(
         {

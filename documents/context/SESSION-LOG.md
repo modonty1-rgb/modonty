@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-27 (Session 70 — Console copy + responsive overhaul ✅ ready to push)
+# Session Context — Last Updated: 2026-04-29 (Session 73 — **Repo Cleanup + Marketing Brief HTML + Pre-push Health Check** · ⏳ Ready to commit)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -6,10 +6,267 @@
 
 ---
 
-## Current Versions
-- **admin**: v0.43.2 ⏳ (ready to push — slug regex accepts Arabic)
-- **modonty**: v1.42.0 ✅ (pushed 2026-04-26 · commit `8a6b59c`)
-- **console**: v0.3.0 ⏳ (ready to push — full copy + responsive overhaul)
+## Current Versions (post-bump, ready to commit)
+- **admin**: v0.44.0 ⏳ (bumped from 0.43.2; covers Sessions 71+72+73 — Notifications Bell · Campaign Leads · Pipeline 13-stage · Pre-index validator · Telegram)
+- **modonty**: v1.43.0 ⏳ (bumped from 1.42.0; covers Telegram + clientFavorite + clientComment)
+- **console**: v0.4.0 ⏳ (bumped from 0.3.0; covers Sessions 71+72+73 — Dashboard + Analytics + Leads + Site Health + Telegram + 12 page rebuilds)
+
+> ⚠️ Last commit on `main`: `3c9729f` (Session 70 partial). **Sessions 71+72+73 work is staged for next commit.**
+
+---
+
+## ✅ Session 73 — 2026-04-29 (Repo Cleanup + Marketing Brief + Pre-push)
+
+### Summary
+Three groups of work this session:
+
+**1. Repo Cleanup (~1.45 GB + 1.7 MB freed)**
+- `.next/` cache (admin 975 MB · modonty 376 MB · console) deleted
+- test-screenshots, test-results, admin/logs, .playwright-mcp deleted
+- Backups trimmed 16 → 5 most recent
+- 31 one-off scripts archived (debug/test/check/seed) → eventually deleted in Phase 4
+- 6 root configs moved to `documents/` (clients-table.yml · ga4.txt · mockup · compass-connections.json moved out)
+- `documents/_archive/` reduced 150 → 0 files (folder deleted entirely)
+- `DESIGN_SYSTEM.md` → `documents/07-design-ui/` (proper home)
+- `shared.md` → `documents/implementation-plans/SHARED_ENV_MIGRATION_PLAN.md`
+- `frontend-master-SKILL.md` → `.claude/skills/frontend-master.md` (Claude skill location)
+
+**2. Marketing Brief 2026 (deliverable for marketing team)**
+- New `documents/01-business-marketing/MARKETING-BRIEF-2026.html` (16 sections)
+- Built on **live PROD DB tier data** (مجاني/الانطلاقة/الزخم/الريادة — 0/499/1299/2999 SAR)
+- Inventory of 28 console features + 22 admin features + modonty 45+ pages from 3 parallel agents
+- 5 Hooks for Reels/Ads + Persona narrative ("أحمد") + Four Powers framework + Honest Numbers credibility section
+- HTML with Tajawal font, sticky TOC, scroll-spy, RTL, print-ready
+- BUSINESS-OVERVIEW.md + MODONTY-STORY-SCRIPT.md merged + deleted (one source of truth now)
+
+**3. Documents structure cleanup**
+- 04-technical-dev: deprecated `settings-ui-removed-fields.md` deleted; `PRODUCTION-ENV-VARS.md` rebuilt with 3 apps (incl. Console — was missing) + correct `GSC_MODONTY_*` names + Telegram + PageSpeed + 5 gotchas
+- 02-seo: verified 4 files (kept) — disavow-linkbooster.txt + AUDIT-4 are standby for negative SEO emergency
+- 07-design-ui: gap-report-v2 verified vs code → 5 gaps resolved → replaced with `PENDING-UX-GAPS.md` (only unresolved)
+
+**Pre-push verification (all green):**
+- TSC zero errors on admin · modonty · console
+- Build success on admin · modonty · console
+- Backup completed (63 collections, 2.5MB)
+- Changelog entries (v0.44.0 + v0.4.0 + v1.43.0) written to LOCAL + PROD DBs
+- `verify-client-password.ts` (security risk leftover) deleted
+
+### Files structure now
+```
+documents/
+  01-business-marketing/
+    MARKETING-BRIEF-2026.html  (single source of truth, 16 sections)
+  02-seo/
+    AUDIT-4-BACKLINK-SPAM-GUIDE.md (standby)
+    ROBOTS-SITEMAP-REFERENCE.md
+    SEO-STRUCTURED-DATA-METADATA-REFERENCE.md (794 lines, gold)
+    disavow-linkbooster.txt (standby)
+  03-analytics-gtm/ga4.txt
+  04-technical-dev/PRODUCTION-ENV-VARS.md (rebuilt, 3 apps)
+  07-design-ui/
+    DESIGN_SYSTEM.md (1277 lines, design tokens)
+    PENDING-UX-GAPS.md (G1-G3 + B1/B2/B4 + accessibility + typography)
+    mockups/
+  audits/REPO-CLEANUP-AUDIT.md
+  implementation-plans/SHARED_ENV_MIGRATION_PLAN.md
+  context/SESSION-LOG.md (this file)
+  tasks/✅ MASTER-TODO.md, 🏆 MASTER-DONE.md, etc.
+```
+
+### Pending decisions (carry forward)
+- Atlas password rotation (`test-prisma-connection.ts` was in working tree, deleted, but in git history `493d4e5` — user decided to rotate Atlas account later instead of cleaning git history)
+- Other documents folders (03-analytics-gtm · 05-performance · 06-ai-chatbot · 08-intake-setup · admin-setting-docs · console-docs · guides · guidelines · modonty-docs) — not yet reviewed in Session 73
+
+---
+
+## ⏳ Session 72 — 2026-04-29 (Telegram Integration · Site Health Dashboard) — included in v0.44.0/0.4.0/1.43.0
+
+---
+
+## ⏳ Session 72 — 2026-04-29 (Telegram Integration · Site Health Dashboard)
+
+### Summary
+Three major value-add features built end-to-end with live tests on PROD DB:
+
+**1. Telegram Per-Client Notifications — OBS-187 to OBS-196**
+- New per-client bot `@ModontyAlertsBot` (separate from existing admin global `TELEGRAM_BOT_TOKEN`)
+- Used distinct env var `TELEGRAM_CLIENT_BOT_TOKEN` to avoid conflict
+- Schema: 5 new optional fields on `Client` (telegramChatId, telegramPairingCode, telegramPairingExpiresAt, telegramConnectedAt, telegramEventPreferences) — no migration needed (MongoDB schemaless)
+- Pairing flow: console UI generates 6-digit code (10-min TTL) → user sends `/start` to bot then the code → webhook validates + binds chat_id
+- Webhook: `console/app/api/telegram/webhook/route.ts` — verifies `x-telegram-bot-api-secret-token` header
+- Telegram catalog: started as 26 events, finalized at 22 after cleanup (removed redundant questionNew/clientLike/clientDislike + admin-only newsletterSubscribe)
+- **All 22 events live-tested via Playwright** (Tester TG visitor account created on modonty + Kimazone admin in console)
+- Dev setup uses ngrok tunnel (URL `https://5429-142-154-87-194.ngrok-free.app` → console:3000) for webhook
+- All messages include footer: timestamp (en-GB Asia/Riyadh) + geo (city/country) using Node native + free ip-api.com fallback
+
+**2. clientFavorite + clientComment — Built end-to-end (OBS-199)**
+- User: "أضيفهم لأنهم بالفعل مهمون للعميل... شغلهم تمامًا، اتركهم شغالين 100% من كل الجهات"
+- `clientFavorite` (modonty): API `/api/clients/[slug]/favorite` (GET/POST/DELETE) + `ClientFavoriteButton` UI on client page hero (Bookmark icon) + Telegram event
+- `clientComment` (modonty): API `/api/clients/[slug]/comments` (POST PENDING + GET list APPROVED) + `ClientCommentsSection` form/list on client page (after FAQ section) + Telegram event
+- Console approval page: `/dashboard/client-comments` with 5 KPIs + filter pills + approve/reject/delete/restore actions
+- Sidebar entry "آراء حول الشركة" with `Quote` icon (NOT MessageSquare — collides with article-comments top-nav bell)
+
+**3. Site Health Dashboard (OBS-202 to OBS-207)**
+- New `/dashboard/site-health` page — value-add for client subscriptions
+- Architecture: **NO DB persistence** (per user request "بس مجرد عرض للعميل كخدمة")
+- 9 free helpers in `console/lib/health/`: ssl, dns, headers, robots, sitemap, domain (RDAP), meta+OG (cheerio), schema-check, pagespeed (Google PSI)
+- 2 cards: "Google PageSpeed" (raw scores Mobile + Desktop side-by-side, direct from Google) + "Modonty Health Score" (separate aggregate of our own checks: security headers, DNS, SEO essentials, CWV)
+- **Critical bug caught by user:** initial UI showed misleading 70/100 vs Google's 57. Two bugs found + fixed: `URLSearchParams.set("category", ...)` overwrote (changed to `append`), and UI mixed PSI scores with Modonty aggregate (now strictly separated).
+- All free APIs: PageSpeed Insights API key + GSC service account copied from `admin/.env.local` to `console/.env.local`
+- Cheerio installed: `pnpm add cheerio` ← only new dep
+- Sidebar entry "صحة موقعك" with `Activity` icon
+
+### Live test results (kimazone.net via Playwright)
+- Telegram: 21/22 events delivered messages successfully (leadHigh future-ready)
+- Site Health: Mobile=Perf 55, A11y 63, BP 100, SEO 91 (matches Google ✓); Desktop=Perf 42, A11y 75, BP 100, SEO 91; Modonty=58/100 Grade C
+- All forms (favorite/comment) successfully submitted via Tester TG visitor account
+
+### Key files added/changed
+**New files (modonty):**
+- `app/api/clients/[slug]/favorite/route.ts`
+- `app/api/clients/[slug]/comments/route.ts`
+- `app/clients/[slug]/components/client-favorite-button.tsx`
+- `app/clients/[slug]/components/client-comments-section.tsx`
+- `lib/telegram/{client,events,notify,geo}.ts` (mirrored from console)
+
+**New files (console):**
+- `app/api/telegram/webhook/route.ts`
+- `app/(dashboard)/dashboard/settings/components/telegram-card.tsx`
+- `app/(dashboard)/dashboard/settings/actions/telegram-actions.ts`
+- `app/(dashboard)/dashboard/client-comments/{page.tsx,actions/,components/,helpers/}` (full module)
+- `app/(dashboard)/dashboard/site-health/{page.tsx,components/score-hero.tsx,category-section.tsx,pagespeed-card.tsx}`
+- `lib/telegram/{client,events,notify,pairing,geo}.ts`
+- `lib/health/{types,ssl,dns,headers,robots,sitemap,domain,meta,schema-check,pagespeed,aggregator}.ts`
+
+**Modified (modonty):**
+- 6 API routes wired with `notifyTelegram` (article view/share/like/dislike/favorite, comments POST + reply, comment like/dislike, client view/follow/share, subscribers, contact)
+- `lib/conversion-tracking.ts` (auto-fires `conversion` Telegram event)
+- `app/clients/[slug]/page.tsx` (added ClientCommentsSection)
+- `app/clients/[slug]/components/hero/hero-cta.tsx` (added ClientFavoriteButton)
+- `lib/telegram.ts` (existing admin file unchanged — coexists with new lib/telegram/ directory)
+
+**Modified (console):**
+- `lib/ar.ts` (added telegram + clientComments + siteHealth namespaces)
+- `app/(dashboard)/components/{sidebar.tsx,mobile-sidebar.tsx,dashboard-layout-client.tsx,dashboard-header.tsx}` (sidebar entries)
+- `app/(dashboard)/layout.tsx` (fetches pendingClientCommentsCount)
+- `app/(dashboard)/dashboard/settings/{page.tsx,actions/,components/}` (Telegram card integrated; OBS-188 prior settings rebuild also reflected)
+- `dataLayer/prisma/schema/schema.prisma` (5 telegram fields added to Client model)
+
+### Known issues / decisions deferred
+- ⚠️ `leadHigh` event in catalog but no `lib/lead-scoring/` exists in modonty — future-ready (UI checkbox visible, doesn't fire)
+- ⚠️ ngrok URL is local-only — production deploy requires fresh `setWebhook` curl pointing to `https://console.modonty.com/api/telegram/webhook`
+- ⚠️ Bot token (`8739374417:...`) was leaked in chat twice — user accepted risk and authorized continued use; should `/revoke` and rotate before production
+- ⚠️ modonty/.env.local was switched to PROD `modonty` DB to enable testing (was on `modonty_dev`) — **CRITICAL: revert before final push if dev DB needed**
+- ⚠️ console/.env.local has new env vars (`TELEGRAM_CLIENT_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_SECRET`, `GOOGLE_PAGESPEED_API_KEY`, `GSC_MODONTY_*`) — must be added to Vercel env settings before production deploy
+- 🟡 Cheerio added as new dep in console/package.json — unrelated tiptap peer-dep warnings (pre-existing, not caused by this session)
+
+### Decisions taken (architecture)
+- **Telegram architecture:** Option B (single shared @ModontyAlertsBot) chosen over Option A (per-client BotFather bots). Simpler UX.
+- **Site Health architecture:** No DB persistence — every page visit triggers fresh parallel checks (~3-10s with Suspense streaming). User explicitly rejected DB-backed approach.
+- **GSC architecture:** Service account (existing `gsc-modonty@modonty.iam.gserviceaccount.com`) instead of OAuth-per-user — simpler, but requires each client to add the service-account email as user on their GSC property for per-client access.
+
+### Manual setup required before production
+1. Vercel env vars (console + modonty): see list above under "Known issues"
+2. Telegram `/revoke` to rotate the leaked token
+3. `setWebhook` curl pointing to `https://console.modonty.com/api/telegram/webhook` with the new secret
+4. Verify with `getWebhookInfo`
+
+---
+
+## ⏳ Session 71 — 2026-04-28 (Campaigns + Notifications + Subscribers + Leads + Console UI sweep)
+
+### Summary
+Three big pieces shipped end-to-end with live Playwright tests, all on PROD DB:
+
+**1. Campaigns Sales Teaser (console + admin) — OBS-168 + OBS-169**
+- Replaced empty `/dashboard/campaigns` analytics page with high-conversion sales teaser
+- 6 sections: hero ("قريباً" badge — no time commitment) · quota strip (mirrors `articlesPerMonth`) · 3 reach tiers (own/industry/full DB) · 5-step workflow · 4 features · final CTA gradient
+- New Prisma model `CampaignInterest` (one-row-per-client with idempotent reach updates + auto history line in `notes` field) + 2 enums (`CampaignReach`, `CampaignInterestStatus`)
+- New admin page `/campaigns/leads`: KPIs (NEW/CONTACTED/CONVERTED/CANCELLED) · search · 5 filter pills · table · Sheet drawer with WhatsApp deep-link, status workflow (auto-stamps contactedAt/convertedAt/cancelledAt), notes/history pre-block
+- Sidebar: new "Campaign Leads" item under Audience group with Megaphone icon
+
+**2. Unified Notifications Bell (admin) — OBS-170**
+- User reframed Notification table as the gateway for ANY admin notification type
+- Built `lib/notifications/registry.ts` (type → icon/tone/label/href fn) + 3 server actions (list / markRead / markAllRead) + Popover-based `NotificationsBell` component
+- 3 types registered: `contact_reply` (blue) · `campaign_interest` (violet) · `faq_reply` (emerald). Unknown types → grey Bell fallback
+- Replaced legacy `<Link href="/contact-messages">` bell + removed `ContactMessagesBadge` import from header
+- **Critical Prisma+MongoDB gotcha caught + fixed**: `where: { readAt: null }` doesn't match documents missing the field. All unread queries now use `OR: [{ readAt: null }, { readAt: { isSet: false } }]`. Writers also explicitly set `readAt: null` on create.
+
+**3. Subscribers Page Hardening (console) — OBS-172**
+- Senior audit found 14 issues (2 critical / 3 high / 5 medium / 4 low) — all fixed
+- 🔴 **Security:** all 5 server actions now `auth()`-checked + `ensureOwnedSubscriber` cross-tenant guard. Removed `clientId` from action signatures (callers can't spoof).
+- 🔴 **CSV escape:** RFC 4180 (quote/double-quote/newline) + UTF-8 BOM (Arabic in Excel)
+- 🟠 Pagination (take: 200) + sonner toasts replacing alert/confirm + dead code purge
+- 🟡 Responsive grid + KPI percentage hints + polished empty states (3 contextual variants) + proper `Prisma.JsonValue` typing + Latin date format
+- 🟢 Bulk select + bulk actions + search bar + Sheet drawer + filter pill "بموافقة الخصوصية" + status/consent badges with icons + trash button separated from toggle
+
+**4. Leads Page Rebuild (console) — OBS-173**
+- Senior audit found ~24 issues including **4 CRITICAL data-integrity bugs** (page returned WRONG results to client). All fixed.
+- 🔴 **Stale leads** — refresh now deletes leads outside the 30-day window (was: HOT lead from 2 months ago stayed HOT forever)
+- 🔴 **Anonymous→User split** — `sessionToUser` map merges anonymous activity into the known user when the same session is later linked to a userId
+- 🔴 **Email always null** — bulk-fetch User table to populate `email` field (phone stays null until per-user phone capture exists)
+- 🔴 **Qualification clarity** — `isQualified` now an INDEPENDENT badge alongside HOT/WARM/COLD level. Filter "مؤهل فقط" added.
+- 🟠 N+1 upsert → `Promise.all` batches of 10 · Sonner toast feedback · "آخر تحديث: منذ X" timestamp · dead code purge
+- 🟡 Responsive grid · empty states (3 contextual variants) · Latin dates · title matches sidebar · subtitle mentions 30-day window
+- 🟢 Search bar · score progress bar visualization · detail Sheet drawer with 4-component score breakdown + WhatsApp/Email CTAs · CSV export with RFC 4180 escaping · Flame/TrendingUp/Snowflake icons for HOT/WARM/COLD
+- **Live math verification:** Ahmed Osman = (viewScore 20 + timeScore 1 + interactionScore 80 + conversionScore 0)×0.25 = 25 ✓ matches DB exactly
+
+### Live Test Results (Playwright on PROD DB, kimazone client)
+- ✅ Campaigns: 6 sections render · 5 CTAs · reach update with auto history line · idempotency (same reach = no-op) · WhatsApp deep-link with pre-filled Arabic
+- ✅ Admin Leads: KPIs · table · drawer · status cycle (NEW→CONTACTED→CONVERTED auto-stamps timestamps)
+- ✅ Notifications Bell: badge count · dropdown · click row marks read + navigates · "Mark all read" clears badge
+- ✅ Subscribers: 5 seeded test subs (incl. edge cases `smith,jr@` + `O"Brien, John`) — search/filter/bulk/drawer/CSV escape all verified · test data cleaned up after
+
+### Files changed
+**Schema (1 file):**
+- `dataLayer/prisma/schema/schema.prisma` — added `CampaignInterest` model + 2 enums + `Client.campaignInterest` relation. `pnpm prisma:generate` ran successfully.
+
+**Console (12 files):**
+- `app/(dashboard)/dashboard/campaigns/actions/register-interest.ts` — NEW
+- `app/(dashboard)/dashboard/campaigns/components/campaigns-teaser.tsx` — NEW
+- `app/(dashboard)/dashboard/campaigns/page.tsx` — slim wrapper
+- `app/(dashboard)/dashboard/subscribers/actions/subscriber-actions.ts` — full rewrite
+- `app/(dashboard)/dashboard/subscribers/helpers/subscriber-queries.ts` — pagination + types
+- `app/(dashboard)/dashboard/subscribers/components/subscribers-table.tsx` — full rewrite
+- `app/(dashboard)/dashboard/subscribers/page.tsx` — responsive KPI grid
+- `app/(dashboard)/dashboard/leads/actions/refresh-lead-scores.ts` — refactor (returns RefreshResult)
+- `app/(dashboard)/dashboard/leads/components/refresh-lead-scores-button.tsx` — sonner toast feedback
+- `app/(dashboard)/dashboard/leads/components/leads-table.tsx` — full rewrite (search + drawer + score viz)
+- `app/(dashboard)/dashboard/leads/helpers/lead-queries.ts` — `getLeadsLastRefreshedAt` + dead code removed
+- `app/(dashboard)/dashboard/leads/page.tsx` — responsive grid + last-refreshed badge
+- `lib/lead-scoring/compute.ts` — sessionToUser merge + email population + delete-stale + parallel upsert
+- `lib/ar.ts` — extended `campaigns` (60+) + `subscribers` (50+) + `leads` (60+) namespaces
+
+**Admin (8 files):**
+- `lib/notifications/registry.ts` — NEW
+- `lib/notifications/actions.ts` — NEW
+- `components/admin/notifications-bell.tsx` — NEW
+- `app/(dashboard)/campaigns/leads/page.tsx` — NEW
+- `app/(dashboard)/campaigns/leads/actions/leads-actions.ts` — NEW
+- `app/(dashboard)/campaigns/leads/components/leads-table.tsx` — NEW
+- `components/admin/header.tsx` — replaced legacy bell, removed `ContactMessagesBadge` import
+- `components/admin/sidebar.tsx` — added Megaphone import + "Campaign Leads" nav item
+
+### Pending before push
+1. ⏳ Bump `console/package.json` v0.3.0 → v0.4.0 (significant new features)
+2. ⏳ Bump `admin/package.json` v0.43.2 → v0.44.0 (new Campaign Leads page + Notifications Bell)
+3. ⏳ Add changelog entry via `admin/scripts/add-changelog.ts`
+4. ⏳ Run `bash scripts/backup.sh` for safety
+5. ⏳ Final TSC sweep on both apps (already green — re-verify before push)
+6. ⏳ Optional: live test all 3 features once more after server restart
+7. ⏳ User explicit confirmation before `git push` (per memory rule `feedback_push_confirmation`)
+
+### Pending issues from earlier sessions (still open)
+- ⚠️ `admin/.env.local` + `console/.env.local` still point to PROD (since OBS-125). End of console session = decide whether to revert to `modonty_dev` for next session.
+- CONS-001..004 HIGH security items still pending (compliance check, RLS, admin notifications for client approvals, dev button hide). Subscribers security closed one chunk; the other 4 remain.
+- CTA event labels in DB still come from modonty.com tracking code (Latin) — out of scope.
+
+### Next agent: BEFORE next push
+- Bump versions (admin + console)
+- Add changelog
+- Run backup script
+- Get explicit user push confirmation
+- After push, decide on PROD-vs-dev `.env.local` state for next session
 
 ---
 

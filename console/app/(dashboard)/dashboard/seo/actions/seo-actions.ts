@@ -1,61 +1,8 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
-
-export async function createSeoIntake(
-  clientId: string,
-  answers: Record<string, unknown>,
-  collectedBy?: string | null
-) {
-  try {
-    const client = await db.client.findUnique({
-      where: { id: clientId },
-      select: { id: true },
-    });
-    if (!client) return { success: false, error: messages.error.notFound };
-
-    const existing = await db.seoIntake.findFirst({
-      where: { clientId },
-      orderBy: { collectedAt: "desc" },
-      select: { id: true },
-    });
-
-    if (existing) {
-      await db.seoIntake.update({
-        where: { id: existing.id },
-        data: {
-          answers: answers as Prisma.InputJsonValue,
-          collectedAt: new Date(),
-          collectedBy: collectedBy ?? null,
-        },
-      });
-    } else {
-      await db.seoIntake.create({
-        data: {
-          clientId,
-          answers: answers as Prisma.InputJsonValue,
-          collectedBy: collectedBy ?? null,
-        },
-      });
-    }
-
-    revalidatePath("/dashboard");
-    revalidatePath("/dashboard/seo");
-    return { success: true };
-  } catch (e) {
-    return { success: false, error: messages.error.serverError };
-  }
-}
-
-export async function getLatestSeoIntake(clientId: string) {
-  return db.seoIntake.findFirst({
-    where: { clientId },
-    orderBy: { collectedAt: "desc" },
-  });
-}
 
 export async function createCompetitor(
   clientId: string,

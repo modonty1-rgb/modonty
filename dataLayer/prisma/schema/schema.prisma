@@ -417,7 +417,20 @@ model Client {
   nextjsMetadataLastGenerated DateTime? // When metadata was last generated
 
   // Client Notification Preferences
-  notificationPreferences Json? // { articlePublished, articleApproved, digest, commentsNew, supportReplies }
+  notificationPreferences Json? // { articlePublished, articleApproved, commentsNew, supportReplies }
+
+  // ============ Telegram Integration ============
+  telegramChatId           String?   // chat_id بعد ما يتم الربط
+  telegramPairingCode      String?   // كود 6 أرقام للربط
+  telegramPairingExpiresAt DateTime? // الكود ينتهي بعد 10 دقائق
+  telegramConnectedAt      DateTime? // وقت اكتمال الربط
+  telegramEventPreferences Json?     // { commentNew: true, articleView: false, ... } — 26 event toggle
+
+  // Unified Intake — single JSON home for all content/SEO strategy answers
+  // Replaces the scattered fields below + the SeoIntake model (Phase 2 will remove them).
+  intake          Json?      // { voice, audience, goals, policy, technical, business, story, customers, strategy, competition, ymylReviewer, version }
+  intakeUpdatedAt DateTime?
+  intakeUpdatedBy String?    // userId who last edited the intake
 
   // SEO Intake & Strategy (static/config - dynamic data in related tables)
   technicalProfile           Json?   // { platform?, stagingUrl?, hreflang?, cacheType? }
@@ -458,6 +471,9 @@ model Client {
   seoIntakes     SeoIntake[]
   competitors    ClientCompetitor[]
   targetKeywords ClientKeyword[]
+
+  // Campaign sales lead (from teaser CTA)
+  campaignInterest CampaignInterest?
 
   @@index([industryId])
   @@index([userId])
@@ -505,6 +521,48 @@ model ClientKeyword {
 
   @@index([clientId])
   @@map("client_keywords")
+}
+
+// ============================================
+// CAMPAIGN INTEREST — sales leads from teaser CTA
+// ============================================
+
+enum CampaignReach {
+  OWN      // own newsletter subscribers
+  INDUSTRY // subscribers from same industry across modonty
+  FULL     // entire modonty subscriber base
+}
+
+enum CampaignInterestStatus {
+  NEW       // just submitted, awaiting team contact
+  CONTACTED // team reached out
+  CONVERTED // client booked/paid for a campaign
+  CANCELLED // client declined or unresponsive
+}
+
+model CampaignInterest {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @unique @db.ObjectId // one record per client (Idempotency: subsequent clicks update reach)
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  reach  CampaignReach
+  source String?       // which CTA was clicked: "hero" | "tier-own" | "tier-industry" | "tier-full" | "final-cta"
+
+  status CampaignInterestStatus @default(NEW)
+
+  assignedTo   String?   @db.ObjectId // User handling this lead
+  notes        String?                 // admin notes (history of reach changes appended automatically)
+  contactedAt  DateTime?
+  convertedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("campaign_interests")
 }
 
 // ============================================

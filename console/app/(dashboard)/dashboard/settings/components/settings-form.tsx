@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { ar } from "@/lib/ar";
 import {
   Card,
@@ -11,143 +11,105 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { updateClientSettings } from "../actions/settings-actions";
-import type { NotificationPreferences } from "../actions/settings-actions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Bell, FileText, CheckCircle2, MessageSquare, Mail } from "lucide-react";
+import {
+  updateNotificationPreferences,
+  type NotificationPreferences,
+} from "../actions/settings-actions";
 
-interface SettingsFormProps {
-  clientId: string;
-  initial: {
-    notificationPreferences?: NotificationPreferences | null;
-  };
+interface Props {
+  initial: NotificationPreferences | null;
 }
 
-export function SettingsForm({ clientId, initial }: SettingsFormProps) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [prefs, setPrefs] = useState<NotificationPreferences>(
-    initial.notificationPreferences ?? {}
-  );
+export function SettingsForm({ initial }: Props) {
+  const s = ar.settings;
+  const [prefs, setPrefs] = useState<NotificationPreferences>(initial ?? {});
+  const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function setBool(key: keyof NotificationPreferences, value: boolean) {
+    setPrefs((p: NotificationPreferences) => ({ ...p, [key]: value }));
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await updateClientSettings(clientId, {
-        notificationPreferences: prefs,
-      });
-      if (res.success) {
-        router.refresh();
-      } else {
-        setError(res.error ?? ar.settings.updateFailed);
-      }
-    } catch {
-      setError(ar.settings.somethingWrong);
-    } finally {
-      setLoading(false);
-    }
+    startTransition(async () => {
+      const res = await updateNotificationPreferences(prefs);
+      if (res.success) toast.success(s.saved);
+      else toast.error(res.error || s.updateFailed);
+    });
   }
 
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">{ar.settings.notifications}</CardTitle>
-        <CardDescription>{ar.settings.notificationsDesc}</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Bell className="h-4 w-4 text-primary" />
+          {s.notifications}
+        </CardTitle>
+        <CardDescription>{s.notificationsHint}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-              {error}
-            </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <div className="space-y-3">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!prefs.articlePublished}
-                    onChange={(e) =>
-                      setPrefs((p) => ({
-                        ...p,
-                        articlePublished: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-input"
-                  />
-                  <span className="text-sm">{ar.settings.articlePublished}</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!prefs.articleApproved}
-                    onChange={(e) =>
-                      setPrefs((p) => ({
-                        ...p,
-                        articleApproved: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-input"
-                  />
-                  <span className="text-sm">{ar.settings.articleApproved}</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!prefs.commentsNew}
-                    onChange={(e) =>
-                      setPrefs((p) => ({
-                        ...p,
-                        commentsNew: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-input"
-                  />
-                  <span className="text-sm">{ar.settings.commentsNew}</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!prefs.supportReplies}
-                    onChange={(e) =>
-                      setPrefs((p) => ({
-                        ...p,
-                        supportReplies: e.target.checked,
-                      }))
-                    }
-                    className="rounded border-input"
-                  />
-                  <span className="text-sm">{ar.settings.supportReplies}</span>
-                </label>
-                <div className="space-y-2">
-                  <Label className="text-sm">{ar.settings.digest}</Label>
-                  <select
-                    value={prefs.digest ?? "none"}
-                    onChange={(e) =>
-                      setPrefs((p) => ({
-                        ...p,
-                        digest: e.target.value as "none" | "weekly" | "monthly",
-                      }))
-                    }
-                    className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-                  >
-                    <option value="none">{ar.settings.digestNone}</option>
-                    <option value="weekly">{ar.settings.digestWeekly}</option>
-                    <option value="monthly">{ar.settings.digestMonthly}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-3">
+            <PrefRow
+              icon={FileText}
+              label={s.articlePublished}
+              checked={!!prefs.articlePublished}
+              onChange={(v) => setBool("articlePublished", v)}
+            />
+            <PrefRow
+              icon={CheckCircle2}
+              label={s.articleApprovedOption}
+              checked={!!prefs.articleApproved}
+              onChange={(v) => setBool("articleApproved", v)}
+            />
+            <PrefRow
+              icon={MessageSquare}
+              label={s.commentsNew}
+              checked={!!prefs.commentsNew}
+              onChange={(v) => setBool("commentsNew", v)}
+            />
+            <PrefRow
+              icon={Mail}
+              label={s.supportReplies}
+              checked={!!prefs.supportReplies}
+              onChange={(v) => setBool("supportReplies", v)}
+            />
           </div>
 
-          <Button type="submit" disabled={loading}>
-            {loading ? ar.settings.saving : ar.settings.save}
-          </Button>
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isPending}>
+              {isPending ? s.saving : s.save}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+function PrefRow({
+  icon: Icon,
+  label,
+  checked,
+  onChange,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border bg-card px-4 py-3 transition-colors hover:bg-muted/40">
+      <span className="flex items-center gap-2.5 text-sm text-foreground">
+        <Icon className="h-4 w-4 text-muted-foreground" />
+        {label}
+      </span>
+      <Checkbox
+        checked={checked}
+        onCheckedChange={(v) => onChange(v === true)}
+      />
+    </label>
   );
 }

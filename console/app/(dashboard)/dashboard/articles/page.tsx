@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
 import {
   getPendingArticles,
   getPublishedArticles,
@@ -24,13 +25,16 @@ export default async function ArticlesPage({
   const params = await searchParams;
   const tab = params.tab || "pending";
 
-  const [pendingArticles, publishedArticles, allArticles, pendingCount] =
+  const [pendingArticles, publishedArticles, allArticles, pendingCount, settings] =
     await Promise.all([
       getPendingArticles(clientId),
       getPublishedArticles(clientId),
       getAllArticles(clientId),
       getPendingArticlesCount(clientId),
+      db.settings.findFirst({ select: { siteUrl: true } }),
     ]);
+
+  const siteUrl = settings?.siteUrl ?? "";
 
   return (
     <ArticlesPageClient
@@ -39,6 +43,7 @@ export default async function ArticlesPage({
       allArticles={allArticles}
       pendingCount={pendingCount}
       initialTab={tab}
+      siteUrl={siteUrl}
     />
   );
 }
