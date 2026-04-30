@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-29 (Session 73 — Pre-push health check ✅ · 3 apps TSC zero errors · 3 apps build success · `verify-client-password.ts` (security risk) محذوف · بانتظار OK للـ version bumps + backup + changelog + push)
+> **آخر تحديث:** 2026-04-30 (Session 74 — Shared Env Migration ✅ · 34 keys نشطة + 12 unused معلَّقة · Functional test ✅ · SESSION-LOG محدَّث للـ handoff · Phase 4 (Vercel) معلَّقة لجلسة قادمة)
 > **🎯 Master plan:** [Perfect-SEO-Plan.md](Perfect-SEO-Plan.md) — 108 task across 13 phases · ~33 يوم عمل · يستبدل **الجزء الميكانيكي** من SEO Specialist (95%) · لا يستبدل الـ Strategy/Content/Backlinks (الـ 80% من النجاح الفعلي) · راجع قسم "Reality Check" في الملف للحقيقة الكاملة
 > **خطة Dashboard rebuild:** [Dashboard-Action-Plan.md](Dashboard-Action-Plan.md) · [Mockup v2](../../admin/public/dashboard-mockup-v2.html)
 > **خطة URL Lifecycle & Coverage:** [URL-Lifecycle-Plan.md](URL-Lifecycle-Plan.md) — 22 task across 3 phases

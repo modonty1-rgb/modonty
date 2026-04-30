@@ -19,9 +19,13 @@ const isProd  = process.argv.includes("--prod");
 const isReset = process.argv.includes("--reset");
 const isBoth  = !isLocal && !isProd; // default: both
 
+// Hardcoded PROD DB URL (user decision 2026-04-29) — to avoid env juggling.
+// ⚠️ Trade-off: URL credentials are in git history. Rotate Atlas password = update all 3 changelog scripts.
+const PRODUCTION_DATABASE_URL = "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+
 const targets: Array<{ label: string; url: string | undefined }> = [];
 if (isBoth || isLocal) targets.push({ label: "LOCAL", url: process.env.DATABASE_URL });
-if (isBoth || isProd)  targets.push({ label: "PROD ", url: process.env.PRODUCTION_DATABASE_URL });
+if (isBoth || isProd)  targets.push({ label: "PROD ", url: PRODUCTION_DATABASE_URL });
 
 type ItemType = "fix" | "feature" | "improve";
 type Entry = {

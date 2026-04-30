@@ -1,4 +1,10 @@
+import { config as loadDotenv } from "dotenv";
+import path from "node:path";
 import type { NextConfig } from "next";
+
+// Load monorepo-level shared env vars (local dev only — Vercel uses Shared Env Vars tab).
+// override:false (default) → admin/.env.local takes precedence.
+loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
   headers: async () => [

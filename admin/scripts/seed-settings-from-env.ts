@@ -58,7 +58,8 @@ function readSiteOrgFromEnv(): SiteOrgData {
   return {
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || null,
     siteName: process.env.NEXT_PUBLIC_SITE_NAME?.trim() || null,
-    brandDescription: process.env.NEXT_PUBLIC_BRAND_DESCRIPTION?.trim() || null,
+    // Brand description hardcoded (2026-04-30) — not a secret, doesn't belong in .env
+    brandDescription: "Modonty — your trusted dental and healthcare platform in the Gulf region.",
     siteAuthor: process.env.NEXT_PUBLIC_SITE_AUTHOR?.trim() || null,
     twitterSite: process.env.NEXT_PUBLIC_TWITTER_SITE?.trim() || null,
     twitterCreator: process.env.NEXT_PUBLIC_TWITTER_CREATOR?.trim() || null,

@@ -20,6 +20,8 @@ logs/
 .env
 .env*.local
 .env.production
+.env.shared
+!.env.shared.example
 
 # Logs
 *.log

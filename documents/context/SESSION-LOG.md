@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-04-29 (Session 73 — **Repo Cleanup + Marketing Brief HTML + Pre-push Health Check** · ⏳ Ready to commit)
+# Session Context — Last Updated: 2026-04-30 (Session 74 — **Shared Env Migration + Local Test** ✅ done · Phase 4 (Vercel) deferred to next session)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -6,12 +6,90 @@
 
 ---
 
-## Current Versions (post-bump, ready to commit)
-- **admin**: v0.44.0 ⏳ (bumped from 0.43.2; covers Sessions 71+72+73 — Notifications Bell · Campaign Leads · Pipeline 13-stage · Pre-index validator · Telegram)
-- **modonty**: v1.43.0 ⏳ (bumped from 1.42.0; covers Telegram + clientFavorite + clientComment)
-- **console**: v0.4.0 ⏳ (bumped from 0.3.0; covers Sessions 71+72+73 — Dashboard + Analytics + Leads + Site Health + Telegram + 12 page rebuilds)
+## Current Versions (no version bump in Session 74 — env-only changes, no app code touched)
+- **admin**: v0.44.0 (committed `300a805` Session 73)
+- **modonty**: v1.43.0 (committed `300a805` Session 73)
+- **console**: v0.4.0 (committed `300a805` Session 73)
 
-> ⚠️ Last commit on `main`: `3c9729f` (Session 70 partial). **Sessions 71+72+73 work is staged for next commit.**
+> ⚠️ Last commit on `main`: `300a805` (Session 73). **Session 74 work is uncommitted** — all env file changes + 3 changelog scripts hardcoded PROD URL + 2 admin code edits (brand description hardcoded).
+
+---
+
+## ✅ Session 74 — 2026-04-30 (Shared Env Migration + Local Verification)
+
+### Summary
+Major refactor of monorepo env management. ZERO production code changes (apart from 3 changelog scripts + 2 brand-description hardcodes). All Next.js apps now load shared env vars via `.env.shared` at root.
+
+### What was done
+
+**Phase 0-3 ✅ — Wired all 3 apps**
+- New file: `MODONTY/.env.shared` (gitignored, 34 active keys + 12 commented unused)
+- New file: `MODONTY/.env.shared.example` (committed template)
+- `console/next.config.ts` + `modonty/next.config.ts` + `admin/next.config.ts` — added `dotenv.config({ path: '../.env.shared' })` at top (4 lines each)
+- `console/package.json` + `modonty/package.json` — added `dotenv@^16.6.1` + `cheerio@^1.0.0` (cheerio was a pre-existing missing dep — bug from Session 71)
+- Priority: `<app>/.env.local > <app>/.env > .env.shared` (override:false, Next.js standard)
+
+**Phase 3.5 ✅ — Cleanup of duplicates**
+- 6 per-app `.env`/`.env.local` files cleaned of duplicate keys (commented-out for rollback safety)
+- Backup of all 6 files: `c:/tmp/env-backup-2026-04-29/`
+- 5 pre-existing bugs fixed:
+  1. console/.env: `NEXTAUTH_URL=https://admin.modonty.com` → `https://console.modonty.com`
+  2. console/.env: `RESEND_FROM=no-reply@admin.modonty.com` → `no-reply@modonty.com`
+  3. console/.env: `NEXT_PUBLIC_SITE_URL=https://modonty.com` → `https://www.modonty.com`
+  4. .env.shared: `GOOGLE_SEARCH_CONSOLE_SITE_URL=https://modonty.com` → `https://www.modonty.com`
+  5. modonty/.env: empty `TELEGRAM_BOT_TOKEN=` placeholder was overriding shared (commented out)
+
+### Keys moved to `.env.shared` (34 active)
+DATABASE_URL · AUTH_TRUST_HOST · NEXT_PUBLIC_SITE_URL · REVALIDATE_SECRET · INTERNAL_LOG_SECRET · GOOGLE_CLIENT_ID/SECRET · 6 Cloudinary · RESEND_API_KEY/FROM · 7 GSC + PageSpeed · NEXT_PUBLIC_GTM_CONTAINER_ID · 3 OpenAI · COHERE_API_KEY · SERPER_API_KEY · UNSPLASH · NEWS · 5 Telegram (with new TELEGRAM_WEBHOOK_SECRET = `b0b05ce0c9bdda586dff0f2a2097e3cf6acb0608656617f186d5a159de9fbc61`)
+
+### Keys hardcoded (NOT secrets — by user decision)
+- `PRODUCTION_DATABASE_URL` → hardcoded in 3 changelog scripts (admin/scripts/add-changelog.ts · changelog-sync.ts · changelog-prod.ts) per user "ما أبغى أتخبط في الـ environment"
+  - ⚠️ **Atlas password rotation = update 3 scripts**
+- `NEXT_PUBLIC_BRAND_DESCRIPTION` → hardcoded in 2 admin seed locations (not a secret)
+
+### Audit & verification (4-level)
+1. Independent Agent (155s, 68 calls) → 12 unused keys
+2. Combined OR-pattern grep → ZERO matches
+3. 12 individual greps → ZERO matches each
+4. Edge-case grep (bracket access + dynamic prefix) → ZERO matches
+
+12 unused keys commented in `.env.shared` (verified UNUSED 2026-04-30):
+- `GSC_MODONTY_CLIENT_EMAIL` (client_email is inside KEY_BASE64 JSON)
+- `NEXT_PUBLIC_GTM_DEBUG`, `NEXT_PUBLIC_GTM_ENVIRONMENT`
+- `NEXT_PUBLIC_PHONE_NUMBER`, `NEXT_PUBLIC_WHATSAPP_NUMBER`
+- 7 `NEXT_PUBLIC_SOCIAL_*` (replaced by DB Settings — `modonty/lib/settings/get-platform-social-links.ts`)
+
+### Local test ✅ (PROD DB)
+- `pnpm install` → 14.4s clean
+- `pnpm prisma:generate` + `prisma:validate` → ✅
+- 3 dev servers running on 3000/3001/3002 → all HTTP 200
+- Playwright live tests ✅ on each:
+  - **console**: login Kimazone → dashboard → site-health (PSI live: Mobile 62, Desktop 78) → settings (Telegram "مربوط")
+  - **admin**: login modonty@modonty.com → dashboard (KPIs live) → /search-console (17 indexed, 11 missing, 19 pending — all GSC live)
+  - **modonty**: homepage + sitemap (17KB) + image-sitemap (26KB) + robots.txt all 200
+- Zero env-related errors. JWTSessionError on modonty browser nav = stale cookies (OBS-118 — pre-existing, not env issue).
+
+### Next session — Phase 4 (Vercel)
+~35-40 min UI work:
+1. Backup .env from each Vercel project (Settings → Environment Variables → Download)
+2. Team Settings → Environment Variables → Shared tab → Import .env.shared → Link to all 3 projects
+3. Verify Shared section visible in each project
+4. Delete duplicates from Project-level (low-risk first → DATABASE_URL last)
+5. Redeploy 3 projects (no cache)
+6. Update Telegram webhook with new secret:
+   ```
+   curl -X POST "https://api.telegram.org/bot8739374417:AAGaV6s6KaEwU7Jl5_sySrjx4YF9DUg099Y/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d '{"url":"https://console.modonty.com/api/telegram/webhook","secret_token":"b0b05ce0c9bdda586dff0f2a2097e3cf6acb0608656617f186d5a159de9fbc61"}'
+   ```
+7. Live verify 3 production domains
+
+### Phase 5 (later — final cleanup)
+After Phase 4 confirmed working: remove all `# UNUSED` and `# moved to .env.shared` comments from per-app `.env` files. Pure cleanup.
+
+### TODO for production rotation (security)
+- Regenerate AUTH_SECRETs in Vercel UI for all 3 apps (rotation best practice)
+- Rotate Atlas DB password — needs to update `.env.shared` + 3 changelog scripts + Vercel Shared
 
 ---
 

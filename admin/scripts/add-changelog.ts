@@ -54,12 +54,15 @@ const entries = [
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Hardcoded PROD DB URL (user decision 2026-04-29) — to avoid env juggling.
+// ⚠️ Trade-off: URL credentials are in git history. Rotate Atlas password = update all 3 changelog scripts.
+const PRODUCTION_DATABASE_URL = "mongodb+srv://modonty-admin:2053712713@modonty-cluster.tgixa8h.mongodb.net/modonty?retryWrites=true&w=majority&appName=modonty-cluster";
+
 const localDb = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
-const prodDb = new PrismaClient({ datasources: { db: { url: process.env.PRODUCTION_DATABASE_URL } } });
+const prodDb = new PrismaClient({ datasources: { db: { url: PRODUCTION_DATABASE_URL } } });
 
 async function run() {
   if (!process.env.DATABASE_URL) { console.error("❌ DATABASE_URL missing"); process.exit(1); }
-  if (!process.env.PRODUCTION_DATABASE_URL) { console.error("❌ PRODUCTION_DATABASE_URL missing in .env.local"); process.exit(1); }
 
   for (const entry of entries) {
     const [local, prod] = await Promise.all([
