@@ -9,16 +9,16 @@ BACKUP_DIR="c:/Users/w2nad/Desktop/dreamToApp/MODONTY/backups"
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
 TARGET="$BACKUP_DIR/backup-$TIMESTAMP"
 
-# Read DATABASE_URL from admin .env (never hardcode credentials)
-ENV_FILE="c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin/.env"
+# Read DATABASE_URL from .env.shared (single source of truth post-migration 2026-04-30)
+ENV_FILE="c:/Users/w2nad/Desktop/dreamToApp/MODONTY/.env.shared"
 if [ ! -f "$ENV_FILE" ]; then
-  echo "✗ Error: .env file not found at $ENV_FILE"
+  echo "✗ Error: .env.shared file not found at $ENV_FILE"
   exit 1
 fi
 
 URI=$(grep "^DATABASE_URL=" "$ENV_FILE" | head -1 | sed 's/DATABASE_URL=//' | tr -d '"' | tr -d "'" | tr -d '\r')
 if [ -z "$URI" ]; then
-  echo "✗ Error: DATABASE_URL not found in .env"
+  echo "✗ Error: DATABASE_URL not found in .env.shared"
   exit 1
 fi
 
