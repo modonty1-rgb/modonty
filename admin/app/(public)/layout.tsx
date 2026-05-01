@@ -8,7 +8,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-full bg-background flex flex-col">
+    <div dir="rtl" className="h-full bg-background flex flex-col">
       {/* Minimal public header */}
       <header className="border-b bg-card/60 backdrop-blur-sm sticky top-0 z-20">
         <div className="px-6 py-3 flex items-center justify-between gap-3">
@@ -18,7 +18,7 @@ export default function PublicLayout({
             </div>
             <div>
               <p className="text-sm font-semibold leading-tight">Modonty</p>
-              <p className="text-[10px] text-muted-foreground leading-tight">Knowledge Hub</p>
+              <p className="text-[10px] text-muted-foreground leading-tight">دليل الفريق</p>
             </div>
           </Link>
           <div className="flex items-center gap-3 shrink-0">
@@ -34,7 +34,7 @@ export default function PublicLayout({
               href="/login"
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Admin Sign In →
+              دخول الإدارة ←
             </Link>
           </div>
         </div>

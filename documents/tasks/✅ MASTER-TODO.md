@@ -1,9 +1,9 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-05-01 (Session 76 — Knowledge Hub Phase 4 Steps 1-4am DONE — **/guidelines/tracking DELETED — same logic as subscribers + seo-specialist (client-managed, not team-managed). Sidebar 7→6 sub-pages**. Knowledge Hub now lean: Media · Articles · Authors · Clients · Organization · معاينة البحث والمشاركة + Prohibitions in navbar.)
+> **آخر تحديث:** 2026-05-02 (Session 76 — **WRAP**: Knowledge Hub Phase 5 + iterative polish complete. **15 guideline pages** total (7 foundation + 8 daily-work). Per-page patterns applied uniformly: 3-layer (الجملة + ليش مهمة + متى تستخدمها) · «سعودية» trust signal · «محركات البحث» (not Google) · «منصة عالمية» (not أمريكي) · pricing 1,299 شهري · cultural anchor (Hadith كالبنيان). Major additions: Rule 22 (Telegram) · NEW page /positioning (vs competitors + ceiling) · ICPs research with 20+ sources + Egypt-Gulf strategic tier. About page refocused as pure Introduction. Pending decisions: push admin v0.47.0 · PRC-01 (jabrseo pricing) · COMP-INTEL-01 (DataForSEO MVP) · KH-AUDIT-01 (client page selling point in 5 pages). TSC zero across all 3 apps.)
 > **🎯 Master plan:** [Perfect-SEO-Plan.md](Perfect-SEO-Plan.md) — 108 task across 13 phases · ~33 يوم عمل · يستبدل **الجزء الميكانيكي** من SEO Specialist (95%) · لا يستبدل الـ Strategy/Content/Backlinks (الـ 80% من النجاح الفعلي) · راجع قسم "Reality Check" في الملف للحقيقة الكاملة
 > **خطة Dashboard rebuild:** [Dashboard-Action-Plan.md](Dashboard-Action-Plan.md) · [Mockup v2](../../admin/public/dashboard-mockup-v2.html)
 > **خطة URL Lifecycle & Coverage:** [URL-Lifecycle-Plan.md](URL-Lifecycle-Plan.md) — 22 task across 3 phases
-> **الإصدار الحالي:** admin v0.42.0 | modonty v1.41.1 | console v0.2.0
+> **الإصدار الحالي:** admin v0.46.0 | modonty v1.43.0 | console v0.5.0
 > المهام المنجزة في → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 
 ---
@@ -12,43 +12,155 @@
 
 ---
 
-## 🔴 URGENT — Pricing & Sales Integration with jabrseo.com (Pending — after Knowledge Hub)
+## 🔴 URGENT — External Data Integration (Pricing + Competitive Intelligence)
+
+> **Pattern moved up to top:** Both PRC-01 and COMP-INTEL-01 share the same architectural pattern — modonty fetches data from external sources (jabrseo for pricing, DataForSEO for competitor intelligence). Single source of truth + REST API + cache strategy. Build them in sequence; second is faster after first.
 
 ### PRC-01 🔴 URGENT — Build pricing/features integration: jabrseo.com → modonty (admin + console)
-- **Context:** jabrseo.com هو بوابة البيع لمودونتي. الأسعار + المزايا + الخصائص اللي ياخذها العميل لازم تكون متمركزة في jabrseo (single source of truth).
-- **Why urgent:** نحتاجها فوراً بعد الانتهاء من Knowledge Hub لأن:
-  - admin يستخدمها لعرض الباقات في `/guidelines/clients` (Sales reference)
-  - console يستخدمها لعرض باقة العميل + upgrade prompts
-  - أي تحديث سعر يجب يظهر في جميع الأماكن فوراً
-- **المقترح المعتمد (Option A — REST API):**
-  1. **jabrseo.com:** `app/api/pricing/route.ts` — يرجع JSON بـ:
-     ```ts
-     {
-       tiers: [
-         { tier: "BASIC", articlesPerMonth: 2, price: 2499, currency: "SAR", features: [...], benefits: [...] },
-         { tier: "STANDARD", ... },
-         { tier: "PRO", ..., popular: true },
-         { tier: "PREMIUM", ... }
-       ],
-       updatedAt: ISO
-     }
-     ```
-  2. **modonty (admin):** `lib/pricing/fetch-pricing.ts` — server function مع `unstable_cache` (TTL ساعة) + DEFAULT_PRICING fallback
-  3. **modonty (console):** نفس lib + استخدام في settings page + upgrade prompts
-  4. **Webhook لاحقاً:** `revalidateTag("pricing")` لو احتجنا real-time invalidation
-- **الأسئلة المعلَّقة (تحتاج إجابة قبل التنفيذ):**
-  1. الأسعار + المزايا الحالية موجودة في jabrseo DB؟ أو نبتدي من الصفر؟
-  2. Endpoint عام (read-only) أو نضيف API key للحماية؟
-  3. هل فيه مواقع تانية غير modonty تستهلك نفس البيانات؟
-- **التأثير المتوقع:**
-  - admin/guidelines/clients: ينقل من hardcoded → live data من jabrseo
-  - console/settings: subscription card يقرأ المزايا الكاملة من jabrseo
-  - أي صفحة pricing/upgrade تستخدم نفس المصدر
-- **الأولوية بعد:** انتهاء Knowledge Hub Phase 4 + push admin v0.46.0
-- **Files to create/modify (estimated):**
-  - jabrseo.com — `app/api/pricing/route.ts` (جديد)
-  - modonty/admin — `lib/pricing/fetch-pricing.ts` (جديد) + `guidelines/clients/page.tsx` (تعديل)
-  - modonty/console — `lib/pricing/fetch-pricing.ts` (mirror) + `settings/components/subscription-card.tsx` (تعديل)
+
+#### الحجم الحقيقي اكتُشف في Session 76 (Knowledge Hub work)
+
+السعر هاردكود مكرّر **في 5+ صفحات guideline**، وفيه **خطأ شائع**:
+- في عدة مواضع: 1,299 مكتوبة كـ **سنوية** بينما هي فعلياً **شهرية** (1,299 × 12 = 15,588 سنوياً)
+- المصدر الداخلي القديم (SYNTHESIS.md) قال «السعر/سنة» — لكن خالد أكّد إنه شهري
+- الموقع الحي (modonty.jbrtechno.com) عنده tiers مختلفة: Basic 2,499 · Standard 3,999 · Pro 6,999 · Premium 9,999
+- لا أحد يدري الأسعار الحقيقية بدقة بدون مصدر موحّد
+
+#### الصفحات المتأثرة حالياً (تحتاج تحديث بعد PRC-01):
+
+| الصفحة | الخطأ |
+|--------|------|
+| `admin/guidelines/clients/page.tsx` | tiers محدّدة + popular flag (بدون أسعار حالياً) |
+| `admin/guidelines/golden-rules/page.tsx` Rule 5 | جدول WordPress fix (تم اليوم) — لكن 1,299/15,588 hardcoded |
+| `admin/guidelines/golden-rules/page.tsx` Rule 11 | ROI Pitch: «1,299 ريال (Momentum)» — السياق سنوي غلط |
+| `admin/guidelines/golden-rules/page.tsx` Rule 12 | جدول الباقات: السعر بدون توضيح month/year |
+| `admin/guidelines/sales-playbook/page.tsx` | Elevator Pitch: «1,299 ريال للسنة كاملة» — غلط |
+| `admin/guidelines/about/page.tsx` | Hero يذكر «90% توفير» — يحتاج reality-check |
+| `admin/guidelines/marketing-strategy/page.tsx` | KPIs يذكر تسعير (يحتاج audit) |
+| `console/dashboard/settings/subscription-card.tsx` | يقرأ من DB حالياً (hardcoded) |
+
+#### المقترح المعتمد (Option A — REST API):
+1. **jabrseo.com:** `app/api/pricing/route.ts` — يرجع JSON بـ:
+   ```ts
+   {
+     tiers: [
+       { tier: "BASIC", articlesPerMonth: 2, monthly: 2499, yearly: 24990, currency: "SAR", features: [...], benefits: [...] },
+       { tier: "STANDARD", ... },
+       { tier: "PRO", ..., popular: true },
+       { tier: "PREMIUM", ... }
+     ],
+     rules: { "twelveEqualsEighteen": true, ... },
+     updatedAt: ISO
+   }
+   ```
+2. **modonty (admin):** `lib/pricing/fetch-pricing.ts` — server function مع `unstable_cache` (TTL ساعة) + DEFAULT_PRICING fallback
+3. **modonty (console):** نفس lib + استخدام في settings page + upgrade prompts
+4. **Webhook لاحقاً:** `revalidateTag("pricing")` لو احتجنا real-time invalidation
+
+#### الأسئلة المعلَّقة (تحتاج إجابة قبل التنفيذ):
+1. الأسعار + المزايا الحالية موجودة في jabrseo DB؟ أو نبتدي من الصفر؟
+2. Endpoint عام (read-only) أو نضيف API key للحماية؟
+3. هل فيه مواقع تانية غير modonty تستهلك نفس البيانات؟
+4. monthly + yearly كلاهما، أو monthly فقط مع حساب yearly = ×12؟
+5. هل تطبيق قاعدة 12=18 يحصل في jabrseo (يحط tier "yearlyDiscount") أو في modonty side؟
+
+#### الأولوية: **بعد انتهاء Knowledge Hub review**
+
+#### Files to create/modify:
+- jabrseo.com — `app/api/pricing/route.ts` (جديد)
+- modonty/admin — `lib/pricing/fetch-pricing.ts` (جديد) + 7 ملفات guideline (تعديل)
+- modonty/console — `lib/pricing/fetch-pricing.ts` (mirror) + `subscription-card.tsx` (تعديل)
+- **Test:** بعد التطبيق، أي تعديل سعر في jabrseo → يظهر في كل المواضع خلال ساعة (max cache TTL)
+
+---
+
+### COMP-INTEL-01 🟡 NEW — Build Competitive Intelligence MVP in console
+
+#### Why same priority pattern as PRC-01:
+نفس الـ architectural pattern — fetch from external data source (DataForSEO API بدل jabrseo) + cache + display in console. **بناء PRC-01 أولاً يعلّمنا الأسلوب**، COMP-INTEL-01 بعده يكون أسرع.
+
+#### MVP Phase 1 (2 weeks):
+- Prisma model: `Competitor` (clientId · domain · keywords · lastFetched)
+- صفحة جديدة: `console/dashboard/competitors`
+- Server action: `addCompetitor` + `fetchCompetitorData`
+- DataForSEO API integration: `lib/competitors/dataforseo.ts`
+- Weekly cron job
+- Dashboard tab يعرض: shared keywords + gaps
+
+#### Phase 2 (2-3 weeks):
+- Search intent classification
+- Content gap suggestions
+- Visual charts (bars, pie)
+
+#### Phase 3 (2 weeks):
+- Weekly PDF reports
+- Telegram alerts (منافس نشر مقال جديد)
+- Free Audit endpoint للـ Discovery Calls
+
+#### Economics:
+- DataForSEO: $50–100/شهر base
+- SerpAPI (مكمّل): $50–100/شهر
+- إجمالي: ~$150/شهر = ~563 ريال
+- لـ 100 عميل: $1.50/عميل/شهر
+- Margin: ~96% ضد Momentum 1,299 شهري
+
+#### القيمة الاستراتيجية:
+- تمايز فريد (ولا منافسة عربية صغيرة عندها هذا)
+- يبرر upsell لـ Pro/Premium
+- Free Audit = أقوى Closing Tool في الـ Discovery Call
+- يصدّق وعد القاعدة 7 (القوة 4 — عيون على المنافسين)
+
+#### Files to create:
+- console — `prisma schema: Competitor model` (جديد)
+- console — `app/(dashboard)/dashboard/competitors/page.tsx` (جديد)
+- console — `lib/competitors/dataforseo.ts` (جديد)
+- console — `app/(dashboard)/dashboard/competitors/actions/competitor-actions.ts` (جديد)
+- console — `lib/cron/fetch-competitor-data.ts` (جديد)
+- admin/guidelines/golden-rules — تحديث القاعدة 7 القوة 4 (إزالة self-gap warning بعد التنفيذ)
+
+#### القرار المعلّق: **متى نبدأ؟**
+الخيار المنطقي: بعد PRC-01 (نتعلم الـ pattern + ما نشتت التركيز).
+
+---
+
+### KH-AUDIT-01 🟡 NEW — Add client page (modonty.com/clients/[slug]) as selling point across guidelines
+
+#### Discovery (Session 76 - audited 2026-05-01):
+صفحة العميل على modonty.com **أصل تسويقي ضخم** فاتت من معظم الـ guidelines. هذي قيمة بيعية قوية ما ذكرناها:
+
+#### ما تحويه الصفحة فعلياً:
+- **8 tabs:** الكل · حول · تواصل · الصور · المتابعون · التقييمات · الريلز · الإعجابات
+- **Hero:** شعار العميل + غلاف + اسم + tagline
+- **Article list:** كل مقالات العميل في مكان واحد
+- **Social proof:** followers list + reviews preview + likes preview + photos preview + mentions
+- **Visitor actions:** follow · favorite · comment · share · review · contact
+- **Newsletter signup card** (lead capture)
+- **Mobile CTA** dedicated
+- **View tracker** (analytics لكل عميل)
+
+#### القيمة التسويقية:
+1. Mini-website جاهز بدون تكلفة موقع منفصل
+2. Social presence مدمج (followers · reviews) بدون أدوات خارجية
+3. Domain Authority benefit (subpage على modonty.com)
+4. Discovery channels (tags · categories · search) — يُكتشف من زوار تجار آخرين
+5. Lead capture كامل (newsletter + contact + comment)
+6. Analytics مدمجة
+
+#### Guidelines pages needing updates:
+| الصفحة | الإضافة المطلوبة |
+|--------|------------------|
+| `about/page.tsx` | بند جديد في «ما يحصل العميل» — «صفحة كاملة على modonty.com بـ 8 tabs» |
+| `golden-rules` Power 3 (social proof) | إضافة: «النظام مدمج في صفحة العميل — followers + reviews + ratings» |
+| `sales-playbook` | نقطة بيعية في الـ Discovery: «احنا نطلّع لك صفحة احترافية — مش بس مقالات» |
+| `clients/page.tsx` | موجود لكن غير مفصّل — يحتاج expansion |
+| `icps/page.tsx` | كل ICP يستفيد بطريقة (التجارة → كتالوج، العيادات → reviews، المحاماة → mentions، إلخ) |
+
+#### الأولوية: ضمن Knowledge Hub review الكامل بعد PRC-01
+
+#### التطبيق المقترح:
+- audit كل صفحة من الـ 5 المذكورة
+- إضافة البند بـ formatting موحّد (icon + headline + 3-5 bullets)
+- screenshot من صفحة عميل حقيقي (مثل kimazone) كـ proof
 
 ---
 

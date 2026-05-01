@@ -17,7 +17,9 @@ import {
   Megaphone,
   Award,
   Users,
+  Swords,
 } from "lucide-react";
+import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
 
 type IconComponent = React.ComponentType<{ className?: string }>;
 
@@ -36,26 +38,32 @@ interface SidebarGroup {
 
 const groups: SidebarGroup[] = [
   {
-    title: "الأدلة العملية",
+    title: "أساسيات Modonty",
     items: [
+      { icon: ModontyIcon, label: "عن Modonty", href: "/guidelines/about" },
+      { icon: Swords, label: "Modonty vs المنافسون", href: "/guidelines/positioning" },
+      { icon: Award, label: "القواعد الذهبية", href: "/guidelines/golden-rules" },
+      { icon: Sparkles, label: "البراند", href: "/guidelines/brand" },
+    ],
+  },
+  {
+    title: "السوق + المبيعات",
+    items: [
+      { icon: Users, label: "العملاء المثاليون", href: "/guidelines/icps" },
+      { icon: Megaphone, label: "دليل المبيعات", href: "/guidelines/sales-playbook" },
+      { icon: BarChart3, label: "استراتيجية التسويق", href: "/guidelines/marketing-strategy" },
+    ],
+  },
+  {
+    title: "العمل اليومي",
+    items: [
+      { icon: BookOpen, label: "تأهيل الفريق", href: "/guidelines/team-onboarding" },
       { icon: Eye, label: "معاينة البحث والمشاركة", href: "/guidelines/seo-visual" },
       { icon: ImageIcon, label: "دليل الوسائط", href: "/guidelines/media" },
       { icon: FileText, label: "المقالات", href: "/guidelines/articles" },
       { icon: Pen, label: "الكتّاب", href: "/guidelines/authors" },
       { icon: Building2, label: "العملاء", href: "/guidelines/clients" },
       { icon: Folder, label: "تنظيم المحتوى", href: "/guidelines/organization" },
-    ],
-  },
-  {
-    title: "قريباً",
-    items: [
-      { icon: BookOpen, label: "عن Modonty", href: "#", isComingSoon: true },
-      { icon: Sparkles, label: "البراند", href: "#", isComingSoon: true },
-      { icon: Users, label: "العملاء المثاليون", href: "#", isComingSoon: true },
-      { icon: Megaphone, label: "دليل المبيعات", href: "#", isComingSoon: true },
-      { icon: BarChart3, label: "استراتيجية التسويق", href: "#", isComingSoon: true },
-      { icon: Sparkles, label: "تأهيل الفريق", href: "#", isComingSoon: true },
-      { icon: Award, label: "القواعد الذهبية", href: "#", isComingSoon: true },
     ],
   },
 ];
