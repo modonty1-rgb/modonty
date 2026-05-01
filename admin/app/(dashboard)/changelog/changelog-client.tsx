@@ -63,7 +63,13 @@ interface NoteReply {
 interface AdminNote {
   id: string;
   author: string;
+  type: string | null;
+  app: string | null;
+  whereExactly: string | null;
   message: string;
+  steps: string | null;
+  severity: string | null;
+  benefit: string | null;
   page: string | null;
   replies: NoteReply[];
   createdAt: string;
@@ -219,6 +225,22 @@ function NoteCard({ note }: { note: AdminNote }) {
     router.refresh();
   };
 
+  const appConfig = note.app === "modonty" ? { label: "🌐 Modonty", cls: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30" }
+    : note.app === "console" ? { label: "👤 Console", cls: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30" }
+    : note.app === "admin" ? { label: "🛠️ Admin", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" }
+    : note.app === "general" ? { label: "💬 General", cls: "bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/30" }
+    : null;
+
+  const typeConfig = note.type === "bug" ? { label: "🐛 Bug", cls: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30" }
+    : note.type === "idea" ? { label: "💡 Idea", cls: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/30" }
+    : note.type === "other" ? { label: "💬 Other", cls: "bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/30" }
+    : null;
+
+  const sevConfig = note.severity === "critical" ? { label: "🔴 Critical", cls: "text-red-600 dark:text-red-400" }
+    : note.severity === "bug" ? { label: "🟡 Bug", cls: "text-amber-600 dark:text-amber-400" }
+    : note.severity === "minor" ? { label: "🟢 Minor", cls: "text-emerald-600 dark:text-emerald-400" }
+    : null;
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex items-start justify-between gap-3">
@@ -227,7 +249,24 @@ function NoteCard({ note }: { note: AdminNote }) {
             <User className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold">{note.author}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-semibold">{note.author}</p>
+              {typeConfig && (
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${typeConfig.cls}`}>
+                  {typeConfig.label}
+                </span>
+              )}
+              {appConfig && (
+                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${appConfig.cls}`}>
+                  {appConfig.label}
+                </span>
+              )}
+              {sevConfig && (
+                <span className={`text-[10px] font-bold ${sevConfig.cls}`}>
+                  {sevConfig.label}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
               <Clock className="h-3 w-3" />
               {formatDateFull(note.createdAt)}
@@ -242,7 +281,33 @@ function NoteCard({ note }: { note: AdminNote }) {
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
+      {note.whereExactly && (
+        <div className="bg-muted/40 rounded-md px-3 py-2 text-xs">
+          <span className="font-semibold text-muted-foreground">📍 Where: </span>
+          <span>{note.whereExactly}</span>
+        </div>
+      )}
+
+      <div>
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+          {note.type === "bug" ? "What happened" : note.type === "idea" ? "The idea" : "Message"}
+        </p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
+      </div>
+
+      {note.steps && (
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-md p-3">
+          <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1">🔄 Steps to reproduce</p>
+          <pre className="text-xs whitespace-pre-wrap font-mono">{note.steps}</pre>
+        </div>
+      )}
+
+      {note.benefit && (
+        <div className="bg-sky-500/5 border border-sky-500/20 rounded-md p-3">
+          <p className="text-[11px] font-semibold text-sky-700 dark:text-sky-400 uppercase tracking-wide mb-1">✨ Why it would help</p>
+          <p className="text-sm whitespace-pre-wrap">{note.benefit}</p>
+        </div>
+      )}
 
       {note.replies.length > 0 && (
         <div className="ps-6 border-s-2 border-muted space-y-3 mt-3">

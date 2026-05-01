@@ -119,7 +119,9 @@ export interface ArticleFormData {
   jsonLdHistory?: any;
   jsonLdDiffSummary?: string;
 
-  // Optimistic locking
+  // Optimistic locking — user-initiated only (NOT bumped by SEO/cron)
+  userVersion?: number;
+  // Legacy/display only (no longer used for conflict check)
   updatedAt?: Date | string | null;
 
   // Tags & FAQs
@@ -316,6 +318,7 @@ export interface FormSubmitResult {
     id: string;
     title?: string | null;
     status?: ArticleStatus;
+    userVersion?: number;
     updatedAt?: Date | string | null;
   };
 }

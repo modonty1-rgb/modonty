@@ -15,6 +15,7 @@ import { LogOut, Settings } from "lucide-react";
 import { Breadcrumb } from "./breadcrumb";
 import { HeaderNav } from "./header-nav";
 import { NotificationsBell } from "./notifications-bell";
+import { HeaderFeedbackButton } from "./header-feedback-button";
 
 export function Header() {
   const { data: session } = useSession();
@@ -35,6 +36,9 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Beta feedback note button */}
+          <HeaderFeedbackButton />
+
           {/* Unified notifications bell */}
           <NotificationsBell />
 

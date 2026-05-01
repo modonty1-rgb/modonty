@@ -46,6 +46,7 @@ export async function getAdminNotes() {
 
 export async function createAdminNote(data: {
   author: string;
+  app?: string;
   message: string;
   page?: string;
 }) {
@@ -59,6 +60,7 @@ export async function createAdminNote(data: {
   const note = await db.adminNote.create({
     data: {
       author: data.author,
+      app: data.app || null,
       message: data.message,
       page: data.page || null,
     },

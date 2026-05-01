@@ -1,5 +1,5 @@
 # MASTER TODO — MODONTY
-> **آخر تحديث:** 2026-04-30 (Session 74 — Shared Env Migration ✅ · committed `3d3ad5d` · **Phase 4 ✅**: Team Shared فيه 34 keys linked to 3 projects, project-level cleaned (76→6 keys), 3 productions redeployed على نفس commit `3c9729fa` و كلهم HTTP 200 · branch ahead by 2 commits)
+> **آخر تحديث:** 2026-04-30 (Session 76 — userVersion optimistic-locking fix ✅ · **Toast UX overhaul ✅ — admin: 6px tone-coded left-bar + always-visible close + larger icons in tinted rings + per-variant durations (success 6s/warning 8s/error 12s/info 5s) · console: closeButton + expand + bold title + RTL close on right + `.playwright-mcp/` rule added for screenshots**)
 > **🎯 Master plan:** [Perfect-SEO-Plan.md](Perfect-SEO-Plan.md) — 108 task across 13 phases · ~33 يوم عمل · يستبدل **الجزء الميكانيكي** من SEO Specialist (95%) · لا يستبدل الـ Strategy/Content/Backlinks (الـ 80% من النجاح الفعلي) · راجع قسم "Reality Check" في الملف للحقيقة الكاملة
 > **خطة Dashboard rebuild:** [Dashboard-Action-Plan.md](Dashboard-Action-Plan.md) · [Mockup v2](../../admin/public/dashboard-mockup-v2.html)
 > **خطة URL Lifecycle & Coverage:** [URL-Lifecycle-Plan.md](URL-Lifecycle-Plan.md) — 22 task across 3 phases
@@ -9,6 +9,55 @@
 ---
 
 > 🟢 LOW items → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
+
+---
+
+## 🐛 Rawan's Reported Bugs (Session 76 — 2026-04-30)
+
+### RWN-01 ✅ DONE — "تم تعديل المقال بواسطة مستخدم آخر" false positive (optimistic locking)
+- [x] **Root cause:** `updateArticle` compared `updatedAt` for conflict detection. SEO regen / JSON-LD storage / cron jobs bump `updatedAt` without being a user edit, so legitimate user saves were rejected immediately after any system write.
+- [x] **Fix:** added `userVersion Int @default(0)` to Article model — bumped ONLY by user-initiated saves (`updateArticle`). `updatedAt` kept for display only.
+- [x] **Sub-bug fixed during live test:** Prisma `{ increment: 1 }` is a silent no-op on MongoDB documents that don't yet have the field. Switched to explicit `set` using `(existingArticle.userVersion ?? 0) + 1`.
+- [x] **Backfill (DEV):** `$set userVersion: 0` on all 29 existing DEV articles. **PROD backfill pending before push.**
+- [x] **Live tests on DEV (admin):**
+  - Plain save → userVersion 0→1 ✅
+  - System bumped `updatedAt` mid-edit → user save still succeeded (was Rawan's exact scenario) ✅
+  - Other-user changed `userVersion` → save correctly blocked ✅
+- [x] **Files:** [update-article.ts](admin/app/(dashboard)/articles/actions/articles-actions/mutations/update-article.ts) · [article-form-context.tsx](admin/app/(dashboard)/articles/components/article-form-context.tsx) · [transform-article-to-form-data.ts](admin/app/(dashboard)/articles/helpers/article-form-helpers/transform-article-to-form-data.ts) · [article-server-schema.ts](admin/app/(dashboard)/articles/actions/articles-actions/article-server-schema.ts) · [form-types.ts](admin/lib/types/form-types.ts) · [schema.prisma](dataLayer/prisma/schema/schema.prisma)
+- [x] TSC admin: zero errors.
+
+### RWN-02 ⏳ PENDING — Slug edit blocked at 60+ chars on published articles
+- Reported by Rawan; not yet reproduced/fixed. Needs live diagnosis.
+
+### RWN-03 ⏳ PENDING — Adding links blocked due to "edited by another user"
+- Likely fully resolved by RWN-01 (same root cause: SEO regen bumps `updatedAt`). Needs live confirmation.
+
+### RWN-04 ⏳ PENDING — Form fields hang on navigation (UX)
+- Reported by Rawan; not yet diagnosed.
+
+---
+
+## 🎨 Toast UX Overhaul (Session 76 — 2026-04-30)
+
+### TOAST-01 ✅ DONE — Admin toast clarity + transparency + employee-friendly
+- [x] **Problem:** toast appeared and disappeared too fast; close button hidden until hover; transparent background washed out on busy pages.
+- [x] **Decision:** Plan A (improve config of existing libraries) over Plan B (migrate admin to sonner). Avoids 68-file migration. Each app keeps its current stack.
+- [x] **Admin (`@/hooks/use-toast` + custom Radix Toaster):**
+  - 6px solid tone-coded left border (emerald/red/amber/blue) — instant visual recognition
+  - Always-visible close button (was opacity-0 until hover) + bigger hit target + Arabic `aria-label`
+  - Icon now sits in a 36px tinted ring (bg-emerald-500/15 + ring-emerald-500/30) for visual hierarchy
+  - Title: `font-bold` + tight leading; Description: full opacity + relaxed leading + spacing
+  - Action button moved below description in flex layout (was overflowing on narrow toasts)
+  - Per-variant durations: success 6s · warning 8s · error 12s · info/default 5s (was all 4s/10s)
+- [x] **Console (`sonner`):**
+  - `closeButton` always visible · `expand` (stack expanded by default for readability) · `visibleToasts: 3`
+  - Custom classNames: bold title · muted-foreground description · close button forced to right side (was breaking in RTL `start: auto, end: 2`)
+  - `border-2 shadow-xl` for prominence on light theme · 64px min-height · 14/16px padding
+  - Default duration 4s → 5s
+- [x] **Files:** [admin/components/ui/toast.tsx](admin/components/ui/toast.tsx) · [admin/components/ui/toaster.tsx](admin/components/ui/toaster.tsx) · [admin/hooks/use-toast.ts](admin/hooks/use-toast.ts) · [console/app/components/providers/toast-provider.tsx](console/app/components/providers/toast-provider.tsx)
+- [x] **TSC:** admin=0 · console=0
+- [x] **Decision rule applied:** kept sonner for non-blocking feedback (success/info) · shadcn AlertDialog stays the right tool for destructive confirmations (delete/publish/push) — already in stack, no migration.
+- [x] **Process rule added:** all Playwright screenshots must save inside `.playwright-mcp/` (filename param prefixed) so root stays clean.
 
 ---
 

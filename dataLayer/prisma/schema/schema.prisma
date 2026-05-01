@@ -752,6 +752,11 @@ model Industry {
 model Article {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
+  // Optimistic concurrency — user-initiated edits only.
+  // System operations (SEO regen, JSON-LD storage, cron) MUST NOT bump this.
+  // Only update-article action increments it. Use this (not updatedAt) for conflict detection.
+  userVersion Int @default(0)
+
   // Basic content
   title         String // Schema.org Article headline
   slug          String
@@ -2231,12 +2236,18 @@ model Changelog {
 }
 
 model AdminNote {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  author    String
-  message   String
-  page      String?
-  replies   AdminNoteReply[]
-  createdAt DateTime         @default(now())
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  author       String
+  type         String?          // "bug" | "idea" | "other"
+  app          String?          // "modonty" | "console" | "admin" | "general"
+  whereExactly String?          // human description: "Article edit page", "Comments list", etc.
+  message      String           // what happened / the idea / the comment
+  steps        String?          // bug-only: reproduction steps
+  severity     String?          // bug-only: "critical" | "bug" | "minor"
+  benefit      String?          // idea-only: why it would help
+  page         String?          // auto-captured URL pathname (technical reference)
+  replies      AdminNoteReply[]
+  createdAt    DateTime         @default(now())
 
   @@index([createdAt])
   @@map("admin_notes")

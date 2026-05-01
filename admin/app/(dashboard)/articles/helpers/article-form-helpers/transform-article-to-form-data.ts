@@ -6,7 +6,9 @@ type ArticleFromDb = NonNullable<Awaited<ReturnType<typeof getArticleById>>>;
 
 export function transformArticleToFormData(article: ArticleFromDb): Partial<ArticleFormData> {
   return {
-    // Optimistic locking
+    // Optimistic locking — user-initiated edits only (NOT bumped by SEO/cron/system writes)
+    userVersion: article.userVersion ?? 0,
+    // Kept for legacy/display only — NOT used for conflict detection anymore
     updatedAt: article.updatedAt ?? null,
 
     // Basic Content

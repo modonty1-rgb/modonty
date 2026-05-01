@@ -21,6 +21,37 @@ During any live test session:
 
 ---
 
+## Session: 2026-04-30 — userVersion optimistic-locking fix + Toast UX overhaul (Session 76)
+
+### OBS-209 ✅ DONE — Toast UX overhaul on both admin and console
+- **User feedback (verbatim):** "الـ رسالة Notification أو Twist Notification bad UX. مو واضحة، تطلع وتختفي بسرعة. ما أدري، نحسنها ولا ننزل الـ sweet sweet alert 2 تقريبًا."
+- **Senior decision (rejected sweetalert2):** sweetalert is a blocking modal, wrong tool for non-blocking feedback. Bundle 13KB+ vs configuring what we already have. Industry pattern: 2-tier UX → sonner-style toast for casual feedback + shadcn AlertDialog for destructive confirmations. Both are already in our stack.
+- **Discovery during audit:** admin uses old shadcn `useToast` system (68 callers), console uses sonner (14 callers). Plan A picked: improve each in place rather than migrate admin to sonner.
+- **Admin changes (4 files):**
+  - `components/ui/toast.tsx` — 6px solid tone-coded left border (emerald/red/amber/blue); always-visible close button (was opacity-0 until hover) with bigger hit target and Arabic aria-label; title `font-bold leading-tight`; description full opacity + relaxed leading + mt-1 spacing
+  - `components/ui/toaster.tsx` — icon now sits in a 36px tinted ring (bg-emerald-500/15 + ring-emerald-500/30); action moved below description in flex layout (was overflowing on narrow toasts)
+  - `hooks/use-toast.ts` — per-variant durations: success 6s · warning 8s · error 12s · info/default 5s (was 4s success / 10s error only)
+- **Console changes (1 file):**
+  - `app/components/providers/toast-provider.tsx` — `closeButton: true` · `expand: true` · `visibleToasts: 3` · custom classNames (bold title, muted-foreground description, close button forced to right side via `!start-auto !end-2 !top-2 !left-auto` to fix RTL bug); default duration 4s → 5s; border-2 + shadow-xl + 64px min-height + 14/16px padding
+- **TSC:** admin=0 · console=0
+- **Process rule added:** all Playwright screenshots must save inside `.playwright-mcp/` (filename param prefixed) so root stays clean. Live test screenshot moved post-hoc, rule enforced going forward.
+
+---
+
+### OBS-208 ✅ DONE — Rawan "تم تعديل المقال بواسطة مستخدم آخر" false-positive resolved
+- **Bug:** SEO regen / JSON-LD storage / cron writes bumped `Article.updatedAt` while a user had the form open. On Save, the form-cached `updatedAt` no longer matched DB → user saw "edited by another user" toast immediately. Looked like a phantom co-editor.
+- **Industry pattern applied:** separate `userVersion Int @default(0)` field — bumped ONLY by `updateArticle`. `updatedAt` kept for display-only. Conflict check now compares `userVersion` (untouched by SEO/cron).
+- **Sub-bug found during live test:** Prisma `{ increment: 1 }` is a silent no-op on MongoDB documents that don't yet have the field (the existing docs were created before the schema added `userVersion`). The first increment did nothing — userVersion stayed at 0 forever, exposing every save to the very race we were trying to prevent.
+- **Sub-bug fix:** switched to explicit `set` using `(existingArticle.userVersion ?? 0) + 1`. Verified manually that increment then works correctly on the same row after the field exists. Defensive: backfilled all 29 DEV articles with `$set userVersion: 0` so any future code path using `{ increment }` would also work.
+- **Live tests (DEV admin):**
+  - Plain save → userVersion 0→1 ✅
+  - SYSTEM-bumped `updatedAt` mid-edit (mimicked SEO regen) → user save still succeeded → userVersion 1→2 ✅ (the exact bug Rawan reported)
+  - Manually set userVersion=99 in DB to simulate another user → user save correctly blocked, DB title unchanged ✅
+- **PROD backfill required before push:** same `$set userVersion: 0` on all `articles` where field missing.
+- **Files:** schema.prisma · update-article.ts · article-form-context.tsx · transform-article-to-form-data.ts · article-server-schema.ts · form-types.ts. TSC admin zero errors.
+
+---
+
 ## Session: 2026-04-28 — Campaigns Sales Teaser (Session 71)
 
 ### OBS-207 ✅ FIXED — Site Health: PSI bugs resolved + Mobile/Desktop both shown

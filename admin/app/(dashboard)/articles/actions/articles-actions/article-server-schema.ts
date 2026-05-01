@@ -38,6 +38,7 @@ export const articleServerSchema = z.object({
   // Boolean
   featured: z.boolean().optional(),
 
-  // Optimistic locking
+  // Optimistic locking — userVersion (preferred) + updatedAt (legacy/display)
+  userVersion: z.number().int().optional(),
   updatedAt: z.union([z.string(), z.date(), z.null()]).optional().nullable(),
 }).passthrough();

@@ -11,6 +11,22 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
+    version: "0.45.0",
+    title: "admin v0.45.0 — userVersion optimistic-locking fix + Toast UX overhaul",
+    items: [
+      { type: "fix" as const, text: "admin: حلّ مشكلة 'تم تعديل المقال بواسطة مستخدم آخر' الكاذبة (بلاغ رنا) — أُضيف حقل userVersion يرتفع فقط عند حفظ المستخدم. عمليات النظام (SEO regen / JSON-LD / cron) ما عاد تعطّل الحفظ" },
+      { type: "fix" as const, text: "admin: Prisma `{ increment }` لا يعمل على MongoDB documents الناقصة الحقل — استبدلت بحساب صريح `(existing ?? 0) + 1` يعمل في الحالتين" },
+      { type: "feature" as const, text: "admin: Toast UX محسّن — شريط أيسر سميك ملوّن (6px) + زرار إغلاق ظاهر دائماً + أيقونة في حلقة ملوّنة 36px + مدد ذكية (نجاح 6s/تحذير 8s/خطأ 12s/معلومة 5s)" },
+    ],
+  },
+  {
+    version: "0.4.0 → 0.5.0",
+    title: "console v0.5.0 — Toast UX overhaul",
+    items: [
+      { type: "feature" as const, text: "console: Sonner toast محسّن — closeButton ظاهر دائماً + expand للوضوح + زرار الإغلاق ينحاز يمين صح في RTL + مدة 5s افتراضي + border-2 + shadow-xl + min-height 64px" },
+    ],
+  },
+  {
     version: "0.44.0",
     title: "admin v0.44.0 — Notifications Bell موحّد + Campaign Leads + Search Console pipeline 13-stage",
     items: [

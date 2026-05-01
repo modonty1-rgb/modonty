@@ -321,9 +321,13 @@ export function ArticleFormProvider({
         setIsDirty(false);
         isDirtyRef.current = false; // sync immediately — beforeunload reads this ref
         setErrors({});
-        // Update updatedAt to match server — prevents optimistic locking conflict on next save
-        if (result.article?.updatedAt) {
-          setFormData((prev) => ({ ...prev, updatedAt: result.article!.updatedAt }));
+        // Sync userVersion + updatedAt from server — prevents optimistic locking conflict on next save
+        if (result.article?.userVersion != null || result.article?.updatedAt) {
+          setFormData((prev) => ({
+            ...prev,
+            ...(result.article!.userVersion != null && { userVersion: result.article!.userVersion }),
+            ...(result.article!.updatedAt && { updatedAt: result.article!.updatedAt }),
+          }));
         }
       } else {
         const errorObj: Record<string, string[]> = result.error ? { _general: [result.error] } : {};

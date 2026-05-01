@@ -4,7 +4,6 @@ import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { SidebarProvider } from "@/components/contexts/sidebar-context";
 import { SessionProvider } from "@/app/components/providers/session-provider";
-import { FeedbackBanner } from "./components/feedback-banner";
 
 export const dynamic = 'force-dynamic';
 
@@ -32,7 +31,6 @@ export default async function DashboardLayout({
           <Sidebar />
           <div className="flex-1 flex flex-col overflow-hidden">
             <Header />
-            <FeedbackBanner />
             <main className="flex-1 overflow-y-auto scrollbar-thin">{children}</main>
           </div>
         </div>

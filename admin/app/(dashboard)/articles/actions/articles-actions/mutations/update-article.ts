@@ -45,7 +45,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const existingArticle = await db.article.findUnique({
       where: { id: articleId },
-      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true },
+      select: { authorId: true, ogArticlePublishedTime: true, slug: true, clientId: true, datePublished: true, status: true, updatedAt: true, userVersion: true, title: true, content: true, excerpt: true, seoTitle: true, seoDescription: true },
     });
 
     if (!existingArticle) {
@@ -55,8 +55,9 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       };
     }
 
-    // Optimistic locking: reject if another user modified the article
-    if (data.updatedAt && existingArticle.updatedAt.getTime() !== new Date(data.updatedAt).getTime()) {
+    // Optimistic locking: reject only when ANOTHER USER edited via the form (not SEO/cron/system writes).
+    // Uses userVersion (incremented only by this action) instead of updatedAt (which system ops also bump).
+    if (typeof data.userVersion === "number" && existingArticle.userVersion !== data.userVersion) {
       return { success: false, error: "تم تعديل المقال بواسطة مستخدم آخر — يرجى تحديث الصفحة والمحاولة مجدداً" };
     }
 
@@ -185,9 +186,14 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
 
     const sanitizedContent = sanitizeHtmlContent(data.content);
 
+    // Optimistic concurrency — explicit set (Prisma `{ increment }` is a no-op on MongoDB
+    // documents that don't yet have the field; safer to compute next value ourselves).
+    const nextUserVersion = (existingArticle.userVersion ?? 0) + 1;
+
     const article = await db.article.update({
       where: { id: articleId },
       data: {
+        userVersion: nextUserVersion,
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt || null,
@@ -291,8 +297,9 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     await revalidateModontyTag("articles");
     try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
 
-    // Re-fetch updatedAt after SEO generation (SEO gen updates the article record, changing updatedAt)
-    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, updatedAt: true } });
+    // Re-fetch userVersion + updatedAt after SEO generation
+    // (SEO ops bump updatedAt but NOT userVersion — keep userVersion fresh from this action)
+    const freshArticle = await db.article.findUnique({ where: { id: article.id }, select: { id: true, title: true, slug: true, status: true, userVersion: true, updatedAt: true } });
     return { success: true, article: freshArticle || article };
   } catch (error) {
     console.error("Error updating article:", error);
