@@ -1,0 +1,1026 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modonty | Brand Strategy + Brand Voice Guide</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1a2f; --text:#e8eefc; --muted:#a8b6d9;
+      --accent:#6ee7ff; --accent2:#a78bfa; --ok:#34d399; --warn:#fbbf24; --bad:#fb7185;
+      --border:rgba(255,255,255,.09); --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans Arabic","Noto Sans",sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background: radial-gradient(1200px 800px at 85% -10%, rgba(110,231,255,.18), transparent 55%),
+                  radial-gradient(900px 700px at 15% 0%, rgba(167,139,250,.14), transparent 55%),
+                  linear-gradient(180deg, var(--bg), #070b14);
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      background: rgba(7,11,20,.6);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:14px 18px; max-width:1200px; margin:0 auto;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(110,231,255,.95), rgba(167,139,250,.95));
+      box-shadow: var(--shadow);
+    }
+    .brand h1{font-size:16px; margin:0; font-weight:750; letter-spacing:.2px}
+    .brand small{display:block; color:var(--muted); font-weight:500; margin-top:2px}
+    .tools{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px; border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:999px; color:var(--muted); font-size:13px;
+    }
+    .btn{
+      cursor:pointer; user-select:none;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:9px 12px; border-radius:12px;
+      font-weight:650;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn:hover{background:rgba(255,255,255,.08); border-color:rgba(110,231,255,.35)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(110,231,255,.18), rgba(167,139,250,.18));
+      border-color: rgba(110,231,255,.28);
+    }
+    .layout{
+      max-width:1200px; margin:0 auto;
+      display:grid; gap:16px;
+      grid-template-columns:310px 1fr;
+      padding:18px;
+    }
+    @media (max-width:980px){ .layout{grid-template-columns:1fr} nav{position:relative !important; top:auto !important; height:auto !important;} }
+    nav{
+      position:sticky; top:78px;
+      height: calc(100vh - 92px);
+      overflow:auto;
+      padding:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .nav-title{font-size:13px; color:var(--muted); margin:0 0 10px}
+    .nav-search{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: var(--text); outline:none; margin-bottom:12px;
+    }
+    .nav a{
+      display:block; padding:9px 10px; border-radius:12px;
+      color: var(--muted); text-decoration:none;
+      border:1px solid transparent; margin:6px 0;
+      font-size:14px; line-height:1.2;
+    }
+    .nav a:hover{background:rgba(255,255,255,.05); color:var(--text); border-color:rgba(110,231,255,.2)}
+    .nav a.active{background:rgba(110,231,255,.10); color:var(--text); border-color:rgba(110,231,255,.35)}
+    main{padding:0}
+    .section{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px; margin-bottom:16px;
+    }
+    .section h2{margin:0 0 10px; font-size:18px; letter-spacing:.2px}
+    .section p{color:var(--muted); margin:8px 0; line-height:1.8}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:980px){ .grid2{grid-template-columns:1fr} }
+    .card{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:12px;
+    }
+    .card h3{margin:0 0 6px; font-size:14px}
+    .tag{
+      display:inline-flex; align-items:center;
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      padding:5px 8px; border-radius:999px;
+      margin:6px 6px 0 0;
+    }
+    .quote{
+      border-right:4px solid rgba(110,231,255,.55);
+      padding:10px 12px;
+      background: rgba(110,231,255,.07);
+      border-radius:14px;
+      color:var(--text);
+      margin:10px 0;
+      line-height:1.8;
+    }
+    details{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.14);
+      border-radius:14px;
+      padding:12px;
+      margin:10px 0;
+    }
+    summary{
+      cursor:pointer; font-weight:750; list-style:none;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      outline:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    .kbd{
+      font-family: var(--mono); font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--border);
+      border-bottom-color: rgba(255,255,255,.18);
+      border-radius:8px;
+      color:var(--muted);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px}
+    .input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-family: var(--sans);
+      line-height:1.5;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .mini{font-size:12px; color:var(--muted); margin-top:6px}
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:740px){ .two{grid-template-columns:1fr} }
+    .codebox{
+      position:relative;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      border-radius:14px;
+      padding:12px;
+      font-family: var(--mono);
+      font-size:12.5px;
+      color:#d8e3ff;
+      line-height:1.7;
+      overflow:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      direction:ltr;
+      text-align:left;
+    }
+    .copy{
+      position:absolute; top:10px; left:10px;
+      font-size:12px; padding:7px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+    }
+    .copy:hover{border-color: rgba(110,231,255,.35)}
+    .meter{
+      height:10px; width:100%;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .meter > div{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(110,231,255,.9), rgba(167,139,250,.9));
+      transition: width .3s ease;
+    }
+    .toast{
+      position:fixed; bottom:16px; right:16px;
+      background: rgba(15,26,47,.95);
+      border:1px solid var(--border);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+      pointer-events:none;
+      z-index:80;
+      max-width:320px;
+    }
+    .toast.show{opacity:1; transform: translateY(0)}
+    .hint{display:flex; gap:8px; align-items:flex-start; color:var(--muted); font-size:13px; line-height:1.6; margin-top:8px}
+    .dot{width:10px; height:10px; border-radius:999px; margin-top:5px; background: rgba(110,231,255,.8); flex:0 0 auto}
+    .divider{height:1px; background: var(--border); margin:12px 0}
+    .bad{color:var(--bad)} .ok{color:var(--ok)} .warn{color:var(--warn)}
+    .small{font-size:13px; color:var(--muted)}
+    .right{direction:rtl; text-align:right}
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Modonty — Brand Strategy + Brand Voice Guide</h1>
+        <small>نسخة تفاعلية للاستخدام داخل فريق البراندنج والمحتوى والمبيعات</small>
+      </div>
+    </div>
+    <div class="tools">
+      <span class="pill">اختصار: <span class="kbd">Ctrl</span> + <span class="kbd">K</span> للبحث</span>
+      <button class="btn primary" id="btnPrint" title="حفظ كـ PDF من المتصفح">🖨️ طباعة / PDF</button>
+      <button class="btn" id="btnExpand">➕ فتح الكل</button>
+      <button class="btn" id="btnCollapse">➖ إغلاق الكل</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav>
+    <p class="nav-title">التنقل السريع</p>
+    <input class="nav-search" id="navSearch" placeholder="ابحث داخل الملف… (مثال: تموضع، نبرة، ICP)" />
+    <div class="nav" id="nav">
+      <a href="#overview">0) الملخص التنفيذي</a>
+      <a href="#foundations">1) أساس البراند</a>
+      <a href="#category">2) الفئة والتموضع</a>
+      <a href="#icp">3) الجمهور والـ ICP</a>
+      <a href="#value">4) عرض القيمة والتفاضل</a>
+      <a href="#messaging">5) معمار الرسائل</a>
+      <a href="#voice">6) Brand Voice Guide</a>
+      <a href="#content">7) قواعد المحتوى (SEO + ثقة)</a>
+      <a href="#visual">8) توجيه الهوية البصرية</a>
+      <a href="#governance">9) الحوكمة والتنفيذ</a>
+      <a href="#assets">10) قوالب جاهزة (Copy & Use)</a>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card">
+      <h3>مولّد رسائل سريع (Interactive)</h3>
+      <p class="small">اختر قطاع + هدف، وسيعطيك صياغة جاهزة لـ Hero / CTA / وصف قصير.</p>
+
+      <label class="small">القطاع</label>
+      <select id="genSector">
+        <option value="المتاجر الإلكترونية">المتاجر الإلكترونية</option>
+        <option value="العيادات والمراكز الطبية">العيادات والمراكز الطبية</option>
+        <option value="شركات خدمات B2B الصغيرة">شركات خدمات B2B الصغيرة</option>
+        <option value="تطبيقات ومنصات رقمية">تطبيقات ومنصات رقمية</option>
+      </select>
+
+      <div style="height:10px"></div>
+
+      <label class="small">الهدف الرئيسي</label>
+      <select id="genGoal">
+        <option value="الظهور في Google وزيادة الطلبات">الظهور في Google وزيادة الطلبات</option>
+        <option value="بناء ثقة وروابط قوية لموقعي">بناء ثقة وروابط قوية لموقعي</option>
+        <option value="تقليل الاعتماد على الإعلانات المدفوعة">تقليل الاعتماد على الإعلانات المدفوعة</option>
+        <option value="الحصول على نمو تراكمي طويل المدى">الحصول على نمو تراكمي طويل المدى</option>
+      </select>
+
+      <div class="row">
+        <button class="btn primary" id="btnGenerate">✨ توليد</button>
+        <button class="btn" id="btnCopyGen">📋 نسخ</button>
+      </div>
+
+      <div class="codebox" id="genOut" style="margin-top:10px; direction:rtl; text-align:right;"></div>
+      <div class="hint"><span class="dot"></span><span>تقدر تعدّل النص يدويًا بعد النسخ — المولّد هدفه السرعة وتوحيد الأسلوب.</span></div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="section" id="overview">
+      <h2>0) الملخص التنفيذي</h2>
+      <p>
+        <b>Modonty (مدونتي)</b> منصة محتوى سعودية/عربية تعمل كنموذج <b>SEO-as-a-Platform via Content</b>:
+        العميل يشترك، وModonty تنتج محتوى متخصّص في مجاله يستهدف كلمات بحث محلية، ويضم رابطًا لموقعه،
+        ما يبني له حضورًا وثقة وترتيبًا تدريجيًا في Google — بدون تعقيد، وبدون إدارة وكالة.
+      </p>
+
+      <div class="quote">
+        جوهر البراند: <b>نمو هادئ وواقعي</b>… نخلّي القارئ يقرأ براحة، يفهم، ويصل للي يحتاجه بثقة.
+        هذا “الهدوء” ليس شكلًا فقط — هو موقف: <b>الثقة قبل البيع</b>.
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>التموضع (Positioning)</h3>
+          <p class="small">بديل ذكي لوكالات SEO للمشاريع الصغيرة والمتوسطة في السعودية.</p>
+          <span class="tag">SEO بدون إدارة</span>
+          <span class="tag">محتوى محلي سعودي</span>
+          <span class="tag">تراكم طويل المدى</span>
+        </div>
+        <div class="card">
+          <h3>وعد البراند (Brand Promise)</h3>
+          <p class="small">لن نبيعك “تصدر سريع” — سنبني لك أصلًا رقميًا يشتغل مع الوقت ويزيد قيمته.</p>
+          <span class="tag">واقعية</span>
+          <span class="tag">وضوح</span>
+          <span class="tag">هدوء</span>
+          <span class="tag">ثقة</span>
+        </div>
+      </div>
+
+      <div class="meter" aria-label="Brand Readiness Meter"><div id="readinessBar"></div></div>
+      <p class="small">مؤشر جاهزية داخلي (تفاعلي): <span id="readinessText">—</span></p>
+      <div class="row">
+        <button class="btn" id="btnAssess">🧭 قيّم الجاهزية</button>
+        <span class="pill">النتيجة مبنية على إجاباتك داخل النموذج أسفل</span>
+      </div>
+    </section>
+
+    <section class="section" id="foundations">
+      <h2>1) أساس البراند (Foundations)</h2>
+
+      <details open>
+        <summary>1.1 الغرض (Purpose) <span class="kbd">Why</span></summary>
+        <p>
+          تمكين أصحاب المشاريع في السعودية من النمو عبر Google <b>بدون ضغط</b> وبدون تعقيد،
+          من خلال محتوى موثوق يختصر عليهم وقت التعلّم وتكلفة الوكالات.
+        </p>
+        <div class="quote">“نمو هادئ. معلومات موثوقة. قرار أسهل.”</div>
+      </details>
+
+      <details>
+        <summary>1.2 الرؤية (Vision) <span class="kbd">5–10y</span></summary>
+        <p>
+          أن تصبح Modonty المرجع العربي الأكثر موثوقية لقرارات SaaS والنمو والظهور في Google داخل السياق السعودي،
+          حيث يأتي الناس للفهم أولًا… ثم تأتي النتائج كنتيجة طبيعية.
+        </p>
+      </details>
+
+      <details>
+        <summary>1.3 الرسالة (Mission) <span class="kbd">What we do</span></summary>
+        <p>
+          إنتاج محتوى عربي متخصّص يراعي السوق السعودي، يستهدف كلمات بحث ذات نية عالية،
+          ويضم روابط مدروسة لمواقع المشتركين، لبناء حضور وثقة وترتيب تراكمي طويل المدى.
+        </p>
+      </details>
+
+      <details>
+        <summary>1.4 القيم (Values) <span class="kbd">Operational</span></summary>
+        <div class="grid2">
+          <div class="card">
+            <h3>الواقعية</h3>
+            <p class="small ok">✅ نوضح القيود والوقت المتوقع.</p>
+            <p class="small bad">❌ ممنوع وعود “تصدر خلال 30 يوم”.</p>
+          </div>
+          <div class="card">
+            <h3>الوضوح</h3>
+            <p class="small ok">✅ لغة بسيطة + أمثلة محلية.</p>
+            <p class="small bad">❌ ممنوع مصطلحات بدون شرح.</p>
+          </div>
+          <div class="card">
+            <h3>الثقة قبل البيع</h3>
+            <p class="small ok">✅ المحتوى مفيد حتى لغير المشترك.</p>
+            <p class="small bad">❌ ممنوع محتوى “إعلاني متخفي”.</p>
+          </div>
+          <div class="card">
+            <h3>الهدوء</h3>
+            <p class="small ok">✅ مقال قوي أفضل من 10 ضعاف.</p>
+            <p class="small bad">❌ ممنوع الحشو والإطالة لرفع الكلمات.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="category">
+      <h2>2) الفئة والتموضع (Category & Positioning)</h2>
+
+      <details open>
+        <summary>2.1 نحن لسنا… / نحن…</summary>
+        <div class="two">
+          <div class="card">
+            <h3>لسنا</h3>
+            <ul class="small right">
+              <li>مدونة عامة “تقنية”</li>
+              <li>دورة لتعليم SEO</li>
+              <li>وكالة SEO بعقود وتقارير معقدة</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>نحن</h3>
+            <ul class="small right">
+              <li><b>SEO-as-a-Platform</b> عبر محتوى متخصص</li>
+              <li>مرجع سعودي/عربي يربط التقنية بالسياق المحلي</li>
+              <li>اشتراك بسيط بدل عقود معقدة</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>2.2 بيان التموضع (Positioning Statement)</summary>
+        <div class="codebox" id="posStatement">
+          <button class="copy" data-copy="#posStatement">نسخ</button>
+Modonty هي منصة محتوى سعودية تساعد أصحاب المشاريع على الظهور في Google عبر مقالات متخصصة تبني ثقة وترتيبًا حقيقيًا، بدون تعقيد SEO أو تكلفة الوكالات.
+        </div>
+      </details>
+
+      <details>
+        <summary>2.3 اختبار “التموضع القوي” (Quick Check)</summary>
+        <p class="small">إذا كان يمكن لأي منافس أن يضع نفس الجملة على موقعه بدون كذب… فالتموضع ضعيف.</p>
+        <div class="hint"><span class="dot"></span><span>قوة Modonty ليست في “نكتب مقالات”، بل في: (محتوى محلي + اشتراك + روابط تراكميّة + أسلوب هادئ يبني ثقة).</span></div>
+      </details>
+    </section>
+
+    <section class="section" id="icp">
+      <h2>3) الجمهور والـ ICP</h2>
+
+      <details open>
+        <summary>3.1 ICP الأساسي (Primary)</summary>
+        <div class="grid2">
+          <div class="card">
+            <h3>من هو؟</h3>
+            <p class="small">صاحب مشروع/مدير في شركة صغيرة–متوسطة داخل السعودية.</p>
+            <span class="tag">عملي</span><span class="tag">وقته قليل</span><span class="tag">يشك بالوكالات</span>
+          </div>
+          <div class="card">
+            <h3>ماذا يريد؟</h3>
+            <p class="small">ظهور + زيارات + عملاء… بطريقة مفهومة وبتكلفة ثابتة.</p>
+            <span class="tag">نتيجة تدريجية</span><span class="tag">حل بدون صداع</span>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>3.2 Jobs To Be Done</summary>
+        <div class="grid2">
+          <div class="card">
+            <h3>Functional</h3>
+            <p class="small">الظهور في Google، زيادة الطلبات، تحسين سمعة الموقع.</p>
+          </div>
+          <div class="card">
+            <h3>Emotional / Social</h3>
+            <p class="small">راحة بال، تقليل الخوف من “دفع فلوس بلا نتيجة”، الظهور بشكل احترافي أمام الشركاء/الإدارة.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>3.3 محفزات الشراء + الاعتراضات</summary>
+        <div class="two">
+          <div class="card">
+            <h3>Triggers</h3>
+            <ul class="small right">
+              <li>المنافسين يظهرون قبلي</li>
+              <li>الإعلانات مكلفة وتوقفها يوقف الطلب</li>
+              <li>فتح فرع/مدينة جديدة</li>
+              <li>إطلاق منتج/خدمة جديدة</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Objections</h3>
+            <ul class="small right">
+              <li>هل هذا “ينفع فعلًا”؟</li>
+              <li>كم يأخذ وقت؟</li>
+              <li>هل الرابط قوي أم مجرد ذكر؟</li>
+              <li>هل هناك شفافية بالنتائج؟</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>3.4 “الهدوء” كميزة لجمهور السعودية</summary>
+        <p>أسلوب Modonty: <b>نبرة هادئة + معلومات مباشرة + أمثلة سعودية</b> لتقليل التوتر وبناء الثقة.</p>
+      </details>
+    </section>
+
+    <section class="section" id="value">
+      <h2>4) عرض القيمة والتفاضل (Value & Differentiation)</h2>
+
+      <details open>
+        <summary>4.1 عرض القيمة (UVP)</summary>
+        <div class="codebox" id="uvp">
+          <button class="copy" data-copy="#uvp">نسخ</button>
+اشترك في Modonty، ودع المحتوى يعمل لك SEO: مقالات متخصصة عن مجالك + استهداف كلمات بحث سعودية + رابط لموقعك… لنمو تراكمي طويل المدى بدون تعقيد أو وكالة.
+        </div>
+      </details>
+
+      <details>
+        <summary>4.2 أعمدة التفاضل (3 Pillars)</summary>
+        <div class="grid2">
+          <div class="card"><h3>1) SEO بدون إدارة</h3><p class="small">العميل لا يكتب ولا يراجع ولا يتابع أدوات.</p></div>
+          <div class="card"><h3>2) محتوى سعودي السياق</h3><p class="small">كلمات بحث محلية + أمثلة واحتياجات واقعية.</p></div>
+          <div class="card"><h3>3) نمو تراكمي “هادئ”</h3><p class="small">لا وعود سريعة، بل أصل رقمي يزداد قوة مع الوقت.</p></div>
+          <div class="card"><h3>لماذا يصعب نسخ هذا؟</h3><p class="small">يتطلب نظام نشر قوي + جودة + إدارة اشتراكات + بناء Authority بوقت.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>4.3 ما الذي “نرفضه” علنًا؟ (Anti-Positioning)</summary>
+        <ul class="small right">
+          <li class="bad">❌ “الصدارة المضمونة”</li>
+          <li class="bad">❌ “نتائج فورية”</li>
+          <li class="bad">❌ “حشو كلمات” بدل قيمة</li>
+          <li class="ok">✅ “شفافية + واقعية + تراكم”</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="section" id="messaging">
+      <h2>5) معمار الرسائل (Messaging Architecture)</h2>
+
+      <details open>
+        <summary>5.1 رسالة واحدة (Core Message)</summary>
+        <div class="codebox" id="coreMsg">
+          <button class="copy" data-copy="#coreMsg">نسخ</button>
+Modonty تجعل ظهورك في Google أسهل: محتوى متخصص عن مجالك + رابط لموقعك + أسلوب واضح وواقعي… لنمو تراكمي بدون وكالة ولا تعقيد.
+        </div>
+      </details>
+
+      <details>
+        <summary>5.2 هرم الرسائل (By Stage)</summary>
+        <div class="grid2">
+          <div class="card"><h3>Awareness</h3><p class="small">تعليم: ليه SEO مكلف/مربك؟ وكيف المحتوى يبني أصل؟</p></div>
+          <div class="card"><h3>Consideration</h3><p class="small">شرح النموذج + أمثلة + كيف نختار الكلمات + الحدود.</p></div>
+          <div class="card"><h3>Decision</h3><p class="small">باقات واضحة + ماذا تحصل عليه + سياسة روابط + تقارير بسيطة.</p></div>
+          <div class="card"><h3>Retention</h3><p class="small">تقدم شهري + تحسينات + اقتراح كلمات + دراسات حالة.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>5.3 نظام الإثبات (Proof System)</summary>
+        <ul class="small right">
+          <li>لقطات ترتيب كلمات</li>
+          <li>زيارات Organic قبل/بعد</li>
+          <li>مقالات منشورة + رابط العميل</li>
+          <li>شفافية: “هذا ما فعلناه”</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>5.4 الرد على الاعتراضات (Objection Handling)</summary>
+        <div class="two">
+          <div class="card">
+            <h3>“كم يأخذ وقت؟”</h3>
+            <p class="small">عادة مؤشرات أولية خلال 8–12 أسبوعًا، وتراكم أوضح خلال 3–6 أشهر (حسب المنافسة).</p>
+          </div>
+          <div class="card">
+            <h3>“كيف أثق؟”</h3>
+            <p class="small">أمثلة منشورة + روابط واضحة + تقارير بسيطة + حدود وعد واضحة.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="voice">
+      <h2>6) Brand Voice Guide (الدليل الصوتي للبراند)</h2>
+
+      <details open>
+        <summary>6.1 شخصية البراند (Archetype + Traits)</summary>
+        <div class="grid2">
+          <div class="card">
+            <h3>Archetype</h3>
+            <p class="small"><b>الخبير الهادئ (Sage)</b> + <b>مرشد عملي</b></p>
+            <span class="tag">تعليمي</span><span class="tag">واقعي</span><span class="tag">غير استعراضي</span>
+          </div>
+          <div class="card">
+            <h3>Traits</h3>
+            <ul class="small right">
+              <li><b>هادئ</b>: لا ضغط.</li>
+              <li><b>واضح</b>: لا تعقيد.</li>
+              <li><b>صريح</b>: لا مبالغة.</li>
+              <li><b>محلي</b>: أمثلة سعودية.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>6.2 قواعد الكتابة (Writing Principles)</summary>
+        <div class="grid2">
+          <div class="card">
+            <h3>افعل ✅</h3>
+            <ul class="small right">
+              <li>ابدأ بالنتيجة خلال 2–3 أسطر</li>
+              <li>فقرات قصيرة + نقاط</li>
+              <li>اشرح المصطلح أو تجنبه</li>
+              <li>قل “يعتمد على…” عند الحاجة</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>لا تفعل ❌</h3>
+            <ul class="small right">
+              <li>“مضمون 100%”</li>
+              <li>حشو وتطويل</li>
+              <li>CTA عدواني</li>
+              <li>مصطلحات بدون شرح</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>6.3 النبرة حسب السياق (Tone by Context)</summary>
+        <div class="two">
+          <div class="card"><h3>مقال</h3><p class="small">هادئ + خطوة بخطوة + مثال.</p></div>
+          <div class="card"><h3>صفحة باقات</h3><p class="small">محدد: ماذا تحصل عليه + ماذا لا نعد به.</p></div>
+          <div class="card"><h3>دعم</h3><p class="small">مطمئن + صريح + حلول.</p></div>
+          <div class="card"><h3>LinkedIn</h3><p class="small">قصير + رأي عملي + مثال.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>6.4 قاموس البراند (Prefer / Avoid)</summary>
+        <div class="two">
+          <div class="card"><h3>نفضّل</h3><p class="small">“واقعي”، “تراكمي”، “يبني ثقة”، “بدون تعقيد”، “حسب المنافسة”.</p></div>
+          <div class="card"><h3>نتجنب</h3><p class="small">“مضمون”، “سريع جدًا”، “الأفضل”، “تصدر خلال أيام”.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>6.5 Microcopy جاهز</summary>
+        <div class="codebox" id="microcopy">
+          <button class="copy" data-copy="#microcopy">نسخ</button>
+- "خلّنا نوضح لك الفكرة ببساطة… ثم قرّر براحتك."
+- "نقدر نساعدك تبني حضورك في Google… بدون وعود سريعة."
+- "إذا تحتاج نتيجة فورية، الإعلانات مناسبة أكثر. إذا تحتاج أصل طويل المدى… هذا مكانك."
+- "بنرسل لك تقرير بسيط: المقالات المنشورة + الروابط + المؤشرات الأساسية."
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="content">
+      <h2>7) قواعد المحتوى (SEO + ثقة)</h2>
+
+      <details open>
+        <summary>7.1 “القراءة الهادئة” كميزة تنافسية</summary>
+        <p>الهدوء هنا = عدم دفع القارئ، وعدم حشو، وإعطاء جواب مبكر. هذا يبني ثقة ويقوي الـ Authority.</p>
+      </details>
+
+      <details>
+        <summary>7.2 معايير المقال القوي</summary>
+        <ul class="small right">
+          <li>نية بحث واضحة</li>
+          <li>جواب مبكر</li>
+          <li>خطوات عملية</li>
+          <li>أمثلة سعودية</li>
+          <li>خاتمة “ماذا تفعل الآن؟”</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>7.3 سياسة الروابط (Backlink Policy)</summary>
+        <div class="grid2">
+          <div class="card"><h3>سقف روابط</h3><p class="small">لا نزيد الروابط على حساب جودة المقال.</p></div>
+          <div class="card"><h3>شفافية</h3><p class="small">نوضح مكان الرابط وسبب وجوده.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>7.4 حدود الوعد</summary>
+        <div class="two">
+          <div class="card"><h3>نقدر</h3><ul class="small right"><li>محتوى قوي</li><li>استهداف محلي</li><li>رابط داخل سياق</li><li>متابعة بسيطة</li></ul></div>
+          <div class="card"><h3>لا نعد بـ</h3><ul class="small right"><li>نتائج خلال أيام</li><li>#1 مضمون</li><li>حل كل مشاكل موقع العميل وحده</li></ul></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="visual">
+      <h2>8) توجيه الهوية البصرية</h2>
+
+      <details open>
+        <summary>8.1 الإحساس المطلوب</summary>
+        <div class="grid2">
+          <div class="card"><h3>أساسي</h3><p class="small"><b>هدوء + ثقة + وضوح</b></p><span class="tag">مساحات بيضاء</span><span class="tag">خط واضح</span></div>
+          <div class="card"><h3>تجنّب</h3><p class="small">زحمة + ألوان صاخبة + ضغط تسويقي.</p></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>8.2 أسلوب الرسوم والبيانات</summary>
+        <ul class="small right">
+          <li>أيقونات بسيطة</li>
+          <li>Charts قليلة العناصر + شرح نصي</li>
+          <li>رسوم للتوضيح لا للاستعراض</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="section" id="governance">
+      <h2>9) الحوكمة والتنفيذ</h2>
+
+      <details open>
+        <summary>9.1 قواعد الاتساق</summary>
+        <ul class="small right">
+          <li>وعد واحد وحدود واحدة في كل القنوات</li>
+          <li>CTA واحد واضح بكل صفحة</li>
+          <li>لا نكسر “الهدوء” بسبب ترند</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>9.2 RACI مختصر</summary>
+        <div class="codebox" id="raci">
+          <button class="copy" data-copy="#raci">نسخ</button>
+- Brand Owner: يوافق على التموضع والرسائل الأساسية.
+- Editor/Content Lead: يوافق على أسلوب الكتابة وجودة المقال.
+- SEO Lead: يراجع نية البحث والبنية والعناوين.
+- Sales/CS: يقدم اعتراضات السوق ويختبر وضوح العرض.
+        </div>
+      </details>
+
+      <details>
+        <summary>9.3 مؤشرات القياس</summary>
+        <ul class="small right">
+          <li>Brand search (Modonty)</li>
+          <li>Direct/Returning traffic</li>
+          <li>CTR للكلمات branded</li>
+          <li>تحويل صفحة “كيف نعمل”</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>9.4 نموذج شفافية جاهز</summary>
+        <div class="codebox" id="transparency">
+          <button class="copy" data-copy="#transparency">نسخ</button>
+نحن لا نعدك بترتيب محدد خلال مدة محددة. الذي نعد به هو:
+1) محتوى قوي ومخصص لمجالك
+2) استهداف كلمات بحث سعودية مدروسة
+3) رابط واضح لموقعك داخل سياق مفيد
+4) متابعة بسيطة وشفافة لما تم نشره وما الذي تحسّن
+والنتائج عادة تظهر تدريجيًا حسب المنافسة وجودة موقعك.
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="assets">
+      <h2>10) قوالب جاهزة (Copy & Use)</h2>
+
+      <details open>
+        <summary>10.1 Hero Section</summary>
+        <div class="codebox" id="hero">
+          <button class="copy" data-copy="#hero">نسخ</button>
+العنوان:
+خلّ المحتوى يعمل لك SEO… بهدوء وواقعية.
+
+وصف:
+Modonty تنشر مقالات متخصصة عن مجالك تستهدف بحث السعودية وتضع رابطًا لموقعك — لنمو تراكمي طويل المدى بدون وكالة ولا تعقيد.
+
+CTA:
+شاهد كيف تعمل Modonty
+        </div>
+      </details>
+
+      <details>
+        <summary>10.2 “كيف نعمل” (3 خطوات)</summary>
+        <div class="codebox" id="how">
+          <button class="copy" data-copy="#how">نسخ</button>
+1) تختار مجالك وهدفك (متجر/عيادة/خدمات…)
+2) نكتب وننشر مقالات تستهدف كلمات بحث محلية قوية
+3) نضع رابطًا لموقعك داخل سياق مفيد ونشاركك متابعة بسيطة للتقدم
+        </div>
+      </details>
+
+      <details>
+        <summary>10.3 LinkedIn Posts</summary>
+        <div class="codebox" id="li">
+          <button class="copy" data-copy="#li">نسخ</button>
+بوست 1:
+ليش كثير من أصحاب المشاريع “يعرفون” SEO… لكن ما يطبقونه؟
+لأنه مكلف، ومُربك، وتقييمه صعب. 
+الحل الواقعي: محتوى متخصص يبني أصل طويل المدى… بدون صداع.
+
+بوست 2:
+إذا كنت تحتاج نتيجة فورية → الإعلانات حل ممتاز.
+إذا تحتاج أصل يجيب طلبات حتى بعد شهور → المحتوى هو اللعبة الطويلة.
+Modonty تبني لك هذا الأصل… خطوة بخطوة.
+
+بوست 3:
+نحن لا نعدك بالصدارة خلال أسبوع.
+نعدك بالشفافية وبناء التراكم. هذه الطريقة أبطأ… لكنها أكثر ثباتًا.
+        </div>
+      </details>
+
+      <details>
+        <summary>10.4 Email Sequence</summary>
+        <div class="codebox" id="emailSeq">
+          <button class="copy" data-copy="#emailSeq">نسخ</button>
+Email 1:
+عنوان: ليش موقعك ما يظهر في Google رغم إن خدمتك ممتازة؟
+محتوى: شرح بسيط لنقطة “النية + الثقة + المحتوى”.
+
+Email 2:
+عنوان: فكرة بسيطة… تخفف عليك SEO
+محتوى: كيف يشتغل النموذج: مقالات + كلمات محلية + رابط + تراكم.
+
+Email 3:
+عنوان: هل Modonty مناسبة لك؟
+محتوى: لمن تناسب + لمن لا تناسب + CTA هادئ: “شاهد الأمثلة”.
+        </div>
+      </details>
+
+      <details>
+        <summary>10.5 رد جاهز على “كم الوقت؟”</summary>
+        <div class="codebox" id="timeResp">
+          <button class="copy" data-copy="#timeResp">نسخ</button>
+يعتمد على المنافسة وجودة موقعك، لكن غالبًا:
+- مؤشرات أولية: 8–12 أسبوعًا
+- تحسن واضح وتراكم: 3–6 أشهر
+نحن لا نعد بترتيب محدد، لكن نضمن الشفافية: ماذا نُشر، وأين الرابط، وما الذي تحسّن.
+        </div>
+      </details>
+
+      <details>
+        <summary>10.6 نموذج “Brand Voice QA” قبل النشر</summary>
+        <div class="two">
+          <div class="card">
+            <h3>أسئلة سريعة</h3>
+            <ul class="small right">
+              <li>هل بدأنا بالنتيجة بسرعة؟</li>
+              <li>هل هناك حشو؟</li>
+              <li>هل قلنا شيئًا لا نستطيع إثباته؟</li>
+              <li>هل النبرة هادئة وغير ضاغطة؟</li>
+              <li>هل في مثال محلي/سعودي؟</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>قرار</h3>
+            <p class="small">إذا فشل المقال في نقطتين أو أكثر → لا يُنشر قبل التحسين.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>10.7 نموذج تعبئة لحساب الجاهزية</summary>
+        <p class="small">املأ البيانات ثم اضغط “قيّم الجاهزية” بالأعلى.</p>
+        <div class="two">
+          <div class="card">
+            <label class="small">هل لديك باقات واضحة مع “ماذا تحصل عليه”؟</label>
+            <select class="assess" data-weight="20">
+              <option value="0">لا</option><option value="10">جزئيًا</option><option value="20" selected>نعم</option>
+            </select>
+            <div class="mini">وزن: 20</div>
+          </div>
+          <div class="card">
+            <label class="small">هل لديك سياسة روابط بسقف لكل مقال + شفافية؟</label>
+            <select class="assess" data-weight="20">
+              <option value="0">لا</option><option value="10">جزئيًا</option><option value="20" selected>نعم</option>
+            </select>
+            <div class="mini">وزن: 20</div>
+          </div>
+          <div class="card">
+            <label class="small">هل لديك صفحات: About / How it works / Pricing؟</label>
+            <select class="assess" data-weight="15">
+              <option value="0">لا</option><option value="7">جزئيًا</option><option value="15" selected>نعم</option>
+            </select>
+            <div class="mini">وزن: 15</div>
+          </div>
+          <div class="card">
+            <label class="small">هل لديك أمثلة منشورة/لقطات إثبات (Proof)؟</label>
+            <select class="assess" data-weight="25">
+              <option value="0">لا</option><option value="12">جزئيًا</option><option value="25">نعم</option>
+            </select>
+            <div class="mini">وزن: 25</div>
+          </div>
+          <div class="card">
+            <label class="small">هل لديك دليل Voice موحّد ويُستخدم؟</label>
+            <select class="assess" data-weight="20">
+              <option value="0">لا</option><option value="10">جزئيًا</option><option value="20" selected>نعم</option>
+            </select>
+            <div class="mini">وزن: 20</div>
+          </div>
+          <div class="card">
+            <label class="small">ملاحظات داخلية (اختياري)</label>
+            <textarea id="notes" placeholder="مثال: نحتاج توثيق نتائج أول شهر…"></textarea>
+            <div class="mini">لن تُرسل لأي مكان — فقط داخل الصفحة.</div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <div class="section">
+      <h2>معلومة أخيرة</h2>
+      <p>هذا الملف “مرجع تشغيل”. للطباعة PDF استخدم زر <b>طباعة / PDF</b> من الأعلى.</p>
+      <p class="small">© Modonty — Internal Brand System</p>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (q, el=document)=> el.querySelector(q);
+  const $$ = (q, el=document)=> Array.from(el.querySelectorAll(q));
+
+  function toast(msg){
+    const t = $("#toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(window.__toast);
+    window.__toast = setTimeout(()=> t.classList.remove("show"), 1800);
+  }
+
+  $("#btnPrint").addEventListener("click", ()=> window.print());
+
+  $("#btnExpand").addEventListener("click", ()=>{
+    $$("details").forEach(d=> d.open = true);
+    toast("تم فتح جميع الأقسام");
+  });
+  $("#btnCollapse").addEventListener("click", ()=>{
+    $$("details").forEach(d=> d.open = false);
+    toast("تم إغلاق جميع الأقسام");
+  });
+
+  $$(".copy").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const sel = btn.getAttribute("data-copy");
+      const el = document.querySelector(sel);
+      const text = el.innerText.replace("نسخ","").trim();
+      try{ await navigator.clipboard.writeText(text); toast("تم النسخ"); }
+      catch(e){ toast("تعذر النسخ — انسخ يدويًا"); }
+    });
+  });
+
+  const navLinks = $$("#nav a");
+  const sections = navLinks.map(a => document.querySelector(a.getAttribute("href")));
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(a=>a.classList.remove("active"));
+        const id = "#" + entry.target.id;
+        const link = navLinks.find(a => a.getAttribute("href") === id);
+        if(link) link.classList.add("active");
+      }
+    });
+  }, {rootMargin:"-35% 0px -55% 0px", threshold:0.01});
+  sections.forEach(s=> s && obs.observe(s));
+
+  const navSearch = $("#navSearch");
+  navSearch.addEventListener("input", ()=>{
+    const q = navSearch.value.trim().toLowerCase();
+    navLinks.forEach(a=>{
+      a.style.display = a.textContent.toLowerCase().includes(q) ? "block" : "none";
+    });
+  });
+
+  window.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
+      e.preventDefault();
+      navSearch.focus();
+      navSearch.select();
+    }
+  });
+
+  const genOut = $("#genOut");
+  function generate(){
+    const sector = $("#genSector").value;
+    const goal = $("#genGoal").value;
+
+    const hero = `خلّ المحتوى يعمل لك SEO… بهدوء وواقعية.`;
+    const sub = `Modonty تنشر مقالات متخصصة تناسب ${sector} وتستهدف بحث السعودية، وتضع رابطًا لموقعك — بهدف ${goal} بدون تعقيد أو وكالة.`;
+    const cta = `شاهد كيف نعمل →`;
+
+    const bullets = [
+      `• محتوى واضح + أمثلة سعودية`,
+      `• رابط داخل سياق مفيد (ليس إعلانًا)`,
+      `• تراكم طويل المدى بدل وعود سريعة`,
+      `• شفافية: ماذا نُشر وأين الرابط`
+    ].join("\\n");
+
+    genOut.textContent = `Hero:\\n${hero}\\n\\nSub:\\n${sub}\\n\\nCTA:\\n${cta}\\n\\nNotes:\\n${bullets}`;
+  }
+  $("#btnGenerate").addEventListener("click", ()=>{ generate(); toast("تم توليد رسالة"); });
+  $("#btnCopyGen").addEventListener("click", async ()=>{
+    try{ await navigator.clipboard.writeText(genOut.textContent); toast("تم النسخ"); }
+    catch(e){ toast("تعذر النسخ — انسخ يدويًا"); }
+  });
+  generate();
+
+  function assess(){
+    const items = $$(".assess");
+    let score = 0, max = 0;
+    items.forEach(sel=>{
+      const weight = Number(sel.dataset.weight || 0);
+      max += weight;
+      score += Number(sel.value || 0);
+    });
+    const pct = max ? Math.round((score/max)*100) : 0;
+    $("#readinessBar").style.width = pct + "%";
+    const label = pct >= 80 ? "جاهزية قوية — ابدأ توسع" :
+                  pct >= 60 ? "جاهزية جيدة — ركّز على الإثبات والصفحات" :
+                  pct >= 40 ? "جاهزية متوسطة — ثبّت الأساس قبل الإعلانات" :
+                             "جاهزية ضعيفة — وضّح العرض وسياسة الروابط أولًا";
+    $("#readinessText").textContent = `${pct}% — ${label}`;
+    toast("تم تحديث مؤشر الجاهزية");
+  }
+  $("#btnAssess").addEventListener("click", assess);
+  assess();
+</script>
+</body>
+</html>

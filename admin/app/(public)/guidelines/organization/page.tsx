@@ -1,371 +1,178 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { GuidelineLayout } from "../components/guideline-layout";
 import {
   FolderTree,
   Tag,
   Briefcase,
-  CheckCircle2,
-  AlertCircle,
-  Network,
   Zap,
-  Lightbulb,
+  HelpCircle,
 } from "lucide-react";
 
-// ─── Shared fields (identical across all 3 entities) ─────────────────────────
-const sharedFields = [
-  { field: "الاسم", required: true, description: "اسم واضح ومحدد — يظهر للزائر وفي نتائج البحث" },
-  { field: "الرابط (Slug)", required: false, description: "يُولّد تلقائياً — يُشكّل رابط الصفحة في الموقع" },
-  { field: "الوصف", required: false, description: "50 حرف على الأقل — يشرح المحتوى للزائر ولجوجل" },
-  { field: "عنوان SEO", required: false, description: "50-60 حرف — يُولّد تلقائياً إذا لم تُدخله يدوياً" },
-  { field: "وصف SEO", required: false, description: "160 حرف كحد أقصى — يُولّد تلقائياً إذا لم تُدخله يدوياً" },
-  { field: "صورة المشاركة", required: false, description: "1200×630px — تظهر عند مشاركة الرابط في وسائل التواصل" },
-];
-
-// ─── Category vs Tag vs Industry ─────────────────────────────────────────────
-const comparisonRows = [
+// ─── 3 طرق التنظيم — في سطر لكل واحدة ────────────────────────────
+const types = [
   {
-    aspect: "الغرض",
-    category: "تصنيف رئيسي للمقالات — كل مقال ينتمي لفئة واحدة",
-    tag: "ربط المقالات المتشابهة عبر فئات مختلفة",
-    industry: "تصنيف العملاء حسب نوع نشاطهم التجاري",
+    icon: FolderTree,
+    name: "Category — الفئة",
+    color: "blue",
+    when: "موضوع عريض ينتمي له المقال",
+    example: "\"التقنية\" · \"التسويق\" · \"الصحة\"",
+    rule: "كل مقال = فئة واحدة فقط · أنشئ 5-15 فئة (لا أكثر)",
   },
   {
-    aspect: "التنظيم",
-    category: "هرمي — فئة أب وفئة ابن (مستويان كحد أقصى)",
-    tag: "مسطح — بدون تسلسل",
-    industry: "مسطح — كل عميل يُربط بقطاع واحد",
+    icon: Tag,
+    name: "Tag — الوسم",
+    color: "violet",
+    when: "كلمة محددة تربط مقالات متشابهة",
+    example: "\"SEO\" · \"تصميم UI\" · \"أدوات مجانية\"",
+    rule: "كل مقال = 3-5 وسوم · محددة، مش عامة",
   },
   {
-    aspect: "العدد الموصى به",
-    category: "5-15 فئة رئيسية",
-    tag: "3-5 وسوم لكل مقال",
-    industry: "10-20 قطاع كحد أقصى",
+    icon: Briefcase,
+    name: "Industry — القطاع",
+    color: "emerald",
+    when: "نوع شغل العميل (للعملاء فقط، مش للمقالات)",
+    example: "\"الرعاية الصحية\" · \"التعليم\" · \"العقارات\"",
+    rule: "كل عميل = قطاع واحد · 10-20 قطاع كحد أقصى",
+  },
+] as const;
+
+// ─── شجرة قرار بسيطة ───────────────────────────────────────
+const decisionTree = [
+  { question: "موضوع عريض — التقنية، التسويق، الصحة؟", answer: "Category" },
+  { question: "كلمة محددة — SEO، تصميم UI، Google Analytics؟", answer: "Tag" },
+  { question: "نوع شغل العميل — مستشفى، مدرسة، متجر؟", answer: "Industry" },
+] as const;
+
+// ─── أخطاء شائعة (3 أمثلة فقط) ──────────────────────────
+const commonMistakes = [
+  {
+    wrong: "إنشاء وسم \"مقالات\"",
+    why: "كل المحتوى مقالات أصلاً — وسم بدون فائدة",
+    do: "احذف، استخدم وسماً محدداً مثل \"دليل خطوة بخطوة\"",
   },
   {
-    aspect: "مثال",
-    category: "التقنية ← تطوير المواقع",
-    tag: "SEO · Google · أدوات مجانية",
-    industry: "الرعاية الصحية · التعليم · العقارات",
+    wrong: "نفس الاسم فئة + وسم",
+    why: "تكرار يُشتت Google ويُربك الزائر",
+    do: "اختر واحد فقط — الفئة للتصنيف الرئيسي، الوسم للربط",
   },
-];
-
-// ─── Category best practices ──────────────────────────────────────────────────
-const categoryPractices = [
-  { tip: "أسماء واضحة ومحددة", detail: "\"تطوير المواقع\" أفضل من \"تطوير\" — الوضوح يساعد الزائر وجوجل" },
-  { tip: "لا تتعمق أكثر من مستويين", detail: "أب ← ابن — التعمق أكثر يُربك الزائر ويضعف بنية الـ URL" },
-  { tip: "كل فئة تحتاج 3 مقالات على الأقل", detail: "فئة فارغة أو بمقال واحد تُضعف SEO الموقع كله" },
-  { tip: "استخدم الوسوم للمواضيع المتداخلة", detail: "موضوع يناسب فئتين = وسم، ليس فئتين — الفئة للتصنيف الرئيسي فقط" },
-];
-
-// ─── Tag best practices ───────────────────────────────────────────────────────
-const tagPractices = [
-  { tip: "محدد وليس عام", detail: "\"SEO\" وسم جيد — \"مقالات\" أو \"معلومات\" وسوم عامة لا تفيد" },
-  { tip: "لا تكرر اسم الفئة كوسم", detail: "إذا الفئة هي \"التسويق\" لا تضف وسم بنفس الاسم" },
-  { tip: "أعد استخدام الوسوم الموجودة", detail: "قبل إنشاء وسم جديد تحقق أنه غير موجود مسبقاً — التكرار يُشتت التصنيف" },
-];
-
-const tagExamples = [
-  { tag: "SEO", good: true, reason: "محدد ويبحث عنه الزوار" },
-  { tag: "تصميم UI", good: true, reason: "واضح ومرتبط بمحتوى محدد" },
-  { tag: "مقالات", good: false, reason: "عام جداً — كل المحتوى مقالات" },
-  { tag: "2025", good: false, reason: "سنة فقط — لا يصف محتوى" },
-];
-
-// ─── Industry best practices ──────────────────────────────────────────────────
-const industryPractices = [
-  { tip: "أسماء قطاعات معروفة ومتعارف عليها", detail: "\"التقنية\" أفضل من \"تكنولوجيا المعلومات والاتصالات\" — البساطة أولاً" },
-  { tip: "تجنب التداخل بين أسماء القطاعات", detail: "لا تنشئ \"التقنية\" و\"تكنولوجيا المعلومات\" معاً — اختر اسماً واحداً" },
-  { tip: "قطاع بعميل واحد؟ فكر في دمجه", detail: "إذا قطاع فيه عميل واحد فقط — فكر في دمجه مع قطاع أقرب" },
-];
-
-const industryExamples = [
-  { name: "التقنية", clients: "شركات البرمجيات، التطبيقات، الاستضافة" },
-  { name: "الرعاية الصحية", clients: "المستشفيات، العيادات، شركات الأدوية" },
-  { name: "التعليم", clients: "المدارس، الجامعات، منصات التعلم" },
-  { name: "التجارة الإلكترونية", clients: "المتاجر الإلكترونية، منصات البيع" },
-  { name: "العقارات", clients: "شركات التطوير، الوساطة العقارية" },
-];
+  {
+    wrong: "فئة فيها مقال واحد",
+    why: "فئة شبه فارغة = إشارة جودة سلبية",
+    do: "ادمجها مع فئة قريبة، أو احذفها لو ما عندك خطة محتوى",
+  },
+] as const;
 
 export default function OrganizationGuidelinesPage() {
+  const colorMap: Record<string, { border: string; bg: string; text: string; iconBg: string }> = {
+    blue: { border: "border-blue-500/30", bg: "bg-blue-500/[0.05]", text: "text-blue-400", iconBg: "bg-blue-500/15" },
+    violet: { border: "border-violet-500/30", bg: "bg-violet-500/[0.05]", text: "text-violet-400", iconBg: "bg-violet-500/15" },
+    emerald: { border: "border-emerald-500/30", bg: "bg-emerald-500/[0.05]", text: "text-emerald-400", iconBg: "bg-emerald-500/15" },
+  };
+
   return (
     <GuidelineLayout
-      title="Content Organization"
-      description="الفئات · الوسوم · القطاعات — كيف ينظّم النظام المحتوى والعملاء"
+      title="تنظيم المحتوى — Categories · Tags · Industries"
+      description="3 طرق لتنظيم المحتوى · فهمها في دقيقة واحدة"
     >
 
-      {/* ── Entity Comparison ────────────────────────────────────────────── */}
-      <Card className="border-blue-500/20 bg-blue-500/[0.03]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Network className="h-4 w-4 text-blue-500" />
-            <CardTitle className="text-base">متى تستخدم كل واحدة؟</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            الثلاثة تعمل معاً لكن لكل منها هدف مختلف
-          </p>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-28">الجانب</TableHead>
-                <TableHead>
-                  <div className="flex items-center gap-1.5">
-                    <FolderTree className="h-3.5 w-3.5 text-blue-500" />
-                    <span>الفئة (Category)</span>
+      {/* ── 3 cards: ما الفرق؟ ─────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {types.map((t) => {
+          const Icon = t.icon;
+          const c = colorMap[t.color];
+          return (
+            <Card key={t.name} className={`${c.border} ${c.bg}`}>
+              <CardContent className="p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`p-2 rounded-lg ${c.iconBg}`}>
+                    <Icon className={`h-5 w-5 ${c.text}`} />
                   </div>
-                </TableHead>
-                <TableHead>
-                  <div className="flex items-center gap-1.5">
-                    <Tag className="h-3.5 w-3.5 text-violet-500" />
-                    <span>الوسم (Tag)</span>
-                  </div>
-                </TableHead>
-                <TableHead>
-                  <div className="flex items-center gap-1.5">
-                    <Briefcase className="h-3.5 w-3.5 text-amber-500" />
-                    <span>القطاع (Industry)</span>
-                  </div>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {comparisonRows.map((row) => (
-                <TableRow key={row.aspect}>
-                  <TableCell className="font-medium text-xs">{row.aspect}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{row.category}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{row.tag}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{row.industry}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* ── Shared Fields ────────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-emerald-500" />
-            <CardTitle className="text-base">الحقول المشتركة — الثلاثة لها نفس الهيكل</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            الفئات والوسوم والقطاعات تشترك في نفس الحقول — الـ Slug وSEO Title وSEO Description تُولَّد تلقائياً
-          </p>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>الحقل</TableHead>
-                <TableHead>الشرح</TableHead>
-                <TableHead className="w-20">الحالة</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sharedFields.map((f) => (
-                <TableRow key={f.field}>
-                  <TableCell className="font-medium text-sm">{f.field}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{f.description}</TableCell>
-                  <TableCell>
-                    {f.required ? (
-                      <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">مطلوب</Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[10px] border-muted-foreground/30 text-muted-foreground">اختياري</Badge>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* ── Categories ───────────────────────────────────────────────────── */}
-      <Card className="border-blue-500/20 bg-blue-500/[0.02]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <FolderTree className="h-4 w-4 text-blue-500" />
-            <CardTitle className="text-base">الفئات (Categories)</CardTitle>
-            <Badge variant="outline" className="text-[10px] border-blue-500/30 text-blue-400">للمقالات</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            التصنيف الرئيسي للمقالات — هرمي بمستويين (أب ← ابن)
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Hierarchy visual */}
-          <div className="rounded-lg border border-border/50 bg-background/60 p-3 space-y-2">
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">التسلسل الهرمي</p>
-            <div className="space-y-1 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-400 font-medium">التقنية</span>
-                <span className="text-muted-foreground text-[10px]">← فئة رئيسية (أب)</span>
-              </div>
-              <div className="flex items-center gap-2 ps-4">
-                <span className="text-muted-foreground text-[10px]">↳</span>
-                <span className="text-blue-300">تطوير المواقع</span>
-                <span className="text-muted-foreground text-[10px]">← فئة فرعية (ابن)</span>
-              </div>
-              <div className="flex items-center gap-2 ps-4">
-                <span className="text-muted-foreground text-[10px]">↳</span>
-                <span className="text-blue-300">تصميم UI/UX</span>
-                <span className="text-muted-foreground text-[10px]">← فئة فرعية (ابن)</span>
-              </div>
-            </div>
-          </div>
-          {/* Best practices */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {categoryPractices.map((item, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs font-medium">{item.tip}</p>
-                  <p className="text-[11px] text-muted-foreground">{item.detail}</p>
+                  <h3 className={`text-base font-bold ${c.text} leading-tight`}>{t.name}</h3>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Tags ─────────────────────────────────────────────────────────── */}
-      <Card className="border-violet-500/20 bg-violet-500/[0.02]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Tag className="h-4 w-4 text-violet-500" />
-            <CardTitle className="text-base">الوسوم (Tags)</CardTitle>
-            <Badge variant="outline" className="text-[10px] border-violet-500/30 text-violet-400">للمقالات</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            مسطحة بدون تسلسل — 3-5 وسوم لكل مقال، تربط المحتوى المتشابه عبر الفئات
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Best practices */}
-          <div className="space-y-2">
-            {tagPractices.map((item, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-violet-500 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs font-medium">{item.tip}</p>
-                  <p className="text-[11px] text-muted-foreground">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* Good / Bad examples */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] p-3">
-              <p className="text-[10px] font-semibold text-emerald-400 mb-2">وسوم جيدة</p>
-              <div className="space-y-1.5">
-                {tagExamples.filter((t) => t.good).map((t, i) => (
-                  <div key={i} className="flex items-start gap-1.5 text-[10px]">
-                    <CheckCircle2 className="h-3 w-3 text-emerald-500 mt-0.5 shrink-0" />
-                    <span><span className="font-medium">{t.tag}</span> — {t.reason}</span>
+                <div className="space-y-2.5">
+                  <div>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">متى تستخدمه؟</p>
+                    <p className="text-sm font-medium leading-relaxed">{t.when}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-lg border border-red-500/20 bg-red-500/[0.04] p-3">
-              <p className="text-[10px] font-semibold text-red-400 mb-2">وسوم سيئة</p>
-              <div className="space-y-1.5">
-                {tagExamples.filter((t) => !t.good).map((t, i) => (
-                  <div key={i} className="flex items-start gap-1.5 text-[10px]">
-                    <AlertCircle className="h-3 w-3 text-red-500 mt-0.5 shrink-0" />
-                    <span><span className="font-medium">{t.tag}</span> — {t.reason}</span>
+                  <div>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">أمثلة</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{t.example}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Industries ───────────────────────────────────────────────────── */}
-      <Card className="border-amber-500/20 bg-amber-500/[0.02]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Briefcase className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base">القطاعات (Industries)</CardTitle>
-            <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-400">للعملاء</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            تُصنّف العملاء حسب نوع نشاطهم — كل عميل يُربط بقطاع واحد عند إنشائه
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {industryPractices.map((item, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs font-medium">{item.tip}</p>
-                  <p className="text-[11px] text-muted-foreground">{item.detail}</p>
+                  <div className={`mt-3 pt-3 border-t ${c.border}`}>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">القاعدة الذهبية</p>
+                    <p className={`text-xs font-bold ${c.text} leading-relaxed`}>{t.rule}</p>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* ── شجرة قرار في 30 ثانية ─────────────────────────── */}
+      <Card className="border-primary/30 bg-primary/[0.04]">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <HelpCircle className="h-5 w-5 text-primary shrink-0" />
+            <h2 className="text-lg font-bold">حيران؟ — اسأل نفسك واحد من هذي الـ 3 أسئلة</h2>
+          </div>
+          <div className="space-y-3">
+            {decisionTree.map((d, i) => (
+              <div key={i} className="flex items-center gap-3 flex-wrap">
+                <span className="shrink-0 w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-sm font-bold text-primary">
+                  {i + 1}
+                </span>
+                <p className="text-sm flex-1 min-w-[200px] leading-relaxed">{d.question}</p>
+                <span className="text-muted-foreground text-lg">←</span>
+                <span className="text-sm font-bold text-primary px-3 py-1 rounded-md bg-primary/10 border border-primary/30 shrink-0">
+                  {d.answer}
+                </span>
               </div>
             ))}
-          </div>
-          {/* Examples table */}
-          <div>
-            <p className="text-[10px] text-muted-foreground font-medium mb-2 uppercase tracking-wide">أمثلة مقترحة</p>
-            <div className="rounded-lg border border-border/50 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>القطاع</TableHead>
-                    <TableHead>أنواع العملاء</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {industryExamples.map((ind) => (
-                    <TableRow key={ind.name}>
-                      <TableCell className="font-medium text-sm">{ind.name}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{ind.clients}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* ── Shared SEO Auto Features ─────────────────────────────────────── */}
-      <Card className="border-emerald-500/20 bg-emerald-500/[0.02]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-emerald-500" />
-            <CardTitle className="text-base">ما يتولاه النظام تلقائياً — الثلاثة بدون استثناء</CardTitle>
+      {/* ── أخطاء شائعة ───────────────────────────────────── */}
+      <Card className="border-red-500/25 bg-red-500/[0.03]">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xl">⚠️</span>
+            <h2 className="text-base font-bold text-red-400">3 أخطاء شائعة — تجنّبها</h2>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {[
-              { label: "Slug", detail: "يُولّد من الاسم فور الحفظ" },
-              { label: "SEO Title", detail: "يُولّد تلقائياً إذا لم تُدخله يدوياً" },
-              { label: "SEO Description", detail: "يُولّد تلقائياً إذا لم تُدخله يدوياً" },
-              { label: "Canonical URL", detail: "/category/[slug] · /tag/[slug] · /industry/[slug]" },
-              { label: "OG Tags", detail: "تُملأ من حقول SEO + صورة المشاركة" },
-              { label: "زر Revalidate", detail: "متاح في كل كيان — يُحدّث الكاش فوراً" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-xs py-1.5 border-b border-border/40 last:border-0">
-                <span className="font-medium">{item.label}</span>
-                <span className="text-muted-foreground text-end max-w-[200px]">{item.detail}</span>
+          <div className="space-y-3">
+            {commonMistakes.map((m, i) => (
+              <div key={i} className="rounded-lg border border-red-500/20 bg-background/60 p-4 space-y-2">
+                <p className="text-sm font-bold flex items-start gap-2">
+                  <span className="text-red-400 shrink-0">❌</span>
+                  <span>{m.wrong}</span>
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed ps-6">
+                  <strong className="text-foreground">السبب:</strong> {m.why}
+                </p>
+                <p className="text-xs leading-relaxed ps-6 flex items-start gap-1.5">
+                  <span className="text-emerald-400 shrink-0">✓</span>
+                  <span><strong className="text-emerald-400">الحل:</strong> {m.do}</span>
+                </p>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── النظام يحلها لك (footer) ─────────────────────── */}
+      <Card className="border-blue-500/25 bg-blue-500/[0.04]">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-2.5">
+            <Zap className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-blue-400 mb-1">ما يحتاج تعمله — النظام يحلها</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                الرابط (Slug) · عنوان SEO · وصف SEO · صورة المشاركة → كلها تُولَّد تلقائياً من الاسم. أنت تكتب الاسم بس، الباقي على النظام.
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

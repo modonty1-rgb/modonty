@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modonty Dashboard | الدراسة + التحليل + الخطة التقنية</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#eaf0ff; --muted:#b9c4e6; --muted2:#8ea0d6;
+      --line:rgba(255,255,255,.08); --accent:#7aa7ff; --good:#5ee2a0; --warn:#ffd46a; --bad:#ff7a8a;
+      --shadow: 0 18px 60px rgba(0,0,0,.35); --radius:18px;
+      --card: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+      background:
+        radial-gradient(1200px 700px at 70% 10%, rgba(122,167,255,.18), transparent 55%),
+        radial-gradient(900px 650px at 20% 30%, rgba(94,226,160,.12), transparent 55%),
+        radial-gradient(900px 700px at 50% 100%, rgba(255,122,138,.08), transparent 60%),
+        var(--bg);
+      color:var(--text); line-height:1.65;
+    }
+    .wrap{max-width:1220px;margin:0 auto;padding:24px 18px 70px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px 18px 14px; border:1px solid var(--line); border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      position: sticky; top: 10px; z-index: 40; backdrop-filter: blur(10px);
+    }
+    @media (max-width: 980px){ header{position:relative;top:auto} }
+    .brand{display:flex;flex-direction:column;gap:6px}
+    .brand h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .brand p{margin:0;color:var(--muted);font-size:12.5px;max-width:820px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+    .search{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      border-radius:999px; padding:10px 12px; width:min(360px, 74vw);
+      color:var(--text); outline:none;
+    }
+    .chip{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:8px 10px; border-radius:999px; color:var(--muted);
+      font-size:12.5px; cursor:pointer; user-select:none;
+      display:flex;gap:8px;align-items:center
+    }
+    .chip strong{color:var(--text);font-weight:800}
+    .chip[aria-pressed="true"]{outline:2px solid rgba(122,167,255,.5); color:var(--text)}
+    .btn{
+      border:1px solid var(--line); background: rgba(255,255,255,.04); color:var(--text);
+      padding:9px 12px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .btn:hover{outline:2px solid rgba(255,255,255,.08)}
+    .grid{display:grid; gap:14px; grid-template-columns: 1.28fr .72fr; margin-top:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{border:1px solid var(--line); background: var(--card); border-radius:var(--radius); box-shadow: var(--shadow); overflow:hidden;}
+    .hd{
+      padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .title{display:flex;align-items:center;gap:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px rgba(122,167,255,.12)}
+    .hd h2{margin:0;font-size:14.5px}
+    .hd small{color:var(--muted2)}
+    .body{padding:14px 16px}
+    .kpis{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px}
+    @media (max-width: 700px){ .kpis{grid-template-columns:1fr} }
+    .kpi{border:1px solid var(--line); background: rgba(16,26,51,.55); border-radius:16px; padding:12px 12px;}
+    .kpi .v{font-size:18px;font-weight:900}
+    .kpi .l{font-size:12.5px;color:var(--muted)}
+    .kpi .s{font-size:12px;color:var(--muted2);margin-top:4px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--line); background: rgba(255,255,255,.03); color:var(--muted);
+      padding:8px 10px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .tab.active{color:var(--text); outline:2px solid rgba(122,167,255,.45)}
+    .section{display:none; margin-top:12px}
+    .section.active{display:block}
+    details{border:1px solid var(--line); background: rgba(255,255,255,.03); border-radius:16px; padding:10px 12px; margin:10px 0;}
+    summary{cursor:pointer; font-weight:900}
+    summary span{color:var(--muted); font-weight:600}
+    .list{margin:10px 0 0; padding:0 18px 0 0}
+    .list li{margin:6px 0;color:var(--text)}
+    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px;}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.03);}
+    .note{border:1px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.03);
+      padding:10px 12px; border-radius:16px; color:var(--muted); font-size:12.5px; margin-top:10px;}
+    .callout{border:1px solid rgba(122,167,255,.22); background: rgba(122,167,255,.08); border-radius:16px; padding:12px 12px;}
+    .small{font-size:12.5px;color:var(--muted)}
+    .hl{color:var(--accent);font-weight:900}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .tag{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.03); color:var(--muted); font-size:12px; margin:4px 6px 0 0;}
+    .table{
+      width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+      border-radius:16px; border:1px solid var(--line); background: rgba(16,26,51,.45);
+    }
+    .table th, .table td{
+      padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:right; font-size:12.5px; vertical-align:top;
+    }
+    .table th{color:var(--muted); font-weight:900; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:0}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+    canvas{width:100%; height:260px; background: rgba(16,26,51,.35); border:1px solid var(--line); border-radius:16px}
+    .formrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px}
+    .input{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      border-radius:12px; padding:10px 12px; color:var(--text); outline:none; width: 190px;
+    }
+    mark{background:rgba(122,167,255,.22);color:inherit;padding:0 4px;border-radius:6px}
+    .footer{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; color:var(--muted); font-size:12.5px;}
+    .muted{color:var(--muted)}
+    .ok{color:var(--good);font-weight:900}
+    .no{color:var(--bad);font-weight:900}
+    .warn{color:var(--warn);font-weight:900}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Modonty Dashboard</h1>
+        <p>ملف واحد تفاعلي يجمع: ما هو Modonty - نقاط القوة/الضعف - ماذا يحل فعلا - توصيات حسب نوع العميل - نماذج مشابهة ومخاطر - قواعد منع تعارض العملاء - الخطة التقنية - نظرة أدوات SEO.</p>
+      </div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="ابحث داخل الملف (Authority، Technical SEO، Backlinks، CAC، Semrush...)" />
+        <button class="chip" id="toggleNumbers" aria-pressed="true" title="إظهار أو إخفاء الأرقام">
+          <strong>الأرقام</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="chip" id="toggleNotes" aria-pressed="true" title="إظهار أو إخفاء الملاحظات">
+          <strong>ملاحظات</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="btn" id="exportBtn" title="نسخ ملخص سريع">نسخ ملخص</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="mainCard">
+        <div class="hd">
+          <div class="title"><span class="dot"></span><h2>لوحة التحليل والاستراتيجية</h2></div>
+          <small>آخر تحديث: <span id="today"></span></small>
+        </div>
+        <div class="body">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="1">1</span> منظومة</div>
+              <div class="l">بدل كتابة مقالات فردية</div>
+              <div class="s">Authority + محتوى + روابط + تتبع</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="18">18</span> شهر</div>
+              <div class="l">محتوى مقابل اشتراك</div>
+              <div class="s">تدفع 12 شهر وتحصل 18 شهر</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="5">5</span> محاور</div>
+              <div class="l">قوة/ضعف/حل/مخاطر/تنفيذ</div>
+              <div class="s">جاهز للعرض الداخلي</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="tabs" role="tablist" aria-label="أقسام الملف">
+            <div class="tab active" data-tab="overview">ما هو Modonty</div>
+            <div class="tab" data-tab="strengths">نقاط القوة</div>
+            <div class="tab" data-tab="weaknesses">نقاط الضعف</div>
+            <div class="tab" data-tab="solves">ماذا يحل</div>
+            <div class="tab" data-tab="fit">توصية حسب العميل</div>
+            <div class="tab" data-tab="similar">نماذج مشابهة + مخاطر</div>
+            <div class="tab" data-tab="conflict">تعارض العملاء</div>
+            <div class="tab" data-tab="tech">الخطة التقنية</div>
+            <div class="tab" data-tab="tools">أدوات SEO</div>
+          </div>
+
+          <!-- OVERVIEW -->
+          <div class="section active" id="sec-overview">
+            <div class="callout">
+              <b>ما هو Modonty بالضبط؟</b><br>
+              Modonty هو <span class="hl">نظام محتوى عربي شهري</span> يعتمد على <span class="hl">منظومة واحدة</span> بدل كتابة مقالات فردية.
+              القلب هو <span class="hl">Authority Blog مركزي قوي</span> تتراكم قوته مع الوقت، مع نسخ مخصّصة لكل عميل وروابط استراتيجية وتتبع أداء.
+            </div>
+
+            <details open>
+              <summary>مكونات Modonty <span>(كما وردت)</span></summary>
+              <ul class="list">
+                <li>Authority Blog مركزي قوي - مدونة واحدة قوية تتصدر في Google.</li>
+                <li>مقالات طويلة وعميقة مكتوبة بالعربية منشورة في المدونة.</li>
+                <li>نسخ مخصّصة لكل عميل جاهزة للنشر على موقع العميل.</li>
+                <li>روابط استراتيجية (Authority Backlinks) من المدونة إلى مواقع العملاء.</li>
+                <li>لوحة تحكم + تتبع في Google Analytics + GTM.</li>
+                <li>تتبع أداء المقالات + تقارير + نشر على السوشيال.</li>
+                <li>اشتراك سنوي يعطي محتوى لـ <span class="num" data-n="18">18</span> شهر حتى لو دفعت <span class="num" data-n="12">12</span> شهر فقط.</li>
+                <li>Meta Pixel مدمج تلقائيًا في المقالات.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>الهدف <span>(الرسالة الأساسية)</span></summary>
+              <div class="callout">بناء حضور رقمي واقعي في Google بدون تعقيدات SEO تقنية أو إدارة فريق كتابة داخلي.</div>
+            </details>
+
+            <div class="note noteToggle">
+              <b>ملاحظة تشغيلية:</b> هذا النموذج يوصل رسالة “Content Infrastructure” أكثر من “SEO Service”.
+              نقطة القوة هنا أنك تبيع <b>نظام تشغيل محتوى + توزيع + تتبع</b> وليس تنفيذ SEO شامل.
+            </div>
+          </div>
+
+          <!-- STRENGTHS -->
+          <div class="section" id="sec-strengths">
+            <details open>
+              <summary>1) Authority Blog بدل كتابة مقالات منفردة</summary>
+              <ul class="list">
+                <li>كل مقال ينشر في مدونة قوية واحدة.</li>
+                <li>قوة المدونة تتزايد مع الوقت وتصبح أصل رقمي.</li>
+                <li>روابط من مدونة قوية تعزز SEO مواقع العملاء.</li>
+                <li>يعزز المصداقية ويدعم دخول الكلمات في الترتيب أسرع من نشر محتوى داخل مواقع متفرقة بدون سلطة.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>2) نظام قائم على النتائج وليس وعد نظري</summary>
+              <ul class="list">
+                <li>العميل يرى الزيارات في Google Analytics.</li>
+                <li>المحتوى يولد زيارات حقيقية.</li>
+                <li>التقارير والـDashboard توضح الأداء الفعلي وتقلل مشكلة “تقارير لا تعني نتائج”.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>3) نموذج اشتراك واضح وتوقعات محددة</summary>
+              <ul class="list">
+                <li>تدفع سنة، تحصل <span class="num" data-n="18">18</span> شهر محتوى.</li>
+                <li>أسعار من <span class="num" data-n="2499">2,499</span> إلى <span class="num" data-n="9999">9,999</span> ريال سنويا.</li>
+                <li>محتوى شهري جاهز للنشر.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>4) مناسب للـSMB التي لا تريد SEO معقد</summary>
+              <ul class="list">
+                <li>لا حاجة لفهم SEO.</li>
+                <li>لا حاجة لتنسيق كتاب.</li>
+                <li>لا متابعة تقنية.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>5) Meta Pixel + ربط المحتوى بالـRetargeting</summary>
+              <ul class="list">
+                <li>Meta Pixel مدمج تلقائيًا في المقالات.</li>
+                <li>ميزة غير تقليدية تربط المحتوى بـRetargeting وحملات Facebook/Instagram والتحليلات.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>رسم سريع: لماذا “Authority Blog” يُعد أصل؟ <span>(تصوير مرئي)</span></summary>
+              <canvas id="authorityChart" width="900" height="420"></canvas>
+              <div class="note noteToggle">الرسم يوضح فكرة التراكم: مع كل شهر محتوى + روابط، “السلطة” تزيد وتنعكس كإشارة تقوية للعميل عبر الروابط.</div>
+            </details>
+          </div>
+
+          <!-- WEAKNESSES -->
+          <div class="section" id="sec-weaknesses">
+            <details open>
+              <summary>1) لا يغطي Technical SEO أو تحسين الأداء الداخلي</summary>
+              <div class="callout">التركيز على المحتوى والروابط. Technical SEO (السرعة، الفهرسة، schema، بنية الموقع، صفحات المنتجات...) يحتاج حلول إضافية.</div>
+            </details>
+
+            <details>
+              <summary>2) قوة المدونة لا تعني ترتيب فوري لموقع العميل</summary>
+              <ul class="list">
+                <li>الترتيب يعتمد أيضا على عمر الموقع وجودة المحتوى على الموقع وتجربة المستخدم والعوامل التقنية.</li>
+                <li>المدونة تقوي الإشارة لكنها ليست ضمان ترتيب وحدها.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>3) المحتوى المخصص يحتاج مراقبة SEO داخلي بعد النشر</summary>
+              <ul class="list">
+                <li>تكامل مع sitemap.</li>
+                <li>تحديثات مستمرة.</li>
+                <li>تحسينات On-Page بعد النشر.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>4) التبعية للمنصة المركزية</summary>
+              <ul class="list">
+                <li>إذا توقف المشروع قد يتأثر الـSEO equity للروابط.</li>
+                <li>اعتماد كبير على المنصة بدل موقع العميل.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>5) القطاعات شديدة المنافسة تحتاج خطوات إضافية</summary>
+              <ul class="list">
+                <li>تحسين سرعة الموقع.</li>
+                <li>بناء روابط خارجية أكثر تنوعًا.</li>
+                <li>Paid Search لمعاونة النتائج.</li>
+              </ul>
+            </details>
+
+            <div class="note noteToggle">
+              <b>خلاصة القيود:</b> Modonty قوي كجزء “Content + Authority + Tracking”، لكنه ليس SEO شامل A-Z بمفرده.
+            </div>
+          </div>
+
+          <!-- SOLVES TABLE -->
+          <div class="section" id="sec-solves">
+            <details open>
+              <summary>ملخص عملي: ما الذي يحله Modonty فعلا؟</summary>
+              <table class="table">
+                <thead><tr><th>ما يقدمه Modonty</th><th>هل يحل المشكلة؟</th><th>ملاحظة تشغيلية</th></tr></thead>
+                <tbody>
+                  <tr><td>إنتاج محتوى SEO عالي الجودة بالعربية</td><td class="ok">✅ نعم</td><td>قوة كبيرة في السوق بسبب فجوة الجودة العربية</td></tr>
+                  <tr><td>محتوى جاهز للنشر</td><td class="ok">✅ نعم</td><td>يقلل زمن التشغيل والضغط على الفريق</td></tr>
+                  <tr><td>روابط استراتيجية (Authority Backlinks)</td><td class="ok">✅ نعم</td><td>تقوية الإشارة لمواقع العملاء عبر hub</td></tr>
+                  <tr><td>تتبع الأداء (GTM/Analytics)</td><td class="ok">✅ نعم</td><td>يترجم “المحتوى” إلى “مشاهدة نتائج”</td></tr>
+                  <tr><td>Technical SEO</td><td class="no">❌ لا</td><td>يلزم باقة تكميلية أو أداة/وكالة</td></tr>
+                  <tr><td>تحسين On-Page بعد النشر</td><td class="warn">🟡 جزئيا</td><td>بحاجة إدارة إضافية بعد نشر النسخ على موقع العميل</td></tr>
+                  <tr><td>SEO شامل من A-Z</td><td class="no">❌ لا</td><td>منتج “جزء من الاستراتيجية”</td></tr>
+                  <tr><td>تكلفة أقل من وكالة</td><td class="ok">✅ نعم</td><td>خاصة للـSMB التي لا تتحمل Retainer عالي</td></tr>
+                </tbody>
+              </table>
+            </details>
+
+            <details>
+              <summary>حاسبة بسيطة: قيمة “18 شهر مقابل 12” <span>(تفاعلية)</span></summary>
+              <div class="small">اكتب سعر الاشتراك السنوي (ريال) لمقارنة تكلفة الشهر الفعلية مقابل “18 شهر محتوى”.</div>
+              <div class="formrow">
+                <label class="pill">السعر السنوي (SAR) <input id="annual" class="input" type="number" value="2499" min="0" step="1" /></label>
+                <button class="btn" id="calcValueBtn">احسب</button>
+              </div>
+              <div class="callout" id="calcValueOut" style="margin-top:10px">النتيجة ستظهر هنا.</div>
+              <div class="note noteToggle">هذه حاسبة قيمة، لا تمثل تكاليف إنتاج أو هامش ربح. الهدف هو تبسيط “الوضوح” في العرض.</div>
+            </details>
+          </div>
+
+          <!-- FIT / RECOMMEND -->
+          <div class="section" id="sec-fit">
+            <details open>
+              <summary>توصية بحسب نوع العميل</summary>
+              <div class="split">
+                <div>
+                  <div class="callout"><b>✔ SMB بدون فريق محتوى</b><br>Modonty حل ممتاز يمنح: حضور رقمي + زيارات فعلية + تكلفة أقل من وكالة.</div>
+                  <ul class="list">
+                    <li>أفضل طرح: “بدون تعقيد SEO” + “محتوى جاهز” + “تتبع واضح”.</li>
+                    <li>ما يلزم إضافته غالبا: أساسيات On-Page (قائمة قصيرة) + إعدادات فهرسة.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="callout"><b>✔ من يريد SEO شامل</b><br>Modonty جزء مهم لكن يحتاج أدوات + Technical SEO + On-Page & CRO.</div>
+                  <ul class="list">
+                    <li>باقة تكميلية: Screaming Frog أو Semrush Site Audit + خطة CWV.</li>
+                    <li>حوكمة: من ينشر؟ من يراجع؟ SLA للنشر؟</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="callout"><b>✔ SaaS أو قطاع تنافسي جدًا</b><br>Modonty يعطي رفع أولي في الوعي وزيارات محتوى لكنه يحتاج: روابط أكثر تنوعًا + استراتيجية محتوى أعمق + clusters + pillar pages داخليا.</div>
+            </details>
+
+            <details>
+              <summary>رسائل بيع جاهزة (حسب نوع العميل)</summary>
+              <ul class="list">
+                <li><b>SMB:</b> “نظام محتوى عربي شهري - جاهز للنشر - تتبع واضح - بدون فريق داخلي”.</li>
+                <li><b>Marketing Team:</b> “محرك محتوى + حوكمة + تقارير قابلة للشرح”.</li>
+                <li><b>CTO/Dev:</b> “بدون سكربتات ثقيلة - تأثير محدود - أولوية CWV”.</li>
+              </ul>
+            </details>
+          </div>
+
+          <!-- SIMILAR + RISKS -->
+          <div class="section" id="sec-similar">
+            <details open>
+              <summary>نماذج قريبة من Modonty <span>(فعليا ومفهوميا)</span></summary>
+              <ul class="list">
+                <li><b>Medium:</b> تشبيه ذهني مفيد (سلطة دومين + نشر مركزي) لكنه ليس نموذج B2B SEO تجاري.</li>
+                <li><b>HARO / Digital PR Platforms:</b> تشابه “سلطة + روابط” لكن غالبا Links فقط بدون محتوى وتشغيل.</li>
+                <li><b>Content Syndication:</b> توزيع محتوى بصيغ متعددة، غالبا Paid وليس SEO-first.</li>
+                <li><b>Niche Authority Blogs (hidden SaaS):</b> مدونات قطاعية تبيع placement/mentions بشكل غير منظم. Modonty هنا “productized”.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>هل تشبيه Medium في محله؟ <span>(صحيح وأين خطر)</span></summary>
+              <div class="split">
+                <div class="callout">
+                  <b>أين صحيح</b>
+                  <ul class="list">
+                    <li>Domain authority عالي.</li>
+                    <li>محتوى مركزي قوي.</li>
+                    <li>الناشر يستفيد من قوة المنصة.</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <b>أين خطر</b>
+                  <ul class="list">
+                    <li>Medium ليس Lead-gen engine.</li>
+                    <li>لا يقدم نسخ مخصصة لكل شركة.</li>
+                    <li>لا يعمل كنظام اشتراك B2B لنمو.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="note noteToggle"><b>قاعدة Positioning:</b> استخدم التشبيه داخليا للتوضيح، لكن خارجيًا الأفضل تقديمه كـ “SEO Growth Engine” أو “Content Infrastructure”.</div>
+            </details>
+
+            <details>
+              <summary>الخوف من تعدد المجالات <span>(حقيقي)</span></summary>
+              <div class="callout">
+                Google يكافئ <b>Topical Authority</b> وليس “مدونة تكتب عن كل شيء”.
+                الحل الصحيح هو فصل رأسي صارم (Vertical Hubs) بدل Blog عام.
+              </div>
+              <ul class="list">
+                <li>هيكل صحيح: /saas/ - /ecommerce/ - /real-estate/ أو Subdomains لكل Vertical.</li>
+                <li>ممنوع cross-linking العشوائي بين الـverticals.</li>
+              </ul>
+            </details>
+          </div>
+
+          <!-- CONFLICT -->
+          <div class="section" id="sec-conflict">
+            <details open>
+              <summary>هل عميلين منافسين = تكسب واحد على حساب الثاني؟ <span>(الخطر + الحلول)</span></summary>
+              <div class="callout">
+                <b>الخطر موجود</b> لو تم التعامل مع BOFU الكلمات بنفس الصفحة وبنفس الزاوية.
+                لكنه <b>مشكلة تصميم</b> ويمكن حلها بقواعد واضحة.
+              </div>
+
+              <details>
+                <summary>حل 1: Segmentation حسب نية البحث</summary>
+                <ul class="list">
+                  <li>نفس المجال لكن نيات مختلفة (مثال: “سحابي” مقابل “Enterprise” مقابل “POS”).</li>
+                  <li>توزيع الكلمات على “Clusters” بدل كلمة واحدة للجميع.</li>
+                </ul>
+              </details>
+
+              <details>
+                <summary>حل 2: Tiered Visibility Model</summary>
+                <ul class="list">
+                  <li>مقال مركزي محايد (Market overview).</li>
+                  <li>الروابط للعملاء تكون بزوايا مختلفة: Use case - Comparison - Industry solution.</li>
+                  <li>تجنب Head-to-Head مباشر على نفس العنوان.</li>
+                </ul>
+              </details>
+
+              <details>
+                <summary>حل 3: قواعد Exclusivity (Upsell + ثقة)</summary>
+                <ul class="list">
+                  <li>لا توجد “keyword exclusivity” عامة.</li>
+                  <li>لكن: حد أقصى منافسين لكل “keyword cluster”.</li>
+                  <li>أو Exclusivity على مستوى Vertical في باكدجات أعلى.</li>
+                </ul>
+              </details>
+
+              <details>
+                <summary>حل 4: المدونة ليست مكان البيع النهائي</summary>
+                <ul class="list">
+                  <li>المدونة تبني الوعي والسلطة.</li>
+                  <li>البيع الحقيقي يحصل على موقع العميل (Landing/Use cases/CRO).</li>
+                </ul>
+              </details>
+            </details>
+
+            <details>
+              <summary>نظام “ملكية الكلمات” المقترح <span>(جدول تشغيل)</span></summary>
+              <table class="table">
+                <thead><tr><th>Keyword Cluster</th><th>Intent</th><th>Max Clients</th><th>طريقة الظهور</th></tr></thead>
+                <tbody>
+                  <tr><td>Commercial BOFU</td><td>شراء/مقارنة</td><td><span class="num" data-n="1">1</span></td><td>مقال محايد + ربط لعميل واحد (أو باكدج Exclusive)</td></tr>
+                  <tr><td>MOFU</td><td>حلول/Use cases</td><td><span class="num" data-n="2">2</span></td><td>زوايا مختلفة لكل عميل</td></tr>
+                  <tr><td>TOFU</td><td>توعوي/تعليمي</td><td><span class="num" data-n="3">3</span>+</td><td>روابط غير مباشرة + مصادر + توسيع سلطة</td></tr>
+                </tbody>
+              </table>
+              <div class="note noteToggle">الفكرة أن “التعارض” يُدار كعملية تشغيل، وليس كقرار عشوائي في آخر لحظة.</div>
+            </details>
+          </div>
+
+          <!-- TECH BLUEPRINT -->
+          <div class="section" id="sec-tech">
+            <details open>
+              <summary>الرؤية التقنية <span>(قبل أي كود)</span></summary>
+              <div class="callout">Modonty ليس Blog فقط. Modonty = <b>SEO Infrastructure</b> تربط Google بالمحتوى ومواقع العملاء بقواعد فهرسة وحوكمة صارمة.</div>
+            </details>
+
+            <details open>
+              <summary>Architecture موصى بها <span>(SEO-safe + scalable)</span></summary>
+              <div class="split">
+                <div>
+                  <div class="callout"><b>المستوى 1: Brand Core</b><br>modonty.com (صفحات تعريف/تسعير/كيف يعمل) - بدون مقالات تنافسية ثقيلة.</div>
+                  <ul class="list">
+                    <li>حماية العلامة (Brand queries).</li>
+                    <li>تحويل Leads.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="callout"><b>المستوى 2: Authority Hubs</b><br>Subdomains مفضلة: saas.modonty.com - ecommerce.modonty.com - realestate.modonty.com</div>
+                  <ul class="list">
+                    <li>Sitemap منفصلة لكل Hub.</li>
+                    <li>Search Console property منفصلة.</li>
+                    <li>Internal linking graph داخل الـvertical فقط.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="callout"><b>المستوى 3: Client Content Layer</b><br>النسخ المخصصة تنشر على موقع العميل مع قواعد On-Page وفهرسة، والروابط من Hubs تدعمها.</div>
+            </details>
+
+            <details>
+              <summary>حل تعدد المجالات (Topical Authority)</summary>
+              <ul class="list">
+                <li>Hub واحد = موضوع واحد = جمهور واحد.</li>
+                <li>Taxonomies منفصلة + Editors منفصلين + قواعد روابط داخلية خاصة.</li>
+                <li>ممنوع مقال SaaS يشير لعقار بدون سبب قوي.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>حل تعارض العملاء تقنيًا</summary>
+              <ul class="list">
+                <li>Keyword Ownership System (Cluster - Intent - Max clients - Assigned clients).</li>
+                <li>Page Types بديلة عن “أفضل X”: كيف تختار - مشاكل - سيناريوهات - Enterprise - Alternatives بحذر.</li>
+                <li>Dynamic Linking Logic: Blocks تختلف حسب Vertical/Intent/Stage والاشتراك.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>SEO Tech Stack المقترح</summary>
+              <table class="table">
+                <thead><tr><th>الطبقة</th><th>أدوات/حلول</th><th>الهدف</th></tr></thead>
+                <tbody>
+                  <tr><td>Core</td><td>WordPress (Headless أو Traditional) + Cloudflare</td><td>أمان + أداء + caching</td></tr>
+                  <tr><td>Tracking</td><td>GA4 + GTM + Events</td><td>Clicks - Scroll - Conversions - Outbound links</td></tr>
+                  <tr><td>SEO Ops</td><td>Semrush أو Ahrefs (واحد) + Screaming Frog (شهري)</td><td>Research + Audit + مراقبة</td></tr>
+                  <tr><td>Automation</td><td>GSC API + سكربتات تشغيل</td><td>Indexing monitoring + Content decay alerts</td></tr>
+                </tbody>
+              </table>
+            </details>
+
+            <details>
+              <summary>أخطاء تقنية قاتلة <span>(لازم تتجنبها)</span></summary>
+              <ul class="list">
+                <li>مدونة واحدة عامة لكل القطاعات.</li>
+                <li>وعود ترتيب #1.</li>
+                <li>Duplicate angles بين العملاء لنفس الكلمة.</li>
+                <li>Internal linking عشوائي.</li>
+                <li>عدم وجود rules مكتوبة (حوكمة تشغيل).</li>
+                <li>الاعتماد على Domain Authority فقط بدون On-Page وTech.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>رسم Blueprint مبسط <span>(مرئي)</span></summary>
+              <canvas id="blueprint" width="900" height="420"></canvas>
+              <div class="note noteToggle">الرسم يوضح طبقات: Brand Core - Authority Hubs - Client Layer - Tracking - Governance.</div>
+            </details>
+          </div>
+
+          <!-- TOOLS -->
+          <div class="section" id="sec-tools">
+            <details open>
+              <summary>تقسيم أدوات SEO حسب النوع</summary>
+              <table class="table">
+                <thead><tr><th>الفئة</th><th>ماذا تفعل</th><th>أمثلة</th></tr></thead>
+                <tbody>
+                  <tr><td>Keyword + Competitor Research</td><td>بحث الكلمات وتحليل المنافسين</td><td>Semrush - Ahrefs - Moz</td></tr>
+                  <tr><td>Site Audit & Technical SEO</td><td>فحص فني وتحسين عناصر تقنية</td><td>Semrush Site Audit - Screaming Frog - GSC</td></tr>
+                  <tr><td>Content Optimization</td><td>توجيه كتابة المحتوى On-Page</td><td>Surfer SEO</td></tr>
+                  <tr><td>Backlinks Analysis</td><td>تحليل الروابط الخلفية</td><td>Ahrefs - Semrush</td></tr>
+                  <tr><td>Rank Tracking</td><td>تتبع ترتيب الكلمات</td><td>Semrush - Ahrefs - Moz</td></tr>
+                  <tr><td>Local SEO</td><td>خرائط + مراجعات + citations</td><td>Whitespark</td></tr>
+                </tbody>
+              </table>
+            </details>
+
+            <details>
+              <summary>مقارنة مختصرة (نظرة سريعة)</summary>
+              <div class="small">النجوم هنا “تصوير مختصر” كما ورد في المحتوى: ليست اختبارًا معتمدًا، لكنها مفيدة للتوجيه.</div>
+              <div style="margin-top:10px">
+                <canvas id="toolsHeat" width="900" height="420"></canvas>
+              </div>
+              <div class="note noteToggle">Semrush أقوى كمنصة شاملة. Ahrefs أقوى في Backlinks. Surfer للمحتوى. Screaming Frog للـTechnical audit.</div>
+            </details>
+
+            <details>
+              <summary>تكاليف تقريبية للأدوات <span>(كما وردت)</span></summary>
+              <table class="table">
+                <thead><tr><th>الأداة</th><th>النطاق</th><th>مناسبة لـ</th></tr></thead>
+                <tbody>
+                  <tr><td>Semrush</td><td>Pro ~ <span class="num" data-n="165">165</span> USD/شهر - Guru ~ <span class="num" data-n="329">329</span> - Business ~ <span class="num" data-n="745">745</span>+</td><td>فرق SEO وAgencies</td></tr>
+                  <tr><td>Ahrefs</td><td>Lite ~ <span class="num" data-n="99">99</span> USD - Standard ~ <span class="num" data-n="199">199</span> - Advanced ~ <span class="num" data-n="399">399</span> - Enterprise ~ <span class="num" data-n="999">999</span></td><td>Backlinks + تحليل منافسين</td></tr>
+                  <tr><td>Moz Pro</td><td>~ <span class="num" data-n="99">99</span> إلى <span class="num" data-n="299">299</span> USD/شهر</td><td>شركات صغيرة/بداية SEO</td></tr>
+                  <tr><td>Surfer SEO</td><td>~ <span class="num" data-n="59">59</span> إلى <span class="num" data-n="249">249</span> USD/شهر</td><td>فريق محتوى</td></tr>
+                  <tr><td>Screaming Frog</td><td>Licensed ~ <span class="num" data-n="249">249</span> USD/سنة</td><td>Technical SEO</td></tr>
+                  <tr><td>GSC + GA</td><td>مجاني</td><td>كل الشركات</td></tr>
+                </tbody>
+              </table>
+            </details>
+
+            <details>
+              <summary>توصية عملية حسب الهدف</summary>
+              <ul class="list">
+                <li><b>MQL + Leads من محتوى SaaS:</b> Semrush + Surfer + GSC.</li>
+                <li><b>Backlinks وتحليل منافسين:</b> Ahrefs + GSC.</li>
+                <li><b>Technical SEO:</b> Screaming Frog + GSC + (اختياري) Semrush Site Audit.</li>
+                <li><b>Local:</b> Whitespark + GSC.</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="footer">
+            <span class="badge">وضع: <b id="modeLabel">عرض كامل</b></span>
+            <span class="badge">بحث: <b id="hits">0</b> نتيجة</span>
+            <span class="badge">RTL - جاهز للعرض</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="sideCard">
+        <div class="hd">
+          <div class="title"><span class="dot" style="background:var(--good);box-shadow:0 0 0 6px rgba(94,226,160,.12)"></span><h2>ملخص سريع</h2></div>
+          <small>Quick View</small>
+        </div>
+        <div class="body">
+          <div class="pill">جوهر المنتج: <b>Authority + Content + Links + Tracking</b></div>
+          <div style="height:10px"></div>
+
+          <details open>
+            <summary>أقوى نقاط</summary>
+            <ul class="list">
+              <li>Authority Blog أصل رقمي متراكم.</li>
+              <li>محتوى عربي طويل وعميق + نسخ جاهزة للعملاء.</li>
+              <li>تتبع واضح + Pixel للـRetargeting.</li>
+              <li>اشتراك واضح: 12 شهر يدفع، 18 شهر محتوى.</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>أكبر قيود</summary>
+            <ul class="list">
+              <li>لا يغطي Technical SEO.</li>
+              <li>لا يضمن ترتيب فوري لموقع العميل.</li>
+              <li>قد يحدث تضارب إن لم توجد قواعد كلمات وظهور.</li>
+              <li>تبعية لمنصة مركزية.</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>3 قرارات “مصيرية”</summary>
+            <ul class="list">
+              <li>فصل Vertical Hubs (تعدد المجالات).</li>
+              <li>قواعد تضارب العملاء (Keyword ownership).</li>
+              <li>باقة تكميلية Technical/On-Page لمن يريد SEO شامل.</li>
+            </ul>
+          </details>
+
+          <div class="note noteToggle"><b>قاعدة تشغيل:</b> Modonty لا يعد بـ#1. يبيع “Momentum + Probability + نظام تشغيل”.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('today').textContent = `${yyyy}-${mm}-${dd}`;
+
+  // Tabs
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const sections = {
+    overview: document.getElementById('sec-overview'),
+    strengths: document.getElementById('sec-strengths'),
+    weaknesses: document.getElementById('sec-weaknesses'),
+    solves: document.getElementById('sec-solves'),
+    fit: document.getElementById('sec-fit'),
+    similar: document.getElementById('sec-similar'),
+    conflict: document.getElementById('sec-conflict'),
+    tech: document.getElementById('sec-tech'),
+    tools: document.getElementById('sec-tools')
+  };
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(sections).forEach(s=>s.classList.remove('active'));
+      sections[t.dataset.tab].classList.add('active');
+      runSearch(document.getElementById('q').value.trim());
+    });
+  });
+
+  // Numbers toggle
+  const toggleNumbers = document.getElementById('toggleNumbers');
+  function setNumbers(on){
+    document.querySelectorAll('.num').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNumbers.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNumbers.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+    document.getElementById('modeLabel').textContent = on ? 'عرض كامل' : 'عرض بدون أرقام';
+  }
+  toggleNumbers.addEventListener('click', ()=> setNumbers(toggleNumbers.getAttribute('aria-pressed') !== 'true'));
+  setNumbers(true);
+
+  // Notes toggle
+  const toggleNotes = document.getElementById('toggleNotes');
+  function setNotes(on){
+    document.querySelectorAll('.noteToggle').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNotes.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNotes.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+  }
+  toggleNotes.addEventListener('click', ()=> setNotes(toggleNotes.getAttribute('aria-pressed') !== 'true'));
+  setNotes(true);
+
+  // Fill numbers
+  document.querySelectorAll('.num[data-n]').forEach(el=>{ el.textContent = el.dataset.n; });
+
+  // Search
+  const q = document.getElementById('q');
+  q.addEventListener('input', ()=> runSearch(q.value.trim()));
+
+  function runSearch(query){
+    const hay = Array.from(document.querySelectorAll('#mainCard .body *'))
+      .filter(el=>el.childElementCount===0 && el.textContent && el.textContent.trim().length>0);
+
+    hay.forEach(el=>{ if(el.dataset.orig){ el.innerHTML = el.dataset.orig; delete el.dataset.orig; } });
+
+    if(!query){ document.getElementById('hits').textContent = '0'; return; }
+
+    let hits = 0;
+    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(safe, 'gi');
+
+    hay.forEach(el=>{
+      if(re.test(el.textContent)){
+        el.dataset.orig = el.innerHTML;
+        el.innerHTML = el.innerHTML.replace(re, m=>`<mark>${m}</mark>`);
+        hits++;
+      }
+    });
+    document.getElementById('hits').textContent = String(hits);
+  }
+
+  // Export summary
+  document.getElementById('exportBtn').addEventListener('click', async ()=>{
+    const text = [
+      'ملخص سريع - Modonty',
+      '- Modonty نظام محتوى عربي شهري يعتمد على Authority Blog مركزي + نسخ مخصصة لكل عميل + روابط استراتيجية + تتبع (GA4/GTM) + Meta Pixel.',
+      '- نقاط القوة: تراكم السلطة، نتائج مرئية في التحليلات، اشتراك واضح (12 شهر يدفع - 18 شهر محتوى)، مناسب للـSMB بدون فريق.',
+      '- القيود: لا يغطي Technical SEO، لا يضمن ترتيب فوري لموقع العميل، يحتاج On-Page بعد النشر، يوجد تبعية لمنصة مركزية.',
+      '- مخاطر يجب إدارتها: تعدد المجالات بدون فصل رأسي، وتعارض العملاء على كلمات BOFU.',
+      '- توصية تقنية: Brand Core منفصل عن Authority Hubs (Subdomains لكل Vertical) + نظام ملكية كلمات + حوكمة linking + Tracking + باقة تكميلية Technical عند الحاجة.',
+      '- أدوات SEO (مختصر): Semrush شامل، Ahrefs قوي في Backlinks، Surfer للمحتوى، Screaming Frog للـTechnical audit، GSC/GA أساس مجاني.'
+    ].join('\n');
+    try{
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('exportBtn');
+      const old = btn.textContent;
+      btn.textContent = 'تم النسخ';
+      setTimeout(()=>btn.textContent = old, 1000);
+    }catch(e){
+      alert('تعذر النسخ تلقائيا. يمكنك تحديد النص ونسخه يدويا.');
+    }
+  });
+
+  // Value calculator
+  document.getElementById('calcValueBtn').addEventListener('click', ()=>{
+    const annual = Number(document.getElementById('annual').value || 0);
+    const per12 = annual / 12;
+    const per18 = annual / 18;
+    const effSavings = per12 - per18;
+    const effPct = per12 ? (effSavings / per12) * 100 : 0;
+
+    const out = document.getElementById('calcValueOut');
+    out.innerHTML = `<b>النتيجة:</b><br>
+      تكلفة الشهر (لو 12 شهر فقط): <b class="num" data-n="${per12.toFixed(2)}">${per12.toFixed(2)}</b> SAR<br>
+      تكلفة الشهر الفعلية (18 شهر محتوى): <b class="num" data-n="${per18.toFixed(2)}">${per18.toFixed(2)}</b> SAR<br>
+      فرق القيمة لكل شهر: <b class="num" data-n="${effSavings.toFixed(2)}">${effSavings.toFixed(2)}</b> SAR (≈ <b class="num" data-n="${effPct.toFixed(1)}">${effPct.toFixed(1)}</b>% أفضل)`;
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  });
+
+  // Simple charts
+  function drawAccumulation(canvas){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const pad = {t:52, r:28, b:58, l:70};
+    const cw = W - pad.l - pad.r;
+    const ch = H - pad.t - pad.b;
+
+    ctx.fillStyle = 'rgba(234,240,255,.95)';
+    ctx.font = '700 18px system-ui, sans-serif';
+    ctx.fillText('تراكم سلطة المدونة (تصوير مبسط)', pad.l, 32);
+
+    // axes
+    ctx.strokeStyle = 'rgba(255,255,255,.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t);
+    ctx.lineTo(pad.l, pad.t+ch);
+    ctx.lineTo(pad.l+cw, pad.t+ch);
+    ctx.stroke();
+
+    // grid + labels
+    ctx.fillStyle = 'rgba(185,196,230,.95)';
+    ctx.font = '12px system-ui, sans-serif';
+    for(let i=0;i<=5;i++){
+      const y = pad.t + ch - (ch*(i/5));
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+cw, y); ctx.stroke();
+      ctx.fillText(String(i*20), 24, y+4);
+    }
+    ctx.fillText('الزمن (أشهر)', pad.l+cw-70, pad.t+ch+40);
+    ctx.save();
+    ctx.translate(22, pad.t+ch/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('مؤشر سلطة (0-100)', 0, 0);
+    ctx.restore();
+
+    // curve
+    ctx.strokeStyle = 'rgba(122,167,255,.9)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for(let x=0;x<=cw;x++){
+      const t = x/cw;
+      // saturating curve
+      const v = 1 - Math.exp(-3.2*t);
+      const y = pad.t + ch - v*ch*0.95;
+      if(x===0) ctx.moveTo(pad.l+x, y);
+      else ctx.lineTo(pad.l+x, y);
+    }
+    ctx.stroke();
+
+    // dots months
+    const months = [1,3,6,9,12];
+    months.forEach(m=>{
+      const t = m/12;
+      const x = pad.l + t*cw;
+      const v = 1 - Math.exp(-3.2*t);
+      const y = pad.t + ch - v*ch*0.95;
+      ctx.fillStyle = 'rgba(94,226,160,.9)';
+      ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(234,240,255,.95)';
+      ctx.font = '700 12px system-ui, sans-serif';
+      ctx.fillText(`${m}م`, x-10, y-12);
+    });
+
+    // annotation
+    ctx.fillStyle = 'rgba(255,255,255,.06)';
+    ctx.strokeStyle = 'rgba(255,255,255,.14)';
+    ctx.lineWidth = 1;
+    const bx = pad.l + cw*0.52, by = pad.t + ch*0.18, bw = 310, bh = 78;
+    ctx.beginPath();
+    roundRect(ctx, bx, by, bw, bh, 14);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(234,240,255,.92)';
+    ctx.font = '700 12px system-ui, sans-serif';
+    ctx.fillText('الفكرة: كل شهر محتوى + روابط يزيد إشارات الثقة', bx+12, by+26);
+    ctx.fillStyle = 'rgba(185,196,230,.95)';
+    ctx.font = '12px system-ui, sans-serif';
+    ctx.fillText('ثم “Authority Backlinks” ينقل جزءا من القوة لمواقع العملاء', bx+12, by+48);
+    ctx.fillText('لكن ترتيب العميل يعتمد أيضا على On-Page وTech وUX', bx+12, by+68);
+
+    function roundRect(ctx, x, y, w, h, r){
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+    }
+  }
+
+  function drawBlueprint(canvas){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    ctx.fillStyle = 'rgba(234,240,255,.95)';
+    ctx.font = '700 18px system-ui, sans-serif';
+    ctx.fillText('Blueprint مبسط (طبقات Modonty)', 24, 32);
+
+    const boxes = [
+      {x:40,y:70,w:240,h:82,t:'Brand Core\nmodonty.com',s:'تعريف - تسعير - تحويل',c:'rgba(122,167,255,.16)',b:'rgba(122,167,255,.45)'},
+      {x:320,y:70,w:520,h:82,t:'Authority Hubs (Vertical)',s:'saas. / ecommerce. / realestate.',c:'rgba(94,226,160,.14)',b:'rgba(94,226,160,.45)'},
+      {x:40,y:185,w:800,h:82,t:'Client Content Layer',s:'نسخ مخصصة على مواقع العملاء + قواعد On-Page',c:'rgba(255,212,106,.12)',b:'rgba(255,212,106,.45)'},
+      {x:40,y:300,w:380,h:82,t:'Tracking',s:'GA4 + GTM + Events + Pixel',c:'rgba(205,180,255,.12)',b:'rgba(205,180,255,.45)'},
+      {x:460,y:300,w:380,h:82,t:'Governance',s:'Keyword ownership + Conflict rules + Linking policy',c:'rgba(255,122,138,.10)',b:'rgba(255,122,138,.45)'}
+    ];
+
+    function box(o){
+      ctx.fillStyle = o.c;
+      ctx.strokeStyle = o.b;
+      ctx.lineWidth = 2;
+      roundRect(o.x,o.y,o.w,o.h,16);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle='rgba(234,240,255,.95)';
+      ctx.font='800 13px system-ui, sans-serif';
+      drawText(o.t, o.x+14, o.y+28, 18);
+      ctx.fillStyle='rgba(185,196,230,.95)';
+      ctx.font='12px system-ui, sans-serif';
+      drawText(o.s, o.x+14, o.y+54, 18);
+    }
+    function roundRect(x,y,w,h,r){
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r);
+      ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);
+      ctx.arcTo(x,y,x+w,y,r);
+      ctx.closePath();
+    }
+    function drawText(text,x,y,lh){
+      const parts = text.split('\n');
+      parts.forEach((p,i)=> ctx.fillText(p, x, y+i*lh));
+    }
+    boxes.forEach(box);
+
+    // arrows
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=2;
+    arrow(160,152, 420,152); // brand to hubs
+    arrow(580,152, 420,226); // hubs to client
+    arrow(420,226, 250,300); // to tracking
+    arrow(420,226, 650,300); // to governance
+
+    function arrow(x1,y1,x2,y2){
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      const ang = Math.atan2(y2-y1, x2-x1);
+      const head = 10;
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2 - head*Math.cos(ang - Math.PI/7), y2 - head*Math.sin(ang - Math.PI/7));
+      ctx.lineTo(x2 - head*Math.cos(ang + Math.PI/7), y2 - head*Math.sin(ang + Math.PI/7));
+      ctx.closePath();
+      ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fill();
+    }
+  }
+
+  function drawHeat(canvas){
+    // Simple heat table based on the quick comparison provided in the content
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const cols = ['Keyword','Audits','Content','Backlinks','Rank','Technical','Local'];
+    const rows = [
+      {name:'Semrush', v:[4,4,4,4,4,4,3]},
+      {name:'Ahrefs', v:[4,3,3,5,3,3,2]},
+      {name:'Moz Pro', v:[3,2,2,2,3,2,2]},
+      {name:'Surfer', v:[2,1,4,1,2,1,1]},
+      {name:'Screaming Frog', v:[1,5,1,1,1,5,1]},
+      {name:'Whitespark', v:[2,1,1,1,1,1,4]},
+      {name:'KeywordTool.io', v:[4,1,1,1,1,1,1]}
+    ];
+
+    ctx.fillStyle='rgba(234,240,255,.95)';
+    ctx.font='700 18px system-ui, sans-serif';
+    ctx.fillText('Heatmap مختصر لمقارنة الأدوات (1-5)', 24, 32);
+
+    const pad={t:60,l:24,r:24,b:28};
+    const x0=pad.l, y0=pad.t;
+    const tableW=W-pad.l-pad.r, tableH=H-pad.t-pad.b;
+    const rowH = Math.floor(tableH/(rows.length+1));
+    const nameW = 170;
+    const cellW = Math.floor((tableW-nameW)/cols.length);
+
+    // header
+    ctx.fillStyle='rgba(255,255,255,.06)';
+    ctx.strokeStyle='rgba(255,255,255,.12)';
+    ctx.lineWidth=1;
+    roundRect(x0,y0,tableW,rowH,14); ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle='rgba(185,196,230,.95)';
+    ctx.font='800 12px system-ui, sans-serif';
+    ctx.fillText('Tool', x0+tableW-nameW+14, y0+rowH/2+4);
+    cols.forEach((c,i)=>{
+      const x = x0 + tableW-nameW - (i+1)*cellW;
+      ctx.fillText(c, x+10, y0+rowH/2+4);
+    });
+
+    // rows
+    rows.forEach((r,ri)=>{
+      const y = y0 + (ri+1)*rowH;
+      ctx.fillStyle='rgba(16,26,51,.35)';
+      ctx.strokeStyle='rgba(255,255,255,.10)';
+      roundRect(x0,y,tableW,rowH,12); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle='rgba(234,240,255,.95)';
+      ctx.font='800 12px system-ui, sans-serif';
+      ctx.fillText(r.name, x0+tableW-nameW+14, y+rowH/2+4);
+
+      r.v.forEach((val,ci)=>{
+        const x = x0 + tableW-nameW - (ci+1)*cellW;
+        const intensity = val/5;
+        ctx.fillStyle = `rgba(122,167,255,${0.12 + intensity*0.38})`;
+        ctx.beginPath();
+        ctx.roundRect(x+6, y+6, cellW-12, rowH-12, 10);
+        ctx.fill();
+
+        ctx.fillStyle='rgba(234,240,255,.95)';
+        ctx.font='800 12px system-ui, sans-serif';
+        ctx.fillText('★'.repeat(val), x+12, y+rowH/2+4);
+      });
+    });
+
+    function roundRect(x,y,w,h,r){
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r);
+      ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);
+      ctx.arcTo(x,y,x+w,y,r);
+      ctx.closePath();
+    }
+  }
+
+  // Polyfill for roundRect in some contexts
+  if(!CanvasRenderingContext2D.prototype.roundRect){
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+      this.beginPath();
+      this.moveTo(x+r,y);
+      this.arcTo(x+w,y,x+w,y+h,r);
+      this.arcTo(x+w,y+h,x,y+h,r);
+      this.arcTo(x,y+h,x,y,r);
+      this.arcTo(x,y,x+w,y,r);
+      this.closePath();
+      return this;
+    }
+  }
+
+  // Draw charts (safe if canvases exist)
+  const ac = document.getElementById('authorityChart');
+  if(ac) drawAccumulation(ac);
+
+  const bp = document.getElementById('blueprint');
+  if(bp) drawBlueprint(bp);
+
+  const ht = document.getElementById('toolsHeat');
+  if(ht) drawHeat(ht);
+
+})();
+</script>
+</body>
+</html>

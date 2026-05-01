@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modonty KPI Dashboard</title>
+  <meta name="description" content="Interactive KPI dashboard for a Saudi B2B SaaS SEO business using SOSTAC-aligned KPIs." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#101a2f;
+      --card2:#0f1830;
+      --text:#e9eefc;
+      --muted:#a9b4d0;
+      --line:rgba(255,255,255,.10);
+      --accent:#7c5cff;
+      --good:#2fe38c;
+      --warn:#ffd166;
+      --bad:#ff5c7a;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:16px;
+      --radius2:12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Arabic", "Noto Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 800px at 80% 0%, rgba(124,92,255,.20), transparent 50%),
+                  radial-gradient(900px 600px at 0% 20%, rgba(47,227,140,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:inherit}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    header{
+      display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      padding:18px 18px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(16,26,47,.75);
+      box-shadow:var(--shadow);backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;gap:12px;align-items:center;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 40%),
+        linear-gradient(135deg, rgba(124,92,255,.95), rgba(47,227,140,.65));
+      box-shadow: 0 10px 25px rgba(124,92,255,.25);
+    }
+    h1{margin:0;font-size:18px}
+    .sub{margin:0;color:var(--muted);font-size:13px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .pill{
+      border:1px solid var(--line);background:rgba(255,255,255,.04);
+      padding:8px 10px;border-radius:999px;color:var(--muted);font-size:12px;
+      display:inline-flex;gap:8px;align-items:center;
+    }
+    .btn{
+      border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);
+      padding:9px 12px;border-radius:12px;cursor:pointer;font-size:13px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex;gap:8px;align-items:center;user-select:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.08)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background: rgba(124,92,255,.18);border-color: rgba(124,92,255,.45);}
+    .btn.danger{background: rgba(255,92,122,.12);border-color: rgba(255,92,122,.35);}
+    .grid{margin-top:18px;display:grid;grid-template-columns: 1.25fr .75fr;gap:16px;}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .panel{
+      border:1px solid var(--line);
+      background:rgba(16,26,47,.70);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel .hd{
+      padding:14px 16px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+    }
+    .panel .hd h2{margin:0;font-size:14px}
+    .panel .bd{padding:14px 16px}
+    .kpiGrid{display:grid;gap:12px;grid-template-columns: repeat(2, minmax(0, 1fr));}
+    @media (max-width: 700px){.kpiGrid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius:12px;
+      padding:12px;
+    }
+    .cardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+    .kpiTitle{margin:0;font-size:14px}
+    .kpiMeta{margin:0;color:var(--muted);font-size:12px}
+    .badge{
+      font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);
+      color:var(--muted);background:rgba(255,255,255,.03);white-space:nowrap;
+    }
+    .badge.good{border-color:rgba(47,227,140,.45);background:rgba(47,227,140,.12);color:#c7ffe5}
+    .badge.warn{border-color:rgba(255,209,102,.45);background:rgba(255,209,102,.10);color:#fff2c2}
+    .badge.bad{border-color:rgba(255,92,122,.45);background:rgba(255,92,122,.10);color:#ffd3db}
+    .kv{display:grid;grid-template-columns: 140px 1fr;gap:6px 10px;margin-top:10px;font-size:12px;}
+    .kv div:nth-child(odd){color:var(--muted)}
+    .kv code{font-family:var(--mono);font-size:11px;color:#d7ddff}
+    .miniRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .mini{flex:1 1 140px;min-width:140px;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:12px;padding:10px;}
+    .mini .t{margin:0;font-size:11px;color:var(--muted)}
+    .mini .v{margin:0;font-size:18px;font-weight:700;letter-spacing:.2px}
+    .mini .s{margin:0;font-size:11px;color:var(--muted)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;}
+    .tab{
+      border:1px solid var(--line);
+      padding:8px 10px;border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      cursor:pointer;font-size:12px;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+      user-select:none;
+    }
+    .tab.active{background: rgba(124,92,255,.18);border-color: rgba(124,92,255,.45);color: var(--text);}
+    .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media (max-width: 980px){ .filters{grid-template-columns:1fr} }
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], select, textarea{
+      width:100%;padding:10px 12px;border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:120px;resize:vertical;font-family:var(--mono);font-size:12px;direction:ltr}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+    .split{display:grid;grid-template-columns: 1fr;gap:12px;}
+    .chartBox{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.12);padding:10px;}
+    .foot{margin-top:14px;color:var(--muted);font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+    .toast{
+      position:fixed;left:16px;bottom:16px;z-index:50;
+      background:rgba(16,26,47,.92);border:1px solid var(--line);
+      padding:10px 12px;border-radius:12px;box-shadow:var(--shadow);
+      color:var(--text);font-size:12px;display:none;max-width:min(420px, calc(100vw - 32px));
+    }
+    .ltr{direction:ltr}
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 id="title">لوحة مؤشرات الأداء الرئيسية KPIs</h1>
+          <p class="sub" id="subtitle">Modonty | SaaS SEO | السعودية | متوافقة مع SOSTAC</p>
+        </div>
+      </div>
+      <div class="row">
+        <span class="pill" id="lastUpdated">آخر تحديث: <b id="lastUpdatedVal">-</b></span>
+        <button class="btn" id="langBtn" title="Toggle language">AR / EN</button>
+        <button class="btn primary" id="exportBtn">تصدير CSV</button>
+        <button class="btn" id="importBtn">استيراد CSV</button>
+        <button class="btn danger" id="resetBtn">إعادة ضبط</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="hd">
+          <h2 id="kpiLibraryTitle">مكتبة KPIs</h2>
+          <div class="tabs" id="tabs"></div>
+        </div>
+        <div class="bd">
+          <div class="filters">
+            <div>
+              <label id="searchLbl">بحث</label>
+              <input id="search" type="text" placeholder="ابحث باسم المؤشر أو المصدر أو المالك" />
+            </div>
+            <div>
+              <label id="ownerLbl">المالك</label>
+              <select id="owner">
+                <option value="all">الكل</option>
+              </select>
+            </div>
+            <div>
+              <label id="cadenceLbl">الدورية</label>
+              <select id="cadence">
+                <option value="all">الكل</option>
+                <option value="Daily">يومي</option>
+                <option value="Weekly">أسبوعي</option>
+                <option value="Monthly">شهري</option>
+                <option value="Quarterly">ربع سنوي</option>
+              </select>
+            </div>
+            <div>
+              <label id="statusLbl">الحالة</label>
+              <select id="status">
+                <option value="all">الكل</option>
+                <option value="good">ضمن الهدف</option>
+                <option value="warn">قريب من الهدف</option>
+                <option value="bad">بعيد عن الهدف</option>
+                <option value="na">غير متاح</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="miniRow" id="summaryRow"></div>
+          <div class="hint" id="hintTop">
+            يمكنك تعديل "الهدف" و"القيمة الحالية" داخل كل بطاقة. يتم حفظ التعديلات تلقائيا في المتصفح.
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="kpiGrid" id="kpiGrid"></div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="hd">
+          <h2 id="insightsTitle">ملخص وتنبيهات</h2>
+          <div class="row">
+            <button class="btn primary" id="autoNotesBtn">توليد ملاحظات</button>
+          </div>
+        </div>
+        <div class="bd split">
+          <div class="chartBox">
+            <canvas id="trendChart" height="160"></canvas>
+            <div class="hint" id="trendHint">اتجاه مؤشرات مختارة (عينة). يمكنك استيراد بياناتك من CSV.</div>
+          </div>
+
+          <div class="chartBox">
+            <canvas id="statusChart" height="160"></canvas>
+            <div class="hint" id="statusHint">توزيع حالة المؤشرات بناء على مقارنة القيمة الحالية بالهدف.</div>
+          </div>
+
+          <div class="card">
+            <div class="cardTop">
+              <div>
+                <p class="kpiTitle" id="notesTitle">ملاحظات تنفيذية</p>
+                <p class="kpiMeta" id="notesSub">جاهزة للاستخدام في تقارير أسبوعية أو شهرية</p>
+              </div>
+              <span class="badge" id="notesBadge">Draft</span>
+            </div>
+            <div class="hr"></div>
+            <textarea id="notes" placeholder="اكتب هنا ملاحظاتك..."></textarea>
+            <div class="hint" id="notesHint">نصيحة: اذكر السبب, التأثير, الإجراء, والمالك, ثم تاريخ المراجعة القادمة.</div>
+          </div>
+
+          <div class="card">
+            <div class="cardTop">
+              <div>
+                <p class="kpiTitle" id="csvTitle">استيراد CSV</p>
+                <p class="kpiMeta" id="csvSub">الصق CSV هنا لتحديث القيم والاهداف</p>
+              </div>
+              <span class="badge ltr">kpi_id,current,target</span>
+            </div>
+            <div class="hr"></div>
+            <textarea id="csvPaste" class="ltr" placeholder="Example:
+signup_to_paid_cvr,0.035,0.05
+mql_to_sql_cvr,0.22,0.30"></textarea>
+            <div class="miniRow">
+              <button class="btn primary" id="applyPasteBtn">تطبيق</button>
+              <button class="btn" id="fillTemplateBtn">قالب</button>
+            </div>
+            <div class="hint" id="csvHint">يتم تحديث القيم للمعرفات المطابقة فقط. الباقي يبقى كما هو.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="foot">
+      <div class="muted" id="footLeft">نسخة محلية تعمل بدون سيرفر. البيانات محفوظة في LocalStorage.</div>
+      <div class="muted" id="footRight">آخر حفظ: <span id="savedAt">-</span></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const I18N = {
+      ar: {
+        title: "لوحة مؤشرات الأداء الرئيسية KPIs",
+        subtitle: "Modonty | SaaS SEO | السعودية | متوافقة مع SOSTAC",
+        lastUpdated: "آخر تحديث:",
+        kpiLibraryTitle: "مكتبة KPIs",
+        insightsTitle: "ملخص وتنبيهات",
+        exportBtn: "تصدير CSV",
+        importBtn: "استيراد CSV",
+        resetBtn: "إعادة ضبط",
+        searchLbl: "بحث",
+        ownerLbl: "المالك",
+        cadenceLbl: "الدورية",
+        statusLbl: "الحالة",
+        hintTop: "يمكنك تعديل \"الهدف\" و\"القيمة الحالية\" داخل كل بطاقة. يتم حفظ التعديلات تلقائيا في المتصفح.",
+        trendHint: "اتجاه مؤشرات مختارة (عينة). يمكنك استيراد بياناتك من CSV.",
+        statusHint: "توزيع حالة المؤشرات بناء على مقارنة القيمة الحالية بالهدف.",
+        notesTitle: "ملاحظات تنفيذية",
+        notesSub: "جاهزة للاستخدام في تقارير أسبوعية أو شهرية",
+        notesHint: "نصيحة: اذكر السبب, التأثير, الإجراء, والمالك, ثم تاريخ المراجعة القادمة.",
+        csvTitle: "استيراد CSV",
+        csvSub: "الصق CSV هنا لتحديث القيم والاهداف",
+        applyPasteBtn: "تطبيق",
+        fillTemplateBtn: "قالب",
+        csvHint: "يتم تحديث القيم للمعرفات المطابقة فقط. الباقي يبقى كما هو.",
+        footLeft: "نسخة محلية تعمل بدون سيرفر. البيانات محفوظة في LocalStorage.",
+        good: "ضمن الهدف",
+        warn: "قريب من الهدف",
+        bad: "بعيد عن الهدف",
+        na: "غير متاح",
+        all: "الكل",
+        cadence: { Daily:"يومي", Weekly:"أسبوعي", Monthly:"شهري", Quarterly:"ربع سنوي" },
+        ownersAll: "الكل",
+        autoNotesBtn: "توليد ملاحظات",
+        savedAt: "آخر حفظ:",
+        kpi: {
+          current: "الحالي",
+          target: "الهدف",
+          unit: "الوحدة",
+          formula: "المعادلة",
+          source: "المصدر",
+          owner: "المالك",
+          cadence: "الدورية",
+          why: "لماذا مهم",
+          action: "إجراء مقترح",
+          edit: "تعديل",
+          save: "حفظ",
+          cancel: "إلغاء",
+          details: "تفاصيل"
+        },
+        tabs: {
+          northstar: "North Star",
+          acquisition: "Acquisition",
+          activation: "Activation",
+          retention: "Retention",
+          revenue: "Revenue",
+          seo: "SEO",
+          product: "Product",
+          cs: "Customer Success",
+          finance: "Finance"
+        },
+        summary: {
+          total: "إجمالي KPIs",
+          good: "ضمن الهدف",
+          warn: "قريب",
+          bad: "بعيد",
+          na: "غير متاح"
+        },
+        toast: { saved: "تم الحفظ", reset: "تمت إعادة الضبط", applied: "تم تطبيق CSV", exported: "تم تصدير CSV" }
+      },
+      en: {
+        title: "KPI Dashboard",
+        subtitle: "Modonty | SaaS SEO | Saudi Arabia | SOSTAC aligned",
+        lastUpdated: "Last updated:",
+        kpiLibraryTitle: "KPI Library",
+        insightsTitle: "Executive Summary and Alerts",
+        exportBtn: "Export CSV",
+        importBtn: "Import CSV",
+        resetBtn: "Reset",
+        searchLbl: "Search",
+        ownerLbl: "Owner",
+        cadenceLbl: "Cadence",
+        statusLbl: "Status",
+        hintTop: "You can edit target and current values in each card. Changes are saved locally in your browser.",
+        trendHint: "Sample trends for selected KPIs. Import your data from CSV.",
+        statusHint: "Status distribution based on current vs target.",
+        notesTitle: "Executive Notes",
+        notesSub: "Ready for weekly or monthly reporting",
+        notesHint: "Tip: write cause, impact, action, owner, and next review date.",
+        csvTitle: "CSV Import",
+        csvSub: "Paste CSV here to update current and target",
+        applyPasteBtn: "Apply",
+        fillTemplateBtn: "Template",
+        csvHint: "Only matching IDs will be updated. Others stay unchanged.",
+        footLeft: "Offline local version. Data stored in LocalStorage.",
+        good: "On target",
+        warn: "Near target",
+        bad: "Off target",
+        na: "Not available",
+        all: "All",
+        cadence: { Daily:"Daily", Weekly:"Weekly", Monthly:"Monthly", Quarterly:"Quarterly" },
+        ownersAll: "All",
+        autoNotesBtn: "Generate notes",
+        savedAt: "Last saved:",
+        kpi: {
+          current: "Current",
+          target: "Target",
+          unit: "Unit",
+          formula: "Formula",
+          source: "Source",
+          owner: "Owner",
+          cadence: "Cadence",
+          why: "Why it matters",
+          action: "Suggested action",
+          edit: "Edit",
+          save: "Save",
+          cancel: "Cancel",
+          details: "Details"
+        },
+        tabs: {
+          northstar: "North Star",
+          acquisition: "Acquisition",
+          activation: "Activation",
+          retention: "Retention",
+          revenue: "Revenue",
+          seo: "SEO",
+          product: "Product",
+          cs: "Customer Success",
+          finance: "Finance"
+        },
+        summary: { total: "Total KPIs", good: "On target", warn: "Near", bad: "Off", na: "N/A" },
+        toast: { saved: "Saved", reset: "Reset complete", applied: "CSV applied", exported: "CSV exported" }
+      }
+    };
+
+    const KPI_LIBRARY = [
+      {id:"active_paid_subscriptions",cat:"northstar",name:{ar:"الاشتراكات المدفوعة النشطة",en:"Active paid subscriptions"},unit:{ar:"اشتراك",en:"subs"},current:120,target:500,cadence:"Monthly",owner:"Growth Lead",source:"Billing (Stripe) + App DB",formula:"count(active_subscriptions)",why:{ar:"هذا هو مؤشر النجاح النهائي للمنتج في نهاية السنة.",en:"This is the ultimate success metric by year end."},action:{ar:"اربط كل لوحة وتقارير الفريق بهذا الرقم ثم وزع الاهداف على القنوات والتحويلات.",en:"Tie team reporting to this number and cascade targets by channel and conversion stages."}},
+      {id:"mrr",cat:"northstar",name:{ar:"الإيراد الشهري المتكرر MRR",en:"Monthly recurring revenue (MRR)"},unit:{ar:"ر.س",en:"SAR"},current:48000,target:200000,cadence:"Monthly",owner:"Finance",source:"Billing (Stripe)",formula:"sum(subscription_amount_monthly)",why:{ar:"يترجم النمو إلى قيمة مالية ويكشف جودة التسعير والاحتفاظ.",en:"Turns growth into revenue and reflects pricing and retention quality."},action:{ar:"اربط MRR بالشرائح والتسعير والخصومات ثم راقب صافي النمو Net MRR.",en:"Link MRR to segments, pricing, discounts, then track Net MRR."}},
+      {id:"net_mrr_churn",cat:"retention",name:{ar:"صافي فقدان MRR",en:"Net MRR churn"},unit:{ar:"%",en:"%"},current:0.028,target:0.015,cadence:"Monthly",owner:"Customer Success",source:"Billing + Cohort analysis",formula:"(churned_mrr - expansion_mrr) / starting_mrr",why:{ar:"يوضح هل التوسع يعوض خسارة العملاء أم لا.",en:"Shows whether expansion offsets churn."},action:{ar:"حدد الاسباب الاكثر تكرارا في التذاكر ثم اطلق تحسينات Onboarding ودعم.",en:"Identify top churn reasons then improve onboarding and support."}},
+      {id:"website_sessions",cat:"acquisition",name:{ar:"زيارات الموقع",en:"Website sessions"},unit:{ar:"جلسة",en:"sessions"},current:52000,target:120000,cadence:"Monthly",owner:"SEO Lead",source:"GA4",formula:"sessions (GA4)",why:{ar:"قاعدة القمع لكل التحويلات. جودة الزيارات اهم من الكم.",en:"Top of funnel base. Quality matters more than volume."},action:{ar:"ركز على صفحات نية الشراء, وصفحات المقارنة, وصفحات الحلول حسب الصناعة.",en:"Focus on high intent pages, comparison pages, and industry solution pages."}},
+      {id:"organic_sessions",cat:"seo",name:{ar:"زيارات عضوية Organic",en:"Organic sessions"},unit:{ar:"جلسة",en:"sessions"},current:31000,target:80000,cadence:"Monthly",owner:"SEO Lead",source:"GA4",formula:"sessions where channel=Organic Search",why:{ar:"يقيس تأثير SEO الفعلي على الطلب.",en:"Measures true SEO impact on demand."},action:{ar:"احكم الربط بين الكلمات والصفحات واعمل تحسين داخلي Internal linking مع تحديثات شهرية.",en:"Tighten keyword to page mapping and internal linking with monthly refreshes."}},
+      {id:"trial_signups",cat:"activation",name:{ar:"تسجيلات التجربة",en:"Trial signups"},unit:{ar:"مستخدم",en:"users"},current:860,target:2200,cadence:"Monthly",owner:"Growth Lead",source:"App DB + GA4 events",formula:"count(signup_event)",why:{ar:"هي بوابة تفعيل المستخدم قبل الدفع.",en:"Gateway to activation before payment."},action:{ar:"حسن صفحات الهبوط, رسائل القيمة, وCTA. اختبر 3 عروض حسب الشريحة.",en:"Improve landing pages, value props, CTA. Test 3 offers by segment."}},
+      {id:"activation_rate",cat:"activation",name:{ar:"معدل التفعيل",en:"Activation rate"},unit:{ar:"%",en:"%"},current:0.41,target:0.55,cadence:"Weekly",owner:"Product",source:"App events (Amplitude/Mixpanel)",formula:"activated_users / trial_signups",why:{ar:"يعكس هل المستخدم يرى قيمة حقيقية بسرعة.",en:"Shows whether users reach value fast."},action:{ar:"اختصر وقت الوصول للقيمة Time to value وقلل خطوات الإعداد.",en:"Reduce time to value and setup friction."}},
+      {id:"signup_to_paid_cvr",cat:"revenue",name:{ar:"تحويل من تسجيل إلى دفع",en:"Signup to paid conversion"},unit:{ar:"%",en:"%"},current:0.035,target:0.05,cadence:"Monthly",owner:"Growth Lead",source:"App DB + Billing",formula:"paid_new / trial_signups",why:{ar:"يحدد هل العرض والتسعير والإثبات الاجتماعي يعمل.",en:"Validates offer, pricing, and proof."},action:{ar:"أضف دراسات حالة سعودية, صفحات مقارنة, وتجارب محددة المدة.",en:"Add Saudi case studies, comparison pages, and time boxed trials."}},
+      {id:"cac",cat:"finance",name:{ar:"تكلفة اكتساب العميل CAC",en:"Customer acquisition cost (CAC)"},unit:{ar:"ر.س",en:"SAR"},current:820,target:650,cadence:"Monthly",owner:"Finance",source:"Ads + Sales payroll allocation + tools",formula:"sales_marketing_cost / new_customers",why:{ar:"بدون CAC مضبوط لا يمكن توسيع النمو بثقة.",en:"Without healthy CAC you cannot scale confidently."},action:{ar:"افصل CAC حسب القناة والشريحة ثم اوقف ما لا يحقق معيار LTV:CAC.",en:"Split CAC by channel and segment then cut what fails LTV:CAC guardrails."}},
+      {id:"ltv_cac",cat:"finance",name:{ar:"نسبة LTV إلى CAC",en:"LTV to CAC ratio"},unit:{ar:"x",en:"x"},current:3.2,target:4.0,cadence:"Quarterly",owner:"Finance",source:"Billing + churn cohorts",formula:"gross_ltv / cac",why:{ar:"مؤشر صحة الوحدة الاقتصادية Unit economics.",en:"Core unit economics health metric."},action:{ar:"ارفع LTV عبر الاحتفاظ والتوسع قبل زيادة الانفاق الاعلاني.",en:"Increase LTV via retention and expansion before scaling spend."}},
+      {id:"top3_keyword_share",cat:"seo",name:{ar:"حصة الكلمات في Top 3",en:"Share of keywords in Top 3"},unit:{ar:"%",en:"%"},current:0.12,target:0.20,cadence:"Monthly",owner:"SEO Lead",source:"GSC + Rank Tracker",formula:"keywords_top3 / total_tracked_keywords",why:{ar:"يرتبط مباشرة بحجم الترافيك العضوي الموثوق.",en:"Directly tied to stable organic traffic."},action:{ar:"ركز على تحسين صفحات تتراوح بين المركز 4 إلى 10 مع محتوى داعم وروابط.",en:"Prioritize positions 4 to 10 pages with supporting content and links."}},
+      {id:"gsc_click_through_rate",cat:"seo",name:{ar:"CTR من Google Search Console",en:"CTR from Google Search Console"},unit:{ar:"%",en:"%"},current:0.031,target:0.045,cadence:"Monthly",owner:"SEO Lead",source:"Google Search Console",formula:"clicks / impressions",why:{ar:"تحسين CTR يرفع النتائج دون زيادة الانطباعات.",en:"CTR lifts results without needing more impressions."},action:{ar:"حسن العناوين والميتا, واستخدم rich results حيث ممكن.",en:"Improve titles, meta, and apply rich results where possible."}},
+      {id:"content_velocity",cat:"seo",name:{ar:"سرعة إنتاج المحتوى",en:"Content velocity"},unit:{ar:"قطعة",en:"items"},current:10,target:18,cadence:"Monthly",owner:"Content",source:"CMS",formula:"published_pieces_per_month",why:{ar:"السرعة ضرورية للهيمنة على الفئات والكلمات.",en:"Velocity is required to win categories and keywords."},action:{ar:"طبقات محتوى: Pillar, Cluster, Use cases, Comparisons, Templates.",en:"Content layers: pillar, clusters, use cases, comparisons, templates."}},
+      {id:"tech_seo_health_score",cat:"seo",name:{ar:"درجة الصحة التقنية SEO",en:"Technical SEO health score"},unit:{ar:"/100",en:"/100"},current:76,target:90,cadence:"Monthly",owner:"Engineering",source:"Site audit (Screaming Frog, GSC, PSI)",formula:"weighted_score(crawl,index,performance,errors)",why:{ar:"المشاكل التقنية تمنع الفهرسة وتضعف التحويل.",en:"Technical issues block indexing and hurt conversion."},action:{ar:"اصلح أخطاء الزحف, الـ canonical, وتحسين الأداء Core Web Vitals.",en:"Fix crawl errors, canonicals, and Core Web Vitals."}},
+      {id:"time_to_value_minutes",cat:"product",name:{ar:"الوقت للوصول للقيمة",en:"Time to value"},unit:{ar:"دقيقة",en:"minutes"},current:18,target:10,cadence:"Weekly",owner:"Product",source:"App events",formula:"median(time_first_value - signup_time)",why:{ar:"كل دقيقة تأخير تقلل التفعيل والتحويل.",en:"Each extra minute reduces activation and conversion."},action:{ar:"استخدم قوالب جاهزة وتوجيه داخل المنتج Product tours.",en:"Use templates and in-product tours."}},
+      {id:"nps",cat:"cs",name:{ar:"صافي نقاط الترويج NPS",en:"Net promoter score (NPS)"},unit:{ar:"score",en:"score"},current:34,target:45,cadence:"Quarterly",owner:"Customer Success",source:"Survey",formula:"%promoters - %detractors",why:{ar:"يقيس الثقة والولاء والاستعداد للتوصية.",en:"Measures trust, loyalty, and referral intent."},action:{ar:"حل اسباب الاستياء ثم اطلق برنامج قصص نجاح وتحفيز إحالات.",en:"Fix dissatisfaction drivers then launch case studies and referral program."}},
+      {id:"support_first_response_mins",cat:"cs",name:{ar:"زمن أول رد للدعم",en:"Support first response time"},unit:{ar:"دقيقة",en:"minutes"},current:42,target:20,cadence:"Weekly",owner:"Support",source:"Helpdesk (Zendesk/Freshdesk)",formula:"median(first_response_time)",why:{ar:"السرعة تقلل churn وترفع الثقة.",en:"Speed reduces churn and increases trust."},action:{ar:"ضع SLA حسب الشريحة وبناء قاعدة معرفة قابلة للبحث.",en:"Set SLAs by tier and build searchable knowledge base."}}
+    ];
+
+    const LS_KEY = "modonty_kpis_v1";
+    const LS_NOTES = "modonty_kpi_notes_v1";
+    const LS_LANG = "modonty_kpi_lang_v1";
+
+    function nowText(){ const d = new Date(); return d.toLocaleString(undefined, { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }); }
+    function clamp01(v){ if (typeof v !== "number" || isNaN(v)) return v; return Math.max(0, Math.min(1, v)); }
+
+    function getLang(){ return localStorage.getItem(LS_LANG) || "ar"; }
+    function setLang(lang){ localStorage.setItem(LS_LANG, lang); }
+    function T(){ return I18N[getLang()] || I18N.ar; }
+
+    function formatVal(v, unit, lang){
+      if (v === null || v === undefined || v === "") return "-";
+      const isPct = unit === "%" || (unit && unit.toLowerCase() === "%");
+      if (typeof v === "number"){
+        if (isPct){ return (v * 100).toFixed(v < 0.1 ? 1 : 0) + "%"; }
+        if (Math.abs(v) < 1 && v !== 0){ return v.toFixed(3); }
+        if (Math.abs(v) < 1000){ return Number.isInteger(v) ? v.toString() : v.toFixed(2); }
+        return Math.round(v).toLocaleString(lang === "ar" ? "ar-EG" : "en-US");
+      }
+      return String(v);
+    }
+
+    function statusOf(kpi){
+      const c = kpi.current, t = kpi.target;
+      if (c === null || c === undefined || c === "" || t === null || t === undefined || t === "") return "na";
+      if (typeof c !== "number" || typeof t !== "number" || isNaN(c) || isNaN(t)) return "na";
+      const lowerBetter = /(churn|cac|time_to_value|response|error|cost)/i.test(kpi.id);
+      if (lowerBetter){
+        if (c <= t) return "good";
+        if (c <= t * 1.15) return "warn";
+        return "bad";
+      } else {
+        if (c >= t) return "good";
+        if (c >= t * 0.85) return "warn";
+        return "bad";
+      }
+    }
+
+    function loadState(){
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      try{ return JSON.parse(raw); }catch{ return null; }
+    }
+    function saveState(state){
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+      localStorage.setItem("modonty_kpis_saved_at", nowText());
+      document.getElementById("savedAt").textContent = nowText();
+      toast(T().toast.saved);
+    }
+    function loadNotes(){ return localStorage.getItem(LS_NOTES) || ""; }
+    function saveNotes(val){
+      localStorage.setItem(LS_NOTES, val || "");
+      localStorage.setItem("modonty_kpis_saved_at", nowText());
+      document.getElementById("savedAt").textContent = nowText();
+    }
+
+    let KPIS = structuredClone(KPI_LIBRARY);
+
+    function hydrate(){
+      const st = loadState();
+      if (st && Array.isArray(st)){
+        const map = new Map(st.map(x => [x.id, x]));
+        KPIS = KPI_LIBRARY.map(k => {
+          const saved = map.get(k.id);
+          const merged = structuredClone(k);
+          if (saved){
+            if (typeof saved.current !== "undefined") merged.current = saved.current;
+            if (typeof saved.target !== "undefined") merged.target = saved.target;
+            if (saved.owner) merged.owner = saved.owner;
+          }
+          return merged;
+        });
+      } else {
+        KPIS = structuredClone(KPI_LIBRARY);
+      }
+      document.getElementById("notes").value = loadNotes();
+      document.getElementById("savedAt").textContent = localStorage.getItem("modonty_kpis_saved_at") || "-";
+      document.getElementById("lastUpdatedVal").textContent = new Date().toLocaleDateString();
+    }
+
+    const TAB_ORDER = ["northstar","acquisition","activation","retention","revenue","seo","product","cs","finance"];
+
+    function buildTabs(){
+      const tabs = document.getElementById("tabs");
+      tabs.innerHTML = "";
+      TAB_ORDER.forEach((cat, idx) => {
+        const el = document.createElement("div");
+        el.className = "tab" + (idx===0 ? " active": "");
+        el.dataset.cat = cat;
+        el.textContent = T().tabs[cat] || cat;
+        el.onclick = () => {
+          [...tabs.children].forEach(x => x.classList.remove("active"));
+          el.classList.add("active");
+          render();
+        };
+        tabs.appendChild(el);
+      });
+    }
+    function activeTab(){
+      const el = document.querySelector("#tabs .tab.active");
+      return el ? el.dataset.cat : "northstar";
+    }
+
+    function buildOwnerFilter(){
+      const sel = document.getElementById("owner");
+      sel.innerHTML = "";
+      const optAll = document.createElement("option");
+      optAll.value = "all";
+      optAll.textContent = T().ownersAll;
+      sel.appendChild(optAll);
+      const owners = [...new Set(KPIS.map(k => k.owner).filter(Boolean))].sort();
+      owners.forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        sel.appendChild(op);
+      });
+    }
+
+    function selectedFilters(){
+      return {
+        q: document.getElementById("search").value.trim().toLowerCase(),
+        owner: document.getElementById("owner").value,
+        cadence: document.getElementById("cadence").value,
+        status: document.getElementById("status").value,
+        cat: activeTab()
+      };
+    }
+
+    function filteredKPIs(){
+      const f = selectedFilters();
+      return KPIS.filter(k => k.cat === f.cat)
+        .filter(k => f.owner === "all" ? true : k.owner === f.owner)
+        .filter(k => f.cadence === "all" ? true : k.cadence === f.cadence)
+        .filter(k => f.status === "all" ? true : statusOf(k) === f.status)
+        .filter(k => {
+          if (!f.q) return true;
+          const lang = getLang();
+          const name = (k.name && k.name[lang]) ? k.name[lang] : (k.name?.en || "");
+          const hay = [name, k.id, k.owner, k.source, k.cadence, k.formula, k.unit?.[lang] || ""].join(" ").toLowerCase();
+          return hay.includes(f.q);
+        });
+    }
+
+    function renderSummary(){
+      const f = selectedFilters();
+      const arr = KPIS.filter(k => k.cat === f.cat);
+      const counts = { total: arr.length, good:0, warn:0, bad:0, na:0 };
+      arr.forEach(k => counts[statusOf(k)]++);
+      const row = document.getElementById("summaryRow");
+      row.innerHTML = "";
+      const items = [
+        { key:"total", val: counts.total },
+        { key:"good", val: counts.good, cls:"good" },
+        { key:"warn", val: counts.warn, cls:"warn" },
+        { key:"bad", val: counts.bad, cls:"bad" },
+        { key:"na", val: counts.na }
+      ];
+      items.forEach(it => {
+        const el = document.createElement("div");
+        el.className = "mini";
+        el.innerHTML = `
+          <p class="t">${T().summary[it.key]}</p>
+          <p class="v">${it.val}</p>
+          <p class="s">${it.cls ? `<span class="badge ${it.cls}">${T()[it.cls]}</span>` : ""}</p>
+        `;
+        row.appendChild(el);
+      });
+    }
+
+    function kpiCard(k){
+      const lang = getLang();
+      const name = k.name?.[lang] || k.name?.en || k.id;
+      const unit = k.unit?.[lang] || k.unit?.en || "";
+      const st = statusOf(k);
+      const badgeTxt = st === "good" ? T().good : st === "warn" ? T().warn : st === "bad" ? T().bad : T().na;
+      const badgeCls = st === "na" ? "" : st;
+      const curDisp = formatVal(k.current, unit, lang);
+      const tgtDisp = formatVal(k.target, unit, lang);
+      const lowerBetter = /(churn|cac|time_to_value|response|error|cost)/i.test(k.id);
+
+      let progress = null;
+      if (typeof k.current === "number" && typeof k.target === "number" && !isNaN(k.current) && !isNaN(k.target)){
+        if (lowerBetter){ progress = k.current <= 0 ? 1 : Math.min(1, k.target / k.current); }
+        else { progress = k.target <= 0 ? 0 : Math.min(1, k.current / k.target); }
+      }
+
+      const why = k.why?.[lang] || k.why?.en || "";
+      const action = k.action?.[lang] || k.action?.en || "";
+      const cadText = (T().cadence && T().cadence[k.cadence]) ? T().cadence[k.cadence] : k.cadence;
+
+      return `
+        <div class="card" data-id="${k.id}">
+          <div class="cardTop">
+            <div>
+              <p class="kpiTitle">${name}</p>
+              <p class="kpiMeta"><span class="muted">${k.id}</span></p>
+            </div>
+            <span class="badge ${badgeCls}">${badgeTxt}</span>
+          </div>
+
+          <div class="miniRow">
+            <div class="mini">
+              <p class="t">${T().kpi.current}</p>
+              <p class="v">${curDisp}</p>
+              <p class="s">${unit}</p>
+            </div>
+            <div class="mini">
+              <p class="t">${T().kpi.target}</p>
+              <p class="v">${tgtDisp}</p>
+              <p class="s">${unit}</p>
+            </div>
+          </div>
+
+          ${progress !== null ? `<div class="hint">${T().kpi.details}: <code>${(progress*100).toFixed(0)}%</code></div>` : `<div class="hint">${T().na}</div>`}
+
+          <div class="kv">
+            <div>${T().kpi.cadence}</div><div>${cadText}</div>
+            <div>${T().kpi.owner}</div><div>${k.owner}</div>
+            <div>${T().kpi.source}</div><div>${k.source}</div>
+            <div>${T().kpi.formula}</div><div><code class="ltr">${k.formula}</code></div>
+            <div>${T().kpi.why}</div><div>${why}</div>
+            <div>${T().kpi.action}</div><div>${action}</div>
+          </div>
+
+          <div class="miniRow">
+            <button class="btn primary" data-act="edit">${T().kpi.edit}</button>
+          </div>
+
+          <div class="hr" style="display:none"></div>
+
+          <div class="editArea" style="display:none">
+            <div class="filters" style="grid-template-columns:1fr 1fr;gap:10px">
+              <div>
+                <label>${T().kpi.current}</label>
+                <input type="text" class="editCurrent ltr" value="${k.current ?? ""}" />
+              </div>
+              <div>
+                <label>${T().kpi.target}</label>
+                <input type="text" class="editTarget ltr" value="${k.target ?? ""}" />
+              </div>
+            </div>
+            <div style="height:10px"></div>
+            <div class="miniRow">
+              <button class="btn primary" data-act="save">${T().kpi.save}</button>
+              <button class="btn" data-act="cancel">${T().kpi.cancel}</button>
+            </div>
+            <div class="hint muted">IDs are stable. Use CSV import for bulk updates.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderKpis(){
+      const grid = document.getElementById("kpiGrid");
+      const list = filteredKPIs();
+      grid.innerHTML = list.map(kpiCard).join("");
+
+      grid.querySelectorAll(".card").forEach(card => {
+        const editBtn = card.querySelector('[data-act="edit"]');
+        const editArea = card.querySelector(".editArea");
+        const hr = card.querySelector(".hr");
+
+        editBtn.addEventListener("click", () => {
+          editArea.style.display = "block";
+          hr.style.display = "block";
+          editBtn.style.display = "none";
+        });
+
+        card.querySelector('[data-act="cancel"]').addEventListener("click", () => {
+          editArea.style.display = "none";
+          hr.style.display = "none";
+          editBtn.style.display = "inline-flex";
+          render();
+        });
+
+        card.querySelector('[data-act="save"]').addEventListener("click", () => {
+          const id = card.dataset.id;
+          const curStr = card.querySelector(".editCurrent").value.trim();
+          const tgtStr = card.querySelector(".editTarget").value.trim();
+
+          const parseSmart = (s) => {
+            if (s === "") return "";
+            if (s.endsWith("%")){
+              const n = parseFloat(s.slice(0,-1));
+              if (isNaN(n)) return s;
+              return n / 100;
+            }
+            const n = Number(s.replace(/,/g,""));
+            if (!isNaN(n)) return n;
+            return s;
+          };
+
+          const k = KPIS.find(x => x.id === id);
+          if (k){
+            k.current = parseSmart(curStr);
+            k.target = parseSmart(tgtStr);
+          }
+          saveState(KPIS.map(x => ({ id:x.id, current:x.current, target:x.target, owner:x.owner })));
+          render();
+        });
+      });
+    }
+
+    let trendChart = null;
+    let statusChart = null;
+
+    function buildCharts(){
+      const lang = getLang();
+      const ctx1 = document.getElementById("trendChart");
+      const ctx2 = document.getElementById("statusChart");
+
+      const sample = ["website_sessions","organic_sessions","trial_signups","signup_to_paid_cvr"]
+        .map(id => KPIS.find(k => k.id === id)).filter(Boolean);
+
+      const labels = ["W-4","W-3","W-2","W-1","Now"];
+      const datasets = sample.map(k => {
+        const name = k.name?.[lang] || k.name?.en || k.id;
+        const base = typeof k.current === "number" ? k.current : 0;
+        const series = labels.map((_, i) => {
+          const drift = (i - (labels.length-1)) / 10;
+          const noise = (Math.sin(i*1.7) + 1) * 0.03;
+          let v = base * (1 + drift + noise);
+          if (k.unit?.en === "%" || k.unit?.ar === "%") v = clamp01(v);
+          return Number(v.toFixed(3));
+        });
+        return { label: name, data: series, tension: 0.35 };
+      });
+
+      if (trendChart) trendChart.destroy();
+      trendChart = new Chart(ctx1, {
+        type: "line",
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: "#e9eefc", boxWidth: 10 } } },
+          scales: {
+            x: { ticks: { color: "#a9b4d0" }, grid: { color: "rgba(255,255,255,.06)" } },
+            y: { ticks: { color: "#a9b4d0" }, grid: { color: "rgba(255,255,255,.06)" } }
+          }
+        }
+      });
+
+      const f = selectedFilters();
+      const arr = KPIS.filter(k => k.cat === f.cat);
+      const counts = { good:0, warn:0, bad:0, na:0 };
+      arr.forEach(k => counts[statusOf(k)]++);
+
+      if (statusChart) statusChart.destroy();
+      statusChart = new Chart(ctx2, {
+        type: "doughnut",
+        data: {
+          labels: [T().good, T().warn, T().bad, T().na],
+          datasets: [{ data: [counts.good, counts.warn, counts.bad, counts.na], borderColor: "rgba(0,0,0,.0)" }]
+        },
+        options: { responsive:true, plugins: { legend: { labels: { color:"#e9eefc" } } } }
+      });
+    }
+
+    function renderText(){
+      const t = T();
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("subtitle").textContent = t.subtitle;
+      document.getElementById("lastUpdated").childNodes[0].textContent = t.lastUpdated + " ";
+      document.getElementById("kpiLibraryTitle").textContent = t.kpiLibraryTitle;
+      document.getElementById("insightsTitle").textContent = t.insightsTitle;
+      document.getElementById("exportBtn").textContent = t.exportBtn;
+      document.getElementById("importBtn").textContent = t.importBtn;
+      document.getElementById("resetBtn").textContent = t.resetBtn;
+      document.getElementById("searchLbl").textContent = t.searchLbl;
+      document.getElementById("ownerLbl").textContent = t.ownerLbl;
+      document.getElementById("cadenceLbl").textContent = t.cadenceLbl;
+      document.getElementById("statusLbl").textContent = t.statusLbl;
+      document.getElementById("hintTop").textContent = t.hintTop;
+      document.getElementById("trendHint").textContent = t.trendHint;
+      document.getElementById("statusHint").textContent = t.statusHint;
+      document.getElementById("notesTitle").textContent = t.notesTitle;
+      document.getElementById("notesSub").textContent = t.notesSub;
+      document.getElementById("notesHint").textContent = t.notesHint;
+      document.getElementById("csvTitle").textContent = t.csvTitle;
+      document.getElementById("csvSub").textContent = t.csvSub;
+      document.getElementById("applyPasteBtn").textContent = t.applyPasteBtn;
+      document.getElementById("fillTemplateBtn").textContent = t.fillTemplateBtn;
+      document.getElementById("csvHint").textContent = t.csvHint;
+      document.getElementById("footLeft").textContent = t.footLeft;
+      document.getElementById("autoNotesBtn").textContent = t.autoNotesBtn;
+
+      const cadSel = document.getElementById("cadence");
+      [...cadSel.options].forEach(op => {
+        if (op.value === "all") op.textContent = t.all;
+        if (t.cadence[op.value]) op.textContent = t.cadence[op.value];
+      });
+      const stSel = document.getElementById("status");
+      [...stSel.options].forEach(op => {
+        if (op.value === "all") op.textContent = t.all;
+        if (op.value === "good") op.textContent = t.good;
+        if (op.value === "warn") op.textContent = t.warn;
+        if (op.value === "bad") op.textContent = t.bad;
+        if (op.value === "na") op.textContent = t.na;
+      });
+      document.getElementById("notes").style.direction = (getLang() === "ar") ? "rtl" : "ltr";
+      document.getElementById("footRight").innerHTML = `${t.savedAt} <span id="savedAt">${localStorage.getItem("modonty_kpis_saved_at") || "-"}</span>`;
+    }
+
+    function render(){
+      renderText();
+      renderSummary();
+      renderKpis();
+      buildCharts();
+    }
+
+    function toast(msg){
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.style.display = "none", 2400);
+    }
+
+    function exportCSV(){
+      const rows = [["kpi_id","current","target","owner","cadence","category"]];
+      KPIS.forEach(k => rows.push([k.id, k.current, k.target, k.owner, k.cadence, k.cat]));
+      const csv = rows.map(r => r.map(v => {
+        const s = (v === null || v === undefined) ? "" : String(v);
+        return (s.includes(",") || s.includes('"') || s.includes("\n")) ? `"${s.replace(/"/g,'""')}"` : s;
+      }).join(",")).join("\n");
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "modonty_kpis.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast(T().toast.exported);
+    }
+
+    function applyCSVText(text){
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const updates = [];
+      lines.forEach((line, idx) => {
+        if (idx === 0 && line.toLowerCase().includes("kpi_id")) return;
+        const parts = line.split(",");
+        if (parts.length < 3) return;
+        const id = parts[0].trim();
+        const curRaw = parts[1].trim();
+        const tgtRaw = parts[2].trim();
+        const parseSmart = (s) => {
+          if (s === "") return "";
+          if (s.endsWith("%")){
+            const n = parseFloat(s.slice(0,-1));
+            if (isNaN(n)) return s;
+            return n / 100;
+          }
+          const n = Number(s.replace(/,/g,""));
+          if (!isNaN(n)) return n;
+          return s;
+        };
+        updates.push({ id, current: parseSmart(curRaw), target: parseSmart(tgtRaw) });
+      });
+      let applied = 0;
+      updates.forEach(u => {
+        const k = KPIS.find(x => x.id === u.id);
+        if (!k) return;
+        k.current = u.current;
+        k.target = u.target;
+        applied++;
+      });
+      saveState(KPIS.map(x => ({ id:x.id, current:x.current, target:x.target, owner:x.owner })));
+      toast(T().toast.applied + " (" + applied + ")");
+      render();
+    }
+
+    function fillTemplate(){
+      const ids = filteredKPIs().slice(0,6).map(k => k.id);
+      const rows = ["kpi_id,current,target"].concat(ids.map(id => `${id},,`)).join("\n");
+      document.getElementById("csvPaste").value = rows;
+    }
+
+    function resetAll(){
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_NOTES);
+      localStorage.removeItem("modonty_kpis_saved_at");
+      hydrate();
+      toast(T().toast.reset);
+      render();
+    }
+
+    function generateNotes(){
+      const lang = getLang();
+      const f = selectedFilters();
+      const arr = KPIS.filter(k => k.cat === f.cat);
+      const bad = arr.filter(k => statusOf(k) === "bad");
+      const warn = arr.filter(k => statusOf(k) === "warn");
+      const pickName = (k) => k.name?.[lang] || k.name?.en || k.id;
+
+      let text = "";
+      if (lang === "ar"){
+        text += `ملخص ${T().tabs[f.cat]}:\n`;
+        text += `- المؤشرات البعيدة عن الهدف: ${bad.length}\n`;
+        text += `- المؤشرات القريبة من الهدف: ${warn.length}\n\n`;
+        if (bad.length){
+          text += "أهم فجوات تحتاج إجراء:\n";
+          bad.slice(0,4).forEach((k, i) => {
+            text += `${i+1}) ${pickName(k)}: الحالي ${k.current} مقابل الهدف ${k.target}. الإجراء: ${k.action?.ar || "حدد إجراء واضح ومالك وموعد."}\n`;
+          });
+          text += "\n";
+        }
+        if (warn.length){
+          text += "فرص سريعة لتحويل القريب إلى ضمن الهدف:\n";
+          warn.slice(0,3).forEach((k, i) => {
+            text += `${i+1}) ${pickName(k)}: شدد المتابعة أسبوعيا وطبق تحسينات صغيرة على ما يعيق الوصول للهدف.\n`;
+          });
+          text += "\n";
+        }
+        text += "الخطوة القادمة: حدد 3 إجراءات فقط لهذا الاسبوع مع مالك ومقياس نجاح واضح.\n";
+      } else {
+        text += `Summary for ${T().tabs[f.cat]}:\n`;
+        text += `- Off target: ${bad.length}\n`;
+        text += `- Near target: ${warn.length}\n\n`;
+        if (bad.length){
+          text += "Top gaps requiring action:\n";
+          bad.slice(0,4).forEach((k, i) => {
+            text += `${i+1}) ${pickName(k)}: current ${k.current} vs target ${k.target}. Action: ${k.action?.en || "Define a clear action, owner, and deadline."}\n`;
+          });
+          text += "\n";
+        }
+        if (warn.length){
+          text += "Quick wins to turn near into on target:\n";
+          warn.slice(0,3).forEach((k, i) => {
+            text += `${i+1}) ${pickName(k)}: increase weekly tracking and remove the main blocker.\n`;
+          });
+          text += "\n";
+        }
+        text += "Next: pick only 3 actions for this week with owner and success criteria.\n";
+      }
+      const notes = document.getElementById("notes");
+      notes.value = text;
+      saveNotes(text);
+      document.getElementById("notesBadge").textContent = "Updated";
+      toast("OK");
+    }
+
+    function wire(){
+      ["search","owner","cadence","status"].forEach(id => {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+      document.getElementById("notes").addEventListener("input", (e) => saveNotes(e.target.value));
+      document.getElementById("exportBtn").addEventListener("click", exportCSV);
+      document.getElementById("applyPasteBtn").addEventListener("click", () => applyCSVText(document.getElementById("csvPaste").value));
+      document.getElementById("fillTemplateBtn").addEventListener("click", fillTemplate);
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+      document.getElementById("importBtn").addEventListener("click", () => { document.getElementById("csvPaste").focus(); toast("Paste CSV then click Apply"); });
+      document.getElementById("autoNotesBtn").addEventListener("click", generateNotes);
+
+      document.getElementById("langBtn").addEventListener("click", () => {
+        const next = getLang() === "ar" ? "en" : "ar";
+        setLang(next);
+        document.documentElement.lang = next === "ar" ? "ar" : "en";
+        document.documentElement.dir = next === "ar" ? "rtl" : "ltr";
+        buildTabs();
+        buildOwnerFilter();
+        render();
+      });
+    }
+
+    function init(){
+      const lang = getLang();
+      document.documentElement.lang = lang === "ar" ? "ar" : "en";
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      hydrate();
+      buildTabs();
+      buildOwnerFilter();
+      buildCharts();
+      wire();
+      render();
+    }
+    init();
+  </script>
+</body>
+</html>

@@ -23,6 +23,96 @@ During any live test session:
 
 ## Session: 2026-04-30 — userVersion optimistic-locking fix + Toast UX overhaul (Session 76)
 
+### OBS-215 🟡 IN-PROGRESS — Guideline source-of-truth folder established (Phase 1 of Knowledge Hub project)
+- **Decision:** the admin Knowledge Hub (sales/marketing/content/design/operations playbook) needs raw source materials in one canonical place before synthesis. Otherwise every refresh = re-research from scratch.
+- **Architecture (4-phase model agreed with user):**
+  - Phase 1 (current) — Khalid dumps every source file (branding, marketing studies, sales playbooks, competitor analyses, etc.) into `documents/guideline/sources/` — flat, no folders. He pushes new files in same folder. When done, says "تم".
+  - Phase 2 — agent categorizes the dumped files into themed sub-folders inside `sources/` (branding, research, competitors, etc.). Sources are NEVER modified, only categorized.
+  - Phase 3 — agent reads all sources end-to-end and produces `documents/guideline/SYNTHESIS.md` (cream-of-cream extract) + `GOLDEN-RULES.md` (canonical rules) + `CHANGELOG.md` (which source contributed what).
+  - Phase 4 — actual `/guidelines/*` admin pages wire to read content from this synthesis (not from raw sources scattered elsewhere). Layout: full Dashboard with persistent sidebar (per Khalid's revised proposal — better than landing-with-cards).
+- **Done in this session:**
+  - Created `documents/guideline/` + `documents/guideline/sources/`
+  - `git mv` moved 4 existing files from `documents/01-business-marketing/` → `documents/guideline/sources/`:
+    - MARKETING-BRIEF-2026.html
+    - MODONTY-MASTERCLASS.html (126KB — biggest, contains 5 ICPs, 7 pain points, 6 competitive battles, sales scripts, 6 golden lines)
+    - PRODUCT-MARKETING-MASTER-BRIEF.html
+    - PRODUCT-MARKETING-MASTER-BRIEF.md
+  - Removed empty `documents/01-business-marketing/` folder
+  - Wrote `documents/guideline/README.md` explaining the 4-phase workflow + immutability rules
+- **Pending:** waiting on Khalid to drop more sources, then trigger Phase 2 by saying "تم".
+
+### OBS-214 ✅ DONE — Modonty Code Refactor skill installed (`.claude/skills/modonty-code-refactor/`)
+- **User intent:** "نبغى skill احترافي للـ refactor" — skill that enforces zero-behavior-change refactors specific to the Modonty monorepo
+- **Process:** user pasted v1 draft → I reviewed and identified 8 issues (SEO/a11y as "polish phase" was actually behavior-changing, no Playwright in final verification, no commit-per-phase, missing Modonty-specific Hard Limits like cross-app duplication) → produced v2 with 10 enhancements → user approved → installed
+- **Key Modonty-specific protections (Hard Limits):**
+  - Cross-app component duplication = STOP (no shared UI package exists; lift requires architectural decision)
+  - `dataLayer/` untouchable
+  - Console permission tiers (Basic/Standard/Pro/Premium) untouchable
+  - RTL classes (`ps/pe/ms/me/start/end`) sacred
+  - SEO/a11y additions are a separate task, not refactor (they change behavior)
+  - Memo/useMemo additions forbidden during refactor (changes render timing)
+- **Process integration with existing memory:**
+  - Step 6 = full pre-push hygiene (TSC + build + version bump + backup + changelog + SESSION-LOG + secret scan)
+  - Step 5 = Playwright on 5 representative pages (matches "Full live test before push" memory rule)
+  - Each phase = atomic commit (`git add <files>`, no `-A`)
+- **Coexists with `Refactor Safely` skill** (which handles code-review-graph MCP tool mechanics) — they complement, not overlap
+- **File:** `.claude/skills/modonty-code-refactor/SKILL.md` (~290 lines, folder format for future expansion)
+- **Auto-trigger phrases:** "refactor" / "ريفاكتور" / "نظف الكود" / "راجع الكود" / "قلل التعقيد" / "deduplicate" / "minimize DOM"
+
+### OBS-213 ✅ DONE — Admin sidebar icons disambiguated + Google Search Console brand icon (multicolor inline SVG)
+- **User feedback (round 1):** "حسّن الأيقونات في الشريط الجانبي. خذ أيقونة Google الخاصة بـ Search Console عشان تكون واضحة."
+- **User feedback (round 2 after first attempt):** "الـ icon تبع Search Console اللي في Side bar غير صحيحة. استخدم الـ Search Console اللي بتستخدمه Google نفسها."
+  - Round 1 used `react-icons/si SiGooglesearchconsole` — but Simple Icons are monochrome (single path with currentColor) → on dark theme it just looked like a generic search icon, not Google's recognizable multicolor brand mark.
+  - Round 2 fix: built custom inline SVG component `admin/components/admin/icons/google-search-console-icon.tsx` with hardcoded Google brand colors (Google blue ring `#4285F4`, Google grey handle `#5F6368`, multicolor bar chart inside the lens — blue/red `#EA4335`/yellow `#FBBC04`). Stays multicolor on any theme.
+  - Removed `react-icons` dependency entirely (was added in round 1, no longer needed) — net dependency change: zero.
+- **Audit found 6 icon problems:**
+  1. `Search` used for both Search Console + SEO Overview (top items couldn't be distinguished)
+  2. `Mail` used 3 times (Subscribers + Email Templates + Audience group)
+  3. `Settings` used twice (System group + Settings item)
+  4. `FileText` used twice (Content group + Articles)
+  5. `Info` used twice (Modonty Pages group + About)
+  6. `ShieldAlert` for "Error Logs" implies security-incident — wrong semantic
+- **Fix:**
+  - Search Console → custom inline SVG with Google brand colors (truly recognizable as GSC)
+  - SEO Overview → `LineChart` (distinct trending visual)
+  - Content group → `Library` (was FileText — duplicated Articles inside)
+  - Modonty Pages group → `BookOpen` (was Info — duplicated About inside)
+  - Audience group → `Users2` (was Mail — duplicated Subscribers inside)
+  - System group → `Wrench` (was Settings — duplicated item inside)
+  - Authors → `UserPen` (was Pen — clearer = author/writer)
+  - Subscribers → `MailPlus` (was Mail — distinct from Email Templates)
+  - Email Templates → `MailOpen` (was Mail — distinct from Subscribers)
+  - Error Logs → `Bug` (was ShieldAlert — correct semantic)
+- **MenuItem.icon type widened** from `typeof Folder` to `React.ComponentType<{ className?: string }>` to accept both lucide and react-icons components
+- **TSC:** admin=0 · live verified via Playwright screenshot — all 11 changes render correctly + no flash on header (previous OBS-212 fix still working)
+
+### OBS-212 ✅ DONE — Admin header flash fixed by hoisting SessionProvider + pre-hydrating session from server
+- **User observation:** "Sidebar يظهر أول، بعدين بعد ثانية يظهر النابار" — visual flash where header is invisible for ~100-300ms after sidebar paints.
+- **Root cause:** `Header` is a client component using `useSession()` with a guard `if (!session?.user) return null`. On first render, `useSession()` returns undefined (loading state) → header returns null → invisible. NextAuth then fetches `/api/auth/session` → session arrives → re-render → header appears. Server already knew the session (via `auth()` in layout), but client didn't have it pre-hydrated.
+- **Discovery during fix:** SessionProvider was duplicated — once in root `app/layout.tsx` (via `<Providers>`) AND once in `app/(dashboard)/layout.tsx`. Both without `session` prop.
+- **Fix (best practice — Option A: single SessionProvider at root):**
+  - `app/layout.tsx` — converted to `async`, calls `auth().catch(() => null)` (returns null on public routes like `/login` — fine), passes `session` to `<Providers>`
+  - `app/components/providers/providers.tsx` — accepts `session: Session | null` prop, forwards to inner `<SessionProvider>`
+  - `app/components/providers/session-provider.tsx` — accepts `session` prop, passes to `NextAuthSessionProvider session={session}` (NextAuth pre-hydration pattern)
+  - `app/(dashboard)/layout.tsx` — removed the redundant inner `<SessionProvider>` wrapper (still calls `auth()` for redirect-on-unauthenticated gate — that role unchanged)
+- **Why best practice over minimal patch:** nested SessionProviders are an anti-pattern; single source of truth is cleaner; root pre-hydration handles ALL routes (dashboard + login + future) consistently.
+- **TSC:** admin=0. Curl smoke: `/login` → 200, `/` → 200.
+
+### OBS-211 ✅ DONE — Next.js patch upgrade 16.1.6 → 16.2.4 (TSC clean, zero code changes)
+- **Decision-prep:** Context7 query revealed 16.2.2 was latest stable in 16.x line, with React 19.2 features layered in (View Transitions, useEffectEvent, Activity — all opt-in). App Router internally uses React canary, so no breaking change for our usage.
+- **Action:** bumped `^16.1.6` → `^16.2.2` in `next` + `eslint-config-next` across 3 package.json files (admin, modonty, console). pnpm resolved to actual install of `16.2.4` (semver-safe, even more recent patches).
+- **Result:** TSC clean on all 3 apps (admin=0, modonty=0, console=0). Zero source-file edits required. Lockfile updated.
+- **Side observation:** Prisma postinstall warned that `package.json#prisma` config block will be removed in Prisma 7 — confirms our deferral decision (v6 → v7 needs dedicated migration session for `prisma.config.ts` + datasource URL refactor).
+- **Modonty postinstall hiccup:** EPERM file-lock on Prisma DLL during initial run (Windows). Resolved by re-running `pnpm exec prisma generate` after the file handles released — clean on retry.
+- **Pending:** push when user authorizes. No version bumps applied yet (waiting on user decision whether to bundle this with a feature push or push standalone).
+
+### OBS-210 ✅ DONE — Removed duplicate "Dashboard" link from admin sidebar
+- **User feedback:** "in admin there are two links for the dashboard. keep one of them" — showed two screenshots: Modonty logo (header) + Dashboard button (sidebar). Both routed to `/`.
+- **Decision:** kept the Modonty logo in the header navbar (brand identity always-visible) · removed the Dashboard item from sidebar (was first item under topItems).
+- **Files:** `admin/components/admin/sidebar.tsx` — dropped `{ icon: LayoutDashboard, label: "Dashboard", href: "/" }` from `topItems` + cleaned the now-unused `LayoutDashboard` icon import.
+- **Verified:** no other component in `admin/components/` referenced `LayoutDashboard` (no mobile-sidebar duplicate).
+- **TSC:** admin=0.
+
 ### OBS-209 ✅ DONE — Toast UX overhaul on both admin and console
 - **User feedback (verbatim):** "الـ رسالة Notification أو Twist Notification bad UX. مو واضحة، تطلع وتختفي بسرعة. ما أدري، نحسنها ولا ننزل الـ sweet sweet alert 2 تقريبًا."
 - **Senior decision (rejected sweetalert2):** sweetalert is a blocking modal, wrong tool for non-blocking feedback. Bundle 13KB+ vs configuring what we already have. Industry pattern: 2-tier UX → sonner-style toast for casual feedback + shadcn AlertDialog for destructive confirmations. Both are already in our stack.

@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Personas و Empathy وبدائل SEO SaaS | السعودية</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#eaf0ff; --muted:#b9c4e6; --muted2:#8ea0d6;
+      --line:rgba(255,255,255,.08); --accent:#7aa7ff; --good:#5ee2a0; --warn:#ffd46a; --bad:#ff7a8a;
+      --shadow: 0 18px 60px rgba(0,0,0,.35); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+      background: radial-gradient(1200px 700px at 70% 10%, rgba(122,167,255,.18), transparent 55%),
+                  radial-gradient(900px 650px at 20% 30%, rgba(94,226,160,.12), transparent 55%),
+                  radial-gradient(900px 700px at 50% 100%, rgba(255,122,138,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text); line-height:1.6;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px 18px 14px; border:1px solid var(--line); border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      position: sticky; top: 10px; z-index: 30; backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;flex-direction:column;gap:6px}
+    .brand h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .brand p{margin:0;color:var(--muted);font-size:12.5px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+    .chip{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:8px 10px; border-radius:999px; color:var(--muted);
+      font-size:12.5px; cursor:pointer; user-select:none;
+      display:flex;gap:8px;align-items:center
+    }
+    .chip strong{color:var(--text);font-weight:700}
+    .chip[aria-pressed="true"]{outline:2px solid rgba(122,167,255,.5); color:var(--text)}
+    .search{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      border-radius:999px; padding:10px 12px; width:min(340px, 70vw);
+      color:var(--text); outline:none;
+    }
+    .grid{display:grid; gap:14px; grid-template-columns: 1.25fr .75fr; margin-top:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} header{position:relative;top:auto} }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .title{display:flex;align-items:center;gap:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px rgba(122,167,255,.12)}
+    .hd h2{margin:0;font-size:14.5px}
+    .hd small{color:var(--muted2)}
+    .body{padding:14px 16px}
+    .kpis{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px}
+    @media (max-width: 700px){ .kpis{grid-template-columns:1fr} }
+    .kpi{border:1px solid var(--line); background: rgba(16,26,51,.55); border-radius:16px; padding:12px 12px;}
+    .kpi .v{font-size:18px;font-weight:800}
+    .kpi .l{font-size:12.5px;color:var(--muted)}
+    .kpi .s{font-size:12px;color:var(--muted2);margin-top:4px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--line); background: rgba(255,255,255,.03); color:var(--muted);
+      padding:8px 10px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .tab.active{color:var(--text); outline:2px solid rgba(122,167,255,.45)}
+    .section{display:none; margin-top:12px}
+    .section.active{display:block}
+    details{border:1px solid var(--line); background: rgba(255,255,255,.03); border-radius:16px; padding:10px 12px; margin:10px 0;}
+    summary{cursor:pointer; font-weight:800}
+    summary span{color:var(--muted); font-weight:600}
+    .list{margin:10px 0 0; padding:0 18px 0 0}
+    .list li{margin:6px 0;color:var(--text)}
+    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px;}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .sw{width:10px;height:10px;border-radius:3px;background:var(--accent);display:inline-block}
+    .mini{font-size:12px;color:var(--muted)}
+    .table{
+      width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+      border-radius:16px; border:1px solid var(--line); background: rgba(16,26,51,.45);
+    }
+    .table th, .table td{
+      padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:right; font-size:12.5px; vertical-align:top;
+    }
+    .table th{color:var(--muted); font-weight:800; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:0}
+    .note{border:1px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.03);
+      padding:10px 12px; border-radius:16px; color:var(--muted); font-size:12.5px; margin-top:10px;}
+    .btn{
+      border:1px solid var(--line); background: rgba(255,255,255,.04); color:var(--text);
+      padding:9px 12px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .btn:hover{outline:2px solid rgba(255,255,255,.08)}
+    .footer{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; color:var(--muted); font-size:12.5px;}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.03);}
+    canvas{width:100%; height:260px; background: rgba(16,26,51,.35); border:1px solid var(--line); border-radius:16px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+    .callout{border:1px solid rgba(122,167,255,.22); background: rgba(122,167,255,.08); border-radius:16px; padding:12px 12px;}
+    .small{font-size:12.5px;color:var(--muted)}
+    .hl{color:var(--accent);font-weight:900}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .tag{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.03); color:var(--muted); font-size:12px; margin:4px 6px 0 0;}
+    .formrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px}
+    .input{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      border-radius:12px; padding:10px 12px; color:var(--text); outline:none; width: 180px;
+    }
+    .muted{color:var(--muted)}
+    mark{background:rgba(122,167,255,.22);color:inherit;padding:0 4px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Personas و Empathy Maps وبدائل الشراء لحل SEO SaaS في السعودية</h1>
+        <p>لوحة تفاعلية: توزيع personas - لجنة القرار - التحديات قبل الشراء - تكلفة البدائل - Empathy Maps مفصلة.</p>
+      </div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="ابحث داخل الملف (مثال: CAC، فريلانسر، CTO، Pipeline...)" />
+        <button class="chip" id="toggleNumbers" aria-pressed="true" title="إظهار أو إخفاء الأرقام">
+          <strong>الأرقام</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="chip" id="toggleNotes" aria-pressed="true" title="إظهار أو إخفاء الملاحظات">
+          <strong>ملاحظات</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="btn" id="exportBtn" title="نسخ ملخص سريع">نسخ ملخص سريع</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="mainCard">
+        <div class="hd">
+          <div class="title"><span class="dot"></span><h2>لوحة Personas للـB2B SaaS</h2></div>
+          <small>آخر تحديث: <span id="today"></span></small>
+        </div>
+        <div class="body">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="6">6</span></div>
+              <div class="l">Personas أساسية + مؤثر تقني</div>
+              <div class="s">B2B SaaS داخل السعودية</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="3">3</span> مراحل</div>
+              <div class="l">Pipeline المقترح للقياس</div>
+              <div class="s">MQL - SQL - Trials/Paid</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="1">1</span> نقطة ضعف متكررة</div>
+              <div class="l">عدم ربط SEO بالإيراد</div>
+              <div class="s">Traffic بدون Pipeline</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="tabs" role="tablist" aria-label="أقسام الملف">
+            <div class="tab active" data-tab="exec">ملخص تنفيذي</div>
+            <div class="tab" data-tab="dist">توزيع Personas</div>
+            <div class="tab" data-tab="committee">لجنة القرار</div>
+            <div class="tab" data-tab="challenges">التحديات قبل الشراء</div>
+            <div class="tab" data-tab="alts">تكلفة البدائل</div>
+            <div class="tab" data-tab="empathy">Empathy Maps</div>
+          </div>
+
+          <div class="section active" id="sec-exec">
+            <div class="callout">
+              <b>الخلاصة:</b>
+              أكبر مالك قرار يومي غالبا هو <span class="hl">Head of Marketing</span> (<span class="num" data-n="32">32</span>%).
+              الـFounder/CEO مؤثر مالي قوي (<span class="num" data-n="28">28</span>%) ويشتري تقليل المخاطر والوضوح وربط الـSEO بالـPipeline.
+              الـGrowth يركز على CAC وConversion (<span class="num" data-n="14">14</span>%)، والـContent Lead يريد نظام تشغيل وQA (<span class="num" data-n="10">10</span>%).
+              الـSEO Specialist يريد سيطرة وشفافية (<span class="num" data-n="8">8</span>%)، والـCTO كمؤثر تقني (<span class="num" data-n="8">8</span>%) يهمه الأداء والأمان.
+            </div>
+
+            <details open>
+              <summary>كيف تبيع لكل Persona في جملة واحدة <span>(اتجاه الميسيج)</span></summary>
+              <ul class="list">
+                <li><b>Founder/CEO:</b> تقليل مخاطر + قناة نمو متوقعة + شفافية Pipeline.</li>
+                <li><b>Head of Marketing:</b> نظام تشغيل محتوى + حوكمة + تقارير تقنع الإدارة.</li>
+                <li><b>Head of Growth:</b> ربط SEO بـBOFU + تحسين CRO + Impact على CAC.</li>
+                <li><b>Content Lead:</b> Briefs وقوالب وQA تقلل المراجعات وترفع الجودة العربية.</li>
+                <li><b>SEO Specialist:</b> سيطرة وTracking وAudit وتذاكر جاهزة للـDev.</li>
+                <li><b>CTO:</b> تكامل خفيف + حماية CWV + تغيير قابل للتنفيذ بدون ضغط.</li>
+              </ul>
+            </details>
+
+            <div class="note noteToggle">
+              <b>ملاحظة:</b> نسب التوزيع هنا تقديرية كما وردت في المحتوى، وتستخدم لتوجيه استراتيجية الميسيج وميزة المنتج وخطة البيع.
+            </div>
+          </div>
+
+          <div class="section" id="sec-dist">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>توزيع Personas (تقديري)</summary>
+                  <canvas id="personaChart" width="900" height="420"></canvas>
+                  <div class="legend" id="personaLegend"></div>
+                </details>
+                <details>
+                  <summary>اختيار Persona سريع <span>(تفاعلي)</span></summary>
+                  <div id="personaTags"></div>
+                  <div class="note noteToggle">اختيار أي Persona سيعرض ملخص الهدف والتحديات وما يقنعه.</div>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>ملخص Persona المختارة</summary>
+                  <div class="callout" id="personaMini">اختر Persona من القائمة لعرض ملخصها هنا.</div>
+                </details>
+                <details>
+                  <summary>اعتراضات شائعة في السوق <span>(للبيع)</span></summary>
+                  <ul class="list">
+                    <li>ليش ما أروح لفريلانسر؟</li>
+                    <li>الوكالة تعمل كل شيء.</li>
+                    <li>SEO بطيء مقارنة بالإعلانات.</li>
+                    <li>نحتاج Top 1 بسرعة.</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="sec-committee">
+            <details open>
+              <summary>لجنة القرار داخل SaaS في السعودية <span>(Buying Committee)</span></summary>
+              <table class="table">
+                <thead><tr><th>الدور</th><th>الصفة</th><th>ما يركز عليه</th></tr></thead>
+                <tbody>
+                  <tr><td>Owner</td><td>Head of Marketing</td><td>القرار اليومي والتنفيذ والقياس</td></tr>
+                  <tr><td>Economic buyer</td><td>CEO/Founder أو Finance</td><td>الميزانية والمخاطر ووضوح العائد</td></tr>
+                  <tr><td>Influencers</td><td>Growth + SEO + CTO</td><td>Impact وبيانات وتكامل وأداء</td></tr>
+                  <tr><td>Users</td><td>Content team + writer pool</td><td>العملية اليومية: briefs - كتابة - مراجعة - نشر</td></tr>
+                  <tr><td>Gatekeeper</td><td>Procurement</td><td>التعاقد والامتثال والمقارنة السعرية</td></tr>
+                </tbody>
+              </table>
+            </details>
+
+            <details>
+              <summary>من يمتلك الاعتماد النهائي غالبا؟</summary>
+              <ul class="list">
+                <li>SMB/Startups: CEO غالبا يحسم القرار مع Marketing.</li>
+                <li>شركات أكبر: Finance/Procurement يدخلان بقوة قبل التوقيع.</li>
+                <li>CTO قد يعطل الصفقة لو التكامل ثقيل أو يؤثر على الأداء.</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="section" id="sec-challenges">
+            <details open>
+              <summary>التحديات الحقيقية قبل شراء حل SEO SaaS <span>(مرتبة حسب التكرار)</span></summary>
+              <ol class="list" style="padding-right:22px">
+                <li>عدم القدرة على ربط SEO بالإيراد (Traffic وليس Pipeline).</li>
+                <li>نقص إنتاج محتوى عالي الجودة (خصوصا العربي) مع منافسة عالية.</li>
+                <li>تشتت العملية: briefs في مكان - كتابة في مكان - مراجعة في مكان - نشر في مكان.</li>
+                <li>Technical debt يؤخر النتائج (Indexing، CWV، بنية الموقع).</li>
+                <li>توقعات غير واقعية (Top 1 خلال أسابيع).</li>
+                <li>اعتماد مفرط على مزود خارجي بدون معرفة داخلية يؤدي لفشل متكرر.</li>
+              </ol>
+            </details>
+
+            <details>
+              <summary>علامات خطر (Signals) أنك ستخسر الصفقة</summary>
+              <ul class="list">
+                <li>العميل يطلب ترتيب لكلمات تنافسية خلال 30 يوم فقط.</li>
+                <li>لا توجد موافقة على محتوى مستمر أو موارد كتابة.</li>
+                <li>لا يوجد Tracking واضح للـTrials/Leads من العضوي.</li>
+                <li>الـDev غير متاح أو يوجد backlog ضخم.</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="section" id="sec-alts">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>جدول بدائل الشراء (بالأرقام)</summary>
+                  <table class="table">
+                    <thead><tr><th>البديل</th><th>النطاق/المتوسط</th><th>تكلفة مخفية</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>وكالة SEO (Retainer شهري)</td>
+                        <td>من <span class="num" data-n="1700">1700</span> إلى <span class="num" data-n="7700">7700</span> SAR شهريا. وقد تصل <span class="num" data-n="50000">50000</span>+ SAR في Enterprise.</td>
+                        <td>اعتماد كامل على طرف خارجي - بطء موافقات المحتوى - صعوبة نقل المعرفة عند الإنهاء</td>
+                      </tr>
+                      <tr>
+                        <td>فريلانسر SEO (بالساعة)</td>
+                        <td><span class="num" data-n="15">15</span> إلى <span class="num" data-n="35">35</span> USD/ساعة (Median ~ <span class="num" data-n="21">21</span>). تحويل تقريبي: <span class="num" data-n="1">1</span> USD ≈ <span class="num" data-n="3.75">3.75</span> SAR.</td>
+                        <td>يفشل عند الحاجة لنظام تشغيل محتوى متكامل وتغطية أدوار متعددة</td>
+                      </tr>
+                      <tr>
+                        <td>توظيف In-house SEO Specialist</td>
+                        <td>حوالي <span class="num" data-n="138000">138000</span> إلى <span class="num" data-n="142620">142620</span> SAR سنويا (تقريبا <span class="num" data-n="11500">11500</span> إلى <span class="num" data-n="11900">11900</span> شهريا قبل المزايا)</td>
+                        <td>يحتاج أدوات + محتوى + 6-12 شهر لإثبات الأثر</td>
+                      </tr>
+                      <tr>
+                        <td>فريق محتوى داخلي بدون SEO SaaS</td>
+                        <td>كاتب محتوى: <span class="num" data-n="4800">4800</span> إلى <span class="num" data-n="7200">7200</span> SAR شهريا</td>
+                        <td>بدون نظام SEO غالبا يصبح محتوى عام لا يلتقط نية الشراء ولا يبني clusters</td>
+                      </tr>
+                      <tr>
+                        <td>DIY Tools Stack بدل SaaS واحد</td>
+                        <td>Surfer يبدأ <span class="num" data-n="99">99</span> USD شهريا. Semrush تبدأ ~ <span class="num" data-n="165.17">165.17</span> USD شهريا. Ahrefs Lite <span class="num" data-n="99">99</span> GBP شهريا.</td>
+                        <td>أدوات كثيرة تعني عمليات أكثر - وقت تعلم - تكاملات - حدود استخدام - ضرورة فريق يديرها</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="note noteToggle">الأرقام أعلاه كما وردت في المحتوى المرسل، وقد تختلف حسب العرض، البلد، ونوع الباقة.</div>
+                </details>
+
+                <details>
+                  <summary>حاسبة فريلانسر (تحويل سريع)</summary>
+                  <div class="small">أدخل عدد الساعات شهريا واختر معدل الساعة (USD) وسعر التحويل (SAR) لحساب التكلفة.</div>
+                  <div class="formrow">
+                    <label class="pill">ساعات/شهر <input id="hrs" class="input" type="number" value="20" min="0" /></label>
+                    <label class="pill">USD/ساعة <input id="rate" class="input" type="number" value="21" min="0" step="0.5" /></label>
+                    <label class="pill">تحويل USD→SAR <input id="fx" class="input" type="number" value="3.75" min="0" step="0.01" /></label>
+                    <button class="btn" id="calcBtn">احسب</button>
+                  </div>
+                  <div class="callout" id="calcOut" style="margin-top:10px">النتيجة ستظهر هنا.</div>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>متى كل بديل يكون منطقي؟ <span>(قواعد عملية)</span></summary>
+                  <ul class="list">
+                    <li><b>وكالة:</b> عندما تريد تنفيذ واسع بسرعة مع محتوى وروابط وتقارير، لكنك تقبل الاعتماد عليها.</li>
+                    <li><b>فريلانسر:</b> عندما تحتاج مهمة محددة (Audit، محتوى محدود، أو دعم مؤقت) وليس محرك تشغيل كامل.</li>
+                    <li><b>In-house:</b> عندما لديك حجم محتوى كبير، وDev متعاون، وتريد بناء معرفة داخلية.</li>
+                    <li><b>Writer فقط:</b> عندما مشكلتك إنتاج لكن لديك SEO Strategy جاهزة وإشراف قوي.</li>
+                    <li><b>DIY Tools:</b> عندما لديك فريق يجيد الأدوات ويستطيع إدارة العمليات والتكاملات.</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary>مخاطر خفية في السوق السعودي <span>(تعطيل صفقات)</span></summary>
+                  <ul class="list">
+                    <li>الخوف من الالتزام بعقد طويل أو إلغاء صعب.</li>
+                    <li>سمعة مزود سابق أثرت على الثقة في SEO بالكامل.</li>
+                    <li>حساسية اللغة العربية وجودة التحرير في B2B.</li>
+                    <li>مخاوف CTO من scripts ثقيلة تؤثر على الأداء.</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="sec-empathy">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>اختيار Persona لعرض Empathy Map <span>(كامل)</span></summary>
+                  <div id="empathyTags"></div>
+                  <div class="divider"></div>
+                  <div class="callout" id="empathyFocus">اختر Persona لعرض Empathy Map الكامل هنا.</div>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>خلاصة استراتيجية <span>(للبيع)</span></summary>
+                  <ul class="list">
+                    <li>Founder تبيعه <b>تقليل المخاطر</b>.</li>
+                    <li>Marketing Manager تبيعه <b>النظام والحوكمة</b>.</li>
+                    <li>Growth تبيعه <b>الربط والImpact</b>.</li>
+                    <li>Content تبيعه <b>السهولة والجودة</b>.</li>
+                    <li>SEO تبيعه <b>التحكم والوضوح</b>.</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary>تعريف النجاح (Success Definition) عبر اللجنة</summary>
+                  <ul class="list">
+                    <li><b>CEO:</b> Leads حقيقية من جوجل واتجاه صعود.</li>
+                    <li><b>Marketing:</b> SEO جزء من محرك التسويق، ليس مشروع جانبي.</li>
+                    <li><b>Growth:</b> Trials ثم Paid بنسبة قابلة للشرح.</li>
+                    <li><b>Content:</b> محتوى قوي مع دورة مراجعات قصيرة.</li>
+                    <li><b>SEO:</b> تحسن مستمر مع تفسير واضح للأسباب.</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <span class="badge">وضع: <b id="modeLabel">عرض كامل</b></span>
+            <span class="badge">بحث: <b id="hits">0</b> نتيجة</span>
+            <span class="badge">RTL - جاهز للعرض</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="sideCard">
+        <div class="hd">
+          <div class="title"><span class="dot" style="background:var(--good);box-shadow:0 0 0 6px rgba(94,226,160,.12)"></span><h2>نظرة سريعة</h2></div>
+          <small>مختصر</small>
+        </div>
+        <div class="body">
+          <div class="pill">الأكثر شيوعا: <b>Marketing Manager</b> (<span class="num" data-n="32">32</span>%)</div>
+          <div style="height:10px"></div>
+
+          <details open>
+            <summary>أهم اعتراضات</summary>
+            <ul class="list">
+              <li>ليش ما أروح لفريلانسر؟</li>
+              <li>الوكالة تعمل كل شيء.</li>
+              <li>SEO بطيء.</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>أهم 3 تحديات</summary>
+            <ul class="list">
+              <li>ربط SEO بالإيراد</li>
+              <li>إنتاج محتوى عربي عالي الجودة</li>
+              <li>تشتيت العملية والأدوات</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>تحذير سريع</summary>
+            <div class="note noteToggle">إذا لا توجد موافقة على محتوى مستمر وتعاون من dev، غالبا ستفشل مبادرة SEO مهما كانت الأداة.</div>
+          </details>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('today').textContent = `${yyyy}-${mm}-${dd}`;
+
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const sections = {
+    exec: document.getElementById('sec-exec'),
+    dist: document.getElementById('sec-dist'),
+    committee: document.getElementById('sec-committee'),
+    challenges: document.getElementById('sec-challenges'),
+    alts: document.getElementById('sec-alts'),
+    empathy: document.getElementById('sec-empathy')
+  };
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(sections).forEach(s=>s.classList.remove('active'));
+      sections[t.dataset.tab].classList.add('active');
+      runSearch(document.getElementById('q').value.trim());
+    });
+  });
+
+  const toggleNumbers = document.getElementById('toggleNumbers');
+  function setNumbers(on){
+    document.querySelectorAll('.num').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNumbers.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNumbers.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+    document.getElementById('modeLabel').textContent = on ? 'عرض كامل' : 'عرض بدون أرقام';
+  }
+  toggleNumbers.addEventListener('click', ()=> setNumbers(toggleNumbers.getAttribute('aria-pressed') !== 'true'));
+  setNumbers(true);
+
+  const toggleNotes = document.getElementById('toggleNotes');
+  function setNotes(on){
+    document.querySelectorAll('.noteToggle').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNotes.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNotes.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+  }
+  toggleNotes.addEventListener('click', ()=> setNotes(toggleNotes.getAttribute('aria-pressed') !== 'true'));
+  setNotes(true);
+
+  document.querySelectorAll('.num[data-n]').forEach(el=>{ el.textContent = el.dataset.n; });
+
+  const personas = [
+    {key:'ceo', name:'Founder/CEO (SMB + Startups)', share:28, color:'#7aa7ff',
+      goal:'نمو سريع مع مخاطر أقل وبناء قناة نمو متوقعة.',
+      challenges:['لا يثق في SEO بسبب وعود سابقة أو نتائج بطيئة','يريد كلمات نية شراء وليس مجرد زيارات','لا يملك فريق محتوى قوي'],
+      convince:['لوحة تربط المحتوى بالـPipeline (MQL → SQL → Trials → Paid)','خطة 90 يوم واضحة ومؤشرات Leading'],
+      objections:['ليش ما أروح لفريلانسر؟','الوكالة تعمل كل شيء'],
+      empathy:{
+        thinkFeel:['أنا محتاج نمو حقيقي، مش تقارير حلوة','متوتر من الحرق المالي (Burn rate)','شايف SEO قناة محتملة لكن مش مضمونة','خايف يكرر تجربة فاشلة'],
+        see:['منافسين ظاهرين في جوجل بكثافة','مدونات بمقالات بدون Leads','أدوات كثيرة بتقول نفس الكلام','ضغط مستثمرين أو شركاء'],
+        hear:['SEO بياخد وقت','اصبر 6 شهور','الإعلانات أسرع','عايز traction واضح'],
+        sayDo:['عايز حل بسيط وواضح','يطلب أرقام Leads وTrials وRevenue','يتدخل في القرار','يغير الاتجاه بسرعة لو شاف فشل'],
+        pains:['عدم ربط SEO بالإيراد','ضياع وقت الفريق','محتوى كثير بدون أثر','وعود غير واقعية'],
+        gains:['Channel نمو متوقعة','محتوى يجلب عملاء مش زيارات','رؤية واضحة للتقدم قبل النتائج النهائية','تقليل الاعتماد على Paid Ads'],
+        fears:['يظهر أنه اتضحك عليه','يضيع 6 شهور بدون نتيجة','يلتزم بحل صعب الإلغاء'],
+        success:['أشوف Leads حقيقية جاية من محتوى جوجل واتجاه صعود واضح']
+      }
+    },
+    {key:'mm', name:'Head of Marketing / Marketing Manager', share:32, color:'#5ee2a0',
+      goal:'بناء محرك محتوى مستدام يخفف CAC ويحسن Qualified Leads.',
+      challenges:['ضغط تسليم Leads مع نقص موارد كتابة/تحرير','صعوبة تنسيق SEO مع فريق المنتج والمبيعات','قياس الأثر على الإيراد وليس الترافيك فقط'],
+      convince:['Content system: Topic clusters + Briefs + QA + تحديثات','Governance: من يكتب؟ من يراجع؟ SLA للنشر'],
+      objections:['الـLeads مش qualified','الـBriefs مش واضحة'],
+      empathy:{
+        thinkFeel:['واقع بين ضغط الإدارة وضغط التنفيذ','محتاج يبني نظام مش حملات','عارف إن SEO مهم بس مش عارف يديره لوحده'],
+        see:['فريق محتوى غير متخصص SEO','أدوات متفرقة وغير مترابطة','KPI غير متفق عليه','تقارير Traffic لا تقنع'],
+        hear:['CEO: فين العائد؟','Sales: الـLeads مش qualified','Content: الـBriefs مش واضحة','Agency: ده طبيعي في المرحلة دي'],
+        sayDo:['عايز Process واضح','يوازن بين سرعة وجودة','يطلب dashboards','يبحث عن حل يريحه إداريا'],
+        pains:['Chaos في المحتوى','صعوبة القياس','تضارب آراء الفرق','اعتماد كامل على أطراف خارجية'],
+        gains:['نظام محتوى قابل للتوسع','رؤية end-to-end','وضوح أولويات الكلمات والمقالات','تقارير تقنع الإدارة'],
+        fears:['يتحاسب على قناة غير ناضجة','يفقد السيطرة لصالح وكالة','يتهم بسوء الإدارة'],
+        success:['SEO أصبح جزء من الـMarketing Engine وليس مشروع جانبي']
+      }
+    },
+    {key:'growth', name:'Head of Growth / Performance Lead', share:14, color:'#ffd46a',
+      goal:'تخفيض CAC ورفع Conversion والـTrial-to-Paid.',
+      challenges:['يرى SEO بطيء مقارنة بـPaid','يريد تجارب سريعة وتحسين Conversion في صفحات الهبوط'],
+      convince:['ربط SEO بصفحات BOFU: comparisons, alternatives, use cases','تحسين CRO للصفحات التي تجيب الزيارات العضوية'],
+      objections:['عايز نتائج سريعة','وريني Impact'],
+      empathy:{
+        thinkFeel:['عقلية أرقام وتجارب','صبور على التجربة وليس على الغموض','شايف SEO long-term لكنه يحتاج ربط ذكي'],
+        see:['CAC عالي من Paid','Funnel غير متوازن','TOFU كثير بدون BOFU','Conversion ضعيف للعضوي'],
+        hear:['Marketing: المحتوى كويس','SEO: الترتيب بيتحسن','CEO: فين النمو؟'],
+        sayDo:['وريني Impact','يطلب Attribution واضح','يركز على المقارنات والاستخدامات','يعمل A/B tests'],
+        pains:['SEO بدون CRO','عدم وضوح Attribution','صعوبة اختبار SEO بسرعة'],
+        gains:['SEO يغذي الـFunnel','محتوى يحسن Conversion','بيانات واضحة لاتخاذ القرار'],
+        fears:['يعتمد على قناة بطيئة','يضيع فرص Growth أسرع','يفشل في إثبات ROI'],
+        success:['Organic يتحول لـTrials ثم Paid بنسبة واضحة']
+      }
+    },
+    {key:'content', name:'Content Lead / Content Manager', share:10, color:'#cdb4ff',
+      goal:'إنتاج محتوى بكفاءة بدون تضحية بالجودة.',
+      challenges:['كثرة stakeholders والمراجعات','صعوبة تحويل SEO guidelines لعملية كتابة مستمرة','محتوى عربي يحتاج معايير أعلى وتحرير أدق'],
+      convince:['أدوات briefs، checklists، وContent QA واضح','تدريب كتاب + قوالب جاهزة لمقالات المقارنة والتعريف وكيف تختار'],
+      objections:['عايز سرعة','حط الكلمة هنا'],
+      empathy:{
+        thinkFeel:['يريد جودة حقيقية','متعب من المراجعات اللانهائية','يرى SEO كقيود أحيانا'],
+        see:['كتاب غير متخصصين','Briefs سيئة','مقالات ترجع تعديلات كثيرة','ضغط إنتاج عالي'],
+        hear:['SEO: حط الكلمة هنا','Marketing: عايز سرعة','Management: عايز نتائج'],
+        sayDo:['عايز Guidelines واضحة','يبني قوالب','يحافظ على Voice','يدافع عن الجودة'],
+        pains:['معايير نجاح غير واضحة','صراع الجودة مقابل SEO','إرهاق الفريق'],
+        gains:['Briefs ذكية','QA واضح','نظام يقلل المراجعات','محتوى يفخر به'],
+        fears:['المحتوى يتحول Spam','الفريق يحترق','الجودة تضيع'],
+        success:['محتوى قوي قليل المراجعات ويظهر في جوجل']
+      }
+    },
+    {key:'seo', name:'SEO Specialist / SEO Manager', share:8, color:'#ff7a8a',
+      goal:'تنفيذ سريع وبيانات دقيقة وتحكم في الأولويات.',
+      challenges:['يحتاج أدوات قوية وبيانات keywords/backlinks','تنسيق Technical SEO مع dev','مقاومة داخلية: SEO شغل كلام'],
+      convince:['منتج يعطي سيطرة وشفافية: tracking, audit, internal linking, content optimization','تصدير مهام واضحة للـDev (tickets-ready)'],
+      objections:['ليه النتائج بطيئة؟','مش أولوية'],
+      empathy:{
+        thinkFeel:['تقني ومنهجي','محبط من ضعف التنفيذ','يريد سيطرة ووضوح'],
+        see:['مشاكل فهرسة','محتوى بلا استراتيجية','Dev backlog طويل','قرارات عشوائية'],
+        hear:['الإدارة: ليه النتائج بطيئة','Content: SEO معقد','Dev: مش أولوية'],
+        sayDo:['يطلب Data','يبني Roadmaps','يقنع الجميع','يستخدم أدوات كثيرة'],
+        pains:['Lack of authority','تنفيذ بطيء','أدوات غير مترابطة'],
+        gains:['Visibility','Control','Clear priorities','Faster execution'],
+        fears:['يظهر فاشل','يفقد مصداقيته','يتحمل أخطاء غيره'],
+        success:['تحسن مستمر وقابل للتفسير مع تحكم في الأولويات']
+      }
+    },
+    {key:'cto', name:'CTO/Engineering Lead (Influencer)', share:8, color:'#ffffff',
+      goal:'عدم تخريب الموقع أو الأداء أو الأمن.',
+      challenges:['أي أداة تخلق ضغط على الفريق أو تغييرات كثيرة','الخوف من سكربتات ثقيلة أو تداخلات'],
+      convince:['Integrations بسيطة وإرشادات تقنية قابلة للتنفيذ','أولوية Core Web Vitals وتجنب التأثير على الأداء'],
+      objections:['الأداة ثقيلة','هتعمل changes كتير'],
+      empathy:{
+        thinkFeel:['يخاف على الأداء والأمان','يريد أقل تغييرات ممكنة','يريد tickets واضحة','يرفض الوعود غير التقنية'],
+        see:['Backlog ممتلئ','سكربتات طرف ثالث ثقيلة','مشاكل CWV','مخاطر أمنية'],
+        hear:['Marketing: نحتاج SEO بسرعة','Vendor: تركيب بسيط','Team: ما عندنا وقت'],
+        sayDo:['يسأل عن impact على performance','يطلب توثيق','يفرض قيود','يركز على تقليل المخاطر'],
+        pains:['ضغط على الفريق','تداخلات غير متوقعة','تدهور CWV','سوء توثيق'],
+        gains:['تكامل خفيف','أولوية واضحة','Tickets ready','تحسن CWV مع SEO'],
+        fears:['انهيار الأداء أو اختراق','تكرار تجربة أداة مزعجة','تحميل الفريق فوق طاقته'],
+        success:['SEO يتحسن بدون تدهور الأداء وبأقل ضغط على الفريق']
+      }
+    }
+  ];
+
+  function shortLabel(n){
+    if(n.startsWith('Founder')) return 'CEO';
+    if(n.startsWith('Head of Marketing')) return 'Marketing';
+    if(n.startsWith('Head of Growth')) return 'Growth';
+    if(n.startsWith('Content Lead')) return 'Content';
+    if(n.startsWith('SEO Specialist')) return 'SEO';
+    return 'CTO';
+  }
+
+  function drawBarChart(canvas, items, title){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const pad = {t:46, r:24, b:56, l:70};
+    const chartW = W - pad.l - pad.r;
+    const chartH = H - pad.t - pad.b;
+
+    ctx.fillStyle = 'rgba(234,240,255,.95)';
+    ctx.font = '700 18px system-ui, sans-serif';
+    ctx.fillText(title, pad.l, 30);
+
+    const max = Math.max(...items.map(x=>x.value));
+    const step = Math.ceil(max/5);
+
+    ctx.strokeStyle = 'rgba(255,255,255,.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t);
+    ctx.lineTo(pad.l, pad.t+chartH);
+    ctx.lineTo(pad.l+chartW, pad.t+chartH);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(185,196,230,.9)';
+    ctx.font = '12px system-ui, sans-serif';
+    for(let i=0;i<=5;i++){
+      const y = pad.t + chartH - (chartH*(i/5));
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+chartW, y); ctx.stroke();
+      ctx.fillText(String(i*step), 18, y+4);
+    }
+
+    const gap = 12;
+    const barW = (chartW - gap*(items.length-1))/items.length;
+    items.forEach((it, idx)=>{
+      const x = pad.l + idx*(barW+gap);
+      const h = (it.value/max)*chartH;
+      const y = pad.t + chartH - h;
+
+      ctx.fillStyle = it.color;
+      ctx.globalAlpha = .9;
+      ctx.fillRect(x, y, barW, h);
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = 'rgba(234,240,255,.95)';
+      ctx.font = '700 12px system-ui, sans-serif';
+      ctx.fillText(`${it.value}%`, x + (barW/2) - 12, y - 8);
+
+      ctx.fillStyle = 'rgba(185,196,230,.95)';
+      ctx.font = '12px system-ui, sans-serif';
+      ctx.save();
+      ctx.translate(x + barW/2, pad.t + chartH + 20);
+      ctx.textAlign = 'center';
+      ctx.fillText(it.label, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  function buildLegend(el, items){
+    el.innerHTML = '';
+    items.forEach(it=>{
+      const d = document.createElement('div');
+      d.className = 'pill';
+      d.innerHTML = `<span class="sw" style="background:${it.color}"></span> ${it.label} <b class="num" data-n="${it.value}">${it.value}</b>%`;
+      el.appendChild(d);
+    });
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  const personaItems = personas.map(p=>({label: shortLabel(p.name), value:p.share, color:p.color})).sort((a,b)=>b.value-a.value);
+  drawBarChart(document.getElementById('personaChart'), personaItems, 'توزيع Personas داخل مشتري SEO SaaS (تقديري)');
+  buildLegend(document.getElementById('personaLegend'), personaItems);
+
+  const personaTags = document.getElementById('personaTags');
+  personas.forEach(p=>{
+    const b = document.createElement('button');
+    b.className='btn'; b.style.margin='6px 0 0 8px';
+    b.textContent = `${p.name} (${p.share}%)`;
+    b.addEventListener('click', ()=> focusPersonaMini(p.key));
+    personaTags.appendChild(b);
+  });
+
+  function focusPersonaMini(key){
+    const p = personas.find(x=>x.key===key);
+    const box = document.getElementById('personaMini');
+    box.innerHTML = `
+      <b>${p.name}</b> - نسبة تمثيل: <b class="num" data-n="${p.share}">${p.share}</b>%<br>
+      <div style="margin-top:8px"><span class="hl">الهدف:</span> ${p.goal}</div>
+      <div style="margin-top:8px" class="small"><span class="hl">تحدياته:</span> ${p.challenges.join(' - ')}</div>
+      <div style="margin-top:8px" class="small"><span class="hl">ما يقنعه:</span> ${p.convince.join(' - ')}</div>
+      <div style="margin-top:8px" class="small"><span class="hl">اعتراضات:</span> ${p.objections.join(' - ')}</div>
+    `;
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  const empathyTags = document.getElementById('empathyTags');
+  personas.filter(p=>['ceo','mm','growth','content','seo'].includes(p.key)).forEach(p=>{
+    const b = document.createElement('button');
+    b.className='btn'; b.style.margin='6px 0 0 8px';
+    b.textContent = `${p.name} (${p.share}%)`;
+    b.addEventListener('click', ()=> focusEmpathy(p.key));
+    empathyTags.appendChild(b);
+  });
+
+  function focusEmpathy(key){
+    const p = personas.find(x=>x.key===key);
+    const e = p.empathy;
+    const box = document.getElementById('empathyFocus');
+    const mk = (title, arr)=> `<details open style="margin:10px 0"><summary>${title}</summary><ul class="list">${arr.map(x=>`<li>${x}</li>`).join('')}</ul></details>`;
+    box.innerHTML = `
+      <b>${p.name}</b> - نسبة تمثيل: <b class="num" data-n="${p.share}">${p.share}</b>%<br>
+      <div style="margin-top:8px"><span class="hl">الهدف:</span> ${p.goal}</div>
+      ${mk('Think & Feel', e.thinkFeel)}
+      ${mk('See', e.see)}
+      ${mk('Hear', e.hear)}
+      ${mk('Say & Do', e.sayDo)}
+      ${mk('Pains', e.pains)}
+      ${mk('Gains', e.gains)}
+      ${mk('Hidden Fears', e.fears)}
+      ${mk('Success Definition', e.success)}
+    `;
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  // Freelancer calculator
+  const calcBtn = document.getElementById('calcBtn');
+  calcBtn.addEventListener('click', ()=>{
+    const hrs = Number(document.getElementById('hrs').value || 0);
+    const rate = Number(document.getElementById('rate').value || 0);
+    const fx = Number(document.getElementById('fx').value || 0);
+    const usd = hrs * rate;
+    const sar = usd * fx;
+    const out = document.getElementById('calcOut');
+    out.innerHTML = `<b>النتيجة:</b><br>
+      تكلفة بالدولار: <b class="num" data-n="${usd.toFixed(2)}">${usd.toFixed(2)}</b> USD شهريا<br>
+      تكلفة بالريال: <b class="num" data-n="${sar.toFixed(2)}">${sar.toFixed(2)}</b> SAR شهريا`;
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  });
+
+  // Search
+  const q = document.getElementById('q');
+  q.addEventListener('input', ()=> runSearch(q.value.trim()));
+
+  function runSearch(query){
+    const hay = Array.from(document.querySelectorAll('#mainCard .body *'))
+      .filter(el=>el.childElementCount===0 && el.textContent && el.textContent.trim().length>0);
+
+    hay.forEach(el=>{ if(el.dataset.orig){ el.innerHTML = el.dataset.orig; delete el.dataset.orig; } });
+
+    if(!query){ document.getElementById('hits').textContent = '0'; return; }
+
+    let hits = 0;
+    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(safe, 'gi');
+
+    hay.forEach(el=>{
+      if(re.test(el.textContent)){
+        el.dataset.orig = el.innerHTML;
+        el.innerHTML = el.innerHTML.replace(re, m=>`<mark>${m}</mark>`);
+        hits++;
+      }
+    });
+    document.getElementById('hits').textContent = String(hits);
+  }
+
+  // Export summary
+  document.getElementById('exportBtn').addEventListener('click', async ()=>{
+    const text = [
+      'ملخص سريع - Personas B2B SaaS (SEO SaaS) في السعودية',
+      '- الأكثر شيوعا: Head of Marketing (32%).',
+      '- مؤثر مالي قوي: Founder/CEO (28%) ويشتري تقليل المخاطر وربط SEO بالـPipeline.',
+      '- Growth (14%) يهتم CAC وConversion، وContent (10%) يهتم نظام التشغيل والجودة، وSEO (8%) يريد سيطرة ووضوح، وCTO (8%) يركز على الأداء والأمان.',
+      '- أعلى تحديات قبل الشراء: ربط SEO بالإيراد، نقص محتوى عربي عالي الجودة، تشتيت العملية، technical debt، توقعات غير واقعية، اعتماد كامل على مزود خارجي.',
+      '- بدائل الشراء: وكالة (1700-7700 SAR شهريا وقد تصل 50000+)، فريلانسر (15-35 USD/ساعة)، In-house (~138k-142.6k SAR سنويا)، فريق محتوى (4800-7200 SAR شهريا)، DIY tools (Surfer 99 USD، Semrush ~165.17 USD، Ahrefs 99 GBP).'
+    ].join('\n');
+    try{
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('exportBtn');
+      const old = btn.textContent;
+      btn.textContent = 'تم النسخ';
+      setTimeout(()=>btn.textContent = old, 1000);
+    }catch(e){
+      alert('تعذر النسخ تلقائيا. يمكنك تحديد النص ونسخه يدويا.');
+    }
+  });
+
+  // Initial defaults
+  focusPersonaMini('mm');
+  focusEmpathy('mm');
+})();
+</script>
+</body>
+</html>

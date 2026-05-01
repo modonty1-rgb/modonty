@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-tajawal)', 'var(--font-montserrat)', 'system-ui', 'sans-serif'],
+  			tajawal: ['var(--font-tajawal)', 'sans-serif'],
+  			montserrat: ['var(--font-montserrat)', 'sans-serif'],
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

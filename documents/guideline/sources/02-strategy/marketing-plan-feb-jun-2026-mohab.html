@@ -1,0 +1,1720 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Human SEO Platform (MENA) Plan | Feb–Jun 2026</title>
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --line:rgba(255,255,255,.16);
+      --accent:#6ee7ff;
+      --accent2:#a78bfa;
+      --accent3:#34d399;
+      --danger:#fb7185;
+      --warn:#fbbf24;
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 26px;
+      --maxw: 1120px;
+    }
+
+    /* Base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 900px at 18% 18%, rgba(110,231,255,.16), transparent 60%),
+                  radial-gradient(1100px 800px at 82% 14%, rgba(167,139,250,.16), transparent 62%),
+                  radial-gradient(900px 900px at 70% 86%, rgba(52,211,153,.12), transparent 60%),
+                  linear-gradient(180deg, #070a14 0%, #0b1020 60%, #070a14 100%);
+      overflow:hidden;
+    }
+    a{color:inherit}
+    button{font:inherit}
+    .nowrap{white-space:nowrap}
+
+    /* Animated background "smart/entertaining" but clean */
+    .bg-grid{
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(700px 600px at 50% 35%, rgba(0,0,0,1), rgba(0,0,0,.2) 55%, transparent 78%);
+      opacity:.35;
+      pointer-events:none;
+      transform: translateZ(0);
+      animation: gridFloat 16s ease-in-out infinite;
+    }
+    @keyframes gridFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(10px)}
+    }
+    .bg-orbs{
+      position:fixed; inset:0;
+      pointer-events:none;
+      filter: blur(22px);
+      opacity:.55;
+    }
+    .orb{
+      position:absolute;
+      width: 360px; height:360px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(110,231,255,.85), rgba(110,231,255,0) 65%);
+      mix-blend-mode: screen;
+      animation: orbMove 18s ease-in-out infinite;
+    }
+    .orb.o2{
+      width: 420px; height:420px;
+      left: 62%; top: 14%;
+      background: radial-gradient(circle at 30% 30%, rgba(167,139,250,.85), rgba(167,139,250,0) 65%);
+      animation-duration: 22s;
+    }
+    .orb.o3{
+      width: 380px; height:380px;
+      left: 18%; top: 62%;
+      background: radial-gradient(circle at 30% 30%, rgba(52,211,153,.75), rgba(52,211,153,0) 65%);
+      animation-duration: 26s;
+    }
+    .orb.o1{left:10%; top:10%}
+    @keyframes orbMove{
+      0%,100%{transform: translate(0,0) scale(1)}
+      35%{transform: translate(26px, 14px) scale(1.05)}
+      70%{transform: translate(-16px, 24px) scale(.98)}
+    }
+
+    /* App layout */
+    .app{
+      position:relative;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0));
+      backdrop-filter: blur(12px);
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-width: 260px;
+    }
+    .mark{
+      width: 14px; height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      font-weight: 650;
+      color: rgba(255,255,255,.88);
+    }
+    .brand .sub{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .topbar .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pill{
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .kbd{
+      font-variant-numeric: tabular-nums;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius: 8px;
+      color: rgba(255,255,255,.86);
+    }
+    .toggle{
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .toggle:hover{transform: translateY(-1px); background: rgba(255,255,255,.08);}
+
+    /* Main */
+    .main{
+      flex:1;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 16px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      align-items: stretch;
+      overflow:hidden;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 0;
+    }
+    .side-head{
+      padding: 14px 14px 10px;
+      border-bottom:1px solid var(--line);
+    }
+    .side-title{
+      margin:0;
+      font-size: 13px;
+      letter-spacing:.2px;
+      font-weight: 680;
+    }
+    .side-desc{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .toc{
+      padding: 8px;
+      overflow:auto;
+      min-height:0;
+    }
+    .toc button{
+      width: 100%;
+      text-align:left;
+      border:1px solid transparent;
+      border-radius: 14px;
+      background: transparent;
+      color: rgba(255,255,255,.78);
+      padding: 10px 10px;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      transition: background .12s ease, border-color .12s ease, transform .12s ease;
+    }
+    .toc button:hover{
+      background: rgba(255,255,255,.06);
+      transform: translateY(-1px);
+    }
+    .toc button.active{
+      background: rgba(110,231,255,.10);
+      border-color: rgba(110,231,255,.25);
+      color: rgba(255,255,255,.94);
+    }
+    .toc .small{
+      font-size: 11px;
+      color: rgba(255,255,255,.60);
+      padding-left: 2px;
+    }
+    .toc .tag{
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.72);
+      white-space:nowrap;
+      align-self:center;
+    }
+    .side-foot{
+      padding: 12px 12px 14px;
+      border-top:1px solid var(--line);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+    }
+    .dot{
+      width: 8px; height: 8px;
+      border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(110,231,255,.12);
+    }
+    .dot.p2{background: var(--accent2); box-shadow: 0 0 0 4px rgba(167,139,250,.12);}
+    .dot.p3{background: var(--accent3); box-shadow: 0 0 0 4px rgba(52,211,153,.12);}
+
+    /* Deck */
+    .deck{
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-height:0;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+    }
+    .deck-head{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,0));
+      backdrop-filter: blur(10px);
+    }
+    .deck-head .meta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .deck-head .title{
+      margin:0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .deck-head .subtitle{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .progress-wrap{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .progress{
+      width: 220px;
+      height: 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .18s ease;
+    }
+    .counter{
+      font-size: 12px;
+      color: rgba(255,255,255,.74);
+      font-variant-numeric: tabular-nums;
+      white-space:nowrap;
+    }
+
+    .slides{
+      position:relative;
+      flex:1;
+      overflow:hidden;
+    }
+    .slide{
+      position:absolute;
+      inset:0;
+      padding: 22px 22px 16px;
+      opacity:0;
+      transform: translateX(16px);
+      transition: opacity .22s ease, transform .22s ease;
+      overflow:auto;
+    }
+    .slide.active{
+      opacity:1;
+      transform: translateX(0);
+    }
+
+    /* Slide content */
+    .wrap{max-width: var(--maxw); margin:0 auto; width:100%;}
+    .hero{
+      padding: 26px;
+      border-radius: var(--radius2);
+      background: radial-gradient(900px 420px at 22% 18%, rgba(110,231,255,.20), transparent 60%),
+                  radial-gradient(780px 420px at 78% 18%, rgba(167,139,250,.20), transparent 60%),
+                  linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+    }
+    .hero h2{
+      margin:0;
+      font-size: 34px;
+      letter-spacing:-.4px;
+      line-height:1.1;
+    }
+    .hero p{
+      margin: 12px 0 0;
+      color: rgba(255,255,255,.78);
+      font-size: 14px;
+      line-height:1.6;
+      max-width: 78ch;
+    }
+    .hero .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    .stat{
+      padding: 14px 14px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .stat .k{
+      font-size: 12px;
+      color: rgba(255,255,255,.64);
+    }
+    .stat .v{
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 760;
+      letter-spacing:.2px;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin: 8px 0 14px;
+    }
+    .section-title h3{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:-.2px;
+    }
+    .section-title .hint{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.3;
+      max-width: 56ch;
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+    .card{
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      padding: 16px;
+      box-shadow: 0 14px 46px rgba(0,0,0,.35);
+    }
+    .card h4{
+      margin:0 0 8px;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .card p{
+      margin:0;
+      color: rgba(255,255,255,.74);
+      font-size: 13px;
+      line-height:1.55;
+    }
+    .list{
+      margin: 10px 0 0;
+      padding:0;
+      list-style:none;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .li b{
+      font-weight: 720;
+      color: rgba(255,255,255,.90);
+    }
+    .li span{
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      line-height:1.45;
+    }
+
+    .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    /* Pills */
+    .pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top: 10px;
+    }
+    .pillbtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.80);
+      border-radius:999px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-size: 12px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .pillbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09);}
+    .pillbtn.active{border-color: rgba(110,231,255,.40); background: rgba(110,231,255,.10); color: rgba(255,255,255,.95);}
+
+    /* Tables */
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+    }
+    .table th, .table td{
+      padding: 12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      font-size: 12.5px;
+      color: rgba(255,255,255,.78);
+      vertical-align:top;
+      line-height:1.45;
+    }
+    .table th{
+      color: rgba(255,255,255,.88);
+      font-weight: 720;
+      background: rgba(255,255,255,.06);
+    }
+    .table tr:last-child td{border-bottom:none}
+
+    /* Timeline */
+    .timeline{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .phase{
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .phase:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(260px 140px at 20% 20%, rgba(110,231,255,.18), transparent 60%),
+                  radial-gradient(260px 140px at 80% 30%, rgba(167,139,250,.14), transparent 60%);
+      opacity:.75;
+      pointer-events:none;
+    }
+    .phase > *{position:relative}
+    .phase h5{
+      margin:0 0 6px;
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .phase .date{
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+      margin-bottom: 10px;
+    }
+    .phase ul{
+      margin:0;
+      padding-left: 16px;
+      color: rgba(255,255,255,.72);
+      font-size: 12.5px;
+      line-height:1.5;
+    }
+
+    /* Task board with role filtering */
+    .taskboard{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .taskcol{
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding: 14px;
+    }
+    .taskcol h5{
+      margin:0 0 10px;
+      font-size: 13px;
+    }
+    .task{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      padding: 10px 10px;
+      margin-bottom: 10px;
+    }
+    .task:last-child{margin-bottom:0}
+    .task .t{
+      margin:0;
+      font-size: 12.8px;
+      font-weight: 700;
+      color: rgba(255,255,255,.88);
+    }
+    .task .d{
+      margin:6px 0 0;
+      font-size: 12.3px;
+      color: rgba(255,255,255,.72);
+      line-height:1.45;
+    }
+    .task .meta{
+      margin-top: 8px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.72);
+    }
+    .badge.a{border-color: rgba(110,231,255,.30); background: rgba(110,231,255,.08)}
+    .badge.b{border-color: rgba(167,139,250,.30); background: rgba(167,139,250,.08)}
+    .badge.c{border-color: rgba(52,211,153,.30); background: rgba(52,211,153,.08)}
+    .badge.d{border-color: rgba(251,191,36,.30); background: rgba(251,191,36,.08)}
+    .badge.e{border-color: rgba(251,113,133,.30); background: rgba(251,113,133,.08)}
+
+    /* Footer controls */
+    .controls{
+      border-top:1px solid var(--line);
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.20));
+      backdrop-filter: blur(10px);
+    }
+    .btns{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.88);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      min-width: 110px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09);}
+    .btn.primary{
+      border-color: rgba(110,231,255,.34);
+      background: rgba(110,231,255,.10);
+    }
+    .btn.primary:hover{background: rgba(110,231,255,.14);}
+    .btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+    .mini{
+      font-size: 12px;
+      color: rgba(255,255,255,.66);
+      line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 1080px){
+      body{overflow:auto}
+      .main{grid-template-columns: 1fr; overflow:visible}
+      .deck{min-height: 70vh}
+      .progress{display:none}
+    }
+    @media (max-width: 720px){
+      .hero h2{font-size: 26px}
+      .hero .grid{grid-template-columns: 1fr}
+      .grid2{grid-template-columns: 1fr}
+      .grid3{grid-template-columns: 1fr}
+      .timeline{grid-template-columns: 1fr}
+      .taskboard{grid-template-columns: 1fr}
+      .btn{min-width: 92px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+  </div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark"></div>
+        <div>
+          <h1>Human SEO Platform (MENA and Gulf) | Execution Plan</h1>
+          <div class="sub">Timeline: 23 Feb 2026 to 30 Jun 2026 | Markets: Egypt and KSA (Saudi-first platform)</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="pill toggle" id="toggleFocus" title="Toggle focus mode">
+          Focus mode
+        </div>
+        <div class="pill" title="Keyboard shortcuts">
+          <span class="nowrap">Keyboard</span>
+          <span class="kbd">Left</span>
+          <span class="kbd">Right</span>
+          <span class="kbd">T</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <aside class="sidebar" id="sidebar">
+        <div class="side-head">
+          <p class="side-title">Table of Contents</p>
+          <p class="side-desc">Click any section to jump. Use the role filter on task slides to see what each team member should do.</p>
+        </div>
+
+        <div class="toc" id="toc"></div>
+
+        <div class="side-foot">
+          <span class="chip"><span class="dot"></span> Human-written content (no AI text)</span>
+          <span class="chip"><span class="dot p2"></span> Tracking and intent analysis</span>
+          <span class="chip"><span class="dot p3"></span> Voucher economy for retention</span>
+        </div>
+      </aside>
+
+      <section class="deck" id="deck">
+        <div class="deck-head">
+          <div class="meta">
+            <p class="title" id="slideTitle">Title</p>
+            <p class="subtitle" id="slideSubtitle">Subtitle</p>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress" aria-label="Progress">
+              <div class="bar" id="bar"></div>
+            </div>
+            <div class="counter" id="counter">1 / 1</div>
+          </div>
+        </div>
+
+        <div class="slides" id="slides">
+
+          <!-- Slide 1 -->
+          <section class="slide active" data-title="Overview" data-subtitle="What we are building and why it wins">
+            <div class="wrap">
+              <div class="hero">
+                <h2>Build the first human-only SEO and content platform designed for MENA businesses</h2>
+                <p>
+                  A Saudi-first platform focused on Egypt and KSA in 2026. We help businesses that cannot rank on Google
+                  (or need high-quality backlinks and real traffic) by publishing human-written, intent-driven content
+                  with analysis and tracking. We also activate users through a coin and voucher system based on real reading behavior.
+                </p>
+                <div class="grid">
+                  <div class="stat">
+                    <div class="k">Professionals goal</div>
+                    <div class="v">100 onboarded by 31 Mar</div>
+                  </div>
+                  <div class="stat">
+                    <div class="k">Business pipeline goal</div>
+                    <div class="v">500 qualified leads</div>
+                  </div>
+                  <div class="stat">
+                    <div class="k">Revenue goal (sales-owned)</div>
+                    <div class="v">50 new customers per month</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:16px;">
+                <h3>Winning idea</h3>
+                <p class="hint">Human intent analysis + measurable engagement + voucher economy + sales closing via BD meetings.</p>
+              </div>
+
+              <div class="grid3">
+                <div class="card">
+                  <h4>What we refuse to do</h4>
+                  <p>AI-generated writing, spam backlinks, fake traffic, low-quality content farms.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Trust:</b> reputation-safe content for brands and professionals.</span></li>
+                    <li class="li"><span><b>Proof:</b> measurable reading-time and engagement signals.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>What we do differently</h4>
+                  <p>We satisfy real search intent with deep analysis, and we track real user behavior to prove value.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Intent:</b> content aligned to user queries and decision stages.</span></li>
+                    <li class="li"><span><b>Tracking:</b> session time, scroll depth, CTR, retention.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>How we scale without losing quality</h4>
+                  <p>A strict editorial system, reusable templates, and a clear workflow between writing, design, video and distribution.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Playbooks:</b> briefs, checklists, and reviews.</span></li>
+                    <li class="li"><span><b>Repurpose:</b> one article becomes many short assets.</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 2 -->
+          <section class="slide" data-title="Goals and KPIs" data-subtitle="Targets until 30 Jun 2026 and how we measure progress">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Targets</h3>
+                <p class="hint">All targets below are tracked weekly. Sales outcomes are owned by the Business Developer.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Core targets</h4>
+                  <table class="table" aria-label="Targets table">
+                    <thead>
+                      <tr>
+                        <th>Area</th>
+                        <th>Target by 30 Jun 2026</th>
+                        <th>Owner</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Professionals</td>
+                        <td>100 onboarded by 31 Mar; paid onboarding starts 1 Apr</td>
+                        <td>Account Manager and Writer</td>
+                      </tr>
+                      <tr>
+                        <td>Businesses</td>
+                        <td>500 qualified leads; 50 new customers per month (closed via meetings)</td>
+                        <td>Marketing for leads; BD for closing</td>
+                      </tr>
+                      <tr>
+                        <td>Users</td>
+                        <td>Active readers with coin system and voucher redemption</td>
+                        <td>Product and Marketing</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="card">
+                  <h4>Weekly KPI dashboard</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Audience:</b> followers gained, engagement rate, watch time, saves, shares.</span></li>
+                    <li class="li"><span><b>Acquisition:</b> leads per platform, qualified lead rate, meeting bookings.</span></li>
+                    <li class="li"><span><b>Product usage:</b> active readers, blogs read per user, session time, retention.</span></li>
+                    <li class="li"><span><b>Sales feedback:</b> objections list, close rate, reasons for loss, pricing signals.</span></li>
+                  </ul>
+
+                  <div class="pills" style="margin-top:12px;">
+                    <span class="badge a">Tracked weekly</span>
+                    <span class="badge b">Review Thursday</span>
+                    <span class="badge c">Optimize monthly</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 3 -->
+          <section class="slide" data-title="Offers and Funnels" data-subtitle="Three-sided platform: professionals, businesses, and readers">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Three offers, one ecosystem</h3>
+                <p class="hint">Professionals create authority content. Businesses fund campaigns and vouchers. Readers create measurable engagement.</p>
+              </div>
+
+              <div class="grid3">
+                <div class="card">
+                  <h4>Professionals</h4>
+                  <p>We publish a human-written Google-optimized article about each professional. Free until 31 March. Paid onboarding starts 1 April.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Input:</b> structured interview + proof + portfolio links.</span></li>
+                    <li class="li"><span><b>Output:</b> profile article + indexable page + internal linking.</span></li>
+                    <li class="li"><span><b>Future upsells:</b> featured slots, monthly updates, reputation monitoring.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Businesses</h4>
+                  <p>We deliver high-quality backlinks, real traffic, and measurable user engagement, plus voucher budget conversion to capture interested customers.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Value:</b> lower cost than ads for qualified retargeting audiences.</span></li>
+                    <li class="li"><span><b>Data:</b> readership insights, clicks, and intent signals.</span></li>
+                    <li class="li"><span><b>Sales:</b> meetings booked by marketing, closed by BD.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Readers</h4>
+                  <p>Coin system that rewards real reading. 1 coin per blog read (2–3 minutes). Redeem coins as items/vouchers from partners.</p>
+                  <ul class="list">
+                    <li class="li"><span><b>Rule:</b> track reading time, scroll depth, and behavior to prevent abuse.</span></li>
+                    <li class="li"><span><b>Growth:</b> challenges, referrals, community loops.</span></li>
+                    <li class="li"><span><b>Outcome:</b> retention and measurable value for businesses.</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:14px;">
+                <h3>Funnel ownership</h3>
+                <p class="hint">Marketing produces demand and qualified leads. BD owns meetings, proposals, closing and renewals.</p>
+              </div>
+
+              <div class="card">
+                <table class="table" aria-label="Funnel ownership">
+                  <thead>
+                    <tr>
+                      <th>Stage</th>
+                      <th>Definition</th>
+                      <th>Owner</th>
+                      <th>Service level</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Lead captured</td>
+                      <td>Company and contact submitted with industry and goals</td>
+                      <td>Marketing</td>
+                      <td>Same day routing to BD</td>
+                    </tr>
+                    <tr>
+                      <td>Qualified</td>
+                      <td>Budget range, timeline, decision maker confirmed</td>
+                      <td>Marketing + BD</td>
+                      <td>Within 48 hours</td>
+                    </tr>
+                    <tr>
+                      <td>Meeting booked</td>
+                      <td>Calendar slot confirmed</td>
+                      <td>BD</td>
+                      <td>Within 7 days</td>
+                    </tr>
+                    <tr>
+                      <td>Closed-won</td>
+                      <td>Signed and paid</td>
+                      <td>BD</td>
+                      <td>Monthly target: 50</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 4 -->
+          <section class="slide" data-title="Platforms and Content Engine" data-subtitle="All-platform distribution with a repeatable weekly system">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>All-platform distribution map</h3>
+                <p class="hint">One human article becomes multiple pieces of content for TikTok, Instagram, Facebook, LinkedIn, X, and YouTube Shorts.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Primary channels</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>LinkedIn:</b> B2B meetings, decision makers, professional onboarding.</span></li>
+                    <li class="li"><span><b>TikTok:</b> reach, discovery, traffic loops for readers and professionals.</span></li>
+                    <li class="li"><span><b>Instagram:</b> social proof, retargeting audiences, brand authority.</span></li>
+                    <li class="li"><span><b>Facebook:</b> community, traffic, low-cost engagement in Egypt and KSA.</span></li>
+                    <li class="li"><span><b>YouTube Shorts:</b> evergreen discovery for educational topics.</span></li>
+                    <li class="li"><span><b>X:</b> thought leadership, shares, PR signals, link distribution.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Weekly publishing cadence (minimum)</h4>
+                  <table class="table" aria-label="Publishing cadence">
+                    <thead>
+                      <tr>
+                        <th>Platform</th>
+                        <th>Frequency</th>
+                        <th>Purpose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>TikTok</td>
+                        <td>5–7 videos/week</td>
+                        <td>Reach, discovery, traffic</td>
+                      </tr>
+                      <tr>
+                        <td>Instagram</td>
+                        <td>4–6 reels/week, daily stories</td>
+                        <td>Authority and retargeting</td>
+                      </tr>
+                      <tr>
+                        <td>Facebook</td>
+                        <td>1–2 posts/day + reels</td>
+                        <td>Community and clicks</td>
+                      </tr>
+                      <tr>
+                        <td>LinkedIn</td>
+                        <td>4 posts/week + daily outreach</td>
+                        <td>Leads and meetings</td>
+                      </tr>
+                      <tr>
+                        <td>YouTube Shorts</td>
+                        <td>3–5 shorts/week</td>
+                        <td>Evergreen discovery</td>
+                      </tr>
+                      <tr>
+                        <td>Website</td>
+                        <td>3–5 articles/week</td>
+                        <td>SEO asset library</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:14px;">
+                <h3>Content pillars</h3>
+                <p class="hint">Use the same pillars across platforms, adjusted by format and audience stage.</p>
+              </div>
+
+              <div class="grid3">
+                <div class="card">
+                  <h4>Human SEO education</h4>
+                  <p>Explain why ranking fails, what intent-based writing means, and how to avoid low-quality content.</p>
+                </div>
+                <div class="card">
+                  <h4>Proof and case studies</h4>
+                  <p>Show reading-time signals, traffic improvements, and conversion stories from professionals and businesses.</p>
+                </div>
+                <div class="card">
+                  <h4>Product loops</h4>
+                  <p>Coin economy, voucher campaigns, referral challenges, and partner redemption stories.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 5 -->
+          <section class="slide" data-title="Paid Media Plan" data-subtitle="10,000 SAR per month for followers, engagement, and leads">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Budget: 10,000 SAR per month</h3>
+                <p class="hint">Three jobs: grow followers, amplify best content, generate qualified leads for BD meetings.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Monthly allocation</h4>
+                  <table class="table" aria-label="Budget allocation">
+                    <thead>
+                      <tr>
+                        <th>Goal</th>
+                        <th>Monthly budget</th>
+                        <th>What it runs</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Followers</td>
+                        <td>4,000 SAR</td>
+                        <td>Page likes and followers campaigns</td>
+                      </tr>
+                      <tr>
+                        <td>Engagement</td>
+                        <td>3,000 SAR</td>
+                        <td>Boost top posts, video views, saves and shares</td>
+                      </tr>
+                      <tr>
+                        <td>Leads</td>
+                        <td>3,000 SAR</td>
+                        <td>Lead forms or WhatsApp leads, meeting booking</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="pills">
+                    <span class="badge d">Always-on</span>
+                    <span class="badge a">Weekly optimizations</span>
+                    <span class="badge b">Two A/B tests per week</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h4>Platform split (baseline)</h4>
+                  <table class="table" aria-label="Platform split">
+                    <thead>
+                      <tr>
+                        <th>Platform</th>
+                        <th>Share</th>
+                        <th>Primary use</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Meta (Facebook and Instagram)</td>
+                        <td>50%</td>
+                        <td>Followers, engagement, leads, retargeting</td>
+                      </tr>
+                      <tr>
+                        <td>TikTok</td>
+                        <td>25%</td>
+                        <td>Follower growth and traffic</td>
+                      </tr>
+                      <tr>
+                        <td>LinkedIn</td>
+                        <td>25%</td>
+                        <td>B2B lead gen and meeting bookings</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="card" style="margin-top:12px; padding:14px;">
+                    <h4 style="margin:0 0 8px;">Optimization rule</h4>
+                    <p style="margin:0; color:rgba(255,255,255,.74); font-size:13px; line-height:1.55;">
+                      Reallocate up to 20% monthly budget to the platform with the highest meeting-booked efficiency.
+                      Do not optimize for cheap leads only. Optimize for qualified leads and booked meetings.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 6 -->
+          <section class="slide" data-title="Team Roles" data-subtitle="Clear ownership, outputs, and weekly expectations">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Team responsibilities</h3>
+                <p class="hint">This slide defines what each role owns. The next slide breaks down tasks with a timeline and role filters.</p>
+              </div>
+
+              <div class="grid3">
+                <div class="card">
+                  <h4>Marketing Manager</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> strategy, KPIs, budget, experiments, weekly reporting.</span></li>
+                    <li class="li"><span><b>Outputs:</b> weekly priorities, channel plan, lead quality standards, BD alignment.</span></li>
+                    <li class="li"><span><b>Guarantees:</b> marketing-to-sales handoff within 24 hours.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Account Manager and Content Writer</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> onboarding professionals, editorial calendar, writing and publishing.</span></li>
+                    <li class="li"><span><b>Outputs:</b> professional articles, authority articles, business case studies, landing copy.</span></li>
+                    <li class="li"><span><b>Quality:</b> human intent analysis, references, and approvals.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Graphic Designer</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> brand system, templates, ads creatives, carousels, thumbnails.</span></li>
+                    <li class="li"><span><b>Outputs:</b> weekly creative pack, business pitch visuals, profile visuals.</span></li>
+                    <li class="li"><span><b>Support:</b> fast iterations for A/B tests.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>AI Video Editor</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> short-form production pipeline, hooks, subtitle style, repurposing.</span></li>
+                    <li class="li"><span><b>Outputs:</b> weekly video batch, multiple hooks per top topic.</span></li>
+                    <li class="li"><span><b>Rule:</b> no AI-written scripts; only editing and formatting.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Digital Marketing Specialist (joining soon)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> ads setup, optimization, pixels, events, UTMs, dashboards.</span></li>
+                    <li class="li"><span><b>Outputs:</b> weekly optimization log, lead quality improvements, retargeting growth.</span></li>
+                    <li class="li"><span><b>Focus:</b> optimize for meetings booked, not only leads.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>SEO Specialist (joining soon)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> on-page SEO, internal linking, schema, search console, technical health.</span></li>
+                    <li class="li"><span><b>Outputs:</b> content briefs, monthly SEO roadmap, ranking reports, site fixes list.</span></li>
+                    <li class="li"><span><b>Guardrail:</b> protect content quality and indexability.</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:14px;">
+                <h3>Business Developer and Product Manager tasks (startup reality)</h3>
+                <p class="hint">In early stage, this person keeps revenue moving and product shipping. The next slide includes weekly tasks.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Business Developer (closing)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> meetings, proposals, pricing feedback, closing, renewals.</span></li>
+                    <li class="li"><span><b>Daily:</b> contact new leads, book meetings, follow-up, update CRM.</span></li>
+                    <li class="li"><span><b>Weekly:</b> share objections and competitor notes with marketing.</span></li>
+                  </ul>
+                </div>
+                <div class="card">
+                  <h4>Product Manager (shipping)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Owns:</b> coin system rules, tracking events, partner redemption flow, fraud controls.</span></li>
+                    <li class="li"><span><b>Weekly:</b> define feature priorities and acceptance criteria.</span></li>
+                    <li class="li"><span><b>Monthly:</b> publish product roadmap updates to internal team.</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 7 -->
+          <section class="slide" data-title="Timeline and Task Breakdown" data-subtitle="Feb–Jun 2026 phases with role-filtered tasks">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Phased roadmap (23 Feb to 30 Jun 2026)</h3>
+                <p class="hint">Use the role filter to focus on one person. Tasks are written for a startup team where people wear multiple hats.</p>
+              </div>
+
+              <div class="pills" id="roleFilters" aria-label="Role filters">
+                <button class="pillbtn active" data-role="all">All roles</button>
+                <button class="pillbtn" data-role="mm">Marketing Manager</button>
+                <button class="pillbtn" data-role="am">Account Manager and Writer</button>
+                <button class="pillbtn" data-role="gd">Graphic Designer</button>
+                <button class="pillbtn" data-role="ve">AI Video Editor</button>
+                <button class="pillbtn" data-role="dms">Digital Marketing Specialist</button>
+                <button class="pillbtn" data-role="seo">SEO Specialist</button>
+                <button class="pillbtn" data-role="bdpm">Business Developer and Product Manager</button>
+              </div>
+
+              <div class="timeline">
+                <div class="phase">
+                  <h5>Phase 1: Setup and proof</h5>
+                  <div class="date">23 Feb to 29 Feb</div>
+                  <ul>
+                    <li>Tracking, pixels, UTMs, CRM pipeline</li>
+                    <li>Two landing pages live</li>
+                    <li>Brand templates and video system</li>
+                  </ul>
+                </div>
+                <div class="phase">
+                  <h5>Phase 2: Professional sprint</h5>
+                  <div class="date">1 Mar to 31 Mar</div>
+                  <ul>
+                    <li>Onboard 100 professionals (free cohort)</li>
+                    <li>Build business lead pipeline</li>
+                    <li>Publish and repurpose at scale</li>
+                  </ul>
+                </div>
+                <div class="phase">
+                  <h5>Phase 3: Monetization start</h5>
+                  <div class="date">1 Apr to 30 Apr</div>
+                  <ul>
+                    <li>Paid onboarding for new professionals</li>
+                    <li>Retargeting for conversions</li>
+                    <li>Vertical pitch packs for BD</li>
+                  </ul>
+                </div>
+                <div class="phase">
+                  <h5>Phase 4: Business scaling</h5>
+                  <div class="date">1 May to 30 Jun</div>
+                  <ul>
+                    <li>Industry campaigns and case studies</li>
+                    <li>Voucher economy readiness</li>
+                    <li>Reader activation challenges</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:14px;">
+                <h3>Task board (weekly execution)</h3>
+                <p class="hint">These tasks repeat weekly, with emphasis changing by phase. Filter by role to see assignments.</p>
+              </div>
+
+              <div class="taskboard" id="taskboard">
+                <div class="taskcol">
+                  <h5>Growth and distribution</h5>
+
+                  <div class="task" data-roles="mm dms">
+                    <p class="t">Weekly media plan and A/B tests</p>
+                    <p class="d">Set two tests per week (hook, creative, audience). Allocate 10k SAR monthly across followers, engagement and leads. Optimize for qualified leads and meetings booked.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge b">Ads</span>
+                      <span class="badge d">Experiment</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="am gd ve">
+                    <p class="t">Content batch production</p>
+                    <p class="d">One article becomes: 2–3 short videos, 1 LinkedIn post, 1 carousel, 2 short captions for IG/FB, and a newsletter snippet. Publish on schedule.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge c">Content</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="ve">
+                    <p class="t">Video system and repurposing</p>
+                    <p class="d">Produce 20–25 short videos per week across TikTok, IG, FB, Shorts. Create multiple openings for top topics. Ensure subtitles and pacing are consistent.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge c">Short-form</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="gd">
+                    <p class="t">Creative pack for the week</p>
+                    <p class="d">Deliver templates and assets: 10 static posts, 4 carousels, 6 ad variants, 10 thumbnails. Maintain brand consistency and rapid iteration.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge b">Creatives</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="seo">
+                    <p class="t">Content briefs and SEO QA</p>
+                    <p class="d">Build briefs for authority pages and profile pages. Enforce internal linking and schema readiness. Review indexability and on-page checks for new posts.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge b">SEO</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="taskcol">
+                  <h5>Acquisition, sales, and product</h5>
+
+                  <div class="task" data-roles="am bdpm">
+                    <p class="t">Professional onboarding pipeline</p>
+                    <p class="d">Collect structured interviews, proof, service list and contact details. Publish profiles. Keep backlog and set clear delivery dates. Switch to paid onboarding from 1 April.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge c">Professionals</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="mm dms bdpm">
+                    <p class="t">Business lead qualification and meeting flow</p>
+                    <p class="d">Define qualified lead rules. Marketing routes leads within 24 hours. BD contacts same day, books meetings, and updates CRM statuses within 48 hours.</p>
+                    <div class="meta">
+                      <span class="badge a">Weekly</span>
+                      <span class="badge b">Leads</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="bdpm">
+                    <p class="t">Business Developer closing system</p>
+                    <p class="d">Run discovery calls, propose packages, handle objections, close deals, and own renewals. Weekly: send feedback to marketing on objections, pricing, competitor claims.</p>
+                    <div class="meta">
+                      <span class="badge a">Daily</span>
+                      <span class="badge c">Sales</span>
+                      <span class="badge d">Feedback loop</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="bdpm mm am">
+                    <p class="t">Partner and voucher pipeline</p>
+                    <p class="d">Secure initial partners for voucher redemption (simple offers). Define redemption rules with product. Align partners with target industries BD is selling to.</p>
+                    <div class="meta">
+                      <span class="badge c">Partnerships</span>
+                      <span class="badge d">June readiness</span>
+                    </div>
+                  </div>
+
+                  <div class="task" data-roles="bdpm seo dms">
+                    <p class="t">Product tracking and anti-abuse rules</p>
+                    <p class="d">Define events: blog view, scroll depth, time thresholds, suspicious behavior. Ship a minimum coin policy page and basic anti-fraud controls before scaling user rewards.</p>
+                    <div class="meta">
+                      <span class="badge b">Product</span>
+                      <span class="badge e">Risk control</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 8 -->
+          <section class="slide" data-title="Weekly Operating Rhythm" data-subtitle="A simple system that keeps everyone aligned and moving">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Weekly rhythm</h3>
+                <p class="hint">A predictable cadence reduces startup chaos. Everyone knows what happens when.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Sunday: Planning and alignment (60–90 minutes)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Marketing Manager:</b> weekly priorities, KPIs, and experiments.</span></li>
+                    <li class="li"><span><b>Account Manager:</b> editorial calendar and backlog status.</span></li>
+                    <li class="li"><span><b>Designer and Video:</b> production batch plan.</span></li>
+                    <li class="li"><span><b>BD and Product:</b> pipeline status, objections, product blockers.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Daily: Execution and handoffs</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Content:</b> write, review, publish, repurpose.</span></li>
+                    <li class="li"><span><b>Distribution:</b> post and engage on each platform.</span></li>
+                    <li class="li"><span><b>Leads:</b> route within 24 hours, BD contacts same day.</span></li>
+                    <li class="li"><span><b>Tracking:</b> monitor spend, CPL, meeting bookings.</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="grid2" style="margin-top:14px;">
+                <div class="card">
+                  <h4>Thursday: Performance review (45–60 minutes)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Review:</b> followers, engagement, leads, meetings booked.</span></li>
+                    <li class="li"><span><b>Decide:</b> what to repeat, what to cut, what to test next.</span></li>
+                    <li class="li"><span><b>BD feedback:</b> objections and what collateral is needed.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Friday: Documentation (30 minutes)</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Update:</b> task board, done list, blockers.</span></li>
+                    <li class="li"><span><b>Archive:</b> top content, top hooks, top creatives.</span></li>
+                    <li class="li"><span><b>Prepare:</b> next week brief for faster start.</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 9 -->
+          <section class="slide" data-title="Risks and Safeguards" data-subtitle="Protect quality, prevent abuse, and keep businesses happy">
+            <div class="wrap">
+              <div class="section-title">
+                <h3>Key risks</h3>
+                <p class="hint">The biggest risk is a reward system that attracts abuse. The second risk is content quality drop while scaling.</p>
+              </div>
+
+              <div class="grid2">
+                <div class="card">
+                  <h4>Risk 1: Coins abused by low-intent users</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Safeguard:</b> enforce time threshold, scroll depth, and behavior checks.</span></li>
+                    <li class="li"><span><b>Safeguard:</b> limit daily coins, use cooldowns, require account verification.</span></li>
+                    <li class="li"><span><b>Safeguard:</b> redemption requires verified contact and partner proof.</span></li>
+                  </ul>
+                </div>
+
+                <div class="card">
+                  <h4>Risk 2: Content quality and trust degrade</h4>
+                  <ul class="list">
+                    <li class="li"><span><b>Safeguard:</b> strict human editorial checklist and approvals.</span></li>
+                    <li class="li"><span><b>Safeguard:</b> templates for structure, not for writing shortcuts.</span></li>
+                    <li class="li"><span><b>Safeguard:</b> publish fewer but better, with strong internal links.</span></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:14px;">
+                <h3>Customer retention safeguards</h3>
+                <p class="hint">Businesses stay when they see measurable results and reliable reporting.</p>
+              </div>
+
+              <div class="card">
+                <table class="table" aria-label="Retention safeguards">
+                  <thead>
+                    <tr>
+                      <th>What the customer sees</th>
+                      <th>How we deliver it</th>
+                      <th>Owner</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Monthly report with traffic and engagement</td>
+                      <td>Standard report template, tracked events, campaign summary</td>
+                      <td>Marketing + Digital Marketing</td>
+                    </tr>
+                    <tr>
+                      <td>Proof of quality backlinks and intent alignment</td>
+                      <td>Link lists, article mapping to search intent, internal linking</td>
+                      <td>SEO + Writer</td>
+                    </tr>
+                    <tr>
+                      <td>Clear next-month plan</td>
+                      <td>Roadmap for content, distribution, and retargeting</td>
+                      <td>Marketing + BD</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 10 -->
+          <section class="slide" data-title="Next Steps" data-subtitle="What to do immediately in the next 7 days">
+            <div class="wrap">
+              <div class="hero">
+                <h2>Next 7 days checklist</h2>
+                <p>Use this list to start execution immediately. Assign owners and due dates in your task tool.</p>
+
+                <div class="cols">
+                  <div class="card" style="margin:0; background: rgba(0,0,0,.18);">
+                    <h4>Go-live items</h4>
+                    <ul class="list">
+                      <li class="li"><span><b>Landing pages:</b> Professionals and Businesses live.</span></li>
+                      <li class="li"><span><b>Tracking:</b> GA4, pixels, UTMs, conversion events.</span></li>
+                      <li class="li"><span><b>CRM:</b> pipeline stages, lead sheet, handoff rules.</span></li>
+                      <li class="li"><span><b>Content templates:</b> 10 posts, 4 carousels, video style.</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="card" style="margin:0; background: rgba(0,0,0,.18);">
+                    <h4>Sales and product items</h4>
+                    <ul class="list">
+                      <li class="li"><span><b>BD:</b> call script, proposal template, objection sheet.</span></li>
+                      <li class="li"><span><b>PM:</b> coin rules draft, anti-abuse requirements, event list.</span></li>
+                      <li class="li"><span><b>Partners:</b> list 20 targets for voucher redemption pilots.</span></li>
+                      <li class="li"><span><b>Reporting:</b> business client monthly template prepared.</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title" style="margin-top:16px;">
+                <h3>How to present this plan</h3>
+                <p class="hint">Use this deck in team meetings. Jump via the table of contents. Keep it as the single source of truth.</p>
+              </div>
+
+              <div class="grid3">
+                <div class="card">
+                  <h4>Weekly priorities</h4>
+                  <p>Always set priorities for the week and stop doing everything else. Startup speed comes from focus.</p>
+                </div>
+                <div class="card">
+                  <h4>One KPI per role</h4>
+                  <p>Each role must have one measurable weekly outcome. If it is not measured, it will not improve.</p>
+                </div>
+                <div class="card">
+                  <h4>Sales feedback loop</h4>
+                  <p>BD objections become marketing content topics and pitch improvements. This loop increases close rate.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <footer class="controls">
+          <div class="mini" id="miniHelp">
+            Tip: Use Left/Right keys. Press T to toggle the table of contents.
+          </div>
+          <div class="btns">
+            <button class="btn" id="prevBtn">Previous</button>
+            <button class="btn primary" id="nextBtn">Next</button>
+          </div>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const slidesEl = document.getElementById('slides');
+      const slides = Array.from(slidesEl.querySelectorAll('.slide'));
+      const toc = document.getElementById('toc');
+
+      const slideTitle = document.getElementById('slideTitle');
+      const slideSubtitle = document.getElementById('slideSubtitle');
+      const counter = document.getElementById('counter');
+      const bar = document.getElementById('bar');
+
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      const sidebar = document.getElementById('sidebar');
+      const toggleFocus = document.getElementById('toggleFocus');
+
+      let index = 0;
+      let focus = false;
+
+      // Build TOC
+      slides.forEach((s, i) => {
+        const btn = document.createElement('button');
+        const left = document.createElement('div');
+        left.style.display = 'flex';
+        left.style.flexDirection = 'column';
+        left.style.gap = '2px';
+
+        const title = document.createElement('div');
+        title.textContent = s.dataset.title || ('Slide ' + (i+1));
+        title.style.fontWeight = '700';
+        title.style.fontSize = '12.8px';
+
+        const small = document.createElement('div');
+        small.textContent = s.dataset.subtitle || '';
+        small.className = 'small';
+
+        left.appendChild(title);
+        left.appendChild(small);
+
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.textContent = (i+1).toString().padStart(2,'0');
+
+        btn.appendChild(left);
+        btn.appendChild(tag);
+
+        btn.addEventListener('click', () => goTo(i));
+        toc.appendChild(btn);
+      });
+
+      const tocButtons = Array.from(toc.querySelectorAll('button'));
+
+      function updateUI(){
+        slides.forEach((s, i) => s.classList.toggle('active', i === index));
+        tocButtons.forEach((b, i) => b.classList.toggle('active', i === index));
+
+        const s = slides[index];
+        slideTitle.textContent = s.dataset.title || 'Slide';
+        slideSubtitle.textContent = s.dataset.subtitle || '';
+        counter.textContent = (index + 1) + ' / ' + slides.length;
+
+        const pct = ((index + 1) / slides.length) * 100;
+        bar.style.width = pct.toFixed(1) + '%';
+
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === slides.length - 1;
+
+        // keep scroll at top for new slide
+        s.scrollTop = 0;
+      }
+
+      function goTo(i){
+        index = Math.max(0, Math.min(slides.length - 1, i));
+        updateUI();
+      }
+
+      function next(){ goTo(index + 1); }
+      function prev(){ goTo(index - 1); }
+
+      prevBtn.addEventListener('click', prev);
+      nextBtn.addEventListener('click', next);
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft') prev();
+        if (e.key.toLowerCase() === 't') toggleTOC();
+      });
+
+      function toggleTOC(){
+        const isHidden = sidebar.style.display === 'none';
+        sidebar.style.display = isHidden ? '' : 'none';
+      }
+
+      // Focus mode: hide TOC, expand deck
+      toggleFocus.addEventListener('click', () => {
+        focus = !focus;
+        toggleFocus.textContent = focus ? 'Exit focus mode' : 'Focus mode';
+        sidebar.style.display = focus ? 'none' : '';
+      });
+
+      // Role filtering for taskboard slide
+      const roleFilters = document.getElementById('roleFilters');
+      const taskboard = document.getElementById('taskboard');
+
+      if (roleFilters && taskboard){
+        const filterButtons = Array.from(roleFilters.querySelectorAll('.pillbtn'));
+        const tasks = Array.from(taskboard.querySelectorAll('.task'));
+
+        function applyRole(role){
+          tasks.forEach(t => {
+            const roles = (t.getAttribute('data-roles') || '').split(/\s+/).filter(Boolean);
+            const show = (role === 'all') || roles.includes(role);
+            t.style.display = show ? '' : 'none';
+          });
+        }
+
+        filterButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyRole(btn.getAttribute('data-role'));
+          });
+        });
+
+        // default
+        applyRole('all');
+      }
+
+      // Init
+      updateUI();
+    })();
+  </script>
+</body>
+</html>

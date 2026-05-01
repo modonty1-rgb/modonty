@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>دراسة سوق خدمات SEO في السعودية | لوحة تفاعلية</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#eaf0ff; --muted:#b9c4e6; --muted2:#8ea0d6;
+      --line:rgba(255,255,255,.08); --accent:#7aa7ff; --good:#5ee2a0; --warn:#ffd46a; --bad:#ff7a8a;
+      --shadow: 0 18px 60px rgba(0,0,0,.35); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+      background: radial-gradient(1200px 700px at 70% 10%, rgba(122,167,255,.18), transparent 55%),
+                  radial-gradient(900px 650px at 20% 30%, rgba(94,226,160,.12), transparent 55%),
+                  radial-gradient(900px 700px at 50% 100%, rgba(255,122,138,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text); line-height:1.6;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      padding:18px 18px 14px; border:1px solid var(--line); border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      position: sticky; top: 10px; z-index: 30; backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;flex-direction:column;gap:6px}
+    .brand h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .brand p{margin:0;color:var(--muted);font-size:12.5px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+    .chip{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:8px 10px; border-radius:999px; color:var(--muted);
+      font-size:12.5px; cursor:pointer; user-select:none;
+      display:flex;gap:8px;align-items:center
+    }
+    .chip strong{color:var(--text);font-weight:700}
+    .chip[aria-pressed="true"]{outline:2px solid rgba(122,167,255,.5); color:var(--text)}
+    .search{
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      border-radius:999px; padding:10px 12px; width:min(320px, 65vw);
+      color:var(--text); outline:none;
+    }
+    .grid{display:grid; gap:14px; grid-template-columns: 1.2fr .8fr; margin-top:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} header{position:relative;top:auto} }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .title{display:flex;align-items:center;gap:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px rgba(122,167,255,.12)}
+    .hd h2{margin:0;font-size:14.5px}
+    .hd small{color:var(--muted2)}
+    .body{padding:14px 16px}
+    .kpis{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px}
+    @media (max-width: 700px){ .kpis{grid-template-columns:1fr} }
+    .kpi{border:1px solid var(--line); background: rgba(16,26,51,.55); border-radius:16px; padding:12px 12px;}
+    .kpi .v{font-size:18px;font-weight:800}
+    .kpi .l{font-size:12.5px;color:var(--muted)}
+    .kpi .s{font-size:12px;color:var(--muted2);margin-top:4px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--line); background: rgba(255,255,255,.03); color:var(--muted);
+      padding:8px 10px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .tab.active{color:var(--text); outline:2px solid rgba(122,167,255,.45)}
+    .section{display:none; margin-top:12px}
+    .section.active{display:block}
+    details{border:1px solid var(--line); background: rgba(255,255,255,.03); border-radius:16px; padding:10px 12px; margin:10px 0;}
+    summary{cursor:pointer; font-weight:700}
+    summary span{color:var(--muted); font-weight:600}
+    .list{margin:10px 0 0; padding:0 18px 0 0}
+    .list li{margin:6px 0;color:var(--text)}
+    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background: rgba(255,255,255,.03);
+      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px;}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .sw{width:10px;height:10px;border-radius:3px;background:var(--accent);display:inline-block}
+    .sw.good{background:var(--good)} .sw.warn{background:var(--warn)} .sw.bad{background:var(--bad)}
+    .mini{font-size:12px;color:var(--muted)}
+    .table{
+      width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+      border-radius:16px; border:1px solid var(--line); background: rgba(16,26,51,.45);
+    }
+    .table th, .table td{
+      padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:right; font-size:12.5px; vertical-align:top;
+    }
+    .table th{color:var(--muted); font-weight:700; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:0}
+    .note{border:1px dashed rgba(255,255,255,.18); background: rgba(255,255,255,.03);
+      padding:10px 12px; border-radius:16px; color:var(--muted); font-size:12.5px; margin-top:10px;}
+    .btn{
+      border:1px solid var(--line); background: rgba(255,255,255,.04); color:var(--text);
+      padding:9px 12px; border-radius:999px; cursor:pointer; font-size:12.5px; user-select:none;
+    }
+    .btn:hover{outline:2px solid rgba(255,255,255,.08)}
+    .footer{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; color:var(--muted); font-size:12.5px;}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background: rgba(255,255,255,.03);}
+    canvas{width:100%; height:260px; background: rgba(16,26,51,.35); border:1px solid var(--line); border-radius:16px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+    .callout{border:1px solid rgba(122,167,255,.22); background: rgba(122,167,255,.08); border-radius:16px; padding:12px 12px;}
+    .small{font-size:12.5px;color:var(--muted)}
+    .hl{color:var(--accent);font-weight:800}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .tag{display:inline-flex; gap:8px; align-items:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.03); color:var(--muted); font-size:12px; margin:4px 6px 0 0;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>دراسة سوق خدمات تحسين محركات البحث (SEO) في السعودية</h1>
+        <p>لوحة تفاعلية تجمع: حجم السوق والنمو - مقدمو الخدمة - شرائح العملاء - تحديات السوق - خريطة القطاعات - Personas - Empathy Maps - ملاحظات منهجية.</p>
+      </div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="ابحث داخل الدراسة (مثال: SaaS، عقار، ميزانية، فهرسة...)" />
+        <button class="chip" id="toggleNumbers" aria-pressed="true" title="إظهار أو إخفاء الأرقام">
+          <strong>الأرقام</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="chip" id="toggleNotes" aria-pressed="true" title="إظهار أو إخفاء الملاحظات المنهجية">
+          <strong>ملاحظات</strong><span class="muted">تشغيل</span>
+        </button>
+        <button class="btn" id="exportBtn" title="نسخ ملخص تنفيذي">نسخ الملخص التنفيذي</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="mainCard">
+        <div class="hd">
+          <div class="title"><span class="dot"></span><h2>لوحة الدراسة</h2></div>
+          <small>آخر تحديث: <span id="today"></span></small>
+        </div>
+        <div class="body">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="1.1">1.1</span> <span class="numUnit">مليار $</span></div>
+              <div class="l">إيرادات سوق برمجيات SEO (2024)</div>
+              <div class="s">المصدر: Grand View Research (تقدير سوقي)</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="2.1">2.1</span> <span class="numUnit">مليار $</span></div>
+              <div class="l">توقعات الإيرادات (2030)</div>
+              <div class="s">المصدر: Grand View Research (تقدير سوقي)</div>
+            </div>
+            <div class="kpi">
+              <div class="v"><span class="num" data-n="12.3">12.3</span>%</div>
+              <div class="l">معدل النمو السنوي المركب (CAGR)</div>
+              <div class="s">2024 إلى 2030 (تقدير سوقي)</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="tabs" role="tablist" aria-label="أقسام الدراسة">
+            <div class="tab active" data-tab="exec">الملخص التنفيذي</div>
+            <div class="tab" data-tab="providers">مقدمو الخدمة</div>
+            <div class="tab" data-tab="customers">شرائح العملاء</div>
+            <div class="tab" data-tab="sectors">خريطة القطاعات</div>
+            <div class="tab" data-tab="challenges">التحديات</div>
+            <div class="tab" data-tab="personas">Personas و Empathy</div>
+            <div class="tab" data-tab="method">المنهجية والحدود</div>
+          </div>
+
+          <div class="section active" id="sec-exec">
+            <div class="callout">
+              <b>الخلاصة التنفيذية:</b>
+              السوق السعودي لخدمات وأدوات SEO في نمو واضح، مدفوع بالتحول الرقمي، وانتشار الإنترنت والهواتف الذكية، وتوسع التجارة الإلكترونية.
+              القيمة السوقية التقديرية لأدوات/برمجيات SEO كانت <span class="hl num" data-n="1.1">1.1</span> مليار دولار في 2024، مع توقع الوصول إلى <span class="hl num" data-n="2.1">2.1</span> مليار دولار بحلول 2030، بمعدل نمو سنوي مركب <span class="hl num" data-n="12.3">12.3</span>%.
+              طلب SEO يتوزع بقوة على قطاعات ذات نية شراء عالية مثل التجارة الإلكترونية والعقار، بينما SaaS B2B أقل حجما لكنه أعلى قيمة لكل عميل.
+            </div>
+
+            <details open>
+              <summary>ما الذي يفسر النمو؟ <span>(عوامل طلب السوق)</span></summary>
+              <ul class="list">
+                <li>تسارع التحول الرقمي ورؤية 2030 يزيدان المنافسة على الظهور العضوي.</li>
+                <li>التجارة الإلكترونية تدفع الشركات للاعتماد على الاكتساب العضوي لتقليل تكلفة الاستحواذ.</li>
+                <li>نضج قرارات الشراء: المستخدمون يقارنون ويبحثون قبل اتخاذ القرار، خاصة في العقار وSaaS والخدمات.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>ما الذي تشتريه الشركات فعليا عندما تشتري SEO؟ <span>(4 مخرجات)</span></summary>
+              <ul class="list">
+                <li>قدرة على الظهور في نتائج البحث لكلمات ذات نية شراء.</li>
+                <li>نظام محتوى مستمر (ليس حملة واحدة) يراكم سلطة موضوعية.</li>
+                <li>إشارات ثقة: روابط، سمعة، E-E-A-T (خصوصا للقطاعات الحساسة).</li>
+                <li>قياس أثر قابل للشرح للإدارة: زيارات، ترتيب، ثم Leads وPipeline.</li>
+              </ul>
+            </details>
+
+            <div class="note noteToggle">
+              <b>تنبيه منهجي:</b> أرقام السوق أعلاه تقديرات من تقارير أبحاث سوق، أما نسب الطلب القطاعية فهي تقديرات مبنية على وزن القطاع، كثافة المنافسة، اعتماد الاكتساب العضوي، وعدد اللاعبين (SMEs)، وليست إحصاءات رسمية مباشرة.
+            </div>
+          </div>
+
+          <div class="section" id="sec-providers">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>من يقدم خدمات SEO في السعودية؟ <span>(خريطة الموردين)</span></summary>
+                  <ul class="list">
+                    <li><b>وكالات رقمية:</b> تقدم SEO كجزء من باقة أوسع (Media + CRO + Content).</li>
+                    <li><b>شركات استشارية/متخصصة:</b> تركيز على Technical SEO، الحوكمة، أو قطاعات محددة.</li>
+                    <li><b>مستقلون:</b> تدقيق فني، كتابة محتوى SEO، وبناء روابط حسب الطلب.</li>
+                    <li><b>فرق داخلية:</b> الشركات الأكبر تبني فريق SEO داخلي وتستعين بأدوات مدفوعة.</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary>أمثلة وكالات ظاهرة في السوق <span>(أمثلة تم ذكرها)</span></summary>
+                  <ul class="list">
+                    <li>Chain Reaction (الرياض) - خدمات تسويق شاملة تشمل SEO وتحسين تجربة المستخدم.</li>
+                    <li>WOW Marketing Agency (الرياض) - SEO متقدم وإدارة روابط.</li>
+                    <li>Red Bananas (جدة) - تحسين ترتيب واستراتيجيات SEO للجوال.</li>
+                  </ul>
+                  <div class="mini">هذه أمثلة تم ذكرها ضمن الدراسة كنماذج، وليست قائمة شاملة.</div>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>كيف يقيم العميل مقدمي الخدمة؟ <span>(معايير قرار الشراء)</span></summary>
+                  <ul class="list">
+                    <li>القدرة على التعامل مع الكلمات ذات النية التجارية، وليس فقط زيارات.</li>
+                    <li>شفافية القياس وربط النتائج بالأهداف التجارية.</li>
+                    <li>قدرة التنفيذ: محتوى، On-page، تنسيق تقني، ثم تحسين مستمر.</li>
+                    <li>الثقة: أمثلة، خبرة قطاعية، جودة الكتابة بالعربية، ووضوح توقعات الزمن.</li>
+                  </ul>
+                </details>
+
+                <details>
+                  <summary>مخاطر شائعة في السوق <span>(سبب فشل مشاريع SEO)</span></summary>
+                  <ul class="list">
+                    <li>توقعات غير واقعية: تصدر فوري لكلمات تنافسية عالية.</li>
+                    <li>تقارير تركيزها Traffic فقط بدون Leads أو مؤشرات قريبة من الإيراد.</li>
+                    <li>تجاهل الجانب التقني والفهرسة في المواقع الكبيرة أو المتاجر.</li>
+                    <li>محتوى عربي ضعيف لا يراعي نية الباحث المحلي.</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="sec-customers">
+            <details open>
+              <summary>شرائح العملاء التي تطلب SEO <span>(تقدير توزيع)</span></summary>
+              <table class="table">
+                <thead>
+                  <tr><th>الفئة</th><th>أمثلة</th><th style="width:160px">النسبة التقريبية</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>شركات ناشئة / صغيرة ومتوسطة</td><td>شركات SaaS ناشئة، متاجر إلكترونية محلية، خدمات مبتكرة</td><td><span class="num" data-n="50">50</span>%</td></tr>
+                  <tr><td>شركات متوسطة</td><td>شركات تقنية محلية وصناعية متوسطة الحجم</td><td><span class="num" data-n="25">25</span>%</td></tr>
+                  <tr><td>شركات كبرى / مؤسسات عامة</td><td>بنوك، شركات الاتصالات، مستشفيات كبرى</td><td><span class="num" data-n="20">20</span>%</td></tr>
+                  <tr><td>جهات حكومية ومؤسسات رسمية</td><td>وزارات وهيئات (حصة محدودة)</td><td><span class="num" data-n="5">5</span>%</td></tr>
+                </tbody>
+              </table>
+              <div class="note noteToggle">النِسب تقديرية وليست منشورة كإحصاء رسمي مباشر، لكنها تعكس أن الجزء الأكبر من الطلب يأتي من القطاع الخاص، خاصة SMB.</div>
+            </details>
+
+            <details>
+              <summary>ماذا يميز طلب SaaS B2B؟ <span>(لماذا مهم لكم)</span></summary>
+              <ul class="list">
+                <li>حجم الطلب أقل من التجارة الإلكترونية والعقار، لكنه أعلى قيمة لكل صفقة.</li>
+                <li>دورة قرار أطول تتطلب محتوى يغطي مراحل الوعي: Problem-aware إلى Product-aware.</li>
+                <li>المحتوى الفعال في SaaS عادة يكون: مقارنات، بدائل، Use cases، صناعات، وموضوعات قرار شراء.</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="section" id="sec-sectors">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>خريطة القطاعات وحصة الطلب على SEO <span>(تقدير)</span></summary>
+                  <canvas id="sectorChart" width="900" height="420"></canvas>
+                  <div class="legend" id="sectorLegend"></div>
+                  <div class="note noteToggle">هذه النسب تمثل حصة الطلب على خدمات SEO (وليست حصة الناتج المحلي أو الإنفاق الإعلاني).</div>
+                </details>
+
+                <details>
+                  <summary>تفصيل سريع: ماذا يطلب كل قطاع من SEO؟ <span>(ملخص)</span></summary>
+                  <table class="table" id="sectorNeedsTable">
+                    <thead><tr><th>القطاع</th><th>حصة الطلب</th><th>ما يطلبه عادة</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>فلاتر عرض القطاعات <span>(تفاعلي)</span></summary>
+                  <div class="small">اختر قطاعا لعرض احتياجاته وتحدياته بسرعة:</div>
+                  <div id="sectorTags"></div>
+                  <div class="divider"></div>
+                  <div class="callout" id="sectorFocus">اختر قطاعا من القائمة لعرض ملخصه هنا.</div>
+                </details>
+
+                <details>
+                  <summary>تحديات حسب القطاع <span>(مختصر عملي)</span></summary>
+                  <div class="small">هذه النقاط تساعدك تكتب Messaging واقعي وتبني Product fit حسب القطاع.</div>
+                  <ul class="list" id="sectorChallengesList"></ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="sec-challenges">
+            <details open>
+              <summary>التحديات العامة في سوق SEO السعودي <span>(المشاكل الأكثر تكرارا)</span></summary>
+              <ul class="list">
+                <li><b>ضعف المحتوى العربي</b> وضرورة محلية الاستهداف.</li>
+                <li><b>نقص الوعي التقني والخبرة.</b></li>
+                <li><b>شدة المنافسة</b> على الكلمات ذات النية التجارية.</li>
+                <li><b>قيود تقنية</b> مثل الأداء والفهرسة.</li>
+                <li><b>محدودية الميزانيات</b> لدى الشركات الصغيرة.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>أسباب فشل مبادرات SEO داخل الشركات</summary>
+              <ul class="list">
+                <li>قياس Traffic فقط بدون Leads أو Pipeline.</li>
+                <li>غياب نظام تشغيل محتوى.</li>
+                <li>غياب توافق مع dev.</li>
+                <li>وعد تصدر سريع.</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="section" id="sec-personas">
+            <div class="split">
+              <div>
+                <details open>
+                  <summary>توزيع Personas داخل مشتري SEO SaaS (تقديري)</summary>
+                  <canvas id="personaChart" width="900" height="420"></canvas>
+                  <div class="legend" id="personaLegend"></div>
+                  <div class="note noteToggle">هذه نسب تقديرية مبنية على أنماط اتخاذ القرار في B2B SaaS بالسعودية.</div>
+                </details>
+
+                <details>
+                  <summary>لجنة القرار (Buying Committee)</summary>
+                  <ul class="list">
+                    <li><b>Owner:</b> Head of Marketing</li>
+                    <li><b>Economic buyer:</b> CEO/Founder أو Finance</li>
+                    <li><b>Influencers:</b> Growth + SEO + CTO</li>
+                    <li><b>Users:</b> فريق المحتوى والكتّاب</li>
+                    <li><b>Gatekeeper:</b> Procurement</li>
+                  </ul>
+                </details>
+              </div>
+
+              <div>
+                <details open>
+                  <summary>Empathy Map (اختر Persona)</summary>
+                  <div id="personaTags"></div>
+                  <div class="divider"></div>
+                  <div class="callout" id="personaFocus">اختر Persona لعرض Empathy Map هنا.</div>
+                </details>
+
+                <details>
+                  <summary>Messaging سريع حسب Persona</summary>
+                  <ul class="list">
+                    <li><b>Founder/CEO:</b> تقليل مخاطر - Pipeline - خطة 90 يوم - شفافية.</li>
+                    <li><b>Head of Marketing:</b> نظام تشغيل محتوى - حوكمة - تقارير تقنع الإدارة.</li>
+                    <li><b>Head of Growth:</b> Attribution - BOFU - CRO - أثر على CAC.</li>
+                    <li><b>Content Lead:</b> Briefs - QA - تقليل مراجعات - جودة عربية.</li>
+                    <li><b>SEO Specialist:</b> وضوح فني - تكامل مع dev - أولويات.</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" id="sec-method">
+            <details open>
+              <summary>المنهجية: كيف تم بناء النِسب والتقديرات؟</summary>
+              <ul class="list">
+                <li>حجم القطاع الاقتصادي كمؤشر وزن عام.</li>
+                <li>عدد اللاعبين (SMEs) وتأثيره على كثافة المنافسة.</li>
+                <li>مدى اعتماد القطاع على الاكتساب العضوي.</li>
+                <li>شدة المنافسة على كلمات ذات نية شراء.</li>
+              </ul>
+              <div class="note noteToggle">لا توجد جهة رسمية تنشر نسب الطلب على خدمات SEO حسب القطاع مباشرة، لذا هذه تقديرات للاستخدام الاستراتيجي.</div>
+            </details>
+
+            <details>
+              <summary>حدود الدراسة وكيف تستخدمها بشكل صحيح</summary>
+              <ul class="list">
+                <li>أرقام حجم السوق (برمجيات SEO) تقديرات أبحاث سوق، وليست إنفاق SEO داخل السعودية فقط.</li>
+                <li>النسب تستخدم لتوجيه القرار ثم يتم التحقق عبر بياناتكم (wins/losses، كلمات المنافسين).</li>
+                <li>أفضل ممارسة: تحديث هذه النسب كل 90 يوم بناء على pipeline الحقيقي.</li>
+              </ul>
+            </details>
+
+            <details>
+              <summary>مصادر مرجعية مذكورة في النص</summary>
+              <ul class="list">
+                <li>Grand View Research: تقديرات سوق برمجيات SEO والنمو.</li>
+                <li>مؤشرات التجارة الإلكترونية والمدفوعات وتوسع السوق.</li>
+                <li>قوائم وكالات SEO الظاهرة (مثال: Semrush Agency partners).</li>
+              </ul>
+              <div class="mini">يمكنك إضافة روابط المصادر الرسمية داخل هذا الملف حسب حاجة العرض.</div>
+            </details>
+          </div>
+
+          <div class="footer">
+            <span class="badge">وضع: <b id="modeLabel">عرض كامل</b></span>
+            <span class="badge">بحث: <b id="hits">0</b> نتيجة</span>
+            <span class="badge">RTL - جاهز للعرض على الإدارة</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card" id="sideCard">
+        <div class="hd">
+          <div class="title"><span class="dot" style="background:var(--good);box-shadow:0 0 0 6px rgba(94,226,160,.12)"></span><h2>نظرة سريعة</h2></div>
+          <small>مركزة</small>
+        </div>
+        <div class="body">
+          <div class="pill">ما الذي نحله؟ <b>نمو عضوي</b> + <b>قناة Leads</b> + <b>ثقة</b></div>
+          <div style="height:10px"></div>
+
+          <details open>
+            <summary>أعلى قطاعات طلب SEO (تقدير)</summary>
+            <div class="tag"><span class="sw"></span> Ecommerce + Retail <b class="num" data-n="30">30</b>%</div>
+            <div class="tag"><span class="sw warn"></span> Real Estate <b class="num" data-n="18">18</b>%</div>
+            <div class="tag"><span class="sw good"></span> Healthcare <b class="num" data-n="10">10</b>%</div>
+            <div class="tag"><span class="sw bad"></span> B2B SaaS <b class="num" data-n="7">7</b>%</div>
+            <div class="mini">SaaS أقل حجما، أعلى قيمة لكل عميل.</div>
+          </details>
+
+          <details>
+            <summary>أكبر 5 تحديات سوقية</summary>
+            <ul class="list">
+              <li>ضعف المحتوى العربي المحلي</li>
+              <li>نقص الوعي التقني والخبرة</li>
+              <li>شدة المنافسة على الكلمات</li>
+              <li>مشاكل الأداء والفهرسة</li>
+              <li>محدودية الميزانيات لدى SMB</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>أين تفشل فرق SEO غالبا؟</summary>
+            <ul class="list">
+              <li>قياس Traffic فقط</li>
+              <li>غياب نظام تشغيل محتوى</li>
+              <li>غياب تنسيق مع dev</li>
+              <li>وعد تصدر سريع</li>
+            </ul>
+          </details>
+
+          <div class="note noteToggle">هذا الملف مصمم ليكون عرض قيادة سريع القراءة، مع عمق كافي للفرق المتخصصة.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('today').textContent = `${yyyy}-${mm}-${dd}`;
+
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const sections = {
+    exec: document.getElementById('sec-exec'),
+    providers: document.getElementById('sec-providers'),
+    customers: document.getElementById('sec-customers'),
+    sectors: document.getElementById('sec-sectors'),
+    challenges: document.getElementById('sec-challenges'),
+    personas: document.getElementById('sec-personas'),
+    method: document.getElementById('sec-method')
+  };
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(sections).forEach(s=>s.classList.remove('active'));
+      sections[t.dataset.tab].classList.add('active');
+      runSearch(document.getElementById('q').value.trim());
+    });
+  });
+
+  const toggleNumbers = document.getElementById('toggleNumbers');
+  function setNumbers(on){
+    document.querySelectorAll('.num').forEach(el=> el.style.display = on ? '' : 'none');
+    document.querySelectorAll('.numUnit').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNumbers.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNumbers.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+    document.getElementById('modeLabel').textContent = on ? 'عرض كامل' : 'عرض بدون أرقام';
+  }
+  toggleNumbers.addEventListener('click', ()=> setNumbers(toggleNumbers.getAttribute('aria-pressed') !== 'true'));
+  setNumbers(true);
+
+  const toggleNotes = document.getElementById('toggleNotes');
+  function setNotes(on){
+    document.querySelectorAll('.noteToggle').forEach(el=> el.style.display = on ? '' : 'none');
+    toggleNotes.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleNotes.querySelector('span').textContent = on ? 'تشغيل' : 'إيقاف';
+  }
+  toggleNotes.addEventListener('click', ()=> setNotes(toggleNotes.getAttribute('aria-pressed') !== 'true'));
+  setNotes(true);
+
+  document.querySelectorAll('.num[data-n]').forEach(el=>{ el.textContent = el.dataset.n; });
+
+  const sectors = [
+    {key:'ecom', name:'التجارة الإلكترونية والريتيل', share:30, color:'#7aa7ff',
+      needs:['صفحات فئات ومنتجات','محتوى مقارنات وBest-of','تحسينات تقنية وسرعة','Schema','إدارة فهرسة'],
+      challenges:['منافسة ضخمة على كلمات المنتجات والفئات','محتوى مكرر وفهرسة غير نظيفة','حاجة لتحديثات تقنية مستمرة (CWV، ربط داخلي)','اعتماد على ماركت بليس يضعف SEO للموقع']
+    },
+    {key:'real', name:'العقارات', share:18, color:'#ffd46a',
+      needs:['Local SEO قوي','صفحات مشاريع وأحياء','صفحات أسعار وتمويل','محتوى توعوي طويل','بناء ثقة وروابط'],
+      challenges:['الكلمات محلية ومتغيرة حسب الأحياء والمشاريع','تداخل SEO مع الإعلانات والعروض','صفحات المشاريع تتغير بسرعة وتحتاج تحديث دائم','حساسية الثقة والمصداقية']
+    },
+    {key:'health', name:'الصحة', share:10, color:'#5ee2a0',
+      needs:['Local + E-E-A-T','صفحات خدمات واضحة','ملف الطبيب','مراجعات وإدارة سمعة','التزام محتوى طبي'],
+      challenges:['قيود المحتوى الطبي وحساسية الادعاءات','ضرورة E-E-A-T قوية وإلا تتأثر النتائج','Local SEO يحتاج مراجعات حقيقية','سمعة العلامة تؤثر على التحويل']
+    },
+    {key:'fin', name:'التمويل والفنتك والتأمين', share:8, color:'#ff7a8a',
+      needs:['محتوى امتثال','صفحات مقارنة','مصطلحات مالية','مصداقية وروابط عالية الجودة'],
+      challenges:['YMYL وامتثال وتنظيمات','صعوبة بناء روابط موثوقة','منافسة قوية من جهات كبرى','حساسية الثقة ومعدلات تحويل دقيقة']
+    },
+    {key:'travel', name:'السفر والضيافة', share:8, color:'#9aa8ff',
+      needs:['صفحات عروض','محتوى سياحي','إدارة الموسمية','محتوى ثنائي اللغة غالبا'],
+      challenges:['موسمية شديدة','منافسة منصات الحجز الكبيرة','تعدد اللغات يغير نية البحث','تحديثات عروض مستمرة']
+    },
+    {key:'auto', name:'السيارات', share:6, color:'#b3ffd1',
+      needs:['صفحات موديلات وخدمات','محتوى مواصفات ومقارنة','صفحات صيانة وقطع','أسعار وتمويل'],
+      challenges:['كلمات عالية المنافسة','تحديث موديلات مستمر','تشابه محتوى بين الوكلاء والمنصات','Local presence لمراكز الخدمة']
+    },
+    {key:'edu', name:'التعليم والتدريب', share:5, color:'#cdb4ff',
+      needs:['صفحات برامج','محتوى نتائج وظيفية','أسئلة شائعة','قصص نجاح'],
+      challenges:['ثقة ونتائج حقيقية مطلوبة','تحويل الزيارات يحتاج صفحات هبوط قوية','منافسة على كلمات شهادات/دورات','موسمية التسجيل']
+    },
+    {key:'home', name:'الخدمات المنزلية والمحلية', share:5, color:'#a8f1ff',
+      needs:['خرائط ومناطق تغطية','صفحات خدمات سريعة التحويل','مراجعات','صفحات محلية'],
+      challenges:['Local SEO مزدحم','أرقام وهمية ومراجعات مزيفة','طلب عاجل يحتاج سرعة استجابة','تفاوت جودة الخدمة']
+    },
+    {key:'saas', name:'B2B SaaS وخدمات المؤسسات', share:7, color:'#ffffff',
+      needs:['مشاكل وحلول','مقارنات وأدلة قرار شراء','Use cases وصناعات','Topic clusters','أدلة بيانات ودراسات حالة'],
+      challenges:['رحلة قرار طويلة','كلمات عالية قيمة صعبة وتحتاج وقت 6-12 شهر','إثبات قيمة عبر محتوى عميق','تنسيق محتوى مع المنتج والمبيعات']
+    },
+    {key:'other', name:'قطاعات أخرى', share:3, color:'#8ea0d6',
+      needs:['حسب القطاع','أساسيات On-page','صفحات خدمات','محتوى توعوي'],
+      challenges:['طلب موزع ومجزأ','صعوبة بناء استراتيجية موحدة','تفاوت نضج القنوات الرقمية']
+    }
+  ];
+
+  const personas = [
+    {key:'ceo', name:'Founder/CEO', share:28, color:'#7aa7ff', empathy:{
+      thinkFeel:['محتاج نمو حقيقي مش تقارير','قلقان من الحرق المالي','متردد بسبب تجارب سابقة','يريد تقليل المخاطر'],
+      see:['منافسين متصدرين','محتوى بلا Leads','أدوات كثيرة بدون وضوح','ضغط مستثمرين أو شركاء'],
+      hear:['SEO بياخد وقت','الإعلانات أسرع','اصبر 6 شهور','عايز traction واضح'],
+      sayDo:['وريني ROI','يتدخل في القرار','يغير الاتجاه بسرعة','يسأل عن كلمات نية شراء'],
+      pains:['عدم ربط SEO بالإيراد','ضياع وقت الفريق','وعود غير واقعية','نتائج بطيئة بدون شفافية'],
+      gains:['قناة نمو متوقعة','محتوى يجلب عملاء','مؤشرات تقدم واضحة','تقليل الاعتماد على Paid'],
+      fears:['يبدو أنه اتضحك عليه','يضيع 6 شهور بدون نتيجة','يلتزم بحل صعب الإلغاء'],
+      success:['Leads حقيقية من محتوى جوجل مع اتجاه صعود واضح']
+    }},
+    {key:'mm', name:'Head of Marketing', share:32, color:'#5ee2a0', empathy:{
+      thinkFeel:['بين ضغط الإدارة والتنفيذ','يريد نظام تشغيل محتوى','يعرف أن SEO مهم لكنه مشتت','يريد تقارير تقنع الإدارة'],
+      see:['فريق محتوى غير متخصص','أدوات متفرقة','KPI غير متفق عليه','تقارير Traffic لا تقنع'],
+      hear:['فين العائد؟','Leads غير qualified','الـbriefs مش واضحة','ده طبيعي في المرحلة دي'],
+      sayDo:['عايز Process واضح','يبني حوكمة','يطلب dashboards','يوازن بين السرعة والجودة'],
+      pains:['Chaos في المحتوى','صعوبة القياس','تضارب بين الفرق','اعتماد كامل على طرف خارجي'],
+      gains:['نظام محتوى قابل للتوسع','رؤية end-to-end','أولوية كلمات واضحة','مخرجات قابلة للتنبؤ'],
+      fears:['يحاسب على قناة غير ناضجة','يفقد السيطرة لصالح وكالة','يتهم بسوء الإدارة'],
+      success:['SEO جزء من المحرك التسويقي وليس مشروع جانبي']
+    }},
+    {key:'growth', name:'Head of Growth', share:14, color:'#ffd46a', empathy:{
+      thinkFeel:['عقلية تجارب وأرقام','صبر على الاختبار لا على الغموض','يريد Attribution واضح','يريد تأثير على CAC'],
+      see:['CAC مرتفع من Paid','Funnel غير متوازن','TOFU كثير بدون BOFU','Conversion ضعيف للعضوي'],
+      hear:['المحتوى كويس','الترتيب بيتحسن','فين النمو؟','عايز نتائج سريعة'],
+      sayDo:['وريني Impact','يطالب بتتبع وتحويلات','يركز على صفحات المقارنة','يجرب CRO'],
+      pains:['SEO بدون CRO','Attribution ضعيف','صعوبة اختبار SEO بسرعة','اعتماد على تقارير سطحية'],
+      gains:['SEO يغذي Funnel','Organic يتحول لـTrials','تحسين Conversion','قرارات مبنية على بيانات'],
+      fears:['يعتمد على قناة بطيئة','يضيع فرص نمو أسرع','يفشل في إثبات ROI'],
+      success:['Organic يؤدي إلى Trials ثم Paid بنسبة قابلة للشرح']
+    }},
+    {key:'content', name:'Content Lead', share:10, color:'#cdb4ff', empathy:{
+      thinkFeel:['يريد جودة حقيقية','مرهق من المراجعات','يرى SEO كقيود أحيانا','يحمي نبرة العلامة'],
+      see:['كتاب غير متخصصين','Briefs سيئة','تعديلات كثيرة','ضغط إنتاج عالي'],
+      hear:['حط الكلمة هنا','عايز سرعة','عايز نتائج','ليه المقال اتأخر؟'],
+      sayDo:['عايز Guidelines واضحة','يبني قوالب','يدافع عن الجودة','ينظم QA'],
+      pains:['معايير نجاح غير واضحة','صراع الجودة vs SEO','احتراق الفريق','تشتيت بين أصحاب قرار'],
+      gains:['Briefs ذكية','QA واضح','محتوى يفخر به الفريق','مراجعات أقل'],
+      fears:['المحتوى يتحول Spam','الجودة تضيع','الكتاب يتركون العمل'],
+      success:['محتوى قوي يظهر في جوجل مع دورة مراجعات قصيرة']
+    }},
+    {key:'seo', name:'SEO Specialist', share:8, color:'#ff7a8a', empathy:{
+      thinkFeel:['تقني ومنهجي','محبط من ضعف التنفيذ','يريد سيطرة وأولوية','يريد تنسيق مع dev'],
+      see:['مشاكل فهرسة','قرارات محتوى عشوائية','dev backlog طويل','تضارب أولويات'],
+      hear:['ليه النتائج بطيئة؟','SEO معقد','مش أولوية','عايز تقرير'],
+      sayDo:['يطلب Data','يبني Roadmap','يكتب tickets','يستخدم أدوات كثيرة'],
+      pains:['عدم وجود authority داخلي','تنفيذ بطيء','أدوات غير مترابطة','لوم غير عادل'],
+      gains:['تحكم وشفافية','أولويات واضحة','تسليم أسرع','نتائج قابلة للتفسير'],
+      fears:['يظهر فاشل','يفقد مصداقيته','يتحمل أخطاء غيره'],
+      success:['تحسن مستمر مع تفسير واضح لمصادر النمو والهبوط']
+    }}
+  ];
+
+  const sectorTags = document.getElementById('sectorTags');
+  sectors.forEach(s=>{
+    const b = document.createElement('button');
+    b.className='btn'; b.style.margin='6px 0 0 8px';
+    b.textContent = `${s.name} (${s.share}%)`;
+    b.addEventListener('click', ()=> focusSector(s.key));
+    sectorTags.appendChild(b);
+  });
+
+  const tbody = document.querySelector('#sectorNeedsTable tbody');
+  sectors.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${s.name}</td><td><span class="num" data-n="${s.share}">${s.share}</span>%</td><td>${s.needs.slice(0,5).map(x=>`• ${x}`).join('<br>')}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  const sectorChallengesList = document.getElementById('sectorChallengesList');
+  function focusSector(key){
+    const s = sectors.find(x=>x.key===key);
+    const box = document.getElementById('sectorFocus');
+    box.innerHTML = `<b>${s.name}</b><br>حصة الطلب التقديرية: <b class="num" data-n="${s.share}">${s.share}</b>%<br><div style="margin-top:8px" class="small"><span class="hl">الاحتياج:</span> ${s.needs.join(' - ')}</div>`;
+    sectorChallengesList.innerHTML = '';
+    s.challenges.forEach(c=>{ const li=document.createElement('li'); li.textContent=c; sectorChallengesList.appendChild(li); });
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  const personaTags = document.getElementById('personaTags');
+  personas.forEach(p=>{
+    const b = document.createElement('button');
+    b.className='btn'; b.style.margin='6px 0 0 8px';
+    b.textContent = `${p.name} (${p.share}%)`;
+    b.addEventListener('click', ()=> focusPersona(p.key));
+    personaTags.appendChild(b);
+  });
+
+  function focusPersona(key){
+    const p = personas.find(x=>x.key===key);
+    const e = p.empathy;
+    const box = document.getElementById('personaFocus');
+    const mk = (title, arr)=> `<details open style="margin:10px 0"><summary>${title}</summary><ul class="list">${arr.map(x=>`<li>${x}</li>`).join('')}</ul></details>`;
+    box.innerHTML = `<b>${p.name}</b> - نسبة تمثيل تقديرية: <b class="num" data-n="${p.share}">${p.share}</b>%<br>
+      ${mk('يفكر ويشعر', e.thinkFeel)}${mk('يرى', e.see)}${mk('يسمع', e.hear)}${mk('يقول ويفعل', e.sayDo)}
+      ${mk('الألم (Pains)', e.pains)}${mk('المكاسب (Gains)', e.gains)}${mk('مخاوف خفية', e.fears)}${mk('تعريف النجاح', e.success)}`;
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  function shortLabel(name){
+    if(name.includes('التجارة')) return 'Ecom';
+    if(name.includes('العقارات')) return 'Real';
+    if(name.includes('الصحة')) return 'Health';
+    if(name.includes('التمويل')) return 'Fin';
+    if(name.includes('السفر')) return 'Travel';
+    if(name.includes('السيارات')) return 'Auto';
+    if(name.includes('التعليم')) return 'Edu';
+    if(name.includes('المنزلية')) return 'Local';
+    if(name.includes('SaaS')) return 'SaaS';
+    return 'Other';
+  }
+
+  function drawBarChart(canvas, items, title){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const pad = {t:46, r:24, b:56, l:70};
+    const chartW = W - pad.l - pad.r;
+    const chartH = H - pad.t - pad.b;
+
+    ctx.fillStyle = 'rgba(234,240,255,.95)';
+    ctx.font = '700 18px system-ui, sans-serif';
+    ctx.fillText(title, pad.l, 30);
+
+    const max = Math.max(...items.map(x=>x.value));
+    const step = Math.ceil(max/5);
+
+    ctx.strokeStyle = 'rgba(255,255,255,.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, pad.t);
+    ctx.lineTo(pad.l, pad.t+chartH);
+    ctx.lineTo(pad.l+chartW, pad.t+chartH);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(185,196,230,.9)';
+    ctx.font = '12px system-ui, sans-serif';
+    for(let i=0;i<=5;i++){
+      const y = pad.t + chartH - (chartH*(i/5));
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+chartW, y); ctx.stroke();
+      ctx.fillText(String(i*step), 18, y+4);
+    }
+
+    const gap = 12;
+    const barW = (chartW - gap*(items.length-1))/items.length;
+    items.forEach((it, idx)=>{
+      const x = pad.l + idx*(barW+gap);
+      const h = (it.value/max)*chartH;
+      const y = pad.t + chartH - h;
+
+      ctx.fillStyle = it.color;
+      ctx.globalAlpha = .9;
+      ctx.fillRect(x, y, barW, h);
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = 'rgba(234,240,255,.95)';
+      ctx.font = '700 12px system-ui, sans-serif';
+      ctx.fillText(`${it.value}%`, x + (barW/2) - 12, y - 8);
+
+      ctx.fillStyle = 'rgba(185,196,230,.95)';
+      ctx.font = '12px system-ui, sans-serif';
+      ctx.save();
+      ctx.translate(x + barW/2, pad.t + chartH + 20);
+      ctx.textAlign = 'center';
+      ctx.fillText(it.label, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  function buildLegend(el, items){
+    el.innerHTML = '';
+    items.forEach(it=>{
+      const d = document.createElement('div');
+      d.className = 'pill';
+      d.innerHTML = `<span class="sw" style="background:${it.color}"></span> ${it.label} <b class="num" data-n="${it.value}">${it.value}</b>%`;
+      el.appendChild(d);
+    });
+    setNumbers(toggleNumbers.getAttribute('aria-pressed') === 'true');
+  }
+
+  const sectorItems = sectors.filter(s=>s.key!=='other').map(s=>({label: shortLabel(s.name), value:s.share, color:s.color})).sort((a,b)=>b.value-a.value);
+  drawBarChart(document.getElementById('sectorChart'), sectorItems, 'حصة الطلب على SEO حسب القطاع (تقدير)');
+  buildLegend(document.getElementById('sectorLegend'), sectorItems.slice(0,6));
+
+  const personaItems = personas.map(p=>({label: p.name.replace('Head of ','Ho ').replace('Founder/','F/'), value:p.share, color:p.color}));
+  drawBarChart(document.getElementById('personaChart'), personaItems, 'توزيع Personas داخل مشتري SEO SaaS (تقدير)');
+  buildLegend(document.getElementById('personaLegend'), personaItems);
+
+  const q = document.getElementById('q');
+  q.addEventListener('input', ()=> runSearch(q.value.trim()));
+
+  function runSearch(query){
+    const hay = Array.from(document.querySelectorAll('#mainCard .body *'))
+      .filter(el=>el.childElementCount===0 && el.textContent && el.textContent.trim().length>0);
+
+    hay.forEach(el=>{ if(el.dataset.orig){ el.innerHTML = el.dataset.orig; delete el.dataset.orig; } });
+
+    if(!query){ document.getElementById('hits').textContent = '0'; return; }
+
+    let hits = 0;
+    const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(safe, 'gi');
+
+    hay.forEach(el=>{
+      if(re.test(el.textContent)){
+        el.dataset.orig = el.innerHTML;
+        el.innerHTML = el.innerHTML.replace(re, m=>`<mark style="background:rgba(122,167,255,.22);color:inherit;padding:0 4px;border-radius:6px">${m}</mark>`);
+        hits++;
+      }
+    });
+    document.getElementById('hits').textContent = String(hits);
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', async ()=>{
+    const text = [
+      'ملخص تنفيذي - سوق SEO في السعودية',
+      '- السوق في نمو واضح مدفوع بالتحول الرقمي والتجارة الإلكترونية.',
+      '- تقدير إيرادات سوق برمجيات SEO: 1.1 مليار دولار (2024) وصولا إلى 2.1 مليار دولار (2030) وبمعدل نمو مركب 12.3%.',
+      '- أكبر قطاعات طلب SEO تقديريا: التجارة الإلكترونية والريتيل (30%) ثم العقارات (18%) ثم الصحة (10%).',
+      '- SaaS B2B أقل حجما (7%) لكنه أعلى قيمة لكل عميل مع دورة قرار أطول.',
+      '- أبرز تحديات السوق: محتوى عربي محلي، نقص خبرة، منافسة عالية، أداء وفهرسة، ميزانيات SMB.'
+    ].join('\n');
+    try{
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('exportBtn');
+      const old = btn.textContent;
+      btn.textContent = 'تم النسخ';
+      setTimeout(()=>btn.textContent = old, 1000);
+    }catch(e){
+      alert('تعذر النسخ تلقائيا. يمكنك تحديد النص ونسخه يدويا.');
+    }
+  });
+
+  focusSector('ecom');
+  focusPersona('mm');
+})();
+</script>
+</body>
+</html>

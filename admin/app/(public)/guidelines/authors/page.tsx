@@ -1,324 +1,220 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { GuidelineLayout } from "../components/guideline-layout";
 import {
   CheckCircle2,
-  User,
   Shield,
-  Zap,
   Star,
-  Eye,
   Award,
   BookOpen,
   Link2,
-  Image as ImageIcon,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 
-const profileFields = [
+// ─── السياسة: متى نستخدم مؤلف فردي vs مودونتي ─────────────────────────────
+const exceptions = [
   {
-    field: "الاسم (Name)",
-    required: true,
-    description: "اسم الكاتب — يظهر في كل المقالات وصفحة الكاتب",
-    tip: "استخدم اسم العلامة التجارية: \"مدونتي\"",
-  },
-  {
-    field: "الرابط (Slug)",
-    required: false,
-    description: "يُولّد تلقائياً من الاسم — لا يحتاج تعديل",
-    tip: "مثال: modonty",
-  },
-  {
-    field: "المسمى الوظيفي (Job Title)",
-    required: true,
-    description: "يظهر بجانب الاسم في المقالات وفي بيانات Google",
-    tip: "مثال: \"منصة محتوى رقمي\" أو \"منصة تقنية متخصصة\"",
-  },
-  {
-    field: "النبذة التعريفية (Bio)",
-    required: false,
-    description: "وصف تفصيلي عن الكاتب — يُنصح بـ 100 حرف أو أكثر",
-    tip: "اكتب نبذة تعكس خبرة المنصة ومجالات تخصصها",
-  },
-  {
-    field: "صورة الكاتب (Profile Image)",
-    required: false,
-    description: "صورة مربعة تظهر بجانب المقالات — المقاس: 200×200",
-    tip: "استخدم شعار المنصة أو صورة احترافية واضحة",
-  },
-  {
-    field: "عنوان SEO (SEO Title)",
-    required: false,
-    description: "عنوان صفحة الكاتب في نتائج البحث — 30-60 حرف",
-    tip: "مثال: \"مدونتي — منصة محتوى رقمي موثوق\"",
-  },
-  {
-    field: "وصف SEO (SEO Description)",
-    required: false,
-    description: "وصف صفحة الكاتب في نتائج البحث — 120-160 حرف",
-    tip: "صف خبرة المنصة ومجالاتها بشكل مختصر وجذاب",
-  },
-];
-
-const eeatPillars = [
-  {
-    letter: "E",
-    name: "Experience — الخبرة",
-    icon: Eye,
-    color: "text-blue-500",
-    description: "هل الكاتب لديه خبرة فعلية في الموضوع؟",
-    actions: [
-      "اكتب نبذة تعكس خبرة المنصة الحقيقية",
-      "اذكر المجالات التي تغطيها المنصة",
-      "وضّح منذ متى تنشر المنصة المحتوى",
-    ],
-  },
-  {
-    letter: "E",
-    name: "Expertise — التخصص",
     icon: Award,
-    color: "text-violet-500",
-    description: "هل الكاتب متخصص في هذا المجال؟",
+    title: "سلطة المجال (Subject-Matter Authority)",
+    description: "خبير معروف يعطي ثقة فورية للقارئ — مثلاً طبيب لمقال طبي، محامي لمقال قانوني، مهندس معماري لمقال عقارات",
+    example: "مقال صحي → د. أحمد العلي (طبيب أسنان مرخّص)",
+  },
+  {
+    icon: Sparkles,
+    title: "شراكة استراتيجية (Brand Partnership)",
+    description: "كاتب لديه brand شخصي قوي اتفقنا معه على نشر محتواه لدينا — ينقل جمهوره ويعزّز ثقة الموقع",
+    example: "كاتب رأي معروف على X بـ 100K متابع",
+  },
+  {
+    icon: BookOpen,
+    title: "محتوى شخصي (Personal Voice)",
+    description: "مقال رأي أو تجربة شخصية يتطلب توقيعاً فردياً — صوت الكاتب جزء من قيمة المحتوى",
+    example: "مقال \"تجربتي في إطلاق متجر إلكتروني\"",
+  },
+] as const;
+
+// ─── خطوات بناء سلطة المؤلف (E-E-A-T) ────────────────────────────────
+const authoritySteps = [
+  {
+    number: "١",
+    title: "ملف الكاتب الكامل في مودونتي",
+    items: [
+      "الاسم الكامل (يطابق ما سيظهر في byline المقال بدون تغيير)",
+      "صورة شخصية احترافية 500×500 بكسل (حقيقية، مش avatar)",
+      "سيرة 100-200 كلمة توضّح: من هو + مجال خبرته + سبب اعتباره مرجعاً",
+      "المسمى الوظيفي (jobTitle) — مثلاً: \"طبيب أسنان مرخّص — وزارة الصحة السعودية\"",
+    ],
+    why: "Google يبحث عن صفحة كاتب مستقلة كإشارة E-E-A-T أساسية — الكاتب بدون صفحة = إشارة ضعيفة",
+  },
+  {
+    number: "٢",
+    title: "حقل sameAs — ابني السلطة بالترتيب من السريع للأقوى",
+    items: [
+      "🚀 الأسبوع الأول — LinkedIn: افتح ملف احترافي للكاتب (لو ما عنده) · أضف مودونتي كـ \"current workplace\" · اطلب من 5 زملاء يعطوه endorsement · أضف رابط profile لـ sameAs",
+      "🚀 الأسبوع الأول — X/Twitter: حساب احترافي بالاسم الحقيقي · bio يذكر المسمى + رابط مودونتي · 10 تغريدات في المجال قبل النشر · ضع الرابط في sameAs",
+      "📰 الشهر الأول — ذِكرات (Mentions): اكتب مقال ضيف واحد في موقع موثوق في القطاع (صحيفة، مجلة متخصصة) يذكر اسم الكاتب + رابط لصفحته على مودونتي · هذي تبني الـ web of trust",
+      "🎓 إذا كان الكاتب أكاديمي — Google Scholar: أنشئ profile + ادرج المنشورات الأكاديمية · إشارة authority قوية جداً للمحتوى التخصصي",
+      "🏆 الشهر الثاني-الثالث — Wikidata entry: (الأقوى على الإطلاق) أنشئ حساب على wikidata.org · اعمل 10-20 تعديلات صغيرة في عناصر أخرى لبناء history · أنشئ entry للكاتب بالحقول: instance of (Q5 = human) + occupation + country + references خارجية · انتظر مراجعة المحررين · بعد القبول → أضف الـ Q-number لـ sameAs",
+      "✅ القاعدة الذهبية: 5-10 روابط عالية الجودة أحسن من 30 رابط ضعيف. كل رابط لازم يكون active + يطابق الاسم بالضبط",
+    ],
+    why: "sameAs = جسر بين موقعك وGoogle Knowledge Graph. Gemini AI يستخدمه للاستشهاد + ChatGPT/Perplexity يثقون فيه. Wikidata بالذات = مدخل مباشر لـ Knowledge Graph (موثّق رسمياً من Schema.org)",
+  },
+  {
+    number: "٣",
+    title: "الاتساق التام (Consistency Check)",
+    items: [
+      "الاسم في byline المقال = الاسم في schema = الاسم على صفحة الكاتب (حرف بحرف)",
+      "المسمى الوظيفي ثابت في كل المقالات",
+      "صورة الكاتب نفسها على LinkedIn + Wikidata + مودونتي",
+      "روابط sameAs كلها تعمل (لا تعطي 404)",
+    ],
+    why: "أي تعارض = Google يتجاهل markup الكاتب. \"Jane Doe Editor at X\" في الصفحة لكن \"Jane D. Writer at Y\" في schema = warning + احتمال إهمال البيانات",
+  },
+] as const;
+
+// ─── خطة بناء سلطة مودونتي كـ Organization (3 مراحل عملية) ──────────────
+const modontyAuthorityPlan = [
+  {
+    phase: "المرحلة الأولى — الأساس (الأسبوع الأول)",
+    icon: "🏗️",
+    color: "blue",
     actions: [
-      "حدد مجالات التخصص بوضوح في النبذة",
-      "استخدم مسمى وظيفي يعكس التخصص",
-      "اربط الملف الشخصي بحسابات المنصة الرسمية",
+      { task: "صفحة \"عن مودونتي\" كاملة", how: "اكتب: المهمة + الرؤية + الفريق + تاريخ التأسيس + موقع المكتب. لا تتركها قالب جاهز", impact: "Google يقرأها ويبني فهم للهوية" },
+      { task: "صفحة سياسة التحرير (Editorial Policy)", how: "اكتب كيف نختار المواضيع + كيف نتحقق من الحقائق + كيف نراجع المقالات + كيف نصحّح الأخطاء", impact: "إشارة Trust قوية لـ E-E-A-T — Google يقدّر الشفافية" },
+      { task: "صفحة تواصل واضحة", how: "إيميل + رقم هاتف + عنوان مكتب فعلي + ساعات العمل. الموقع الفعلي مهم", impact: "الـ Trust يعتمد على إمكانية الوصول الحقيقي للمؤسسة" },
     ],
   },
   {
-    letter: "A",
-    name: "Authority — المصداقية",
-    icon: Shield,
-    color: "text-emerald-500",
-    description: "هل الكاتب مصدر معروف وموثوق؟",
+    phase: "المرحلة الثانية — الحضور الرقمي (الأسبوع الثاني-الثالث)",
+    icon: "🌐",
+    color: "violet",
     actions: [
-      "أضف روابط حسابات السوشال ميديا",
-      "اربط الملف بموقع المنصة الرسمي",
-      "حافظ على تحديث المعلومات باستمرار",
+      { task: "Google Business Profile (GBP)", how: "سجّل المؤسسة على Google Business + تحقّق من العنوان + أضف الفئة + الصور + ساعات العمل", impact: "إشارة authority محلية للسوق السعودي/المصري" },
+      { task: "LinkedIn Company Page", how: "صفحة الشركة (مش شخصية) + شعار + كوفر + bio + موقع الويب + موظفين مرتبطين", impact: "أقوى إشارة authority B2B" },
+      { task: "X/Twitter للمؤسسة", how: "حساب @modonty_sa مثلاً + bio احترافي + تغريدات منتظمة + رابط الموقع", impact: "إشارة نشاط + وصول لجمهور" },
+      { task: "Organization Schema في الكود", how: "JSON-LD في كل صفحة بـ: name + logo + url + sameAs (روابط الحسابات أعلاه) + foundingDate + contactPoint + address", impact: "Google يفهم مودونتي ككيان موحَّد عبر الويب" },
     ],
   },
   {
-    letter: "T",
-    name: "Trust — الثقة",
-    icon: Star,
-    color: "text-amber-500",
-    description: "هل يمكن للزائر الوثوق بهذا المحتوى؟",
+    phase: "المرحلة الثالثة — Knowledge Graph (الشهر الثاني-الثالث)",
+    icon: "🏆",
+    color: "emerald",
     actions: [
-      "أكمل جميع حقول الملف الشخصي",
-      "استخدم صورة احترافية واضحة",
-      "تأكد من دقة كل المعلومات المذكورة",
+      { task: "اطلب ذكرات (mentions) من مواقع القطاع", how: "تواصل مع 5-10 مواقع موثوقة في الإعلام السعودي/العربي + اطلب نشر خبر إطلاق منصتك. لا backlinks مدفوعة — ذكرات حقيقية", impact: "كل ذكر = إشارة authority + مدخل محتمل لـ Knowledge Graph" },
+      { task: "Wikidata entry لـ مودونتي", how: "أنشئ حساب → اعمل 20+ تعديل في عناصر أخرى → أنشئ entry لـ Modonty بحقول: instance of (Q1115791 = software platform) + country + foundingDate + official website + references خارجية + sameAs لكل حساباتك", impact: "🏆 الجائزة الكبرى — مدخل مباشر لـ Google Knowledge Graph + Gemini AI يستشهد بمودونتي" },
+      { task: "تابع مع Knowledge Panel", how: "بعد 2-4 أسابيع من Wikidata + الذكرات، ابحث في Google عن \"مودونتي\" — لو ظهر Knowledge Panel = نجحت في بناء الـ Knowledge Graph entity", impact: "ظهور تلقائي في AI Mode + Knowledge Panel + Rich Results" },
     ],
   },
-];
-
-const adminChecklist = [
-  "أكمل جميع حقول الملف الشخصي — خاصة الاسم والمسمى والنبذة",
-  "اكتب نبذة قوية (100+ حرف) تعكس خبرة المنصة",
-  "أضف صورة احترافية بمقاس 200×200",
-  "أضف روابط حسابات السوشال ميديا الرسمية",
-  "راجع عنوان ووصف SEO لصفحة الكاتب",
-  "حدّث المعلومات عند أي تغيير في هوية المنصة",
-];
-
-const autoFeatures = [
-  { feature: "Schema.org Person", detail: "بيانات منظمة تُولّد تلقائياً — تساعد Google في فهم هوية الكاتب" },
-  { feature: "الرابط (Slug)", detail: "يُولّد تلقائياً من الاسم" },
-  { feature: "ربط المقالات", detail: "كل المقالات تُنسب تلقائياً لحساب الكاتب الموحد" },
-  { feature: "OG Tags", detail: "بيانات المشاركة تُملأ تلقائياً من بيانات الكاتب" },
-];
+] as const;
 
 export default function AuthorsGuidelinesPage() {
   return (
     <GuidelineLayout
-      title="Authors"
-      description="دليل إدارة ملف الكاتب — نموذج الكاتب الموحد، حقول الملف، ومعايير E-E-A-T"
+      title="سياسة الكتّاب — Authors Policy"
+      description="مودونتي هي المؤلف الأساسي · المؤلف الفردي = استثناء ذو قيمة استراتيجية"
     >
-      {/* Singleton Model Explanation */}
-      <Card className="border-blue-500/20 bg-blue-500/[0.03]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-blue-500" />
-            <CardTitle className="text-base">نموذج الكاتب الموحد</CardTitle>
+
+      {/* ── HERO: السياسة ─────────────────────────────────────── */}
+      <Card className="border-primary/30 bg-primary/[0.04] overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-primary/15 border border-primary/30">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold leading-tight">القاعدة: مودونتي هي المؤلف الافتراضي</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">E-E-A-T على مستوى المنصة، مش الفرد — قرار استراتيجي مقصود</p>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm">
-            مدونتي تستخدم <strong>كاتب واحد موحد</strong> — كل المحتوى يُنشر باسم العلامة التجارية &quot;مدونتي&quot;، وليس بأسماء أفراد.
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            بدلاً من تشتيت ثقة القارئ بين عشرات الكتّاب، نبني <strong className="text-foreground">سلطة موحّدة لمودونتي</strong>.
+            النتيجة: كل مقال جديد يستفيد من سمعة المنصة كاملة، مش يبدأ من الصفر مع كاتب جديد.
+            المؤلف الفردي = استثناء له قيمة استراتيجية واضحة.
           </p>
+        </CardContent>
+      </Card>
+
+      {/* ── الاستثناءات الـ 3 ─────────────────────────────────── */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="h-4 w-4 text-amber-500" />
+            <h2 className="text-base font-bold">متى نستخدم كاتب فردي؟ — 3 حالات فقط</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {[
-              { label: "هوية موحدة", detail: "كل المقالات تظهر باسم واحد — تجربة متسقة للزائر" },
-              { label: "إدارة أبسط", detail: "ملف شخصي واحد تديره بدل عدة ملفات" },
-              { label: "SEO أقوى", detail: "Google يركز إشارات الثقة في كاتب واحد بدل تشتيتها" },
-            ].map((item, i) => (
-              <div key={i} className="p-3 rounded-lg border bg-background">
-                <p className="text-sm font-medium">{item.label}</p>
-                <p className="text-xs text-muted-foreground mt-1">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Author vs Publisher SEO Strategy */}
-      <Card className="border-amber-500/20 bg-amber-500/[0.03]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base">استراتيجية المؤلف وبناء مصداقية الدومين</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            معلومة مهمة جداً — كيف يتعامل Google مع المؤلف والناشر وتأثيرهما على ترتيب الموقع
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Key Concept */}
-          <div className="p-3 rounded-lg border bg-background">
-            <p className="text-sm font-semibold mb-2">الفرق بين المؤلف (Author) والناشر (Publisher)</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg bg-blue-500/[0.05] border border-blue-500/20">
-                <p className="text-xs font-semibold text-blue-600 mb-1">Publisher — الناشر</p>
-                <p className="text-xs text-muted-foreground">هو اللي يبني مصداقية الدومين عند Google. &quot;مدونتي&quot; كناشر = Google يربط كل المحتوى بالمنصة ويبني ثقة الدومين.</p>
-                <p className="text-xs font-medium mt-2">النوع: Organization</p>
-              </div>
-              <div className="p-3 rounded-lg bg-violet-500/[0.05] border border-violet-500/20">
-                <p className="text-xs font-semibold text-violet-600 mb-1">Author — المؤلف</p>
-                <p className="text-xs text-muted-foreground">هو اللي كتب المقال. ممكن يكون شخص (Person) أو مؤسسة (Organization). Google يقبل كلاهما رسمياً.</p>
-                <p className="text-xs font-medium mt-2">النوع: Person أو Organization</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Why Modonty as Author */}
-          <div className="p-3 rounded-lg border bg-background">
-            <p className="text-sm font-semibold mb-2">لماذا نستخدم &quot;مدونتي&quot; كمؤلف؟</p>
-            <ul className="space-y-2">
-              {[
-                { title: "تركيز إشارات الثقة", detail: "بدل تشتيت E-E-A-T بين كتّاب متعددين، كل الإشارات تتركز في هوية واحدة — يقوّي الدومين" },
-                { title: "مرونة مستقبلية", detail: "لو جبت كتّاب مستقبلاً، تقدر تغير مقالات محددة لأشخاص حقيقيين بدون تأثير على باقي المقالات" },
-                { title: "Google يقبل هذا رسمياً", detail: "وثائق Google تسمح بـ Organization كمؤلف — مواقع مثل BBC و Reuters تستخدم نفس النهج للمقالات العامة" },
-                { title: "تناسق العلامة التجارية", detail: "كل المقالات تظهر باسم واحد — تجربة موحدة للزائر وبناء وعي بالعلامة" },
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" />
-                  <span><strong>{item.title}:</strong> {item.detail}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* What Google Sees */}
-          <div className="p-3 rounded-lg border bg-background">
-            <p className="text-sm font-semibold mb-2">ماذا يرى Google في كل مقال؟</p>
-            <div className="space-y-2 text-xs font-mono bg-muted/50 p-3 rounded-lg">
-              <p className="text-muted-foreground">// البيانات المنظمة في كل مقال:</p>
-              <p><span className="text-blue-500">&quot;publisher&quot;</span>: &#123; <span className="text-emerald-500">&quot;@type&quot;</span>: &quot;Organization&quot;, <span className="text-emerald-500">&quot;name&quot;</span>: &quot;مدونتي&quot; &#125; <span className="text-amber-500">← يبني مصداقية الدومين</span></p>
-              <p><span className="text-blue-500">&quot;author&quot;</span>: &#123; <span className="text-emerald-500">&quot;@type&quot;</span>: &quot;Person&quot;, <span className="text-emerald-500">&quot;name&quot;</span>: &quot;مدونتي&quot;, <span className="text-emerald-500">&quot;worksFor&quot;</span>: &quot;مدونتي&quot; &#125; <span className="text-amber-500">← يربط المؤلف بالمنصة</span></p>
-              <p><span className="text-blue-500">&quot;creditText&quot;</span>: &quot;مدونتي&quot; <span className="text-amber-500">← يظهر في Google Images</span></p>
-              <p><span className="text-blue-500">&quot;copyrightHolder&quot;</span>: &quot;مدونتي&quot; <span className="text-amber-500">← يحمي المحتوى قانونياً</span></p>
-            </div>
-          </div>
-
-          {/* When to Change */}
-          <div className="p-3 rounded-lg border border-amber-500/20 bg-amber-500/[0.03]">
-            <p className="text-xs font-semibold text-amber-600 mb-2">متى تغيّر هذا النهج؟</p>
-            <ul className="space-y-1 text-xs text-muted-foreground">
-              <li>• لو عيّنت كتّاب متخصصين بأسمائهم الحقيقية (أطباء، محامين، خبراء) — غيّر المقالات المتخصصة فقط لأشخاص</li>
-              <li>• لو المحتوى YMYL (صحي، مالي، قانوني) — Google يفضّل أشخاص حقيقيين بشهادات</li>
-              <li>• المقالات العامة والتقنية — خليها باسم المنصة، ما في مشكلة</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Profile Fields Table */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-emerald-500" />
-            <CardTitle className="text-base">حقول ملف الكاتب</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            أكمل الحقول المطلوبة أولاً — الحقول الاختيارية تحسّن ظهورك في محركات البحث
-          </p>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>الحقل</TableHead>
-                <TableHead>الشرح</TableHead>
-                <TableHead>نصيحة</TableHead>
-                <TableHead className="w-20">الحالة</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {profileFields.map((f) => (
-                <TableRow key={f.field}>
-                  <TableCell>
-                    <span className="font-medium text-sm">{f.field}</span>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[250px]">
-                    {f.description}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[200px]">
-                    {f.tip}
-                  </TableCell>
-                  <TableCell>
-                    {f.required ? (
-                      <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">مطلوب</Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[10px] border-muted-foreground/30 text-muted-foreground">اختياري</Badge>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* E-E-A-T Explanation */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-violet-500" />
-            <CardTitle className="text-base">معايير E-E-A-T — لماذا ملف الكاتب مهم؟</CardTitle>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Google يقيّم المحتوى بناءً على أربعة معايير — ملف الكاتب المكتمل يحسّن ترتيبك في النتائج
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {eeatPillars.map((pillar) => {
-              const Icon = pillar.icon;
+            {exceptions.map((ex) => {
+              const Icon = ex.icon;
               return (
-                <div key={pillar.name} className="p-3 rounded-lg border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className={`h-4 w-4 ${pillar.color}`} />
-                    <span className="font-semibold text-sm">
-                      <span className="font-mono">{pillar.letter}</span> — {pillar.name}
-                    </span>
+                <div key={ex.title} className="rounded-xl border border-amber-500/25 bg-amber-500/[0.04] p-4 space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-amber-400 shrink-0" />
+                    <h3 className="text-sm font-bold leading-tight">{ex.title}</h3>
                   </div>
-                  <p className="text-xs text-muted-foreground mb-2">{pillar.description}</p>
-                  <ul className="space-y-1">
-                    {pillar.actions.map((action, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" />
-                        <span>{action}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{ex.description}</p>
+                  <p className="text-xs italic text-amber-300/80 leading-relaxed pt-2 border-t border-amber-500/15">
+                    💡 {ex.example}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 rounded-lg border border-border/50 bg-muted/30 p-3">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">في أي حالة أخرى</strong> → استخدم <code className="text-xs bg-background border border-border rounded px-1.5 py-0.5">مودونتي</code> كمؤلف. لا تنشر مقالاً باسم كاتب جديد بدون قيمة E-E-A-T واضحة.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── خطوات بناء السلطة (E-E-A-T) ───────────────────────── */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="px-6 py-5 border-b border-border/40 bg-gradient-to-b from-background to-muted/20">
+            <h2 className="text-lg font-bold">3 خطوات لبناء كاتب فردي موثوق — Person Schema</h2>
+            <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+              هذي الخطوات تخصّ <strong className="text-foreground">الكاتب الفردي (@type: Person)</strong>. لما المؤلف = مودونتي، تنطبق قواعد <strong className="text-foreground">Organization</strong> المختلفة (في القسم البنفسجي تحت).
+            </p>
+            <div className="mt-3 rounded-lg border border-blue-500/25 bg-blue-500/[0.06] p-3 flex items-start gap-2">
+              <Sparkles className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-200/90 leading-relaxed">
+                <strong>الفرق التقني:</strong> كاتب فردي = Person schema → يحتاج <code className="text-[11px] bg-background/60 border border-border rounded px-1 py-0.5">image</code> (صورة شخصية حقيقية). مودونتي = Organization schema → يستخدم <code className="text-[11px] bg-background/60 border border-border rounded px-1 py-0.5">logo</code> (لا تحتاج صورة شخصية). كلاهما مقبول رسمياً في Google كمؤلف للمقال.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {authoritySteps.map((step, idx) => {
+              const isLast = idx === authoritySteps.length - 1;
+              return (
+                <div key={step.number} className="relative">
+                  {!isLast && (
+                    <div className="absolute end-7 top-16 bottom-[-24px] w-px bg-emerald-500/30" aria-hidden />
+                  )}
+                  <div className="flex items-start gap-4 mb-3">
+                    <div className="shrink-0 w-14 h-14 rounded-full bg-emerald-500/10 ring-4 ring-emerald-500/30 flex items-center justify-center font-bold relative z-10">
+                      <span className="text-2xl text-emerald-400 leading-none">{step.number}</span>
+                    </div>
+                    <div className="flex-1 min-w-0 pt-1.5">
+                      <h3 className="text-base font-bold leading-tight">{step.title}</h3>
+                    </div>
+                  </div>
+                  <div className="ms-[72px] space-y-2.5">
+                    <ul className="space-y-1.5">
+                      {step.items.map((item) => (
+                        <li key={item} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.05] p-3">
+                      <p className="text-xs text-emerald-300/90 leading-relaxed">
+                        <strong className="text-emerald-400">لماذا مهم:</strong> {step.why}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -326,106 +222,90 @@ export default function AuthorsGuidelinesPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Admin Checklist */}
-        <Card className="border-emerald-500/20 bg-emerald-500/[0.03]">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <CardTitle className="text-base">المطلوب منك كمدير</CardTitle>
+      {/* ── خطة بناء سلطة مودونتي كـ Organization (3 مراحل) ─────────────── */}
+      <Card className="border-violet-500/25 bg-violet-500/[0.03] overflow-hidden">
+        <CardContent className="p-0">
+          <div className="px-6 py-5 border-b border-violet-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <Link2 className="h-4 w-4 text-violet-400" />
+              <h2 className="text-lg font-bold text-violet-400">خطة بناء سلطة مودونتي (Organization) — 3 مراحل عملية</h2>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {adminChecklist.map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <div className="h-4 w-4 rounded border border-muted-foreground/30 shrink-0" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Auto Features */}
-        <Card className="border-violet-500/20 bg-violet-500/[0.03]">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-violet-500" />
-              <CardTitle className="text-base">خصائص تلقائية</CardTitle>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              هذه الخصائص يعالجها النظام تلقائياً — لا تحتاج إدخال يدوي
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              الـ schema لمودونتي = <code className="text-[11px] bg-background/60 border border-border rounded px-1 py-0.5">@type: Organization</code> + <code className="text-[11px] bg-background/60 border border-border rounded px-1 py-0.5">logo</code> بدلاً من Person + image. اتبع المراحل بالترتيب — كل مرحلة تبني على اللي قبلها.
             </p>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {autoFeatures.map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-border/50 last:border-0">
-                <span className="font-medium">{item.feature}</span>
-                <span className="text-muted-foreground text-end max-w-[200px]">{item.detail}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
 
-      {/* Profile Image Guide */}
+          <div className="p-6 space-y-6">
+            {modontyAuthorityPlan.map((phase) => {
+              const colorMap: Record<string, { border: string; bg: string; text: string; iconBg: string }> = {
+                blue: { border: "border-blue-500/30", bg: "bg-blue-500/[0.05]", text: "text-blue-400", iconBg: "bg-blue-500/15" },
+                violet: { border: "border-violet-500/30", bg: "bg-violet-500/[0.05]", text: "text-violet-400", iconBg: "bg-violet-500/15" },
+                emerald: { border: "border-emerald-500/30", bg: "bg-emerald-500/[0.05]", text: "text-emerald-400", iconBg: "bg-emerald-500/15" },
+              };
+              const c = colorMap[phase.color];
+              return (
+                <div key={phase.phase}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`w-10 h-10 rounded-lg ${c.iconBg} flex items-center justify-center text-xl`}>{phase.icon}</div>
+                    <h3 className={`text-base font-bold ${c.text}`}>{phase.phase}</h3>
+                  </div>
+                  <div className="space-y-2.5">
+                    {phase.actions.map((action) => (
+                      <div key={action.task} className={`rounded-lg border ${c.border} ${c.bg} p-3 space-y-1.5`}>
+                        <p className="text-sm font-bold leading-tight">{action.task}</p>
+                        <div className="flex items-start gap-1.5">
+                          <span className="text-[11px] font-semibold text-foreground/80 shrink-0">كيف:</span>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{action.how}</p>
+                        </div>
+                        <div className="flex items-start gap-1.5">
+                          <span className={`text-[11px] font-semibold ${c.text} shrink-0`}>الأثر:</span>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{action.impact}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="px-6 py-4 border-t border-violet-500/20 bg-amber-500/[0.04] flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-200/90 leading-relaxed">
+              <strong>الـ ROI متراكم:</strong> المرحلة 1 (أسبوع) تعطيك أساس صحيح. المرحلة 2 (أسبوعين) تبني الحضور. المرحلة 3 (شهرين-ثلاثة) تفتح Knowledge Graph — أعلى مستوى authority على الإنترنت. لا تتوقّف بعد المرحلة 1.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── المراجع الرسمية ────────────────────────────────────── */}
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <ImageIcon className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base">مواصفات صورة الكاتب</CardTitle>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold">مراجع رسمية</h2>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-3 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.03]">
-              <p className="text-xs font-semibold text-emerald-600 mb-2">المواصفات المطلوبة</p>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                <li>المقاس: 200×200 بكسل (مربع)</li>
-                <li>الصيغة: JPG أو PNG</li>
-                <li>الحجم: أقل من 50 كيلوبايت</li>
-                <li>الجودة: واضحة واحترافية</li>
-              </ul>
-            </div>
-            <div className="p-3 rounded-lg border border-amber-500/20 bg-amber-500/[0.03]">
-              <p className="text-xs font-semibold text-amber-600 mb-2">نصائح</p>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                <li>استخدم شعار المنصة بخلفية واضحة</li>
-                <li>تجنب الصور المعقدة أو المزدحمة</li>
-                <li>تأكد من وضوح الصورة في الحجم الصغير</li>
-                <li>نفس الصورة تظهر في المقالات وصفحة الكاتب</li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+            <a href="https://developers.google.com/search/docs/appearance/structured-data/article#author-best-practices" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-border/50 bg-background p-3 hover:border-primary/40 hover:bg-primary/[0.03] transition-colors">
+              <p className="font-semibold text-foreground">Google Article Author Best Practices</p>
+              <p className="text-muted-foreground mt-1 leading-relaxed">المرجع الرسمي لـ Person markup + sameAs + name disambiguation</p>
+            </a>
+            <a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-border/50 bg-background p-3 hover:border-primary/40 hover:bg-primary/[0.03] transition-colors">
+              <p className="font-semibold text-foreground">Google Helpful Content + E-E-A-T</p>
+              <p className="text-muted-foreground mt-1 leading-relaxed">قواعد المحتوى المفيد — البايلاين + ملف الكاتب + الشفافية</p>
+            </a>
+            <a href="https://schema.org/Person" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-border/50 bg-background p-3 hover:border-primary/40 hover:bg-primary/[0.03] transition-colors">
+              <p className="font-semibold text-foreground">Schema.org Person</p>
+              <p className="text-muted-foreground mt-1 leading-relaxed">المعجم الرسمي لكل خصائص Person المدعومة</p>
+            </a>
+            <a href="https://www.wikidata.org" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-border/50 bg-background p-3 hover:border-primary/40 hover:bg-primary/[0.03] transition-colors">
+              <p className="font-semibold text-foreground">Wikidata — Knowledge Graph</p>
+              <p className="text-muted-foreground mt-1 leading-relaxed">المصدر الأقوى لـ sameAs — يربط الكاتب بـ Google Knowledge Graph</p>
+            </a>
           </div>
         </CardContent>
       </Card>
 
-      {/* Social Links */}
-      <Card className="border-blue-500/20 bg-blue-500/[0.03]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-blue-500" />
-            <CardTitle className="text-base">روابط السوشال ميديا</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-xs text-muted-foreground">
-            إضافة روابط الحسابات الرسمية تعزز مصداقية الكاتب عند Google وتسهّل على الزوار متابعة المنصة.
-          </p>
-          <div className="space-y-2">
-            {[
-              { platform: "LinkedIn", tip: "رابط صفحة المنصة الرسمية" },
-              { platform: "Twitter/X", tip: "حساب المنصة الرسمي (@username)" },
-              { platform: "Facebook", tip: "صفحة المنصة الرسمية" },
-              { platform: "الموقع الرسمي", tip: "رابط الموقع الرئيسي (مثال: https://modonty.com)" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-border/50 last:border-0">
-                <span className="font-medium">{item.platform}</span>
-                <span className="text-muted-foreground">{item.tip}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </GuidelineLayout>
   );
 }

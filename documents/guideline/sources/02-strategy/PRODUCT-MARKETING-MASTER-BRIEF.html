@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مدونتي — Marketing Master Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --ink-soft: #334155;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --primary: #0f172a;
+  --accent: #c8941a;
+  --accent-soft: #fef3c7;
+  --success: #047857;
+  --success-soft: #d1fae5;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --info: #1e40af;
+  --info-soft: #dbeafe;
+  --code-bg: #f1f5f9;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 16px;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR ─────────────────────────────────── */
+aside {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--primary);
+  color: #e2e8f0;
+  padding: 32px 24px;
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+}
+
+.brand {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.brand-tag {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 32px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.toc-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 16px;
+}
+
+aside nav ol {
+  list-style: none;
+  counter-reset: section;
+}
+
+aside nav ol li {
+  counter-increment: section;
+  margin-bottom: 4px;
+}
+
+aside nav ol li a {
+  display: block;
+  padding: 8px 12px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+  position: relative;
+  padding-inline-start: 36px;
+}
+
+aside nav ol li a::before {
+  content: counter(section, decimal-leading-zero);
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+aside nav ol li a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+/* ─── MAIN ─────────────────────────────────── */
+main {
+  padding: 64px 80px;
+  max-width: 1100px;
+}
+
+/* Hero header */
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+  color: #fff;
+  padding: 48px;
+  border-radius: var(--radius);
+  margin-bottom: 48px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  inset-inline-start: -10%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(200, 148, 26, 0.15) 0%, transparent 60%);
+}
+
+.hero-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #cbd5e1;
+  max-width: 700px;
+  line-height: 1.7;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.hero-meta-item strong {
+  color: #fff;
+  display: block;
+  font-size: 16px;
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+/* Sections */
+section {
+  background: var(--surface);
+  padding: 48px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+  scroll-margin-top: 24px;
+}
+
+section h2 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid var(--accent);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+section h2 .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+section h3 {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 32px;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+section h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+section h5 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+section p {
+  margin-bottom: 16px;
+  color: var(--ink-soft);
+}
+
+section ul, section ol {
+  margin-bottom: 16px;
+  padding-inline-start: 24px;
+}
+
+section ul li, section ol li {
+  margin-bottom: 8px;
+  color: var(--ink-soft);
+}
+
+section ul li::marker { color: var(--accent); }
+
+strong { color: var(--primary); font-weight: 700; }
+em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+a { color: var(--info); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--code-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+pre {
+  background: var(--primary);
+  color: #e2e8f0;
+  padding: 20px 24px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin: 16px 0 24px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  direction: ltr;
+  text-align: left;
+  border-inline-start: 4px solid var(--accent);
+}
+
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 24px 0;
+  font-size: 14px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+}
+
+thead {
+  background: var(--primary);
+  color: #fff;
+}
+
+thead th {
+  padding: 12px 16px;
+  text-align: start;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:hover { background: var(--accent-soft); }
+
+tbody td strong { color: var(--primary); }
+
+/* Callouts */
+.callout {
+  background: var(--accent-soft);
+  border-inline-start: 4px solid var(--accent);
+  padding: 20px 24px;
+  border-radius: var(--radius-sm);
+  margin: 24px 0;
+  position: relative;
+}
+
+.callout-tag {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.callout-quote {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
+  font-style: italic;
+}
+
+.callout.success { background: var(--success-soft); border-color: var(--success); }
+.callout.success .callout-tag { color: var(--success); }
+.callout.danger { background: var(--danger-soft); border-color: var(--danger); }
+.callout.danger .callout-tag { color: var(--danger); }
+.callout.info { background: var(--info-soft); border-color: var(--info); }
+.callout.info .callout-tag { color: var(--info); }
+
+blockquote {
+  border-inline-start: 4px solid var(--accent);
+  padding: 12px 24px;
+  margin: 20px 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+  font-style: italic;
+  background: var(--accent-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border: 1px solid var(--line);
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  border-top: 3px solid var(--accent);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.stat-meta {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Tier cards */
+.tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.tier {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  padding: 24px;
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.tier.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.tier-badge {
+  position: absolute;
+  top: -10px;
+  inset-inline-end: 16px;
+  background: var(--accent);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.tier-name {
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tier-price {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tier-price small {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.tier-meta {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* Diagram */
+.diagram {
+  background: var(--code-bg);
+  padding: 24px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  overflow-x: auto;
+  margin: 16px 0 24px 0;
+  border: 1px solid var(--line);
+}
+
+/* Two-column section */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.col-card {
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.col-card.win { background: var(--success-soft); border-color: var(--success); }
+.col-card.lose { background: var(--danger-soft); border-color: var(--danger); }
+.col-card h5 { color: inherit; margin-top: 0; }
+.col-card.win h5 { color: var(--success); }
+.col-card.lose h5 { color: var(--danger); }
+
+/* Footer */
+.doc-footer {
+  margin-top: 48px;
+  padding: 32px;
+  background: var(--primary);
+  color: #cbd5e1;
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 14px;
+}
+
+.doc-footer strong { color: #fff; }
+
+.toolbar {
+  position: fixed;
+  bottom: 24px;
+  inset-inline-end: 24px;
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+
+.toolbar button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.15s;
+}
+
+.toolbar button:hover { transform: translateY(-2px); }
+
+/* Print */
+@media print {
+  .layout { grid-template-columns: 1fr; }
+  aside { display: none; }
+  .toolbar { display: none; }
+  main { padding: 0; }
+  section { box-shadow: none; page-break-inside: avoid; padding: 24px 0; }
+  .hero { background: #fff !important; color: var(--ink) !important; padding: 24px 0; }
+  .hero h1, .hero p, .hero-meta-item, .hero-meta-item strong { color: var(--ink) !important; }
+  .hero::before { display: none; }
+  pre { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  thead { background: #fff !important; color: var(--ink) !important; border-bottom: 2px solid var(--ink); }
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  aside { position: static; height: auto; }
+  main { padding: 32px 24px; }
+  section { padding: 32px 24px; }
+  .hero { padding: 32px 24px; }
+  .hero h1 { font-size: 28px; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<aside>
+  <div class="brand">مدونتي</div>
+  <div class="brand-tag">MARKETING MASTER BRIEF</div>
+  <div class="toc-title">الفهرس</div>
+  <nav>
+    <ol>
+      <li><a href="#s1">الملخص التنفيذي</a></li>
+      <li><a href="#s2">ما هي مدونتي؟</a></li>
+      <li><a href="#s3">المشكلة</a></li>
+      <li><a href="#s4">التموضع</a></li>
+      <li><a href="#s5">الجمهور المستهدف</a></li>
+      <li><a href="#s6">عرض القيمة</a></li>
+      <li><a href="#s7">القدرات الكاملة</a></li>
+      <li><a href="#s8">المزايا التنافسية</a></li>
+      <li><a href="#s9">التسعير</a></li>
+      <li><a href="#s10">المنافسون</a></li>
+      <li><a href="#s11">الرسائل التسويقية</a></li>
+      <li><a href="#s12">القنوات</a></li>
+      <li><a href="#s13">مسار العميل</a></li>
+      <li><a href="#s14">KPIs</a></li>
+      <li><a href="#s15">التوصيات الفورية</a></li>
+      <li><a href="#s16">الفرص غير المستغلة</a></li>
+    </ol>
+  </nav>
+</aside>
+
+<main>
+
+<div class="hero">
+  <div class="hero-eyebrow">PRODUCT × MARKETING DEEP DIVE</div>
+  <h1>مدونتي — الـ Master Brief الشامل</h1>
+  <p>مرجع تسويقي مبني على دراسة عميقة 100% من الكود + قاعدة البيانات + وثائق المؤسس. الوثيقة الأم لأي تخطيط حملة، landing page، أو عرض مبيعات.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">التاريخ<strong>2026-04-30</strong></div>
+    <div class="hero-meta-item">الإصدار<strong>1.0</strong></div>
+    <div class="hero-meta-item">الجمهور<strong>فريق التسويق + المنتج</strong></div>
+    <div class="hero-meta-item">المصدر<strong>Code + DB + Docs</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s1">
+<h2><span class="num">01</span> الملخص التنفيذي</h2>
+
+<p><strong>مدونتي ليست منصة تدوين</strong>. هي منصة <strong>SaaS عربية متكاملة</strong> للشركات الصغيرة والمتوسطة في السعودية ومصر، تقدم: نشر محتوى احترافي + SEO تلقائي + تحليلات متقدمة + توليد عملاء محتملين (Leads) + تنبيهات Telegram لحظية — كل ذلك بواجهة عربية أصيلة، بسعر يبدأ من <strong>0 ريال</strong> وينتهي عند <strong>2,999 ريال/سنة</strong> (مقابل 36,000–96,000 ريال للوكالات التقليدية).</p>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">قاعدة بيانات</div>
+    <div class="stat-value">50+</div>
+    <div class="stat-meta">كيان (Entity)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">باقات</div>
+    <div class="stat-value">4</div>
+    <div class="stat-meta">من 0 إلى 2,999 ريال</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">تكاملات AI</div>
+    <div class="stat-value">3</div>
+    <div class="stat-meta">OpenAI + Cohere + Wikidata</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Telegram Events</div>
+    <div class="stat-value">26</div>
+    <div class="stat-meta">حدث قابل للتخصيص</div>
+  </div>
+</div>
+
+<h4>القلب التقني</h4>
+<p>50+ كيان في قاعدة البيانات، تكامل OpenAI + Cohere، أتمتة JSON-LD، تكامل Google Search Console و GA4 و PageSpeed، نظام Lead Scoring من 0–100، Telegram bot لكل عميل مع 26 حدث قابل للتخصيص.</p>
+
+<div class="callout">
+  <div class="callout-tag">فلسفة المؤسس</div>
+  <div class="callout-quote">"حضور لا وعود — الأرقام التي تراها = الواقع 100%"</div>
+</div>
+
+<h4>الميزة التنافسية الجوهرية (الـ Moat)</h4>
+<p><strong>"Authority Blog Network"</strong> — مدونة مركزية واحدة (modonty.com) يستفيد منها كل العملاء بشكل تراكمي، وكل عميل جديد يقوي ظهور بقية العملاء بسبب network effect على الـ SEO.</p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s2">
+<h2><span class="num">02</span> ما هي مدونتي؟ — التعريف الدقيق</h2>
+
+<h3>التعريف بكلمة واحدة</h3>
+<p style="font-size: 22px; font-weight: 700; color: var(--primary);">Content-as-a-Service للشركات العربية الصغيرة والمتوسطة.</p>
+
+<h3>التعريف بجملة</h3>
+<p>منصة سحابية تستضيف <strong>مدونة احترافية باسم شركتك</strong>، تنشر فيها مقالات SEO شهرياً (من 1 إلى 12 مقال حسب الباقة)، وتعطيك <strong>لوحة تحكم ذكية</strong> تعرف منها وش الزوار، من اللي ينوي يشتري، وكيف تحول القراء إلى عملاء.</p>
+
+<h3>المعمارية المنطقية للمنتج</h3>
+<div class="diagram">┌─────────────────────────────────────────────────────────────┐
+│  modonty.com  ←  المدونة المركزية (Authority Blog)         │
+│                  محرك Network Effect                        │
+└─────────────────────────────────────────────────────────────┘
+            ↑
+            │ تظهر فيها مقالات كل العملاء
+            │
+┌───────────────────────┐    ┌──────────────────────┐
+│ console.modonty.com   │    │  admin.modonty.com   │
+│ لوحة العميل المشترك   │    │  لوحة فريق مدونتي    │
+│ - يدير مقالاته        │    │  - يدير كل العملاء   │
+│ - يشوف Leads          │    │  - يدير الـ SEO      │
+│ - يربط Telegram       │    │  - يولّد محتوى AI    │
+└───────────────────────┘    └──────────────────────┘</div>
+
+<h3>المنتج ينقسم إلى 3 طبقات</h3>
+<table>
+<thead><tr><th>الطبقة</th><th>لمن؟</th><th>المنتج</th></tr></thead>
+<tbody>
+<tr><td><strong>1. القارئ العام</strong></td><td>زوار محتملين، باحثين على Google</td><td>يقرأون المقالات، يستخدمون الـ Chatbot، يتواصلون عبر النماذج</td></tr>
+<tr><td><strong>2. العميل المشترك</strong></td><td>الشركة المالكة للمحتوى</td><td>تنشر، تتابع التحليلات، تتصل بالـ Leads</td></tr>
+<tr><td><strong>3. فريق التشغيل</strong></td><td>فريق مدونتي الداخلي</td><td>يدير كل العملاء، يولّد محتوى بالـ AI، يضمن جودة SEO</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s3">
+<h2><span class="num">03</span> المشكلة التي تحلها</h2>
+
+<h3>المشكلة الأم</h3>
+<blockquote>"أنا صاحب شركة، أعرف إن المحتوى يجيب لي عملاء من Google، بس <strong>ما عندي وقت أكتب</strong>، <strong>ما عندي ميزانية أوظف كاتب</strong>، و<strong>ما أفهم في SEO</strong>."</blockquote>
+
+<h3>الحقائق السوقية</h3>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">سوق الإعلانات الرقمي السعودي</div>
+    <div class="stat-value">8.9B$</div>
+    <div class="stat-meta">ينمو 14–18% سنوياً</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">SMBs السعودية تحتاج محتوى</div>
+    <div class="stat-value">200K+</div>
+    <div class="stat-meta">شركة بدون قدرة وكالة</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">تكلفة وكالة عربية</div>
+    <div class="stat-value">9K–23K</div>
+    <div class="stat-meta">ريال/شهر</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">معدل فشل الكتابة الذاتية</div>
+    <div class="stat-value">73%</div>
+    <div class="stat-meta">يستسلمون خلال 3 شهور</div>
+  </div>
+</div>
+
+<h3>نقاط الألم المحددة (Pain Points)</h3>
+<table>
+<thead><tr><th>نقطة الألم</th><th>كيف تحلها مدونتي</th></tr></thead>
+<tbody>
+<tr><td>"ما عندي وقت أكتب"</td><td>فريق مدونتي يكتب نيابة عنك</td></tr>
+<tr><td>"ما عندي ميزانية وكالة"</td><td>بأقل من 10% من سعر الوكالة</td></tr>
+<tr><td>"ما أعرف SEO"</td><td>JSON-LD + Meta + Sitemap كلها أوتوماتيك</td></tr>
+<tr><td>"ما أعرف هل المحتوى ينفع"</td><td>Lead Scoring يعطيك رقم 0–100 لكل زائر</td></tr>
+<tr><td>"ما أعرف إيش يكتب"</td><td>استبيان SEO Intake + تتبع منافسين</td></tr>
+<tr><td>"ينقصني تنبيهات لحظية"</td><td>Telegram alerts على 26 حدث</td></tr>
+<tr><td>"ما أتابع Google Search Console"</td><td>تكامل مباشر مع GSC + PageSpeed</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s4">
+<h2><span class="num">04</span> التموضع الاستراتيجي</h2>
+
+<h3>عبارة التموضع (Positioning Statement)</h3>
+<div class="callout info">
+<div class="callout-tag">POSITIONING STATEMENT</div>
+<div class="callout-quote">"لشركات الـ MENA الصغيرة والمتوسطة اللي تعرف إن المحتوى = عملاء، لكن ما تقدر تحط 100 ألف ريال بالسنة على وكالة، مدونتي تقدم لك مدونة احترافية + SEO تلقائي + Lead Intelligence بسعر يبدأ من صفر — لأنها مبنية بمنطق SaaS مو بمنطق وكالة."</div>
+</div>
+
+<h3>مربع التموضع (Positioning Quadrant)</h3>
+<div class="diagram">عالي الذكاء (AI + Analytics)
+        ↑
+        │
+HubSpot │  مدونتي ⭐
+(غالي،  │  (بسعر SMB)
+إنجليزي)│
+────────┼──────────→ سعر منخفض
+        │
+WordPress│ Wix
+(يدوي،   │ (بدائي)
+ضعيف SEO)│
+        ↓
+منخفض الذكاء</div>
+
+<p><strong>النتيجة</strong>: مدونتي تشغل <em>Quadrant فاضي</em> — منتج ذكي بسعر SMB. هذا هو الـ Differentiator الأساسي.</p>
+
+<h3>ثوابت العلامة (Brand Philosophy)</h3>
+<div class="two-col">
+  <div class="col-card win">
+    <h5>الثابت الأول</h5>
+    <p style="font-size: 18px; font-weight: 700;">"حضور لا وعود"</p>
+    <p>كل ما يُقال موثّق في GA + لوحة التحكم</p>
+  </div>
+  <div class="col-card win">
+    <h5>الثابت الثاني</h5>
+    <p style="font-size: 18px; font-weight: 700;">"الأرقام = الواقع 100%"</p>
+    <p>لا تضخيم، لا ادعاءات</p>
+  </div>
+</div>
+<div class="col-card win" style="margin-top: 16px;">
+  <h5>الثابت الثالث</h5>
+  <p style="font-size: 18px; font-weight: 700;">"20% منتج، 80% سوق"</p>
+  <p>التقنية انتهت، الآن السوق</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s5">
+<h2><span class="num">05</span> الجمهور المستهدف (ICPs)</h2>
+
+<h3>Tier 1 — يبدأ هنا التسويق</h3>
+
+<h4>ICP 1 — التجارة الإلكترونية (Salla / Zid)</h4>
+<table>
+<tbody>
+<tr><td><strong>الحجم</strong></td><td>5–50 موظف</td></tr>
+<tr><td><strong>الإيراد السنوي</strong></td><td>500K–10M ريال</td></tr>
+<tr><td><strong>نقطة الألم</strong></td><td>المنافسة على Google قاتلة، المتاجر اللي ما عندها مدونة تخسر</td></tr>
+<tr><td><strong>الرسالة</strong></td><td>"متجرك على سلة ممتاز، بس تجارتك من Google = صفر بدون مدونة"</td></tr>
+<tr><td><strong>القناة المثلى</strong></td><td>Meta Ads + Snapchat (السعودية) | Facebook + Instagram (مصر)</td></tr>
+</tbody>
+</table>
+
+<h4>ICP 2 — العيادات والقطاع الصحي</h4>
+<table>
+<tbody>
+<tr><td><strong>الحجم</strong></td><td>عيادة فردية إلى مجموعة 10 عيادات</td></tr>
+<tr><td><strong>الإيراد السنوي</strong></td><td>1M–20M ريال</td></tr>
+<tr><td><strong>نقطة الألم</strong></td><td>المرضى يبحثون "أفضل دكتور أسنان في الرياض" قبل ما يحجزون</td></tr>
+<tr><td><strong>الرسالة</strong></td><td>"خل المرضى يلاقوك على Google قبل المنافس"</td></tr>
+<tr><td><strong>القناة</strong></td><td>Google Search Ads + Snapchat Stories</td></tr>
+<tr><td><strong>انتباه</strong></td><td>قطاع YMYL (Your Money Your Life) — مدونتي عنده compliance gating</td></tr>
+</tbody>
+</table>
+
+<h4>ICP 3 — مكاتب المحاماة والاستشارات</h4>
+<p><strong>الحجم</strong>: محامي مستقل إلى مكتب 20 محامي. <strong>نقطة الألم</strong>: السوق منافس جداً، Authority على Google = ثقة العميل. <strong>الرسالة</strong>: "مقال واحد على Google = 5 عملاء استشارة جدد شهرياً". <strong>القناة</strong>: LinkedIn Ads + Google Search.</p>
+
+<h4>ICP 4 — العقارات (وسطاء + مطورين)</h4>
+<p><strong>الحجم</strong>: مكتب 3–30 موظف. <strong>نقطة الألم</strong>: العميل يبحث "شقق للبيع في الياسمين" — مين يظهر يكسب. <strong>الرسالة</strong>: "اربح بحث Google قبل المنافس، خل العميل يجيك". <strong>القناة</strong>: Google + Snapchat + TikTok (Reels عقاري).</p>
+
+<h4>ICP 5 — المطاعم والضيافة</h4>
+<p><strong>الحجم</strong>: مطعم واحد إلى سلسلة 10 فروع. <strong>نقطة الألم</strong>: GBP لا يكفي، يحتاج مدونة تدعم Local SEO. <strong>الرسالة</strong>: "خل ابن السعودية يلاقي مطعمك قبل ما يفتح Hungerstation". <strong>القناة</strong>: Instagram + TikTok + Snapchat (طعام = visual).</p>
+
+<h3>Tier 2 — قناة B2B</h3>
+<h4>ICP 6 — الوكالات الرقمية (Resellers)</h4>
+<div class="callout success">
+<div class="callout-tag">الفرصة الاستراتيجية الكبرى</div>
+<div class="callout-quote">وكالة وحدة = 10–50 عميل دفعة وحدة. الرسالة: "بدل ما توظف 5 كتّاب، وفّرها لعملائك بـ White Label"</div>
+</div>
+
+<h3>Demographics التفصيلية</h3>
+<table>
+<thead><tr><th>البُعد</th><th>السعودية</th><th>مصر</th></tr></thead>
+<tbody>
+<tr><td>العمر</td><td>30–55</td><td>28–50</td></tr>
+<tr><td>الجنس</td><td>75% رجال</td><td>65% رجال</td></tr>
+<tr><td>المستوى التعليمي</td><td>جامعي +</td><td>جامعي +</td></tr>
+<tr><td>الدخل الشخصي</td><td>8K+ ريال/شهر</td><td>15K+ جنيه/شهر</td></tr>
+<tr><td>المدن المستهدفة</td><td>الرياض، جدة، الدمام، الخبر</td><td>القاهرة، الجيزة، الإسكندرية</td></tr>
+<tr><td>اللغة المفضلة</td><td>عربية فصيحة + إنجليزية تقنية</td><td>لهجة مصرية + إنجليزية تقنية</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s6">
+<h2><span class="num">06</span> عرض القيمة الكامل (Value Proposition)</h2>
+
+<h3>الـ Headline</h3>
+<div class="callout">
+<div class="callout-tag">الجملة الأولى — Hero</div>
+<div class="callout-quote">"مدونتك على Google. عملاؤك في WhatsApp. بدون ما تكتب حرف."</div>
+</div>
+
+<h3>القيم الأربع الأساسية (The Four Powers)</h3>
+
+<h4>القوة 1: Smart Lead Scoring</h4>
+<p>كل زائر يحصل على <strong>رقم من 0 إلى 100</strong> يعتمد على 4 عوامل متساوية:</p>
+<ul>
+<li>تكرار الزيارات (Frequency)</li>
+<li>عمق التصفح (Depth) — كم صفحة فتح، كم وقت قضى</li>
+<li>التفاعل (Interaction) — لايكات، مفضلة، تعليقات، مشاركات</li>
+<li>التحويل (Conversion) — تواصل، اشتراك في النشرة، نقر CTA</li>
+</ul>
+<p><em>الفائدة</em>: تعرف بالضبط مين العميل المحتمل، بدل ما تتصل بالكل عشواء.</p>
+
+<h4>القوة 2: SEO على الطيار الآلي</h4>
+<ul>
+<li>JSON-LD لكل مقال (Article + Author + Organization + BreadcrumbList)</li>
+<li>Meta tags + Open Graph + Twitter Cards توليد تلقائي</li>
+<li>Canonical + hreflang للسوق العربي</li>
+<li>Sitemap.xml + Image sitemap محدّث تلقائياً</li>
+<li>Pre-publish audit يمنع نشر مقال ضعيف الـ SEO</li>
+<li>تكامل GSC مباشر — تشوف الـ indexing من اللوحة</li>
+<li>PageSpeed monitoring + Core Web Vitals</li>
+<li>AI Crawler Optimization — مقالاتك تظهر في ChatGPT Search و Perplexity</li>
+</ul>
+
+<h4>القوة 3: نظام الإثبات الاجتماعي</h4>
+<p>مراجعات، متابعين، شارة التحقق، Facepile، إحصاءات تفاعل ظاهرة، Author E-E-A-T markup كامل.</p>
+
+<h4>القوة 4: Competitive Intelligence</h4>
+<p>متابعة المنافسين من اللوحة، Keywords tracking مع نية البحث، Industry-specific compliance gating.</p>
+
+<h3>عرض القيمة المالي (الـ ROI Pitch)</h3>
+<div class="diagram">كلفة وكالة عربية تقليدية:    9,000 - 23,500 ريال / شهر
+                              108,000 - 282,000 ريال / سنة
+
+كلفة مدونتي (Momentum):       1,299 ريال / سنة
+                              + 8 مقالات شهرياً
+                              + Lead Scoring
+                              + Telegram alerts
+                              + استشارة شهرية
+
+التوفير:                      99% — نعم، 99 بالمية
+ROI لو حصلت 2 عميل من المقال: 5x – 50x</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s7">
+<h2><span class="num">07</span> القدرات الكاملة للمنتج</h2>
+
+<h3>7.1 ما يحصل عليه القارئ على modonty.com</h3>
+
+<h5>صفحات استكشاف المحتوى</h5>
+<ul>
+<li>صفحة رئيسية بـ feed زمني (10 مقالات/صفحة)</li>
+<li>صفحات المقالات + التصنيفات + التاجات + الصناعات</li>
+<li>صفحات العملاء — كل عميل له صفحة مع متابعين، تعليقات، مراجعات</li>
+<li>صفحات المؤلفين مع credentials و expertise</li>
+<li>صفحة Trending (آخر 7 / 14 / 30 يوم)</li>
+<li>بحث شامل + Chatbot ذكي يجاوب الأسئلة (Cohere RAG)</li>
+</ul>
+
+<h5>ميزات تجربة القراءة</h5>
+<ul>
+<li>وقت قراءة متوقع، جدول محتويات، مقالات ذات صلة</li>
+<li>مزيد من المؤلف / من العميل، Audio version (البنية موجودة)</li>
+<li>7 أزرار مشاركة، لايك/ديسلايك/مفضلة، تعليقات مع moderation</li>
+<li>ثيم داكن/فاتح، RTL أصيل + خط Tajawal</li>
+</ul>
+
+<h5>ميزات تحويل القارئ إلى عميل</h5>
+<ul>
+<li>نماذج تواصل ذكية (مع rate limiting)</li>
+<li>اشتراك بالنشرة + متابعة العملاء + مراجعات</li>
+<li>روابط واتساب مباشرة + تتبع نقرات الـ CTA</li>
+</ul>
+
+<h3>7.2 ما يحصل عليه العميل المشترك على console.modonty.com</h3>
+<p><strong>14 قسم رئيسي في لوحة التحكم</strong>:</p>
+<ol>
+<li><strong>Profile</strong> — معلومات الشركة كاملة (CR، VAT، عنوان، شعار)</li>
+<li><strong>SEO</strong> — استبيان Intake، متابعة المنافسين، Keywords tracker</li>
+<li><strong>Articles</strong> — قائمة المقالات (قيد المراجعة، منشورة، مسودات)</li>
+<li><strong>Content</strong> — Pipeline view + monthly quota</li>
+<li><strong>Media</strong> — مكتبة الأصول</li>
+<li><strong>Analytics</strong> — تحليلات 7/30/90 يوم</li>
+<li><strong>Campaigns</strong> — حملات SMS/Email (beta)</li>
+<li><strong>Subscribers</strong> — قائمة المشتركين بالنشرة</li>
+<li><strong>Leads</strong> — قاعدة عملاء محتملين مع Lead Score 0–100 + WhatsApp deep-link</li>
+<li><strong>Comments</strong> — مراجعة تعليقات القراء</li>
+<li><strong>Questions</strong> — أسئلة القراء من المقالات</li>
+<li><strong>FAQs</strong> — أسئلة شائعة مستخرجة تلقائياً</li>
+<li><strong>Support</strong> — رسائل التواصل من الزوار</li>
+<li><strong>Settings</strong> — الباقة، Telegram، تفضيلات الإشعارات</li>
+</ol>
+
+<h3>7.3 ما يحصله فريق التشغيل (admin) — الـ engine الفعلي</h3>
+
+<h5>AI Content Stack</h5>
+<ul>
+<li><strong>OpenAI Article Generator</strong>: ينشئ مقال عربي كامل (عنوان، محتوى، excerpt، SEO، keywords، FAQs)</li>
+<li><strong>Content Quality Scorer</strong>: درجة 0–100 على 4 محاور</li>
+<li><strong>AI Crawler Optimizer</strong>: TLDRs + reading level + JSON-LD مُحسّن لمحركات AI</li>
+<li><strong>Entity Disambiguator</strong>: ربط Wikidata للـ keywords الدلالية</li>
+</ul>
+
+<h5>SEO Automation Stack</h5>
+<ul>
+<li><strong>Knowledge Graph Generator</strong>: يبني @graph JSON-LD كامل</li>
+<li><strong>Adobe Structured Data Validator</strong> + Custom Validation Rules</li>
+<li><strong>Pre-Publish Audit</strong>: 9 فحوصات قبل النشر</li>
+<li><strong>Auto-Fix Metadata</strong> + Weekly Report Generator</li>
+</ul>
+
+<h5>Google Integration Stack</h5>
+<ul>
+<li><strong>GSC URL Inspection</strong> + Manual Indexing Requests + Sitemap Submission</li>
+<li><strong>PageSpeed Insights</strong>: mobile + desktop, Lighthouse audit details</li>
+<li><strong>GA4 Integration</strong>: top pages, top queries, performance by date</li>
+<li><strong>CrUX Data</strong>: real user metrics</li>
+</ul>
+
+<h5>Operator Multi-Tenancy Tools</h5>
+<ul>
+<li>Client Management كامل + YMYL Compliance Gating</li>
+<li>Subscription Tiers Configuration + Email Templates Library (7 قوالب)</li>
+<li>Notifications Bell + System Errors Monitoring + Data Export (CSV)</li>
+<li>URL Inspector Tool — debug أي URL</li>
+</ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s8">
+<h2><span class="num">08</span> المزايا التنافسية</h2>
+
+<h3>الميزة الجوهرية — الـ Moat الحقيقي</h3>
+<div class="callout">
+<div class="callout-tag">السلاح السري</div>
+<div class="callout-quote">Authority Blog Network Effect — لا يستطيع أي منافس تكراره بسهولة</div>
+</div>
+
+<p>modonty.com مدونة مركزية واحدة يستفيد منها كل العملاء بشكل تراكمي:</p>
+<ul>
+<li>Domain Authority يكبر مع كل مقال جديد لأي عميل</li>
+<li>Backlinks متبادلة بين العملاء</li>
+<li>Google يثق بالـ domain أكثر مع الوقت</li>
+<li>عميل جديد ينضم → يرفع SEO لكل العملاء</li>
+</ul>
+
+<p><strong>المعادلة</strong>: 100 عميل × 8 مقالات = 800 مقالة/شهر = <em>سلطة Domain لا تُكسر</em>.</p>
+
+<h3>المزايا التنافسية المساعدة</h3>
+<table>
+<thead><tr><th>الميزة</th><th>مدونتي</th><th>منافسون</th></tr></thead>
+<tbody>
+<tr><td>سعر</td><td><strong>يبدأ من 0 ريال</strong></td><td>WordPress: مجاني لكن يدوي / HubSpot: 1,200$+</td></tr>
+<tr><td>عربي أصيل</td><td><strong>100%</strong></td><td>HubSpot: لا / WordPress: ترجمة</td></tr>
+<tr><td>AI مدمج</td><td>OpenAI + Cohere</td><td>لا أحد بهذا العمق</td></tr>
+<tr><td>Lead Scoring</td><td>تلقائي 0–100</td><td>HubSpot فقط (وغالي)</td></tr>
+<tr><td>Telegram Alerts</td><td>26 حدث</td><td>لا أحد</td></tr>
+<tr><td>GSC تكامل</td><td>كامل</td><td>بعضهم</td></tr>
+<tr><td>JSON-LD أوتوماتيك</td><td>كامل + adobe validator</td><td>يدوي عادةً</td></tr>
+<tr><td>YMYL Compliance</td><td>مدمج</td><td>لا أحد</td></tr>
+<tr><td>Multi-Tenant SaaS</td><td>نعم (network effect)</td><td>WordPress: لا، HubSpot: لا</td></tr>
+<tr><td>Authority Blog مشترك</td><td><strong>نعم — سر مدونتي</strong></td><td>لا أحد</td></tr>
+<tr><td>18 شهر مقابل 12</td><td>نعم</td><td>لا أحد</td></tr>
+<tr><td>استشارة شهرية</td><td>في Momentum+</td><td>فقط عقود سنوية مكلفة</td></tr>
+</tbody>
+</table>
+
+<h3>نقاط الضعف الواقعية (للشفافية الداخلية)</h3>
+<div class="two-col">
+<div class="col-card lose">
+<h5>قيود حالية</h5>
+<ul>
+<li>بدون مدفوعات تلقائية (Stripe/Paddle)</li>
+<li>بدون mobile app</li>
+<li>personalization بسيط</li>
+<li>paywall غير مفعّل</li>
+<li>audio playback غير ظاهر</li>
+</ul>
+</div>
+<div class="col-card win">
+<h5>كل القيود قابلة للحل</h5>
+<p>هذي قيود manageable على المدى القصير. الـ infrastructure التقنية موجودة، التفعيل بحاجة قرار تجاري + tasks محدودة.</p>
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s9">
+<h2><span class="num">09</span> التسعير والباقات</h2>
+
+<h3>الباقات الأربع (مؤكدة من PROD DB)</h3>
+
+<div class="tiers">
+  <div class="tier">
+    <div class="tier-name">Free</div>
+    <div class="tier-price">0<small>ريال / سنة</small></div>
+    <div class="tier-meta">1 مقال/شهر<br>Profile + SEO تلقائي<br><strong>الجمهور</strong>: ناشئون، تجربة</div>
+  </div>
+  <div class="tier">
+    <div class="tier-name">Launch</div>
+    <div class="tier-price">499<small>ريال / سنة</small></div>
+    <div class="tier-meta">4 مقالات/شهر<br>+ Email list, Q&amp;A, Site Health<br><strong>الجمهور</strong>: شركات صغيرة</div>
+  </div>
+  <div class="tier featured">
+    <div class="tier-badge">الأكثر شعبية</div>
+    <div class="tier-name">Momentum ⭐</div>
+    <div class="tier-price">1,299<small>ريال / سنة</small></div>
+    <div class="tier-meta">8 مقالات/شهر<br>+ Lead Scoring, Telegram, مكالمة شهرية<br><strong>الجمهور</strong>: متوسطة</div>
+  </div>
+  <div class="tier">
+    <div class="tier-name">Leadership</div>
+    <div class="tier-price">2,999<small>ريال / سنة</small></div>
+    <div class="tier-meta">12 مقالات/شهر<br>+ Account manager, دعم 24/7<br><strong>الجمهور</strong>: كبيرة</div>
+  </div>
+</div>
+
+<h3>قاعدة "12 شهر = 18 شهر"</h3>
+<div class="callout success">
+<div class="callout-tag">أقوى عرض في تاريخ المنتج</div>
+<div class="callout-quote">العميل يدفع 12 شهر، يستلم خدمة 18 شهر — لماذا تشتغل: إنزال الـ perceived risk + يحفّز التزام أطول + يعطي مدونتي وقت لإثبات الـ ROI</div>
+</div>
+
+<h3>حساب ROI لـ ICP عيادة أسنان متوسطة</h3>
+<div class="diagram">الاستثمار:           1,299 ريال/سنة
+عدد المقالات:        96 مقال (8 × 12)
+متوسط زيارات/مقال:   200 زيارة شهرياً (بعد 6 شهور)
+معدل تحويل لـ Lead:  3%
+عدد Leads:           576 lead/سنة
+معدل تحويل lead → عميل: 8%
+عدد عملاء جدد:       46 مريض/سنة
+متوسط قيمة المريض:   2,000 ريال
+
+العائد:              92,000 ريال/سنة
+ROI:                 7,082% (70x)</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s10">
+<h2><span class="num">10</span> تحليل المنافسين</h2>
+
+<h3>المنافسون المباشرون</h3>
+
+<h4>WordPress + Yoast SEO</h4>
+<p><strong>القوة</strong>: مجاني، الأكبر عالمياً. <strong>الضعف</strong>: يدوي 100%، لا multi-tenant، لا Lead Scoring، لا AI. <strong>سعر مكافئ</strong>: 200–500$/شهر (استضافة + الإضافات + كاتب + SEO expert). <strong>رسالة مدونتي</strong>: "WordPress يحتاج فريق. مدونتي تستبدل الفريق."</p>
+
+<h4>HubSpot CMS Hub</h4>
+<p><strong>القوة</strong>: ميزات قوية، تكامل CRM. <strong>الضعف</strong>: 1,200$+/شهر، إنجليزي، معقد. <strong>رسالة مدونتي</strong>: "HubSpot ممتاز لو عندك ميزانية شركة أمريكية. لو سعودي/مصري متوسط، مدونتي الـ HubSpot الإقليمي."</p>
+
+<h4>Wix / Squarespace</h4>
+<p><strong>القوة</strong>: drag-and-drop، سهولة. <strong>الضعف</strong>: SEO ضعيف، لا analytics متقدمة، لا lead scoring. <strong>رسالة مدونتي</strong>: "Wix للعرض. مدونتي للنتائج."</p>
+
+<h3>المنافسون غير المباشرون (الأخطر)</h3>
+<ul>
+<li><strong>الوكالات الرقمية التقليدية</strong>: 9–23K ريال/شهر — رسالة: "ادفع 10% من سعر الوكالة، احصل على الشفافية"</li>
+<li><strong>الكاتب المستقل</strong>: مرن — رسالة: "كاتب يكتب، مدونتي تنشر + تحلل + تحول"</li>
+<li><strong>الكتابة الذاتية</strong>: مجانية — رسالة: "تعرف ليش 73% يفشلون؟"</li>
+</ul>
+
+<h3>مقارنة الميزات الكاملة</h3>
+<table>
+<thead><tr><th>الميزة</th><th>مدونتي Momentum</th><th>WordPress + Pro</th><th>HubSpot Starter</th><th>وكالة محلية</th></tr></thead>
+<tbody>
+<tr><td>السعر السنوي</td><td><strong>1,299 ريال</strong></td><td>~3,000 ريال + كاتب</td><td>12,000+ ريال</td><td>108,000+ ريال</td></tr>
+<tr><td>عربي أصيل</td><td>✅</td><td>جزئي</td><td>❌</td><td>✅</td></tr>
+<tr><td>8 مقالات/شهر</td><td>✅</td><td>يدوي</td><td>يدوي</td><td>حسب العقد</td></tr>
+<tr><td>JSON-LD أوتو</td><td>✅</td><td>إضافة</td><td>✅</td><td>غالباً لا</td></tr>
+<tr><td>Lead Scoring</td><td>✅</td><td>❌</td><td>✅ ($800+)</td><td>❌</td></tr>
+<tr><td>Telegram Alerts</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>AI Article Gen</td><td>✅</td><td>إضافة</td><td>جزئي</td><td>يدوي</td></tr>
+<tr><td>GSC Integration</td><td>✅</td><td>إضافة</td><td>❌</td><td>غالباً لا</td></tr>
+<tr><td>استشارة شهرية</td><td>✅</td><td>❌</td><td>جزئي</td><td>✅</td></tr>
+<tr><td>Multi-Tenant</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s11">
+<h2><span class="num">11</span> الرسائل التسويقية الرئيسية</h2>
+
+<h3>الـ Big Idea</h3>
+<blockquote>"حضور لا وعود"</blockquote>
+
+<h3>5 رسائل رئيسية للحملات</h3>
+
+<h4>الرسالة 1 — Hero / Above the Fold</h4>
+<div class="callout">
+<div class="callout-quote">مدونتك على Google.<br>عملاؤك في WhatsApp.<br>بدون ما تكتب حرف.<br><br>[ابدأ مجاناً] [شوف Demo]</div>
+</div>
+
+<h4>الرسالة 2 — Pricing CTA</h4>
+<div class="callout">
+<div class="callout-quote">ادفع 12 شهر، استلم 18 شهر.<br>ادفع 99% أقل من الوكالات.<br>ما يصير شي = كل شي يصير.</div>
+</div>
+
+<h4>الرسالة 3 — Lead Scoring</h4>
+<div class="callout">
+<div class="callout-quote">كل زائر = درجة من 0 إلى 100.<br>الأعلى = الأقرب للشراء.<br>لا تخمين بعد اليوم.</div>
+</div>
+
+<h4>الرسالة 4 — AI / Content</h4>
+<div class="callout">
+<div class="callout-quote">8 مقالات شهرياً.<br>كل مقال SEO-perfect.<br>كل مقال E-E-A-T compliant.<br>بدون فريق. بدون تعب.</div>
+</div>
+
+<h4>الرسالة 5 — Telegram Alerts</h4>
+<div class="callout">
+<div class="callout-quote">مقال نُشر؟ تيلجرام.<br>زائر مهتم؟ تيلجرام.<br>عميل محتمل ضغط زر؟ تيلجرام.<br>كل شي يجيك على جوالك. لحظة بلحظة.</div>
+</div>
+
+<h3>10 Hooks للسوشال</h3>
+<ol>
+<li>تعرف إن 73% من اللي يحاولون يكتبون لمدوناتهم بنفسهم يستسلمون بعد 3 شهور؟</li>
+<li>ليش وكالة محتوى بتكلفك 100 ألف ريال سنوي وأنت تقدر تحصل نفس النتيجة بـ 1,299 ريال؟</li>
+<li>العميل المحتمل عندك يقرأ مقال، ينقر زر، يطلب عرض — وأنت في الجلسة لسا ما خلصت.</li>
+<li>WordPress تنفع لو عندك فريق 5 أشخاص. ما عندك؟ تحتاج مدونتي.</li>
+<li>لو ما تظهر في Google، أنت ما موجود. نقطة.</li>
+<li>مقال واحد على Google = 5 عملاء استشارة جدد شهرياً. حسبتها؟</li>
+<li>HubSpot يكلفك 12,000 ريال سنوي. مدونتي 1,299. والميزات أعربية.</li>
+<li>عندك صفحة Salla؟ ممتاز. بدون مدونة = خسارة 80% من ترافيك Google.</li>
+<li>Telegram alerts على 26 حدث. مقال يُنشر، تعليق يجي، عميل ينقر — كله على جوالك.</li>
+<li>Lead Scoring 0–100. تتصل بالأعلى. تترك الأقل. وقتك ثمين.</li>
+</ol>
+
+<h3>Anti-Hooks (لا تستخدمها)</h3>
+<div class="col-card lose">
+<ul>
+<li>❌ "مدوّنة" — مجرد كلمة "مدونة" تستهلك من القيمة (المنتج أكبر بكثير)</li>
+<li>❌ "أرخص" — يقلل perceived value (استخدم "ROI")</li>
+<li>❌ "AI-powered" بحد ذاتها — كل المنتجات تقولها (استخدم النتيجة)</li>
+<li>❌ "Easy" — السعودي ما يبحث عن "easy"، يبحث عن "نتيجة"</li>
+</ul>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s12">
+<h2><span class="num">12</span> القنوات التسويقية الموصى بها</h2>
+
+<h3>للسوق السعودي — الترتيب الأمثل</h3>
+
+<table>
+<thead><tr><th>#</th><th>القناة</th><th>السبب</th><th>ميزانية مقترحة</th><th>CPL متوقع</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>Google Search Ads</strong></td><td>المنتج عن SEO — لا يصح ما تتربك أنت في Google</td><td>5,000 ريال/شهر</td><td>50–80 ريال</td></tr>
+<tr><td>2</td><td><strong>LinkedIn Ads</strong></td><td>لـ ICP6 الوكالات + ICP3 المحامون</td><td>3,000 ريال/شهر</td><td>80–150 ريال</td></tr>
+<tr><td>3</td><td><strong>Snapchat Ads</strong></td><td>Gen Z المالكين الجدد + ICP1</td><td>2,500 ريال/شهر</td><td>CPM 8–14</td></tr>
+<tr><td>4</td><td><strong>Twitter/X Ads</strong></td><td>thought leadership + B2B</td><td>2,000 ريال/شهر</td><td>—</td></tr>
+<tr><td>5</td><td><strong>WhatsApp Business</strong></td><td>closing channel</td><td>صفر</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3>القنوات العضوية (Organic — أهم من المدفوع)</h3>
+<ul>
+<li><strong>مدونتي.com نفسها</strong>: مدونتي يجب أن تكون مثالاً حياً</li>
+<li><strong>Twitter/X organic</strong>: المؤسس يبني personal brand (Founder-led marketing)</li>
+<li><strong>LinkedIn personal posts</strong>: قصص نجاح العملاء</li>
+<li><strong>YouTube tutorials</strong>: "كيف تكتب مقال SEO عربي"</li>
+</ul>
+
+<h3>للسوق المصري — الترتيب المختلف</h3>
+<table>
+<thead><tr><th>#</th><th>القناة</th><th>الميزانية</th><th>CPL متوقع</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>Facebook Ads</strong> (الأولوية القصوى — Facebook ملك مصر، 56M مستخدم)</td><td>30,000 جنيه/شهر</td><td>30–60 جنيه</td></tr>
+<tr><td>2</td><td><strong>YouTube</strong> (الـ trust building)</td><td>—</td><td>—</td></tr>
+<tr><td>3</td><td><strong>Instagram</strong> (للـ visual ICPs)</td><td>—</td><td>—</td></tr>
+<tr><td>4</td><td><strong>TikTok</strong> (Gen Z + شباب)</td><td>—</td><td>—</td></tr>
+<tr><td>5</td><td><strong>WhatsApp</strong> (closing)</td><td>صفر</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3>مفتاح النجاح — Demo Lab</h3>
+<div class="callout">
+<div class="callout-tag">أقوى Marketing Asset في حياتك</div>
+<div class="callout-quote">إنشاء عميل demo على modonty.com يكون نموذج حي: مقالات منشورة فعلاً، ظهور في Google، تحليلات ظاهرة، Authority Domain يكبر.</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s13">
+<h2><span class="num">13</span> مسار العميل (Customer Journey)</h2>
+
+<table>
+<thead><tr><th>المرحلة</th><th>القناة</th><th>المحتوى</th><th>KPI</th></tr></thead>
+<tbody>
+<tr><td><strong>1. الوعي</strong></td><td>Google / LinkedIn / Facebook</td><td>مقال يحل ألم محدد</td><td>Impressions + CTR</td></tr>
+<tr><td><strong>2. الاهتمام</strong></td><td>مقالات modonty.com + Chatbot</td><td>case study + ROI calculator</td><td>Engagement Score داخلي</td></tr>
+<tr><td><strong>3. التقييم</strong></td><td>Newsletter + WhatsApp</td><td>Free tier + استشارة</td><td>Conversion to Free</td></tr>
+<tr><td><strong>4. التحويل</strong></td><td>WhatsApp + استشارة شخصية</td><td>عرض Momentum + ضمان "12=18"</td><td>Free → Paid (الهدف: 12%)</td></tr>
+<tr><td><strong>5. الاحتفاظ</strong></td><td>Telegram + Email + استشارة شهرية</td><td>تقارير + توصيات</td><td>NRR (الهدف: 110%+)</td></tr>
+<tr><td><strong>6. الإحالة</strong></td><td>Email + Console banner</td><td>"أحل صديق، خذ شهر مجاني"</td><td>Viral coefficient (0.3)</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s14">
+<h2><span class="num">14</span> مؤشرات الأداء (KPIs)</h2>
+
+<h3>KPIs الأعمال (Business)</h3>
+<table>
+<thead><tr><th>المؤشر</th><th>الهدف للسنة الأولى</th><th>المصدر</th></tr></thead>
+<tbody>
+<tr><td>MRR (Monthly Recurring Revenue)</td><td><strong>50,000 ريال</strong></td><td>لوحة الأدمن</td></tr>
+<tr><td>عدد العملاء النشطين</td><td><strong>50</strong> (شهر 24)</td><td>DB</td></tr>
+<tr><td>Free → Paid Conversion</td><td><strong>12%</strong></td><td>Analytics</td></tr>
+<tr><td>Churn Rate شهري</td><td>&lt;5%</td><td>DB</td></tr>
+<tr><td>LTV : CAC</td><td><strong>3:1</strong></td><td>حسابات</td></tr>
+<tr><td>NPS</td><td>&gt;50</td><td>استبيان</td></tr>
+</tbody>
+</table>
+
+<h3>KPIs التسويق (Marketing)</h3>
+<table>
+<thead><tr><th>المؤشر</th><th>الهدف الشهري</th></tr></thead>
+<tbody>
+<tr><td>Organic Sessions</td><td>5,000</td></tr>
+<tr><td>Direct Sessions</td><td>2,000</td></tr>
+<tr><td>Paid Sessions</td><td>3,000</td></tr>
+<tr><td>Total Leads</td><td>100</td></tr>
+<tr><td>Marketing Qualified Leads</td><td>30</td></tr>
+<tr><td>Sales Qualified Leads</td><td>15</td></tr>
+<tr><td>Closed-Won</td><td>5</td></tr>
+<tr><td>CPL (overall)</td><td>&lt;100 ريال</td></tr>
+<tr><td>CAC</td><td>&lt;500 ريال</td></tr>
+</tbody>
+</table>
+
+<h3>KPIs المنتج (موجودة فعلاً في Admin)</h3>
+<ul>
+<li>Engagement Score متوسط/مقال (الهدف: &gt;40/100)</li>
+<li>Lead Score متوسط/زائر (الهدف: &gt;25/100)</li>
+<li>Article Quality Score متوسط (الهدف: &gt;70/100)</li>
+<li>Core Web Vitals: LCP &lt;2.5s, CLS &lt;0.1, INP &lt;200ms</li>
+<li>GSC Indexing Coverage (الهدف: &gt;95%)</li>
+<li>Pre-publish Audit Pass Rate (الهدف: 100%)</li>
+</ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s15">
+<h2><span class="num">15</span> التوصيات التسويقية الفورية</h2>
+
+<h3>الأسبوع الأول</h3>
+<ol>
+<li><strong>أنشئ Landing Page تسويقي</strong>: استخدم رسائل القسم 11، اربطه بـ Free tier، ضع ROI calculator (1,299 → 92,000 = 70x)</li>
+<li><strong>حدد Demo Client على modonty.com</strong>: انشر له 8 مقالات SEO-perfect، خله dashboard مفتوح يشوف الأرقام</li>
+<li><strong>أنشئ 3 Case Study Documents</strong>: نموذج لـ ICP1 (متجر سلة) + ICP2 (عيادة) + ICP3 (محاماة)</li>
+</ol>
+
+<h3>الأسبوع الثاني</h3>
+<ol start="4">
+<li><strong>حملة Google Ads</strong>: ابدأ بـ 1,000 ريال (low risk)، 5 keywords، Landing مخصص</li>
+<li><strong>LinkedIn Outreach للوكالات</strong>: 50 وكالة رقمية في السعودية، رسالة White Label</li>
+</ol>
+
+<h3>الشهر الأول</h3>
+<ol start="6">
+<li><strong>أنشئ مكتبة محتوى عضوي</strong>: 10 مقالات على modonty.com (eat your own dog food)</li>
+<li><strong>ابدأ Founder-Led Marketing</strong>: 2 thread/أسبوع على X، 1 LinkedIn post/أسبوع، شارك أرقام حقيقية</li>
+</ol>
+
+<h3>الشهر الثاني</h3>
+<ol start="8">
+<li><strong>حملة Snapchat للـ ICP1</strong>: Story Ads، Targeting تجار سلة + Zid، 2,500 ريال</li>
+<li><strong>Webinar مجاني</strong>: "كيف تجيب 50 عميل من Google خلال 6 شهور" — Recording = evergreen</li>
+</ol>
+
+<h3>الشهر الثالث وما بعد</h3>
+<ol start="10">
+<li><strong>Partnership Strategy</strong>: شراكة مع Salla / Zid + 5 وكالات (reseller) + منصات إعلانية</li>
+</ol>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s16">
+<h2><span class="num">16</span> الفرص غير المستغلة</h2>
+
+<p style="margin-bottom: 24px; color: var(--muted);">فرص استراتيجية لاحقة — خارج النطاق الفوري، لكن قيّمة جداً للنظر.</p>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 1</div>
+    <div class="stat-value" style="font-size: 18px;">Free tier كأداة جذب SEO</div>
+    <div class="stat-meta">1,000 عميل Free = 1,000 backlink لـ modonty.com</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 2</div>
+    <div class="stat-value" style="font-size: 18px;">Authority Blog كـ منبر إعلامي</div>
+    <div class="stat-meta">إعلام رقمي عربي مستقل — moat لا يُكسر</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 3</div>
+    <div class="stat-value" style="font-size: 18px;">AI Content Marketplace</div>
+    <div class="stat-meta">licensing للمواقع = revenue stream إضافي</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 4</div>
+    <div class="stat-value" style="font-size: 18px;">Multi-language Expansion</div>
+    <div class="stat-meta">إنجليزي + فرنسي = الإمارات + المغرب</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 5</div>
+    <div class="stat-value" style="font-size: 18px;">Mobile App للعميل</div>
+    <div class="stat-meta">+30% engagement</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 6</div>
+    <div class="stat-value" style="font-size: 18px;">Slack/Discord Integration</div>
+    <div class="stat-meta">الشركات الأكثر تقنية</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 7</div>
+    <div class="stat-value" style="font-size: 18px;">API Access (Enterprise)</div>
+    <div class="stat-meta">tier جديد بـ 10,000+ ريال/سنة</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 8</div>
+    <div class="stat-value" style="font-size: 18px;">White Label Reseller</div>
+    <div class="stat-meta">وكالة تبيع بـ 30% commission</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 9</div>
+    <div class="stat-value" style="font-size: 18px;">SEO Services Marketplace</div>
+    <div class="stat-meta">"احجز SEO expert" داخل اللوحة</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">الفرصة 10</div>
+    <div class="stat-value" style="font-size: 18px;">Free Content Audit Tool</div>
+    <div class="stat-meta">"افحص مدونتك مجاناً" = lead magnet</div>
+  </div>
+</div>
+
+<h3>تحليل SWOT الاستراتيجي</h3>
+
+<div class="two-col">
+<div class="col-card win">
+<h5>Strengths — نقاط قوة استثنائية</h5>
+<ol>
+<li>عمق تقني نادر (50+ entity، AI stack كامل)</li>
+<li>عربي 100% أصيل، ليس ترجمة</li>
+<li>سعر يفتح سوق ضخم (200K+ SMB)</li>
+<li>Network effect عبر Authority Blog</li>
+<li>ضمان "12 = 18" يلغي الخطر</li>
+<li>مؤسس opinionated يعرف المنتج</li>
+<li>Tech debt مدار + audit-driven</li>
+</ol>
+</div>
+<div class="col-card lose">
+<h5>Weaknesses — نقاط ضعف للمعالجة</h5>
+<ol>
+<li>لا توجد payments تلقائية (Stripe)</li>
+<li>Free tier لم يُسوّق له كـ lead magnet</li>
+<li>لا case studies ظاهرة على modonty.com</li>
+<li>Founder personal brand لم يُبنى</li>
+<li>لا webinar / community building</li>
+<li>لا app mobile</li>
+</ol>
+</div>
+</div>
+
+<div class="two-col" style="margin-top: 16px;">
+<div class="col-card win">
+<h5>Opportunities — فرص ضخمة</h5>
+<ol>
+<li>Vision 2030 يدفع الرقمنة</li>
+<li>أزمة الكتّاب العرب الجيدين</li>
+<li>AI hype يخلي العملاء يبحثون عن AI tools</li>
+<li>ChatGPT Search + Perplexity = ترافيك جديد</li>
+<li>الوكالات التقليدية ضعيفة في الـ tech</li>
+<li>LinkedIn يكبر في السعودية (B2B)</li>
+</ol>
+</div>
+<div class="col-card lose">
+<h5>Threats — تهديدات للمراقبة</h5>
+<ol>
+<li>WordPress + ChatGPT plugins = منافسة مجانية</li>
+<li>HubSpot قد تطلق نسخة عربية</li>
+<li>منصات سعودية محلية ممكن تظهر</li>
+<li>Google algorithm changes تؤثر على نموذج SEO</li>
+</ol>
+</div>
+</div>
+
+<h3 style="margin-top: 32px;">التوصية الختامية</h3>
+<div class="callout">
+<div class="callout-tag">الخلاصة</div>
+<div class="callout-quote">مدونتي منتج ناضج تقنياً وضعيف تسويقياً. الأولوية الفورية = بناء brand awareness + landing page تحويلي + 3 case studies + حملة Google Ads متواضعة. خلال 3 شهور: 50 عميل أول. خلال 12 شهر: 200 عميل. السوق موجود، المنتج جاهز — ينقص فقط التسويق المنظم.</div>
+</div>
+</section>
+
+<div class="doc-footer">
+<strong>مدونتي — Marketing Master Brief</strong> · الإصدار 1.0 · 2026-04-30<br>
+أُعدّ بناءً على دراسة 100% للكود + Prisma schema + ملفات documents/<br>
+<small style="opacity: 0.7;">للنقاش الداخلي فقط — يحدّث ربع سنوياً</small>
+</div>
+
+</main>
+
+</div>
+
+<div class="toolbar">
+<button onclick="window.print()">طباعة / PDF</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">للأعلى</button>
+</div>
+
+</body>
+</html>

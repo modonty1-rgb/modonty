@@ -15,11 +15,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
-  LayoutDashboard,
   FileText,
   Folder,
   Tag,
-  Pen,
+  UserPen,
   Factory,
   Info,
   CircleHelp,
@@ -28,10 +27,12 @@ import {
   ShieldCheck,
   Cookie,
   Copyright,
-  Search,
-  Mail,
+  LineChart,
+  MailPlus,
+  MailOpen,
   BarChart3,
   Users,
+  Users2,
   CreditCard,
   Download,
   Database,
@@ -40,24 +41,29 @@ import {
   ChevronRight,
   ChevronDown,
   BookOpen,
+  Library,
   MessageSquare,
-  ShieldAlert,
+  Bug,
+  Wrench,
   Megaphone,
 } from "lucide-react";
+import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import pkg from "@/package.json";
 
+type IconComponent = React.ComponentType<{ className?: string }>;
+
 interface MenuItem {
-  icon: typeof Folder;
+  icon: IconComponent;
   label: string;
   href: string;
 }
 
 interface MenuGroup {
   title: string;
-  icon: typeof Folder;
+  icon: IconComponent;
   items: MenuItem[];
   defaultOpen?: boolean;
 }
@@ -65,19 +71,19 @@ interface MenuGroup {
 const menuGroups: MenuGroup[] = [
   {
     title: "Content",
-    icon: FileText,
+    icon: Library,
     defaultOpen: true,
     items: [
       { icon: FileText, label: "Articles", href: "/articles" },
       { icon: Folder, label: "Categories", href: "/categories" },
       { icon: Tag, label: "Tags", href: "/tags" },
-      { icon: Pen, label: "Authors", href: "/authors" },
+      { icon: UserPen, label: "Authors", href: "/authors" },
       { icon: Factory, label: "Industries", href: "/industries" },
     ],
   },
   {
     title: "Modonty Pages",
-    icon: Info,
+    icon: BookOpen,
     defaultOpen: false,
     items: [
       { icon: Info, label: "About", href: "/modonty/pages/about" },
@@ -91,10 +97,10 @@ const menuGroups: MenuGroup[] = [
   },
   {
     title: "Audience",
-    icon: Mail,
+    icon: Users2,
     defaultOpen: false,
     items: [
-      { icon: Mail, label: "Subscribers", href: "/subscribers" },
+      { icon: MailPlus, label: "Subscribers", href: "/subscribers" },
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
       { icon: Megaphone, label: "Campaign Leads", href: "/campaigns/leads" },
@@ -102,24 +108,23 @@ const menuGroups: MenuGroup[] = [
   },
   {
     title: "System",
-    icon: Settings,
+    icon: Wrench,
     defaultOpen: false,
     items: [
       { icon: Users, label: "Admins", href: "/users" },
       { icon: CreditCard, label: "Plans & Pricing", href: "/subscription-tiers" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
-      { icon: Mail, label: "Email Templates", href: "/emails" },
-      { icon: ShieldAlert, label: "Error Logs", href: "/system-errors" },
+      { icon: MailOpen, label: "Email Templates", href: "/emails" },
+      { icon: Bug, label: "Error Logs", href: "/system-errors" },
       { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },
 ];
 
 const topItems: MenuItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Search, label: "Search Console", href: "/search-console" },
-  { icon: Search, label: "SEO Overview", href: "/seo-overview" },
+  { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
+  { icon: LineChart, label: "SEO Overview", href: "/seo-overview" },
 ];
 
 function NavLink({ item, collapsed, pathname }: { item: MenuItem; collapsed: boolean; pathname: string }) {
