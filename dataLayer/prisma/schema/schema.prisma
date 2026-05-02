@@ -572,13 +572,17 @@ model CampaignInterest {
 model SubscriptionTierConfig {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
 
-  // ─── Step A (compatibility — للـ 52 ملف اللي يقرأوا الـ enum) ───
-  tier            SubscriptionTier @unique         // Step B: يُحذف
-  price           Float                            // Step B: يُحذف (replaced بـ pricing.SA.mo)
-  articlesPerMonth Int                             // Step B: يُحذف (replaced بـ articleCounts JSON)
-  name            String                           // Step B: يصير عربي من jbrseo
+  // ─── Step A (compatibility — تُحذف Step B بعد refactor الـ 52 ملف) ───
+  tier            SubscriptionTier @unique
+  price           Float
+  articlesPerMonth Int
+  name            String
+  isActive        Boolean          @default(true)
+  isPopular       Boolean          @default(false)
+  description     String?
+  createdAt       DateTime         @default(now())
 
-  // ─── Jbrseo integration (Round 6 FINAL) ───
+  // ─── Jbrseo integration (Round 6) ───
   jbrseoId        String?         @unique          // "free" | "starter" | "growth" | "scale"
   pricing         Json?                            // { SA: { mo, yr }, EG: { mo, yr } }
   articleCounts   Json?                            // global mapping: { اسم الباقة: عدد المقالات }

@@ -4,9 +4,10 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getJbrseoDb } from "@/lib/jbrseo-client";
 import { revalidatePath } from "next/cache";
+import type { ObjectId } from "mongodb";
 
 interface JbrseoSubscriberDoc {
-  _id: { toString(): string };
+  _id: ObjectId;
   contactName?: string | null;
   email: string;
   phone: string;
