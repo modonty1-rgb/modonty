@@ -16,6 +16,7 @@ import { Breadcrumb } from "./breadcrumb";
 import { HeaderNav } from "./header-nav";
 import { NotificationsBell } from "./notifications-bell";
 import { HeaderFeedbackButton } from "./header-feedback-button";
+import { SyncLocalButton } from "./sync-local-button";
 
 export function Header() {
   const { data: session } = useSession();
@@ -36,6 +37,9 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* DEV-only — sync local DB from PROD */}
+          <SyncLocalButton />
+
           {/* Beta feedback note button */}
           <HeaderFeedbackButton />
 

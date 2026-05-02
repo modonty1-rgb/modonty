@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { getMomentumPrice, formatPriceForGuideline } from "@/lib/pricing/format-for-guideline";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
 import {
@@ -25,7 +26,7 @@ const objections = [
     num: 1,
     severity: "common",
     q: "غالي",
-    a: "1,299 ريال شهري = 43 ريال يومياً. حملة Snapchat واحدة تكلف أكثر، وتنتهي يوم الدفع. مقالات Modonty تشتغل دائماً، تجيب زوار حتى لو وقفت الدفع غداً.",
+    a: "__OBJ_GHALI__",
     why: "العميل يسمع «غالي» يفكر في cost. إنت تحوّل النقاش لـ value/day — 43 ريال يومياً = مشروب قهوة، لكنه يجيب lead/شهر.",
     when: "أول اعتراض في 80% من الـ Discovery Calls. اطلقها بدون تردّد.",
   },
@@ -33,7 +34,7 @@ const objections = [
     num: 2,
     severity: "common",
     q: "أكتب بنفسي / أجيب كاتب",
-    a: "كاتب junior بـ 3,000 ريال شهري + متخصص SEO 4,000 + مصمم 4,000 + مطور 7,000 = 18,000 شهري بالحد الأدنى = 216,000 سنوياً. Modonty Momentum 1,299 شهري (15,588 سنوياً) — توفير 200,412 ريال/سنة، مع منظومة أكمل من الفريق كله.",
+    a: "__OBJ_WORDPRESS__",
     why: "العميل يفكر بكاتب وحيد. إنت تذكّره: المقال SEO-perfect يحتاج فريق كامل، مش شخص. الأرقام بالحد الأدنى = عميل ما يقدر يعارض.",
     when: "بعد ما يقول «أكتب بنفسي» أو «عندي كاتب على Fiverr». الجدول الكامل في القاعدة 5 من القواعد الذهبية.",
   },
@@ -109,7 +110,7 @@ const fullDemoTimeline = [
   { time: "3–8", title: "Discovery", body: "5 أسئلة عميقة لفهم وضعه (الـ pain points الـ 7)" },
   { time: "8–12", title: "عرض المشكلة", body: "اربط ألمه بالحل — قل «زي ما قلت لي...»" },
   { time: "12–22", title: "Live Demo", body: "افتح console.modonty.com لـ demo client + أرسل Telegram event حقيقي" },
-  { time: "22–25", title: "العرض + ROI", body: "حاسبة (1,299 شهري → 92,000 سنوي عائد)" },
+  { time: "22–25", title: "العرض + ROI", body: "__ROI_CALC_BODY__" },
   { time: "25–28", title: "معالجة الاعتراضات", body: "استخدم جدول الـ 5 اعتراضات أدناه" },
   { time: "28–30", title: "Closing", body: "اختر جملة الإغلاق المناسبة لشخصيته" },
 ] as const;
@@ -144,7 +145,77 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
   amber: { border: "border-amber-500/30", bg: "bg-amber-500/[0.04]", text: "text-amber-500", iconBg: "bg-amber-500/15" },
 };
 
-export default function SalesPlaybookPage() {
+export default async function SalesPlaybookPage() {
+  const [launch, m, leadership] = await Promise.all([
+    formatPriceForGuideline("starter", "SA"),
+    getMomentumPrice("SA"),
+    formatPriceForGuideline("scale", "SA"),
+  ]);
+
+  const launchPrice = launch?.monthly ?? "499";
+  const momentumPrice = m?.monthly ?? "1,299";
+  const momentumYearly = m?.yearly ?? "15,588";
+  const leadershipPrice = leadership?.monthly ?? "2,999";
+
+  // WordPress + ROI math (live)
+  const monthlyNum = m?.monthly ? Number(m.monthly.replace(/,/g, "")) : 1299;
+  const dailyPrice = Math.round(monthlyNum / 30); // 43
+  const wpMonthly = 18000;
+  const wpYearly = wpMonthly * 12; // 216,000
+  const annualSavings = wpYearly - monthlyNum * 12; // 200,412
+  const annualReturn = 92000;
+  const articlesYearly = 96; // 8 × 12
+  const effectiveMonthly18 = Math.round((monthlyNum * 12) / 18); // ~866
+
+  const objGhali = `${momentumPrice} ريال شهري = ${dailyPrice} ريال يومياً. حملة Snapchat واحدة تكلف أكثر، وتنتهي يوم الدفع. مقالات Modonty تشتغل دائماً، تجيب زوار حتى لو وقفت الدفع غداً.`;
+  const objWordpress = `كاتب junior بـ 3,000 ريال شهري + متخصص SEO 4,000 + مصمم 4,000 + مطور 7,000 = ${wpMonthly.toLocaleString("en-GB")} شهري بالحد الأدنى = ${wpYearly.toLocaleString("en-GB")} سنوياً. Modonty Momentum ${momentumPrice} شهري (${momentumYearly} سنوياً) — توفير ${annualSavings.toLocaleString("en-GB")} ريال/سنة، مع منظومة أكمل من الفريق كله.`;
+  const roiCalcBody = `حاسبة (${momentumPrice} شهري → ${annualReturn.toLocaleString("en-GB")} سنوي عائد)`;
+
+  // Map plan names → live prices
+  const priceMap: Record<string, string> = {
+    Free: "0",
+    Launch: launchPrice,
+    Momentum: momentumPrice,
+    Leadership: leadershipPrice,
+  };
+
+  const resolvedObjections = objections.map((o) => ({
+    ...o,
+    a:
+      o.a === "__OBJ_GHALI__"
+        ? objGhali
+        : o.a === "__OBJ_WORDPRESS__"
+          ? objWordpress
+          : o.a,
+  }));
+  const resolvedPackages = fourPackages.map((p) => ({
+    ...p,
+    price: priceMap[p.name] ?? p.price,
+  }));
+  const resolvedTimeline = fullDemoTimeline.map((t) => ({
+    ...t,
+    body: t.body === "__ROI_CALC_BODY__" ? roiCalcBody : t.body,
+  }));
+
+  const roiCalcPre = `الاستثمار الشهري:           ${momentumPrice} ريال (Momentum)
+الاستثمار السنوي:           ${momentumYearly} ريال (× 12)
+عدد المقالات:               ${articlesYearly} مقال (8 × 12)
+زيارات/مقال (بعد 6 شهور):    200/شهر
+معدل تحويل لـ Lead:          3%
+عدد Leads/سنة:              576
+معدل Lead → عميل:            8%
+عدد عملاء جدد/سنة:           46 مريض
+متوسط قيمة المريض:           2,000 ريال
+─────────────────────────────────────
+عائد سنوي:                  ${annualReturn.toLocaleString("en-GB")} ريال
+ROI:                        ≈ 5.9× على الاستثمار السنوي
+
++ بقاعدة 12=18 (دفع 12 شهر، خدمة 18 شهر):
+الـ effective شهري:           ${effectiveMonthly18} ريال/شهر
+ROI الفعلي:                   ≈ 8.85×`;
+
+  const pricingFixText = `الاعتراض رقم 3 (WordPress + ChatGPT) هو الأخطر — احفظ الرد حرفياً. الأرقام مصلَّحة بحساب صحيح: ${momentumPrice} شهري (${momentumYearly} سنوي).`;
+
   return (
     <GuidelineLayout
       title="دليل المبيعات (Sales Playbook)"
@@ -189,7 +260,7 @@ export default function SalesPlaybookPage() {
               «نحن <strong>منصة سعودية</strong> اسمها Modonty. الفكرة: نحط لك <strong>مدونة احترافية
               </strong> باسم شركتك على modonty.com، نكتب لها مقالات شهرياً تظهر في <strong>محركات البحث
               </strong> (Google + Bing + ChatGPT Search)، ونعطيك لوحة ذكية تكشف لك الزوار اللي قريبين من
-              الشراء بدرجة من 0 إلى 100 — كل هذا بسعر يبدأ من <strong>صفر</strong>، أو 1,299 ريال شهري
+              الشراء بدرجة من 0 إلى 100 — كل هذا بسعر يبدأ من <strong>صفر</strong>، أو {momentumPrice} ريال شهري
               للباقة الأكثر شعبية.»
             </p>
           </div>
@@ -310,7 +381,7 @@ export default function SalesPlaybookPage() {
           </div>
 
           <div className="space-y-2 mb-4">
-            {fullDemoTimeline.map((step, i) => (
+            {resolvedTimeline.map((step, i) => (
               <div key={i} className="flex items-start gap-3 rounded-md border border-amber-500/20 bg-background/60 p-3">
                 <span className="shrink-0 px-2 py-1 rounded bg-amber-500/15 border border-amber-500/30 text-[10px] font-mono font-bold text-amber-500 w-16 text-center">
                   {step.time}
@@ -345,11 +416,11 @@ export default function SalesPlaybookPage() {
         </div>
         <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
           الاعتراض رقم 3 (WordPress + ChatGPT) هو <strong>الأخطر</strong> — احفظ الرد حرفياً. الأرقام
-          مصلَّحة بحساب صحيح: 1,299 شهري (15,588 سنوي).
+          مصلَّحة بحساب صحيح: {momentumPrice} شهري ({momentumYearly} سنوي).
         </p>
 
         <div className="space-y-3">
-          {objections.map((o) => (
+          {resolvedObjections.map((o) => (
             <Card
               key={o.num}
               className={
@@ -443,22 +514,7 @@ export default function SalesPlaybookPage() {
 
           <div className="rounded-lg border border-emerald-500/25 bg-background/70 p-5 mb-4">
             <pre className="text-xs leading-loose font-mono overflow-x-auto">
-{`الاستثمار الشهري:           1,299 ريال (Momentum)
-الاستثمار السنوي:           15,588 ريال (× 12)
-عدد المقالات:               96 مقال (8 × 12)
-زيارات/مقال (بعد 6 شهور):    200/شهر
-معدل تحويل لـ Lead:          3%
-عدد Leads/سنة:              576
-معدل Lead → عميل:            8%
-عدد عملاء جدد/سنة:           46 مريض
-متوسط قيمة المريض:           2,000 ريال
-─────────────────────────────────────
-عائد سنوي:                  92,000 ريال
-ROI:                        ≈ 5.9× على الاستثمار السنوي
-
-+ بقاعدة 12=18 (دفع 12 شهر، خدمة 18 شهر):
-الـ effective شهري:           866 ريال/شهر
-ROI الفعلي:                   ≈ 8.85×`}
+{roiCalcPre}
             </pre>
           </div>
 
@@ -481,7 +537,7 @@ ROI الفعلي:                   ≈ 8.85×`}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            {fourPackages.map((p) => (
+            {resolvedPackages.map((p) => (
               <div
                 key={p.name}
                 className={`rounded-lg border p-4 ${

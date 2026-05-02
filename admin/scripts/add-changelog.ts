@@ -11,21 +11,17 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.48.0",
-    title: "admin v0.48.0 — تكامل Jabra SEO: مزامنة المشتركين + بنية الأسعار (Step A)",
+    version: "0.49.0",
+    title: "admin v0.49.0 — صفحات guideline تقرأ الأسعار من DB + DEV-only Sync Local from PROD button",
     items: [
-      { type: "feature" as const, text: "admin: صفحة /jbrseo-subscribers جديدة — تعرض المشتركين القادمين من jbrseo.com pricing page (mirror حرفي · صفر workflow)" },
-      { type: "feature" as const, text: "admin: زر Sync from jbrseo — يقرأ من collection اسمها Subscriber في قاعدة Jabra SEO MongoDB ويحفظ في jbrseo_subscribers" },
-      { type: "feature" as const, text: "admin: 4 KPI cards (Total · SA · EG · Annual/Monthly) + جدول كامل (Date/Name/Email/Phone/Business/Plan/Country/Billing) + بحث + فلاتر" },
-      { type: "feature" as const, text: "admin: صفحة sidebar item جديد في مجموعة Audience — jbrseo Subscribers" },
-      { type: "feature" as const, text: "schema: model JbrseoSubscriber جديد (mirror كامل لـ jbrseo Subscriber model) + indexes على country + jbrseoCreatedAt" },
-      { type: "feature" as const, text: "schema: 4 حقول جديدة على SubscriptionTierConfig — jbrseoId String? @unique + pricing Json? + articleCounts Json? + syncedAtSA/EG DateTime?" },
-      { type: "fix" as const, text: "schema cleanup: حذف 4 حقول boilerplate من SubscriptionTierConfig — isActive · isPopular · description · createdAt" },
-      { type: "feature" as const, text: "infra: env var JBRSEO_DATABASE_URL في .env.shared + Vercel Team Shared (مرتبط بـ admin/modonty/console)" },
-      { type: "feature" as const, text: "infra: helper admin/lib/jbrseo-client.ts — singleton MongoClient connection لقاعدة Jabra SEO" },
-      { type: "feature" as const, text: "infra: package mongodb@^6.20.0 مضاف لـ admin" },
-      { type: "feature" as const, text: "data: backfill jbrseoId على 4 صفوف موجودة (BASIC→free · STANDARD→starter · PRO→growth · PREMIUM→scale)" },
-      { type: "feature" as const, text: "docs: ملف JBRSEO-INTEGRATION-PLAN.md جديد — خطة كاملة 70+ task across 4 phases (Pricing refactor + Subscribers mirror)" },
+      { type: "feature" as const, text: "admin: 6 صفحات guideline تقرأ الأسعار من قاعدة البيانات بدل hardcoded — brand · golden-rules · icps · positioning · sales-playbook · team-onboarding (33 موضع كلهم live)" },
+      { type: "feature" as const, text: "admin: helper جديد admin/lib/pricing/get-tier-pricing.ts — getTierPricing() + getAllTiersPricing() مع unstable_cache ساعة + smart fallback لـ tier.price" },
+      { type: "feature" as const, text: "admin: helper جديد admin/lib/pricing/format-for-guideline.ts — formatPriceForGuideline() + getMomentumPrice() + getLeadershipPrice() مع تنسيق Intl ar-SA + en-GB" },
+      { type: "feature" as const, text: "admin: زر DEV-only Sync Local from PROD في navbar — مخفي في production (NODE_ENV check inlined في build) · streaming UI live progress" },
+      { type: "feature" as const, text: "admin: API route admin/app/api/dev/sync-local-from-prod/route.ts — NDJSON streaming · safety check يرفض الكتابة لو DATABASE_URL ليس modonty_dev · نسخ الـ indexes من PROD وإعادة بنائها" },
+      { type: "feature" as const, text: "admin: Dialog progress (current collection · doc counter · 3 KPIs · per-collection list · time tracking) — تم اختباره: 64 جدول · 1,242 وثيقة · 137.3s · صفر فشل" },
+      { type: "fix" as const, text: "data sync: إصلاح bug في createIndexes — MongoDB كان يرفض unique:null و sparse:null · الآن نضيف القيم only when === true" },
+      { type: "fix" as const, text: "guidelines: WordPress comparison + ROI calculator + الفرق النفسي + جداول الباقات — كلهم تأتي من DB live (لو غيّرت سعر growth في DB، كل صفحة guideline تتحدّث بعد cache invalidate)" },
     ],
   },
 ];

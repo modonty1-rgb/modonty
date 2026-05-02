@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
 import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
@@ -26,7 +27,7 @@ const sixBattles = [
     rival: "الوكالة الإعلانية",
     rivalCost: "96,000–360,000 ريال/سنة",
     rivalWeakness: "ساعات بشرية مكلفة + تنتهي لما توقف الدفع + لا Authority Blog",
-    modontyEdge: "نظام يشتغل 24/7 + يتراكم مع كل عميل + سعر 1,299 شهري",
+    modontyEdge: "__EDGE_PRICE__",
     keyLine: "«الوكالة تخدمك. مدونتي تشغّل لك نظام.»",
     deepWhy: "الوكالة بنموذج Service-as-a-Service — يبيعون ساعات بشرية. Modonty بنموذج SaaS — يبيع منظومة. الفرق فلسفي، لا يُختزل في السعر.",
     icon: Shield,
@@ -46,7 +47,7 @@ const sixBattles = [
   {
     num: 3,
     rival: "WordPress + Plugins",
-    rivalCost: "216,000+ ريال/سنة (مع فريق Dev+Design+Writer+SEO بأقل أسعار)",
+    rivalCost: "__WORDPRESS_YEARLY__",
     rivalWeakness: "أداة فاضية تحتاج فريق كامل لتشغيلها + لا Authority Blog + Backlinks تحتاج 2 سنة",
     modontyEdge: "نظام متكامل — يحلّ محل الفريق كله + يستفيد من Domain Authority راسخة من اليوم الأول",
     keyLine: "«WordPress يحتاج فريق. مدونتي تستبدل الفريق.»",
@@ -180,7 +181,21 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
   rose: { border: "border-rose-500/30", bg: "bg-rose-500/[0.04]", text: "text-rose-500", iconBg: "bg-rose-500/15" },
 };
 
-export default function PositioningPage() {
+export default async function PositioningPage() {
+  const m = await getMomentumPrice("SA");
+  const monthly = m?.monthly ?? "1,299";
+  const yearly = m?.yearly ?? "15,588";
+  const wordpressYearly = 18000 * 12; // 216,000
+  const edgePrice = `نظام يشتغل 24/7 + يتراكم مع كل عميل + سعر ${monthly} شهري`;
+  const wordpressYearlyText = `${wordpressYearly.toLocaleString("en-GB")}+ ريال/سنة (مع فريق Dev+Design+Writer+SEO بأقل أسعار)`;
+  const footnoteText = `* الأسعار للسوق السعودي — مايو 2026. * ${monthly} شهري × 12 = ${yearly} سنوياً للـ Momentum.`;
+
+  const resolvedBattles = sixBattles.map((b) => ({
+    ...b,
+    modontyEdge: b.modontyEdge === "__EDGE_PRICE__" ? edgePrice : b.modontyEdge,
+    rivalCost: b.rivalCost === "__WORDPRESS_YEARLY__" ? wordpressYearlyText : b.rivalCost,
+  }));
+
   return (
     <GuidelineLayout
       title="Modonty vs المنافسون — الفرق + السقف"
@@ -284,7 +299,7 @@ export default function PositioningPage() {
           </div>
 
           <p className="text-[10px] text-muted-foreground italic mt-3 leading-relaxed">
-            * الأسعار للسوق السعودي — مايو 2026. * 1,299 شهري × 12 = 15,588 سنوياً للـ Momentum.
+            {footnoteText}
           </p>
         </CardContent>
       </Card>
@@ -300,7 +315,7 @@ export default function PositioningPage() {
         </p>
 
         <div className="space-y-3">
-          {sixBattles.map((b) => {
+          {resolvedBattles.map((b) => {
             const Icon = b.icon;
             const c = colorMap[b.color];
             return (

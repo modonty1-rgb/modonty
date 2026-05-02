@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
 import { ModontyIcon } from "@/components/admin/icons/modonty-icon";
+import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
 import {
   Palette,
   Type,
@@ -106,7 +107,8 @@ const toneOfVoice = [
     titleEn: "Sleek and Purposeful",
     titleAr: "أنيق وله غرض",
     meaning: "كل عنصر له دور — لا حشو، لا زخرفة بدون معنى",
-    do: "«1,299 ريال شهرياً = 8 مقالات + لوحة + Lead Scoring»",
+    // Price placeholder — replaced at render time with live pricing from DB
+    do: "__PRICE_DO__",
     dont: "«تجربة فريدة من نوعها لمحتوى لا يُضاهى يقدّم لك...»",
     when: "في كل copy، كل تصميم، كل عنصر UI",
   },
@@ -270,10 +272,10 @@ const brandVoiceScenarios = [
   },
   {
     situation: "العميل يتردّد في السعر",
-    customer: "«1,299 شهرياً — كثير شوي»",
+    customer: "__PRICE_CUSTOMER__",
     wrongTone: "«احنا أرخص خيار في السوق»",
     wrongWhy: "Anti-hook: «أرخص» تدمّر perceived value",
-    rightTone: "«احسبها كذا: فريق WordPress (Dev + Designer + كاتب + SEO) = 18,000 شهرياً. عندنا 1,299 — توفّر 16,701 شهرياً.»",
+    rightTone: "__PRICE_RIGHTTONE__",
     rightWhy: "ROI واضح بأرقام قابلة للتحقق",
     valueShown: "Accurate + Sleek and Purposeful",
   },
@@ -288,7 +290,30 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
   rose: { border: "border-rose-500/30", bg: "bg-rose-500/[0.04]", text: "text-rose-500", iconBg: "bg-rose-500/15" },
 };
 
-export default function BrandGuidelinesPage() {
+export default async function BrandGuidelinesPage() {
+  const momentum = await getMomentumPrice("SA");
+  const m = momentum?.monthly ?? "1,299";
+  const articles = momentum?.articles ?? 8;
+
+  // WordPress comparison math (live): Dev 7K + Designer 4K + Writer 3K + SEO 4K = 18K
+  const wordpress = 18000;
+  const savings = wordpress - (momentum?.monthly ? Number(momentum.monthly.replace(/,/g, "")) : 1299);
+
+  // Resolve placeholders in static data with live pricing
+  const priceDo = `«${m} ريال شهرياً = ${articles} مقالات + لوحة + Lead Scoring»`;
+  const priceCustomer = `«${m} شهرياً — كثير شوي»`;
+  const priceRightTone = `«احسبها كذا: فريق WordPress (Dev + Designer + كاتب + SEO) = ${wordpress.toLocaleString("en-GB")} شهرياً. عندنا ${m} — توفّر ${savings.toLocaleString("en-GB")} شهرياً.»`;
+
+  const resolvedToneOfVoice = toneOfVoice.map((v) => ({
+    ...v,
+    do: v.do === "__PRICE_DO__" ? priceDo : v.do,
+  }));
+  const resolvedScenarios = brandVoiceScenarios.map((o) => ({
+    ...o,
+    customer: o.customer === "__PRICE_CUSTOMER__" ? priceCustomer : o.customer,
+    rightTone: o.rightTone === "__PRICE_RIGHTTONE__" ? priceRightTone : o.rightTone,
+  }));
+
   return (
     <GuidelineLayout
       title="البراند — الهوية البصرية والصوت"
@@ -553,7 +578,7 @@ export default function BrandGuidelinesPage() {
           </p>
 
           <div className="space-y-3">
-            {toneOfVoice.map((t) => (
+            {resolvedToneOfVoice.map((t) => (
               <div key={t.titleEn} className="rounded-lg border border-violet-500/25 bg-background/70 p-5">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <p className="text-sm font-bold text-violet-500">{t.titleAr}</p>
@@ -657,7 +682,7 @@ export default function BrandGuidelinesPage() {
               </div>
               <div className="rounded-md bg-emerald-500/[0.05] border border-emerald-500/20 p-2.5 text-[11px]">
                 <p className="font-bold text-emerald-500 mb-0.5">✓ مثال:</p>
-                <p>SEO · ROI · 1,299 SAR · Modonty · Dashboard</p>
+                <p>SEO · ROI · {momentum?.monthly ?? "1,299"} SAR · Modonty · Dashboard</p>
               </div>
             </div>
             <div className="rounded-lg border border-emerald-500/25 bg-background/60 p-5">
@@ -808,7 +833,7 @@ export default function BrandGuidelinesPage() {
           </p>
 
           <div className="space-y-3">
-            {brandVoiceScenarios.map((s, i) => (
+            {resolvedScenarios.map((s, i) => (
               <div key={i} className="rounded-lg border border-primary/25 bg-background/70 p-5 space-y-3">
                 <Badge variant="outline" className="text-[10px] border-primary/40 text-primary">
                   السيناريو {i + 1}: {s.situation}

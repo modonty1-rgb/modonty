@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
+import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
 import {
   Layers,
   CheckCircle2,
@@ -106,7 +107,7 @@ const roles = [
       "احفظ الـ 3 سكريبتات: Elevator (30 ث) · Discovery (5 د) · Full Demo (30 د)",
       "احفظ الـ 5 ICPs بترتيب سهولة الإغلاق",
       "احفظ الـ 8 اعتراضات + ردودها — خاصة «WordPress + ChatGPT يكفي»",
-      "احفظ ROI Calculator: 1,299 → 92,000 (70x)",
+      "__ROI_CALC__",
       "قاعدة 12=18 + جمل الإغلاق الأربع",
     ],
     cta: { href: "/guidelines/sales-playbook", label: "دليل المبيعات" },
@@ -142,7 +143,20 @@ const onboardingChecklist = [
   "Sign-off للانتقال للعمل المستقل (المرحلة 3)",
 ] as const;
 
-export default function TeamOnboardingPage() {
+export default async function TeamOnboardingPage() {
+  const m = await getMomentumPrice("SA");
+  const monthly = m?.monthly ?? "1,299";
+  const annualReturn = 92000;
+  const monthlyNum = m?.monthly ? Number(m.monthly.replace(/,/g, "")) : 1299;
+  const multiplier = Math.round(annualReturn / monthlyNum);
+  const roiText = `احفظ ROI Calculator: ${monthly} → ${annualReturn.toLocaleString("en-GB")} (${multiplier}x)`;
+
+  // Resolve __ROI_CALC__ placeholder in roles
+  const resolvedRoles = roles.map((r) => ({
+    ...r,
+    items: r.items.map((item) => (item === "__ROI_CALC__" ? roiText : item)),
+  }));
+
   return (
     <GuidelineLayout
       title="تأهيل الموظف الجديد — رحلة 3 مراحل"
@@ -230,7 +244,7 @@ export default function TeamOnboardingPage() {
         </p>
 
         <div className="space-y-3">
-          {roles.map((r) => {
+          {resolvedRoles.map((r) => {
             const Icon = r.icon;
             const c = colorMap[r.color];
             return (

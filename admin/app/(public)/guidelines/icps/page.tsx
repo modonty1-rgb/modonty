@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
+import { getMomentumPrice } from "@/lib/pricing/format-for-guideline";
 import {
   ShoppingBag,
   Stethoscope,
@@ -208,7 +209,7 @@ const egyptMarketData = [
 // ─── 7 Pain Points (validated) ────────────────────────────────
 const sevenPains = [
   { pain: "ما عندي وقت أكتب", solution: "فريق مدونتي يكتب نيابة عنك — كل المحتوى يدوي ومحترف، 8 مقالات شهرياً" },
-  { pain: "ما عندي ميزانية وكالة", solution: "بأقل من 10% من سعر الوكالة (Momentum 1,299 شهري vs 18,000 شهري لفريق WordPress)" },
+  { pain: "ما عندي ميزانية وكالة", solution: "__BUDGET_SOLUTION__" },
   { pain: "ما أعرف SEO", solution: "JSON-LD + Meta + Sitemap + Schema — كلها تلقائية للظهور في محركات البحث + AI Overviews" },
   { pain: "ما أعرف هل المحتوى ينفع", solution: "Lead Scoring 0–100 لكل زائر + تحليلات GA4 شفافة" },
   { pain: "ما أعرف إيش يكتب", solution: "استبيان SEO Intake + تتبّع منافسين + AI suggestions — نقترح المواضيع بناءً على نية البحث" },
@@ -238,7 +239,18 @@ const colorMap: Record<string, { border: string; bg: string; text: string; iconB
   blue: { border: "border-blue-500/30", bg: "bg-blue-500/[0.04]", text: "text-blue-500", iconBg: "bg-blue-500/15" },
 };
 
-export default function ICPsPage() {
+export default async function ICPsPage() {
+  const m = await getMomentumPrice("SA");
+  const monthly = m?.monthly ?? "1,299";
+  const wordpress = 18000;
+  const budgetSolution = `بأقل من 10% من سعر الوكالة (Momentum ${monthly} شهري vs ${wordpress.toLocaleString("en-GB")} شهري لفريق WordPress)`;
+  const discoveryQuestion = `2. هل يقدر يدفع ${monthly} ريال شهرياً (Momentum)؟`;
+
+  const resolvedPains = sevenPains.map((p) => ({
+    ...p,
+    solution: p.solution === "__BUDGET_SOLUTION__" ? budgetSolution : p.solution,
+  }));
+
   return (
     <GuidelineLayout
       title="العملاء المثاليون (ICPs) — دراسة سوق 2026"
@@ -650,7 +662,7 @@ export default function ICPsPage() {
                 no: "→ Tier 3 Watchlist؟ احتفظ بمعلوماته للمستقبل",
               },
               {
-                q: "2. هل يقدر يدفع 1,299 ريال شهرياً (Momentum)؟",
+                q: discoveryQuestion,
                 yes: "→ كمل بثقة",
                 no: "→ اقترح Free tier تجربة 30 يوم",
               },
@@ -698,7 +710,7 @@ export default function ICPsPage() {
           </p>
 
           <div className="space-y-2">
-            {sevenPains.map((p, i) => (
+            {resolvedPains.map((p, i) => (
               <div key={i} className="rounded-lg border border-rose-500/20 bg-background/60 p-4">
                 <div className="flex items-start gap-2 mb-2">
                   <span className="shrink-0 w-6 h-6 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-[10px] font-bold text-rose-500 mt-0.5">

@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { getMomentumPrice, formatPriceForGuideline } from "@/lib/pricing/format-for-guideline";
 import { Badge } from "@/components/ui/badge";
 import { GuidelineLayout } from "../components/guideline-layout";
 import { Award, Sparkles, Lightbulb, Target } from "lucide-react";
@@ -234,7 +235,52 @@ function Rule({ num, badge, title, children, why, when, borderClass }: RuleProps
   );
 }
 
-export default function GoldenRulesPage() {
+export default async function GoldenRulesPage() {
+  const [launch, m, leadership] = await Promise.all([
+    formatPriceForGuideline("starter", "SA"),
+    getMomentumPrice("SA"),
+    formatPriceForGuideline("scale", "SA"),
+  ]);
+
+  const launchPrice = launch?.monthly ?? "499";
+  const momentumPrice = m?.monthly ?? "1,299";
+  const momentumYearly = m?.yearly ?? "15,588";
+  const leadershipPrice = leadership?.monthly ?? "2,999";
+
+  // WordPress comparison math (live)
+  const wpMonthly = 18000;
+  const wpYearly = wpMonthly * 12; // 216,000
+  const monthlyNum = m?.monthly ? Number(m.monthly.replace(/,/g, "")) : 1299;
+  const monthlyYearly = monthlyNum * 12; // 15,588
+  const savings = wpYearly - monthlyYearly; // 200,412
+  const annualReturn = 92000;
+  const roiMultiplier = Math.round(annualReturn / monthlyNum);
+
+  // Map plan names → live prices
+  const priceMap: Record<string, string> = {
+    Free: "0",
+    Launch: launchPrice,
+    "Momentum ⭐": momentumPrice,
+    Leadership: leadershipPrice,
+  };
+  const resolvedPackages = fourPackages.map((p) => ({
+    ...p,
+    price: priceMap[p.name] ?? p.price,
+  }));
+
+  const wpComparisonRow = `${wpMonthly.toLocaleString("en-GB")} ريال`;
+  const wpYearlyRow = `${wpYearly.toLocaleString("en-GB")} ريال`;
+  const savingsText = `${savings.toLocaleString("en-GB")} ريال`;
+  const roiPreBlock = `${momentumPrice} ريال (Momentum، عيادة أسنان)
+↓
+8 مقالات × 12 شهر = 96 مقال
+↓
+46 مريض جديد/سنة
+↓
+${annualReturn.toLocaleString("en-GB")} ريال عائد
+↓
+ROI = ${roiMultiplier}x`;
+
   return (
     <GuidelineLayout
       title="القواعد الذهبية"
@@ -627,18 +673,18 @@ export default function GoldenRulesPage() {
                               </tr>
                               <tr className="border-b border-emerald-500/30 font-bold bg-background">
                                 <td className="p-2">المجموع شهرياً</td>
-                                <td className="p-2 text-end text-rose-500">18,000 ريال</td>
-                                <td className="p-2 text-end text-emerald-500">1,299 ريال</td>
+                                <td className="p-2 text-end text-rose-500">{wpComparisonRow}</td>
+                                <td className="p-2 text-end text-emerald-500">{momentumPrice} ريال</td>
                               </tr>
                               <tr className="border-b border-emerald-500/30 font-bold bg-background">
                                 <td className="p-2">المجموع سنوياً (× 12)</td>
-                                <td className="p-2 text-end text-rose-500">216,000 ريال</td>
-                                <td className="p-2 text-end text-emerald-500">15,588 ريال</td>
+                                <td className="p-2 text-end text-rose-500">{wpYearlyRow}</td>
+                                <td className="p-2 text-end text-emerald-500">{momentumYearly} ريال</td>
                               </tr>
                               <tr className="bg-emerald-500/[0.08] font-bold">
                                 <td className="p-2 text-emerald-600">التوفير السنوي</td>
                                 <td className="p-2 text-end" colSpan={2}>
-                                  <span className="text-emerald-600">200,412 ريال</span>{" "}
+                                  <span className="text-emerald-600">{savingsText}</span>{" "}
                                   <span className="text-muted-foreground font-normal">(~14× أرخص)</span>
                                 </td>
                               </tr>
@@ -1083,15 +1129,7 @@ export default function GoldenRulesPage() {
             }
           >
             <pre className="text-[11px] bg-background/60 border border-primary/20 rounded p-3 overflow-x-auto leading-loose">
-{`1,299 ريال (Momentum، عيادة أسنان)
-↓
-8 مقالات × 12 شهر = 96 مقال
-↓
-46 مريض جديد/سنة
-↓
-92,000 ريال عائد
-↓
-ROI = 70x`}
+{roiPreBlock}
             </pre>
             <p className="text-xs mt-2">
               <strong>جملة جاهزة:</strong> «لو حصلت 2 عملاء بس من مقال واحد، تكون استرجعت السعر.»
@@ -1119,7 +1157,7 @@ ROI = 70x`}
             }
           >
             <div className="space-y-1.5">
-              {fourPackages.map((p, i) => (
+              {resolvedPackages.map((p, i) => (
                 <div
                   key={i}
                   className={`flex items-center gap-3 rounded-md border p-2.5 ${
@@ -1520,7 +1558,7 @@ ROI = 70x`}
                 على موقع كامل + Lead capture + Social proof + Analytics — كل ذلك مدمج في الاشتراك.
                 <br />
                 <br />
-                <strong>الفرق النفسي:</strong> «اشتراك 1,299 شهرياً للمقالات» = غالي. «اشتراك 1,299
+                <strong>الفرق النفسي:</strong> «اشتراك {momentumPrice} شهرياً للمقالات» = غالي. «اشتراك {momentumPrice}
                 شهرياً لـ Mini-website + 8 مقالات + كل أدوات الـ social proof» = صفقة العمر.
               </>
             }
