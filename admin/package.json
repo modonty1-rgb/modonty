@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -79,6 +79,7 @@
     "json-formatter-js": "^2.5.11",
     "jsonld": "^9.0.0",
     "lucide-react": "^0.562.0",
+    "mongodb": "^6.21.0",
     "next": "^16.2.2",
     "next-auth": "^5.0.0-beta.25",
     "next-cloudinary": "^6.17.5",

@@ -104,6 +104,7 @@ const menuGroups: MenuGroup[] = [
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
       { icon: Megaphone, label: "Campaign Leads", href: "/campaigns/leads" },
+      { icon: Users2, label: "jbrseo Subscribers", href: "/jbrseo-subscribers" },
     ],
   },
   {

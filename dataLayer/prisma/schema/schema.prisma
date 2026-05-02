@@ -571,21 +571,52 @@ model CampaignInterest {
 
 model SubscriptionTierConfig {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  tier            SubscriptionTier @unique
-  name            String          // "Basic", "Standard", "Pro", "Premium"
-  articlesPerMonth Int            // 2, 4, 8, 12
-  price           Float           // 2499, 3999, 6999, 9999 (store as number, format in UI)
-  isActive        Boolean         @default(true)
-  isPopular       Boolean         @default(false) // For "Most Popular" badge
-  description     String?         // Optional tier description
-  createdAt       DateTime        @default(now())
+
+  // ─── Step A (compatibility — للـ 52 ملف اللي يقرأوا الـ enum) ───
+  tier            SubscriptionTier @unique         // Step B: يُحذف
+  price           Float                            // Step B: يُحذف (replaced بـ pricing.SA.mo)
+  articlesPerMonth Int                             // Step B: يُحذف (replaced بـ articleCounts JSON)
+  name            String                           // Step B: يصير عربي من jbrseo
+
+  // ─── Jbrseo integration (Round 6 FINAL) ───
+  jbrseoId        String?         @unique          // "free" | "starter" | "growth" | "scale"
+  pricing         Json?                            // { SA: { mo, yr }, EG: { mo, yr } }
+  articleCounts   Json?                            // global mapping: { اسم الباقة: عدد المقالات }
+  syncedAtSA      DateTime?
+  syncedAtEG      DateTime?
+
   updatedAt       DateTime        @updatedAt
 
   // Relationships
   clients         Client[]        @relation("ClientTierConfig")
 
   @@map("subscription_tier_configs")
-  @@index([isActive])
+}
+
+// ============================================
+// JBRSEO SUBSCRIBERS MIRROR
+// ============================================
+// Pure mirror of jbrseo's Subscriber collection — display only, no workflow.
+// Synced via admin button (manual). See: JBRSEO-INTEGRATION-PLAN.md Phase 4.
+
+model JbrseoSubscriber {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  jbrseoId        String   @unique          // _id الأصلي من jbrseo
+  contactName     String?
+  email           String
+  phone           String
+  businessName    String?
+  businessType    String?
+  planName        String                    // الباقة اللي اختارها
+  planIndex       Int?
+  country         String                    // "SA" | "EG"
+  isAnnual        Boolean
+  jbrseoCreatedAt DateTime                  // الـ createdAt الأصلي من jbrseo
+  syncedAt        DateTime @default(now())
+
+  @@index([country])
+  @@index([jbrseoCreatedAt])
+  @@map("jbrseo_subscribers")
 }
 
 // ============================================
