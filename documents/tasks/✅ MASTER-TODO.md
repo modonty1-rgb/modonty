@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate · Google-strict audit · v0.51.0 indexing tracking · v0.51.1 encoding hotfix · **v0.51.2**: dropped unsupported `?id=` pre-fill (Google never documented it — `?action=inspect` is official) · admin pastes URL from clipboard manually · NEXT SESSION: "SEO Data Health" section)
-> **الإصدار الحالي:** admin v0.51.2 · modonty v1.43.0 · console v0.5.0
+> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate · Google-strict audit · v0.51.x indexing tracking + GSC deep-link cleanup · **v0.52.0 + modonty v1.43.1**: removed image-sitemap (cross-domain Cloudinary URLs caused 48/48 GSC errors — verified safe per 3 official Google docs: page crawl + JSON-LD already cover image discovery) · ACTION: remove sitemap manually from GSC after deploy · NEXT SESSION: "SEO Data Health" section)
+> **الإصدار الحالي:** admin v0.52.0 · modonty v1.43.1 · console v0.5.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

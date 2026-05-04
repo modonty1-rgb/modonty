@@ -34,7 +34,6 @@ import { InspectBulkButton } from "./components/inspect-bulk-button";
 import { TechHealthStat } from "./components/tech-health-stat";
 import type { TechHealthIssue } from "./components/tech-health-dialog";
 import { SitemapManager } from "./components/sitemap-manager";
-import { ImageSitemapCard } from "./components/image-sitemap-card";
 import { RobotsValidator } from "./components/robots-validator";
 import { PendingIndexingCard } from "./components/pending-indexing-card";
 import { DataSourcesNote } from "./components/data-sources-note";
@@ -269,7 +268,6 @@ export default async function SearchConsolePage({
       />
 
       <SitemapManager />
-      <ImageSitemapCard />
       <RobotsValidator />
 
       <Card>

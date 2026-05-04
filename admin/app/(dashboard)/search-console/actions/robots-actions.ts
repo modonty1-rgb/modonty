@@ -102,7 +102,6 @@ const AUDIT_CASES: Array<{
   { path: "/authors/example", userAgent: "Googlebot", expect: "allow", group: "public", label: "Authors" },
   { path: "/clients/example", userAgent: "Googlebot", expect: "allow", group: "public", label: "Clients" },
   { path: "/sitemap.xml", userAgent: "Googlebot", expect: "allow", group: "public", label: "Main sitemap" },
-  { path: "/image-sitemap.xml", userAgent: "Googlebot", expect: "allow", group: "public", label: "Image sitemap" },
 
   // Private pages — must be BLOCKED for Googlebot
   { path: "/admin/articles", userAgent: "Googlebot", expect: "block", group: "private", label: "Admin area" },
