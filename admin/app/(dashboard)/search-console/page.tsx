@@ -25,6 +25,7 @@ import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/ins
 import { SITE_BASE_URL } from "@/lib/gsc/client";
 import {
   getRemovalTrackStates,
+  getManualTrackStates,
   type RemovalTrackState,
 } from "./actions/removal-tracking-actions";
 
@@ -91,7 +92,16 @@ export default async function SearchConsolePage({
     topPages,
     publishedArticles,
   );
-  const inspectionMap = await getCachedInspectionsByUrls(pages.map((p) => p.url));
+
+  // Build the union of URLs that need inspection lookup: coverage table + pending indexing
+  const pendingUrls = pendingIndexing.map((a) => `${SITE_BASE_URL}/articles/${a.slug}`);
+  const inspectionMap = await getCachedInspectionsByUrls([
+    ...pages.map((p) => p.url),
+    ...pendingUrls,
+  ]);
+
+  // INDEXING request states for pending articles (DB tracking)
+  const indexingRequestStates = await getManualTrackStates(pendingUrls, "INDEXING");
 
   // Union of GSC coverage URLs + all PUBLISHED articles (deduped)
   const inspectableUrls = Array.from(
@@ -252,7 +262,11 @@ export default async function SearchConsolePage({
         </CardContent>
       </Card>
 
-      <PendingIndexingCard pendingIndexing={pendingIndexing} />
+      <PendingIndexingCard
+        pendingIndexing={pendingIndexing}
+        requestStates={indexingRequestStates}
+        inspections={inspectionMap}
+      />
 
       <SitemapManager />
       <ImageSitemapCard />

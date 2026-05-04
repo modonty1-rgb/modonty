@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { refreshInspection, type InspectionRecord } from "@/lib/gsc/inspection-cache";
 
 export type GscRequestType = "REMOVAL" | "INDEXING";
 
@@ -118,6 +119,41 @@ export async function getManualTrackState(
   });
   if (!row) return null;
   return { ...row, type: row.type as GscRequestType };
+}
+
+interface RecheckResponse {
+  ok: boolean;
+  error?: string;
+  inspection?: {
+    verdict: string | null;
+    coverageState: string | null;
+    indexingState: string | null;
+    inspectedAt: string;
+  };
+}
+
+/**
+ * Re-check a URL's indexing status via Google URL Inspection API.
+ * Forces fresh fetch from Google (1/2,000 daily quota). Updates DB cache.
+ * Used by the per-row Re-check button on /search-console Pending Indexing card.
+ */
+export async function recheckIndexingStatusAction(url: string): Promise<RecheckResponse> {
+  try {
+    await requireUserId();
+    const inspection: InspectionRecord = await refreshInspection(url);
+    revalidatePath("/search-console");
+    return {
+      ok: true,
+      inspection: {
+        verdict: inspection.verdict,
+        coverageState: inspection.coverageState,
+        indexingState: inspection.indexingState,
+        inspectedAt: inspection.inspectedAt.toISOString(),
+      },
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Re-check failed" };
+  }
 }
 
 // ───── Backward-compatible async wrappers (old names — Next.js requires async fn exports) ─────
