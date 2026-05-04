@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate built · Google-strict 21-check audit · 4 root-cause SEO fixes · Live test passed · **NEXT SESSION:** build "SEO Data Health" section in `/database` maintenance UI (replaces all DB-fix scripts) · then push v0.50.0 · plan in SESSION-LOG.md)
-> **الإصدار الحالي:** admin v0.48.0 · modonty v1.43.0 · console v0.5.0
+> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate built · Google-strict 21-check audit · 4 root-cause SEO fixes · **PUSHED v0.50.0 + v0.50.1 hotfix** (Stage 13 NEUTRAL paradox fixed — gate now opens for unvisited articles) · NEXT SESSION: build "SEO Data Health" section in `/database` · plan in SESSION-LOG.md)
+> **الإصدار الحالي:** admin v0.50.1 · modonty v1.43.0 · console v0.5.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

@@ -220,13 +220,17 @@ export function PipelineRunner({ articleId, articleUrl, indexingTrackState, cach
     }
     if (stage.key === "final-check") {
       if (inspection) {
-        const isPass = inspection.verdict === "PASS";
+        const verdict = inspection.verdict;
+        // NEUTRAL = Google hasn't visited yet. Not a failure of this page —
+        // Stage 14's job is to request that visit. Treat as ready so the gate opens.
+        // FAIL/PARTIAL = Google found a real problem → keep critical.
+        const isReady = verdict === "PASS" || verdict === "NEUTRAL";
         summary = {
-          status: isPass ? "ready" : "critical",
-          passed: isPass ? 1 : 0,
-          failed: isPass ? 0 : 1,
+          status: isReady ? "ready" : "critical",
+          passed: isReady ? 1 : 0,
+          failed: isReady ? 0 : 1,
           total: 1,
-          hasCritical: !isPass,
+          hasCritical: !isReady,
         };
       } else {
         summary = { status: "not-run", passed: 0, failed: 0, total: 1, hasCritical: false };
