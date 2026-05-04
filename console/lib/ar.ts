@@ -212,7 +212,6 @@ export const ar = {
     requestFailed: "ما تم إرسال طلب التعديل. جرّب مرة أخرى.",
     errorOccurred: "حدث خطأ",
     confirmYes: "نعم، وافق",
-    cancel: "إلغاء",
     basicContent: "المحتوى الأساسي",
     titleSlugExcerpt: "العنوان والرابط والملخص والبيانات",
     title: "العنوان",
