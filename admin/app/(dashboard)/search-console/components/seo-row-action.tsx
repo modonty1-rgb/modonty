@@ -25,19 +25,15 @@ const GSC_REMOVALS_URL =
   "https://search.google.com/search-console/removals?resource_id=sc-domain%3Amodonty.com";
 
 /**
- * Build GSC URL Inspection deep-link.
- * Decode-then-encode ensures we encode exactly once — handles inputs that may
- * already be percent-encoded (e.g. from `new URL().href`) without double-encoding.
+ * GSC URL Inspection deep-link.
+ *
+ * IMPORTANT: Google does NOT document a deep-link with pre-filled URL.
+ * Per support.google.com/webmasters/answer/9012289, the only supported entry point
+ * is `?action=inspect` (no URL pre-fill). Past attempts at `?id=<url>` returned 404
+ * after Google's routing changes. We open the inspection screen and rely on the
+ * clipboard copy so the admin can paste manually.
  */
-const GSC_INSPECT_URL = (rawUrl: string) => {
-  let decoded: string;
-  try {
-    decoded = decodeURIComponent(rawUrl);
-  } catch {
-    decoded = rawUrl;
-  }
-  return `https://search.google.com/search-console/inspect?resource_id=sc-domain%3Amodonty.com&id=${encodeURIComponent(decoded)}`;
-};
+const GSC_INSPECT_URL = `https://search.google.com/search-console?action=inspect&resource_id=sc-domain%3Amodonty.com`;
 
 const formatDate = (d: Date) =>
   new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(
@@ -65,17 +61,15 @@ function actionToLabels(action: Action) {
     newColor: "border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10",
     doneLabel: "Indexing requested",
     toastOpenTitle: "Opened GSC URL Inspection",
-    toastOpenDesc: "Click 'Request Indexing' in Google, then come back and Mark done.",
+    toastOpenDesc: "URL copied — paste it (Ctrl+V) in the inspection bar, click Test Live URL, then Request Indexing.",
     toastDoneTitle: "Marked as requested",
     toastDoneDesc: "Indexing request confirmed in your records.",
   };
 }
 
-function buildGscUrl(action: Action, url: string): string {
-  // For the deep-link, pass the raw URL directly — GSC_INSPECT_URL handles encoding.
-  // Don't pre-normalize via new URL().href: that pre-encodes special chars and
-  // would cause double-encoding when combined with encodeURIComponent.
-  return action === "delete" ? GSC_REMOVALS_URL : GSC_INSPECT_URL(url);
+function buildGscUrl(action: Action): string {
+  // No URL pre-fill — Google doesn't support it. URL goes to clipboard for paste.
+  return action === "delete" ? GSC_REMOVALS_URL : GSC_INSPECT_URL;
 }
 
 export function SeoRowAction({ url, action, size = "sm", trackState }: SeoRowActionProps) {
@@ -92,7 +86,7 @@ export function SeoRowAction({ url, action, size = "sm", trackState }: SeoRowAct
       try { return new URL(url).href; } catch { return url; }
     })();
     void navigator.clipboard.writeText(canonical).catch(() => {});
-    window.open(buildGscUrl(action, url), "_blank", "noopener,noreferrer");
+    window.open(buildGscUrl(action), "_blank", "noopener,noreferrer");
     toast({ title: labels.toastOpenTitle, description: labels.toastOpenDesc });
     startTransition(async () => {
       const res = await markManualOpenedAction(url, type);
