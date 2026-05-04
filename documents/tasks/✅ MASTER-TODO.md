@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate · Google-strict audit · Stage 13 NEUTRAL fix · **v0.51.0 indexing tracking**: per-row Request badge + Google verdict + Re-check button on Pending Indexing card · NEXT SESSION: build "SEO Data Health" section in `/database`)
-> **الإصدار الحالي:** admin v0.51.0 · modonty v1.43.0 · console v0.5.0
+> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate · Google-strict audit · Stage 13 NEUTRAL fix · v0.51.0 indexing tracking · **v0.51.1 hotfix**: GSC deep-link double-encoding bug fixed — Arabic slugs now produce valid GSC inspection URLs · NEXT SESSION: "SEO Data Health" section in `/database`)
+> **الإصدار الحالي:** admin v0.51.1 · modonty v1.43.0 · console v0.5.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

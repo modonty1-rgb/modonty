@@ -23,8 +23,21 @@ interface SeoRowActionProps {
 
 const GSC_REMOVALS_URL =
   "https://search.google.com/search-console/removals?resource_id=sc-domain%3Amodonty.com";
-const GSC_INSPECT_URL = (encodedUrl: string) =>
-  `https://search.google.com/search-console/inspect?resource_id=sc-domain%3Amodonty.com&id=${encodeURIComponent(encodedUrl)}`;
+
+/**
+ * Build GSC URL Inspection deep-link.
+ * Decode-then-encode ensures we encode exactly once — handles inputs that may
+ * already be percent-encoded (e.g. from `new URL().href`) without double-encoding.
+ */
+const GSC_INSPECT_URL = (rawUrl: string) => {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(rawUrl);
+  } catch {
+    decoded = rawUrl;
+  }
+  return `https://search.google.com/search-console/inspect?resource_id=sc-domain%3Amodonty.com&id=${encodeURIComponent(decoded)}`;
+};
 
 const formatDate = (d: Date) =>
   new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(
@@ -59,10 +72,10 @@ function actionToLabels(action: Action) {
 }
 
 function buildGscUrl(action: Action, url: string): string {
-  const canonical = (() => {
-    try { return new URL(url).href; } catch { return url; }
-  })();
-  return action === "delete" ? GSC_REMOVALS_URL : GSC_INSPECT_URL(canonical);
+  // For the deep-link, pass the raw URL directly — GSC_INSPECT_URL handles encoding.
+  // Don't pre-normalize via new URL().href: that pre-encodes special chars and
+  // would cause double-encoding when combined with encodeURIComponent.
+  return action === "delete" ? GSC_REMOVALS_URL : GSC_INSPECT_URL(url);
 }
 
 export function SeoRowAction({ url, action, size = "sm", trackState }: SeoRowActionProps) {
