@@ -103,6 +103,10 @@ export function Breadcrumb() {
               <span className="text-foreground font-medium" aria-current="page">
                 {item.label}
               </span>
+            ) : item.disabled ? (
+              <span className="text-muted-foreground/70 cursor-default select-none">
+                {item.label}
+              </span>
             ) : (
               <Link
                 href={item.href}

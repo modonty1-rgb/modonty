@@ -159,7 +159,7 @@ export async function getPendingArticles(clientId: string): Promise<ArticleWithA
   return db.article.findMany({
     where: {
       clientId,
-      status: ArticleStatus.DRAFT,
+      status: ArticleStatus.AWAITING_APPROVAL,
     },
     include: {
       client: {
@@ -732,7 +732,7 @@ export async function getPendingArticlesCount(clientId: string): Promise<number>
   return db.article.count({
     where: {
       clientId,
-      status: ArticleStatus.DRAFT,
+      status: ArticleStatus.AWAITING_APPROVAL,
     },
   });
 }

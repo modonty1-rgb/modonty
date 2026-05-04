@@ -398,10 +398,10 @@ export async function validateBusinessRules(
     errors.push("Missing headline in Article");
   }
 
-  // Check datePublished
-  if (!articleNode.datePublished) {
-    errors.push("Missing datePublished in Article (required for published articles)");
-  }
+  // datePublished is optional per Google docs ("There are no required properties").
+  // Pre-publish articles (DRAFT/AWAITING_APPROVAL/SCHEDULED) legitimately have
+  // datePublished = null until they actually publish. The generator populates it
+  // when status = PUBLISHED. Don't error here — Quality Gate must respect workflow.
 
   // Check publisher (handle both @id and id — MongoDB may strip @ from nested keys)
   const publisherRef = articleNode.publisher as { "@id"?: string; id?: string } | undefined;

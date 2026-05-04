@@ -13,6 +13,7 @@ import {
 } from "../lib/transitions";
 import { TransitionButton } from "../components/transition-button";
 import { GatedTransitionButton } from "../components/gated-transition-button";
+import { ScheduledRowActions } from "../components/scheduled-row-actions";
 import { SeoHealthCell } from "../components/seo-health-cell";
 
 export const dynamic = "force-dynamic";
@@ -228,13 +229,19 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Actions row — Send button + status pill side by side */}
+              {/* Actions row — different per transition */}
               <div className="flex items-center gap-2 shrink-0">
                 {transition === "draft-to-approval" ? (
                   <GatedTransitionButton
                     articleId={article.id}
                     actionLabel={config.actionLabel}
                     hasErrors={(seoResults[idx]?.failedCount ?? 0) > 0}
+                  />
+                ) : transition === "scheduled-to-published" ? (
+                  <ScheduledRowActions
+                    articleId={article.id}
+                    articleTitle={article.title}
+                    scheduledAt={article.scheduledAt}
                   />
                 ) : (
                   <TransitionButton

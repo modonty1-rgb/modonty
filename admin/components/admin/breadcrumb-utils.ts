@@ -1,7 +1,21 @@
 export interface BreadcrumbItem {
   label: string;
   href: string;
+  /** True when this segment isn't a real route (only a parent for dynamic children).
+   *  Renderer should display as plain text, not a Link, to avoid 404s. */
+  disabled?: boolean;
 }
+
+/**
+ * URL segments that are NOT real routes — they only exist as parent paths for
+ * dynamic children (e.g. /search-console/pipeline → no page.tsx, only [articleId]).
+ * Clicking these in breadcrumb produces a 404. Render them as text instead.
+ */
+const NON_NAVIGABLE_SEGMENTS = new Set([
+  "pipeline",        // /search-console/pipeline (parent of [articleId])
+  "workflow",        // /articles/workflow (parent of [transition] + quality-check)
+  "quality-check",   // /articles/workflow/quality-check (parent of [articleId])
+]);
 
 export interface EntityRouteConfig {
   type: 'article' | 'client' | 'category' | 'tag' | 'author' | 'industry' | 'media' | 'user';
@@ -155,6 +169,7 @@ export function generateBreadcrumbs(
       items.push({
         label,
         href: currentPath,
+        disabled: NON_NAVIGABLE_SEGMENTS.has(segment),
       });
     }
   }

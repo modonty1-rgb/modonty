@@ -7,7 +7,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { ArticleCard } from "./article-card";
-import { FileText, CheckCircle, List } from "lucide-react";
+import { FileText, CheckCircle, List, CalendarClock } from "lucide-react";
 import type { ArticleWithAllData } from "../helpers/article-queries";
 
 interface ArticlesPageClientProps {
@@ -29,6 +29,8 @@ export function ArticlesPageClient({
 }: ArticlesPageClientProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
+  const scheduledArticles = allArticles.filter((a) => a.status === "SCHEDULED");
+
   const tabs = [
     {
       id: "pending",
@@ -36,6 +38,13 @@ export function ArticlesPageClient({
       count: pendingCount,
       icon: FileText,
       articles: pendingArticles,
+    },
+    {
+      id: "scheduled",
+      label: ar.articles.scheduledTab ?? "مجدولة",
+      count: scheduledArticles.length,
+      icon: CalendarClock,
+      articles: scheduledArticles,
     },
     {
       id: "published",
@@ -97,9 +106,11 @@ export function ArticlesPageClient({
               <p className="text-muted-foreground">
                 {activeTab === "pending"
                   ? ar.articles.noPending
-                  : activeTab === "published"
-                    ? ar.articles.noPublished
-                    : ar.articles.noArticlesYet}
+                  : activeTab === "scheduled"
+                    ? ar.articles.noScheduled ?? "لا توجد مقالات مجدولة. ستظهر هنا بعد موافقتك."
+                    : activeTab === "published"
+                      ? ar.articles.noPublished
+                      : ar.articles.noArticlesYet}
               </p>
             </CardContent>
           </Card>

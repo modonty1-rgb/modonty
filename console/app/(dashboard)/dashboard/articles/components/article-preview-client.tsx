@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -42,23 +43,31 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
   };
 
   const a = ar.articles;
-  const handleApprove = async () => {
-    if (!confirm(a.approveConfirm)) return;
 
+  const runApprove = async () => {
     setLoading(true);
     try {
       const result = await approveArticle(article.id, clientId);
       if (result.success) {
+        toast.success(a.approveSuccess ?? "تمت الموافقة — المحرر سيقوم بالنشر قريباً");
         router.push("/dashboard/articles");
         router.refresh();
       } else {
-        alert(result.error || a.approveFailed);
+        toast.error(result.error || a.approveFailed);
       }
-    } catch (error) {
-      alert(a.errorOccurred);
+    } catch {
+      toast.error(a.errorOccurred);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleApprove = () => {
+    toast(a.approveConfirm, {
+      duration: 8000,
+      action: { label: a.confirmYes ?? "نعم، وافق", onClick: runApprove },
+      cancel: { label: a.cancel ?? "إلغاء", onClick: () => {} },
+    });
   };
 
   const handleRequestChanges = async (feedback: string) => {
@@ -67,13 +76,14 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
       const result = await requestChanges(article.id, clientId, feedback);
       if (result.success) {
         setShowFeedback(false);
+        toast.success(a.requestSuccess ?? "تم إرسال طلب التعديلات للمحرر");
         router.push("/dashboard/articles");
         router.refresh();
       } else {
-        alert(result.error || a.requestFailed);
+        toast.error(result.error || a.requestFailed);
       }
-    } catch (error) {
-      alert(a.errorOccurred);
+    } catch {
+      toast.error(a.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -128,7 +138,7 @@ export function ArticlePreviewClient({ article, clientId }: ArticlePreviewClient
               {a.reviewBeforeApproval}
             </p>
           </div>
-          {article.status === "DRAFT" && (
+          {article.status === "AWAITING_APPROVAL" && (
             <div className="flex gap-2">
               <Button
                 variant="outline"

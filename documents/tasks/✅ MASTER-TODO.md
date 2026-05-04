@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate · Google-strict audit · v0.51.x indexing tracking + GSC deep-link cleanup · **v0.52.0 + modonty v1.43.1**: removed image-sitemap (cross-domain Cloudinary URLs caused 48/48 GSC errors — verified safe per 3 official Google docs: page crawl + JSON-LD already cover image discovery) · ACTION: remove sitemap manually from GSC after deploy · NEXT SESSION: "SEO Data Health" section)
-> **الإصدار الحالي:** admin v0.52.0 · modonty v1.43.1 · console v0.5.0
+> **آخر تحديث:** 2026-05-04 (Session 82 — Console Phase A + admin scheduling overhaul · **PUSHED admin v0.53.0 + console v0.6.0** · 6 wins shipped: AWAITING_APPROVAL filter, sonner toast confirms, approve→SCHEDULED (admin must publish), "مجدولة" tab in console with violet date banner, admin date picker on Scheduled→Published + per-button loading, datePublished optional in pre-publish, breadcrumb fix (pipeline/workflow/quality-check segments no longer 404) · NEXT: Phase B (persist client feedback in NEEDS_REVISION + notify admin) + cron auto-publish at scheduledAt)
+> **الإصدار الحالي:** admin v0.53.0 · modonty v1.43.1 · console v0.6.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

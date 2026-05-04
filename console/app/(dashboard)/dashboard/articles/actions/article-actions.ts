@@ -14,7 +14,7 @@ export async function approveArticle(articleId: string, clientId: string) {
       where: {
         id: articleId,
         clientId,
-        status: ArticleStatus.DRAFT,
+        status: ArticleStatus.AWAITING_APPROVAL,
       },
     });
 
@@ -26,13 +26,15 @@ export async function approveArticle(articleId: string, clientId: string) {
     }
 
     const now = new Date();
-    const hasScheduledDate = article.scheduledAt && new Date(article.scheduledAt) > now;
 
+    // Client approval moves the article to SCHEDULED only — admin must publish.
+    // Per workflow design: client approval ≠ publish. Admin sees the article in
+    // /articles/workflow/scheduled-to-published queue and decides when to publish.
+    // datePublished is intentionally NOT set here — it's set when admin publishes.
     await db.article.update({
       where: { id: articleId },
       data: {
-        status: hasScheduledDate ? ArticleStatus.SCHEDULED : ArticleStatus.PUBLISHED,
-        ...(hasScheduledDate ? {} : { datePublished: now }),
+        status: ArticleStatus.SCHEDULED,
         ogArticleModifiedTime: now,
       },
     });
@@ -64,7 +66,7 @@ export async function requestChanges(
       where: {
         id: articleId,
         clientId,
-        status: ArticleStatus.DRAFT,
+        status: ArticleStatus.AWAITING_APPROVAL,
       },
     });
 
