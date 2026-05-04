@@ -45,7 +45,7 @@ export default async function RootLayout({
   const session = await auth().catch(() => null);
 
   return (
-    <html lang="en" className={`h-full overflow-hidden ${tajawal.variable} ${montserrat.variable}`} suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" className={`h-full overflow-hidden ${tajawal.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="bg-background h-full overflow-hidden font-sans">
         <GTMContainer />
         <Providers session={session}>

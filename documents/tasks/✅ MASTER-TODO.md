@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-02 (admin v0.48.0 — Jabra SEO subscribers sync + pricing schema Step A)
+> **آخر تحديث:** 2026-05-04 (Session 81 — Quality Gate built · Google-strict 21-check audit · 4 root-cause SEO fixes · Live test passed · **NEXT SESSION:** build "SEO Data Health" section in `/database` maintenance UI (replaces all DB-fix scripts) · then push v0.50.0 · plan in SESSION-LOG.md)
 > **الإصدار الحالي:** admin v0.48.0 · modonty v1.43.0 · console v0.5.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
@@ -130,7 +130,43 @@
 
 ---
 
-## 🟡 3. KH-AUDIT-01 — Add client page selling point في 5 guideline pages
+## 🟡 3. T1.3-REV — Reviewer Field (Person reviews medical articles for E-E-A-T)
+
+**Priority:** Medium — يحتاج outreach لطبيب مرخّص قبل ما code يفيد · مرجع كامل في [ARTICLE-SCHEMA-PERFECTION-TODO.md#T1.3](ARTICLE-SCHEMA-PERFECTION-TODO.md)
+
+### الخلفية
+
+modonty = dental + healthcare platform → YMYL (Your Money Your Life) content. Google E-E-A-T يفضّل بشدة المحتوى المُراجَع من خبير. Schema.org `reviewedBy` + Person node = boost في الـ trust scoring.
+
+### Blocker الحقيقي
+
+❌ **مش مشكلة code** — مشكلة **operations/شراكات**: modonty ما عنده طبيب مراجع حالياً.
+
+### Code work (سهل · ~30-45 دقيقة لما نوصلها)
+
+- [ ] إضافة `isReviewer Boolean @default(false)` لـ Author model في schema.prisma
+- [ ] إضافة `reviewedById String? @db.ObjectId` + relation `reviewer Author?` لـ Article model
+- [ ] Admin article editor: dropdown "Reviewed by" يفلتر `isReviewer=true` فقط
+- [ ] Author dropdown يفلتر `isReviewer=false` (يبقى Modonty فقط)
+- [ ] `admin/lib/seo/knowledge-graph-generator.ts` — إضافة `reviewedBy` Person node لو الـ `reviewedById` موجود
+- [ ] modonty article header: عرض "كَتبه: Modonty · ✓ راجَعه: د. X"
+
+### Operations work (Blocker)
+
+- [ ] **اختر approach** — paid Medical Editor part-time (3-6K/شهر) · per-article reviewer (150-400/مقال) · co-credit + LinkedIn outreach (مجاني — author bio + backlink)
+- [ ] **outreach 3 أطباء أسنان عرب** عبر LinkedIn (search: dental surgeon Riyadh/Cairo) — استهداف assistants/junior في بداية مسارهم الرقمي
+- [ ] أول طبيب يوافق → نضيف Author row بـ `isReviewer=true` + jobTitle + sameAs (LinkedIn URL)
+- [ ] بعدها → ننفّذ الـ code work + live test على مقال طبي
+
+### Why deferred
+
+- ❌ ما نضيف feature بدون data تملاها → JSON-LD يطلع `reviewedBy: null` في كل مقال
+- ❌ ما نخدع Google بـ reviewer وهمي → E-E-A-T penalty لو اكتشف
+- ✅ Code work ينستنى لما يكون عندنا أول reviewer real
+
+---
+
+## 🟡 4. KH-AUDIT-01 — Add client page selling point في 5 guideline pages
 
 **Priority:** ضمن Knowledge Hub review الكامل بعد PRC-01
 
@@ -248,7 +284,59 @@
 
 ---
 
-## 🧹 5. CLEAN-01 — Atlas password rotation (معلّقة)
+## 🟢 5. SCHEMA-T2 — Article Schema Tier 2 (deferred — low ROI)
+
+**Priority:** Low — يُرجَع لها بعد monitoring Search Console post-Tier-1-push (2-4 أسابيع)
+
+### السياق
+
+Tier 1 من ARTICLE-SCHEMA-PERFECTION-TODO خلصت بـ ~80% من فائدة schema الممكنة. Tier 2 هي الـ 20% الباقية، **موزّعة على tasks ضعيفة الـ ROI** لمدونتي حالياً.
+
+### Tier 2 tasks (deferred)
+
+- **T2.1 — Speakable Schema (Voice Assistants)** 🔴 ROI ~0%
+  - Google **deprecated** Speakable في 2023. Voice Assistant market صغير في العالم العربي.
+  - Schema.org `speakable` — auto-detect summary + first paragraph
+
+- **T2.2 — VideoObject Embedded في المقالات** 🟡 ROI 5-10%
+  - Schema.org VideoObject — يخدم Google Video rich result
+  - Parser للـ content يستخرج YouTube/Vimeo links + يضيف VideoObject في @graph
+  - **شرط:** يفيد فقط لو في مقالات تحتوي فيديو فعلاً
+
+- **T2.3 — isBasedOn (مختلف عن citation)** 🟡 ROI 2-5%
+  - Schema.org `isBasedOn` — للمقالات المبنية على press release / research paper
+  - حقل اختياري في SEO tab — "هذا المقال مبني على" (URL + name)
+  - يحتاج مصادر بحثية حقيقية
+
+- **T2.4 — interactionStatistic (Likes/Shares/Comments)** 🔴 ROI ~0%
+  - Schema.org `interactionStatistic` + InteractionCounter
+  - **Google ما يعرضها** في rich results — مجرد metadata
+  - الـ generator يضيف array من InteractionCounter لكل نوع
+
+- **T2.5 — Featured Articles Section على Homepage** 🟡 UX (مش SEO)
+  - Component يستهلك `getFeaturedArticles()` ويعرض carousel/hero في homepage modonty
+  - مرجع: [modonty/app/api/articles/featured/route.ts](../../modonty/app/api/articles/featured/route.ts) موجود جاهز
+
+### Tier 3 — Nice-to-have (deferred too)
+
+- **T3.1** — `hasPart` لتقسيم المقالات الطويلة لفصول قابلة للـ deep-link
+- **T3.2** — `proficiencyLevel` / `educationalLevel` للـ tutorials و courses
+- **T3.3** — Multi-author UI (الكود يدعم authors[]، الـ UI single)
+- **T3.4** — WebPage wrapper ينلف Article في @graph: `WebPage > about > Article`
+- **T3.5** — `dateCreated` (مختلف عن datePublished) — متى بدأت المسودة
+- **T3.6** — Custom CTA Box per article (Conversion-focused)
+- **T3.7** — Pull Quotes قابلة للمشاركة على Twitter/LinkedIn
+- **T3.8** — Hreflang / Multi-language ربط نسخ المقال عبر اللغات
+
+### قرار التنفيذ (post-validation)
+
+- Push Tier 1 → wait 2-4 weeks → check Search Console:
+  - لو في improvement واضح → الـ approach صح، نختار **T2.2 + T2.3 selective** بناءً على نوع المحتوى
+  - لو ما في → الـ bottleneck = content quality، نشتغل عليه بدل الـ schema
+
+---
+
+## 🧹 6. CLEAN-01 — Atlas password rotation (معلّقة)
 
 **Priority:** متى ما تجهز
 
@@ -266,6 +354,7 @@
 
 نُقلت إلى [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md):
 
+- **Session 80 (2026-05-03):** Article Schema Tier 1 done (T1.1+T1.2+T1.5+T1.6+T1.7+T1.8) · Modonty Org author + multi aspect ratios + cascade unified + live UI banner · guideline addition (Publisher Authority Transfer) · **SIDEBAR-ACCORDION** (admin sidebar one-group-at-a-time behavior) · **SEED-DISTRIBUTION** (integration test seed: 24 articles across all 7 statuses) · **WORKFLOW-SEO-HEALTH** (per-row SEO badge + dialog on workflow pages — DB-mirror of Search Console pipeline checks · `validateArticleFromDb()` shares same check IDs/labels/severity as `validateArticle()` · pre-publish checks · admin/lib/seo/article-validator-db.ts) · padding fix on workflow `[transition]/page.tsx` · **QUALITY-GATE** (28-check comprehensive pre-publish validator across 8 groups: indexability/content/author+publisher/images/internal-links/JSON-LD/technical/dates · researched from Google Search Central + Schema.org Article spec + Next.js metadata API via Context7 · auto-fix layer regenerates stale JSON-LD before validation · hard gate blocks DRAFT→AWAITING_APPROVAL when ANY check fails — NO OVERRIDES · `gatedTransitionAction` · validation results shown on dedicated page `/articles/workflow/quality-check/[id]` instead of dialog — full-screen review · summary banner + article info strip + issues cards with How-to-fix + smart links to article editor tab (SEO/Content/Media/Basic) per check · ReRunButton + SendToClientButton (disabled when failed) · live tested on 4 DRAFT articles all blocked with 22-24/28 scores · zero TS errors)
 - **Session 76 (2026-04-30/05-01/05-02):** RWN-01..04 (Rawan bugs · userVersion locking) · TOAST-01 (admin toast UX) · Knowledge Hub Phase 5 (15 صفحات guideline · 22 قاعدة ذهبية · pricing fixes · «محركات البحث» · «عالمي/غربي» · Sidebar 3 groups · Hadith cultural anchor) · admin v0.47.0 push
 - **Session 73 (2026-04-29):** CLEAN-02..07 (Build cache · test artifacts · backups · scripts archive · documents/_archive deleted · root configs)
 - **Session 68-69 (2026-04-26):** SC-UI-01..04 (Search Console UI enhancements · Sitemap drill-down dialog · Indexing API removal dedup · bulk button removed · filter pills inside table)

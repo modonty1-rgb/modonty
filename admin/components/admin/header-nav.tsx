@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { FileText, Building2, Image as ImageIcon } from "lucide-react";
+import { FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -15,7 +15,6 @@ import {
 
 const navItems = [
   { icon: FileText, label: "Articles", href: "/articles" },
-  { icon: Building2, label: "Clients", href: "/clients" },
   { icon: ImageIcon, label: "Media", href: "/media" },
 ];
 

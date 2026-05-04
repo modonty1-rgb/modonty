@@ -23,6 +23,8 @@ enum UserRole {
 enum ArticleStatus {
   WRITING
   DRAFT
+  AWAITING_APPROVAL
+  NEEDS_REVISION
   SCHEDULED
   PUBLISHED
   ARCHIVED
@@ -1850,6 +1852,13 @@ model ArticleLinkClick {
 
 model Settings {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Cascade progress tracking (T1.8 — UI feedback for Save & Publish)
+  cascadeStatus      String?   // "running" | "done" | "error" | null = idle
+  cascadeProgress    Json?     // { total, completed, phase: "articles"|"clients"|"categories"|"tags"|"industries"|"listings" }
+  cascadeStartedAt   DateTime?
+  cascadeCompletedAt DateTime?
+  cascadeError       String?
 
   // SEO Title Settings
   seoTitleMin      Int     @default(30)

@@ -4,7 +4,7 @@ import { useState, createContext, useContext, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, HeartPulse } from "lucide-react";
+import { Search, HeartPulse } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
@@ -80,12 +80,6 @@ export function ArticlesHeaderWrapper({
               <Button size="sm" variant="outline" className="whitespace-nowrap gap-1.5 rounded-full px-4">
                 <HeartPulse className="h-3.5 w-3.5" />
                 SEO Health
-              </Button>
-            </Link>
-            <Link href="/articles/new">
-              <Button size="sm" className="whitespace-nowrap gap-1.5 rounded-full px-4 shadow-sm">
-                <Plus className="h-3.5 w-3.5" />
-                New Article
               </Button>
             </Link>
           </div>

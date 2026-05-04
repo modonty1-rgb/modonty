@@ -4,8 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, SlidersHorizontal } from "lucide-react";
-import Link from "next/link";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { ClientsFilters } from "./clients-filters";
 import type { ClientsStats } from "../actions/clients-actions/types";
 
@@ -58,12 +57,6 @@ export function ClientsHeader({ clientCount, stats, search, onSearchChange }: Cl
             <SlidersHorizontal className="h-4 w-4 me-1.5" />
             Filters
           </Button>
-          <Link href="/clients/new">
-            <Button size="sm">
-              <Plus className="h-4 w-4 me-1.5" />
-              New Client
-            </Button>
-          </Link>
         </div>
       </div>
 

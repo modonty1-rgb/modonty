@@ -3,8 +3,8 @@ import { getTags } from '../../tags/actions/tags-actions';
 import { getAllSettings } from '../../settings/actions/settings-actions';
 import { getArticleDefaultsFromSettings } from '../../settings/helpers/get-article-defaults-from-settings';
 import { ArticleFormProvider } from '../components/article-form-context';
-import { ArticleFormNavigation } from '../components/article-form-navigation';
 import { ArticleFormTabs } from '../components/article-form-tabs';
+import { ArticleFormActionBar } from '../components/article-form-action-bar';
 
 export default async function NewArticlePage() {
   const [clients, categories, authors, tags, settings] = await Promise.all([
@@ -28,11 +28,9 @@ export default async function NewArticlePage() {
       tags={tags}
     >
       <div className="p-4 sm:p-6 pb-6 md:pb-8">
-        <ArticleFormNavigation />
-        <div className="mt-6">
-          <ArticleFormTabs />
-        </div>
+        <ArticleFormTabs />
       </div>
+      <ArticleFormActionBar />
     </ArticleFormProvider>
   );
 }

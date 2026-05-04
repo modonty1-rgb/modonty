@@ -563,14 +563,20 @@ async function seedArticles(): Promise<SectionResult> {
     R.push(ok(orphanTags.length === 0, "verify articleTag links deleted", "verify", `remaining: ${orphanTags.length}`));
   }
 
-  // ── RE-CREATE final articles — 25 articles spread across all clients/categories ──
+  // ── RE-CREATE final articles — 24 articles distributed across ALL 7 statuses
+  // for full pipeline testing (writing/draft/awaiting/revision/scheduled/published/archived)
   type FinalArticle = {
     title: string; slug: string; content: string; excerpt: string;
-    status: "PUBLISHED" | "DRAFT"; featured?: boolean;
+    status: "WRITING" | "DRAFT" | "AWAITING_APPROVAL" | "NEEDS_REVISION" | "SCHEDULED" | "PUBLISHED" | "ARCHIVED";
+    featured?: boolean;
+    scheduledAt?: Date;
     seoTitle: string; seoDescription: string;
     wordCount?: number; readingTimeMinutes?: number;
     faqs?: { question: string; answer: string }[];
   };
+
+  // Helper: future date for SCHEDULED articles
+  const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 
   const FINAL_ARTICLES: FinalArticle[] = [
     {
@@ -625,7 +631,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "تسويق عيادتك الطبية عبر الإنترنت",
-      slug: "medical-clinic-digital-marketing", status: "PUBLISHED", wordCount: 490, readingTimeMinutes: 3,
+      slug: "medical-clinic-digital-marketing", status: "WRITING", wordCount: 490, readingTimeMinutes: 3,
       content: "<h2>لماذا التسويق الرقمي ضروري للعيادات؟</h2><p><strong>72% من المرضى</strong> يبحثون عن الأطباء عبر الإنترنت قبل الحجز. عيادتك بحاجة إلى حضور رقمي قوي لاستقطاب مرضى جدد.</p><h2>استراتيجيات فعّالة</h2><p>Google My Business لظهور محلي، محتوى تعليمي يبني الثقة، وإدارة التقييمات لزيادة المصداقية.</p>",
       excerpt: "كيف تسوّق عيادتك الطبية رقمياً: Google My Business، المحتوى التعليمي، وإدارة التقييمات. دليل عملي للأطباء.",
       seoTitle: "تسويق عيادتك الطبية رقمياً — دليل الأطباء 2025",
@@ -633,7 +639,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "كيف تختار منصة التجارة الإلكترونية المناسبة",
-      slug: "choose-ecommerce-platform-2025", status: "PUBLISHED", wordCount: 510, readingTimeMinutes: 3,
+      slug: "choose-ecommerce-platform-2025", status: "WRITING", wordCount: 510, readingTimeMinutes: 3,
       content: "<h2>المنصات الرائدة في السوق السعودي</h2><p>Shopify الأسهل للمبتدئين. Salla وZid خيارات محلية ممتازة تدعم العربية وطرق الدفع السعودية. WooCommerce للمتاجر المخصصة.</p><h2>معايير الاختيار</h2><p>تكلفة الاشتراك، بوابات الدفع المتاحة، سهولة إدارة المنتجات، وجودة دعم العملاء. الدفع عبر مدى وSTC Pay معيار لا غنى عنه.</p>",
       excerpt: "مقارنة شاملة بين منصات التجارة الإلكترونية: Shopify وSalla وZid وWooCommerce. اختر المنصة المناسبة لأعمالك في السعودية.",
       seoTitle: "أفضل منصات التجارة الإلكترونية في السعودية 2025",
@@ -641,7 +647,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "الصحة النفسية في بيئة العمل السعودية",
-      slug: "mental-health-workplace-saudi", status: "PUBLISHED", wordCount: 470, readingTimeMinutes: 3,
+      slug: "mental-health-workplace-saudi", status: "WRITING", wordCount: 470, readingTimeMinutes: 3,
       content: "<h2>أهمية الصحة النفسية في العمل</h2><p><strong>1 من كل 4 موظفين</strong> يعاني من ضغوط نفسية تؤثر على إنتاجيته. الشركات التي تهتم بصحة موظفيها تحقق إنتاجية أعلى بنسبة 20%.</p><h2>خطوات عملية</h2><p>أيام عمل مرنة، بيئة داعمة خالية من الحكم، وتوفير دعم نفسي. رؤية 2030 تدعم مبادرات الصحة النفسية.</p>",
       excerpt: "الصحة النفسية في بيئة العمل السعودية: أهميتها، تأثيرها على الإنتاجية، وخطوات عملية لبيئة عمل أكثر صحة ورفاهية.",
       seoTitle: "الصحة النفسية في بيئة العمل السعودية — دليل عملي",
@@ -649,7 +655,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "تحسين تجربة المستخدم لزيادة المبيعات",
-      slug: "ux-improve-sales-ecommerce", status: "PUBLISHED", wordCount: 500, readingTimeMinutes: 3,
+      slug: "ux-improve-sales-ecommerce", status: "WRITING", wordCount: 500, readingTimeMinutes: 3,
       content: "<h2>UX وتأثيره على المبيعات</h2><p>كل ريال تستثمره في تحسين تجربة المستخدم يعود بـ <strong>100 ريال</strong>. تجربة شراء سلسة تقلل الهجر إلى 68% من الزوار.</p><h2>أولويات التحسين</h2><p>تبسيط عملية الدفع، تسريع تحميل الصفحات، وتحسين التصميم للجوال. 60% من المتسوقين السعوديين يتسوقون عبر الهاتف.</p>",
       excerpt: "كيف تحسن تجربة المستخدم لزيادة مبيعات متجرك: تبسيط الدفع، تسريع التحميل، وتحسين الجوال. استراتيجيات ROI مضمونة.",
       seoTitle: "تحسين UX لزيادة المبيعات — دليل المتاجر الإلكترونية",
@@ -657,7 +663,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "برامج الولاء في المتاجر السعودية",
-      slug: "loyalty-programs-saudi-ecommerce", status: "PUBLISHED", wordCount: 460, readingTimeMinutes: 3,
+      slug: "loyalty-programs-saudi-ecommerce", status: "WRITING", wordCount: 460, readingTimeMinutes: 3,
       content: "<h2>لماذا برامج الولاء مهمة؟</h2><p>اكتساب عميل جديد يكلف <strong>5 أضعاف</strong> الاحتفاظ بعميل حالي. برامج الولاء ترفع معدل الاحتفاظ بالعملاء وتزيد متوسط الإنفاق.</p><h2>نماذج ناجحة</h2><p>نقاط المكافآت، العضويات المدفوعة (مثل أمازون Prime)، والعروض الحصرية للعملاء المتكررين.</p>",
       excerpt: "برامج الولاء في التجارة الإلكترونية السعودية: لماذا تحتاجها، أفضل النماذج، وكيف تبني برنامجاً يحافظ على عملائك.",
       seoTitle: "برامج الولاء للمتاجر الإلكترونية السعودية — استراتيجيات 2025",
@@ -665,7 +671,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "ChatGPT في الأعمال: دليل عملي للشركات السعودية",
-      slug: "chatgpt-business-guide-saudi", status: "PUBLISHED", wordCount: 530, readingTimeMinutes: 3,
+      slug: "chatgpt-business-guide-saudi", status: "AWAITING_APPROVAL", wordCount: 530, readingTimeMinutes: 3,
       content: "<h2>كيف تستخدم ChatGPT في عملك؟</h2><p>كتابة المحتوى التسويقي، الرد على استفسارات العملاء، تحليل البيانات، وكتابة الكود. الشركات التي تُدمج AI في عملياتها توفر <strong>40% من وقت الموظفين</strong>.</p><h2>تطبيقات عملية</h2><p>خدمة عملاء 24/7، إنشاء محتوى مواقع التواصل، تحليل مراجعات العملاء، وتوليد أفكار للمنتجات.</p>",
       excerpt: "دليل عملي لاستخدام ChatGPT في الشركات السعودية: من كتابة المحتوى إلى خدمة العملاء وتحليل البيانات. وفّر 40% من وقت فريقك.",
       seoTitle: "ChatGPT للأعمال السعودية — دليل عملي 2025",
@@ -673,7 +679,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "تسويق المحتوى للعيادات والمراكز الطبية",
-      slug: "content-marketing-medical-centers", status: "PUBLISHED", wordCount: 490, readingTimeMinutes: 3,
+      slug: "content-marketing-medical-centers", status: "AWAITING_APPROVAL", wordCount: 490, readingTimeMinutes: 3,
       content: "<h2>المحتوى الطبي يبني الثقة</h2><p>المريض يبحث عن معلومات قبل زيارة الطبيب. العيادة التي تنشر محتوى مفيداً تكتسب ثقة المريض قبل أن يطأ عتبتها.</p><h2>أنواع المحتوى الأكثر فاعلية</h2><p>مقالات توعية صحية، أسئلة وأجوبة شائعة، فيديوهات توضيحية. Google يفضل المحتوى الطبي الموثوق (E-E-A-T).</p>",
       excerpt: "تسويق المحتوى للعيادات: كيف تبني ثقة المرضى عبر المقالات الصحية والفيديوهات؟ استراتيجية E-E-A-T لظهور أعلى في جوجل.",
       seoTitle: "تسويق المحتوى للعيادات الطبية — دليل SEO الصحي",
@@ -681,7 +687,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "التجارة الاجتماعية: البيع عبر سناب وإنستغرام",
-      slug: "social-commerce-snap-instagram-saudi", status: "PUBLISHED", wordCount: 500, readingTimeMinutes: 3,
+      slug: "social-commerce-snap-instagram-saudi", status: "AWAITING_APPROVAL", wordCount: 500, readingTimeMinutes: 3,
       content: "<h2>التجارة الاجتماعية في السعودية</h2><p>المملكة من أعلى دول العالم في استخدام سناب شات. <strong>60% من الشباب السعودي</strong> اشترى منتجاً شاهده على سوشيال ميديا.</p><h2>استراتيجيات ناجحة</h2><p>Instagram Shopping لربط المنتجات مباشرة، Snapchat Ads للوصول إلى الشباب، والتعاون مع المؤثرين المحليين.</p>",
       excerpt: "كيف تبيع عبر سناب وإنستغرام في السعودية: Instagram Shopping وSnapchat Ads والمؤثرين. 60% من الشباب يشتري من السوشيال ميديا.",
       seoTitle: "التجارة الاجتماعية في السعودية — سناب وإنستغرام 2025",
@@ -689,7 +695,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "كيف تحسّن نتائج جوجل لعيادتك المحلية",
-      slug: "local-seo-medical-clinic", status: "PUBLISHED", wordCount: 480, readingTimeMinutes: 3,
+      slug: "local-seo-medical-clinic", status: "NEEDS_REVISION", wordCount: 480, readingTimeMinutes: 3,
       content: "<h2>SEO المحلي للعيادات</h2><p>عندما يبحث مريض عن \"طبيب قريب مني\"، هل تظهر عيادتك؟ Google My Business هو مفتاح الظهور في نتائج الخرائط والبحث المحلي.</p><h2>خطوات التحسين</h2><p>أكمل ملفك في Google My Business، اطلب من المرضى الراضين كتابة تقييمات، وأنشئ محتوى يستهدف مدينتك وتخصصك.</p>",
       excerpt: "SEO المحلي للعيادات الطبية: كيف تظهر في نتائج جوجل عندما يبحث المرضى عن \"طبيب قريب\"؟ Google My Business وتقييمات المرضى.",
       seoTitle: "SEO المحلي للعيادات الطبية — دليل Google My Business",
@@ -697,7 +703,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "كتابة وصف المنتج الذي يبيع",
-      slug: "product-description-that-sells", status: "PUBLISHED", wordCount: 450, readingTimeMinutes: 3,
+      slug: "product-description-that-sells", status: "NEEDS_REVISION", wordCount: 450, readingTimeMinutes: 3,
       content: "<h2>سر وصف المنتج الجيد</h2><p>الوصف الجيد يُجيب على سؤال واحد: <strong>كيف سيُحسّن هذا المنتج حياتك؟</strong> لا تصف المواصفات فقط، صِف التجربة والفائدة.</p><h2>الصيغة الفعّالة</h2><p>ابدأ بالفائدة الرئيسية، اذكر المميزات التقنية بصرياً (نقاط)، وأضف دليلاً اجتماعياً (تقييمات). اختم بـ call-to-action واضح.</p>",
       excerpt: "كيف تكتب وصف منتج يحوّل الزائر إلى مشتري: الصيغة الفعّالة للتجارة الإلكترونية. ركز على الفائدة لا المواصفات.",
       seoTitle: "كيف تكتب وصف المنتج الذي يبيع — دليل التجارة الإلكترونية",
@@ -705,7 +711,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "البث المباشر والتجارة الإلكترونية في السعودية",
-      slug: "live-commerce-saudi-market", status: "PUBLISHED", wordCount: 470, readingTimeMinutes: 3,
+      slug: "live-commerce-saudi-market", status: "SCHEDULED", scheduledAt: daysFromNow(3), wordCount: 470, readingTimeMinutes: 3,
       content: "<h2>ظاهرة Live Commerce</h2><p>الصين حققت 300 مليار دولار من البيع عبر البث المباشر. السعودية تسير في نفس المسار مع نمو استخدام سناب وتيك توك.</p><h2>كيف تبدأ؟</h2><p>اختر منصة مناسبة (سناب لايف، إنستغرام لايف، TikTok Shop)، قدّم عروضاً حصرية للمشاهدين، وأنشئ إحساساً بالندرة.</p>",
       excerpt: "Live Commerce في السعودية: كيف تبيع عبر البث المباشر على سناب وإنستغرام وتيك توك؟ استراتيجيات مجربة من تجربة الصين.",
       seoTitle: "Live Commerce في السعودية — البيع عبر البث المباشر",
@@ -713,7 +719,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "أمن المعلومات للشركات السعودية الصغيرة",
-      slug: "cybersecurity-small-business-saudi", status: "PUBLISHED", wordCount: 490, readingTimeMinutes: 3,
+      slug: "cybersecurity-small-business-saudi", status: "SCHEDULED", scheduledAt: daysFromNow(7), wordCount: 490, readingTimeMinutes: 3,
       content: "<h2>لماذا الشركات الصغيرة هدف سهل؟</h2><p><strong>43% من الهجمات الإلكترونية</strong> تستهدف الشركات الصغيرة. مع رقمنة الأعمال، أصبح الأمن ضرورة وليس رفاهية.</p><h2>الحماية الأساسية</h2><p>كلمات مرور قوية ومختلفة، نسخ احتياطي يومي، تحديثات منتظمة، وتوعية الموظفين. تكلفة الوقاية أقل بكثير من تكلفة الاختراق.</p>",
       excerpt: "أمن المعلومات للشركات الصغيرة: 43% من الهجمات تستهدفك. خطوات الحماية الأساسية وكيف تقلل مخاطر الاختراق بتكلفة منخفضة.",
       seoTitle: "أمن المعلومات للشركات الصغيرة في السعودية 2025",
@@ -721,7 +727,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "كيف تربح من الكتابة الحرة في السعودية",
-      slug: "freelance-writing-income-saudi", status: "PUBLISHED", wordCount: 460, readingTimeMinutes: 3,
+      slug: "freelance-writing-income-saudi", status: "SCHEDULED", scheduledAt: daysFromNow(14), wordCount: 460, readingTimeMinutes: 3,
       content: "<h2>سوق الكتابة الحرة العربي</h2><p>الطلب على محتوى عربي احترافي في ارتفاع مستمر. كاتب محتوى متمرس يكسب من <strong>5,000 إلى 25,000 ريال</strong> شهرياً.</p><h2>كيف تبدأ؟</h2><p>بناء محفظة أعمال، منصات العمل الحر (Fiverr وMostaqel)، والتخصص في مجال واحد (طبي، تقني، SEO). التخصص يضاعف سعرك.</p>",
       excerpt: "كيف تربح من الكتابة الحرة في السعودية: من 5,000 إلى 25,000 ريال شهرياً. بناء المحفظة واختيار المجال والبدء في منصات العمل الحر.",
       seoTitle: "كيف تربح من الكتابة الحرة في السعودية — دليل 2025",
@@ -729,7 +735,7 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "التسويق عبر المؤثرين في السعودية: دليل الشركات",
-      slug: "influencer-marketing-saudi-brands", status: "PUBLISHED", wordCount: 510, readingTimeMinutes: 3,
+      slug: "influencer-marketing-saudi-brands", status: "ARCHIVED", wordCount: 510, readingTimeMinutes: 3,
       content: "<h2>المؤثرون في السوق السعودي</h2><p>المملكة من أعلى الأسواق في التفاعل مع المؤثرين. <strong>Micro-influencers</strong> (10K-100K متابع) يحققون تفاعلاً أعلى بنسبة 60% من المؤثرين الكبار.</p><h2>كيف تختار المؤثر المناسب؟</h2><p>معدل التفاعل أهم من عدد المتابعين. راجع جودة التعليقات وانتبه للمتابعين الوهميين. الاتساق مع قيم علامتك التجارية معيار لا تتنازل عنه.</p>",
       excerpt: "دليل التسويق عبر المؤثرين في السعودية: اختيار المؤثر الصحيح، قياس النتائج، وتجنب الأخطاء الشائعة. Micro-influencers أكثر فاعلية.",
       seoTitle: "التسويق عبر المؤثرين في السعودية — دليل الشركات 2025",
@@ -737,35 +743,11 @@ async function seedArticles(): Promise<SectionResult> {
     },
     {
       title: "الفاتورة الإلكترونية ZATCA للمتاجر السعودية",
-      slug: "zatca-e-invoicing-guide-saudi", status: "PUBLISHED", wordCount: 480, readingTimeMinutes: 3,
+      slug: "zatca-e-invoicing-guide-saudi", status: "ARCHIVED", wordCount: 480, readingTimeMinutes: 3,
       content: "<h2>الفوترة الإلكترونية إلزامية</h2><p>هيئة الزكاة والضريبة طبّقت الفوترة الإلكترونية تدريجياً. المتاجر والشركات مُلزمة بإصدار فواتير إلكترونية متوافقة مع متطلبات ZATCA.</p><h2>المرحلة الثانية: الربط</h2><p>نظام نقطة البيع يجب أن يكون مرتبطاً بمنظومة FATOORA. الخيارات متعددة: ERP متكامل، أو حلول SaaS متوافقة بتكلفة منخفضة.</p>",
       excerpt: "دليل الفوترة الإلكترونية ZATCA للمتاجر: المتطلبات، المراحل، والأنظمة المتوافقة. تجنب الغرامات وتأكد من الامتثال الكامل.",
       seoTitle: "الفوترة الإلكترونية ZATCA للمتاجر السعودية — دليل الامتثال",
       seoDescription: "الفوترة الإلكترونية ZATCA: المتطلبات والمراحل والأنظمة المتوافقة للمتاجر السعودية. تجنب الغرامات وحقق الامتثال الكامل.",
-    },
-    {
-      title: "شهادة الجودة ISO وتأثيرها على ظهورك في جوجل",
-      slug: "iso-certification-seo-impact", status: "PUBLISHED", wordCount: 450, readingTimeMinutes: 3,
-      content: "<h2>هل شهادة ISO تحسّن SEO؟</h2><p>مباشرةً؟ لا. لكن بصورة غير مباشرة؟ نعم. الشركات الحاصلة على ISO تحظى بتغطية إعلامية أكبر وروابط خلفية أقوى، مما يحسّن ثقة جوجل.</p><h2>الفائدة الحقيقية</h2><p>E-E-A-T (الخبرة والثقة) هو معيار جوجل للمحتوى المتخصص. شهادات الجودة تُعزز مصداقيتك وتُقنع جوجل بأنك مصدر موثوق.</p>",
-      excerpt: "هل شهادات الجودة ISO تحسّن ظهورك في جوجل؟ الإجابة التفصيلية عن تأثير الاعتمادية والمصداقية على SEO وE-E-A-T.",
-      seoTitle: "شهادة ISO وتأثيرها على SEO وE-E-A-T — دليل 2025",
-      seoDescription: "هل شهادة ISO تحسّن ظهورك في جوجل؟ تأثير الاعتمادية على E-E-A-T والروابط الخلفية. دليل لفهم العلاقة بين الجودة والسيو.",
-    },
-    {
-      title: "كيف تختار كلماتك المفتاحية بذكاء",
-      slug: "smart-keyword-research-arabic", status: "PUBLISHED", wordCount: 490, readingTimeMinutes: 3,
-      content: "<h2>الكلمة المفتاحية الصحيحة = نصف النجاح</h2><p>أخطاء الاختيار: استهداف كلمات عامة جداً (منافسة مستحيلة) أو نادرة جداً (لا أحد يبحث). الحل: Long-tail keywords ذات نية واضحة.</p><h2>المعادلة الذهبية</h2><p>حجم البحث × نية الشراء ÷ صعوبة الكلمة. كلمة بـ 500 بحث شهري ونية شراء عالية أفضل من كلمة بـ 50,000 بحث بدون نية.</p>",
-      excerpt: "كيف تختار الكلمات المفتاحية بذكاء: معادلة حجم البحث ونية الشراء والصعوبة. Long-tail keywords للنتائج السريعة.",
-      seoTitle: "اختيار الكلمات المفتاحية بذكاء — دليل SEO العربي",
-      seoDescription: "اختيار الكلمات المفتاحية: Long-tail keywords ونية الشراء وصعوبة المنافسة. المعادلة الذهبية للكلمة المفتاحية المثالية بالعربي.",
-    },
-    {
-      title: "نصائح لتسريع موقعك وتحسين Core Web Vitals",
-      slug: "speed-optimize-core-web-vitals", status: "PUBLISHED", wordCount: 500, readingTimeMinutes: 3,
-      content: "<h2>Core Web Vitals وعلاقتها بالترتيب</h2><p>جوجل يستخدم LCP وFID وCLS كمعاملات ترتيب مباشرة. مواقع تحت 2.5 ثانية LCP تحظى بأولوية في النتائج.</p><h2>الحلول العملية</h2><p>ضغط الصور وتحويلها إلى WebP، تفعيل CDN، إزالة CSS وJS غير المستخدم، وتفعيل الـ caching. Next.js يحل 80% من هذه المشكلات تلقائياً.</p>",
-      excerpt: "تسريع موقعك لتحسين ترتيب جوجل: Core Web Vitals شرح مبسط وحلول عملية. LCP وFID وCLS وكيفية تحسينها.",
-      seoTitle: "تسريع الموقع وتحسين Core Web Vitals — دليل 2025",
-      seoDescription: "تحسين Core Web Vitals: LCP أقل من 2.5 ثانية يُحسّن ترتيبك في جوجل. حلول عملية: WebP وCDN وإزالة الكود غير المستخدم.",
     },
     {
       title: "بناء روابط خلفية عربية عالية الجودة",
@@ -823,8 +805,17 @@ async function seedArticles(): Promise<SectionResult> {
     }
     const { faqs: articleFaqs, ...articleData } = a;
     const faqItems = (articleFaqs || []).map((f, fi) => ({ ...f, position: fi }));
-    const r = await createArticle({ ...articleData, clientId, authorId: author.id, categoryId, tags: articleTagIds, faqs: faqItems, datePublished: a.status === "PUBLISHED" ? new Date() : undefined });
-    R.push(ok(r.success, `re-create("${a.title.slice(0, 35)}...")`, "re-create", r.error));
+    const r = await createArticle({
+      ...articleData,
+      clientId,
+      authorId: author.id,
+      categoryId,
+      tags: articleTagIds,
+      faqs: faqItems,
+      datePublished: a.status === "PUBLISHED" ? new Date() : undefined,
+      scheduledAt: a.status === "SCHEDULED" ? a.scheduledAt : undefined,
+    });
+    R.push(ok(r.success, `re-create("${a.title.slice(0, 35)}...") → ${a.status}`, "re-create", r.error));
 
     if (r.success && r.article && a.status === "PUBLISHED") {
       const pub = await updateArticle(r.article.id, { ...articleData, clientId, authorId: author.id, categoryId, tags: articleTagIds, faqs: faqItems, datePublished: new Date() });

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Label } from '@/components/ui/label';
+import { AlertCircle } from 'lucide-react';
 import { ArticleSelectionTable } from './article-selection-table';
 import { getArticlesForSelection, ArticleSelectionItem } from '../actions/articles-actions';
 import { useArticleForm } from './article-form-context';
@@ -15,12 +15,14 @@ interface RelatedArticlesBuilderProps {
   relatedArticles: RelatedArticleItem[];
   onChange: (articles: RelatedArticleItem[]) => void;
   excludeArticleId?: string;
+  maxArticles?: number;
 }
 
 export function RelatedArticlesBuilder({
   relatedArticles,
   onChange,
   excludeArticleId,
+  maxArticles,
 }: RelatedArticlesBuilderProps) {
   const { categories, tags, formData } = useArticleForm();
   const [availableArticles, setAvailableArticles] = useState<ArticleSelectionItem[]>([]);
@@ -66,7 +68,13 @@ export function RelatedArticlesBuilder({
       relatedArticles.map((rel) => [rel.relatedId, rel])
     );
 
-    const updatedArticles = articleIds.map((id) => {
+    // Enforce max-articles limit when set
+    const cappedIds =
+      typeof maxArticles === 'number' && articleIds.length > maxArticles
+        ? articleIds.slice(0, maxArticles)
+        : articleIds;
+
+    const updatedArticles = cappedIds.map((id) => {
       const existing = existingMap.get(id);
       if (existing) {
         return existing;
@@ -88,33 +96,35 @@ export function RelatedArticlesBuilder({
     );
   };
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-base font-semibold mb-4 block">Select Related Articles</Label>
-        <ArticleSelectionTable
-          articles={availableArticles}
-          selectedArticleIds={selectedArticleIds}
-          onSelectionChange={handleSelectionChange}
-          categories={categories}
-          tags={tags}
-          loading={loading}
-          onCategoryFilterChange={setCategoryFilter}
-          onTagFilterChange={setTagFilter}
-          onSearchChange={setSearchQuery}
-          defaultCategoryId={formData.categoryId || undefined}
-          defaultTagIds={[]}
-          relatedArticles={relatedArticles}
-          onRelationshipTypeChange={handleRelationshipTypeChange}
-        />
-      </div>
+  const isFull = typeof maxArticles === 'number' && relatedArticles.length >= maxArticles;
 
-      {relatedArticles.length === 0 && !loading && (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm font-medium mb-1">No articles selected</p>
-          <p className="text-xs">Use the table above to select related articles</p>
+  return (
+    <div className="space-y-3">
+      {isFull && (
+        <div className="flex items-start gap-2 rounded-md border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/20 p-2.5">
+          <AlertCircle className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+          <p className="text-xs text-emerald-800 dark:text-emerald-200">
+            وصلت للحدّ الأقصى ({maxArticles}). أزل واحدة لإضافة أخرى — هذا الحدّ مُوصى به لـ SEO.
+          </p>
         </div>
       )}
+
+      <ArticleSelectionTable
+        articles={availableArticles}
+        selectedArticleIds={selectedArticleIds}
+        onSelectionChange={handleSelectionChange}
+        categories={categories}
+        tags={tags}
+        loading={loading}
+        onCategoryFilterChange={setCategoryFilter}
+        onTagFilterChange={setTagFilter}
+        onSearchChange={setSearchQuery}
+        defaultCategoryId={formData.categoryId || undefined}
+        defaultTagIds={[]}
+        relatedArticles={relatedArticles}
+        onRelationshipTypeChange={handleRelationshipTypeChange}
+        maxArticles={maxArticles}
+      />
     </div>
   );
 }

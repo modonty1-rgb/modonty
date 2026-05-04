@@ -24,14 +24,8 @@ import { BasicStep } from "./steps/basic-step";
 import { ContentStep } from "./steps/content-step";
 import { MediaStep } from "./steps/media-step";
 import { FAQsStep } from "./steps/faqs-step";
-import { SettingsStep } from "./steps/settings-step";
 import { RelatedArticlesStep } from "./steps/related-articles-step";
-import { KeywordsStep } from "./steps/keywords-step";
-import { CitationsStep } from "./steps/citations-step";
-import { SemanticKeywordsStep } from "./steps/semantic-keywords-step";
 import { SEOStep } from "./steps/seo-step";
-import { MetaTagsStep } from "./steps/meta-tags-step";
-import { MetaTagPreviewStep } from "./steps/metatag-preview-step";
 
 const SEO_CATEGORY_LABELS: Record<string, string> = {
   metaTags: "العنوان والوصف",
@@ -95,142 +89,134 @@ export function ArticleFormTabs() {
 
   return (
     <Tabs value={activeTabId} onValueChange={handleTabChange} className="w-full">
-      <div className="flex gap-6">
-        <div className="flex-1 min-w-0">
-          {/* Step 1: Basic */}
-          <TabsContent value="basic" className="space-y-6 mt-0">
-            <BasicStep />
-          </TabsContent>
+      <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-6 bg-background/95 backdrop-blur-sm border-b">
+        <TooltipProvider delayDuration={300}>
+          <TabsList className="flex flex-row h-auto w-full bg-transparent p-0 gap-1 justify-start overflow-x-auto">
+            {STEP_CONFIGS.map((step) => {
+              const baseValidation = getStepValidation(step.number);
+              const isSeoStep = step.id === "seo";
+              const validation: StepValidation = isSeoStep
+                ? (() => {
+                    const cats = seoScoreResult?.categories ?? {};
+                    const seoPassed = Object.values(cats).filter(
+                      (c) => c.percentage >= 80,
+                    ).length;
+                    const total = 6;
+                    return {
+                      ...baseValidation,
+                      completionPercentage: seoScoreResult?.percentage ?? 0,
+                      completedFields: seoPassed,
+                      totalFields: total,
+                    };
+                  })()
+                : baseValidation;
+              const status = getStepStatus(step.number, currentStep, validation);
+              const isActive = status === "active";
+              const hasError = status === "error";
+              const baseWarning = status === "warning";
+              const seoWarning =
+                isSeoStep && (seoScoreResult?.percentage ?? 0) < 100;
+              const metaTitleLen = (formData.seoTitle || "").length;
+              const metaDescLen = (formData.seoDescription || "").length;
+              const metaTagsWarning =
+                isSeoStep &&
+                (
+                  (metaTitleLen > 0 && (metaTitleLen < 30 || metaTitleLen > 60)) ||
+                  (metaDescLen > 0 && (metaDescLen < 120 || metaDescLen > 160))
+                );
+              const hasWarningIcon = baseWarning || seoWarning || metaTagsWarning;
+              const isCompletedIcon = status === "completed" && !hasWarningIcon;
+              const hint = isSeoStep
+                ? getSeoStepHint(seoScoreResult ?? null)
+                : getStepHint(step, validation, formData);
 
-          {/* Step 2: Content + Media */}
-          <TabsContent value="content" className="space-y-6 mt-0">
-            <ContentStep />
-            <MediaStep />
-          </TabsContent>
-
-          {/* Step 3: SEO (Keywords + Meta Tags + Semantic Keywords) */}
-          <TabsContent value="seo" className="space-y-6 mt-0">
-            <MetaTagsStep />
-            <KeywordsStep />
-            <SemanticKeywordsStep />
-          </TabsContent>
-
-          {/* Step 4: FAQs & Related */}
-          <TabsContent value="faqs-related" className="space-y-6 mt-0">
-            <FAQsStep />
-            <RelatedArticlesStep />
-          </TabsContent>
-
-          {/* Step 5: Publish (Citations + Settings + Technical SEO + MetaTag Preview) */}
-          <TabsContent value="publish" className="space-y-6 mt-0">
-            <SettingsStep />
-            <CitationsStep />
-            <SEOStep />
-            <MetaTagPreviewStep />
-          </TabsContent>
-        </div>
-
-        <div className="w-64 shrink-0 flex flex-col gap-2">
-          <div className="sticky top-24 z-30 flex flex-col gap-2">
-            <TooltipProvider delayDuration={300}>
-              <TabsList className="flex flex-col h-auto w-full bg-muted p-1 gap-0.5">
-                {STEP_CONFIGS.map((step) => {
-                  const baseValidation = getStepValidation(step.number);
-                  const isSeoStep = step.id === "seo";
-                  const validation: StepValidation = isSeoStep
-                    ? (() => {
-                        const cats = seoScoreResult?.categories ?? {};
-                        const seoPassed = Object.values(cats).filter(
-                          (c) => c.percentage >= 80,
-                        ).length;
-                        const total = 6;
-                        return {
-                          ...baseValidation,
-                          completionPercentage: seoScoreResult?.percentage ?? 0,
-                          completedFields: seoPassed,
-                          totalFields: total,
-                        };
-                      })()
-                    : baseValidation;
-                  const status = getStepStatus(step.number, currentStep, validation);
-                  const isActive = status === "active";
-                  const hasError = status === "error";
-                  const baseWarning = status === "warning";
-                  const seoWarning =
-                    isSeoStep && (seoScoreResult?.percentage ?? 0) < 100;
-                  const metaTitleLen = (formData.seoTitle || "").length;
-                  const metaDescLen = (formData.seoDescription || "").length;
-                  const metaTagsWarning =
-                    isSeoStep &&
-                    (
-                      (metaTitleLen > 0 && (metaTitleLen < 30 || metaTitleLen > 60)) ||
-                      (metaDescLen > 0 && (metaDescLen < 120 || metaDescLen > 160))
-                    );
-                  const hasWarningIcon = baseWarning || seoWarning || metaTagsWarning;
-                  const isCompletedIcon = status === "completed" && !hasWarningIcon;
-                  const hint = isSeoStep
-                    ? getSeoStepHint(seoScoreResult ?? null)
-                    : getStepHint(step, validation, formData);
-
-                  return (
-                    <Tooltip key={step.id}>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger
-                          value={step.id}
-                          className={cn(
-                            "w-full justify-start gap-2 relative h-auto py-1.5 px-2.5",
-                            isActive && "bg-background text-foreground shadow-sm",
-                          )}
-                          aria-label={`${step.label}: ${validation.completionPercentage}% complete. ${hint}`}
-                          aria-current={isActive ? "true" : undefined}
-                        >
-                          <span
-                            className={cn(
-                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold transition-colors",
-                              isActive && "bg-primary text-primary-foreground",
-                              isCompletedIcon && "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-                              hasError && "bg-destructive/15 text-destructive",
-                              hasWarningIcon && "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-                              !isActive && !isCompletedIcon && !hasError && !hasWarningIcon && "bg-muted text-muted-foreground",
-                            )}
-                          >
-                            {isCompletedIcon ? (
-                              <Check className="h-3 w-3 stroke-[2.5]" />
-                            ) : hasError ? (
-                              <AlertCircle className="h-3 w-3 stroke-[2.5]" />
-                            ) : hasWarningIcon ? (
-                              <AlertTriangle className="h-3 w-3 stroke-[2.5]" />
-                            ) : (
-                              step.number
-                            )}
-                          </span>
-                          <span className="truncate flex-1 text-start text-sm">{step.label}</span>
-                          <span
-                            className={cn(
-                              "shrink-0 text-[11px] font-semibold tabular-nums",
-                              validation.completionPercentage === 100
-                                ? "text-emerald-600 dark:text-emerald-400"
-                                : "text-muted-foreground",
-                            )}
-                          >
-                            {validation.completionPercentage}%
-                          </span>
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="left"
-                        className="max-w-xs text-balance bg-amber-50 dark:bg-amber-950/80 border-amber-200 dark:border-amber-800"
+              return (
+                <Tooltip key={step.id}>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger
+                      value={step.id}
+                      className={cn(
+                        "relative h-auto gap-2 rounded-none border-b-2 border-transparent bg-transparent px-3 py-2.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap",
+                        isActive && "border-primary text-foreground",
+                      )}
+                      aria-label={`${step.label}: ${validation.completionPercentage}% complete. ${hint}`}
+                      aria-current={isActive ? "true" : undefined}
+                    >
+                      <span
+                        className={cn(
+                          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold transition-colors",
+                          isActive && "bg-primary text-primary-foreground",
+                          isCompletedIcon && "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+                          hasError && "bg-destructive/15 text-destructive",
+                          hasWarningIcon && "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+                          !isActive && !isCompletedIcon && !hasError && !hasWarningIcon && "bg-muted text-muted-foreground",
+                        )}
                       >
-                        {hint}
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                })}
-              </TabsList>
-            </TooltipProvider>
-          </div>
-        </div>
+                        {isCompletedIcon ? (
+                          <Check className="h-3 w-3 stroke-[2.5]" />
+                        ) : hasError ? (
+                          <AlertCircle className="h-3 w-3 stroke-[2.5]" />
+                        ) : hasWarningIcon ? (
+                          <AlertTriangle className="h-3 w-3 stroke-[2.5]" />
+                        ) : (
+                          step.number
+                        )}
+                      </span>
+                      <span className="text-sm font-medium">{step.label}</span>
+                      <span
+                        className={cn(
+                          "shrink-0 text-[11px] font-semibold tabular-nums",
+                          validation.completionPercentage === 100
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {validation.completionPercentage}%
+                      </span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="max-w-xs text-balance bg-amber-50 dark:bg-amber-950/80 border-amber-200 dark:border-amber-800"
+                  >
+                    {hint}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </TabsList>
+        </TooltipProvider>
       </div>
+
+      {/* Step 1: Basic */}
+      <TabsContent value="basic" className="space-y-6 mt-0">
+        <BasicStep />
+      </TabsContent>
+
+      {/* Step 2: Content (Editor + AI Assistant) */}
+      <TabsContent value="content" className="space-y-6 mt-0">
+        <ContentStep />
+      </TabsContent>
+
+      {/* Step 3: Media (Cover + Audio + Gallery) */}
+      <TabsContent value="media" className="space-y-6 mt-0">
+        <MediaStep />
+      </TabsContent>
+
+      {/* Step 4: SEO — unified (Meta + Keywords + Citations + Score + Advanced) */}
+      <TabsContent value="seo" className="space-y-6 mt-0">
+        <SEOStep />
+      </TabsContent>
+
+      {/* Step 5: FAQs (FAQ Schema for Google rich results) */}
+      <TabsContent value="faqs" className="space-y-6 mt-0">
+        <FAQsStep />
+      </TabsContent>
+
+      {/* Step 6: Related Articles (internal linking) */}
+      <TabsContent value="related" className="space-y-6 mt-0">
+        <RelatedArticlesStep />
+      </TabsContent>
     </Tabs>
   );
 }

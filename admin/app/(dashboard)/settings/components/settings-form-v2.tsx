@@ -14,14 +14,19 @@ import { messages } from "@/lib/messages";
 import { Building2, Shield, RefreshCw, Download, Info } from "lucide-react";
 import {
   getAllSettings,
-  saveSiteSettings,
-  saveOrganizationSettings,
-  saveTrackingSettings,
-  saveSocialMediaSettings,
-  saveMediaSettings,
-  saveModontySettings,
+  updateAllSettings,
   type AllSettings,
 } from "../actions/settings-actions";
+import {
+  getCascadeEntities,
+  regenerateOneArticleCascade,
+  regenerateOneClientCascade,
+  regenerateBulkCategoriesCascade,
+  regenerateBulkTagsCascade,
+  regenerateBulkIndustriesCascade,
+  regenerateListingsCascade,
+  finalizeCascadeRevalidation,
+} from "../actions/cascade-step-actions";
 import { applyTechnicalDefaults } from "../actions/seed-technical-defaults";
 import { recalculateArticleCounts } from "../actions/recalculate-article-counts";
 
@@ -321,12 +326,98 @@ function formatTimeAgo(dateStr: string | null): string {
   } catch { return "Never"; }
 }
 
+// ─── Cascade Progress Types (T1.8) ───
+type CascadePhase =
+  | "idle"
+  | "saving"
+  | "articles"
+  | "clients"
+  | "categories"
+  | "tags"
+  | "industries"
+  | "listings"
+  | "done"
+  | "error";
+
+interface CascadeProgress {
+  phase: CascadePhase;
+  total: number;
+  completed: number;
+  errors: number;
+  message?: string;
+}
+
+// ─── Cascade Progress Banner (T1.8) ───
+const PHASE_LABELS: Record<string, string> = {
+  saving: "💾 جاري حفظ الإعدادات…",
+  articles: "📝 تحديث المقالات",
+  clients: "👥 تحديث العملاء",
+  categories: "🏷️ تحديث التصنيفات",
+  tags: "🔖 تحديث الوسوم",
+  industries: "🏭 تحديث القطاعات",
+  listings: "📋 تحديث الصفحات الرئيسية",
+};
+
+function CascadeProgressBanner({ cascade }: { cascade: CascadeProgress }) {
+  if (cascade.phase === "idle") return null;
+
+  if (cascade.phase === "done") {
+    return (
+      <div className="mt-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700 dark:text-emerald-300">
+        ✅ تم تحديث كل المحتوى بنجاح ({cascade.completed} عنصر)
+      </div>
+    );
+  }
+
+  if (cascade.phase === "error") {
+    return (
+      <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-300">
+        ⚠️ فشل تحديث {cascade.errors} عنصر — {cascade.message || "راجع سجل الأخطاء"}
+      </div>
+    );
+  }
+
+  const label = PHASE_LABELS[cascade.phase] || cascade.phase;
+  const pct = cascade.total > 0 ? Math.round((cascade.completed / cascade.total) * 100) : 0;
+  const showCounter = cascade.total > 1; // Don't show "1/1" for bulk operations
+
+  return (
+    <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <span className="font-medium">{label}</span>
+        {showCounter && (
+          <span className="font-mono text-xs text-muted-foreground">
+            {cascade.completed} / {cascade.total}
+          </span>
+        )}
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-full bg-primary transition-all duration-200"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      {cascade.errors > 0 && (
+        <div className="mt-2 text-xs text-red-600">
+          ⚠️ {cascade.errors} عنصر فشل تحديثه
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main ───
 export function SettingsFormV2() {
   const { toast } = useToast();
   const [settings, setSettings] = useState<AllSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [cascade, setCascade] = useState<CascadeProgress>({
+    phase: "idle",
+    total: 0,
+    completed: 0,
+    errors: 0,
+  });
 
   useEffect(() => {
     getAllSettings()
@@ -354,23 +445,86 @@ export function SettingsFormV2() {
   async function saveModonty() {
     if (!settings) return;
     setIsSaving(true);
-    const results = await Promise.all([
-      saveSiteSettings(settings),
-      saveOrganizationSettings(settings),
-      saveTrackingSettings(settings),
-      saveSocialMediaSettings(settings),
-      saveMediaSettings(settings),
-      saveModontySettings(settings),
-    ]);
-    const ok = results.every((r) => r.success);
-    if (ok) {
-      // Regenerate all listing page caches so modonty reflects changes immediately
-      const gen = await import("@/lib/seo/listing-page-seo-generator");
-      await gen.regenerateAllListingCaches();
-      setSettings(await getAllSettings());
+    setCascade({ phase: "saving", total: 0, completed: 0, errors: 0 });
+
+    // Step 1 — Save settings atomically (no cascade in this action; we drive it below)
+    const result = await updateAllSettings(settings);
+    if (!result.success) {
+      setCascade({ phase: "error", total: 0, completed: 0, errors: 1, message: result.error });
+      toast({ title: messages.error.update_failed, description: result.error || "فشل حفظ الإعدادات", variant: "destructive" });
+      setIsSaving(false);
+      return;
     }
-    toast({ title: ok ? messages.success.saved : messages.error.update_failed, description: ok ? "تم حفظ الإعدادات وتحديث موقع مدونتي تلقائياً" : "فشل حفظ بعض الإعدادات", variant: ok ? "success" : "destructive" });
+
+    // Step 2 — Get entity lists
+    let entities;
+    try {
+      entities = await getCascadeEntities();
+    } catch {
+      setCascade({ phase: "error", total: 0, completed: 0, errors: 1, message: "Failed to load entities" });
+      setIsSaving(false);
+      return;
+    }
+
+    let totalErrors = 0;
+
+    // Step 3 — Regenerate articles one-by-one (live counter)
+    setCascade({ phase: "articles", total: entities.articleIds.length, completed: 0, errors: 0 });
+    for (let i = 0; i < entities.articleIds.length; i++) {
+      const r = await regenerateOneArticleCascade(entities.articleIds[i]);
+      if (!r.success) totalErrors++;
+      setCascade({ phase: "articles", total: entities.articleIds.length, completed: i + 1, errors: totalErrors });
+    }
+
+    // Step 4 — Regenerate clients one-by-one
+    setCascade({ phase: "clients", total: entities.clientIds.length, completed: 0, errors: totalErrors });
+    for (let i = 0; i < entities.clientIds.length; i++) {
+      const r = await regenerateOneClientCascade(entities.clientIds[i]);
+      if (!r.success) totalErrors++;
+      setCascade({ phase: "clients", total: entities.clientIds.length, completed: i + 1, errors: totalErrors });
+    }
+
+    // Step 5 — Bulk regen taxonomy + listings (each 1 call)
+    setCascade({ phase: "categories", total: 1, completed: 0, errors: totalErrors });
+    await regenerateBulkCategoriesCascade().catch(() => { totalErrors++; });
+    setCascade({ phase: "categories", total: 1, completed: 1, errors: totalErrors });
+
+    setCascade({ phase: "tags", total: 1, completed: 0, errors: totalErrors });
+    await regenerateBulkTagsCascade().catch(() => { totalErrors++; });
+    setCascade({ phase: "tags", total: 1, completed: 1, errors: totalErrors });
+
+    setCascade({ phase: "industries", total: 1, completed: 0, errors: totalErrors });
+    await regenerateBulkIndustriesCascade().catch(() => { totalErrors++; });
+    setCascade({ phase: "industries", total: 1, completed: 1, errors: totalErrors });
+
+    setCascade({ phase: "listings", total: 1, completed: 0, errors: totalErrors });
+    await regenerateListingsCascade().catch(() => { totalErrors++; });
+    setCascade({ phase: "listings", total: 1, completed: 1, errors: totalErrors });
+
+    // Step 6 — Final revalidate
+    await finalizeCascadeRevalidation().catch(() => {});
+
+    setCascade({
+      phase: totalErrors > 0 ? "error" : "done",
+      total: entities.articleIds.length + entities.clientIds.length,
+      completed: entities.articleIds.length + entities.clientIds.length,
+      errors: totalErrors,
+    });
+
+    setSettings(await getAllSettings());
+    toast({
+      title: totalErrors === 0 ? messages.success.saved : "تم الحفظ مع أخطاء",
+      description: totalErrors === 0
+        ? `تم تحديث ${entities.articleIds.length} مقال + ${entities.clientIds.length} عميل + التصنيفات`
+        : `${totalErrors} عنصر فشل تحديثه — راجع السجل`,
+      variant: totalErrors === 0 ? "success" : "destructive",
+    });
     setIsSaving(false);
+
+    // Auto-hide banner after 5s on success
+    if (totalErrors === 0) {
+      setTimeout(() => setCascade({ phase: "idle", total: 0, completed: 0, errors: 0 }), 5000);
+    }
   }
 
   async function handleApplyDefaults() {
@@ -553,6 +707,8 @@ export function SettingsFormV2() {
         <Button onClick={saveModonty} disabled={isSaving} className="w-full mt-4">
           {isSaving ? "Saving..." : "Save & Publish"}
         </Button>
+
+        <CascadeProgressBanner cascade={cascade} />
       </TabsContent>
 
       {/* ═══════════════════════════════════════════════ */}

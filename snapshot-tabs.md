@@ -1,0 +1,263 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - button "Collapse sidebar" [ref=e5] [cursor=pointer]:
+        - img
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - link "Search Console" [ref=e8] [cursor=pointer]:
+            - /url: /search-console
+            - img [ref=e9]
+            - generic [ref=e15]: Search Console
+          - link "SEO Overview" [ref=e16] [cursor=pointer]:
+            - /url: /seo-overview
+            - img [ref=e17]
+            - generic [ref=e20]: SEO Overview
+        - generic [ref=e22]:
+          - button "Clients" [expanded] [ref=e23] [cursor=pointer]:
+            - generic [ref=e24]:
+              - img [ref=e25]
+              - generic [ref=e28]: Clients
+            - img [ref=e29]
+          - generic [ref=e32]:
+            - link "All Clients" [ref=e33] [cursor=pointer]:
+              - /url: /clients
+              - img [ref=e34]
+              - generic [ref=e38]: All Clients
+            - link "New Client" [ref=e39] [cursor=pointer]:
+              - /url: /clients/new
+              - img [ref=e40]
+              - generic [ref=e43]: New Client
+            - link "Verify Client" [ref=e44] [cursor=pointer]:
+              - /url: /clients/verify
+              - img [ref=e45]
+              - generic [ref=e48]: Verify Client
+            - link "Publish Client" [ref=e49] [cursor=pointer]:
+              - /url: /clients/publish
+              - img [ref=e50]
+              - generic [ref=e53]: Publish Client
+        - generic [ref=e54]:
+          - button "Articles" [expanded] [ref=e55] [cursor=pointer]:
+            - generic [ref=e56]:
+              - img [ref=e57]
+              - generic [ref=e60]: Articles
+            - img [ref=e61]
+          - generic [ref=e64]:
+            - link "All Articles" [ref=e65] [cursor=pointer]:
+              - /url: /articles
+              - img [ref=e66]
+              - generic [ref=e69]: All Articles
+            - link "New Article" [ref=e70] [cursor=pointer]:
+              - /url: /articles/new
+              - img [ref=e71]
+              - generic [ref=e74]: New Article
+            - link "Writing → Draft" [ref=e75] [cursor=pointer]:
+              - /url: /articles/workflow/writing-to-draft
+              - img [ref=e76]
+              - generic [ref=e80]: Writing → Draft
+            - link "Draft → Approval" [ref=e81] [cursor=pointer]:
+              - /url: /articles/workflow/draft-to-approval
+              - img [ref=e82]
+              - generic [ref=e87]: Draft → Approval
+            - link "Approval → Revision" [ref=e88] [cursor=pointer]:
+              - /url: /articles/workflow/approval-to-revision
+              - img [ref=e89]
+              - generic [ref=e94]: Approval → Revision
+            - link "Approval → Scheduled" [ref=e95] [cursor=pointer]:
+              - /url: /articles/workflow/approval-to-scheduled
+              - img [ref=e96]
+              - generic [ref=e100]: Approval → Scheduled
+            - link "Scheduled → Published" [ref=e101] [cursor=pointer]:
+              - /url: /articles/workflow/scheduled-to-published
+              - img [ref=e102]
+              - generic [ref=e105]: Scheduled → Published
+        - button "Content" [ref=e107] [cursor=pointer]:
+          - generic [ref=e108]:
+            - img [ref=e109]
+            - generic [ref=e111]: Content
+          - img [ref=e112]
+        - button "Modonty Pages" [ref=e115] [cursor=pointer]:
+          - generic [ref=e116]:
+            - img [ref=e117]
+            - generic [ref=e119]: Modonty Pages
+          - img [ref=e120]
+        - button "Audience" [ref=e123] [cursor=pointer]:
+          - generic [ref=e124]:
+            - img [ref=e125]
+            - generic [ref=e129]: Audience
+          - img [ref=e130]
+        - button "System" [ref=e133] [cursor=pointer]:
+          - generic [ref=e134]:
+            - img [ref=e135]
+            - generic [ref=e137]: System
+          - img [ref=e138]
+      - generic [ref=e140]:
+        - link "Guidelines" [ref=e141] [cursor=pointer]:
+          - /url: /guidelines
+          - img [ref=e142]
+          - text: Guidelines
+        - generic [ref=e144]:
+          - button "Switch to light mode" [ref=e145] [cursor=pointer]:
+            - img
+          - link "v0.49.0 ?" [ref=e146] [cursor=pointer]:
+            - /url: /changelog
+            - text: v0.49.0
+            - generic [ref=e147]: "?"
+    - generic [ref=e148]:
+      - banner [ref=e149]:
+        - generic [ref=e150]:
+          - navigation "Breadcrumb" [ref=e152]:
+            - link "Go to dashboard" [ref=e153] [cursor=pointer]:
+              - /url: /
+              - img [ref=e154]
+            - generic [ref=e157]:
+              - img [ref=e158]
+              - link "Articles" [ref=e160] [cursor=pointer]:
+                - /url: /articles
+            - generic [ref=e161]:
+              - img [ref=e162]
+              - generic [ref=e164]: New
+          - navigation "Main navigation" [ref=e166]:
+            - link "Modonty Modonty" [ref=e167] [cursor=pointer]:
+              - /url: /
+              - img "Modonty" [ref=e169]
+              - generic [ref=e170]: Modonty
+            - generic [ref=e172]:
+              - link "Articles" [ref=e173] [cursor=pointer]:
+                - /url: /articles
+                - button "Articles" [ref=e174]:
+                  - img
+                  - generic [ref=e175]: Articles
+              - link "Media" [ref=e176] [cursor=pointer]:
+                - /url: /media
+                - button "Media" [ref=e177]:
+                  - img
+                  - generic [ref=e178]: Media
+          - generic [ref=e179]:
+            - button "Sync Local from PROD" [ref=e180] [cursor=pointer]:
+              - img [ref=e181]
+              - generic [ref=e185]: Sync Local from PROD
+            - button "Beta — Send feedback" [ref=e186] [cursor=pointer]:
+              - generic [ref=e187]: Beta
+              - img [ref=e189]
+              - generic [ref=e191]: Feedback
+            - button "Notifications" [ref=e192] [cursor=pointer]:
+              - img
+              - generic [ref=e292]: "1"
+            - button "M" [ref=e193] [cursor=pointer]:
+              - generic [ref=e195]: M
+      - main [ref=e196]:
+        - generic [ref=e197]:
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - generic [ref=e203]: Step 1 of 5
+                - generic [ref=e204]: "SEO Health: 72%"
+                - generic [ref=e207]: Live Analysis
+              - generic [ref=e208]:
+                - generic [ref=e210]: 46% Complete
+                - button "Save Draft" [ref=e212] [cursor=pointer]:
+                  - img
+                  - generic [ref=e213]: Save Draft
+            - 'generic "Overall progress: 46%" [ref=e315]'
+          - generic [ref=e219]:
+            - 'tabpanel "Basic: 78% complete. اختياري: التصنيف، الوسوم" [ref=e294]':
+              - generic [ref=e224]:
+                - generic [ref=e226]:
+                  - generic [ref=e227]:
+                    - generic [ref=e228]:
+                      - generic [ref=e229]: Client*
+                      - combobox "Client*" [ref=e230]:
+                        - option "Select a client"
+                        - option "شركة جبر الجنوبية للمقاولات"
+                        - option "شركة جبر سيو"
+                        - option "كيما زون" [selected]
+                    - generic [ref=e296]:
+                      - img "كيما زون" [ref=e298]
+                      - generic [ref=e299]:
+                        - paragraph [ref=e300]: كيما زون
+                        - generic [ref=e301]:
+                          - img [ref=e302]
+                          - generic [ref=e305]: Logo ready
+                  - generic [ref=e232]:
+                    - generic [ref=e233]: Category
+                    - combobox "Category" [ref=e234]:
+                      - option "None" [selected]
+                      - option "SEO تحسين محركات البحث"
+                      - option "إدارة المشاريع"
+                      - option "إدارة وسائل التواصل"
+                      - option "الانشاءات والتعمير"
+                      - option "البرمجة وتطوير التطبيقات"
+                      - option "التجارة الإلكترونية"
+                      - option "التسويق الرقمي"
+                      - option "التسويق الرقمي"
+                      - option "التسويق بالمحتوى"
+                      - option "التعليم والتدريب"
+                      - option "التقنية والذكاء الاصطناعي"
+                      - option "التمويل الشخصي"
+                      - option "الذكاء الاصطناعي"
+                      - option "السياحة والسفر"
+                      - option "الصحة والعافية"
+                      - option "العقارات والاستثمار"
+                      - option "القانون وتأسيس الشركات"
+                      - option "المحتوى والكتابة"
+                      - option "المطاعم والطعام"
+                      - option "الموضة والجمال"
+                      - option "تحسين محركات البحث"
+                      - option "تصميم المواقع"
+                      - option "تصميم المواقع"
+                      - option "ريادة الأعمال"
+                      - option "ريادة الأعمال"
+                - generic [ref=e235]:
+                  - generic [ref=e236]:
+                    - generic [ref=e237]: Title*
+                    - textbox "Title*" [ref=e238]: مقال اختبار سير العمل
+                    - generic [ref=e241]: 21 / 80 maximum
+                  - generic [ref=e306]:
+                    - paragraph [ref=e307]: الرابط الدائم للمقال — يظهر في جوجل ولا يتغير بعد النشر
+                    - generic [ref=e308]:
+                      - generic [ref=e309]: Slug
+                      - generic [ref=e310]: مقال-اختبار-سير-العمل
+                    - paragraph [ref=e311]: https://www.modonty.com/articles/مقال-اختبار-سير-العمل
+                  - generic [ref=e242]:
+                    - text: Excerpt
+                    - textbox "Excerpt" [active] [ref=e243]: مقال تجريبي لاختبار انتقالات الحالات في سير العمل الجديد للمقالات في الإدارة.
+                    - generic [ref=e244]:
+                      - paragraph [ref=e245]: Optimize for 150-160 characters for better search visibility
+                      - generic [ref=e247]: 77 / 160 maximum
+                  - generic [ref=e248]:
+                    - generic [ref=e249]: Tags
+                    - combobox [ref=e250] [cursor=pointer]:
+                      - generic [ref=e252]: Select tags
+                      - img
+                  - generic [ref=e253]:
+                    - text: Author
+                    - generic [ref=e254]:
+                      - generic [ref=e255]: Modonty
+                      - generic [ref=e256]: (Only author)
+            - tablist [ref=e259]:
+              - 'tab "Basic: 78% complete. اختياري: التصنيف، الوسوم" [selected] [ref=e312] [cursor=pointer]':
+                - generic [ref=e261]: "1"
+                - generic [ref=e262]: Basic
+                - generic [ref=e263]: 78%
+              - 'tab "Content: 30% complete. مطلوب: محتوى المقال · اختياري: عدد الكلمات، وقت القراءة، عمق المحتوى، النص المستخرج، صورة المقال الرئيسية، معرض الصور" [ref=e264] [cursor=pointer]':
+                - generic [ref=e265]: "2"
+                - generic [ref=e266]: Content
+                - generic [ref=e267]: 30%
+              - 'tab "SEO: 72% complete. العنوان والوصف: 77 حرف — قصير جداً · المحتوى: المقال فارغ — أضف محتوى · الصور: مفقودة — أضف صورة من تبويب المحتوى" [ref=e313] [cursor=pointer]':
+                - img [ref=e270]
+                - generic [ref=e272]: SEO
+                - generic [ref=e273]: 72%
+              - 'tab "FAQs & Related: 0% complete. اختياري: الأسئلة الشائعة، مقالات ذات صلة" [ref=e274] [cursor=pointer]':
+                - generic [ref=e275]: "4"
+                - generic [ref=e276]: FAQs & Related
+                - generic [ref=e277]: 0%
+              - 'tab "Publish: 50% complete. اختياري: موعد النشر، حساب تويتر، كاتب تويتر، المراجع والمصادر" [ref=e314] [cursor=pointer]':
+                - generic [ref=e279]: "5"
+                - generic [ref=e280]: Publish
+                - generic [ref=e281]: 50%
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e287] [cursor=pointer]:
+    - img [ref=e288]
+  - alert [ref=e291]

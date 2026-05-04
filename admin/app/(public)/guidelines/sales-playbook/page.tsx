@@ -572,6 +572,89 @@ ROI الفعلي:                   ≈ 8.85×`;
         </CardContent>
       </Card>
 
+      {/* ── 🥇 قاعدة التسعير الذهبية — لا discount ───────────────── */}
+      <Card className="border-2 border-amber-500/40 bg-gradient-to-br from-amber-500/[0.08] via-background to-background">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <Badge className="text-[10px] bg-amber-500 text-white">🥇 قاعدة ذهبية</Badge>
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-amber-500" />
+              <h2 className="text-base font-bold">قاعدة التسعير — لا discount على السعر</h2>
+            </div>
+          </div>
+
+          <p className="text-xs text-foreground/85 leading-relaxed mb-4">
+            الأسعار في مدونتي <strong>ثابتة ولا تُخصم تحت أي ظرف</strong>. السعر الشهري لكل باقة هو نفسه
+            دائماً — سواءً اشترك العميل شهر، 3 شهور، أو سنة كاملة. هذي قاعدة نهائية تحمي قيمة البراند
+            وتمنع سباق التخفيضات.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            {/* ❌ ممنوع */}
+            <div className="rounded-lg border border-red-500/30 bg-red-500/[0.05] p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="h-4 w-4 text-red-500" />
+                <p className="text-xs font-bold text-red-500 uppercase tracking-wide">
+                  ❌ ممنوع نهائياً
+                </p>
+              </div>
+              <ul className="text-xs space-y-1.5 leading-relaxed list-disc pe-4">
+                <li>أي خصم بنسبة (5%، 10%، 20%…)</li>
+                <li>أي خصم بمبلغ ثابت</li>
+                <li>&ldquo;عرض ترويجي&rdquo; أو &ldquo;صفقة خاصة&rdquo;</li>
+                <li>تخفيض السعر تحت ضغط مفاوضة</li>
+                <li>تعديل الـ pricePerMonth في الـ DB لأقل من سعر الباقة القياسي</li>
+              </ul>
+            </div>
+
+            {/* ✅ مسموح بتعميد إدارة */}
+            <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/[0.05] p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <p className="text-xs font-bold text-emerald-500 uppercase tracking-wide">
+                  ✅ مسموح (بتعميد الإدارة فقط)
+                </p>
+              </div>
+              <ul className="text-xs space-y-1.5 leading-relaxed list-disc pe-4">
+                <li>شهر إضافي مجاني (أو أكثر)</li>
+                <li>مقالات إضافية فوق quota الباقة</li>
+                <li>إضافات قيمة (consulting · setup · إلخ)</li>
+                <li>السعر الشهري يبقى ثابت — البونص فقط يضيف قيمة</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* 💡 المنطق */}
+          <div className="rounded-md border border-amber-500/25 bg-amber-500/[0.04] p-3 mb-3">
+            <p className="text-[11px] font-bold text-amber-500 uppercase tracking-wide mb-1.5 flex items-center gap-1">
+              <Lightbulb className="h-3 w-3" /> ليش ما نخصم؟
+            </p>
+            <ul className="text-xs leading-relaxed space-y-1 list-disc pe-4">
+              <li><strong>السعر إشارة قيمة:</strong> خصم اليوم = توقّع خصم أكبر بكرا. كل صفقة قادمة تبدأ من سعر منخفض.</li>
+              <li><strong>الـ bonus لا يضرّ البراند:</strong> &ldquo;شهر هدية&rdquo; شعور بكرم — &ldquo;خصم 20%&rdquo; شعور إن السعر الأصلي مبالغ فيه.</li>
+              <li><strong>الـ accounting نظيف:</strong> السعر الفعلي = السعر القياسي. تقارير المبيعات تعكس الواقع بدون استثناءات.</li>
+              <li><strong>عدالة بين العملاء:</strong> كل العملاء يدفعون نفس السعر للباقة. لا أحد يحس إنه دفع أكثر.</li>
+            </ul>
+          </div>
+
+          {/* 📋 الصياغة الجاهزة */}
+          <div className="rounded-md border border-primary/25 bg-primary/[0.05] p-3">
+            <p className="text-[11px] font-bold text-primary uppercase tracking-wide mb-1.5 flex items-center gap-1">
+              <Target className="h-3 w-3" /> الصياغة الجاهزة لما العميل يطلب خصم
+            </p>
+            <p className="text-xs leading-relaxed mb-2">
+              <strong>«</strong>السعر ثابت في مدونتي ومعتمد على قيمة فعلية، مش رقم متحرّك.{" "}
+              <strong>لكن</strong> لو نقدر نتفاهم، أقدر أعرض على الإدارة <strong>شهر إضافي</strong>{" "}
+              أو <strong>مقالات زيادة</strong> على باقتك. بكذا تحصل على قيمة أكبر بدون مساس بالسعر.<strong>»</strong>
+            </p>
+            <p className="text-[11px] text-muted-foreground leading-relaxed font-mono">
+              ⚠️ <strong>تنبيه:</strong> أي bonus يحتاج <strong>تعميد إدارة كتابي</strong> قبل الوعد للعميل.
+              لا تعد ببونص بدون موافقة مسبقة.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ── 4 جمل الإغلاق (مع متى) ──────────────────────────────── */}
       <div>
         <div className="flex items-center gap-2 mb-3">

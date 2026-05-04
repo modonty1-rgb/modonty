@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,12 @@ import {
 } from "@/components/ui/tooltip";
 import {
   FileText,
+  FilePlus,
+  FileEdit,
+  FileClock,
+  FileX,
+  CalendarClock,
+  CheckCircle2,
   Folder,
   Tag,
   UserPen,
@@ -42,10 +49,15 @@ import {
   ChevronDown,
   BookOpen,
   Library,
+  Newspaper,
   MessageSquare,
   Bug,
   Wrench,
   Megaphone,
+  Briefcase,
+  UserPlus,
+  BadgeCheck,
+  Send,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -59,6 +71,7 @@ interface MenuItem {
   icon: IconComponent;
   label: string;
   href: string;
+  exact?: boolean;
 }
 
 interface MenuGroup {
@@ -70,11 +83,36 @@ interface MenuGroup {
 
 const menuGroups: MenuGroup[] = [
   {
-    title: "Content",
-    icon: Library,
+    title: "Clients",
+    icon: Briefcase,
     defaultOpen: true,
     items: [
-      { icon: FileText, label: "Articles", href: "/articles" },
+      { icon: Users2, label: "All Clients", href: "/clients", exact: true },
+      { icon: UserPlus, label: "New Client", href: "/clients/new" },
+      { icon: BadgeCheck, label: "Verify Client", href: "/clients/verify" },
+      { icon: Send, label: "Publish Client", href: "/clients/publish" },
+    ],
+  },
+  {
+    title: "Articles",
+    icon: Newspaper,
+    defaultOpen: false,
+    items: [
+      { icon: FileText, label: "All Articles", href: "/articles", exact: true },
+      { icon: FilePlus, label: "New Article", href: "/articles/new" },
+      { icon: FileEdit, label: "Writing → Draft", href: "/articles/workflow/writing-to-draft" },
+      { icon: FileClock, label: "Draft → Approval", href: "/articles/workflow/draft-to-approval" },
+      { icon: FileX, label: "Approval → Revision", href: "/articles/workflow/approval-to-revision" },
+      { icon: CalendarClock, label: "Approval → Scheduled", href: "/articles/workflow/approval-to-scheduled" },
+      { icon: CheckCircle2, label: "Scheduled → Published", href: "/articles/workflow/scheduled-to-published" },
+      { icon: Wrench, label: "Technical Review", href: "/articles/technical" },
+    ],
+  },
+  {
+    title: "Content",
+    icon: Library,
+    defaultOpen: false,
+    items: [
       { icon: Folder, label: "Categories", href: "/categories" },
       { icon: Tag, label: "Tags", href: "/tags" },
       { icon: UserPen, label: "Authors", href: "/authors" },
@@ -131,8 +169,8 @@ const topItems: MenuItem[] = [
 function NavLink({ item, collapsed, pathname }: { item: MenuItem; collapsed: boolean; pathname: string }) {
   const Icon = item.icon;
   const isActive =
-    item.href === "/"
-      ? pathname === "/"
+    item.href === "/" || item.exact
+      ? pathname === item.href
       : pathname === item.href || pathname?.startsWith(item.href + "/");
 
   return (
@@ -162,6 +200,14 @@ function hasActiveChild(items: MenuItem[], pathname: string): boolean {
 export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, toggle } = useSidebar();
+
+  // T-SIDEBAR-ACCORDION: only one group open at a time. Initial value = the
+  // group whose route is currently active (so it's auto-expanded on page load).
+  const initialOpen =
+    menuGroups.find((g) => hasActiveChild(g.items, pathname))?.title ||
+    menuGroups.find((g) => g.defaultOpen)?.title ||
+    null;
+  const [openGroupTitle, setOpenGroupTitle] = useState<string | null>(initialOpen);
 
   return (
     <aside
@@ -196,11 +242,9 @@ export function Sidebar() {
 
         <div className="mx-2 border-t border-border/50 mb-3" />
 
-        {/* Collapsible groups */}
+        {/* Collapsible groups — accordion behavior: only one open at a time */}
         {menuGroups.map((group) => {
           const GroupIcon = group.icon;
-          const isGroupActive = hasActiveChild(group.items, pathname);
-          const openByDefault = group.defaultOpen || isGroupActive;
 
           if (collapsed) {
             return (
@@ -213,8 +257,13 @@ export function Sidebar() {
             );
           }
 
+          const isOpen = openGroupTitle === group.title;
           return (
-            <Collapsible key={group.title} defaultOpen={openByDefault}>
+            <Collapsible
+              key={group.title}
+              open={isOpen}
+              onOpenChange={(open) => setOpenGroupTitle(open ? group.title : null)}
+            >
               <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 rounded-md text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group">
                 <div className="flex items-center gap-2.5">
                   <GroupIcon className="h-4 w-4 shrink-0" />

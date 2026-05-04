@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { buildAspectRatiosArray } from "./image-aspect-ratios";
 
 export interface SEOData {
   title?: string;
@@ -212,14 +213,10 @@ export function generateArticleStructuredData(article: any) {
     "@type": "Article",
     headline: article.title,
     description: article.seoDescription || article.excerpt || "",
+    // Google Article rich results: provide 3 aspect ratios (1:1, 4:3, 16:9)
+    // when image is on Cloudinary; falls back to single URL otherwise.
     image: article.featuredImage?.url
-      ? {
-          "@type": "ImageObject",
-          url: article.featuredImage.url,
-          ...(article.featuredImage.width && { width: article.featuredImage.width }),
-          ...(article.featuredImage.height && { height: article.featuredImage.height }),
-          ...(article.featuredImage.altText && { name: article.featuredImage.altText }),
-        }
+      ? buildAspectRatiosArray(article.featuredImage.url)
       : undefined,
     datePublished: article.datePublished?.toISOString(),
     dateModified: article.dateModified?.toISOString() || article.updatedAt?.toISOString(),
@@ -260,6 +257,33 @@ export function generateArticleStructuredData(article: any) {
         },
       })),
     };
+  }
+
+  // Inject semanticKeywords (Wikidata entities) as schema.org `mentions`.
+  // Each entity references its Wikidata URL via @id + sameAs for disambiguation.
+  // Falls back to plain { @type: Thing, name } when no wikidataId/url is set.
+  const semantics = Array.isArray(article.semanticKeywords)
+    ? (article.semanticKeywords as Array<{ name?: string; wikidataId?: string | null; url?: string | null }>)
+    : [];
+  const mentionEntities = semantics
+    .filter((s) => s && typeof s.name === "string" && s.name.trim().length > 0)
+    .map((s) => {
+      const wikidataUrl = s.wikidataId
+        ? `https://www.wikidata.org/entity/${s.wikidataId}`
+        : null;
+      const entityId = s.url || wikidataUrl;
+      const entity: Record<string, unknown> = {
+        "@type": "Thing",
+        name: s.name,
+      };
+      if (entityId) {
+        entity["@id"] = entityId;
+        entity.sameAs = entityId;
+      }
+      return entity;
+    });
+  if (mentionEntities.length > 0) {
+    structuredData.mentions = mentionEntities;
   }
 
   return structuredData;

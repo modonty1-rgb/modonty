@@ -114,12 +114,30 @@ export async function generateAndSaveJsonLd(
     // Extract plain text for articleBody
     const articleBodyText = extractPlainText(articleWithDefaults.content);
 
+    // Build platform branding (used when author is the platform brand — Modonty)
+    const branding = settings
+      ? {
+          siteName: settings.siteName,
+          siteUrl: settings.siteUrl,
+          brandDescription: settings.brandDescription,
+          logoUrl: settings.logoUrl || settings.orgLogoUrl,
+          facebookUrl: settings.facebookUrl,
+          twitterUrl: settings.twitterUrl,
+          linkedInUrl: settings.linkedInUrl,
+          instagramUrl: settings.instagramUrl,
+          youtubeUrl: settings.youtubeUrl,
+          tiktokUrl: settings.tiktokUrl,
+          pinterestUrl: settings.pinterestUrl,
+          snapchatUrl: settings.snapchatUrl,
+        }
+      : null;
+
     // Generate knowledge graph
     const articleWithText = {
       ...articleWithDefaults,
       articleBodyText,
     };
-    const knowledgeGraph = generateArticleKnowledgeGraph(articleWithText);
+    const knowledgeGraph = generateArticleKnowledgeGraph(articleWithText, branding);
 
     // Normalize JSON-LD structure (ensures consistency)
     const normalizedGraph = await normalizeJsonLd(knowledgeGraph);

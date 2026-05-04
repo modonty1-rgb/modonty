@@ -15,6 +15,7 @@ import {
 import { ArticleFormData, FAQItem } from "@/lib/types";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
@@ -95,9 +96,10 @@ export async function createArticle(data: ArticleFormData) {
     const seoDescription =
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
+    const baseUrl = await loadSiteUrl();
     const canonicalUrl =
       !data.canonicalUrl?.trim() || data.canonicalUrl.includes("/clients/")
-        ? generateCanonicalUrl(data.slug)
+        ? generateCanonicalUrl(data.slug, baseUrl)
         : data.canonicalUrl.trim();
 
     const breadcrumbPath = generateBreadcrumbPath(
@@ -168,12 +170,16 @@ export async function createArticle(data: ArticleFormData) {
         });
       }
 
-      if (data.faqs && data.faqs.length > 0) {
+      // Filter out incomplete FAQs (missing question OR answer) — prevents partial entries in DB
+      const validFaqs = (data.faqs ?? []).filter(
+        (f: FAQItem) => f.question?.trim() && f.answer?.trim(),
+      );
+      if (validFaqs.length > 0) {
         await tx.articleFAQ.createMany({
-          data: data.faqs.map((faq: FAQItem, index: number) => ({
+          data: validFaqs.map((faq: FAQItem, index: number) => ({
             articleId: article.id,
             question: sanitizeText(faq.question),
-            answer: faq.answer ? sanitizeText(faq.answer) : null,
+            answer: sanitizeText(faq.answer),
             position: faq.position ?? index,
           })),
         });

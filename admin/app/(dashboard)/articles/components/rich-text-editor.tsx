@@ -101,11 +101,28 @@ export function RichTextEditor({
   const linkSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
+  type ToolbarGroup = "text" | "structure" | "media" | "layout";
+  const [toolbarGroup, setToolbarGroupState] = useState<ToolbarGroup>("text");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("articleEditorToolbarGroup") as ToolbarGroup | null;
+    if (saved && ["text", "structure", "media", "layout"].includes(saved)) {
+      setToolbarGroupState(saved);
+    }
+  }, []);
+  const setToolbarGroup = (group: ToolbarGroup) => {
+    setToolbarGroupState(group);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("articleEditorToolbarGroup", group);
+    }
+  };
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: false,
+        link: false,
+        underline: false,
       }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6],
@@ -245,6 +262,7 @@ export function RichTextEditor({
   return (
     <div className={cn("border border-border rounded-md bg-card", className)}>
       <div className="border-b border-border p-2 flex flex-wrap items-center gap-1">
+        {/* Always-visible: Undo / Redo */}
         <Button
           type="button"
           variant="ghost"
@@ -268,6 +286,32 @@ export function RichTextEditor({
 
         <Separator orientation="vertical" className="h-6" />
 
+        {/* Group selector — 4 mutually-exclusive tabs */}
+        <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
+          {(["text", "structure", "media", "layout"] as const).map((group) => (
+            <button
+              key={group}
+              type="button"
+              onClick={() => setToolbarGroup(group)}
+              aria-pressed={toolbarGroup === group}
+              className={cn(
+                "px-2.5 py-1 text-xs font-medium rounded-sm transition-colors",
+                toolbarGroup === group
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {group === "text" && "نص"}
+              {group === "structure" && "بنية"}
+              {group === "media" && "وسائط"}
+              {group === "layout" && "تخطيط"}
+            </button>
+          ))}
+        </div>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        {toolbarGroup === "text" && (<>
         <Button
           type="button"
           variant="ghost"
@@ -348,9 +392,9 @@ export function RichTextEditor({
         >
           <SubscriptIcon className="h-4 w-4" />
         </Button>
+        </>)}
 
-        <Separator orientation="vertical" className="h-6" />
-
+        {toolbarGroup === "structure" && (<>
         <Button
           type="button"
           variant="ghost"
@@ -414,9 +458,9 @@ export function RichTextEditor({
         >
           <Quote className="h-4 w-4" />
         </Button>
+        </>)}
 
-        <Separator orientation="vertical" className="h-6" />
-
+        {toolbarGroup === "layout" && (<>
         <Button
           type="button"
           variant="ghost"
@@ -457,9 +501,9 @@ export function RichTextEditor({
         >
           <AlignJustify className="h-4 w-4" />
         </Button>
+        </>)}
 
-        <Separator orientation="vertical" className="h-6" />
-
+        {toolbarGroup === "media" && (<>
         <Button
           type="button"
           variant="ghost"
@@ -575,9 +619,9 @@ export function RichTextEditor({
             </Button>
           </>
         )}
+        </>)}
 
-        <Separator orientation="vertical" className="h-6" />
-
+        {toolbarGroup === "layout" && (<>
         <Button
           type="button"
           variant="ghost"
@@ -588,6 +632,7 @@ export function RichTextEditor({
         >
           <RemoveFormatting className="h-4 w-4" />
         </Button>
+        </>)}
         <MediaPickerDialog
           open={mediaPickerOpen}
           onOpenChange={setMediaPickerOpen}

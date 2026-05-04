@@ -40,6 +40,12 @@
       "args": [
         "C:\\Users\\w2nad\\AppData\\Roaming\\npm\\node_modules\\@browserbasehq\\mcp\\cli.js"
       ]
+    },
+    "mermaid": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\w2nad\\AppData\\Roaming\\npm\\node_modules\\mcp-mermaid\\build\\index.js"
+      ]
     }
   }
 }

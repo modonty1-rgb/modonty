@@ -73,8 +73,8 @@ export const PIPELINE_STAGES: StageDefinition[] = [
     id: 6,
     key: "content",
     name: "Content",
-    description: "Heading structure and word count",
-    checkIds: ["h1", "word-count"],
+    description: "Heading structure (H1)",
+    checkIds: ["h1"],
     placeholder: false,
   },
   {
@@ -97,8 +97,8 @@ export const PIPELINE_STAGES: StageDefinition[] = [
     id: 9,
     key: "internal-links",
     name: "Internal Links",
-    description: "Internal link count · anchor quality · broken links",
-    checkIds: ["internal-links-count", "internal-links-anchors", "internal-links-broken"],
+    description: "Anchor quality · broken links",
+    checkIds: ["internal-links-anchors", "internal-links-broken"],
     placeholder: false,
   },
   {

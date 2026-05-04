@@ -68,7 +68,7 @@ export function SEOHealthScore({ score, categories, isLoading }: SEOHealthScoreP
 
           {/* Category Breakdown */}
           {categories && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-6">
               <CategoryItem
                 label="Meta Tags"
                 score={categories.metaTags}
@@ -124,19 +124,19 @@ function CategoryItem({
       <HoverCardTrigger asChild>
         <div
           className={cn(
-            "flex items-center justify-between p-3 border rounded-lg cursor-default",
+            "flex flex-col gap-1 p-2.5 border rounded-lg cursor-default",
             "hover:bg-muted/50 transition-colors",
           )}
         >
-          <div className="flex items-center gap-2">
-            {icon}
-            <span className="text-sm font-medium">{label}</span>
-          </div>
-          <div className="text-right">
-            <div className="text-sm font-semibold">{score.percentage}%</div>
-            <div className="text-xs text-muted-foreground">
-              {score.passed}/{score.total}
+          <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="shrink-0">{icon}</span>
+              <span className="text-xs font-medium truncate">{label}</span>
             </div>
+            <span className="text-sm font-semibold tabular-nums shrink-0">{score.percentage}%</span>
+          </div>
+          <div className="text-[10px] text-muted-foreground tabular-nums">
+            {score.passed}/{score.total}
           </div>
         </div>
       </HoverCardTrigger>

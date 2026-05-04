@@ -1,43 +1,70 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useArticleForm } from '../article-form-context';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { 
-  ChevronDown, 
-  AlertCircle, 
-  ImageIcon,
-  Globe,
-  Twitter,
-  Search
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { SITE_NAME } from '@/lib/constants/site-name';
-import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
-import { TechnicalSEOGuidance } from '../sections/technical-seo-guidance';
-import { TechnicalSection } from '../sections/technical-section';
-import { SocialSection } from '../sections/social-section';
-import { FormNativeSelect } from '@/components/admin/form-field';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { LICENSE_OPTIONS } from '@/lib/constants/licenses';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CharacterCounter } from '@/components/shared/character-counter';
+import { useToast } from '@/hooks/use-toast';
+import { messages } from '@/lib/messages';
+import { extractLinksFromContent } from '../../helpers/link-extraction-helper';
+import { TechnicalSEOGuidance } from '../sections/technical-seo-guidance';
+import { getMediaById } from '@/app/(dashboard)/media/actions/get-media-by-id';
+import { SITE_NAME } from '@/lib/constants/site-name';
+import {
+  Tag,
+  Hash,
+  Globe,
+  ImageIcon,
+  Plus,
+  X,
+  Link as LinkIcon,
+  Loader2,
+  Wrench,
+  ExternalLink,
+} from 'lucide-react';
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex items-start gap-2.5 pb-1">
+      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <div className="space-y-0.5">
+        <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{title}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  );
+}
 
 interface FeaturedMedia {
   url: string;
   altText: string | null;
-  width: number | null;
-  height: number | null;
 }
 
 export function SEOStep() {
-  const { formData, updateField, clients, categories, authors, tags } = useArticleForm();
+  const { formData, updateField, clients, articleId } = useArticleForm();
+  const { toast } = useToast();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
-  const [previewsOpen, setPreviewsOpen] = useState(true);
+  const [keywordInput, setKeywordInput] = useState('');
+  const [citationInput, setCitationInput] = useState('');
+  const [isExtracting, setIsExtracting] = useState(false);
 
-  // Fetch featured image metadata
   useEffect(() => {
     const fetchMedia = async () => {
       if (!formData.featuredImageId || !formData.clientId) {
@@ -47,14 +74,7 @@ export function SEOStep() {
       try {
         const media = await getMediaById(formData.featuredImageId, formData.clientId);
         if (media) {
-          setFeaturedMedia({
-            url: media.url,
-            altText: media.altText,
-            width: media.width,
-            height: media.height,
-          });
-        } else {
-          setFeaturedMedia(null);
+          setFeaturedMedia({ url: media.url, altText: media.altText });
         }
       } catch {
         setFeaturedMedia(null);
@@ -63,208 +83,370 @@ export function SEOStep() {
     fetchMedia();
   }, [formData.featuredImageId, formData.clientId]);
 
-  // Resolve effective values
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
-
-  const normalizeUrl = (url: string | undefined, fallback: string): string => {
-    if (!url) return `${siteUrl}${fallback}`;
-    if (url.startsWith(siteUrl)) return url;
-    try {
-      const urlObj = new URL(url);
-      const path = urlObj.pathname + urlObj.search + urlObj.hash;
-      return `${siteUrl}${path}`;
-    } catch {
-      const cleanPath = url.startsWith('/') ? url : `/${url}`;
-      return `${siteUrl}${cleanPath}`;
-    }
-  };
-
   const effectiveTitle = formData.seoTitle || formData.title || '';
   const effectiveDescription = formData.seoDescription || formData.excerpt || '';
-  const effectiveCanonical = normalizeUrl(formData.canonicalUrl, `/articles/${formData.slug}`);
+  const effectiveCanonical = formData.canonicalUrl || `${siteUrl}/articles/${formData.slug}`;
   const selectedClient = clients.find((c) => c.id === formData.clientId);
-  const selectedCategory = categories.find((c) => c.id === formData.categoryId);
-  const selectedAuthor = authors.find((a) => a.id === formData.authorId);
-  const selectedTagNames = useMemo(() => {
-    if (!formData.tags || formData.tags.length === 0) return [];
-    return tags.filter((t) => formData.tags?.includes(t.id)).map((t) => t.name);
-  }, [formData.tags, tags]);
+  const hasPreviewData = effectiveTitle && effectiveDescription;
 
-  // Build Open Graph metadata
-  const openGraphMeta = useMemo(() => {
-    const ogUrl = normalizeUrl(formData.canonicalUrl, `/articles/${formData.slug}`);
-    const og: Record<string, unknown> = {
-      type: formData.ogType || 'article',
-      title: formData.ogTitle || effectiveTitle,
-      description: formData.ogDescription || effectiveDescription,
-      url: ogUrl,
-      siteName: formData.ogSiteName || selectedClient?.name || SITE_NAME,
-      locale: formData.ogLocale || formData.inLanguage || 'ar_SA',
-    };
+  const keywords = formData.seoKeywords ?? [];
+  const citations = formData.citations ?? [];
 
-    if (og.type === 'article') {
-      if (formData.ogArticlePublishedTime) {
-        og.publishedTime = new Date(formData.ogArticlePublishedTime).toISOString();
-      } else if (formData.datePublished) {
-        og.publishedTime = new Date(formData.datePublished).toISOString();
-      } else if (formData.scheduledAt) {
-        og.publishedTime = new Date(formData.scheduledAt).toISOString();
-      }
+  const addKeyword = useCallback(() => {
+    const trimmed = keywordInput.trim();
+    if (!trimmed) return;
+    if (keywords.some((k) => k.toLowerCase() === trimmed.toLowerCase())) return;
+    updateField('seoKeywords', [...keywords, trimmed]);
+    setKeywordInput('');
+  }, [keywordInput, keywords, updateField]);
 
-      if (formData.ogArticleModifiedTime) {
-        og.modifiedTime = new Date(formData.ogArticleModifiedTime).toISOString();
-      } else {
-        og.modifiedTime = new Date().toISOString();
-      }
+  const removeKeyword = useCallback(
+    (idx: number) => {
+      updateField(
+        'seoKeywords',
+        keywords.filter((_, i) => i !== idx),
+      );
+    },
+    [keywords, updateField],
+  );
 
-      if (formData.ogArticleAuthor || selectedAuthor?.name) {
-        og.authors = [formData.ogArticleAuthor || selectedAuthor?.name || ''];
-      }
+  const addCitation = useCallback(() => {
+    const trimmed = citationInput.trim();
+    if (!trimmed) return;
+    if (citations.some((c) => c.trim() === trimmed)) return;
+    updateField('citations', [...citations, trimmed]);
+    setCitationInput('');
+  }, [citationInput, citations, updateField]);
 
-      if (formData.ogArticleSection || selectedCategory?.name) {
-        og.section = formData.ogArticleSection || selectedCategory?.name || '';
-      }
+  const removeCitation = useCallback(
+    (idx: number) => {
+      updateField(
+        'citations',
+        citations.filter((_, i) => i !== idx),
+      );
+    },
+    [citations, updateField],
+  );
 
-      if (formData.ogArticleTag && formData.ogArticleTag.length > 0) {
-        og.tags = formData.ogArticleTag;
-      } else if (selectedTagNames.length > 0) {
-        og.tags = selectedTagNames;
-      }
+  const extractAuthSources = useCallback(() => {
+    if (!formData.content) {
+      toast({
+        title: messages.error.operation_failed,
+        description: messages.descriptions.article_content_required,
+        variant: 'destructive',
+      });
+      return;
     }
-
-    if (featuredMedia?.url) {
-      og.images = [{
-        url: featuredMedia.url,
-        width: featuredMedia.width || 1200,
-        height: featuredMedia.height || 630,
-        alt: featuredMedia.altText || effectiveTitle,
-      }];
+    setIsExtracting(true);
+    try {
+      const links = extractLinksFromContent(formData.content);
+      const auth = links.filter((l) => l.isAuthoritative && l.isExternal).map((l) => l.url);
+      const existing = new Set(citations);
+      const newOnes = auth.filter((url) => !existing.has(url));
+      if (newOnes.length === 0) {
+        toast({
+          title: messages.success.success,
+          description:
+            auth.length > 0 ? 'تم إضافة جميع المصادر الموثوقة مسبقاً' : 'لا توجد مصادر موثوقة في المحتوى',
+        });
+        return;
+      }
+      updateField('citations', [...citations, ...newOnes]);
+      const dups = auth.length - newOnes.length;
+      toast({
+        title: messages.success.updated,
+        description: `تمت إضافة ${newOnes.length} مصدر${dups > 0 ? ` • تم تخطي ${dups} مكرر` : ''}`,
+      });
+    } catch {
+      toast({
+        title: messages.error.server_error,
+        description: messages.descriptions.citations_error,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsExtracting(false);
     }
+  }, [formData.content, citations, updateField, toast]);
 
-    return og;
-  }, [formData, effectiveTitle, effectiveDescription, selectedClient, selectedCategory, selectedAuthor, selectedTagNames, featuredMedia]);
-
-  // Build Twitter metadata
-  const twitterMeta = useMemo(() => ({
-    card: formData.twitterCard || 'summary_large_image',
-    title: effectiveTitle,
-    description: effectiveDescription,
-    site: formData.twitterSite || undefined,
-    creator: formData.twitterCreator || selectedAuthor?.name || undefined,
-    images: featuredMedia?.url ? [featuredMedia.url] : undefined,
-    label1: undefined,
-    data1: undefined,
-  }), [formData, effectiveTitle, effectiveDescription, selectedAuthor, featuredMedia]);
-
-  const hasRequiredData = effectiveTitle && effectiveDescription;
+  const titleLen = (formData.seoTitle || '').length;
+  const descLen = (formData.seoDescription || '').length;
 
   return (
-    <div className="space-y-4">
-      <TechnicalSEOGuidance />
-      <TechnicalSection />
+    <div className="space-y-6">
+      {/* ─────────────────────────────────────────────
+          SECTION 1 — SEO الأساسي + Search Preview
+          ───────────────────────────────────────────── */}
+      <Card>
+        <CardContent className="space-y-6 pt-6">
+          <SectionHeader
+            icon={Tag}
+            title="SEO الأساسي"
+            description="ما يظهر في صفحات نتائج البحث ومنصات التواصل"
+          />
 
-      {/* Search & Social Previews */}
-      <Collapsible open={previewsOpen} onOpenChange={setPreviewsOpen}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Search className="h-5 w-5" />
-                  Search & Social Previews
-                </CardTitle>
-                <ChevronDown className={cn("h-5 w-5 transition-transform", previewsOpen && "rotate-180")} />
+          <div className="space-y-2">
+            <Label htmlFor="seoTitle">SEO Title</Label>
+            <Input
+              id="seoTitle"
+              value={formData.seoTitle || ''}
+              onChange={(e) => updateField('seoTitle', e.target.value)}
+              placeholder="عنوان محسّن لمحركات البحث (50–60 حرف)"
+              maxLength={60}
+            />
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-muted-foreground">
+                النطاق الأمثل: 50–60 حرف — معيار Google + Semrush
+              </p>
+              <CharacterCounter current={titleLen} max={60} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="seoDescription">SEO Description</Label>
+            <Textarea
+              id="seoDescription"
+              value={formData.seoDescription || ''}
+              onChange={(e) => updateField('seoDescription', e.target.value)}
+              placeholder="وصف محسّن لمحركات البحث (120–160 حرف)"
+              rows={3}
+              maxLength={160}
+            />
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-muted-foreground">
+                النطاق الأمثل: 120–160 حرف
+              </p>
+              <CharacterCounter current={descLen} max={160} />
+            </div>
+          </div>
+
+          {/* Inline Search Preview */}
+          <div className="border-t pt-6 space-y-3">
+            <Label className="text-sm font-medium">Search Preview</Label>
+            {!hasPreviewData ? (
+              <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+                <p className="text-xs text-muted-foreground">
+                  أضف عنوان ووصف SEO أعلاه لرؤية المعاينة
+                </p>
               </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent className="space-y-6">
-              {!hasRequiredData ? (
-                <div className="flex items-center gap-2 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                  <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                  <span className="text-sm text-amber-900 dark:text-amber-100">
-                    Add SEO title and description in Meta Tags step to see previews
-                  </span>
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {/* Google */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold flex items-center gap-1.5 text-muted-foreground">
+                    <Globe className="h-3 w-3" /> Google
+                  </p>
+                  <div className="border rounded-lg p-3 space-y-1 bg-background">
+                    <div className="text-[10px] text-emerald-700 dark:text-emerald-400 truncate">
+                      {effectiveCanonical}
+                    </div>
+                    <div className="text-sm text-blue-600 dark:text-blue-400 font-medium line-clamp-1">
+                      {effectiveTitle}
+                    </div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">
+                      {effectiveDescription}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-3">
-                  {/* Google Preview */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold flex items-center gap-2">
-                      <Globe className="h-4 w-4" /> Google
-                    </h4>
-                    <div className="border rounded-lg p-3 space-y-1">
-                      <div className="text-xs text-green-700 dark:text-green-400 truncate">{effectiveCanonical}</div>
-                      <div className="text-sm text-blue-600 dark:text-blue-400 font-medium line-clamp-1 hover:underline cursor-pointer">
-                        {effectiveTitle}
+                {/* Social */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold flex items-center gap-1.5 text-muted-foreground">
+                    <Globe className="h-3 w-3" /> Social (Open Graph)
+                  </p>
+                  <div className="border rounded-lg overflow-hidden bg-background">
+                    {featuredMedia?.url ? (
+                      <div className="relative aspect-video">
+                        <Image
+                          src={featuredMedia.url}
+                          alt={effectiveTitle}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 400px"
+                        />
                       </div>
-                      <div className="text-xs text-muted-foreground line-clamp-2">{effectiveDescription}</div>
-                    </div>
-                  </div>
-
-                  {/* Facebook Preview */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold flex items-center gap-2">
-                      <Globe className="h-4 w-4" /> Facebook
-                    </h4>
-                    <div className="border rounded-lg overflow-hidden">
-                      {featuredMedia?.url ? (
-                        <div className="relative aspect-video">
-                          <Image src={featuredMedia.url} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
-                        </div>
-                      ) : (
-                        <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
-                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
-                      <div className="p-2 space-y-1">
-                        <div className="text-[10px] text-muted-foreground uppercase">{openGraphMeta.siteName as string}</div>
-                        <div className="text-xs font-semibold line-clamp-1">{effectiveTitle}</div>
-                        <div className="text-[10px] text-muted-foreground line-clamp-1">{effectiveDescription}</div>
+                    ) : (
+                      <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Twitter Preview */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold flex items-center gap-2">
-                      <Twitter className="h-4 w-4" /> Twitter
-                    </h4>
-                    <div className="border rounded-lg overflow-hidden">
-                      {featuredMedia?.url ? (
-                        <div className="relative aspect-video">
-                          <Image src={featuredMedia.url} alt={effectiveTitle} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
-                        </div>
-                      ) : (
-                        <div className="w-full aspect-video bg-muted/50 flex items-center justify-center">
-                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
-                      <div className="p-2 space-y-1">
-                        <div className="text-xs font-semibold line-clamp-1">{twitterMeta.title}</div>
-                        <div className="text-[10px] text-muted-foreground line-clamp-1">{twitterMeta.description}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{effectiveCanonical}</div>
+                    )}
+                    <div className="p-2 space-y-0.5">
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                        {selectedClient?.name || SITE_NAME}
+                      </div>
+                      <div className="text-xs font-semibold line-clamp-1">{effectiveTitle}</div>
+                      <div className="text-[10px] text-muted-foreground line-clamp-1">
+                        {effectiveDescription}
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ─────────────────────────────────────────────
+          SECTION 2 — كلمات ومصادر
+          ───────────────────────────────────────────── */}
+      <Card>
+        <CardContent className="space-y-6 pt-6">
+          <SectionHeader
+            icon={Hash}
+            title="كلمات ومصادر"
+            description="الكلمات المفتاحية ومصادر E-E-A-T الموثوقة"
+          />
+
+          {/* Keywords */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label>SEO Keywords</Label>
+              {keywords.length > 0 && (
+                <Badge variant="outline" className="font-mono text-xs">
+                  {keywords.length}
+                </Badge>
               )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              الكلمات المفتاحية التي يقوم عليها المقال
+            </p>
+            <div className="flex gap-2">
+              <Input
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())}
+                placeholder="أضف كلمة مفتاحية..."
+                className="flex-1"
+              />
+              <Button type="button" variant="outline" size="sm" onClick={addKeyword} className="shrink-0 gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+            </div>
+            {keywords.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {keywords.map((kw, i) => (
+                  <Badge
+                    key={`${kw}-${i}`}
+                    variant="secondary"
+                    className="ps-2.5 pe-1 py-1 text-sm font-medium flex items-center gap-1.5"
+                  >
+                    <span>{kw}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeKeyword(i)}
+                      className="rounded-full p-0.5 hover:bg-muted-foreground/20"
+                      aria-label={`Remove ${kw}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
 
-              {!featuredMedia?.url && hasRequiredData && (
-                <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-dashed">
-                  <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Add a featured image in Media step for better social sharing
-                  </span>
-                </div>
+          <div className="border-t" />
+
+          {/* Citations */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label>Citations (E-E-A-T)</Label>
+              {citations.length > 0 && (
+                <Badge variant="outline" className="font-mono text-xs">
+                  {citations.length}
+                </Badge>
               )}
-            </CardContent>
-          </CollapsibleContent>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              روابط مصادر خارجية موثوقة — تعزّز E-E-A-T
+            </p>
+            <div className="flex gap-2">
+              <Input
+                value={citationInput}
+                onChange={(e) => setCitationInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCitation())}
+                placeholder="https://..."
+                className="flex-1"
+              />
+              <Button type="button" variant="outline" size="sm" onClick={addCitation} className="shrink-0 gap-1.5">
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={extractAuthSources}
+                disabled={isExtracting || !formData.content}
+                className="shrink-0 gap-1.5"
+              >
+                {isExtracting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
+                Extract
+              </Button>
+            </div>
+            {citations.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {citations.map((url, i) => (
+                  <Badge
+                    key={`${url}-${i}`}
+                    variant="secondary"
+                    className="ps-2.5 pe-1 py-1 text-sm font-medium flex items-center gap-1.5"
+                  >
+                    <span className="truncate max-w-[240px]">{url}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeCitation(i)}
+                      className="rounded-full p-0.5 hover:bg-muted-foreground/20"
+                      aria-label={`Remove ${url}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ─────────────────────────────────────────────
+          SECTION 3 — Health Score (always visible)
+          ───────────────────────────────────────────── */}
+      <TechnicalSEOGuidance />
+
+      {/* ─────────────────────────────────────────────
+          SECTION 4 — رابط للمراجعة التقنية المتقدّمة
+          ───────────────────────────────────────────── */}
+      {articleId && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                  <Wrench className="h-3.5 w-3.5" />
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                    المراجعة التقنية والـ Schema
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-md">
+                    Canonical · Robots · Open Graph · Twitter · Semantic Keywords · JSON-LD —
+                    صفحة dedicated للمراجعة التقنية بعد الانتهاء من الكتابة.
+                  </p>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="gap-2 shrink-0">
+                <Link href={`/articles/${articleId}/technical`} target="_blank" rel="noopener noreferrer">
+                  <Wrench className="h-3.5 w-3.5" />
+                  <span>فتح المراجعة التقنية</span>
+                  <ExternalLink className="h-3 w-3 opacity-60" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
         </Card>
-      </Collapsible>
-
-      {/* Social Media */}
-      <SocialSection />
+      )}
     </div>
   );
 }

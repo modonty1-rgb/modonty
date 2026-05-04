@@ -43,13 +43,20 @@ export function generateSEODescription(
 
 /**
  * Generate canonical URL for article. Always siteUrl/articles/{slug} (no /clients/ in path).
+ *
+ * Priority for siteUrl:
+ *   1. baseUrl param (from server-loaded Settings.siteUrl — preferred)
+ *   2. NEXT_PUBLIC_SITE_URL env var
+ *   3. Hardcoded `https://www.modonty.com` (matches live deployment — WITH www)
+ *
+ * Server callers should pass `baseUrl` from `loadSiteUrl()` (lib/seo/site-url).
  */
 export function generateCanonicalUrl(
   slug: string,
   baseUrl?: string,
   _clientSlug?: string
 ): string {
-  const siteUrl = baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   return `${siteUrl}/articles/${slug}`;
 }
 
@@ -58,7 +65,7 @@ export function normalizeArticleCanonicalForForm(
   canonicalUrl: string | null | undefined,
   slug: string
 ): string | undefined {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   if (!canonicalUrl?.trim()) return undefined;
   if (canonicalUrl.includes("/clients/")) return `${siteUrl}/articles/${slug}`;
   return canonicalUrl.trim();

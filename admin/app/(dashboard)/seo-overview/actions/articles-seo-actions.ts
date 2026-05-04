@@ -16,6 +16,7 @@ import {
 } from "@/app/(dashboard)/articles/helpers/seo-helpers";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 export interface ArticleSeoHealth {
@@ -142,6 +143,8 @@ export async function bulkFixArticleSeo(articleIds: string[]): Promise<{ success
   if (!session) return { success: false, results: [] };
 
   const results: BulkFixResult[] = [];
+  // Fetch siteUrl once for the whole batch (Settings.siteUrl > env > hardcoded)
+  const baseUrl = await loadSiteUrl();
 
   for (const articleId of articleIds) {
     try {
@@ -166,7 +169,7 @@ export async function bulkFixArticleSeo(articleIds: string[]): Promise<{ success
       const seoTitle = article.seoTitle?.trim() ? article.seoTitle : generateSEOTitle(article.title, article.client?.name);
       const seoDescription = article.seoDescription?.trim() ? article.seoDescription : generateSEODescription(article.excerpt || "");
       const canonicalUrl = !article.canonicalUrl?.trim() || article.canonicalUrl.includes("/clients/")
-        ? generateCanonicalUrl(article.slug)
+        ? generateCanonicalUrl(article.slug, baseUrl)
         : article.canonicalUrl;
       const metaRobots = article.status === "PUBLISHED" ? "index, follow" : "noindex, follow";
       const sitemapPriority = article.featured ? 0.8 : 0.5;

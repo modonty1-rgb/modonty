@@ -37,6 +37,7 @@ interface ArticleSelectionTableProps {
   defaultTagIds?: string[];
   relatedArticles?: RelatedArticleInfo[];
   onRelationshipTypeChange?: (relatedId: string, type: 'related' | 'similar' | 'recommended') => void;
+  maxArticles?: number;
 }
 
 export function ArticleSelectionTable({
@@ -53,6 +54,7 @@ export function ArticleSelectionTable({
   defaultTagIds = [],
   relatedArticles = [],
   onRelationshipTypeChange,
+  maxArticles,
 }: ArticleSelectionTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(defaultCategoryId);
@@ -86,16 +88,26 @@ export function ArticleSelectionTable({
     onTagFilterChange?.(newTagIds);
   };
 
+  const isAtMax =
+    typeof maxArticles === 'number' && selectedArticleIds.length >= maxArticles;
+
   const handleSelectAll = () => {
     if (selectedArticleIds.length === articles.length) {
       onSelectionChange([]);
     } else {
-      onSelectionChange(articles.map((a) => a.id));
+      // Cap to maxArticles when set
+      const target =
+        typeof maxArticles === 'number'
+          ? articles.slice(0, maxArticles).map((a) => a.id)
+          : articles.map((a) => a.id);
+      onSelectionChange(target);
     }
   };
 
   const handleSelectOne = (articleId: string, checked: boolean) => {
     if (checked) {
+      // Block adding new ones at max
+      if (isAtMax && !selectedArticleIds.includes(articleId)) return;
       onSelectionChange([...selectedArticleIds, articleId]);
     } else {
       onSelectionChange(selectedArticleIds.filter((id) => id !== articleId));
@@ -252,13 +264,21 @@ export function ArticleSelectionTable({
       )}
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-xs text-muted-foreground">
           {selectedArticleIds.length > 0 && (
-            <span>{selectedArticleIds.length} articles selected</span>
+            <span>
+              {selectedArticleIds.length} مختار
+              {typeof maxArticles === 'number' && ` من ${maxArticles}`}
+            </span>
           )}
         </div>
         {articles.length > 0 && (
-          <Button variant="outline" size="sm" onClick={handleSelectAll}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSelectAll}
+            disabled={isAtMax && !isAllSelected}
+          >
             {isAllSelected ? 'Deselect All' : 'Select All'}
           </Button>
         )}
@@ -313,8 +333,10 @@ export function ArticleSelectionTable({
                       <input
                         type="checkbox"
                         checked={isSelected}
+                        disabled={isAtMax && !isSelected}
                         onChange={(e) => handleSelectOne(article.id, e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300"
+                        className="h-4 w-4 rounded border-gray-300 disabled:cursor-not-allowed disabled:opacity-40"
+                        title={isAtMax && !isSelected ? `وصلت للحد الأقصى (${maxArticles})` : undefined}
                       />
                     </TableCell>
                     <TableCell className="font-medium">
@@ -410,7 +432,10 @@ export function ArticleSelectionTable({
                         <Link
                           href={`/articles/${article.id}`}
                           target="_blank"
-                          className="text-muted-foreground hover:text-primary"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary inline-flex items-center justify-center h-7 w-7 rounded-md hover:bg-muted transition-colors"
+                          title="معاينة المقال في tab جديد"
+                          aria-label="معاينة المقال في tab جديد"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Link>

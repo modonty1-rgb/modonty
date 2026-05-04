@@ -78,7 +78,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
   const previewEditor = useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ heading: false }),
+      StarterKit.configure({ heading: false, link: false, underline: false }),
       Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
       Link.configure({ openOnClick: false }),
       Image,

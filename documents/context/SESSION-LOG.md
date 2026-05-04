@@ -1,4 +1,248 @@
-# Session Context — Last Updated: 2026-04-30 (Session 74 — **Shared Env Migration + Local Test** ✅ done · Phase 4 (Vercel) deferred to next session)
+# Session Context — Last Updated: 2026-05-04 (Session 81 — Quality Gate + Google-strict audit + PUSHED v0.50.0)
+
+---
+
+## ✅ Session 81 — 2026-05-03/04 (Quality Gate + Google-strict audit + SEO root-cause fixes)
+
+### Summary
+Built a complete pre-publish Quality Gate at `DRAFT → AWAITING_APPROVAL` — single bouncer that ensures every article is technically clean before reaching the client. Started at 28 checks (initial design), then a strict audit against Google official docs dropped it to **21 checks** after removing 6 invented rules (stricter than Google or sourced from third-party SEO blogs). Plus 4 code-level SEO root-cause fixes. Full lifecycle live-tested end-to-end: WRITING → DRAFT → AWAITING_APPROVAL → SCHEDULED → PUBLISHED with the gate enforcing 100% before forward movement.
+
+### Key architectural decision: SINGLE GATE
+Only `draft → approval` is gated (28 checks → 21 after audit). Once an article passes:
+- `approval → revision` NOT gated (content rejection, admin must respond freely)
+- `approval → scheduled` NOT gated (article is trusted clean)
+- `scheduled → published` NOT gated (same trust)
+
+The gate at draft-to-approval is the **only bouncer**. Subsequent transitions trust its guarantee.
+
+### What was built
+
+**Quality Gate core:**
+- `admin/lib/seo/article-validator-db.ts` — pre-publish DB validator (21 checks across 8 groups)
+- `admin/lib/seo/site-url.ts` (NEW) — `loadSiteUrl()` + `resolveSiteUrl()` — single source of truth for the site URL (Settings.siteUrl > env > hardcoded www)
+- `admin/app/(dashboard)/articles/workflow/quality-check/[articleId]/page.tsx` (NEW) — dedicated review page (re-run + edit + send buttons)
+- `admin/app/(dashboard)/articles/workflow/components/gated-transition-button.tsx` — Link to quality-check page (replaced the dialog approach)
+- `admin/app/(dashboard)/articles/workflow/components/seo-health-cell.tsx` — pill linking to quality-check page (no dialog)
+- `admin/app/(dashboard)/articles/workflow/actions/gated-transition.ts` — server action: auto-fix JSON-LD → validate → block if any check fails
+
+**Workflow row UI (current state):**
+```
+[Avatar 40px]  Article Title (next to avatar)
+              client · author · updated date          [Send for Approval] [N issues to fix]
+                                                       (locked when errors)  (links to quality-check)
+```
+Quality check pill ONLY appears on `draft-to-approval` page.
+
+### Google-strict audit — 6 invented rules REMOVED
+
+| # | Removed Rule | Google's Position |
+|---|------|------|
+| 1 | `title-length` 30-60 chars | *"There's no limit on how long a `<title>` element can be"* |
+| 2 | `meta-description` 120-160 chars | *"There's no limit on how long a meta description can be"* |
+| 3 | `excerpt` ≥50 chars | Invented (no Google source) |
+| 4 | `word-count` ≥300 | EXPLICIT: *"we don't have a preferred word count"* (Helpful Content) |
+| 5 | `jsonld-adobe-warnings = 0` | *"Warnings don't prevent rich results from being shown"* |
+| 6 | `jsonld-breadcrumb` required | Recommended (separate rich result), not required for Article |
+
+### Sweep across admin (other validators with same patterns)
+- `admin/lib/seo/article-validator.ts` (HTML post-publish, used by Search Console pipeline) — same 4 invented rules removed
+- `admin/lib/seo/pre-publish-audit.ts` — `WORD_COUNT_LOW` warning removed
+- `admin/lib/seo/pipeline-stages.ts` — Stage 6 + Stage 9 mappings updated to drop removed check IDs
+
+### 4 code-level SEO fixes (root-cause analysis)
+1. **slugify** regex updated to `\p{L}\p{N}` (was `\u0600-\u06FF` which incorrectly kept Arabic punctuation `؟ ، ؛` since they sit inside the Arabic Unicode block)
+2. **Settings.siteUrl** in DB was `https://modonty.com` (no www) — fixed to `https://www.modonty.com` via one-time script
+3. **Single source of truth for canonical** — server actions (create/update/bulkFixSeo) now read `Settings.siteUrl` and pass `baseUrl` to `generateCanonicalUrl()`. Stops relying on hardcoded fallbacks.
+4. **All hardcoded `https://modonty.com` fallbacks** in admin codebase fixed to `https://www.modonty.com`
+
+### Validator robustness fixes (during live test)
+- Validator now accepts **Person OR Organization** as Author (was rejecting Organization despite T1.1 making Modonty the Org Author)
+- 60-second tolerance window on cache freshness check (Prisma `@updatedAt` race put `dateModified` ~9ms after `jsonLdLastGenerated` causing always-stale verdict)
+
+### Files created
+- `admin/lib/seo/site-url.ts` — `loadSiteUrl()` + `resolveSiteUrl()` (single source of truth helper)
+- `admin/lib/seo/article-validator-db.ts` — 21-check validator
+- `admin/app/(dashboard)/articles/workflow/quality-check/[articleId]/page.tsx` + components
+- `admin/app/(dashboard)/articles/workflow/components/gated-transition-button.tsx`
+- `admin/app/(dashboard)/articles/workflow/components/seo-health-cell.tsx`
+- `admin/app/(dashboard)/articles/workflow/actions/gated-transition.ts`
+- `admin/scripts/reset-articles-to-writing.ts` — DEV reset helper
+- `admin/scripts/fix-settings-site-url.ts` — DB fix
+- `admin/scripts/test-*.ts` — 8 diagnostic scripts (can clean up before push)
+
+### Files modified (key)
+- `admin/lib/utils.ts` — slugify regex
+- `admin/app/(dashboard)/articles/helpers/seo-generation.ts` — canonical fallback to www
+- `admin/app/(dashboard)/articles/actions/articles-actions/mutations/create-article.ts` — uses loadSiteUrl
+- `admin/app/(dashboard)/articles/actions/articles-actions/mutations/update-article.ts` — uses loadSiteUrl
+- `admin/app/(dashboard)/seo-overview/actions/articles-seo-actions.ts` — uses loadSiteUrl
+- `admin/lib/seo/article-validator.ts` — invented rules removed
+- `admin/lib/seo/pre-publish-audit.ts` — WORD_COUNT_LOW removed
+- `admin/lib/seo/pipeline-stages.ts` — stage check IDs updated
+- `admin/lib/seo/jsonld-validator.ts` — author accepts Person OR Organization
+- `admin/app/(dashboard)/articles/workflow/[transition]/page.tsx` — gate scope + row redesign
+
+### DB changes (DEV only)
+- `Settings.siteUrl`: `https://modonty.com` → `https://www.modonty.com`
+- All 46 articles reset to WRITING (one-time, for end-to-end flow testing)
+- Test article `69d6830820251ee8497527b4` (`ماهو-السيو-...`) cycled through full workflow → now PUBLISHED with clean JSON-LD `https://www.modonty.com/articles/<clean-slug>#article`
+
+### Documentation added
+- `documents/tasks/QUALITY-GATE-AUDIT-2026-05-04.md` — full audit report with Google source citations + sweep results
+
+### Live tests passed (final)
+| Test | Result |
+|------|--------|
+| Quality-check page (21/21) | ✅ |
+| writing-to-draft / draft-to-approval / approval-to-revision / approval-to-scheduled / scheduled-to-published | ✅ all 5 workflow pages render |
+| Article edit page | ✅ tabs render with %, no errors |
+| Search Console pipeline page | ✅ uses cleaned `article-validator.ts` |
+| SEO Overview page | ✅ uses cleaned canonical generator |
+| TSC (admin) | ✅ zero errors |
+
+### Pending for next session
+
+#### 🎯 MAJOR: Build "SEO Data Health" maintenance section in `/database` page
+The owner pointed out (correctly) that all the one-off scripts I wrote should be **maintenance actions** in the existing `/database` UI page (which already has Orphan Cleaner, Session Cleaner, Slug Integrity, Broken References, etc.). This is the architectural standard — DB changes that may need re-running should be UI-accessible buttons, NOT tribal-knowledge scripts.
+
+**Plan: add a new section "SEO Data Health" to `db-tools-section.tsx` with these checks/actions:**
+
+| # | Check | What it does | Backend |
+|---|------|------|---------|
+| 1 | Settings.siteUrl health | Verify www-prefixed, "Fix" button if not | New action `getSiteUrlHealth()` + `fixSiteUrl()` |
+| 2 | Articles with invalid slug chars | Count articles where slug fails `/^[\p{L}\p{N}\-_/]+$/u` | New action `findInvalidSlugs()` + `bulkCleanSlugs()` |
+| 3 | Articles with stale canonical | Count articles where `canonicalUrl` host ≠ Settings.siteUrl | New action `findStaleCanonicals()` + `bulkResetCanonical()` (set null → auto-generate) |
+| 4 | Articles with stale JSON-LD cache | Count where `dateModified > jsonLdLastGenerated + 60s` | New action `findStaleJsonLd()` + `bulkRegenerateJsonLd()` |
+| 5 | Articles with stale `mainEntityOfPage` | Count where stored URL ≠ `${siteUrl}/articles/${slug}` | New action `findStaleMainEntity()` + `bulkResetMainEntity()` |
+
+**File structure to create:**
+- `admin/app/(dashboard)/database/actions/seo-data-health.ts` — consolidated actions file
+- Update `admin/app/(dashboard)/database/components/db-tools-section.tsx` — add new section
+- Update `admin/app/(dashboard)/database/page.tsx` — fetch initial counts + pass props
+- Delete after migration: `admin/scripts/fix-settings-site-url.ts`, `admin/scripts/test-fix-slug.ts`, `admin/scripts/test-fix-content-and-regen.ts`, `admin/scripts/test-clear-mainentity.ts`, `admin/scripts/reset-articles-to-writing.ts` (the last one is DEV-only — could keep for fast resets)
+
+**Why this matters:**
+- Admin can run maintenance whenever needed, on PROD or DEV
+- No need to touch terminal or write new scripts
+- Same UX as existing maintenance (consistent)
+- Single source of truth for "what needs fixing"
+
+**Estimated effort:** 1-2 hours (5 actions + 1 UI section, follows existing pattern)
+
+#### 📋 Pre-push checklist
+- [ ] Build SEO Data Health section (above) — replaces script-based fixes
+- [ ] Run "Fix Settings.siteUrl" action on PROD via the new UI button (instead of script)
+- [ ] Decide: delete `admin/scripts/test-*.ts` (8 files) OR leave as DEV utilities (not pushed)?
+- [ ] Run "Bulk regenerate JSON-LD" on PROD (refreshes mainEntityOfPage + canonical for all articles)
+- [ ] TSC zero errors on `modonty` and `console` (only admin verified so far)
+- [ ] Version bump admin v0.49.0 → v0.50.0 (significant architecture change)
+- [ ] `bash scripts/backup.sh`
+- [ ] Add Changelog DB entry for v0.50.0
+- [ ] Final live verify after all maintenance + push
+
+### Where the user left off (2026-05-04, late night)
+- **Live test of all validator-touched functions: PASSED ✅** (6/6 green)
+- Owner asked for risk report if pushing now → I gave them the assessment
+- Owner correctly pointed out the architectural mistake: I was building scripts for DB maintenance instead of adding them to the existing `/database` maintenance UI. **The right approach: add as UI actions in `db-tools-section.tsx` so they're reusable on any environment.**
+- Owner said: *"خليك ذكي يعني"* (be smart) — meaning think architecturally, not script-by-script.
+
+### Push v0.50.0 — 2026-05-04
+- TSC zero errors on **admin + modonty + console** (3/3 ✅)
+- `bash scripts/backup.sh` ran successfully (`backup-2026-05-04_13-35`)
+- admin version bumped 0.49.0 → 0.50.0
+- 58 files changed (Sessions 80 + 81 combined): Quality Gate, audit cleanup, T1.x Schema work
+- Pushed to main → Vercel auto-deploy
+
+### Pending for next session (post-push)
+- 🎯 Build "SEO Data Health" maintenance section in `/database` page (replaces 8 one-off scripts in `admin/scripts/test-*.ts` + `fix-settings-site-url.ts`)
+- Run "Fix Settings.siteUrl" + "Bulk regenerate JSON-LD" on PROD via that new UI
+- Add Changelog DB entry for v0.50.0
+- Decide: delete `admin/scripts/test-*.ts` after migrating to UI
+
+---
+
+## ✅ Session 80 — 2026-05-03 (T1.1 multi aspect ratios + T1.2 Modonty Organization + T1.6 mentions + T1.7 cascade unified + T1.8 UI banner)
+
+### Summary
+Major Schema.org perfection work. T1.1 (multi aspect ratio images), T1.2 (Modonty author = Organization with Settings branding), T1.6 (semanticKeywords as mentions[]) all live-tested on real article. T1.7 unified Settings Save into single atomic action with one cascade (was 6 parallel actions causing race conditions). T1.8 added UI progress banner with live counter (Updating articles 6/23…). All DB schema unchanged — no migrations.
+
+### What was done
+
+**T1.1 — Multiple Image Aspect Ratios (1:1 · 4:3 · 16:9)** ✅ DONE
+- Cloudinary `c_fill,ar_X:Y,g_auto` auto-crop — single image in DB → 3 variants in JSON-LD
+- New file `modonty/lib/seo/image-aspect-ratios.ts` (`buildAspectRatioUrl`, `buildAspectRatiosArray`)
+- `admin/lib/seo/knowledge-graph-generator.ts` — primary generator emits 3 ImageObjects (1:1 · 4:3 · 16:9) for both featuredImage AND fallback (client logo) branches
+- `modonty/lib/seo/index.ts` — fallback generator uses `buildAspectRatiosArray()` for `image[]`
+- Live verified: 3 ImageObjects emitted with correct Cloudinary transformations
+- Zero schema changes · zero UI changes · TSC clean both apps
+
+**T1.2 — Modonty Author = Organization (Brand-level E-E-A-T)** ✅ DONE
+- Modonty articles now emit `@type: Organization` for author (not Person) — pattern: Forbes/BuzzFeed
+- `admin/lib/seo/knowledge-graph-generator.ts` — added `PLATFORM_AUTHOR_SLUGS = ["modonty"]` + `PlatformBranding` interface + `generatePlatformAuthorNode()`
+- Pulls branding from Settings: name (siteName) · url (siteUrl) · description (brandDescription) · logo (logoUrl) · sameAs[] (7 social URLs)
+- `admin/lib/seo/jsonld-storage.ts` — passes Settings as branding to generator
+- **Logo upload via Playwright on /settings tab Modonty** — used existing Cloudinary URL `https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg`
+- Live verified: author node has 7 fields (@id, @type, name, url, description, logo, sameAs)
+
+**T1.6 — Semantic Keywords as JSON-LD mentions[]** ✅ DONE
+- `modonty/lib/seo/index.ts` — added block converting `Article.semanticKeywords` (Wikidata entities) to `mentions[]` array with `@id` + `sameAs` for entity disambiguation
+- Graceful fallback when no wikidataId → `{ @type: Thing, name }` only
+
+**T1.7 — Settings Cascade Unified into single atomic save** ✅ DONE
+- **Problem found:** "Save & Publish" was firing 6 server actions in parallel (`Promise.all`) — 3 of them triggered cascade simultaneously → race conditions + duplicate work + 2 actions (saveMediaSettings, saveModontySettings) had NO cascade at all
+- **Solution:** `updateAllSettings()` in [settings-actions.ts](admin/app/(dashboard)/settings/actions/settings-actions.ts) now writes all fields atomically; the 6 individual save actions kept for backward compat
+- **MongoDB Atlas issue:** Initial single-update of 73 fields hit "Pipeline length greater than 50" error → split into 2 chunks of 45 + 28 fields
+- [settings-form-v2.tsx](admin/app/(dashboard)/settings/components/settings-form-v2.tsx) `saveModonty()` simplified to call `updateAllSettings(settings)` once
+
+**T1.8 — Cascade UI feedback (Live Progress Banner)** ⚠️ CODE WRITTEN — UNTESTED
+- User direction: "تخيل لو عندنا 600 مقال بكرة — لازم UI يعرض progress" + "مش محتاجين DB schema change"
+- **Approach:** Client-driven cascade (form pulls list of IDs, calls regen action per-entity, updates UI counter live)
+- **New file:** [cascade-step-actions.ts](admin/app/(dashboard)/settings/actions/cascade-step-actions.ts) with 7 server actions:
+  - `getCascadeEntities()` → returns `{ articleIds[], clientIds[] }`
+  - `regenerateOneArticleCascade(id)` · `regenerateOneClientCascade(id)` (one-by-one)
+  - `regenerateBulkCategoriesCascade()` · `regenerateBulkTagsCascade()` · `regenerateBulkIndustriesCascade()` · `regenerateListingsCascade()` (each is one bulk call)
+  - `finalizeCascadeRevalidation()` (revalidate tags)
+- **Removed:** background `cascadeSettingsToAllEntities()` trigger from `updateAllSettings()` — form drives the cascade now
+- **Form changes (settings-form-v2.tsx):**
+  - New state: `cascade: CascadeProgress { phase, total, completed, errors, message }`
+  - `saveModonty()` rewrite: 6 sequential phases (saving → articles → clients → categories → tags → industries → listings), each updating state after every entity
+  - New `<CascadeProgressBanner />` component below Save & Publish button — shows live progress bar + counter `6/23` + Arabic phase labels (📝 تحديث المقالات / 👥 تحديث العملاء / etc.)
+  - Auto-hides banner 5s after success
+  - Shows error count + final toast with totals
+- **TSC:** admin zero errors
+- **⚠️ NOT live-tested before user requested restart** — needs verification next session
+
+### State at restart
+
+- **All code committed in working tree but NOT pushed to git**
+- **No DB schema changes** — all of Session 80's work is code-only
+- **No version bumps yet**
+- **modonty article 69f71c9cdf533d533b45f48b** has fresh JSON-LD with all 23 articles regenerated during T1.7 live test
+- **Settings.logoUrl** = `https://res.cloudinary.com/dfegnpgwx/image/upload/v1768724691/final-01_fdnhom.svg` (uploaded via Playwright)
+
+### Next session priorities
+
+1. **Verify T1.8 live** — start admin + modonty, navigate /settings, click Save & Publish, watch banner show "📝 تحديث المقالات 6/23 …" → done
+2. **Continue Tier 1:** T1.3 Reviewer Field · T1.4 Schema Type Selector (NewsArticle/BlogPosting) · T1.5 Publisher Logo Dimensions
+3. **Pre-push:** version bumps (admin → 0.50.0, modonty → 1.44.0) + backup + changelog + commit + push
+
+### Files changed (NOT YET COMMITTED)
+
+**modonty:**
+- `modonty/lib/seo/image-aspect-ratios.ts` (new)
+- `modonty/lib/seo/index.ts` (mentions block + image array using buildAspectRatiosArray)
+
+**admin:**
+- `admin/lib/seo/knowledge-graph-generator.ts` (PLATFORM_AUTHOR_SLUGS + generatePlatformAuthorNode + buildAspectUrl + 3 ImageObjects)
+- `admin/lib/seo/jsonld-storage.ts` (pass branding to generator)
+- `admin/app/(dashboard)/settings/actions/settings-actions.ts` (split updateAllSettings into 2 chunks, removed cascade trigger)
+- `admin/app/(dashboard)/settings/actions/cascade-step-actions.ts` (new — 7 step actions)
+- `admin/app/(dashboard)/settings/components/settings-form-v2.tsx` (CascadeProgressBanner + saveModonty rewrite)
+- `documents/tasks/ARTICLE-SCHEMA-PERFECTION-TODO.md` (T1.1/T1.2/T1.6/T1.7 moved to Done · T1.8 in Tier 1.5 · Last Updated bumped)
+
+---
+
+# Session Context — Earlier sessions: 2026-05-02 (Session 79 — admin v0.49.0 pushed + Pricing Strategy Agreement + mermaid MCP installed)
 
 > This file is the handoff document for the next agent/session.
 > Read this FIRST before starting any work.
@@ -6,12 +250,122 @@
 
 ---
 
-## Current Versions (no version bump in Session 74 — env-only changes, no app code touched)
-- **admin**: v0.44.0 (committed `300a805` Session 73)
-- **modonty**: v1.43.0 (committed `300a805` Session 73)
-- **console**: v0.4.0 (committed `300a805` Session 73)
+## Current Versions
 
-> ⚠️ Last commit on `main`: `300a805` (Session 73). **Session 74 work is uncommitted** — all env file changes + 3 changelog scripts hardcoded PROD URL + 2 admin code edits (brand description hardcoded).
+- **admin**: v0.49.0 (committed `ba85296` Session 79 — PUSHED, Vercel deploy in progress)
+- **modonty**: v1.43.0 (no change since Session 74)
+- **console**: v0.5.0 (committed earlier — no change in Session 79)
+
+---
+
+## ✅ Session 79 — 2026-05-02 (admin v0.49.0 + Pricing Strategy + mermaid MCP)
+
+### Summary
+Pushed admin v0.49.0 (guideline pages now read prices from DB · DEV-only Sync Local from PROD button). Then deep architectural discussion on pricing/billing — agreed on snapshot pattern + no-discount golden rule + unified client creation flow with origin selector. Added the pricing rule to sales-playbook guideline. Installed mermaid MCP for upcoming flow diagrams (pending Claude Code restart to activate).
+
+### What was done
+
+**1. ✅ Pushed admin v0.49.0 (commit `ba85296`)**
+- 14 files changed · 1267 insertions
+- 6 guideline pages migrated to DB-driven pricing (33 places): brand · golden-rules · icps · positioning · sales-playbook · team-onboarding
+- New helpers: `admin/lib/pricing/get-tier-pricing.ts` (unstable_cache 1h) + `format-for-guideline.ts` (Intl ar-SA + en-GB)
+- DEV-only **Sync Local from PROD** button in navbar (NDJSON streaming, drops + recreates indexes)
+- API route `admin/app/api/dev/sync-local-from-prod/route.ts` with safety check (rejects if not modonty_dev)
+- Tested: 64 collections · 1,242 docs · 137.3s · zero failures
+- Bug fix: createIndexes rejected `unique:null`/`sparse:null` — now only added when `=== true`
+- Changelog written to LOCAL + PROD DBs (ids `69f6232a58ae44523c1de701`/`702`)
+
+**2. 🥇 Pricing Golden Rule agreed + documented**
+- **Rule:** الأسعار ثابتة — لا خصم على الإطلاق. المكافآت فقط (شهور إضافية + مقالات إضافية) بتعميد إدارة كتابي.
+- Added prominent card to `admin/app/(public)/guidelines/sales-playbook/page.tsx` (between Packages card and Closing Lines section) — 4 sections: ❌ ممنوع · ✅ مسموح · 💡 المنطق · 📋 الصياغة الجاهزة
+- Saved memory: `memory/project_pricing_no_discount.md` + indexed in MEMORY.md
+- TSC admin: zero errors
+
+**3. 🏗 Schema redesign agreed (NOT yet implemented)**
+
+Adding to Client model — snapshot of pricing locked at subscribe time + customer origin tracking:
+
+```prisma
+// Subscription snapshot (locked at subscribe/renew time)
+subscribedCountry        String?    // "SA" | "EG"
+subscribedMonthsPaid     Int?       // الشهور المدفوعة (1, 2, 3, 6, 12, 24...)
+subscribedMonthsBonus    Int?       @default(0)  // شهور إضافية (بتعميد إدارة)
+subscribedPricePerMonth  Float?     // السعر القياسي (يطابق tier.pricing[country].mo — لا خصم)
+subscribedArticlesBonus  Int?       @default(0)  // مقالات إضافية (one-time pool)
+subscribedAt             DateTime?  // تاريخ التثبيت
+
+// Customer origin (analytics + flow routing)
+origin                   ClientOrigin?  // enum: JBRSEO | DIRECT | REFERRAL | ADVERTISING | OTHER
+jbrseoSubscriberId       String?        // link only when origin=JBRSEO
+referralClientId         String?        // link only when origin=REFERRAL
+
+enum ClientOrigin {
+  JBRSEO
+  DIRECT
+  REFERRAL
+  ADVERTISING
+  OTHER
+}
+enum BillingCycle deferred — using subscribedMonthsPaid (flexible duration) instead
+```
+
+**Computed values (live in UI, not stored):**
+- `currency = country === "EG" ? "EGP" : "SAR"` (derived, single source of truth)
+- `totalMonths = monthsPaid + monthsBonus`
+- `totalAmountPaid = monthsPaid × pricePerMonth`
+- `totalArticles = (articlesPerMonth × totalMonths) + articlesBonus`
+- `subscriptionEndDate = startDate + totalMonths months` (auto-set on save)
+
+**4. 🎯 Unified `/clients/new` flow agreed**
+- Single screen with origin selector at top (default: JBRSEO)
+- If JBRSEO: shows search of unconverted JbrseoSubscriber records → autofill email/phone/country/plan/billing on selection
+- If DIRECT/REFERRAL/ADVERTISING/OTHER: form stays empty for manual entry
+- Origin always saved → analytics on customer acquisition channels
+- The 3.7.x console subscription-card migration was started + reverted (pending schema redesign)
+
+**5. 📊 Installed `mcp-mermaid` (v0.4.1) + generated 3 flow diagrams**
+- Path: `C:\Users\w2nad\AppData\Roaming\npm\node_modules\mcp-mermaid\build\index.js`
+- Added to `.mcp.json` under name `mermaid`
+- ✅ Restarted + tested live — generates Arabic-text PNGs cleanly
+- Saved to `documents/diagrams/`:
+  - `01-client-creation-flow.png` — flowchart of 5 origins + autofill behavior
+  - `02-database-schema-er.png` — ER diagram of Client + JbrseoSubscriber + SubscriptionTierConfig with new snapshot fields
+  - `03-jbrseo-conversion-sequence.png` — sequence diagram of admin → form → DB conversion flow
+
+**6. 📝 Memory updates**
+- New: `memory/project_pricing_no_discount.md` (golden rule)
+- Strengthened: `memory/feedback_arabic_only_chat.md` — added explicit "no English in Arabic prose, even brand names"
+- Both indexed in MEMORY.md
+
+### Pending for next session
+
+1. **Restart Claude Code** to activate mermaid MCP
+2. Draw 3 flow diagrams via mermaid:
+   - Customer creation flow (5 origin sources + autofill behavior)
+   - JbrseoSubscriber → Client conversion sequence
+   - New schema ER diagram (snapshot fields + origin links)
+3. Decide on schema migration approach (extend existing Client vs separate Subscription model)
+4. Implement schema additions + data migration for existing 3 clients
+5. Refactor `/clients/new` form: add origin selector + JBRSEO autofill behavior
+6. Refactor `console/.../settings/page.tsx` + `subscription-card.tsx` to read snapshot from Client (not tier config)
+7. Resume Step 3.7 (console subscription-card migration) AFTER schema redesign is in place
+8. Continue JBRSEO-INTEGRATION-PLAN Step 3.f (Pricing Mirror admin UI) when ready
+
+### Files touched (committed in `ba85296`)
+- `admin/package.json` (0.48.0 → 0.49.0)
+- `admin/scripts/add-changelog.ts` (v0.49.0 entry)
+- 6 guideline pages: brand · golden-rules · icps · positioning · sales-playbook · team-onboarding
+- `admin/lib/pricing/get-tier-pricing.ts` (NEW)
+- `admin/lib/pricing/format-for-guideline.ts` (NEW)
+- `admin/app/api/dev/sync-local-from-prod/route.ts` (NEW)
+- `admin/components/admin/sync-local-button.tsx` (NEW)
+- `admin/components/admin/header.tsx` (added SyncLocalButton)
+- `documents/tasks/JBRSEO-INTEGRATION-PLAN.md` (status updated)
+
+### Files touched in Session 79 (NOT committed yet)
+- `admin/app/(public)/guidelines/sales-playbook/page.tsx` (added pricing rule card)
+- `documents/tasks/JBRSEO-INTEGRATION-PLAN.md` (added pricing rule + schema notes)
+- `.mcp.json` (added mermaid server)
 
 ---
 

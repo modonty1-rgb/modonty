@@ -4,8 +4,8 @@ import { getTags } from "../../../tags/actions/tags-actions";
 import { getAllSettings } from "../../../settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "../../../settings/helpers/get-article-defaults-from-settings";
 import { ArticleFormProvider } from "../../components/article-form-context";
-import { ArticleFormNavigation } from "../../components/article-form-navigation";
 import { ArticleFormTabs } from "../../components/article-form-tabs";
+import { ArticleFormActionBar } from "../../components/article-form-action-bar";
 import { transformArticleToFormData } from "../../helpers/article-form-helpers";
 
 export default async function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -46,11 +46,9 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
       articleId={id}
     >
       <div className="p-4 sm:p-6 pb-6 md:pb-8">
-        <ArticleFormNavigation />
-        <div className="mt-6">
-          <ArticleFormTabs />
-        </div>
+        <ArticleFormTabs />
       </div>
+      <ArticleFormActionBar />
     </ArticleFormProvider>
   );
 }

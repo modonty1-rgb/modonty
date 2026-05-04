@@ -50,6 +50,7 @@ type ArticleClient = {
 interface ArticleFormContextType {
   // Mode ('new' for article creation, 'edit' for editing)
   mode: 'new' | 'edit';
+  articleId?: string;
 
   // Form Data
   formData: ArticleFormData;
@@ -376,9 +377,17 @@ export function ArticleFormProvider({
   const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-save every 30 seconds when dirty (edit mode only)
+  // Auto-save every 30 seconds when dirty (edit mode only).
+  // Skips when minimum required fields are missing to avoid persisting invalid drafts.
   useEffect(() => {
     if (mode !== 'edit' || !isDirty || isSaving) return;
+
+    const hasMinimumFields =
+      Boolean(formData.title?.trim()) &&
+      Boolean(formData.clientId) &&
+      Boolean(formData.content?.trim());
+
+    if (!hasMinimumFields) return;
 
     autoSaveTimerRef.current = setTimeout(async () => {
       const result = await save();
@@ -392,7 +401,7 @@ export function ArticleFormProvider({
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [mode, isDirty, isSaving, save]);
+  }, [mode, isDirty, isSaving, save, formData.title, formData.clientId, formData.content]);
 
   // Step navigation methods
   const goToStep = useCallback((step: number) => {
@@ -525,6 +534,7 @@ export function ArticleFormProvider({
 
   const value: ArticleFormContextType = {
     mode,
+    articleId,
     formData,
     updateField,
     updateFields,

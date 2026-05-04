@@ -10,9 +10,9 @@ import type { FullPageValidationResult } from '@/lib/seo/types';
 import {
   FileText,
   Edit,
+  Image as ImageIcon,
   Search,
   Tag,
-  CheckCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -363,8 +363,9 @@ export const getSections = (): SectionConfig[] => {
   return [
     { id: 'basic', label: 'Basic', icon: FileText, anchor: '#basic' },
     { id: 'content', label: 'Content', icon: Edit, anchor: '#content' },
+    { id: 'media', label: 'Media', icon: ImageIcon, anchor: '#media' },
     { id: 'seo', label: 'SEO', icon: Search, anchor: '#seo' },
-    { id: 'faqs-related', label: 'FAQs & Related', icon: Tag, anchor: '#faqs-related' },
-    { id: 'publish', label: 'Publish', icon: CheckCircle, anchor: '#publish' },
+    { id: 'faqs', label: 'FAQs', icon: Tag, anchor: '#faqs' },
+    { id: 'related', label: 'Related', icon: Tag, anchor: '#related' },
   ];
 };

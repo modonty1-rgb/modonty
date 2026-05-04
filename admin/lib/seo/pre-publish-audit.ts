@@ -170,17 +170,8 @@ export function auditBeforePublish(
     });
   }
 
-  // Word count check
-  const wordCount = article.wordCount || 0;
-  if (wordCount < 300) {
-    warnings.push({
-      code: "WORD_COUNT_LOW",
-      category: "content",
-      message: `عدد الكلمات قليل (${wordCount})`,
-      fix: "أضف محتوى إضافي (الهدف: 800+ كلمة)",
-      field: "content",
-    });
-  }
+  // (Word count check REMOVED — Google: "we don't have a preferred word count"
+  //  per Helpful Content guide. See QUALITY-GATE-AUDIT-2026-05-04.md.)
 
   // === MEDIA CHECKS ===
 

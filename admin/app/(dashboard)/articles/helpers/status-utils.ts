@@ -3,6 +3,8 @@ import { ArticleStatus } from "@prisma/client";
 export const statusLabels: Record<ArticleStatus, string> = {
   WRITING: "Writing",
   DRAFT: "Draft",
+  AWAITING_APPROVAL: "Awaiting Approval",
+  NEEDS_REVISION: "Needs Revision",
   SCHEDULED: "Scheduled",
   PUBLISHED: "Published",
   ARCHIVED: "Archived",
@@ -11,6 +13,8 @@ export const statusLabels: Record<ArticleStatus, string> = {
 export const statusVariants = {
   WRITING: "outline",
   DRAFT: "secondary",
+  AWAITING_APPROVAL: "outline",
+  NEEDS_REVISION: "destructive",
   SCHEDULED: "outline",
   PUBLISHED: "default",
   ARCHIVED: "destructive",

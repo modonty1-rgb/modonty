@@ -922,7 +922,9 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           snapchatUrl: data.snapchatUrl,
         },
       });
-      settings = await db.settings.update({
+      // Split into 2 chunks (each < 50 fields) — MongoDB Atlas limits
+      // aggregation pipeline to 50 stages. Combined update of 73 fields fails.
+      await db.settings.update({
         where: { id },
         data: {
           siteUrl: data.siteUrl,
@@ -970,6 +972,11 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           orgGeoLongitude: data.orgGeoLongitude,
           orgSearchUrlTemplate: data.orgSearchUrlTemplate,
           orgLogoUrl: data.orgLogoUrl,
+        },
+      });
+      settings = await db.settings.update({
+        where: { id },
+        data: {
           logoUrl: data.logoUrl,
           ogImageUrl: data.ogImageUrl,
           altImage: data.altImage,
@@ -1018,6 +1025,11 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
 
     revalidatePath("/settings");
     await revalidateModontyTag("settings", settings?.siteUrl);
+
+    // T1.8: cascade is NOT triggered here — the client (settings-form-v2)
+    // drives it step-by-step with live UI feedback via getCascadeEntities()
+    // + regenerateOneEntity(). This gives the admin a real progress counter
+    // (Updating 6/23 articles…) instead of a fire-and-forget background job.
     return { success: true, settings };
   } catch (error) {
     console.error("Error updating settings:", error);

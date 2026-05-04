@@ -2,31 +2,63 @@
 
 import { useArticleForm } from '../article-form-context';
 import { Card, CardContent } from '@/components/ui/card';
-import { FormInput, FormTextarea, FormNativeSelect } from '@/components/admin/form-field';
+import { FormNativeSelect } from '@/components/admin/form-field';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CharacterCounter } from '@/components/shared/character-counter';
 import { TagMultiSelect } from '../tag-multi-select';
 import { ClientLogoPreview } from '../client-logo-preview';
-import { AlertCircle, AlertTriangle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Building2, FileText, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { ClientLogoModal } from '@/app/(dashboard)/clients/components/client-logo-modal';
+import { cn } from '@/lib/utils';
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex items-start gap-2.5 pb-1">
+      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <div className="space-y-0.5">
+        <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{title}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  );
+}
 
 export function BasicSection() {
   const { formData, updateField, errors, clients, categories, tags, authors } = useArticleForm();
   const [logoModalOpen, setLogoModalOpen] = useState(false);
 
-  // Find selected client with logo data
   const selectedClient = clients.find((c) => c.id === formData.clientId);
   const hasPublisherLogo = !!selectedClient?.logoMedia?.url;
 
   return (
     <Card>
-      <CardContent className="space-y-4 pt-6">
-        <div className="space-y-4">
+      <CardContent className="space-y-8 pt-6">
+        {/* ─────────────────────────────────────────────
+            Section 1 — العميل والتصنيف
+            ───────────────────────────────────────────── */}
+        <section className="space-y-4">
+          <SectionHeader
+            icon={Building2}
+            title="العميل والتصنيف"
+            description="من ينشر هذا المقال وتحت أي تصنيف"
+          />
+
           <div className="flex gap-4">
             <div className="flex-[0.7]">
               <FormNativeSelect
@@ -44,12 +76,10 @@ export function BasicSection() {
                 ))}
               </FormNativeSelect>
 
-              {/* Logo Preview */}
               {selectedClient && (
                 <div className="mt-3">
                   <ClientLogoPreview client={selectedClient as Parameters<typeof ClientLogoPreview>[0]['client']} />
 
-                  {/* Missing Logo Alert */}
                   {!hasPublisherLogo && (
                     <Alert variant="default" className="mt-3 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
                       <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
@@ -93,9 +123,33 @@ export function BasicSection() {
               </FormNativeSelect>
             </div>
           </div>
-        </div>
 
-        <div className="border-t pt-6 space-y-4">
+          <div>
+            <Label>Author</Label>
+            <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+              <span className="text-sm font-medium">Modonty</span>
+              <span className="text-xs text-muted-foreground">(Only author)</span>
+            </div>
+            <input
+              type="hidden"
+              name="authorId"
+              value={authors?.[0]?.id || formData.authorId || ''}
+            />
+          </div>
+        </section>
+
+        <div className="border-t" />
+
+        {/* ─────────────────────────────────────────────
+            Section 2 — محتوى التعريفي
+            ───────────────────────────────────────────── */}
+        <section className="space-y-4">
+          <SectionHeader
+            icon={FileText}
+            title="محتوى التعريفي"
+            description="ما يظهر للقارئ في الصفحة وفي نتائج البحث"
+          />
+
           <div className="space-y-2">
             <Label htmlFor="title">
               Title
@@ -106,7 +160,7 @@ export function BasicSection() {
               name="title"
               value={formData.title}
               onChange={(e) => updateField('title', e.target.value)}
-              className={errors.title?.[0] ? 'border-destructive' : ''}
+              className={cn(errors.title?.[0] && 'border-destructive')}
             />
             <div className="flex justify-end mt-1.5">
               <CharacterCounter
@@ -154,7 +208,7 @@ export function BasicSection() {
               value={formData.excerpt || ''}
               onChange={(e) => updateField('excerpt', e.target.value)}
               rows={3}
-              className={errors.excerpt?.[0] ? 'border-destructive' : ''}
+              className={cn(errors.excerpt?.[0] && 'border-destructive')}
             />
             <div className="flex justify-between items-center mt-1.5">
               <p className="text-xs text-muted-foreground">
@@ -176,20 +230,42 @@ export function BasicSection() {
               placeholder="Select tags"
             />
           </div>
+        </section>
 
-          <div>
-            <Label>Author</Label>
-            <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
-              <span className="text-sm font-medium">Modonty</span>
-              <span className="text-xs text-muted-foreground">(Only author)</span>
+        <div className="border-t" />
+
+        {/* ─────────────────────────────────────────────
+            Section 3 — خيارات النشر
+            ───────────────────────────────────────────── */}
+        <section className="space-y-4">
+          <SectionHeader
+            icon={Sparkles}
+            title="خيارات النشر"
+            description="إعدادات إضافية تؤثر على ظهور المقال في الواجهة"
+          />
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="featured"
+                checked={formData.featured || false}
+                onCheckedChange={(checked) => updateField('featured', checked === true)}
+                aria-describedby="featured-desc"
+              />
+              <Label htmlFor="featured" className="cursor-pointer font-normal">
+                Highlight on Homepage
+              </Label>
+              {formData.featured && (
+                <Badge variant="default" className="ms-2">
+                  Enabled
+                </Badge>
+              )}
             </div>
-            <input
-              type="hidden"
-              name="authorId"
-              value={authors?.[0]?.id || formData.authorId || ''}
-            />
+            <p id="featured-desc" className="text-xs text-muted-foreground">
+              Show this article in featured sections (homepage, trending) and boost sitemap priority to 0.8.
+            </p>
           </div>
-        </div>
+        </section>
       </CardContent>
     </Card>
   );

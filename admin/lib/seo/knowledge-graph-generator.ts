@@ -24,6 +24,22 @@ import {
   Tag,
 } from "@prisma/client";
 
+/**
+ * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
+ * Google Article rich results recommends 3 aspect ratios.
+ * Falls back to original URL when not Cloudinary.
+ */
+function buildAspectUrl(url: string, aspectRatio: "1:1" | "4:3" | "16:9", width = 1200): string {
+  if (!url || !url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
+    return url;
+  }
+  if (url.includes(",ar_") || url.includes("/ar_")) return url;
+  const uploadIndex = url.indexOf("/upload/");
+  const beforeUpload = url.substring(0, uploadIndex + 8);
+  const afterUpload = url.substring(uploadIndex + 8);
+  return `${beforeUpload}c_fill,ar_${aspectRatio},g_auto,w_${width},f_auto,q_auto/${afterUpload}`;
+}
+
 // Type for article with all relations needed for JSON-LD
 export interface ArticleWithFullRelations extends Article {
   client: Client & {
@@ -37,6 +53,26 @@ export interface ArticleWithFullRelations extends Article {
   gallery?: Array<ArticleMedia & { media: Media }>;
   faqs?: ArticleFAQ[];
 }
+
+// Platform-wide branding from Settings — used when author is the platform brand (Modonty)
+export interface PlatformBranding {
+  siteName?: string | null;
+  siteUrl?: string | null;
+  brandDescription?: string | null;
+  logoUrl?: string | null;
+  facebookUrl?: string | null;
+  twitterUrl?: string | null;
+  linkedInUrl?: string | null;
+  instagramUrl?: string | null;
+  youtubeUrl?: string | null;
+  tiktokUrl?: string | null;
+  pinterestUrl?: string | null;
+  snapchatUrl?: string | null;
+}
+
+// Author slugs that should be treated as the platform brand (Organization, not Person).
+// These authors will use Settings branding (logo, social links, description).
+const PLATFORM_AUTHOR_SLUGS = ["modonty"] as const;
 
 // JSON-LD Graph structure
 export interface JsonLdGraph {
@@ -87,9 +123,10 @@ function toSaudiISOString(date: Date): string {
  * Generate complete Knowledge Graph for an article
  */
 export function generateArticleKnowledgeGraph(
-  article: ArticleWithFullRelations
+  article: ArticleWithFullRelations,
+  branding?: PlatformBranding | null
 ): JsonLdGraph {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = branding?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
   
   // Single source: canonical URL = mainEntityOfPage = Article url (Schema.org + Google best practice)
   const raw = article.canonicalUrl || article.mainEntityOfPage;
@@ -97,11 +134,18 @@ export function generateArticleKnowledgeGraph(
     ? normalizeUrl(raw, siteUrl, `/articles/${article.slug}`)
     : `${siteUrl}/articles/${article.slug}`;
 
-  // Stable entity IDs (used for cross-referencing)
+  // Detect if author is the platform brand (Modonty) — emit as Organization
+  const authorSlug = (article.author.slug || "").toLowerCase();
+  const isPlatformAuthor = (PLATFORM_AUTHOR_SLUGS as readonly string[]).includes(authorSlug);
+
+  // Stable entity IDs (used for cross-referencing).
+  // Platform-brand authors (Modonty) get an Organization @id; humans get Person @id.
   const ids = {
     webPage: articleUrl,
     article: `${articleUrl}#article`,
-    author: `${siteUrl}/authors/${article.author.slug}#person`,
+    author: isPlatformAuthor
+      ? `${siteUrl}/authors/${article.author.slug}#organization`
+      : `${siteUrl}/authors/${article.author.slug}#person`,
     publisher: `${siteUrl}/clients/${article.client.slug}#organization`,
     breadcrumb: `${articleUrl}#breadcrumb`,
     primaryImage: `${articleUrl}#primary-image`,
@@ -118,8 +162,12 @@ export function generateArticleKnowledgeGraph(
   // 3. Organization (Publisher/Client)
   graph.push(generateOrganizationNode(article.client, ids.publisher, siteUrl));
 
-  // 4. Person (Author)
-  graph.push(generatePersonNode(article.author, ids.author, siteUrl, article.client.name, ids.publisher));
+  // 4. Author — Organization (platform brand) or Person (human author)
+  if (isPlatformAuthor) {
+    graph.push(generatePlatformAuthorNode(article.author, ids.author, siteUrl, branding));
+  } else {
+    graph.push(generatePersonNode(article.author, ids.author, siteUrl, article.client.name, ids.publisher));
+  }
 
   // 5. BreadcrumbList
   graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
@@ -272,15 +320,10 @@ function buildImageArray(
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
   const images: JsonLdNode[] = [];
 
-  // Hero image (featuredImage)
+  // Hero image (featuredImage) — emit 3 aspect ratios per Google Article rich results spec
   if (article.featuredImage) {
-    images.push({
-      "@type": "ImageObject",
-      "@id": `${articleUrl}#primary-image`,
-      url: article.featuredImage.url,
-      contentUrl: article.featuredImage.url,
-      ...(article.featuredImage.width && { width: article.featuredImage.width }),
-      ...(article.featuredImage.height && { height: article.featuredImage.height }),
+    const sourceUrl = article.featuredImage.url;
+    const sharedFields = {
       ...(article.featuredImage.caption && { caption: article.featuredImage.caption }),
       ...(article.featuredImage.altText && { name: article.featuredImage.altText }),
       ...(article.featuredImage.license && { license: article.featuredImage.license }),
@@ -291,9 +334,51 @@ function buildImageArray(
         },
       }),
       ...(article.featuredImage.credit && { creditText: article.featuredImage.credit }),
-      ...(article.featuredImage.credit && { copyrightHolder: { "@type": "Organization", name: article.featuredImage.credit } }),
+      ...(article.featuredImage.credit && {
+        copyrightHolder: { "@type": "Organization", name: article.featuredImage.credit },
+      }),
+    };
+
+    // Primary 16:9 (representativeOfPage)
+    const url16x9 = buildAspectUrl(sourceUrl, "16:9");
+    images.push({
+      "@type": "ImageObject",
+      "@id": `${articleUrl}#primary-image`,
+      url: url16x9,
+      contentUrl: url16x9,
+      width: 1200,
+      height: 675,
+      ...sharedFields,
       representativeOfPage: true,
     });
+
+    // 4:3 variant
+    const url4x3 = buildAspectUrl(sourceUrl, "4:3");
+    if (url4x3 !== url16x9) {
+      images.push({
+        "@type": "ImageObject",
+        "@id": `${articleUrl}#primary-image-4x3`,
+        url: url4x3,
+        contentUrl: url4x3,
+        width: 1200,
+        height: 900,
+        ...sharedFields,
+      });
+    }
+
+    // 1:1 variant (square — for AMP/mobile carousels)
+    const url1x1 = buildAspectUrl(sourceUrl, "1:1");
+    if (url1x1 !== url16x9) {
+      images.push({
+        "@type": "ImageObject",
+        "@id": `${articleUrl}#primary-image-1x1`,
+        url: url1x1,
+        contentUrl: url1x1,
+        width: 1200,
+        height: 1200,
+        ...sharedFields,
+      });
+    }
   } else {
     // Fallback: client hero image -> client logo -> site default (same chain as metadata-generator)
     const fallbackUrl =
@@ -301,13 +386,41 @@ function buildImageArray(
       article.client.logoMedia?.url ||
       `${siteUrl}/og-image.jpg`;
 
+    // Emit 3 aspect ratios for fallback too (when on Cloudinary)
+    const fallbackUrl16x9 = buildAspectUrl(fallbackUrl, "16:9");
     images.push({
       "@type": "ImageObject",
       "@id": `${articleUrl}#primary-image`,
-      url: fallbackUrl,
-      contentUrl: fallbackUrl,
+      url: fallbackUrl16x9,
+      contentUrl: fallbackUrl16x9,
+      width: 1200,
+      height: 675,
       representativeOfPage: true,
     });
+
+    const fallbackUrl4x3 = buildAspectUrl(fallbackUrl, "4:3");
+    if (fallbackUrl4x3 !== fallbackUrl16x9) {
+      images.push({
+        "@type": "ImageObject",
+        "@id": `${articleUrl}#primary-image-4x3`,
+        url: fallbackUrl4x3,
+        contentUrl: fallbackUrl4x3,
+        width: 1200,
+        height: 900,
+      });
+    }
+
+    const fallbackUrl1x1 = buildAspectUrl(fallbackUrl, "1:1");
+    if (fallbackUrl1x1 !== fallbackUrl16x9) {
+      images.push({
+        "@type": "ImageObject",
+        "@id": `${articleUrl}#primary-image-1x1`,
+        url: fallbackUrl1x1,
+        contentUrl: fallbackUrl1x1,
+        width: 1200,
+        height: 1200,
+      });
+    }
   }
 
   // Gallery images
@@ -487,6 +600,56 @@ function generateOrganizationNode(
   if (client.foundingDate) {
     node.foundingDate = client.foundingDate.toISOString().split("T")[0];
   }
+
+  return node;
+}
+
+/**
+ * Generate Organization node for a platform-brand author (Modonty).
+ *
+ * Modonty is a brand, not an individual person. Writers are internal employees,
+ * not the public face of the article. Per E-E-A-T best practice (Forbes/BuzzFeed),
+ * the brand stays consistent across all articles regardless of which writer drafted.
+ *
+ * Pulls branding (logo, social links, description) from Settings.
+ */
+function generatePlatformAuthorNode(
+  author: Author,
+  id: string,
+  siteUrl: string,
+  branding?: PlatformBranding | null
+): JsonLdNode {
+  const brandUrl = branding?.siteUrl || siteUrl;
+  const brandName = branding?.siteName || author.name;
+  const brandDescription = branding?.brandDescription || author.bio || undefined;
+  const brandLogo = branding?.logoUrl || author.image || undefined;
+
+  // Build sameAs[] from all social URLs in Settings (filter out empty)
+  const sameAs = [
+    branding?.facebookUrl,
+    branding?.twitterUrl,
+    branding?.linkedInUrl,
+    branding?.instagramUrl,
+    branding?.youtubeUrl,
+    branding?.tiktokUrl,
+    branding?.pinterestUrl,
+    branding?.snapchatUrl,
+  ].filter((url): url is string => typeof url === "string" && url.trim().length > 0);
+
+  const node: JsonLdNode = {
+    "@type": "Organization",
+    "@id": id,
+    name: brandName,
+    url: brandUrl,
+    ...(brandDescription && { description: brandDescription }),
+    ...(brandLogo && {
+      logo: {
+        "@type": "ImageObject",
+        url: brandLogo,
+      },
+    }),
+    ...(sameAs.length > 0 && { sameAs }),
+  };
 
   return node;
 }

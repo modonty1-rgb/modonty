@@ -350,6 +350,59 @@ export default function ClientsGuidelinesPage() {
         </CardContent>
       </Card>
 
+      {/* ── الميزة الفنية الكبرى: Publisher Authority Transfer ─────────────── */}
+      <Card className="border-violet-500/30 bg-violet-500/[0.04]">
+        <CardContent className="p-5">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-violet-500/15 border border-violet-500/30 shrink-0">
+              <ShieldCheck className="h-5 w-5 text-violet-400" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                <h3 className="text-base font-bold text-violet-400">🚀 كل مقال = authority للعميل في Google (ميزة Schema.org)</h3>
+                <Badge variant="outline" className="border-violet-500/40 text-violet-300 bg-violet-500/10 text-[10px]">
+                  SEO ميزة قوية
+                </Badge>
+              </div>
+              <p className="text-sm text-foreground/90 leading-relaxed mb-3">
+                مع كل مقال يُنشر، Google يقرأ في JSON-LD أن <strong>الـ publisher = العميل نفسه</strong> (مش مودونتي).
+                هذا يبني <strong>domain authority للعميل تلقائياً</strong> مع مرور الوقت — وهي ميزة فنية لا توفّرها مدوّنات WordPress العادية.
+              </p>
+              <div className="rounded-lg border border-violet-500/30 bg-background/50 p-3 mb-3 font-mono text-[11px] leading-relaxed">
+                <div className="text-muted-foreground mb-1">{"// مثال JSON-LD لمقال على modonty.com"}</div>
+                <div>{"\"publisher\": {"}</div>
+                <div className="ps-3">{"\"@type\": \"Organization\","}</div>
+                <div className="ps-3">{"\"@id\": \"https://modonty.com/clients/كيما-زون#organization\","}</div>
+                <div className="ps-3">{"\"name\": \"كيما زون\","}<span className="text-violet-300 ms-1">{"// ← اسم العميل، مش مودونتي"}</span></div>
+                <div className="ps-3">{"\"logo\": { \"width\": 200, \"height\": 205, ... }"}</div>
+                <div>{"}"}</div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong className="text-foreground">Google يربط كل مقال بالعميل</strong> — يبني domain authority للعميل، مش لمودونتي فقط</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong className="text-foreground">Brand awareness في نتائج البحث</strong> — اسم العميل + شعاره يظهران في rich results</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong className="text-foreground">E-E-A-T signal تراكمي</strong> — كل مقال يقوّي مصداقية العميل في عيون Google</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span><strong className="text-foreground">صفر شغل تقني للعميل</strong> — JSON-LD يُولَّد تلقائياً مع كل مقال</span>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed mt-3 pt-3 border-t border-violet-500/20">
+                💡 <strong>للسيلز:</strong> عندما يسأل العميل "ليش أكتب على مودونتي بدل موقعي؟" — الإجابة: <em>"مودونتي تعطيك authority + traffic + Google يربط المقال باسم شركتك مش باسمنا. مع 24 مقال في السنة، كل مقال = brick في authority شركتك على Google."</em>
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* ── ملاحظة للسيلز ─────────────────────────────────────── */}
       <Card className="border-amber-500/30 bg-amber-500/[0.04]">
         <CardContent className="p-5">

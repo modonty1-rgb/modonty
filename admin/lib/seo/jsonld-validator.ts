@@ -426,26 +426,37 @@ export async function validateBusinessRules(
     }
   }
 
-  // Check author (handle both @id and id — MongoDB may strip @ from nested keys)
+  // Check author — accept Person OR Organization (both valid per Schema.org + Google Article rich results).
+  // Modonty in-house articles use the Organization itself as Author (post-T1.1).
   const authorRef = articleNode.author as { "@id"?: string; id?: string } | undefined;
   const authorId = authorRef?.["@id"] || authorRef?.id;
   if (!authorRef || !authorId) {
     errors.push("Missing author reference in Article");
   } else {
-    // Find Person node
-    const personNode = graph.find(
-      (n: unknown) =>
-        (n as { "@type"?: string })["@type"] === "Person" &&
-        ((n as { "@id"?: string })["@id"] === authorId || (n as { id?: string }).id === authorId)
-    ) as Record<string, unknown> | undefined;
+    const validAuthorTypes = [
+      "Person",
+      "Organization",
+      "EducationalOrganization",
+      "LocalBusiness",
+      "Corporation",
+      "GovernmentOrganization",
+      "NGO",
+      "MedicalOrganization",
+    ];
+    const authorNode = graph.find((n: unknown) => {
+      const t = (n as { "@type"?: string })["@type"] ?? "";
+      const id = (n as { "@id"?: string; id?: string })["@id"] ?? (n as { id?: string }).id;
+      return validAuthorTypes.includes(t) && id === authorId;
+    }) as Record<string, unknown> | undefined;
 
-    if (!personNode) {
-      errors.push("Author Person node not found in @graph");
+    if (!authorNode) {
+      errors.push("Author node not found in @graph (expected Person or Organization)");
     } else {
-      if (!personNode.name) {
+      if (!authorNode.name) {
         errors.push("Author name missing");
       }
-      if (opts.requireAuthorBio && !personNode.description) {
+      const isPerson = authorNode["@type"] === "Person";
+      if (isPerson && opts.requireAuthorBio && !authorNode.description) {
         warnings.push("Author bio missing (recommended for E-E-A-T)");
       }
     }

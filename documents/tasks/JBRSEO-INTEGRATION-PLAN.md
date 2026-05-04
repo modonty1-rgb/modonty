@@ -1,8 +1,16 @@
 # JBRSEO ↔ MODONTY Integration — Plan
 
-> **آخر تحديث:** 2026-05-02 (✅ كل صفحات guideline منجزة — 33 موضع في 7 صفحات تقرأ من DB · 100% live tested)
-> **الحالة:** Subscribers ✅ live · Schema Step A ✅ deployed · DEV Sync button ✅ tested · **التالي: Pricing**
-> **الإصدار:** admin v0.48.0 (production)
+> **آخر تحديث:** 2026-05-02 (✅ admin v0.49.0 pushed · 🥇 Pricing Rule موثّقة في sales-playbook + memory)
+> **الحالة:** Subscribers ✅ live · Schema Step A ✅ deployed · DEV Sync ✅ · Guidelines ✅ DB-driven · Pricing Rule ✅ documented · **التالي: Schema redesign (subscribedMonthsBonus + subscribedArticlesBonus)**
+> **الإصدار:** admin v0.49.0 (deploying to production)
+>
+> **🥇 قاعدة تسعير ذهبية (2026-05-02):** الأسعار ثابتة — لا discount. الـ bonuses فقط (شهور/مقالات إضافية بتعميد إدارة). موثّقة في `sales-playbook` + `memory/project_pricing_no_discount.md`. **الـ Client schema الجديدة لازم تعكس القاعدة:**
+> - `subscribedCountry: String?` — "SA" | "EG"
+> - `subscribedMonthsPaid: Int?` — الشهور المدفوعة
+> - `subscribedMonthsBonus: Int? @default(0)` — شهور إضافية مجانية (بتعميد إدارة)
+> - `subscribedPricePerMonth: Float?` — السعر القياسي (يطابق tier.pricing[country].mo · لا خصم)
+> - `subscribedArticlesBonus: Int? @default(0)` — مقالات إضافية (one-time pool)
+> - `subscribedAt: DateTime?`
 
 ---
 
@@ -118,16 +126,16 @@
 - [ ] **3.10.5** Live test: افتح كل صفحة guideline من 6 + تأكد السعر يظهر من DB
 - [ ] **3.10.6** Live test: console subscription-card على Kimazone client → 1,299 SAR ظاهر
 
-#### 3k — Push admin v0.49.0
+#### 3k — Push admin v0.49.0 ✅ (2026-05-02)
 
-- [ ] **3.11.1** Backup قاعدة البيانات (`bash scripts/backup.sh`)
-- [ ] **3.11.2** Bump `admin/package.json` 0.48.0 → 0.49.0
-- [ ] **3.11.3** أضف v0.49.0 entry لـ `add-changelog.ts`
-- [ ] **3.11.4** Run changelog script (LOCAL + PROD)
-- [ ] **3.11.5** Stage selected files (تجنّب `.claude/settings.json`)
-- [ ] **3.11.6** Commit + Push
+- [x] **3.11.1** ✅ Backup قاعدة البيانات (10 backups maintained)
+- [x] **3.11.2** ✅ Bump `admin/package.json` 0.48.0 → 0.49.0
+- [x] **3.11.3** ✅ أضف v0.49.0 entry لـ `add-changelog.ts`
+- [x] **3.11.4** ✅ Run changelog script (LOCAL + PROD — ids 69f6232a58ae44523c1de701/702)
+- [x] **3.11.5** ✅ Stage selected files (14 files — `.claude/settings.json` تم تجنّبه)
+- [x] **3.11.6** ✅ Commit + Push (commit `ba85296` على main)
 - [ ] **3.11.7** انتظار Vercel deploy
-- [ ] **3.11.8** **Production Live Cast:** افتح https://admin.modonty.com/pricing-mirror → sync → تحقق
+- [ ] **3.11.8** **Production Live Cast:** افتح https://admin.modonty.com/guidelines/brand → تحقق الأسعار من DB
 
 **الإجمالي:** ~37 sub-task صغيرة قابلة للتتبع
 

@@ -42,11 +42,9 @@ interface ValidateOptions {
   sitemapEntries?: string[];
 }
 
-const TITLE_MIN = 30;
-const TITLE_MAX = 60;
-const DESCRIPTION_MIN = 120;
-const DESCRIPTION_MAX = 160;
-const MIN_WORDS = 300;
+// REMOVED: TITLE_MIN/MAX, DESCRIPTION_MIN/MAX, MIN_WORDS
+// Google docs explicitly say no length/word-count requirements.
+// See documents/tasks/QUALITY-GATE-AUDIT-2026-05-04.md.
 
 export async function validateArticle(
   article: InputArticle,
@@ -212,29 +210,18 @@ export async function validateArticle(
         : undefined,
   });
 
-  // Title
+  // Title — exists check only. Google docs: "no length limit" — no min/max enforcement.
   const titleText = matchTag(html, /<title[^>]*>([^<]+)<\/title>/i)?.trim();
-  const titleLen = titleText ? titleText.length : 0;
-  const titleOk = !!titleText && titleLen >= TITLE_MIN && titleLen <= TITLE_MAX;
+  const titleOk = !!titleText && titleText.length > 0;
   checks.push({
     id: "title",
-    label: `Title length ${TITLE_MIN}-${TITLE_MAX} chars`,
+    label: "Title tag present",
     severity: "critical",
     passed: titleOk,
-    detail: !titleText
-      ? "No <title> tag"
-      : titleLen < TITLE_MIN
-        ? `Title is ${titleLen} chars (too short, min ${TITLE_MIN})`
-        : titleLen > TITLE_MAX
-          ? `Title is ${titleLen} chars (too long, max ${TITLE_MAX})`
-          : undefined,
+    detail: !titleText ? "No <title> tag" : undefined,
     fix: titleOk
       ? undefined
-      : !titleText
-        ? "Article must have a title — set it in admin → Article editor → Title field."
-        : titleLen < TITLE_MIN
-          ? `Edit article title in admin to be ${TITLE_MIN}-${TITLE_MAX} chars (currently ${titleLen}). Add 1-2 keywords or a benefit.`
-          : `Shorten article title to ${TITLE_MAX} chars or less (currently ${titleLen}). Cut filler words; lead with the keyword.`,
+      : "Article must have a title — set it in admin → Article editor → Title field.",
   });
 
   // H1 — exactly one
@@ -255,50 +242,21 @@ export async function validateArticle(
           : undefined,
   });
 
-  // Meta description
+  // Meta description — exists check only. Google docs: "no length limit" — no min/max.
   const metaDesc = matchTag(html, /<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i);
-  const descLen = metaDesc ? metaDesc.length : 0;
-  const descOk = !!metaDesc && descLen >= DESCRIPTION_MIN && descLen <= DESCRIPTION_MAX;
+  const descOk = !!metaDesc && metaDesc.length > 0;
   checks.push({
     id: "meta-description",
-    label: `Meta description ${DESCRIPTION_MIN}-${DESCRIPTION_MAX} chars`,
+    label: "Meta description present",
     severity: "high",
     passed: descOk,
-    detail: !metaDesc
-      ? "No meta description"
-      : descLen < DESCRIPTION_MIN
-        ? `Description is ${descLen} chars (too short)`
-        : descLen > DESCRIPTION_MAX
-          ? `Description is ${descLen} chars (too long)`
-          : undefined,
+    detail: !metaDesc ? "No meta description" : undefined,
     fix: descOk
       ? undefined
-      : !metaDesc
-        ? "Set meta description in admin → Article editor → SEO tab → Meta Description field."
-        : descLen < DESCRIPTION_MIN
-          ? `Expand meta description to ${DESCRIPTION_MIN}-${DESCRIPTION_MAX} chars (currently ${descLen}). Include the main keyword + value prop.`
-          : `Trim meta description to ${DESCRIPTION_MAX} chars or less (currently ${descLen}). Google truncates the rest.`,
+      : "Set meta description in admin → Article editor → SEO tab → Meta Description field.",
   });
 
-  // Word count (rough — strip tags then count whitespace-separated tokens)
-  const text = html
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  const wordCount = text ? text.split(/\s+/).length : 0;
-  checks.push({
-    id: "word-count",
-    label: `Word count ≥ ${MIN_WORDS}`,
-    severity: "high",
-    passed: wordCount >= MIN_WORDS,
-    detail: wordCount < MIN_WORDS ? `Page has ${wordCount} words (thin content)` : undefined,
-    fix:
-      wordCount < MIN_WORDS
-        ? `Add more content to the article body (currently ${wordCount}, target ≥ ${MIN_WORDS} words). Expand sections, add examples, or include a FAQ.`
-        : undefined,
-  });
+  // (Word count check REMOVED — Google: "we don't have a preferred word count")
 
   // hreflang
   const hreflangAr = /<link[^>]+hreflang=["']ar(?:-[A-Z]{2})?["']/i.test(html);
@@ -457,20 +415,8 @@ export async function validateArticle(
   const internalLinks = allLinks.filter((l) => isInternal(l.href, articleHost, article.url));
   const externalLinks = allLinks.filter((l) => !isInternal(l.href, articleHost, article.url) && /^https?:\/\//i.test(l.href));
 
-  checks.push({
-    id: "internal-links-count",
-    label: "At least 2 internal links",
-    severity: "high",
-    passed: internalLinks.length >= 2,
-    detail:
-      internalLinks.length < 2
-        ? `Only ${internalLinks.length} internal link${internalLinks.length === 1 ? "" : "s"} found`
-        : undefined,
-    fix:
-      internalLinks.length < 2
-        ? "Add 2+ internal links in article body — link to related articles, categories, or author page. Helps Google understand site structure and distributes PageRank."
-        : undefined,
-  });
+  // (internal-links-count REMOVED — Google: "no magical ideal number of links"
+  //  per Make Your Links Crawlable docs. See QUALITY-GATE-AUDIT-2026-05-04.md.)
 
   const genericAnchors = ["click here", "here", "read more", "اضغط هنا", "هنا", "اقرأ المزيد", "المزيد"];
   const genericInternal = internalLinks.filter((l) =>
