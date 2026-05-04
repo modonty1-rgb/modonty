@@ -1,4 +1,103 @@
-# Session Context — Last Updated: 2026-05-04 (Session 81 — Quality Gate + Google-strict audit + PUSHED v0.50.0)
+# Session Context — Last Updated: 2026-05-04 (Session 82 — Indexing tracking · Stage 13 paradox · Sitemap cleanup · 4 PROD pushes)
+
+---
+
+## ✅ Session 82 — 2026-05-04 (Pipeline polish + indexing UX + sitemap fix)
+
+### Summary
+Continued Session 81 work after machine push of v0.50.0. Live-tested the pipeline on PROD (admin.modonty.com) and shipped **4 sequential PROD releases** to address discovered issues, ending with a leaner SEO setup and a verified-working indexing flow.
+
+### Releases shipped today (in order)
+
+| Version | What | Why |
+|---------|------|-----|
+| **v0.50.1** | Stage 13 NEUTRAL → ready (was critical) | Without this, Stage 14 Lock could never open for a brand-new article — Google hadn't visited yet, so verdict was NEUTRAL, treated as critical, gate locked. NEUTRAL means "no problem, just unvisited" → ready. PASS still required for true success; FAIL/PARTIAL stay critical. |
+| **v0.51.0** | Indexing tracking on Pending Indexing card | New Request column (DB: GscManualRequest.openedAt + doneAt) + Google column (URL Inspection verdict) + per-row Re-check button (24h confirmation guard, calls URL Inspection API forceRefresh, 1 quota per click) |
+| **v0.51.1** | Encoding hotfix (decode-then-encode) | `new URL(url).href` was pre-encoding Arabic slugs (`أ` → `%D8%A3`), then `encodeURIComponent` was encoding the `%` again → `%25D8%25A3` (double-encoded). Fixed: removed the round-trip. |
+| **v0.51.2** | Drop unsupported `?id=` pre-fill | Per official docs (support.google.com/webmasters/answer/9012289), Google never documented a deep-link with URL pre-fill. The `?id=...` pattern was reverse-engineered, broke after a GSC routing change. Switched to documented `?action=inspect` (no pre-fill) + clipboard copy + paste-Ctrl+V manually. |
+| **v0.52.0 + modonty v1.43.1** | Removed image-sitemap entirely | GSC reported 48/48 entries as errors. Root cause: image URLs point to `res.cloudinary.com` (cross-domain). Verified safe to remove via 3 Google docs (image-sitemaps, google-images, image-license-metadata) — page crawl + JSON-LD + OG cover all image discovery. Image SEO unaffected. |
+
+### Key architectural learning — Trust + Verify pattern for indexing requests
+
+User asked: "how do we know Google received the request?"
+
+Verified flow (from Google docs):
+- **DB tracks human action only** — Google has NO API field to expose "user clicked Request Indexing" (verified: "documentation does not indicate that the URL Inspection tool displays a history of indexing requests"). The user's click → DB `openedAt`/`doneAt` is the ONLY way to track the human side.
+- **URL Inspection API tracks Google's view** — returns verdict, coverageState, indexingState. Reflects Google's last crawl, NOT real-time. Google indexing takes 1 day to 2 weeks per docs.
+- **Verification is async**: re-inspection some hours/days later compares coverageState before/after. Change from "URL unknown" → "Discovered/Crawled" = signal that Google received the request.
+
+The Re-check button surfaces this in the UI: admin can re-poll Google whenever they want, status updates in the Google column. Once verdict = PASS, the article naturally drops out of "Pending Indexing" (because it appears in GSC top 100 by impressions — existing logic handles the transition).
+
+### PROD live verifications
+
+| Test | Result |
+|------|--------|
+| `admin.modonty.com/search-console` after each push | ✅ all sections render, sidebar shows correct version |
+| Pipeline (test article 69e8b29e004d362b0383b22a) | ✅ 13/13 stages pass after v0.50.1; previously 12/13 with Stage 13 critical |
+| Stage 14 Lock unlock | ✅ "All quality gates passed" + "Request indexing in GSC" button shown |
+| GSC deep-link click | ✅ after v0.51.2: opens correct URL Inspection page (was 404 with `?id=` pattern) |
+| Image-sitemap removal in GSC | ✅ user clicked sitemap row → details page → ⋮ → Remove sitemap (NOT the 3 dots in the row table itself — that only shows "See page indexing"). After removal, only `sitemap.xml` (Success, 101 URLs) remains. |
+| Local TSC after each change | ✅ admin + console + modonty zero errors |
+
+### Files created / modified
+
+**Created:**
+- `admin/.../search-console/components/indexing-recheck-button.tsx` — client component with 24h guard
+- `recheckIndexingStatusAction(url)` in `removal-tracking-actions.ts` — re-inspect via API
+
+**Deleted:**
+- `modonty/app/image-sitemap.xml/route.ts`
+- `admin/.../search-console/components/image-sitemap-card.tsx`
+- `admin/.../search-console/components/submit-image-sitemap-button.tsx`
+
+**Modified:**
+- `admin/.../search-console/pipeline/[articleId]/pipeline-runner.tsx` — Stage 13 NEUTRAL fix
+- `admin/.../search-console/components/pending-indexing-card.tsx` — full rewrite with 5 columns (added Request, Google)
+- `admin/.../search-console/components/seo-row-action.tsx` — encoding fix + drop pre-fill
+- `admin/.../search-console/page.tsx` — fetch indexing request states + inspections, removed ImageSitemapCard render
+- `admin/.../search-console/actions/robots-actions.ts` — removed image-sitemap from audit cases (19 → 17)
+
+### Manual GSC action (completed by user)
+
+Removed `image-sitemap.xml` from GSC web UI:
+- Steps: Sitemaps page → click on the row (not the ⋮) → details page → click ⋮ in details → Remove sitemap
+- Result confirmed via screenshot: only `sitemap.xml` remains in Submitted sitemaps list
+
+### Still pending (next session)
+
+#### 🎯 MAJOR (carried from Session 81): Build "SEO Data Health" section in `/database`
+All the same as previous SESSION-LOG entry — no progress on this since user prioritized pipeline polish today. Plan:
+- New section in `db-tools-section.tsx` with 5 actions:
+  1. Settings.siteUrl health check + fix
+  2. Articles with invalid slug chars (count + bulk clean)
+  3. Articles with stale canonical (count + bulk reset)
+  4. Articles with stale JSON-LD cache (count + bulk regen)
+  5. Articles with stale `mainEntityOfPage` (count + bulk reset)
+- New file `admin/.../database/actions/seo-data-health.ts`
+- Replaces 8 one-off scripts (`admin/scripts/test-*.ts` + `fix-settings-site-url.ts`)
+- Estimated: 1-2 hours
+
+#### Other pending
+- Decide: delete `admin/scripts/test-*.ts` after migrating to UI
+- Run "Bulk regenerate JSON-LD" on PROD (refreshes mainEntityOfPage + canonical for all articles)
+- Add Changelog DB entry for v0.50.0 + v0.51.x + v0.52.0 (not added yet)
+
+### Where the user left off (2026-05-04, end of session)
+- All work pushed to PROD, all verified live
+- GSC manually cleaned (image-sitemap removed)
+- User asked to update this SESSION-LOG before machine restart
+- DEV environment (DEV DB) verified — `.env.shared` defaults to `modonty_dev`, all `.env.local` overrides commented out → safe to restart and continue on DEV
+
+### Quick resume commands for next session
+
+```bash
+# Start servers
+pnpm --filter @modonty/admin dev      # :3000
+pnpm --filter @modonty/modonty dev    # :3001
+pnpm --filter @modonty/console dev    # :3002
+```
+
+**Current versions live on PROD:** admin v0.52.0 · modonty v1.43.1 · console v0.5.0
 
 ---
 
