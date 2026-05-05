@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-04 (Session 82 — Console Phase A + admin scheduling overhaul · **PUSHED admin v0.53.0 + console v0.6.0** · 6 wins shipped: AWAITING_APPROVAL filter, sonner toast confirms, approve→SCHEDULED (admin must publish), "مجدولة" tab in console with violet date banner, admin date picker on Scheduled→Published + per-button loading, datePublished optional in pre-publish, breadcrumb fix (pipeline/workflow/quality-check segments no longer 404) · NEXT: Phase B (persist client feedback in NEEDS_REVISION + notify admin) + cron auto-publish at scheduledAt)
-> **الإصدار الحالي:** admin v0.53.0 · modonty v1.43.1 · console v0.6.0
+> **آخر تحديث:** 2026-05-05 (Session 83 — Article Revision Cycle code-complete + 🚨 production DB safety incident resolved · `dataLayer/.env` was pointing to PROD `modonty` so any standalone Node script auto-targeted production · article `69e8b29e…` was briefly flipped from PUBLISHED → AWAITING_APPROVAL during a test setup, restored within minutes with `datePublished` preserved · `dataLayer/.env` now points to `modonty_dev` so all future scripts default to dev · memory rule added: log resolved DATABASE_URL inside every script before any read/write)
+> **الإصدار الحالي:** admin v0.54.0 · modonty v1.43.1 · console v0.6.2
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

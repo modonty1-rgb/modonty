@@ -103,6 +103,7 @@ const menuGroups: MenuGroup[] = [
       { icon: FileEdit, label: "Writing → Draft", href: "/articles/workflow/writing-to-draft" },
       { icon: FileClock, label: "Draft → Approval", href: "/articles/workflow/draft-to-approval" },
       { icon: FileX, label: "Approval → Revision", href: "/articles/workflow/approval-to-revision" },
+      { icon: FileEdit, label: "Revision → Draft", href: "/articles/workflow/revision-to-draft" },
       { icon: CalendarClock, label: "Approval → Scheduled", href: "/articles/workflow/approval-to-scheduled" },
       { icon: CheckCircle2, label: "Scheduled → Published", href: "/articles/workflow/scheduled-to-published" },
       { icon: Wrench, label: "Technical Review", href: "/articles/technical" },

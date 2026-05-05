@@ -45,6 +45,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
       datePublished: true,
       dateModified: true,
       scheduledAt: true,
+      revisionNotes: true,
       seoTitle: true,
       seoDescription: true,
       wordCount: true,
@@ -170,8 +171,23 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
           {articles.map((article, idx) => (
             <div
               key={article.id}
-              className="flex items-center gap-3 p-4 hover:bg-accent/30 transition-colors"
+              className="flex flex-col gap-3 p-4 hover:bg-accent/30 transition-colors"
             >
+              {/* Client revision notes — only shown on the revision-to-draft transition */}
+              {transition === "revision-to-draft" && article.revisionNotes && (
+                <div className="rounded-lg border-2 border-amber-500/40 bg-amber-500/5 p-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-base">💬</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                      Client revision notes
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+                    {article.revisionNotes}
+                  </p>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
               {/* Avatar-sized thumbnail */}
               <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-muted ring-1 ring-border/60">
                 {article.featuredImage?.url ? (
@@ -258,6 +274,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
                 {showSeoCheck && seoResults[idx] && (
                   <SeoHealthCell articleId={article.id} result={seoResults[idx]} />
                 )}
+              </div>
               </div>
             </div>
           ))}

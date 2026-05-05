@@ -56,6 +56,20 @@ export const TRANSITIONS = {
       "The article will move from Awaiting Approval to Needs Revision. The writer will be notified to address the client feedback.",
     successMessage: "Article moved to Needs Revision",
   },
+  "revision-to-draft": {
+    from: ArticleStatus.NEEDS_REVISION,
+    to: ArticleStatus.DRAFT,
+    fromLabel: "Needs Revision",
+    toLabel: "Draft",
+    pageTitle: "Revision → Draft",
+    pageDescription:
+      "Articles the client requested changes on. Read the client's notes, edit the article, then re-submit for the Quality Gate before sending back to the client.",
+    actionLabel: "Re-submit for Review",
+    confirmTitle: "Re-submit this article?",
+    confirmDescription:
+      "The article will move from Needs Revision back to Draft. The Quality Gate will run again before you can send it to the client.",
+    successMessage: "Article re-submitted to Draft",
+  },
   "approval-to-scheduled": {
     from: ArticleStatus.AWAITING_APPROVAL,
     to: ArticleStatus.SCHEDULED,

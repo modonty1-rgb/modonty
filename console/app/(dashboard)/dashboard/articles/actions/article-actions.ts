@@ -84,12 +84,12 @@ export async function requestChanges(
       };
     }
 
-    // Transition to WRITING so the author knows changes were requested
-    // TODO: Add a revisionNotes field to Article model to persist feedback
+    // Move article to NEEDS_REVISION + persist client feedback so admin sees it.
     await db.article.update({
       where: { id: articleId },
       data: {
-        status: ArticleStatus.WRITING,
+        status: ArticleStatus.NEEDS_REVISION,
+        revisionNotes: feedback.trim(),
       },
     });
 

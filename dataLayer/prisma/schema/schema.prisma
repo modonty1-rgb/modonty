@@ -810,9 +810,10 @@ model Article {
   author     Author    @relation(fields: [authorId], references: [id])
 
   // Status & workflow
-  status      ArticleStatus @default(WRITING)
-  scheduledAt DateTime?
-  featured    Boolean       @default(false)
+  status        ArticleStatus @default(WRITING)
+  scheduledAt   DateTime?
+  featured      Boolean       @default(false)
+  revisionNotes String? // Client's feedback when requesting changes (status=NEEDS_REVISION)
 
   // Schema.org Article - Required fields
   datePublished    DateTime? // ISO 8601

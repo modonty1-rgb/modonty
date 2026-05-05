@@ -40,12 +40,17 @@ export async function transitionArticleAction(
       };
     }
 
-    // Auto-set datePublished when moving directly to PUBLISHED
-    const data: { status: ArticleStatus; datePublished?: Date } = {
+    // Auto-set datePublished when moving directly to PUBLISHED.
+    // Clear revisionNotes when admin re-submits a NEEDS_REVISION article — the
+    // notes were already addressed; lingering them would clutter future cycles.
+    const data: { status: ArticleStatus; datePublished?: Date; revisionNotes?: null } = {
       status: toStatus,
     };
     if (toStatus === ArticleStatus.PUBLISHED) {
       data.datePublished = new Date();
+    }
+    if (expectedFrom === ArticleStatus.NEEDS_REVISION && toStatus === ArticleStatus.DRAFT) {
+      data.revisionNotes = null;
     }
 
     await db.article.update({
