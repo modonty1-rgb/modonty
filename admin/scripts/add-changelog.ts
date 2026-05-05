@@ -11,17 +11,16 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.49.0",
-    title: "admin v0.49.0 — صفحات guideline تقرأ الأسعار من DB + DEV-only Sync Local from PROD button",
+    version: "0.54.0",
+    title: "admin v0.54.0 + console v0.6.2 — دورة المراجعة (Article Revision Cycle)",
     items: [
-      { type: "feature" as const, text: "admin: 6 صفحات guideline تقرأ الأسعار من قاعدة البيانات بدل hardcoded — brand · golden-rules · icps · positioning · sales-playbook · team-onboarding (33 موضع كلهم live)" },
-      { type: "feature" as const, text: "admin: helper جديد admin/lib/pricing/get-tier-pricing.ts — getTierPricing() + getAllTiersPricing() مع unstable_cache ساعة + smart fallback لـ tier.price" },
-      { type: "feature" as const, text: "admin: helper جديد admin/lib/pricing/format-for-guideline.ts — formatPriceForGuideline() + getMomentumPrice() + getLeadershipPrice() مع تنسيق Intl ar-SA + en-GB" },
-      { type: "feature" as const, text: "admin: زر DEV-only Sync Local from PROD في navbar — مخفي في production (NODE_ENV check inlined في build) · streaming UI live progress" },
-      { type: "feature" as const, text: "admin: API route admin/app/api/dev/sync-local-from-prod/route.ts — NDJSON streaming · safety check يرفض الكتابة لو DATABASE_URL ليس modonty_dev · نسخ الـ indexes من PROD وإعادة بنائها" },
-      { type: "feature" as const, text: "admin: Dialog progress (current collection · doc counter · 3 KPIs · per-collection list · time tracking) — تم اختباره: 64 جدول · 1,242 وثيقة · 137.3s · صفر فشل" },
-      { type: "fix" as const, text: "data sync: إصلاح bug في createIndexes — MongoDB كان يرفض unique:null و sparse:null · الآن نضيف القيم only when === true" },
-      { type: "fix" as const, text: "guidelines: WordPress comparison + ROI calculator + الفرق النفسي + جداول الباقات — كلهم تأتي من DB live (لو غيّرت سعر growth في DB، كل صفحة guideline تتحدّث بعد cache invalidate)" },
+      { type: "feature" as const, text: "schema: حقل revisionNotes String? على Article — يخزّن فيدباك العميل لما يطلب تعديلات" },
+      { type: "feature" as const, text: "console: requestChanges يحفظ نص الفيدباك ويحوّل المقالة لـ NEEDS_REVISION (بدل إلغاء الموافقة فقط)" },
+      { type: "feature" as const, text: "admin: transition جديد revision-to-draft + رابط جانبي 'Revision → Draft' — يجمع المقالات اللي العميل طلب تعديلها" },
+      { type: "feature" as const, text: "admin: banner أصفر فوق المقالة يعرض ملاحظات العميل بشكل بارز قبل التعديل" },
+      { type: "feature" as const, text: "admin: زر Re-submit for Review ينقل المقالة DRAFT ويمسح revisionNotes تلقائياً (ما تتراكم بين الدورات)" },
+      { type: "fix" as const, text: "DB safety: dataLayer/.env كان يشير لـ prod modonty افتراضياً — تعديل ليشير لـ modonty_dev، وأي سكريبت standalone Node بيستخدم dev الآن. حادثة flip-then-restore لمقالة كيما زون تمت معالجتها بدون فقدان بيانات." },
+      { type: "fix" as const, text: "memory rule: log resolved DATABASE_URL داخل أي سكريبت قبل أي read/write كحماية إضافية" },
     ],
   },
 ];
