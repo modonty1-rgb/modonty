@@ -1,4 +1,115 @@
-# Session Context — Last Updated: 2026-05-04 (Session 82 — Indexing tracking · Stage 13 paradox · Sitemap cleanup · 4 PROD pushes)
+# Session Context — Last Updated: 2026-05-05 (Session 83 — Article Revision Cycle + 🚨 prod-DB safety incident resolved · 1 PROD push)
+
+---
+
+## ✅ Session 83 — 2026-05-05 (Article Revision Cycle + dataLayer/.env safety fix)
+
+### Summary
+Closed the last gap in the article life cycle: the **client → admin feedback loop**. When a client clicks "Request changes" in console, the feedback now persists on the article and surfaces in a dedicated admin workflow page with an amber banner above the article. Admin clicks **Re-submit for Review** → article goes back to DRAFT and re-enters the Quality Gate. Pushed as **admin v0.54.0 + console v0.6.2** (commit `1c49e3b`).
+
+Also resolved a **production-DB safety incident** discovered mid-session (see below).
+
+### Releases shipped today
+
+| Version | What | Why |
+|---------|------|-----|
+| **admin v0.54.0 + console v0.6.2** | Article revision cycle — client feedback persists, admin sees it in `/articles/workflow/revision-to-draft`, Re-submit clears notes and re-enters Quality Gate | Final missing piece of the article life cycle. Without this, when a client requested changes, the admin had no way to see what they actually wanted edited. |
+
+### Code changes (1 commit feature + 1 changelog commit)
+
+**Schema:**
+- `dataLayer/prisma/schema/schema.prisma` — added `revisionNotes String?` on Article model (stores client feedback text when status = NEEDS_REVISION)
+
+**Console:**
+- `console/.../articles/actions/article-actions.ts` — `requestChanges` now saves `feedback.trim()` to `revisionNotes` and sets status to `NEEDS_REVISION` (was: cancelled approval only)
+
+**Admin:**
+- `admin/.../workflow/lib/transitions.ts` — new `revision-to-draft` transition (NEEDS_REVISION → DRAFT, action label "Re-submit for Review")
+- `admin/.../workflow/[transition]/page.tsx` — selects `revisionNotes` from DB; renders amber banner with 💬 emoji + "Client revision notes" header + the feedback text above the article row (only on this one transition)
+- `admin/.../workflow/actions/transition-article.ts` — when `expectedFrom=NEEDS_REVISION` and `toStatus=DRAFT`, sets `revisionNotes: null` in the same DB update (atomic clear, no leftover notes between cycles)
+- `admin/components/admin/sidebar.tsx` — added "Revision → Draft" item between "Approval → Revision" and "Approval → Scheduled" with the FileEdit icon
+
+### Live test (dev DB)
+
+E2E pass on `modonty_dev` using a Nova Electronics DRAFT article (`69f78bed732bb6673fcc28ec`):
+1. Set status=NEEDS_REVISION + revisionNotes (Arabic feedback string) via prep script
+2. Opened `/articles/workflow/revision-to-draft` as admin → ✅ amber banner rendered with the exact feedback text
+3. Clicked **Re-submit for Review** → confirm dialog → ✅ status moved to DRAFT, revisionNotes cleared to null
+
+DB verification post-test:
+```
+AFTER_RESUBMIT: { "status": "DRAFT", "revisionNotes": null, "title": "..." }
+PASS — status=DRAFT + revisionNotes cleared
+```
+
+### 🚨 Production-DB safety incident (resolved, no data loss)
+
+**What happened:**
+Mid-session, while preparing the test article on what I believed was the dev DB, my standalone Node prep script wrote to **production** (`modonty`). Article `69e8b29e004d362b0383b22a` (Kimazone "أفضل واكس شعر للرجال") was briefly flipped from PUBLISHED → AWAITING_APPROVAL.
+
+**Why it happened:**
+- I checked `.env.shared` (which correctly points to `modonty_dev`) and assumed dev was the resolved URL.
+- I **did not check `dataLayer/.env`**, which had an active `DATABASE_URL=...modonty?...` (production).
+- Prisma's standalone client and Prisma CLI both load `.env` adjacent to the schema (i.e. `dataLayer/.env`), NOT `.env.shared`. So my `node _tmp-prep.mjs` script silently used prod.
+
+**Restoration (within ~10 min):**
+- Article restored to `status=PUBLISHED`, `datePublished=2026-04-22T11:35:58.678Z` (original timestamp preserved), `revisionNotes=null`.
+- No other rows touched. No data loss.
+
+**Permanent fix:**
+- `dataLayer/.env` now points to `modonty_dev` (with a comment explaining why prod URL must NEVER live in this file — production env lives only in Vercel Dashboard).
+- Memory rule added: `feedback_check_datalayer_env.md` — log resolved `DATABASE_URL` *inside* every standalone Node script before any read/write. `.env.shared` alone is not sufficient verification.
+
+**Verified after fix:**
+```
+RESOLVED_DB_URL: ...modonty_dev?...
+✅ DEV — safe
+article.count(): 46  (vs 19 on prod — confirms different DB)
+```
+
+### Files created / modified
+
+**Schema:**
+- `dataLayer/prisma/schema/schema.prisma` (revisionNotes field)
+
+**Code:**
+- `console/.../articles/actions/article-actions.ts` (saves revisionNotes)
+- `admin/.../workflow/lib/transitions.ts` (new transition)
+- `admin/.../workflow/[transition]/page.tsx` (amber banner)
+- `admin/.../workflow/actions/transition-article.ts` (clears notes on Re-submit)
+- `admin/components/admin/sidebar.tsx` (sidebar entry)
+- `admin/scripts/add-changelog.ts` (v0.54.0 entry)
+
+**Safety fix:**
+- `dataLayer/.env` (modonty → modonty_dev, with cautionary comment)
+
+**Memory:**
+- `~/.claude/projects/.../memory/feedback_check_datalayer_env.md` (new)
+- `~/.claude/projects/.../memory/MEMORY.md` (indexed)
+
+**Versions:**
+- `admin/package.json` 0.53.0 → 0.54.0
+- `console/package.json` 0.6.1 → 0.6.2
+
+### Pre-push checks
+
+| Check | Result |
+|-------|--------|
+| Backup script (`scripts/backup.sh`) | ✅ ran, 12 backups maintained |
+| TSC admin (`pnpm tsc --noEmit`) | ✅ zero errors |
+| TSC console (`pnpm tsc --noEmit`) | ✅ zero errors |
+| Changelog → LOCAL + PROD DBs | ✅ id `69f9b2a446d9764223e5f050` (LOCAL) + `69f9b2a446d9764223e5f051` (PROD) |
+| Live test on dev DB | ✅ amber banner + Re-submit + DB clear all verified |
+
+### Push
+
+`ec98b55..1c49e3b main -> main` — Vercel auto-deploys both admin + console.
+
+### Next session ideas
+
+1. **Notify admin when client requests changes** — currently revisionNotes persists silently. A toast/notification on admin dashboard ("X clients requested changes") would surface urgency.
+2. **Cron auto-publish at scheduledAt** — still pending from Session 82; SCHEDULED articles don't auto-transition to PUBLISHED yet.
+3. **Cleanup snapshot artifacts** — `snapshot-*.md` and `snap-*.md` files from earlier sessions still untracked at repo root.
 
 ---
 
