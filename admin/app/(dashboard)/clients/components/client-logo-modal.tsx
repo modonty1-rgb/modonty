@@ -65,7 +65,7 @@ export function ClientLogoModal({
         <DialogHeader>
           <DialogTitle>Add Publisher Logo</DialogTitle>
           <DialogDescription>
-            Upload a logo for rich results in search engines. Recommended: 160×160px circular.
+            Upload a logo for this client. Recommended: 500×500px (1:1 ratio).
           </DialogDescription>
         </DialogHeader>
 

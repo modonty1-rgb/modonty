@@ -65,7 +65,7 @@ export function ClientHeroModal({
         <DialogHeader>
           <DialogTitle>Edit Hero Image</DialogTitle>
           <DialogDescription>
-            Upload a hero image for this client. Recommended: 1200×630px or 1200×400px.
+            Upload a hero image for this client. Recommended: 2400×400px (6:1 ratio).
           </DialogDescription>
         </DialogHeader>
 

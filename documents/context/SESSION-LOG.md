@@ -1,4 +1,36 @@
-# Session Context — Last Updated: 2026-05-06 (Session 84 — Bug fixes: share URL encoding + client follow 500 + UX polish · 1 PROD push)
+# Session Context — Last Updated: 2026-05-06 (Session 85 — Media widget in client edit page + table cleanup · admin v0.55.0)
+
+---
+
+## ✅ Session 85 — 2026-05-06 (Media Widget in Client Edit + Table Cleanup)
+
+### Summary
+Added Logo + Hero image editing widget to the client edit page (`/clients/[id]/edit`) as a prominent Media section above the accordion. Logo and Hero are click-to-change thumbnails using the existing `ClientLogoModal` and `ClientHeroModal`. Removed all media editing from the clients table (logo click no longer opens modal, "Edit media" action button removed). Corrected all dimension hints to match the official guideline (`/guidelines/media`): Logo = 500×500px (1:1), Hero = 2400×400px (6:1). Fixed inconsistent hint text across `client-form.tsx`, `client-logo-modal.tsx`, `client-hero-modal.tsx`, and `media-picker.tsx`. Pushed as **admin v0.55.0**.
+
+### Releases shipped today
+
+| Version | What | Why |
+|---------|------|-----|
+| **admin v0.55.0** | Media widget in edit page + table cleanup + correct dimension hints | Logo/hero editing was hidden (table-only); dimensions were wrong across 4 files |
+
+### Code changes
+
+**admin:**
+- `app/(dashboard)/clients/components/client-form.tsx` — Added Media widget (Logo + Hero thumbnails) in edit mode above accordion; added `logoModalOpen`, `heroModalOpen`, `currentLogoUrl`, `currentHeroUrl` state + `useEffect` to sync after `router.refresh()`; corrected hints to `500×500px — نسبة 1:1` and `2400×400px — نسبة 6:1`
+- `app/(dashboard)/clients/components/client-table.tsx` — Removed `ClientLogoModal` + `ClientHeroModal` + all related state; converted logo `button` → `div` (display only); removed "Edit media" action button
+- `app/(dashboard)/clients/components/client-logo-modal.tsx` — Updated description to `500×500px (1:1 ratio)`
+- `app/(dashboard)/clients/components/client-hero-modal.tsx` — Updated description to `2400×400px (6:1 ratio)`
+- `components/shared/media-picker.tsx` — Updated inline hints: Logo → `500×500px — 1:1`, non-logo → `2400×400px — 6:1`
+
+### Key decisions
+- All media editing (logo + hero) now centralized in `/clients/[id]/edit` — single source of truth
+- Table shows logo as display-only avatar; no editing shortcuts from table
+- Dimension source: `/guidelines/media` page (team guideline) — not the SEO validator minimum (112×112)
+
+### Pending / next session ideas
+- Test share URL on production after Session 84 deploy
+- Notification to admin when client requests changes (bell on dashboard)
+- Cron auto-publish SCHEDULED → PUBLISHED at scheduledAt
 
 ---
 

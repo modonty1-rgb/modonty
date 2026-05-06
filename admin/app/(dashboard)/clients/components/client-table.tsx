@@ -17,7 +17,7 @@ import {
   BarChart2,
   Pencil,
   Eye,
-  ImageIcon,
+
   FileText,
   Truck,
   CalendarClock,
@@ -35,8 +35,6 @@ import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
-import { ClientHeroModal } from "./client-hero-modal";
-import { ClientLogoModal } from "./client-logo-modal";
 
 type ListValidationError = { message?: string } | string;
 
@@ -204,11 +202,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [heroModalOpen, setHeroModalOpen] = useState(false);
-  const [logoModalOpen, setLogoModalOpen] = useState(false);
-  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
-  const [selectedLogoUrl, setSelectedLogoUrl] = useState<string | null>(null);
   const pageSize = 10;
 
   // Sync external search prop with internal state
@@ -469,17 +462,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                     >
                     <TableCell>
                       <div className="flex items-center gap-2.5">
-                        <button
-                          type="button"
-                          title={client.logoMedia?.url ? "Change logo" : "Add logo"}
-                          className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border hover:ring-2 hover:ring-primary transition-all"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedClientId(client.id);
-                            setSelectedLogoUrl(client.logoMedia?.url ?? null);
-                            setLogoModalOpen(true);
-                          }}
-                        >
+                        <div className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border">
                           {client.logoMedia?.url ? (
                             <Image
                               src={client.logoMedia.url}
@@ -493,7 +476,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                               {client.name.charAt(0)}
                             </div>
                           )}
-                        </button>
+                        </div>
                         <div className="flex flex-col gap-0.5 min-w-0">
                           <Link
                             href={`/clients/${client.id}`}
@@ -651,20 +634,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedClientId(client.id);
-                            setSelectedHeroUrl(client.heroImageMedia?.url ?? null);
-                            setHeroModalOpen(true);
-                          }}
-                          aria-label="Edit media"
-                        >
-                          <ImageIcon className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           asChild
                           aria-label="View client details"
                         >
@@ -714,25 +683,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
         </div>
       )}
 
-      {/* Hero Modal */}
-      {selectedClientId && (
-        <ClientHeroModal
-          open={heroModalOpen}
-          onOpenChange={setHeroModalOpen}
-          clientId={selectedClientId}
-          initialHeroUrl={selectedHeroUrl}
-        />
-      )}
-
-      {/* Logo Modal */}
-      {selectedClientId && (
-        <ClientLogoModal
-          open={logoModalOpen}
-          onOpenChange={setLogoModalOpen}
-          clientId={selectedClientId}
-          initialLogoUrl={selectedLogoUrl}
-        />
-      )}
     </div>
   );
 }

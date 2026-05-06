@@ -5,7 +5,10 @@ import { useHeaderRef } from "./client-form-header-wrapper";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Plus, Pencil, Loader2 } from "lucide-react";
+import { Plus, Pencil, Loader2, ImageIcon } from "lucide-react";
+import NextImage from "next/image";
+import { ClientLogoModal } from "./client-logo-modal";
+import { ClientHeroModal } from "./client-hero-modal";
 import { SEODoctor } from "@/components/shared/seo-doctor";
 import { createOrganizationSEOConfig, createOrganizationSEOConfigFull } from "../helpers/client-seo-config";
 import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
@@ -37,6 +40,22 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [seoSettings, setSeoSettings] = useState<SEOSettings | null>(null);
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
+  const [heroModalOpen, setHeroModalOpen] = useState(false);
+  const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
+    (initialData?.logoMedia as { url?: string } | null)?.url ?? null
+  );
+  const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(
+    (initialData?.heroImageMedia as { url?: string } | null)?.url ?? null
+  );
+
+  useEffect(() => {
+    setCurrentLogoUrl((initialData?.logoMedia as { url?: string } | null)?.url ?? null);
+  }, [(initialData?.logoMedia as { url?: string } | null)?.url]);
+
+  useEffect(() => {
+    setCurrentHeroUrl((initialData?.heroImageMedia as { url?: string } | null)?.url ?? null);
+  }, [(initialData?.heroImageMedia as { url?: string } | null)?.url]);
 
   const { form, handleSubmit, loading, error, setError, tierConfigs, isEditMode } = useClientForm({
     initialData,
@@ -199,6 +218,61 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                 </div>
               ) : (
                 /* EDIT MODE — accordion with all sections */
+                <>
+                {/* Media Widget — Logo + Hero */}
+                {clientId && (
+                  <div className="border border-white/10 rounded-lg bg-white/5 p-4 mb-2">
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-4">Media</p>
+                    <div className="flex gap-6">
+                      {/* Logo */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setLogoModalOpen(true)}
+                          className="relative group w-20 h-20 rounded-lg border border-dashed border-white/20 bg-muted/30 hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0"
+                        >
+                          {currentLogoUrl ? (
+                            <NextImage src={currentLogoUrl} alt="Client logo" fill className="object-contain p-1" sizes="80px" />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Pencil className="h-4 w-4 text-white" />
+                          </div>
+                        </button>
+                        <div>
+                          <p className="text-sm font-medium">{currentLogoUrl ? "Change Logo" : "Add Logo"}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">500×500px — نسبة 1:1</p>
+                        </div>
+                      </div>
+                      {/* Hero Image */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setHeroModalOpen(true)}
+                          className="relative group w-36 h-20 rounded-lg border border-dashed border-white/20 bg-muted/30 hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0"
+                        >
+                          {currentHeroUrl ? (
+                            <NextImage src={currentHeroUrl} alt="Hero image" fill className="object-cover" sizes="144px" />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Pencil className="h-4 w-4 text-white" />
+                          </div>
+                        </button>
+                        <div>
+                          <p className="text-sm font-medium">{currentHeroUrl ? "Change Hero" : "Add Hero"}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">2400×400px — نسبة 6:1</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <Accordion type="multiple" defaultValue={["client-info"]} className="w-full">
                   <AccordionItem value="client-info" className="border border-white/10 rounded-lg bg-white/5">
                     <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
@@ -267,6 +341,25 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
+                {clientId && (
+                  <>
+                  <ClientLogoModal
+                    open={logoModalOpen}
+                    onOpenChange={setLogoModalOpen}
+                    clientId={clientId}
+                    initialLogoUrl={currentLogoUrl}
+                    initialLogoMediaId={(initialData?.logoMedia as { id?: string } | null)?.id ?? null}
+                  />
+                  <ClientHeroModal
+                    open={heroModalOpen}
+                    onOpenChange={setHeroModalOpen}
+                    clientId={clientId}
+                    initialHeroUrl={currentHeroUrl}
+                    initialHeroMediaId={(initialData?.heroImageMedia as { id?: string } | null)?.id ?? null}
+                  />
+                  </>
+                )}
+                </>
               )}
             </div>
 
