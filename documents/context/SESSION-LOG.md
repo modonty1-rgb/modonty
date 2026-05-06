@@ -1,4 +1,39 @@
-# Session Context — Last Updated: 2026-05-05 (Session 83 — Article Revision Cycle + 🚨 prod-DB safety incident resolved · 1 PROD push)
+# Session Context — Last Updated: 2026-05-06 (Session 84 — Bug fixes: share URL encoding + client follow 500 + UX polish · 1 PROD push)
+
+---
+
+## ✅ Session 84 — 2026-05-06 (Bug Fixes: Share URL + Follow 500 + UX)
+
+### Summary
+Three bugs fixed in the modonty public site. (1) Share/copy URL was copying `%D8%A3%D9%81...` instead of readable Arabic — fixed with `decodeURIComponent` in 4 components. (2) Client follow API was returning 500 for all users after the first follower — root cause: `@@unique([clientId, sessionId])` in `ClientLike` MongoDB model treats `null==null`, blocking any second authenticated follow. Fixed by changing to `@@index` + running `prisma db push` directly against prod Atlas (instant fix, no deploy needed). (3) "حفظ" label on client page → "مفضّلة"/"مُضافة". Pushed as **modonty v1.44.0** (commit `1204863`).
+
+### Releases shipped today
+
+| Version | What | Why |
+|---------|------|-----|
+| **modonty v1.44.0** | Share URL fix + follow 500 fix + "حفظ"→"مفضّلة" | Share was copying encoded URL; follow was broken for all users after 1st follower; "حفظ" was ambiguous |
+
+### Code changes
+
+**Schema:**
+- `dataLayer/prisma/schema/schema.prisma` — `@@unique([clientId, sessionId])` → `@@index` in ClientLike model. Ran `prisma db push` on both dev + prod MongoDB Atlas directly.
+
+**modonty:**
+- `components/shared/ShareButtons.tsx` — `window.location.href` → `decodeURIComponent(window.location.href)` (main share component)
+- `articles/[slug]/components/article-mobile-sidebar-sheet.tsx` — same fix (navigator.share + clipboard)
+- `articles/[slug]/components/article-mobile-engagement-bar.tsx` — same fix
+- `articles/[slug]/components/article-utilities.tsx` — same fix (currentUrl for copy)
+- `clients/[slug]/components/client-favorite-button.tsx` — "حفظ"→"مفضّلة", "محفوظ"→"مُضافة"
+
+### Key decisions
+- Follow fix applied directly via `prisma db push` on prod Atlas — no deploy needed, instant effect. Verified: POST /api/clients/كيما-زون/follow → 200 `{isFollowing:true, followersCount:2}`.
+- Share fix requires Vercel deploy (client-side code change). Verified logic correct via `decodeURIComponent(window.location.href)` evaluation.
+- Test visitor account created on prod: `testvisitor@modonty.com` / `Visitor123!`
+
+### Pending / next session ideas
+- Test share URL on production after deploy (verify Arabic slug copies cleanly)
+- Notification to admin when client requests changes (bell on dashboard)
+- Cron auto-publish SCHEDULED → PUBLISHED at scheduledAt
 
 ---
 
