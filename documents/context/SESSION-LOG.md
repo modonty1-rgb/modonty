@@ -1,4 +1,39 @@
-# Session Context — Last Updated: 2026-05-06 (Session 85 — Media widget in client edit page + table cleanup · admin v0.55.0)
+# Session Context — Last Updated: 2026-05-06 (Session 86 — Loader fix + Save performance · admin v0.55.0)
+
+---
+
+## ✅ Session 86 — 2026-05-06 (Update Client: Loader Bug Fix + Performance 4× Speedup)
+
+### Summary
+Fixed two bugs in the client update flow. (1) **Loader stuck bug**: after saving a client successfully and the toast notification appeared, the "Saving..." button never reset to "Update Client" — root cause: `setLoading(false)` was missing in the success branch of `use-client-form.ts`. One-line fix. (2) **Save performance**: `updateClient` server action was taking 30–55 seconds — root cause: `generateClientSEO` + article SEO cascade were running sequentially, two redundant `db.article.findMany` calls, and `batchRegenerateJsonLd` was internally sequential. Fixed by merging to one DB call, running SEO generation + article cascade in `Promise.all`, and calling `generateAndSaveJsonLd` / `generateAndSaveNextjsMetadata` directly per article in parallel. Result: **55s → 13s** (4× speedup) on a client with 2 articles. Added `ARCH-01` note to MASTER-TODO documenting the scalability concern: `Promise.all` on all articles simultaneously will exhaust the MongoDB connection pool (~10 connections) for large clients (200 articles). Long-term fix is background jobs (Inngest / BullMQ).
+
+### Releases shipped today
+
+| Version | What | Why |
+|---------|------|-----|
+| **admin v0.55.0** | Loader fix + save performance 4× speedup + ARCH-01 scalability note | Loader never reset; save was 55s; large clients risk connection pool exhaustion |
+
+### Code changes
+
+**admin:**
+- `app/(dashboard)/clients/helpers/hooks/use-client-form.ts` — Added `setLoading(false)` in success path before `router.push()` (was only called in failure branch)
+- `app/(dashboard)/clients/actions/clients-actions/update-client.ts` — Merged two `db.article.findMany` into one; moved `generateClientSEO` + article cascade into `Promise.all`; bypassed sequential `batchRegenerateJsonLd` with direct per-article parallel calls; removed redundant `db.client.findUnique` for slug
+
+**documents:**
+- `documents/tasks/✅ MASTER-TODO.md` — Added `ARCH-01` section documenting background jobs scalability concern with table (article count vs outcome) and short/long-term fix plans
+
+### Key decisions
+- `setLoading(false)` MUST be called before `router.push()` in success path — navigation is async and the button stays mounted briefly
+- `generateClientSEO` and article cascade have no dependency (both read already-updated DB) → safe to `Promise.all`
+- `batchRegenerateJsonLd` was a hidden bottleneck (sequential for-loop internally) — bypassed
+- `Promise.all` on all articles is OK for small clients but will break at ~50+ articles (connection pool); needs chunked batching or background jobs as next step
+
+### Pending / next session ideas
+- **ARCH-01**: Implement batch processing (10 articles at a time) as short-term fix for `update-client.ts` lines 96–120
+- **ARCH-01 long-term**: Evaluate Inngest vs BullMQ for background job queue
+- Test share URL on production after Session 84 deploy
+- Notification to admin when client requests changes (bell on dashboard)
+- Cron auto-publish SCHEDULED → PUBLISHED at scheduledAt
 
 ---
 

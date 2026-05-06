@@ -92,60 +92,50 @@ export async function updateClient(id: string, data: ClientFormData) {
       warning = `Partially saved. Failed to update: ${failedGroups.map(g => g.groupName).join(', ')}`;
     }
 
-    // Regenerate client SEO (MetaTags + JSON-LD)
-    const seoResult = await generateClientSEO(id);
+    // Fetch articles once for cascade
+    const clientArticles = await db.article.findMany({
+      where: { clientId: id },
+      select: { id: true },
+    }).catch(() => [] as { id: string }[]);
+
+    // Run client SEO + full article cascade in parallel
+    const [seoResult] = await Promise.all([
+      generateClientSEO(id),
+      clientArticles.length > 0
+        ? (async () => {
+            const [{ generateAndSaveJsonLd }, { generateAndSaveNextjsMetadata }] = await Promise.all([
+              import("@/lib/seo"),
+              import("@/lib/seo/metadata-storage"),
+            ]);
+            await Promise.all(
+              clientArticles.map((a) =>
+                Promise.all([
+                  generateAndSaveJsonLd(a.id).catch(() => {}),
+                  generateAndSaveNextjsMetadata(a.id).catch(() => {}),
+                ])
+              )
+            );
+          })().catch(() => {})
+        : Promise.resolve(undefined),
+    ]);
+
     if (!seoResult.success) {
       const seoWarning = "Saved successfully, but SEO data generation failed. You can update it later.";
       warning = warning ? `${warning} | ${seoWarning}` : seoWarning;
-    }
-
-    // Cascade: regenerate JSON-LD for all client articles
-    // Client data (name, logo, org info) is embedded in article JSON-LD as publisher
-    try {
-      const clientArticles = await db.article.findMany({
-        where: { clientId: id },
-        select: { id: true },
-      });
-      if (clientArticles.length > 0) {
-        const { batchRegenerateJsonLd } = await import("@/lib/seo");
-        await batchRegenerateJsonLd(clientArticles.map((a) => a.id));
-      }
-    } catch {
-      // Don't fail the update if article JSON-LD cascade fails
-    }
-
-    // Also regenerate metadata for client articles (client name in OG siteName, etc.)
-    try {
-      const clientArticles = await db.article.findMany({
-        where: { clientId: id },
-        select: { id: true },
-      });
-      if (clientArticles.length > 0) {
-        const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
-        for (const article of clientArticles) {
-          await generateAndSaveNextjsMetadata(article.id);
-        }
-      }
-    } catch {
-      // Don't fail the update if metadata regeneration fails
     }
 
     // Revalidate admin paths
     revalidatePath("/clients");
     revalidatePath(`/clients/${id}`);
     revalidatePath("/media");
-
-    // Revalidate modonty public pages - fetch slug to revalidate correct path
-    const updatedClient = await db.client.findUnique({
-      where: { id },
-      select: { slug: true },
-    });
-    if (updatedClient?.slug) {
-      revalidatePath(`/clients/${updatedClient.slug}`);
+    if (client?.slug) {
+      revalidatePath(`/clients/${client.slug}`);
     }
 
-    await revalidateModontyTag("clients");
-    await revalidateModontyTag("articles");
+    await Promise.all([
+      revalidateModontyTag("clients"),
+      revalidateModontyTag("articles"),
+    ]);
     
     return warning ? { success: true, client, warning } : { success: true, client };
   } catch (error) {

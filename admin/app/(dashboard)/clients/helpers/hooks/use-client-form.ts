@@ -181,6 +181,7 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
             ? `${clientName} has been updated successfully.`
             : `${clientName} has been created successfully and is ready for use.`,
         });
+        setLoading(false);
         router.push("/clients");
         router.refresh();
       } else {

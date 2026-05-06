@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-05 (Session 83 — Article Revision Cycle code-complete + 🚨 production DB safety incident resolved · `dataLayer/.env` was pointing to PROD `modonty` so any standalone Node script auto-targeted production · article `69e8b29e…` was briefly flipped from PUBLISHED → AWAITING_APPROVAL during a test setup, restored within minutes with `datePublished` preserved · `dataLayer/.env` now points to `modonty_dev` so all future scripts default to dev · memory rule added: log resolved DATABASE_URL inside every script before any read/write)
-> **الإصدار الحالي:** admin v0.54.0 · modonty v1.43.1 · console v0.6.2
+> **آخر تحديث:** 2026-05-06 (Session 85 — loader fix + update-client perf 55s→13s · **⚠️ ملاحظة مهمة جداً أُضيفت: ARCH-01 — Background Jobs for Article SEO Cascade**)
+> **الإصدار الحالي:** admin v0.55.0 · modonty v1.44.0 · console v0.6.2
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 
@@ -11,6 +11,70 @@
 - [Perfect-SEO-Plan](Perfect-SEO-Plan.md) — 108 مهمة عبر 13 phase
 - [Dashboard Action Plan](Dashboard-Action-Plan.md)
 - [URL Lifecycle Plan](URL-Lifecycle-Plan.md)
+
+---
+
+## 🚨 ARCH-01 — Background Jobs for Article SEO Cascade *(ملاحظة مهمة جداً — Session 85)*
+
+**Priority:** HIGH · يجب معالجتها قبل أي عميل عنده أكثر من 50 مقال
+
+### المشكلة
+
+في `admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts`، بعد حفظ بيانات العميل، يُشغَّل cascade يولّد من جديد:
+- `generateClientSEO(id)`
+- `generateAndSaveJsonLd(articleId)` — لكل مقال
+- `generateAndSaveNextjsMetadata(articleId)` — لكل مقال
+
+الكود الحالي يستخدم `Promise.all` على **كل المقالات دفعة واحدة**:
+
+```ts
+await Promise.all(
+  clientArticles.map((a) =>
+    Promise.all([
+      generateAndSaveJsonLd(a.id),
+      generateAndSaveNextjsMetadata(a.id),
+    ])
+  )
+);
+```
+
+### ليش هذا خطر؟
+
+| العميل | المقالات | عمليات DB متزامنة | النتيجة |
+|--------|----------|-------------------|---------|
+| صغير (حالي) | 2 | 4 | ✅ 13 ثانية |
+| متوسط | 50 | 100 | ⚠️ بطيء، ممكن يمشي |
+| كبير | 200 | 400 | 🔴 connection pool exhaustion |
+
+Prisma default pool size في MongoDB = ~10 connections. 400 عملية متزامنة = كلها تتراص في queue، ممكن timeouts وأخطاء.
+
+### الحل القصير المدى (مؤقت)
+
+استبدال `Promise.all` الكامل بـ batch processing (10 مقالات في كل batch):
+
+```ts
+const BATCH_SIZE = 10;
+for (let i = 0; i < clientArticles.length; i += BATCH_SIZE) {
+  const batch = clientArticles.slice(i, i + BATCH_SIZE);
+  await Promise.all(batch.map((a) => Promise.all([...])));
+}
+```
+
+### الحل الصحيح على المدى البعيد (background job)
+
+1. Admin يضغط Save → الكود يحفظ بيانات العميل في DB فوراً (2-3 ثواني)
+2. يرجع success للمستخدم
+3. في الخلفية (fire-and-forget): يولّد SEO/JSON-LD/metadata بشكل async في batches
+
+هذا يعني:
+- المستخدم يشوف "تم الحفظ" بعد 2-3 ثواني بدل 13+
+- الـ cascade يصير في background — لا يأثر على تجربة المستخدم
+- بالنسبة للعميل صاحب 200 مقال = الـ cascade يأخذ دقيقة أو دقيقتين في الخلفية بدون أي أثر
+
+### الملفات المتأثرة
+
+- `admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts` — السطور 96–120
+- يحتاج: قرار architecture — هل نستخدم Next.js background jobs؟ أو queue system (BullMQ/Inngest)؟
 
 ---
 
