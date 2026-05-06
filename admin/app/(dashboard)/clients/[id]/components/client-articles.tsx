@@ -162,7 +162,7 @@ export function ClientArticles({ articles, clientId }: ClientArticlesProps) {
             </div>
           </div>
 
-          <div className="border rounded-lg">
+          <div className="border rounded-lg bg-card">
             <Table>
               <TableHeader>
                 <TableRow>

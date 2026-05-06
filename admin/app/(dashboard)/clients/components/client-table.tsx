@@ -331,7 +331,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
 
   return (
     <div className="space-y-4">
-      <div className="border rounded-lg">
+      <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
           <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[80px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* Analytics */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
           <TableHeader>

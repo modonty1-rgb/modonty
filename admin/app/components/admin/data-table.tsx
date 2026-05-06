@@ -63,7 +63,7 @@ export function DataTable<T extends { id: string }>({
         </div>
       )}
 
-      <div className="border rounded-lg">
+      <div className="border rounded-lg bg-card">
         <Table>
           <TableHeader>
             <TableRow>

@@ -157,7 +157,7 @@ export function TagArticles({ articles, tagId }: TagArticlesProps) {
             </div>
           </div>
 
-          <div className="border rounded-lg">
+          <div className="border rounded-lg bg-card">
             <Table>
               <TableHeader>
                 <TableRow>

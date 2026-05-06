@@ -231,7 +231,7 @@ export function MediaGrid({
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-              <div className="divide-y border rounded-lg overflow-hidden">
+              <div className="divide-y border rounded-lg overflow-hidden bg-card">
                 {group.items.map((item) => (
                   <div key={item.id} className="flex items-center gap-3 px-3 py-2 hover:bg-muted/30 transition-colors">
                     {/* Thumbnail */}

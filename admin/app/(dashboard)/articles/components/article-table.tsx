@@ -149,7 +149,7 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
 
   return (
     <div className="space-y-4">
-      <div className="border rounded-lg">
+      <div className="border rounded-lg bg-card">
         <Table>
           <TableHeader>
             <TableRow>

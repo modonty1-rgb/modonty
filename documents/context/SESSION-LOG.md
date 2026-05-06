@@ -1,4 +1,55 @@
-# Session Context — Last Updated: 2026-05-06 (Session 86 — Loader fix + Save performance · admin v0.55.0)
+# Session Context — Last Updated: 2026-05-06 (Session 87 — Light mode full scan + bg-card fixes · admin v0.55.1)
+
+---
+
+## ✅ Session 87 — 2026-05-06 (Light Mode Full Scan + bg-card Fixes)
+
+### Summary
+Full scan of all admin pages in light mode. Root cause: dark-mode-first development left two classes of issues: (1) `bg-white/N` / `border-white/N` opacity classes on section containers — nearly invisible on light backgrounds, already fixed in Session 87's first half. (2) Table/section containers with `border rounded-lg overflow-hidden` but no `bg-card` — transparent on the warm gray page background. Fixed all instances across 15+ files. Also fixed loading skeleton containers to match. The two intentional cases (`border-white/5` in WhatsApp mockup, `border-white/50` on image overlay dot) were left unchanged.
+
+### Releases shipped today
+
+| Version | What | Why |
+|---------|------|-----|
+| **admin v0.55.1** | Light mode full scan — bg-card fixes on all table/section containers | Transparent containers blended with warm gray page background in light mode |
+
+### Code changes (Session 87)
+
+**Table containers — added `bg-card`:**
+- `app/(dashboard)/industries/components/industry-table.tsx`
+- `app/(dashboard)/industries/loading.tsx`
+- `app/(dashboard)/tags/components/tag-table.tsx`
+- `app/(dashboard)/tags/loading.tsx`
+- `app/(dashboard)/categories/components/category-table.tsx`
+- `app/(dashboard)/categories/loading.tsx`
+- `app/(dashboard)/media/components/media-grid.tsx` (list view container)
+
+**Client detail tab section containers — added `bg-card`:**
+- `app/(dashboard)/clients/[id]/components/tabs/settings-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/tabs/address-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/tabs/security-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/tabs/legal-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/tabs/additional-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/tabs/media-social-tab.tsx`
+- `app/(dashboard)/clients/[id]/components/client-tabs.tsx` (SectionCard helper)
+
+**Previously fixed (Session 87 first half):**
+- `clients/components/client-form.tsx` — AccordionItems bg-white/5 → bg-card
+- `clients/[id]/components/client-articles.tsx` — table wrapper bg-card
+- `categories/[id]/components/category-articles.tsx` — table wrapper bg-card
+- `tags/[id]/components/tag-articles.tsx` — table wrapper bg-card
+- `industries/[id]/components/industry-clients.tsx` — table wrapper bg-card
+- `clients/[id]/components/client-seo-form.tsx` — AccordionItems bg-card
+- `settings/components/settings-form-v2.tsx` — Social image container bg-card
+- `search-console/pipeline/[articleId]/pipeline-runner.tsx` — step badge bg-muted-foreground/20
+- `components/admin/data-table.tsx` (both copies) — table wrapper bg-card
+- `articles/components/article-table.tsx` — table wrapper bg-card
+- `clients/components/client-table.tsx` — table wrapper bg-card
+
+### Key decisions
+- `bg-card` is always correct for data/section containers — it's `hsl(var(--card))` which is white in light, dark in dark
+- `bg-white/N` only works on dark backgrounds — never use for containers
+- Image/video aspect-ratio containers and overlay dots are intentional — do NOT add bg-card to those
 
 ---
 

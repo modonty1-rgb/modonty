@@ -143,7 +143,7 @@ export function IndustryClients({ clients, industryId }: IndustryClientsProps) {
             </div>
           </div>
 
-          <div className="border rounded-lg">
+          <div className="border rounded-lg bg-card">
             <Table>
               <TableHeader>
                 <TableRow>

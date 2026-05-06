@@ -14,7 +14,7 @@ interface SettingsTabProps {
 export function SettingsTab({ client }: SettingsTabProps) {
   return (
     <div className="space-y-6">
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border rounded-lg overflow-hidden bg-card">
         <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
           <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
             Subscription & Billing
@@ -61,7 +61,7 @@ export function SettingsTab({ client }: SettingsTabProps) {
       </div>
 
       {client.gtmId && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden bg-card">
           <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
               Tracking

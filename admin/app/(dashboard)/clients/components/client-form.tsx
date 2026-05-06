@@ -221,7 +221,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                 <>
                 {/* Media Widget — Logo + Hero */}
                 {clientId && (
-                  <div className="border border-white/10 rounded-lg bg-white/5 p-4 mb-2">
+                  <div className="border rounded-lg bg-card p-4 mb-2">
                     <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-4">Media</p>
                     <div className="flex gap-6">
                       {/* Logo */}
@@ -229,7 +229,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                         <button
                           type="button"
                           onClick={() => setLogoModalOpen(true)}
-                          className="relative group w-20 h-20 rounded-lg border border-dashed border-white/20 bg-muted/30 hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0"
+                          className="relative group w-20 h-20 rounded-lg border border-dashed border-border hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0 bg-muted/30"
                         >
                           {currentLogoUrl ? (
                             <NextImage src={currentLogoUrl} alt="Client logo" fill className="object-contain p-1" sizes="80px" />
@@ -252,7 +252,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                         <button
                           type="button"
                           onClick={() => setHeroModalOpen(true)}
-                          className="relative group w-36 h-20 rounded-lg border border-dashed border-white/20 bg-muted/30 hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0"
+                          className="relative group w-36 h-20 rounded-lg border border-dashed border-border hover:border-primary/50 transition-colors overflow-hidden flex-shrink-0 bg-muted/30"
                         >
                           {currentHeroUrl ? (
                             <NextImage src={currentHeroUrl} alt="Hero image" fill className="object-cover" sizes="144px" />
@@ -274,8 +274,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                   </div>
                 )}
                 <Accordion type="multiple" defaultValue={["client-info"]} className="w-full">
-                  <AccordionItem value="client-info" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                  <AccordionItem value="client-info" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                       <div className="flex items-center justify-between w-full pe-2">
                         <span>Client Info</span>
                         {watchedValues.slug && (
@@ -293,8 +293,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="company" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                  <AccordionItem value="company" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                       Company Profile
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">
@@ -304,8 +304,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="seo" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                  <AccordionItem value="seo" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                       SEO Details
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">
@@ -315,8 +315,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="seo-validation" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                  <AccordionItem value="seo-validation" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                       SEO Validation
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">
@@ -330,8 +330,8 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="settings" className="border border-white/10 rounded-lg bg-white/5">
-                    <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                  <AccordionItem value="settings" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                       Settings
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">

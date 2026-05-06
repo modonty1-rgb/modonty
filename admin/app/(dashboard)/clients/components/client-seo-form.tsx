@@ -238,8 +238,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
         <div className="flex gap-6">
           <div className="flex-1 min-w-0 space-y-6">
             <Accordion type="multiple" defaultValue={["meta"]} className="w-full">
-              <AccordionItem value="meta" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="meta" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   Meta
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
@@ -315,8 +315,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="schema" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="schema" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   Schema Data
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
@@ -392,8 +392,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="gbp" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="gbp" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   <span className="flex items-center gap-2">
                     <span className="inline-block w-2 h-2 rounded-full bg-muted-foreground" />
                     Google Business Profile
@@ -448,8 +448,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="address" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="address" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   Address
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
@@ -533,8 +533,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="business-details" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="business-details" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   Business Details
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">
@@ -623,8 +623,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
               </AccordionItem>
 
               {isEditMode && (
-                <AccordionItem value="media" className="border border-white/10 rounded-lg bg-white/5">
-                  <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+                <AccordionItem value="media" className="border rounded-lg bg-card">
+                  <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                     Media
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-5 pt-3">
@@ -635,8 +635,8 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                 </AccordionItem>
               )}
 
-              <AccordionItem value="analysis" className="border border-white/10 rounded-lg bg-white/5">
-                <AccordionTrigger className="hover:bg-muted/20 data-[state=open]:bg-white/8 data-[state=open]:hover:bg-muted/40 px-4 py-3">
+              <AccordionItem value="analysis" className="border rounded-lg bg-card">
+                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
                   SEO Analysis
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-5 pt-3">

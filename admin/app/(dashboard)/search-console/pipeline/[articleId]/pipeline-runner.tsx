@@ -807,7 +807,7 @@ function RunStepButton({
       <Lock className="h-2.5 w-2.5" />
     </span>
   ) : (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-current text-[10px] font-bold">
+    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted-foreground/20 text-foreground text-[10px] font-bold">
       {stepNumber}
     </span>
   );

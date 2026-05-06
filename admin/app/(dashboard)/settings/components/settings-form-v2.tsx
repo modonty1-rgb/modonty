@@ -817,7 +817,7 @@ export function SettingsFormV2() {
                   <Label className="text-xs text-muted-foreground">SEO Description</Label>
                   <Textarea value={val(settings, descKey)} onChange={(e) => set(descKey, e.target.value)} placeholder={`Browse all ${name.toLowerCase()} on Modonty...`} className="resize-none text-sm min-h-[72px]" />
                 </div>
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                <div className="rounded-lg border bg-card p-3">
                   <p className="text-[10px] text-muted-foreground uppercase font-medium mb-2">Social Sharing Image</p>
                   {settings.ogImageUrl ? (
                     <div className="flex items-center gap-3">

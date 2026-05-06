@@ -98,7 +98,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
     <>
       <div className="space-y-6">
         {(client.logoMedia || client.heroImageMedia || client.heroImageMedia) && (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-hidden bg-card">
             <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
                 Media Assets
@@ -197,7 +197,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
           client.twitterTitle ||
           client.twitterDescription ||
           client.twitterSite) && (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-hidden bg-card">
             <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
                 Twitter Cards
@@ -232,7 +232,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
           </div>
         )}
 
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden bg-card">
           <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
               Social Profiles
@@ -286,7 +286,7 @@ export function MediaSocialTab({ client, media }: MediaSocialTabProps) {
         </div>
 
         {media.length > 0 && (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-hidden bg-card">
             <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
                 Media Gallery

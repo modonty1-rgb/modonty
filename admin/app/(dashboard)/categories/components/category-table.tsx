@@ -90,7 +90,7 @@ export function CategoryTable({ categories }: CategoryTableProps) {
 
   return (
     <div className="space-y-3">
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border rounded-lg overflow-hidden bg-card">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30 hover:bg-muted/30">

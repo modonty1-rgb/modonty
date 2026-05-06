@@ -19,7 +19,7 @@ export default function TagsLoading() {
           <Skeleton className="h-8 w-24" />
         </div>
       </div>
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border rounded-lg overflow-hidden bg-card">
         <Skeleton className="h-10 w-full" />
         {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton key={i} className="h-14 w-full border-t" />
