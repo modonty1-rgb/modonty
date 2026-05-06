@@ -11,16 +11,12 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.54.0",
-    title: "admin v0.54.0 + console v0.6.2 — دورة المراجعة (Article Revision Cycle)",
+    version: "1.44.0",
+    title: "modonty v1.44.0 — bug fixes: share URL encoding + client follow 500 + UX polish",
     items: [
-      { type: "feature" as const, text: "schema: حقل revisionNotes String? على Article — يخزّن فيدباك العميل لما يطلب تعديلات" },
-      { type: "feature" as const, text: "console: requestChanges يحفظ نص الفيدباك ويحوّل المقالة لـ NEEDS_REVISION (بدل إلغاء الموافقة فقط)" },
-      { type: "feature" as const, text: "admin: transition جديد revision-to-draft + رابط جانبي 'Revision → Draft' — يجمع المقالات اللي العميل طلب تعديلها" },
-      { type: "feature" as const, text: "admin: banner أصفر فوق المقالة يعرض ملاحظات العميل بشكل بارز قبل التعديل" },
-      { type: "feature" as const, text: "admin: زر Re-submit for Review ينقل المقالة DRAFT ويمسح revisionNotes تلقائياً (ما تتراكم بين الدورات)" },
-      { type: "fix" as const, text: "DB safety: dataLayer/.env كان يشير لـ prod modonty افتراضياً — تعديل ليشير لـ modonty_dev، وأي سكريبت standalone Node بيستخدم dev الآن. حادثة flip-then-restore لمقالة كيما زون تمت معالجتها بدون فقدان بيانات." },
-      { type: "fix" as const, text: "memory rule: log resolved DATABASE_URL داخل أي سكريبت قبل أي read/write كحماية إضافية" },
+      { type: "fix" as const, text: "share URL: decodeURIComponent على window.location.href في ShareButtons + article-mobile-sidebar-sheet + article-mobile-engagement-bar + article-utilities — المستخدم كان ينسخ %D8%A3%D9%81... بدل النص العربي" },
+      { type: "fix" as const, text: "client follow 500: @@unique([clientId, sessionId]) في ClientLike كان يمنع أكثر من مستخدم من متابعة نفس العميل (MongoDB يعتبر null==null) — تحوّل لـ @@index + prisma db push على dev+prod" },
+      { type: "fix" as const, text: "client page: label 'حفظ' → 'مفضّلة' / 'محفوظ' → 'مُضافة' في client-favorite-button" },
     ],
   },
 ];

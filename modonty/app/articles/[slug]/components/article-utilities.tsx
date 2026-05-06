@@ -25,7 +25,7 @@ export function ArticleUtilities({ articleUrl, compact = false, buttonVariant = 
     };
   }, []);
 
-  const currentUrl = mounted ? window.location.href : articleUrl;
+  const currentUrl = mounted ? decodeURIComponent(window.location.href) : articleUrl;
 
   const handleCopyLink = async () => {
     try {

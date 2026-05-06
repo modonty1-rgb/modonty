@@ -94,12 +94,12 @@ export function ClientFavoriteButton({
       ) : isFavorited ? (
         <>
           <BookmarkCheck className="h-4 w-4" />
-          <span>محفوظ</span>
+          <span>مُضافة</span>
         </>
       ) : (
         <>
           <Bookmark className="h-4 w-4" />
-          <span>حفظ</span>
+          <span>مفضّلة</span>
         </>
       )}
     </Button>

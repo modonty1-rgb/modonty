@@ -85,14 +85,14 @@ export function ArticleMobileSidebarSheet({
 
   const handleShare = () => {
     if ("share" in navigator) {
-      void navigator.share({ title: articleTitle, url: window.location.href }).catch(() => {});
+      void navigator.share({ title: articleTitle, url: decodeURIComponent(window.location.href) }).catch(() => {});
     } else {
       handleCopyLink();
     }
   };
 
   const handleCopyLink = () => {
-    void (navigator as Navigator).clipboard?.writeText(window.location.href);
+    void (navigator as Navigator).clipboard?.writeText(decodeURIComponent(window.location.href));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

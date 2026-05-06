@@ -1441,7 +1441,7 @@ model ClientLike {
   createdAt DateTime @default(now())
 
   @@unique([clientId, userId])
-  @@unique([clientId, sessionId])
+  @@index([clientId, sessionId])
   @@index([clientId])
   @@index([userId])
   @@map("client_likes")

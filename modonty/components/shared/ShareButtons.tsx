@@ -51,7 +51,7 @@ export function ShareButtons({
     };
   }, []);
 
-  const fullUrl = mounted ? window.location.href : urlProp ?? "";
+  const fullUrl = mounted ? decodeURIComponent(window.location.href) : urlProp ?? "";
   const shareUrlEnc = encodeURIComponent(fullUrl);
   const shareTitleEnc = encodeURIComponent(title);
 

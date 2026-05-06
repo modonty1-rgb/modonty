@@ -66,9 +66,9 @@ export function ArticleMobileEngagementBar({
 
   const handleShare = () => {
     if ("share" in navigator) {
-      void navigator.share({ title, url: window.location.href }).catch(() => {});
+      void navigator.share({ title, url: decodeURIComponent(window.location.href) }).catch(() => {});
     } else {
-      void (navigator as Navigator).clipboard?.writeText(window.location.href);
+      void (navigator as Navigator).clipboard?.writeText(decodeURIComponent(window.location.href));
     }
   };
 
