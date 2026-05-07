@@ -359,7 +359,7 @@ export function ClientTabs({
                   "text-sm font-medium",
                   client.subscriptionStatus === "ACTIVE"
                     ? "text-green-500"
-                    : "text-red-400",
+                    : "text-red-600 dark:text-red-400",
                 )}
               >
                 {client.subscriptionStatus}
@@ -371,7 +371,7 @@ export function ClientTabs({
                   "text-sm font-medium",
                   client.paymentStatus === "PAID"
                     ? "text-green-500"
-                    : "text-red-400",
+                    : "text-red-600 dark:text-red-400",
                 )}
               >
                 {client.paymentStatus}
@@ -393,7 +393,7 @@ export function ClientTabs({
             )}
           </Grid>
           {(subExpired || subOverdue) && (
-            <div className="mt-3 pt-3 border-t text-xs text-amber-500/80 flex items-center gap-1.5">
+            <div className="mt-3 pt-3 border-t text-xs text-amber-600/80 dark:text-amber-500/80 flex items-center gap-1.5">
               ⚠{" "}
               {subExpired
                 ? "Subscription expired — contact client for renewal"
@@ -413,7 +413,7 @@ export function ClientTabs({
             ) : isBehind ? (
               <Badge
                 variant="outline"
-                className="text-xs text-amber-500 border-amber-500/30 bg-amber-500/10"
+                className="text-xs text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10"
               >
                 Behind
               </Badge>
@@ -440,7 +440,7 @@ export function ClientTabs({
               <span
                 className={cn(
                   "text-2xl font-semibold",
-                  isBehind && promised > 0 ? "text-amber-500" : "text-foreground",
+                  isBehind && promised > 0 ? "text-amber-600 dark:text-amber-500" : "text-foreground",
                 )}
               >
                 {articlesThisMonth}
@@ -456,9 +456,9 @@ export function ClientTabs({
                 className={cn(
                   "text-2xl font-semibold",
                   deliveryRate < 50 && promised > 0
-                    ? "text-amber-500"
+                    ? "text-amber-600 dark:text-amber-500"
                     : deliveryRate < 100 && promised > 0
-                      ? "text-amber-400"
+                      ? "text-amber-600 dark:text-amber-400"
                       : "text-foreground",
                 )}
               >
@@ -482,7 +482,7 @@ export function ClientTabs({
             ) : seoStatus === "warning" ? (
               <Badge
                 variant="outline"
-                className="text-xs text-amber-500 border-amber-500/30 bg-amber-500/10"
+                className="text-xs text-amber-600 dark:text-amber-500 border-amber-500/30 bg-amber-500/10"
               >
                 Needs work
               </Badge>
@@ -501,18 +501,18 @@ export function ClientTabs({
               {hasMeta ? (
                 <span className="text-green-500 font-medium">✓ Generated</span>
               ) : (
-                <span className="text-red-400 font-medium">✗ Missing</span>
+                <span className="text-red-600 dark:text-red-400 font-medium">✗ Missing</span>
               )}
             </Field>
             <Field label="JSON-LD">
               {hasJsonLd && jsonLdErrors === 0 ? (
                 <span className="text-green-500 font-medium">✓ Valid</span>
               ) : hasJsonLd && jsonLdErrors > 0 ? (
-                <span className="text-amber-500 font-medium">
+                <span className="text-amber-600 dark:text-amber-500 font-medium">
                   {jsonLdErrors} errors
                 </span>
               ) : (
-                <span className="text-red-400 font-medium">✗ Missing</span>
+                <span className="text-red-600 dark:text-red-400 font-medium">✗ Missing</span>
               )}
             </Field>
             {client.seoTitle && (
@@ -534,7 +534,7 @@ export function ClientTabs({
             )}
           </Grid>
           {!hasMeta && (
-            <div className="mt-3 pt-3 border-t text-xs text-red-400/80">
+            <div className="mt-3 pt-3 border-t text-xs text-red-600/80 dark:text-red-400/80">
               ✗ No SEO data — open edit and save to generate
             </div>
           )}

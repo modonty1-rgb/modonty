@@ -95,7 +95,7 @@ export function BasicInfoSection({
               </div>
             )}
             {isEditMode && (
-              <div className="flex items-start gap-2 rounded-md bg-yellow-500/8 border border-yellow-500/20 px-3 py-2">
+              <div className="flex items-start gap-2 rounded-md bg-yellow-50 border border-yellow-200 dark:bg-yellow-500/8 dark:border-yellow-500/20 px-3 py-2">
                 <div className="flex-1" dir="rtl">
                   <span className="mt-0.5 text-yellow-500 shrink-0">⚠ </span>
                   <span className="text-[11px] text-yellow-600 dark:text-yellow-400 leading-relaxed">
@@ -133,9 +133,9 @@ export function BasicInfoSection({
         </FormField>
       </div>
 
-      <div className="rounded-lg border border-blue-500/20 bg-blue-500/[0.03] p-4 space-y-4">
+      <div className="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-500/20 dark:bg-blue-500/[0.06] p-4 space-y-4">
         <div dir="rtl">
-          <p className="text-sm font-medium text-blue-400">بيانات دخول العميل</p>
+          <p className="text-sm font-medium text-blue-600 dark:text-blue-400">بيانات دخول العميل</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             يتم إرسال هذه البيانات للعميل للدخول على لوحة التحكم الخاصة به وإدارة محتواه.
           </p>

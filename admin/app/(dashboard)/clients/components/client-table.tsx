@@ -497,9 +497,9 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                       {(() => {
                         const tier = client.subscriptionTier;
                         const style = tier === "PREMIUM"
-                          ? "bg-purple-500/10 text-purple-400"
+                          ? "bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400"
                           : tier === "STANDARD"
-                            ? "bg-blue-500/10 text-blue-400"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
                             : "bg-muted text-muted-foreground";
                         return (
                           <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium", style)}>
@@ -521,8 +521,8 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           const color = ratio >= 0.75
                             ? "text-emerald-500"
                             : ratio >= 0.25
-                              ? "text-amber-500"
-                              : "text-red-500";
+                              ? "text-amber-600 dark:text-amber-500"
+                              : "text-red-600 dark:text-red-500";
                           return (
                             <span className={cn("text-sm font-medium", color)}>
                               {delivery.delivered}/{delivery.promised}
@@ -540,9 +540,9 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                           daysRemaining <= 0
                             ? "text-muted-foreground"
                             : daysRemaining <= 14
-                              ? "text-red-500"
+                              ? "text-red-600 dark:text-red-500"
                               : daysRemaining <= 30
-                                ? "text-amber-500"
+                                ? "text-amber-600 dark:text-amber-500"
                                 : "text-emerald-500"
                         )}>
                           {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}

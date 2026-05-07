@@ -40,7 +40,7 @@ export function SubscriptionSection({
             }}
             className={`h-full rounded border px-3 text-[11px] font-medium transition-all whitespace-nowrap ${
               subscriptionTier === config.tier
-                ? "border-violet-500 bg-violet-500/15 text-violet-300"
+                ? "border-violet-500 bg-violet-500/15 text-violet-700 dark:text-violet-300"
                 : "border-input hover:border-violet-500/40 text-muted-foreground"
             }`}
           >
