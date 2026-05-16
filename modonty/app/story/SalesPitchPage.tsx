@@ -36,7 +36,7 @@ import { Vision2030Spotlight } from "./Vision2030Spotlight";
 import { TeamCarousel } from "./TeamCarousel";
 import { TestimonialPlayer } from "./TestimonialPlayer";
 import { PartnersShowcase } from "./PartnersShowcase";
-import { LEGAL_ENTITY } from "./_constants";
+import { LEGAL_ENTITY, MODONTY_LOGO_URL } from "./_constants";
 import { stripTashkeel } from "./_utils/arabic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -1370,6 +1370,43 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
                                 className="inline-block"
                               >
                                 {pos}
+                              </m.span>
+                            );
+                          }
+                          if (currentSection.media === "vision-2030") {
+                            return (
+                              <m.span
+                                key="vision-modonty-pair"
+                                initial={{ scale: 0.7, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                className="inline-flex items-center justify-center gap-3 md:gap-4 align-middle"
+                                style={{ fontSize: 0 }}
+                                aria-label="رؤية ٢٠٣٠ × مدوني"
+                              >
+                                <Image
+                                  src="/vision-2030-logo.png"
+                                  alt="رؤية ٢٠٣٠"
+                                  width={88}
+                                  height={56}
+                                  className="object-contain w-[60px] md:w-[78px] lg:w-[92px] h-auto"
+                                  unoptimized
+                                />
+                                <span
+                                  aria-hidden
+                                  className="text-foreground/40 font-light"
+                                  style={{ fontSize: "0.42em" }}
+                                >
+                                  ×
+                                </span>
+                                <Image
+                                  src={MODONTY_LOGO_URL}
+                                  alt="مدوني"
+                                  width={56}
+                                  height={56}
+                                  className="object-contain w-[50px] md:w-[64px] lg:w-[76px] h-auto"
+                                  unoptimized
+                                />
                               </m.span>
                             );
                           }
