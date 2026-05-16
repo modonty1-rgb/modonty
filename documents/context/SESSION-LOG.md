@@ -1,4 +1,945 @@
-# Session Context — Last Updated: 2026-05-06 (Session 87 — Light mode full scan + bg-card fixes · admin v0.55.1)
+# Session Context — Last Updated: 2026-05-16 (Session 95 — /story v1.45.0: business→مشروعك cleanup + audio re-gen + UI moves · READY TO PUSH)
+
+---
+
+## 🟢 Session 95 — 2026-05-16 (/story v1.45.0 — language cleanup + audio re-gen + UI polish · READY TO PUSH)
+
+### TL;DR
+Replaced "بزنس" (loanword) → "مشروعك / نشاط" throughout /story scripts + manifest + SEO metadata + welcome card. Pivoted "أنت طوبة" → "شركتك طوبة" (no person-as-brick). Re-generated 13 audio sections with Gemini Kore (~45MB). Improved UI: read button → top bar, vision 2030 → sidebar (full width), hint → audio controls, removed redundant headings. Logo dot rendered as authentic diamond (#00D8D8 extracted from real SVG) with smart animation (isPlaying gate + reduced-motion). Category names rewritten as questions (hooks).
+
+### Architectural moves
+- **Script file relocation:** `console/app/help/voice-script/script.md` → `modonty/scripts/voice/general-pitch/script.md` (modonty owns its own pitch source · zero dead code · console pitch unchanged)
+- **New folder structure:** `modonty/scripts/voice/general-pitch/` for story script source
+- **Updated 2 console scripts** to read from new path (build-general-pitch-manifest.mjs + generate-section.mjs)
+
+### Audio regeneration (Gemini Kore)
+13 sections: 02, 03, 04, 06, 07, 08, 12, 13, 14, 15, 16, 17, 18 · ~45MB · zero generation errors
+
+### UI/UX changes (live tested)
+- "📄 اقرأ النص" button moved from content area → top bar (visible on media sections)
+- "نساهم في رؤية ٢٠٣٠" button: top bar → sidebar header (full width)
+- "اضغط للبدء" hint moved to audio controls footer
+- Removed headings: "🎬 خريطة القصة" + "🎬 افتتاحية" (sidebar simplified)
+- TV stage number badge: raw ID → sequential position (1-12) for categorized sections · diamond cyan dot (extracted from logo SVG) for logo-spotlight
+- Animation polished: useReducedMotion + isPlaying gate + glow -30% + 30% faster cycles
+- Welcome card text shortened: ~95 chars → ~52 chars
+- Category labels = questions (hooks): "عميلك يلقاك؟" · "ليش مدوني؟" · "وكالة ولا منظومة؟" · "نتائج العملاء" · "مين خلف البنيان؟"
+
+### Language cleanup (zero "بزنس" remaining)
+- script.md: 22 occurrences replaced
+- manifest.json: 18 occurrences (text + labels + highlights + section 18 + section 15 + section 03)
+- page.tsx: 3 SEO metadata occurrences
+- SalesPitchPage.tsx welcome card inline string
+- "أنت طوبة" → "شركتك طوبة" (8 occurrences across manifest + script.md)
+- Fake number "+١٢٠ بزنس عربي" removed entirely (script.md + manifest)
+- Section 03 metaphor pivot: نقطة → طوبة → بنيان (preserves logo literal meaning + dignifies customer)
+- Removed file: `console/app/help/voice-script/video-brief-kling.md` (internal kling brief, not user-facing)
+
+### Pre-push state
+- TSC clean on all 3 apps (modonty + admin + console)
+- Backup: 66 collections · 2.9MB
+- Changelog v1.45.0 written to LOCAL + PROD DBs
+- Version bump: modonty 1.44.0 → 1.45.0
+
+### Pending phases (NOT in this push)
+- Cloudinary audio migration → `documents/tasks/CLOUDINARY-AUDIO-MIGRATION.md`
+- Console UI changes from earlier (dashboard-header, dashboard-layout-client, etc.) — separate scope
+
+---
+
+## Session 94 archive — see git history for details
+
+---
+
+## 🟡 Session 94 — 2026-05-16 (/story page production-hardening — 52 items across Phases 1-9 · NOT PUSHED)
+
+### TL;DR
+Massive iteration cycle on `modonty.com/story` after Session 93's layout work. Spawned 4 parallel audit agents 3 times (UI/UX · CRO · A11y · Code), each round generated new findings that were systematically executed. End state: **52 items shipped**, 4 strategic items deferred for Khalid's input.
+
+### Phase-by-phase summary (all live, all TSC clean)
+
+**Phase 1-4 (foundational)** — completed earlier in session:
+- Wave 1-3 batch (8 items: WCAG focus rings, 44px targets, transcript drawer, skeleton loading, voice metadata, PodcastSeries JSON-LD, big play button, SkipBack semantic)
+- Section #20 «خطوتك الأولى» complete (script v3.3 + Kore audio + sidebar footer CTA)
+- Trust Strip + Organization JSON-LD enhanced (CR 4030560460 + Unified Entity 7040602091 + capital 8M + DBA «حديقة البستان للديكور»)
+- CEO/Sales contact split + WhatsApp pre-fill (env vars in `.env.shared`)
+- Vision 2030 deep integration (Vision2030Spotlight cinematic widget + TV header CTA + JSON-LD knowsAbout + «نساهم في رؤية المملكة ٢٠٣٠»)
+- Packages CTA replaced CEO block → `https://www.jbrseo.com/pricing` country-aware
+- Collapsible sidebar categories (Hick's Law fix)
+- TeamCarousel (13 members from jbrseo live data, embla-carousel + autoplay + dept color-coding)
+- TestimonialPlayer (2 real YouTube videos: Kimazone Short + Jabr South Full · embedded via youtube-nocookie)
+- PartnersShowcase (5 real partners with Cloudinary logos, jabrco/kimazone/الساحة/Trust Tech/DreamToApp)
+- Maya Ahmed avatar (DiceBear `micah` female + light skin baseColor=f9c9b6)
+- Professional audio generator `pnpm gen:section <id>` (modonty-side, Gemini Kore)
+
+**Phase 5 (HIGH from audit #1)**:
+- 5.1 Founder Offer hook merged into amber footer CTA («🎁 عرض المؤسسين · ادفع ١٢ احصل على ١٨» stacked with «🚀 خطوتك الأولى»)
+- 5.2 Decision paralysis: Option A applied — Packages CTA demoted to outline ghost, Contact links to compact text rows (Nielsen Norman + CXL pattern)
+- 5.3 WCAG 2.5.5 carousel sizes — arrows 36→44px, dots wrapped in 44×44 hit-area
+- 5.4 SENIOR CALL — React.memo on 5 widgets (TeamCarousel + Testimonial + Partners zero-prop = 100% re-render elimination; LogoSpotlight + Vision2030 = activeWord-only re-renders). REJECTED full SalesPitchPage split (~90% benefit, ~5% risk)
+- 5.5 `dynamic({ssr:false})` via StoryClientLoader + StorySkeleton fallback — visitor bundle deferred
+
+**Phase 6 (MEDIUM from audit #1)** — 8 items, batch shipped:
+- 6.1 ARIA APG tab keyboard nav (aria-controls + tabpanel + roving tabindex + arrow keys on TestimonialPlayer + TeamCarousel)
+- 6.2 «ابقَ هنا ✕» cancel button on auto-advance overlay (WCAG 2.2.2)
+- 6.3 jbrseo domain disclosure («شريكنا التقني لإدارة الباقات والاشتراكات»)
+- 6.4 Distinct emoji: TestimonialPlayer 💬 (was duplicate 🤝 with Partners)
+- 6.5 Vision2030Spotlight animation pause when `!isPlaying`
+- 6.6 Transcript shown on media sections with text (drop `!media` guard)
+- 6.7 Non-null assertion `!` removed from TestimonialPlayer (early-return guard)
+- 6.8 PartnersShowcase orphan card centered on mobile (arbitrary variant `nth-last-child:nth-child(odd)`)
+
+**Phase 7 (LOW polish)** — 8 items:
+- 7.1 Extracted `splitIntoPhrases` to `_utils/phrases.ts`
+- 7.2 ChevronDown on transcript summary with `group-open:rotate-180`
+- 7.3 Last 2 TV header chips `hidden md:inline-flex` (375px overflow fix)
+- 7.4 `_constants.ts` centralized `MODONTY_LOGO_URL` + `STORY_OG_IMAGE`
+- 7.5 `formatTime` hoisted to module + `m` variable shadow fixed
+- 7.6 TeamCarousel autoplay pauses on focus (keyboard users)
+- 7.7 TestimonialPlayer outcome lines (qualitative, no fake numbers per memory rule)
+- 7.8 Partners footer assertive: «شركاء فعليون مع مدونتي منذ ٢٠٢٤»
+
+**Phase 8 (audit #2 — tactical)** — 11 items shipped:
+- 8.1 focus-visible:ring on speed + volume + seek (WCAG 2.4.7)
+- 8.2 Removed tabpanel tabIndex={0} (no double tab-stop with iframe)
+- 8.5 aria-valuetext on seek + volume sliders
+- 8.6 sr-only h2 heading on media sections
+- 8.9 Dead AnimatePresence removed from TeamCarousel
+- 8.10 onTimeUpdate throttled to 4Hz via performance.now() + ref
+- 8.11 useMemo for findPrev/findNextCoreIdx (was called 2x/render)
+- 8.12 Autoplay button: role="switch" + aria-checked (ARIA preferred)
+- 8.13 TeamCarousel dots `hidden sm:flex` (13 dots wrap fix on small screens)
+- 8.14 Exported `SalesPitchProps` type from SalesPitchPage to StoryClientLoader
+- 8.15 Vision2030 SME badge wrapped in AnimatePresence + key + exit
+
+**Phase 9 (audit #3 — Trust Strip iteration findings)** — 11 items shipped:
+- 9.1+9.5 Trust Strip Row 2 wrap fix on md breakpoint («المملكة العربية السعودية» → «السعودية»)
+- 9.2 Mixed numerals fix — «تأسست ٢٠٢٤» → «2024» (Latin consistent with CR + capital)
+- 9.3 `↗` arrow wrapped in `<span aria-hidden>`
+- 9.4 Visual weight rebalanced — CR `font-bold text-foreground 11px`, capital `bold 11px` (legal proof prominent)
+- 9.6 `نشط` badge: dot replaced by `<ShieldCheck>` lucide
+- 9.7 `💰`/`📍` emojis → `<Wallet>` + `<MapPin>` lucide icons (formal tone)
+- 9.8 تحقّق aria-label improved: «ابحث بالرقم {CR} في وزارة التجارة»
+- 9.9 `LEGAL_ENTITY` constant in `_constants.ts` (brand, dba, cr, capital, currency, city, country, countryFull, foundedYear, verifyUrl)
+- 9.10 `stripTashkeel` + `TASHKEEL_REGEX` → `_utils/arabic.ts`
+- 9.11 Dead AnimatePresence removed from TestimonialPlayer
+- Bonus: `<section aria-label>` landmark on Trust Strip + capital aria-label for screen readers
+
+**Trust Strip evolution (most-iterated component)**:
+- Started: vertical 140px stack (eyebrow + brand + CR row + capital paragraph + address)
+- Compacted to: horizontal 2-row strip ~50px (8.8) — DBA/badge/verify cluster on row 1, credentials chips on row 2
+- Polished: Latin year, lucide icons, semantic LEGAL_ENTITY constants
+- Final visual: «مدونتي · تحت مظلة حديقة البستان للديكور» [نشط] [تحقّق] / ✓ سجل 4030560460 · 💰 رأس المال 8,000,000 ر.س · 📍 جدة · السعودية · 2024
+
+**Transcript drawer journey (CRITICAL learning)**:
+- v1: `<details>` inline with `max-h-[40vh]` — text overflowed controls
+- v2: `<details>` with `max-h-[180-220px]` bordered box — same overflow on long sections
+- v3: Refactored TV stage to always-scroll + fixed-height media wrappers — broke media layout
+- **FINAL (correct)**: shadcn Dialog modal (Radix portal). Click «📄 اقرأ النص الكامل» opens overlay with internal scroll, zero layout impact. **Senior lesson:** secondary/optional content should live in portal, not compete for layout space inside fixed containers.
+
+### New files created this session
+- `modonty/app/story/StoryClientLoader.tsx` — client wrapper for dynamic({ssr:false})
+- `modonty/app/story/StorySkeleton.tsx` — fallback loading state
+- `modonty/app/story/TeamCarousel.tsx` — 13-member embla carousel
+- `modonty/app/story/TestimonialPlayer.tsx` — 2-tab YouTube embed (Kimazone + Jabr South)
+- `modonty/app/story/PartnersShowcase.tsx` — 5-partner grid with lucide icons
+- `modonty/app/story/Vision2030Spotlight.tsx` — Vision 2030 cinematic widget
+- `modonty/app/story/_constants.ts` — MODONTY_LOGO_URL + LEGAL_ENTITY
+- `modonty/app/story/_utils/phrases.ts` — splitIntoPhrases shared between spotlights
+- `modonty/app/story/_utils/arabic.ts` — stripTashkeel + TASHKEEL_REGEX
+- `modonty/scripts/generate-section.mjs` — Gemini Kore TTS pipeline for modonty
+
+### Files significantly modified
+- `modonty/app/story/SalesPitchPage.tsx` — major iteration (~1469 lines now)
+- `modonty/app/story/page.tsx` — converted to use StoryClientLoader + dynamic
+- `modonty/app/story/LogoSpotlight.tsx` — memo + consume _constants/_utils
+- `modonty/public/help/audio/general-pitch/manifest.json` — added sections #18 (Vision 2030) · #20 (close CTA) · #21 (team) · #22 (testimonial) · #23 (partners) + categories restructured
+- `.env.shared` (root) — added NEXT_PUBLIC_SALES_WHATSAPP + SALES_EMAIL + GEMINI_API_KEY
+- `documents/tasks/STORY-PAGE-TODO.md` — fully rewritten + maintained throughout (52 done items + 4 pending)
+
+### 4 strategic items DEFERRED (need Khalid input or architectural decision)
+- **8.3** Founder Offer button — currently navigates to audio section #20. CRO agent suggests split: WhatsApp prefill «أبغى أثبت كمؤسس مبكر» + secondary chevron for the audio. NEEDS DECISION.
+- **8.4** jbrseo external domain trust break — Packages CTA opens different brand. Option A: inline pricing strip on modonty.com (1h). Option B: host pricing at modonty.com/pricing (4-6h). NEEDS DECISION + data.
+- **8.7** Contrast measurement on text-foreground/45-/55 — needs Lighthouse run by Khalid + targeted fix per failure.
+- **9.12** SalesPitchPage parent itself not memo'd — re-renders on each throttled audio tick. Architectural refactor with high risk vs the throttle already in place giving most benefit.
+- **9.13** ~37 occurrences of `text-[Npx]` arbitrary — design system token work (out of scope for this iteration).
+
+### Verification status
+- ✅ TSC modonty: 0 errors (verified throughout, 20+ times this session)
+- ✅ HTTP 200 on /story · ~138 KB initial HTML (skeleton + JSON-LD + metadata)
+- ✅ Dev server hot-reload working
+- ⚠️ NOT live-browser-tested (Playwright MCP disconnected this session, all verification text-only)
+
+### Critical learnings for next session
+1. **Memo > Split** for visitor-page perf when widgets are zero-prop. Splitting just for line count adds prop-drilling without runtime benefit.
+2. **Trust Strip needed 3 attempts** before getting horizontal layout right. The breakpoint trap: `md:w-64` (256px) doesn't fit long Arabic text well — keep chips short.
+3. **Inline transcript = wrong pattern** for media-section layouts with fixed containers. Use Dialog/portal.
+4. **Re-audits expose NEW issues each round** because each iteration changes surface. User got frustrated by "every time new" — suggested rule: re-audit only after MAJOR iteration batches, not after every tweak.
+5. **DiceBear PNG, NOT SVG** — Next.js Image blocks external SVGs by default. Use `/png?size=256` for retina.
+6. **Mobile-first sidebar dots wrap** — 13 dots × ~28px slot = ~364px on 360px screens. Use `hidden sm:flex` for non-essential controls.
+
+### Pending — Push checklist (when Khalid says "push")
+1. Version bump `modonty/package.json` 1.44.0 → 1.45.0 (major story polish + memo + dynamic = minor bump)
+2. Run `bash scripts/backup.sh`
+3. Update `scripts/add-changelog.ts` with v1.45.0 entry
+4. Run `pnpm tsx scripts/add-changelog.ts` (writes to local + prod DB)
+5. Commit: «modonty v1.45.0: /story production-hardening — 52 items across 8 phases (WCAG AA + perf + CRO + a11y + Trust Strip refactor + Dialog transcript)»
+6. Git push (waits on Khalid's explicit confirmation per memory rule)
+
+### Files in scope when resuming
+- `modonty/app/story/*` — all components
+- `modonty/public/help/audio/general-pitch/manifest.json`
+- `documents/tasks/STORY-PAGE-TODO.md` — 4 pending strategic items
+- `.env.shared` (root) — env vars added
+
+### What's NOT in scope (other ongoing tasks)
+- Console module — untouched this session
+- Admin module — untouched this session
+- Other modonty pages — untouched
+- dataLayer/Prisma — untouched
+
+---
+
+## 🟡 Session 93 — 2026-05-16 (Cinematic UX upgrades for /story — 3-column layout + Now Playing panel + progressive highlights · NOT PUSHED)
+
+### TL;DR
+Major UI redesign for `/story` based on Khalid's iterative direction. Three big changes:
+1. **3-column viewport-contained layout** — Menu (right) + TV (center) + Now Playing panel (left), all visible in one viewport, no external scroll.
+2. **Standalone sidebar** — Menu moved OUT of the player card to its own column; TV card focuses purely on display + controls.
+3. **Cinematic "Now Playing" panel** — left column transforms from static brand intro to dynamic section info (huge `03` section number with gradient + SVG progress ring, section title, active highlight pull-quote, position/time footer).
+4. **Progressive highlights reveal** — instead of showing all highlights at once, each highlight animates IN as its turn arrives in the narration (slide+blur+scale entry, 0.7s cinematic ease). Past ones stay visible (✓ + muted), present one is amber-bordered + pulsing, future ones hidden until their turn.
+
+### Files modified
+- `modonty/app/story/SalesPitchPage.tsx` — full restructure: 3-column layout, Now Playing panel with idle/playing states, `highlightStates` useMemo computing past/present/future per highlight, AnimatePresence-driven progressive reveal
+- `console/scripts/test-gemini-api.mjs` and `test-gemini-tts.mjs` — DELETED (one-time tests)
+- `console/scripts/gemini-test-output/` — DELETED (test wav samples)
+- Root: 65 snapshot/screenshot files DELETED (snap-*.md, snapshot-*.md, section-03-*.png, snapshot-*.png, test-*.png)
+
+### Cleanup verified
+- 5 questionable scripts INVESTIGATED + KEPT (each is active for either general-pitch or sales-pitch system): build-general-pitch-manifest, export-plain-script, generate-sales-pitch-audio, generate-section, rebuild-pitch-manifest
+- test-pronunciation.mjs KEPT (memory rule says active tool)
+
+### Layout decisions confirmed via discussion
+- **Subdomain vs subpath**: Khalid chose `modonty.com/story` (subpath) — SEO juice stays on main domain
+- **Inside vs outside card**: Sidebar OUT of card (standalone column), card becomes "TV"
+- **Static vs dynamic left column**: Dynamic — transforms from brand intro to Now Playing on first play
+- **All highlights at once vs progressive**: Progressive — each appears as its turn arrives
+
+### Pending — Section 03/15 philosophy separation (DISCUSSED, NOT EXECUTED)
+- Khalid agreed: «فلسفة الشعار وفلسفة مدونتي ما ينفع ندمجهم مع بعض»
+- Plan: cut bridge from end of section 03 (`«ومن هنا جاءت فلسفة مدونتي... كالبنيان المرصوص»`) and move it to opening of section 15
+- BLOCKED ON: reading section 15 current text to decide if we graft or rewrite
+- Khalid said: "خلصنا، خليني أسيب الموضوع هذا ليك أنت بإبداعه" — left to my judgment but UI work took priority
+- **TODO ON RESUME:** read manifest section 15, propose graft vs rewrite, implement, regenerate audio for section 03 (because we cut content)
+
+### Verification status
+- ✅ TSC modonty: 0 errors (verified earlier this session)
+- ✅ TSC console: 0 errors
+- ✅ Modonty build: succeeded, `/story` route registered
+- ✅ Console errors during live Playwright test: 0 across 18 different state transitions
+- ✅ Audio playback: section-03.wav plays correctly with progressive highlight reveal
+- ⚠️ Section 03 audio regeneration NEEDED once philosophy split is executed
+
+### Status before next session
+- All work in `modonty/app/story/` and `console/app/help/` — **NOT PUSHED**
+- Branch: `main`
+- Dev server running in background on `localhost:3000`
+- Chrome with remote debug port 9222 active
+
+---
+
+---
+
+## 🟡 Session 92 — 2026-05-15 (Cinematic LogoSpotlight for section 03 + Gemini tashkeel pipeline + Kore TTS + plan to move to /modonty/story route · NOT PUSHED)
+
+### TL;DR
+Major UX upgrade for section 03 (فلسفة الشعار). Built `LogoSpotlight.tsx` — a cinematic logo widget with karaoke-style phrase subtitles synced to audio. Logo scaled 1.65x to fill, layout split into `flex-[7]` (logo) + `flex-[3]` (subtitle). Reactive animations: pulse on «نقطة», halo on «شعار/مدونتي», 3 orbiting dots on «ثلاث», cascade on «قصة/مقال/عميل». Section 03 text expanded with full philosophy ("everything IS dots → بنيان مرصوص → Modonty philosophy"). Built Gemini API tashkeel pipeline (`scripts/tashkeel.mjs`) — replaces manual Khalid→Gemini copy-paste. Built Kore TTS via Gemini (`scripts/generate-audio-kore.mjs`) — fallback after ElevenLabs credits exhausted. Khalid upgraded Gemini to paid Tier 1. Honesty rules baked into memory: NEVER quote Modonty pricing in pitch, NEVER claim "no contract" (real: 1-year + 6 months bonus), NEVER claim "Reels per article" (tier-dependent), NEVER invent customer counts ("+120" removed).
+
+### ✅ DONE (Session 92 finalization on 2026-05-16)
+URL chosen: **`modonty.com/story`** (single subpath, NOT subdomain — SEO juice stays on main domain per the SEO dominance goal).
+
+All steps executed:
+1. ✅ `framer-motion ^12.38.0` added to `modonty/package.json` + `pnpm install` ran clean
+2. ✅ `modonty/app/story/page.tsx` — Server Component with full SEO metadata + WebPage JSON-LD + canonical + ar-SA/ar-EG alternates + OG tags
+3. ✅ `modonty/app/story/loading.tsx` — Skeleton fallback
+4. ✅ `modonty/app/story/SalesPitchPage.tsx` — Client Component with `LazyMotion features={domAnimation}` wrapper, all `m.X` instead of `motion.X`, **elevenlabs mode only** (dropped browser-tts ~80 lines), no dev refresh button, no portal, no modal wrapper — full-page article layout with hero header
+5. ✅ `modonty/app/story/LogoSpotlight.tsx` — copy from console with `m` instead of `motion`
+6. ✅ `audio.preload="none"` on `<audio>` element (CWV optimization)
+7. ✅ 17 audio files copied (manifest.json + 9 MP3s + 7 WAVs — only manifest-referenced files, no dead audio)
+8. ✅ `console/app/help/HelpClient.tsx` — added "الصفحة العامة" link button (with ExternalLink icon) next to existing modal button. Modal kept because ConsoleTourClient.tsx still uses SalesPitchPlayer.
+
+### ✅ Verification
+- ✅ `pnpm tsc --noEmit` on **modonty** → exit code 0 (zero errors)
+- ✅ `pnpm tsc --noEmit` on **console** → exit code 0 (zero errors)
+- ✅ `pnpm build` on modonty → success. `/story` route registered as ◐ (Partial Prerender)
+- ✅ Bundle size: SalesPitchPage+LogoSpotlight+framer-motion chunk = **~105KB minified on disk** (≈25-30KB gzipped over the wire)
+- ✅ Framer-motion isolated to `/story` chunk only — verified by grepping all `.next/static/chunks`. **Zero leak to other modonty.com pages.**
+- ⚠️ Playwright live browser test SKIPPED — MCP server disconnected. Khalid should test manually at `http://localhost:3000/story` after `pnpm dev` from `modonty/`.
+
+### Files added/modified this finalization
+- NEW: `modonty/app/story/page.tsx`
+- NEW: `modonty/app/story/loading.tsx`
+- NEW: `modonty/app/story/SalesPitchPage.tsx`
+- NEW: `modonty/app/story/LogoSpotlight.tsx`
+- NEW: `modonty/public/help/audio/general-pitch/` (17 files)
+- MODIFIED: `modonty/package.json` (+framer-motion)
+- MODIFIED: `console/app/help/HelpClient.tsx` (+link button)
+- MODIFIED: `pnpm-lock.yaml` (auto by pnpm install)
+
+### No dead code policy applied
+- DROPPED from public version: `mode="browser-tts"` (entire speech synthesis pipeline, playBrowserTTS, pickArabicVoice, ttsActiveWordIdx, ttsUtteranceRef, ttsStartTimeRef, autoplayRef)
+- DROPPED: dev refresh button, isDev branch, isRefreshing state, loadManifest cache-bust
+- DROPPED: createPortal, open/onClose props, ESC keyboard handler, modal backdrop animations, max-w-5xl modal wrapper, X close button
+- KEPT in console: SalesPitchPlayer/SalesPitchOverlay (still used by ConsoleTourClient.tsx)
+- Audio: copied ONLY the 17 manifest-referenced files (skipped 17+ unused duplicate MP3/WAV variants in console)
+
+### Changes this session
+- `console/app/help/console/LogoSpotlight.tsx` (NEW) — cinematic logo widget, 215 lines
+- `console/app/help/console/SalesPitchOverlay.tsx` — added `media?: "logo-spotlight"` field handling
+- `console/public/help/audio/general-pitch/manifest.json` — section 03 expanded text + tashkeel + `"media": "logo-spotlight"` field
+- `console/scripts/tashkeel.mjs` (NEW) — Gemini 2.5 Flash tashkeel automation (replaces manual workflow)
+- `console/scripts/generate-audio-kore.mjs` (NEW) — Kore TTS via Gemini (24kHz WAV PCM, fallback for ElevenLabs)
+- `console/scripts/test-gemini-api.mjs` (NEW) — health check for `GEMINI_API_KEY`
+- Section 03 audio regenerated (Layla — religious/philosophical tone)
+- Several sections corrected for honesty: removed Modonty pricing from comparisons (sections 06/07/13/18), removed "+120 businesses" (sections 04/18), reframed "no contract" → "عقد سنة + ٦ شهور هدية = ١٨ شهر" (section 18), reframed "Reels per article" → "حسب باقتك" (section 12)
+
+### Memory updates (4 new + 1 modified)
+- New: `feedback_no_modonty_pricing_in_pitch.md` — never show our prices in voice comparisons (show competitor cost only)
+- New: `project_modonty_contract_founder_offer.md` — real offer is 1-year contract + 6 months founder bonus = 18 months. NEVER claim "no contract".
+- New: `project_modonty_deliverables_per_tier.md` — every article gets images+design+audio; Reels is tier-dependent.
+- New: `feedback_no_fake_numbers_in_pitch.md` — no fabricated stats. Founder-phase framing only.
+- Modified: `project_modonty_real_pricing.md` — clarified prices for code/UI only, not voice pitch
+
+### Tech decisions verified via official docs (Context7)
+- **Next.js**: routes are auto code-split. `/modonty/story` will not affect any other page on modonty.com. Source: `nextjs.org/docs/app/04-glossary#code-splitting`.
+- **Framer Motion**: `LazyMotion features={domAnimation}` + `m.div` (instead of `motion.div`) = ~17KB. Source: framer-motion official docs via Context7.
+
+### Audio pipeline status
+- **Hazem (primary voice)**: ElevenLabs MP3. Used for most sections.
+- **Layla (religious/philosophical)**: ElevenLabs MP3. Used for sections 03, 15.
+- **Kore (Gemini TTS)**: WAV PCM 24kHz fallback when ElevenLabs out of credits. Tested working.
+- **Tashkeel automation**: `node scripts/tashkeel.mjs --file plain.txt --out tashkeeled.txt` (paid Tier 1 — no daily limit issues).
+
+### Files NOT yet touched on modonty public app
+- `modonty/app/modonty/story/` — does not exist yet (this is the next task)
+- `modonty/package.json` — needs `framer-motion` added
+- `modonty/public/help/audio/general-pitch/` — does not exist yet
+
+### Status before restart
+- All work in `console/` app — committed locally? **NO, NOT PUSHED**
+- Branch: `main`
+- `git status` shows many modified + untracked files (see below)
+- Khalid wants to restart laptop — pick up at "Pending — NEXT TASK ON RESTART" section above
+
+---
+
+## 🟡 Session 91 — 2026-05-15 (Voice pitch section 12 finalized — Gemini-tashkeeled + hadith integration + JSON-LD simplification · NOT PUSHED)
+
+### TL;DR
+Finalized section 12 (`مُدَوَّنَتِي — كِيَانُكَ الرَّقْمِيُّ الشَّامِلُ`) with Gemini's full tashkeel. New structure: 5 cornerstones (بَيْتُكَ الرَّقْمِيُّ · جِدَارُ الثِّقَةِ · نَبْضُ بِزْنِسِكَ · مُسْتَشَارُكَ الرَّقْمِيُّ · جُمْهُورٌ يَنْتَظِرُكَ) + brief hadith reference + Saudi-mentality closing. Rejected JSON-LD jargon in audio script (per "no SEO jargon" rule); replaced with plain "يَرَاهُ الزَّائِرُ، وَتَقْرَأُهُ مُحَرِّكَاتُ البَحْثِ". Audio regenerated with Hazem (1997 KB).
+
+### Changes
+- `console/public/help/audio/general-pitch/manifest.json`: section 12 text + label + 11 highlights replaced
+- `console/app/help/voice-script/script.md`: section 12 markdown updated with new structure + hadith block
+- `console/public/help/audio/general-pitch/section-12.mp3`: regenerated (Hazem voice)
+- `console/scripts/test-pronunciation.mjs`: added auto-clean of old MP3s before each run (Khalid's rule — old test files confuse review)
+- Fixed typo: `شَرِيكَتِكَ` → `شَرِكَتِكَ` (company, not female partner)
+
+### Memory updates
+- New: `feedback_pronunciation_test_autoclean.md` — test script self-cleans before run
+
+### Open items
+- Section 19 (WordPress comparison) — text drafted, awaits Gemini tashkeel + audio test
+- Final full-pitch review after section 19 lands
+
+### Pronunciation tweaks
+- `مَكَّةَ` → `مَكَّةَ المُكَرَّمَةِ` in section 12 (test winner #04 — formal full form). Audio regenerated 2004 KB.
+
+### Section 17 upgrade — formal tashkeel + new structure
+- Label: `زائرك ممكن مش من بلدك` → `مُدَوَّنَتِي.. جِسْرٌ بِلَا حُدُودٍ`
+- Text fully retashkeeled (Gemini); replaced colloquial Saudi with formal Arabic + 3 emotional beats
+- New gems: «عُمْلَة صَعْبَة», «جِسْرٌ بَيْنَ السُّعُودِيَّةِ وَمِصْرَ», «لَا تَنْتَظِرِ الزَّائِرَ، كُنْ حَيْثُ يَبْحَثُ عَنْكَ»
+- JSON-LD jargon dropped (per Khalid's choice option ب) — replaced with `نُوَثِّقُهُ تِقْنِيًّا لِيَعْرِفَكَ جُوجَل` (meaning preserved, ElevenLabs-friendly)
+- `فنادق مكة` → `فَنَادِقِ مَكَّةَ المُكَرَّمَةِ` (consistency with section 12)
+- Audio regenerated: 1260 KB (Hazem) — first pass confirmed
+- **Tweak (v2):** Latin `2030` + exclamation `يِطِيرْ!` per Gemini's exact spec — audio regenerated 1258 KB, awaiting Khalid's listen-test
+
+### Section 14 upgrade — SEO four pillars
+- Label: `كيف يشوفك Google (SEO)` → `أَعْمِدَةُ الـ SEO الأَرْبَعَة`
+- Full tashkeel from Gemini; preserved "محل في سوق ضخم" metaphor + 4 consistent pillar structure
+- Stripped all stage directions including `(وقفة قصيرة)` (TTS would have spoken it literally)
+- Removed inline parentheses around technical terms (SEO/Backlinks/Semrush) — cleaner pronunciation
+- New highlights: 9 anchors including «تَحْسِينُ مَحَرِّكَاتِ البَحْثِ عِلْمٌ حَقِيقِيٌّ», «العِبْرَةُ بِالجَوْدَةِ لَا بِالكَثْرَةِ», «نَجْمَعُ الأَرْبَعَةَ تَحْتَ سَقْفٍ وَاحِدٍ»
+- Audio regenerated: 1783 KB (Hazem)
+
+### Section 16 upgrade — paid ads vs Modonty
+- Label: `إعلانات ممولة، ولا مُدَوَّنَتِي؟` → `إِعْلَانَاتٌ تَنْطَفِئُ.. أَمْ بـِنَاءٌ يَدُومُ؟`
+- Full tashkeel; new framing «الصُّورَةَ الكَامِلَةَ الَّتِي لَا تَقُولُهَا لَكَ شَرِكَاتُ الإِعْلَانِ»
+- Stripped stage directions and `(فرقعة بالأصابع)` (would have been pronounced literally)
+- Latin numerals for amounts (1000, 12, 60) — better ElevenLabs pronunciation
+- **Golden closing metaphor**: «الإِعْلَانُ مِثْلُ الشَّمْعَةِ.. تَنْطَفِئُ» vs «مُدَوَّنَتِي مِثْلُ الشَّمْسِ.. تُشْرِقُ كُلَّ يَوْمٍ»
+- Audio regenerated: 1343 KB (Hazem)
+
+### Section 13 upgrade — freelancer vs Modonty
+- Label: `فريلانسر، ولا مُدَوَّنَتِي؟` → `الفْرِيلَانْسَر أَمِ المَنْظُومَة؟`
+- Full tashkeel; restructured into **3 numbered risks** (الأُولَى/الثَّانِيَةُ/الثَّالِثَةُ)
+- Technical-gap pain expanded with 3 concrete questions (هل المقال محسّن لجوجل؟ هل العناوين تخدم بزنسك؟)
+- Fixed Gemini typo: `مَحْسُور` → `مُحَسَّن`
+- `كونسولك` → `لَوْحَةُ تَحَكُّمِكَ` (per memory rule)
+- **Closing metaphor**: «الفْرِيلَانْسَر مِثْلُ المَوْجَةِ.. تَجِيكَ وَتَخْتَفِي» vs «مُدَوَّنَتِي هِيَ الشَّاطِئُ»
+- Audio regenerated: 1273 KB (Hazem)
+
+### Section 06 upgrade — agency vs Modonty
+- Label: `وكالة، ولا مُدَوَّنَتِي؟` → `وَكَالَةٌ أَمْ بـِنَاءٌ؟`
+- Full tashkeel; restructured with stronger setup → reveal → contrast
+- Stripped `(وقفة)` stage direction (would have been pronounced literally) + all other stage directions
+- Stripped parens around Presentation/Schema/Core Web Vitals
+- Fixed: `كُونْسُولُكَ` (Gemini kept jargon) → `لَوْحَةُ تَحَكُّمِكَ`
+- `١٢٪` → `12 بالمِئَة` (TTS pronounces percent symbol awkwardly)
+- **New closing**: «أَنْتَ صَاحِبُ القَرَارِ.. تَدْفَعُ لِلْمَظَاهِرِ، أَمْ تَبْنِي فِي البُنْيَانِ؟»
+- Audio regenerated: 1666 KB (Hazem)
+
+### 🎯 NEW PROJECT RULE — No Modonty pricing in voice pitch comparisons (2026-05-15)
+**Decision:** Comparison sections must show only competitor costs (5K agency, 27K team, 1K ad). Never quote our prices (499/1299/2999). Customer clicks through to pricing page.
+
+**Why:** Psychology — quoting our price stops the customer from listening to the value story; shifts focus from principles to cost. Better to hook them, then let them discover pricing actively (stronger commitment).
+
+**Applied to:**
+- section 06 (وكالة) — dropped 499/1299, closing now «شُف البَاقَاتِ بـِنَفْسِكَ، وَاحْكُمْ» — regen 1491 KB
+- section 07 (فريق داخلي) — dropped 1299/15588/300K-saving, closing «بجزء بسيط من التكلفة. شف الباقات بنفسك واحكم» — regen 943 KB
+- section 16 (إعلانات) — already clean
+
+**Memory:** `feedback_no_modonty_pricing_in_pitch.md` saved + `project_modonty_real_pricing.md` updated to clarify scope
+
+### 🚀 NEW TOOL — Gemini API tashkeel integration (2026-05-15)
+**Built:** `console/scripts/tashkeel.mjs` — adds full Arabic diacritization via Gemini 2.5 Flash API. Replaces manual Khalid → Gemini → Claude copy-paste loop.
+
+**Usage:**
+- `node scripts/tashkeel.mjs "نص هنا"` — inline
+- `node scripts/tashkeel.mjs --file plain.txt --out tashkeeled.txt` — file
+- `echo "نص" | node scripts/tashkeel.mjs --quiet` — pipe (only tashkeel output, no logs)
+
+**Features:**
+- Uses `GEMINI_API_KEY` from `console/.env.local` (already configured)
+- Preserves Saudi/Egyptian dialect (تِقُول, يِخْتَفِي, مَا حَدّ) — does NOT force MSA
+- Preserves English words (SEO, Schema, etc), Latin/Arabic-Indic numbers, punctuation
+- Forces brand `مُدَوَّنَتِي` spelling even if written as `مدونتي` in input
+- ~2s response, ~1000 tokens per section = < 1 halala per call
+- `thinkingBudget: 0` for speed (no thinking tokens consumed)
+
+**Free tier limits:** 10 req/min, 250 req/day on Gemini 2.5 Flash — sufficient. Upgrade to paid via Google Cloud Console (same key) when needed.
+
+**Health check:** `console/scripts/test-gemini-api.mjs` — verifies key + connectivity.
+
+### 🎤 Gemini TTS (Kore voice) — alternate audio engine (2026-05-15)
+**Built:** `console/scripts/generate-audio-kore.mjs` — generates WAV audio via Gemini 2.5 Flash TTS with Kore voice. Replaces ElevenLabs as primary engine for new/regen work.
+
+**Trigger:** ElevenLabs Starter ($6) credits exhausted (60 of 39,517 remaining). Khalid chose Kore over upgrade.
+
+**Decision:**
+- ✅ Existing ElevenLabs-generated sections — **keep as-is, no regeneration**
+- ✅ Going forward — use Kore via `generate-audio-kore.mjs`
+- ✅ Section 06 (text recently changed: numbers→words) — regenerated with Kore as first Kore section
+
+**Format:** WAV 24kHz 16-bit PCM. Larger than MP3 (~4MB vs ~1.5MB) but native browser playback works. Player code at SalesPitchOverlay.tsx:349 reads `sec.file` directly — no code changes needed.
+
+**Usage:**
+- `node scripts/generate-audio-kore.mjs 06` — one section
+- `node scripts/generate-audio-kore.mjs 06 13 14` — multiple
+- `node scripts/generate-audio-kore.mjs` — all
+
+**Section 06 status:** `section-06.wav` (3844 KB) generated, manifest updated, awaiting Khalid's listen-test.
+
+### 🏛️ Contract honesty fix — founder bonus framing (2026-05-15)
+**Problem:** section 06 claimed `اشتراك مرن بدون عقود طويلة تكبلك` — DISHONEST. Modonty has 1-year contract + 6 months free bonus.
+
+**Fix applied:** removed "no contract" claim entirely. Reframed:
+- **Agency criticism:** "عقد سنوي بدون قيمة مقابل التزامك" (not "long contract")
+- **Modonty pitch:** "عقد سنة، وعليه ٦ شهور هدية مجاناً. ١٨ شهر بسعر السنة. عرض المؤسسين الأوائل — ينتهي لما يكتمل البنيان"
+
+**Where:**
+- `manifest.json` section 06 text + highlights updated
+- `section-06.wav` regenerated via Kore (4354 KB)
+
+**Memory rule saved:** `project_modonty_contract_founder_offer.md` — NEVER claim no-contract/flexible. Always frame as 18-for-12 founder bonus, time-limited until البنيان completes.
+
+**Other sections checked:** grep across manifest shows no other "بدون عقد" / "اشتراك مرن" claims. Only section 06 had the contradiction.
+
+### 🎤 Batch — Sections 07, 08, 18, 19 with Kore (2026-05-15)
+**Applied full workflow** (numbers→words + Gemini tashkeel + Kore audio) to remaining sections needing it:
+- **07** (فريق داخلي): all digits converted (٢٤ألف→أربعة وعشرين، ٣٢٤ألف→ثلاثمائة وأربعة وعشرين، etc). Full tashkeel. `section-07.wav` (3662 KB).
+- **08** (منظومة كاملة): list markers (١-٦) → أولاً-سادساً; `كونسولك`→`لوحة تحكمك`; "٨ قنوات"→"ثماني قنوات"; "١ لـ ١٠٠"→"واحد لمئة". `section-08.wav` (4599 KB).
+- **18** (vision): "٢٠٣٠"→"ألفين وثلاثين"; "+١٢٠"→"المئة والعشرين"; "٥ سنين"→"خمس سنين". `section-18.wav` (3019 KB).
+- **19** (WordPress comparison): first audio generation (had no audio before). Full tashkeel. `section-19.wav` (3829 KB).
+
+**Sections kept untouched (Hazem/Layla MP3):** 01, 02, 03, 04, 05, 12, 13, 14, 15, 16, 17 — already refined this session or have minor digit usage that ElevenLabs handled fine.
+
+**Current voice mix:**
+- Hazem ElevenLabs MP3: sections 01, 02, 04, 05, 12, 13, 14, 16, 17
+- Layla ElevenLabs MP3: sections 03, 15
+- Kore Gemini WAV: sections 06, 07, 08, 18, 19
+
+### 📦 Section 08 fix — Reels is tier-dependent (2026-05-15)
+**Problem:** section 08 implied EVERY article gets a Reels video. False — Reels is in higher packages only.
+
+**Fix:**
+- Standard for every article: صور احترافية + نسخة صوتية + عناصر تصميم
+- Tier-add-on: «وَحَسَبَ بَاقَتِكَ، نِزِيدْ فِيدْيُو رِيلْز قَصِيرْ لِجُمْهُورِ TikTok وَ Instagram»
+- `section-08.wav` regenerated (5102 KB)
+
+**Memory rule saved:** `project_modonty_deliverables_per_tier.md` — what's standard vs tier-dependent. Reels is the only tier-add-on in voice scripts (so far).
+
+### 🚨 Fabrication removed — fake "120 businesses" claim (2026-05-15)
+**Problem:** Sections 04 + 18 claimed Modonty serves "+١٢٠ بزنس عربي" / "أوائل الـ ١٢٠ صفحة" — FALSE. Khalid flagged it: «من فين جبت الـ 120 هذي؟ ما في حاجة اسمها 120 عميل».
+
+**Fix:**
+- **Section 04**: Replaced «صار اليوم منظومة تخدم +١٢٠ بزنس عربي» with «صار اليوم بنياناً جاهزاً يستقبل كل بزنس عربي يبغى الاستدامة». Also reframed «البزنسات اللي عرفت قيمة المنظومة» → «المؤسسين الأوائل اللي عرفوا قيمة المنظومة». Tashkeel via Gemini. `section-04.wav` regenerated 3201 KB (now Kore — was Hazem MP3 before).
+- **Section 18**: Replaced «صفحة من أوائل الـ ١٢٠ صفحة» with «اسمك بين المؤسسين الأوائل لمدونتي». Also «بعد ٥ سنين» → «بعد سنوات» (generic, no specific year claim). Manifest text fixed.
+- **Section 18 audio:** ❌ Failed — Gemini TTS daily quota hit (429). Audio still has old "120" claim. Retry needed when quota resets (~24h).
+
+**Lesson:** Don't fabricate growth numbers in pitch. Founder-phase framing > inflated stats.
+
+### 💳 Gemini API upgraded to Paid Tier 1 (2026-05-15)
+**Done:** Khalid linked Google Cloud billing account to `modonty` Gemini API project.
+
+**Unlocked:**
+- ✅ Tier 1 rate limits (no more daily quota blocks on Free)
+- ✅ $300 welcome credit for Google Cloud (excludes Gemini API — pay-as-you-go for Gemini)
+- ✅ Higher RPM / RPD on both text and TTS endpoints
+
+**Verification:** Section 18 TTS retry succeeded immediately after billing activation. `section-18.wav` regenerated (3364 KB) with "120" claim removed.
+
+**Going forward:** No need to worry about Gemini quota for normal workflow. Estimated cost: < $5/month.
+
+### 🎬 Section 03 — Logo Spotlight with synced animations (2026-05-15)
+**Built:** Cinematic logo visualization that reacts to narration in real-time.
+
+**Files:**
+- New: `console/app/help/console/LogoSpotlight.tsx` — Framer Motion component
+- Edited: `SalesPitchOverlay.tsx` — added `media: "logo-spotlight"` support to manifest interface + conditional rendering
+- `manifest.json` section 03: text re-tashkeeled (Gemini), `media: "logo-spotlight"` added, 6 highlights, audio regen with Kore
+- `section-03.wav` — 2676 KB (replaces Layla MP3)
+
+**Visual reactions (based on activeWord):**
+- "نقط…" → animated dot pulses with golden glow (2.4x scale + boxShadow)
+- "شعار / مدونتي" → warm halo intensifies behind logo
+- "ثلاث / ثَلَاث" → 3 micro-dots orbit around logo
+- "قصة / مقال / عميل" (finale) → 3 dots cascade left-to-right RTL
+- Always (while playing): logo subtly "breathes" (4s cycle)
+- Cinematic entrance: fade + scale (0.85 → 1) over 0.9s
+
+**Tech:** Reads `words[activeWordIdx]` from existing karaoke system. Uses regex matching on the current word to trigger animations. Zero new state, zero new effects. Cleanly composes with existing playback engine.
+
+**TypeScript check:** ✅ No errors.
+
+### 🎬 Section 03 v2 — Cinematic subtitle replaces full script (2026-05-15)
+**Idea (Khalid):** «بدل ما تكتب الـ script تحت، خليه كأنه بيتكلم، تجي الكلمة، كأنك أنت بتترجم».
+
+**Implementation:**
+1. Phrase splitter in LogoSpotlight — splits text by `.؟!?،,:؛;..` and `...` into phrases
+2. Each phrase mapped to a range of word indices
+3. As audio plays, the phrase containing `activeWordIdx` is displayed below the logo
+4. Phrase transitions: fade + slide + blur (450ms, ease-out)
+5. Idle state when paused: «اضغط تشغيل لتسمع القصة..»
+
+**Layout:**
+- Logo container: `w-full aspect-[16/9]`, image `scale(1.55)` for visibility
+- Subtitle container: `min-h-[80-100px]`, `text-xl md:text-2xl lg:text-3xl`
+- Full karaoke text HIDDEN when `media === "logo-spotlight"` — modal stays compact
+
+**Tested via Playwright:** Logo renders at ~700px wide, cyan dots in wordmark clearly visible. Active phrase "شفت النقطة الصغيرة في شعار مدونتي؟" displayed correctly under logo. Sentence transitions confirmed working.
+
+**v3 fix — overlay subtitle, kill dead space (2026-05-15):** Khalid flagged that the SVG's internal padding created visible empty space. Fix:
+- Logo container: aspect-[5/2] (was 16/9) + `overflow-hidden rounded-3xl` — tight box, no dead space
+- Subtitle now POSITIONED ABSOLUTE at bottom of logo container with a white-to-transparent gradient backdrop (cinema-style)
+- Logo grew to 1042×417px (was ~700) because aspect change + scale(1.55) push the SVG further
+- Finale 3-dots cascade repositioned to bottom edge of logo container with z-30
+
+**v4 fix — no scroll, no cut-off subtitle (2026-05-15):** Khalid: «هنا يقطع. لما نشغل، الـ scroll بيطلع. الكلام نزل تحت مو باين».
+- Removed h3 title for logo-spotlight mode (less clutter)
+- Main area: `overflow-hidden flex items-center justify-center` when logo-spotlight (no scroll possible)
+- LogoSpotlight wrapper: `h-full flex flex-col justify-start` — fills available height
+- Logo: `flex-[7]` (70% of space), subtitle: `flex-[3]` (30%) — adaptive split
+- Subtitle moved OUT of logo container into its own flex row (cannot be clipped)
+- Subtitle row: soft amber-tinted bg to visually separate from logo
+- scale(1.65) on image — visible without overflowing during animation pulses
+- transformOrigin + willChange on animated motion.div — prevents layout reflow during scale/filter animations
+
+**v5 — philosophy upgrade: "everything IS dots → بنيان مرصوص" (2026-05-15):** Khalid extended the logo philosophy from "everything STARTS with a dot" to "everything IS dots, and when dots line up they form a structure (kal-bunyan al-marsoos)".
+- New section 03 narrative: pixel → letter → brick → star → نقطة → بنيان مرصوص → فلسفة مدونتي
+- Bridges section 03 (logo dot) with section 15 (hadith بنيان) via shared "بنيان مرصوص" anchor
+- Quranic reference (61:4 surat as-saff) — كَأَنَّهُمْ بُنْيَانٌ مَرْصُوصٌ — separate from section 15's hadith
+- LogoSpotlight regex expanded: hasPoint now triggers on نقط/بكسل/طوب/حرف; hasLogoWord on شعار/مدونت/بنيان/مرصوص — animations fire on more philosophy keywords
+- New highlights: "كُلُّ بِكْسِلٍ نُقْطَةٌ", "اللَّبِنَةُ الأُولَى لِكُلِّ شَيْءٍ", "وَمِنْ هُنَا جَاءَتْ فَلْسَفَةُ مُدَوَّنَتِي", "كَالبُنْيَانِ المَرْصُوصِ", "البُنْيَانُ الرَّقْمِيُّ لِلْعَالَمِ العَرَبِيِّ"
+- Audio regenerated: `section-03.wav` 2938 KB (Kore)
+- wordCount: 120 → 140 (~55 sec)
+
+**TypeScript check:** ✅ No errors.
+
+---
+
+## 🟡 Session 90 — 2026-05-13 (Console `/help/console` simulation tour — sequential numbering + 3-color priority dots, **NOT PUSHED**)
+
+> Continuing from Session 89 — focused on the interactive console tour page (`/help/console`). Iterated visual approach 4 times before landing on the final design.
+
+### TL;DR
+Built the `/help/console` page as a **non-interactive simulation tour** — 17 screenshot stops, each with numbered hotspots overlaid. After heavy iteration we settled on: **refined numbered dots + sequential numbering across all stops (1→36) + 3-color priority system + hover tooltips + bullet list below each screenshot**. Dot positions now follow a "varied yet organized" pattern (not uniform columns) — each dot placed in clear empty space, proximal to its target, with horizontal variety. Login screen positions finalized as POC; other 16 stops still pending repositioning.
+
+### Visual iterations (rejected → accepted)
+1. **❌ Red ellipse + curved arrow + label callout** — user said unprofessional for fields, "I gave you the image to explain the idea, not copy it"
+2. **❌ Blue speech-bubble callout with tail** — clean but gets cluttered with 4+ hotspots per screen (e.g. leads page)
+3. **❌ Uniform numbered dot column on left margin** — too rigid, not visually engaging
+4. **✅ Sequential numbered dots with varied placement + 3-color priority** — accepted
+
+### Final design system
+- **Dot size**: 28×28px, white ring (3px) for visibility against any bg, subtle static halo (no pulse)
+- **Sequential numbering**: 1→36 across all 17 stops (precomputed `STOP_START_NUMBERS` array)
+- **3 priority colors**:
+  - 🔴 Critical (red) — key actions/insights (12 dots)
+  - 🟡 Important (amber) — daily-use features (15 dots)
+  - 🔵 Optional (blue) — context/orientation (9 dots)
+- **Color legend** at top of page explains the 3 colors
+- **Hover tooltip** — small dark pill with hotspot title only (full description in bullet list below)
+- **Stop header badge** — range like "1–3", "24–27" instead of single stop number
+- **Bullet list below each screenshot** — same sequential number + same priority color badge
+
+### Files changed (Session 90)
+- `console/app/help/console/tour-config.ts`
+  - Added `HotspotPriority` type: `"critical" | "important" | "optional"`
+  - Added `priority?: HotspotPriority` field to `Hotspot` interface
+  - Assigned priorities to all 36 hotspots across 17 stops
+  - **Login stop**: replaced "زر الدخول" hotspot (n: 3) with **"هدية لكل عميل تجلبه!"** (referral/marketing card explanation) — user said login button doesn't need callout, but the referral CTA is the critical marketing message
+- `console/app/help/console/ConsoleTourClient.tsx`
+  - Added `PRIORITY_CLASSES` map (dot/halo/badge colors per priority)
+  - Added `STOP_START_NUMBERS` precomputed array for sequential numbering
+  - Refactored render: dots use `globalN` (startN + idx), colored per priority, with hover tooltip
+  - Refactored bullet list: same `globalN` + same priority color badge
+  - Added color legend at top of stops list
+  - Stop header now shows range "X–Y" instead of single number
+- `documents/context/SESSION-LOG.md` — this entry
+
+### Login stop dot positions (POC — approved)
+- **n=1 (Email · optional · blue)**: `top: 38, right: 50` — visual right of email input (start of field in RTL)
+- **n=2 (Password · important · amber)**: `top: 48, right: 85` — visual left of password input (end of field in RTL)
+- **n=3 (Referral card · critical · red)**: `top: 88, right: 95` — visual far left margin beside referral card
+
+Z-pattern distribution: top-right → middle-left → bottom-left. User-approved as "elegant + organized + varied".
+
+### Positioning principles (apply to remaining 16 stops)
+1. **One at start of field** (visual right in RTL = small `right` %)
+2. **One at end of field** (visual left in RTL = large `right` %)
+3. **Bottom/last one in empty space** (clearly empty area, not on content)
+4. **Varied across image regions** — avoid uniform vertical column
+5. **Visual proximity to target** — must be near what it explains
+6. **No overlap with content** — placeholder text, button text, icons all off-limits
+
+### Pending work
+1. Reposition dots for the other 16 stops using the same principles (currently they're at their original "on-target" positions which often overlap content)
+2. Review hotspot **content quality** — user wants "presentation-grade" copy, like a lecturer; right now copy is OK but could be more polished
+3. **Re-take screenshots** at clean 1440×900 or 1920×1080 viewport — some current screenshots show browser chrome or are cut off. User asked me to verify, but didn't decide yet whether to re-screenshot. (Defer to user.)
+4. After all 17 stops repositioned + content reviewed, regenerate audio MP3s OR remove audio feature (Session 89 leftover)
+5. TSC + backup + commit + push
+
+### Dev servers state
+- console: `http://localhost:3000` (running, used Chrome DevTools MCP for live test)
+- modonty: `http://localhost:3001` (running)
+- admin: `http://localhost:3002` (assumed running)
+
+### Test credentials (for re-screenshots if user approves)
+- Console PROD: `info@kimazone.com` / `Kimazone2026!` (Kimazone client)
+- URL: `console.modonty.com`
+
+### Screenshots taken (for review)
+- `snapshot-login-v5.png` — Final approved login layout (3 dots well distributed)
+- `snapshot-priority-leads.png` — Earlier 4-color demo on leads page (positions need fixing)
+- Several earlier iterations for visual history (snapshot-callout-*, snapshot-priority-*)
+
+### Resume next session
+1. **Ask user**: "Should I reposition all 16 remaining stops with the same Z-pattern logic? Or review content first?"
+2. If repositioning: do 2-3 stops per cycle, screenshot, get user approval, continue
+3. **Key insight from this session**: User reviewed dot positions ONE BY ONE ("1 ok, 2 no, 3 no") — expect same granular feedback. Don't try to push all 16 at once.
+
+---
+
+## 🟡 Session 89 — 2026-05-13 (Console /help v2 — Major redesign + Azure Speech + 25-engagement showcase, **NOT PUSHED**)
+
+> Khalid is restarting laptop. This entry has everything needed to resume seamlessly.
+
+### TL;DR
+We extended Session 88's `/help` page massively — went from a flat 18-section guide to a **6-tier UX-redesigned** guide that showcases Modonty as a **complete platform** (not just a CMS). Added Azure Neural TTS with Saudi voice (Hamed) + full Arabic tashkeel for accurate pronunciation. Discovered **25 engagement events** (not 22 as expected) via deep code exploration. All changes on disk, NOT pushed.
+
+### Console version: `0.6.2 → 0.7.0` (bumped, uncommitted)
+
+### Dev servers state when Khalid stepped away
+- modonty: `localhost:3000` (running, will die on laptop restart)
+- admin: `localhost:3001` (running, will die)
+- console: `localhost:3002` (running, will die — this is where `/help` lives now)
+- Chrome with `--remote-debugging-port=9222` (running, will die)
+
+When Khalid returns + boots: all 4 are dead. Need to restart.
+
+### Major decisions (chronological)
+
+**1. Auto-play TTS toggle** — Speaker button now toggles. Click once → speaks current step + auto-plays all future steps. Click again → silences. Resets when tour ends.
+
+**2. Sticky sidebar fix** — Tailwind `sticky` was broken because body/html had `overflow: hidden auto` (preflight quirk). Switched to `position: fixed md:top-4 md:bottom-4 md:start-4` with `ms-[284px]` on main content. Works perfectly now.
+
+**3. Voice quality solved with TWO steps**
+- **Source**: Azure Neural TTS (free tier F0 — 500K chars/month, zero cost for our volume)
+  - Voice: `ar-SA-HamedNeural` (Saudi male)
+  - Endpoint: West Europe
+  - Khalid created Azure account + Speech Service `modonty-speech` in resource group `modonty-rg`
+  - Keys saved in `console/.env.local` (gitignored, not pushed)
+- **Pronunciation accuracy**: Manual Arabic tashkeel (الفتحة، الضمة، الكسرة، الشدة) added to all 30 audio script texts. Critical for Neural TTS — without it, AI pronounces ambiguous words wrong (e.g. عَلَّم vs عَلِم vs عَلَم).
+
+**4. Pre-generated audio strategy** (Khalid's idea, my proposal): Generate MP3s ONCE locally, save to `console/public/help/audio/`, serve from Vercel CDN. Zero per-client Azure calls. After generation, Khalid can delete the Azure resource — audio lives in repo forever.
+- 30 MP3s generated successfully with Hamed Saudi voice + full tashkeel
+- ⚠️ **Audio is OUT OF DATE** for the v2 content (see below) — must be regenerated before push
+
+**5. Major UX restructure — V1 → V2**
+After Khalid said "اعتبر نفسك عميل ومش فاهم"، I:
+- Did a comprehensive Site Survey via Explore agent across all 3 apps
+- Discovered actual workflows from code (not guesses)
+- Asked Khalid 7 clarifying questions for facts no agent could derive:
+  1. Article publish timing after approval → **24h max**
+  2. FAQs sources → **manual by team + reader-submitted + chatbot (3 sources)**
+  3. Site Health source → **live every page open, NO DB cache, uses Google PageSpeed + Node DNS + SSL + headers + HTML scrape**
+  4. Newsletter trigger → **automatic with every published article + manual campaigns (coming soon)**
+  5. Quota reset → **rolling 30 days from signup date** (NOT calendar month)
+  6. Analytics source → **100% internal from DB, real visitor data, NO Hotjar/Clarity**
+  7. Lead scoring → **4 axes 25% each: views + time + interactions + conversions. HOT≥70, WARM≥40, QUALIFIED=≥60. Rolling 30-day window. Auto-deletes inactive visitors.**
+
+**6. Tier restructure (V1 = 18 flat sections → V2 = 6 progressive tiers)**
+
+| Tier | Content | Why |
+|------|---------|-----|
+| **T0** | "منصة مودونتي الكاملة" — platform showcase with 8 capability cards + 4 stats | Sells the FULL value of Modonty (not just CMS) so client becomes advocate |
+| **T1** | "كيف تشتغل العملية" — 3 steps with arrows (نكتب → توافق → ننشر) | Sets the mental model immediately |
+| **T2** | "صفحتك على مودونتي" — full breakdown of `/clients/[slug]` page (7 blocks) | Shows the "official home" — most important page for client |
+| **T3** | "كيف يتفاعل زوارك" — 7 Before/After Engagement Cards + 25-event summary table (5 groups) | Visual storytelling: visitor action on modonty → result in console |
+| **T4** | "صفحات الكونسول" — 13 pages in 4 groups (محتواك / نتائجك / جمهورك / بياناتك) | Reference for daily ops |
+| **T5** | "حسابك" — 4 quick settings + screenshot | Account-related stuff |
+
+**7. The 25 engagement events** (discovered from code, not guessed):
+- 7 article interactions (View, Like, Dislike, Favorite, Share, Comment, CommentReply)
+- 5 client page (View, Follow, Like, Dislike, ClientComment)
+- 7 conversion types (NEWSLETTER, CONTACT_FORM, DOWNLOAD, SIGNUP, PURCHASE, TRIAL_START, DEMO_REQUEST)
+- 3 click tracking (CTAClick, ArticleLinkClick, ChatbotChat)
+- 3 performance (Real CWV: LCP, CLS, INP)
+
+### Files created this session (Session 89)
+
+**Console — `app/help/data/`**:
+- `guide-v2.ts` — Tier metadata + tier-by-tier content (intro steps, client page blocks, engagement cards, console groups, account settings)
+- `platform-capabilities.ts` — 8 capability cards for Tier 0 + 25-event grouped summary + stats
+
+**Console — `app/help/components/v2/`** (all new):
+- `HeroV2.tsx` — Updated hero with CTA → Tier 0
+- `TocSidebarV2.tsx` — Fixed sidebar with 6 tiers + subtitle for each
+- `Tier0Platform.tsx` — Dark gradient header + 4 big stats + 8 capability cards
+- `Tier1Intro.tsx` — 3-step diagram with arrows
+- `Tier2ClientPage.tsx` — Real modonty.com/clients/[slug] screenshot + 7 block grid
+- `Tier3Engagement.tsx` — Grid container for engagement cards
+- `EngagementCard.tsx` — Before/After visual pair component (modonty.com → console)
+- `AllEngagementSummary.tsx` — 25-event compact reference (5 groups)
+- `Tier4ConsolePages.tsx` — 4 groups × 13 pages with screenshots
+- `Tier5Account.tsx` — Settings screenshot + 4 quick cards
+
+**Console — `app/help/lib/`**:
+- `tour-helpers.ts` — `celebrate()` (confetti) + `speakArabic()` (audio with WebSpeech fallback) + `enhancePopover()` (driver.js DOM injection) + `resetAutoSpeak()` + `stopSpeaking()` + autoSpeakEnabled module state
+
+**Console — `scripts/`**:
+- `generate-tour-audio.mjs` — Azure REST TTS generator. Reads `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION` from `.env.local`. Generates 30 MP3 files to `console/public/help/audio/`. Voice = `ar-SA-HamedNeural`. Has full Arabic tashkeel in step texts.
+
+**Console — `public/help/`**:
+- `audio/*.mp3` — 30 files (s1-h1.mp3 to master-4.mp3) — OUT OF DATE for v2 content
+- `engagement/*.png` — 11 modonty screenshots (article like/share, comments, ask-client, subscribe, contact form, client page full + sections)
+- `*.png` — 16 console screenshots from earlier in Session 88
+
+**Console — modified**:
+- `app/help/HelpClient.tsx` — completely rewritten for v2 structure
+- `package.json` — version 0.6.2 → 0.7.0
+- `app/globals.css` — has driver.js RTL/brand polish + `.driver-active-element` bounce (from earlier)
+- `app/(dashboard)/components/dashboard-layout-client.tsx` — has `<FirstTimeWelcome />` mounted
+- `app/(dashboard)/components/dashboard-header.tsx` — has BookOpen icon link to `/help`
+- `app/(dashboard)/components/first-time-welcome.tsx` — first-login modal (localStorage flag)
+
+### Memory updates this session
+- `feedback_bundle_size_policy_per_app.md` — Bundle weight concerns apply only to modonty (public site). admin + console can be feature-heavy.
+- `user_name.md` — User name is Khalid (created earlier in this session).
+
+### ⚠️ Critical state when Khalid returns
+
+**1. Audio mismatch**: The 30 MP3 files were generated with v1 tour content (driver.js hotspot tours). V2 doesn't use those tours — content is now in cards/sections, not popovers. Audio files are dead weight until we re-generate to match the new copy (or remove and replace with section-level audio).
+
+**Decision needed on return**:
+- Option A: Re-generate audio for the v2 cards (per Tier-section, not per hotspot)
+- Option B: Drop the audio feature entirely (the v2 design relies on visual storytelling — audio is optional)
+- Option C: Add audio later as Phase 2 after current content is approved
+
+**2. Azure Speech resource**: Still exists in Khalid's Azure account at `modonty-rg / modonty-speech` (West Europe, F0 free tier). Zero charge accumulating because it's F0. Khalid can delete it anytime if he doesn't plan to regenerate. Keys live in `console/.env.local` (gitignored — safe).
+
+**3. Driver.js + canvas-confetti**: Still installed in console package.json. The v2 doesn't use them for Tour functionality anymore (the v1 TourButton/MasterTourButton are still in the codebase but not rendered by `HelpClient.tsx`). Either remove them or keep for future.
+
+**4. Old v1 components**: Still on disk under `console/app/help/components/` (Hero.tsx, SectionCard.tsx, TocSidebar.tsx, TourButton.tsx, MasterTourButton.tsx, etc.). Only `Hotspot.tsx`, `ImageModal.tsx`, `ScrollProgress.tsx` are still imported. Need cleanup before push.
+
+**5. Old data file**: `console/app/help/data/sections.ts` (v1, 18-section flat) is still on disk but not imported anywhere. Should be deleted.
+
+### Resume checklist when Khalid returns
+
+```
+1. kill node (auto on laptop restart)
+2. cd MODONTY
+3. Run three dev servers — easiest:
+   - cd modonty && PORT=3000 pnpm exec next dev (background)
+   - cd admin   && PORT=3001 pnpm exec next dev (background)
+   - cd console && PORT=3002 pnpm exec next dev (background)
+4. Open http://localhost:3002/help
+5. Walk through all 6 tiers visually
+6. Decide on audio (see Decision needed above)
+7. Cleanup unused v1 files + driver.js/confetti if not using
+8. TSC check
+9. Backup
+10. Commit + push (suggested message:
+    "console v0.7.0: /help guide v2 — platform showcase + 25-engagement narrative + Azure TTS")
+11. Verify on console.modonty.com/help after deploy
+```
+
+### Active TODOs / Outstanding questions
+
+- [ ] Decide audio fate (regenerate / drop / Phase 2)
+- [ ] Cleanup v1 unused files
+- [ ] Decide if Tour orientation feature stays or gets removed
+- [ ] Final content review by Khalid before push
+- [ ] After approval → push to deploy on console.modonty.com
+
+### Things that worked exceptionally well
+- Senior UX decision to restructure flat → tiered (6 tiers vs 18 flat) — significantly improves clarity
+- "Before/After" engagement card pattern — visual storytelling killer
+- Tier 0 platform showcase — Khalid's "wow" moment when he sees it shows all 25 engagement events + 20+ schemas + Local SEO + ZATCA + GBP integration
+- Arabic tashkeel for Neural TTS — fixed pronunciation 100%
+- Azure F0 free tier — zero ongoing cost for pre-generated audio
+
+### Things to watch out for on return
+- Don't forget the v1 cleanup before push (will commit dead code otherwise)
+- Audio files mismatch the v2 content — don't let Khalid hear them in their current state, he'll think we regressed
+- Make sure `.env.local` stays gitignored (Azure keys must not leak)
+- The 11 modonty screenshots in `public/help/engagement/` are from production, might want to retake from local since modonty has unpushed changes (Khalid mentioned this — "خذ ال screenshot من ال Locals لان اللي فى Local احنا لسا ما رفعناه")
+
+### Session-89 ended state
+- Live test on `localhost:3002/help` showed:
+  - Tier 0 dark hero + 4 stats + 8 capability cards: ✅ rendering beautifully
+  - Tier 1-5: ✅ all rendering
+  - TocSidebar: ✅ shows 6 tiers with active highlighting
+  - Animations (Framer Motion): ✅ smooth
+- Khalid did NOT push because he wants to review more first + audio still needs decision
+
+---
+
+## 🟡 Session 88 — 2026-05-12 (Console Help Guide — full feature, **NOT PUSHED YET**)
+
+> Khalid stepped away mid-session. Work is committed to disk but NOT pushed. When he returns, this is exactly where we stopped.
+
+### Status
+- Branch: `main`, dirty (no commit yet)
+- Console version bumped: `0.6.2` → `0.7.0` (in package.json, not committed)
+- Dev server: was running on `localhost:3000`, killed before stepping away
+- TSC: zero errors on console
+- Live tested on `http://localhost:3000/help` — all working
+
+### What was built — the `/help` page in console
+
+**The goal:** Public guide page (no auth) for clients to learn the console. Sales team shares the URL via WhatsApp along with credentials. Same page also pops up on first login.
+
+**Architecture decision (with Khalid):**
+- New route in console (`console.modonty.com/help`), NOT in admin's existing `/guidelines/`
+- Why: admin's guidelines are internal team content (sales playbook, brand book, ICPs). Mixing client-facing guide there = confusion. Cleaner: admin = team, console = clients.
+- Bundle policy agreed: admin + console can be heavy (features > weight), modonty must stay lean (SEO/Core Web Vitals). Saved in memory at `feedback_bundle_size_policy_per_app.md`.
+
+### Phase 1 — Foundation ✅
+- Installed `framer-motion` in console
+- Copied 16 screenshots from `documents/mockups/console-guide/img/` → `console/public/help/`
+- Created data layer: `console/app/help/data/sections.ts` — 18 sections as typed data (id, title, lead, image, hotspots, steps, callouts, groupTitle)
+- Page entry: `console/app/help/page.tsx` (server) + `HelpClient.tsx` (client wrapper)
+- Components in `console/app/help/components/`: `Hero`, `SectionCard`, `TocSidebar`, `Hotspot`, `ImageModal`, `ScrollProgress`
+
+### Phase 2 — Interactivity ✅
+- Scroll progress bar (Framer Motion `useScroll`)
+- Section fade-in on scroll (`whileInView`)
+- Click-to-enlarge image modal with ESC + backdrop close
+- Animated numbered hotspots over each screenshot
+- TOC sidebar with `IntersectionObserver` for active-section highlighting
+
+### Phase 3 — First-time popup ✅
+- `console/app/(dashboard)/components/first-time-welcome.tsx`
+- localStorage flag: `modonty.help.welcomeSeen.v1`
+- Modal with "ابدأ الجولة" → `/help` and "لاحقاً" (dismisses with flag set)
+- Wired into `dashboard-layout-client.tsx`
+
+### Phase 4 — Interactive tour with driver.js + 5 polish features ✅
+After Khalid asked for professional polish, added:
+
+1. **driver.js** (12 KB) — installed and integrated
+   - Per-section "اشرح لي هذي الصفحة" button → guided spotlight tour through that section's hotspots
+   - "اشرح لي كل الصفحة" master button in Hero → 5-stop orientation tour (TOC → first section → hotspots → tour button → zoom hint)
+   - Custom CSS in `console/app/globals.css` for RTL + Tajawal font on `.driver-popover` family
+   - Strong bounce animation on `.driver-active-element` (1.2s ease-in-out)
+
+2. **canvas-confetti** (9 KB) — confetti burst on tour completion (3 bursts, brand colors)
+
+3. **Visual progress dots** — replaced "1 من 3" text with custom dots inside popover (active dot extends to a 18×6 pill, brand color)
+
+4. **Arabic TTS button** — speaker icon inside every popover (Web Speech API, `ar-SA`, free, zero deps)
+
+5. **Master tour from Hero** — `MasterTourButton.tsx` component using `data-master="..."` attributes on `TocSidebar`, first section with tour, first image, first tour button, first zoom hint
+
+All injected via `driver.js` `onPopoverRender` hook + helper module `console/app/help/lib/tour-helpers.ts`.
+
+### Files created/modified (Session 88)
+
+**Console — created:**
+- `console/app/help/page.tsx`
+- `console/app/help/HelpClient.tsx`
+- `console/app/help/data/sections.ts`
+- `console/app/help/lib/tour-helpers.ts`
+- `console/app/help/components/Hero.tsx`
+- `console/app/help/components/SectionCard.tsx`
+- `console/app/help/components/TocSidebar.tsx`
+- `console/app/help/components/Hotspot.tsx`
+- `console/app/help/components/ImageModal.tsx`
+- `console/app/help/components/ScrollProgress.tsx`
+- `console/app/help/components/TourButton.tsx`
+- `console/app/help/components/MasterTourButton.tsx`
+- `console/app/(dashboard)/components/first-time-welcome.tsx`
+- `console/public/help/*.png` (16 screenshots)
+
+**Console — modified:**
+- `console/package.json` — version 0.6.2 → 0.7.0, added `framer-motion`, `driver.js`, `canvas-confetti`, `@types/canvas-confetti`
+- `console/app/globals.css` — added driver.js RTL/brand styles + `.driver-active-element` bounce keyframe
+- `console/app/(dashboard)/components/dashboard-layout-client.tsx` — mounted `<FirstTimeWelcome />`
+- `console/app/(dashboard)/components/dashboard-header.tsx` — added BookOpen icon link to `/help`
+
+**Memory updates:**
+- `feedback_bundle_size_policy_per_app.md` — new
+- `user_name.md` — new (Khalid)
+- `MEMORY.md` — added both pointers
+
+### What was also pushed earlier today (Session 88's admin v0.55.2)
+Commit `5ab119b` — already on origin/main. Two things combined:
+1. JSON-LD cache integrity tool in `admin/app/(dashboard)/database/` — detects articles where cached JSON-LD points to localhost / non-canonical hosts, with batch regenerate button
+2. Light mode fixes for client form (subscription tier text, slug-change dialog yellow box, client-table tier badges, delivery rate amber colors, status indicators)
+
+### Where Khalid stopped
+- Built and tested all 5 polish features successfully — Master tour spotlight visible on TOC, visual dots in popover, speaker button rendering
+- Was about to push but stepped away → asked to update session log instead
+- **No commit, no push** — diff is clean and ready to commit when he returns
+
+### When Khalid returns — pick up here
+1. **Optional final test:** click "اشرح لي كل الصفحة" from Hero, walk through 5 stops, verify confetti fires at end, verify TTS speaks Arabic on speaker click
+2. **Push flow:** backup (`bash scripts/backup.sh`) → commit → push (will deploy console v0.7.0 to Vercel)
+3. **Suggested commit message:** `console v0.7.0: /help guide page + driver.js interactive tours + first-time welcome popup`
+4. **After push:** verify on `console.modonty.com/help` (will need a few minutes for Vercel deploy)
+5. **Optional next:** decide if first-time popup needs DB-level flag (currently localStorage = per-device; same client on different device sees it again)
 
 ---
 

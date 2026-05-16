@@ -1,6 +1,6 @@
 {
   "name": "@modonty/modonty",
-  "version": "1.44.0",
+  "version": "1.45.0",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -21,7 +21,8 @@
     "approve-comments": "tsx ../scripts/approve-and-revalidate.ts",
     "test:chatbot": "tsx scripts/test-chatbot-live.ts",
     "test:chatbot-cases": "tsx scripts/test-chatbot-cases.ts",
-    "test:chatbot-rag": "tsx scripts/test-chatbot-rag-scores.ts"
+    "test:chatbot-rag": "tsx scripts/test-chatbot-rag-scores.ts",
+    "gen:section": "node scripts/generate-section.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
@@ -45,6 +46,7 @@
     "cohere-ai": "^7.20.0",
     "dotenv": "^16.6.1",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.562.0",
     "next": "^16.2.2",
     "next-auth": "^5.0.0-beta.25",

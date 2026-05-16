@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      // illustrated avatars (team carousel privacy fallback)
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+        pathname: "/9.x/**",
+      },
     ],
     formats: ["image/avif", "image/webp"], // modern formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

@@ -11,12 +11,18 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.44.0",
-    title: "modonty v1.44.0 — bug fixes: share URL encoding + client follow 500 + UX polish",
+    version: "1.45.0",
+    title: "modonty v1.45.0 — /story page polish: copy refresh + audio re-generation + UI cleanup",
     items: [
-      { type: "fix" as const, text: "share URL: decodeURIComponent على window.location.href في ShareButtons + article-mobile-sidebar-sheet + article-mobile-engagement-bar + article-utilities — المستخدم كان ينسخ %D8%A3%D9%81... بدل النص العربي" },
-      { type: "fix" as const, text: "client follow 500: @@unique([clientId, sessionId]) في ClientLike كان يمنع أكثر من مستخدم من متابعة نفس العميل (MongoDB يعتبر null==null) — تحوّل لـ @@index + prisma db push على dev+prod" },
-      { type: "fix" as const, text: "client page: label 'حفظ' → 'مفضّلة' / 'محفوظ' → 'مُضافة' في client-favorite-button" },
+      { type: "feature" as const, text: "استبدال 'بزنس' → 'مشروعك / نشاط' في كل /story: ٢٢ موضع script.md + ١٨ موضع manifest + ٣ مواضع SEO metadata + welcome card — تطبيق قاعدة لغوية متناسقة (مشروعك للمخاطبة، نشاط للتصنيف)" },
+      { type: "feature" as const, text: "metaphor cleanup: 'أنت طوبة' → 'شركتك طوبة' (٨ مواضع) — لا تشييء للشخص، الشركة هي الطوبة في البنيان" },
+      { type: "feature" as const, text: "section 03 body: pivot سلس نقطة → طوبة → بنيان — يحافظ على المعنى الحرفي للنقطة في الشعار ويكرّم العميل كوحدة بناء" },
+      { type: "feature" as const, text: "أسامي الأقسام كأسئلة hook في sidebar: المشكلة → 'عميلك يلقاك؟' · مدوني → 'ليش مدوني؟' · مقابل البدائل → 'وكالة ولا منظومة؟' · شركاء نجاح → 'نتائج العملاء' · الفريق → 'مين خلف البنيان؟'" },
+      { type: "feature" as const, text: "UI moves: زر '📄 اقرأ النص' من content area → top bar (ظاهر على media sections) · زر 'رؤية ٢٠٣٠' من top bar → sidebar header بعرض كامل · 'اضغط للبدء' hint → audio controls footer · شيل headings 'خريطة القصة' + 'افتتاحية'" },
+      { type: "feature" as const, text: "TV stage badge: ID خام → موضع متسلسل (1-12) للسكشنات في categories · للـ logo-spotlight: نقطة سيان diamond #00D8D8 مستخرجة من الـ SVG الأصلي للشعار · animation محسّن (isPlaying gate + useReducedMotion + glow أخف ٣٠٪)" },
+      { type: "feature" as const, text: "audio re-generated: ١٣ سكشن بـ Gemini Kore (sections 02,03,04,06,07,08,12,13,14,15,16,17,18) · ~٤٥MB · صفر أخطاء توليد" },
+      { type: "refactor" as const, text: "نقل voice script للموقع الصحيح: console/app/help/voice-script/script.md → modonty/scripts/voice/general-pitch/script.md — منطقي: modonty يملك سكريبت /story · تحديث build-general-pitch-manifest.mjs + generate-section.mjs للمسار الجديد · صفر dead code · console pitch بحاله (سكريبت منفصل)" },
+      { type: "fix" as const, text: "welcome card مختصر: 'حياك الله في مدونتي. خلني أحكي لك بسرعة، كيف نجعل بزنسك يطلع أمام العميل الذي يبحث عنك — وأنت مرتاح' → 'حياك الله في مدونتي. مشروعك يطلع لعميلك — وأنت مرتاح' (~٩٥ → ~٥٢ حرف)" },
     ],
   },
 ];
