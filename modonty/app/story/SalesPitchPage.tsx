@@ -367,6 +367,30 @@ export function SalesPitchPage({ manifestUrl, audioBase }: SalesPitchProps) {
       .catch(() => setIsPlaying(false));
   }, [isPlaying, currentSection, audioBase]);
 
+  // Space key toggles play/pause (standard audio/video player UX)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space" && e.key !== " ") return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (
+          tag === "INPUT" ||
+          tag === "TEXTAREA" ||
+          tag === "SELECT" ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+      }
+      if (!currentSection?.file) return;
+      e.preventDefault();
+      togglePlay();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [togglePlay, currentSection]);
+
   const handleSectionClick = useCallback(
     (idx: number) => {
       if (!manifest) return;
