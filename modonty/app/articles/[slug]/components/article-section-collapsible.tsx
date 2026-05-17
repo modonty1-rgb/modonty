@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Collapsible,
@@ -9,31 +9,27 @@ import {
 } from "@/components/ui/collapsible";
 import { IconChevronDown, IconChevronUp } from "@/lib/icons";
 
-type SectionIcon = ComponentType<{ className?: string }>;
-
 interface ArticleSectionCollapsibleProps {
   title: string;
   headingId: string;
-  icon: SectionIcon;
+  /**
+   * Pre-rendered icon element (e.g. `<IconAi className="h-4 w-4 ..." />`).
+   * Must be a rendered React element — not a component reference —
+   * so it can cross the Server→Client boundary as a serialized RSC payload.
+   */
+  icon: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
 }
 
 export function ArticleSectionCollapsible({
   title,
   headingId,
-  icon: Icon,
+  icon,
   children,
   defaultOpen = false,
-  open: controlledOpen,
-  onOpenChange: controlledOnOpenChange,
 }: ArticleSectionCollapsibleProps) {
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const isControlled = controlledOpen !== undefined && controlledOnOpenChange !== undefined;
-  const open = isControlled ? controlledOpen : internalOpen;
-  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
     <section className="my-2 md:my-3" aria-labelledby={headingId}>
@@ -48,7 +44,7 @@ export function ArticleSectionCollapsible({
               >
                 <div className="flex flex-col items-end gap-0.5">
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    {icon}
                     <h2
                       id={headingId}
                       className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"

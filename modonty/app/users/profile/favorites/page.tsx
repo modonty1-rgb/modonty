@@ -1,122 +1,28 @@
-"use client";
-
-import { useSession } from "@/components/providers/SessionContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import Image from "next/image";
+import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { IconSaved } from "@/lib/icons";
+import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import Link from "@/components/link";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Image from "next/image";
-import Link from "@/components/link";
-import { Button } from "@/components/ui/button";
+import { getProfileFavorites } from "../helpers/profile-favorites";
 
-interface FavoritedArticle {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  datePublished: Date | null;
-  featuredImage: {
-    url: string;
-    altText: string | null;
-  } | null;
-  client: {
-    id: string;
-    name: string;
-    slug: string;
-    logo: string | null;
-  };
-  author: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  } | null;
-  favoritedAt: string;
-}
+const dateFormatter = new Intl.DateTimeFormat("ar-SA", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
 
-export default function FavoritesPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [favorites, setFavorites] = useState<FavoritedArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function FavoritesPage() {
+  const session = await auth();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/users/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      if (!session?.user?.id) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/users/${session.user.id}/favorites?limit=20`);
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch favorites");
-        }
-
-        const data = await response.json();
-        
-        if (data.success) {
-          setFavorites(data.data);
-        } else {
-          setError(data.error || "Failed to load favorites");
-        }
-      } catch (err) {
-        setError("Failed to load favorites");
-        console.error("Error fetching favorites:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (status === "authenticated") {
-      fetchFavorites();
-    }
-  }, [session?.user?.id, status]);
-
-  if (status === "loading" || loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto max-w-[1128px] px-4 py-8">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-32 mb-4" />
-              <Skeleton className="h-10 w-full" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex gap-4 p-4 border rounded-lg">
-                  <Skeleton className="h-24 w-24 rounded flex-shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!session?.user?.id) {
+    redirect("/users/login");
   }
 
-  if (status === "unauthenticated" || !session?.user) {
-    return null;
-  }
+  const favorites = await getProfileFavorites(session.user.id, 20);
 
   return (
     <>
@@ -137,9 +43,7 @@ export default function FavoritesPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            {error ? (
-              <div className="text-center py-8 text-destructive">{error}</div>
-            ) : favorites.length === 0 ? (
+            {favorites.length === 0 ? (
               <EmptyState
                 icon={IconSaved}
                 title="لا توجد مقالات محفوظة"
@@ -195,9 +99,7 @@ export default function FavoritesPage() {
                                 {article.datePublished && (
                                   <>
                                     <span>•</span>
-                                    <span>
-                                      {new Date(article.datePublished).toLocaleDateString("ar-SA")}
-                                    </span>
+                                    <span>{dateFormatter.format(article.datePublished)}</span>
                                   </>
                                 )}
                               </div>

@@ -15,6 +15,12 @@ import {
   getArticleFaqs,
 } from "./actions";
 import {
+  getRelatedArticlesByArticleId,
+  getRelatedArticlesByClient,
+  getRelatedArticlesByAuthor,
+} from "./actions/article-data";
+import { getPendingFaqsForCurrentUser } from "./actions/ask-client-actions";
+import {
   ArticleHeader,
   ArticleTags,
   ArticleEngagementMetrics,
@@ -208,10 +214,25 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     }
     const article = { ...articleRaw, ...articleDefaults };
 
-    // Fetch FAQs for FAQPage JSON-LD if article has published FAQs
-    const articleFaqsForJsonLd = articleRaw._count.faqs > 0
-      ? await getArticleFaqs(articleRaw.id)
-      : [];
+    // Fetch FAQs + related articles + pending FAQs server-side
+    // → Q&A text + internal links appear in raw HTML (Googlebot + AI engines can read them)
+    const [
+      articleFaqsForJsonLd,
+      relatedArticles,
+      moreFromClient,
+      moreFromAuthor,
+      pendingFaqs,
+    ] = await Promise.all([
+      articleRaw._count.faqs > 0 ? getArticleFaqs(articleRaw.id) : Promise.resolve([]),
+      getRelatedArticlesByArticleId(articleRaw.id),
+      articleRaw.clientId
+        ? getRelatedArticlesByClient(articleRaw.clientId, articleRaw.id)
+        : Promise.resolve([]),
+      articleRaw.authorId
+        ? getRelatedArticlesByAuthor(articleRaw.authorId, articleRaw.id)
+        : Promise.resolve([]),
+      userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
+    ]);
 
     // Get cached JSON-LD from database (Phase 6)
     let jsonLdGraph: object | null = null;
@@ -443,6 +464,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   <ArticleFaq
                     articleId={article.id}
                     faqsCount={article._count.faqs}
+                    faqs={articleFaqsForJsonLd}
+                    pendingFaqs={pendingFaqs}
                   />
 
                   {/* Comments (lazy-loaded on open) */}
@@ -454,21 +477,23 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                     userId={userId}
                   />
 
-                  {/* More from Author (lazy-loaded on open) */}
+                  {/* More from Author — server-rendered for SEO */}
                   {article.author && (
                     <MoreFromAuthor
                       authorId={article.authorId}
                       articleId={article.id}
                       authorName={article.author.name}
+                      articles={moreFromAuthor}
                     />
                   )}
 
-                  {/* More from Client (lazy-loaded on open) */}
+                  {/* More from Client — server-rendered for SEO */}
                   {article.client && (
                     <MoreFromClient
                       clientId={article.clientId}
                       articleId={article.id}
                       clientName={article.client.name}
+                      articles={moreFromClient}
                     />
                   )}
 
@@ -479,7 +504,11 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   />
 
                   {/* Related Articles (lazy-loaded on open) */}
-                  <RelatedArticles articleId={article.id} clientId={article.clientId ?? undefined} />
+                  <RelatedArticles
+                    articleId={article.id}
+                    clientId={article.clientId ?? undefined}
+                    relatedArticles={relatedArticles}
+                  />
 
                   <ArticleFooter
                     client={article.client}

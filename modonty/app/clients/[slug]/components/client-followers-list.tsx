@@ -1,96 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IconUsers } from "@/lib/icons";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-
-interface ClientFollowersListProps {
-  clientSlug: string;
-  clientId?: string;
-}
 
 interface Follower {
   id: string;
   userId: string | null;
   name: string;
   image: string | null;
-  followedAt: string;
 }
 
-export function ClientFollowersList({ clientSlug, clientId }: ClientFollowersListProps) {
-  const [followers, setFollowers] = useState<Follower[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface ClientFollowersListProps {
+  clientId?: string;
+  followers: Follower[];
+}
 
-  useEffect(() => {
-    const fetchFollowers = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/clients/${encodeURIComponent(clientSlug)}/followers`);
-
-        if (!response.ok) {
-          throw new Error("Failed to load followers");
-        }
-
-        const data = await response.json();
-
-        if (data.success) {
-          setFollowers(
-            data.data.map((f: any) => ({
-              ...f,
-              followedAt: f.followedAt,
-            }))
-          );
-        } else {
-          setError(data.error || "تعذر تحميل المتابعين");
-        }
-      } catch {
-        setError("تعذر تحميل المتابعين");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFollowers();
-  }, [clientSlug]);
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconUsers className="h-4 w-4" />
-            المتابعون
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-14 w-full rounded-md" />
-          ))}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconUsers className="h-4 w-4" />
-            المتابعون
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-destructive">{error}</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
+export function ClientFollowersList({ clientId, followers }: ClientFollowersListProps) {
   if (followers.length === 0) {
     return (
       <Card>
@@ -164,4 +89,3 @@ export function ClientFollowersList({ clientSlug, clientId }: ClientFollowersLis
     </Card>
   );
 }
-

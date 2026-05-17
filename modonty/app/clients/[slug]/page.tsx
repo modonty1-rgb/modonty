@@ -7,6 +7,7 @@ import { getClientForMetadata } from "./helpers/client-metadata";
 import { getClientPageData } from "./helpers/client-page-data";
 import { getClientReviewsBySlug } from "./helpers/client-reviews";
 import { getClientFollowers } from "./helpers/client-followers";
+import { getClientComments } from "./helpers/client-comments";
 import { getClientEngagementBySlug } from "./helpers/client-engagement";
 import { articleToFeedPost } from "./helpers/article-to-feed-post";
 import { getClientPublishedFaqs } from "./helpers/client-faqs";
@@ -114,11 +115,12 @@ async function ClientPageContent({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, articlesResult, reviewsData, followers, engagementData, cachedSeo, clientFaqs] = await Promise.all([
+    const [data, articlesResult, reviewsData, followers, comments, engagementData, cachedSeo, clientFaqs] = await Promise.all([
       getClientPageData(slug),
       getArticles({ page: 1, limit: FEED_PAGE_SIZE, client: decodedSlug }),
       getClientReviewsBySlug(slug),
       getClientFollowers(slug),
+      getClientComments(slug),
       getClientEngagementBySlug(slug),
       db.client.findUnique({
         where: { slug: decodedSlug },
@@ -250,8 +252,8 @@ async function ClientPageContent({ params }: ClientPageProps) {
           </section>
         )}
 
-        {/* Client Comments Section (آراء حول الشركة) */}
-        <ClientCommentsSection clientSlug={client.slug} clientName={client.name} />
+        {/* Client Comments Section (آراء حول الشركة) — list rendered server-side for SEO */}
+        <ClientCommentsSection clientSlug={client.slug} clientName={client.name} comments={comments} />
 
         {/* JBRSEO-5: CTA — join as client */}
         <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">

@@ -1,114 +1,25 @@
-"use client";
-
-import { useSession } from "@/components/providers/SessionContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import Image from "next/image";
+import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { IconLike, IconClients, IconArticle, IconMessage } from "@/lib/icons";
-import { EmptyState } from "../components/empty-state";
-import { ProfileTabs } from "../components/profile-tabs";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { formatRelativeTime } from "@/lib/utils";
-import Image from "next/image";
 import Link from "@/components/link";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { EmptyState } from "../components/empty-state";
+import { ProfileTabs } from "../components/profile-tabs";
+import { getProfileLiked, type LikedItem, type LikedItemType } from "../helpers/profile-liked";
 
-interface LikedItem {
-  id: string;
-  type: "client" | "article" | "comment";
-  likedAt: Date;
-  item: {
-    id: string;
-    name?: string;
-    title?: string;
-    slug: string;
-    description?: string;
-    excerpt?: string;
-    image?: string;
-    imageAlt?: string;
-    client?: {
-      name: string;
-      slug: string;
-    };
-  };
-}
+export default async function LikedPage() {
+  const session = await auth();
 
-export default function LikedPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [items, setItems] = useState<LikedItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/users/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    const fetchLikedItems = async () => {
-      if (!session?.user?.id) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/users/${session.user.id}/liked?limit=20`);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('[Liked Page] API error:', response.status, errorText);
-          throw new Error(`API returned ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        
-        if (data.success) {
-          const parsedItems = data.data.map((item: any) => ({
-            ...item,
-            likedAt: new Date(item.likedAt),
-          }));
-          setItems(parsedItems);
-        } else {
-          setError(data.error || "Failed to load liked items");
-        }
-      } catch (err) {
-        console.error("[Liked Page] Error fetching liked items:", err);
-        setError("Failed to load liked items");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (status === "authenticated") {
-      fetchLikedItems();
-    }
-  }, [session?.user?.id, status]);
-
-  if (status === "loading" || loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto max-w-[1128px] px-4 py-8">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-32 mb-4" />
-              <Skeleton className="h-10 w-full" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-32 w-full rounded-lg" />
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!session?.user?.id) {
+    redirect("/users/login");
   }
 
-  if (status === "unauthenticated" || !session?.user) {
-    return null;
-  }
+  const items = await getProfileLiked(session.user.id, 20);
 
   return (
     <>
@@ -129,9 +40,7 @@ export default function LikedPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            {error ? (
-              <div className="text-center py-8 text-destructive">{error}</div>
-            ) : items.length === 0 ? (
+            {items.length === 0 ? (
               <EmptyState
                 icon={IconLike}
                 title="لا توجد إعجابات"
@@ -148,16 +57,10 @@ export default function LikedPage() {
                 </div>
                 <div className="grid gap-4">
                   {items.map((item) => {
-                    switch (item.type) {
-                      case "client":
-                        return <ClientLikeCard key={item.id} item={item} />;
-                      case "article":
-                        return <ArticleLikeCard key={item.id} item={item} />;
-                      case "comment":
-                        return <ClientLikeCard key={item.id} item={item} />;
-                      default:
-                        return null;
+                    if (item.type === "article") {
+                      return <ArticleLikeCard key={item.id} item={item} />;
                     }
+                    return <ClientLikeCard key={item.id} item={item} />;
                   })}
                 </div>
               </div>
@@ -169,29 +72,17 @@ export default function LikedPage() {
   );
 }
 
-function TypeBadge({ type }: { type: "client" | "article" | "comment" }) {
+function TypeBadge({ type }: { type: LikedItemType }) {
   const config = {
-    client: {
-      icon: IconClients,
-      label: "عميل",
-      color: "bg-primary/10 text-primary border-primary/20",
-    },
-    article: {
-      icon: IconArticle,
-      label: "مقالة",
-      color: "bg-primary/10 text-primary border-primary/20",
-    },
-    comment: {
-      icon: IconMessage,
-      label: "تعليق",
-      color: "bg-primary/10 text-primary border-primary/20",
-    },
-  };
+    client: { icon: IconClients, label: "عميل" },
+    article: { icon: IconArticle, label: "مقالة" },
+    comment: { icon: IconMessage, label: "تعليق" },
+  } as const;
 
-  const { icon: Icon, label, color } = config[type];
+  const { icon: Icon, label } = config[type];
 
   return (
-    <Badge variant="secondary" className={`gap-1 ${color}`}>
+    <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
       <Icon className="h-3 w-3" />
       <span className="text-xs">{label}</span>
     </Badge>
@@ -199,10 +90,8 @@ function TypeBadge({ type }: { type: "client" | "article" | "comment" }) {
 }
 
 function ClientLikeCard({ item }: { item: LikedItem }) {
-  const clientUrl = `/clients/${item.item.slug}`;
-
   return (
-    <Link href={clientUrl}>
+    <Link href={`/clients/${item.item.slug}`}>
       <Card className="hover:shadow-md transition-shadow cursor-pointer">
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
@@ -247,10 +136,8 @@ function ClientLikeCard({ item }: { item: LikedItem }) {
 }
 
 function ArticleLikeCard({ item }: { item: LikedItem }) {
-  const articleUrl = `/articles/${item.item.slug}`;
-
   return (
-    <Link href={articleUrl}>
+    <Link href={`/articles/${item.item.slug}`}>
       <Card className="hover:shadow-md transition-shadow cursor-pointer">
         <CardContent className="p-4">
           <div className="flex items-start gap-4">
@@ -275,9 +162,7 @@ function ArticleLikeCard({ item }: { item: LikedItem }) {
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-lg line-clamp-1">{item.item.title}</h4>
                   {item.item.client && (
-                    <p className="text-xs text-muted-foreground">
-                      {item.item.client.name}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{item.item.client.name}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">

@@ -11,13 +11,16 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.57.0",
-    title: "admin v0.57.0 — Bing Webmaster page منفصلة + IndexNow card انتقل لها",
+    version: "1.47.0",
+    title: "modonty v1.47.0 — تحويل 14 صفحة/مكوّن إلى Server Components (SEO + Performance)",
     items: [
-      { type: "feature" as const, text: "صفحة /bing-webmaster مستقلة: KPIs (clicks/impressions/CTR/avg position) + Top 10 queries + Top 10 pages — تستخدم نفس INDEXNOW_KEY كـ Bing Webmaster API key" },
-      { type: "feature" as const, text: "Bing API client (admin/lib/bing-webmaster/client.ts): GetQueryStats + GetPageStats + GetRankAndTrafficStats + GetCrawlStats + aggregator helpers + error handling (graceful per-call)" },
-      { type: "refactor" as const, text: "IndexNow card: انتقل من /search-console → /bing-webmaster (موضعه الطبيعي مع Bing) — /search-console يبقى Google فقط" },
-      { type: "feature" as const, text: "Sidebar: Bing Webmaster entry جديد بأيقونة Globe — بين Search Console و SEO Overview" },
+      { type: "feature" as const, text: "Phase 1 (article page): related-articles + more-from-client + more-from-author + manual-related + article-faq كلها Server Components الآن. البيانات تُجلب server-side وتُعرض في raw HTML لـ Googlebot + AI engines (60-100 رابط داخلي مكشوف لكل مقال)" },
+      { type: "feature" as const, text: "Phase 2 (client page): client-followers-list (pure Server) + client-comments-section (Server) + client-comment-form (Client + useActionState + Server Action). POST API route حُذف، استُبدل بـ Server Action مع revalidatePath + Zod validation" },
+      { type: "feature" as const, text: "Phase 3 (profile pages — perf + UX): page (stats) + activity-feed + favorites + following + comments + liked + disliked كلها Server Components مع auth() + redirect() + Promise.all server fetch. لا skeleton flicker، لا client fetch waterfall" },
+      { type: "refactor" as const, text: "Phase 4: ask-client-dialog — تنظيف dead code (useEffect lazy fetch + retry UI + pendingFaqsLocal/Loading/Error). Dialog يبقى Client للـ interactivity لكن البيانات تُمرَّر من Server" },
+      { type: "refactor" as const, text: "article-section-collapsible: icon prop من ComponentType إلى ReactNode (يحل Server→Client serialization error بعد تحويل الـ wrappers لـ Server Components)" },
+      { type: "feature" as const, text: "13 helper جديد للـ server-side fetching: client-comments, profile-stats, profile-activity, profile-favorites, profile-following, profile-comments, profile-liked, profile-disliked + faq-collapsible-body (small Client wrapper) + client-comment-actions (Server Action)" },
+      { type: "fix" as const, text: "Next.js 16 compliance: كل التحويلات مُتحقَّق منها مقابل vercel/next.js docs عبر Context7. minimal Client boundary، Server Component default، useActionState للـ form mutations" },
     ],
   },
 ];

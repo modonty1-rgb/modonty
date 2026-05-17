@@ -1,113 +1,23 @@
-"use client";
-
-import { useSession } from "@/components/providers/SessionContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import Image from "next/image";
+import { auth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { IconUsers, IconClients } from "@/lib/icons";
+import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import Link from "@/components/link";
 import { EmptyState } from "../components/empty-state";
 import { ProfileTabs } from "../components/profile-tabs";
-import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import Image from "next/image";
-import Link from "@/components/link";
 import { ClientFollowButton } from "@/app/clients/[slug]/components/client-follow-button";
+import { getProfileFollowing } from "../helpers/profile-following";
 
-interface FollowedClient {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  logo: string | null;
-  articleCount: number;
-  followedAt: string;
-  industry: {
-    id: string;
-    name: string;
-    slug: string;
-  } | null;
-}
+export default async function FollowingPage() {
+  const session = await auth();
 
-export default function FollowingPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [following, setFollowing] = useState<FollowedClient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/users/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    const fetchFollowing = async () => {
-      if (!session?.user?.id) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/users/${session.user.id}/following?limit=20`);
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch following");
-        }
-
-        const data = await response.json();
-        
-        if (data.success) {
-          setFollowing(data.data);
-        } else {
-          setError(data.error || "Failed to load following");
-        }
-      } catch (err) {
-        setError("Failed to load following");
-        console.error("Error fetching following:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (status === "authenticated") {
-      fetchFollowing();
-    }
-  }, [session?.user?.id, status]);
-
-  const handleUnfollow = (clientSlug: string) => {
-    setFollowing((prev) => prev.filter((client) => client.slug !== clientSlug));
-  };
-
-  if (status === "loading" || loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto max-w-[1128px] px-4 py-8">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-32 mb-4" />
-              <Skeleton className="h-10 w-full" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
-                  <Skeleton className="h-16 w-16 rounded flex-shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-6 w-48" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-1/3" />
-                  </div>
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!session?.user?.id) {
+    redirect("/users/login");
   }
 
-  if (status === "unauthenticated" || !session?.user) {
-    return null;
-  }
+  const following = await getProfileFollowing(session.user.id, 20);
 
   return (
     <>
@@ -128,9 +38,7 @@ export default function FollowingPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            {error ? (
-              <div className="text-center py-8 text-destructive">{error}</div>
-            ) : following.length === 0 ? (
+            {following.length === 0 ? (
               <EmptyState
                 icon={IconUsers}
                 title="لا تتابع أحداً"

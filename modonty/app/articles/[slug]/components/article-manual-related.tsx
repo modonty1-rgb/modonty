@@ -1,5 +1,3 @@
-"use client";
-
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card } from "@/components/ui/card";
 import { ArticleSectionCollapsible } from "./article-section-collapsible";
@@ -49,7 +47,7 @@ export function ArticleManualRelated({ articleId, clientId, relatedArticles }: A
     <ArticleSectionCollapsible
       title="مقالات ذات صلة"
       headingId="manual-related-articles-heading"
-      icon={IconLink}
+      icon={<IconLink className="h-4 w-4 shrink-0 text-muted-foreground" />}
       defaultOpen={true}
     >
       {relatedArticles.map(({ id, related }) => (
