@@ -42,38 +42,21 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
 
-      // ═══ AI TRAINING BOTS — BLOCK (protect content from datasets) ═══
+      // ═══ AI TRAINING BOTS — ALLOW (Phase 1: maximize visibility) ═══
+      // Trade-off accepted: brand exposure > content protection while site is new.
+      // Re-evaluate once organic traffic + authority are established.
 
-      // OpenAI training crawler — trains GPT models
-      {
-        userAgent: "GPTBot",
-        disallow: ["/"],
-      },
-      // Google Gemini training — does NOT affect AI Overviews or Search
-      // Source: https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers
-      {
-        userAgent: "Google-Extended",
-        disallow: ["/"],
-      },
-      // Common Crawl — open training dataset used by many AI companies
-      {
-        userAgent: "CCBot",
-        disallow: ["/"],
-      },
-      // Anthropic training crawler
-      {
-        userAgent: "ClaudeBot",
-        disallow: ["/"],
-      },
-      {
-        userAgent: "anthropic-ai",
-        disallow: ["/"],
-      },
-      // ByteDance training crawler
-      {
-        userAgent: "Bytespider",
-        disallow: ["/"],
-      },
+      // OpenAI training crawler — feeds GPT model memory
+      { userAgent: "GPTBot", allow: "/" },
+      // Google Gemini training — influences Gemini answers
+      { userAgent: "Google-Extended", allow: "/" },
+      // Common Crawl — open dataset used by dozens of AI companies
+      { userAgent: "CCBot", allow: "/" },
+      // Anthropic training crawler — feeds Claude
+      { userAgent: "ClaudeBot", allow: "/" },
+      { userAgent: "anthropic-ai", allow: "/" },
+      // ByteDance — feeds Doubao + TikTok search
+      { userAgent: "Bytespider", allow: "/" },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };

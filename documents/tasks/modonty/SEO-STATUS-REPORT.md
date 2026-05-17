@@ -15,7 +15,7 @@
 | **Errors** | 🟢 محلولة | كل الـ 5 أخطاء محلولة في v1.29.7 + v1.29.8 |
 | **Structured Data** | 🟢 صفر أخطاء | مؤكد بـ Google Rich Results Test |
 | **Sitemap** | 🟢 نظيف | ~84 URL، كلها www canonical |
-| **robots.txt** | 🟢 صحيح | Google/Perplexity/ChatGPT مسموحين، training bots محجوبون |
+| **robots.txt** | 🟢 صحيح | كل البوتات مسموحة (search + training) — Phase 1: maximize visibility (2026-05-17) |
 
 ---
 
@@ -85,10 +85,10 @@
 | Googlebot | ✅ مسموح | الفهرسة الأساسية |
 | OAI-SearchBot (ChatGPT Search) | ✅ مسموح | AI search results |
 | PerplexityBot | ✅ مسموح | AI answers |
-| GPTBot (OpenAI training) | ❌ محجوب | لا تدريب على المحتوى |
-| Google-Extended (Gemini) | ❌ محجوب | لا تدريب |
-| ClaudeBot / anthropic-ai | ❌ محجوب | لا تدريب |
-| CCBot / Bytespider | ❌ محجوب | لا تدريب |
+| GPTBot (OpenAI training) | ✅ مسموح | Phase 1: نريد ظهور كل قنوات AI (2026-05-17) |
+| Google-Extended (Gemini) | ✅ مسموح | فتح Gemini context + AI Overviews context |
+| ClaudeBot / anthropic-ai | ✅ مسموح | فتح Claude يستشهد بمحتوانا |
+| CCBot / Bytespider | ✅ مسموح | Common Crawl + Doubao/TikTok |
 
 ---
 
@@ -98,6 +98,17 @@
 |-------|---------|---------|
 | **AI-BOT-1/2/3: بوتات محجوبة من 2 صفحة** | ✅ لا إجراء | الصفحتان هما /users/login/ و /users/profile/ — محجوبتان عمداً. صحيح. |
 | AUDIT-5: Bundle size 401kB | 🟢 منخفض | مؤجل بقرار المستخدم — يحتاج build:analyze + dynamic imports |
+
+## 6.1 IndexNow Integration (2026-05-17) — 🟢 جاهز للـ push
+
+- ✅ `INDEXNOW_KEY=49813ea4f9f14773baa6d56490f840ee` في `.env.shared`
+- ✅ Verification file: `modonty/public/49813ea4f9f14773baa6d56490f840ee.txt`
+- ✅ Helper: `modonty/lib/indexnow.ts` + `admin/lib/indexnow.ts` (mirror) — `submitToIndexNow(urls[])`
+- ✅ Bulk script: `scripts/indexnow-bulk-submit.mjs` — يقرأ sitemap.xml ويرسل كل URLs
+- ✅ **Admin UI button** في `/search-console`: `SubmitIndexNowButton` + `indexnow-actions.ts` — manual click يقرأ sitemap + يرسل لكل engines
+- ✅ تسجيل في Bing Webmaster Tools (2026-05-17 — Import from GSC، 2 sites)
+- ⏳ بعد push للـ production: نقرة واحدة في admin → يبعت كل الـ URLs (مفضّل) أو CLI: `node scripts/indexnow-bulk-submit.mjs`
+- ❌ **NOT automated** بقرار خالد (2026-05-17) — manual button فقط، Phase 2 (auto-hook في publish) مؤجلة
 
 ---
 

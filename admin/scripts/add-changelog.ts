@@ -11,18 +11,13 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.45.0",
-    title: "modonty v1.45.0 — /story page polish: copy refresh + audio re-generation + UI cleanup",
+    version: "1.46.0",
+    title: "modonty v1.46.0 + admin v0.56.0 — IndexNow integration + كل bots مفتوحة (GEO Phase 1)",
     items: [
-      { type: "feature" as const, text: "استبدال 'بزنس' → 'مشروعك / نشاط' في كل /story: ٢٢ موضع script.md + ١٨ موضع manifest + ٣ مواضع SEO metadata + welcome card — تطبيق قاعدة لغوية متناسقة (مشروعك للمخاطبة، نشاط للتصنيف)" },
-      { type: "feature" as const, text: "metaphor cleanup: 'أنت طوبة' → 'شركتك طوبة' (٨ مواضع) — لا تشييء للشخص، الشركة هي الطوبة في البنيان" },
-      { type: "feature" as const, text: "section 03 body: pivot سلس نقطة → طوبة → بنيان — يحافظ على المعنى الحرفي للنقطة في الشعار ويكرّم العميل كوحدة بناء" },
-      { type: "feature" as const, text: "أسامي الأقسام كأسئلة hook في sidebar: المشكلة → 'عميلك يلقاك؟' · مدوني → 'ليش مدوني؟' · مقابل البدائل → 'وكالة ولا منظومة؟' · شركاء نجاح → 'نتائج العملاء' · الفريق → 'مين خلف البنيان؟'" },
-      { type: "feature" as const, text: "UI moves: زر '📄 اقرأ النص' من content area → top bar (ظاهر على media sections) · زر 'رؤية ٢٠٣٠' من top bar → sidebar header بعرض كامل · 'اضغط للبدء' hint → audio controls footer · شيل headings 'خريطة القصة' + 'افتتاحية'" },
-      { type: "feature" as const, text: "TV stage badge: ID خام → موضع متسلسل (1-12) للسكشنات في categories · للـ logo-spotlight: نقطة سيان diamond #00D8D8 مستخرجة من الـ SVG الأصلي للشعار · animation محسّن (isPlaying gate + useReducedMotion + glow أخف ٣٠٪)" },
-      { type: "feature" as const, text: "audio re-generated: ١٣ سكشن بـ Gemini Kore (sections 02,03,04,06,07,08,12,13,14,15,16,17,18) · ~٤٥MB · صفر أخطاء توليد" },
-      { type: "refactor" as const, text: "نقل voice script للموقع الصحيح: console/app/help/voice-script/script.md → modonty/scripts/voice/general-pitch/script.md — منطقي: modonty يملك سكريبت /story · تحديث build-general-pitch-manifest.mjs + generate-section.mjs للمسار الجديد · صفر dead code · console pitch بحاله (سكريبت منفصل)" },
-      { type: "fix" as const, text: "welcome card مختصر: 'حياك الله في مدونتي. خلني أحكي لك بسرعة، كيف نجعل بزنسك يطلع أمام العميل الذي يبحث عنك — وأنت مرتاح' → 'حياك الله في مدونتي. مشروعك يطلع لعميلك — وأنت مرتاح' (~٩٥ → ~٥٢ حرف)" },
+      { type: "feature" as const, text: "IndexNow integration: helper modonty/lib/indexnow.ts + admin/lib/indexnow.ts (mirror) + verification file على الروت + bulk script — request واحد يفهرس الـ URLs في Bing + Yandex + Brave + Seznam + Naver = يفتح ChatGPT Search + Copilot + DuckDuckGo + Perplexity + Brave AI" },
+      { type: "feature" as const, text: "Admin UI: SubmitIndexNowButton في /search-console — manual click يقرأ sitemap.xml + يرسل كل URLs لـ IndexNow + يعرض toast + شريط نتيجة (count + timestamp + message)" },
+      { type: "feature" as const, text: "robots.txt: فتح كل training bots (GPTBot + Google-Extended + ClaudeBot + anthropic-ai + CCBot + Bytespider) — قرار خالد للـ Phase 1 (visibility فوق كل شيء، الحماية لاحقاً لما يثبت الموقع)" },
+      { type: "refactor" as const, text: "تنظيم env vars: INDEXNOW_KEY في .env.shared (gitignored) — لازم يُضاف يدوياً في Vercel Dashboard للـ production" },
     ],
   },
 ];
