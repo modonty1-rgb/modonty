@@ -99,16 +99,28 @@
 | **AI-BOT-1/2/3: بوتات محجوبة من 2 صفحة** | ✅ لا إجراء | الصفحتان هما /users/login/ و /users/profile/ — محجوبتان عمداً. صحيح. |
 | AUDIT-5: Bundle size 401kB | 🟢 منخفض | مؤجل بقرار المستخدم — يحتاج build:analyze + dynamic imports |
 
-## 6.1 IndexNow Integration (2026-05-17) — 🟢 جاهز للـ push
+## 6.1 IndexNow Integration (2026-05-17) — ✅ LIVE في الإنتاج
 
-- ✅ `INDEXNOW_KEY=49813ea4f9f14773baa6d56490f840ee` في `.env.shared`
-- ✅ Verification file: `modonty/public/49813ea4f9f14773baa6d56490f840ee.txt`
-- ✅ Helper: `modonty/lib/indexnow.ts` + `admin/lib/indexnow.ts` (mirror) — `submitToIndexNow(urls[])`
-- ✅ Bulk script: `scripts/indexnow-bulk-submit.mjs` — يقرأ sitemap.xml ويرسل كل URLs
-- ✅ **Admin UI button** في `/search-console`: `SubmitIndexNowButton` + `indexnow-actions.ts` — manual click يقرأ sitemap + يرسل لكل engines
-- ✅ تسجيل في Bing Webmaster Tools (2026-05-17 — Import from GSC، 2 sites)
-- ⏳ بعد push للـ production: نقرة واحدة في admin → يبعت كل الـ URLs (مفضّل) أو CLI: `node scripts/indexnow-bulk-submit.mjs`
-- ❌ **NOT automated** بقرار خالد (2026-05-17) — manual button فقط، Phase 2 (auto-hook في publish) مؤجلة
+- [x] `INDEXNOW_KEY=49813ea4f9f14773baa6d56490f840ee` في `.env.shared` + Vercel (admin + modonty projects)
+- [x] Verification file: `modonty/public/49813ea4f9f14773baa6d56490f840ee.txt` (HTTP 200 على modonty.com ✓ verified)
+- [x] Helper: `modonty/lib/indexnow.ts` + `admin/lib/indexnow.ts` (mirror) — `submitToIndexNow(urls[])`
+- [x] Bulk script: `scripts/indexnow-bulk-submit.mjs` — اختُبر LIVE: **102 URL submitted, 102 accepted (HTTP 202)**
+- [x] تسجيل في Bing Webmaster Tools (Import from GSC، 2 sites: modonty.com + jbrseo.com)
+- [x] Commit `6b90295` + push to main + Vercel deployed
+- ❌ **NOT automated** بقرار خالد — manual button فقط
+
+## 6.2 Bing Webmaster page (2026-05-17) — 🟡 جاهز للـ push (لم يُختبر بعد)
+
+- [x] `admin/lib/bing-webmaster/client.ts` — Bing API client (GetQueryStats, GetPageStats, GetRankAndTrafficStats, GetCrawlStats)
+- [x] `admin/app/(dashboard)/bing-webmaster/page.tsx` — صفحة مستقلة عن /search-console
+- [x] `SubmitIndexNowCard` — منقول من /search-console للموضع الطبيعي (مع Bing)
+- [x] Sidebar entry: `Bing Webmaster` بأيقونة Globe
+- [x] KPIs: Clicks · Impressions · CTR · Position + Top Queries (10) + Top Pages (10)
+- [x] Error handling: graceful per-call (Bing بياخد 24-48 ساعة قبل بيانات تظهر)
+- ⏳ بعد push: live test في admin
+
+### Phase 1 robots.txt (2026-05-17) — ✅ LIVE
+- [x] فتح كل training bots (GPTBot + Google-Extended + ClaudeBot + anthropic-ai + CCBot + Bytespider) → verified LIVE على modonty.com/robots.txt
 
 ---
 

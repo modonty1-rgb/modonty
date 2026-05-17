@@ -11,13 +11,13 @@ dotenv.config({ path: path.join(__dirname, "../.env.local") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.46.0",
-    title: "modonty v1.46.0 + admin v0.56.0 — IndexNow integration + كل bots مفتوحة (GEO Phase 1)",
+    version: "0.57.0",
+    title: "admin v0.57.0 — Bing Webmaster page منفصلة + IndexNow card انتقل لها",
     items: [
-      { type: "feature" as const, text: "IndexNow integration: helper modonty/lib/indexnow.ts + admin/lib/indexnow.ts (mirror) + verification file على الروت + bulk script — request واحد يفهرس الـ URLs في Bing + Yandex + Brave + Seznam + Naver = يفتح ChatGPT Search + Copilot + DuckDuckGo + Perplexity + Brave AI" },
-      { type: "feature" as const, text: "Admin UI: SubmitIndexNowButton في /search-console — manual click يقرأ sitemap.xml + يرسل كل URLs لـ IndexNow + يعرض toast + شريط نتيجة (count + timestamp + message)" },
-      { type: "feature" as const, text: "robots.txt: فتح كل training bots (GPTBot + Google-Extended + ClaudeBot + anthropic-ai + CCBot + Bytespider) — قرار خالد للـ Phase 1 (visibility فوق كل شيء، الحماية لاحقاً لما يثبت الموقع)" },
-      { type: "refactor" as const, text: "تنظيم env vars: INDEXNOW_KEY في .env.shared (gitignored) — لازم يُضاف يدوياً في Vercel Dashboard للـ production" },
+      { type: "feature" as const, text: "صفحة /bing-webmaster مستقلة: KPIs (clicks/impressions/CTR/avg position) + Top 10 queries + Top 10 pages — تستخدم نفس INDEXNOW_KEY كـ Bing Webmaster API key" },
+      { type: "feature" as const, text: "Bing API client (admin/lib/bing-webmaster/client.ts): GetQueryStats + GetPageStats + GetRankAndTrafficStats + GetCrawlStats + aggregator helpers + error handling (graceful per-call)" },
+      { type: "refactor" as const, text: "IndexNow card: انتقل من /search-console → /bing-webmaster (موضعه الطبيعي مع Bing) — /search-console يبقى Google فقط" },
+      { type: "feature" as const, text: "Sidebar: Bing Webmaster entry جديد بأيقونة Globe — بين Search Console و SEO Overview" },
     ],
   },
 ];

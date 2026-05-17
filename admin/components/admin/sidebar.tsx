@@ -58,6 +58,7 @@ import {
   UserPlus,
   BadgeCheck,
   Send,
+  Globe,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -164,6 +165,7 @@ const menuGroups: MenuGroup[] = [
 
 const topItems: MenuItem[] = [
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
+  { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
   { icon: LineChart, label: "SEO Overview", href: "/seo-overview" },
 ];
 

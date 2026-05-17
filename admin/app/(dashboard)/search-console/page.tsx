@@ -36,7 +36,6 @@ import type { TechHealthIssue } from "./components/tech-health-dialog";
 import { SitemapManager } from "./components/sitemap-manager";
 import { RobotsValidator } from "./components/robots-validator";
 import { PendingIndexingCard } from "./components/pending-indexing-card";
-import { SubmitIndexNowButton } from "./components/submit-indexnow-button";
 import { DataSourcesNote } from "./components/data-sources-note";
 
 import type { DbStatus, EnrichedPage, PathType } from "@/lib/gsc/coverage";
@@ -269,7 +268,6 @@ export default async function SearchConsolePage({
       />
 
       <SitemapManager />
-      <SubmitIndexNowButton />
       <RobotsValidator />
 
       <Card>
