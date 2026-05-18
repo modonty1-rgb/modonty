@@ -1,11 +1,18 @@
 /**
  * GA4 Measurement Protocol — server-side event sender
  *
- * Fire-and-forget pattern: never blocks the caller, never throws.
+ * Fire-and-forget pattern via Next.js `after()` — survives Vercel serverless
+ * function termination (critical: without after(), the fetch may be killed
+ * when the lambda returns before the GA4 request completes).
+ *
  * Used by Server Actions + Route Handlers to track engagement events.
  *
- * Docs: https://developers.google.com/analytics/devguides/collection/protocol/ga4
+ * Docs:
+ * - https://developers.google.com/analytics/devguides/collection/protocol/ga4
+ * - https://nextjs.org/docs/app/api-reference/functions/after
  */
+
+import { after } from "next/server";
 
 const GA4_ENDPOINT = "https://www.google-analytics.com/mp/collect";
 const GA4_DEBUG_ENDPOINT = "https://www.google-analytics.com/debug/mp/collect";
@@ -94,32 +101,37 @@ export function sendGA4Event(
   const endpoint = options.debug ? GA4_DEBUG_ENDPOINT : GA4_ENDPOINT;
   const url = `${endpoint}?measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}`;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 3000);
-
-  void fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    signal: controller.signal,
-    keepalive: true,
-  })
-    .then(async (resp) => {
+  // Wrap fetch in `after()` so Vercel keeps the lambda alive until GA4 responds.
+  // Without this, the function may return + terminate before the fetch completes,
+  // silently dropping events in production.
+  after(async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 3000);
+    try {
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+        keepalive: true,
+      });
       if (isDev) {
-        // Dev-only confirmation log — verify events reach GA4 during local testing
         console.log(`[ga4-server] ${eventName} → HTTP ${resp.status}${resp.ok ? "" : " ⚠️"}`);
       }
       if (options.debug) {
-        const json = await resp.json().catch(() => null);
+        const json = (await resp.json().catch(() => null)) as
+          | { validationMessages?: unknown[] }
+          | null;
         if (json?.validationMessages?.length) {
           console.warn(`[ga4-server] validation errors for ${eventName}:`, json.validationMessages);
         }
       }
-    })
-    .catch(() => {
+    } catch {
       // Silent — analytics must never break origin flow
-    })
-    .finally(() => clearTimeout(timeout));
+    } finally {
+      clearTimeout(timeout);
+    }
+  });
 }
 
 /**
