@@ -5,6 +5,12 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { CommentStatus } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import {
+  trackCommentSubmit,
+  trackCommentReply,
+  trackCommentLike,
+  trackCommentDislike,
+} from "@/lib/analytics/events-registry";
 
 function sanitizeComment(content: string): string {
   const trimmed = content.trim();
@@ -72,14 +78,23 @@ export async function submitComment(
 
     revalidatePath(`/articles/${articleSlug}`);
 
-    // Telegram notification (non-blocking)
+    // Telegram + GA4 (non-blocking, single DB lookup)
     db.article
       .findUnique({
         where: { id: articleId },
-        select: { clientId: true, title: true },
+        select: {
+          clientId: true,
+          title: true,
+          slug: true,
+          client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+          author: { select: { id: true, name: true } },
+          category: { select: { slug: true, name: true } },
+          tags: { select: { tag: { select: { name: true } } }, take: 1 },
+        },
       })
       .then((art) => {
-        if (art?.clientId) {
+        if (!art) return;
+        if (art.clientId) {
           notifyTelegram(art.clientId, "commentNew", {
             title: art.title,
             body: `${comment.author?.name ?? "زائر"}: ${content}`,
@@ -89,6 +104,25 @@ export async function submitComment(
             },
           });
         }
+        void trackCommentSubmit(
+          {
+            article_id: articleId,
+            article_slug: art.slug,
+            article_title: art.title.slice(0, 100),
+            author_id: art.author?.id,
+            author_name: art.author?.name ?? undefined,
+            category_slug: art.category?.slug,
+            category_name: art.category?.name,
+            tag_primary: art.tags[0]?.tag?.name,
+            client_id: art.clientId ?? undefined,
+            client_slug: art.client?.slug,
+            client_name: art.client?.name,
+            client_industry: art.client?.industry?.name,
+            comment_id: comment.id,
+            comment_target_type: "article",
+          },
+          { userId },
+        );
       })
       .catch(() => {});
 
@@ -161,15 +195,42 @@ export async function submitReply(
     db.article
       .findUnique({
         where: { id: articleId },
-        select: { clientId: true, title: true },
+        select: {
+          clientId: true,
+          title: true,
+          slug: true,
+          client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+          author: { select: { id: true, name: true } },
+          category: { select: { slug: true, name: true } },
+          tags: { select: { tag: { select: { name: true } } }, take: 1 },
+        },
       })
       .then((art) => {
-        if (art?.clientId) {
+        if (!art) return;
+        if (art.clientId) {
           notifyTelegram(art.clientId, "commentReply", {
             title: art.title,
             body: `${reply.author?.name ?? "زائر"}: ${content}`,
           });
         }
+        void trackCommentReply(
+          {
+            article_id: articleId,
+            article_slug: art.slug,
+            article_title: art.title.slice(0, 100),
+            author_id: art.author?.id,
+            author_name: art.author?.name ?? undefined,
+            category_slug: art.category?.slug,
+            category_name: art.category?.name,
+            tag_primary: art.tags[0]?.tag?.name,
+            client_id: art.clientId ?? undefined,
+            client_slug: art.client?.slug,
+            client_name: art.client?.name,
+            client_industry: art.client?.industry?.name,
+            comment_id: reply.id,
+          },
+          { userId },
+        );
       })
       .catch(() => {});
 
@@ -236,14 +297,45 @@ export async function likeComment(commentId: string, articleSlug: string) {
       db.comment
         .findUnique({
           where: { id: commentId },
-          select: { article: { select: { clientId: true, title: true } } },
+          select: {
+            article: {
+              select: {
+                id: true,
+                clientId: true,
+                title: true,
+                slug: true,
+                client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+                author: { select: { id: true, name: true } },
+                category: { select: { slug: true, name: true } },
+                tags: { select: { tag: { select: { name: true } } }, take: 1 },
+              },
+            },
+          },
         })
         .then((c) => {
-          if (c?.article?.clientId) {
-            notifyTelegram(c.article.clientId, "commentLike", {
-              title: c.article.title,
-            });
+          if (!c?.article) return;
+          const art = c.article;
+          if (art.clientId) {
+            notifyTelegram(art.clientId, "commentLike", { title: art.title });
           }
+          void trackCommentLike(
+            {
+              article_id: art.id,
+              article_slug: art.slug,
+              article_title: art.title.slice(0, 100),
+              author_id: art.author?.id,
+              author_name: art.author?.name ?? undefined,
+              category_slug: art.category?.slug,
+              category_name: art.category?.name,
+              tag_primary: art.tags[0]?.tag?.name,
+              client_id: art.clientId ?? undefined,
+              client_slug: art.client?.slug,
+              client_name: art.client?.name,
+              client_industry: art.client?.industry?.name,
+              comment_id: commentId,
+            },
+            { userId },
+          );
         })
         .catch(() => {});
     }
@@ -311,14 +403,45 @@ export async function dislikeComment(commentId: string, articleSlug: string) {
       db.comment
         .findUnique({
           where: { id: commentId },
-          select: { article: { select: { clientId: true, title: true } } },
+          select: {
+            article: {
+              select: {
+                id: true,
+                clientId: true,
+                title: true,
+                slug: true,
+                client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+                author: { select: { id: true, name: true } },
+                category: { select: { slug: true, name: true } },
+                tags: { select: { tag: { select: { name: true } } }, take: 1 },
+              },
+            },
+          },
         })
         .then((c) => {
-          if (c?.article?.clientId) {
-            notifyTelegram(c.article.clientId, "commentDislike", {
-              title: c.article.title,
-            });
+          if (!c?.article) return;
+          const art = c.article;
+          if (art.clientId) {
+            notifyTelegram(art.clientId, "commentDislike", { title: art.title });
           }
+          void trackCommentDislike(
+            {
+              article_id: art.id,
+              article_slug: art.slug,
+              article_title: art.title.slice(0, 100),
+              author_id: art.author?.id,
+              author_name: art.author?.name ?? undefined,
+              category_slug: art.category?.slug,
+              category_name: art.category?.name,
+              tag_primary: art.tags[0]?.tag?.name,
+              client_id: art.clientId ?? undefined,
+              client_slug: art.client?.slug,
+              client_name: art.client?.name,
+              client_industry: art.client?.industry?.name,
+              comment_id: commentId,
+            },
+            { userId },
+          );
         })
         .catch(() => {});
     }

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import type { ConversionType } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackConversionComplete } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -59,4 +60,12 @@ export async function createConversion(data: CreateConversionData): Promise<void
       ipAddress: data.ipAddress ?? null,
     }).catch(() => {});
   }
+
+  void trackConversionComplete(
+    {
+      client_id: data.clientId,
+      conversion_type: String(data.type),
+    },
+    { userId: data.userId },
+  );
 }

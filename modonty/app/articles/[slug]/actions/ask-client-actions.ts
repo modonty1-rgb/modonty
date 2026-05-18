@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { ArticleStatus, ArticleFAQStatus } from "@prisma/client";
 import { askClientSchema, type AskClientFormData } from "../helpers/schemas/ask-client-schema";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackAskClientSubmit } from "@/lib/analytics/events-registry";
 
 function sanitizeText(text: string): string {
   return text
@@ -34,7 +35,13 @@ export async function submitAskClient(
 
   const article = await db.article.findFirst({
     where: { id: articleId, status: ArticleStatus.PUBLISHED },
-    select: { id: true, slug: true, title: true, clientId: true },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      clientId: true,
+      client: { select: { slug: true, name: true } },
+    },
   });
   if (!article) {
     return { success: false, error: "المقال غير متاح أو غير منشور" };
@@ -90,6 +97,18 @@ export async function submitAskClient(
       },
     }).catch(() => {});
   }
+
+  void trackAskClientSubmit(
+    {
+      client_id: article.clientId ?? undefined,
+      client_slug: article.client?.slug,
+      client_name: article.client?.name,
+      article_id: article.id,
+      article_slug: article.slug,
+      article_title: article.title.slice(0, 100),
+    },
+    { userId: session.user.id },
+  );
 
   return { success: true };
 }

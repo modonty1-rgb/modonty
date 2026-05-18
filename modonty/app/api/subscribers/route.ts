@@ -6,6 +6,7 @@ import { getOrCreateSessionId, createConversion } from "@/lib/conversion-trackin
 import { ConversionType } from "@prisma/client";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackNewsletterSubscribe } from "@/lib/analytics/events-registry";
 
 const subscribeSchema = z.object({
   email: z.string().email().max(254),
@@ -65,7 +66,10 @@ export async function POST(request: NextRequest) {
           consentDate: new Date(),
         },
       }),
-      db.client.findUnique({ where: { id: clientId }, select: { name: true } }),
+      db.client.findUnique({
+        where: { id: clientId },
+        select: { slug: true, name: true, industry: { select: { name: true } } },
+      }),
     ]);
     void newSubscriber;
 
@@ -90,6 +94,13 @@ export async function POST(request: NextRequest) {
       type: ConversionType.NEWSLETTER,
       clientId,
       sessionId,
+    });
+
+    void trackNewsletterSubscribe({
+      client_id: clientId,
+      client_slug: client?.slug,
+      client_name: client?.name,
+      client_industry: client?.industry?.name,
     });
 
     return NextResponse.json({

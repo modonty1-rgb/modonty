@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackClientShare } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -36,7 +37,7 @@ export async function POST(
 
     const client = await db.client.findFirst({
       where: { slug },
-      select: { id: true },
+      select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
     });
 
     if (!client) {
@@ -78,6 +79,14 @@ export async function POST(
       ipAddress: ip,
       headers: request.headers,
     }).catch(() => {});
+
+    void trackClientShare({
+      client_id: client.id,
+      client_slug: client.slug,
+      client_name: client.name,
+      client_industry: client.industry?.name,
+      share_platform: String(sharePlatform).toLowerCase(),
+    });
 
     return NextResponse.json({
       success: true,

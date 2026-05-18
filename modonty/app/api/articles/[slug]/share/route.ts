@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { SharePlatform } from "@prisma/client";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackArticleShare } from "@/lib/analytics/events-registry";
 
 const SHARE_RATE_LIMIT = 10;
 const SHARE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -18,7 +19,16 @@ export async function POST(
 
     const article = await db.article.findFirst({
       where: { slug },
-      select: { id: true, clientId: true },
+      select: {
+        id: true,
+        clientId: true,
+        title: true,
+        slug: true,
+        client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+        author: { select: { id: true, name: true } },
+        category: { select: { slug: true, name: true } },
+        tags: { select: { tag: { select: { name: true } } }, take: 1 },
+      },
     });
 
     if (!article) {
@@ -82,6 +92,22 @@ export async function POST(
         headers: request.headers,
       }).catch(() => {});
     }
+
+    void trackArticleShare({
+      article_id: article.id,
+      article_slug: article.slug,
+      article_title: article.title.slice(0, 100),
+      author_id: article.author?.id,
+      author_name: article.author?.name ?? undefined,
+      category_slug: article.category?.slug,
+      category_name: article.category?.name,
+      tag_primary: article.tags[0]?.tag?.name,
+      client_id: article.clientId ?? undefined,
+      client_slug: article.client?.slug,
+      client_name: article.client?.name,
+      client_industry: article.client?.industry?.name,
+      share_platform: String(sharePlatform).toLowerCase(),
+    });
 
     return NextResponse.json({
       success: true,

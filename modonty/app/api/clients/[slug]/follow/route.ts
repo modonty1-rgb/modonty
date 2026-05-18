@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackFollowClient } from "@/lib/analytics/events-registry";
 
 export async function GET(
   request: NextRequest,
@@ -78,7 +79,7 @@ export async function POST(
     
     const client = await db.client.findUnique({
       where: { slug: decodedSlug },
-      select: { id: true }
+      select: { id: true, slug: true, name: true, industry: { select: { name: true } } }
     });
 
     if (!client) {
@@ -127,6 +128,16 @@ export async function POST(
         ipAddress: ip,
         headers: request.headers,
       }).catch(() => {});
+
+      void trackFollowClient(
+        {
+          client_id: client.id,
+          client_slug: client.slug,
+          client_name: client.name,
+          client_industry: client.industry?.name,
+        },
+        { userId: session.user.id },
+      );
     }
 
     return NextResponse.json({

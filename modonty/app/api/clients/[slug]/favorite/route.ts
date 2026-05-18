@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import type { ApiResponse } from "@/lib/types";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackClientFavorite } from "@/lib/analytics/events-registry";
 
 /**
  * Toggle favorite for the current user on a client page.
@@ -13,7 +14,7 @@ async function findClient(rawSlug: string) {
   const slug = decodeURIComponent(rawSlug);
   return db.client.findUnique({
     where: { slug },
-    select: { id: true, name: true },
+    select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
   });
 }
 
@@ -92,6 +93,16 @@ export async function POST(
       ipAddress: ip,
       headers: request.headers,
     }).catch(() => {});
+
+    void trackClientFavorite(
+      {
+        client_id: client.id,
+        client_slug: client.slug,
+        client_name: client.name,
+        client_industry: client.industry?.name,
+      },
+      { userId: session.user.id },
+    );
   }
 
   const count = await db.clientFavorite.count({ where: { clientId: client.id } });

@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { ArticleStatus, TrafficSource } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackArticleView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -48,7 +49,16 @@ export async function POST(
 
     const article = await db.article.findFirst({
       where: { slug: decodedSlug, status: ArticleStatus.PUBLISHED },
-      select: { id: true, clientId: true, title: true },
+      select: {
+        id: true,
+        clientId: true,
+        title: true,
+        slug: true,
+        client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+        author: { select: { id: true, name: true } },
+        category: { select: { slug: true, name: true } },
+        tags: { select: { tag: { select: { name: true } } }, take: 1 },
+      },
     });
 
     if (!article) {
@@ -121,6 +131,24 @@ export async function POST(
         headers: headersList,
       }).catch(() => {});
     }
+
+    void trackArticleView(
+      {
+        article_id: article.id,
+        article_slug: article.slug,
+        article_title: article.title.slice(0, 100),
+        author_id: article.author?.id,
+        author_name: article.author?.name ?? undefined,
+        category_slug: article.category?.slug,
+        category_name: article.category?.name,
+        tag_primary: article.tags[0]?.tag?.name,
+        client_id: article.clientId ?? undefined,
+        client_slug: article.client?.slug,
+        client_name: article.client?.name,
+        client_industry: article.client?.industry?.name,
+      },
+      { userId },
+    );
 
     return NextResponse.json({ ok: true, analyticsId: analytics.id });
   } catch (err) {

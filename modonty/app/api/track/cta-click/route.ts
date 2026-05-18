@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { CTAType } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackOutboundClick } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -68,6 +69,17 @@ export async function POST(request: Request) {
         ipAddress: ip,
         headers: request.headers,
       }).catch(() => {});
+    }
+
+    if (typeof targetUrl === "string" && targetUrl) {
+      void trackOutboundClick(
+        {
+          cta_target_url: targetUrl,
+          cta_label: typeof label === "string" ? label : undefined,
+          cta_type: typeof type === "string" ? type.toLowerCase() : undefined,
+        },
+        userId ? { userId } : undefined,
+      );
     }
 
     return NextResponse.json({ ok: true });

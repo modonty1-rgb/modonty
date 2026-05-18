@@ -7,20 +7,23 @@ import path from "path";
 import { PrismaClient } from "@prisma/client";
 
 dotenv.config({ path: path.join(__dirname, "../.env.local") });
+dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.47.0",
-    title: "modonty v1.47.0 — تحويل 14 صفحة/مكوّن إلى Server Components (SEO + Performance)",
+    version: "1.48.0",
+    title: "modonty v1.48.0 — GTM + GA4 Server-Side Analytics (19 events wired)",
     items: [
-      { type: "feature" as const, text: "Phase 1 (article page): related-articles + more-from-client + more-from-author + manual-related + article-faq كلها Server Components الآن. البيانات تُجلب server-side وتُعرض في raw HTML لـ Googlebot + AI engines (60-100 رابط داخلي مكشوف لكل مقال)" },
-      { type: "feature" as const, text: "Phase 2 (client page): client-followers-list (pure Server) + client-comments-section (Server) + client-comment-form (Client + useActionState + Server Action). POST API route حُذف، استُبدل بـ Server Action مع revalidatePath + Zod validation" },
-      { type: "feature" as const, text: "Phase 3 (profile pages — perf + UX): page (stats) + activity-feed + favorites + following + comments + liked + disliked كلها Server Components مع auth() + redirect() + Promise.all server fetch. لا skeleton flicker، لا client fetch waterfall" },
-      { type: "refactor" as const, text: "Phase 4: ask-client-dialog — تنظيف dead code (useEffect lazy fetch + retry UI + pendingFaqsLocal/Loading/Error). Dialog يبقى Client للـ interactivity لكن البيانات تُمرَّر من Server" },
-      { type: "refactor" as const, text: "article-section-collapsible: icon prop من ComponentType إلى ReactNode (يحل Server→Client serialization error بعد تحويل الـ wrappers لـ Server Components)" },
-      { type: "feature" as const, text: "13 helper جديد للـ server-side fetching: client-comments, profile-stats, profile-activity, profile-favorites, profile-following, profile-comments, profile-liked, profile-disliked + faq-collapsible-body (small Client wrapper) + client-comment-actions (Server Action)" },
-      { type: "fix" as const, text: "Next.js 16 compliance: كل التحويلات مُتحقَّق منها مقابل vercel/next.js docs عبر Context7. minimal Client boundary، Server Component default، useActionState للـ form mutations" },
+      { type: "feature" as const, text: "GA4 Measurement Protocol integration — 4 ملفات جديدة في modonty/lib/analytics/ (ga4-server, visitor-cookie, events-registry, validate-events). 21 event مع typed wrappers + fire-and-forget pattern (لا يبطّئ origin response)" },
+      { type: "feature" as const, text: "26 Custom Dimensions في GA4 Property 538167732 (23 EVENT + 3 USER scope) — client_id, client_slug, client_name, client_industry, article_id, article_slug, article_title, author_id/name, category_slug/name, tag_primary, cta_*, share_platform, comment_*, conversion_type, contact_method, campaign_reach, user_role, signup_method, user_segment" },
+      { type: "feature" as const, text: "19 events wired عبر 11 ملف: Wave 1 (Tier 3 ⭐) follow_client + ask_client_submit + contact_submit + conversion_complete · Wave 2 (Article) article_view + article_like/dislike/favorite + article_share + comment_submit/reply/like/dislike · Wave 3 (Client page) client_view + client_share + client_favorite + client_comment_submit + newsletter_subscribe · Wave 4 outbound_click" },
+      { type: "feature" as const, text: "Hybrid visitor cookie strategy — يقرأ _ga أولاً (من GTM)، fallback لـ mdy_vid (HTTP-only، 2-year max-age). session_id مع 30-min sliding window (يطابق GA4 default)" },
+      { type: "feature" as const, text: "DebugView auto-enabled في non-production — events تظهر في GA4 Admin → DebugView بدون تلوّث Reports. Production يرسل clean events" },
+      { type: "fix" as const, text: "Critical fix بعد Context7 review: rename `purchase` event → `conversion_complete` (purchase reserved ecommerce في GA4 يحتاج currency+value+transaction_id+items، استخدامه مع conversion_type كان يلوّث Ecommerce Reports)" },
+      { type: "feature" as const, text: "Local Live Test verified end-to-end: 3 events (article_view + article_share + client_view) أرسلت بنجاح إلى GA4 (HTTP 204) + ظهرت في DebugView مع كل الـ params" },
+      { type: "feature" as const, text: "Vercel env vars configured: NEXT_PUBLIC_GTM_CONTAINER_ID upgraded (GTM-P43DC5FM → GTM-MNRR2NS9) + NEXT_PUBLIC_GA4_MEASUREMENT_ID + GA4_API_SECRET + GA4_PROPERTY_ID + GA4_CLIENT_EMAIL" },
+      { type: "fix" as const, text: "Golden Rule established: Context7 + official docs mandatory before any code edit (Next.js cookies, GA4 reserved events, Prisma schema relations, Vercel CLI syntax). 6 documented lessons في memory" },
     ],
   },
 ];

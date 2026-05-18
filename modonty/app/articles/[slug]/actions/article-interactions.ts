@@ -5,24 +5,59 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import type { TelegramEventKey } from "@/lib/telegram/events";
+import {
+  trackArticleLike,
+  trackArticleDislike,
+  trackArticleFavorite,
+} from "@/lib/analytics/events-registry";
 
-function fireTelegram(
+type ArticleGA4EventName = "article_like" | "article_dislike" | "article_favorite";
+
+function fireEngagement(
   articleId: string,
-  eventKey: TelegramEventKey,
-  actorName: string | null
+  telegramKey: TelegramEventKey,
+  ga4EventName: ArticleGA4EventName,
+  actor: { id?: string; name: string | null },
 ): void {
   db.article
     .findUnique({
       where: { id: articleId },
-      select: { clientId: true, title: true },
+      select: {
+        clientId: true,
+        title: true,
+        slug: true,
+        client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+        author: { select: { id: true, name: true } },
+        category: { select: { slug: true, name: true } },
+        tags: { select: { tag: { select: { name: true } } }, take: 1 },
+      },
     })
     .then((art) => {
-      if (art?.clientId) {
-        notifyTelegram(art.clientId, eventKey, {
+      if (!art) return;
+      if (art.clientId) {
+        notifyTelegram(art.clientId, telegramKey, {
           title: art.title,
-          meta: actorName ? { من: actorName } : undefined,
+          meta: actor.name ? { من: actor.name } : undefined,
         });
       }
+      const params = {
+        article_id: articleId,
+        article_slug: art.slug,
+        article_title: art.title.slice(0, 100),
+        author_id: art.author?.id,
+        author_name: art.author?.name ?? undefined,
+        category_slug: art.category?.slug,
+        category_name: art.category?.name,
+        tag_primary: art.tags[0]?.tag?.name,
+        client_id: art.clientId ?? undefined,
+        client_slug: art.client?.slug,
+        client_name: art.client?.name,
+        client_industry: art.client?.industry?.name,
+      };
+      const options = actor.id ? { userId: actor.id } : undefined;
+      if (ga4EventName === "article_like") void trackArticleLike(params, options);
+      else if (ga4EventName === "article_dislike") void trackArticleDislike(params, options);
+      else void trackArticleFavorite(params, options);
     })
     .catch(() => {});
 }
@@ -76,7 +111,7 @@ export async function likeArticle(articleId: string, articleSlug: string) {
 
     revalidatePath(`/articles/${articleSlug}`);
     if (!existing) {
-      fireTelegram(articleId, "articleLike", session.user.name ?? null);
+      fireEngagement(articleId, "articleLike", "article_like", { id: userId, name: session.user.name ?? null });
     }
     return {
       success: true,
@@ -136,7 +171,7 @@ export async function dislikeArticle(articleId: string, articleSlug: string) {
 
     revalidatePath(`/articles/${articleSlug}`);
     if (!existing) {
-      fireTelegram(articleId, "articleDislike", session.user.name ?? null);
+      fireEngagement(articleId, "articleDislike", "article_dislike", { id: userId, name: session.user.name ?? null });
     }
     return {
       success: true,
@@ -186,7 +221,7 @@ export async function favoriteArticle(articleId: string, articleSlug: string) {
 
     revalidatePath(`/articles/${articleSlug}`);
     if (!existing) {
-      fireTelegram(articleId, "articleFavorite", session.user.name ?? null);
+      fireEngagement(articleId, "articleFavorite", "article_favorite", { id: userId, name: session.user.name ?? null });
     }
     return {
       success: true,

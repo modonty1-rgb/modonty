@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackClientView } from "@/lib/analytics/events-registry";
 
 const VIEW_SESSION_COOKIE = "modonty_view_sid";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
@@ -17,7 +18,7 @@ export async function POST(
 
     const client = await db.client.findFirst({
       where: { slug: decodedSlug },
-      select: { id: true },
+      select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
     });
 
     if (!client) {
@@ -89,6 +90,16 @@ export async function POST(
       ipAddress,
       headers: headersList,
     }).catch(() => {});
+
+    void trackClientView(
+      {
+        client_id: client.id,
+        client_slug: client.slug,
+        client_name: client.name,
+        client_industry: client.industry?.name,
+      },
+      userId ? { userId } : undefined,
+    );
 
     return NextResponse.json({ ok: true });
   } catch (err) {

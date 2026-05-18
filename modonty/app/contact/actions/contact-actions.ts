@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
 import { ConversionType } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackContactSubmit } from "@/lib/analytics/events-registry";
 
 interface ContactMessageData {
   name: string;
@@ -20,14 +21,16 @@ interface ContactMessageData {
 export async function submitContactMessage(data: ContactMessageData) {
   try {
     const resolvedClientId = data.clientId?.trim() || null;
+    let clientContext: { slug?: string; name?: string } = {};
     if (resolvedClientId) {
       const client = await db.client.findUnique({
         where: { id: resolvedClientId },
-        select: { id: true },
+        select: { id: true, slug: true, name: true },
       });
       if (!client) {
         return { success: false, error: "العميل غير موجود" };
       }
+      clientContext = { slug: client.slug, name: client.name };
     }
 
     const resolvedUserId = data.userId?.trim() || null;
@@ -77,6 +80,16 @@ export async function submitContactMessage(data: ContactMessageData) {
         ipAddress: data.ipAddress ?? null,
       }).catch(() => {});
     }
+
+    void trackContactSubmit(
+      {
+        client_id: resolvedClientId ?? undefined,
+        client_slug: clientContext.slug,
+        client_name: clientContext.name,
+        contact_method: "form",
+      },
+      { userId: resolvedUserId ?? undefined },
+    );
 
     return { success: true, message: "تم إرسال الرسالة بنجاح" };
   } catch (error) {

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackClientCommentSubmit } from "@/lib/analytics/events-registry";
 
 const COMMENT_COOLDOWN_MS = 60 * 1000; // 1 minute between comments per user
 
@@ -67,13 +68,13 @@ export async function postClientCommentAction(
 
   const client = await db.client.findUnique({
     where: { slug: decodedSlug },
-    select: { id: true, name: true },
+    select: { id: true, slug: true, name: true, industry: { select: { name: true } } },
   });
   if (!client) {
     return { ok: false, message: "العميل غير موجود.", attempt };
   }
 
-  await db.clientComment.create({
+  const createdComment = await db.clientComment.create({
     data: {
       clientId: client.id,
       authorId: session.user.id,
@@ -103,6 +104,17 @@ export async function postClientCommentAction(
     ipAddress: ip,
     headers: reqHeaders,
   }).catch(() => {});
+
+  void trackClientCommentSubmit(
+    {
+      client_id: client.id,
+      client_slug: client.slug,
+      client_name: client.name,
+      client_industry: client.industry?.name,
+      comment_id: createdComment.id,
+    },
+    { userId: session.user.id },
+  );
 
   return {
     ok: true,

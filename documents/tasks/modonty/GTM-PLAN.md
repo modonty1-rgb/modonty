@@ -2,9 +2,65 @@
 
 **Created:** 2026-05-17
 **Last Updated:** 2026-05-18
-**Status:** 🟢 Plan complete · All 10 decisions made · Verified against official Google docs (round 2) · Ready for Phase 1 execution
+**Status:** 🟡 Phases 1-3 معظمها ✅ DONE · ينتظر: Vercel env vars + Live test + Console dashboard
 **Owner:** Khalid (modonty1@gmail.com)
 **Agent rule:** ❌ صفر كود · صفر API edits · صفر commits — حتى Khalid يقول "نفذ" بعد قراءة القسم المعني
+
+---
+
+## 📊 STATUS SNAPSHOT (نظرة سريعة — 2026-05-18)
+
+### ✅ المُنجَز (Done)
+
+| البند | التفاصيل |
+|---|---|
+| **GA4 Property** | `538167732` (G-V25C2PSHNB) — Modonty stream live |
+| **26 Custom Dimensions** | 23 EVENT + 3 USER · verified visually في GA4 UI |
+| **GA4 API Secret** | `modonty-server-prod` أُنشئ + أُضيف لـ `.env.shared` |
+| **Smoke Test** | `/debug/mp/collect` 200 + `/mp/collect` 204 (event real وصل GA4) |
+| **Core Helpers** | 4 ملفات في `modonty/lib/analytics/` (ga4-server, visitor-cookie, events-registry, validate-events) |
+| **21 Events Validated** | كل الـ events تمر `/debug/mp/collect` بدون errors |
+| **19 Events Wired** | في 11 ملف (انظر الجدول أدناه) |
+| **Golden Rule** | حُفظت `feedback_context7_mandatory_before_code.md` + 3 دروس |
+
+### ⏳ المتبقّي (Pending)
+
+| الأولوية | البند | الزمن المتوقع |
+|---|---|---|
+| ✅ | ~~Local Live Test~~ | **DONE — verified في GA4 DebugView (article_view confirmed visually)** |
+| ✅ | ~~Vercel env vars~~ | **DONE — 5 vars أُضيفت على modonty project (Production):** `NEXT_PUBLIC_GTM_CONTAINER_ID` (override → GTM-MNRR2NS9 verified) · `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (verified G-V25C2PSHNB) · `GA4_PROPERTY_ID` · `GA4_API_SECRET` · `GA4_CLIENT_EMAIL` (الـ 3 الأخيرة sensitive — saved لكن غير readable عبر pull). `GA4_PRIVATE_KEY` تُجاهلت (مش مستخدمة في modonty runtime). |
+| ✅ | ~~Pre-push prep~~ | **DONE — version bump (1.47.0 → 1.48.0) · backup (66 collections, 3.0M, 10/10) · changelog written to LOCAL + PROD DBs (id 6a0b022...). Fixed admin/scripts/add-changelog.ts dotenv path to also load .env.shared.** |
+| 🔴 2 | **`git push`** — ينتظر إذن خالد الصريح ("push" / "ادفع" / "go") | 5د |
+| 🟠 3 | **Live test على GA4 Realtime** (من PROD بعد Vercel deploy) — التحقّق من 5-6 events حقيقية | 30 دقيقة |
+| 🟡 4 | **campaign_interest event** — يعيش في console، يحتاج قرار: mirror analytics lib لـ console أو endpoint بعيد | ساعة |
+| 🟢 5 | **Console Dashboard (Phase 5)** — مؤجَّل أسبوع لتجميع بيانات | 6 ساعات (لاحقاً) |
+
+### 🗺️ خريطة الأحداث الـ 19 المربوطة
+
+| Wave | Event | الملف |
+|---|---|---|
+| 1 ⭐ | `follow_client` | `api/clients/[slug]/follow/route.ts` |
+| 1 ⭐ | `ask_client_submit` | `articles/[slug]/actions/ask-client-actions.ts` |
+| 1 ⭐ | `contact_submit` | `contact/actions/contact-actions.ts` |
+| 1 ⭐ | `conversion_complete` | `lib/conversion-tracking.ts` (تلقائي لكل ConversionType) |
+| 1 ⭐ | ~~`campaign_interest`~~ | **DEFERRED** (في console) |
+| 2 | `article_view` | `api/articles/[slug]/view/route.ts` |
+| 2 | `article_like` / `article_dislike` / `article_favorite` | `articles/[slug]/actions/article-interactions.ts` |
+| 2 | `article_share` | `api/articles/[slug]/share/route.ts` |
+| 2 | `comment_submit` / `comment_reply` / `comment_like` / `comment_dislike` | `articles/[slug]/actions/comment-actions.ts` |
+| 3 | `client_view` / `client_share` / `client_favorite` | `api/clients/[slug]/{view,share,favorite}/route.ts` |
+| 3 | `client_comment_submit` | `clients/[slug]/actions/client-comment-actions.ts` |
+| 3 | `newsletter_subscribe` | `api/subscribers/route.ts` |
+| 4 | `outbound_click` | `api/track/cta-click/route.ts` |
+
+### 🎯 الخطوة التالية — قرار مطلوب
+
+**خياران معقولان:**
+
+- **A — نشر سريع:** Vercel env vars → push → live test (~1 ساعة) · يخلّينا نشوف بيانات حقيقية بسرعة
+- **B — إغلاق campaign_interest أولاً:** نحلّ مسألة console قبل النشر (~ساعة) · push واحد كامل بدل اثنين
+
+**توصيتي:** A — الـ 19 event الموجودة كافية لـ live test؛ campaign_interest له dedicated table في console أصلاً (يكمل تشغيله Telegram + Notification بدون GA4)، فمؤجَّله ما يعطّل شي.
 
 ---
 
@@ -295,7 +351,7 @@ flowchart LR
 
 | العنصر | الحالة |
 |---|---|
-| GA4 Property `Modonty` (Measurement ID: `G-V25C2PSHNB`) | ✅ منشأ — Property ID 529892585 — Stream "Modonty" (ID 14897505409) |
+| GA4 Property `Modonty` (Measurement ID: `G-V25C2PSHNB`) | ✅ منشأ — Property ID 538167732 — Stream "Modonty" (ID 14897505409) |
 | GTM Container `modonty.com` (`GTM-MNRR2NS9`) | ✅ منشأ — Account 6346050418 · Container 252729131 · Workspace 2 |
 | Service account `jbrseo-analytics@modonty.iam.gserviceaccount.com` | ✅ Publish-level access على الـ container |
 | GA4 Configuration Tag في GTM | ✅ منشأ — Version 2 published (تأكيد عبر `:live` API) |
@@ -1205,28 +1261,30 @@ POST https://www.google-analytics.com/debug/mp/collect
 
 ## 10.1 Phase 1 — Setup Infrastructure (~1 ساعة)
 
-| الخطوة | الزمن | المخرَج |
-|---|---|---|
-| Script `setup-ga4-dimensions.ts` ينشئ 30 dimensions في GA4 | 30 دقيقة | كل الـ params جاهزة للظهور في reports |
-| GA4 API Secret + إضافته لـ env vars | 5 دقايق | المفتاح اللي يسمح للسيرفر يرسل |
-| إضافة Viewer permission للـ service account على GA4 property | 5 دقايق | console يقدر يقرأ GA4 |
-| تحديث Vercel env vars (PROD) | 10 دقايق | env كامل ومتسق |
-| تحديث NEXT_PUBLIC_GTM_CONTAINER_ID = GTM-MNRR2NS9 (Vercel) | 5 دقايق | الواجهة العامة تحمّل الـ container الجديد |
+| الخطوة | الزمن | الحالة | المخرَج |
+|---|---|---|---|
+| Script `setup-ga4-dimensions.mjs` ينشئ Custom Dimensions في GA4 | 30 دقيقة | ✅ DONE | 26 dimension تم إنشاؤها (23 EVENT + 3 USER · 52% من حد 50) |
+| تفعيل GA4 Admin API + ترقية service account لـ Administrator | 5 دقايق | ✅ DONE | API enabled · service account جاهز |
+| GA4 API Secret + إضافته لـ `.env.shared` | 5 دقايق | ✅ DONE | `GA4_API_SECRET=nELD5agsSQ-ZxqgYja1NzA` (modonty-server-prod) |
+| Smoke test (debug + real) عبر `scripts/smoke-test-ga4-mp.mjs` | 5 دقايق | ✅ DONE | `/debug/mp/collect` 200 OK + `/mp/collect` 204 No Content · event حقيقي وصل GA4 |
+| تحديث Vercel env vars (PROD) — GA4_* + NEXT_PUBLIC_GA4_MEASUREMENT_ID + NEXT_PUBLIC_GTM_CONTAINER_ID | 10 دقايق | ⏳ PENDING | env كامل ومتسق في production |
 
 **Verification:** Vercel redeploy → curl modonty.com → تحقق من ظهور `GTM-MNRR2NS9` في الـ HTML.
 
+**Phase 1 الحالي:** 4/5 خطوات مكتملة (80%). الباقي = نسخ الـ env vars لـ Vercel فقط.
+
 ---
 
-## 10.2 Phase 2 — Core Helper (~1 ساعة)
+## 10.2 Phase 2 — Core Helper (~1 ساعة) ✅ DONE
 
-| الملف | المسؤولية |
-|---|---|
-| `lib/analytics/ga4-server.ts` | `sendGA4Event()` helper مع MP + fire-and-forget |
-| `lib/analytics/visitor-cookie.ts` | `getOrCreateVisitorId()` + `getSessionId()` |
-| `lib/analytics/events-registry.ts` | 22 event definitions (typed) |
-| `lib/analytics/__tests__/validate.test.ts` | unit test يرسل sample event لـ `/debug/mp/collect` ويتأكد validationMessages = [] |
+| الملف | المسؤولية | الحالة |
+|---|---|---|
+| `modonty/lib/analytics/ga4-server.ts` | `sendGA4Event()` fire-and-forget + `sendGA4EventAwait()` للسكربتات | ✅ DONE |
+| `modonty/lib/analytics/visitor-cookie.ts` | `getOrCreateVisitorId()` (هايبرد _ga + mdy_vid) + `getSessionId()` (30-min sliding) | ✅ DONE |
+| `modonty/lib/analytics/events-registry.ts` | 21 event مع TypeScript types + `track*` helpers | ✅ DONE |
+| `modonty/lib/analytics/__tests__/validate-events.mjs` | يرسل sample لكل event لـ `/debug/mp/collect` | ✅ DONE |
 
-**Verification:** `pnpm test analytics/validate` → كل validation tests تمر.
+**Verification:** `node modonty/lib/analytics/__tests__/validate-events.mjs` → **21/21 events passed** · 0 validation errors · TSC zero errors.
 
 ---
 
@@ -1234,18 +1292,38 @@ POST https://www.google-analytics.com/debug/mp/collect
 
 **نمضي event بـ event حسب الأولوية:**
 
-### Wave 1 — Tier 3 ⭐ (الـ 5 conversion events أولاً)
-- `follow_client` · `ask_client_submit` · `contact_submit` · `campaign_interest` · `purchase`
-- **الأولوية الأعلى** لأنها الـ KPIs الأهم للعميل
+### Wave 1 — Tier 3 ⭐ (الـ 5 conversion events أولاً) — ✅ 4/5 DONE
+- [x] `follow_client` — `modonty/app/api/clients/[slug]/follow/route.ts` (POST)
+- [x] `ask_client_submit` — `modonty/app/articles/[slug]/actions/ask-client-actions.ts: submitAskClient`
+- [x] `contact_submit` — `modonty/app/contact/actions/contact-actions.ts: submitContactMessage`
+- [x] `conversion_complete` — `modonty/lib/conversion-tracking.ts: createConversion` (يطلق لكل ConversionType) · **مُصحَّح من `purchase` (reserved ecommerce) بعد مراجعة Context7**
+- [ ] `campaign_interest` — **DEFERRED**: يعيش في console (`register-interest.ts`)، يحتاج مرآة الـ analytics lib لـ console أو endpoint بعيد. سنتعامل معه في Phase 3.5.
+- **TSC: zero errors** · جاهز للـ live test (Wave 1 → GA4 Realtime).
 
-### Wave 2 — Tier 2 article events
-- `article_view` · `article_like/dislike/favorite/share` · `comment_submit/reply/like/dislike`
+### Wave 2 — Tier 2 article events — ✅ 9/9 DONE
+- [x] `article_view` — `modonty/app/api/articles/[slug]/view/route.ts` (POST)
+- [x] `article_like` — `article-interactions.ts: likeArticle` (عبر `fireEngagement` helper)
+- [x] `article_dislike` — `article-interactions.ts: dislikeArticle`
+- [x] `article_favorite` — `article-interactions.ts: favoriteArticle`
+- [x] `article_share` — `modonty/app/api/articles/[slug]/share/route.ts` (POST) — مع `share_platform` lowercase
+- [x] `comment_submit` — `comment-actions.ts: submitComment` — مع `comment_target_type: "article"`
+- [x] `comment_reply` — `comment-actions.ts: submitReply`
+- [x] `comment_like` — `comment-actions.ts: likeComment` (يطلق فقط عند create)
+- [x] `comment_dislike` — `comment-actions.ts: dislikeComment` (يطلق فقط عند create)
+- **النمط:** كل ربط يعيد استخدام نفس الـ DB lookup للـ notifyTelegram (single query، dual output) · category + tags[].tag.name pattern مُطبَّق · TSC zero errors.
 
-### Wave 3 — Tier 2 client events
-- `client_view` · `client_share/favorite/comment_submit` · `newsletter_subscribe`
+### Wave 3 — Tier 2 client events — ✅ 5/5 DONE
+- [x] `client_view` — `modonty/app/api/clients/[slug]/view/route.ts` (POST)
+- [x] `client_share` — `modonty/app/api/clients/[slug]/share/route.ts` (POST) — مع share_platform lowercase
+- [x] `client_favorite` — `modonty/app/api/clients/[slug]/favorite/route.ts` (POST) — يطلق فقط عند create
+- [x] `client_comment_submit` — `modonty/app/clients/[slug]/actions/client-comment-actions.ts: postClientCommentAction`
+- [x] `newsletter_subscribe` — `modonty/app/api/subscribers/route.ts` (POST) — يطلق إضافة لـ `conversion_complete` التلقائي
+- **النمط:** Client select موسّع بـ slug + name + industry.name · كل ربط داخل بلوك الـ notifyTelegram الموجود · TSC zero errors.
 
-### Wave 4 — Auto-tracked
-- `outbound_click` (إذا ما اكتفينا بـ Enhanced Measurement)
+### Wave 4 — Auto-tracked — ✅ 1/1 DONE
+- [x] `outbound_click` — `modonty/app/api/track/cta-click/route.ts` (POST)
+- **قرار مُتحقَّق منه عبر Context7:** Enhanced Measurement يطلق `click` (مش `outbound_click`) ولـ outbound LINKS فقط — ما يلتقط BUTTON/FORM/BANNER/POPUP CTAs. لدينا endpoint موجود يلتقط كل CTAs مع context كامل. ربطنا `trackOutboundClick` به (server-side أغنى).
+- **النمط:** cta_target_url + cta_label + cta_type (lowercase) · userId اختياري · TSC zero errors.
 
 **Verification بعد كل Wave:** GA4 Realtime → تحقق من ظهور الـ events.
 
@@ -1320,3 +1398,14 @@ Day 9 — Phase 5 (~6 ساعات)           ✅ Console dashboards live
 | 2026-05-18 | 🔬 Deep Verification Round 2 — 6 ميزات إضافية موثّقة من docs الرسمية + مُدمَجة في الـ plan: MP batching (25/request), EU endpoint, 72h backdating, quota monitoring (returnPropertyQuota), ENFORCE_RECOMMENDATIONS validation mode, Consent Mode v2 readiness. لا bugs لُقيت — الـ plan كان سليم 100% — هذي تحسينات. | agent (بطلب Khalid: "ما نبغى نشتغل بتخمين") |
 | 2026-05-18 | 🧹 Final Cleanup — لُقي 15+ stale reference (Tier 4 mentions, Hybrid architecture remnants, multi-container suggestions, "ينتظر قرار C-X" status). نُظِّفت كل الـ sections + diagrams + tables لتعكس القرارات النهائية: Server-only + container واحد + Tier 4 = N/A. Section 1.2-1.5, 2.4-2.6, 3.1-3.5 أُعيد كتابتها بدقة 100%. الـ plan الآن internally consistent. | agent (بطلب Khalid: "ما في مجال للخطأ ولا في مجال للتخمين") |
 | 2026-05-18 | 🧪 Section 9.0 added — Comprehensive Live Test Strategy (4 layers: Local → Preview → Production → Long-term) · 21-event smoke test matrix · Critical UX tests (fire-and-forget verification, GA4 down scenario) · Edge cases · Acceptance Criteria · 9-day schedule. الـ plan صار جاهز للتنفيذ مع طريقة تحقق واضحة لكل خطوة. | agent (بطلب Khalid: "كيف حنقدر نعمل live test") |
+| 2026-05-18 | 🚀 Phase 1 Step 1 EXECUTED — Setup GA4 Custom Dimensions: تصحيح property ID (`529892585` → `538167732` — الـ ID القديم كان JBRSEO خطأً)، تفعيل GA4 Admin API في GCP، ترقية service account لـ Administrator، تشغيل `scripts/setup-ga4-dimensions.mjs --apply`. **النتيجة: 26/26 dimension تم إنشاؤها** (23 event + 3 user · 52% من حد 50) · 0 failed. مُتحقَّق منها visually في GA4 UI. | agent + Khalid |
+| 2026-05-18 | ✅ Phase 1 Steps 2-4 EXECUTED — GA4 API Secret (`modonty-server-prod`) أُنشئ في Modonty stream + أُضيف لـ `.env.shared`. Smoke test (`scripts/smoke-test-ga4-mp.mjs`) نجح على المستويين: `/debug/mp/collect` رجع `validationMessages: []` (HTTP 200) و `/mp/collect` رجع HTTP 204 (event حقيقي وصل GA4 Realtime). **Phase 1 = 80% مكتمل** — الباقي فقط نسخ env vars لـ Vercel. | agent + Khalid |
+| 2026-05-18 | ✅ Phase 2 EXECUTED — Core Helpers built: 4 ملفات في `modonty/lib/analytics/` (ga4-server.ts · visitor-cookie.ts · events-registry.ts · __tests__/validate-events.mjs). 21 event مع typed wrappers + cookie hybrid (_ga + mdy_vid) + session sliding 30-min. **Validation: 21/21 events passed على /debug/mp/collect** · 0 validation errors · TSC zero errors. جاهز لـ Phase 3 (wiring events). | agent + Khalid |
+| 2026-05-18 | ✅ Phase 3 Wave 1 EXECUTED (4/5) — Tier 3 conversion events wired: `follow_client` (follow route POST) · `ask_client_submit` (ask-client-actions) · `contact_submit` (contact-actions) · `purchase` (conversion-tracking). كل ربط fire-and-forget جنب الـ notifyTelegram الموجود. `campaign_interest` مؤجل (يعيش في console). TSC zero errors. | agent + Khalid |
+| 2026-05-18 | 🚨 GOLDEN RULE VIOLATION + FIX — Khalid أمسك إن ما تحقّقت من Context7 أثناء Phase 2/3 (كتبت من الذاكرة + النمط الموجود). راجعت كل التعديلات عبر Context7: (1) Next.js 16 cookies API → ✅ مطابق 100%. (2) GA4 MP `purchase` → ❌ **reserved ecommerce event** يحتاج currency+value+transaction_id+items؛ استخدامي بـ conversion_type فقط كان يلوّث Ecommerce Reports. **الإصلاح:** rename `purchase` → `conversion_complete` (custom safe name) في events-registry + conversion-tracking + validate-events. (3) Prisma schema: استخدمت `primaryCategory` (غير موجود) + `tags.name` (M2M wrong) → صحّحت إلى `category` + `tags[].tag.name`. حُفظت قاعدة ذهبية جديدة `feedback_context7_mandatory_before_code.md` مع 3 دروس. Re-validation: **21/21 events passed** · TSC zero errors. | agent + Khalid |
+| 2026-05-18 | ✅ Phase 3 Wave 2 EXECUTED (9/9) — Tier 2 article events wired: `article_view` · `article_like/dislike/favorite` (عبر `fireEngagement` helper مُحدَّث) · `article_share` (مع share_platform lowercase) · `comment_submit/reply/like/dislike` (كل واحد ضمن نفس DB lookup الموجود للـ Telegram). كل التعديلات اتبعت القاعدة الذهبية: تحقّقت من Prisma schema قبل أي select (category + tags[].tag.name). TSC zero errors. | agent + Khalid |
+| 2026-05-18 | ✅ Phase 3 Wave 3 EXECUTED (5/5) — Tier 2 client page events wired: `client_view` · `client_share` (مع share_platform lowercase) · `client_favorite` (عند create فقط) · `client_comment_submit` (مع comment_id حقيقي) · `newsletter_subscribe` (إضافة لـ conversion_complete التلقائي). كل التعديلات Client select موسّع: id + slug + name + industry.name. التزام كامل بالقاعدة الذهبية (تحقّق Prisma قبل select). TSC zero errors. | agent + Khalid |
+| 2026-05-18 | ✅ Phase 3 Wave 4 EXECUTED (1/1) — `outbound_click` wired لـ `/api/track/cta-click/route.ts`. **قرار مُصحَّح بعد Context7:** Enhanced Measurement يطلق `click` (event name مختلف) ولـ links خارجية فقط — ما يلتقط form/button CTAs. الـ endpoint الموجود أغنى (label + type + target + clientId + articleId). **Phase 3 = COMPLETE: 19/20 events wired** (campaign_interest في console مؤجل). TSC zero errors. | agent + Khalid |
+| 2026-05-18 | ✅ LOCAL LIVE TEST PASSED — modonty dev (port 3000) شغّل بنجاح بعد restart نظيف. `.env.shared` يُحمَّل عبر `next.config.ts` dotenv loader. DATABASE_URL = `modonty_dev` (آمن). أضفت `debug_mode: 1` تلقائياً في non-production عشان events تظهر في GA4 DebugView (بدون تلوّث reports). اختبرنا 3 events عبر curl (cookies جديدة لكل request): **article_view → HTTP 204** · **article_share → HTTP 204** · **client_view → HTTP 204**. كل الـ env vars محمَّلة (MID + SECRET ✓). Fire-and-forget pattern عمل بدون block للـ origin response. | agent + Khalid |
+| 2026-05-18 | 🎯 GA4 DEBUGVIEW VISUAL CONFIRMATION — خالد فتح DebugView (analytics.google.com → Admin → Data display → DebugView). شاف "TOP EVENTS LAST 30 MINS: **article_view 1**" + timeline marker عند 2:23 PM + non_personalized_ads user property نشطة. كل curl request أنشأ clientId مختلف (devices منفصلة في GA4 view) — هذا متوقع للـ curl بدون cookies. **النتيجة: المسار كامل verified end-to-end:** Server action → trackXxx → sendGA4Event → cookies → fetch GA4 → GA4 receives → DebugView displays. Phase 4 (Testing) قاعدة جاهزة لاعتماد production push. | agent + Khalid |
+| 2026-05-18 | ✅ VERCEL ENV VARS CONFIGURED — أضفت 5 vars على modonty project (Production scope): `NEXT_PUBLIC_GTM_CONTAINER_ID` (override للـ team-shared القديم GTM-P43DC5FM → GTM-MNRR2NS9 — verified readable) · `NEXT_PUBLIC_GA4_MEASUREMENT_ID=G-V25C2PSHNB` (verified) · `GA4_API_SECRET` + `GA4_PROPERTY_ID` + `GA4_CLIENT_EMAIL` (sensitive — saved، CLI confirms success). 4 دروس جديدة في القاعدة الذهبية: (1) Vercel CLI v53+ يحتاج `--value "VAL" --yes` للـ non-interactive add (stdin pipe ما يعمل); (2) Production env vars sensitive by default — `env pull` يعرضهم كـ "" بعد الـ add; (3) للـ NEXT_PUBLIC_* استخدم `--no-sensitive`; (4) Team-shared overrides عبر project-level add. `GA4_PRIVATE_KEY` تُجاهلت — مش مستخدمة في modonty runtime (مخصصة للسكربتات + Phase 5 Console فقط). | agent + Khalid |
