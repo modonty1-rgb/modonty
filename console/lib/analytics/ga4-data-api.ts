@@ -207,4 +207,147 @@ export const getClientOverview = unstable_cache(
   { revalidate: 60, tags: ["ga4-overview"] },
 );
 
+// ─── Phase 5 Wave 2 — 4 deep-dive helpers ────────────────────────────────────
+
+export interface TopArticle {
+  slug: string;
+  title: string | null;
+  views: number;
+}
+
+export const getTopArticles = unstable_cache(
+  async (clientId: string, limit = 10): Promise<TopArticle[]> => {
+    const resp = await runReport({
+      dateRanges: [{ startDate: "28daysAgo", endDate: "today" }],
+      dimensions: [
+        { name: "customEvent:article_slug" },
+        { name: "customEvent:article_title" },
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        andGroup: {
+          expressions: [
+            { filter: { fieldName: "customEvent:client_id", stringFilter: { matchType: "EXACT", value: clientId } } },
+            { filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: "article_view" } } },
+          ],
+        },
+      },
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit,
+    });
+    return (resp.rows ?? [])
+      .map((r) => ({
+        slug: r.dimensionValues[0]?.value ?? "",
+        title: r.dimensionValues[1]?.value || null,
+        views: Number(r.metricValues[0]?.value ?? 0),
+      }))
+      .filter((a) => a.slug);
+  },
+  ["ga4-top-articles"],
+  { revalidate: 300, tags: ["ga4-overview"] },
+);
+
+export interface TrafficSource {
+  source: string;
+  medium: string;
+  sessions: number;
+  users: number;
+}
+
+export const getTrafficSources = unstable_cache(
+  async (clientId: string, limit = 10): Promise<TrafficSource[]> => {
+    const resp = await runReport({
+      dateRanges: [{ startDate: "28daysAgo", endDate: "today" }],
+      dimensions: [
+        { name: "sessionSource" },
+        { name: "sessionMedium" },
+      ],
+      metrics: [{ name: "sessions" }, { name: "totalUsers" }],
+      dimensionFilter: {
+        filter: { fieldName: "customEvent:client_id", stringFilter: { matchType: "EXACT", value: clientId } },
+      },
+      orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
+      limit,
+    });
+    return (resp.rows ?? []).map((r) => ({
+      source: r.dimensionValues[0]?.value ?? "(direct)",
+      medium: r.dimensionValues[1]?.value ?? "(none)",
+      sessions: Number(r.metricValues[0]?.value ?? 0),
+      users: Number(r.metricValues[1]?.value ?? 0),
+    }));
+  },
+  ["ga4-traffic-sources"],
+  { revalidate: 300, tags: ["ga4-overview"] },
+);
+
+export interface DayHourCell {
+  dayOfWeek: number; // 0=Sunday ... 6=Saturday
+  hour: number; // 0..23
+  events: number;
+}
+
+export const getDayPattern = unstable_cache(
+  async (clientId: string): Promise<DayHourCell[]> => {
+    const resp = await runReport({
+      dateRanges: [{ startDate: "28daysAgo", endDate: "today" }],
+      dimensions: [
+        { name: "dayOfWeek" },
+        { name: "hour" },
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: {
+        filter: { fieldName: "customEvent:client_id", stringFilter: { matchType: "EXACT", value: clientId } },
+      },
+      limit: 200,
+    });
+    return (resp.rows ?? []).map((r) => ({
+      dayOfWeek: Number(r.dimensionValues[0]?.value ?? 0),
+      hour: Number(r.dimensionValues[1]?.value ?? 0),
+      events: Number(r.metricValues[0]?.value ?? 0),
+    }));
+  },
+  ["ga4-day-pattern"],
+  { revalidate: 600, tags: ["ga4-overview"] },
+);
+
+export interface ConversionFunnel {
+  views: number;
+  engagements: number; // like + favorite + comment + share
+  intents: number; // ask_client + contact + newsletter + follow
+  conversions: number; // conversion_complete
+}
+
+export const getConversionFunnel = unstable_cache(
+  async (clientId: string): Promise<ConversionFunnel> => {
+    const clientFilter: DimensionFilter = {
+      filter: { fieldName: "customEvent:client_id", stringFilter: { matchType: "EXACT", value: clientId } },
+    };
+    const resp = await runReport({
+      dateRanges: [{ startDate: "28daysAgo", endDate: "today" }],
+      dimensions: [{ name: "eventName" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: clientFilter,
+      limit: 50,
+    });
+    const counts: Record<string, number> = {};
+    for (const row of resp.rows ?? []) {
+      const name = row.dimensionValues[0]?.value ?? "";
+      counts[name] = (counts[name] ?? 0) + Number(row.metricValues[0]?.value ?? 0);
+    }
+    const sum = (...keys: string[]) => keys.reduce((acc, k) => acc + (counts[k] ?? 0), 0);
+    return {
+      views: sum("article_view", "client_view"),
+      engagements: sum(
+        "article_like", "article_favorite", "article_share",
+        "comment_submit", "comment_reply",
+        "client_favorite", "client_share", "client_comment_submit",
+      ),
+      intents: sum("ask_client_submit", "contact_submit", "newsletter_subscribe", "follow_client"),
+      conversions: sum("conversion_complete"),
+    };
+  },
+  ["ga4-conversion-funnel"],
+  { revalidate: 300, tags: ["ga4-overview"] },
+);
+
 export { OUR_EVENTS };

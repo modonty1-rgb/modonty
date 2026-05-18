@@ -12,13 +12,15 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.48.2",
-    title: "modonty v1.48.2 — GA4 auth-event hotfix: after() wrap on engagement actions",
+    version: "0.10.0 (console)",
+    title: "console v0.10.0 — GA4 Dashboard Phase 5 Wave 2: 4 deep-dive widgets",
     items: [
-      { type: "fix" as const, text: "Critical: 11 auth-required GA4 events (article like/dislike/favorite, comment submit/reply/like) were dropped on Vercel because the calling actions used `db.findUnique().then(...)` — fire-and-forget Promise chain killed before the inner sendGA4Event registered its after() callback. Fixed by wrapping the whole DB lookup + dispatch in `after(async () => {...})` at the outer layer." },
-      { type: "fix" as const, text: "modonty/app/articles/[slug]/actions/article-interactions.ts — fireEngagement() now uses after() (covers article_like + article_dislike + article_favorite)." },
-      { type: "fix" as const, text: "modonty/app/articles/[slug]/actions/comment-actions.ts — 4 .then() patterns rewritten to after() (covers comment_submit + comment_reply + comment_like + comment_dislike)." },
-      { type: "fix" as const, text: "Discovery via live Playwright test on PROD: 0/11 auth events arrived in GA4 Realtime even though anonymous events worked perfectly. Root cause traced + fixed in 30 min." },
+      { type: "feature" as const, text: "New /dashboard/analytics → GA4 Deep-Dive section with 4 widgets that pull straight from Google Analytics Data API (cached 5-10 min)." },
+      { type: "feature" as const, text: "Widget 1 — أكثر المقالات مشاهدة (28 يوم): top 10 articles by article_view event, filtered by client_id. Shows ranked list with progress bars." },
+      { type: "feature" as const, text: "Widget 2 — مصادر الزيارات (28 يوم): sessionSource × sessionMedium breakdown with Arabic labels (Google → Google, facebook.com → Facebook, t.co → Twitter/X, etc). Shows session count + % share + user count." },
+      { type: "feature" as const, text: "Widget 3 — نمط النشاط الأسبوعي (28 يوم): heatmap 7 days × 24 hours, color intensity by eventCount. Hover tooltip shows exact day/hour/event count. Helps client decide best publishing time." },
+      { type: "feature" as const, text: "Widget 4 — قمع التحويل (28 يوم): visualizes the funnel views → engagements → intents → conversions with per-step drop-off rate %. Final line shows overall view-to-conversion %." },
+      { type: "feature" as const, text: "New helpers in console/lib/analytics/ga4-data-api.ts: getTopArticles(), getTrafficSources(), getDayPattern(), getConversionFunnel(). All cached via unstable_cache with tag 'ga4-overview' for unified invalidation." },
     ],
   },
 ];

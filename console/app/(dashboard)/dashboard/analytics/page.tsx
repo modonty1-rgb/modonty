@@ -44,6 +44,7 @@ import {
 import { AnalyticsProgressList } from "./components/analytics-progress-list";
 import { TimeframeSelector } from "./components/timeframe-selector";
 import { GA4RealtimeCard } from "./components/ga4-realtime-card";
+import { GA4DeepDiveCard } from "./components/ga4-deep-dive-card";
 
 export const dynamic = "force-dynamic";
 
@@ -146,6 +147,9 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
 
       {/* ─── GA4 Realtime (live data from Google Analytics) ──── */}
       <GA4RealtimeCard clientId={clientId} />
+
+      {/* ─── GA4 Deep-Dive (4 widgets: top articles, traffic, day pattern, funnel) ──── */}
+      <GA4DeepDiveCard clientId={clientId} />
 
       {/* ─── 1. Audience Section ─────────────────────────────── */}
       <SectionHeader

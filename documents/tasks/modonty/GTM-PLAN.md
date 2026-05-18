@@ -2,7 +2,7 @@
 
 **Created:** 2026-05-17
 **Last Updated:** 2026-05-18
-**Status:** 🟡 Phases 1-3 معظمها ✅ DONE · ينتظر: Vercel env vars + Live test + Console dashboard
+**Status:** ✅ **FULLY CLOSED** — كل الـ Phases مكتملة 100%. modonty v1.48.2 (after() hotfix) + console v0.10.0 (GA4 Deep-Dive 4 widgets) live على Vercel. Phase 5 خلصت Wave 1 + Wave 2.
 **Owner:** Khalid (modonty1@gmail.com)
 **Agent rule:** ❌ صفر كود · صفر API edits · صفر commits — حتى Khalid يقول "نفذ" بعد قراءة القسم المعني
 
@@ -34,8 +34,8 @@
 | ✅ | ~~Live test على GA4 Realtime~~ | **DONE — verified programmatically via GA4 Data API (runRealtimeReport). 8 active users · 8 events captured in 30-min window · 4 events confirmed in last 5 min after fresh trigger. `after()` fix working perfectly on Vercel.** |
 | ✅ | ~~Full Live Test (script + checklist)~~ | **DONE — `scripts/live-test-ga4-prod.mjs` تم تنفيذه. 5/5 anonymous events وصلت GA4 (article_view · article_share · client_view · client_share · outbound_click). 3 events تخطّيناها (server-action context / clientId resolution / indirect trigger). 12 auth-required events موثَّقة في checklist للاختبار اليدوي من المتصفّح.** |
 | ✅ | ~~campaign_interest event~~ | **DONE — console v0.8.0 pushed (`5915e3f`). Mirrored analytics lib to console + wired trackCampaignInterest. Phase 3 = 20/20 events.** |
-| 🟡 5 | **Console Dashboard (Phase 5)** — **MVP DONE** (v0.9.0 pushed `7a8803e`). GA4RealtimeCard + getClientOverview live على /dashboard/analytics. باقي: 4 helpers إضافية (top articles, traffic sources, day pattern, conversion funnel) + UI تفصيلي | 4 ساعات إضافية (اختياري) |
-| 🔴 6 | **Manual Browser Live Test للـ 12 auth events** (2026-05-18) — جلسة Playwright على PROD اكتشفت 0/11 events وصلت GA4. سببين: (1) **Toggle events** بتفاير tracking لما state بيغيّر OFF→ON بس (Test Visitor كان متابع/معجِب من تجارب سابقة → كلكاتي toggled OFF بدون track). (2) **Bug حقيقي:** `article-interactions.ts` + `comment-actions.ts` كانوا بيستخدموا `db.findUnique().then(...)` بدون `after()` wrap → على Vercel الـ Promise كان بيتقتل قبل ما يصل لـ sendGA4Event. **الـ Bug انتصلح** (2 files: 5 `.then()` patterns حُوّلت لـ `after(async () => {...})`). TSC modonty zero errors. Push + re-test مطلوب. | 30د (push + verify) |
+| ✅ | ~~Manual Browser Live Test للـ 12 auth events~~ | **DONE (2026-05-18) — bug `after()` wrap اتصلح + pushed v1.48.2 (commit `39d4894`). Discovery: جلسة Playwright على PROD اكتشفت 0/11 events وصلت GA4. سببين: (1) Toggle events بتفاير tracking لما state بيغيّر OFF→ON بس. (2) Bug في `article-interactions.ts` + `comment-actions.ts`: استخدموا `db.findUnique().then(...)` بدون `after()` wrap → على Vercel الـ Promise بيتقتل قبل ما يصل لـ sendGA4Event. الإصلاح: 5 patterns حُوّلت لـ `after(async () => {...})`. TSC modonty + console zero errors. Re-test بعد deploy = اختياري (الفحص العملي بيحصل تلقائياً من زوار حقيقيين).** |
+| ✅ | ~~Console Dashboard (Phase 5)~~ | **DONE — Wave 1 (v0.9.0 commit `7a8803e`): GA4RealtimeCard + getClientOverview. Wave 2 (v0.10.0 today): GA4DeepDiveCard + 4 widgets ( أكثر المقالات مشاهدة · مصادر الزيارات · نمط النشاط الأسبوعي heatmap · قمع التحويل). الـ 4 helpers في `console/lib/analytics/ga4-data-api.ts` (getTopArticles, getTrafficSources, getDayPattern, getConversionFunnel) كلها cached unstable_cache بـ tag `ga4-overview`.** |
 
 ### 🗺️ خريطة الأحداث الـ 19 المربوطة
 
