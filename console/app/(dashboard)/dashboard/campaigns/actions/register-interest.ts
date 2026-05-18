@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { CampaignReach } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { notifyTelegram } from "@/lib/telegram/notify";
+import { trackCampaignInterest } from "@/lib/analytics/events-registry";
 
 const NOTIFICATION_TYPE = "campaign_interest";
 
@@ -43,7 +44,7 @@ export async function registerCampaignInterestAction(input: Input): Promise<Resu
   try {
     const client = await db.client.findUnique({
       where: { id: clientId },
-      select: { id: true, name: true, userId: true },
+      select: { id: true, slug: true, name: true, userId: true, industry: { select: { name: true } } },
     });
     if (!client) return { success: false, error: "unauthorized" };
 
@@ -106,6 +107,17 @@ export async function registerCampaignInterestAction(input: Input): Promise<Resu
       title: client.name,
       meta: { النطاق: REACH_LABEL[reach] },
     }).catch(() => {});
+
+    void trackCampaignInterest(
+      {
+        client_id: client.id,
+        client_slug: client.slug,
+        client_name: client.name,
+        client_industry: client.industry?.name,
+        campaign_reach: input.reach,
+      },
+      client.userId ? { userId: client.userId } : undefined,
+    );
 
     revalidatePath("/dashboard/campaigns");
     return { success: true, alreadyRegistered: false, reachChanged: false };

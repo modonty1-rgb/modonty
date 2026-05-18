@@ -12,11 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.48.1",
-    title: "modonty v1.48.1 — fix: GA4 events drop on Vercel serverless (wrap in after())",
+    version: "0.8.0 (console)",
+    title: "console v0.8.0 — GA4 analytics lib + campaign_interest event wired",
     items: [
-      { type: "fix" as const, text: "Wrap GA4 Measurement Protocol fetch in Next.js `after()` from `next/server` — critical fix verified via Context7. On Vercel serverless lambdas, fire-and-forget fetch can be killed when the function returns before the GA4 request completes, silently dropping events. `after()` extends lambda lifetime via Vercel's waitUntil primitive until analytics request completes." },
-      { type: "fix" as const, text: "Without this fix: v1.48.0 events appeared in local dev (long-running Node process) but were intermittently dropped in production. Now both environments guaranteed identical behavior." },
+      { type: "feature" as const, text: "Copied modonty/lib/analytics to console/lib/analytics (3 files: ga4-server, visitor-cookie, events-registry). Same patterns + after() wrapper for Vercel serverless." },
+      { type: "feature" as const, text: "Wired campaign_interest event in console/app/(dashboard)/dashboard/campaigns/actions/register-interest.ts — fires alongside notifyTelegram on successful interest registration (NEW row only). Includes client context (id/slug/name/industry) + campaign_reach + userId." },
+      { type: "feature" as const, text: "Added 4 GA4 env vars to console Vercel project (NEXT_PUBLIC_GA4_MEASUREMENT_ID + GA4_API_SECRET + GA4_PROPERTY_ID + GA4_CLIENT_EMAIL). console was previously unlinked from Vercel — linked to modonty-console project." },
+      { type: "feature" as const, text: "**Phase 3 = 20/20 events wired** (Wave 1-4 + campaign_interest). All conversion events now flow through GA4 from both modonty + console." },
     ],
   },
 ];
