@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.8.0 (console)",
-    title: "console v0.8.0 — GA4 analytics lib + campaign_interest event wired",
+    version: "0.9.0 (console)",
+    title: "console v0.9.0 — GA4 Realtime Dashboard MVP (Phase 5 Wave 1)",
     items: [
-      { type: "feature" as const, text: "Copied modonty/lib/analytics to console/lib/analytics (3 files: ga4-server, visitor-cookie, events-registry). Same patterns + after() wrapper for Vercel serverless." },
-      { type: "feature" as const, text: "Wired campaign_interest event in console/app/(dashboard)/dashboard/campaigns/actions/register-interest.ts — fires alongside notifyTelegram on successful interest registration (NEW row only). Includes client context (id/slug/name/industry) + campaign_reach + userId." },
-      { type: "feature" as const, text: "Added 4 GA4 env vars to console Vercel project (NEXT_PUBLIC_GA4_MEASUREMENT_ID + GA4_API_SECRET + GA4_PROPERTY_ID + GA4_CLIENT_EMAIL). console was previously unlinked from Vercel — linked to modonty-console project." },
-      { type: "feature" as const, text: "**Phase 3 = 20/20 events wired** (Wave 1-4 + campaign_interest). All conversion events now flow through GA4 from both modonty + console." },
+      { type: "feature" as const, text: "New console/lib/analytics/ga4-data-api.ts — Server-side GA4 Data API wrapper with JWT auth (supports both GA4_PRIVATE_KEY and GA4_PRIVATE_KEY_BASE64). runReport + runRealtimeReport helpers + access token caching (1h)." },
+      { type: "feature" as const, text: "Added getClientOverview(clientId) helper — returns 6 KPIs in 1 Promise.all: activeUsers (last 30 min), total events (7d + 28d), unique users (7d + 28d), top 10 events by name. Cached via unstable_cache (60s TTL, tag: ga4-overview)." },
+      { type: "feature" as const, text: "New GA4RealtimeCard component on /dashboard/analytics top — 4 gradient KPI cards (نشط الآن · أحداث · زوار · أنواع) + top 5 events bar chart. Arabic event labels (article_view → 'مشاهدة مقال', etc). Graceful error fallback if GA4 unreachable." },
+      { type: "feature" as const, text: "Added GA4_PRIVATE_KEY_BASE64 to console Vercel project + .env.shared (base64-encoded PEM, avoids special-char shell issues per Vercel CLI bug with values starting with '-')." },
     ],
   },
 ];

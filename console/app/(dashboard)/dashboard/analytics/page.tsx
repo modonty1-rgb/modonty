@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { AnalyticsProgressList } from "./components/analytics-progress-list";
 import { TimeframeSelector } from "./components/timeframe-selector";
+import { GA4RealtimeCard } from "./components/ga4-realtime-card";
 
 export const dynamic = "force-dynamic";
 
@@ -142,6 +143,9 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
         </div>
         <TimeframeSelector value={days} />
       </header>
+
+      {/* ─── GA4 Realtime (live data from Google Analytics) ──── */}
+      <GA4RealtimeCard clientId={clientId} />
 
       {/* ─── 1. Audience Section ─────────────────────────────── */}
       <SectionHeader
