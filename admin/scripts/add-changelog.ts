@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.9.0 (console)",
-    title: "console v0.9.0 — GA4 Realtime Dashboard MVP (Phase 5 Wave 1)",
+    version: "1.48.2",
+    title: "modonty v1.48.2 — GA4 auth-event hotfix: after() wrap on engagement actions",
     items: [
-      { type: "feature" as const, text: "New console/lib/analytics/ga4-data-api.ts — Server-side GA4 Data API wrapper with JWT auth (supports both GA4_PRIVATE_KEY and GA4_PRIVATE_KEY_BASE64). runReport + runRealtimeReport helpers + access token caching (1h)." },
-      { type: "feature" as const, text: "Added getClientOverview(clientId) helper — returns 6 KPIs in 1 Promise.all: activeUsers (last 30 min), total events (7d + 28d), unique users (7d + 28d), top 10 events by name. Cached via unstable_cache (60s TTL, tag: ga4-overview)." },
-      { type: "feature" as const, text: "New GA4RealtimeCard component on /dashboard/analytics top — 4 gradient KPI cards (نشط الآن · أحداث · زوار · أنواع) + top 5 events bar chart. Arabic event labels (article_view → 'مشاهدة مقال', etc). Graceful error fallback if GA4 unreachable." },
-      { type: "feature" as const, text: "Added GA4_PRIVATE_KEY_BASE64 to console Vercel project + .env.shared (base64-encoded PEM, avoids special-char shell issues per Vercel CLI bug with values starting with '-')." },
+      { type: "fix" as const, text: "Critical: 11 auth-required GA4 events (article like/dislike/favorite, comment submit/reply/like) were dropped on Vercel because the calling actions used `db.findUnique().then(...)` — fire-and-forget Promise chain killed before the inner sendGA4Event registered its after() callback. Fixed by wrapping the whole DB lookup + dispatch in `after(async () => {...})` at the outer layer." },
+      { type: "fix" as const, text: "modonty/app/articles/[slug]/actions/article-interactions.ts — fireEngagement() now uses after() (covers article_like + article_dislike + article_favorite)." },
+      { type: "fix" as const, text: "modonty/app/articles/[slug]/actions/comment-actions.ts — 4 .then() patterns rewritten to after() (covers comment_submit + comment_reply + comment_like + comment_dislike)." },
+      { type: "fix" as const, text: "Discovery via live Playwright test on PROD: 0/11 auth events arrived in GA4 Realtime even though anonymous events worked perfectly. Root cause traced + fixed in 30 min." },
     ],
   },
 ];

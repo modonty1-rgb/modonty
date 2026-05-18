@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import type { TelegramEventKey } from "@/lib/telegram/events";
 import {
@@ -19,26 +20,29 @@ function fireEngagement(
   ga4EventName: ArticleGA4EventName,
   actor: { id?: string; name: string | null },
 ): void {
-  db.article
-    .findUnique({
-      where: { id: articleId },
-      select: {
-        clientId: true,
-        title: true,
-        slug: true,
-        client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-        author: { select: { id: true, name: true } },
-        category: { select: { slug: true, name: true } },
-        tags: { select: { tag: { select: { name: true } } }, take: 1 },
-      },
-    })
-    .then((art) => {
+  // Wrap the entire DB lookup + dispatch chain in after() so Vercel keeps the
+  // lambda alive past the response. Without after() the .then() callback runs
+  // after the request closes and sendGA4Event never gets registered.
+  after(async () => {
+    try {
+      const art = await db.article.findUnique({
+        where: { id: articleId },
+        select: {
+          clientId: true,
+          title: true,
+          slug: true,
+          client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+          author: { select: { id: true, name: true } },
+          category: { select: { slug: true, name: true } },
+          tags: { select: { tag: { select: { name: true } } }, take: 1 },
+        },
+      });
       if (!art) return;
       if (art.clientId) {
         notifyTelegram(art.clientId, telegramKey, {
           title: art.title,
           meta: actor.name ? { من: actor.name } : undefined,
-        });
+        }).catch(() => {});
       }
       const params = {
         article_id: articleId,
@@ -55,11 +59,11 @@ function fireEngagement(
         client_industry: art.client?.industry?.name,
       };
       const options = actor.id ? { userId: actor.id } : undefined;
-      if (ga4EventName === "article_like") void trackArticleLike(params, options);
-      else if (ga4EventName === "article_dislike") void trackArticleDislike(params, options);
-      else void trackArticleFavorite(params, options);
-    })
-    .catch(() => {});
+      if (ga4EventName === "article_like") await trackArticleLike(params, options);
+      else if (ga4EventName === "article_dislike") await trackArticleDislike(params, options);
+      else await trackArticleFavorite(params, options);
+    } catch {}
+  });
 }
 
 export async function likeArticle(articleId: string, articleSlug: string) {

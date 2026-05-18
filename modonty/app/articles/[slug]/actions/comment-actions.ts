@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { CommentStatus } from "@prisma/client";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import {
@@ -78,21 +79,21 @@ export async function submitComment(
 
     revalidatePath(`/articles/${articleSlug}`);
 
-    // Telegram + GA4 (non-blocking, single DB lookup)
-    db.article
-      .findUnique({
-        where: { id: articleId },
-        select: {
-          clientId: true,
-          title: true,
-          slug: true,
-          client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-          author: { select: { id: true, name: true } },
-          category: { select: { slug: true, name: true } },
-          tags: { select: { tag: { select: { name: true } } }, take: 1 },
-        },
-      })
-      .then((art) => {
+    // Telegram + GA4 wrapped in after() so Vercel keeps the lambda alive past response.
+    after(async () => {
+      try {
+        const art = await db.article.findUnique({
+          where: { id: articleId },
+          select: {
+            clientId: true,
+            title: true,
+            slug: true,
+            client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+            author: { select: { id: true, name: true } },
+            category: { select: { slug: true, name: true } },
+            tags: { select: { tag: { select: { name: true } } }, take: 1 },
+          },
+        });
         if (!art) return;
         if (art.clientId) {
           notifyTelegram(art.clientId, "commentNew", {
@@ -102,9 +103,9 @@ export async function submitComment(
               label: "مراجعة من اللوحة",
               url: `https://console.modonty.com/dashboard/comments`,
             },
-          });
+          }).catch(() => {});
         }
-        void trackCommentSubmit(
+        await trackCommentSubmit(
           {
             article_id: articleId,
             article_slug: art.slug,
@@ -123,8 +124,8 @@ export async function submitComment(
           },
           { userId },
         );
-      })
-      .catch(() => {});
+      } catch {}
+    });
 
     return {
       success: true,
@@ -192,28 +193,28 @@ export async function submitReply(
 
     revalidatePath(`/articles/${articleSlug}`);
 
-    db.article
-      .findUnique({
-        where: { id: articleId },
-        select: {
-          clientId: true,
-          title: true,
-          slug: true,
-          client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-          author: { select: { id: true, name: true } },
-          category: { select: { slug: true, name: true } },
-          tags: { select: { tag: { select: { name: true } } }, take: 1 },
-        },
-      })
-      .then((art) => {
+    after(async () => {
+      try {
+        const art = await db.article.findUnique({
+          where: { id: articleId },
+          select: {
+            clientId: true,
+            title: true,
+            slug: true,
+            client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+            author: { select: { id: true, name: true } },
+            category: { select: { slug: true, name: true } },
+            tags: { select: { tag: { select: { name: true } } }, take: 1 },
+          },
+        });
         if (!art) return;
         if (art.clientId) {
           notifyTelegram(art.clientId, "commentReply", {
             title: art.title,
             body: `${reply.author?.name ?? "زائر"}: ${content}`,
-          });
+          }).catch(() => {});
         }
-        void trackCommentReply(
+        await trackCommentReply(
           {
             article_id: articleId,
             article_slug: art.slug,
@@ -231,8 +232,8 @@ export async function submitReply(
           },
           { userId },
         );
-      })
-      .catch(() => {});
+      } catch {}
+    });
 
     return {
       success: true,
@@ -294,31 +295,31 @@ export async function likeComment(commentId: string, articleSlug: string) {
     revalidatePath(`/articles/${articleSlug}`);
 
     if (!existingLike) {
-      db.comment
-        .findUnique({
-          where: { id: commentId },
-          select: {
-            article: {
-              select: {
-                id: true,
-                clientId: true,
-                title: true,
-                slug: true,
-                client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-                author: { select: { id: true, name: true } },
-                category: { select: { slug: true, name: true } },
-                tags: { select: { tag: { select: { name: true } } }, take: 1 },
+      after(async () => {
+        try {
+          const c = await db.comment.findUnique({
+            where: { id: commentId },
+            select: {
+              article: {
+                select: {
+                  id: true,
+                  clientId: true,
+                  title: true,
+                  slug: true,
+                  client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+                  author: { select: { id: true, name: true } },
+                  category: { select: { slug: true, name: true } },
+                  tags: { select: { tag: { select: { name: true } } }, take: 1 },
+                },
               },
             },
-          },
-        })
-        .then((c) => {
+          });
           if (!c?.article) return;
           const art = c.article;
           if (art.clientId) {
-            notifyTelegram(art.clientId, "commentLike", { title: art.title });
+            notifyTelegram(art.clientId, "commentLike", { title: art.title }).catch(() => {});
           }
-          void trackCommentLike(
+          await trackCommentLike(
             {
               article_id: art.id,
               article_slug: art.slug,
@@ -336,8 +337,8 @@ export async function likeComment(commentId: string, articleSlug: string) {
             },
             { userId },
           );
-        })
-        .catch(() => {});
+        } catch {}
+      });
     }
 
     return {
@@ -400,31 +401,31 @@ export async function dislikeComment(commentId: string, articleSlug: string) {
     revalidatePath(`/articles/${articleSlug}`);
 
     if (!existingDislike) {
-      db.comment
-        .findUnique({
-          where: { id: commentId },
-          select: {
-            article: {
-              select: {
-                id: true,
-                clientId: true,
-                title: true,
-                slug: true,
-                client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
-                author: { select: { id: true, name: true } },
-                category: { select: { slug: true, name: true } },
-                tags: { select: { tag: { select: { name: true } } }, take: 1 },
+      after(async () => {
+        try {
+          const c = await db.comment.findUnique({
+            where: { id: commentId },
+            select: {
+              article: {
+                select: {
+                  id: true,
+                  clientId: true,
+                  title: true,
+                  slug: true,
+                  client: { select: { slug: true, name: true, industry: { select: { name: true } } } },
+                  author: { select: { id: true, name: true } },
+                  category: { select: { slug: true, name: true } },
+                  tags: { select: { tag: { select: { name: true } } }, take: 1 },
+                },
               },
             },
-          },
-        })
-        .then((c) => {
+          });
           if (!c?.article) return;
           const art = c.article;
           if (art.clientId) {
-            notifyTelegram(art.clientId, "commentDislike", { title: art.title });
+            notifyTelegram(art.clientId, "commentDislike", { title: art.title }).catch(() => {});
           }
-          void trackCommentDislike(
+          await trackCommentDislike(
             {
               article_id: art.id,
               article_slug: art.slug,
@@ -442,8 +443,8 @@ export async function dislikeComment(commentId: string, articleSlug: string) {
             },
             { userId },
           );
-        })
-        .catch(() => {});
+        } catch {}
+      });
     }
 
     return {

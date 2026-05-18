@@ -21,7 +21,31 @@ During any live test session:
 
 ---
 
-## Session: 2026-04-30 — userVersion optimistic-locking fix + Toast UX overhaul (Session 76)
+## Session: 2026-05-18 — GTM Phase 6: Manual browser live test + after() bug fix on PROD
+
+### OBS-216 🔴 HIGH (BUG FOUND + FIXED) — `fire-and-forget Promise.then()` killed by Vercel before `after()` registered
+- **Where:** `modonty/app/articles/[slug]/actions/article-interactions.ts` (1 `.then()` block) + `modonty/app/articles/[slug]/actions/comment-actions.ts` (4 `.then()` blocks)
+- **Symptom:** Live Playwright test fired 11 auth-required events on PROD (article like/dislike/favorite, comment submit/reply/like, ask client, follow/favorite/comment client, campaign interest). **0/11 arrived in GA4** Realtime API. Anonymous events from prior test (article_view, share, etc.) still visible from previous run — so GA4 ingestion confirmed working.
+- **Root cause:** The pattern `db.article.findUnique({...}).then((art) => { void trackXxx(...) })` is fire-and-forget. By the time the parent server action returns, the DB query is mid-flight. Vercel's serverless runtime kills the unawaited Promise → `.then()` callback never reaches `sendGA4Event` → `after()` never gets registered to keep the lambda alive.
+- **Why earlier `after()` fix wasn't enough:** The previous fix (commit `786a233`) wrapped `sendGA4Event`'s fetch in `after()`, but `after()` only works if the calling code reaches it BEFORE the response closes. With a Promise chain, the call site is asynchronous — by the time `.then()` fires, the response is already gone.
+- **Fix:** Replaced 5 `.then()` patterns with `after(async () => { try { const art = await db.article.findUnique({...}); ... await trackXxx(...); } catch {} })`. Now the entire DB lookup + dispatch is registered with `after()` AT call time — Vercel keeps the lambda alive past response until the chain completes.
+- **Files NOT changed (verified safe pattern):** `ask-client-actions.ts` + `client-comment-actions.ts` + API routes (`follow/route.ts`, `favorite/route.ts`, `view/route.ts`, etc.) — all use `await db.findUnique(...)` synchronously BEFORE calling `void trackXxx(...)`. Since `trackXxx` is called inline (not async), `sendGA4Event`'s `after()` registers immediately. ✓
+- **TSC modonty:** zero errors.
+- **Status:** code fixed locally. **Push + re-test pending** user confirmation.
+
+### OBS-217 🟡 MEDIUM — Toggle events don't fire on "untoggle" (by design, but blocks Live Test reproducibility)
+- **Where:** `likeArticle()`, `dislikeArticle()`, `favoriteArticle()`, `POST /api/clients/[slug]/follow`, `POST /api/clients/[slug]/favorite`
+- **Behavior:** `if (existing) → delete (NO tracking)` else `→ create + trackXxx(...)`. Same for `DELETE` route on follow.
+- **Real-world impact:** correct UX (we don't want analytics flooded by un-likes), but **breaks Live Test when test user already has state**. Test Visitor on PROD was already follow/favorited from prior sessions → my clicks toggled OFF without firing tracking.
+- **Decision needed for next test run:** (a) reset Test Visitor state in DB via one-shot script before re-testing, OR (b) double-click each toggle (off → on → fires), OR (c) use a fresh test account.
+- **Recommendation:** option (a) — single script `reset-test-visitor-state.ts` that clears ArticleLike/ArticleDislike/ArticleFavorite/ClientLike/ClientFavorite rows for `testvisitor@modonty.com` before each Live Test.
+
+### OBS-218 🟢 LOW — `comment_dislike` has no UI surface on article page
+- **Where:** `modonty/app/articles/[slug]/components/comments/article-comments.tsx:206-233` (CommentItem Actions block)
+- **What:** API endpoint `POST /api/comments/[id]/dislike` exists + wired with `trackCommentDislike`, but the UI only renders ONE button next to "رد" (Reply) — the Like button. No Dislike button anywhere on comments.
+- **Decision:** acceptable gap (comment dislike UX is rare in modern interfaces — see X/Reddit hide dislike counts entirely). Either remove the unused endpoint OR add the UI in a future polish round.
+
+
 
 ### OBS-215 🟡 IN-PROGRESS — Guideline source-of-truth folder established (Phase 1 of Knowledge Hub project)
 - **Decision:** the admin Knowledge Hub (sales/marketing/content/design/operations playbook) needs raw source materials in one canonical place before synthesis. Otherwise every refresh = re-research from scratch.
