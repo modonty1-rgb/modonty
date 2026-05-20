@@ -23,11 +23,13 @@ import type { StaleVersionsStats } from "../actions/stale-versions";
 import type { CollectionSize } from "../actions/collection-sizes";
 import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
 import type { JsonLdIntegrityStats } from "../actions/jsonld-integrity";
+import type { LegalFormSanitizerStats } from "../actions/legalform-sanitizer";
 import { cleanExpiredOtps } from "../actions/orphan-cleaner";
 import { cleanExpiredSessions } from "../actions/session-cleaner";
 import { cleanStaleVersions } from "../actions/stale-versions";
 import { createTTLIndex } from "../actions/index-health";
 import { regenerateAllStaleJsonLd } from "../actions/jsonld-integrity";
+import { sanitizeAllLegalForms } from "../actions/legalform-sanitizer";
 
 interface Props {
   orphans: OrphanStats;
@@ -39,6 +41,7 @@ interface Props {
   collectionSizes: CollectionSize[];
   duplicateSlugs: DuplicateSlugStats;
   jsonLdIntegrity: JsonLdIntegrityStats;
+  legalFormSanitizer: LegalFormSanitizerStats;
 }
 
 export function DbToolsSection({
@@ -51,6 +54,7 @@ export function DbToolsSection({
   collectionSizes,
   duplicateSlugs,
   jsonLdIntegrity,
+  legalFormSanitizer,
 }: Props) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -59,6 +63,7 @@ export function DbToolsSection({
   const [currentVersions, setCurrentVersions] = useState(staleVersions);
   const [currentIndexHealth, setCurrentIndexHealth] = useState(indexHealth);
   const [currentJsonLd, setCurrentJsonLd] = useState(jsonLdIntegrity);
+  const [currentLegalForm, setCurrentLegalForm] = useState(legalFormSanitizer);
   const [cleaningAction, setCleaningAction] = useState<string | null>(null);
 
   const run = (key: string, fn: () => Promise<void>) => {
@@ -527,6 +532,140 @@ export function DbToolsSection({
                   <RefreshCw className="h-3 w-3 me-1" />
                 )}
                 Regenerate All Stale JSON-LD
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Legal Form Sanitizer ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            Legal Form Sanitizer
+          </h2>
+          <Badge
+            variant={
+              currentLegalForm.mappableCount === 0 && currentLegalForm.unmappedCount === 0
+                ? "secondary"
+                : "destructive"
+            }
+            className="text-xs font-normal"
+          >
+            {currentLegalForm.mappableCount === 0 && currentLegalForm.unmappedCount === 0
+              ? "Clean"
+              : `${currentLegalForm.mappableCount + currentLegalForm.unmappedCount} non-canonical`}
+          </Badge>
+        </div>
+        <Card>
+          <CardContent className="pt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                {currentLegalForm.mappableCount === 0 && currentLegalForm.unmappedCount === 0 ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                ) : (
+                  <AlertTriangle className="h-4 w-4 text-yellow-500 shrink-0" />
+                )}
+                <div>
+                  <p className="text-sm font-medium">
+                    Clients with non-canonical <code className="text-xs">legalForm</code> values
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Free-text or Arabic legal forms (e.g. <span className="font-mono">شركة شخص واحد</span>)
+                    block all form saves on the affected client — including password updates. Canonical
+                    values: LLC · JSC · Sole Proprietorship · Partnership · Limited Partnership ·
+                    Simplified Joint Stock Company · One-Person Company.
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm font-semibold whitespace-nowrap">
+                {currentLegalForm.mappableCount + currentLegalForm.unmappedCount} / {currentLegalForm.totalClients}
+              </span>
+            </div>
+
+            {currentLegalForm.mappable.length > 0 && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-muted-foreground mb-1.5">
+                  Will be auto-converted ({currentLegalForm.mappable.length}):
+                </p>
+                <ul className="space-y-1">
+                  {currentLegalForm.mappable.slice(0, 10).map((m) => (
+                    <li key={m.id} className="text-xs flex items-center gap-2">
+                      <span className="text-muted-foreground truncate max-w-[260px]" title={m.name ?? ""}>
+                        {m.name ?? "(no name)"}
+                      </span>
+                      <code className="text-[11px] bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 rounded">
+                        {m.before}
+                      </code>
+                      <span className="text-muted-foreground">→</span>
+                      <code className="text-[11px] bg-green-500/10 text-green-700 dark:text-green-300 px-1.5 py-0.5 rounded">
+                        {m.after}
+                      </code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {currentLegalForm.unmapped.length > 0 && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-destructive mb-1.5">
+                  Manual review required — no mapping rule matched ({currentLegalForm.unmapped.length}):
+                </p>
+                <ul className="space-y-1">
+                  {currentLegalForm.unmapped.slice(0, 10).map((m) => (
+                    <li key={m.id} className="text-xs flex items-center gap-2">
+                      <span className="text-muted-foreground truncate max-w-[260px]" title={m.name ?? ""}>
+                        {m.name ?? "(no name)"}
+                      </span>
+                      <code className="text-[11px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded">
+                        {m.before}
+                      </code>
+                      <a
+                        href={`/clients/${m.id}/edit`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline flex items-center gap-1"
+                      >
+                        Open <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {currentLegalForm.mappable.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={isPending}
+                className="w-full h-8 text-xs"
+                onClick={() =>
+                  run("legalform", async () => {
+                    const r = await sanitizeAllLegalForms();
+                    toast({
+                      title: `Sanitized ${r.successful} of ${r.attempted} clients`,
+                      description: r.failed > 0 ? `${r.failed} failed — check logs` : undefined,
+                      variant: r.failed > 0 ? "destructive" : "default",
+                    });
+                    setCurrentLegalForm({
+                      ...currentLegalForm,
+                      mappableCount: r.failed,
+                      mappable: currentLegalForm.mappable.filter((m) =>
+                        r.errors.some((e) => e.id === m.id),
+                      ),
+                      canonicalOrNull: currentLegalForm.canonicalOrNull + r.successful,
+                    });
+                  })
+                }
+              >
+                {cleaningAction === "legalform" ? (
+                  <Loader2 className="h-3 w-3 animate-spin me-1" />
+                ) : (
+                  <RefreshCw className="h-3 w-3 me-1" />
+                )}
+                Sanitize {currentLegalForm.mappable.length} Auto-Mappable Client{currentLegalForm.mappable.length === 1 ? "" : "s"}
               </Button>
             )}
           </CardContent>

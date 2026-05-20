@@ -1,4 +1,124 @@
-# Session Context — Last Updated: 2026-05-17 (Session 97 — v1.47.0 SHIPPED · 14 Server Components refactor · GTM foundation laid)
+# Session Context — Last Updated: 2026-05-20 (Session 99 — Legal Form fix · admin v0.57.1 SHIPPED)
+
+---
+
+## 🟢 Session 99 — 2026-05-20 (Client Edit blocked by Arabic legalForm · permanent DB Sanitizer added)
+
+### TL;DR
+Khalid reported "password update broken in admin". Live test reproduced the actual error: Update Client form was rejecting save because `Client.legalForm` held a free-text Arabic value (`شركة شخص واحد`) that didn't match the form's strict English Zod enum. Because RHF validates the whole schema, **every field was blocked** — including password — even though the user wasn't editing legalForm. Fix shipped as admin v0.57.1: (a) added `One-Person Company` as a 7th canonical enum (Saudi Companies Law M/132 — شركة الشخص الواحد is a distinct legal entity), (b) bilingual dropdown (Arabic labels · English values), (c) **promoted the migration from one-shot script to a permanent `Legal Form Sanitizer` card on `/database`** so any future legacy Arabic values can be detected + sanitized via UI without engineering involvement.
+
+### What was built
+- **`admin/app/(dashboard)/clients/helpers/client-form-schema.ts`** — added `"One-Person Company"` to legalForm enum (7 values total).
+- **`admin/app/(dashboard)/clients/helpers/client-seo-config/validators-advanced.ts`** — added `"One-Person Company"` to `LEGAL_FORMS` whitelist.
+- **`admin/app/(dashboard)/clients/components/form-sections/legal-section.tsx`** — bilingual `SelectItem`s: Arabic label + English value cast. Note: `LegalSection` is currently not imported by `client-form.tsx` (orphan component) — Arabic labels will activate when wired into the form, but the Zod relax + Sanitizer are the actual fix that unblocks save.
+- **`admin/app/(dashboard)/database/actions/legalform-sanitizer.ts` (new)** — `getLegalFormSanitizerStats()` + `sanitizeAllLegalForms()` with 10-rule Arabic→English mapping (longest-match first), idempotent, returns `{ attempted, successful, failed, errors }`. Mapping covers: شركة الشخص الواحد · شركة شخص واحد → `One-Person Company` · شركة مساهمة مبسطة → `Simplified Joint Stock Company` · شركة مساهمة → `JSC` · شركة توصية بسيطة → `Limited Partnership` · شركة تضامن → `Partnership` · مؤسسة فردية → `Sole Proprietorship` · شركة ذات مسؤولية محدودة / ش.ذ.م.م → `LLC`.
+- **`admin/app/(dashboard)/database/components/db-tools-section.tsx`** — new Legal Form Sanitizer card following the existing maintenance pattern (Orphan Cleaner / JSON-LD Integrity). Shows badge, two preview lists (auto-mappable in yellow→green pills · unmapped with deep-link to `/clients/[id]/edit`), single "Sanitize" button with sonner toast + optimistic UI.
+- **`admin/app/(dashboard)/database/page.tsx`** — added new stats fetch to parallel `Promise.all`.
+
+### Live test (Playwright, dev DB modonty_dev)
+1. Pre-fix repro: injected `شركة شخص واحد` into kimazone → click Update Client → exact error from Khalid's screenshot.
+2. Seed mixed cases: kimazone `شركة مساهمة` (mappable) + jbrseo `كيان غير معروف` (unmapped).
+3. Open `/database` → Sanitizer card badge `2 non-canonical · 2/5`. Auto-mappable section shows `شركة مساهمة → JSC` (yellow→green). Unmapped section shows jbrseo with Open deep-link.
+4. Click Sanitize button → toast "Sanitized 1 of 1" → badge updates to `1 non-canonical · 1/5` → auto-mappable section disappears → unmapped section stays.
+5. DB verify: kimazone `JSC` ✓, jbrseo unchanged `كيان غير معروف` ✓.
+6. Post-fix repro: click Update Client → form saved → redirect to `/clients` (no error). ✓
+
+### Push artifacts
+- Backup: `backups/backup-2026-05-20_11-05` (66 collections, 3.0M)
+- Version: admin 0.57.0 → **0.57.1**
+- Changelog: LOCAL + PROD synced (entry `6a0d6b967710486a38aac33b` LOCAL, `6a0d6b967710486a38aac33a` PROD)
+- TSC: admin · modonty · console — zero errors on all three
+
+### Production rollout (now self-service)
+After Vercel auto-deploy:
+1. Open `admin.modonty.com/database` → scroll to "Legal Form Sanitizer" card.
+2. If badge > 0: review the auto-mappable preview list, click "Sanitize N Auto-Mappable Clients".
+3. Any unmapped entries: click "Open" deep-link, manually pick the right enum from the (future) dropdown OR set legalForm = null in the form.
+
+### Open items for next session
+- 🟡 (not urgent) `LegalSection` component is defined but not imported by `client-form.tsx` — the Arabic-label dropdown won't render in the UI until someone wires it in. The bug fix doesn't depend on it; the Sanitizer card handles the legacy data.
+- 🟢 (future) Optional: extend Sanitizer to a generic "Enum Sanitizer" that scans ALL enum fields on Client/Article (orgType, contentTone, etc.) for free-text Arabic values.
+
+### Test credentials still valid
+- admin (local): `modonty@modonty.com` / `Modonty123!` · DB = `modonty_dev` (per `.env.shared` line 19, `.env.local` line 1 commented)
+
+---
+
+## 🟢 Session 98 — 2026-05-18 (GTM Closure — auth-event hotfix + 4 deep-dive widgets · 2 pushes)
+
+### TL;DR
+GTM/GA4 integration project **fully closed**. Discovered + fixed a production bug where 11 auth-required GA4 events were silently dropped on Vercel (`db.findUnique().then(...)` killed before `after()` could register), then shipped the final Phase 5 Wave 2 (4 deep-dive widgets for client analytics dashboard). Two atomic pushes today.
+
+### Discoveries (live test on PROD)
+- Built `scripts/verify-auth-events-ga4.mjs` to programmatically query GA4 Realtime API per event after browser interactions.
+- Live Playwright session as `testvisitor@modonty.com`: clicked all 11 auth-required interactions (article like/dislike/favorite, comment submit/reply/like, ask client, follow/favorite/comment client, campaign interest). All 11 returned HTTP 200 from the actions.
+- **0/11 events arrived in GA4** — anonymous events from prior test (article_view, share, etc.) still visible, confirming GA4 ingestion was healthy.
+- Two distinct root causes identified:
+  1. **Toggle gating:** `likeArticle/dislikeArticle/favoriteArticle/follow/favorite` only fire `track*()` on first activation (`if (existing) → no track`). Test Visitor was already follow/favorited from earlier sessions → my clicks toggled OFF without firing tracking. By-design, but blocks Live Test reproducibility — recommended: build `reset-test-visitor-state.ts` before next Live Test.
+  2. **Real bug:** `article-interactions.ts` + `comment-actions.ts` used `db.findUnique().then((art) => { void trackXxx(...) })`. On Vercel serverless, the parent action returns BEFORE the `.then()` callback runs → request closes → Vercel kills the unawaited Promise chain → `sendGA4Event` never reaches `after()` registration → fetch never fires. Five `.then()` patterns affected.
+
+### Fix shipped — modonty v1.48.2 (commit `39d4894`)
+- 2 files modified: `modonty/app/articles/[slug]/actions/article-interactions.ts` (1 pattern) + `modonty/app/articles/[slug]/actions/comment-actions.ts` (4 patterns)
+- All 5 `.then()` chains rewritten as `after(async () => { try { const art = await db.findUnique(...); ... await trackXxx(...); } catch {} })`. Outer `after()` registration happens AT call time, keeping the lambda alive past response close.
+- Verified safe patterns (left untouched): `ask-client-actions.ts` + `client-comment-actions.ts` + all API routes (`follow/route.ts`, `favorite/route.ts`, `view/route.ts`, `share/route.ts`). These use `await db.findUnique(...)` synchronously BEFORE calling `void trackXxx(...)`, so `sendGA4Event`'s inner `after()` registers in-flight.
+- Pushed with backup + changelog (LOCAL + PROD, id `6a0b247...`). TSC modonty + console zero errors.
+
+### Phase 5 Wave 2 — console v0.10.0 (commit `d3f4b4e`)
+- Closed the last optional task in GTM-PLAN.md: 4 deep-dive widgets on `/dashboard/analytics`.
+- 4 new helpers in `console/lib/analytics/ga4-data-api.ts`:
+  - `getTopArticles(clientId, limit)` — top 10 articles by `article_view` event, filtered by `customEvent:client_id`
+  - `getTrafficSources(clientId, limit)` — `sessionSource × sessionMedium` breakdown with Arabic labels (Google → Google, facebook.com → Facebook, t.co → Twitter/X)
+  - `getDayPattern(clientId)` — `dayOfWeek × hour` heatmap, color intensity by `eventCount`
+  - `getConversionFunnel(clientId)` — sums `views → engagements → intents → conversions` from named event groups, computes per-step drop-off %
+- All cached via `unstable_cache` with shared tag `ga4-overview` for unified invalidation (5-10 min TTL).
+- New `console/app/(dashboard)/dashboard/analytics/components/ga4-deep-dive-card.tsx` — 2×2 grid of widgets with Suspense + skeleton loading + graceful error states. Each widget independent (one widget's GA4 failure doesn't break the others).
+- Wired into `page.tsx` directly under `GA4RealtimeCard`. TSC console zero errors.
+- Pushed with backup + changelog (LOCAL + PROD, id `6a0b26fd...`).
+
+### GTM-PLAN.md status — `✅ FULLY CLOSED`
+- 21 events wired (incl. campaign_interest in console v0.8.0)
+- Wave 1 (Realtime KPIs) + Wave 2 (4 deep-dive widgets) — live
+- All env vars in Vercel · all DB migrations done · all docs updated
+- Zero open tasks remaining
+
+### Files added during session
+- `scripts/live-test-ga4-prod.mjs` — 5/5 anonymous-event verifier (Phase 1: trigger, Phase 2: wait 60s, Phase 3: query Realtime API)
+- `scripts/verify-auth-events-ga4.mjs` — 11-event Realtime checker (queries `runRealtimeReport` per event name)
+- `console/app/(dashboard)/dashboard/analytics/components/ga4-deep-dive-card.tsx`
+
+### Files modified during session
+- `modonty/app/articles/[slug]/actions/article-interactions.ts` (`after()` wrap)
+- `modonty/app/articles/[slug]/actions/comment-actions.ts` (4× `after()` wraps)
+- `modonty/package.json` (1.48.1 → 1.48.2)
+- `console/package.json` (0.9.0 → 0.10.0)
+- `console/lib/analytics/ga4-data-api.ts` (+4 helpers)
+- `console/app/(dashboard)/dashboard/analytics/page.tsx` (import + render GA4DeepDiveCard)
+- `admin/scripts/add-changelog.ts` (v1.48.2 + console v0.10.0 entries)
+- `documents/tasks/modonty/GTM-PLAN.md` (status → FULLY CLOSED)
+- `documents/tasks/CLAUDE.md` (OBS-216, OBS-217, OBS-218)
+
+### Memory updates this session
+- None added; existing rules followed:
+  - `feedback_full_test_before_push` (TSC both apps zero errors)
+  - `feedback_backup_before_push` (66 collections, 3.0M, twice)
+  - `feedback_changelog_with_push` (both DBs synced, twice)
+  - `feedback_version_bump_before_push` (modonty + console bumped)
+  - `feedback_context7_mandatory_before_code` (Next.js `after()` API verified before applying fix)
+
+### Open items for next session
+- 🟡 (not urgent) `comment_dislike` has no UI surface on article page — API endpoint + tracking wired but no button. Either remove endpoint or add UI button in future polish round (see OBS-218).
+- 🟡 (not urgent) Toggle-event tracking semantics: should `un-follow/un-like/un-favorite` fire a separate event for completeness, or stay silent? Currently silent (industry norm — see X/Reddit/Instagram all hide dislike counts).
+- 🟢 (future) `lead_qualified` event — pending when lead-scoring code lands in modonty (currently lives in console only).
+
+### Push artifacts (both pushes today)
+| Push | Version | Commit | Files | Backup | Changelog ID (PROD) |
+|------|---------|--------|-------|--------|---------------------|
+| 1 | modonty 1.48.2 | `39d4894` | 8 (2 fixes + 2 test scripts + 4 docs) | `backup-2026-05-18_17-38` | `6a0b247861cc7b29984d1c78` |
+| 2 | console 0.10.0 | `d3f4b4e` | 6 (1 new component + 5 modified) | `backup-2026-05-18_17-48` | `6a0b26fd9aab713e09e2305b` |
+
+### Test credentials still valid
+- modonty (public site): `Test Visitor` button in nav (auto-login as `testvisitor@modonty.com`)
+- console (`console.modonty.com`): `info@kimazone.com` / `Kimazone2026!` · client `كيما-زون` · ID `69e8927b6a15f350c2158a2e`
 
 ---
 

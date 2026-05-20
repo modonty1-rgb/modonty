@@ -20,17 +20,18 @@ export function LegalSection({ form }: LegalSectionProps) {
           label="Legal Form"
           name="legalForm"
           value={watch("legalForm") || undefined}
-          onValueChange={(value) => setValue("legalForm", value ? (value as "LLC" | "JSC" | "Sole Proprietorship" | "Partnership" | "Limited Partnership" | "Simplified Joint Stock Company") : null, { shouldValidate: true })}
+          onValueChange={(value) => setValue("legalForm", value ? (value as "LLC" | "JSC" | "Sole Proprietorship" | "Partnership" | "Limited Partnership" | "Simplified Joint Stock Company" | "One-Person Company") : null, { shouldValidate: true })}
           error={errors.legalForm?.message}
           hint={messages.hints.client.legalForm}
           placeholder="Select Legal Form"
         >
-          <SelectItem value="LLC">LLC (Limited Liability Company)</SelectItem>
-          <SelectItem value="JSC">JSC (Joint Stock Company)</SelectItem>
-          <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
-          <SelectItem value="Partnership">Partnership</SelectItem>
-          <SelectItem value="Limited Partnership">Limited Partnership</SelectItem>
-          <SelectItem value="Simplified Joint Stock Company">Simplified Joint Stock Company</SelectItem>
+          <SelectItem value="LLC">شركة ذات مسؤولية محدودة (LLC)</SelectItem>
+          <SelectItem value="JSC">شركة مساهمة (JSC)</SelectItem>
+          <SelectItem value="Sole Proprietorship">مؤسسة فردية</SelectItem>
+          <SelectItem value="Partnership">شركة تضامن</SelectItem>
+          <SelectItem value="Limited Partnership">شركة توصية بسيطة</SelectItem>
+          <SelectItem value="Simplified Joint Stock Company">شركة مساهمة مبسطة</SelectItem>
+          <SelectItem value="One-Person Company">شركة الشخص الواحد</SelectItem>
         </FormSelect>
         <FormInput
           name="vatID"

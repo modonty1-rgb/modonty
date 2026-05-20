@@ -12,15 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.10.0 (console)",
-    title: "console v0.10.0 — GA4 Dashboard Phase 5 Wave 2: 4 deep-dive widgets",
+    version: "0.57.1 (admin)",
+    title: "admin v0.57.1 — Legal Form fix: bilingual UI + Sanitizer in DB Maintenance",
     items: [
-      { type: "feature" as const, text: "New /dashboard/analytics → GA4 Deep-Dive section with 4 widgets that pull straight from Google Analytics Data API (cached 5-10 min)." },
-      { type: "feature" as const, text: "Widget 1 — أكثر المقالات مشاهدة (28 يوم): top 10 articles by article_view event, filtered by client_id. Shows ranked list with progress bars." },
-      { type: "feature" as const, text: "Widget 2 — مصادر الزيارات (28 يوم): sessionSource × sessionMedium breakdown with Arabic labels (Google → Google, facebook.com → Facebook, t.co → Twitter/X, etc). Shows session count + % share + user count." },
-      { type: "feature" as const, text: "Widget 3 — نمط النشاط الأسبوعي (28 يوم): heatmap 7 days × 24 hours, color intensity by eventCount. Hover tooltip shows exact day/hour/event count. Helps client decide best publishing time." },
-      { type: "feature" as const, text: "Widget 4 — قمع التحويل (28 يوم): visualizes the funnel views → engagements → intents → conversions with per-step drop-off rate %. Final line shows overall view-to-conversion %." },
-      { type: "feature" as const, text: "New helpers in console/lib/analytics/ga4-data-api.ts: getTopArticles(), getTrafficSources(), getDayPattern(), getConversionFunnel(). All cached via unstable_cache with tag 'ga4-overview' for unified invalidation." },
+      { type: "fix" as const, text: "Fixed: Update Client form was blocked when DB held a free-text Arabic legalForm (e.g. 'شركة شخص واحد'). The strict Zod enum on client-form-schema.ts rejected the loaded value, blocking ALL form fields — including password updates — on the affected client." },
+      { type: "feature" as const, text: "Added 'One-Person Company' as a canonical enum value (شركة الشخص الواحد) — distinct legal entity under Saudi Companies Law M/132 (2022). Total accepted values: LLC · JSC · Sole Proprietorship · Partnership · Limited Partnership · Simplified Joint Stock Company · One-Person Company." },
+      { type: "feature" as const, text: "Bilingual dropdown in legal-section.tsx: SelectItems now display Arabic labels (شركة ذات مسؤولية محدودة, شركة مساهمة, مؤسسة فردية, شركة تضامن, شركة توصية بسيطة, شركة مساهمة مبسطة, شركة الشخص الواحد) while values remain canonical English enum." },
+      { type: "feature" as const, text: "New 'Legal Form Sanitizer' card on /database page: scans Client.legalForm for non-canonical values, previews auto-mappable Arabic→English transformations (10-rule mapping), surfaces unmapped clients for manual review with deep-link to /clients/[id]/edit, one-click Sanitize button applies the migration via server action." },
+      { type: "feature" as const, text: "New server actions in admin/app/(dashboard)/database/actions/legalform-sanitizer.ts: getLegalFormSanitizerStats() + sanitizeAllLegalForms(). Reusable for any future legacy Arabic legalForm values — not a one-shot migration." },
     ],
   },
 ];

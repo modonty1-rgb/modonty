@@ -741,6 +741,7 @@ const LEGAL_FORMS = [
   "Partnership",
   "Limited Partnership",
   "Simplified Joint Stock Company",
+  "One-Person Company",
 ];
 
 export const validateSaudiIdentifiers: SEOFieldValidator = (value, data) => {

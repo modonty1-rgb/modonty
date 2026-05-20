@@ -8,6 +8,7 @@ import { getStaleVersionsStats } from "./actions/stale-versions";
 import { getCollectionSizes } from "./actions/collection-sizes";
 import { getDuplicateSlugs } from "./actions/duplicate-slugs";
 import { getJsonLdIntegrityStats } from "./actions/jsonld-integrity";
+import { getLegalFormSanitizerStats } from "./actions/legalform-sanitizer";
 import { DatabaseOverview } from "./components/database-overview";
 import { DbToolsSection } from "./components/db-tools-section";
 
@@ -23,6 +24,7 @@ export default async function DatabasePage() {
     collectionSizes,
     duplicateSlugs,
     jsonLdIntegrity,
+    legalFormSanitizer,
   ] = await Promise.all([
     getDatabaseHealth(),
     getOrphanStats(),
@@ -34,6 +36,7 @@ export default async function DatabasePage() {
     getCollectionSizes(),
     getDuplicateSlugs(),
     getJsonLdIntegrityStats(),
+    getLegalFormSanitizerStats(),
   ]);
 
   const isLocal = process.env.NODE_ENV !== "production";
@@ -58,6 +61,7 @@ export default async function DatabasePage() {
         collectionSizes={collectionSizes}
         duplicateSlugs={duplicateSlugs}
         jsonLdIntegrity={jsonLdIntegrity}
+        legalFormSanitizer={legalFormSanitizer}
       />
     </div>
   );

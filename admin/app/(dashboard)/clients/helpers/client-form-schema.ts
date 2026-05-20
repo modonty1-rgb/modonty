@@ -86,6 +86,7 @@ const legalFormSchema = z
     "Partnership",
     "Limited Partnership",
     "Simplified Joint Stock Company",
+    "One-Person Company",
   ])
   .optional()
   .nullable();

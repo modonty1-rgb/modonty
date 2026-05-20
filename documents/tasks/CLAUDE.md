@@ -1,5 +1,7 @@
 # CLAUDE — Live Test Observation Log
 
+**Last Updated:** 2026-05-20 — OBS-219 (Legal Form i18n + Sanitizer in admin DB Maintenance) ✅ DONE in dev. Awaiting prod rollout via UI.
+
 > **Purpose:** This file is maintained by Claude (the AI agent) during every live test session.
 > When simulating a real user (client) navigating the admin or public site, any UX/QA issue
 > spotted — whether visual, functional, logical, or a best-practice violation — is automatically
@@ -18,6 +20,72 @@ During any live test session:
 - Do NOT wait to be asked — automatic observation is mandatory
 - Every entry gets a severity: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW
 - After the session, entries move to MASTER-TODO for review
+
+---
+
+## Session: 2026-05-20 — Client Edit blocked by Zod enum mismatch on legalForm
+
+### OBS-219 ✅ DONE — Update Client form blocked when DB has free-text Arabic `legalForm` — FIXED in DEV (i18n display + canonical enum + migration)
+- **Symptom (verbatim error toast):** `Please fix the following errors: Legal Form: Invalid enum value. Expected 'LLC' | 'JSC' | 'Sole Proprietorship' | 'Partnership' | 'Limited Partnership' | 'Simplified Joint Stock Company', received 'شركة شخص واحد'.`
+- **Where:** `/clients/[id]/edit` — any client whose `Client.legalForm` column holds a value outside the 6-item English enum (Arabic free text, legacy values, manual DB edits).
+- **Side-effect (tail of the bug):** while this validation fails, **the user cannot save ANY field** — including password, intake, address, etc. The whole form is gated on the first invalid Zod field. Khalid hit this while trying to update a client password — hence "في عندنا مشكلة في الـ password تبع العميل في الـ admin".
+- **Root cause (verified end-to-end):**
+  1. Prisma schema: `legalForm String?` (flexible — accepts any string)
+  2. Server-side Zod (`client-server-schema.ts:44`): `z.string().max(50).optional().nullable()` (flexible)
+  3. **Client-side form Zod (`client-form-schema.ts:81-91`): `z.enum(["LLC","JSC","Sole Proprietorship","Partnership","Limited Partnership","Simplified Joint Stock Company"]).optional().nullable()` — STRICT**
+  4. Form loads, `map-initial-data-to-form-data` injects the Arabic value into RHF state → `zodResolver` runs on every submit → rejects → form blocked.
+  - The `<FormSelect>` UI only exposes the 6 English values, so the Arabic value cannot originate from current UI. Source is historical: legacy seed, manual DB edit, or migration from prior form version.
+- **Files involved:**
+  - `admin/app/(dashboard)/clients/helpers/client-form-schema.ts:81-91` — strict enum (the real gate)
+  - `admin/app/(dashboard)/clients/actions/clients-actions/client-server-schema.ts:44` — permissive server schema (no gate)
+  - `admin/app/(dashboard)/clients/components/form-sections/legal-section.tsx:23-33` — UI cast + 6 SelectItem options
+  - `dataLayer/prisma/schema/schema.prisma:339` — `legalForm String?` (DB layer — flexible)
+- **Repro (verified live in dev DB · cleaned up after test):**
+  1. `db.client.update({ where: { id: kimazoneId }, data: { legalForm: "شركة شخص واحد" } })`
+  2. Open `/clients/<id>/edit` → form loads silently (no validation on mount — RHF default)
+  3. Click "Update Client" → exact error from Khalid's screenshot appears
+  4. Set legalForm = null → form saves fine. Repro is 1:1.
+- **Dev DB state (verified 2026-05-20):** 5 clients all currently have `legalForm = null`. So bug is dormant in dev. Production status: unknown — likely affects clients seeded with Arabic legal form names.
+- **Decision needed before fix (3 options, ranked):**
+  - **Option A — Relax form enum to free string (1-line · ships now):** change `legalForm: z.string().max(50).optional().nullable()` in client-form-schema.ts to match server schema. UX stays clean because the `<FormSelect>` still only exposes 6 values; only existing DB legacy values can persist (read-only on those rows). Unblocks Khalid immediately.
+  - **Option B — Data migration script (clean · 30 min):** Arabic→English mapping table (`شركة شخص واحد → Sole Proprietorship`, `شركة ذات مسؤولية محدودة → LLC`, `شركة مساهمة → JSC`, etc.) — runs against prod DB after backup. Keeps enum strictness end-to-end.
+  - **Option C — A + B in sequence:** relax enum now (unblock), migrate data later (cleanup). My recommendation — fixes blocker today, no data loss, normalization is non-urgent.
+- **Decision taken (Khalid):** Option C — i18n display (Arabic labels in UI · English enum in DB) + add new canonical `One-Person Company` enum for legacy `شركة شخص واحد` (legally distinct under Saudi Companies Law M/132 2022) + migration script.
+- **Implementation (2026-05-20):**
+  1. **`client-form-schema.ts:82-90`** — added `"One-Person Company"` to legalForm enum (7 values total).
+  2. **`validators-advanced.ts:737-745`** — added `"One-Person Company"` to `LEGAL_FORMS` whitelist (Saudi identifiers validator stays in sync).
+  3. **`legal-section.tsx`** — bilingual SelectItems (Arabic label · English value): `شركة ذات مسؤولية محدودة (LLC)` / `شركة مساهمة (JSC)` / `مؤسسة فردية` / `شركة تضامن` / `شركة توصية بسيطة` / `شركة مساهمة مبسطة` / `شركة الشخص الواحد`. **Note:** `<LegalSection>` is currently not imported by `client-form.tsx` (orphan); the bilingual SelectItems will activate when wired. The Zod relax + migration ARE the actual fix.
+  4. **`scripts/migrate-arabic-legalforms.ts`** — idempotent migration with 10-rule Arabic→English mapping (longest-match first), supports `--apply` flag, refuses prod DB unless explicitly configured. Mapping: شركة الشخص الواحد · شركة شخص واحد → `One-Person Company` · شركة مساهمة مبسطة → `Simplified Joint Stock Company` · شركة مساهمة → `JSC` · شركة توصية بسيطة → `Limited Partnership` · شركة تضامن → `Partnership` · مؤسسة فردية → `Sole Proprietorship` · شركة ذات مسؤولية محدودة / ش.ذ.م.م → `LLC`.
+- **Live test (Playwright on dev DB):**
+  - **Repro confirmed pre-fix:** injected `شركة شخص واحد` → click Update Client → exact error from Khalid's screenshot.
+  - **Migration dry-run:** 1/5 clients matched (kimazone), 0 unmapped.
+  - **Migration apply:** `شركة شخص واحد` → `One-Person Company` ✓
+  - **Post-fix repro test:** click Update Client → form saved + redirected to `/clients` ✓ (no error toast, no validation block).
+  - **Final DB state:** 5 clients · 4 null · 1 = `One-Person Company` (canonical). Zero Arabic free-text remaining.
+- **TSC admin:** zero errors.
+- **Cleanup:** all one-shot scripts deleted post-test (`find-arabic-legalform.ts`, `inject-arabic-legalform.ts`, `migrate-arabic-legalforms.ts`). Migration logic now lives as a permanent admin UI feature (see below).
+
+### OBS-220 ✅ DONE — Migration promoted from one-shot script to permanent admin UI feature (`/database` page)
+- **User direction (2026-05-20):** "ضيف لي عملية الـ fix للـ immigration هذه ... كيف تقدر نضيف الـ script هذا بحيث إن إحنا نعمل fix في الـ maintenance تبع الـ database" → make it a reusable DB maintenance tool, not a throwaway script.
+- **Built (new `Legal Form Sanitizer` card on `/database`):**
+  1. **`actions/legalform-sanitizer.ts`** — `"use server"` action with two exports:
+     - `getLegalFormSanitizerStats()` — scans `Client.legalForm`, returns `{ totalClients, canonicalOrNull, mappableCount, unmappedCount, mappable[], unmapped[] }`. Each issue includes `id · name · before · after` so the UI can preview transformations + deep-link unmapped clients.
+     - `sanitizeAllLegalForms()` — applies the 10-rule Arabic→English mapping in bulk, returns `{ attempted, successful, failed, errors }`. Idempotent (running twice on already-canonical data is a no-op).
+  2. **`page.tsx`** — added `getLegalFormSanitizerStats()` to the parallel `Promise.all` fetch + passed result to `DbToolsSection`.
+  3. **`components/db-tools-section.tsx`** — new card matches the existing pattern (Orphan Cleaner / JSON-LD Integrity / etc.): destructive badge if non-canonical found, 2-list preview (`auto-convertible` in yellow→green pills · `manual review` with deep-link to `/clients/[id]/edit`), single "Sanitize N Auto-Mappable Clients" button with sonner toast feedback + optimistic UI update (mappable count drops, unmapped stays).
+- **Live test (Playwright on dev DB):**
+  - Seed 1 mappable (kimazone: `شركة مساهمة`) + 1 unmapped (jbrseo: `كيان غير معروف`).
+  - Page load: badge shows `2 non-canonical · 2/5`. "Will be auto-converted (1)" lists kimazone `شركة مساهمة → JSC` (yellow→green pills). "Manual review required (1)" lists jbrseo with `كيان غير معروف` + Open deep-link.
+  - Click "Sanitize 1 Auto-Mappable Client" → toast "Sanitized 1 of 1 clients" → badge updates to `1 non-canonical · 1/5` → mappable section disappears → unmapped section stays.
+  - DB verify: kimazone `JSC` ✓, jbrseo unchanged `كيان غير معروف` ✓.
+- **TSC admin:** zero errors.
+- **Cleanup:** seed/restore scripts deleted post-test. DB restored to clean state (all null).
+- **Production rollout (now self-service for Khalid):**
+  1. Backup prod DB (`bash scripts/backup.sh`)
+  2. Push code (admin v0.57.0 → 0.57.1 bump + changelog)
+  3. Vercel auto-deploy
+  4. On `admin.modonty.com/database` → review the Legal Form Sanitizer card → click "Sanitize" if mappable count > 0 → review unmapped manually via deep-links
+- **Status:** ✅ DONE in DEV. Feature is now reusable for any future Arabic→enum legacy data on `legalForm`. Awaiting Khalid's go-ahead for prod push.
 
 ---
 
