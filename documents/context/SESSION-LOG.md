@@ -1,4 +1,36 @@
-# Session Context — Last Updated: 2026-05-21 (Session 102 — Dashboard workflow board + sidebar badges + collapsible sections · admin v0.57.3 SHIPPED)
+# Session Context — Last Updated: 2026-05-21 (Session 103 — Industry dropdown restored on Edit Client · admin v0.57.4 SHIPPED)
+
+---
+
+## 🟢 Session 103 — 2026-05-21 (Industry dropdown missing on Edit Client — UI restore + group-mapping fix)
+
+### TL;DR
+Khalid reported he couldn't find the Industry field on Edit Client. Live test confirmed: `<FormSelect>` was missing from `basic-info-section.tsx` entirely, despite `industries` prop being passed and `watch("industryId")` being called (in a dead `void(...)` block). On top of that, `industryId` was in the `required` field group's `fields[]` but `updateRequiredFields` doesn't write it — same silent-drop class as the URL bug. 4 of 5 dev clients had `industryId=null` for this reason. Fixed both: added the dropdown UI + moved `industryId` from `required` to `business` group so `updateBusinessFields` reliably writes it. Verified end-to-end through modonty SSR.
+
+### Files changed
+- **EDITED** `admin/app/(dashboard)/clients/helpers/client-form-config.ts` — moved `"industryId"` from `required.fields[]` to `business.fields[]`
+- **EDITED** `admin/app/(dashboard)/clients/components/form-sections/basic-info-section.tsx` — added `<FormSelect name="industryId">` with `industries.map(...)` rendering; removed `industryId` from dead `void(...)` block
+- **EDITED** `admin/scripts/add-changelog.ts` + `admin/package.json` (0.57.3 → 0.57.4)
+
+### Live test (Playwright)
+1. `/clients/.../edit` → Industry dropdown now visible with placeholder "Select industry"
+2. 20 industries listed (with 2 legacy duplicates — known data issue, deferred)
+3. Selected "اللوجستيات وسلاسل التوريد" → Update Client → DB updated correctly
+4. `modonty.com/industries/logistics-supply-chain` → renders "1 شركة موثوقة" + Kimazone card
+5. `modonty.com/clients/كيما-زون` → page contains "اللوجستيات" reference
+6. Full data flow admin → DB → modonty SSR confirmed
+
+### Push artifacts
+- Backup: `backups/backup-2026-05-21_*`
+- Version: admin 0.57.3 → **0.57.4**
+- Changelog: LOCAL + PROD synced (id `6a0ede4c5eae5abe813e2d38`)
+- TSC admin: zero source errors
+
+### Open items for next session
+- 🟡 (low priority) Industry dropdown shows 2 duplicate entries ("التجارة الإلكترونية" × 2 · "التعليم والتدريب" × 2) — legacy data dupes from earlier seed runs. Cleanup task.
+- 🟡 (low priority) URL silent-drop bug still present for `url/phone/contactType/sameAs/address fields/legal fields` — same root cause as the industry issue. Could be fixed by either moving those fields to their respective groups (like industry was), or by including them in `updateRequiredFields`. Not addressed in this push since Khalid hasn't surfaced the symptom from the user side yet.
+
+---
 
 ---
 

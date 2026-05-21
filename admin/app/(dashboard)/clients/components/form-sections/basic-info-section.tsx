@@ -48,7 +48,6 @@ export function BasicInfoSection({
     errors &&
     legalName &&
     foundingDate &&
-    industryId &&
     contactType &&
     sameAs &&
     numberOfEmployees &&
@@ -199,6 +198,21 @@ export function BasicInfoSection({
           placeholder="https://www.example.com"
           hint="Website — used in backlinks and SEO data"
         />
+        <FormSelect
+          label="Industry"
+          name="industryId"
+          value={industryId || undefined}
+          onValueChange={(value) => form.setValue("industryId", value ? value : null, { shouldValidate: true })}
+          error={errors.industryId?.message}
+          placeholder="Select industry"
+          hint="Used in SEO, client listing pages, and industry directory."
+        >
+          {industries.map((ind) => (
+            <SelectItem key={ind.id} value={ind.id}>
+              {ind.name}
+            </SelectItem>
+          ))}
+        </FormSelect>
       </div>
 
       <BusinessBriefSection form={form} showHeader={false} />

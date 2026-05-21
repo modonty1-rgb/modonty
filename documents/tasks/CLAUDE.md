@@ -1,6 +1,6 @@
 # CLAUDE — Live Test Observation Log
 
-**Last Updated:** 2026-05-21 — OBS-223 (Article Workflow Board + sidebar badges) · OBS-224 (Dashboard sections collapsible) ✅ DONE in dev · awaiting push confirmation.
+**Last Updated:** 2026-05-21 — OBS-225 (Industry dropdown restored on Edit Client + silent-drop fix) ✅ DONE + pushed as admin v0.57.4.
 
 > **Purpose:** This file is maintained by Claude (the AI agent) during every live test session.
 > When simulating a real user (client) navigating the admin or public site, any UX/QA issue
@@ -20,6 +20,30 @@ During any live test session:
 - Do NOT wait to be asked — automatic observation is mandatory
 - Every entry gets a severity: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW
 - After the session, entries move to MASTER-TODO for review
+
+---
+
+## Session: 2026-05-21 (later × 3) — Industry dropdown missing on Edit Client + silent-drop on save
+
+### OBS-225 ✅ DONE — Restored Industry <FormSelect> on Edit Client + fixed group-mapping silent-drop
+- **User direction (2026-05-21):** "كيف أعدل الصناعات تبع العميل من التعديل؟ أنا ماني لاقي منطقة الصناعات." → live test confirmed: 4 of 5 dev clients have industryId=null because admins have no UI to assign one. Kimazone among them.
+- **Root cause (two layers):**
+  1. **Missing UI:** `<FormSelect name="industryId">` was absent from `basic-info-section.tsx` despite the `industries` prop being passed and `watch("industryId")` being called. The watched value was discarded in a dead `void(...)` block.
+  2. **Silent drop in save flow (same class as URL bug — OBS-from-earlier-session-not-numbered):** `industryId` was listed in the `required` field group's `fields[]` in `client-form-config.ts`, but `updateRequiredFields` in `update-client-grouped.ts` doesn't write `industryId` to DB. Meanwhile `updateBusinessFields` DOES write it — but its group's `fields[]` only had `["contentPriorities"]`, so `hasGroupData("business", ...)` returned false unless contentPriorities was set → `updateBusinessFields` rarely fired for industry-only changes.
+- **Fix (3 files):**
+  - `client-form-config.ts` — moved `"industryId"` from the `required` group's `fields[]` to the `business` group's `fields[]`. Now `updateBusinessFields` is reliably called when industryId is in the payload.
+  - `basic-info-section.tsx` — added `<FormSelect name="industryId">` with `industries.map(...)` rendering all 20 industries. Placed in the Phone/ContactType/URL row (under Website URL, before Business Brief). Removed `industryId` from the dead `void(...)` consumer block.
+  - No schema/migration — all DB structure was already correct.
+- **Live test (Playwright, admin :3001 + modonty :3002, dev modonty_dev):**
+  1. Open `/clients/69e8927b6a15f350c2158a2e/edit` → new Industry dropdown visible with placeholder "Select industry" ✓
+  2. Click → 20 options listed (with some legacy duplicates — separate cleanup task not addressed here) ✓
+  3. Select "اللوجستيات وسلاسل التوريد" → click Update Client ✓
+  4. Verify DB: `kimazone.industryId = 69d020f3...` · `industry.name = "اللوجستيات وسلاسل التوريد"` ✓
+  5. Open modonty `/industries/logistics-supply-chain` → header shows "1 شركة موثوقة" + Kimazone card with logo + "10 مقال" ✓
+  6. Open modonty `/clients/كيما-زون` → page renders + body contains "اللوجستيات" string ✓
+- **Side note (not fixed in this push):** Industry dropdown shows duplicates ("التجارة الإلكترونية" × 2 · "التعليم والتدريب" × 2) — legacy data dupes from earlier seed runs. Separate cleanup task.
+- **TSC admin:** zero errors.
+- **Push:** admin 0.57.3 → 0.57.4 · changelog synced LOCAL + PROD (id `6a0ede4c5eae5abe813e2d38`).
 
 ---
 

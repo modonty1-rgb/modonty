@@ -12,13 +12,12 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.57.3 (admin)",
-    title: "admin v0.57.3 — Dashboard workflow board · sidebar count badges · collapsible sections",
+    version: "0.57.4 (admin)",
+    title: "admin v0.57.4 — Restore Industry dropdown on Edit Client (silent-drop fix)",
     items: [
-      { type: "feature" as const, text: "New Article Workflow board on the dashboard home (/). Seven tone-coded KPI cards (Writing · Draft · Awaiting Approval · Needs Revision · Scheduled · Published · Archived) with live counts across all clients. Each card is a clickable link to /articles?status=KEY for instant filtering." },
-      { type: "feature" as const, text: "Sidebar workflow links now show floating red count badges on top-right of the icon (matches the bell notification pattern). Six workflow transition links display the count of articles in the relevant source status. Caps at 99+." },
-      { type: "feature" as const, text: "All <DashboardSection> cards are now collapsible. Click the header to toggle open/closed — chevron rotates 180°. Each section is independent (not accordion); all open by default; no persistence. The drill-down link (e.g. 'All Articles') stays clickable separately from the toggle." },
-      { type: "feature" as const, text: "Added getArticleStatusCounts() server action with unstable_cache + tag 'article-status-counts'. Cache is invalidated via revalidateTag in 5 mutation paths: transition-article, gated-transition, archive-article, create-article, delete-article. Counts stay fresh after every workflow change." },
+      { type: "fix" as const, text: "Added back the Industry <FormSelect> on the Edit Client form (basic-info-section.tsx). The dropdown was missing from the UI — the prop and watch existed but no visible field. Admins now have a working dropdown with all 20 industries to assign clients." },
+      { type: "fix" as const, text: "Root cause #2: industryId was assigned to the 'required' field group in client-form-config.ts, but updateRequiredFields never wrote it to the DB. Moved industryId from 'required' to 'business' group so updateBusinessFields picks it up (which already writes industryId correctly). Same class of bug as the URL silent-drop." },
+      { type: "fix" as const, text: "Verified end-to-end live: assigned 'اللوجستيات وسلاسل التوريد' to Kimazone via /clients/.../edit → saved to DB → modonty.com/industries/logistics-supply-chain renders the client card + breadcrumb correctly + /clients/كيما-زون shows the industry tag. Full data flow admin → DB → modonty SSR confirmed." },
     ],
   },
 ];
