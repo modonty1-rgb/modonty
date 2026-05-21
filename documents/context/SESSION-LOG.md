@@ -1,4 +1,43 @@
-# Session Context — Last Updated: 2026-05-21 (Session 101 — Native alert/confirm purge · admin v0.57.2 SHIPPED)
+# Session Context — Last Updated: 2026-05-21 (Session 102 — Dashboard workflow board + sidebar badges + collapsible sections · admin v0.57.3 SHIPPED)
+
+---
+
+## 🟢 Session 102 — 2026-05-21 (Article Workflow Board + sidebar count badges + collapsible dashboard sections)
+
+### TL;DR
+Three connected admin enhancements shipped together as v0.57.3: (1) a 7-status KPI board on the dashboard home showing live article counts per status with click-to-filter, (2) tiny red count badges floating on top of the 6 workflow sidebar icons (matches bell notification pattern), (3) all `<DashboardSection>` cards became click-to-collapse with independent toggles. Single architectural change: a `getArticleStatusCounts()` server action with `unstable_cache` feeds both the dashboard board and the sidebar, invalidated by `revalidateTag("article-status-counts", "max")` in 5 article-mutation paths so counts always stay fresh.
+
+### Files changed
+- **NEW** `admin/app/(dashboard)/actions/article-status-counts.ts` — server action with 60s cache
+- **NEW** `admin/app/(dashboard)/components/sections/article-workflow-board.tsx` — 7-card grid wrapped in `<DashboardSection>`
+- **EDITED** `admin/app/(dashboard)/components/dashboard-section.tsx` — converted to client, wrapped body in `<Collapsible>`, chevron rotation, header becomes toggle button
+- **EDITED** `admin/app/(dashboard)/page.tsx` — added `<ArticleWorkflowBoard />` between alerts banner and GSC section
+- **EDITED** `admin/app/(dashboard)/layout.tsx` — fetches counts, passes to `<Sidebar>`
+- **EDITED** `admin/components/admin/sidebar.tsx` — accepts `articleStatusCounts` prop, `NavLink` renders floating red badge on top of icon when count > 0, `HREF_TO_STATUS` map links each workflow href to its source status
+- **EDITED** 5 mutation actions — added `revalidateTag("article-status-counts", "max")`: transition-article · gated-transition · archive-article · create-article · delete-article
+- **EDITED** `admin/scripts/add-changelog.ts` + `admin/package.json` (0.57.2 → 0.57.3)
+
+### Live test (Playwright, admin :3001, dev modonty_dev — 46 articles total)
+1. Dashboard board renders: Writing 39 · Draft 3 · Awaiting Approval 0 · Needs Revision 0 · Scheduled 1 · Published 3 · Archived 0
+2. Click Writing card → navigates to `/articles?status=WRITING` ✓
+3. Sidebar Articles group expanded: red floating 39 on Writing→Draft icon, 3 on Draft→Approval, no badges on zero-count rows. `asideHasHorizScroll: false` (Khalid's earlier "skull"/scrollbar concern resolved).
+4. Click "Article Workflow" header → cards collapse + chevron rotates 180°, "All Articles" link still clickable independently. Other sections remain in their state (independent toggles, not accordion).
+
+### Iteration notes during build (Khalid's mid-session feedback)
+- v1 had inline badges with label → made sidebar row wider → introduced horizontal scrollbar. Fixed by moving badges to absolute-positioned floating dots on top-right of the icon (matches bell pattern).
+- v1 badge color was amber-500 → Khalid: "ألوان العداد ليست واضحة" → switched to red-500 with white text + ring (universal notification standard, max contrast).
+- v1 collapsible plan included localStorage persistence + accordion mode → Khalid: "لا محتاجة local storage ولا حاجة. الموضوع بسيط" → simplified to independent toggles, all-open default, no persistence.
+
+### Push artifacts
+- Backup: `backups/backup-2026-05-21_*` (66 collections)
+- Version: admin 0.57.2 → **0.57.3**
+- Changelog: LOCAL + PROD synced (id `6a0ec9b784661253525a5b2c`)
+- TSC admin: zero source errors
+
+### Open items for next session
+- None on this thread.
+
+---
 
 ---
 

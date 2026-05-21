@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import {
   calculateWordCountImproved,
@@ -223,6 +223,7 @@ export async function createArticle(data: ArticleFormData) {
     }
 
     revalidatePath("/articles");
+    revalidateTag("article-status-counts", "max");
     await revalidateModontyTag("articles");
     try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
 

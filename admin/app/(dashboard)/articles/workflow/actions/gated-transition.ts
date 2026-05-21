@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 import { SITE_BASE_URL } from "@/lib/gsc/client";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
@@ -156,6 +156,7 @@ export async function gatedTransitionAction(
     revalidatePath("/articles");
     revalidatePath("/articles/workflow");
     revalidatePath(`/articles/${articleId}`);
+    revalidateTag("article-status-counts", "max");
 
     return {
       success: true,

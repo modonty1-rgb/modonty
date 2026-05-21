@@ -1,6 +1,6 @@
 # CLAUDE — Live Test Observation Log
 
-**Last Updated:** 2026-05-21 — OBS-222 (Native alert/confirm purge in admin → shadcn AlertDialog + toast) ✅ DONE + pushed as admin v0.57.2.
+**Last Updated:** 2026-05-21 — OBS-223 (Article Workflow Board + sidebar badges) · OBS-224 (Dashboard sections collapsible) ✅ DONE in dev · awaiting push confirmation.
 
 > **Purpose:** This file is maintained by Claude (the AI agent) during every live test session.
 > When simulating a real user (client) navigating the admin or public site, any UX/QA issue
@@ -20,6 +20,46 @@ During any live test session:
 - Do NOT wait to be asked — automatic observation is mandatory
 - Every entry gets a severity: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW
 - After the session, entries move to MASTER-TODO for review
+
+---
+
+## Session: 2026-05-21 (later × 2) — Dashboard sections become collapsible (single-file change)
+
+### OBS-224 ✅ DONE — All `<DashboardSection>` cards are now click-to-collapse — single file edit, all consumers benefit
+- **User direction:** "حط الأقسام في collapse — نفس الـ design اللي أنت بتقول عنه، بس اللهم إنه كله أضغط وأفتح. الموضوع بسيط، لا محتاجة local storage ولا حاجة."
+- **Senior decisions taken (no questions, kept it simple):** independent toggles (not accordion), all sections default OPEN, no persistence (resets to open on every page load — which matches Khalid's "بسط لي الموضوع").
+- **Built (one file changed):**
+  - `admin/app/(dashboard)/components/dashboard-section.tsx` — converted from server component to client (added `"use client"` + `useState`). Wrapped body in shadcn `<Collapsible>`. Header is now a `<button>` (`type="button"`, `aria-expanded`, `aria-label="${open ? 'Collapse' : 'Expand'} ${title}"`) that toggles state. ChevronDown icon rotates 180° on toggle with a 200ms transition. New `defaultOpen?: boolean` prop (default `true`) — future opt-out.
+  - Drill-down link kept OUTSIDE the toggle area as a sibling — clicking "All Articles" / "Open Search Console" navigates without accidentally toggling the section. `e.stopPropagation()` on the link as belt-and-suspenders.
+- **Coverage (automatic):** all 4 consumers benefit without code changes — `<ArticleWorkflowBoard>`, `<GscSection>`, GTM/GA4 placeholder, `<DbSection>`. The alerts banner stays as-is (it's not a `DashboardSection`, by design — alerts must stay visible).
+- **Live test (Playwright):**
+  - Page load: 4 sections all open with chevrons pointing up. Layout identical to previous behavior.
+  - Click "Article Workflow" header → cards (Writing 39 / Draft 3 / etc.) collapse instantly, chevron rotates 180°, "All Articles" link still clickable.
+  - Click "Search Console" header (while Workflow is closed) → independent toggle, no accordion behavior, both can be in any state.
+- **TSC admin:** zero errors.
+- **Status:** ✅ DONE in DEV. Awaiting Khalid's explicit "push" / "ادفع" / "go ahead" before bumping admin v0.57.2 → 0.57.3 + commit + push.
+
+---
+
+## Session: 2026-05-21 (later) — Article Workflow Board on dashboard + sidebar floating badges
+
+### OBS-223 ✅ DONE — 7-status workflow KPI board on `/` + tiny floating count badges on sidebar workflow links
+- **User direction (2026-05-21):** "أبغى أعرف كم عدد الـ articles اللي منشورة واللي مستنية Draft، واللي كل واحدة بحالتها. ويفضل إنه يكون برضو فيه counter عند كل مرحلة." Plus "do the best as senior" → 4 senior decisions taken (Dashboard placement · click-to-filter · sidebar badges yes · all 7 statuses including ARCHIVED).
+- **Built:**
+  - `admin/app/(dashboard)/actions/article-status-counts.ts` (new) — `getArticleStatusCounts()` returns `Record<ArticleStatus, number>` for all 7 statuses (WRITING / DRAFT / AWAITING_APPROVAL / NEEDS_REVISION / SCHEDULED / PUBLISHED / ARCHIVED). Cached 60s via `unstable_cache` with tag `article-status-counts`.
+  - `admin/app/(dashboard)/components/sections/article-workflow-board.tsx` (new) — server component reading the action, renders inside `<DashboardSection>` wrapper with 7 tone-coded cards (violet/amber/blue/red/cyan/emerald/slate) in a 2/3/4 responsive grid. Each card is a clickable `<Link>` to `/articles?status=KEY` (filter the articles list).
+  - `admin/app/(dashboard)/page.tsx` — added `<ArticleWorkflowBoard />` between the alerts banner and the GscSection (workflow is more actionable than analytics).
+  - `admin/app/(dashboard)/layout.tsx` — fetches counts once at layout level (single Promise.all already there), passes to `<Sidebar articleStatusCounts={...} />` as a prop. `.catch(() => null)` guard so a DB blip doesn't crash the entire dashboard.
+  - `admin/components/admin/sidebar.tsx` — new `HREF_TO_STATUS` map links each workflow href to the relevant ArticleStatus enum. `NavLink` accepts `statusCounts` prop and renders a tiny floating badge **on top of the icon** (absolute -top-1.5 -end-1.5, h-14 w-14 px-1 ring-2 ring-card, amber-500/white when inactive, primary-foreground/primary when active). Caps display at "99+". Initial implementation used inline badges after the label, but Khalid flagged that it widened the row and introduced a horizontal scrollbar — corrected to floating-on-icon pattern (matches the bell notification badge in the header).
+  - Cache invalidation: added `revalidateTag("article-status-counts", "max")` (Next.js 16 signature) to 5 mutation paths: `transition-article.ts`, `gated-transition.ts`, `archive-article.ts`, `create-article.ts`, `delete-article.ts`. So the board + sidebar badges stay fresh after every workflow change.
+- **Live test (Playwright, admin :3001, dev modonty_dev):**
+  - Dashboard board renders 7 cards with live counts: Writing 39 / Draft 3 / Awaiting Approval 0 / Needs Revision 0 / Scheduled 1 / Published 3 / Archived 0 (total 46 articles).
+  - Sidebar Articles group expanded: amber floating "39" badge on Writing → Draft icon, "3" on Draft → Approval icon, no badges on the 4 zero-count rows.
+  - `asideHasHorizScroll: false` confirmed via JS — Khalid's "skull" (horizontal scrollbar) is gone.
+  - Click on Writing card → navigates to `/articles?status=WRITING` (filter works).
+- **TSC admin:** zero source errors. Two API gotchas surfaced and fixed: (1) Next.js 16 requires `revalidateTag(tag, profile)` with profile arg — used "max". (2) `<DashboardSection>` `accent` type is `"blue" | "cyan" | "emerald"` only — picked "blue" (was initially "violet" which doesn't exist).
+- **Push:** NOT YET. Code committed locally is **NOT done yet either** — waiting for Khalid's explicit "push" / "ادفع" / "go ahead" before bumping version + writing changelog + commit + push (per `feedback_push_safety` memory rule that I previously violated twice).
+- **Status:** ✅ DONE in DEV. Awaiting push confirmation.
 
 ---
 

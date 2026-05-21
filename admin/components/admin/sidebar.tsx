@@ -65,6 +65,18 @@ import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import pkg from "@/package.json";
+import type { ArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
+
+// Maps a workflow href → the ArticleStatus whose count should appear as a badge.
+// Two transitions share AWAITING_APPROVAL (approval can go either to revision or to scheduled).
+const HREF_TO_STATUS: Record<string, keyof ArticleStatusCounts> = {
+  "/articles/workflow/writing-to-draft": "WRITING",
+  "/articles/workflow/draft-to-approval": "DRAFT",
+  "/articles/workflow/approval-to-revision": "AWAITING_APPROVAL",
+  "/articles/workflow/approval-to-scheduled": "AWAITING_APPROVAL",
+  "/articles/workflow/revision-to-draft": "NEEDS_REVISION",
+  "/articles/workflow/scheduled-to-published": "SCHEDULED",
+};
 
 type IconComponent = React.ComponentType<{ className?: string }>;
 
@@ -169,12 +181,27 @@ const topItems: MenuItem[] = [
   { icon: LineChart, label: "SEO Overview", href: "/seo-overview" },
 ];
 
-function NavLink({ item, collapsed, pathname }: { item: MenuItem; collapsed: boolean; pathname: string }) {
+function NavLink({
+  item,
+  collapsed,
+  pathname,
+  statusCounts,
+}: {
+  item: MenuItem;
+  collapsed: boolean;
+  pathname: string;
+  statusCounts?: ArticleStatusCounts | null;
+}) {
   const Icon = item.icon;
   const isActive =
     item.href === "/" || item.exact
       ? pathname === item.href
       : pathname === item.href || pathname?.startsWith(item.href + "/");
+
+  const statusKey = HREF_TO_STATUS[item.href];
+  const badgeCount =
+    statusKey && statusCounts ? statusCounts[statusKey] : null;
+  const showBadge = badgeCount !== null && badgeCount !== undefined && badgeCount > 0;
 
   return (
     <Link
@@ -186,9 +213,24 @@ function NavLink({ item, collapsed, pathname }: { item: MenuItem; collapsed: boo
           ? "bg-primary text-primary-foreground"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
-      title={collapsed ? item.label : undefined}
+      title={collapsed ? `${item.label}${showBadge ? ` (${badgeCount})` : ""}` : undefined}
     >
-      <Icon className="h-4 w-4 shrink-0" />
+      <span className="relative shrink-0 inline-flex">
+        <Icon className="h-4 w-4" />
+        {showBadge && (
+          <span
+            className={cn(
+              "absolute -top-2 -end-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold tabular-nums leading-none ring-2 shadow-sm",
+              isActive
+                ? "bg-white text-red-600 ring-primary"
+                : "bg-red-500 text-white ring-card dark:ring-card"
+            )}
+            aria-label={`${badgeCount} ${item.label}`}
+          >
+            {badgeCount > 99 ? "99+" : badgeCount}
+          </span>
+        )}
+      </span>
       {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
     </Link>
   );
@@ -200,7 +242,7 @@ function hasActiveChild(items: MenuItem[], pathname: string): boolean {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: ArticleStatusCounts | null }) {
   const pathname = usePathname();
   const { collapsed, toggle } = useSidebar();
 
@@ -239,7 +281,13 @@ export function Sidebar() {
         {/* Top-level links (always visible) */}
         <div className="space-y-0.5 mb-3">
           {topItems.map((item) => (
-            <NavLink key={item.href} item={item} collapsed={collapsed} pathname={pathname} />
+            <NavLink
+              key={item.href}
+              item={item}
+              collapsed={collapsed}
+              pathname={pathname}
+              statusCounts={articleStatusCounts}
+            />
           ))}
         </div>
 
@@ -254,7 +302,13 @@ export function Sidebar() {
               <div key={group.title} className="space-y-0.5">
                 <div className="mx-2 mb-1 border-t border-border/30" />
                 {group.items.map((item) => (
-                  <NavLink key={item.href} item={item} collapsed pathname={pathname} />
+                  <NavLink
+                    key={item.href}
+                    item={item}
+                    collapsed
+                    pathname={pathname}
+                    statusCounts={articleStatusCounts}
+                  />
                 ))}
               </div>
             );
@@ -277,7 +331,13 @@ export function Sidebar() {
               <CollapsibleContent>
                 <div className="ms-3 ps-3 border-s border-border/40 mt-0.5 space-y-0.5">
                   {group.items.map((item) => (
-                    <NavLink key={item.href} item={item} collapsed={false} pathname={pathname} />
+                    <NavLink
+                      key={item.href}
+                      item={item}
+                      collapsed={false}
+                      pathname={pathname}
+                      statusCounts={articleStatusCounts}
+                    />
                   ))}
                 </div>
               </CollapsibleContent>

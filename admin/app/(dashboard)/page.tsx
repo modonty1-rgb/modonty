@@ -6,6 +6,7 @@ import { getDashboardAlerts } from "./actions/dashboard-actions";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
 import { DateRangeSelector } from "./components/date-range-selector";
 import { DashboardSection } from "./components/dashboard-section";
+import { ArticleWorkflowBoard } from "./components/sections/article-workflow-board";
 import { DbSection } from "./components/sections/db-section";
 import { GscSection } from "./components/sections/gsc-section";
 import { GscSectionSkeleton } from "./components/sections/gsc-section-skeleton";
@@ -30,6 +31,9 @@ export default async function DashboardPage() {
 
       {/* Alert Bar (cross-source urgent issues) */}
       <DashboardAlertsBanner alerts={alerts} />
+
+      {/* Article Workflow board (live counts per status) */}
+      <ArticleWorkflowBoard />
 
       {/* Section 1 — Search Console (live) */}
       <Suspense fallback={<GscSectionSkeleton />}>

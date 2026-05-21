@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { ArticleStatus } from "@prisma/client";
@@ -18,6 +18,7 @@ export async function archiveArticle(id: string): Promise<{ success: boolean; er
 
     revalidatePath(`/articles/${id}`);
     revalidatePath("/articles");
+    revalidateTag("article-status-counts", "max");
     await revalidateModontyTag("articles");
     return { success: true };
   } catch (error) {
@@ -37,6 +38,7 @@ export async function unarchiveArticle(id: string): Promise<{ success: boolean; 
 
     revalidatePath(`/articles/${id}`);
     revalidatePath("/articles");
+    revalidateTag("article-status-counts", "max");
     await revalidateModontyTag("articles");
     return { success: true };
   } catch (error) {

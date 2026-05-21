@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.57.2 (admin)",
-    title: "admin v0.57.2 — Native alert/confirm purge: shadcn AlertDialog + toast everywhere",
+    version: "0.57.3 (admin)",
+    title: "admin v0.57.3 — Dashboard workflow board · sidebar count badges · collapsible sections",
     items: [
-      { type: "feature" as const, text: "Replaced native browser confirm() on the Publish Now button (scheduled-row-actions.tsx) with a shadcn AlertDialog. RTL-friendly, brand-styled, with an explicit warning that publishing is immediate and irreversible. Cancel and 'نعم، انشر الآن' buttons keep the user in control." },
-      { type: "feature" as const, text: "Replaced 6 native alert() calls across batch SEO regen flows with the existing useToast() hook. Affected files: industries/components/industries-page-client.tsx, industries/components/revalidate-all-seo-button.tsx, tags/components/tags-page-client.tsx, tags/components/revalidate-all-seo-button.tsx, categories/components/categories-page-client.tsx, categories/components/revalidate-all-seo-button.tsx." },
-      { type: "feature" as const, text: "Each toast shows success/failure breakdown ('N succeeded · N failed · N total') with destructive variant when any failure occurred. router.refresh() replaces the previous full-page window.location.reload() — softer refresh, no scroll-jump, no flash of empty content." },
-      { type: "fix" as const, text: "Zero native browser dialogs remain across admin/(dashboard). Verified via grep — 0 matches for alert(/confirm( in app/(dashboard)." },
+      { type: "feature" as const, text: "New Article Workflow board on the dashboard home (/). Seven tone-coded KPI cards (Writing · Draft · Awaiting Approval · Needs Revision · Scheduled · Published · Archived) with live counts across all clients. Each card is a clickable link to /articles?status=KEY for instant filtering." },
+      { type: "feature" as const, text: "Sidebar workflow links now show floating red count badges on top-right of the icon (matches the bell notification pattern). Six workflow transition links display the count of articles in the relevant source status. Caps at 99+." },
+      { type: "feature" as const, text: "All <DashboardSection> cards are now collapsible. Click the header to toggle open/closed — chevron rotates 180°. Each section is independent (not accordion); all open by default; no persistence. The drill-down link (e.g. 'All Articles') stays clickable separately from the toggle." },
+      { type: "feature" as const, text: "Added getArticleStatusCounts() server action with unstable_cache + tag 'article-status-counts'. Cache is invalidated via revalidateTag in 5 mutation paths: transition-article, gated-transition, archive-article, create-article, delete-article. Counts stay fresh after every workflow change." },
     ],
   },
 ];
