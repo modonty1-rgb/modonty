@@ -1,4 +1,44 @@
-# Session Context — Last Updated: 2026-05-20 (Session 99 — Legal Form fix · admin v0.57.1 SHIPPED)
+# Session Context — Last Updated: 2026-05-21 (Session 100 — Console sign-out UX · console v0.10.1 SHIPPED)
+
+---
+
+## 🟢 Session 100 — 2026-05-21 (Sign-out flow: dedicated /signed-out page · industry-standard SaaS UX)
+
+### TL;DR
+Khalid flagged the console sign-out UX — after signing out, users were dropped straight back onto the login form (`/`), which feels broken and is an industry anti-pattern (Stripe / Notion / Linear / Vercel / Slack all route signed-out users to a confirmation page or marketing site). Built dedicated `/signed-out` page with brand-consistent layout, security note, and two explicit CTAs (sign in again / visit modonty.com). No auto-redirect — user agency preserved. Shipped as console v0.10.1.
+
+### Files changed
+- **`console/app/signed-out/page.tsx`** (new) — static page (no auth dependency), Modonty logo + ✓ confirmation card + 2 CTAs + security footer
+- **`console/lib/ar.ts`** — new `signedOut` namespace (pageTitle / heading / subtitle / signInAgain / visitModonty / safeNote)
+- **`console/app/(dashboard)/components/sidebar.tsx:194`** — `callbackUrl: "/"` → `"/signed-out"` (desktop)
+- **`console/app/(dashboard)/components/mobile-sidebar.tsx:157`** — same change (mobile)
+- **`console/package.json`** — 0.10.0 → 0.10.1
+- **`admin/scripts/add-changelog.ts`** — entry written to LOCAL + PROD changelog DBs (id `6a0ebe2724a184b3eafc183d` / `...3e`)
+
+### Live test (Playwright, dev modonty_dev)
+1. Direct navigate to `/signed-out` → page renders with logo + heading + 2 CTAs + security note ✓ (screenshot saved)
+2. Login as kimazone (test password set on dev DB only) → land on `/dashboard` ✓
+3. Click sidebar sign-out button → NextAuth redirects to `console.modonty.com/signed-out` (PROD — NEXTAUTH_URL points to prod even in local dev). This **proves** the new callback URL fires. Production currently shows not-found because deploy hasn't happened yet — exactly the expected behaviour pre-push.
+
+### Push artifacts
+- Backup: `backups/backup-2026-05-21_*` (66 collections)
+- Version: console 0.10.0 → **0.10.1**
+- Changelog: LOCAL + PROD synced
+
+### Best-practice references (researched before building)
+- Stripe Dashboard · Notion · Linear · Vercel: all redirect to confirmation/marketing
+- GitHub · Slack: redirect to homepage with sign-out banner
+- Common rationale: (1) security — login form right after signout invites session-fixation, (2) UX — same screen = "did signout fail?", (3) brand — chance to reinforce identity / share next-step CTAs
+- No-auto-redirect choice: matches Stripe / Notion / Linear — auto-redirect feels patronizing; user picks their next move
+
+### Cleanup
+- One-shot dev scripts (`find-dev-client-creds.ts`, `set-dev-test-password.ts`) deleted post-test.
+- Kimazone test password on DEV was set to `TestSignOut123!` for the live test. Memory rule notes the original PROD test creds (`info@kimazone.com / Kimazone2026!`) still apply on PROD — only DEV password was overwritten.
+
+### Open items for next session
+- 🟢 (future) Could add a session-expired variant of the same page (`/signed-out?reason=expired`) so users who time out see a clear "your session expired" message instead of getting unceremoniously dropped to login.
+
+---
 
 ---
 

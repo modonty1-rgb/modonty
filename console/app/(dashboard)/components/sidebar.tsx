@@ -191,7 +191,7 @@ export function Sidebar({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => signOut({ callbackUrl: "/signed-out" })}
           className={cn(
             "w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10",
             isCollapsed && "justify-center px-0"

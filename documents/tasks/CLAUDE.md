@@ -1,6 +1,6 @@
 # CLAUDE — Live Test Observation Log
 
-**Last Updated:** 2026-05-20 — OBS-219 (Legal Form i18n + Sanitizer in admin DB Maintenance) ✅ DONE in dev. Awaiting prod rollout via UI.
+**Last Updated:** 2026-05-21 — OBS-221 (Console sign-out → dedicated /signed-out page) ✅ DONE + pushed as console v0.10.1.
 
 > **Purpose:** This file is maintained by Claude (the AI agent) during every live test session.
 > When simulating a real user (client) navigating the admin or public site, any UX/QA issue
@@ -20,6 +20,28 @@ During any live test session:
 - Do NOT wait to be asked — automatic observation is mandatory
 - Every entry gets a severity: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW
 - After the session, entries move to MASTER-TODO for review
+
+---
+
+## Session: 2026-05-21 — Console sign-out UX upgrade
+
+### OBS-221 ✅ DONE — Sign-out now lands on dedicated `/signed-out` confirmation page (was dropping users back on the login form)
+- **User feedback (2026-05-21):** "بعد ما أعمل sign out في الـ console، يرجعني على Login form. أبغى يرجعني على مكان تاني — إيش best practice؟"
+- **Industry research (best-practice answer):** Stripe / Notion / Linear / Vercel / Slack — none of them route a signed-out user back to a fresh login form. Pattern is a confirmation page with explicit CTAs (sign in again / visit homepage / etc.). Reasons: (1) security — login form right after signout invites session-fixation / shoulder-surfing, (2) UX — same screen = "did signout fail?", (3) brand reinforcement.
+- **Built:**
+  - `console/app/signed-out/page.tsx` (new, server-side static) — Modonty logo + emerald ✓ icon + heading "تم تسجيل خروجك بنجاح" + subtitle + 2 CTAs ("تسجيل الدخول مرة ثانية" → `/login` · "العودة لـ modonty.com" → `https://modonty.com`) + ShieldCheck footer "تم إغلاق جلستك بأمان وحُذفت بيانات الدخول من هذا المتصفح."
+  - `console/lib/ar.ts` — new `signedOut` namespace with 6 strings (pageTitle / heading / subtitle / signInAgain / visitModonty / safeNote)
+  - `console/app/(dashboard)/components/sidebar.tsx:194` — `signOut({ callbackUrl: "/signed-out" })` (was "/")
+  - `console/app/(dashboard)/components/mobile-sidebar.tsx:157` — same change
+- **No auto-redirect** — user picks next step (Stripe / Notion / Linear pattern). Auto-redirect after N seconds feels patronizing.
+- **No middleware to update** — console has no auth middleware; route-level auth via `auth()` in each protected page. `/signed-out` is public by omission.
+- **Live test (Playwright, dev modonty_dev):**
+  1. Direct navigate to `/signed-out` → page renders cleanly (screenshot saved). Title: "تم تسجيل الخروج · مدوّنتي". Zero console errors.
+  2. Login as kimazone (set test password on DEV) → land on `/dashboard` ✓
+  3. Click sign-out button in sidebar → NextAuth redirected to `console.modonty.com/signed-out` (NEXTAUTH_URL forces prod hostname even on local) — **proves the new callback URL is firing**. Production shows not-found until deploy lands.
+- **TSC console:** zero source errors (only `.next/dev/types/` Turbopack cache noise — harmless).
+- **Cleanup:** dev-only scripts (`find-dev-client-creds.ts`, `set-dev-test-password.ts`) deleted post-test.
+- **Push:** console v0.10.0 → 0.10.1 · changelog synced to LOCAL + PROD (id `6a0ebe27...`) · awaiting commit + push.
 
 ---
 

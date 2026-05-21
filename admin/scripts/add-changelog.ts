@@ -12,14 +12,12 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.57.1 (admin)",
-    title: "admin v0.57.1 — Legal Form fix: bilingual UI + Sanitizer in DB Maintenance",
+    version: "0.10.1 (console)",
+    title: "console v0.10.1 — Sign-out UX upgrade: dedicated confirmation page",
     items: [
-      { type: "fix" as const, text: "Fixed: Update Client form was blocked when DB held a free-text Arabic legalForm (e.g. 'شركة شخص واحد'). The strict Zod enum on client-form-schema.ts rejected the loaded value, blocking ALL form fields — including password updates — on the affected client." },
-      { type: "feature" as const, text: "Added 'One-Person Company' as a canonical enum value (شركة الشخص الواحد) — distinct legal entity under Saudi Companies Law M/132 (2022). Total accepted values: LLC · JSC · Sole Proprietorship · Partnership · Limited Partnership · Simplified Joint Stock Company · One-Person Company." },
-      { type: "feature" as const, text: "Bilingual dropdown in legal-section.tsx: SelectItems now display Arabic labels (شركة ذات مسؤولية محدودة, شركة مساهمة, مؤسسة فردية, شركة تضامن, شركة توصية بسيطة, شركة مساهمة مبسطة, شركة الشخص الواحد) while values remain canonical English enum." },
-      { type: "feature" as const, text: "New 'Legal Form Sanitizer' card on /database page: scans Client.legalForm for non-canonical values, previews auto-mappable Arabic→English transformations (10-rule mapping), surfaces unmapped clients for manual review with deep-link to /clients/[id]/edit, one-click Sanitize button applies the migration via server action." },
-      { type: "feature" as const, text: "New server actions in admin/app/(dashboard)/database/actions/legalform-sanitizer.ts: getLegalFormSanitizerStats() + sanitizeAllLegalForms(). Reusable for any future legacy Arabic legalForm values — not a one-shot migration." },
+      { type: "feature" as const, text: "New /signed-out page replaces the silent redirect-to-login-form behaviour. Shows a clear ✓ confirmation card ('تم تسجيل خروجك بنجاح'), brand-consistent layout with Modonty logo, two CTAs (تسجيل الدخول مرة ثانية / العودة لـ modonty.com), and a security note ('تم إغلاق جلستك بأمان')." },
+      { type: "feature" as const, text: "Updated callbackUrl in both desktop sidebar.tsx and mobile-sidebar.tsx from '/' to '/signed-out'. Industry pattern (Stripe / Notion / Linear / Vercel) — never drop a signed-out user straight onto a fresh login form (security + UX rationale)." },
+      { type: "feature" as const, text: "No auto-redirect — user chooses next action explicitly. Matches modern SaaS sign-out flow." },
     ],
   },
 ];
