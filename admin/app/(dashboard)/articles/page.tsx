@@ -70,7 +70,7 @@ export default async function ArticlesPage({
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="space-y-6">
       <Suspense fallback={<ArticlesLoading />}>
         <ArticlesContent filters={filters} />
       </Suspense>

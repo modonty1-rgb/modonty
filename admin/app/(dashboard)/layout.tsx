@@ -36,7 +36,7 @@ export default async function DashboardLayout({
         <Sidebar articleStatusCounts={articleStatusCounts} />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
-          <main className="flex-1 overflow-y-auto scrollbar-thin">{children}</main>
+          <main className="flex-1 overflow-y-auto scrollbar-thin p-4 sm:p-6">{children}</main>
         </div>
       </div>
     </SidebarProvider>

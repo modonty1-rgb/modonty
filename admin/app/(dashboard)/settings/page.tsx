@@ -6,7 +6,7 @@ export default async function SettingsPage() {
   const isDev = process.env.NODE_ENV === "development";
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold">Settings</h1>

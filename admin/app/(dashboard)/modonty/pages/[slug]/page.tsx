@@ -32,7 +32,7 @@ export default async function ModontyPageEditPage({ params }: { params: Promise<
   };
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>}>
         <PageFormWrapper
           slug={slug}

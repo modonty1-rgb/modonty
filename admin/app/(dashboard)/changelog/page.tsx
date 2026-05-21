@@ -10,7 +10,7 @@ export default async function ChangelogPage() {
   ]);
 
   return (
-    <div className="p-4 sm:p-6 max-w-[900px] mx-auto">
+    <div className="max-w-[900px] mx-auto">
       <ChangelogClient
         changelogs={JSON.parse(JSON.stringify(changelogs))}
         notes={JSON.parse(JSON.stringify(notes))}

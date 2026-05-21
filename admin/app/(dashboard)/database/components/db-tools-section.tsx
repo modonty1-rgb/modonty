@@ -96,7 +96,7 @@ export function DbToolsSection({
             All maintenance tools are healthy
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Nothing needs attention right now. Reference data (Collection Sizes) still shown below.
+            Nothing needs attention right now.
           </p>
         </div>
       )}

@@ -12,18 +12,16 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.59.0 (admin)",
-    title: "admin v0.59.0 — Auto-Maintenance: 10-step one-click DB cleanup + content-owner UX overhaul",
+    version: "0.59.1 (admin)",
+    title: "admin v0.59.1 — Page split (Database vs Maintenance) + Pricing & Leads hub + main layout padding refactor",
     items: [
-      { type: "feature" as const, text: "/database completely redesigned — Tabs (Maintenance/Data Tables/Backup) + Health Summary strip + Auto-Maintenance inline progress panel (no dialog). 10 deterministic clean-up steps run sequentially with live per-step progress bars: Expired OTPs · Expired Sessions · Stale Versions (30d+) · TTL Indexes · JSON-LD Regen · Canonical URLs · Legal Forms · Cloudinary Orphans · Sitemap Refresh (GSC) · Soft-Deleted Comments (30d+)." },
-      { type: "feature" as const, text: "Cloudinary Orphan Sweep — scans Cloudinary by Modonty-only prefixes (modonty/, general/, clients/, admins/) and deletes files with no DB record, older than 1h. CRITICAL safety scope: shared Cloudinary account means we double-check prefix BEFORE every destroy — other projects' files cannot be touched. DEV run cleaned 84 real orphans." },
-      { type: "feature" as const, text: "Sitemap Freshness Ping — auto-resubmits /sitemap.xml + /image-sitemap.xml to Google Search Console if last submission > 24h ago. Helps Google detect new content faster." },
-      { type: "feature" as const, text: "Canonical URL Sanitizer — fixes legacy stored canonicalUrl values that don't match what modonty.com would emit at runtime. Completes Session 104b indexing bug fix data-side cleanup." },
-      { type: "feature" as const, text: "Unused Media moved from /database to /media as an inline dialog (amber banner → opens dialog with thumbnail · filename · size · per-file Open/Delete actions). Content owner now controls media review in its natural place." },
-      { type: "feature" as const, text: "Article version snapshots cleanup handled silently in auto-maintenance (was a banner on /articles, removed). 30-day threshold matches industry retention." },
-      { type: "fix" as const, text: "Media stats reconciliation — single source of truth via MEDIA_USED_WHERE/MEDIA_UNUSED_WHERE (OR of featuredArticles + logoClients + heroImageClients). Stats `unused` count now matches the /media filter result 1:1 (was 58 vs 7 mismatch)." },
-      { type: "fix" as const, text: "media-grid renders 'Host not allowed' placeholder for any image with hostname not in next.config remotePatterns — prevents the page from crashing on legacy/test rows with bad URLs." },
-      { type: "feature" as const, text: "Data Tables tab now hosts Storage Usage (MongoDB collection sizes) — moved from Maintenance tab to keep system tools and data references logically separated." },
+      { type: "feature" as const, text: "/database split into two routes — /database (passive: stats header + Data Tables + Backup & Restore) and /maintenance (action: Health Summary + Auto-Maintenance inline panel + tool cards). Each route has a clean single purpose; one source of truth for both." },
+      { type: "feature" as const, text: "/database redesigned as Health Command Center — 4-card KPI strip (Total Records · Storage with progress vs 512MB Free Tier · Collections count · Last Backup with age tone), Storage Breakdown stacked bar revealing which collection dominates disk (Articles 86.5% on dev), collapsible per-group Data Tables, Backup & Restore." },
+      { type: "feature" as const, text: "/subscription-tiers transformed into 'Pricing & Leads' hub — promoted to top-level sidebar item (no longer under System). 5-card KPI strip (Active Clients · Est. Annual Revenue 54,660 SAR · Most Adopted Tier · Avg Articles/Client · jbrseo Signups with last-synced timeAgo). Tabs: Plans (4-tier cards with dual-currency 🇸🇦+🇪🇬 + Client Distribution stacked bar) and Signups (the entire former /jbrseo-subscribers content: Sync button + filterable searchable table)." },
+      { type: "feature" as const, text: "Dual-market pricing surfaced — every tier card now shows Saudi (SAR) and Egypt (EGP) prices side by side at the monthly-equivalent-of-annual rate. Reads from `SubscriptionTierConfig.pricing` JSON (synced from JBRSEO landing-{sa,eg}.ts via new scripts/sync-tier-pricing.ts), falls back to in-code constants if DB null." },
+      { type: "fix" as const, text: "/jbrseo-subscribers fully merged into Pricing & Leads — route deleted, sidebar entry removed, 4 files relocated (sync action, queries renamed to jbrseo-queries.ts, table component, sync button), all imports rewired, revalidatePath updated. Zero dead refs verified via grep." },
+      { type: "fix" as const, text: "Main layout padding refactor — added p-4 sm:p-6 to <main> in dashboard/layout.tsx (single source of truth), bulk-removed the same padding from 49 page files that previously each carried their own copy. Any new page now inherits correct spacing without copy-pasting the pattern." },
+      { type: "feature" as const, text: "Sidebar: 'Plans & Pricing' renamed to 'Pricing & Leads' to reflect the merged hub (pricing catalog + signup leads), promoted from System group to top-level visibility next to SEO Overview." },
     ],
   },
 ];

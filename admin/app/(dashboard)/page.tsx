@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   const today = new Date();
 
   return (
-    <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="max-w-[1280px] mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>

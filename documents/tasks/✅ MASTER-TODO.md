@@ -1,7 +1,7 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-21 (Session 104e — Auto-Maintenance now 10 steps inline (Cloudinary Orphans + Sitemap Freshness + Soft-Deleted Comments 30d) · Canonical Sanitizer · Storage → Data Tables · Unused Media → /media dialog · ready for Google indexing · awaiting push)
-> **الإصدار الحالي:** admin v0.58.0 (pending push, includes Sessions 104b/104c/104d/104e) · modonty v1.48.2 · console v0.10.0
+> **آخر تحديث:** 2026-05-22 (Session 104f — /database و /maintenance مفصولين + Database redesigned + main layout padding refactor + /subscription-tiers redesigned + merged /jbrseo-subscribers as Signups tab + renamed "Pricing & Leads" top-level sidebar · awaiting push as v0.59.1)
+> **الإصدار الحالي:** admin v0.59.0 PUSHED · v0.59.1 pending (page split) · modonty v1.48.2 · console v0.10.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

@@ -11,7 +11,7 @@ export default async function CategoriesPage() {
   const missingSeo = categories.filter((c: any) => !c.jsonLdLastGenerated).length;
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap items-center gap-4">

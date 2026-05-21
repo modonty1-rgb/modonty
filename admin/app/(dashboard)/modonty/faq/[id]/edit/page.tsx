@@ -15,7 +15,7 @@ export default async function EditFAQPage({
   }
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <div className="mb-6">
         <h1 className="text-xl font-semibold">Edit FAQ</h1>
         <p className="text-xs text-muted-foreground mt-0.5">Update question and answer</p>

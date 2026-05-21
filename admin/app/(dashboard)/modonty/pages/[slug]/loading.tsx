@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ModontyPageLoading() {
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       {/* Header: title + buttons */}
       <div className="flex items-center justify-between mb-6">
         <div>

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ArticleViewLoading() {
   return (
-    <div className="p-4 sm:p-6">
+    <div className="">
       <div className="mb-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64 mt-1" />

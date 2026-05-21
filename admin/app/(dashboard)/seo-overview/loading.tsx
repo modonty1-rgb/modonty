@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SeoOverviewLoading() {
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <div className="mb-6">
         <Skeleton className="h-7 w-36" />
         <Skeleton className="h-3.5 w-80 mt-1.5" />

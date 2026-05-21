@@ -44,7 +44,7 @@ export default async function InboxClientPage({ params }: PageProps) {
   const totalPending = articles.reduce((sum, a) => sum + a.faqs.length, 0);
 
   return (
-    <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="max-w-[1280px] mx-auto space-y-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link href="/inbox" className="hover:text-foreground">Inbox</Link>

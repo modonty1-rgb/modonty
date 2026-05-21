@@ -27,7 +27,7 @@ export default async function NewArticlePage() {
       authors={authors}
       tags={tags}
     >
-      <div className="p-4 sm:p-6 pb-6 md:pb-8">
+      <div className="pb-6 md:pb-8">
         <ArticleFormTabs />
       </div>
       <ArticleFormActionBar />

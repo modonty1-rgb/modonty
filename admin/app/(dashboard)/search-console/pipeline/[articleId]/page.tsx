@@ -34,7 +34,7 @@ export default async function IndexingPipelinePage({
   ]);
 
   return (
-    <div className="px-6 py-6 max-w-[1100px] mx-auto space-y-6">
+    <div className="max-w-[1100px] mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="space-y-1.5">
           <Link

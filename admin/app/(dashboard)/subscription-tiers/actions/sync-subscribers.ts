@@ -79,7 +79,7 @@ export async function syncJbrseoSubscribersAction(): Promise<SyncResult> {
       }
     }
 
-    revalidatePath("/jbrseo-subscribers");
+    revalidatePath("/subscription-tiers");
 
     return {
       ok: true,

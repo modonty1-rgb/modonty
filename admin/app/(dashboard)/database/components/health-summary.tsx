@@ -6,11 +6,12 @@ interface Props {
   attentionCount: number;
   healthyCount: number;
   tableGroupsCount: number;
+  hideGroups?: boolean;
 }
 
-export function HealthSummary({ attentionCount, healthyCount, tableGroupsCount }: Props) {
+export function HealthSummary({ attentionCount, healthyCount, tableGroupsCount, hideGroups = false }: Props) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <div className={`grid grid-cols-1 ${hideGroups ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
       <div className={`rounded-xl border p-3.5 flex items-center gap-3 ${
         attentionCount > 0
           ? "border-yellow-500/30 bg-yellow-500/5"
@@ -43,15 +44,17 @@ export function HealthSummary({ attentionCount, healthyCount, tableGroupsCount }
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-3.5 flex items-center gap-3">
-        <div className="size-9 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
-          <Database className="h-4 w-4" />
+      {!hideGroups && (
+        <div className="rounded-xl border bg-card p-3.5 flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+            <Database className="h-4 w-4" />
+          </div>
+          <div>
+            <div className="text-lg font-bold leading-none">{tableGroupsCount}</div>
+            <div className="text-[11px] text-muted-foreground mt-1">data table groups</div>
+          </div>
         </div>
-        <div>
-          <div className="text-lg font-bold leading-none">{tableGroupsCount}</div>
-          <div className="text-[11px] text-muted-foreground mt-1">data table groups</div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

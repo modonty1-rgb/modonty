@@ -27,7 +27,7 @@ export default async function InboxPage() {
   const totalArticles = clientsWithFAQs.reduce((sum, c) => sum + c.articleCount, 0);
 
   return (
-    <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="max-w-[1280px] mx-auto space-y-6">
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
           <InboxIcon className="h-5 w-5" />

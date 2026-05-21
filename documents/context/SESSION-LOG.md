@@ -1,4 +1,198 @@
-# Session Context — Last Updated: 2026-05-21 (Session 104e — One-click Run-All Auto-Maintenance on /database · still pending push)
+# Session Context — Last Updated: 2026-05-22 (admin v0.59.0 PUSHED to main — c079ffb · Sessions 104b/104c/104d/104e bundled · Vercel deploying)
+
+---
+
+## 🟢 Session 104f (continued) — /database redesigned as Health Command Center — DONE
+Khalid: "شوف المناسب وسويه، خليها 100% perfect." → executed Option A minus the "fastest-growing" deltas (deferred — needs snapshot history we don't have yet, would show "—" without it).
+
+**New `/database` structure (top → bottom):**
+1. **Page title + last-checked timestamp** (compact, no stats here)
+2. **KPI Strip — 4 cards** (`kpi-strip.tsx`):
+   - Total Records (with table count) — violet
+   - Storage with progress bar (MB / 512MB Free Tier limit, % displayed) — color shifts emerald→amber→red at 50%/80%
+   - Collections count — blue
+   - Last Backup (timeAgo + collections + size) — color shifts emerald→amber→red at 24h/72h thresholds
+3. **Storage Breakdown** (`storage-breakdown.tsx`): horizontal stacked bar with palette (10 colors) + legend showing MB + % per collection. Reveals which collection dominates storage at a glance.
+4. **Data Tables** — collapsible per-group rows (CORE/CONTENT/AUDIENCE/ANALYTICS/SYSTEM), collapsed by default with counts visible. Click to expand each group's full table.
+5. **Backup & Restore** (existing card, unchanged)
+
+**New files:**
+- `actions/backup-info.ts` — reads `backups/backup-log.txt`, parses last line, returns `{ lastBackup, totalCount, rotationLimit }`
+- `components/kpi-strip.tsx` — 4-card strip with tone-shifting icons + progress bar
+- `components/storage-breakdown.tsx` — stacked bar visual with legend
+
+**Rewritten:**
+- `database-page-shell.tsx` — composes all 5 sections
+- `data-tables-group.tsx` — collapsible per-group rows replacing the previous always-expanded tables. Storage Usage section removed (replaced by StorageBreakdown above).
+
+**Constants:**
+- MongoDB Atlas Free Tier limit: 512 MB (hard-coded in `kpi-strip.tsx`)
+
+**Live verified:** Math: 17+252+11+39+6 = 325 matches KPI · Storage: Articles 86.5% (actionable insight visible at a glance) · Last Backup: 43m ago shown with emerald clock icon · TSC zero errors.
+
+**Deferred** for next iteration: week-over-week growth deltas (need snapshot history table — would store daily counts and compute deltas).
+
+**Awaiting push** for Sessions 104f changes (database/maintenance split + database redesign) as admin v0.59.1.
+
+### Renamed: Plans & Pricing → Pricing & Leads
+Khalid picked "Pricing & Leads" — better reflects the merged content (pricing catalog + leads from jbrseo).
+- Sidebar label updated
+- Page H1 updated
+- Subtitle updated to "Subscription plans · dual-market pricing · jbrseo signup leads"
+- URL kept as `/subscription-tiers` (no redirect needed; route still works)
+
+### Plans & Pricing promoted to top-level sidebar item
+Khalid: "أبغى أشيلها من تحت الـ system تكون لوحدها، لأنه فيها subscribers اللي بيجوا من Jabber SEO وفيها pricing — مش تبع الـ system."
+
+**Moved:** removed `Plans & Pricing` entry from System group, added to `topItems` (the always-visible top section above the collapsible groups). Position: 4th item, after Search Console / Bing Webmaster / SEO Overview.
+
+**Rationale**: after the merge it became a revenue/sales hub (catalog + leads + KPIs), not a system admin tool. Top-level placement reflects its business prominence.
+
+### /jbrseo-subscribers merged into /subscription-tiers — DONE
+Khalid: "do it" with senior recommendation = Tabs architecture with hoisted KPIs.
+
+**Executed (zero dead code):**
+- Moved 4 files from `/jbrseo-subscribers` into `/subscription-tiers`:
+  - `actions/sync-subscribers.ts` (kept name) — updated `revalidatePath` from `/jbrseo-subscribers` to `/subscription-tiers`
+  - `helpers/queries.ts` → `helpers/jbrseo-queries.ts` (renamed for clarity since `tier-actions.ts` already exists nearby)
+  - `components/subscribers-table.tsx` (kept name) — import updated to `../helpers/jbrseo-queries`
+  - `components/sync-button.tsx` (kept name) — import path unchanged (still `../actions/sync-subscribers`)
+- Deleted `/jbrseo-subscribers` route entirely (page.tsx + 3 subfolders)
+- Removed `{ icon: Users2, label: "jbrseo Subscribers", href: "/jbrseo-subscribers" }` from sidebar Audience group
+
+**New page composition:**
+- Header (title + concise subtitle)
+- **5-card KPI strip** above tabs (added new `jbrseo Signups` card with `last synced Xd ago` hint · pink tone)
+- **Tabs** (Radix shadcn):
+  - "Plans (4)" — TierCards + TierDistribution
+  - "Signups (2)" — header with Sync button + searchable filterable table
+
+**Verification:**
+- `grep "jbrseo-subscribers" admin/` → 0 matches (no dead path refs)
+- TSC admin: zero errors
+- Live test: KPI strip renders with all 5 cards · Plans tab default · clicking Signups tab swaps to subscribers table with Sync button + filters · sidebar no longer shows jbrseo Subscribers entry
+
+### Pending — merge /jbrseo-subscribers into /subscription-tiers
+Khalid: "أبغى أعمل لهم merge الاثنين وحدة. إيش خطتك؟" → analyzed: two pages conceptually different (Plans catalog vs Leads inbox) but linked via jbrseo signup → plan choice.
+
+**Senior recommendation: Tabs architecture with hoisted KPIs**
+- KPIs row stays above tabs (5 cards including new "jbrseo Signups" stat)
+- Tab "Plans" → existing TierCards + TierDistribution
+- Tab "Signups" → migrated SyncButton + SubscribersTable from /jbrseo-subscribers
+- Delete /jbrseo-subscribers route + sidebar item after migration
+
+**Awaiting Khalid's go-ahead.**
+
+### /subscription-tiers redesigned + EG pricing surfaced
+Khalid: "حاس إنه القيمة فيها مش قوية. سويها زي ما سويت في الصفحة اللي قبلها تبعت الـ database." + earlier "المفروض تطلع لي السعر المصري والسعر السعودي عشان تكون واضحة."
+
+**Discovery during build:** `pricing` JSON was NULL on all 4 tiers in DB (jbrseo integration was planned but never synced). Pulled SA + EG pricing from `JBRSEO/antigravitty-jbrseo/app/content/landing/landing-{sa,eg}.ts` (the canonical pricing surface).
+
+**Built:**
+- `scripts/sync-tier-pricing.ts` — one-shot seeder mirroring jbrseo landing into `pricing` JSON + setting `jbrseoId`/`syncedAtSA`/`syncedAtEG`. Ran on dev DB; all 4 tiers now have SA/EG mo+yr pricing.
+- `lib/pricing.ts` — typed helpers (`resolvePricing()`, `formatPrice()`) + `FALLBACK_PRICING_BY_NAME` constants. UI reads DB first, falls back to constants on null. This means PROD still works pre-sync (UI shows fallback values) and will use DB after sync.
+- `components/tier-kpi-strip.tsx` — 4 KPI cards: Active Clients · Est. Annual Revenue (yearly plan × 12 × clients) · Most Adopted Tier (by client count) · Avg Articles/Client (weighted)
+- `components/tier-cards.tsx` (rewritten) — dual-currency display (🇸🇦 + 🇪🇬), adoption progress bar per tier, "Recommended" ring on isPopular
+- `components/tier-distribution.tsx` — stacked horizontal bar showing client % per tier with legend
+- `page.tsx` (rewritten) — composes header + KPI strip + cards + distribution + existing table
+
+**Result on dev (6 total clients):**
+- الزخم = 4 clients (66.7% adoption) · Recommended
+- مجاني / الانطلاقة = 1 client each (16.7% each)
+- الريادة = 0 clients — upsell opportunity surfaced
+- Est. revenue 54,660 SAR/yr based on actual yearly plan rates
+
+**TSC admin: zero errors.** Live verified.
+
+**Note for PROD push:** include `scripts/sync-tier-pricing.ts` so we can run it on PROD once after deploy to populate `pricing` JSON. UI works even before sync thanks to the fallback constants.
+
+### Padding refactor — single source of truth on `<main>`
+Khalid spotted `/subscription-tiers` also had cramped layout — proving the per-page pattern was inconsistent, not just the 2 new shells. Confirmed his diagnosis: the bug was IN the main layout (lacked padding), and the per-page pattern was an accumulated workaround.
+
+**Refactor executed (Option B — long-term clean fix):**
+1. Added `p-4 sm:p-6` to `<main>` in `admin/app/(dashboard)/layout.tsx`
+2. Stripped top-level padding from **49 page files** via a bulk `sed` script. Patterns removed: `p-4 sm:p-6`, `px-6 py-6`, `p-6`, `px-4 py-6`, `p-4 md:p-6`, `px-4 py-4`, `px-4 sm:px-6 py-6`
+3. Reverted the earlier `p-4 sm:p-6` I had just added to database + maintenance shells (no longer needed)
+
+**Result:** ONE source of truth in the layout. New pages get correct padding for free without copy-pasting the pattern. The 4 live-tested pages (`/database`, `/maintenance`, `/subscription-tiers`, `/articles`) all render with consistent spacing.
+
+**TSC admin: zero errors.** No double-padding. No cramped pages.
+
+## 🟢 Session 104f — 2026-05-22 (post-push) — /database split into /database + /maintenance
+Khalid: "حنخلي /database بس لما يخص Database. حنسوي صفحة جديدة نسميها maintenance. كل ما يخص الـ maintenance في الصفحة هذه." + clarification "الباك أب والـ Restore هذي تخص الـ database."
+
+**Architectural split executed:**
+
+| Route | Owns |
+|-------|------|
+| `/database` | passive viewing: stats header · Data Tables (Core/Content/Audience/Analytics/System) · Storage Usage · Backup & Restore |
+| `/maintenance` (NEW) | action-oriented: Health Summary · Auto-Maintenance panel (10 steps) · Tool cards (when attention items exist) |
+
+**Files changed:**
+- `admin/components/admin/sidebar.tsx` — added `{ icon: Wrench, label: "Maintenance", href: "/maintenance" }` right after Database in System group
+- `admin/app/(dashboard)/database/page.tsx` — slimmed to fetch only `getDatabaseHealth` + `getCollectionSizes`
+- `admin/app/(dashboard)/database/components/database-page-shell.tsx` — rewrote: no more Tabs, just CompactStatsHeader + DataTablesGroup + BackupRestoreCard. No more health-summary or auto-maintenance.
+- **NEW** `admin/app/(dashboard)/maintenance/page.tsx` — fetches all 10 maintenance stats from `database/actions/*` (kept actions in their original location for cohesion)
+- **NEW** `admin/app/(dashboard)/maintenance/components/maintenance-page-shell.tsx` — owns HealthSummary + AutoMaintenancePanel + DbToolsSection
+- `admin/app/(dashboard)/database/components/health-summary.tsx` — added `hideGroups?: boolean` prop so the "5 data table groups" card doesn't render on /maintenance (the page only has 2 columns there)
+- `admin/app/(dashboard)/database/components/db-tools-section.tsx` — updated empty-state copy: removed stale "Collection Sizes still shown below" line (no longer applies to /maintenance)
+
+**No actions moved** — server actions stay in `admin/app/(dashboard)/database/actions/*` because /maintenance imports them via path aliases. Keeping them co-located with the original implementation avoids refactor churn.
+
+**Trade-off accepted:** the actions directory remains under `/database` even though some are maintenance-flavored. Reason: moving them would require touching every import site (run-all-maintenance.ts + all the individual server-action files). Functional cohesion wins over folder neatness.
+
+**TSC admin: zero errors.** Live verified — both pages render correctly, sidebar shows Maintenance under System group with Wrench icon, breadcrumb works.
+
+**Pending push** — Khalid hasn't said "push" yet for this Session 104f.
+
+---
+
+## 🚀 PUSH COMPLETE — admin v0.59.0 (c079ffb · 2026-05-22)
+Pre-push sequence executed cleanly:
+1. ✅ TSC verified zero errors on admin + modonty + console (source-only, `.next/dev/types/` noise excluded)
+2. ✅ Version bumped: admin 0.58.0 → 0.59.0
+3. ✅ Backup: `scripts/backup.sh` → backup-2026-05-21_23-59 (66 collections, 2.0M, 10/10 rotation)
+4. ✅ Changelog: v0.59.0 (admin) entry added to LOCAL + PROD DBs (id `6a0f727419e09f612cecf41d` / `6a0f727419e09f612cecf41e`)
+5. ✅ Secret scan: confirmed `.claude/settings.json` (with Telegram bot token) NOT in commit — excluded `.claude/*` from `git add`
+6. ✅ Commit `c079ffb`: "admin v0.59.0: 10-step Auto-Maintenance · Cloudinary orphans + sitemap freshness + canonical sanitizer · indexing fix complete"
+7. ✅ Push: `2dccb23..c079ffb main -> main` → Vercel auto-deploy
+
+### What ships in v0.59.0:
+**Major feature**: /database redesigned — Tabs + inline Auto-Maintenance progress panel (no dialog) running 10 deterministic clean-up steps with live per-step progress bars
+
+**10 Auto-Maintenance steps**:
+1. Expired OTPs · 2. Expired Sessions · 3. Stale Versions (30d+) · 4. TTL Indexes · 5. JSON-LD Regeneration · 6. Canonical URLs · 7. Legal Forms · 8. Cloudinary Orphans (Modonty-only prefixes) · 9. Sitemap Refresh (GSC) · 10. Soft-Deleted Comments (30d+)
+
+**Content-owner UX overhauls**:
+- Unused Media: moved /database → /media as inline dialog (amber banner + per-file Open/Delete)
+- Article version snapshots: removed banner from /articles, handled silently by auto-maintenance
+- Storage Usage: moved Maintenance tab → Data Tables tab
+
+**Session 104b indexing fix bundled**:
+- Canonical URLs always regen from current slug (no DB persistence of stale)
+- `new URL()` encoding across canonical link + JSON-LD @id + sitemap loc + breadcrumb
+- All 4 Google touchpoints now match 1:1
+
+**Session 104c cleanup bundled**:
+- seoKeywords field removed entirely (4 sources verified zero SEO value)
+- 16 files affected, 2 orphan components deleted
+
+**Bug fixes**:
+- Media stats reconciliation (MEDIA_USED_WHERE/MEDIA_UNUSED_WHERE single source of truth)
+- media-grid placeholder for non-allowed hosts (prevents page crash)
+
+**Project rules saved to memory**:
+- All new maintenance must go into Run-All Auto-Maintenance
+- chatbot_messages have permanent retention (analytics value)
+
+### Next steps for Khalid:
+1. Wait for Vercel deploy (~3-5 min)
+2. Visit `admin.modonty.com/database` → click "Run All Auto-Maintenance"
+3. Watch the 10 steps run; expect Cloudinary Orphans to clean MANY (DEV had 84)
+4. After PROD clean: head to Google Search Console → request indexing for affected articles
+5. Wait for Google to re-crawl (days to weeks — outside our control)
+
+---
 
 ---
 

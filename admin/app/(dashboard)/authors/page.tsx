@@ -14,7 +14,7 @@ export default async function AuthorsPage() {
 
   if (!author) {
     return (
-      <div className="px-6 py-6 max-w-[1200px] mx-auto">
+      <div className="max-w-[1200px] mx-auto">
         <div className="text-center py-12">
           <p className="text-muted-foreground">Error: Modonty author not found</p>
         </div>
@@ -23,7 +23,7 @@ export default async function AuthorsPage() {
   }
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       <AuthorForm
         initialData={author}
         authorId={author.id}

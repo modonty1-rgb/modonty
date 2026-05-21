@@ -181,7 +181,7 @@ export default async function SearchConsolePage({
   const removalTrackStates = await getRemovalTrackStates(visible.map((p) => p.url));
 
   return (
-    <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="max-w-[1280px] mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-blue-500/15 text-blue-500 flex items-center justify-center">

@@ -156,7 +156,6 @@ const menuGroups: MenuGroup[] = [
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
       { icon: Megaphone, label: "Campaign Leads", href: "/campaigns/leads" },
-      { icon: Users2, label: "jbrseo Subscribers", href: "/jbrseo-subscribers" },
     ],
   },
   {
@@ -165,9 +164,9 @@ const menuGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: Users, label: "Admins", href: "/users" },
-      { icon: CreditCard, label: "Plans & Pricing", href: "/subscription-tiers" },
       { icon: Download, label: "Export Data", href: "/export-data" },
       { icon: Database, label: "Database", href: "/database" },
+      { icon: Wrench, label: "Maintenance", href: "/maintenance" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
       { icon: Bug, label: "Error Logs", href: "/system-errors" },
       { icon: Settings, label: "Settings", href: "/settings" },
@@ -179,6 +178,7 @@ const topItems: MenuItem[] = [
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
   { icon: LineChart, label: "SEO Overview", href: "/seo-overview" },
+  { icon: CreditCard, label: "Pricing & Leads", href: "/subscription-tiers" },
 ];
 
 function NavLink({

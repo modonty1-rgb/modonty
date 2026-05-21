@@ -47,7 +47,7 @@ export default async function ArticleViewPage({ params }: { params: Promise<{ id
   const hasRelated = (a.relatedTo && a.relatedTo.length > 0) || (a.relatedFrom && a.relatedFrom.length > 0);
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="space-y-6">
       {/* ── Header ── */}
       <div>
         <div className="flex items-start justify-between gap-4">

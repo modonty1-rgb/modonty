@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import type { JbrseoSubscriberRow } from "../helpers/queries";
+import type { JbrseoSubscriberRow } from "../helpers/jbrseo-queries";
 
 interface Props {
   rows: JbrseoSubscriberRow[];

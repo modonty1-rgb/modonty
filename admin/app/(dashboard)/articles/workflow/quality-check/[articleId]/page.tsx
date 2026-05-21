@@ -152,7 +152,7 @@ export default async function QualityCheckPage({ params }: PageProps) {
   const articleEditUrl = `/articles/${article.id}/edit`;
 
   return (
-    <div className="px-6 py-6 max-w-[1100px] mx-auto space-y-5">
+    <div className="max-w-[1100px] mx-auto space-y-5">
       {/* Header */}
       <div className="space-y-1.5">
         <Link

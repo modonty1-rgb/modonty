@@ -10,7 +10,7 @@ export default async function FAQManagementPage() {
   const inactiveCount = faqs.length - activeCount;
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-2">

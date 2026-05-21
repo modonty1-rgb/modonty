@@ -210,7 +210,7 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
   ).length;
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
+    <div className="space-y-4">
       <ClientHeader client={client as any} seoScore={seoScore} />
       {seoScore < 80 && (
         <div className="bg-muted/30 border border-border rounded-lg p-4 flex items-center gap-4">

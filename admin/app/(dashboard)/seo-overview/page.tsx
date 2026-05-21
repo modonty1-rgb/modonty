@@ -17,7 +17,7 @@ export default async function SeoOverviewPage() {
   const withJsonLd = pages.filter((p) => p.hasJsonLd).length;
 
   return (
-    <div className="px-6 py-6 max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold">SEO Overview</h1>

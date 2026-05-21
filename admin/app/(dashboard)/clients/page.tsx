@@ -56,7 +56,7 @@ export default async function ClientsPage({
   };
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="">
       <Suspense fallback={<TableSkeleton />}>
         <ClientsContent filters={filters} />
       </Suspense>

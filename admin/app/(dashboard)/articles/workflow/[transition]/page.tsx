@@ -127,7 +127,7 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
     : [];
 
   return (
-    <div className="px-6 py-6 max-w-[1280px] mx-auto space-y-5">
+    <div className="max-w-[1280px] mx-auto space-y-5">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="space-y-1.5 min-w-0">
