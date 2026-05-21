@@ -1,4 +1,35 @@
-# Session Context — Last Updated: 2026-05-21 (Session 100 — Console sign-out UX · console v0.10.1 SHIPPED)
+# Session Context — Last Updated: 2026-05-21 (Session 101 — Native alert/confirm purge · admin v0.57.2 SHIPPED)
+
+---
+
+## 🟢 Session 101 — 2026-05-21 (Native alert/confirm → shadcn AlertDialog + toast on 7 admin files)
+
+### TL;DR
+Khalid flagged that publishing an article triggered a native browser confirm() popup. Audit revealed 7 native dialog sites across admin: 1 confirm() on the Publish Now button (workflow scheduled-row), and 6 alert() calls on batch SEO regen flows (industries / tags / categories — both page-client and revalidate-all-seo-button variants). Replaced confirm() with shadcn AlertDialog (modal, RTL-styled, brand-consistent), replaced alert() with useToast() showing success/failure breakdown. window.location.reload() → router.refresh() everywhere. Zero native dialogs remain.
+
+### Files changed (7 total)
+- **admin/app/(dashboard)/articles/workflow/components/scheduled-row-actions.tsx** — wrapped Publish Now in `<AlertDialog>` with Arabic title "نشر المقال الآن؟" + description warning + Cancel/Confirm buttons
+- **admin/app/(dashboard)/industries/components/industries-page-client.tsx** — alert → toast + router.refresh
+- **admin/app/(dashboard)/industries/components/revalidate-all-seo-button.tsx** — same
+- **admin/app/(dashboard)/tags/components/tags-page-client.tsx** — same
+- **admin/app/(dashboard)/tags/components/revalidate-all-seo-button.tsx** — same
+- **admin/app/(dashboard)/categories/components/categories-page-client.tsx** — same
+- **admin/app/(dashboard)/categories/components/revalidate-all-seo-button.tsx** — same
+
+### Live test (Playwright on admin :3001 / dev modonty_dev)
+1. `/articles/workflow/scheduled-to-published` → click "Publish Now" → shadcn AlertDialog opens with title + description + 2 buttons → click "إلغاء" → dialog closes, URL unchanged, no publish triggered ✓
+2. `/industries` → click "Revalidate All" → batch SEO regen ran → all rows show "Cached" badge → no native alert appeared (confirmed by Playwright not blocking, screenshot succeeded, 0 console errors)
+
+### Push artifacts
+- Backup: `backups/backup-2026-05-21_*` (66 collections)
+- Version: admin 0.57.1 → **0.57.2**
+- Changelog: LOCAL + PROD synced (id `6a0ec24ee5186937bd9c5357`)
+- TSC admin: zero errors
+
+### Open items for next session
+- None on this thread.
+
+---
 
 ---
 

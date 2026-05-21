@@ -1,6 +1,6 @@
 # CLAUDE — Live Test Observation Log
 
-**Last Updated:** 2026-05-21 — OBS-221 (Console sign-out → dedicated /signed-out page) ✅ DONE + pushed as console v0.10.1.
+**Last Updated:** 2026-05-21 — OBS-222 (Native alert/confirm purge in admin → shadcn AlertDialog + toast) ✅ DONE + pushed as admin v0.57.2.
 
 > **Purpose:** This file is maintained by Claude (the AI agent) during every live test session.
 > When simulating a real user (client) navigating the admin or public site, any UX/QA issue
@@ -20,6 +20,31 @@ During any live test session:
 - Do NOT wait to be asked — automatic observation is mandatory
 - Every entry gets a severity: 🔴 HIGH | 🟡 MEDIUM | 🟢 LOW
 - After the session, entries move to MASTER-TODO for review
+
+---
+
+## Session: 2026-05-21 — Native browser alert/confirm purge across admin
+
+### OBS-222 ✅ DONE — Replaced 1 native confirm + 6 native alerts with shadcn AlertDialog + useToast
+- **User feedback (2026-05-21):** "لما Admin يجي يعمل Publish للـ Article، فيه Native Alert و Native Confirmation بيطلع. شوفوا فين موجود الـ Native هذا."
+- **Audit found 7 native dialog sites:**
+  1. `articles/workflow/components/scheduled-row-actions.tsx:41` — `confirm()` on Publish Now button (the one Khalid hit)
+  2. `industries/components/industries-page-client.tsx:32,35` — `alert()` on batch SEO regen
+  3. `industries/components/revalidate-all-seo-button.tsx:15,18` — same
+  4. `tags/components/tags-page-client.tsx:32,35` — same
+  5. `tags/components/revalidate-all-seo-button.tsx:15,18` — same
+  6. `categories/components/categories-page-client.tsx:33,36` — same
+  7. `categories/components/revalidate-all-seo-button.tsx:15,18` — same
+- **Decision:** AlertDialog for the publish flow (intentional destructive action, modal modal feel right) · useToast for the 6 batch SEO regen alerts (non-blocking feedback, fits the existing toast pattern used elsewhere in admin).
+- **Implementation per file:**
+  - `scheduled-row-actions.tsx` — wrapped Publish Now button in `<AlertDialog>` with shadcn primitives. Arabic title "نشر المقال الآن؟", description warning ("سيظهر المقال للقرّاء على modonty.com فوراً. لا يمكن التراجع تلقائياً بعد النشر."), Cancel ("إلغاء") + Confirm ("نعم، انشر الآن", emerald). handlePublishNow is now triggered by AlertDialogAction onClick — no inline confirm() check.
+  - 6 SEO regen files — replaced `alert(...)` + `window.location.reload()` with `toast({ title, description, variant })` + `router.refresh()`. Toast format: title = `✅ SEO generated` (success) / `⚠️ SEO partially generated` (some failed) / `❌ Failed to generate SEO` (catch). Description = `N succeeded · N failed · N total`. variant = `default` if failed===0, else `destructive`. Imports added: `useRouter` from `next/navigation`, `useToast` from `@/hooks/use-toast`.
+- **Live test (Playwright, admin :3001, dev modonty_dev):**
+  - `/articles/workflow/scheduled-to-published` → 1 article (أمن المعلومات للشركات السعودية الصغيرة, kimazone) → click "Publish Now" → AlertDialog opens with the new RTL layout (screenshot saved) → click "إلغاء" → dialog closes, URL unchanged, no publish ✓
+  - `/industries` → click "Revalidate All" → batch SEO ran successfully, all rows show "Cached" badge → no native alert (verified by Playwright not blocking + 0 console errors)
+- **Verification grep:** `grep -E '\\balert\\s*\\(|\\bconfirm\\s*\\(' admin/app/(dashboard)` → **0 matches**. Native browser dialogs fully purged from admin dashboard surface.
+- **TSC admin:** zero errors.
+- **Push:** admin 0.57.1 → 0.57.2 · changelog synced to LOCAL + PROD (id `6a0ec24ee5186937bd9c5357`) · awaiting commit + push.
 
 ---
 

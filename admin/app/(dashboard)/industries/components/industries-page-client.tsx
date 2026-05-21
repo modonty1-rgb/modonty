@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { IndustryTable } from "./industry-table";
 
 interface Industry {
@@ -22,6 +24,8 @@ interface IndustriesPageClientProps {
 }
 
 export function IndustriesPageClient({ industries, missingSeoCount }: IndustriesPageClientProps) {
+  const { toast } = useToast();
+  const router = useRouter();
   const [batchLoading, setBatchLoading] = useState(false);
 
   const handleBatchGenerate = async () => {
@@ -29,10 +33,14 @@ export function IndustriesPageClient({ industries, missingSeoCount }: Industries
     try {
       const { batchGenerateIndustrySeo } = await import("@/lib/seo/industry-seo-generator");
       const result = await batchGenerateIndustrySeo();
-      alert(`Done: ${result.successful} succeeded, ${result.failed} failed out of ${result.total}`);
-      window.location.reload();
+      toast({
+        title: result.failed === 0 ? "✅ SEO generated" : "⚠️ SEO partially generated",
+        description: `${result.successful} succeeded · ${result.failed} failed · ${result.total} total`,
+        variant: result.failed === 0 ? "default" : "destructive",
+      });
+      router.refresh();
     } catch {
-      alert("Failed to generate SEO");
+      toast({ title: "❌ Failed to generate SEO", variant: "destructive" });
     } finally {
       setBatchLoading(false);
     }

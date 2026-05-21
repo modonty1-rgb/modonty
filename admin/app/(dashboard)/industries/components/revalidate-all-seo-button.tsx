@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function RevalidateAllSEOButton() {
+  const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleRevalidate = async () => {
@@ -12,10 +16,14 @@ export function RevalidateAllSEOButton() {
     try {
       const { batchGenerateIndustrySeo } = await import("@/lib/seo/industry-seo-generator");
       const result = await batchGenerateIndustrySeo();
-      alert(`Done: ${result.successful} succeeded, ${result.failed} failed out of ${result.total}`);
-      window.location.reload();
+      toast({
+        title: result.failed === 0 ? "✅ SEO generated" : "⚠️ SEO partially generated",
+        description: `${result.successful} succeeded · ${result.failed} failed · ${result.total} total`,
+        variant: result.failed === 0 ? "default" : "destructive",
+      });
+      router.refresh();
     } catch {
-      alert("Failed to generate SEO");
+      toast({ title: "❌ Failed to generate SEO", variant: "destructive" });
     } finally {
       setLoading(false);
     }

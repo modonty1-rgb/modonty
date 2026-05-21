@@ -12,12 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.10.1 (console)",
-    title: "console v0.10.1 — Sign-out UX upgrade: dedicated confirmation page",
+    version: "0.57.2 (admin)",
+    title: "admin v0.57.2 — Native alert/confirm purge: shadcn AlertDialog + toast everywhere",
     items: [
-      { type: "feature" as const, text: "New /signed-out page replaces the silent redirect-to-login-form behaviour. Shows a clear ✓ confirmation card ('تم تسجيل خروجك بنجاح'), brand-consistent layout with Modonty logo, two CTAs (تسجيل الدخول مرة ثانية / العودة لـ modonty.com), and a security note ('تم إغلاق جلستك بأمان')." },
-      { type: "feature" as const, text: "Updated callbackUrl in both desktop sidebar.tsx and mobile-sidebar.tsx from '/' to '/signed-out'. Industry pattern (Stripe / Notion / Linear / Vercel) — never drop a signed-out user straight onto a fresh login form (security + UX rationale)." },
-      { type: "feature" as const, text: "No auto-redirect — user chooses next action explicitly. Matches modern SaaS sign-out flow." },
+      { type: "feature" as const, text: "Replaced native browser confirm() on the Publish Now button (scheduled-row-actions.tsx) with a shadcn AlertDialog. RTL-friendly, brand-styled, with an explicit warning that publishing is immediate and irreversible. Cancel and 'نعم، انشر الآن' buttons keep the user in control." },
+      { type: "feature" as const, text: "Replaced 6 native alert() calls across batch SEO regen flows with the existing useToast() hook. Affected files: industries/components/industries-page-client.tsx, industries/components/revalidate-all-seo-button.tsx, tags/components/tags-page-client.tsx, tags/components/revalidate-all-seo-button.tsx, categories/components/categories-page-client.tsx, categories/components/revalidate-all-seo-button.tsx." },
+      { type: "feature" as const, text: "Each toast shows success/failure breakdown ('N succeeded · N failed · N total') with destructive variant when any failure occurred. router.refresh() replaces the previous full-page window.location.reload() — softer refresh, no scroll-jump, no flash of empty content." },
+      { type: "fix" as const, text: "Zero native browser dialogs remain across admin/(dashboard). Verified via grep — 0 matches for alert(/confirm( in app/(dashboard)." },
     ],
   },
 ];

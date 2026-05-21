@@ -6,6 +6,17 @@ import { Loader2, Zap, CalendarCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import { transitionArticleAction } from "../actions/transition-article";
 import { setScheduledDateAction } from "../actions/set-scheduled-date";
@@ -37,12 +48,6 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt }: Pr
   const [datetimeValue, setDatetimeValue] = useState(toLocalDatetimeInput(initialDate));
 
   const handlePublishNow = () => {
-    if (
-      !confirm(
-        `نشر "${articleTitle}" الآن؟ سيظهر للقرّاء فوراً.`,
-      )
-    )
-      return;
     setActiveAction("publish");
     startTransition(async () => {
       const res = await transitionArticleAction(articleId, "SCHEDULED", "PUBLISHED");
@@ -105,20 +110,41 @@ export function ScheduledRowActions({ articleId, articleTitle, scheduledAt }: Pr
           className="rounded-md border bg-background px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         />
       </div>
-      <Button
-        type="button"
-        size="sm"
-        onClick={handlePublishNow}
-        disabled={isPending}
-        className="bg-emerald-600 hover:bg-emerald-700"
-      >
-        {activeAction === "publish" ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Zap className="h-4 w-4" />
-        )}
-        Publish Now
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            type="button"
+            size="sm"
+            disabled={isPending}
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            {activeAction === "publish" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Zap className="h-4 w-4" />
+            )}
+            Publish Now
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>نشر المقال الآن؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيظهر المقال <strong>&quot;{articleTitle}&quot;</strong> للقرّاء على modonty.com فوراً.
+              لا يمكن التراجع تلقائياً بعد النشر.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handlePublishNow}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              نعم، انشر الآن
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Button
         type="button"
         size="sm"
