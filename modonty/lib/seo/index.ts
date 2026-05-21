@@ -199,14 +199,16 @@ export function generateBreadcrumbStructuredData(items: Array<{ name: string; ur
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${siteUrl}${item.url}`,
+      // Use URL constructor to safely percent-encode non-ASCII path segments
+      item: new URL(item.url, siteUrl).href,
     })),
   };
 }
 
 export function generateArticleStructuredData(article: any) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-  const articleUrl = article.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
+  // Always build from current slug — never trust article.canonicalUrl (may be stale after slug rename)
+  const articleUrl = new URL(`/articles/${article.slug}`, siteUrl).href;
 
   const structuredData: any = {
     "@context": "https://schema.org",

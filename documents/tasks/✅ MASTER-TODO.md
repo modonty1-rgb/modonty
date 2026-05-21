@@ -1,13 +1,15 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-06 (Session 85 — loader fix + update-client perf 55s→13s · **⚠️ ملاحظة مهمة جداً أُضيفت: ARCH-01 — Background Jobs for Article SEO Cascade**)
-> **الإصدار الحالي:** admin v0.55.0 · modonty v1.44.0 · console v0.6.2
+> **آخر تحديث:** 2026-05-21 (Session 104e — Auto-Maintenance now 10 steps inline (Cloudinary Orphans + Sitemap Freshness + Soft-Deleted Comments 30d) · Canonical Sanitizer · Storage → Data Tables · Unused Media → /media dialog · ready for Google indexing · awaiting push)
+> **الإصدار الحالي:** admin v0.58.0 (pending push, includes Sessions 104b/104c/104d/104e) · modonty v1.48.2 · console v0.10.0
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 
 ### روابط الخطط
 
-- 🆕 **[JBRSEO Integration Plan](JBRSEO-INTEGRATION-PLAN.md)** — Mirror + Sync (Pricing + Leads). يلغي PRC-01 ويستبدله. 5 phases · 8 questions pending
+- 🆕🔗 **[Short Link System TODO](SHORT-LINK-SYSTEM-TODO.md)** — يحل مشكلة فتح الروابط العربية في iPhone · يضيف Events كنوع جديد · محوّل عربي→إنجليزي + QR + لوحة تحليلات للعميل (9 phases)
+- 💭 **[Pending Ideas Brainstorm](PENDING-IDEAS-TODO.md)** — أفكار مستقبلية قبل ما تتحوّل لخطط تفصيلية (تُحدَّث عبر shortcut "reminder"). الحالي: Modonty Reviews · Client QR · Client Services · What's New feed · Partners logos polish · Admin client page redesign + Console sync · Admin Broadcaster (6+ social channels)
+- 🗑️ **[seoKeywords Deletion Execution Plan](SEOKEYWORDS-DELETION-EXECUTION.md)** — checklist تفصيلي ٩ phases · ٦٥+ خطوة `[ ]` · ٤ TSC checkpoints · live test + rollback plan. تمت مراجعة سينيور (٤ نقاط مفقودة أُضيفت). awaiting "go ahead".
 - [Perfect-SEO-Plan](Perfect-SEO-Plan.md) — 108 مهمة عبر 13 phase
 - [Dashboard Action Plan](Dashboard-Action-Plan.md)
 - [URL Lifecycle Plan](URL-Lifecycle-Plan.md)

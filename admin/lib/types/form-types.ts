@@ -111,9 +111,6 @@ export interface ArticleFormData {
   // Audio
   audioUrl?: string | null;
 
-  // SEO keywords the article is based on (reference)
-  seoKeywords?: string[];
-  
   // Schema Versioning
   jsonLdVersion?: number;
   jsonLdHistory?: any;

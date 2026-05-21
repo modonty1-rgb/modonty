@@ -175,16 +175,6 @@ export default async function ArticleTechnicalPage({ params }: { params: Promise
               <p className="text-xs text-muted-foreground mb-0.5">Main Entity</p>
               <p className="font-mono text-xs text-blue-600 dark:text-blue-400 break-all">{a.mainEntityOfPage || "—"}</p>
             </div>
-            {a.seoKeywords && a.seoKeywords.length > 0 && (
-              <div className="md:col-span-2">
-                <p className="text-xs text-muted-foreground mb-1">SEO Keywords</p>
-                <div className="flex flex-wrap gap-1">
-                  {a.seoKeywords.map((k: string) => (
-                    <Badge key={k} className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{k}</Badge>
-                  ))}
-                </div>
-              </div>
-            )}
             {Array.isArray(a.semanticKeywords) && a.semanticKeywords.length > 0 && (
               <div className="md:col-span-2">
                 <p className="text-xs text-muted-foreground mb-1">Semantic Keywords</p>

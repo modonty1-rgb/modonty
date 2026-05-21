@@ -61,7 +61,6 @@ export function SEOStep() {
   const { formData, updateField, clients, articleId } = useArticleForm();
   const { toast } = useToast();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
-  const [keywordInput, setKeywordInput] = useState('');
   const [citationInput, setCitationInput] = useState('');
   const [isExtracting, setIsExtracting] = useState(false);
 
@@ -90,26 +89,7 @@ export function SEOStep() {
   const selectedClient = clients.find((c) => c.id === formData.clientId);
   const hasPreviewData = effectiveTitle && effectiveDescription;
 
-  const keywords = formData.seoKeywords ?? [];
   const citations = formData.citations ?? [];
-
-  const addKeyword = useCallback(() => {
-    const trimmed = keywordInput.trim();
-    if (!trimmed) return;
-    if (keywords.some((k) => k.toLowerCase() === trimmed.toLowerCase())) return;
-    updateField('seoKeywords', [...keywords, trimmed]);
-    setKeywordInput('');
-  }, [keywordInput, keywords, updateField]);
-
-  const removeKeyword = useCallback(
-    (idx: number) => {
-      updateField(
-        'seoKeywords',
-        keywords.filter((_, i) => i !== idx),
-      );
-    },
-    [keywords, updateField],
-  );
 
   const addCitation = useCallback(() => {
     const trimmed = citationInput.trim();
@@ -293,60 +273,9 @@ export function SEOStep() {
         <CardContent className="space-y-6 pt-6">
           <SectionHeader
             icon={Hash}
-            title="كلمات ومصادر"
-            description="الكلمات المفتاحية ومصادر E-E-A-T الموثوقة"
+            title="مصادر موثوقة"
+            description="روابط مصادر E-E-A-T الموثوقة التي يستند إليها المقال"
           />
-
-          {/* Keywords */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>SEO Keywords</Label>
-              {keywords.length > 0 && (
-                <Badge variant="outline" className="font-mono text-xs">
-                  {keywords.length}
-                </Badge>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              الكلمات المفتاحية التي يقوم عليها المقال
-            </p>
-            <div className="flex gap-2">
-              <Input
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())}
-                placeholder="أضف كلمة مفتاحية..."
-                className="flex-1"
-              />
-              <Button type="button" variant="outline" size="sm" onClick={addKeyword} className="shrink-0 gap-1.5">
-                <Plus className="h-4 w-4" />
-                Add
-              </Button>
-            </div>
-            {keywords.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {keywords.map((kw, i) => (
-                  <Badge
-                    key={`${kw}-${i}`}
-                    variant="secondary"
-                    className="ps-2.5 pe-1 py-1 text-sm font-medium flex items-center gap-1.5"
-                  >
-                    <span>{kw}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeKeyword(i)}
-                      className="rounded-full p-0.5 hover:bg-muted-foreground/20"
-                      aria-label={`Remove ${kw}`}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="border-t" />
 
           {/* Citations */}
           <div className="space-y-3">

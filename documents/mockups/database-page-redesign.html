@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Database Page Redesign — Mockup v1</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Tajawal', 'system-ui', 'sans-serif'] },
+          colors: {
+            bg: '#0a0a0a',
+            card: '#141414',
+            border: '#262626',
+            muted: '#737373',
+            primary: '#7c3aed',
+            'primary-soft': 'rgba(124,58,237,0.1)',
+          },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #0a0a0a; color: #e5e5e5; font-family: Tajawal, system-ui, sans-serif; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #404040; border-radius: 3px; }
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] summary .chev { transform: rotate(180deg); }
+    .chev { transition: transform .15s ease; }
+    .design-note { background: rgba(124,58,237,0.08); border-left: 2px solid #7c3aed; }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+
+  <div class="max-w-[1200px] mx-auto space-y-4">
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- LABEL: explainer banner at top                             -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="design-note p-3 rounded-md text-xs text-violet-200 mb-6">
+      <span class="font-semibold">📐 Mockup v1 — Database Page Redesign</span>
+      <span class="text-violet-300/70 ms-2">Senior UI/UX proposal · click on collapsibles below to test the interactions · ~600px tall instead of 4,350px</span>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- ROW 1 — Compact Health Header (sticky-ready)              -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="bg-card border border-border rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-xl font-bold leading-tight">Database</h1>
+        <p class="text-[11px] text-muted mt-0.5">آخر تحديث: 06:31 PM · 21 May 2026</p>
+      </div>
+      <!-- Inline stats — pills, dense, scannable -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/10 text-violet-300 text-xs font-medium">
+          <span class="size-1.5 rounded-full bg-violet-400"></span> 327 records
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 text-xs font-medium">
+          <span class="size-1.5 rounded-full bg-blue-400"></span> 2.6 MB
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-300 text-xs font-medium">
+          <span class="size-1.5 rounded-full bg-yellow-400"></span> Free Tier · no auto-backup
+        </span>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- ROW 2 — Health Summary Strip (the "answer at a glance")    -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="bg-yellow-500/5 border border-yellow-500/30 rounded-xl p-3.5 flex items-center gap-3">
+        <div class="size-9 rounded-lg bg-yellow-500/15 flex items-center justify-center text-yellow-400 text-lg">⚠</div>
+        <div>
+          <div class="text-lg font-bold text-yellow-300 leading-none">3</div>
+          <div class="text-[11px] text-muted mt-1">tools need attention</div>
+        </div>
+      </div>
+      <div class="bg-green-500/5 border border-green-500/30 rounded-xl p-3.5 flex items-center gap-3">
+        <div class="size-9 rounded-lg bg-green-500/15 flex items-center justify-center text-green-400 text-lg">✓</div>
+        <div>
+          <div class="text-lg font-bold text-green-300 leading-none">7</div>
+          <div class="text-[11px] text-muted mt-1">tools healthy</div>
+        </div>
+      </div>
+      <div class="bg-card border border-border rounded-xl p-3.5 flex items-center gap-3">
+        <div class="size-9 rounded-lg bg-violet-500/15 flex items-center justify-center text-violet-400 text-lg">↻</div>
+        <div>
+          <div class="text-lg font-bold leading-none">5</div>
+          <div class="text-[11px] text-muted mt-1">data table groups</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- ROW 3 — Tabs                                              -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="flex items-center gap-1 border-b border-border">
+      <button class="px-4 py-2.5 text-sm font-medium text-foreground border-b-2 border-violet-500 -mb-px">
+        Maintenance <span class="ms-1 text-[10px] text-yellow-400">3</span>
+      </button>
+      <button class="px-4 py-2.5 text-sm font-medium text-muted hover:text-foreground">
+        Data Tables <span class="ms-1 text-[10px] text-muted">5</span>
+      </button>
+      <button class="px-4 py-2.5 text-sm font-medium text-muted hover:text-foreground">
+        Backup & Restore
+      </button>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- MAINTENANCE TAB CONTENT                                    -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="space-y-5 pt-2">
+
+      <!-- ─── Section: Needs Attention (always visible) ─── -->
+      <section>
+        <div class="flex items-center justify-between mb-2.5">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-yellow-400">⚠ Needs Attention</h2>
+          <span class="text-[10px] text-muted">click any to fix</span>
+        </div>
+        <div class="space-y-2">
+
+          <!-- Issue 1 -->
+          <details class="bg-card border border-yellow-500/30 rounded-xl group">
+            <summary class="p-4 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="size-8 rounded-lg bg-yellow-500/15 flex items-center justify-center text-yellow-400 shrink-0">⚠</div>
+                <div class="min-w-0">
+                  <div class="font-medium text-sm">JSON-LD Cache Integrity</div>
+                  <div class="text-[11px] text-muted truncate">5 articles have stale or invalid JSON-LD cache</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300 text-[11px] font-medium">5 stale</span>
+                <button class="px-3 py-1.5 rounded-md bg-violet-500 text-white text-xs font-medium">Regenerate</button>
+                <span class="chev text-muted text-xs">▾</span>
+              </div>
+            </summary>
+            <div class="px-4 pb-4 pt-2 text-xs text-muted border-t border-border">
+              Cached JSON-LD that's older than 24h or fails validation. Click Regenerate to rebuild from current article data.
+            </div>
+          </details>
+
+          <!-- Issue 2 -->
+          <details class="bg-card border border-yellow-500/30 rounded-xl group">
+            <summary class="p-4 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="size-8 rounded-lg bg-yellow-500/15 flex items-center justify-center text-yellow-400 shrink-0">⚠</div>
+                <div class="min-w-0">
+                  <div class="font-medium text-sm">Article Version History</div>
+                  <div class="text-[11px] text-muted truncate">90 versions older than 30 days · safe to remove</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300 text-[11px] font-medium">90 old</span>
+                <button class="px-3 py-1.5 rounded-md bg-violet-500 text-white text-xs font-medium">Clean</button>
+                <span class="chev text-muted text-xs">▾</span>
+              </div>
+            </summary>
+            <div class="px-4 pb-4 pt-2 text-xs text-muted border-t border-border">
+              Old article version snapshots taking DB space. Versions older than 30 days · 90 days · 180 days can be cleaned individually.
+            </div>
+          </details>
+
+          <!-- Issue 3 -->
+          <details class="bg-card border border-yellow-500/30 rounded-xl group">
+            <summary class="p-4 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="size-8 rounded-lg bg-yellow-500/15 flex items-center justify-center text-yellow-400 shrink-0">⚠</div>
+                <div class="min-w-0">
+                  <div class="font-medium text-sm">Session Cleaner</div>
+                  <div class="text-[11px] text-muted truncate">2 expired sessions / verification tokens</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2 py-0.5 rounded-full bg-red-500/15 text-red-300 text-[11px] font-medium">2 expired</span>
+                <button class="px-3 py-1.5 rounded-md bg-violet-500 text-white text-xs font-medium">Clean All</button>
+                <span class="chev text-muted text-xs">▾</span>
+              </div>
+            </summary>
+            <div class="px-4 pb-4 pt-2 text-xs text-muted border-t border-border">
+              Expired NextAuth sessions + verification tokens past expiry. Clean to free DB rows.
+            </div>
+          </details>
+
+        </div>
+      </section>
+
+      <!-- ─── Section: Healthy Tools (collapsed by default) ─── -->
+      <section>
+        <details class="bg-card border border-border rounded-xl">
+          <summary class="p-4 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="size-8 rounded-lg bg-green-500/15 flex items-center justify-center text-green-400">✓</div>
+              <div>
+                <h2 class="text-sm font-semibold">Healthy Tools (7)</h2>
+                <p class="text-[11px] text-muted">All clean · click to view</p>
+              </div>
+            </div>
+            <span class="chev text-muted text-xs">▾</span>
+          </summary>
+          <div class="border-t border-border p-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Orphan Cleaner</span>
+              <span class="ms-auto text-[10px] text-muted">0 issues</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Slug Integrity</span>
+              <span class="ms-auto text-[10px] text-muted">0 issues</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">TTL Indexes</span>
+              <span class="ms-auto text-[10px] text-muted">all set</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Duplicate Slugs</span>
+              <span class="ms-auto text-[10px] text-muted">0 dupes</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Broken References</span>
+              <span class="ms-auto text-[10px] text-muted">0 broken</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Legal Form Sanitizer</span>
+              <span class="ms-auto text-[10px] text-muted">all canonical</span>
+            </div>
+            <div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg/40 border border-border">
+              <span class="size-2 rounded-full bg-green-400"></span>
+              <span class="text-xs">Collection Sizes</span>
+              <span class="ms-auto text-[10px] text-muted">within free tier</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- DESIGN PRINCIPLES NOTE                                    -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-card border border-border rounded-xl p-4">
+        <h3 class="text-sm font-bold mb-2.5 text-violet-300">🎨 ما الذي تغيّر</h3>
+        <ul class="text-xs text-muted space-y-1.5">
+          <li>• <span class="text-foreground">Compact health bar</span> بدل ٤ stat cards كبيرة (توفير 200px)</li>
+          <li>• <span class="text-foreground">Summary strip</span> يقول الإجابة فوراً (3 issues / 7 healthy)</li>
+          <li>• <span class="text-foreground">Tabs</span> فصل Maintenance · Data Tables · Backup</li>
+          <li>• <span class="text-foreground">Issues-first</span> اللي محتاج انتباه فوق + expandable</li>
+          <li>• <span class="text-foreground">Healthy في accordion واحد</span> بدل ٧ بطاقات منفصلة</li>
+          <li>• <span class="text-foreground">Action proximity</span> الزر بجنب البيانات اللي يأثر عليها</li>
+        </ul>
+      </div>
+      <div class="bg-card border border-border rounded-xl p-4">
+        <h3 class="text-sm font-bold mb-2.5 text-green-300">✓ النتيجة</h3>
+        <ul class="text-xs text-muted space-y-1.5">
+          <li>• <span class="text-foreground">~600px</span> بدل 4,350px في الـ default view</li>
+          <li>• الأدمن يشوف "إيش يحتاج عمل" فوراً</li>
+          <li>• الـ tools المرتاحة لا تشغل مساحة بصرية</li>
+          <li>• Data Tables منقولة لـ tab منفصل (لا تخنق الـ maintenance view)</li>
+          <li>• Backup في tab خاص (مهم لكن نادر)</li>
+          <li>• Color coding متّسق: yellow=attention · green=healthy · red=critical</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="design-note p-4 rounded-md text-xs text-violet-200 mt-6">
+      <span class="font-semibold">💡 ملاحظة للتحقّق:</span> هذا mockup HTML بسيط. عند الموافقة، التطبيق الفعلي يستخدم shadcn/ui (Tabs, Collapsible, Card) من admin code base.
+    </div>
+
+  </div>
+
+</body>
+</html>

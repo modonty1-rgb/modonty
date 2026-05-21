@@ -57,7 +57,7 @@ export function generateCanonicalUrl(
   _clientSlug?: string
 ): string {
   const siteUrl = baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-  return `${siteUrl}/articles/${slug}`;
+  return new URL(`/articles/${slug}`, siteUrl).href;
 }
 
 /** Normalize stored canonical for form: reject /clients/.../articles/ and use siteUrl/articles/slug. */

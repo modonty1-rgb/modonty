@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
 import type { MediaFilters } from "./types";
 
 const DEFAULT_PER_PAGE = 20;
@@ -73,11 +74,7 @@ export async function getMedia(filters?: MediaFilters) {
     }
 
     if (filters?.used !== undefined) {
-      if (filters.used) {
-        whereConditions.push({ featuredArticles: { some: {} } });
-      } else {
-        whereConditions.push({ featuredArticles: { none: {} } });
-      }
+      whereConditions.push(filters.used ? MEDIA_USED_WHERE : MEDIA_UNUSED_WHERE);
     }
 
     const where: Prisma.MediaWhereInput =

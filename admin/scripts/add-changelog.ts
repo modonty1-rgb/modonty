@@ -12,12 +12,18 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.57.4 (admin)",
-    title: "admin v0.57.4 — Restore Industry dropdown on Edit Client (silent-drop fix)",
+    version: "0.59.0 (admin)",
+    title: "admin v0.59.0 — Auto-Maintenance: 10-step one-click DB cleanup + content-owner UX overhaul",
     items: [
-      { type: "fix" as const, text: "Added back the Industry <FormSelect> on the Edit Client form (basic-info-section.tsx). The dropdown was missing from the UI — the prop and watch existed but no visible field. Admins now have a working dropdown with all 20 industries to assign clients." },
-      { type: "fix" as const, text: "Root cause #2: industryId was assigned to the 'required' field group in client-form-config.ts, but updateRequiredFields never wrote it to the DB. Moved industryId from 'required' to 'business' group so updateBusinessFields picks it up (which already writes industryId correctly). Same class of bug as the URL silent-drop." },
-      { type: "fix" as const, text: "Verified end-to-end live: assigned 'اللوجستيات وسلاسل التوريد' to Kimazone via /clients/.../edit → saved to DB → modonty.com/industries/logistics-supply-chain renders the client card + breadcrumb correctly + /clients/كيما-زون shows the industry tag. Full data flow admin → DB → modonty SSR confirmed." },
+      { type: "feature" as const, text: "/database completely redesigned — Tabs (Maintenance/Data Tables/Backup) + Health Summary strip + Auto-Maintenance inline progress panel (no dialog). 10 deterministic clean-up steps run sequentially with live per-step progress bars: Expired OTPs · Expired Sessions · Stale Versions (30d+) · TTL Indexes · JSON-LD Regen · Canonical URLs · Legal Forms · Cloudinary Orphans · Sitemap Refresh (GSC) · Soft-Deleted Comments (30d+)." },
+      { type: "feature" as const, text: "Cloudinary Orphan Sweep — scans Cloudinary by Modonty-only prefixes (modonty/, general/, clients/, admins/) and deletes files with no DB record, older than 1h. CRITICAL safety scope: shared Cloudinary account means we double-check prefix BEFORE every destroy — other projects' files cannot be touched. DEV run cleaned 84 real orphans." },
+      { type: "feature" as const, text: "Sitemap Freshness Ping — auto-resubmits /sitemap.xml + /image-sitemap.xml to Google Search Console if last submission > 24h ago. Helps Google detect new content faster." },
+      { type: "feature" as const, text: "Canonical URL Sanitizer — fixes legacy stored canonicalUrl values that don't match what modonty.com would emit at runtime. Completes Session 104b indexing bug fix data-side cleanup." },
+      { type: "feature" as const, text: "Unused Media moved from /database to /media as an inline dialog (amber banner → opens dialog with thumbnail · filename · size · per-file Open/Delete actions). Content owner now controls media review in its natural place." },
+      { type: "feature" as const, text: "Article version snapshots cleanup handled silently in auto-maintenance (was a banner on /articles, removed). 30-day threshold matches industry retention." },
+      { type: "fix" as const, text: "Media stats reconciliation — single source of truth via MEDIA_USED_WHERE/MEDIA_UNUSED_WHERE (OR of featuredArticles + logoClients + heroImageClients). Stats `unused` count now matches the /media filter result 1:1 (was 58 vs 7 mismatch)." },
+      { type: "fix" as const, text: "media-grid renders 'Host not allowed' placeholder for any image with hostname not in next.config remotePatterns — prevents the page from crashing on legacy/test rows with bad URLs." },
+      { type: "feature" as const, text: "Data Tables tab now hosts Storage Usage (MongoDB collection sizes) — moved from Maintenance tab to keep system tools and data references logically separated." },
     ],
   },
 ];

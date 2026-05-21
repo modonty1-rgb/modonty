@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { format } from "date-fns";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { Edit, Trash2, Info, Copy, ChevronDown } from "lucide-react";
+import { Edit, Trash2, Info, Copy, ChevronDown, ImageOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -64,6 +64,22 @@ export function MediaGrid({
   const [infoMedia, setInfoMedia] = useState<Media | null>(null);
 
   const isImage = (mimeType: string) => mimeType.startsWith("image/");
+
+  // Hosts allowed in next.config.ts → images.remotePatterns
+  const isHostAllowed = (url: string): boolean => {
+    try {
+      const h = new URL(url).hostname;
+      return (
+        h === "images.unsplash.com" ||
+        h.endsWith(".unsplash.com") ||
+        h.endsWith(".cloudinary.com") ||
+        h.endsWith(".amazonaws.com") ||
+        h.endsWith(".googleapis.com")
+      );
+    } catch {
+      return false;
+    }
+  };
 
   const copyUrl = async (item: Media) => {
     try {
@@ -329,7 +345,7 @@ export function MediaGrid({
           <CardContent className="p-0">
             {/* Image */}
             <div className={`${gridSize === "compact" ? "aspect-square" : "aspect-[4/3]"} relative overflow-hidden bg-muted`}>
-              {isImage(item.mimeType) ? (
+              {isImage(item.mimeType) && isHostAllowed(item.url) ? (
                 <NextImage
                   src={item.url}
                   alt={item.altText || item.filename}
@@ -341,6 +357,13 @@ export function MediaGrid({
                       : "(max-width: 767px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
                   }
                 />
+              ) : isImage(item.mimeType) ? (
+                <div className="flex flex-col items-center justify-center h-full gap-1 p-2 text-center">
+                  <ImageOff className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-[10px] text-muted-foreground break-all line-clamp-2">
+                    Host not allowed
+                  </span>
+                </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <span className="text-muted-foreground text-sm">{item.mimeType}</span>

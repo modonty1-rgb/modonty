@@ -107,3 +107,132 @@
     background-color: hsl(var(--muted-foreground) / 0.5);
   }
 }
+
+/* driver.js RTL + brand polish for /help tour */
+.driver-popover {
+  font-family: "Tajawal", system-ui, sans-serif !important;
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-radius: 14px !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 20px 50px -10px rgba(0,0,0,.25) !important;
+  max-width: 360px !important;
+}
+.driver-popover-title {
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  color: hsl(var(--foreground)) !important;
+  margin-bottom: 0.4rem !important;
+  line-height: 1.4 !important;
+  text-align: right;
+  padding-inline-end: 80px; /* clear space on visual left for close + speaker buttons */
+}
+.driver-popover-description {
+  font-size: 0.92rem !important;
+  line-height: 1.7 !important;
+  color: hsl(var(--muted-foreground)) !important;
+  text-align: right;
+}
+.driver-popover-footer {
+  margin-top: 1rem !important;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.5rem;
+}
+.driver-popover-progress-text {
+  font-size: 0.75rem !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-weight: 600;
+}
+.driver-popover-prev-btn,
+.driver-popover-next-btn {
+  font-family: "Tajawal", system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 9px !important;
+  border: none !important;
+  cursor: pointer;
+  text-shadow: none !important;
+}
+.driver-popover-next-btn {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+.driver-popover-next-btn:hover {
+  background: hsl(var(--primary) / 0.9) !important;
+}
+.driver-popover-prev-btn {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+.driver-popover-prev-btn:hover {
+  background: hsl(var(--muted) / 0.7) !important;
+}
+.driver-popover-close-btn {
+  font-family: "Tajawal", system-ui, sans-serif !important;
+  color: hsl(var(--muted-foreground)) !important;
+  top: 12px !important;
+  right: auto !important;
+  left: 12px !important;
+}
+.driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: hsl(var(--card)) !important;
+}
+.driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: hsl(var(--card)) !important;
+}
+.driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: hsl(var(--card)) !important;
+}
+.driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: hsl(var(--card)) !important;
+}
+
+/* driver.js active element — attention-grabbing amber ring + radiating halo (no zoom) */
+.driver-active-element {
+  outline: 4px solid #f59e0b;
+  outline-offset: 4px;
+  border-radius: 12px;
+  animation: tour-attention 1.4s ease-in-out infinite;
+}
+@keyframes tour-attention {
+  0%, 100% {
+    outline-color: #f59e0b;
+    box-shadow:
+      0 0 0 10px rgba(245, 158, 11, 0.28),
+      0 0 40px 4px rgba(245, 158, 11, 0.45);
+  }
+  50% {
+    outline-color: #fb923c;
+    box-shadow:
+      0 0 0 18px rgba(245, 158, 11, 0.12),
+      0 0 70px 10px rgba(245, 158, 11, 0.25);
+  }
+}
+.driver-popover-progress-text {
+  font-size: 0 !important;
+}
+
+/* driver.js — kill the jarring zoom/scale, keep simple fade only */
+.driver-popover {
+  animation: driver-soft-fade 220ms ease-out !important;
+  transition: none !important;
+}
+.driver-popover-arrow {
+  transition: none !important;
+}
+.driver-overlay,
+.driver-overlay-animated {
+  transition: opacity 220ms ease-out !important;
+}
+@keyframes driver-soft-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Disable the spotlight (stage) scale animation — just snap to position */
+.driver-stage,
+.driver-active-element {
+  transition: none !important;
+}

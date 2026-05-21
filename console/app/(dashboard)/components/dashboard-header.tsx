@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, Bell } from "lucide-react";
+import { Menu, Settings, LayoutDashboard, BarChart3, HelpCircle, MessageSquare, Bell, BookOpen } from "lucide-react";
 import { ar } from "@/lib/ar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -176,6 +176,11 @@ export function DashboardHeader({
                 {pendingSupportCount > 9 ? "9+" : pendingSupportCount}
               </span>
             )}
+          </Link>
+          <Link href="/help" title="دليل الاستخدام" className="hidden sm:inline-block">
+            <Button type="button" variant="ghost" size="icon" className="h-10 w-10">
+              <BookOpen className="h-4 w-4" />
+            </Button>
           </Link>
           <Link href="/dashboard/settings" title={ar.nav.settings} className="hidden sm:inline-block">
             <Button type="button" variant="ghost" size="icon" className="h-10 w-10">

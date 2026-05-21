@@ -37,9 +37,9 @@ export const STEP_CONFIGS: StepConfig[] = [
     number: 4,
     label: "SEO",
     id: "seo",
-    description: "SEO title, description, keywords, and semantic keywords",
+    description: "SEO title, description, and semantic keywords",
     requiredFields: ["seoTitle", "seoDescription"],
-    optionalFields: ["metaRobots", "seoKeywords", "semanticKeywords"],
+    optionalFields: ["metaRobots", "semanticKeywords"],
   },
   {
     number: 5,

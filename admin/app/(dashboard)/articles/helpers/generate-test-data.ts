@@ -138,18 +138,6 @@ export function generateTestData(options: GenerateTestDataOptions): Partial<Arti
     caption: `صورة معرض رقم ${index + 1}`,
     altText: img.altText || `صورة توضيحية ${index + 1}`,
   }));
-  // SEO keywords
-  const seoKeywords = [
-    'كلمة مفتاحية رئيسية',
-    'تحسين محركات البحث',
-    'محتوى عربي احترافي',
-    'مقالات تقنية متقدمة',
-    'استراتيجيات التسويق الرقمي',
-    'تطوير الويب',
-    'تجربة المستخدم',
-    'الذكاء الاصطناعي',
-  ].slice(0, Math.floor(Math.random() * 4) + 5); // 5-8 keywords
-
   // Semantic keywords (entities)
   const semanticKeywords = [
     {
@@ -245,8 +233,7 @@ export function generateTestData(options: GenerateTestDataOptions): Partial<Arti
       'https://example.com/authoritative-source',
     ],
 
-    // SEO keywords & semantic entities
-    seoKeywords,
+    // Semantic entities
     semanticKeywords,
     
     // Content metadata

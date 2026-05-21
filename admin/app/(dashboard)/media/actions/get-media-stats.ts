@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { MEDIA_USED_WHERE, MEDIA_UNUSED_WHERE } from "@/lib/media/usage-where";
 
 function normalizeImageTypeCounts(
   imageTypesRaw: Array<{ mimeType: string; _count: { _all: number } }>
@@ -61,6 +62,9 @@ function normalizeMediaTypeCounts(
   );
 }
 
+// Match /media list default scope filter — exclude PLATFORM-scoped media so stats reflect the visible universe
+const SCOPE_FILTER = { scope: { not: "PLATFORM" } } as const;
+
 export async function getMediaStats() {
   try {
     const now = new Date();
@@ -100,98 +104,34 @@ export async function getMediaStats() {
       asLogos,
       asHeroImages,
     ] = await Promise.all([
-      // Total media
-      db.media.count({
-        where: {
-          clientId: { not: null },
-        },
-      }),
+      // Total media (matches /media filter universe — excludes PLATFORM scope)
+      db.media.count({ where: SCOPE_FILTER }),
       // Images
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          mimeType: { startsWith: "image/" },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, mimeType: { startsWith: "image/" } } }),
       // Videos
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          mimeType: { startsWith: "video/" },
-        },
-      }),
-      // Used (featured in articles)
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          featuredArticles: { some: {} },
-        },
-      }),
-      // Unused (not featured in any articles)
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          featuredArticles: { none: {} },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, mimeType: { startsWith: "video/" } } }),
+      // Used (linked via featured, logo, OR hero — single source of truth)
+      db.media.count({ where: { AND: [SCOPE_FILTER, MEDIA_USED_WHERE] } }),
+      // Unused (not linked via featured, logo, NOR hero — single source of truth)
+      db.media.count({ where: { AND: [SCOPE_FILTER, MEDIA_UNUSED_WHERE] } }),
       // Created this month
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          createdAt: { gte: startOfMonth },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, createdAt: { gte: startOfMonth } } }),
       // Total file size
-      db.media.aggregate({
-        where: {
-          clientId: { not: null },
-        },
-        _sum: {
-          fileSize: true,
-        },
-      }),
+      db.media.aggregate({ where: SCOPE_FILTER, _sum: { fileSize: true } }),
       // Image type breakdown
       db.media.groupBy({
         by: ["mimeType"],
-        where: {
-          clientId: { not: null },
-          mimeType: { startsWith: "image/" },
-        },
-        _count: {
-          _all: true,
-        },
+        where: { ...SCOPE_FILTER, mimeType: { startsWith: "image/" } },
+        _count: { _all: true },
       }),
       // Media type breakdown (GENERAL, LOGO, OGIMAGE, etc.)
-      // Get all media to count types manually (can't use groupBy with null enum values)
-      db.media.findMany({
-        where: {
-          clientId: { not: null },
-        },
-        select: {
-          type: true,
-        },
-      }),
+      db.media.findMany({ where: SCOPE_FILTER, select: { type: true } }),
       // Detailed usage breakdown: Media featured in articles
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          featuredArticles: { some: {} },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, featuredArticles: { some: {} } } }),
       // Detailed usage breakdown: Media used as client logos
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          logoClients: { some: {} },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, logoClients: { some: {} } } }),
       // Detailed usage breakdown: Media used as hero images
-      db.media.count({
-        where: {
-          clientId: { not: null },
-          heroImageClients: { some: {} },
-        },
-      }),
+      db.media.count({ where: { ...SCOPE_FILTER, heroImageClients: { some: {} } } }),
     ]);
 
     const imageTypeCounts = normalizeImageTypeCounts(imageTypesRaw);
@@ -200,7 +140,7 @@ export async function getMediaStats() {
     // Calculate total used (union of all usage types - a media can be used in multiple ways)
     const totalUsedUnique = await db.media.count({
       where: {
-        clientId: { not: null },
+        ...SCOPE_FILTER,
         OR: [
           { featuredArticles: { some: {} } },
           { logoClients: { some: {} } },

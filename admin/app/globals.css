@@ -128,4 +128,14 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--muted-foreground) / 0.5);
   }
+
+  /* Indeterminate progress bar — slides a 33%-wide block from left to right and loops */
+  @keyframes progress-indeterminate-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  .progress-indeterminate {
+    animation: progress-indeterminate-slide 1.4s ease-in-out infinite;
+  }
 }

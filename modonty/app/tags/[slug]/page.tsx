@@ -171,7 +171,7 @@ export default async function TagPage({ params }: TagPageProps) {
           item: {
             "@type": "Article",
             headline: article.title,
-            url: `${siteUrl}/articles/${article.slug}`,
+            url: new URL(`/articles/${article.slug}`, siteUrl).href,
           },
         })),
       },

@@ -8,9 +8,9 @@ import { getStaleVersionsStats } from "./actions/stale-versions";
 import { getCollectionSizes } from "./actions/collection-sizes";
 import { getDuplicateSlugs } from "./actions/duplicate-slugs";
 import { getJsonLdIntegrityStats } from "./actions/jsonld-integrity";
+import { getCanonicalUrlSanitizerStats } from "./actions/canonical-url-sanitizer";
 import { getLegalFormSanitizerStats } from "./actions/legalform-sanitizer";
-import { DatabaseOverview } from "./components/database-overview";
-import { DbToolsSection } from "./components/db-tools-section";
+import { DatabasePageShell } from "./components/database-page-shell";
 
 export default async function DatabasePage() {
   const [
@@ -24,6 +24,7 @@ export default async function DatabasePage() {
     collectionSizes,
     duplicateSlugs,
     jsonLdIntegrity,
+    canonicalSanitizer,
     legalFormSanitizer,
   ] = await Promise.all([
     getDatabaseHealth(),
@@ -36,33 +37,27 @@ export default async function DatabasePage() {
     getCollectionSizes(),
     getDuplicateSlugs(),
     getJsonLdIntegrityStats(),
+    getCanonicalUrlSanitizerStats(),
     getLegalFormSanitizerStats(),
   ]);
 
   const isLocal = process.env.NODE_ENV !== "production";
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight">Database Overview</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">
-          Live snapshot — {health.totalRecords.toLocaleString()} records
-          {health.storageMB > 0 ? ` · ${health.storageMB} MB` : ""}
-        </p>
-      </div>
-      <DatabaseOverview health={health} isLocal={isLocal} />
-      <DbToolsSection
-        orphans={orphans}
-        indexHealth={indexHealth}
-        slugIssues={slugIssues}
-        brokenRefs={brokenRefs}
-        sessionStats={sessionStats}
-        staleVersions={staleVersions}
-        collectionSizes={collectionSizes}
-        duplicateSlugs={duplicateSlugs}
-        jsonLdIntegrity={jsonLdIntegrity}
-        legalFormSanitizer={legalFormSanitizer}
-      />
-    </div>
+    <DatabasePageShell
+      health={health}
+      isLocal={isLocal}
+      orphans={orphans}
+      indexHealth={indexHealth}
+      slugIssues={slugIssues}
+      brokenRefs={brokenRefs}
+      sessionStats={sessionStats}
+      staleVersions={staleVersions}
+      collectionSizes={collectionSizes}
+      duplicateSlugs={duplicateSlugs}
+      jsonLdIntegrity={jsonLdIntegrity}
+      canonicalSanitizer={canonicalSanitizer}
+      legalFormSanitizer={legalFormSanitizer}
+    />
   );
 }

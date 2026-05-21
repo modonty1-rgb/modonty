@@ -57,29 +57,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Google ignores priority and changeFrequency — omit both per official docs
   // images[] → Google Image Search indexing (Next.js official: MetadataRoute.Sitemap images property)
+  // URL constructor percent-encodes non-ASCII slugs (e.g. Arabic) — required for valid sitemap XML
   const articleUrls: MetadataRoute.Sitemap = articles.map((article: SitemapArticle) => ({
-    url: `${baseUrl}/articles/${article.slug}`,
+    url: new URL(`/articles/${article.slug}`, baseUrl).href,
     lastModified: article.dateModified || article.datePublished || new Date(),
     ...(article.featuredImage?.url && { images: [article.featuredImage.url] }),
   }));
 
   const categoryUrls: MetadataRoute.Sitemap = categories.map((category) => ({
-    url: `${baseUrl}/categories/${category.slug}`,
+    url: new URL(`/categories/${category.slug}`, baseUrl).href,
     lastModified: category.updatedAt,
   }));
 
   const clientUrls: MetadataRoute.Sitemap = clients.map((client) => ({
-    url: `${baseUrl}/clients/${client.slug}`,
+    url: new URL(`/clients/${client.slug}`, baseUrl).href,
     lastModified: client.updatedAt,
   }));
 
   const authorUrls: MetadataRoute.Sitemap = authors.map((author) => ({
-    url: `${baseUrl}/authors/${author.slug}`,
+    url: new URL(`/authors/${author.slug}`, baseUrl).href,
     lastModified: author.updatedAt,
   }));
 
   const tagUrls: MetadataRoute.Sitemap = tags.map((tag) => ({
-    url: `${baseUrl}/tags/${tag.slug}`,
+    url: new URL(`/tags/${tag.slug}`, baseUrl).href,
     lastModified: tag.updatedAt,
   }));
 

@@ -107,9 +107,6 @@ export function transformArticleToFormData(article: ArticleFromDb): Partial<Arti
     // Audio
     audioUrl: article.audioUrl || null,
 
-    // SEO keywords the article is based on (reference)
-    seoKeywords: article.seoKeywords ?? [],
-
     // Tags & FAQs
     tags: article.tags?.map((t: { tag: { id: string } }) => t.tag.id) || [],
     faqs:

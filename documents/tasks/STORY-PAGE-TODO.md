@@ -1,6 +1,6 @@
 # /story Page Master TODO
 
-**Last Updated:** 2026-05-16 (✅ welcome card مختصر + بزنس النهائي شلت من page.tsx metadata · صفر "بزنس" في كل modonty · TSC clean)
+**Last Updated:** 2026-05-16 (✅ GEMINI plan FINAL — 16 capabilities · all 8 new ones now have "سيناريو من مدوني" cards (problem→solution→benefit→example) matching the chat-style explanations)
 **Files in scope:** `modonty/scripts/voice/general-pitch/script.md` (المصدر) · `modonty/app/story/*` · `modonty/public/help/audio/general-pitch/*`
 **Page:** `modonty.com/story` — 5-min audio pitch
 

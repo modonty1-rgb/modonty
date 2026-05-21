@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DashboardHeader } from "./dashboard-header";
 import { Sidebar } from "./sidebar";
 import { MobileSidebar } from "./mobile-sidebar";
+import { FirstTimeWelcome } from "./first-time-welcome";
 import { cn } from "@/lib/utils";
 
 interface DashboardLayoutClientProps {
@@ -38,6 +39,7 @@ export function DashboardLayoutClient({
 
   return (
     <div className="min-h-screen bg-background">
+      <FirstTimeWelcome />
       <Sidebar
         clientName={clientName}
         clientLogoUrl={clientLogoUrl}

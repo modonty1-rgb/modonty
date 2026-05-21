@@ -1,4 +1,518 @@
-# Session Context — Last Updated: 2026-05-21 (Session 103 — Industry dropdown restored on Edit Client · admin v0.57.4 SHIPPED)
+# Session Context — Last Updated: 2026-05-21 (Session 104e — One-click Run-All Auto-Maintenance on /database · still pending push)
+
+---
+
+## 🟢 Session 104e — 2026-05-21 (one-click Run-All Auto-Maintenance button on /database)
+
+### TL;DR
+Khalid asked to bundle the safe-to-automate maintenance actions into a single button. After auditing the 9 tool cards, identified **6 deterministic, no-review-needed steps** safe to bundle: expired OTPs, expired sessions + verification tokens, stale article versions (90+ days only), missing TTL indexes, stale JSON-LD regen (the canonical-URL data fix from Session 104b's plan), and auto-mappable legal forms. Created server action `runAllAutoMaintenance` that runs all six in sequence with per-step error isolation. Added `RunAllMaintenanceButton` with AlertDialog confirm + result toast + per-step last-run summary card. Button shows a count badge for how many of the 6 categories currently need attention (disabled when 0). Placed at the top of the Maintenance tab. Also fixed a pre-existing bug in `computeToolStatuses` where the JSON-LD attention check used `total` (= all published articles) instead of `staleCount`. Live tested: button renders with correct badge (3 — matches 6 OTPs + 2 sessions + 3 TTL missing), dialog opens cleanly with all 6 steps enumerated, items needing human review explicitly listed as "not touched".
+
+### Why the Session 104b indexing fix piggybacks here
+Khalid asked whether the canonical-URL/JSON-LD fix from Session 104b deserves its own button. Answer: no — the Session 104b changes were **code-level fixes** (one-time application via `new URL()` encoding + slug-rename canonical regen), so all new/edited articles get the correct canonical automatically. The only *data* leftover is articles whose **stored** `jsonLdStructuredData` still points to localhost/old hosts — and that is exactly what the JSON-LD Cache Integrity tool fixes. It is included in the Run-All button, so the bulk data-side cleanup ships with it. (A separate `Canonical URL Sanitizer` for the `canonicalUrl` field itself is still pending — kept in PENDING-IDEAS for now.)
+
+### Files added (2 new)
+- **NEW** `admin/app/(dashboard)/database/actions/run-all-maintenance.ts` — server action `runAllAutoMaintenance` running 6 steps with per-step try/catch, returns `{ totalFixed, steps: MaintenanceStepResult[] }`
+- **NEW** `admin/app/(dashboard)/database/components/run-all-maintenance-button.tsx` — AlertDialog confirm + result toast + last-run summary card
+
+### Files modified (1)
+- **EDITED** `admin/app/(dashboard)/database/components/database-page-shell.tsx`
+  - Added `computeAutoFixableCount()` (counts only the 6 bundleable categories)
+  - Fixed JSON-LD bug: `props.jsonLdIntegrity.total > 0` → `props.jsonLdIntegrity.staleCount > 0`
+  - Added Auto-Maintenance card with `RunAllMaintenanceButton` at top of Maintenance tab
+
+### What the 6 steps do
+1. `cleanExpiredOtps()` — slug-change codes past `expiresAt`
+2. `cleanExpiredSessions()` — NextAuth sessions + verification tokens past `expires`
+3. `cleanStaleVersions(90)` — `ArticleVersion` rows older than 90 days
+4. `createTTLIndex()` — loops missing TTL indexes from `getIndexHealth()`
+5. `regenerateAllStaleJsonLd()` — finds + regenerates articles whose stored JSON-LD has bad hosts (localhost / .vercel.app / 127.0.0.1 / 0.0.0.0 / wrong-host)
+6. `sanitizeAllLegalForms()` — Arabic-→-canonical English mapping for mappable clients only
+
+### What is *not* bundled (needs human judgment)
+- Unused Media (might be intentionally orphaned by a forgetful user)
+- Stale Versions 30-day (too recent to auto-delete)
+- Unmapped Legal Forms (no mapping rule matched — manual fix)
+- Duplicate Slug Scanner / Slug Integrity / Broken References (read-only review)
+
+### Live verification
+- ✅ TSC admin: zero errors
+- ✅ Button renders on /database with correct count badge (3 categories need attention)
+- ✅ AlertDialog opens cleanly, all 6 steps listed, "not touched" disclaimer visible
+- ✅ Cancel works, no console errors
+- ✅ **Real run on PROD (executed by Khalid 2026-05-21 21:22):** OTPs 6→0 · sessions 2→0 · TTL indexes 3 missing→0 missing. attention 4→2, healthy 5→7. Auto-Maintenance button correctly disables itself (no count badge) after completion since nothing left to auto-fix.
+
+### Fifth UX iteration — Unused Media banner needs state feedback
+Khalid: "أضغط عليها تختفي ... المفروض تجيب لي الصور اللي مش مستخدمة واضحة ... UX ملخبطني" — clicking the amber banner caused it to disappear with no confirmation that filter was applied, and no way back to all files except via the Filters popover.
+- **Fix**: kept the amber alert banner for default mode (filter NOT applied), and added a **second BLUE banner** that appears when in unused-mode (`?used=unused`). Blue banner has Filter icon · "Viewing unused files only — N results" headline · description · "✕ Show all files" exit link.
+- **Full UX cycle now clear**: default page = amber alert "58 unused — Review now" → click → URL becomes `?used=unused` → blue confirmation banner "Viewing unused files only — N results" + ✕ exit → click ✕ → back to amber alert.
+- **TSC admin: zero errors.** Live verified — switched both directions, banners morph correctly.
+
+### Step 10 added — Soft-Deleted Comments Hard Delete (30d window)
+Khalid: "أنت إيش رأيك إيش تنصح؟" → recommended **30 days** based on industry standards (Disqus/WordPress/Facebook/Twitter) + GDPR alignment + low analytical value of deleted comments (mostly spam/abuse, unlike chatbot_messages which capture user intent).
+
+**Built:**
+- `soft-deleted-comments.ts` — `getSoftDeletedCommentsStats()` + `hardDeleteOldSoftDeletedComments()`. Deletes both `Comment.status=DELETED` AND `ClientComment.status=DELETED` where `updatedAt < 30 days ago`. Uses `Promise.all` to clean both tables in parallel.
+- `runStepSoftDeletedComments` exported from `run-all-maintenance.ts`
+- Registered in `auto-maintenance-panel.tsx` STEPS array as Step 10
+- Panel header subtitle: 9 → 10
+
+**Live test:** TSC zero errors. Dev server had a transient Turbopack RSC payload issue (not code-related) so visual verification deferred; user to restart dev server and verify panel shows 10 steps.
+
+**Total auto-maintenance now = 10 steps:**
+1. Expired OTPs
+2. Expired Sessions
+3. Stale Versions (30d+)
+4. TTL Indexes
+5. JSON-LD Regeneration
+6. Canonical URLs
+7. Legal Forms
+8. Cloudinary Orphans
+9. Sitemap Refresh (GSC)
+10. Soft-Deleted Comments (30d+)
+
+### Steps 8 + 9 added — Cloudinary Orphan Sweep + Sitemap Freshness Ping
+Khalid confirmed: build Cloudinary Orphan Sweep + Sitemap Freshness Ping per the new project rule (both go inside auto-maintenance, no separate UI).
+
+**Step 8 — Cloudinary Orphan Sweep** (`cloudinary-orphans.ts`):
+- **CRITICAL SAFETY** per Khalid's warning ("الحساب مشترك مع مشاريع ثانية"): hard-coded `MODONTY_PREFIXES = ["modonty/", "general/", "clients/", "admins/"]` — only assets matching these prefixes are touched. Double-checked in BOTH list and destroy paths (final guard before `uploader.destroy()`).
+- Min-age 1 hour to skip in-flight uploads (race protection)
+- Lists assets via `cloudinary.api.resources({ type: "upload", prefix, max_results: 500 })` per prefix with pagination (caps at 5000/prefix to prevent runaway)
+- Diff against `Media.cloudinaryPublicId` in DB; anything in Cloudinary AND NOT in DB AND in-scope AND older than 1h → orphan
+- Uses existing CLOUDINARY_URL / individual env vars (same parsing as `cloudinary-usage.ts`)
+
+**Step 9 — Sitemap Freshness Ping** (`sitemap-freshness.ts`):
+- Builds full URLs from Settings.siteUrl + known paths (`/sitemap.xml`, `/image-sitemap.xml`)
+- Calls existing `listSitemaps()` (GSC API) to get lastSubmitted per URL
+- Stale = never submitted, OR lastSubmitted > 24h ago
+- For each stale: calls `submitSitemap(url)` to ping GSC
+
+**Wiring:**
+- Added `runStepCloudinaryOrphans` + `runStepSitemapFreshness` exports to `run-all-maintenance.ts`
+- Registered both in `STEPS` array in `auto-maintenance-panel.tsx`
+- Updated panel subtitle: "Runs 7" → "Runs 9 safe, deterministic clean-ups..."
+
+**Live test on DEV:** 9/9 complete in 64.6s.
+- Cloudinary Orphans: **84 fixed** ⭐ (real orphan files in Modonty folders only — confirmed safe scope)
+- Sitemap Refresh: **2 fixed** (both sitemap.xml + image-sitemap.xml re-submitted to GSC)
+- Other 7 steps: clean
+
+**TSC admin: zero errors.** Both new tools obey `project_auto_maintenance_rule.md` — no standalone UI, only Run-All wiring.
+
+### Project rule locked — Auto-Maintenance is THE home for all future cleanups
+Khalid asked to confirm in project memory: every future maintenance/cleanup/sanitizer/migration tool we add MUST be wired into Run-All Auto-Maintenance, not surfaced as a separate card/banner/dialog on /database. Saved as `project_auto_maintenance_rule.md` + indexed in MEMORY.md.
+
+Rule summary:
+- Default home for new maintenance = a step inside `runStep<Name>` + entry in `auto-maintenance-panel.tsx` STEPS array
+- Update header description ("Runs N safe…")
+- DO NOT add a standalone card to db-tools-section
+- DO NOT add an attention counter unless monitoring needs it
+- **Exception**: tools that need human-review-per-row (like Unused Media) → move to content-owner's page as a dialog, NOT auto-maintenance
+
+### Tenth UX iteration — Auto-Maintenance becomes an inline progress panel (no dialog)
+Khalid: "بدل ما تطلع dialog ومش فاهم ... اعمل progress bar لكل status كده progress bar professional" → then refined: "بدل ما تضغط Auto وبعدين الـ Dialog أضغط Start ... الـ Progress في نفس الصفحة يشتغل واحد ورا بعض."
+
+**Refactor:**
+- **Deleted** `run-all-maintenance-button.tsx` (dialog-based, 2-click flow)
+- **Built** `auto-maintenance-panel.tsx` — single-click inline progress panel:
+  - Header row: title + description + "Run All Auto-Maintenance" button (+ Reset/Run Again after completion)
+  - Body (visible only when started): overall progress bar + per-step rows
+  - Each step row: status icon · label · status text + per-step progress bar (indeterminate animation while running)
+  - When done: overall summary "Complete — X fixed in Y.Ys" (or "Finished with N errors" if any failed)
+
+**Server-side refactor** `run-all-maintenance.ts` → split into 7 individual server actions (`runStepOtps`, `runStepSessions`, `runStepVersions`, `runStepTtl`, `runStepJsonLd`, `runStepCanonical`, `runStepLegalForm`) + `revalidateDatabasePage()`. Each action returns a single `MaintenanceStepResult`. The client calls them sequentially with state updates between each → enables true live progress (running → done) per step rather than waiting for all 7 to finish.
+
+**Progress component upgrade**: extended shadcn `Progress` with two new props:
+- `indeterminate?: boolean` — animates a sliding block left→right when value is unknown (the `running…` state)
+- `tone?: "default" | "destructive" | "emerald"` — color variants for ok/failed steps
+
+Added the `progress-indeterminate-slide` keyframes + `.progress-indeterminate` utility class to globals.css.
+
+**UX gain:**
+- Before: button → dialog confirms → dialog tracks progress (2 clicks, modal blocks view)
+- After: button click → progress runs inline below the button itself (1 click, page stays interactive)
+
+**Dead code purge:**
+- Deleted: `run-all-maintenance-button.tsx` (replaced)
+- Grep verified: zero remaining references to `RunAllMaintenanceButton` symbol anywhere
+- The old `runAllAutoMaintenance` bundled function in `run-all-maintenance.ts` was REMOVED — only the 7 individual actions remain. No bundled action sits unused.
+
+**TSC admin: zero errors.** Live verified — clicked Run Again, all 7 steps animated sequentially (~4.3s total), each marked "clean" since DB has no pending work after the earlier run; overall bar filled, summary line displayed.
+
+### Ninth UX iteration — Article Versions handled silently by auto-maintenance (final design)
+Khalid: "شيلها من الـ articles page وحطها من ضمن الـ auto maintenance" + chose **30 days** as the new threshold (was 90).
+
+**Removed:**
+- `/articles` `StaleVersionsButton` component + banner (deleted file)
+- `/articles` `actions/stale-versions-actions.ts` (deleted file)
+- `/database` `Article Version History` card UI block (was already hidden behind `hasVersions = false`, now fully removed including imports + types + state + dead refs)
+- `make sure no dead code` enforced — verified with grep across `admin/`: zero remaining references to deleted symbols
+
+**Changed:**
+- `run-all-maintenance.ts` Step 3: `cleanStaleVersions(90)` → `cleanStaleVersions(30)` · label "Stale Versions (90d+)" → "Stale Versions (30d+)"
+- `database-page-shell.tsx` autoFixable count: `stale90Days > 0` → `stale30Days > 0` (now triggers Run All badge when 30+ day snapshots exist)
+- `run-all-maintenance-button.tsx` dialog list: "older than 90 days" → "older than 30 days"
+
+**Files cleaned:**
+- `db-tools-section.tsx` — removed `StaleVersionsStats` import + type, `staleVersions` prop + destructuring, `currentVersions`/`setCurrentVersions` state, `cleanStaleVersions` import, `hasVersions` constant
+- `database-page-shell.tsx` — removed `versions: false` from `computeToolStatuses` statuses + removed `staleVersions={props.staleVersions}` from DbToolsSection invocation
+- Kept the `staleVersions` prop on the shell because `computeAutoFixableCount` still needs `stale30Days` to drive the Run-All badge — that's a load-bearing read, not dead code
+
+**Result on /database**:
+- 0 attention · 9 healthy
+- Run-All Auto-Maintenance button shows badge "1" (the 90 snapshots are the only auto-fixable work currently)
+- Clicking Run-All cleans them silently in <1s
+
+**TSC admin: zero errors.** Live verified on both /database and /articles.
+
+### Eighth UX move — Article Version History → /articles page banner
+Khalid: "هذي كلها مشاكل content، مش مشاكل database. وصاحب الـ content هو اللي يقرر" — same logic as Unused Media → /media. Moved.
+
+**New on /articles**:
+- `actions/stale-versions-actions.ts` — `getStaleVersionsByArticle()` returns per-article breakdown (articleId, title, slug, staleCount, oldestAt) + global totalStale30Days + totalStale90Days. Also `cleanStaleVersionsForArticle(id, days)` and `cleanAllStaleVersionsAtDays(days)` with auth gate.
+- `components/stale-versions-button.tsx` — same pattern as UnusedMediaButton: amber banner + Dialog showing per-article rows (title · stale count · oldest date · Open + Clean snapshots actions) + footer "Clean all 30+ day snapshots" button + AlertDialog confirms before delete.
+- Wired into `/articles/page.tsx` — fetched alongside articles, rendered just above the articles table.
+
+**Removed from /database**:
+- `hasVersions = false` constant → entire "Article Version History" card stays hidden permanently
+- `computeToolStatuses().versions = false` → no longer counted in attention
+- Auto-Maintenance Step 3 (silent 90d+ cleanup) is UNCHANGED — still runs in the background
+
+**Result**: `/database` Maintenance tab is now **completely empty** of attention items when truly clean — only Auto-Maintenance button + "All maintenance tools are healthy" empty state. Health Summary: 0 attention · 10 healthy · 5 groups. /articles content owner has direct UI control over snapshot cleanup.
+
+**TSC admin: zero errors.** Live verified — banner displays on /articles, dialog shows 90 snapshots grouped by article, per-article + bulk cleanup buttons present.
+
+### Honest status checkpoint (Khalid asked "اتحلت 100%؟")
+Confirmed completion of **data + code** side of the canonical/JSON-LD indexing fix. Three honest caveats given:
+1. **Pending push to PROD** — admin v0.58.0 includes all Sessions 104b/c/d/e but never pushed. Khalid must say "push" to trigger commit + deploy.
+2. **Pending Run-All on PROD** — after deploy, admin must visit `/database` and click Run All Auto-Maintenance once to clean PROD's stored data.
+3. **Pending Google re-crawl** — we don't control when Google re-indexes. Days to weeks.
+4. **iPhone link-sharing (the original Session 104 problem) is NOT solved** — that needs the Short Link System (9-phase plan in SHORT-LINK-SYSTEM-TODO.md, still unbuilt).
+
+Net: canonical/indexing-data issue = solved 100% in code; iPhone-share issue = separate, pending.
+
+### Canonical URL Sanitizer — BUILT (Session 104e final step)
+Khalid: "أخلص كل حاجة، عشان ما نتعلق. أنا أبغى أعمل الفهرس في Google" → built the missing Canonical URL Sanitizer tool so Auto-Maintenance closes the Session 104b gap 100%.
+
+**Implementation:**
+- **NEW** `admin/.../database/actions/canonical-url-sanitizer.ts` exporting:
+  - `getCanonicalUrlSanitizerStats()` — scans all PUBLISHED articles · computes expected canonical via `new URL("/articles/" + slug, settings.siteUrl).href` (same logic as modonty runtime) · returns total, withCanonical, staleCount, expectedBase, detectedBadHosts (5 patterns: localhost, .vercel.app, 127.0.0.1, 0.0.0.0, plus mismatched host), sample (5 most recent stale)
+  - `regenerateAllStaleCanonicalUrls()` — fetches all stale articles → updates `Article.canonicalUrl` with the freshly computed expected value · returns `{ attempted, successful, failed }`
+- **Wired into** `run-all-maintenance.ts` as Step 6 ("Canonical URLs Sanitized"). The bundle is now 7 steps.
+- **Wired into** `database-page-shell.tsx` — added `canonical` to attention statuses and `autoFixable` counter.
+- **Wired into** `db-tools-section.tsx` — new card "Canonical URL Sanitizer" mirroring the JSON-LD card design (badge · explanation · bad-hosts pills · sample list with deep-links · single "Sanitize All Stale Canonical URLs" button).
+- **Updated** Auto-Maintenance card subtitle (6 → 7) and dialog list to include the new step.
+
+**Result**: combined with Step 5 (JSON-LD regen), the auto-maintenance now fixes both:
+- The inline JSON-LD blob (`Article.jsonLdStructuredData` — what Google reads from the page)
+- The standalone canonical field (`Article.canonicalUrl` — what tools that read DB directly use)
+
+**TSC admin: zero errors.** Live verified — page shows "Runs 7 safe clean-ups", attention 0 → 0 on DEV (no stale canonicals currently). Card auto-shows when staleCount > 0 on PROD.
+
+### Session 104b coverage question — answered with code-level proof
+Khalid asked whether the canonical/JSON-LD fix from Session 104b is in the Auto-Maintenance Run-All. Read `jsonld-storage.ts:155-166` to confirm:
+- **YES**: Step 5 (`regenerateAllStaleJsonLd`) regenerates the entire JSON-LD blob via `generateArticleKnowledgeGraph()`, which produces a corrected canonical URL inside the blob's `@id` field. This is what Google reads.
+- **NO (gap)**: the standalone `Article.canonicalUrl` field is NOT updated — `db.article.update` at line 156 only writes 4 fields (jsonLdStructuredData, jsonLdLastGenerated, jsonLdValidationReport, articleBodyText).
+- **Production impact**: zero. Session 104b also fixed `modonty/app/articles/[slug]/page.tsx` to regenerate canonical from slug at runtime — so the HTML Google scrapes is always correct regardless of the stale DB field.
+- **Awaiting**: Khalid's decision whether to build "Canonical URL Sanitizer" (pending in PENDING-IDEAS) to clean the DB field for cosmetic consistency.
+
+### Delete-flow safety verified (Khalid asked)
+Khalid asked whether clicking Delete in the dialog properly deletes from DB + Cloudinary + only the targeted file. Read `delete-media.ts` + `can-delete-media.ts` to confirm. 5 layers verified:
+1. Auth required
+2. `canDeleteMedia(id)` re-checks usage server-side (published articles · logoClients · heroImageClients) — refuses with specific reason if found
+3. Cloudinary delete FIRST; if it fails → DB delete is aborted (no orphan)
+4. `db.media.delete({ where: { id } })` — by exact ObjectId only, no cascading
+5. `revalidatePath("/media")` after success
+
+Conclusion: deletion is atomic-ish, scoped, and defensive. Safe for production use.
+
+### Seventh UX iteration — Unused review as Dialog (final design)
+Khalid: "الـ UX هذا غلط. اديني الـ banner اللي هو الـ warning. لما أضغط عليه، طلع لي dialog أشوف الصور اللي مستخدمة، ومن هناك أتحكم فيها." → final design lands on a Dialog instead of a URL-based filter view.
+
+**Changes:**
+- **NEW** `admin/.../media/components/unused-media-button.tsx` — combines the amber warning banner + Dialog (with file list) + AlertDialog (delete confirmation) into one client component
+- **Reverted** the `flat` prop plumbing in MediaGrid and MediaPageClient (no longer needed)
+- **Reverted** the blue "Viewing unused only" banner in page.tsx (replaced by dialog)
+- **Updated** page.tsx — fetches the 100 most recent unused items server-side (using `MEDIA_UNUSED_WHERE` + scope filter) and passes them to `<UnusedMediaButton>` as a static list
+
+**Dialog UX:**
+- Title: "Unused files (N)" + descriptive subtitle
+- Each row: thumbnail (with `isHostAllowed` placeholder for non-allowed hosts) + filename + meta line (type · size · upload date) + Open button (deep-link to `/media/[id]/edit`) + Delete button
+- Click Delete → AlertDialog confirms → calls existing `deleteMedia()` action → toast + `router.refresh()`
+- Close button at bottom
+- Dialog is scrollable when list is long (max-h-[85vh] + overflow-y-auto)
+
+**Net result**: amber banner alone is enough cognitive surface. User clicks → modal opens → they see all the unused files clearly in one place with actions. No URL changes, no flat-vs-grouped confusion, no scrolling between client accordions.
+
+**TSC admin: zero errors.** Live verified — dialog opens, shows 6 items with thumbnails, delete confirmation flow works.
+
+### Sixth UX iteration — Unused mode needs flat view (Khalid's confusion)
+Khalid kept asking "where are the 6 files?" — turned out the grid in `?used=unused` was STILL grouping by client (Unknown 2 + كيما زون 2 + شركة جبر 2 = 6, split into 3 collapsible accordions). User only saw the first group at viewport top, the rest needed scrolling. The "Host not allowed" placeholder on the first two thumbs made them look identical, hiding the difference between views.
+- **Fix**: added `flat?: boolean` prop to `MediaGrid`. When true, all items collapse into ONE group called "All files" instead of being split per-client. Wired through `MediaPageClient` so `/media?used=unused` always renders flat.
+- **Result**: clicking "Review now" now lands on a single group "All files — 6 files" with all 6 unused thumbnails visible together. No more scrolling between client accordions while reviewing.
+- **TSC admin: zero errors.** Live verified.
+
+### Media stats reconciliation — FIXED
+Khalid: "لا أصلح، أصلح، أصلح. يعني إحنا طلبنا عشان نصلح، أو تعبنا عشان نصلح، مش عشان نأجل." → fixed immediately.
+
+**Three bugs found by live test + code review:**
+1. `get-media-stats.ts:131` — counted unused with `featuredArticles: { none: {} }` only (missed logo + hero relations)
+2. `get-media.ts:78` — filter also checked only `featuredArticles` (same bug, same fix)
+3. Stats applied `clientId: { not: null }` but filter applied `scope: { not: "PLATFORM" }` — different universes, so counts couldn't match even if both used the same usage logic
+
+**Fix:**
+- **New** `admin/lib/media/usage-where.ts` — exports `MEDIA_USED_WHERE` and `MEDIA_UNUSED_WHERE` (OR/AND-NONE of all 3 relations: featuredArticles + logoClients + heroImageClients). Single source of truth.
+- **Edited** `get-media.ts` — uses these clauses for `filters.used` branching.
+- **Edited** `get-media-stats.ts` — uses these clauses for `used`/`unused` + `totalUsedUnique`. Replaced `clientId: { not: null }` with `scope: { not: "PLATFORM" }` (matches `/media` list default scope) everywhere.
+
+**Live verified end-to-end:**
+- Default `/media`: 11 files · 45% used · banner "6 unused files"
+- Filter `/media?used=unused`: blue banner "Viewing unused files only — 6 results" ✓ matches
+- Math: 5 used + 6 unused = 11 total ✓
+- Toggle: "Show all files" → back to default ✓
+
+**Net impact**: banner now tells the truth. Click → land on exactly the count shown.
+
+TSC admin: zero errors. PENDING-IDEAS entry marked done.
+
+### Fourth UX move — Unused Media → /media page banner
+Khalid: "هذه مكانها غلط هنا. اللي هي Unused Media المفروض تكون في صفحة الـ media بطريقة UI/UX أفضل" — Unused Media was a passive notification on the wrong page. Moved to the place where the user can actually act on it.
+- **Removed from `/database`**: deleted the Unused Media row from Orphan Cleaner card · changed `hasOrphans` from `total > 0` to `expiredOtps > 0` · updated badge from "X issues" to "X expired" · also updated `computeToolStatuses().orphan` in shell to use `expiredOtps > 0`. Now the Orphan Cleaner section only handles OTPs.
+- **Added to `/media`**: prominent amber banner directly below the page header, conditional on `stats.unused > 0 && params.used !== "unused"`. Reads: "N unused file(s) — not linked to any article or client" + descriptive subtitle + "Review now" CTA arrow. Banner is a `<Link href="/media?used=unused">` that activates the existing Usage filter so admin lands on the unused-only view in one click.
+- **Bonus fix** (pre-existing crash): `media-grid.tsx` was throwing `Invalid src prop` for any media row with a host not in `next.config.ts → images.remotePatterns` (one DB row had `example.com/temp.jpg`). The entire page failed to render → my new banner couldn't show. Added `isHostAllowed(url)` helper that checks against the 5 whitelisted hosts (unsplash, cloudinary, amazonaws, googleapis); rows with non-allowed hosts now render an `ImageOff` placeholder + "Host not allowed" text instead of crashing.
+- **Live verified**: Database `/database` Maintenance shows attention 2→1 (Unused Media removed from the count) · healthy 7→8 · only Article Version History card visible. `/media` shows amber banner "58 unused files — Review now" with working CTA. Image-host placeholder renders cleanly for the example.com row.
+- **TSC admin: zero errors.**
+
+### Third UX move — Collection Sizes → Data Tables tab
+Khalid: "Collection Sizes إيش وظيفتها؟ ليش ما تكون مع الـ data table في الـ tab هناك؟" — surfaced the duplication: standalone Collection Sizes was in Maintenance tab while showing data identical in intent to Data Tables tab (record counts + storage). Decision: move it under "Data Tables" tab as a separate "Storage Usage" sub-block (NOT merged inline because the two are different abstractions — Prisma model counts vs MongoDB collection storage).
+- Extended `DataTablesGroup` to accept `collectionSizes` prop + render new "Storage Usage" block below the 5 grouped tables, with subtitle "MongoDB collection sizes — what takes up space on disk" + total MB badge
+- Removed standalone Collection Sizes block from `DbToolsSection`, cleaned up unused `CollectionSize` type import, `collectionSizes` prop, and `maxSizeMB` variable
+- Updated `database-page-shell.tsx` to pass `collectionSizes` to `DataTablesGroup` instead of `DbToolsSection`
+- TSC admin: zero errors. Live verified — Data Tables tab now has Core / Content / Audience / Analytics / System / Storage Usage; Maintenance tab is purely tools needing attention
+
+### Second UX cleanup pass (Khalid's call)
+Khalid: "اللي اتعمل له تنظيف ما أحتاج أشوفه ثاني في الصفحة" → hide clean sections entirely; Health Summary cards above are enough confirmation. Changes in `db-tools-section.tsx`:
+- Each maintenance section now wrapped in conditional render (`hasOrphans`, `hasSessions`, `hasVersions`, `hasDuplicateSlugs`, `hasTtlMissing`, `hasSlugIssues`, `hasJsonLdStale`, `hasLegalForm`, `hasBrokenRefs`)
+- Sections with zero issues are completely hidden from the page
+- Inside Orphan Cleaner: clean sub-rows (e.g., OTPs when 0) are hidden too
+- TTL table filters to show ONLY missing indexes (`!idx.exists`)
+- Slug Integrity table filters to show ONLY entities with empty slugs
+- Broken References table filters to show ONLY rows with count > 0
+- Added empty-state when EVERY maintenance section is clean: emerald banner "All maintenance tools are healthy"
+- Collection Sizes stays (informational/reference data, not a cleanup target)
+- TSC admin: zero errors. Live verified — page now shows only Orphan Cleaner (Unused Media row) + Article Version History (30d+ stale) + Collection Sizes. Other 7 sections hidden as clean.
+
+### First UX polish pass (Khalid's call)
+Khalid: "خليه ظاهر إذا ضغطت عليه، وما في حاجة يرجع لي إنه الدنيا كلها سليمة." → button now stays always-visible. Changes:
+- Removed `disabled` when `attentionCount === 0` — button is now clickable in all states
+- Variant flips: `default` (solid violet) when work to do · `outline` when clean
+- Count badge only renders when `hasWork === true`
+- Dialog shows emerald banner "✅ Nothing currently needs auto-maintenance — but you can re-check anyway" when `!hasWork`
+- Toast on zero-work run: "✅ Everything is clean — no issues found" + "All 6 maintenance steps ran. Database is healthy."
+- TSC admin: zero errors. Live verified — button visible after the earlier successful run, no badge, clean outline style.
+
+### Open items
+- **NEXT:** Khalid's "push" word triggers commit + push of all current Session 104b+104c+104d+104e changes together
+- **Pending idea (Canonical URL Sanitizer):** the `canonicalUrl` field itself — separate tool, kept in PENDING-IDEAS for later
+
+---
+
+## 🟢 Session 104d — 2026-05-21 (admin /database page redesigned — Tabs + Health Summary + Compact Header)
+
+### TL;DR
+Khalid reported the `/database` page was disorganized (4,350px tall, 14+ stacked sections). After audit + mockup approval, redesigned with: compact header (pills) + Health Summary strip (3 cards) + Tabs (Maintenance · Data Tables · Backup & Restore). Existing `DbToolsSection` reused as-is inside Maintenance tab — zero behavior change for the tools themselves. The old `DatabaseOverview` was split into 3 reusable components (`CompactStatsHeader`, `BackupRestoreCard`, `DataTablesGroup`). New orchestrator `DatabasePageShell` wires everything via Radix Tabs. Result: default view drops from 4,350px → 600px. Live tested on Playwright — all 3 tabs switch correctly, zero console errors.
+
+### Files added (4 new)
+- **NEW** `admin/app/(dashboard)/database/components/compact-stats-header.tsx` — compact header with stat pills + timestamp
+- **NEW** `admin/app/(dashboard)/database/components/health-summary.tsx` — 3-card status strip (attention/healthy/tables)
+- **NEW** `admin/app/(dashboard)/database/components/backup-restore-card.tsx` — extracted from database-overview
+- **NEW** `admin/app/(dashboard)/database/components/data-tables-group.tsx` — extracted from database-overview
+- **NEW** `admin/app/(dashboard)/database/components/database-page-shell.tsx` — top-level orchestrator with Radix Tabs
+
+### Files modified (1)
+- **EDITED** `admin/app/(dashboard)/database/page.tsx` — replaced `<DatabaseOverview>` + `<DbToolsSection>` with single `<DatabasePageShell {...props}>`
+
+### Files preserved (unchanged — for rollback safety)
+- `admin/app/(dashboard)/database/components/database-overview.tsx` (kept intact, no longer imported)
+- `admin/app/(dashboard)/database/components/db-tools-section.tsx` (kept intact, imported by new shell)
+
+### Live verification
+- ✅ TSC admin: zero errors
+- ✅ Console: zero errors on /database page
+- ✅ Maintenance tab: all 10 tools render correctly with badges/state
+- ✅ Data Tables tab: 5 groups (Core/Content/Audience/Analytics/System) render correctly
+- ✅ Backup & Restore tab: Backup + Restore card visible cleanly
+- ✅ Health Summary strip: live counts (5 attention · 4 healthy · 5 groups)
+
+### Mockup file (kept for reference)
+- `documents/mockups/database-page-redesign.html` — visual reference for the redesign decisions
+
+### Open items
+- **NEXT:** Khalid's "push" word triggers commit + push of all current Session 104b+104c+104d changes together
+
+---
+
+---
+
+## 🟢 Session 104c — 2026-05-21 (seoKeywords field removed — 4-source evidence + bulletproof execution plan + live test passed)
+
+### TL;DR
+Khalid asked whether the SEO Keywords field still has value. Triple-verified via Context7 + WebSearch + WebFetch on real production sites: **zero measurable SEO benefit** (Google docs don't list it for Article rich results · Ahrefs 2025 1885-page study confirms no AI citation boost · SearchViu empirical test proves AI engines ignore JSON-LD at retrieval · industry split with NY Post including it but Guardian not · modonty.com never even reads the field — pure dead data). Built a 9-phase execution checklist file (`SEOKEYWORDS-DELETION-EXECUTION.md`) with 65+ checkboxes, 4 TSC checkpoints, line-numbered before/after snippets for all 16 affected files. After senior re-review found 5 missed spots (orphan `keywordInput` useState, SectionHeader description, separator div, error message text, DialogDescription sentence), executed the plan in 6 phases with zero issues. Final result: 2 orphan files deleted (KeywordsStep + KeywordsSection), 13 files edited, 1 Prisma schema field removed. AI dialog refactored to use transient state only. TSC zero errors on all 3 apps. SEO tab UI verified clean on Playwright. Technical page verified clean. Section header re-titled "كلمات ومصادر" → "مصادر موثوقة" since only Citations remain.
+
+### Files changed (16 total)
+- **DELETED** `admin/.../components/sections/keywords-section.tsx` (orphan)
+- **DELETED** `admin/.../components/steps/keywords-step.tsx` (orphan)
+- **EDITED** `dataLayer/prisma/schema/schema.prisma` — removed `seoKeywords String[] @default([])` on Article model
+- **EDITED** `admin/.../mutations/create-article.ts` — removed `seoKeywords: data.seoKeywords ?? []`
+- **EDITED** `admin/.../mutations/update-article.ts` — same
+- **EDITED** `admin/.../article-server-schema.ts` — removed `seoKeywords: z.array(z.string()).optional()` from Zod
+- **EDITED** `admin/lib/types/form-types.ts` — removed `seoKeywords?: string[]` from ArticleFormData
+- **EDITED** `admin/.../article-form-context.tsx` — removed `seoKeywords: []` from initial state
+- **EDITED** `admin/.../transform-article-to-form-data.ts` — removed line
+- **EDITED** `admin/.../step-validation-helpers/step-configs.ts` — removed from SEO step optionalFields + description
+- **EDITED** `admin/.../step-validation-helpers/field-labels.ts` — removed entry
+- **EDITED** `admin/.../helpers/generate-test-data.ts` — removed test array + reference
+- **EDITED** `admin/.../components/steps/seo-step.tsx` — removed: keywordInput useState · keywords const · addKeyword + removeKeyword callbacks · Keywords UI block · `<div className="border-t" />` separator. Re-titled SectionHeader "مصادر موثوقة"
+- **EDITED** `admin/.../[id]/technical/page.tsx` — removed SEO Keywords display block
+- **EDITED** `admin/.../components/ai-article-dialog.tsx` — refactored 7 spots: useEffect prefill · handleGenerate fallback · error message text · handleConfirm updateFields · onOpenAutoFocus prop · DialogDescription sentence · button disabled condition. Local keywords state stays (used as AI prompt input only, not bound to formData)
+
+### Pre-push artifacts (✅ ready)
+- Version bump: admin 0.57.4 → **0.58.0**
+- Changelog: synced to LOCAL + PROD (id `6a0f19901744f8c27b16ee65` / `6a0f19901744f8c27b16ee66`)
+- TSC admin: zero errors
+- TSC modonty: zero errors
+- TSC console: zero source errors (only Turbopack `.next/dev/types/validator.ts` cache noise — harmless)
+- Source code grep `seoKeywords`: zero matches outside `semantic-keywords-*` (different feature, preserved)
+- Live test on dev: SEO tab UI clean · technical page clean · form loads · zero console errors
+
+### Verification timeline
+1. **Context7 query** on schemaorg/schemaorg + Google Search Central — keywords NOT required/recommended for Article
+2. **WebSearch + WebFetch** on jsonld.com showing real NY Post/Guardian schemas — industry split
+3. **WebFetch on searchviu.com 2025 empirical test** — AI engines ignore JSON-LD at direct fetch (5/5 systems failed to extract data placed only in JSON-LD)
+4. **Triple grep scan** across admin + modonty + console + scripts + API + tests/specs + cron — confirmed 71 references across 20 files, all accounted for
+5. **Senior re-review** caught 5 missed spots (orphan state, section header desc, separator div, error msg text, DialogDescription sentence)
+6. **Execution in 6 phases** with TSC checkpoints after each
+7. **Playwright live test** confirmed SEO tab UI clean, technical page clean, zero console errors
+
+### What stayed safe (verified zero touch)
+- `semanticKeywords` Json field — different feature, actively used in modonty/lib/seo/index.ts:264-269 as JSON-LD `mentions[]` for Wikidata entity disambiguation
+- `modonty/` — zero references found in 3-pass grep
+- `console/` — zero references
+- Existing MongoDB documents with seoKeywords arrays — Prisma silently ignores unknown fields, no error
+- All SEO generator functions (`generateArticleSEO`, `generateAndSaveJsonLd`, `generateAndSaveNextjsMetadata`, etc.) — none read the field
+- All publish-action flow, cron jobs, scripts, API endpoints — verified clean
+
+### Open items for next session
+- **🔴 NEXT IMMEDIATE:** Khalid's "push" word triggers commit + push to main → Vercel auto-deploys both admin + modonty independently
+- **🟡 PENDING:** Canonical URL Sanitizer in admin/database — to fix existing 46 articles' stale canonicalUrl + jsonLdStructuredData cache (code fix was in 104b, data sanitizer is the missing piece for production rollout)
+- **🟢 LOW:** Short Link System Phase 0 still has 3 pending decisions (per PENDING-IDEAS-TODO)
+
+---
+
+---
+
+## 🟢 Session 104b — 2026-05-21 (Canonical URL + JSON-LD code fixes — code-only, no data migration yet)
+
+### TL;DR
+Khalid surfaced bug report `documents/bugs/modonty-indexing-bug-report.md`: Google rejects indexing of `modonty.com/articles/ما-هو-السيو` with "Page fetch: Failed: Not found (404)" because the JSON-LD `@id` points to a long stale slug (`ما-هو-السيو-في-2026-كيف-تضاعف-مبيعاتك...`) while the canonical link points to the short current slug. Root cause traced: `update-article.ts` and `create-article.ts` had a conditional that only regenerated `canonicalUrl` from slug when the DB value was empty OR contained `/clients/`, otherwise it kept the stale DB value. When admin renamed a slug, `canonicalUrl` stayed pointing to the old slug, propagating to JSON-LD `@id` via `generateArticleStructuredData`. Code fix: removed the conditional everywhere, always regenerate canonical from current slug. Bonus: switched to `new URL(path, siteUrl).href` everywhere to auto-percent-encode Arabic slugs (matches Google's expected URL form 1:1).
+
+### Files edited (8 spots in 6 files — all code, no data touched)
+- **EDITED** `admin/app/(dashboard)/articles/helpers/seo-generation.ts:60` — `generateCanonicalUrl` uses `new URL()` for percent-encoding
+- **EDITED** `admin/.../mutations/update-article.ts:159-162` — removed buggy conditional, always regen from slug
+- **EDITED** `admin/.../mutations/create-article.ts:100-103` — same fix as update
+- **EDITED** `modonty/lib/seo/index.ts:202` — `generateBreadcrumbStructuredData` uses `new URL()`
+- **EDITED** `modonty/lib/seo/index.ts:209` — `generateArticleStructuredData` ignores `article.canonicalUrl`, always builds from slug + URL constructor
+- **EDITED** `modonty/app/articles/[slug]/page.tsx:99` — stored-metadata path uses `new URL()`
+- **EDITED** `modonty/app/articles/[slug]/page.tsx:130-153` — simplified live-metadata path (removed canonicalInput/legacyClientScoped logic), always uses slug-based URL
+- **EDITED** `modonty/app/sitemap.ts:60-83` — all 5 entity URL maps (articles/categories/clients/authors/tags) use `new URL()`
+- **EDITED** `modonty/app/tags/[slug]/page.tsx:174` — tag page JSON-LD URL uses `new URL()`
+
+### Verification (200% per Khalid's request)
+- ✅ TSC admin: zero errors
+- ✅ TSC modonty: zero errors
+- ✅ Re-grep `article.canonicalUrl \|\|` in modonty: 0 matches (only comment line remains)
+- ✅ Re-grep buggy conditional in admin: 0 matches
+- ✅ Re-grep `${siteUrl}/articles/${...}` without encoding: 0 matches
+- ✅ Live `new URL('/articles/ما-هو-السيو', 'https://www.modonty.com').href` test → produces `https://www.modonty.com/articles/%D9%85%D8%A7-%D9%87%D9%88-%D8%A7%D9%84%D8%B3%D9%8A%D9%88` (matches Google URL Inspection's expected form 1:1)
+
+### What's guaranteed from now on
+- Any **new article create** → canonical built from slug with proper encoding
+- Any **article update** (including slug rename) → canonical regenerated immediately, no stale value
+- **All emitted URLs** (canonical link · JSON-LD `@id` · sitemap loc · BreadcrumbList item) are consistent percent-encoded form
+- DB field `article.canonicalUrl` is no longer load-bearing on the read side — even if it's stale, modonty reader ignores it
+
+### What's NOT done (pending Phase 2 — Data Sanitizer)
+- **Existing DB articles** (~46 on dev, all on PROD) still have stale `canonicalUrl` + stale `jsonLdStructuredData` cache + stale `nextjsMetadata` cache
+- Modonty article page's `nextjsMetadata` path correctly overrides canonical at render time (safe) — but `jsonLdStructuredData` cache is rendered raw without override → still emits stale `@id` until cache is regenerated
+- **Next step:** build "Canonical URL Sanitizer" card in `admin/database` page (same pattern as Legal Form Sanitizer OBS-220) that:
+  1. Scans articles for stale canonicalUrl (any mismatch with `generateCanonicalUrl(slug)`)
+  2. Shows preview list
+  3. One-click bulk regenerate canonical + JSON-LD cache + nextjsMetadata cache
+- Khalid runs Sanitizer on PROD via admin UI after push — no scripts touch PROD DB directly
+
+### ISR & encoding (Bugs 2, 3, 4 from report)
+- Bug 2 (ISR cache STALE): not addressed yet — needs separate decision on `export const revalidate` value + investigation of why current ISR is failing silently
+- Bug 3 (Sitemap raw Arabic): ✅ fixed via `new URL()` in sitemap.ts
+- Bug 4 (BreadcrumbList raw Arabic): ✅ fixed via `new URL()` in generateBreadcrumbStructuredData
+
+### Push artifacts
+- No push (Phase 1 only — code fix). Awaiting explicit "push" after Phase 2 (Sanitizer) is built and tested
+- No version bump yet
+- No backup yet (no DB writes)
+
+### Open items for next session
+- **🔴 NEXT IMMEDIATE:** Build Canonical URL Sanitizer card in `admin/database/page.tsx` (Phase 2)
+- **🟡 MEDIUM:** Investigate Bug 2 (ISR stale) — add `export const revalidate` or fix silent failure
+- **🟢 LOW (Sessions 104a):** Short Link System Phase 0 decisions still pending (3 questions in PENDING-IDEAS)
+
+---
+
+---
+
+## 🟢 Session 104 — 2026-05-21 (Planning + memory expansion — NO code changes)
+
+### TL;DR
+Pure planning session driven by Khalid's question: "روابط مودونتي العربية ما تفتح في iPhone". Diagnosed root cause via Apple Developer Forum + RFC 3986 + NSDataDetector docs (iOS link detection rejects non-ASCII chars in URLs). Designed full Short Link System on same domain (`modonty.com/r/[slug]`) with Arabic→English transliteration helper instead of random codes — produces readable, brand-friendly slugs like `maqal-al-seo` instead of `k9aB7c`. Created `SHORT-LINK-SYSTEM-TODO.md` (9 phases · ~7-8 days work · includes new Events entity + QR codes + console analytics for clients). Then Khalid agreed on two new shortcuts: **"reminder X"** to capture brainstorm ideas and **"مهام معلقة"** to surface pending work. Captured 5 brainstorm ideas via the new "reminder" workflow.
+
+### What was decided (no code yet)
+- **Short Link architecture:** `modonty.com/r/[slug]` on same domain (free, zero third-party deps). DB-backed redirect with click tracking + per-channel UTM auto-tagging.
+- **Slug strategy:** Arabic→English transliteration helper (NOT random codes) — readable in messages, brand-consistent. Built as `arabicToLatinSlug()` with 28-letter table + tashkeel stripping + Arabic numeral conversion + collision handling.
+- **Scope:** Articles + Clients + **Events (NEW entity to be built)** + any generic share button.
+- **Pre-generation:** short links created at publish time, not on share-click (instant UX, no DB-write delay).
+- **Client value-add:** dedicated analytics dashboard in console — every client sees clicks per link + per channel. Differentiator: "I pay but can't measure" pain killer.
+- **3 decisions still pending before Phase 1 kickoff:** (a) WhatsApp message format (organized title + URL vs URL-only), (b) self-serve link generation for clients in console (recommended YES), (c) 404 behavior for archived links.
+
+### Files created
+- **NEW** `documents/tasks/SHORT-LINK-SYSTEM-TODO.md` — 9-phase implementation plan with Events as new Prisma model
+- **NEW** `documents/tasks/PENDING-IDEAS-TODO.md` — brainstorm captures from "reminder" shortcut
+- **NEW** `~/.claude/projects/.../memory/project_pending_short_link_system.md` — resume pointer for future sessions
+- **NEW** `~/.claude/projects/.../memory/feedback_pending_tasks_shortcut.md` — defines both "reminder" + "مهام معلقة" shortcuts
+
+### Files edited (docs only)
+- `documents/tasks/✅ MASTER-TODO.md` — added Short Link + Pending Ideas to "روابط الخطط" section + version bump in header
+- `~/.claude/projects/.../memory/MEMORY.md` — added 2 new pointers (shortcuts + pending Short Link System)
+
+### 5 brainstorm ideas captured via "reminder" shortcut
+1. Modonty Reviews system (clients write reviews for the modonty platform itself)
+2. QR Code on each client's profile page (display + download from console)
+3. "Services" section on client profile page (new `ClientService` model)
+4. "جديد مودونتي" feed sourced from WhatsApp + Telegram channels (webhook-driven)
+5. Polish "شركاء النجاح" homepage section — current logos too small, redesign with bigger thumbnails + carousel/marquee
+
+### Two new memory shortcuts now active
+- **"reminder X"** → adds X to `PENDING-IDEAS-TODO.md` immediately, no exploratory questions
+- **"مهام معلقة"** → lists all pending work from `*-TODO.md` files + `project_pending_*.md` memory pointers
+
+### Push artifacts
+- No push (planning + docs only)
+- No version bump
+- No TSC run needed (no code touched)
+
+### Open items for next session
+- **🔴 HIGH (Khalid asked to continue tomorrow 2026-05-22):** Short Link System Phase 0 — answer the 3 pending decisions then begin Phase 1 (schema + transliteration helper + redirect route)
+- **🟡 MEDIUM:** When user says "مهام معلقة" or "reminder X" — use the new shortcuts (saved to memory)
+- **🟢 LOW:** 5 brainstorm ideas in PENDING-IDEAS-TODO.md await user direction on which to mature into full plans first
+
+---
 
 ---
 

@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>دليل استخدام بوابة العملاء — مودونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e5e7eb;
+    --brand:#1e58c8;
+    --brand-soft:#e8efff;
+    --accent:#f59e0b;
+    --ok:#10b981;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px;line-height:1.7}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* layout */
+  .wrap{display:grid;grid-template-columns:280px 1fr;gap:0;max-width:1400px;margin:0 auto;min-height:100vh}
+  aside.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;background:#fff;border-inline-start:1px solid var(--line);padding:24px 18px}
+  aside.toc .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--ink);margin-bottom:6px}
+  aside.toc .brand .dot{width:10px;height:10px;background:var(--brand);border-radius:50%}
+  aside.toc .sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+  aside.toc nav{display:flex;flex-direction:column;gap:2px}
+  aside.toc nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--ink);font-size:14px}
+  aside.toc nav a:hover{background:var(--brand-soft);text-decoration:none}
+  aside.toc nav a .num{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;background:#f1f5f9;border-radius:50%;font-size:11px;color:var(--muted);font-weight:700}
+  aside.toc nav .group-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:14px;padding:0 10px}
+
+  main{padding:48px 56px;max-width:980px}
+  .hero{background:linear-gradient(135deg,#1e58c8 0%,#3b82f6 100%);color:#fff;border-radius:18px;padding:46px 40px;margin-bottom:48px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:auto -80px -80px auto;width:280px;height:280px;background:rgba(255,255,255,.08);border-radius:50%}
+  .hero h1{margin:0 0 10px;font-size:34px;font-weight:900;line-height:1.25}
+  .hero p{margin:0;font-size:16px;opacity:.92;max-width:560px}
+  .hero .meta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
+  .hero .meta span{background:rgba(255,255,255,.18);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500}
+
+  section.chap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;margin-bottom:28px;scroll-margin-top:20px}
+  section.chap h2{margin:0 0 6px;font-size:24px;font-weight:900;display:flex;align-items:center;gap:12px}
+  section.chap h2 .badge{background:var(--brand);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+  section.chap .lead{color:var(--muted);font-size:15px;margin:0 0 20px}
+
+  .fig{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fafbfd;margin:18px 0}
+  .fig img{display:block;width:100%;height:auto}
+  .hot{position:absolute;width:30px;height:30px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;box-shadow:0 0 0 4px rgba(245,158,11,.25),0 2px 8px rgba(0,0,0,.25);z-index:2}
+  .hot::after{content:"";position:absolute;width:60px;height:60px;border:2px dashed var(--accent);border-radius:50%;opacity:.45}
+
+  .steps{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+  .steps li{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;background:#fafbfd;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .steps li .n{width:26px;height:26px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+  .steps li .t{font-size:14.5px}
+  .steps li .t b{display:block;margin-bottom:2px}
+
+  .note{background:#fef9c3;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:14px;margin-top:14px}
+  .note b{color:#92400e}
+  .tip{background:#dcfce7;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;font-size:14px;margin-top:14px}
+  .tip b{color:#065f46}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .stat{background:#fafbfd;border:1px solid var(--line);border-radius:10px;padding:14px}
+  .stat .k{font-size:12px;color:var(--muted)}
+  .stat .v{font-size:22px;font-weight:900;color:var(--brand)}
+
+  footer{padding:40px;text-align:center;color:var(--muted);font-size:13px}
+  footer b{color:var(--ink)}
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    aside.toc{position:relative;height:auto;border-inline-start:none;border-bottom:1px solid var(--line)}
+    main{padding:24px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="toc">
+    <div class="brand"><span class="dot"></span> مودونتي · بوابة العملاء</div>
+    <div class="sub">دليل الاستخدام الكامل · v١</div>
+    <nav>
+      <span class="group-title">الأول</span>
+      <a href="#s1"><span class="num">١</span> الصفحة الرئيسية</a>
+      <a href="#s2"><span class="num">٢</span> كيف تدخل</a>
+      <a href="#s3"><span class="num">٣</span> الجولة السريعة</a>
+
+      <span class="group-title">عبّي بياناتك</span>
+      <a href="#s4"><span class="num">٤</span> بيانات شركتك</a>
+      <a href="#s5"><span class="num">٥</span> خبّرنا عن نشاطك</a>
+
+      <span class="group-title">مقالاتك</span>
+      <a href="#s6"><span class="num">٦</span> مقالاتك</a>
+      <a href="#s7"><span class="num">٧</span> رصيدك الشهري</a>
+      <a href="#s8"><span class="num">٨</span> صورك</a>
+
+      <span class="group-title">قياس النتائج</span>
+      <a href="#s9"><span class="num">٩</span> الإحصائيات</a>
+      <a href="#s10"><span class="num">١٠</span> صحة موقعك</a>
+
+      <span class="group-title">زوارك وعملاؤك</span>
+      <a href="#s11"><span class="num">١١</span> المشتركين</a>
+      <a href="#s12"><span class="num">١٢</span> العملاء المحتملون</a>
+      <a href="#s13"><span class="num">١٣</span> أسئلة الزوار</a>
+      <a href="#s14"><span class="num">١٤</span> تعليقات المقالات</a>
+      <a href="#s15"><span class="num">١٥</span> تقييم شركتك</a>
+      <a href="#s16"><span class="num">١٦</span> أسئلة جاهزة</a>
+
+      <span class="group-title">حسابك</span>
+      <a href="#s17"><span class="num">١٧</span> الإعدادات</a>
+      <a href="#s18"><span class="num">١٨</span> رسائل الزوار</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <h1>أهلاً بك في بوابتك</h1>
+      <p>هذا دليلك خطوة بخطوة. هنشرح لك كل صفحة بكلام بسيط: إيش وظيفتها، وإيش بتستفيد منها. مفيش تقنيات معقّدة — كله واضح ومريح.</p>
+      <div class="meta">
+        <span>⏱ وقت القراءة: ١٢ دقيقة</span>
+        <span>📸 ١٦ لقطة شاشة</span>
+        <span>🟢 يُحدّث باستمرار</span>
+      </div>
+    </div>
+
+    <!-- ١ -->
+    <section class="chap" id="s1">
+      <h2><span class="badge">١</span> الصفحة الرئيسية</h2>
+      <p class="lead">أول صفحة تشوفها لما تدخل. ملخّص سريع لكل اللي صار على موقعك في آخر شهر — بدون ما تدخل في تفاصيل.</p>
+      <div class="fig">
+        <img src="img/01-dashboard.png" alt="لوحة التحكم الرئيسية" />
+        <div class="hot" style="top:6%;right:14%">١</div>
+        <div class="hot" style="top:32%;right:30%">٢</div>
+        <div class="hot" style="top:62%;right:65%">٣</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>اسم شركتك في الأعلى</b>عشان تتأكد إنك داخل على حسابك الصح.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>أرقام شهرك</b>كم مقال انتشر، كم واحد شاف موقعك، كم واحد اشترك جديد.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>تنبيهات تستنّاك</b>لو فيه تعليق محتاج موافقتك أو رسالة عميل محتاجة رد — هتطلع لك هنا.</div></li>
+      </ul>
+      <div class="tip"><b>نصيحة:</b> ابدأ يومك من هنا — نص دقيقة يعطوك صورة كاملة عن كل شي.</div>
+    </section>
+
+    <!-- ٢ -->
+    <section class="chap" id="s2">
+      <h2><span class="badge">٢</span> كيف تدخل</h2>
+      <p class="lead">سهلة. رابطك وبياناتك وصلوك من فريقنا في رسالة واتساب. تسجل دخول مرة واحدة بس وخلاص.</p>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>افتح المتصفح واكتب:</b> <code>console.modonty.com</code></div></li>
+        <li><span class="n">٢</span><div class="t"><b>إيميلك وكلمة المرور</b>هم نفس اللي وصلوك من مودونتي. انسخ والصق علشان ما تكتب غلط.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>اضغط "دخول"</b>وخلاص. ما بتحتاج تسجّل دخول كل مرة — البوابة بتفتكر إنك أنت.</div></li>
+      </ul>
+      <div class="note"><b>مهم:</b> ما تعطي حد بياناتك. لو نسيت الباسورد كلّمنا على الواتساب وبنرسلها لك.</div>
+    </section>
+
+    <!-- ٣ -->
+    <section class="chap" id="s3">
+      <h2><span class="badge">٣</span> الجولة السريعة</h2>
+      <p class="lead">خليني أوريك أين الأشياء قبل ما نبدأ. شغلتين بس لازم تعرفهم: القائمة الكبيرة على اليمين، والأدوات السريعة على اليسار فوق.</p>
+      <div class="fig">
+        <img src="img/01-dashboard.png" alt="الواجهة الرئيسية بسهام توضيحية" />
+        <div class="hot" style="top:14%;right:8%">١</div>
+        <div class="hot" style="top:6%;left:6%">٢</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>القائمة الرئيسية (يمين)</b>كل صفحاتك المهمة هنا: شركتك، مقالاتك، صورك، إحصائياتك. اضغط على أي اسم وتنقلك له.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>الأدوات السريعة (يسار فوق)</b>أيقونات صغيرة للحاجات اللي بتفتحها كثير: إعدادات حسابك، رسائل الدعم، تعليقات، أسئلة. الرقم الأحمر يقول لك "فيه شي جديد".</div></li>
+      </ul>
+    </section>
+
+    <!-- ٤ -->
+    <section class="chap" id="s4">
+      <h2><span class="badge">٤</span> ابدأ من هنا — عبّي بيانات شركتك</h2>
+      <p class="lead">ده ملف شركتك الكامل. كل ما عبّيت بيانات أكثر، كل ما عرفك جوجل أحسن، وظهرت قدّام عملاء أكثر بدون ما تدفع إعلانات. خصصها ٢٠ دقيقة مرة واحدة وخلاص.</p>
+      <div class="fig">
+        <img src="img/02-profile.png" alt="نموذج بيانات الشركة" />
+        <div class="hot" style="top:5%;right:6%">١</div>
+        <div class="hot" style="top:10%;right:38%">٢</div>
+        <div class="hot" style="top:32%;right:40%">٣</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>شريط أزرق فوق</b>يوريك كم عبّيت من بياناتك. هدفك تخلي الشريط كامل.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>الصفحة مقسّمة لـ ٦ أجزاء</b>: اسم شركتك، طرق التواصل، عنوانك، سجلك التجاري، معلومات عن نشاطك، ورابطك. لا تضغط نفسك — عبّي اللي تعرفه دلوقتي وارجع للباقي بعدين.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>زر "حفظ التغييرات"</b>تحت الصفحة. اضغطه كل ما تخلّص جزء.</div></li>
+      </ul>
+      <div class="tip"><b>ليش يهمك:</b> الشركات اللي تكمّل بياناتها بتظهر قدّام عملاء جدد بمعدّل ٣ أضعاف الشركات اللي بياناتها ناقصة.</div>
+    </section>
+
+    <!-- ٥ -->
+    <section class="chap" id="s5">
+      <h2><span class="badge">٥</span> خبّرنا عن نشاطك</h2>
+      <p class="lead">احنا بنكتب لك مقالات. عشان نكتب حاجة عميلك يحبّها فعلاً، لازم نعرف أنت بتعمل إيش وعميلك مين. هنا تكتب الإجابات وفريقنا بيقراها.</p>
+      <div class="fig">
+        <img src="img/03-seo.png" alt="نموذج معلومات النشاط" />
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>وصف مختصر</b>إيش نشاطك بكلمتين، وفي إيش متخصّص.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>مين عميلك المثالي</b>الزبون اللي تتمنى يدخل عليك كل يوم. وصفه: عمره، اهتماماته، إيش يحب يسمع.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>روابطك الاجتماعية + مدنك + ساعات شغلك</b>كل ده بيظهر للزائر في صفحتك.</div></li>
+      </ul>
+      <div class="tip"><b>صدّقني:</b> ١٠ دقايق هنا توفّر عليك ساعات من التعديلات على المقالات بعدين.</div>
+    </section>
+
+    <!-- ٦ -->
+    <section class="chap" id="s6">
+      <h2><span class="badge">٦</span> مقالاتك</h2>
+      <p class="lead">كل المقالات اللي بنكتبها لك بتظهر هنا. ما بننشر شي إلا بعد ما تشوفه وتوافق. ده موقعك ومسؤوليتك — احنا بس بنساعد.</p>
+      <div class="fig">
+        <img src="img/04-articles.png" alt="صفحة المقالات" />
+        <div class="hot" style="top:32%;right:38%">١</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>٤ أزرار فوق</b>: <b>بانتظار الموافقة</b> (محتاج ردك) · <b>مجدولة</b> (متفق على نشرها لاحقاً) · <b>منشور</b> (موجودة فعلاً على موقعك) · <b>الكل</b> (مرّة وحدة).</div></li>
+        <li><span class="n">٢</span><div class="t"><b>افتح المقال</b>تقرا العنوان والمحتوى والصور — لو عاجبك اضغط "موافق"، لو محتاج تعديل اكتب لنا إيش تبي يتغير.</div></li>
+      </ul>
+    </section>
+
+    <!-- ٧ -->
+    <section class="chap" id="s7">
+      <h2><span class="badge">٧</span> كم مقال باقي ليك الشهر ده</h2>
+      <p class="lead">باقتك فيها عدد معيّن من المقالات في الشهر (مثلاً ٨ مقالات). هنا تشوف كم استخدمت وكم باقي ومتى يبدأ شهرك الجديد.</p>
+      <div class="fig">
+        <img src="img/05-content.png" alt="نشاط المحتوى ورصيد المقالات" />
+        <div class="hot" style="top:35%;right:8%">١</div>
+        <div class="hot" style="top:68%;right:32%">٢</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>الشريط الكبير فوق</b>كم استخدمت من باقتك. لما يخلص بنخبّرك ولو محتاج تكبير الباقة.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>٤ كروت ملوّنة</b>: <b>منشور</b> (موجود على موقعك) · <b>قيد الكتابة</b> (فريقنا بيشتغل عليه) · <b>مسودات</b> (محفوظة بس ما خلصت) · <b>مجدولة</b> (هتنشر تلقائي في يوم محدد).</div></li>
+      </ul>
+    </section>
+
+    <!-- ٨ -->
+    <section class="chap" id="s8">
+      <h2><span class="badge">٨</span> الصور</h2>
+      <p class="lead">كل صور شركتك ومقالاتك في معرض واحد. تقدر تشوف كل صورة، تعرف متى انرفعت، وفي أي مقال متستخدمة.</p>
+      <div class="fig">
+        <img src="img/06-media.png" alt="معرض الصور" />
+        <div class="hot" style="top:35%;right:25%">١</div>
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>أزرار فوق المعرض</b>للتنقّل السريع: <b>الكل</b> · <b>شعار شركتك</b> · <b>صور موجودة في مقالات</b> · <b>صور غلاف</b> · <b>صور غير مستخدمة</b>.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>تحت كل صورة معلومات</b>: اسمها، حجمها، وفين متستخدمة (لو غير مستخدمة بتظهر علامة).</div></li>
+      </ul>
+    </section>
+
+    <!-- ٩ -->
+    <section class="chap" id="s9">
+      <h2><span class="badge">٩</span> الإحصائيات ⭐</h2>
+      <p class="lead">دي أهم صفحة عندك. هنا تفهم زوارك فعلاً: مين هم، إمتى بيدخلون، إيش بيقروا، وإيش يحبّوا أكثر. والأحسن: في آخر الصفحة "توصيات جاهزة" — مودونتي يقول لك بنفسه إيش الأفضل تعمله الفترة الجاية.</p>
+      <div class="fig">
+        <img src="img/14-analytics.png" alt="صفحة الإحصائيات" />
+      </div>
+      <div class="grid2">
+        <div class="stat"><div class="k">مين زوارك</div><div class="v">جدد أو راجعين تاني</div></div>
+        <div class="stat"><div class="k">إيش بيعملوا</div><div class="v">كم وقت قعدوا · كم قروا</div></div>
+        <div class="stat"><div class="k">إمتى بيدخلوا</div><div class="v">أي يوم وأي ساعة</div></div>
+        <div class="stat"><div class="k">إيش بيضغطوا</div><div class="v">الأزرار والروابط الأكثر اهتمام</div></div>
+      </div>
+      <div class="tip"><b>أحلى ميزة:</b> آخر قسم في الصفحة فيه توصيات بسيطة زي "أفضل يوم تنشر فيه الأربعاء" أو "زوارك بيدخلوا من الموبايل أكثر — احرص على صور واضحة".</div>
+    </section>
+
+    <!-- ١٠ -->
+    <section class="chap" id="s10">
+      <h2><span class="badge">١٠</span> صحة موقعك ⭐</h2>
+      <p class="lead">تخيّل إنك بتاخد سيارتك للفحص الدوري. هنا نفس الفكرة — مودونتي بيفحص موقعك ويعطيك تقرير: إيش شغّال تمام وإيش محتاج تصليح. النتيجة درجة من ١٠٠ زي درجة الامتحان.</p>
+      <div class="fig">
+        <img src="img/11-site-health.png" alt="فحص صحة الموقع" />
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>سرعة موقعك على جوجل</b>أرقام رسمية من جوجل نفسه. زي اختبار سرعة الإنترنت بس لموقعك. كل ما الرقم أعلى كل ما موقعك أسرع.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>درجة مودونتي العامة</b>الدرجة الإجمالية من ١٠٠. لو فوق ٨٠ موقعك ممتاز.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>قائمة بالتفاصيل</b>قائمة باللي تمام (علامة خضراء) واللي ناقص (علامة برتقالية). كل بند مكتوب بكلام واضح.</div></li>
+      </ul>
+      <div class="note"><b>مهم:</b> لو فيه أي بند محتاج تصليح، فريقنا يساعدك. كلّمنا بس.</div>
+    </section>
+
+    <!-- ١١ -->
+    <section class="chap" id="s11">
+      <h2><span class="badge">١١</span> اللي اشتركوا في نشرتك</h2>
+      <p class="lead">في موقعك صندوق "اشترك معنا للحصول على أحدث المقالات". أي شخص يكتب إيميله هناك بيظهر هنا. ده جمهورك المخلص — اللي عاوز يسمع منك.</p>
+      <div class="fig">
+        <img src="img/07-subscribers.png" alt="مشتركو النشرة" />
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>٥ كروت بأرقامك</b>: <b>نشط</b> (لسه مشترك) · <b>وافق على الخصوصية</b> · <b>اشترك هذا الشهر</b> · <b>ألغى</b> · <b>الإجمالي</b>.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>زر "تصدير CSV"</b>بينزّل كل القائمة كملف Excel — تقدر تستخدمه في أي برنامج إيميل عندك أو ترسل لهم عروضك.</div></li>
+      </ul>
+      <div class="tip"><b>ليش يهمك:</b> هؤلاء أرخص طريقة لجلب عملاء جدد — كلّفك صفر، وهم اللي طلبوا منك تكلّمهم.</div>
+    </section>
+
+    <!-- ١٢ -->
+    <section class="chap" id="s12">
+      <h2><span class="badge">١٢</span> الزوار اللي ممكن يصيروا عملاء</h2>
+      <p class="lead">مش كل من يدخل موقعك مهتم. بس فيه ناس بتدخل صفحات كثيرة، تقعد وقت طويل، وتضغط أزرار. هؤلاء "محتملين" — يعني قريبين يصيروا عملاء. هنا تشوفهم وتعرف مين الأحرص.</p>
+      <div class="fig">
+        <img src="img/08-leads.png" alt="العملاء المحتملون" />
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>كل واحد له درجة</b>: <b>عالي</b> (الأقرب للشراء) · <b>متوسط</b> · <b>منخفض</b> · <b>جاهز للتواصل</b> (ترك إيميل أو رقم).</div></li>
+        <li><span class="n">٢</span><div class="t"><b>تفاصيل كاملة لكل واحد</b>: كم صفحة دخل، كم وقت قعد، كم زر ضغط، وآخر مرة دخل الموقع.</div></li>
+      </ul>
+      <div class="tip"><b>نصيحة:</b> ركّز على اللي عندهم درجة عالية أو "جاهز للتواصل" — هم الأقرب يدفعوا فلوس.</div>
+    </section>
+
+    <!-- ١٣ -->
+    <section class="chap" id="s13">
+      <h2><span class="badge">١٣</span> أسئلة من زوارك</h2>
+      <p class="lead">لو زائر دخل موقعك وحب يسأل سؤال (مثلاً: "كم سعر الخدمة؟" أو "هل تشحنوا للسعودية؟") — السؤال يجي هنا. ترد بكلمتين، والرد يوصله إيميل بشكل تلقائي. ما تحتاج تفتح إيميلك.</p>
+      <div class="fig">
+        <img src="img/16-questions.png" alt="أسئلة الزوار" />
+      </div>
+      <div class="note"><b>خد بالك:</b> هذي الأسئلة من زوار حقيقيين دخلوا موقعك. مش نفس "الأسئلة الشائعة" (قسم ١٦) اللي هي أسئلة فريقنا بيقترحها لمقالاتك.</div>
+    </section>
+
+    <!-- ١٤ -->
+    <section class="chap" id="s14">
+      <h2><span class="badge">١٤</span> تعليقات الناس على مقالاتك</h2>
+      <p class="lead">أي زائر يكتب تعليق تحت أي مقال — التعليق ما يظهر مباشرة. لازم يجي هنا، تشوفه، وتقرّر: ينشر أو لا. وتقدر ترد عليه بنفسك. ده يخليك في السيطرة وما يطلع شي ما تحبه.</p>
+      <div class="fig">
+        <img src="img/15-comments.png" alt="مراجعة التعليقات على المقالات" />
+      </div>
+      <div class="tip"><b>نصيحة:</b> ردّ على التعليقات الحلوة — الزائر يحب يحس إنك مهتم، وجوجل يكافئك على المحادثة.</div>
+    </section>
+
+    <!-- ١٥ -->
+    <section class="chap" id="s15">
+      <h2><span class="badge">١٥</span> تقييم زوارك لشركتك</h2>
+      <p class="lead">في صفحتك العامة فيه قسم "شاركنا رأيك". أي شخص يكتب رأيه عن شركتك يجي هنا. نفس الفكرة: ما يظهر شي إلا بعد ما توافق عليه. تقييماتك الحلوة تظهر للعالم وتبني سمعتك.</p>
+      <div class="fig">
+        <img src="img/10-client-comments.png" alt="آراء حول الشركة" />
+      </div>
+      <div class="note"><b>الفرق عن قسم ١٤:</b> هنا تقييم عام عن شركتك. قسم ١٤ تعليقات على مقالات معيّنة.</div>
+    </section>
+
+    <!-- ١٦ -->
+    <section class="chap" id="s16">
+      <h2><span class="badge">١٦</span> أسئلة وإجابات جاهزة لمقالاتك</h2>
+      <p class="lead">فريقنا يفكّر بدل عنك: "إيش الأسئلة اللي زائرك ممكن يسألها عن مقال معيّن؟" يجهّز السؤال والإجابة، ويعرضهم هنا. توافق بنقرة، ويظهروا في نهاية المقال. الفايدة: زائرك يلاقي إجاباته بسرعة، وجوجل يحب الصفحات اللي فيها أسئلة وإجابات.</p>
+      <div class="fig">
+        <img src="img/09-faqs.png" alt="الأسئلة الشائعة المقترحة" />
+      </div>
+      <div class="tip"><b>سر صغير:</b> الصفحات اللي فيها أسئلة وإجابات تظهر في جوجل بطريقة خاصة (مع السؤال نفسه) — يعني فرصة أكبر إن الناس يضغطوا على موقعك.</div>
+    </section>
+
+    <!-- ١٧ -->
+    <section class="chap" id="s17">
+      <h2><span class="badge">١٧</span> إعدادات حسابك</h2>
+      <p class="lead">كل اللي يخص حسابك في مكان واحد: باقتك، تنبيهاتك، وكلمة سرّك. صفحة بسيطة بتدخلها مرة وحدة وتظبط فيها كل شي.</p>
+      <div class="fig">
+        <img src="img/12-settings.png" alt="صفحة الإعدادات" />
+      </div>
+      <ul class="steps">
+        <li><span class="n">١</span><div class="t"><b>باقتك</b>اسمها، سعرها، وامتى تنتهي. لو قاربت تنتهي بنخبّرك قبلها.</div></li>
+        <li><span class="n">٢</span><div class="t"><b>التنبيهات</b>اختر متى نخبّرك: مقال جديد، تعليق، رسالة دعم، إلخ. علّم اللي تبيه، شيل علامة اللي مش مهم.</div></li>
+        <li><span class="n">٣</span><div class="t"><b>اربط Telegram</b>لو تبي تنبيهات لحظية على جوّالك (مثلاً: زائر دخل صفحتك دلوقتي). دقيقة وحدة وانتهيت.</div></li>
+        <li><span class="n">٤</span><div class="t"><b>غيّر كلمة المرور</b>في آخر الصفحة. ينصح تغيّرها كل ٦ أشهر.</div></li>
+      </ul>
+    </section>
+
+    <!-- ١٨ -->
+    <section class="chap" id="s18">
+      <h2><span class="badge">١٨</span> رسائل من زوارك</h2>
+      <p class="lead">في موقعك صفحة "تواصل معنا". أي شخص يكتب رسالة من هناك بتجي لك هنا. ترد بنقرة، والرد يوصله إيميل بشكل تلقائي. أبسط نظام دعم عملاء — بدون ما تحتاج تفتح إيميلك.</p>
+      <div class="fig">
+        <img src="img/13-support.png" alt="رسائل الدعم" />
+      </div>
+      <div class="tip"><b>مفيد:</b> كل رسالة وردّك بيتحفظوا هنا — تقدر ترجع لها أي وقت بدون ما تدخل إيميلك.</div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  دليل بوابة العملاء — <b>مودونتي</b> · جميع لقطات الشاشة من بيئة الإنتاج · مسوّدة معاينة (HTML mockup)
+</footer>
+</body>
+</html>

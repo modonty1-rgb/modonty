@@ -97,10 +97,9 @@ export async function createArticle(data: ArticleFormData) {
       data.seoDescription || generateSEODescription(data.excerpt || "");
 
     const baseUrl = await loadSiteUrl();
-    const canonicalUrl =
-      !data.canonicalUrl?.trim() || data.canonicalUrl.includes("/clients/")
-        ? generateCanonicalUrl(data.slug, baseUrl)
-        : data.canonicalUrl.trim();
+    // Always regenerate canonical from current slug — never trust input value
+    // (prior logic kept user-provided canonicalUrl, allowing stale/wrong URLs)
+    const canonicalUrl = generateCanonicalUrl(data.slug, baseUrl);
 
     const breadcrumbPath = generateBreadcrumbPath(
       category?.name,
@@ -153,7 +152,6 @@ export async function createArticle(data: ArticleFormData) {
           data.semanticKeywords != null
             ? (JSON.parse(JSON.stringify(data.semanticKeywords)) as Prisma.InputJsonValue)
             : undefined,
-        seoKeywords: data.seoKeywords ?? [],
         citations: data.citations ?? [],
         audioUrl: data.audioUrl || null,
       },

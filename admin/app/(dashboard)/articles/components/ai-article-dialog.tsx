@@ -68,12 +68,6 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
   const { updateFields, formData, authors } = useArticleForm();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (open) {
-      setKeywords((formData.seoKeywords ?? []).join(', '));
-    }
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps -- pre-fill only on open; formData read when open
-
   // Preview editor for content tab
   const previewEditor = useEditor({
     immediatelyRender: false,
@@ -112,10 +106,9 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
   }
 
   const handleGenerate = async () => {
-    const fromForm = (formData.seoKeywords ?? []).join(', ').trim();
-    const keywordsToUse = keywords.trim() || fromForm;
+    const keywordsToUse = keywords.trim();
     if (!keywordsToUse) {
-      setError('Please enter keywords in the "SEO Keywords" tab or here');
+      setError('Please enter keywords');
       return;
     }
 
@@ -165,7 +158,6 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
       readingTimeMinutes: generatedData.readingTimeMinutes,
       contentDepth: generatedData.contentDepth,
       authorId,
-      seoKeywords: generatedData.keywords ?? [],
       faqs: generatedData.faqs.map((faq: { question: string; answer: string }, index: number) => ({
         question: faq.question,
         answer: faq.answer,
@@ -227,10 +219,6 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-4xl max-h-[90vh] overflow-y-auto"
-        onOpenAutoFocus={() => {
-          const fromForm = (formData.seoKeywords ?? []).join(', ');
-          setKeywords(fromForm);
-        }}
       >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -239,7 +227,6 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
           </DialogTitle>
           <DialogDescription>
             Enter keywords and choose article length to generate professional content ready to publish.
-            If keywords exist in the "SEO Keywords" tab, they will be auto-filled here.
           </DialogDescription>
         </DialogHeader>
 
@@ -391,16 +378,6 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Keywords</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {generatedData.keywords?.map((keyword: string, index: number) => (
-                      <Badge key={index} variant="outline">
-                        {keyword}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
               </TabsContent>
 
               <TabsContent value="faqs" className="space-y-4 mt-4">
@@ -436,7 +413,7 @@ export function AiArticleDialog({ open, onOpenChange }: AiArticleDialogProps) {
               <Button
                 onClick={handleGenerate}
                 disabled={
-                  (!keywords.trim() && !(formData.seoKeywords ?? []).join(', ').trim()) || isGenerating
+                  !keywords.trim() || isGenerating
                 }
               >
                 {isGenerating ? (

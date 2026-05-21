@@ -26,7 +26,6 @@ export const FIELD_LABELS: Record<string, string> = {
   seoTitle: "عنوان البحث (SEO)",
   seoDescription: "وصف البحث (SEO)",
   metaRobots: "إعدادات الفهرسة",
-  seoKeywords: "كلمات مفتاحية",
   semanticKeywords: "كلمات دلالية",
 
   // Technical SEO

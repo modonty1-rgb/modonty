@@ -96,7 +96,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
         if (stored.title) {
           // Always regenerate canonical + hreflang — stored values may be stale/truncated/wrong-domain
           const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
-          const canonicalUrl = `${siteUrl}/articles/${slug}`;
+          // URL constructor percent-encodes non-ASCII slug for consistency with JSON-LD + sitemap
+          const canonicalUrl = new URL(`/articles/${slug}`, siteUrl).href;
           return {
             ...stored,
             openGraph: {
@@ -129,27 +130,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
 
-    let canonicalInput: string | undefined = articleForGeneration.canonicalUrl || undefined;
-
-    if (canonicalInput) {
-      const isAbsolute = /^https?:\/\//.test(canonicalInput);
-      const sameDomain = isAbsolute && canonicalInput.startsWith(siteUrl);
-      const legacyClientScoped =
-        sameDomain &&
-        canonicalInput.includes("/clients/") &&
-        canonicalInput.includes(`/articles/${slug}`);
-
-      // Normalize legacy internal canonicals to the public articles route
-      if (legacyClientScoped) {
-        canonicalInput = `/articles/${slug}`;
-      }
-    }
-
-    const urlForMetadata = canonicalInput || `/articles/${slug}`;
-    const canonicalUrlFull =
-      urlForMetadata.startsWith("http")
-        ? urlForMetadata
-        : `${siteUrl}${urlForMetadata.startsWith("/") ? urlForMetadata : `/${urlForMetadata}`}`;
+    // Always build canonical from current slug — ignore DB articleForGeneration.canonicalUrl
+    // (prevents stale URL when slug was renamed; URL constructor handles percent-encoding)
+    const urlForMetadata = `/articles/${slug}`;
+    const canonicalUrlFull = new URL(urlForMetadata, siteUrl).href;
 
     const languages: Record<string, string> = { ar: canonicalUrlFull, "x-default": canonicalUrlFull };
     if (Array.isArray(articleDefaults.alternateLanguages)) {

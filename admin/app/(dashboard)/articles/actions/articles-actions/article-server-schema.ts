@@ -25,7 +25,6 @@ export const articleServerSchema = z.object({
   // Optional arrays
   tags: z.array(z.string()).optional(),
   citations: z.array(z.string()).optional(),
-  seoKeywords: z.array(z.string()).optional(),
 
   // Status
   status: z.string().optional().nullable(),

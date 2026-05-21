@@ -204,9 +204,6 @@ const initialFormData: ArticleFormData = {
   // Audio
   audioUrl: null,
 
-  // SEO keywords the article is based on (reference)
-  seoKeywords: [],
-  
   // Schema Versioning
   jsonLdVersion: 1,
   jsonLdHistory: undefined,

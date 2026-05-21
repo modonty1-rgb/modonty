@@ -1,0 +1,3551 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemini API × مدوني — خطة التكامل المفصّلة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3030ff;
+    --primary-soft: #6366f1;
+    --amber: #f59e0b;
+    --amber-soft: #fbbf24;
+    --emerald: #10b981;
+    --emerald-soft: #34d399;
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-2: #232340;
+    --text: #f0f0f5;
+    --text-muted: #a0a0b8;
+    --border: #2a2a45;
+    --cyan: #00D8D8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+  code, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.92em; }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-bottom: 3rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, rgba(48,48,255,0.15), rgba(245,158,11,0.10));
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(48,48,255,0.2), transparent 60%);
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero h1 {
+    font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;
+    background: linear-gradient(135deg, #6366f1, #fbbf24, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 720px; margin: 0 auto; }
+  .hero .meta { margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); }
+
+  /* TOC */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .toc h2 { font-size: 1.1rem; color: var(--amber); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.6rem;
+  }
+  .toc li {
+    counter-increment: toc;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .toc li:hover { border-color: var(--primary-soft); transform: translateX(-3px); }
+  .toc li a { color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 0.7rem; }
+  .toc li a::before {
+    content: counter(toc, decimal-leading-zero);
+    background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+    color: white;
+    font-weight: 700;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  /* CAPABILITY CARDS */
+  .capability {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .capability::before {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 6px; height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--amber));
+  }
+  .capability h2 {
+    font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .capability h2 .num {
+    background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+    color: white; padding: 0.3rem 0.8rem; border-radius: 0.5rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 1rem;
+  }
+  .capability h2 .icon { font-size: 2rem; }
+  .capability > .subtitle {
+    color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem;
+    padding-right: 4.5rem;
+  }
+
+  .section { margin-top: 2rem; }
+  .section-title {
+    font-size: 0.95rem; font-weight: 700; color: var(--amber);
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 2px solid var(--amber);
+    padding-bottom: 0.5rem;
+  }
+
+  .what-it-does {
+    background: var(--card-2);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-right: 4px solid var(--cyan);
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+  }
+  .what-it-does .analogy {
+    color: var(--cyan); font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .use-cases ul {
+    list-style: none;
+    display: grid; gap: 0.8rem;
+  }
+  .use-cases li {
+    background: var(--card-2);
+    padding: 1rem 1.25rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--border);
+    display: flex; gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .use-cases li:hover { border-color: var(--emerald-soft); }
+  .use-cases li .check { color: var(--emerald-soft); font-size: 1.3rem; flex-shrink: 0; }
+  .use-cases li .text strong { color: var(--amber-soft); display: block; margin-bottom: 0.3rem; }
+
+  .steps {
+    counter-reset: stp;
+    list-style: none;
+    display: grid; gap: 1rem;
+  }
+  .steps li {
+    counter-increment: stp;
+    background: var(--card-2);
+    padding: 1.25rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--border);
+    padding-right: 4rem;
+    position: relative;
+  }
+  .steps li::before {
+    content: counter(stp);
+    position: absolute; right: 1rem; top: 1.1rem;
+    background: linear-gradient(135deg, var(--amber), var(--amber-soft));
+    color: var(--bg);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .steps li strong { color: var(--cyan); display: block; margin-bottom: 0.4rem; }
+  .steps li code {
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--emerald-soft);
+    font-size: 0.9em;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .meta-card {
+    background: linear-gradient(135deg, var(--card-2), rgba(48,48,255,0.08));
+    padding: 1.25rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .meta-card .label {
+    font-size: 0.75rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .meta-card .value {
+    font-size: 1.4rem; font-weight: 800;
+    color: var(--amber-soft);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .meta-card.roi .value { color: var(--emerald-soft); }
+  .meta-card.cost .value { color: var(--primary-soft); font-size: 1.1rem; }
+
+  /* CODE BLOCK */
+  pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+    direction: ltr; text-align: left;
+    margin: 1rem 0;
+  }
+  pre code { color: var(--emerald-soft); font-size: 0.85rem; line-height: 1.6; }
+  .code-comment { color: var(--text-muted); }
+  .code-string { color: var(--amber-soft); }
+  .code-keyword { color: var(--primary-soft); }
+
+  /* FINAL PRIORITY TABLE */
+  .priority-table {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-top: 3rem;
+  }
+  .priority-table h2 {
+    text-align: center;
+    font-size: 1.8rem; font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--amber);
+  }
+  .priority-table > p { text-align: center; color: var(--text-muted); margin-bottom: 2rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  thead { background: var(--card-2); }
+  th, td { padding: 1rem; text-align: right; border-bottom: 1px solid var(--border); }
+  th { color: var(--amber); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; }
+  tbody tr:hover { background: rgba(48,48,255,0.05); }
+  tbody td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--primary-soft);
+    font-weight: 700;
+    width: 60px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .badge.high { background: rgba(16,185,129,0.15); color: var(--emerald-soft); }
+  .badge.med { background: rgba(245,158,11,0.15); color: var(--amber-soft); }
+  .badge.low { background: rgba(160,160,184,0.15); color: var(--text-muted); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+  footer .brand {
+    background: linear-gradient(135deg, #6366f1, #fbbf24);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800; font-size: 1.1rem;
+  }
+
+  /* REAL SCENARIO CARDS */
+  .scenario {
+    background: linear-gradient(135deg, rgba(0,216,216,0.08), rgba(48,48,255,0.05));
+    border-radius: 1rem;
+    margin: 1.5rem 0 2rem;
+    overflow: hidden;
+    border: 1px solid var(--cyan);
+    border-left: 4px solid var(--cyan);
+  }
+  .scenario-header {
+    background: rgba(0,216,216,0.12);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 800;
+    color: var(--cyan);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .scenario-body { padding: 1.5rem; }
+  .scenario-block {
+    margin-bottom: 1.5rem;
+    padding-right: 1rem;
+    border-right: 3px solid;
+  }
+  .scenario-block:last-child { margin-bottom: 0; }
+  .scenario-block.problem { border-right-color: #ef4444; }
+  .scenario-block.solution { border-right-color: var(--amber); }
+  .scenario-block.benefit { border-right-color: var(--emerald-soft); }
+  .scenario-block .scenario-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .scenario-block.problem .scenario-label { color: #ef4444; }
+  .scenario-block.solution .scenario-label { color: var(--amber); }
+  .scenario-block.benefit .scenario-label { color: var(--emerald-soft); }
+  .scenario-block p { color: var(--text); line-height: 1.8; font-size: 0.98rem; margin: 0; }
+  .scenario-block ul { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  .scenario-block ul li { padding: 0.3rem 0; color: var(--text); font-size: 0.95rem; }
+  .scenario-block ul li::before { content: '✓ '; color: var(--emerald-soft); font-weight: 800; }
+  .scenario-example {
+    background: var(--bg);
+    border-radius: 0.6rem;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    border: 1px dashed var(--border);
+  }
+  .scenario-example .ex-label {
+    color: var(--amber-soft);
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .scenario-example p { color: var(--text); font-size: 0.95rem; margin: 0; }
+
+  /* PROBLEM/SOLUTION CARDS */
+  .problem-solution {
+    background: var(--card-2);
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .problem-solution h4 {
+    background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(245,158,11,0.10));
+    padding: 1rem 1.5rem;
+    color: #ef4444;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-bottom: 1px solid var(--border);
+  }
+  .problem-solution .ps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .problem-solution .before, .problem-solution .after {
+    padding: 1.25rem 1.5rem;
+  }
+  .problem-solution .before {
+    border-left: 1px solid var(--border);
+  }
+  .problem-solution .label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.7rem;
+  }
+  .problem-solution .before .label { color: #ef4444; }
+  .problem-solution .after .label { color: var(--emerald-soft); }
+  .problem-solution ul {
+    list-style: none;
+    padding: 0;
+  }
+  .problem-solution ul li {
+    padding: 0.4rem 0;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .problem-solution ul li::before {
+    content: '·';
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+  }
+  .problem-solution .outcome {
+    background: rgba(16,185,129,0.1);
+    padding: 0.8rem 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--emerald-soft);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    background: var(--card-2);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+  }
+  .flow-step {
+    padding: 0.8rem 1rem;
+    background: var(--bg);
+    border-radius: 0.5rem;
+    text-align: center;
+    color: var(--text);
+    font-size: 0.95rem;
+    margin: 0.5rem 0;
+    border: 1px solid var(--border);
+  }
+  .flow-arrow {
+    text-align: center;
+    color: var(--amber);
+    font-size: 1.5rem;
+    margin: 0;
+    line-height: 1;
+  }
+  .flow-final {
+    background: linear-gradient(135deg, var(--emerald), var(--emerald-soft));
+    color: var(--bg);
+    font-weight: 800;
+  }
+
+  /* OPTION COMPARISON */
+  .options-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .option-card {
+    background: var(--card-2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+  }
+  .option-card.recommended {
+    border-color: var(--emerald-soft);
+    background: linear-gradient(135deg, var(--card-2), rgba(16,185,129,0.08));
+  }
+  .option-card h4 {
+    color: var(--amber);
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .option-card .recommended-badge {
+    background: var(--emerald-soft);
+    color: var(--bg);
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+  .option-card p { color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0 1rem; }
+  .option-card .pros, .option-card .cons {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .option-card .pros li, .option-card .cons li {
+    list-style: none;
+    padding: 0.2rem 0;
+  }
+  .option-card .pros li::before { content: '✓ '; color: var(--emerald-soft); font-weight: 800; }
+  .option-card .cons li::before { content: '✗ '; color: #ef4444; font-weight: 800; }
+  .option-card .when {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--cyan);
+  }
+
+  /* SUMMARY TABLE */
+  .summary-table {
+    width: 100%;
+    background: var(--card-2);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+  }
+  .summary-table td {
+    padding: 0.8rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-table td:first-child { color: var(--amber-soft); font-weight: 700; width: 40%; }
+  .summary-table td:last-child { color: var(--text); }
+  .summary-table tr:last-child td { border-bottom: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    body { padding: 1rem 0.75rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .capability { padding: 1.5rem 1rem; }
+    .capability h2 { font-size: 1.4rem; }
+    .capability > .subtitle { padding-right: 0; }
+    table { font-size: 0.85rem; }
+    th, td { padding: 0.7rem 0.5rem; }
+    .problem-solution .ps-grid { grid-template-columns: 1fr; }
+    .problem-solution .before { border-left: none; border-bottom: 1px solid var(--border); }
+    .options-compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Gemini API × مدوني</h1>
+  <p>دليل التكامل المفصّل — ٨ قدرات Gemini ذكية، شرح بسيط، استخدامات عملية في منظومة مدوني، وخطوات الربط واحدة واحدة.</p>
+  <div class="meta">📅 ١٦ مايو ٢٠٢٦ · 🎯 خطة عمل قابلة للتنفيذ · 💡 مصمّمة لخالد</div>
+</section>
+
+<!-- TOC -->
+<section class="toc">
+  <h2>📋 جدول المحتويات — ١٦ قدرة</h2>
+  <ol>
+    <li><a href="#cap-1">Embeddings + البحث الدلالي</a></li>
+    <li><a href="#cap-2">Long Context (الذاكرة الطويلة)</a></li>
+    <li><a href="#cap-3">Image Understanding</a></li>
+    <li><a href="#cap-4">JSON-LD Auto-Fix</a></li>
+    <li><a href="#cap-5">Grounded Generation</a></li>
+    <li><a href="#cap-6">Function Calling Agents</a></li>
+    <li><a href="#cap-7">Speech-to-Text</a></li>
+    <li><a href="#cap-8">Translation الذكي</a></li>
+    <li><a href="#cap-9">🆕 Video Understanding</a></li>
+    <li><a href="#cap-10">🆕 Document Understanding (PDF)</a></li>
+    <li><a href="#cap-11">🆕 Live API (Chatbot)</a></li>
+    <li><a href="#cap-12">🆕 Image Generation (Imagen)</a></li>
+    <li><a href="#cap-13">🆕 Batch API</a></li>
+    <li><a href="#cap-14">🆕 Context Caching</a></li>
+    <li><a href="#cap-15">🆕 Content Moderation</a></li>
+    <li><a href="#cap-16">🆕 URL Context Tool</a></li>
+    <li><a href="#priority">🥇 الأولويات والترتيب</a></li>
+  </ol>
+</section>
+
+<!-- ============= 1. EMBEDDINGS ============= -->
+<section class="capability" id="cap-1">
+  <h2><span class="num">01</span> <span class="icon">🔍</span> Embeddings + البحث الدلالي</h2>
+  <p class="subtitle">يحوّل كل مقال إلى "بصمة رقمية" تفهم المعنى، مش الكلمات. أساس كل ميزات الذكاء في منظومتك.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: موظف قرأ كل مقالاتك وفاهمها</div>
+      كل مقال يتحوّل لـ vector (مصفوفة أرقام تمثّل المعنى). المقالات اللي معناها قريب، أرقامها قريبة. النظام يقارن الأرقام، يكتشف ترابط ما اكتشفته أنت. الفرق عن البحث العادي: لو كتبت "سيارة"، يجيب لك مقال فيه "عربية" لأن المعنى واحد.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>اقتراح روابط داخلية تلقائياً</strong>الكاتب يخلص مقال → النظام يقترح: "ضع رابط لمقال X لأنه مرتبط ٨٧٪". يخدم الـ SEO golden rule.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>كشف التكرار قبل النشر</strong>قبل ما يُنشر المقال، النظام يحذّر: "هذا الموضوع كتبته من ٦ شهور بنفس الزاوية، حدّث أو اربط".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>اقتراحات للقارئ في نهاية المقال</strong>"قد يعجبك أيضاً..." مبني على المعنى مش الكلمات. يزيد time-on-site بشكل ملحوظ.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>بحث ذكي للزائر</strong>الزائر يكتب "أبغى مقاول بنا" → يلقي نتائج "مقاولات + شركات تشييد + بناء فلل" حتى لو الكلمات مختلفة.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>ربط مقال بعميل/صناعة تلقائياً</strong>مقال جديد عن "تنظيف الأسنان" → النظام يربطه تلقائياً بالعميل "عيادة بلسم" + صناعة "الرعاية الصحية".</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>إضافة حقل embedding في Article model</strong>نضيف <code>embedding: Float[]</code> في <code>schema.prisma</code> — MongoDB يدعم arrays مباشرة.</li>
+      <li><strong>عند نشر/تحديث مقال</strong>server action في <code>dataLayer</code> يستدعي <code>models.embedContent</code> ويحفظ النتيجة في DB.</li>
+      <li><strong>توليد embeddings للمقالات الحالية</strong>سكريبت <code>scripts/embed-all-articles.mjs</code> يمشي على ٢٠٠ مقال موجود مرة واحدة.</li>
+      <li><strong>API endpoint للبحث الدلالي</strong>endpoint جديد <code>/api/search/semantic</code> يحسب cosine distance بين السؤال والمقالات.</li>
+      <li><strong>UI: اقتراحات داخل article editor</strong>tab جديد "روابط مقترحة" في admin يعرض ٥ مقالات مرتبطة مع نسبة التطابق.</li>
+      <li><strong>UI: "قد يعجبك" في نهاية كل مقال على modonty.com</strong>component جديد <code>RelatedArticles</code> يستدعي endpoint البحث الدلالي.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💻 مثال كود مبسّط</div>
+    <pre><code><span class="code-comment">// عند حفظ مقال جديد</span>
+<span class="code-keyword">import</span> { GoogleGenAI } <span class="code-keyword">from</span> <span class="code-string">"@google/genai"</span>;
+
+<span class="code-keyword">const</span> ai = <span class="code-keyword">new</span> GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+<span class="code-keyword">const</span> embedding = <span class="code-keyword">await</span> ai.models.embedContent({
+  model: <span class="code-string">"gemini-embedding-001"</span>,
+  content: article.title + <span class="code-string">"\n"</span> + article.body,
+});
+
+<span class="code-keyword">await</span> db.article.update({
+  where: { id: article.id },
+  data: { embedding: embedding.values },
+});</code></pre>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة شهرياً</div><div class="value">~$5</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">4-6 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐⭐</div></div>
+  </div>
+
+  <!-- ============ EXPANDED: 3 PROBLEMS YOU FACE TODAY ============ -->
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: كاتب جديد يبدأ من الصفر</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كاتب جديد يكتب مقال عن "صيانة السيارات"</li>
+            <li>ما يدري إن في عندك مقال شبه دا من ٤ شهور</li>
+            <li>مقالين على نفس الموضوع</li>
+            <li>Google يحتار أيهم يطلع</li>
+            <li>خسرت ranking + ضيّعت وقت الكاتب</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Embeddings</div>
+          <ul>
+            <li>الكاتب يبدأ يكتب</li>
+            <li>النظام يحذره: "في مقال شبه دا من ٤ شهور"</li>
+            <li>إما يربط بالمقال القديم</li>
+            <li>أو يكتب من زاوية مختلفة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: صفر تكرار + كل مقال يضيف قيمة فعلية</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: زائر يقرأ مقال، ثم يخرج</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>زائر يدخل من Google</li>
+            <li>يقرأ مقالك، يخرج فوراً</li>
+            <li>ما شاف باقي مقالاتك المرتبطة</li>
+            <li>Google يشوف "bounce rate عالي"</li>
+            <li>ينزّل ترتيبك</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Embeddings</div>
+          <ul>
+            <li>في نهاية كل مقال: "قد يعجبك أيضاً"</li>
+            <li>٣ مقالات مرتبطة بالمعنى مش بالكلمات</li>
+            <li>الزائر يقرأ ٢-٣ مقالات بدل واحد</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: time-on-site يزيد ×٣ + Google يرفع ترتيبك</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: زائر يبحث، ما يلقاك</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>زائر يبحث "أبغى مقاول بنا"</li>
+            <li>موقعك يبحث بالكلمات بس</li>
+            <li>"مقاول بنا" مش موجودة حرفياً</li>
+            <li>"لا نتائج"</li>
+            <li>عندك مقالات عن "شركات بناء" و "تشييد فلل" — ما طلعت</li>
+            <li>خسرت عميل محتمل</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Embeddings</div>
+          <ul>
+            <li>نفس البحث "أبغى مقاول بنا"</li>
+            <li>النظام يفهم القصد</li>
+            <li>يجيب المقالات الثلاثة المرتبطة</li>
+            <li>الزائر يلقي اللي يدور عليه</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: كل بحث يطلع نتيجة + رضا الزائر + conversion أعلى</div>
+    </div>
+  </div>
+
+  <!-- ============ EXPANDED: MONGODB INTEGRATION ============ -->
+  <div class="section">
+    <div class="section-title">🗄️ آلية العمل مع MongoDB</div>
+
+    <h3 style="margin-top:1rem;color:var(--cyan);font-size:1.1rem;">⚙️ ما يتغيّر في الـ Database</h3>
+    <div class="options-compare">
+      <div class="option-card">
+        <h4>قبل (اليوم)</h4>
+        <pre style="background:var(--bg);padding:1rem;border-radius:0.5rem;font-size:0.85rem;direction:ltr;text-align:left;"><code>Article في DB:
+├─ id
+├─ title
+├─ slug
+├─ body
+├─ status
+└─ ...</code></pre>
+      </div>
+      <div class="option-card recommended">
+        <h4>بعد التطبيق <span class="recommended-badge">جديد</span></h4>
+        <pre style="background:var(--bg);padding:1rem;border-radius:0.5rem;font-size:0.85rem;direction:ltr;text-align:left;"><code>Article في DB:
+├─ id
+├─ title
+├─ slug
+├─ body
+├─ status
+├─ embedding ← الجديد
+├─ embeddingUpdatedAt ← متى
+└─ ...</code></pre>
+      </div>
+    </div>
+    <p style="color:var(--text-muted);text-align:center;margin-top:0.5rem;font-size:0.9rem;">
+      <strong style="color:var(--emerald-soft);">حقل واحد جديد فقط</strong> — زيادة ~3KB في حجم المقال (مصفوفة ٧٦٨ رقم)
+    </p>
+
+    <h3 style="margin-top:2rem;color:var(--cyan);font-size:1.1rem;">📥 آلية الحفظ (Write)</h3>
+    <div class="flow">
+      <div class="flow-step">admin يحفظ مقال جديد</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">prisma db update</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">[trigger] server action تستدعي Gemini</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يولّد embedding (1 ثانية)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نحفظه في نفس الـ document</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ المقال جاهز</div>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.9rem;">
+      <strong>أين يحدث:</strong> في <code>dataLayer/articles/save-article.ts</code> (مكان موجود أصلاً) ·
+      <strong>تأثير على السرعة:</strong> +1 ثانية على عملية الحفظ ·
+      <strong>التكلفة:</strong> $0.00001 لكل مقال (مجاني تقريباً)
+    </p>
+
+    <h3 style="margin-top:2rem;color:var(--cyan);font-size:1.1rem;">📤 آلية البحث الدلالي (Read #1)</h3>
+    <div class="flow">
+      <div class="flow-step">زائر يبحث "أبغى مقاول بنا"</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نولّد embedding للسؤال (1 ثانية)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نجيب كل المقالات من DB (مع embeddings تبعهم)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نحسب التشابه بين السؤال وكل مقال</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ نتائج ذكية مرتبة</div>
+    </div>
+
+    <h3 style="margin-top:2rem;color:var(--cyan);font-size:1.1rem;">🔗 آلية "قد يعجبك أيضاً" (Read #2)</h3>
+    <div class="flow">
+      <div class="flow-step">زائر يفتح مقال على modonty.com</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نجيب embedding المقال الحالي</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نقارنه بـ embeddings كل المقالات الأخرى</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نرجّع أعلى ٣ مقالات مرتبطة</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ "قد يعجبك أيضاً..." يظهر تحت المقال</div>
+    </div>
+  </div>
+
+  <!-- ============ EXPANDED: MONGODB OPTIONS ============ -->
+  <div class="section">
+    <div class="section-title">⚖️ خياران تقنيان للبحث في MongoDB</div>
+    <div class="options-compare">
+      <div class="option-card recommended">
+        <h4>الخيار A — بسيط <span class="recommended-badge">موصى به للبداية</span></h4>
+        <p>نجيب كل المقالات، نحسب التشابه في الـ code التطبيقي.</p>
+        <div class="pros">
+          <strong style="color:var(--emerald-soft);">المميزات:</strong>
+          <ul>
+            <li>يشتغل على أي MongoDB (حتى free tier)</li>
+            <li>لا يحتاج تغيير في إعدادات Atlas</li>
+            <li>سهل التطبيق</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong style="color:#ef4444;">العيوب:</strong>
+          <ul>
+            <li>مع +١٠٠٠ مقال، يصير بطيء</li>
+            <li>يستهلك ذاكرة في الـ server</li>
+          </ul>
+        </div>
+        <div class="when">🎯 المناسب: مدوني الآن (٢٠٠ مقال) — ممتاز</div>
+      </div>
+
+      <div class="option-card">
+        <h4>الخيار B — متقدّم (لما تكبر)</h4>
+        <p>MongoDB Atlas Vector Search — feature مدمج يبحث في embeddings بسرعة الضوء.</p>
+        <div class="pros">
+          <strong style="color:var(--emerald-soft);">المميزات:</strong>
+          <ul>
+            <li>سريع جداً (مللي ثانية حتى مع ١٠٠ ألف مقال)</li>
+            <li>MongoDB يسوي العمليات بدل الـ code</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong style="color:#ef4444;">العيوب:</strong>
+          <ul>
+            <li>يحتاج إنشاء Vector Index في Atlas dashboard</li>
+            <li>يحتاج تعديل في الـ queries</li>
+          </ul>
+        </div>
+        <div class="when">🎯 المناسب: لما توصل +٥٠٠٠ مقال</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EXPANDED: PHASED IMPLEMENTATION ============ -->
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق العملية لمدوني</div>
+
+    <div class="problem-solution">
+      <h4 style="color:var(--emerald-soft);background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,95,70,0.10));">Phase 1 (الآن): الخيار A — البسيط</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>إضافة <code>embedding: Float[]</code> في Article schema</strong>تعديل سطر واحد في schema.prisma — MongoDB يدعم arrays مباشرة.</li>
+          <li><strong>Migration بدون drop</strong>MongoDB يسمح إضافة حقل بدون مسح البيانات.</li>
+          <li><strong>سكريبت لمرة واحدة</strong>يولّد embeddings لكل ٢٠٠ مقال موجود.</li>
+          <li><strong>إضافة الـ trigger في save-article</strong>كل مقال جديد/معدّل يولّد embedding تلقائياً.</li>
+          <li><strong>بناء UI للبحث + الاقتراحات</strong>component جديد في admin (التحذير من التكرار) + في modonty.com (قد يعجبك).</li>
+        </ol>
+        <div class="meta-grid" style="margin-top:1rem;">
+          <div class="meta-card"><div class="label">الوقت</div><div class="value">4-6 يوم</div></div>
+          <div class="meta-card cost"><div class="label">التكلفة الأولى</div><div class="value">~$0.02</div></div>
+          <div class="meta-card cost"><div class="label">شهرياً</div><div class="value">&lt; $5</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(48,48,255,0.10));color:var(--primary-soft);">Phase 2 (لما توصل +٢٠٠٠ مقال): الترقية للخيار B</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:0.5rem 0;"><span style="color:var(--emerald-soft);">✓</span> نضيف Vector Index في Atlas (٥ دقايق clicking)</li>
+          <li style="padding:0.5rem 0;"><span style="color:var(--emerald-soft);">✓</span> نعدّل ٢ queries فقط</li>
+          <li style="padding:0.5rem 0;"><span style="color:var(--emerald-soft);">✓</span> الباقي يبقى كما هو — صفر مخاطرة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SUMMARY TABLE ============ -->
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط — أسئلة شائعة</div>
+    <table class="summary-table">
+      <tr><td>يحتاج DB جديد؟</td><td>لا، نفس MongoDB الحالي</td></tr>
+      <tr><td>يحتاج تغيير schema كبير؟</td><td>لا، حقل واحد جديد</td></tr>
+      <tr><td>يحتاج إعدادات خاصة في Atlas؟</td><td>لا للبداية، نعم لاحقاً (Phase 2)</td></tr>
+      <tr><td>هل البيانات الحالية تنحذف؟</td><td>لا، كل المقالات تبقى كما هي</td></tr>
+      <tr><td>هل يأثر على سرعة الموقع؟</td><td>لا، الـ embedding pre-computed</td></tr>
+      <tr><td>هل يحتاج backup خاص؟</td><td>لا، نفس backup عادي</td></tr>
+      <tr><td>هل يأثر على Vercel deployment؟</td><td>لا، حجم الكود ما يتغيّر</td></tr>
+      <tr><td>هل يحتاج downtime؟</td><td>لا، يطبّق على HOT DB بدون توقف</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 2. LONG CONTEXT ============= -->
+<section class="capability" id="cap-2">
+  <h2><span class="num">02</span> <span class="icon">📚</span> Long Context — الذاكرة الطويلة</h2>
+  <p class="subtitle">Gemini 2.0 يقدر يستوعب مليون token دفعة واحدة. يعني تعطيه ١٠٠ مقال + كل قواعدك دفعة وحدة ويجاوبك على أساس المجموع كله.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: موظف يقرأ ١٠٠ مقال في دقيقة ويعطيك تقرير</div>
+      عادةً نسأل Gemini عن مقال واحد. مع Long Context تعطيه مكتبة كاملة + سياسات الكتابة + brand guidelines، ويفهم كل دا كـ context. تقدر تسأله أسئلة استراتيجية تخص مجموع المحتوى.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>Brand Voice Audit شهري</strong>"اقرأ كل مقالات الشهر، هل النبرة متناسقة؟ أعطني تقرير + ٥ مقالات تخالف الـ tone".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>كشف التناقضات</strong>لو ذكرت "+١٢٠ عميل" في مقال + "+٨٠ عميل" في مقال آخر، Gemini يكشف التناقض تلقائياً.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Content Gap Analysis</strong>"بناءً على ٢٠٠ مقال، ما هي ٥ مواضيع مفقودة من منظومة مدوني؟ مع ترتيب حسب فرص SEO".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Pre-publish style check</strong>قبل نشر مقال جديد، Gemini يقارنه بـ ٢٠ مقال سابق ويقول: "هذي الفقرة مش بنبرة مدوني، اقترح بديل".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>تحليل تطور المحتوى</strong>"كيف تطوّر أسلوبي من ٢٠٢٥ إلى ٢٠٢٦؟ هل صار أوضح أم أعقد؟"</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>إنشاء UI tab في admin</strong>صفحة <code>/admin/brand-audit</code> بثلاثة أزرار: Run Audit · Style Check · Gap Analysis.</li>
+      <li><strong>Server action يجمع المحتوى</strong>يأخذ آخر ٣٠ مقال + ملف <code>brand-guidelines.md</code> + قائمة المواضيع المنشورة.</li>
+      <li><strong>استدعاء Gemini مع كل المحتوى</strong>API call واحد بـ <code>gemini-2.0-flash</code> مع context كامل + prompt محدد.</li>
+      <li><strong>حفظ التقرير كـ snapshot</strong>model جديد <code>BrandAudit</code> في Prisma يحفظ التقارير الشهرية.</li>
+      <li><strong>UI لعرض التقرير</strong>صفحة <code>/admin/brand-audit/[id]</code> تعرض التقرير بشكل منظم.</li>
+      <li><strong>Cron job اختياري</strong>يشغّل audit شهري تلقائياً ويرسله للأدمن بالإيميل.</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💻 مثال كود مبسّط</div>
+    <pre><code><span class="code-comment">// تجميع آخر 30 مقال</span>
+<span class="code-keyword">const</span> articles = <span class="code-keyword">await</span> db.article.findMany({
+  where: { status: <span class="code-string">"PUBLISHED"</span> },
+  take: 30,
+  orderBy: { publishedAt: <span class="code-string">"desc"</span> },
+});
+
+<span class="code-keyword">const</span> context = articles.map(a =>
+  `Title: ${a.title}\nBody: ${a.body}`
+).join(<span class="code-string">"\n---\n"</span>);
+
+<span class="code-keyword">const</span> result = <span class="code-keyword">await</span> ai.models.generateContent({
+  model: <span class="code-string">"gemini-2.0-flash"</span>,
+  contents: [
+    { role: <span class="code-string">"user"</span>, parts: [{ text: context }] },
+    { role: <span class="code-string">"user"</span>, parts: [{ text: <span class="code-string">"حلّل اتساق النبرة..."</span> }] },
+  ],
+});</code></pre>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة لكل audit</div><div class="value">~$0.05</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">3-4 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: نبرة الكتابة تنحرف مع كل كاتب جديد</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كاتب جديد ينضم للفريق</li>
+            <li>يكتب مقالات بنبرته الشخصية</li>
+            <li>ما تنتبه إلا بعد ٢٠ مقال</li>
+            <li>القارئ يحس إن مدوني صارت "بأكثر من صوت"</li>
+            <li>brand identity ينهار تدريجياً</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Long Context</div>
+          <ul>
+            <li>كل شهر، النظام يقرأ كل المقالات الجديدة</li>
+            <li>يقارنها بـ brand-guidelines</li>
+            <li>يعطيك تقرير: "كاتب X خرج عن النبرة في ٧ مقالات"</li>
+            <li>تتدخّل قبل ما المشكلة تكبر</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: brand consistency عبر ١٠٠٠+ مقال</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: تناقضات في الأرقام بين المقالات</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مقال ٢٠٢٥: "نخدم +١٠٠ عميل"</li>
+            <li>مقال ٢٠٢٦: "نخدم ٨٠ شركة" (الكاتب نسي)</li>
+            <li>قارئ ذكي يكتشف التناقض</li>
+            <li>الثقة في مدوني تنخفض</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Long Context</div>
+          <ul>
+            <li>قبل النشر، Gemini يقارن أرقامك الجديدة بالقديمة</li>
+            <li>"⚠️ هذا الرقم يخالف ما قلته في ٣ مقالات سابقة"</li>
+            <li>تصلح قبل النشر</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: مصداقية محفوظة + صفر تناقضات</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: ما تعرف إيش المواضيع المفقودة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كتبت ٢٠٠ مقال</li>
+            <li>تخمن إيش المواضيع التالية</li>
+            <li>تكرر مواضيع موجودة بدون قصد</li>
+            <li>تفوت مواضيع مهمة لجمهورك</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Long Context</div>
+          <ul>
+            <li>Gemini يقرأ كل مقالاتك</li>
+            <li>"عندك تغطية ممتازة لـ X، لكن مفقود: Y, Z, W"</li>
+            <li>مع ترتيب حسب فرص SEO + موسمية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: content strategy مبنية على بيانات حقيقية</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يفتح صفحة /admin/brand-audit شهرياً</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يضغط زر "Run Brand Audit"</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">السيرفر يجمع آخر ٣٠ مقال + brand-guidelines.md</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يرسل كل ذلك لـ Gemini دفعة واحدة (long context)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يحلّل ويرجع تقرير منظم</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ التقرير محفوظ + يعرض في الـ admin</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,95,70,0.10));color:var(--emerald-soft);">٣-٤ أيام تطوير</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>صفحة جديدة في admin</strong><code>/admin/brand-audit</code> بثلاثة أزرار: Run Audit · Style Check · Gap Analysis</li>
+          <li><strong>Server action يجمع البيانات</strong>آخر ٣٠ مقال من DB + brand-guidelines.md + قائمة المواضيع المنشورة</li>
+          <li><strong>استدعاء Gemini مع كل المحتوى</strong>API call واحد بـ gemini-2.0-flash مع prompt محدد</li>
+          <li><strong>Prisma model جديد BrandAudit</strong>يحفظ كل تقرير كـ snapshot للمراجعة لاحقاً</li>
+          <li><strong>UI لعرض التقرير</strong>صفحة منظمة بـ tabs: Voice · Numbers · Gaps</li>
+          <li><strong>Cron job اختياري</strong>يشغّل audit شهري تلقائياً ويرسله للأدمن</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>كم مرة تشغّله؟</td><td>شهري يدوياً، أو تلقائياً عبر cron</td></tr>
+      <tr><td>كم مقال يقرأ في المرة؟</td><td>٣٠-١٠٠ مقال دفعة واحدة</td></tr>
+      <tr><td>التقرير يحفظ في DB؟</td><td>نعم، للمقارنة بين الفترات</td></tr>
+      <tr><td>يأثر على سرعة الموقع؟</td><td>لا، يشتغل في الخلفية</td></tr>
+      <tr><td>هل يحتاج إنترنت مفتوح؟</td><td>نعم وقت التشغيل فقط (دقيقة)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 3. IMAGE UNDERSTANDING ============= -->
+<section class="capability" id="cap-3">
+  <h2><span class="num">03</span> <span class="icon">🖼️</span> Image Understanding — يفهم الصور</h2>
+  <p class="subtitle">Gemini يشوف الصورة ويوصفها بدقة عربية: اللون، التكوين، حتى النص الموجود فيها. أداة قوية للـ accessibility والـ SEO.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: كأن لـ Gemini عينين تشوف الصورة وتفهمها</div>
+      تعطيه صورة، يرجع لك وصف نصّي بالعربي. يحلّل الـ context (هل هي طبية؟ تجارية؟ فاخرة؟)، الجودة (مضاءة؟ مظلمة؟ blurry؟)، ويستخرج أي نص داخل الصورة.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>Alt Text تلقائي للصور</strong>كل صورة تُرفع → Gemini يكتب alt عربي دقيق → Google يفهم → ترتيب في بحث الصور. هذا requirement لـ WCAG accessibility.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>فحص جودة الصورة قبل النشر</strong>"الصورة blurry، استبدلها" أو "الإضاءة ضعيفة" — منع نشر صور رديئة الجودة.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>استخراج نص من screenshots</strong>الـ admin يلصق لقطة شاشة فيها كلام → Gemini يحوّلها text → جاهز للنسخ.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>كشف logos العملاء تلقائياً</strong>صورة فيها logo عميل → النظام يتعرّف عليه ويربط الصورة بالعميل.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>اقتراح cropping</strong>"اقص هنا للحصول على hero image مثالي" — يحدد الـ focal point.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>تعديل upload flow في admin</strong>بعد upload للـ Cloudinary، نستدعي Gemini مع URL الصورة.</li>
+      <li><strong>Server action: <code>generateAltText(mediaId)</code></strong>تأخذ ID الصورة، تجلب URL من DB، ترسل لـ Gemini مع prompt محدد.</li>
+      <li><strong>Prompt مصاغ بدقة</strong>"اكتب alt text عربي مختصر (٨٠ حرف أقصى) يصف الصورة + المعنى المقصود. لا تستخدم 'صورة لـ' في البداية."</li>
+      <li><strong>UI: حقل alt قابل للتعديل</strong>النص المولّد يظهر في form، الـ admin يقدر يعدّله قبل الحفظ.</li>
+      <li><strong>Bulk script للصور القديمة</strong><code>scripts/backfill-alt-text.mjs</code> يمشي على كل صورة بدون alt ويولّد لها واحد.</li>
+      <li><strong>Quality check tool</strong>زر "تحقق من الجودة" يستدعي Gemini ويعرض تقييم (ممتاز/جيد/ضعيف + سبب).</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💻 مثال كود مبسّط</div>
+    <pre><code><span class="code-keyword">const</span> result = <span class="code-keyword">await</span> ai.models.generateContent({
+  model: <span class="code-string">"gemini-2.0-flash"</span>,
+  contents: [{
+    role: <span class="code-string">"user"</span>,
+    parts: [
+      { text: <span class="code-string">"اكتب alt text عربي مختصر (80 حرف) لهذه الصورة"</span> },
+      { inlineData: {
+          mimeType: <span class="code-string">"image/jpeg"</span>,
+          data: imageBase64
+      }},
+    ],
+  }],
+});
+
+<span class="code-keyword">await</span> db.media.update({
+  where: { id: mediaId },
+  data: { altText: result.text },
+});</code></pre>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للصورة</div><div class="value">~$0.001</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">2-3 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: صور بدون alt text = SEO ضايع + إعاقة accessibility</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>admin يرفع ٢٠ صورة بسرعة</li>
+            <li>ما يكتب alt text (الوقت يضغطه)</li>
+            <li>Google ما يفهم الصور = ما يطلعها في image search</li>
+            <li>المكفوفين ما يقدرون يفهموا المحتوى</li>
+            <li>WCAG accessibility ضايع</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Image Understanding</div>
+          <ul>
+            <li>كل صورة تُرفع → Gemini يكتب alt تلقائياً</li>
+            <li>وصف عربي دقيق وذكي (مش "image of ...")</li>
+            <li>admin يقدر يعدّله لو حاب</li>
+            <li>Google يفهم + المكفوفين يستفيدون</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: ترتيب أعلى في Google Images + accessibility محققة</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: صور رديئة الجودة تنزل قبل ما تنتبه</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>صورة blurry / مظلمة / مقطوعة</li>
+            <li>admin ما يلاحظ في الصورة المصغّرة</li>
+            <li>تنشر، القارئ يحس إن مدوني unprofessional</li>
+            <li>brand image ينخفض</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Image Understanding</div>
+          <ul>
+            <li>بعد upload، Gemini يحلل: "الإضاءة ضعيفة"</li>
+            <li>"الصورة blurry — استبدلها"</li>
+            <li>"الـ focal point غير واضح"</li>
+            <li>تمنعك قبل ما تنشر</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: كل صورة تطلع بجودة احترافية</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: ١٠٠٠ صورة بدون tags = صعب تلقي اللي تبيها</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مكتبة الصور مع +١٠٠٠ صورة</li>
+            <li>تدور صورة "شعار مطعم" → تقلّب يدوياً</li>
+            <li>تكتب tags يدوياً = ما يحدث</li>
+            <li>تنتهي ترفع نفس الصورة مرتين</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Image Understanding</div>
+          <ul>
+            <li>كل صورة تُرفع → Gemini يستخرج tags تلقائياً</li>
+            <li>"شعار، مطعم، أحمر، نص عربي، طعام"</li>
+            <li>بحث ذكي في المكتبة</li>
+            <li>كشف الصور المكررة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: مكتبة منظّمة + توفير ساعات بحث</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يرفع صورة في Media Library</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">الصورة تُحفظ في Cloudinary (الموجود)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">[trigger] server action ترسل URL للـ Gemini</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يرجع: alt text + quality score + tags</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نحفظهم في Media model (Prisma)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">admin يشوف النتيجة + يعدّل لو حاب</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ الصورة جاهزة بـ alt + tags + quality grade</div>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.7rem;">
+      <strong>الوقت من upload إلى ready:</strong> ~٣-٥ ثوانٍ ·
+      <strong>التكلفة:</strong> $0.001 لكل صورة (مجاني تقريباً)
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,95,70,0.10));color:var(--emerald-soft);">٢-٣ أيام تطوير — الأبسط، الأسرع، الأعلى ROI</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>تعديل upload flow</strong>بعد ما الصورة تُرفع لـ Cloudinary، ندعو Gemini</li>
+          <li><strong>Server action <code>analyzeImage(mediaId)</code></strong>تأخذ ID الصورة → ترسلها لـ Gemini → ترجع alt + quality + tags</li>
+          <li><strong>إضافة حقول في Media model</strong><code>altText</code> + <code>qualityScore</code> + <code>aiTags: String[]</code></li>
+          <li><strong>UI: حقل alt قابل للتعديل</strong>في Media edit page، النص المولّد يظهر مع زر "Regenerate"</li>
+          <li><strong>Quality warning badge</strong>صور بـ quality score منخفض تظهر بشارة "⚠️ تحسّن الجودة"</li>
+          <li><strong>Bulk script للصور القديمة</strong><code>backfill-image-analysis.mjs</code> يمشي على ١٠٠٠ صورة بدون alt</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>يأثر على سرعة الـ upload؟</td><td>+٣-٥ ثوانٍ بس، يصير في الخلفية</td></tr>
+      <tr><td>يحتاج Cloudinary خاص؟</td><td>لا، نفس Cloudinary الموجود</td></tr>
+      <tr><td>كم لغة يدعم في الـ alt؟</td><td>عربي + إنجليزي + ٤٠+ لغة</td></tr>
+      <tr><td>هل alt text قابل للتعديل؟</td><td>نعم، admin يعدّله بحرية</td></tr>
+      <tr><td>هل يصلح للصور الموجودة؟</td><td>نعم، سكريبت backfill لمرة واحدة</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 4. JSON-LD AUTO-FIX ============= -->
+<section class="capability" id="cap-4">
+  <h2><span class="num">04</span> <span class="icon">🔧</span> JSON-LD Auto-Fix</h2>
+  <p class="subtitle">JSON-LD هو "بطاقة تعريف" المقال اللي Google يقرأها قبل المحتوى. حالياً لو فيها warning، الـ admin يحلها يدوياً. Gemini يحلها تلقائياً.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مهندس جودة يفحص الـ schema ويصلحها بدلك</div>
+      Gemini يفهم schema.org كاملاً + قواعد Google Rich Results. يقرأ المقال + الـ schema الحالي + قائمة warnings → يولّد schema مُصلَح ومُحسَّن. يخدم مباشرة قاعدة مدوني الذهبية: <strong>"JSON-LD = code responsibility, never admin task"</strong>.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>Auto-Fix فوري عند Warning</strong>admin يفتح المقال → ⚠️ warning → يضغط "Auto-Fix with AI" → Gemini يصلحها + يعرض diff.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>اقتراح schemas إضافية</strong>"هذا المقال يستحق FAQPage schema + HowTo schema. هل أضيفهم؟"</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Validation تلقائي قبل النشر</strong>في الـ publish pipeline، Gemini يفحص + يصلح + يوافق قبل أن يصل إلى Google.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Bulk audit للمقالات القديمة</strong>"افحص ٢٠٠ مقال، أعطني قائمة كل المقالات اللي schema تبعها فيه مشاكل + اقتراحات للإصلاح".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Schema enhancement بناءً على ميزات Google الجديدة</strong>لما Google يضيف schema جديد (مثل LearningResource)، Gemini يعرف ويقترح الإضافة.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>زر "Auto-Fix Schema" في admin article view</strong>يظهر تلقائياً لما يوجد schema warning في الـ validator.</li>
+      <li><strong>Server action يجمع البيانات</strong>المقال + الـ schema الحالي + قائمة warnings + Google Rich Results requirements للنوع.</li>
+      <li><strong>Prompt مصاغ بدقة</strong>"أصلح هذا الـ JSON-LD ليحقق معايير schema.org و Google Rich Results. لا تضف حقول مخترعة، استخدم بيانات المقال فقط."</li>
+      <li><strong>Validation الإجباري بعد التوليد</strong>نمرّر النتيجة عبر <code>validateJsonLdComplete()</code> الموجود (Adobe SDV + AJV) — لا نحفظ إلا الـ schema الذي يجتاز.</li>
+      <li><strong>UI لعرض diff</strong>قبل/بعد بشكل واضح + قائمة بالتغييرات + ✅ تم حل ٣ warnings.</li>
+      <li><strong>Logging كل auto-fix</strong>نحفظ كل عملية لمراقبة الجودة وتحسين الـ prompt.</li>
+    </ol>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للإصلاح</div><div class="value">~$0.001</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">5-7 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: كل مقال يطلع schema warning — admin ما يدري إيش يسوي</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>admin يفتح مقال</li>
+            <li>⚠️ "Schema warning: missing 'author'"</li>
+            <li>admin: "إيش معنى author؟ كيف أحلها؟"</li>
+            <li>يجي يسأل خالد أو يتركها</li>
+            <li>Google يفقد فرصة rich result</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع JSON-LD Auto-Fix</div>
+          <ul>
+            <li>admin يشوف ⚠️ warning</li>
+            <li>زر "Auto-Fix with AI" يظهر تلقائياً</li>
+            <li>يضغط → Gemini يصلحها</li>
+            <li>يعرض diff واضح "أُضيف: author = اسم الكاتب"</li>
+            <li>admin يوافق → اتحلت</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: صفر warnings + admin مرتاح + golden rule محققة</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: schema بسيط = ضايع فرص Rich Results في Google</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>المقال له Article schema بس</li>
+            <li>المقال فيه أسئلة وأجوبة → FAQPage schema مفقود</li>
+            <li>المقال فيه خطوات → HowTo schema مفقود</li>
+            <li>المنافسين يطلعون بـ rich snippets، أنت لا</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع JSON-LD Auto-Fix</div>
+          <ul>
+            <li>Gemini يقرأ المحتوى</li>
+            <li>"المقال فيه ٥ أسئلة — أقترح FAQPage schema"</li>
+            <li>"المقال فيه ٧ خطوات — أقترح HowTo schema"</li>
+            <li>تضغط "Apply" → rich snippets تطلع</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: ٢-٣x ظهور في Google + click-through أعلى</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: Google يحدّث متطلباته باستمرار — schema يصير قديم</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>Google يضيف schema جديد (مثلاً LearningResource)</li>
+            <li>أنت ما تعرف</li>
+            <li>كل مقالاتك ما تستفيد من الميزة الجديدة</li>
+            <li>المنافسين يأخذون السبق</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع JSON-LD Auto-Fix</div>
+          <ul>
+            <li>Gemini عنده آخر معلومات schema.org</li>
+            <li>يقترح تحديثات تلقائياً</li>
+            <li>Bulk audit شهري: "٢٠٠ مقال يحتاجون تحديث schema"</li>
+            <li>تطبّق دفعة وحدة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: تبقى على آخر تحديثات SEO بدون متابعة يدوية</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يفتح مقال — Validator يكشف ⚠️ warning</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">زر "Auto-Fix Schema with AI" يظهر</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">admin يضغط → نرسل لـ Gemini: المقال + schema الحالي + warnings</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يرجع schema مُصلَح</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">⚠️ Safety: نمرّر النتيجة عبر validator موجود (Adobe SDV + AJV)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">UI يعرض diff: قبل/بعد + قائمة بالتغييرات</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ admin يوافق → الـ schema يُحفظ</div>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.7rem;">
+      <strong>الـ Safety net:</strong> ما نحفظ إلا الـ schema اللي يجتاز validator موجود — لا نخاطر بكسر schema موجود.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(180,83,9,0.10));color:var(--amber);">٥-٧ أيام — يحتاج prompt engineering دقيق</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>زر "Auto-Fix Schema" في article validator UI</strong>يظهر بشرط: يوجد warnings (تلقائي)</li>
+          <li><strong>Server action يجمع البيانات</strong>المقال + schema الحالي + warnings + Google Rich Results requirements للنوع (Article/FAQ/HowTo)</li>
+          <li><strong>Prompt مصاغ بدقة عالية</strong>"أصلح JSON-LD لـ schema.org + Google Rich Results. لا تضف حقول مخترعة. استخدم بيانات المقال فقط."</li>
+          <li><strong>Validation الإجباري بعد التوليد</strong>نمرّر النتيجة عبر <code>validateJsonLdComplete()</code> الموجود — لا نحفظ إلا الذي يجتاز</li>
+          <li><strong>UI diff component</strong>عرض قبل/بعد بـ syntax highlighting + قائمة "✅ تم حل ٣ warnings"</li>
+          <li><strong>Logging كامل</strong>كل auto-fix يُحفظ لتحسين الـ prompt مع الوقت</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>هل يكسر schema الموجود؟</td><td>لا — Safety net عبر validator</td></tr>
+      <tr><td>هل يتغيّر بدون موافقة admin؟</td><td>لا — admin يراجع diff قبل الحفظ</td></tr>
+      <tr><td>يدعم كل schemas؟</td><td>Article, FAQPage, HowTo, BreadcrumbList, ومعظم schema.org</td></tr>
+      <tr><td>يحتاج تدريب admin؟</td><td>لا — زر واحد يحلّ كل شي</td></tr>
+      <tr><td>يخدم Golden Rule؟</td><td>نعم مباشرة — JSON-LD code responsibility</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 5. GROUNDED GENERATION ============= -->
+<section class="capability" id="cap-5">
+  <h2><span class="num">05</span> <span class="icon">🌍</span> Grounded Generation — مدعوم من Google</h2>
+  <p class="subtitle">Gemini عادي يخمّن من training data القديم. Grounded يبحث في Google قبل الكتابة، ويعطيك إجابة مدعومة بنتائج حقيقية + روابط مصادر.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: باحث يبحث في Google قبل ما يكتب أي ادعاء</div>
+      بدل ما يقول "هذا الادعاء صحيح" من ذاكرته، يفتح Google، يقرأ ٥ مصادر، يقارن، ثم يجاوبك. كل جواب مدعوم بـ citations يقدر القارئ يتحقق منها.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>Fact-Checking للمقالات</strong>كل ادعاء/رقم في المقال → Gemini يتحقق من Google → ⚠️ ينبّه على الأرقام المخالفة للواقع.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>اقتراح citations تلقائي</strong>"هذا الادعاء يحتاج source. إليك ٣ مصادر موثوقة من Google".</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>محتوى YMYL آمن</strong>للمقالات الحساسة (طب، مالية، قانون) — يضمن دقة كل ادعاء قبل النشر. يحمي من Google penalty.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>News-aware content</strong>يكتب مقالات تواكب آخر التحديثات (قوانين جديدة، إحصائيات حديثة، أنظمة سعودية متغيّرة).</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>تعزيز E-E-A-T</strong>Google يعطي ترتيب أعلى للمحتوى الموثّق. citations حقيقية = experience + expertise + authority.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>زر "Fact-Check with Google" في article editor</strong>يظهر بعد ما الكاتب يخلص المقال، قبل الإرسال للمراجعة.</li>
+      <li><strong>Server action يستخرج الادعاءات</strong>يحلّل المقال ويستخرج الأرقام والإحصائيات والادعاءات القابلة للتحقق.</li>
+      <li><strong>استدعاء Gemini مع Grounding</strong>لكل ادعاء، استدعاء بـ <code>tools: [{googleSearch: {}}]</code> للتحقق.</li>
+      <li><strong>تصنيف النتائج</strong>✅ verified · ⚠️ partial · ❌ contradicts source · 🔍 needs more research.</li>
+      <li><strong>UI لعرض التقرير</strong>كل ادعاء مع نتيجته + الـ source URLs + اقتراح للتعديل.</li>
+      <li><strong>الـ admin يقرر</strong>يقبل التعديل، أو يحدّث الادعاء، أو يحذفه.</li>
+    </ol>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة لكل grounded call</div><div class="value">~$0.035/1K</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">3-5 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: رقم تقريبي ينتهي يطلع غلط = penalty من Google</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>الكاتب يكتب: "سوق السيارات السعودي يبلغ +١٠٠ مليار ريال"</li>
+            <li>الرقم تقريبي، ما تأكد منه</li>
+            <li>قارئ ذكي يبحث، يلقي الرقم الحقيقي ٧٥ مليار</li>
+            <li>التعليقات تنتقد المقال</li>
+            <li>Google يشوف "user reports inaccurate" = penalty</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Grounded Generation</div>
+          <ul>
+            <li>قبل النشر، Gemini يستخرج كل الأرقام</li>
+            <li>يبحث في Google عن كل رقم</li>
+            <li>"⚠️ '١٠٠ مليار' يخالف Statista (٧٥ مليار)"</li>
+            <li>تصلح قبل النشر</li>
+            <li>كل رقم يطلع مع citation للمصدر</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: دقة ١٠٠٪ + حماية من penalties</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: مقال صحي/قانوني يحتاج دقة عالية — ما عندك خبير</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مقال طبي عن "فوائد فيتامين C"</li>
+            <li>الكاتب يكتب من تجربته الشخصية</li>
+            <li>ادعاءات غير دقيقة طبياً</li>
+            <li>Google يصنّفها YMYL (Your Money Your Life)</li>
+            <li>ترتيبك ينخفض بشكل حاد</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Grounded Generation</div>
+          <ul>
+            <li>الكاتب يخلص المقال</li>
+            <li>زر "Fact-Check with Google" يظهر</li>
+            <li>Gemini يتحقق من كل ادعاء طبي</li>
+            <li>يقترح روابط لـ WHO، وزارة الصحة، Mayo Clinic</li>
+            <li>المقال يطلع بـ citations موثوقة → ترتيب عالي</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى YMYL آمن + E-E-A-T قوي</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: قوانين/أنظمة سعودية تتحدّث، مقالاتك تصير قديمة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مقال عن "متطلبات السجل التجاري" (كُتب ٢٠٢٤)</li>
+            <li>وزارة التجارة عدّلت اللوائح ٢٠٢٦</li>
+            <li>مقالك صار غلط</li>
+            <li>قارئ يطبق المعلومة الغلط → يخسر معاملة</li>
+            <li>سمعة مدوني تتضرر</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Grounded Generation</div>
+          <ul>
+            <li>شهرياً، Gemini يفحص المقالات القديمة</li>
+            <li>يبحث في Google عن تحديثات الموضوع</li>
+            <li>"⚠️ هذا المقال يحتاج تحديث — اللوائح تغيّرت في فبراير ٢٠٢٦"</li>
+            <li>يقترح التعديلات + المصادر الجديدة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى دائماً محدّث + freshness signal لـ Google</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">الكاتب يخلص المقال في admin</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يضغط "Fact-Check with Google"</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">السيرفر يستخرج الادعاءات + الأرقام من المقال</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">لكل ادعاء: استدعاء Gemini مع tools: [googleSearch]</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يبحث في Google + يقارن + يصنّف</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">تقرير: ✅ verified / ⚠️ partial / ❌ contradicts</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ admin يراجع + يصلح + يقبل citations</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(180,83,9,0.10));color:var(--amber);">٣-٥ أيام تطوير</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>زر "Fact-Check" في article editor</strong>يظهر بعد ما الكاتب يخلص المقال</li>
+          <li><strong>Claim extraction</strong>سكريبت يحلّل النص ويستخرج الأرقام والادعاءات (regex + LLM)</li>
+          <li><strong>Grounded API call لكل claim</strong>استدعاء Gemini بـ <code>tools: [{googleSearch: {}}]</code></li>
+          <li><strong>Categorization</strong>تصنيف النتائج: verified / partial / contradicts / needs research</li>
+          <li><strong>UI للتقرير</strong>كل ادعاء مع لون + الـ sources + اقتراح تعديل</li>
+          <li><strong>Bulk audit للمقالات القديمة</strong>cron شهري يفحص المقالات المنشورة من +٦ شهور</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>متى أستخدمه؟</td><td>مقالات YMYL (طب/مالية/قانون) + أي مقال فيه أرقام</td></tr>
+      <tr><td>يأخذ كم وقت؟</td><td>~٣٠ ثانية لمقال متوسط (٥-٧ ادعاءات)</td></tr>
+      <tr><td>التكلفة لكل fact-check؟</td><td>~$0.05 (مقبول للقيمة)</td></tr>
+      <tr><td>هل يضمن دقة ١٠٠٪؟</td><td>~٩٥٪ — يحدّ من الأخطاء، الـ admin يتأكد</td></tr>
+      <tr><td>يحفظ citations في DB؟</td><td>نعم، تتعرض في المقال كـ rich snippets</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 6. FUNCTION CALLING AGENTS ============= -->
+<section class="capability" id="cap-6">
+  <h2><span class="num">06</span> <span class="icon">🤖</span> Function Calling Agents — وكيل AI</h2>
+  <p class="subtitle">بدل ما يجاوبك بنص، Gemini "ينادي" أدوات في النظام ويسوي مهام متعددة الخطوات بشكل مستقل. الأقوى والأعقد.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: موظف ذكي عنده صلاحيات يستخدم أدوات النظام</div>
+      تعرّف لـ Gemini الأدوات المتاحة (إنشاء مقال، توليد صورة، فحص SEO، إلخ). تعطيه هدف ("اكتب مقال عن X")، هو يخطط الخطوات ويستخدم الأدوات تلقائياً. يقفز إنتاجيتك من ٢ مقال/يوم إلى ٢٠.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>Article Creation Agent</strong>admin يقول "اكتب مقال عن X" → Agent يبحث + يكتب + يصمم + يتحقق + يحفظ كـ DRAFT جاهز للموافقة.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Auto-Publishing Pipeline</strong>المقال يجتاز كل المعايير (golden rule 100%) → ينشر تلقائياً + يرسل لـ Google Indexing API.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Engagement Agent</strong>يرد على تعليقات بسيطة تلقائياً، يصعّد المعقدة للـ admin، يحلل ما يحتاج رد.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>SEO Optimization Agent</strong>يحلّل كل مقال شهرياً ويعمل تحديثات (alt text، roads داخلية، meta description) — يحافظ على Modonty في القمة.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Content Refresh Agent</strong>"حدّث المقالات اللي عمرها +٦ شهور بأرقام حديثة من Google" — يحافظ على freshness signal.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>تعريف الـ Tools كـ functions</strong><code>createArticle</code> · <code>generateImage</code> · <code>checkSeo</code> · <code>validateSchema</code> · <code>publishArticle</code> · إلخ.</li>
+      <li><strong>كل function لها schema</strong>JSON schema يصف الـ inputs والـ outputs، عشان Gemini يفهم كيف يستخدمها.</li>
+      <li><strong>System prompt يشرح الـ persona</strong>"أنت كاتب محتوى مدوني، تكتب بنبرة سعودية احترافية، تتبع الـ golden rule..."</li>
+      <li><strong>Loop التنفيذ</strong>admin يكتب hammer ("اكتب عن X") → Gemini يستدعي tool → نشغّل الـ function → نرجع النتيجة لـ Gemini → يقرر الخطوة التالية → نكرر حتى ينتهي.</li>
+      <li><strong>Human-in-the-loop</strong>قبل النشر، admin يراجع الـ DRAFT ويوافق (للحفاظ على الـ golden rule).</li>
+      <li><strong>Logging كامل</strong>كل خطوة تتسجل عشان نتبع ونحسّن الـ agent.</li>
+    </ol>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للمقال</div><div class="value">~$0.10</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">10-15 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: كل مقال ياخذ ٤-٦ ساعات يدوياً</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كاتب يبحث الموضوع: ساعة</li>
+            <li>يكتب draft: ٢-٣ ساعات</li>
+            <li>يبحث صور: ساعة</li>
+            <li>SEO check + JSON-LD: نص ساعة</li>
+            <li>إجمالي: ٤-٦ ساعات/مقال × ٢ كاتب = ٤ مقالات/يوم max</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Function Calling Agent</div>
+          <ul>
+            <li>admin يقول للـ agent: "اكتب عن X"</li>
+            <li>Agent يبحث + يكتب + يصمم + يفحص — ١٥ دقيقة</li>
+            <li>admin يراجع ويوافق: ١٠ دقايق</li>
+            <li>إجمالي: ٢٥ دقيقة/مقال = ٢٠+ مقال/يوم</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: إنتاجية ×٥ بنفس الفريق</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: admin بوتلنك — كل شي يمر عليه</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كاتب يحتاج صور — admin يبحث</li>
+            <li>كاتب يحتاج SEO check — admin يراجع</li>
+            <li>كاتب يحتاج JSON-LD — admin يصلح</li>
+            <li>admin يصير bottleneck = الكل ينتظره</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Function Calling Agent</div>
+          <ul>
+            <li>الكاتب يكتب — Agent يجهّز الـ supporting tasks</li>
+            <li>الصور + SEO + Schema = Agent يسوّيهم</li>
+            <li>admin يراجع المنتج النهائي فقط</li>
+            <li>وقت admin يتفرّغ للقرارات الاستراتيجية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: الفريق يتحرّك بسرعة + admin يفكر في الـ big picture</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: ما تقدر تنشر +٢-٣ مقالات يومياً</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>المنافسين ينشرون ١٠+ مقال يومياً</li>
+            <li>أنت ١-٢ بحد أقصى</li>
+            <li>السوق يتقدّمك في حجم المحتوى</li>
+            <li>SEO authority ينمو ببطء</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Function Calling Agent</div>
+          <ul>
+            <li>Agent يكتب draft كامل في ١٥ دقيقة</li>
+            <li>تقدر تنشر ٢٠-٣٠ مقال يومياً</li>
+            <li>حجم المحتوى ينافس الكبار</li>
+            <li>Domain Authority ينمو ×٥</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: مدوني تصير أكبر مكتبة محتوى سعودية في سنة</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يكتب prompt: "اكتب مقال عن صيانة السيارات"</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Agent يخطط الخطوات + يستدعي tools</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Step 1: googleSearch("صيانة السيارات SEO keywords")</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Step 2: generateDraft(keywords, audience, tone)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Step 3: generateImages(prompt) → Cloudinary</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Step 4: checkSeo(draft) + autoFixSchema(draft)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Step 5: saveAsDraft(article) → Prisma DB</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ admin يراجع DRAFT → يوافق → ينشر</div>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.7rem;">
+      <strong>Human-in-the-loop:</strong> Agent ما ينشر تلقائياً — admin دائماً يراجع (يحمي الـ golden rule).
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(48,48,255,0.10));color:var(--primary-soft);">١٠-١٥ يوم — الأقوى لكن الأعقد، يحتاج الميزات السابقة</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>تعريف الـ Tools كـ functions</strong>createArticle · generateImage · checkSeo · validateSchema · publishArticle ... إلخ</li>
+          <li><strong>JSON schema لكل function</strong>يصف الـ inputs والـ outputs ليفهم Gemini كيف يستخدمها</li>
+          <li><strong>System prompt يشرح الـ persona</strong>"أنت كاتب محتوى مدوني، نبرة سعودية احترافية، تتبع golden rule..."</li>
+          <li><strong>Execution loop</strong>admin يكتب طلب → Gemini يستدعي tool → السيرفر ينفّذ → يرجع النتيجة → Gemini يقرر الخطوة التالية</li>
+          <li><strong>Human-in-the-loop UI</strong>قبل النشر، admin يراجع DRAFT (لا نشر تلقائي)</li>
+          <li><strong>Logging كامل + analytics</strong>كل خطوة تتسجل لتحسين الـ agent مع الوقت</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>هل ينشر تلقائياً؟</td><td>لا — admin دائماً يوافق قبل النشر</td></tr>
+      <tr><td>هل يحتاج الميزات السابقة؟</td><td>نعم — يستخدم Embeddings + Image + Schema + Fact-check</td></tr>
+      <tr><td>هل المقال يكون نهائياً؟</td><td>DRAFT — جاهز ٩٠٪، admin يراجع ويعدّل</td></tr>
+      <tr><td>كم مقال يقدر يكتب يومياً؟</td><td>٢٠-٣٠ مقال/يوم (إذا API quota كافية)</td></tr>
+      <tr><td>متى أبدأ به؟</td><td>بعد ما تطبّق ٣-٤ ميزات أولى — هذا الـ capstone</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 7. SPEECH-TO-TEXT ============= -->
+<section class="capability" id="cap-7">
+  <h2><span class="num">07</span> <span class="icon">🎤</span> Speech-to-Text — صوت لكتابة</h2>
+  <p class="subtitle">عكس الـ TTS اللي عندك الآن. تعطيه audio → يرجع لك نص دقيق بالعربي. يحوّل المقابلات والشهادات لمحتوى.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: كاتب يستمع للمقابلة ويكتب transcript</div>
+      تعطيه ملف صوتي أو رابط YouTube، يحوّل الكلام لنص مكتوب. يفهم اللهجات العربية (سعودية، مصرية، خليجية)، ويفصل بين المتكلّمين لو فيهم أكثر من شخص.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>شهادات العملاء من WhatsApp</strong>عميل يرسل voice message بشهادته → transcript → مقال "ماذا قال عميلنا" + فيديو YouTube.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>مقابلات الخبراء → مقالات</strong>تسجل خبير ٣٠ دقيقة → transcript → ٣ مقالات SEO جاهزة.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>YouTube → article تلقائي</strong>رابط فيديو على قناة مدوني → transcript → مقال SEO مع الفيديو embedded.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Voice-to-Article للـ admin</strong>أنت تتكلّم بأفكارك ١٠ دقائق → النظام يحوّلها draft → تراجع.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Subtitles تلقائي للـ Reels</strong>كل Reel video يُولّد subtitles عربية دقيقة — يخدم التفاعل في السوشال.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>UI: زر "Upload Audio"</strong>في article editor، خانة لرفع MP3/WAV أو لصق YouTube URL.</li>
+      <li><strong>YouTube downloader</strong>لو URL، نستخدم ytdl-core أو ما يشابه لاستخراج audio.</li>
+      <li><strong>استدعاء Gemini مع Audio</strong>إرسال audio file لـ Gemini → استلام transcript بالعربي.</li>
+      <li><strong>Pre-processing</strong>لو الصوت طويل (>30 min)، نقسّمه لـ chunks ونرسلها متوازية.</li>
+      <li><strong>UI: تحرير الـ transcript</strong>المستخدم يقدر يعدّل النص قبل تحويله لمقال.</li>
+      <li><strong>زر "Convert to Article"</strong>يستدعي Gemini مرة ثانية ليحوّل الـ transcript لمقال SEO منظّم بعناوين.</li>
+    </ol>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للساعة</div><div class="value">~$0.36</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">3-4 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: شهادات العملاء على WhatsApp تضيع</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عميل يرسل voice message ٣ دقايق</li>
+            <li>يحكي تجربته الرائعة مع مدوني</li>
+            <li>تستمعها، تعجبك</li>
+            <li>ما عندك وقت تكتبها مقال</li>
+            <li>شهادة قوية ضاعت من الـ pipeline</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Speech-to-Text</div>
+          <ul>
+            <li>ترفع الـ voice message للنظام</li>
+            <li>Gemini يحوّلها لنص دقيق (٣٠ ثانية)</li>
+            <li>زر "Convert to Article" — يصير مقال SEO</li>
+            <li>عنوان "ماذا قال عميلنا؟" — جاهز للنشر</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: شهادات قوية تتحوّل لمحتوى يخدم SEO</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: مقابلات الخبراء تحتاج ساعات تفريغ</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تسجل مقابلة ٣٠ دقيقة مع خبير</li>
+            <li>تفريغها يدوياً = ساعتين+ شغل</li>
+            <li>تحويلها لمقالات = يوم كامل</li>
+            <li>المقابلة تجلس في الـ drive بدون استفادة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Speech-to-Text</div>
+          <ul>
+            <li>ترفع الـ audio (٣٠ دقيقة)</li>
+            <li>transcript دقيق في ٥ دقايق</li>
+            <li>Gemini يحوّله ٣ مقالات SEO منظّمة</li>
+            <li>كل مقال بزاوية مختلفة (من نفس المقابلة)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: من مقابلة واحدة → ٣ مقالات بدون شغل يدوي</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: YouTube content على قناتك ما يخدم SEO</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عندك ٢٠ فيديو على YouTube</li>
+            <li>Google ما يقدر يقرأ الفيديو</li>
+            <li>محتواهم ضايع SEO-wise</li>
+            <li>الفيديوهات يدور عليها بس اللي يلاقي القناة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Speech-to-Text</div>
+          <ul>
+            <li>ترفع رابط فيديو YouTube</li>
+            <li>النظام يستخرج audio + transcript</li>
+            <li>يحوّله مقال SEO مع الفيديو embedded</li>
+            <li>Google يفهم المحتوى = ترتيب أعلى</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: كل فيديو يصير مقال + ranking في Google</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يرفع audio file (MP3/WAV) أو يلصق YouTube URL</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">لو YouTube، نستخرج audio عبر yt-dlp</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نرسل الـ audio لـ Gemini Speech-to-Text</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نستلم transcript عربي دقيق</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">admin يقدر يعدّل الـ transcript قبل التحويل</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">زر "Convert to Article" — Gemini يصيغ مقال SEO</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ مقال جاهز للمراجعة + النشر</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,95,70,0.10));color:var(--emerald-soft);">٣-٤ أيام تطوير</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>UI: زر "Upload Audio" في article editor</strong>خانة لرفع MP3/WAV أو لصق YouTube URL</li>
+          <li><strong>YouTube extractor</strong>استخدام yt-dlp أو @distube/ytdl-core لاستخراج audio</li>
+          <li><strong>Gemini API call</strong>إرسال audio file → استلام transcript</li>
+          <li><strong>Chunking للملفات الطويلة</strong>لو +٣٠ دقيقة، نقسّمها لـ chunks متوازية</li>
+          <li><strong>UI لتحرير الـ transcript</strong>المستخدم يقدر يصحّح قبل التحويل</li>
+          <li><strong>زر "Convert to Article"</strong>استدعاء Gemini ثاني ليحوّل transcript لمقال منظّم</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>كم لغة يدعم؟</td><td>عربي (كل اللهجات) + إنجليزي + ٤٠+ لغة</td></tr>
+      <tr><td>كم طول audio يقبل؟</td><td>حتى ٢ ساعة لكل ملف</td></tr>
+      <tr><td>هل يفصل بين المتكلّمين؟</td><td>نعم — Speaker Diarization</td></tr>
+      <tr><td>دقة الترانسكريبت؟</td><td>~٩٥٪ للعربية الفصحى، ~٨٥٪ للهجات</td></tr>
+      <tr><td>متى أبدأ به؟</td><td>لما يكون عندك مقابلات أو شهادات صوتية كثيرة</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 8. TRANSLATION ============= -->
+<section class="capability" id="cap-8">
+  <h2><span class="num">08</span> <span class="icon">🌐</span> Translation الذكي</h2>
+  <p class="subtitle">ترجمة عادية تفقد النبرة. Gemini يحفظ اللهجة والمصطلحات التقنية والـ brand voice. مفتاح التوسّع الجغرافي.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مترجم محترف يفهم سياقك ولهجتك</div>
+      تعطيه مقال + brand guidelines + target locale (مثل en-US أو ar-EG). يرجع لك ترجمة تحفظ النبرة، تترك أسماء العلامات بدون ترجمة، وتكيّف التعابير للسوق المستهدف.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 استخدامات عملية في مدوني</div>
+    <div class="use-cases">
+      <ul>
+        <li><span class="check">✓</span><div class="text"><strong>التوسّع للسوق الإنجليزي</strong>مقال عربي → نسخة English عالية الجودة → modonty.com/en للأسواق العالمية.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>تكييف اللهجة بين الأسواق العربية</strong>مقال بلهجة سعودية → نسخة مصرية + إماراتية → coverage أوسع.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Multi-language SEO</strong>صفحة بـ ar-SA + ar-EG + en تحت نفس الـ canonical + hreflang tags → ترتيب في كل الأسواق.</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Localization automation</strong>لو وسّعت لـ الإمارات/قطر، Gemini يكيّف التعابير تلقائياً ("ريال" → "درهم" مثلاً).</div></li>
+        <li><span class="check">✓</span><div class="text"><strong>Translation memory</strong>المصطلحات المتكررة (brand terms، technical terms) تترجم بنفس الطريقة دائماً.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 خطوات الربط مع مدوني</div>
+    <ol class="steps">
+      <li><strong>Prisma schema جديد</strong>model <code>TranslatedArticle</code> مربوط بـ Article الأصلي بـ <code>parentId</code> + <code>locale</code>.</li>
+      <li><strong>UI: dropdown "Translate to"</strong>في article editor، خيارات: en · ar-EG · ar-AE · ar-KW.</li>
+      <li><strong>Server action للترجمة</strong>يأخذ المقال + brand guidelines + target locale → يستدعي Gemini.</li>
+      <li><strong>Prompt محدد</strong>"ترجم لـ {locale} مع الحفاظ على النبرة. اترك أسماء العلامات (مدوني، Google) بدون ترجمة. كيّف العبارات للسوق."</li>
+      <li><strong>Routing على modonty.com</strong>صفحة <code>/[locale]/articles/[slug]</code> تعرض النسخة المترجمة.</li>
+      <li><strong>SEO: hreflang setup</strong>كل نسخة تشير للأخريات بـ <code>&lt;link rel="alternate" hreflang="..."&gt;</code>.</li>
+    </ol>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للمقال</div><div class="value">~$0.003</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">5-7 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: Google Translate يفقد النبرة والمصطلحات</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تستخدم Google Translate</li>
+            <li>الترجمة حرفية وبدون روح</li>
+            <li>"مدوني" تتحوّل "My Blog" (غلط — اسم علامة)</li>
+            <li>اللهجة السعودية تختفي</li>
+            <li>القارئ الإنجليزي يحس إن المحتوى آلي</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Translation الذكي</div>
+          <ul>
+            <li>Gemini يعرف "مدوني" = brand name، يخليها كما هي</li>
+            <li>يحافظ على النبرة الاحترافية</li>
+            <li>يكيّف العبارات للسوق المستهدف</li>
+            <li>القارئ الإنجليزي يحس إنها كُتبت أصلاً بالإنجليزية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى عالمي بجودة محلية</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: مترجم بشري يكلف $$$ + بطيء</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تتعاقد مع مترجم محترف</li>
+            <li>$50-100 لكل مقال (~1500 كلمة)</li>
+            <li>أسبوع انتظار</li>
+            <li>٢٠٠ مقال = $20K + ٤ شهور</li>
+            <li>التوسّع الدولي يصير ممكن مالياً</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Translation الذكي</div>
+          <ul>
+            <li>$0.003 لكل مقال</li>
+            <li>دقيقة واحدة لكل مقال</li>
+            <li>٢٠٠ مقال = $0.60 + يوم واحد</li>
+            <li>توسّع دولي بدون كلفة كبيرة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: توفير $20K + ٤ شهور = ROI ضخم</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: لما توسّع لـ مصر/الإمارات، اللهجة ما تناسب</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مقال بلهجة سعودية ("كاش، يبغى، شفنا")</li>
+            <li>قارئ مصري يحس إنه غريب</li>
+            <li>قارئ إماراتي يحس إنه ما يخصه</li>
+            <li>conversion rate في الأسواق الأخرى منخفض</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Translation الذكي</div>
+          <ul>
+            <li>تختار "ar-EG" → Gemini يكيّف العبارات</li>
+            <li>"يبغى" → "عايز" · "كاش" → "كاش" (ثابتة)</li>
+            <li>قارئ مصري يحس إنه مكتوب لـه</li>
+            <li>"ar-AE" يكيّف للهجة الإماراتية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: مدوني تخدم كل سوق عربي بلهجته</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يفتح مقال في article editor</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">dropdown "Translate to": en · ar-EG · ar-AE · ar-KW</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">السيرفر يجمع: المقال + brand guidelines + target locale</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يترجم مع الحفاظ على النبرة والـ brand terms</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">نحفظ النسخة المترجمة في TranslatedArticle model</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">routing: /[locale]/articles/[slug] يعرض النسخة</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ hreflang tags + multi-language SEO</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 خطة التطبيق</div>
+    <div class="problem-solution">
+      <h4 style="background:linear-gradient(135deg,rgba(160,160,184,0.15),rgba(80,80,100,0.10));color:var(--text-muted);">٥-٧ يوم — مؤجّل حتى تقرّر التوسّع الجغرافي</h4>
+      <div style="padding:1.25rem 1.5rem;">
+        <ol class="steps">
+          <li><strong>Prisma model جديد</strong>TranslatedArticle مربوط بـ Article الأصلي عبر <code>parentId + locale</code></li>
+          <li><strong>UI: dropdown "Translate to"</strong>خيارات: en · ar-EG · ar-AE · ar-KW</li>
+          <li><strong>Server action للترجمة</strong>يأخذ المقال + brand guidelines + target locale → يستدعي Gemini</li>
+          <li><strong>Prompt محدد بدقة</strong>"ترجم لـ {locale}. لا تترجم أسماء العلامات. كيّف العبارات للسوق."</li>
+          <li><strong>Routing على modonty.com</strong>صفحة <code>/[locale]/articles/[slug]</code> تعرض النسخة المترجمة</li>
+          <li><strong>SEO: hreflang setup</strong>كل نسخة تشير للأخريات بـ <code>&lt;link rel="alternate" hreflang="..."&gt;</code></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>متى أستخدمه؟</td><td>لما تقرّر التوسّع لسوق جديد (مصر/الإمارات/إنجليزي)</td></tr>
+      <tr><td>الكلفة لكل ١٠٠ مقال؟</td><td>~$0.30 — رخيص جداً مقارنة بالمترجم البشري</td></tr>
+      <tr><td>دقة الترجمة؟</td><td>~٩٥٪ — قابلة للنشر مباشرة مع مراجعة بسيطة</td></tr>
+      <tr><td>يحفظ النبرة؟</td><td>نعم — تعطيه brand guidelines يلتزم بها</td></tr>
+      <tr><td>SEO multi-language؟</td><td>نعم — hreflang tags تلقائية</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════════════════════════════╗ -->
+<!-- ║          🆕 ٨ قدرات إضافية اكتشفناها لاحقاً                ║ -->
+<!-- ╚══════════════════════════════════════════════════════════╝ -->
+
+<section style="margin: 4rem 0 2rem; text-align: center; padding: 2.5rem; border-radius: 1.5rem; background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(48,48,255,0.08)); border: 2px dashed var(--emerald);">
+  <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--emerald-soft);">🆕 القدرات الإضافية</h2>
+  <p style="color: var(--text-muted); font-size: 1.1rem;">٨ قدرات إضافية من Gemini API — من رقم ٩ إلى ١٦ — تكمّل المنظومة</p>
+</section>
+
+<!-- ============= 9. VIDEO UNDERSTANDING ============= -->
+<section class="capability" id="cap-9">
+  <h2><span class="num">09</span> <span class="icon">🎥</span> Video Understanding</h2>
+  <p class="subtitle">Gemini يحلّل الفيديو لقطة لقطة. يفهم الكلام + الحركة + النص الظاهر + المشاعر. يحوّل فيديو واحد لكنز محتوى.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مساعد يشاهد الفيديو كامل ويأخذ ملاحظات</div>
+      تعطيه فيديو (YouTube أو ملف)، يشاهده، يطلع لك transcript + ملخّص + أهم اللحظات + المشاعر. تقدر تسأله "أعطني أفضل ٣٠ ثانية" أو "إيش الأفكار الرئيسية؟".
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>عندك قناة YouTube فيها ١٠ فيديوهات شهادات عملاء. كل فيديو ٢-٥ دقايق. الزائر اللي يدخل modonty.com <strong>ما يشوفهم إلا لو دخل القناة</strong> — يعني ٩٩٪ من زوار الموقع ضايع منهم هذا المحتوى الذهبي.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>ترفع رابط فيديو واحد للنظام، Gemini يسوي:</p>
+        <ul>
+          <li><strong>transcript كامل</strong> → مقال SEO ("ماذا قال عميل مدوني")</li>
+          <li><strong>أفضل ٣٠ ثانية</strong> → Reel جاهز لـ Instagram/TikTok</li>
+          <li><strong>٥ key quotes</strong> → social posts منفصلة</li>
+        </ul>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <p>من فيديو واحد ضايع → <strong>٣-٤ قطع محتوى منشورة</strong>. وفيديوهات YouTube تبدأ تظهر في Google.</p>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">مثال حقيقي</div>
+        <p>فيديو شهادة "كيما زون" ٣ دقايق → مقال SEO + Reel + ٣ tweets = <strong>٥ قطع محتوى في ٥ دقايق شغل</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: شهادات YouTube الموجودة لا تستفيد منها</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عندك ١٠ فيديو شهادات على قناة مدوني</li>
+            <li>كل فيديو ٢-٥ دقايق</li>
+            <li>الزائر ما يشوفهم إلا لو دخل القناة</li>
+            <li>محتواهم ضايع في YouTube</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Video Understanding</div>
+          <ul>
+            <li>ترفع رابط الفيديو</li>
+            <li>Gemini يستخرج أفضل ٣٠ ثانية → Reels</li>
+            <li>+ transcript كامل → مقال SEO</li>
+            <li>+ key quotes → social posts</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: من فيديو واحد → Reel + مقال + ٥ posts</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: فيديوهات شرح طويلة صعب على القارئ</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>فيديو شرح ٤٥ دقيقة عن "أساسيات SEO"</li>
+            <li>القارئ يحتاج ٤٥ دقيقة كاملة</li>
+            <li>كثيرون يخرجون قبل النهاية</li>
+            <li>محتوى عميق ما يصل</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Video Understanding</div>
+          <ul>
+            <li>Gemini يقسّم الفيديو لـ chapters تلقائياً</li>
+            <li>كل chapter → قسم في مقال</li>
+            <li>الفيديو الكامل + transcript searchable</li>
+            <li>القارئ يقفز للنقطة اللي يبيها</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى صعب يصير سهل الاستهلاك</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: فيديوهات المنافسين تجاوزتنا بدون ما ندري</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>منافس يعمل فيديو ينتشر</li>
+            <li>تشوف العنوان، تظن إنه عادي</li>
+            <li>ما تعرف الزاوية اللي استخدمها</li>
+            <li>تفوّت دروس مهمة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Video Understanding</div>
+          <ul>
+            <li>تلصق رابط فيديو منافس</li>
+            <li>Gemini يحلّله: الزاوية + الأفكار + الـ hooks</li>
+            <li>"هذا الفيديو يستخدم استراتيجية X"</li>
+            <li>تستفيد من غير ما تشاهد ساعة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: استخبارات تنافسية سريعة وذكية</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يرفع فيديو (أو يلصق YouTube URL)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">إذا YouTube، استخراج audio + video frames</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يحلّل: transcript + chapters + highlights</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يرجع: مقال SEO + Reel suggestions + key quotes</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ كل المخرجات في waiting queue للمراجعة</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للساعة</div><div class="value">~$0.10</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">4-5 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>أطول فيديو يقبله؟</td><td>~ساعتين لكل request</td></tr>
+      <tr><td>هل يفهم العربي؟</td><td>نعم، كل اللهجات</td></tr>
+      <tr><td>يأخذ كم وقت لمعالجة فيديو ٣٠ دقيقة؟</td><td>~٢-٣ دقايق</td></tr>
+      <tr><td>متى أبدأ به؟</td><td>لما يكون عندك +٥ فيديوهات على YouTube</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 10. DOCUMENT UNDERSTANDING ============= -->
+<section class="capability" id="cap-10">
+  <h2><span class="num">10</span> <span class="icon">📄</span> Document Understanding (PDF)</h2>
+  <p class="subtitle">يقرأ PDF/Word/Excel بفهم كامل (مش OCR بدائي). يستخرج البيانات المنظمة من المستندات.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: موظف ذكي يقرأ المستند ويملي لك البيانات المهمة</div>
+      تعطيه PDF (مثل سجل تجاري)، يفهم البنية، يستخرج الحقول المنظّمة (اسم الشركة + رقم CR + رأس المال + العنوان). أفضل من OCR بكثير لأنه يفهم السياق، مش فقط يحوّل صور لنص.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>عميل جديد يشترك. يرسل لك السجل التجاري PDF. admin يفتحه، يقرأ، <strong>يكتب الرقم ١٠ خانات يدوياً</strong> + رأس المال + العنوان. ساعة شغل + احتمال أخطاء طباعة عالي (رقم CR حساس، خطأ واحد = ساعتين تصحيح).</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>العميل يرفع PDF في onboarding form. Gemini يستخرج تلقائياً:</p>
+        <ul>
+          <li>اسم الشركة + رقم CR + رأس المال + العنوان + سنة التأسيس</li>
+          <li>الحقول تتعبأ في الـ form لوحدها</li>
+          <li>admin يراجع ويوافق في ٣ دقايق</li>
+        </ul>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li>onboarding: من <strong>ساعة → ٣ دقايق</strong></li>
+          <li><strong>صفر أخطاء طباعة</strong></li>
+          <li>العميل ينبهر: "الموقع ذكي جداً"</li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">مثال إضافي</div>
+        <p>عقد اشتراك ٢٠ صفحة → استخراج تواريخ التجديد تلقائياً + تنبيهات قبل أسبوعين = <strong>صفر عقود تنتهي بدون تجديد</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: onboarding عميل جديد يأخذ ساعة + أخطاء كتابة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عميل يرسل سجل تجاري PDF</li>
+            <li>admin يقرأه، يكتب البيانات يدوياً</li>
+            <li>أخطاء طباعة محتملة (رقم CR ١٠ خانات)</li>
+            <li>كل عميل يأخذ ٣٠-٦٠ دقيقة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Document Understanding</div>
+          <ul>
+            <li>العميل يرفع PDF</li>
+            <li>Gemini يستخرج: اسم + CR + رأس المال + عنوان + سنة التأسيس</li>
+            <li>تتعبئ الحقول تلقائياً</li>
+            <li>admin يراجع ويوافق (٣ دقايق)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: onboarding من ساعة → ٣ دقايق + صفر أخطاء</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: عقود الاشتراك بنود مخفية، صعب تتبعها</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عقد اشتراك ٢٠ صفحة</li>
+            <li>بنود مهمة مدفونة في النص</li>
+            <li>تواريخ التجديد + شروط الإلغاء صعب تتبع</li>
+            <li>تنسى تاريخ، يصير مشكلة قانونية</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Document Understanding</div>
+          <ul>
+            <li>ترفع العقد PDF</li>
+            <li>Gemini يستخرج: تاريخ البداية + النهاية + قيمة + بنود الإلغاء</li>
+            <li>يحفظهم في DB كـ structured data</li>
+            <li>تنبيهات تلقائية قبل التجديد بأسبوعين</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: إدارة عقود احترافية + صفر تأخير</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: تقارير صناعية ضخمة ما تستفيد منها</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تقرير McKinsey PDF ١٠٠ صفحة عن سوق السعودية</li>
+            <li>تحتاج يومين لقراءته</li>
+            <li>تخرج منه بـ ٣ ملاحظات بس</li>
+            <li>أرقام كثيرة تضيع</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Document Understanding</div>
+          <ul>
+            <li>ترفع التقرير PDF</li>
+            <li>Gemini يستخرج: كل الأرقام + insights + trends</li>
+            <li>"أعطني ٥ مقالات SEO يمكن كتابتها من هذا التقرير"</li>
+            <li>محتوى مستند على بيانات قوية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: من تقرير ضخم → ٥ مقالات بأرقام موثوقة</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">رفع PDF (سجل تجاري / عقد / تقرير)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يحلّل كل صفحة (يفهم بنية المستند)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">حسب النوع: يستخرج structured data معيّن</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">تتعبئ الحقول في الـ form / DB تلقائياً</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ admin يراجع + يوافق</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للصفحة</div><div class="value">~$0.005</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">3-4 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>يدعم أي format؟</td><td>PDF + Word + Excel + PowerPoint</td></tr>
+      <tr><td>يقرأ PDF فيها صور؟</td><td>نعم، multimodal كامل</td></tr>
+      <tr><td>كم صفحة كحد أقصى؟</td><td>~٣٠٠٠ صفحة لكل request</td></tr>
+      <tr><td>يفهم الجداول؟</td><td>نعم، يستخرجها كـ structured data</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 11. LIVE API CHATBOT ============= -->
+<section class="capability" id="cap-11">
+  <h2><span class="num">11</span> <span class="icon">💬</span> Live API — Real-time Chatbot</h2>
+  <p class="subtitle">محادثة فورية صوتية أو نصية مع الزائر. شات بوت ذكي ٢٤/٧ يحوّل الزوار لعملاء.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: موظف مبيعات يشتغل ٢٤/٧ بدون راتب</div>
+      Gemini Live API يفتح قناة محادثة حقيقية. الزائر يسأل، يجاوب فوراً (نص أو صوت). يفهم السياق، يقترح الباقة المناسبة، ويحوّل المهتمين الجادين لـ WhatsApp مع خالد.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>زائر يفتح modonty.com <strong>الساعة ٣ صباحاً</strong>. عنده سؤال "هل تخدمون قطاع طبي؟". الـ contact form يقول "نرد خلال ٢٤ ساعة". الزائر يخرج، ينسى مدوني. <strong>عميل محتمل ضاع</strong>. هذا يحصل ١٠ مرات كل شهر = ١٠ leads ضائعين.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>chatbot ذكي يفتح فوراً:</p>
+        <ul>
+          <li><strong>زائر:</strong> هل تخدمون قطاع طبي؟</li>
+          <li><strong>bot:</strong> أهلاً! نعم نخدم القطاع الطبي. عندنا ٣ عملاء في الـ healthcare. تحب أوريك أمثلة؟ أو نناقش احتياجك؟</li>
+        </ul>
+        <p style="margin-top:0.8rem;">يفهم البزنس → يقترح باقة → لو high-intent يحوّله لخالد على واتساب.</p>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li><strong>٢٤/٧ بدون راتب موظف</strong></li>
+          <li><strong>٧٠٪ من support tickets</strong> يحلها لوحده</li>
+          <li>خالد يستلم بس "العملاء الجادين"</li>
+          <li>conversion rate <strong>×٢-٣</strong></li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">القيمة المالية</div>
+        <p>بدل ١٠ leads ضائعين شهرياً (تكلفة ضمنية ~$5,000)، يحوّل <strong>٥-٧ منهم لعملاء</strong> = +$3,500/شهر.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: زائر يدخل ٣ صباحاً، ما يلقي رد، يخرج</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>زائر في الفجر يحب الموقع</li>
+            <li>عنده سؤال "هل تخدمون قطاع طبي؟"</li>
+            <li>الـ contact form يطلب انتظار</li>
+            <li>الزائر يخرج، ينسى</li>
+            <li>عميل محتمل ضاع</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Live Chatbot</div>
+          <ul>
+            <li>chatbot يفتح فوراً</li>
+            <li>"أهلاً! نعم نخدم القطاع الطبي. عندنا ٣ عملاء فيه..."</li>
+            <li>يفهم احتياجه ويقترح باقة</li>
+            <li>"تحب أحوّلك لخالد على واتساب؟"</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: صفر زوار ضائعين بسبب التوقيت</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: support tickets تتراكم على خالد</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عميل يسأل "كيف أضيف مقال؟" — يحتاج رد</li>
+            <li>عميل آخر "كيف أحدث logo؟" — رد ثاني</li>
+            <li>خالد يقضي ساعتين/يوم في الردود</li>
+            <li>الأسئلة المتكررة تستهلك وقت الشغل الإستراتيجي</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Live Chatbot</div>
+          <ul>
+            <li>chatbot يرد على ٨٠٪ من الأسئلة فوراً</li>
+            <li>يفهم سياق المستخدم (عميل أم زائر)</li>
+            <li>الأسئلة المعقدة يصعّدها لخالد</li>
+            <li>خالد وقته للقرارات الإستراتيجية فقط</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: ساعتين/يوم محرّرة + ردود فورية</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: الزائر يحتار بين ٤ باقات، يخرج بدون قرار</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>الزائر يفتح صفحة الباقات</li>
+            <li>٤ خيارات، ما يدري إيش المناسب</li>
+            <li>"خليني أفكر" — ينسى</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Live Chatbot</div>
+          <ul>
+            <li>chatbot يسأل: "إيش حجم بزنسك؟ كم مقال شهرياً تحتاج؟"</li>
+            <li>يحلل الإجابات، يقترح باقة محددة</li>
+            <li>يشرح ليش تناسبه</li>
+            <li>يقترح الاشتراك مباشرة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: conversion rate ×٢-٣</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">زائر يفتح modonty.com — chatbot widget يظهر</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يكتب سؤال (أو يضغط mic للصوت)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini Live API يحلل + يستخدم data: pricing, FAQs, articles</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يرد فوراً مع context كامل</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">لو high-intent: زر "تواصل مع خالد على واتساب"</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ المحادثة تتسجل في DB للمتابعة</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة شهرياً</div><div class="value">~$30-80</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">7-10 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>يدعم صوت + نص؟</td><td>نعم، الاثنين في نفس المحادثة</td></tr>
+      <tr><td>متى تنشئ ticket لخالد؟</td><td>عند high-intent (شراء/شكوى/سؤال معقد)</td></tr>
+      <tr><td>كم زائر يخدم في الوقت نفسه؟</td><td>غير محدود (concurrent)</td></tr>
+      <tr><td>هل يحفظ المحادثات؟</td><td>نعم في DB للمتابعة + التحسين</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 12. IMAGE GENERATION (IMAGEN) ============= -->
+<section class="capability" id="cap-12">
+  <h2><span class="num">12</span> <span class="icon">🎨</span> Image Generation (Imagen)</h2>
+  <p class="subtitle">يولّد صور احترافية من نص. يحرّرك من بنوك الصور المكلفة والمحدودة.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مصمم جرافيك يولّد لك صورة في ثانية</div>
+      تكتب وصف ("hero image لمقال عن SEO، خلفية زرقاء، عربي fonts، سعودي vibes")، يرجع لك صورة احترافية ٤K. تقدر تتحكم في الـ style والـ aspect ratio.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>مقال جديد عن "افتتاح متجر في الرياض". تبحث في Unsplash → كل النتائج صور غربية، رجل أوروبي بـ suit في متجر نيويورك. <strong>القارئ السعودي ما يرتبط</strong>. ولو لقيت صورة مناسبة، شفت منافسك استخدم نفس الصورة الشهر اللي راح. <strong>هويتك البصرية مكررة + غريبة عن السوق</strong>.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>تكتب وصف بسيط:</p>
+        <p style="background:var(--bg);padding:0.8rem;border-radius:0.5rem;margin:0.5rem 0;font-style:italic;color:var(--cyan);">"متجر حديث في الرياض ليلاً، رجل سعودي يفتح الباب، نيون أزرق، vibes رؤية ٢٠٣٠"</p>
+        <p>Imagen يولّد صورة فريدة ١٠٠٪ لمدوني خلال <strong>٢٠ ثانية</strong>. ٤K، بدون watermark.</p>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li><strong>هوية بصرية حصرية</strong> — لا تكرار مع المنافسين</li>
+          <li>توفير اشتراك Unsplash Pro <strong>(~$15/شهر)</strong></li>
+          <li>صور سعودية أصيلة (صعب تلقاها في بنوك الصور)</li>
+          <li>Reels: <strong>١٠ frames في دقيقة</strong> بدل ساعة بحث</li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">المقارنة الاقتصادية</div>
+        <p>$0.02 لكل صورة = <strong>~$20 شهرياً لـ ١٠٠٠ صورة</strong>. أرخص من Unsplash بكثير، وأقوى بصرياً.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: صور Unsplash/Stock مكررة بين المنافسين</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تبحث Unsplash عن "computer SEO"</li>
+            <li>نفس الـ ٢٠ صورة المتاحة للكل</li>
+            <li>منافسك استخدم نفس الصورة الشهر الماضي</li>
+            <li>مدوني تفقد التميّز البصري</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Imagen</div>
+          <ul>
+            <li>تكتب: "SEO dashboard، عربي، خلفية مدوني الزرقاء"</li>
+            <li>صورة فريدة ١٠٠٪ لمدوني</li>
+            <li>كل مقال له صورة exclusive</li>
+            <li>هوية بصرية متماسكة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: تميّز بصري + brand consistency</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: صعب تلقي صور بـ"vibe عربي/سعودي"</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>مقال عن "افتتاح متجر في الرياض"</li>
+            <li>Unsplash يعطيك صور غربية</li>
+            <li>القارئ السعودي ما يرتبط</li>
+            <li>محتوى عربي بصور غير عربية = تنافر</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Imagen</div>
+          <ul>
+            <li>"رجل سعودي يفتح متجر في الرياض، مساء، نيون"</li>
+            <li>صورة سعودية أصيلة</li>
+            <li>القارئ يحس إنها تخصه</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى مرتبط بصرياً بالجمهور المحلي</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: Reels تحتاج صور كثيرة، وقت طويل لإنتاجها</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>Reel من ١٠ frames يحتاج ١٠ صور</li>
+            <li>يأخذ ساعتين بحث + تحرير</li>
+            <li>تطلع reels بمعدل ١-٢ في الأسبوع فقط</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Imagen</div>
+          <ul>
+            <li>تعطي قصة Reel</li>
+            <li>Imagen يولّد ١٠ frames في دقيقة</li>
+            <li>تنتج ٥+ Reels يومياً</li>
+            <li>SOcial media presence أقوى</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى Reels ×٥</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يكتب prompt في article editor (أو يستخدم template)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">استدعاء Imagen API مع style guidelines</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">رجوع ٤ variations للاختيار</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">admin يختار + ترفع تلقائياً لـ Cloudinary</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ صورة جاهزة + alt text تلقائي (من #3)</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة للصورة</div><div class="value">~$0.02</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">3-4 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>يولّد صور بنص عربي؟</td><td>نعم (Imagen 3)</td></tr>
+      <tr><td>الجودة؟</td><td>4K بدون watermark</td></tr>
+      <tr><td>هل يلغي الحاجة لـ Unsplash؟</td><td>نعم، 90٪ من الاستخدامات</td></tr>
+      <tr><td>كم variation لكل prompt؟</td><td>4 (تختار الأفضل)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 13. BATCH API ============= -->
+<section class="capability" id="cap-13">
+  <h2><span class="num">13</span> <span class="icon">📦</span> Batch API — معالجة مجمّعة</h2>
+  <p class="subtitle">معالجة آلاف المهام دفعة واحدة بتكلفة أقل ٥٠٪. ممتاز لـ bulk operations.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مغسلة بالجملة بدل كل ثوب لوحده</div>
+      بدل ما ترسل ١٠٠٠ request منفصل (مكلف وبطيء)، ترفع كل المهام دفعة واحدة. Gemini يشتغل عليها في الخلفية (ساعات). ترجع لك النتائج بنصف السعر.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>لما نطبّق ميزة Embeddings (#1)، لازم نولّد embeddings لـ <strong>٢٠٠ مقال الموجودين</strong>. لو واحد واحد:</p>
+        <ul>
+          <li>٢٠٠ API calls منفصلة</li>
+          <li>٣٠ دقيقة انتظار</li>
+          <li>التكلفة كاملة</li>
+          <li>احتمال API rate limits</li>
+        </ul>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>نرفع الـ ٢٠٠ مقال كـ <strong>batch واحد</strong>:</p>
+        <ul>
+          <li>request واحد فقط</li>
+          <li>Gemini يشتغل عليهم في الخلفية (ساعة-ساعتين)</li>
+          <li><strong>نصف السعر</strong> (٥٠٪ توفير)</li>
+          <li>صفر API rate limits</li>
+        </ul>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li>بكل ميزة bulk نوفر <strong>٥٠٪</strong></li>
+          <li>١٠٠٠ صورة alt text = $0.50 بدل $1</li>
+          <li>brand audit شهري = نصف التكلفة</li>
+          <li>سنوياً: توفير <strong>$50-100</strong></li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">القاعدة الذهبية</div>
+        <p>أي عملية على <strong>+١٠٠ سجل</strong> → استخدم Batch. توفير ضخم بلا تعب.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: تطبيق Embeddings (#1) على ٢٠٠ مقال يكلّف double</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Batch</div>
+          <ul>
+            <li>٢٠٠ request منفصل</li>
+            <li>التكلفة كاملة</li>
+            <li>السرعة بطيئة (٣٠ دقيقة)</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Batch API</div>
+          <ul>
+            <li>upload batch من ٢٠٠ مقال</li>
+            <li>نصف السعر</li>
+            <li>كل النتائج جاهزة في ساعة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: $0.01 → $0.005 + سرعة أعلى</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: توليد alt text لـ ١٠٠٠ صورة قديمة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Batch</div>
+          <ul>
+            <li>١٠٠٠ × $0.001 = $1</li>
+            <li>سرعة معالجة بطيئة</li>
+            <li>الـ API rate limits قد تحدث</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Batch API</div>
+          <ul>
+            <li>١٠٠٠ × $0.0005 = $0.50</li>
+            <li>كله في ٢-٣ ساعات</li>
+            <li>صفر rate limits</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: ٥٠٪ + لا قلق من limits</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: brand audit شهري لكل المحتوى</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Batch</div>
+          <ul>
+            <li>كل audit $0.05</li>
+            <li>سنوياً = $0.60</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Batch API</div>
+          <ul>
+            <li>كل audit $0.025</li>
+            <li>سنوياً = $0.30</li>
+            <li>نصف التكلفة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: مستمر شهرياً</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">سكريبت يجمع المهام (مثلاً ١٠٠٠ صورة)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يرفعها كـ JSONL batch لـ Gemini</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يعالج في الخلفية (٢-٢٤ ساعة)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">webhook ينبهنا عند الانتهاء</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ النتائج تتحفظ في DB</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التوفير</div><div class="value">50%</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">1-2 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>متى أستخدمه؟</td><td>أي عملية على +١٠٠ سجل</td></tr>
+      <tr><td>كم وقت يأخذ؟</td><td>٢-٢٤ ساعة (مش فوري)</td></tr>
+      <tr><td>هل يدعم كل APIs؟</td><td>نعم: text, embeddings, image analysis</td></tr>
+      <tr><td>الحد الأقصى للـ batch؟</td><td>١٠٠،٠٠٠ مهمة لكل batch</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 14. CONTEXT CACHING ============= -->
+<section class="capability" id="cap-14">
+  <h2><span class="num">14</span> <span class="icon">💾</span> Context Caching</h2>
+  <p class="subtitle">يحفظ الـ context المتكرر (مثل brand guidelines) في cache → التكلفة تنزل ٧٥٪ على الـ calls المتكررة.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: بدل ما تشرح القاعدة لكل موظف جديد، تسجّلها مرة وحدة</div>
+      Gemini يحفظ الـ context الطويل (brand guidelines + style guide + schema knowledge) في cache. كل call تالي يستخدم الـ cache → ما يحتاج يدفع على الـ tokens المكررة. التوفير ٧٥٪.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>كل brand audit شهري (#2 في القدرات) يرسل لـ Gemini:</p>
+        <ul>
+          <li>brand guidelines (~5K tokens)</li>
+          <li>past audits (~10K tokens)</li>
+          <li>المقالات الجديدة (~30K tokens)</li>
+        </ul>
+        <p style="margin-top:0.8rem;"><strong>الـ guidelines والـ past audits ما يتغيّرون</strong> — لكن ندفع عليهم في كل call شهرياً.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>نخزّن الـ guidelines + past audits في <strong>cache</strong> (Gemini يحفظهم لنا). كل audit جديد:</p>
+        <ul>
+          <li>نشير للـ cache_id (مجاناً تقريباً)</li>
+          <li>نرسل بس المحتوى الجديد</li>
+          <li><strong>توفير ٧٥٪</strong> على الـ tokens المتكررة</li>
+        </ul>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li>brand audit: من <strong>$0.05 → $0.012</strong></li>
+          <li>Function Calling Agent: من $0.10/مقال → <strong>$0.03/مقال</strong></li>
+          <li>JSON-LD auto-fix: نفس التوفير</li>
+          <li><strong>يخدم كل الميزات الكبيرة</strong> اللي تستخدم context طويل</li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">القاعدة الذهبية</div>
+        <p>أضفه بعد ما تطبّق #2 أو #6 — <strong>توفير ضخم بسطر كود واحد</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: كل brand audit يعيد إرسال نفس guidelines</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Caching</div>
+          <ul>
+            <li>كل audit شهري يرسل ٥٠K tokens (guidelines + history)</li>
+            <li>التكلفة كاملة</li>
+            <li>السنة = $0.60</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Caching</div>
+          <ul>
+            <li>نخزّن الـ guidelines مرة في cache</li>
+            <li>كل audit يستخدم الـ cache</li>
+            <li>التكلفة تنزل ٧٥٪</li>
+            <li>السنة = $0.15</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: $0.45/سنة على هذا المثال فقط</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: Function Calling Agent يستخدم system prompt طويل في كل call</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Caching</div>
+          <ul>
+            <li>system prompt = ١٠K tokens</li>
+            <li>كل مقال جديد = أرسلها كاملة</li>
+            <li>التكلفة تتراكم بسرعة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Caching</div>
+          <ul>
+            <li>system prompt محفوظ كـ cache</li>
+            <li>كل مقال = نصف السعر</li>
+            <li>المقال = من $0.10 → $0.03</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: ٧٠٪ على كل مقال يُكتب بـ Agent</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: schema knowledge يتكرر في كل JSON-LD fix</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ بدون Caching</div>
+          <ul>
+            <li>كل auto-fix يرسل schema.org rules + Google requirements</li>
+            <li>~٢٠K tokens مكررة في كل مرة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Caching</div>
+          <ul>
+            <li>الـ rules محفوظة</li>
+            <li>كل fix يستخدم الـ cache</li>
+            <li>توفير ٧٥٪</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 التوفير: عام لكل ميزة تستخدم context طويل</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">أول call: ننشئ cache من الـ context الطويل</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يخزّن الـ cache (له TTL مثلاً ساعة)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">calls تالية: نشير للـ cache_id بدل إرسال الـ context</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ التكلفة تنزل ٧٥٪ على الـ cached tokens</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التوفير</div><div class="value">75%</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">1 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>متى يفيد؟</td><td>أي context +٤٠٠٠ tokens يتكرر</td></tr>
+      <tr><td>كم TTL للـ cache؟</td><td>قابلة للضبط (دقيقة - ساعات)</td></tr>
+      <tr><td>هل تكلفة لإنشاء الـ cache؟</td><td>نعم، لكن تُسترد بسرعة</td></tr>
+      <tr><td>متى أبدأ؟</td><td>بعد ما تطبّق #2 أو #6 (الميزات اللي تستخدم context طويل)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 15. CONTENT MODERATION ============= -->
+<section class="capability" id="cap-15">
+  <h2><span class="num">15</span> <span class="icon">🛡️</span> Content Moderation</h2>
+  <p class="subtitle">يفحص المحتوى تلقائياً للـ spam / hate speech / محتوى ضار. مجاني ومدمج في API.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: حارس أمن يفحص الزوار قبل دخولهم</div>
+      Gemini يفحص أي نص (تعليق، رسالة، مقال) ويصنّفه. لو فيه spam / إساءة / محتوى جنسي / عنف، يرفع علم. تقدر تمنع، تخفي، أو ترفع للأدمن.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>كل يوم يجي تعليقات spam على المقالات (روابط، إعلانات فيها viagra مثلاً). admin يحذف يدوياً. أحياناً ينشر spam قبل ما ينتبه = <strong>سمعة مدوني تتأثر</strong>. تخيّل قارئ جديد يدخل ويشوف تعليق spam → ينطبع لديه إنطباع سلبي عن الموقع كله.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>كل تعليق جديد، قبل النشر:</p>
+        <ul>
+          <li>يمرّ على Gemini Safety</li>
+          <li>يصنّفه: ✅ آمن / ⚠️ مشتبه / ❌ spam/إساءة</li>
+          <li>spam يُمنع تلقائياً</li>
+          <li>التعليقات الحقيقية تنشر فوراً</li>
+        </ul>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li><strong>صفر spam ينشر</strong> على modonty.com</li>
+          <li>admin يتفرّغ للردود الفعلية</li>
+          <li><strong>مجاني تماماً</strong> (مدمج في Gemini API)</li>
+          <li>يخدم: تعليقات + رسائل contact + lead inquiries</li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">فائدة جانبية</div>
+        <p>يفلتر الرسائل المسيئة قبل وصول خالد = <strong>راحة نفسية</strong> + توفير وقت قراءة الرسائل السلبية.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: تعليقات spam على المقالات</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كل يوم تجي تعليقات spam (روابط، إعلانات)</li>
+            <li>admin يحذف يدوياً</li>
+            <li>بعض الـ spam ينشر قبل ما تنتبه</li>
+            <li>سمعة الموقع تتأثر</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Moderation</div>
+          <ul>
+            <li>كل تعليق يتفحص قبل النشر</li>
+            <li>spam يُمنع تلقائياً</li>
+            <li>التعليقات الحقيقية تنشر فوراً</li>
+            <li>admin يتفرّغ للردود الفعلية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: صفر spam ينشر + توفير وقت</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: رسائل lead inquiries فيها أحياناً تهديدات أو إساءة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>admin يقرأ كل رسالة contact form</li>
+            <li>بعضها إساءة أو تهديدات</li>
+            <li>تأثير نفسي + وقت ضائع</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Moderation</div>
+          <ul>
+            <li>كل رسالة تتصنّف قبل وصولها</li>
+            <li>الإساءات تُحجز في صندوق منفصل</li>
+            <li>admin يشوف فقط الرسائل الإيجابية</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: تجربة أفضل لخالد + كفاءة أعلى</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: محتوى كاتب جديد قد يكون غير مناسب</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>كاتب جديد يكتب مقال</li>
+            <li>قد يستخدم تعابير غير لائقة</li>
+            <li>admin يكتشف بعد النشر</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع Moderation</div>
+          <ul>
+            <li>قبل النشر، Gemini يفحص</li>
+            <li>"تنبيه: 'العبارة X' قد تكون مسيئة"</li>
+            <li>الكاتب يصلح قبل أي مشكلة</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى آمن + brand محفوظ</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">أي نص جديد (تعليق / رسالة / مقال) يدخل النظام</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يمرّ على Gemini Safety Categories</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">تصنيف: HARASSMENT / HATE / SEXUAL / DANGEROUS / SPAM</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">حسب التصنيف: نشر / حجز / رفض / تنبيه admin</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ بيئة آمنة بدون تدخل يدوي</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة</div><div class="value">مجاني</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">1-2 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>هل مجاني؟</td><td>نعم، مدمج في Gemini API</td></tr>
+      <tr><td>كم فئة يفحص؟</td><td>٤ فئات رئيسية + قابلة للتخصيص</td></tr>
+      <tr><td>يدعم العربي؟</td><td>نعم، كل اللهجات</td></tr>
+      <tr><td>إيش الـ false positive rate؟</td><td>~٣-٥٪ (مقبول، admin يراجع المعلّقة)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= 16. URL CONTEXT TOOL ============= -->
+<section class="capability" id="cap-16">
+  <h2><span class="num">16</span> <span class="icon">🌐</span> URL Context Tool</h2>
+  <p class="subtitle">تعطيه رابط، يفتحه ويفهم محتواه. أداة قوية لتحليل المنافسين + scraping ذكي.</p>
+
+  <div class="section">
+    <div class="section-title">💡 إيش يسوي ببساطة</div>
+    <div class="what-it-does">
+      <div class="analogy">التشبيه: مساعد يفتح الرابط يقرأه ويلخص لك</div>
+      تعطيه URL لأي صفحة، يفتحها (بدلك)، يقرأ المحتوى، يستخرج المعلومات. أفضل من scraping يدوي لأنه يفهم السياق ويستخرج structured data.
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-header">💼 سيناريو من مدوني</div>
+    <div class="scenario-body">
+      <div class="scenario-block problem">
+        <div class="scenario-label">❌ المشكلة الفعلية</div>
+        <p>كل ٣ شهور تحب تحلل ٥ منافسين. تفتح ١٠ صفحة لكل واحد، تأخذ ملاحظات، تقارن. <strong>٤ ساعات شغل لتقرير سطحي</strong>. ولأنه يأخذ وقت، تأجّله، وما تعرف وين يتفوّق المنافسين عليك.</p>
+      </div>
+      <div class="scenario-block solution">
+        <div class="scenario-label">💡 الحل</div>
+        <p>تلصق الـ ٥ روابط في dashboard:</p>
+        <p style="background:var(--bg);padding:0.8rem;border-radius:0.5rem;margin:0.5rem 0;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--cyan);">https://competitor1.com<br>https://competitor2.com<br>...</p>
+        <p>Gemini يفتح كل واحد، يحلل، يرجع لك:</p>
+        <ul>
+          <li>pricing مقارنة</li>
+          <li>services offered</li>
+          <li>tone of voice</li>
+          <li>USPs + نقاط ضعف</li>
+        </ul>
+        <p style="margin-top:0.8rem;">في <strong>١٠ دقايق بدل ٤ ساعات</strong>.</p>
+      </div>
+      <div class="scenario-block benefit">
+        <div class="scenario-label">📊 الفائدة بالأرقام</div>
+        <ul>
+          <li><strong>استخبارات تنافسية</strong> بسرعة ٢٤×</li>
+          <li>استخراج بيانات Google My Business تلقائياً</li>
+          <li>مراقبة أخبار صناعة معيّنة (للمحتوى)</li>
+          <li>onboarding عميل بـ scraping بياناته من موقعه</li>
+        </ul>
+      </div>
+      <div class="scenario-example">
+        <div class="ex-label">مثال إضافي</div>
+        <p>عميل جديد يعطيك رابط موقعه → Gemini يفهم بزنسه تلقائياً ويقترح <strong>أنواع المقالات المناسبة</strong> له = onboarding أذكى.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 ٣ مشاكل عندك اليوم — وكيف تحلها</div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ١: تحليل المنافسين يأخذ ساعات</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تحب تحلل ٥ منافسين</li>
+            <li>تفتح ١٠ صفحة لكل واحد</li>
+            <li>تأخذ ملاحظات يدوياً</li>
+            <li>٤ ساعات شغل</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع URL Context</div>
+          <ul>
+            <li>تعطي ٥ روابط لمنافسين</li>
+            <li>Gemini يحلل كل واحد</li>
+            <li>تقرير مقارنة: pricing, services, tone, USPs</li>
+            <li>١٠ دقايق</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: استخبارات تنافسية في ٤٠ ضعف السرعة</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٢: استخراج بيانات من Google Business Profile</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>عميل يعطيك رابط GMB تبعه</li>
+            <li>تفتحه يدوياً، تأخذ بيانات</li>
+            <li>تكتبها في DB</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع URL Context</div>
+          <ul>
+            <li>تلصق الرابط</li>
+            <li>Gemini يستخرج: اسم + عنوان + ساعات + تقييمات + صور</li>
+            <li>يحفظهم في DB</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: onboarding أسرع + بيانات أكثر</div>
+    </div>
+
+    <div class="problem-solution">
+      <h4>المشكلة ٣: متابعة آخر أخبار صناعة معيّنة</h4>
+      <div class="ps-grid">
+        <div class="before">
+          <div class="label">❌ اليوم</div>
+          <ul>
+            <li>تشترك في ٥ مواقع أخبار</li>
+            <li>كل صباح تتصفح يدوياً</li>
+            <li>تفوّتك أخبار مهمة</li>
+          </ul>
+        </div>
+        <div class="after">
+          <div class="label">✅ مع URL Context</div>
+          <ul>
+            <li>cron job يومي يفحص ٥ مواقع</li>
+            <li>Gemini يستخرج آخر الأخبار في صناعة العميل</li>
+            <li>"عميل عيادة → خبر جديد عن تأمين طبي → مقال محتمل"</li>
+          </ul>
+        </div>
+      </div>
+      <div class="outcome">📈 النتيجة: محتوى دائماً مرتبط بآخر أحداث</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ آلية العمل في مدوني</div>
+    <div class="flow">
+      <div class="flow-step">admin يلصق URL في الـ dashboard</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini API call مع <code>tools: [{urlContext: {}}]</code></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Gemini يفتح URL، يقرأ، يحلّل</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">يرجع structured data + insights</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step flow-final">✅ تتعرض في dashboard / تتحفظ في DB</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card cost"><div class="label">التكلفة لكل URL</div><div class="value">~$0.002</div></div>
+    <div class="meta-card"><div class="label">وقت التطوير</div><div class="value">2-3 يوم</div></div>
+    <div class="meta-card roi"><div class="label">قيمة الـ ROI</div><div class="value">⭐⭐⭐</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 ملخص بسيط</div>
+    <table class="summary-table">
+      <tr><td>هل يفتح أي URL؟</td><td>أي صفحة عامة + بعض المواقع المحمية</td></tr>
+      <tr><td>يفهم JavaScript-rendered pages؟</td><td>نعم (يستخدم headless browser داخلياً)</td></tr>
+      <tr><td>كم URL في الـ call؟</td><td>حتى ٢٠ في request واحد</td></tr>
+      <tr><td>يحفظ النتائج؟</td><td>لا، لازم نخزّنها بأنفسنا في DB</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============= PRIORITY ============= -->
+<section class="priority-table" id="priority">
+  <h2>🥇 الأولويات والترتيب الموصى به</h2>
+  <p>بناءً على تحليل احتياجات مدوني الحالية، ROI، وتعقيد التطبيق</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الترتيب</th>
+        <th>القدرة</th>
+        <th>السبب</th>
+        <th>الوقت</th>
+        <th>الأولوية</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Image Auto Alt-Text</strong></td>
+        <td>مكسب فوري لـ SEO + accessibility. يُحلّ مشكلة موجودة الآن.</td>
+        <td>2-3 يوم</td>
+        <td><span class="badge high">عالية جداً</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>JSON-LD Auto-Fix</strong></td>
+        <td>يخدم Modonty's golden rule مباشرة. حل دائم لمشكلة متكررة.</td>
+        <td>5-7 يوم</td>
+        <td><span class="badge high">عالية جداً</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Embeddings + Semantic Search</strong></td>
+        <td>يبني infrastructure لكل الميزات الذكية اللاحقة. ROI طويل المدى.</td>
+        <td>4-6 يوم</td>
+        <td><span class="badge high">عالية</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Long Context Brand Audit</strong></td>
+        <td>يحمي اتساق الـ brand voice لما الفريق يكبر. شهري.</td>
+        <td>3-4 يوم</td>
+        <td><span class="badge med">متوسطة</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Grounded Fact-Check</strong></td>
+        <td>ضروري للمحتوى الحساس (YMYL). Phase 2 بعد البنية التحتية.</td>
+        <td>3-5 يوم</td>
+        <td><span class="badge med">متوسطة</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Function Calling Agent</strong></td>
+        <td>الأقوى — يضاعف الإنتاجية. لكن أعقد، يحتاج البنية التحتية أولاً.</td>
+        <td>10-15 يوم</td>
+        <td><span class="badge med">متوسطة (مهم لاحقاً)</span></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Speech-to-Text</strong></td>
+        <td>مفيد لـ workflows محددة (مقابلات، شهادات). ليس عام.</td>
+        <td>3-4 يوم</td>
+        <td><span class="badge low">حسب الحاجة</span></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Translation الذكي</strong></td>
+        <td>للتوسّع الجغرافي. يحتاج قرار استراتيجي أولاً.</td>
+        <td>5-7 يوم</td>
+        <td><span class="badge low">مؤجّل</span></td>
+      </tr>
+      <tr style="background:rgba(16,185,129,0.05);"><td colspan="5" style="text-align:center;color:var(--emerald-soft);font-weight:800;padding:0.7rem;">🆕 القدرات الإضافية</td></tr>
+      <tr>
+        <td>9</td>
+        <td><strong>🎨 Image Generation (Imagen)</strong></td>
+        <td>يلغي الحاجة لـ Unsplash. صور حصرية لكل مقال. ROI سريع.</td>
+        <td>3-4 يوم</td>
+        <td><span class="badge high">عالية</span></td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>💾 Context Caching</strong></td>
+        <td>توفير ٧٥٪ على كل integrations تستخدم context طويل. زدها بعد أي ميزة كبيرة.</td>
+        <td>1 يوم</td>
+        <td><span class="badge high">عالية (وفير)</span></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>📦 Batch API</strong></td>
+        <td>توفير ٥٠٪ على bulk operations. مفيدة جداً مع Embeddings + Image alt text.</td>
+        <td>1-2 يوم</td>
+        <td><span class="badge high">عالية (وفير)</span></td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>📄 Document Understanding</strong></td>
+        <td>onboarding أسرع + استخراج بيانات من PDFs + تحويل تقارير لمقالات.</td>
+        <td>3-4 يوم</td>
+        <td><span class="badge med">متوسطة</span></td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><strong>💬 Live API Chatbot</strong></td>
+        <td>chatbot ٢٤/٧ يقلل support load. مكلف نسبياً.</td>
+        <td>7-10 يوم</td>
+        <td><span class="badge med">متوسطة (مهم لاحقاً)</span></td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td><strong>🎥 Video Understanding</strong></td>
+        <td>يفعّل فيديوهات YouTube الموجودة. تحويلها لمحتوى متعدد.</td>
+        <td>4-5 يوم</td>
+        <td><span class="badge med">متوسطة</span></td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td><strong>🛡️ Content Moderation</strong></td>
+        <td>فلترة تعليقات spam + إساءات. مجاني ومدمج.</td>
+        <td>1-2 يوم</td>
+        <td><span class="badge med">متوسطة</span></td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td><strong>🌐 URL Context Tool</strong></td>
+        <td>تحليل منافسين + GMB + scraping ذكي. مفيد لكن ليس عاجل.</td>
+        <td>2-3 يوم</td>
+        <td><span class="badge low">حسب الحاجة</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 2rem; padding: 1.5rem; background: var(--card-2); border-radius: 0.75rem; border-right: 4px solid var(--emerald);">
+    <strong style="color: var(--emerald); display: block; margin-bottom: 0.5rem;">💡 توصيتي السنير: ابدأ بـ Image Auto Alt-Text</strong>
+    أبسط، أرخص، أسرع، وله مكسب مباشر فوري. يبني الثقة بـ Gemini integration ويفتح الطريق للميزات الأعقد. بعد ٢-٣ أيام، تشوف نتيجة مباشرة.
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Gemini × مدوني</div>
+  <div>دليل التكامل المفصّل · ١٦ مايو ٢٠٢٦</div>
+  <div style="margin-top: 0.5rem;">صُمّم لـ <strong>خالد</strong> · مؤسس مدوني</div>
+</footer>
+
+</div>
+</body>
+</html>
