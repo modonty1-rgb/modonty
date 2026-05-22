@@ -4,6 +4,7 @@ import { SeedDevButton } from "./components/seed-dev-button";
 
 // Settings save triggers a background SEO cascade via after().
 // Vercel Pro Plus + Fluid Compute supports up to 800s.
+// Test: ignoreCommand verification — modonty + console should skip this build (2026-05-22).
 export const maxDuration = 800;
 
 export default async function SettingsPage() {
