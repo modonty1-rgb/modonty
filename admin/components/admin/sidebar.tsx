@@ -63,8 +63,6 @@ import {
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "./theme-toggle";
-import pkg from "@/package.json";
 import type { ArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
 
 // Maps a workflow href → the ArticleStatus whose count should appear as a badge.
@@ -169,7 +167,6 @@ const menuGroups: MenuGroup[] = [
       { icon: Wrench, label: "Maintenance", href: "/maintenance" },
       { icon: MailOpen, label: "Email Templates", href: "/emails" },
       { icon: Bug, label: "Error Logs", href: "/system-errors" },
-      { icon: Settings, label: "Settings", href: "/settings" },
     ],
   },
 ];
@@ -349,54 +346,38 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
       <TooltipProvider>
         <div className={cn(
           "mt-auto border-t px-3 py-2 flex items-center",
-          collapsed ? "justify-center gap-1" : "justify-between"
+          collapsed ? "justify-center" : "justify-start"
         )}>
           {collapsed ? (
-            <>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href="/guidelines"
-                    className={cn(
-                      "flex items-center justify-center h-8 w-8 rounded-md transition-colors",
-                      pathname?.startsWith("/guidelines")
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <BookOpen className="h-4 w-4" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="left"><p>Guidelines</p></TooltipContent>
-              </Tooltip>
-              <ThemeToggle />
-            </>
-          ) : (
-            <>
-              <Link
-                href="/guidelines"
-                className={cn(
-                  "flex items-center gap-1.5 text-[12px] font-medium rounded-md px-2 py-1 transition-colors",
-                  pathname?.startsWith("/guidelines")
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <BookOpen className="h-3.5 w-3.5" />
-                Guidelines
-              </Link>
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Link
-                  href="/changelog"
-                  className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  title="سجل التحديثات والملاحظات"
+                  href="/settings"
+                  className={cn(
+                    "flex items-center justify-center h-8 w-8 rounded-md transition-colors",
+                    pathname?.startsWith("/settings")
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
                 >
-                  v{pkg.version}
-                  <span className="text-[9px] bg-primary/10 text-primary rounded px-1">?</span>
+                  <Settings className="h-4 w-4" />
                 </Link>
-              </div>
-            </>
+              </TooltipTrigger>
+              <TooltipContent side="left"><p>Settings</p></TooltipContent>
+            </Tooltip>
+          ) : (
+            <Link
+              href="/settings"
+              className={cn(
+                "flex items-center gap-1.5 text-[12px] font-medium rounded-md px-2 py-1 transition-colors",
+                pathname?.startsWith("/settings")
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Settings
+            </Link>
           )}
         </div>
       </TooltipProvider>

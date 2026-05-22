@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -11,19 +13,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings } from "lucide-react";
+import { BookOpen, LogOut, Moon, Sun } from "lucide-react";
 import { Breadcrumb } from "./breadcrumb";
 import { HeaderNav } from "./header-nav";
 import { NotificationsBell } from "./notifications-bell";
 import { HeaderFeedbackButton } from "./header-feedback-button";
 import { SyncLocalButton } from "./sync-local-button";
+import pkg from "@/package.json";
 
 export function Header() {
   const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!session?.user) {
     return null;
   }
+
+  const isDark = mounted && theme === "dark";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
@@ -66,9 +77,24 @@ export function Header() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/settings" className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
+                <Link href="/guidelines" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Guidelines
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setTheme(isDark ? "light" : "dark");
+                }}
+              >
+                {isDark ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+                {isDark ? "Light mode" : "Dark mode"}
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/changelog" className="flex items-center justify-between gap-2">
+                  <span>Version</span>
+                  <span className="text-xs text-muted-foreground tabular-nums">v{pkg.version}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

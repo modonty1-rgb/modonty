@@ -12,8 +12,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Database, CheckCircle2, XCircle, Loader2, SkipForward, Square } from "lucide-react";
-import { runSeedSection, saveCombinedLog } from "../actions/seed-integration-test";
-import type { SeedSection, SectionResult, TestResult } from "../actions/seed-integration-test";
+import { runSeedSection, saveCombinedLog } from "../../actions/seed-integration-test";
+import type { SeedSection, SectionResult, TestResult } from "../../actions/seed-integration-test";
 
 const SECTIONS: { id: SeedSection; label: string; description: string }[] = [
   { id: "categories", label: "Categories", description: "6 categories + parent-child" },
