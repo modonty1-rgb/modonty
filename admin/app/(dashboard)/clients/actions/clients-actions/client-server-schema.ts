@@ -50,7 +50,6 @@ export const clientServerSchema = z.object({
   alternateName: z.string().max(200).optional().nullable(),
   slogan: z.string().max(200).optional().nullable(),
   organizationType: z.string().max(50).optional().nullable(),
-  gtmId: z.string().max(20).optional().nullable(),
   ga4PropertyId: z.string().max(50).optional().nullable(),
   ga4MeasurementId: z.string().max(50).optional().nullable(),
   gbpProfileUrl: z.string().max(500).optional().nullable(),

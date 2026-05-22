@@ -120,7 +120,6 @@ export async function createClient(data: ClientFormData) {
       "keywords",
       "knowsLanguage",
       "organizationType",
-      "gtmId",
       "subscriptionTier",
       "subscriptionStartDate",
       "subscriptionEndDate",

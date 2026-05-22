@@ -21,7 +21,6 @@ export function mapInitialDataToFormData(
     seoDescription: "",
     businessBrief: "",
     targetAudience: "",
-    gtmId: "",
     sameAs: [],
     contentPriorities: [],
     keywords: [],
@@ -129,9 +128,6 @@ export function mapInitialDataToFormData(
 
     // Relationships
     parentOrganizationId: initialData.parentOrganizationId || null,
-
-    // GTM Integration
-    gtmId: initialData.gtmId || "",
 
     // Subscription Management
     subscriptionTier: initialData.subscriptionTier || null,

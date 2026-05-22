@@ -1,6 +1,6 @@
 # 💭 Pending Ideas — Brainstorm & Future Features
 
-**Last Updated:** 2026-05-21 (6 active ideas + 5 done · auto-maintenance now 10 steps · Cloudinary Orphans + Sitemap Freshness + Soft-Deleted Comments shipped this session)
+**Last Updated:** 2026-05-22 (7 active ideas + 5 done · Vercel billing audit added · settings cascade fix in progress)
 **Purpose:** ملف يجمع كل الأفكار المُلتقطة عبر shortcut **"reminder"** قبل ما تتحوّل لخطط تفصيلية.
 
 > **القاعدة:** كل فكرة هنا = `[ ]` فارغ، عنوان قصير + وصف موجز + تاريخ الإضافة.
@@ -9,6 +9,18 @@
 ---
 
 ## 💡 أفكار قيد التفكير
+
+### 🚨 Vercel Billing Audit — تقرير صرف كامل (added 2026-05-22)
+
+- [ ] **مهمة عالية الأولوية بعد إنهاء fix الـ settings cascade مباشرةً.** خالد يدفع $40-$70 شهرياً على Vercel بدل $20 المتوقع — يحتاج تقرير شفاف من أين يأتي الصرف.
+- **Granted:** صلاحية كاملة عبر `VERCEL_TOKEN` env var.
+- **التقرير المطلوب:**
+  - فاتورة آخر 3 أشهر مع breakdown (Active CPU · Memory · Invocations · Bandwidth · Image Optimization · Edge Requests · Web Analytics · Speed Insights · ...)
+  - أعلى مشاريع استهلاكاً ضمن الـ 9 (modonty-admin · modonty-modonty · modonty-console · jbrtechno-dashboard · jbrtechno-homepage · jbrseo · content-claender · smartcrowds · test-jbrseo)
+  - أعلى routes/functions داخل المشاريع
+  - توصيات لتخفيض الفاتورة + اقتراح Spend Management cap
+- **شرط:** سأل خالد قبل التنفيذ — تقرير على admin فقط ولا على كل المشاريع؟
+- **مرجع الذاكرة:** `project_vercel_billing_audit.md`
 
 ### ~~Reconcile getMediaStats.unused vs getMedia({used:false}).total~~ ✅ DONE 2026-05-21 (Session 104e)
 

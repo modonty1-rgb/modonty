@@ -1,7 +1,18 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-22 (Session 104f — /database و /maintenance مفصولين + Database redesigned + main layout padding refactor + /subscription-tiers redesigned + merged /jbrseo-subscribers as Signups tab + renamed "Pricing & Leads" top-level sidebar · awaiting push as v0.59.1)
-> **الإصدار الحالي:** admin v0.59.0 PUSHED · v0.59.1 pending (page split) · modonty v1.48.2 · console v0.10.0
+> **آخر تحديث:** 2026-05-22 (Session 104g — GTM/Hotjar cleanup DONE in DEV · TSC clean all 3 apps · awaiting live test + push)
+> **الإصدار الحالي:** admin v0.59.1 (PUSHED · PROD Run-All executed) · modonty v1.48.2 · console v0.10.0
+>
+> **🔄 Pending push (Session 104g):** Remove DB-managed GTM/Hotjar fields → env-only architecture
+> - `Settings.{gtmContainerId, gtmEnabled, hotjarSiteId, hotjarEnabled}` removed from schema
+> - `Client.gtmId` removed from schema (per-client GTM was always env-driven)
+> - GTM+Hotjar UI removed from `/settings`
+> - gtmId removed from Client edit flow (12 files cleaned)
+> - `getGTMSettings()` simplified to env-only sync read (both admin + modonty)
+> - **Bug fix:** `<GTMContainer />` was imported but never rendered in modonty layout — now properly mounted
+> - New `<HotjarScript />` component (modonty/components/hotjar/) auto-loads when `NEXT_PUBLIC_HOTJAR_SITE_ID` is set
+> - `.env.shared` has Hotjar placeholder (Khalid will provide Site ID + version snippet)
+> - TSC: admin/modonty/console all zero errors
 > **المهام المنجزة** → [🏆 MASTER-DONE.md](🏆%20MASTER-DONE.md)
 > **مهام Low-priority** → [💡 NICE-TO-HAVE.md](💡%20NICE-TO-HAVE.md)
 

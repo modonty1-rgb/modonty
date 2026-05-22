@@ -475,12 +475,6 @@ export function DetailsTab({ client }: DetailsTabProps) {
                     )}
                   </div>
                 )}
-              {client.gtmId && (
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Google Tag Manager ID</p>
-                  <p className="text-sm font-mono">{client.gtmId}</p>
-                </div>
-              )}
             </CardContent>
           </CollapsibleContent>
         </Card>

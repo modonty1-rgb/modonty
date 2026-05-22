@@ -9,14 +9,6 @@ import { SubscriptionTier, SubscriptionStatus, PaymentStatus } from "@prisma/cli
 // URL validation helper
 const urlSchema = z.string().url("Must be a valid URL").optional().nullable().or(z.literal(""));
 
-// GTM ID validation (format: GTM-XXXXXXX)
-const gtmIdSchema = z
-  .string()
-  .regex(/^GTM-[A-Z0-9]+$/, "GTM ID must be in format GTM-XXXXXXX")
-  .optional()
-  .nullable()
-  .or(z.literal(""));
-
 // Twitter site validation (format: @username)
 const twitterSiteSchema = z
   .string()
@@ -294,9 +286,6 @@ export const clientFormSchema = z
       .or(z.literal("")),
     twitterSite: twitterSiteSchema,
 
-    // GTM Integration
-    gtmId: gtmIdSchema,
-
     // Subscription Management
     subscriptionTier: subscriptionTierSchema,
     subscriptionTierConfigId: z.string().optional().nullable(),
@@ -314,19 +303,6 @@ export const clientFormSchema = z
     {
       message: "Business brief is required and must be at least 100 characters long",
       path: ["businessBrief"],
-    }
-  )
-  .refine(
-    (data) => {
-      // If GTM ID is provided, it must be valid format
-      if (data.gtmId && data.gtmId.trim() !== "") {
-        return /^GTM-[A-Z0-9]+$/.test(data.gtmId);
-      }
-      return true;
-    },
-    {
-      message: "GTM ID must be in format GTM-XXXXXXX",
-      path: ["gtmId"],
     }
   );
 

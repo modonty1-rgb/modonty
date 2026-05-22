@@ -2,9 +2,11 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import type { Prisma } from "@prisma/client";
+import { cascadeSettingsToAllEntities } from "./cascade-all-seo";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type JsonValue = Prisma.InputJsonValue | any;
@@ -24,16 +26,6 @@ export interface SEOSettings {
   ogTitleRestrict: boolean;
   ogDescriptionMax: number;
   ogDescriptionRestrict: boolean;
-}
-
-export interface GTMSettings {
-  gtmContainerId: string | null;
-  gtmEnabled: boolean;
-}
-
-export interface HOTjarSettings {
-  hotjarSiteId: string | null;
-  hotjarEnabled: boolean;
 }
 
 export interface SocialMediaSettings {
@@ -173,8 +165,6 @@ export interface SiteOrgSettings {
 
 export interface AllSettings
   extends SEOSettings,
-    GTMSettings,
-    HOTjarSettings,
     SocialMediaSettings,
     SiteOrgSettings,
     MediaSettings,
@@ -197,10 +187,6 @@ const DEFAULT_SETTINGS: AllSettings = {
   ogTitleRestrict: false,
   ogDescriptionMax: 200,
   ogDescriptionRestrict: false,
-  gtmContainerId: null,
-  gtmEnabled: false,
-  hotjarSiteId: null,
-  hotjarEnabled: false,
   facebookUrl: null,
   twitterUrl: null,
   linkedInUrl: null,
@@ -376,10 +362,6 @@ export async function getAllSettings(): Promise<AllSettings> {
         ogTitleRestrict: newSettings.ogTitleRestrict,
         ogDescriptionMax: newSettings.ogDescriptionMax,
         ogDescriptionRestrict: newSettings.ogDescriptionRestrict,
-        gtmContainerId: newSettings.gtmContainerId,
-        gtmEnabled: newSettings.gtmEnabled,
-        hotjarSiteId: newSettings.hotjarSiteId,
-        hotjarEnabled: newSettings.hotjarEnabled,
         facebookUrl: newSettings.facebookUrl,
         twitterUrl: newSettings.twitterUrl,
         linkedInUrl: newSettings.linkedInUrl,
@@ -508,10 +490,6 @@ export async function getAllSettings(): Promise<AllSettings> {
       ogTitleRestrict: settings.ogTitleRestrict,
       ogDescriptionMax: settings.ogDescriptionMax,
       ogDescriptionRestrict: settings.ogDescriptionRestrict,
-      gtmContainerId: settings.gtmContainerId,
-      gtmEnabled: settings.gtmEnabled,
-      hotjarSiteId: settings.hotjarSiteId,
-      hotjarEnabled: settings.hotjarEnabled,
       facebookUrl: settings.facebookUrl,
       twitterUrl: settings.twitterUrl,
       linkedInUrl: settings.linkedInUrl,
@@ -709,10 +687,15 @@ export async function saveSiteSettings(data: Partial<Pick<SiteOrgSettings, "site
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
 
-    // Cascade: regenerate SEO for all entities (runs in background)
-    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
-      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
-    );
+    // Cascade: regenerate SEO for all entities AFTER response is sent.
+    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
+    after(async () => {
+      try {
+        await cascadeSettingsToAllEntities();
+      } catch (e) {
+        console.error("Settings cascade failed:", e);
+      }
+    });
 
     return { success: true };
   } catch (error) {
@@ -749,36 +732,19 @@ export async function saveOrganizationSettings(data: Partial<Omit<SiteOrgSetting
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
 
-    // Cascade: regenerate SEO for all entities (runs in background)
-    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
-      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
-    );
+    // Cascade: regenerate SEO for all entities AFTER response is sent.
+    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
+    after(async () => {
+      try {
+        await cascadeSettingsToAllEntities();
+      } catch (e) {
+        console.error("Settings cascade failed:", e);
+      }
+    });
 
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to save Organization settings";
-    return { success: false, error: message };
-  }
-}
-
-export async function saveTrackingSettings(data: Partial<GTMSettings & HOTjarSettings>): Promise<{ success: boolean; error?: string }> {
-  try {
-    const session = await auth(); if (!session) return { success: false, error: "Unauthorized" };
-    const id = await ensureSettingsExists();
-    await db.settings.update({
-      where: { id },
-      data: {
-        gtmContainerId: data.gtmContainerId,
-        gtmEnabled: !!(data.gtmContainerId?.trim()),
-        hotjarSiteId: data.hotjarSiteId,
-        hotjarEnabled: !!(data.hotjarSiteId?.trim()),
-      },
-    });
-    revalidatePath("/settings");
-    await revalidateModontyTag("settings");
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to save Tracking settings";
     return { success: false, error: message };
   }
 }
@@ -803,10 +769,15 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
     revalidatePath("/settings");
     await revalidateModontyTag("settings");
 
-    // Cascade: regenerate SEO for all entities (runs in background)
-    import("./cascade-all-seo").then(({ cascadeSettingsToAllEntities }) =>
-      cascadeSettingsToAllEntities().catch((e) => console.error("Settings cascade failed:", e))
-    );
+    // Cascade: regenerate SEO for all entities AFTER response is sent.
+    // `after()` keeps the function alive (waitUntil) — admin doesn't wait.
+    after(async () => {
+      try {
+        await cascadeSettingsToAllEntities();
+      } catch (e) {
+        console.error("Settings cascade failed:", e);
+      }
+    });
 
     return { success: true };
   } catch (error) {
@@ -908,10 +879,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           ogTitleRestrict: data.ogTitleRestrict,
           ogDescriptionMax: data.ogDescriptionMax,
           ogDescriptionRestrict: data.ogDescriptionRestrict,
-          gtmContainerId: data.gtmContainerId,
-          gtmEnabled: data.gtmEnabled,
-          hotjarSiteId: data.hotjarSiteId,
-          hotjarEnabled: data.hotjarEnabled,
           facebookUrl: data.facebookUrl,
           twitterUrl: data.twitterUrl,
           linkedInUrl: data.linkedInUrl,
@@ -1026,10 +993,16 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
     revalidatePath("/settings");
     await revalidateModontyTag("settings", settings?.siteUrl);
 
-    // T1.8: cascade is NOT triggered here — the client (settings-form-v2)
-    // drives it step-by-step with live UI feedback via getCascadeEntities()
-    // + regenerateOneEntity(). This gives the admin a real progress counter
-    // (Updating 6/23 articles…) instead of a fire-and-forget background job.
+    // Cascade runs AFTER response via `after()` (Next.js stable since v15.1).
+    // Vercel keeps the function alive via waitUntil — admin doesn't wait.
+    // Scales linearly with article count; safe up to ~2500 articles within 800s maxDuration.
+    after(async () => {
+      try {
+        await cascadeSettingsToAllEntities();
+      } catch (e) {
+        console.error("Settings cascade failed:", e);
+      }
+    });
     return { success: true, settings };
   } catch (error) {
     console.error("Error updating settings:", error);

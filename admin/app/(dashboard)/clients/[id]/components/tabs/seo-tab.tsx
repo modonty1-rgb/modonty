@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { messages } from "@/lib/messages";
-import { Search, Link2, Code, Image as ImageIcon, FileCode, Tag, AlertTriangle, Sparkles, Copy, Check, RefreshCw, Loader2, XCircle, CheckCircle } from "lucide-react";
+import { Search, Link2, Image as ImageIcon, FileCode, Tag, AlertTriangle, Sparkles, Copy, Check, RefreshCw, Loader2, XCircle, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -817,22 +817,6 @@ export function SEOTab({ client }: SEOTabProps) {
         </Card>
       )}
 
-      {client.gtmId && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Code className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Tracking</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">Google Tag Manager ID</p>
-              <p className="text-sm font-mono bg-muted p-2 rounded">{client.gtmId}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

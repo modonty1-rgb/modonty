@@ -66,3 +66,4 @@ backups/
 # Playwright MCP snapshots
 .playwright-mcp/
 *.png
+.vercel

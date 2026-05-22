@@ -107,7 +107,6 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         businessBrief: true,
         sameAs: true,
         foundingDate: true,
-        gtmId: true,
         contactType: true,
         addressStreet: true,
         addressCity: true,

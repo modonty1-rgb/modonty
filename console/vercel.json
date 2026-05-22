@@ -1,5 +1,6 @@
 {
   "buildCommand": "pnpm --filter @modonty/console build",
   "installCommand": "pnpm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ./ ../dataLayer/ ../.env.shared ../package.json ../pnpm-lock.yaml"
 }

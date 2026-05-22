@@ -36,7 +36,6 @@ export type ClientForList = {
   businessBrief: string | null;
   sameAs: string[];
   foundingDate: Date | null;
-  gtmId: string | null;
   contactType: string | null;
   addressStreet: string | null;
   addressCity: string | null;

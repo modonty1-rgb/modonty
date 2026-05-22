@@ -370,9 +370,6 @@ model Client {
   // Canonical URL
   canonicalUrl String?
 
-  // GTM Integration
-  gtmId String? // Google Tag Manager ID
-
   // Analytics
   ga4PropertyId    String?
   ga4MeasurementId String?
@@ -1883,14 +1880,6 @@ model Settings {
   // OG Description Settings
   ogDescriptionMax      Int     @default(200)
   ogDescriptionRestrict Boolean @default(false)
-
-  // GTM (Google Tag Manager) Settings
-  gtmContainerId String?
-  gtmEnabled     Boolean @default(false)
-
-  // HOTjar Settings
-  hotjarSiteId  String?
-  hotjarEnabled Boolean @default(false)
 
   // Social Media Links (Platform-wide)
   facebookUrl  String?

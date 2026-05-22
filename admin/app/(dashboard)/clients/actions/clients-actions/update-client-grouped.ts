@@ -352,7 +352,6 @@ export async function updateSEOFields(
         seoDescription: true,
         description: true,
         canonicalUrl: true,
-        gtmId: true,
       },
     });
 
@@ -365,7 +364,6 @@ export async function updateSEOFields(
       seoDescription: data.seoDescription ?? null,
       description: data.description ?? null,
       canonicalUrl: data.canonicalUrl ?? null,
-      gtmId: data.gtmId ?? null,
     };
 
     const updateData = buildGroupUpdateData("seo", client as Record<string, unknown>, newData);

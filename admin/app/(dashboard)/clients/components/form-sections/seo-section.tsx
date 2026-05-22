@@ -81,8 +81,7 @@ export function SEOSection({
       errors.twitterCard ||
       errors.twitterTitle ||
       errors.twitterDescription ||
-      errors.twitterSite ||
-      errors.gtmId,
+      errors.twitterSite,
   );
   const hasSchemaContentErrors = Boolean(
     errors.description || errors.keywords || errors.knowsLanguage
@@ -317,15 +316,6 @@ export function SEOSection({
                 </div>
               )}
             </div>
-            <FormInput
-              label="Google Tag Manager ID (Optional)"
-              name="gtmId"
-              value={watch("gtmId") || ""}
-              onChange={(e) => setValue("gtmId", e.target.value || null, { shouldValidate: true })}
-              error={errors.gtmId?.message}
-              placeholder="GTM-XXXXXXX"
-              hint={messages.hints.client.gaTrackingId}
-            />
           </div>
         )}
       </div>

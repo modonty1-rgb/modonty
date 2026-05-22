@@ -88,9 +88,6 @@ export function mapFormDataToClientData(data: ClientFormData) {
     twitterDescription: data.twitterDescription || null,
     twitterSite: data.twitterSite || null,
 
-    // GTM Integration
-    gtmId: data.gtmId || null,
-
     // Subscription Management
     subscriptionTier: data.subscriptionTier || null,
     subscriptionTierConfigId: data.subscriptionTierConfigId || null,

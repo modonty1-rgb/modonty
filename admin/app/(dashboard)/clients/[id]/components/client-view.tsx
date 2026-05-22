@@ -86,7 +86,6 @@ interface Client {
   addressCountry: string | null;
   addressPostalCode: string | null;
   canonicalUrl: string | null;
-  gtmId: string | null;
   foundingDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -535,12 +534,6 @@ export function ClientView({ client }: ClientViewProps) {
                   >
                     {client.canonicalUrl}
                   </a>
-                </div>
-              )}
-              {client.gtmId && (
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Google Tag Manager ID</p>
-                  <p className="text-sm font-mono">{client.gtmId}</p>
                 </div>
               )}
             </CardContent>

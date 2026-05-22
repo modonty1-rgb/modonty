@@ -170,7 +170,6 @@ export interface ClientFormData {
   twitterSite?: string | null;
   canonicalUrl?: string | null;
   metaRobots?: string | null;
-  gtmId?: string;
   ga4PropertyId?: string | null;
   ga4MeasurementId?: string | null;
   subscriptionTier?: SubscriptionTier | null;

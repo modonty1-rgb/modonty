@@ -276,7 +276,6 @@ const hints = {
     legalForm: 'Company legal form — differs from organization type',
     socialDescription: 'Organization description in Schema.org — 100+ characters recommended',
     twitterHandle: 'Official X/Twitter account for client',
-    gaTrackingId: 'Optional — only if client wants separate tracking',
     canonical: 'Prevents duplicate content — specifies original page',
     robots: 'Controls search engine indexing for this client',
     twitterCard: 'Content format when shared on X/Twitter',

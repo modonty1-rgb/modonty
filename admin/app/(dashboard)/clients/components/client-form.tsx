@@ -78,7 +78,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
 
   const seoFieldsKey = useMemo(() => {
     const { name, slug, legalName, alternateName, url, email, phone,
-      seoTitle, seoDescription, description, businessBrief, gtmId,
+      seoTitle, seoDescription, description, businessBrief,
       canonicalUrl, metaRobots, twitterCard, twitterTitle, twitterDescription,
       twitterSite, contactType, addressStreet, addressBuildingNumber,
       addressAdditionalNumber, addressNeighborhood, addressCity, addressRegion,
@@ -88,7 +88,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
       sameAs, foundingDate } = watchedValues;
     return JSON.stringify({
       name, slug, legalName, alternateName, url, email, phone,
-      seoTitle, seoDescription, description, businessBrief, gtmId,
+      seoTitle, seoDescription, description, businessBrief,
       canonicalUrl, metaRobots, twitterCard, twitterTitle, twitterDescription,
       twitterSite, contactType, addressStreet, addressBuildingNumber,
       addressAdditionalNumber, addressNeighborhood, addressCity, addressRegion,

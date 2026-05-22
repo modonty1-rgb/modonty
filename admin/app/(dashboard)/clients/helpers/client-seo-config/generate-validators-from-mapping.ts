@@ -236,11 +236,6 @@ export function generateValidatorFromMapping(fieldName: string): SEOFieldValidat
     return null;
   }
 
-  // Skip fields that shouldn't have validators
-  if (mapping.category === "Integration") {
-    return null; // gtmId - not SEO-related
-  }
-
   // Determine field type and generate appropriate validator
   if (mapping.field === "url" || mapping.field === "canonicalUrl") {
     return generateUrlValidator(mapping);

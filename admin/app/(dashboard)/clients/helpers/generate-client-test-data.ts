@@ -93,7 +93,6 @@ export function generateClientTestData(
     description: businessBrief,
     metaRobots: "index, follow",
     canonicalUrl: `https://modonty.com/clients/${slug}`,
-    gtmId: "GTM-TEST123",
     keywords: ["تكنولوجيا", "استشارات", "تحول رقمي"],
     knowsLanguage: ["Arabic", "English"],
     parentOrganizationId: parent?.id ?? null,

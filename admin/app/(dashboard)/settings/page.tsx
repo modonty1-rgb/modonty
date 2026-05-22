@@ -2,6 +2,10 @@ import { Suspense } from "react";
 import { SettingsFormV2 } from "./components/settings-form-v2";
 import { SeedDevButton } from "./components/seed-dev-button";
 
+// Settings save triggers a background SEO cascade via after().
+// Vercel Pro Plus + Fluid Compute supports up to 800s.
+export const maxDuration = 800;
+
 export default async function SettingsPage() {
   const isDev = process.env.NODE_ENV === "development";
 

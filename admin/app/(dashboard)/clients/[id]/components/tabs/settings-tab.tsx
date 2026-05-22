@@ -1,13 +1,12 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Code } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 interface SettingsTabProps {
   client: {
     subscriptionStatus: string;
     paymentStatus: string;
-    gtmId: string | null;
   };
 }
 
@@ -60,26 +59,6 @@ export function SettingsTab({ client }: SettingsTabProps) {
         </div>
       </div>
 
-      {client.gtmId && (
-        <div className="border rounded-lg overflow-hidden bg-card">
-          <div className="px-4 py-3 border-b bg-muted/20 flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground/70 uppercase tracking-widest">
-              Tracking
-            </span>
-          </div>
-          <div className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Code className="h-4 w-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Google Tag Manager ID</p>
-              </div>
-              <p className="text-sm font-mono bg-muted px-2 py-1 rounded inline-block">
-                {client.gtmId}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

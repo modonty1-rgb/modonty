@@ -1224,14 +1224,10 @@ export const ar = {
 
   settings: {
     profileSettings: "الملف والإعدادات",
-    contactGtm: "التواصل وأدوات التتبع (اختياري)",
     email: "البريد الإلكتروني",
     phone: "الهاتف",
-    gtmContainerId: "معرّف Google Tag Manager (اختياري)",
-    gtmHint: "إذا كنت تستخدم Google Tag Manager لتتبع الزوار، أدخل المعرّف هنا.",
     placeholderEmail: "example@mail.com",
     placeholderPhone: "+966...",
-    placeholderGtm: "GTM-XXXXXXX",
     save: "حفظ",
     saving: "جاري الحفظ…",
     saved: "تم الحفظ.",

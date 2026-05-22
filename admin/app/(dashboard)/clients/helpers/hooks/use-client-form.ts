@@ -108,16 +108,6 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
       setLoading(true);
       setError(null);
 
-      // Additional validation for edit mode
-      if (isEditMode) {
-        if (data.gtmId && !/^GTM-[A-Z0-9]+$/.test(data.gtmId)) {
-          setError("GTM ID must be in format GTM-XXXXXXX");
-          setLoading(false);
-          form.setFocus("gtmId");
-          return;
-        }
-      }
-
       // Convert form data to ClientFormData format
       const submitData = {
         ...data,

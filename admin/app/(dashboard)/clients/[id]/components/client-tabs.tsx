@@ -76,7 +76,6 @@ type ClientTabsProps = {
     addressBuildingNumber: string | null;
     addressAdditionalNumber: string | null;
     canonicalUrl: string | null;
-    gtmId: string | null;
     nextjsMetadata: unknown;
     jsonLdStructuredData: string | null;
     jsonLdLastGenerated: Date | null;

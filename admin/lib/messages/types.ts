@@ -229,7 +229,6 @@ export type ClientHintKey =
   | 'legalForm'
   | 'socialDescription'
   | 'twitterHandle'
-  | 'gaTrackingId'
   | 'canonical'
   | 'robots'
   | 'twitterCard'

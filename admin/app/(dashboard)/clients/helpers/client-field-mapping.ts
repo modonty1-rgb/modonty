@@ -882,20 +882,6 @@ export const CLIENT_FIELD_MAPPINGS: FieldMapping[] = [
     example: '@modonty',
   },
 
-  // ============================================================================
-  // GTM INTEGRATION
-  // ============================================================================
-  {
-    field: 'gtmId',
-    category: 'Integration',
-    description: 'Google Tag Manager container ID',
-    marketingBenefits: [
-      'Enables Google Tag Manager integration',
-      'Used for analytics and tracking',
-      'Not included in MetaTags or JSON-LD',
-    ],
-    example: 'GTM-XXXXXXX',
-  },
 ];
 
 // ============================================================================

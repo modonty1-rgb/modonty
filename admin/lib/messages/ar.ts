@@ -276,7 +276,6 @@ const hints = {
     legalForm: 'الشكل القانوني للشركة — يختلف عن نوع المنظمة',
     socialDescription: 'وصف المنظمة في Schema.org — 100+ حرف للأفضل',
     twitterHandle: 'حساب X/Twitter الرسمي للعميل',
-    gaTrackingId: 'اختياري — فقط إذا كان العميل يريد تتبع منفصل',
     canonical: 'يمنع المحتوى المكرر — يحدد الصفحة الأصلية',
     robots: 'يتحكم في فهرسة محركات البحث لهذا العميل',
     twitterCard: 'شكل المحتوى عند المشاركة في X/Twitter',

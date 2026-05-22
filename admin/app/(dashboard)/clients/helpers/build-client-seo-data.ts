@@ -15,7 +15,6 @@ type ClientSeoOverrides = {
   seoDescription?: string | null;
   description?: string | null;
   businessBrief?: string | null;
-  gtmId?: string | null;
   canonicalUrl?: string | null;
   metaRobots?: string | null;
   twitterCard?: string | null;
@@ -98,7 +97,6 @@ export function buildClientSeoData(
     seoDescription: (pick("seoDescription") as string | null) ?? "",
     description: (pick("description") as string | null) ?? "",
     businessBrief: (pick("businessBrief") as string | null) ?? "",
-    gtmId: (pick("gtmId") as string | null) ?? "",
     canonicalUrl: (pick("canonicalUrl") as string | null) ?? "",
     metaRobots: (pick("metaRobots") as string | null) ?? null,
     twitterCard:
