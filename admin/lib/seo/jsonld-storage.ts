@@ -49,6 +49,7 @@ export async function fetchArticleForJsonLd(
         },
       },
       author: true,
+      reviewer: true, // YMYL reviewer (Physician/Attorney node in JSON-LD)
       category: true,
       tags: {
         include: {

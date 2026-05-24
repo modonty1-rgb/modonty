@@ -45,13 +45,9 @@ export const clientServerSchema = z.object({
   businessActivityCode: z.string().max(50).optional().nullable(),
   isicV4: z.string().max(20).optional().nullable(),
   numberOfEmployees: z.string().max(50).optional().nullable(),
-  licenseNumber: z.string().max(100).optional().nullable(),
-  licenseAuthority: z.string().max(200).optional().nullable(),
   alternateName: z.string().max(200).optional().nullable(),
   slogan: z.string().max(200).optional().nullable(),
   organizationType: z.string().max(50).optional().nullable(),
-  ga4PropertyId: z.string().max(50).optional().nullable(),
-  ga4MeasurementId: z.string().max(50).optional().nullable(),
   gbpProfileUrl: z.string().max(500).optional().nullable(),
   gbpPlaceId: z.string().max(100).optional().nullable(),
   gbpAccountId: z.string().max(100).optional().nullable(),
@@ -97,4 +93,9 @@ export const clientServerSchema = z.object({
 
   // JSON fields
   openingHoursSpecification: z.unknown().optional().nullable(),
+
+  // YMYL verification
+  isYmyl: z.boolean().optional(),
+  ymylCategory: z.enum(["medical", "legal", "financial"]).optional().nullable(),
+  ymylData: z.record(z.unknown()).optional().nullable(),
 }).passthrough(); // Allow extra fields from form that aren't listed here

@@ -94,8 +94,6 @@ export async function generateClientSEO(clientId: string) {
         businessActivityCode: true,
         isicV4: true,
         numberOfEmployees: true,
-        licenseNumber: true,
-        licenseAuthority: true,
         // Additional Properties
         slogan: true,
         keywords: true,

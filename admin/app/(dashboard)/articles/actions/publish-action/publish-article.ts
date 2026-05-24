@@ -20,47 +20,50 @@ async function validateArticleData(formData: ArticleFormData): Promise<{
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  // All messages in Arabic — admin is bilingual but UX targets Arabic-first usage.
+  // Each error names the field clearly so admin knows what to fix without guessing.
   if (!formData.title || formData.title.trim().length === 0) {
-    errors.push("Title is required");
+    errors.push("العنوان (Title) مطلوب");
   }
 
   if (!formData.slug || formData.slug.trim().length === 0) {
-    errors.push("Slug is required");
+    errors.push("الرابط المختصر (Slug) مطلوب");
   }
 
   if (!formData.content || formData.content.trim().length === 0) {
-    errors.push("Content is required");
+    errors.push("المحتوى (Content) مطلوب");
   }
 
   if (!formData.clientId) {
-    errors.push("Client is required");
+    errors.push("العميل (Client) مطلوب");
   }
 
   if (!formData.authorId) {
-    errors.push("Author is required");
+    errors.push("الكاتب (Author) مطلوب");
   }
 
   if (!formData.seoTitle) {
-    warnings.push("SEO title is recommended for better search visibility");
+    warnings.push("عنوان SEO (SEO Title) مهم لتحسين الظهور في نتائج البحث");
   }
 
   if (!formData.seoDescription || formData.seoDescription.trim().length < 50) {
-    errors.push("وصف SEO مطلوب ولا يقل عن 50 حرفاً للنشر");
+    const current = formData.seoDescription?.trim().length ?? 0;
+    errors.push(`وصف SEO (SEO Description) مطلوب ولا يقل عن 50 حرفاً — حالياً ${current} حرف`);
   } else if (formData.seoDescription.length > 160) {
     warnings.push(
-      "SEO description should be 155-160 characters for optimal display"
+      `وصف SEO (SEO Description) الأفضل أن يكون 155-160 حرف — حالياً ${formData.seoDescription.length} حرف`
     );
   }
 
   if (formData.content && formData.content.length < 300) {
     warnings.push(
-      "Article content is quite short. Consider adding more detailed content"
+      `المحتوى قصير (${formData.content.length} حرف) — يُفضّل 300+ حرف للتأثير على ترتيب البحث`
     );
   }
 
   if (!formData.featuredImageId) {
     warnings.push(
-      "Featured image is recommended for better social media sharing"
+      "الصورة الرئيسية (Featured Image) مهمة للمشاركة على وسائل التواصل"
     );
   }
 
@@ -81,16 +84,21 @@ export async function publishArticle(
     if (!validation.valid) {
       return {
         success: false,
-        error: `Validation failed: ${validation.errors.join("; ")}`,
+        error: `لا يمكن النشر — أصلح هذي المشاكل:\n• ${validation.errors.join("\n• ")}`,
       };
     }
 
     // SEO score gate — block publish below minimum
     const seoResult = analyzeArticleSEO(formData);
     if (seoResult.percentage < MIN_SEO_SCORE) {
+      // Show breakdown so admin knows WHICH category is dragging the score down
+      const weakCategories = Object.entries(seoResult.categories)
+        .filter(([, cat]) => cat.percentage < 60)
+        .map(([name, cat]) => `${name} ${cat.percentage}%`)
+        .join(" · ");
       return {
         success: false,
-        error: `نقاط SEO الحالية ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. يرجى تحسين حقول SEO (العنوان، الوصف، الصورة) قبل النشر.`,
+        error: `نقاط SEO ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%.${weakCategories ? `\nالأقسام الضعيفة: ${weakCategories}` : ""}`,
       };
     }
 

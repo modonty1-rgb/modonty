@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ar } from "@/lib/ar";
 import { ProfileForm } from "./components/profile-form";
+import { YmylSection } from "./components/ymyl-section";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,10 @@ export default async function ProfilePage() {
         foundingDate: true,
         sameAs: true,
         canonicalUrl: true,
+        // YMYL verification
+        isYmyl: true,
+        ymylCategory: true,
+        ymylData: true,
       },
     }),
     db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
@@ -60,6 +65,12 @@ export default async function ProfilePage() {
         clientId={clientId}
         initial={client}
         industries={industries}
+      />
+      <YmylSection
+        isYmyl={client.isYmyl}
+        ymylCategory={client.ymylCategory}
+        ymylData={(client.ymylData ?? null) as Record<string, unknown> | null}
+        country={client.addressCountry}
       />
     </div>
   );

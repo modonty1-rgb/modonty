@@ -8,12 +8,14 @@ import { SITE_BASE_URL } from "@/lib/gsc/client";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
+import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
 
 export interface GatedTransitionResult {
   success: boolean;
   error?: string;
   validation?: ValidationResult;
   autoFixed?: { jsonLdRegenerated: boolean };
+  ymylGate?: { canPublish: boolean; blockers: string[]; warnings: string[] };
 }
 
 /**
@@ -78,10 +80,17 @@ export async function gatedTransitionAction(
         nextjsMetadata: true,
         nextjsMetadataLastGenerated: true,
         featuredImageId: true,
+        // YMYL reviewer for publish gate
+        reviewedById: true,
         client: {
           select: {
             name: true,
             logoMedia: { select: { url: true, width: true, height: true } },
+            // YMYL gate inputs
+            isYmyl: true,
+            ymylCategory: true,
+            ymylData: true,
+            addressCountry: true,
           },
         },
         author: { select: { name: true } },
@@ -147,6 +156,29 @@ export async function gatedTransitionAction(
       };
     }
 
+    // Step 4b — YMYL gate: if client is YMYL, enforce reviewer + license + clean content.
+    const ymylGate = checkYmylPublishGate({
+      client: {
+        isYmyl: article.client?.isYmyl ?? false,
+        ymylCategory: article.client?.ymylCategory ?? null,
+        ymylData: article.client?.ymylData ?? null,
+        addressCountry: article.client?.addressCountry ?? null,
+      },
+      article: {
+        content: article.content ?? "",
+        reviewedById: article.reviewedById ?? null,
+      },
+    });
+    if (!ymylGate.canPublish) {
+      return {
+        success: false,
+        error: `YMYL gate blocked: ${ymylGate.blockers.join(" · ")}`,
+        validation,
+        autoFixed: { jsonLdRegenerated },
+        ymylGate,
+      };
+    }
+
     // Step 5 — Transition.
     await db.article.update({
       where: { id: articleId },
@@ -162,6 +194,7 @@ export async function gatedTransitionAction(
       success: true,
       validation,
       autoFixed: { jsonLdRegenerated },
+      ymylGate,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Gated transition failed";

@@ -90,8 +90,6 @@ type ClientTabsProps = {
     legalForm: string | null;
     businessActivityCode: string | null;
     isicV4: string | null;
-    licenseNumber: string | null;
-    licenseAuthority: string | null;
     parentOrganization: {
       id: string;
       name: string;

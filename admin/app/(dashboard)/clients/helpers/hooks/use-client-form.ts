@@ -144,8 +144,6 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
         businessActivityCode: data.businessActivityCode || null,
         isicV4: data.isicV4 || null,
         numberOfEmployees: data.numberOfEmployees || null,
-        licenseNumber: data.licenseNumber || null,
-        licenseAuthority: data.licenseAuthority || null,
         alternateName: data.alternateName || null,
         slogan: data.slogan || null,
         newsletterCtaText: data.newsletterCtaText || null,
@@ -157,6 +155,10 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
         twitterSite: data.twitterSite || null,
         canonicalUrl: data.canonicalUrl || null,
         metaRobots: data.metaRobots || null,
+        // YMYL verification fields
+        isYmyl: data.isYmyl ?? false,
+        ymylCategory: data.ymylCategory ?? null,
+        ymylData: data.ymylData ?? null,
       } as ClientFormData;
 
       const result = clientId

@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
+import { auth } from "@/lib/auth";
+import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 
 function str(v: string | undefined | null) {
   return v === undefined ? undefined : (v?.trim() || null);
@@ -190,6 +192,65 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     revalidatePath("/dashboard/seo");
     return { success: true };
   } catch (_e) {
+    return { success: false, error: messages.error.serverError };
+  }
+}
+
+/**
+ * Save the client's YMYL verification data.
+ *
+ * Auth-checked + cross-tenant safe: clientId derives from the session (NOT
+ * a caller argument), so a malicious client can never write to another
+ * tenant's ymylData. Reads isYmyl + ymylCategory + addressCountry from DB
+ * to validate the payload against YMYL_CATEGORIES config — silently rejects
+ * if the client isn't flagged YMYL.
+ */
+export async function updateYmylData(
+  data: Record<string, unknown>
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const session = await auth();
+    const clientId = (session as { clientId?: string })?.clientId;
+    if (!clientId) return { success: false, error: messages.error.unauthorized };
+
+    const client = await db.client.findUnique({
+      where: { id: clientId },
+      select: {
+        isYmyl: true,
+        ymylCategory: true,
+        addressCountry: true,
+      },
+    });
+    if (!client) return { success: false, error: messages.error.notFound };
+
+    if (!client.isYmyl) {
+      // Client isn't flagged YMYL — admin must enable it first
+      return { success: false, error: "هذا الحساب غير مصنّف YMYL — راجع مودونتي لتفعيل التوثيق" };
+    }
+
+    const validation = validateYmylData(client.ymylCategory, data, {
+      country: client.addressCountry,
+    });
+
+    // Allow partial saves (progressive disclosure) — only block on hard format errors,
+    // not on missing required fields. The publish gate enforces completeness later.
+    const hardErrors = Object.entries(validation.errors).filter(
+      ([, msg]) => !msg.includes("مطلوب")
+    );
+    if (hardErrors.length > 0) {
+      return { success: false, error: hardErrors[0][1] };
+    }
+
+    await db.client.update({
+      where: { id: clientId },
+      data: {
+        ymylData: data as object,
+      },
+    });
+
+    revalidatePath("/dashboard/profile");
+    return { success: true };
+  } catch {
     return { success: false, error: messages.error.serverError };
   }
 }

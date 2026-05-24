@@ -45,6 +45,9 @@ type ArticleClient = {
     width?: number | null;
     height?: number | null;
   } | null;
+  // YMYL flags — drive conditional reviewer field in article form
+  isYmyl?: boolean;
+  ymylCategory?: string | null;
 };
 
 interface ArticleFormContextType {

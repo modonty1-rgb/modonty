@@ -350,8 +350,7 @@ model Client {
   businessActivityCode         String? // Local business activity classification code
   isicV4                       String? // International Standard Industrial Classification (V4)
   numberOfEmployees            String? // Employee count (QuantitativeValue as string)
-  licenseNumber                String? // License number (for regulated sectors)
-  licenseAuthority             String? // Regulatory authority
+  // (Deprecated 2026-05-24: licenseNumber + licenseAuthority moved to Client.ymylData JSON, owned by YMYL system)
 
   // Additional Properties
   alternateName                String? // Alternative names (Arabic name, trade name, etc.)
@@ -369,10 +368,6 @@ model Client {
 
   // Canonical URL
   canonicalUrl String?
-
-  // Analytics
-  ga4PropertyId    String?
-  ga4MeasurementId String?
 
   // GBP
   gbpProfileUrl String?
@@ -443,6 +438,14 @@ model Client {
   forbiddenKeywords          String[]
   forbiddenClaims            String[]
   competitiveMentionsAllowed Boolean?
+
+  // YMYL (Your Money Your Life) verification — admin-controlled per client.
+  // When isYmyl=true, ymylCategory determines which JSON shape applies to ymylData
+  // (see admin/lib/seo/ymyl-config.ts). Drives form rendering, publish gates, and
+  // JSON-LD output (MedicalClinic / LegalService / FinancialService).
+  isYmyl        Boolean @default(false)
+  ymylCategory  String? // "medical" | "legal" | "financial"
+  ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
 
   // Relationships
   articles          Article[]
@@ -680,7 +683,8 @@ model Author {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  articles Article[]
+  articles         Article[] @relation("ArticleAuthor")
+  reviewedArticles Article[] @relation("ArticleReviewer")
 
   @@map("authors")
 }
@@ -804,7 +808,12 @@ model Article {
   categoryId String?   @db.ObjectId
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   authorId   String    @db.ObjectId
-  author     Author    @relation(fields: [authorId], references: [id])
+  author     Author    @relation("ArticleAuthor", fields: [authorId], references: [id])
+
+  // YMYL reviewer (required when client.isYmyl=true). Cross-client allowed so
+  // freelance specialists can review for multiple clients.
+  reviewedById String? @db.ObjectId
+  reviewer     Author? @relation("ArticleReviewer", fields: [reviewedById], references: [id])
 
   // Status & workflow
   status        ArticleStatus @default(WRITING)

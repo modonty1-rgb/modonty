@@ -53,17 +53,24 @@ export async function publishArticleById(
     const mergedArticle = { ...article, ...defaults };
     const seoResult = analyzeArticleSEO(mergedArticle as never);
     if (seoResult.percentage < MIN_SEO_SCORE) {
+      const weakCategories = Object.entries(seoResult.categories)
+        .filter(([, cat]) => cat.percentage < 60)
+        .map(([name, cat]) => `${name} ${cat.percentage}%`)
+        .join(" · ");
       return {
         success: false,
-        error: `نقاط SEO الحالية ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. يرجى تحسين حقول SEO (العنوان، الوصف، الصورة) قبل النشر.`,
+        error: `نقاط SEO ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%.${weakCategories ? `\nالأقسام الضعيفة: ${weakCategories}` : ""}`,
       };
     }
 
-    if (!article.title || !article.slug || !article.content) {
+    const missing: string[] = [];
+    if (!article.title) missing.push("العنوان");
+    if (!article.slug) missing.push("الرابط المختصر");
+    if (!article.content) missing.push("المحتوى");
+    if (missing.length > 0) {
       return {
         success: false,
-        error:
-          "Article is missing required fields (title, slug, or content)",
+        error: `لا يمكن النشر — حقول مفقودة: ${missing.join(" · ")}`,
       };
     }
 

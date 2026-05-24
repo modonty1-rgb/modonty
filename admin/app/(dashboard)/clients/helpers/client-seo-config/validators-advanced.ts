@@ -1028,47 +1028,4 @@ export const validateNumberOfEmployees: SEOFieldValidator = (value, data) => {
   };
 };
 
-export const validateLicenseInfo: SEOFieldValidator = (value, data) => {
-  const hasLicenseNumber =
-    data.licenseNumber &&
-    typeof data.licenseNumber === "string" &&
-    data.licenseNumber.trim().length > 0;
-  const hasLicenseAuthority =
-    data.licenseAuthority &&
-    typeof data.licenseAuthority === "string" &&
-    data.licenseAuthority.trim().length > 0;
-
-  if (hasLicenseNumber && hasLicenseAuthority) {
-    return {
-      status: "good",
-      message:
-        "License information complete (number and authority) - important for regulated sectors",
-      score: 8,
-    };
-  }
-
-  if (hasLicenseNumber) {
-    return {
-      status: "warning",
-      message:
-        "License number provided - add license authority (regulatory body) for complete license information",
-      score: 4,
-    };
-  }
-
-  if (hasLicenseAuthority) {
-    return {
-      status: "warning",
-      message:
-        "License authority provided - add license number for complete license information",
-      score: 4,
-    };
-  }
-
-  return {
-    status: "info",
-    message:
-      "License information optional - required for regulated sectors (healthcare, finance, education, etc.)",
-    score: 0,
-  };
-};
+// (validateLicenseInfo removed 2026-05-24 — license fields moved to Client.ymylData JSON owned by YMYL system)

@@ -399,8 +399,6 @@ export async function updateLegalFields(
         commercialRegistrationNumber: true,
         vatID: true,
         taxID: true,
-        licenseNumber: true,
-        licenseAuthority: true,
       },
     });
 
@@ -413,8 +411,6 @@ export async function updateLegalFields(
       commercialRegistrationNumber: data.commercialRegistrationNumber ?? null,
       vatID: data.vatID ?? null,
       taxID: data.taxID ?? data.vatID ?? null, // Fallback to VAT ID only if Tax ID is not provided
-      licenseNumber: data.licenseNumber ?? null,
-      licenseAuthority: data.licenseAuthority ?? null,
     };
 
     const updateData = buildGroupUpdateData("legal", client as Record<string, unknown>, newData);
@@ -642,5 +638,50 @@ export async function updateAdditionalFields(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update additional fields";
     return { success: false, error: message, groupName: "additional" };
+  }
+}
+
+/**
+ * Updates YMYL (Your Money Your Life) verification fields.
+ * - isYmyl: admin checkbox flag
+ * - ymylCategory: "medical" | "legal" | "financial"
+ * - ymylData: category-specific Json (shape defined in lib/seo/ymyl-config.ts)
+ */
+export async function updateYmylFields(
+  clientId: string,
+  data: Partial<ClientFormData>
+): Promise<GroupUpdateResult> {
+  try {
+    const client = await db.client.findUnique({
+      where: { id: clientId },
+      select: { isYmyl: true, ymylCategory: true, ymylData: true },
+    });
+
+    if (!client) {
+      return { success: false, error: "Client not found", groupName: "ymyl" };
+    }
+
+    const newData: Record<string, unknown> = {
+      isYmyl: data.isYmyl ?? false,
+      ymylCategory: data.ymylCategory ?? null,
+      // Prisma expects a JsonValue — pass null when disabling YMYL or no data set
+      ymylData: data.ymylData ?? null,
+    };
+
+    const updateData = buildGroupUpdateData("ymyl", client as Record<string, unknown>, newData);
+
+    if (Object.keys(updateData).length === 0) {
+      return { success: true, groupName: "ymyl", fieldsUpdated: 0 };
+    }
+
+    await db.client.update({
+      where: { id: clientId },
+      data: updateData,
+    });
+
+    return { success: true, groupName: "ymyl", fieldsUpdated: Object.keys(updateData).length };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to update YMYL fields";
+    return { success: false, error: message, groupName: "ymyl" };
   }
 }

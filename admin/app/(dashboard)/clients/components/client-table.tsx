@@ -14,7 +14,6 @@ import {
   ArrowUp,
   ArrowDown,
   MapPin,
-  BarChart2,
   Pencil,
   Eye,
 
@@ -333,7 +332,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
     <div className="space-y-4">
       <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[80px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* Analytics */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[80px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -385,11 +384,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </TableHead>
-              <TableHead className="text-center px-1" title="Analytics">
-                <div className="flex justify-center">
-                  <BarChart2 className="h-3.5 w-3.5 text-muted-foreground" />
-                </div>
-              </TableHead>
               <TableHead className="text-center px-1" title="SEO Score">
                 <div className="flex justify-center">
                   <SearchCheck className="h-3.5 w-3.5 text-muted-foreground" />
@@ -418,7 +412,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                   ? client.subscriptionTier.charAt(0) + client.subscriptionTier.slice(1).toLowerCase()
                   : "N/A";
                 const gbpPlaceId = (client as { gbpPlaceId?: string | null }).gbpPlaceId;
-                const ga4PropertyId = (client as { ga4PropertyId?: string | null }).ga4PropertyId;
                 const isActive = client.subscriptionStatus === SubscriptionStatus.ACTIVE;
                 const isPaid = client.paymentStatus === PaymentStatus.PAID;
                 const isOverdue = client.paymentStatus === PaymentStatus.OVERDUE;
@@ -559,17 +552,6 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                       ) : (
                         <div title="Business profile not connected" className="flex items-center justify-center">
                           <MapPin className="h-4 w-4 text-muted-foreground/40" />
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center px-1">
-                      {ga4PropertyId ? (
-                        <div title="Analytics enabled" className="flex items-center justify-center">
-                          <BarChart2 className="h-4 w-4 text-green-500" />
-                        </div>
-                      ) : (
-                        <div title="Analytics disabled" className="flex items-center justify-center">
-                          <BarChart2 className="h-4 w-4 text-muted-foreground/40" />
                         </div>
                       )}
                     </TableCell>

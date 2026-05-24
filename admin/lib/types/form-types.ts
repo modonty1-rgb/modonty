@@ -34,6 +34,8 @@ export interface ArticleFormData {
   clientId: string;
   categoryId?: string;
   authorId: string;
+  // YMYL reviewer (required at publish-time when client.isYmyl=true; admin can pick any Author)
+  reviewedById?: string | null;
   
   // Status & Workflow
   status: ArticleStatus;
@@ -170,8 +172,6 @@ export interface ClientFormData {
   twitterSite?: string | null;
   canonicalUrl?: string | null;
   metaRobots?: string | null;
-  ga4PropertyId?: string | null;
-  ga4MeasurementId?: string | null;
   subscriptionTier?: SubscriptionTier | null;
   subscriptionStartDate?: Date | null;
   subscriptionEndDate?: Date | null;
@@ -209,8 +209,6 @@ export interface ClientFormData {
   businessActivityCode?: string | null;
   isicV4?: string | null;
   numberOfEmployees?: string | null;
-  licenseNumber?: string | null;
-  licenseAuthority?: string | null;
 
   // Additional Properties
   alternateName?: string | null;
@@ -222,6 +220,12 @@ export interface ClientFormData {
 
   // Relationships
   parentOrganizationId?: string | null;
+
+  // YMYL (Your Money Your Life) verification — admin-controlled per client.
+  // ymylData shape varies per ymylCategory — see admin/lib/seo/ymyl-config.ts
+  isYmyl?: boolean;
+  ymylCategory?: "medical" | "legal" | "financial" | null;
+  ymylData?: Record<string, unknown> | null;
 }
 
 export interface AuthorFormData {

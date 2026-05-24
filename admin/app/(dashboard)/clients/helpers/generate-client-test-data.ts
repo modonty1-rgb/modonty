@@ -74,8 +74,6 @@ export function generateClientTestData(
     legalForm: "LLC",
     vatID: vatId,
     taxID: vatId,
-    licenseNumber: "HC-2024-001234",
-    licenseAuthority: "وزارة الصحة",
     // --- Subscription tab ---
     subscriptionTier: tier?.tier ?? "STANDARD",
     subscriptionTierConfigId: tier?.id ?? null,

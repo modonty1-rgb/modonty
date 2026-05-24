@@ -47,26 +47,6 @@ export function LegalSection({ form }: LegalSectionProps) {
           hint={messages.hints.client.taxId}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormInput
-          name="licenseNumber"
-          label="License Number"
-          value={watch("licenseNumber") || ""}
-          onChange={(e) => setValue("licenseNumber", e.target.value || null, { shouldValidate: true })}
-          error={errors.licenseNumber?.message}
-          placeholder="e.g., HC-2024-001234"
-          hint={messages.hints.client.tradeLicense}
-        />
-        <FormInput
-          name="licenseAuthority"
-          label="License Authority"
-          value={watch("licenseAuthority") || ""}
-          onChange={(e) => setValue("licenseAuthority", e.target.value || null, { shouldValidate: true })}
-          error={errors.licenseAuthority?.message}
-          placeholder="e.g., Ministry of Health"
-          hint="Licensing authority — required if license number is entered"
-        />
-      </div>
     </div>
   );
 }

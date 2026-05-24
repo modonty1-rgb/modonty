@@ -17,6 +17,7 @@ import { clientFormSections, getVisibleFieldCount } from "../helpers/client-form
 import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { SubscriptionSection } from "./form-sections/subscription-section";
 import { BusinessSection } from "./form-sections/business-section";
+import { YmylSection } from "./form-sections/ymyl-section";
 import { SEOSection } from "./form-sections/seo-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
 import { SettingsSection } from "./form-sections/settings-section";
@@ -300,6 +301,24 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     <AccordionContent className="px-4 pb-5 pt-3">
                       <div className="space-y-6">
                         <BusinessSection form={form} industries={industries} clients={clients} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="ymyl" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
+                      <div className="flex items-center justify-between w-full pe-2">
+                        <span>YMYL Verification</span>
+                        {watchedValues.isYmyl && watchedValues.ymylCategory && (
+                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase">
+                            {watchedValues.ymylCategory}
+                          </span>
+                        )}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <YmylSection form={form} />
                       </div>
                     </AccordionContent>
                   </AccordionItem>

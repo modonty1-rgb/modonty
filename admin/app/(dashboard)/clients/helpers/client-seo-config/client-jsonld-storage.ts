@@ -70,8 +70,6 @@ export interface ClientWithFullRelations {
   businessActivityCode: string | null;
   isicV4: string | null;
   numberOfEmployees: string | null;
-  licenseNumber: string | null;
-  licenseAuthority: string | null;
   slogan: string | null;
   organizationType: string | null;
   parentOrganizationId: string | null;
@@ -147,8 +145,6 @@ export async function fetchClientForJsonLd(
       businessActivityCode: true,
       isicV4: true,
       numberOfEmployees: true,
-      licenseNumber: true,
-      licenseAuthority: true,
       slogan: true,
       organizationType: true,
       parentOrganizationId: true,

@@ -40,8 +40,11 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     const parsed = articleServerSchema.safeParse(data);
     if (!parsed.success) {
-      const firstError = parsed.error.errors[0];
-      return { success: false, error: firstError.message };
+      // Surface ALL failed fields by name — see create-article.ts for rationale.
+      const errors = parsed.error.errors
+        .map((e) => `${e.path.join(".") || "field"}: ${e.message}`)
+        .join(" · ");
+      return { success: false, error: `بيانات غير صحيحة — ${errors}` };
     }
 
     const existingArticle = await db.article.findUnique({
@@ -202,6 +205,8 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         clientId: data.clientId,
         categoryId: data.categoryId || null,
         authorId: existingArticle.authorId,
+        // YMYL reviewer (drives JSON-LD reviewedBy + publish gate)
+        reviewedById: data.reviewedById ?? null,
         status: data.status,
         scheduledAt: data.scheduledAt || null,
         featured: data.featured || false,

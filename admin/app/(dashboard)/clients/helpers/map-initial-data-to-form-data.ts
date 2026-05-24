@@ -46,12 +46,14 @@ export function mapInitialDataToFormData(
     businessActivityCode: "",
     isicV4: "",
     numberOfEmployees: "",
-    licenseNumber: "",
-    licenseAuthority: "",
     alternateName: "",
     slogan: "",
     newsletterCtaText: "",
     canonicalUrl: "",
+    // YMYL defaults
+    isYmyl: false,
+    ymylCategory: null,
+    ymylData: null,
   };
 
   if (!initialData) {
@@ -115,8 +117,6 @@ export function mapInitialDataToFormData(
     businessActivityCode: initialData.businessActivityCode || null,
     isicV4: initialData.isicV4 || null,
     numberOfEmployees: initialData.numberOfEmployees || null,
-    licenseNumber: initialData.licenseNumber || null,
-    licenseAuthority: initialData.licenseAuthority || null,
 
     // Additional Properties
     alternateName: initialData.alternateName || null,
@@ -128,6 +128,11 @@ export function mapInitialDataToFormData(
 
     // Relationships
     parentOrganizationId: initialData.parentOrganizationId || null,
+
+    // YMYL verification
+    isYmyl: (initialData as { isYmyl?: boolean }).isYmyl ?? false,
+    ymylCategory: (initialData as { ymylCategory?: "medical" | "legal" | "financial" | null }).ymylCategory ?? null,
+    ymylData: (initialData as { ymylData?: Record<string, unknown> | null }).ymylData ?? null,
 
     // Subscription Management
     subscriptionTier: initialData.subscriptionTier || null,

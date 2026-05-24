@@ -181,7 +181,8 @@ export function generateCompleteOrganizationJsonLd(
 
   // companyRegistration (Schema.org Certification) when CR exists
   if (client.commercialRegistrationNumber) {
-    const issuer = client.licenseAuthority?.trim() || "Ministry of Commerce";
+    // (Issuer formerly read from Client.licenseAuthority — that column was removed when YMYL data moved into Client.ymylData JSON.)
+    const issuer = "Ministry of Commerce";
     organizationNode.companyRegistration = {
       "@type": "Certification",
       name: "Commercial Registration",

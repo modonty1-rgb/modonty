@@ -246,19 +246,6 @@ export const clientFormSchema = z
       .optional()
       .nullable()
       .or(z.literal("")),
-    licenseNumber: z
-      .string()
-      .max(100, "License number must be less than 100 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    licenseAuthority: z
-      .string()
-      .max(200, "License authority must be less than 200 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-
     // Additional Properties
     alternateName: z
       .string()
@@ -285,6 +272,13 @@ export const clientFormSchema = z
       .nullable()
       .or(z.literal("")),
     twitterSite: twitterSiteSchema,
+
+    // YMYL (Your Money Your Life) verification — admin-controlled per client.
+    // When isYmyl=true + ymylCategory is set, ymylData carries category-specific fields
+    // (license number, authority, specialty, etc.) per ymyl-config.ts.
+    isYmyl: z.boolean().optional().default(false),
+    ymylCategory: z.enum(["medical", "legal", "financial"]).optional().nullable(),
+    ymylData: z.record(z.unknown()).optional().nullable(),
 
     // Subscription Management
     subscriptionTier: subscriptionTierSchema,

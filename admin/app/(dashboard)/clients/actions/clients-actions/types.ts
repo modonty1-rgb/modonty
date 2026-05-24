@@ -51,8 +51,12 @@ export type ClientForList = {
   businessActivityCode: string | null;
   isicV4: string | null;
   numberOfEmployees: string | null;
-  licenseNumber: string | null;
   organizationType: string | null;
+  // YMYL verification (ymylCategory is constrained to medical/legal/financial in code,
+  // but stored as String in Prisma — narrow when consuming via isYmylCategory guard)
+  isYmyl: boolean;
+  ymylCategory: string | null;
+  ymylData: unknown;
   alternateName: string | null;
   slogan: string | null;
   logoMedia: {

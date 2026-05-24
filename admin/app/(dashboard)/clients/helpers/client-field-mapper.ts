@@ -69,8 +69,6 @@ export function mapFormDataToClientData(data: ClientFormData) {
     businessActivityCode: data.businessActivityCode || null,
     isicV4: data.isicV4 || null,
     numberOfEmployees: data.numberOfEmployees || null,
-    licenseNumber: data.licenseNumber || null,
-    licenseAuthority: data.licenseAuthority || null,
 
     // Additional Properties
     alternateName: data.alternateName || null,

@@ -108,7 +108,8 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground leading-relaxed mt-1", className)}
+    // whitespace-pre-line preserves \n in error messages (multi-issue publish errors)
+    className={cn("text-sm text-muted-foreground leading-relaxed mt-1 whitespace-pre-line", className)}
     {...props}
   />
 ))

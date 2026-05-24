@@ -23,6 +23,7 @@ import {
   ArticleMedia,
   Tag,
 } from "@prisma/client";
+import { buildYmylJsonLdGraph } from "./build-ymyl-jsonld";
 
 /**
  * Build Cloudinary URL for a specific aspect ratio (1:1, 4:3, 16:9).
@@ -52,6 +53,7 @@ export interface ArticleWithFullRelations extends Article {
   featuredImage?: Media | null;
   gallery?: Array<ArticleMedia & { media: Media }>;
   faqs?: ArticleFAQ[];
+  reviewer?: Author | null;
 }
 
 // Platform-wide branding from Settings — used when author is the platform brand (Modonty)
@@ -171,6 +173,44 @@ export function generateArticleKnowledgeGraph(
 
   // 5. BreadcrumbList
   graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
+
+  // 6. YMYL nodes (Medical/Legal/Financial org + Physician/Attorney reviewer + MedicalWebPage wrapper for medical)
+  if (article.client.isYmyl) {
+    const ymylNodes = buildYmylJsonLdGraph({
+      client: {
+        id: article.client.id,
+        name: article.client.name,
+        url: `${siteUrl}/clients/${article.client.slug}`,
+        isYmyl: article.client.isYmyl,
+        ymylCategory: article.client.ymylCategory,
+        ymylData: article.client.ymylData,
+        addressCountry: article.client.addressCountry,
+      },
+      reviewer: article.reviewer
+        ? {
+            id: article.reviewer.id,
+            name: article.reviewer.name,
+            jobTitle: article.reviewer.jobTitle,
+            credentials: article.reviewer.credentials ?? [],
+            qualifications: article.reviewer.qualifications ?? [],
+            expertiseAreas: article.reviewer.expertiseAreas ?? [],
+            profileUrl: `${siteUrl}/authors/${article.reviewer.slug}`,
+            imageUrl: article.reviewer.image ?? null,
+          }
+        : null,
+      article: {
+        pageUrl: articleUrl,
+        lastReviewedIso: article.lastReviewed
+          ? (article.lastReviewed instanceof Date
+              ? article.lastReviewed.toISOString().slice(0, 10)
+              : String(article.lastReviewed).slice(0, 10))
+          : null,
+      },
+    });
+    for (const node of ymylNodes) {
+      graph.push(node as JsonLdNode);
+    }
+  }
 
   return {
     "@context": "https://schema.org",

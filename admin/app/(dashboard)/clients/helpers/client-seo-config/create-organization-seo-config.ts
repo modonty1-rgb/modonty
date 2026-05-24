@@ -42,7 +42,6 @@ import {
   validateClassification,
   validateOrganizationType,
   validateNumberOfEmployees,
-  validateLicenseInfo,
 } from './validators-advanced';
 import { generateOrganizationStructuredData } from "./generate-organization-structured-data";
 import { 
@@ -121,7 +120,6 @@ const FIELD_TO_VALIDATOR_MAP: Record<string, string[]> = {
   'businessActivityCode': ['businessActivityCode'],
   'isicV4': ['isicV4'],
   'numberOfEmployees': ['numberOfEmployees'],
-  'licenseNumber': ['licenseNumber'],
   'organizationType': ['organizationType'],
   'alternateName': ['alternateName'],
   'slogan': ['slogan'],
@@ -179,7 +177,6 @@ function getValidatorForField(fieldName: string, settings?: SEOSettings): SEOFie
     'businessActivityCode': validateClassification,
     'isicV4': validateClassification,
     'numberOfEmployees': validateNumberOfEmployees,
-    'licenseNumber': validateLicenseInfo,
     'organizationType': validateOrganizationType,
     'alternateName': validateName,
     'slogan': validateSlogan,

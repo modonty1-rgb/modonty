@@ -136,6 +136,28 @@ export function BasicSection() {
               value={authors?.[0]?.id || formData.authorId || ''}
             />
           </div>
+
+          {/* YMYL reviewer — visible only when selected client is flagged YMYL.
+              Required at publish-time; gated-transition blocks AWAITING_APPROVAL without it. */}
+          {selectedClient?.isYmyl && (
+            <div className="space-y-1.5">
+              <FormNativeSelect
+                label={`YMYL Reviewer * — ${selectedClient.ymylCategory ?? "ymyl"}`}
+                name="reviewedById"
+                value={formData.reviewedById ?? ''}
+                onChange={(e) => updateField('reviewedById', e.target.value || null)}
+                error={errors.reviewedById?.[0]}
+                hint="المُراجِع الذي راجع المحتوى وأقرّ صحته. يطلع في JSON-LD كـ Physician/Attorney — Google يستخدمه كإثبات E-E-A-T. النشر ممنوع بدونه."
+              >
+                <option value="">— اختر مُراجِع مختص —</option>
+                {authors.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </FormNativeSelect>
+            </div>
+          )}
         </section>
 
         <div className="border-t" />

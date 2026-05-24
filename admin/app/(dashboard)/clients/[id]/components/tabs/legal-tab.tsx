@@ -6,8 +6,6 @@ interface LegalTabProps {
     legalForm: string | null;
     vatID: string | null;
     taxID: string | null;
-    licenseNumber: string | null;
-    licenseAuthority: string | null;
   };
 }
 
@@ -43,18 +41,6 @@ export function LegalTab({ client }: LegalTabProps) {
             <p className="text-sm text-muted-foreground mb-1">Tax ID</p>
             <p className="text-sm font-medium font-mono">
               {client.taxID || <span className="text-muted-foreground italic">Not set</span>}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">License Number</p>
-            <p className="text-sm font-medium">
-              {client.licenseNumber || <span className="text-muted-foreground italic">Not set</span>}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">License Authority</p>
-            <p className="text-sm font-medium">
-              {client.licenseAuthority || <span className="text-muted-foreground italic">Not set</span>}
             </p>
           </div>
         </div>

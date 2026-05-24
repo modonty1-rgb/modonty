@@ -113,8 +113,6 @@ export async function createClient(data: ClientFormData) {
       "businessActivityCode",
       "isicV4",
       "numberOfEmployees",
-      "licenseNumber",
-      "licenseAuthority",
       "alternateName",
       "slogan",
       "keywords",
@@ -126,8 +124,6 @@ export async function createClient(data: ClientFormData) {
       "articlesPerMonth",
       "subscriptionStatus",
       "paymentStatus",
-      "ga4PropertyId",
-      "ga4MeasurementId",
       "gbpProfileUrl",
       "gbpPlaceId",
       "gbpAccountId",
@@ -136,6 +132,10 @@ export async function createClient(data: ClientFormData) {
       "priceRange",
       "openingHoursSpecification",
       "googleBusinessProfileUrl",
+      // YMYL verification
+      "isYmyl",
+      "ymylCategory",
+      "ymylData",
     ];
     // Strategy fields removed (Plan B): targetAudience, forbiddenKeywords, forbiddenClaims,
     // competitiveMentionsAllowed — these are now client-managed via console intake.

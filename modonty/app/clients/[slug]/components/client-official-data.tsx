@@ -26,8 +26,6 @@ interface ClientOfficialDataProps {
     addressRegion?: string | null;
     addressPostalCode?: string | null;
     addressCountry?: string | null;
-    licenseNumber?: string | null;
-    licenseAuthority?: string | null;
   };
 }
 
@@ -74,8 +72,7 @@ export function ClientOfficialData({ client }: ClientOfficialDataProps) {
     client.taxID ||
     client.organizationType ||
     (client.knowsLanguage && client.knowsLanguage.length > 0) ||
-    addressParts.length > 0 ||
-    client.licenseNumber;
+    addressParts.length > 0;
 
   if (!hasAny) return null;
 
@@ -131,18 +128,7 @@ export function ClientOfficialData({ client }: ClientOfficialDataProps) {
             value={addressParts.join("، ")}
           />
         )}
-        {client.licenseNumber && (
-          <OfficialRow
-            icon={IconFileCheck}
-            label="رقم الترخيص"
-            value={
-              client.licenseAuthority
-                ? `${client.licenseNumber} (${client.licenseAuthority})`
-                : client.licenseNumber
-            }
-            dir="ltr"
-          />
-        )}
+        {/* License row removed 2026-05-24 — license data moved to Client.ymylData JSON via YMYL system. Future: render Medical/Legal/Financial license from ymylData when client.isYmyl. */}
       </CardContent>
     </Card>
   );

@@ -122,8 +122,11 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         businessActivityCode: true,
         isicV4: true,
         numberOfEmployees: true,
-        licenseNumber: true,
         organizationType: true,
+        // YMYL verification
+        isYmyl: true,
+        ymylCategory: true,
+        ymylData: true,
         alternateName: true,
         slogan: true,
         logoMedia: {

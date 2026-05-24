@@ -38,8 +38,12 @@ export async function createArticle(data: ArticleFormData) {
     const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
     const parsed = articleServerSchema.safeParse(data);
     if (!parsed.success) {
-      const firstError = parsed.error.errors[0];
-      return { success: false, error: firstError.message };
+      // Surface ALL failed fields by name — generic "String must contain at most N character(s)"
+      // is useless to the admin when they don't know which field is too long.
+      const errors = parsed.error.errors
+        .map((e) => `${e.path.join(".") || "field"}: ${e.message}`)
+        .join(" · ");
+      return { success: false, error: `بيانات غير صحيحة — ${errors}` };
     }
 
     // Validate slug uniqueness within client
@@ -131,6 +135,8 @@ export async function createArticle(data: ArticleFormData) {
         clientId: data.clientId,
         categoryId: data.categoryId || null,
         authorId: modontyAuthor.id,
+        // YMYL reviewer (optional at create; required by publish gate when client.isYmyl=true)
+        reviewedById: data.reviewedById ?? null,
         status: finalStatus,
         scheduledAt: data.scheduledAt || null,
         featured: data.featured || false,

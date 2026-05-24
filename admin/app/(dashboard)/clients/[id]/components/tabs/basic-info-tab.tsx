@@ -59,8 +59,6 @@ interface BasicInfoTabProps {
     businessActivityCode: string | null;
     isicV4: string | null;
     numberOfEmployees: string | null;
-    licenseNumber: string | null;
-    licenseAuthority: string | null;
     keywords: string[];
     knowsLanguage: string[];
     organizationType: string | null;
@@ -237,14 +235,6 @@ export function BasicInfoTab({ client }: BasicInfoTabProps) {
             <div>
               <p className="text-sm text-muted-foreground mb-1">Tax ID</p>
               <p className="text-sm font-medium font-mono">{client.taxID || <span className="text-muted-foreground italic">Not set</span>}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">License Number</p>
-              <p className="text-sm font-medium">{client.licenseNumber || <span className="text-muted-foreground italic">Not set</span>}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">License Authority</p>
-              <p className="text-sm font-medium">{client.licenseAuthority || <span className="text-muted-foreground italic">Not set</span>}</p>
             </div>
           </div>
         </CardContent>
