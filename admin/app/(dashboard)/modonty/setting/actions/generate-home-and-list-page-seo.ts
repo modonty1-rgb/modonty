@@ -409,7 +409,7 @@ export async function previewPageSeo(page: PageKey): Promise<PreviewSeoResult> {
         upvoteCount: f.upvoteCount,
         lastReviewed: f.lastReviewed,
       }));
-      const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+      const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
       const jsonLdObj = buildFaqPageJsonLd(siteUrl, faqsForJsonLd);
       const report = await validateHomeOrListPageJsonLd(jsonLdObj);
       const valid =

@@ -25,13 +25,12 @@ interface ArticleFormPreviewSidebarProps {
 }
 
 export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebarProps) {
-  const { formData, clients, categories, authors, seoScore } = useArticleForm();
+  const { formData, clients, categories, authors, seoScore, siteUrl } = useArticleForm();
   const [device, setDevice] = useState<'mobile' | 'desktop'>('mobile');
 
   const effectiveTitle = formData.seoTitle || formData.title || 'Article title will appear here';
   const effectiveDescription = formData.seoDescription || formData.excerpt || 'Article description will appear here as a short snippet to attract readers from search engines...';
   const selectedClient = clients.find(c => c.id === formData.clientId);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
   const displayUrl = `${siteUrl.replace('https://', '')} › articles › ${formData.slug || 'slug'}`;
 
   return (

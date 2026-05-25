@@ -40,10 +40,8 @@ export async function POST(
     }
 
     // Use request origin so we fetch the same server (avoids env mismatch, e.g. localhost vs production)
-    const baseUrl =
-      request.nextUrl.origin ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3000";
+    const { loadSiteUrl } = await import("@/lib/seo/site-url");
+    const baseUrl = request.nextUrl.origin || (await loadSiteUrl());
     const previewUrl = `${baseUrl}/articles/preview/${article.id}`;
     
     let html: string;

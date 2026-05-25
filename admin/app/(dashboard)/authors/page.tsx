@@ -1,15 +1,17 @@
 import { getModontyAuthor, getAuthorsStats } from "./actions/authors-actions";
 import { getSEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { AuthorForm } from "./components/author-form";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FileText, CheckCircle2, Share2 } from "lucide-react";
 
 export default async function AuthorsPage() {
-  const [author, stats, seoSettings] = await Promise.all([
+  const [author, stats, seoSettings, siteUrl] = await Promise.all([
     getModontyAuthor(),
     getAuthorsStats(),
     getSEOSettings(),
+    loadSiteUrl(),
   ]);
 
   if (!author) {
@@ -28,6 +30,7 @@ export default async function AuthorsPage() {
         initialData={author}
         authorId={author.id}
         seoSettings={seoSettings}
+        siteUrl={siteUrl}
         header={
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

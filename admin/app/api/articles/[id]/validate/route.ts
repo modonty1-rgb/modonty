@@ -40,7 +40,8 @@ export async function POST(
 
     // Always validate from DB data — most accurate source of truth
     // (live page may have stale cache)
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const { loadSiteUrl } = await import("@/lib/seo/site-url");
+    const siteUrl = await loadSiteUrl();
     const previewUrl = `${siteUrl}/articles/${article.slug}`;
     const jsonLd = article.jsonLdStructuredData || "";
     const desc = article.seoDescription || "";

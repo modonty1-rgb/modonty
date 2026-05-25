@@ -11,8 +11,14 @@ interface ArticleWithRelations extends Article {
   featuredImage?: { url: string; altText?: string | null } | null;
 }
 
-export function generateArticleStructuredData(article: ArticleWithRelations): ArticleStructuredData {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+/**
+ * Generate Article JSON-LD. Pass siteUrl from `loadSiteUrl()` for DB-backed source of truth.
+ * The default fallback is a last-resort safety net only.
+ */
+export function generateArticleStructuredData(
+  article: ArticleWithRelations,
+  siteUrl: string = "https://www.modonty.com",
+): ArticleStructuredData {
   const articleUrl = article.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
 
   const structuredData: ArticleStructuredData = {
@@ -51,10 +57,9 @@ export function generateArticleStructuredData(article: ArticleWithRelations): Ar
 }
 
 export function generateBreadcrumbStructuredData(
-  items: Array<{ name: string; url: string }>
+  items: Array<{ name: string; url: string }>,
+  siteUrl: string = "https://www.modonty.com",
 ) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
-
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

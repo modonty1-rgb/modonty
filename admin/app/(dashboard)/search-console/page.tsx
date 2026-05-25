@@ -22,7 +22,8 @@ import { db } from "@/lib/db";
 import { getCachedTopPages } from "@/lib/gsc/cached";
 import { analyzeGscCoverage, getAllPublishedArticles } from "@/lib/gsc/coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
+import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 import {
   getRemovalTrackStates,
   getManualTrackStates,
@@ -93,7 +94,8 @@ export default async function SearchConsolePage({
   );
 
   // Build the union of URLs that need inspection lookup: coverage table + pending indexing
-  const pendingUrls = pendingIndexing.map((a) => `${SITE_BASE_URL}/articles/${a.slug}`);
+  const siteUrl = await loadSiteUrl();
+  const pendingUrls = pendingIndexing.map((a) => buildArticleUrlFromBase(a.slug, siteUrl));
   const inspectionMap = await getCachedInspectionsByUrls([
     ...pages.map((p) => p.url),
     ...pendingUrls,
@@ -106,7 +108,7 @@ export default async function SearchConsolePage({
   const inspectableUrls = Array.from(
     new Set([
       ...pages.map((p) => p.url),
-      ...publishedArticles.map((a) => `${SITE_BASE_URL}/articles/${a.slug}`),
+      ...publishedArticles.map((a) => buildArticleUrlFromBase(a.slug, siteUrl)),
     ]),
   );
 
@@ -265,6 +267,7 @@ export default async function SearchConsolePage({
         pendingIndexing={pendingIndexing}
         requestStates={indexingRequestStates}
         inspections={inspectionMap}
+        siteUrl={siteUrl}
       />
 
       <SitemapManager />

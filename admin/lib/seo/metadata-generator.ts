@@ -8,6 +8,7 @@
 import type { Metadata } from "next";
 import type { Article, Client, Author, Category, Media } from "@prisma/client";
 import { SITE_NAME } from "@/lib/constants/site-name";
+import { loadSiteUrl } from "./site-url";
 
 // Type for article with relations needed for metadata generation
 export interface ArticleWithMetadataRelations {
@@ -95,7 +96,7 @@ export async function generateNextjsMetadata(
   article: ArticleWithMetadataRelations,
   options?: GenerateMetadataOptions
 ): Promise<Metadata> {
-  const siteUrl = options?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = options?.siteUrl || (await loadSiteUrl());
   const siteName = article.client.name || SITE_NAME;
 
   // Effective values

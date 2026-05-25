@@ -81,7 +81,7 @@ export function buildCategoriesPageJsonLd(
   totalCount: number,
   dateModified: Date
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
   const pageUrl = `${siteUrl}/categories`;
   const { org, website, inLangCodes } = buildSiteOrgAndWebSite(settings, siteUrl);
 

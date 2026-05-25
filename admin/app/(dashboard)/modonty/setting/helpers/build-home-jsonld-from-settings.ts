@@ -80,7 +80,7 @@ export function buildHomeJsonLdFromSettings(
   articles: ArticleForHomeJsonLd[],
   totalArticleCount: number
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
   const orgId = `${siteUrl}/#organization`;
   const websiteId = `${siteUrl}/#website`;
   const collectionPageId = `${siteUrl}/#collectionpage`;
@@ -328,7 +328,7 @@ export function buildListPageJsonLdFromSettings(
   settings: SettingsForHomeJsonLd,
   pageType: ListPageType
 ): object {
-  const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+  const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
   const fallback = LIST_PAGE_FALLBACKS[pageType];
   const nameMap = {
     clients: settings.clientsSeoTitle,

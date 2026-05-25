@@ -91,7 +91,8 @@ export function generateCompleteOrganizationJsonLd(
   clientPageUrl: string,
   options?: { siteUrl?: string; siteName?: string }
 ): JsonLdGraph {
-  const siteUrl = options?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). Hardcoded fallback only as a safety net.
+  const siteUrl = options?.siteUrl || "https://www.modonty.com";
   const siteName = options?.siteName || "Modonty";
   const graph: JsonLdNode[] = [];
 

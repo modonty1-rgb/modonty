@@ -15,10 +15,11 @@
 
 const BASE = "https://ssl.bing.com/webmaster/api.svc/json";
 
-function getCreds() {
+async function getCreds() {
   const apikey = process.env.INDEXNOW_KEY;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
   if (!apikey) throw new Error("INDEXNOW_KEY env var not set");
+  const { loadSiteUrl } = await import("@/lib/seo/site-url");
+  const siteUrl = await loadSiteUrl();
   return { apikey, siteUrl };
 }
 
@@ -27,7 +28,7 @@ interface BingResponse<T> {
 }
 
 async function bingGet<T>(endpoint: string): Promise<T> {
-  const { apikey, siteUrl } = getCreds();
+  const { apikey, siteUrl } = await getCreds();
   const url = `${BASE}/${endpoint}?siteUrl=${encodeURIComponent(siteUrl)}&apikey=${apikey}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) {

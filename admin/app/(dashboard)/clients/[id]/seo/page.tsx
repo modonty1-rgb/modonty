@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import { getClientById } from "../../actions/clients-actions";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { ClientFormHeaderWrapper } from "../../components/client-form-header-wrapper";
 import { ClientSeoForm } from "../../components/client-seo-form";
 
 export default async function ClientSeoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const client = await getClientById(id);
+  const [client, siteUrl] = await Promise.all([getClientById(id), loadSiteUrl()]);
 
   if (!client) {
     redirect("/clients");
@@ -14,7 +15,7 @@ export default async function ClientSeoPage({ params }: { params: Promise<{ id: 
   return (
     <div className="max-w-[1200px] mx-auto">
       <ClientFormHeaderWrapper title={`${client.name} — SEO Setup`}>
-        <ClientSeoForm initialData={client} clientId={id} />
+        <ClientSeoForm initialData={client} clientId={id} siteUrl={siteUrl} />
       </ClientFormHeaderWrapper>
     </div>
   );

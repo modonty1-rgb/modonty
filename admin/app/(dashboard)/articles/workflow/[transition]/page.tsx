@@ -4,7 +4,8 @@ import { db } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Inbox } from "lucide-react";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
+import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import {
   isValidTransitionSlug,
@@ -78,13 +79,14 @@ export default async function WorkflowTransitionPage({ params }: PageProps) {
   // Subsequent transitions (approval→revision, approval→scheduled, scheduled→published)
   // trust this guarantee — no re-validation, no pill, no disabled button.
   const showSeoCheck = transition === "draft-to-approval";
+  const siteUrl = showSeoCheck ? await loadSiteUrl() : "";
   const seoResults = showSeoCheck
     ? articles.map((a) =>
         validateArticleFromDb({
           id: a.id,
           slug: a.slug,
           title: a.title,
-          url: `${SITE_BASE_URL}/articles/${a.slug}`,
+          url: buildArticleUrlFromBase(a.slug, siteUrl),
           status: a.status,
           content: a.content,
           excerpt: a.excerpt,

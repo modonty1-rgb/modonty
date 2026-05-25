@@ -16,7 +16,7 @@ interface FeaturedMedia {
 }
 
 export function SEOSection() {
-  const { formData, clients, categories, authors, tags } = useArticleForm();
+  const { formData, clients, categories, authors, tags, siteUrl } = useArticleForm();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
 
   useEffect(() => {
@@ -37,7 +37,6 @@ export function SEOSection() {
     fetchMedia();
   }, [formData.featuredImageId, formData.clientId]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
   const effectiveTitle = formData.seoTitle || formData.title || '';
   const effectiveDescription = formData.seoDescription || formData.excerpt || '';
   const effectiveCanonical = formData.canonicalUrl || `${siteUrl}/articles/${formData.slug}`;

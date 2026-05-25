@@ -125,7 +125,7 @@ export async function updatePage(slug: string, data: PageFormData) {
     if (pageConfig) {
       try {
         const settings = await getAllSettings();
-        const modontyUrl = settings.siteUrl?.trim() || "https://modonty.com";
+        const modontyUrl = settings.siteUrl?.trim() || "https://www.modonty.com";
         if (modontyUrl) {
           await fetch(
             `${modontyUrl}/api/revalidate?path=${pageConfig.modontyPath}&secret=${process.env.REVALIDATE_SECRET}`,

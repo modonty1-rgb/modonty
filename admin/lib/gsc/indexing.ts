@@ -1,4 +1,5 @@
-import { getIndexingClient, SITE_BASE_URL } from "./client";
+import { getIndexingClient } from "./client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 
 // Per Google Indexing API v3 Discovery: enum is URL_NOTIFICATION_TYPE_UNSPECIFIED | URL_UPDATED | URL_DELETED.
 // Earlier code used URL_REMOVED which Google rejects silently — fixed below.
@@ -22,13 +23,16 @@ export interface RemovalMetadata {
   updatedAt: Date | null;
 }
 
-/** Resolve a path or full URL into an absolute URL on the configured site. */
-export function toAbsoluteUrl(input: string): string {
+/**
+ * Resolve a path or full URL into an absolute URL on the configured site.
+ * Async because the base URL is fetched from Settings (DB-backed source of truth).
+ */
+export async function toAbsoluteUrl(input: string): Promise<string> {
   try {
     const u = new URL(input);
     return u.toString();
   } catch {
-    const base = SITE_BASE_URL.replace(/\/$/, "");
+    const base = (await loadSiteUrl()).replace(/\/$/, "");
     const path = input.startsWith("/") ? input : `/${input}`;
     return `${base}${path}`;
   }
@@ -40,7 +44,7 @@ export function toAbsoluteUrl(input: string): string {
  * has its own read quota separate from the 200/day publish quota.
  */
 export async function getRemovalMetadata(url: string): Promise<RemovalMetadata | null> {
-  const absolute = toAbsoluteUrl(url);
+  const absolute = await toAbsoluteUrl(url);
   const client = getIndexingClient();
   try {
     const res = await client.urlNotifications.getMetadata({ url: absolute });
@@ -78,7 +82,7 @@ export async function getRemovalMetadataBulk(
  * but service-account-owned properties can use it for any URL in practice.
  */
 export async function requestIndexing(url: string): Promise<IndexingResult> {
-  const absolute = toAbsoluteUrl(url);
+  const absolute = await toAbsoluteUrl(url);
   const client = getIndexingClient();
   try {
     const res = await client.urlNotifications.publish({
@@ -111,7 +115,7 @@ export async function requestIndexing(url: string): Promise<IndexingResult> {
  * for this URL, we skip the publish call to avoid wasting the 200/day write quota.
  */
 export async function notifyDeleted(url: string): Promise<IndexingResult> {
-  const absolute = toAbsoluteUrl(url);
+  const absolute = await toAbsoluteUrl(url);
   const client = getIndexingClient();
 
   try {

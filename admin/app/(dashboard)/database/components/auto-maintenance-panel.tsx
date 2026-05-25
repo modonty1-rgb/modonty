@@ -35,7 +35,7 @@ const STEPS: StepDef[] = [
   { key: "versions", label: "Stale Versions (30d+)", description: "Article version snapshots older than 30 days", runner: runStepVersions },
   { key: "ttl", label: "TTL Indexes", description: "Missing TTL indexes for auto-expiry", runner: runStepTtl },
   { key: "jsonld", label: "JSON-LD Regeneration", description: "Articles with stale hosts in cached JSON-LD", runner: runStepJsonLd },
-  { key: "canonical", label: "Canonical URLs", description: "Articles with stale canonicalUrl field", runner: runStepCanonical },
+  { key: "canonical", label: "Canonical URLs (7 tables)", description: "Stale canonical hosts across Article + Client + Category + Tag + Industry + Author + Modonty pages", runner: runStepCanonical },
   { key: "legalform", label: "Legal Forms", description: "Clients with non-canonical legalForm values", runner: runStepLegalForm },
   { key: "cloudinary", label: "Cloudinary Orphans", description: "Files in Cloudinary (Modonty folders only) with no DB record", runner: runStepCloudinaryOrphans },
   { key: "sitemap", label: "Sitemap Refresh", description: "Resubmit stale sitemaps to Google Search Console", runner: runStepSitemapFreshness },

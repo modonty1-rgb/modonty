@@ -30,7 +30,7 @@ interface FeaturedMedia {
 export function MetaTagPreviewStep() {
   const router = useRouter();
   const pathname = usePathname();
-  const { formData, clients, categories, authors, tags, dbMetaAndJsonLd } = useArticleForm();
+  const { formData, clients, categories, authors, tags, dbMetaAndJsonLd, siteUrl } = useArticleForm();
   const { toast } = useToast();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
 
@@ -58,8 +58,6 @@ export function MetaTagPreviewStep() {
     };
     fetchMedia();
   }, [formData.featuredImageId, formData.clientId]);
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
 
   const normalizeUrl = (url: string | undefined, fallback: string): string => {
     if (!url) return `${siteUrl}${fallback}`;

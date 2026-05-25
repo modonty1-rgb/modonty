@@ -109,7 +109,8 @@ export async function verifyAndChangeSlug(
   if (!oldClient) return { success: false, error: "Client not found" };
 
   const oldSlug = oldClient.slug;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const { loadSiteUrl } = await import("@/lib/seo/site-url");
+  const siteUrl = await loadSiteUrl();
   const newCanonicalUrl = `${siteUrl}/clients/${newSlug}`;
 
   // Mark OTP as used

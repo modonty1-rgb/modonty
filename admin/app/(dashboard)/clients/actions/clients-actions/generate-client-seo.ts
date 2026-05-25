@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { generateCompleteOrganizationJsonLd } from "@/lib/seo/generate-complete-organization-jsonld";
 import { validateClientJsonLdComplete } from "../../helpers/client-seo-config/client-jsonld-validator";
 import type { Prisma } from "@prisma/client";
@@ -142,7 +143,7 @@ export async function generateClientSEO(clientId: string) {
     }
 
     const settings = await (await import("@/app/(dashboard)/settings/actions/settings-actions")).getAllSettings();
-    const siteUrl = settings.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = settings.siteUrl || (await loadSiteUrl());
     const siteName = settings.siteName || "Modonty";
     const inLanguage = settings.inLanguage || "ar";
     const ogLocale = settings.defaultOgLocale || "ar_SA";

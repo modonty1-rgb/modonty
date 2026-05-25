@@ -10,6 +10,7 @@
 
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { generateCompleteOrganizationJsonLd } from "@/lib/seo/generate-complete-organization-jsonld";
 import {
   validateClientJsonLdComplete,
@@ -199,11 +200,11 @@ export async function generateAndSaveClientJsonLd(
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = await loadSiteUrl();
     const clientPageUrl = client.canonicalUrl || `${siteUrl}/clients/${client.slug}`;
 
     // Generate knowledge graph
-    const knowledgeGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl);
+    const knowledgeGraph = generateCompleteOrganizationJsonLd(client as any, clientPageUrl, { siteUrl });
 
     // Normalize JSON-LD structure (ensures consistency)
     const normalizedGraph = await normalizeJsonLd(knowledgeGraph);

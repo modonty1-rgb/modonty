@@ -3,6 +3,7 @@ import { getArticleById, getClients, getCategories, getAuthors, createArticle } 
 import { getTags } from "../../../tags/actions/tags-actions";
 import { getAllSettings } from "../../../settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "../../../settings/helpers/get-article-defaults-from-settings";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 import { ArticleFormProvider } from "../../components/article-form-context";
 import { ArticleFormTabs } from "../../components/article-form-tabs";
 import { ArticleFormActionBar } from "../../components/article-form-action-bar";
@@ -11,13 +12,14 @@ import { transformArticleToFormData } from "../../helpers/article-form-helpers";
 export default async function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [article, clients, categories, authors, tags, settings] = await Promise.all([
+  const [article, clients, categories, authors, tags, settings, siteUrl] = await Promise.all([
     getArticleById(id),
     getClients(),
     getCategories(),
     getAuthors(),
     getTags(),
     getAllSettings(),
+    loadSiteUrl(),
   ]);
 
   if (!article) {
@@ -44,6 +46,7 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
       authors={authors}
       tags={tags}
       articleId={id}
+      siteUrl={siteUrl}
     >
       <div className="pb-6 md:pb-8">
         <ArticleFormTabs />

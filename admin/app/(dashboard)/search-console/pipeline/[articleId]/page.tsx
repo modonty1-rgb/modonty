@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink, Pencil } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { getCachedInspection } from "@/lib/gsc/inspection-cache";
 
 import { getManualTrackState } from "../../actions/removal-tracking-actions";
@@ -27,7 +27,7 @@ export default async function IndexingPipelinePage({
   });
   if (!article) notFound();
 
-  const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+  const url = await buildArticleUrl(article.slug);
   const [cachedInspection, indexingTrackState] = await Promise.all([
     getCachedInspection(url).catch(() => null),
     getManualTrackState(url, "INDEXING").catch(() => null),

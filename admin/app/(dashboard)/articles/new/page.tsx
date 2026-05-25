@@ -2,17 +2,19 @@ import { getClients, getCategories, getAuthors, createArticle } from '../actions
 import { getTags } from '../../tags/actions/tags-actions';
 import { getAllSettings } from '../../settings/actions/settings-actions';
 import { getArticleDefaultsFromSettings } from '../../settings/helpers/get-article-defaults-from-settings';
+import { loadSiteUrl } from '@/lib/seo/site-url';
 import { ArticleFormProvider } from '../components/article-form-context';
 import { ArticleFormTabs } from '../components/article-form-tabs';
 import { ArticleFormActionBar } from '../components/article-form-action-bar';
 
 export default async function NewArticlePage() {
-  const [clients, categories, authors, tags, settings] = await Promise.all([
+  const [clients, categories, authors, tags, settings, siteUrl] = await Promise.all([
     getClients(),
     getCategories(),
     getAuthors(),
     getTags(),
     getAllSettings(),
+    loadSiteUrl(),
   ]);
 
   const settingsArticleDefaults = getArticleDefaultsFromSettings(settings);
@@ -26,6 +28,7 @@ export default async function NewArticlePage() {
       categories={categories}
       authors={authors}
       tags={tags}
+      siteUrl={siteUrl}
     >
       <div className="pb-6 md:pb-8">
         <ArticleFormTabs />

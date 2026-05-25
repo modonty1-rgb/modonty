@@ -22,9 +22,11 @@ interface AuthorFormProps {
   onSuccess?: () => void;
   header?: React.ReactNode;
   seoSettings?: SEOSettings;
+  /** Site base URL from Settings.siteUrl (passed by server parent). */
+  siteUrl: string;
 }
 
-export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettings }: AuthorFormProps) {
+export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettings, siteUrl }: AuthorFormProps) {
   const seoConfig = createAuthorSEOConfig(seoSettings);
   const router = useRouter();
   const {
@@ -36,7 +38,7 @@ export function AuthorForm({ initialData, authorId, onSuccess, header, seoSettin
     updateField,
     updateSEOField,
     handleSubmit,
-  } = useAuthorForm({ initialData, authorId, onSuccess });
+  } = useAuthorForm({ initialData, authorId, onSuccess, siteUrl });
 
   return (
     <div className="space-y-4">

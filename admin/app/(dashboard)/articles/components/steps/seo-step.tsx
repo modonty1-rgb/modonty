@@ -58,7 +58,7 @@ interface FeaturedMedia {
 }
 
 export function SEOStep() {
-  const { formData, updateField, clients, articleId } = useArticleForm();
+  const { formData, updateField, clients, articleId, siteUrl } = useArticleForm();
   const { toast } = useToast();
   const [featuredMedia, setFeaturedMedia] = useState<FeaturedMedia | null>(null);
   const [citationInput, setCitationInput] = useState('');
@@ -82,7 +82,6 @@ export function SEOStep() {
     fetchMedia();
   }, [formData.featuredImageId, formData.clientId]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
   const effectiveTitle = formData.seoTitle || formData.title || '';
   const effectiveDescription = formData.seoDescription || formData.excerpt || '';
   const effectiveCanonical = formData.canonicalUrl || `${siteUrl}/articles/${formData.slug}`;

@@ -17,7 +17,7 @@ import { FormInput, FormSelect, FormTextarea } from "@/components/admin/form-fie
 import { CharacterCounter } from "@/components/shared/character-counter";
 import { useClientForm } from "../helpers/hooks/use-client-form";
 import type { ClientWithRelations } from "@/lib/types";
-import { getAllSettings, getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createOrganizationSEOConfig, createOrganizationSEOConfigFull } from "../helpers/client-seo-config";
 import {
@@ -39,6 +39,8 @@ type OpeningHoursDay = {
 interface ClientSeoFormProps {
   initialData?: Partial<ClientWithRelations>;
   clientId: string;
+  /** Site base URL from Settings.siteUrl (passed by server parent). */
+  siteUrl: string;
 }
 
 const DAYS: Array<{ key: string; label: string }> = [
@@ -81,22 +83,20 @@ function getIssueCounts(items: ClientSEOGroupAnalysis["meta"]["items"]) {
   return { error, warning, good };
 }
 
-export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
+export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormProps) {
   const { form, handleSubmit, loading, error, isEditMode } = useClientForm({
     initialData,
     clientId,
   });
 
   const [seoSettings, setSeoSettings] = useState<SEOSettings | null>(null);
-  const [siteUrl, setSiteUrl] = useState<string | null>(null);
   const [showTechnicalPreview, setShowTechnicalPreview] = useState(false);
 
   useEffect(() => {
     async function loadSettings() {
       try {
-        const [seo, all] = await Promise.all([getSEOSettings(), getAllSettings()]);
+        const seo = await getSEOSettings();
         setSeoSettings(seo);
-        setSiteUrl(all.siteUrl);
       } catch (e) {
         console.error("Failed to load settings:", e);
       }
@@ -645,6 +645,7 @@ export function ClientSeoForm({ initialData, clientId }: ClientSeoFormProps) {
                       formData={seoData}
                       clientId={clientId}
                       mode={isEditMode ? "edit" : "new"}
+                      siteUrl={siteUrl}
                     />
                   </div>
                 </AccordionContent>

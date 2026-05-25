@@ -49,4 +49,3 @@ export function getIndexingClient() {
 }
 
 export const GSC_PROPERTY = process.env.GSC_MODONTY_PROPERTY ?? "sc-domain:modonty.com";
-export const SITE_BASE_URL = process.env.NEXT_PUBLIC_SITE_BASE_URL ?? "https://www.modonty.com";

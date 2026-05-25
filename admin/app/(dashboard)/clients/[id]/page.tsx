@@ -6,6 +6,7 @@ import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
+import { loadSiteUrl } from "@/lib/seo/site-url";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
@@ -134,7 +135,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         title: title,
         description: description,
         type: "website",
-        url: client.canonicalUrl || `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/clients/${client.slug}`,
+        url: client.canonicalUrl || `${await loadSiteUrl()}/clients/${client.slug}`,
         siteName: "Modonty",
         locale: "ar_SA",
       },

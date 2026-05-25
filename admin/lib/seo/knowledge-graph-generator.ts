@@ -128,8 +128,9 @@ export function generateArticleKnowledgeGraph(
   article: ArticleWithFullRelations,
   branding?: PlatformBranding | null
 ): JsonLdGraph {
-  const siteUrl = branding?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
-  
+  // branding.siteUrl SHOULD come from loadSiteUrl() (DB-backed). Hardcoded fallback only as safety net.
+  const siteUrl = branding?.siteUrl || "https://www.modonty.com";
+
   // Single source: canonical URL = mainEntityOfPage = Article url (Schema.org + Google best practice)
   const raw = article.canonicalUrl || article.mainEntityOfPage;
   const articleUrl = raw
@@ -304,7 +305,7 @@ function generateArticleNode(
   }
 
   // Add images (hero + gallery)
-  const images = buildImageArray(article, articleUrl);
+  const images = buildImageArray(article, articleUrl, siteUrl);
   if (images.length > 0) {
     node.image = images.length === 1 ? images[0] : images;
   }
@@ -355,9 +356,9 @@ function buildMentionsFromSemanticKeywords(
  */
 function buildImageArray(
   article: ArticleWithFullRelations,
-  articleUrl: string
+  articleUrl: string,
+  siteUrl: string = "https://www.modonty.com",
 ): JsonLdNode[] {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
   const images: JsonLdNode[] = [];
 
   // Hero image (featuredImage) — emit 3 aspect ratios per Google Article rich results spec

@@ -38,9 +38,11 @@ interface UseAuthorFormParams {
   initialData?: Partial<AuthorWithRelations>;
   authorId?: string;
   onSuccess?: () => void;
+  /** Site base URL from Settings.siteUrl (passed by server parent). */
+  siteUrl: string;
 }
 
-export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFormParams) {
+export function useAuthorForm({ initialData, authorId, onSuccess, siteUrl }: UseAuthorFormParams) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -66,7 +68,7 @@ export function useAuthorForm({ initialData, authorId, onSuccess }: UseAuthorFor
     verificationStatus: initialData?.verificationStatus || false,
     seoTitle: initialData?.seoTitle || "",
     seoDescription: initialData?.seoDescription || "",
-    canonicalUrl: initialData?.canonicalUrl || `${process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com"}/authors/${initialData?.slug || MODONTY_AUTHOR_SLUG}`,
+    canonicalUrl: initialData?.canonicalUrl || `${siteUrl}/authors/${initialData?.slug || MODONTY_AUTHOR_SLUG}`,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

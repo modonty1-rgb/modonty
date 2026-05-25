@@ -1,7 +1,7 @@
 async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null> {
   const u = baseUrl?.trim();
   if (u) return u;
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  // DB-first source of truth (matches loadSiteUrl semantics for revalidation target)
   const { getAllSettings } = await import("@/app/(dashboard)/settings/actions/settings-actions");
   const s = await getAllSettings();
   return s.siteUrl?.trim() || null;

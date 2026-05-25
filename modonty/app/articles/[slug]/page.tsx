@@ -94,8 +94,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       try {
         const stored = article.nextjsMetadata as Metadata;
         if (stored.title) {
-          // Always regenerate canonical + hreflang — stored values may be stale/truncated/wrong-domain
-          const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
+          // Always regenerate canonical + hreflang — stored values may be stale/truncated.
+          // Source of truth: NEXT_PUBLIC_SITE_URL env (mirror of admin Settings.siteUrl).
+          // No more www workaround — admin canonical generator now always emits www host.
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
           // URL constructor percent-encodes non-ASCII slug for consistency with JSON-LD + sitemap
           const canonicalUrl = new URL(`/articles/${slug}`, siteUrl).href;
           return {
@@ -128,7 +130,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const imageAlt =
       articleForGeneration.featuredImage?.altText || title || undefined;
 
-    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com").replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
     // Always build canonical from current slug — ignore DB articleForGeneration.canonicalUrl
     // (prevents stale URL when slug was renamed; URL constructor handles percent-encoding)

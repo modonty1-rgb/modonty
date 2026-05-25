@@ -8,7 +8,8 @@ import { fetchPageSpeed, type PageSpeedReport } from "@/lib/seo/pagespeed";
 import { fetchCruxReport, type CruxReport } from "@/lib/seo/crux";
 import { regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import { validateJsonLdComplete, type ValidationReport } from "@/lib/seo/jsonld-validator";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
+import { buildArticleUrlFromBase, buildSitemapUrlFromBase } from "@/lib/seo/url-builders";
 import {
   inspectWithCache,
   refreshInspection,
@@ -63,10 +64,11 @@ export async function runHtmlPipelineStagesAction(
       return { ok: false, error: "Article must be PUBLISHED before running pipeline" };
     }
 
-    const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+    const siteUrl = await loadSiteUrl();
+    const url = buildArticleUrlFromBase(article.slug, siteUrl);
 
     // Fetch sitemap entries in parallel for the inclusion check
-    const sitemap = await fetchAndParseSitemap(`${SITE_BASE_URL}/sitemap.xml`).catch(() => null);
+    const sitemap = await fetchAndParseSitemap(buildSitemapUrlFromBase(siteUrl)).catch(() => null);
     const sitemapEntries = sitemap?.entries.map((e) => e.loc) ?? [];
 
     const validation = await validateArticle(
@@ -103,7 +105,7 @@ export async function runPageSpeedStageAction(
     });
     if (!article) return { ok: false, error: "Article not found" };
 
-    const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+    const url = buildArticleUrlFromBase(article.slug, await loadSiteUrl());
 
     const [psiResult, cruxResult] = await Promise.allSettled([
       fetchPageSpeed(url, "mobile"),
@@ -149,7 +151,7 @@ export async function runFinalIndexCheckAction(
     });
     if (!article) return { ok: false, error: "Article not found" };
 
-    const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+    const url = buildArticleUrlFromBase(article.slug, await loadSiteUrl());
     const inspection = options.forceRefresh
       ? await refreshInspection(url)
       : await inspectWithCache(url);
@@ -258,7 +260,7 @@ export async function requestArticleIndexingAction(
     });
     if (!article) return { ok: false, error: "Article not found" };
 
-    const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+    const url = buildArticleUrlFromBase(article.slug, await loadSiteUrl());
     const result = await requestIndexing(url);
     if (result.success) {
       revalidateTag("gsc-dashboard", "max");

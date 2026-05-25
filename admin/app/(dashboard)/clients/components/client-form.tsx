@@ -34,9 +34,11 @@ interface ClientFormProps {
   industries?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
   clientId?: string;
+  /** Site base URL from Settings.siteUrl (passed by server parent). */
+  siteUrl: string;
 }
 
-export function ClientForm({ initialData, industries = [], clients = [], clientId }: ClientFormProps) {
+export function ClientForm({ initialData, industries = [], clients = [], clientId, siteUrl }: ClientFormProps) {
   const headerRef = useHeaderRef();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -344,6 +346,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                           formData={watchedValues}
                           clientId={clientId}
                           mode="edit"
+                          siteUrl={siteUrl}
                         />
                       </div>
                     </AccordionContent>

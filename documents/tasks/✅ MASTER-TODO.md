@@ -1,6 +1,6 @@
 # MASTER TODO — MODONTY
 
-> **آخر تحديث:** 2026-05-22 (Session 104g — GTM/Hotjar cleanup DONE in DEV · TSC clean all 3 apps · awaiting live test + push)
+> **آخر تحديث:** 2026-05-25 (✅ SITE URL Refactor COMPLETE: Phase 1 + Phase 2+3 + Step 1.5 + Live Test — جاهز للـ push)
 > **الإصدار الحالي:** admin v0.59.1 (PUSHED · PROD Run-All executed) · modonty v1.48.2 · console v0.10.0
 >
 > **🔄 Pending push (Session 104g):** Remove DB-managed GTM/Hotjar fields → env-only architecture
@@ -18,6 +18,8 @@
 
 ### روابط الخطط
 
+- 🌐 **[SITE URL Source of Truth Refactor](SITE-URL-SOURCE-OF-TRUTH-TODO.md)** — ✅ ALL DONE · Phase 1 + Phase 2+3 + Step 1.5 + Live Test (13 pages) + senior independent review: **SAFE TO PUSH** · 3 apps TSC clean · 0 side effects detected.
+- 🚨 **[CRITICAL TODO](🚨%20CRITICAL-TODO.md)** — مهام مهمة. الحالي: **CRIT-003** Canonical URL host mismatch (www vs non-www) — root cause تم تحديده، خطة 6 phases تحت المناقشة · **CRIT-001** صور Cloudinary مكسورة على PROD (21 ملف · مؤجّلة) · **CRIT-002** زرار "Detect Broken/Orphan URLs" في admin (مؤجّلة).
 - 🆕🔗 **[Short Link System TODO](SHORT-LINK-SYSTEM-TODO.md)** — يحل مشكلة فتح الروابط العربية في iPhone · يضيف Events كنوع جديد · محوّل عربي→إنجليزي + QR + لوحة تحليلات للعميل (9 phases)
 - 💭 **[Pending Ideas Brainstorm](PENDING-IDEAS-TODO.md)** — أفكار مستقبلية قبل ما تتحوّل لخطط تفصيلية (تُحدَّث عبر shortcut "reminder"). الحالي: Modonty Reviews · Client QR · Client Services · What's New feed · Partners logos polish · Admin client page redesign + Console sync · Admin Broadcaster (6+ social channels)
 - 🗑️ **[seoKeywords Deletion Execution Plan](SEOKEYWORDS-DELETION-EXECUTION.md)** — checklist تفصيلي ٩ phases · ٦٥+ خطوة `[ ]` · ٤ TSC checkpoints · live test + rollback plan. تمت مراجعة سينيور (٤ نقاط مفقودة أُضيفت). awaiting "go ahead".

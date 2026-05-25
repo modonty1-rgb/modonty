@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Pencil, ShieldCheck, ShieldX, AlertTriangle, CheckCircle2, XCircle, Sparkles } from "lucide-react";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
 import type { ValidationCheck } from "@/lib/seo/article-validator";
@@ -102,11 +102,12 @@ export default async function QualityCheckPage({ params }: PageProps) {
   const canSendToApproval = article.status === "DRAFT";
 
   // Step 3 — Run the 28-check validator
+  const articleUrl = await buildArticleUrl(article.slug);
   const validation = validateArticleFromDb({
     id: article.id,
     slug: article.slug,
     title: article.title,
-    url: `${SITE_BASE_URL}/articles/${article.slug}`,
+    url: articleUrl,
     status: article.status,
     content: article.content,
     excerpt: article.excerpt,

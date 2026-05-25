@@ -25,6 +25,8 @@ export interface SEOData {
 
 export interface SEOOptions {
   robots?: "noindex,nofollow" | "index,follow";
+  /** Pass siteUrl from `loadSiteUrl()` for DB-backed source of truth. Falls back to hardcoded www only as safety net. */
+  siteUrl?: string;
 }
 
 export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Metadata {
@@ -49,7 +51,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: SEOOptions): Me
   } = data;
 
   const fullTitle = title ? `${title} - ${siteName}` : siteName;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  const siteUrl = options?.siteUrl || "https://www.modonty.com";
   let canonicalUrl: string;
   if (!url) {
     canonicalUrl = siteUrl;

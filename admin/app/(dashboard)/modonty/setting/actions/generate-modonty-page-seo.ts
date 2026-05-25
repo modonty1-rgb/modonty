@@ -55,7 +55,7 @@ export async function generateModontyPageSEO(slug: string) {
 
     if (!page) return { success: false, error: `"${slug}" page has no content yet — go to Modonty Pages and add content before generating SEO` };
 
-    const siteUrl = (settings.siteUrl?.trim() || "https://modonty.com").replace(/\/$/, "");
+    const siteUrl = (settings.siteUrl?.trim() || "https://www.modonty.com").replace(/\/$/, "");
     const existingMeta = (page.metaTags ?? {}) as Record<string, unknown>;
     const defaultAuthorString = singletonAuthor
       ? (singletonAuthor.name ?? ([singletonAuthor.firstName, singletonAuthor.lastName].filter(Boolean).join(" ").trim() || ""))
@@ -177,7 +177,7 @@ export async function generateModontyPageSEO(slug: string) {
     revalidatePath("/modonty/pages", "layout");
     const pageConfig = getPageConfig(slug);
     if (pageConfig?.modontyPath) {
-      const modontyUrl = settings.siteUrl?.trim() || "https://modonty.com";
+      const modontyUrl = settings.siteUrl?.trim() || "https://www.modonty.com";
       if (modontyUrl) {
         fetch(
           `${modontyUrl}/api/revalidate?path=${pageConfig.modontyPath}&secret=${process.env.REVALIDATE_SECRET}`,

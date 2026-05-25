@@ -23,20 +23,21 @@ interface ClientSEOValidationSectionProps {
   formData: Record<string, unknown>;
   clientId?: string;
   mode?: 'new' | 'edit';
+  /** Site base URL passed from server parent (single source of truth via loadSiteUrl). */
+  siteUrl: string;
 }
 
-export function ClientSEOValidationSection({ 
-  formData, 
-  clientId, 
-  mode = 'new' 
+export function ClientSEOValidationSection({
+  formData,
+  clientId,
+  mode = 'new',
+  siteUrl,
 }: ClientSEOValidationSectionProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [validationReport, setValidationReport] = useState<ValidationReport | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [jsonLd, setJsonLd] = useState<object | null>(null);
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
 
   // Generate JSON-LD preview from form data (live from context, new and edit)
   useEffect(() => {

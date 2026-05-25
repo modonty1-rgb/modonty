@@ -12,7 +12,8 @@ import {
   type IndexingResult,
 } from "@/lib/gsc/indexing";
 import { bulkInspect } from "@/lib/gsc/inspection-cache";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { loadSiteUrl } from "@/lib/seo/site-url";
+import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 
 interface ActionResponse {
   ok: boolean;
@@ -95,7 +96,8 @@ export async function bulkInspectAction(
         where: { status: "PUBLISHED" },
         select: { slug: true },
       });
-      urls = articles.map((a) => `${SITE_BASE_URL}/articles/${a.slug}`);
+      const siteUrl = await loadSiteUrl();
+      urls = articles.map((a) => buildArticleUrlFromBase(a.slug, siteUrl));
     }
     if (urls.length === 0) return { ok: true, inspectedCount: 0, errorCount: 0, errors: [] };
     if (urls.length > 200) {

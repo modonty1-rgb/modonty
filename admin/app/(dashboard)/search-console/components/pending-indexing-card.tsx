@@ -4,7 +4,7 @@ import { Zap, ExternalLink, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 
 import type { PublishedArticleRef } from "@/lib/gsc/coverage";
 import type { ManualTrackState } from "../actions/removal-tracking-actions";
@@ -17,6 +17,8 @@ interface Props {
   requestStates: Map<string, ManualTrackState>;
   /** Latest URL Inspection cache (Google's view). Keyed by URL. */
   inspections: Map<string, InspectionRecord>;
+  /** Base site URL from Settings.siteUrl (passed by server parent — single source of truth). */
+  siteUrl: string;
 }
 
 function formatRelativeDays(date: Date | null): string {
@@ -81,10 +83,10 @@ function GoogleStatusBadge({ inspection }: { inspection: InspectionRecord | null
   );
 }
 
-export function PendingIndexingCard({ pendingIndexing, requestStates, inspections }: Props) {
+export function PendingIndexingCard({ pendingIndexing, requestStates, inspections, siteUrl }: Props) {
   const total = pendingIndexing.length;
   const requestedCount = pendingIndexing.filter((a) =>
-    requestStates.has(`${SITE_BASE_URL}/articles/${a.slug}`),
+    requestStates.has(buildArticleUrlFromBase(a.slug, siteUrl)),
   ).length;
 
   return (
@@ -137,7 +139,7 @@ export function PendingIndexingCard({ pendingIndexing, requestStates, inspection
                 </thead>
                 <tbody className="divide-y">
                   {pendingIndexing.map((article, i) => {
-                    const url = `${SITE_BASE_URL}/articles/${article.slug}`;
+                    const url = buildArticleUrlFromBase(article.slug, siteUrl);
                     const reqState = requestStates.get(url) ?? null;
                     const inspection = inspections.get(url) ?? null;
                     return (

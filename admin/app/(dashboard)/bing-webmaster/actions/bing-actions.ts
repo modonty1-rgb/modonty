@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { submitToIndexNow, type IndexNowResult } from "@/lib/indexnow";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildSitemapUrl } from "@/lib/seo/url-builders";
 
 async function requireAuth() {
   const session = await auth();
@@ -25,7 +25,7 @@ export async function submitAllToIndexNowAction(): Promise<IndexNowActionRespons
   try {
     await requireAuth();
 
-    const sitemapUrl = `${SITE_BASE_URL.replace(/\/$/, "")}/sitemap.xml`;
+    const sitemapUrl = await buildSitemapUrl();
     const res = await fetch(sitemapUrl, { cache: "no-store" });
     if (!res.ok) {
       return { ok: false, error: `Failed to fetch sitemap: HTTP ${res.status}` };

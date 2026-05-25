@@ -21,7 +21,8 @@ function getPageUrl(
   identifier: string,
   baseUrl?: string
 ): string {
-  const siteUrl = baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  // Callers should pass baseUrl from `loadSiteUrl()`. Hardcoded fallback only as safety net.
+  const siteUrl = baseUrl || "https://www.modonty.com";
   
   switch (pageType) {
     case "article":

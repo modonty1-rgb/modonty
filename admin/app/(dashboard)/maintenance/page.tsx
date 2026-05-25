@@ -8,6 +8,7 @@ import { getDuplicateSlugs } from "@/app/(dashboard)/database/actions/duplicate-
 import { getJsonLdIntegrityStats } from "@/app/(dashboard)/database/actions/jsonld-integrity";
 import { getCanonicalUrlSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-url-sanitizer";
 import { getLegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
+import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { MaintenancePageShell } from "./components/maintenance-page-shell";
 
 export default async function MaintenancePage() {
@@ -22,6 +23,7 @@ export default async function MaintenancePage() {
     jsonLdIntegrity,
     canonicalSanitizer,
     legalFormSanitizer,
+    siteUrlDrift,
   ] = await Promise.all([
     getOrphanStats(),
     getIndexHealth(),
@@ -33,6 +35,7 @@ export default async function MaintenancePage() {
     getJsonLdIntegrityStats(),
     getCanonicalUrlSanitizerStats(),
     getLegalFormSanitizerStats(),
+    getSiteUrlDriftStatus(),
   ]);
 
   return (
@@ -47,6 +50,7 @@ export default async function MaintenancePage() {
       jsonLdIntegrity={jsonLdIntegrity}
       canonicalSanitizer={canonicalSanitizer}
       legalFormSanitizer={legalFormSanitizer}
+      siteUrlDrift={siteUrlDrift}
     />
   );
 }

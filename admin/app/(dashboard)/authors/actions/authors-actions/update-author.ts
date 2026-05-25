@@ -92,7 +92,7 @@ export async function updateAuthor(
 
     // Cache author SEO data — read ALL settings for Organization data
     const settings = await getAllSettings();
-    const siteUrl = settings.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+    const siteUrl = settings.siteUrl || "https://www.modonty.com";
     const authorUrl = d.canonicalUrl || d.url || `${siteUrl}/authors/${d.slug}`;
 
     // Build social profiles array

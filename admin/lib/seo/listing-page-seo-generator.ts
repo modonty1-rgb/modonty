@@ -16,7 +16,8 @@ import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-acti
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
-  return (settings?.siteUrl as string) || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com";
+  // Caller fetches settings via getAllSettings() (DB-backed). Hardcoded fallback only as safety net.
+  return (settings?.siteUrl as string) || "https://www.modonty.com";
 }
 
 function getSiteName(settings: Record<string, unknown>): string {

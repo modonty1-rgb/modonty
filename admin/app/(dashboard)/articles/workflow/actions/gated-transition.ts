@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
@@ -102,11 +102,12 @@ export async function gatedTransitionAction(
     if (!article) return { success: false, error: "Article not found after re-fetch" };
 
     // Step 3 — Run the 28-check validator.
+    const articleUrl = await buildArticleUrl(article.slug);
     const validation = validateArticleFromDb({
       id: article.id,
       slug: article.slug,
       title: article.title,
-      url: `${SITE_BASE_URL}/articles/${article.slug}`,
+      url: articleUrl,
       status: article.status,
       content: article.content,
       excerpt: article.excerpt,

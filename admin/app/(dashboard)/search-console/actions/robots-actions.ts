@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { SITE_BASE_URL } from "@/lib/gsc/client";
+import { buildRobotsUrl } from "@/lib/seo/url-builders";
 
 interface RobotsResponse {
   ok: boolean;
@@ -21,7 +21,7 @@ async function requireAuth() {
 export async function fetchRobotsTxtAction(): Promise<RobotsResponse> {
   try {
     await requireAuth();
-    const url = `${SITE_BASE_URL}/robots.txt`;
+    const url = await buildRobotsUrl();
     const res = await fetch(url, { cache: "no-store" });
     const content = await res.text();
     return {

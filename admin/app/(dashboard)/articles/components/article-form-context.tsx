@@ -96,6 +96,10 @@ interface ArticleFormContextType {
 
   // DB snapshot for MetaTag & JSON-LD tab (edit only)
   dbMetaAndJsonLd: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
+
+  // Site base URL (from Settings.siteUrl via loadSiteUrl) — passed by server parent.
+  // Single source of truth for canonical URL previews + builds inside client steps.
+  siteUrl: string;
 }
 
 const ArticleFormContext = createContext<ArticleFormContextType | undefined>(undefined);
@@ -120,6 +124,8 @@ interface ArticleFormProviderProps {
   tags: Array<{ id: string; name: string; slug: string }>;
   articleId?: string;
   dbMetaAndJsonLd?: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
+  /** Site base URL fetched once on the server via loadSiteUrl(). Required — no env fallback. */
+  siteUrl: string;
 }
 
 const initialFormData: ArticleFormData = {
@@ -230,6 +236,7 @@ export function ArticleFormProvider({
   authors,
   tags,
   articleId,
+  siteUrl,
 }: ArticleFormProviderProps) {
   const dbMetaAndJsonLd = dbMetaAndJsonLdProp ?? { nextjsMetadata: null, jsonLdStructuredData: null };
   const mode: 'new' | 'edit' = articleId ? 'edit' : 'new';
@@ -457,7 +464,7 @@ export function ArticleFormProvider({
     if (formData.slug && !formData.canonicalUrl) {
       const selectedClient = clients.find((c) => c.id === formData.clientId);
       const clientSlug = selectedClient?.slug;
-      const canonicalUrl = generateCanonicalUrl(formData.slug, undefined, clientSlug);
+      const canonicalUrl = generateCanonicalUrl(formData.slug, siteUrl, clientSlug);
       if (canonicalUrl) {
         setFormData((prev) => ({ ...prev, canonicalUrl }));
       }
@@ -561,6 +568,7 @@ export function ArticleFormProvider({
     overallProgress,
     seoScore,
     dbMetaAndJsonLd,
+    siteUrl,
   };
 
   return (

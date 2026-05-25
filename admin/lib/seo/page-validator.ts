@@ -30,7 +30,8 @@ export async function validateFullPage(
   options?: ValidationOptions
 ): Promise<FullPageValidationResult> {
   const timestamp = new Date().toISOString();
-  const baseUrl = options?.baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const { loadSiteUrl } = await import("./site-url");
+  const baseUrl = options?.baseUrl || (await loadSiteUrl());
 
   try {
     // Step 1: Render page to HTML

@@ -11,6 +11,8 @@ import type { DuplicateSlugStats } from "@/app/(dashboard)/database/actions/dupl
 import type { JsonLdIntegrityStats } from "@/app/(dashboard)/database/actions/jsonld-integrity";
 import type { CanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-url-sanitizer";
 import type { LegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
+import type { SiteUrlDriftStatus } from "@/lib/seo/site-url";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface Props {
   orphans: OrphanStats;
@@ -23,6 +25,7 @@ interface Props {
   jsonLdIntegrity: JsonLdIntegrityStats;
   canonicalSanitizer: CanonicalSanitizerStats;
   legalFormSanitizer: LegalFormSanitizerStats;
+  siteUrlDrift: SiteUrlDriftStatus;
 }
 
 function computeToolStatuses(props: Props) {
@@ -76,6 +79,9 @@ export function MaintenancePageShell(props: Props) {
 
       <AutoMaintenancePanel attentionCount={autoFixable} />
 
+      {/* Site URL Drift Detection — manual-fix banner (env mismatch requires Vercel redeploy) */}
+      <SiteUrlDriftCard status={props.siteUrlDrift} />
+
       <DbToolsSection
         orphans={props.orphans}
         indexHealth={props.indexHealth}
@@ -87,6 +93,48 @@ export function MaintenancePageShell(props: Props) {
         canonicalSanitizer={props.canonicalSanitizer}
         legalFormSanitizer={props.legalFormSanitizer}
       />
+    </div>
+  );
+}
+
+function SiteUrlDriftCard({ status }: { status: SiteUrlDriftStatus }) {
+  // When in sync: subtle green card. When drift: bold amber/red card.
+  if (status.hasDrift) {
+    return (
+      <div className="rounded-lg border-2 border-amber-500/40 bg-amber-500/5 p-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-1.5 min-w-0">
+            <h3 className="text-sm font-bold text-amber-700 dark:text-amber-400">
+              ⚠️ Site URL drift — DB ≠ Vercel env
+            </h3>
+            <p className="text-xs text-foreground/80">{status.message}</p>
+            <dl className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+              <div>
+                <dt className="text-muted-foreground font-medium uppercase tracking-wide">DB (Settings.siteUrl)</dt>
+                <dd className="font-mono text-emerald-700 dark:text-emerald-400 break-all">{status.dbValue ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium uppercase tracking-wide">env (NEXT_PUBLIC_SITE_URL)</dt>
+                <dd className="font-mono text-red-600 dark:text-red-400 break-all">{status.envValue ?? "—"}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // No drift — compact confirmation
+  return (
+    <div className="rounded-lg border bg-card p-3">
+      <div className="flex items-center gap-2 text-xs">
+        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+        <span className="font-medium">Site URL sync:</span>
+        <span className="text-muted-foreground">DB + env match</span>
+        <code className="ms-auto font-mono text-[10px] text-emerald-700 dark:text-emerald-400 truncate">
+          {status.dbValue || status.envValue || "—"}
+        </code>
+      </div>
     </div>
   );
 }

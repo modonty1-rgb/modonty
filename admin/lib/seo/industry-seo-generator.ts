@@ -113,7 +113,7 @@ export async function buildIndustryJsonLd(industry: IndustryData, s: SeoSettings
 async function resolveSettings(): Promise<SeoSettings> {
   const settings = await getAllSettings();
   return {
-    siteUrl: settings.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://modonty.com",
+    siteUrl: settings.siteUrl || "https://www.modonty.com",
     siteName: settings.siteName || "Modonty",
     inLanguage: settings.inLanguage || "ar",
     ogLocale: settings.defaultOgLocale || "ar_SA",

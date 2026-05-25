@@ -13,13 +13,13 @@ import {
 } from '@/components/ui/table';
 
 export function SocialSection() {
-  const { formData, categories, clients, tags } = useArticleForm();
+  const { formData, categories, clients, tags, siteUrl } = useArticleForm();
 
   const selectedClient = clients.find((c) => c.id === formData.clientId);
   const selectedCategory = categories.find((c) => c.id === formData.categoryId);
   const tagNames = (formData.tags?.length ? tags.filter((t) => formData.tags?.includes(t.id)).map((t) => t.name) : []) || [];
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://modonty.com';
+
   const ogUrlDisplay = formData.canonicalUrl
     ? (formData.canonicalUrl.startsWith('http') ? formData.canonicalUrl : `${siteUrl}${formData.canonicalUrl.startsWith('/') ? formData.canonicalUrl : `/${formData.canonicalUrl}`}`)
     : `${siteUrl}/articles/${formData.slug || '…'}`;
