@@ -222,6 +222,9 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         ogArticleAuthor: data.ogArticleAuthor || null,
         ogArticlePublishedTime: existingArticle.ogArticlePublishedTime,
         ogArticleModifiedTime: new Date(),
+        // dateModified must update on every edit so Google's lastmod reflects reality.
+        // Otherwise sitemap.ts falls back to datePublished → Google never recrawls after edits.
+        dateModified: new Date(),
         canonicalUrl,
         breadcrumbPath: JSON.parse(JSON.stringify(breadcrumbPath)) as Prisma.InputJsonValue,
         semanticKeywords:

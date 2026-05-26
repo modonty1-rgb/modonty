@@ -1,4 +1,4 @@
-# Session Context — Last Updated: 2026-05-26 (admin v0.62.0 LIVE on PROD `6e44a98` · Settings singleton FIX VERIFIED 100% IN DEV after BSON-missing-field discovery · 40-parallel-req stress test passed · v0.63.0 NOT yet committed — awaits PROD migration via raw MongoDB + manual unique index + Khalid's push approval)
+# Session Context — Last Updated: 2026-05-26 (admin v0.63.0 LIVE on PROD `6b48f9e` · Settings singleton FULLY CLOSED on DEV + PROD · unique index enforced at MongoDB level on both DBs · 25 PROD JSON-LDs + 34 canonical URLs auto-fixed · failing articles 15/15 = HTTP 200 · all tools healthy)
 
 ## Session: 2026-05-26 (evening — addendum after `us>` reset)
 

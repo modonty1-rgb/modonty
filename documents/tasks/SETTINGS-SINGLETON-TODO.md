@@ -1,7 +1,24 @@
 # Settings Singleton — Race Condition Permanent Fix
 
-> **Last Updated:** 2026-05-26 (post-stress-test fix)
-> **Status:** DEV 100% VERIFIED · 40 parallel reqs → 1 doc · awaiting PROD migration strategy decision
+> **Last Updated:** 2026-05-26 (PROD MIGRATION COMPLETE)
+> **Status:** ✅ FULLY CLOSED on both DEV + PROD · v0.63.0 LIVE · unique index enforced at MongoDB level · E11000 verified blocks duplicates · all maintenance tools clean
+
+## ✅ PROD MIGRATION COMPLETE (2026-05-26 evening)
+
+Sequence executed:
+1. **Backfill ran on PROD** (`backfill-singleton-key.ts`):
+   - Found 2 docs (historical race from initial seed)
+   - Deleted Doc-2 (`...0d746f`)
+   - Doc-1 already had `singletonKey="global"` stored in BSON — the v0.63.0 self-heal via `$runCommandRaw` had written it automatically during Run-All-Maintenance from admin UI earlier
+2. **Unique index created** (`create-singleton-unique-index.ts` — new script, raw MongoDB driver, no Prisma — preserves TTL indexes):
+   - `settings_singletonKey_key` on `{singletonKey: 1}` unique
+3. **Final verification** (`debug-singleton-index.ts`):
+   - 1 doc · BSON field stored · unique index enforced · direct insert with duplicate singletonKey blocked by E11000
+4. **Live test on PROD admin** (`/maintenance`):
+   - Drift card: green "DB + env match · https://www.modonty.com"
+   - All 9 tools healthy, 0 attention
+   - 25 JSON-LD entries regenerated + 34 canonical URLs sanitized
+5. **PROD article verification**: 3 failing articles × 5 hammer tests each = 15/15 HTTP 200, canonical+og:url+JSON-LD all use www
 
 ## ⚡ CRITICAL DISCOVERY (post-cleanup stress test)
 

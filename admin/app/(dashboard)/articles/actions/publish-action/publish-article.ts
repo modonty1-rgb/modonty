@@ -146,6 +146,7 @@ export async function publishArticle(
       data: {
         status: ArticleStatus.PUBLISHED,
         datePublished: formData.datePublished || now,
+        dateModified: now,
         ogArticlePublishedTime: formData.datePublished || now,
         ogArticleModifiedTime: now,
       },

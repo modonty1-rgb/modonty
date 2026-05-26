@@ -118,6 +118,7 @@ export async function publishArticleById(
       data: {
         status: ArticleStatus.PUBLISHED,
         datePublished: article.datePublished || now,
+        dateModified: now,
         ogArticlePublishedTime: article.ogArticlePublishedTime || now,
         ogArticleModifiedTime: now,
       },
