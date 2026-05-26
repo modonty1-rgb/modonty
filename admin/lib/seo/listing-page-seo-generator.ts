@@ -13,6 +13,7 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
+import { ensureSettingsId } from "@/lib/settings/settings-singleton";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 function getSiteUrl(settings: Record<string, unknown>): string {
@@ -113,11 +114,10 @@ async function updateSettingsPageCache(
   metadata: object,
   jsonLd: object,
 ) {
-  const settings = await db.settings.findFirst({ select: { id: true } });
-  if (!settings) return;
+  const id = await ensureSettingsId();
 
   await db.settings.update({
-    where: { id: settings.id },
+    where: { id },
     data: {
       [metaTagsField]: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
       [jsonLdField]: JSON.stringify(jsonLd),
@@ -389,11 +389,10 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     const jsonLd = { "@context": "https://schema.org", "@graph": [webSite, org, webPage] };
 
     // Save to Settings
-    const settingsRecord = await db.settings.findFirst({ select: { id: true } });
-    if (!settingsRecord) return { success: false, error: "No Settings record" };
+    const id = await ensureSettingsId();
 
     await db.settings.update({
-      where: { id: settingsRecord.id },
+      where: { id },
       data: {
         homeMetaTags: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
         jsonLdStructuredData: JSON.stringify(jsonLd),

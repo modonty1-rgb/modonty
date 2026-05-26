@@ -2,6 +2,7 @@
 
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export type SocialLink = {
   key: string;
@@ -23,7 +24,8 @@ export async function getPlatformSocialLinks(): Promise<SocialLink[]> {
   cacheTag("settings");
   cacheLife("hours");
 
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       facebookUrl: true,
       linkedInUrl: true,

@@ -1,5 +1,6 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export type ArticleDefaultsFromSettings = {
   inLanguage: string;
@@ -24,7 +25,7 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
   "use cache";
   cacheTag("settings");
   cacheLife("hours");
-  const settings = await db.settings.findFirst();
+  const settings = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE });
   if (!settings) {
     return {
       inLanguage: "ar",

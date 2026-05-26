@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Newspaper, FilePlus2, FileEdit, CalendarClock, ExternalLink, ArrowLeft, Sparkles } from "lucide-react";
@@ -36,7 +37,7 @@ export default async function ContentPage() {
     }),
     getMonthlyArticleCount(clientId),
     getContentOverview(clientId),
-    db.settings.findFirst({ select: { siteUrl: true } }),
+    db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true } }),
   ]);
 
   if (!client) return null;

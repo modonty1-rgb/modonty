@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export interface FaqPageSeo {
   metadata: Metadata | null;
@@ -8,7 +9,8 @@ export interface FaqPageSeo {
 
 // Read cached Metadata + JSON-LD for the FAQ page from Settings (SOT).
 export async function getFaqPageSeo(): Promise<FaqPageSeo> {
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       faqPageMetaTags: true,
       faqPageJsonLdStructuredData: true,

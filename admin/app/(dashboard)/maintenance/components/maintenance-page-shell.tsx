@@ -98,7 +98,6 @@ export function MaintenancePageShell(props: Props) {
 }
 
 function SiteUrlDriftCard({ status }: { status: SiteUrlDriftStatus }) {
-  // When in sync: subtle green card. When drift: bold amber/red card.
   if (status.hasDrift) {
     return (
       <div className="rounded-lg border-2 border-amber-500/40 bg-amber-500/5 p-4">
@@ -124,7 +123,6 @@ function SiteUrlDriftCard({ status }: { status: SiteUrlDriftStatus }) {
       </div>
     );
   }
-  // No drift — compact confirmation
   return (
     <div className="rounded-lg border bg-card p-3">
       <div className="flex items-center gap-2 text-xs">

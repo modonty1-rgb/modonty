@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { ensureSettingsId } from "@/lib/settings/settings-singleton";
 
 /**
  * Technical defaults — fixed values based on official sources.
@@ -77,12 +78,10 @@ const TECHNICAL_DEFAULTS: Record<string, unknown> = {
 export async function applyTechnicalDefaults(): Promise<{ success: boolean; updated: number; error?: string }> {
   try {
     const allDefaults = { ...SEO_RULES, ...TECHNICAL_DEFAULTS, ...BUSINESS_DEFAULTS };
-    const settings = await db.settings.findFirst();
-
+    const id = await ensureSettingsId();
+    const settings = await db.settings.findUnique({ where: { id } });
     if (!settings) {
-      await db.settings.create({ data: allDefaults });
-      revalidatePath("/settings");
-      return { success: true, updated: Object.keys(allDefaults).length };
+      return { success: false, updated: 0, error: "Settings singleton missing after ensure — should never happen" };
     }
 
     const updates: Record<string, unknown> = {};
@@ -98,7 +97,7 @@ export async function applyTechnicalDefaults(): Promise<{ success: boolean; upda
     }
 
     await db.settings.update({
-      where: { id: settings.id },
+      where: { id },
       data: updates,
     });
 

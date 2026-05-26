@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 const HARDCODED_FALLBACK = "https://www.modonty.com";
 
@@ -19,7 +20,7 @@ const HARDCODED_FALLBACK = "https://www.modonty.com";
  */
 export async function loadSiteUrl(): Promise<string> {
   try {
-    const settings = await db.settings.findFirst({ select: { siteUrl: true } });
+    const settings = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true } });
     const dbValue = settings?.siteUrl?.trim();
     if (dbValue) {
       const envValue = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -61,7 +62,7 @@ export async function getSiteUrlDriftStatus(): Promise<SiteUrlDriftStatus> {
   const envValue = process.env.NEXT_PUBLIC_SITE_URL?.trim() || null;
   let dbValue: string | null = null;
   try {
-    const settings = await db.settings.findFirst({ select: { siteUrl: true } });
+    const settings = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true } });
     dbValue = settings?.siteUrl?.trim() || null;
   } catch {
     return {

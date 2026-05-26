@@ -7,6 +7,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import type { Prisma } from "@prisma/client";
 import { cascadeSettingsToAllEntities } from "./cascade-all-seo";
+import { SETTINGS_SINGLETON_WHERE, ensureSettingsId } from "@/lib/settings/settings-singleton";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type JsonValue = Prisma.InputJsonValue | any;
@@ -339,14 +340,17 @@ export async function getSEOSettings(): Promise<SEOSettings> {
 
 export async function getAllSettings(): Promise<AllSettings> {
   try {
-    // Use findFirst for singleton pattern (only one settings record)
-    const settings = await db.settings.findFirst();
+    let settings = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE });
 
     if (!settings) {
-      // Create default settings if none exist
-      const newSettings = await db.settings.create({
-        data: DEFAULT_SETTINGS as unknown as Prisma.SettingsCreateInput,
+      // Singleton missing — ensureSettingsId handles legacy migration + atomic create.
+      await ensureSettingsId();
+      const seeded = await db.settings.upsert({
+        where: SETTINGS_SINGLETON_WHERE,
+        update: {},
+        create: DEFAULT_SETTINGS as unknown as Prisma.SettingsCreateInput,
       });
+      const newSettings = seeded;
       return {
         seoTitleMin: newSettings.seoTitleMin,
         seoTitleMax: newSettings.seoTitleMax,
@@ -608,10 +612,7 @@ export async function getAllSettings(): Promise<AllSettings> {
 }
 
 async function ensureSettingsExists(): Promise<string> {
-  const existing = await db.settings.findFirst();
-  if (existing) return existing.id;
-  const created = await db.settings.create({ data: DEFAULT_SETTINGS as unknown as Prisma.SettingsCreateInput });
-  return created.id;
+  return ensureSettingsId();
 }
 
 export async function saveSEOSettings(data: Partial<SEOSettings>): Promise<{ success: boolean; error?: string }> {
@@ -856,12 +857,11 @@ export async function updateSEOSettings(data: Partial<SEOSettings>) {
 
 export async function updateAllSettings(data: Partial<AllSettings>) {
   try {
-    // Check if settings exist
-    const existing = await db.settings.findFirst();
-    
+    // Atomic singleton resolution — creates if missing, returns id.
+    const id = await ensureSettingsId();
+
     let settings;
-    if (existing) {
-      const id = existing.id;
+    {
       await db.settings.update({
         where: { id },
         data: {
@@ -972,21 +972,6 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           trendingPageJsonLdLastGenerated: data.trendingPageJsonLdLastGenerated,
           trendingPageJsonLdValidationReport: data.trendingPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
         },
-      });
-    } else {
-      settings = await db.settings.create({
-        data: {
-          ...DEFAULT_SETTINGS,
-          ...data,
-          jsonLdValidationReport: (data.jsonLdValidationReport ?? null) as Prisma.InputJsonValue,
-          homeMetaTags: (data.homeMetaTags ?? null) as Prisma.InputJsonValue,
-          clientsPageMetaTags: (data.clientsPageMetaTags ?? null) as Prisma.InputJsonValue,
-          clientsPageJsonLdValidationReport: (data.clientsPageJsonLdValidationReport ?? null) as Prisma.InputJsonValue,
-          categoriesPageMetaTags: (data.categoriesPageMetaTags ?? null) as Prisma.InputJsonValue,
-          categoriesPageJsonLdValidationReport: (data.categoriesPageJsonLdValidationReport ?? null) as Prisma.InputJsonValue,
-          trendingPageMetaTags: (data.trendingPageMetaTags ?? null) as Prisma.InputJsonValue,
-          trendingPageJsonLdValidationReport: (data.trendingPageJsonLdValidationReport ?? null) as Prisma.InputJsonValue,
-        } as Prisma.SettingsCreateInput,
       });
     }
 

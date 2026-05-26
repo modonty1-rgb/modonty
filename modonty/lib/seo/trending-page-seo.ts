@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export interface TrendingPageSeo {
   metadata: Metadata | null;
@@ -9,7 +10,8 @@ export interface TrendingPageSeo {
 // Read cached Metadata + JSON-LD for the trending page from Settings (SOT).
 // Does not build or mutate SEO – it only reads what admin flows cached.
 export async function getTrendingPageSeo(): Promise<TrendingPageSeo> {
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       trendingPageMetaTags: true,
       trendingPageJsonLdStructuredData: true,

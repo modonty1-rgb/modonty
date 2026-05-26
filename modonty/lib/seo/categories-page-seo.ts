@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export interface CategoriesPageSeo {
   metadata: Metadata | null;
@@ -9,7 +10,8 @@ export interface CategoriesPageSeo {
 // Read cached Metadata + JSON-LD for the categories page from Settings (SOT).
 // Does not build or mutate SEO – it only reads what admin flows cached.
 export async function getCategoriesPageSeo(): Promise<CategoriesPageSeo> {
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       categoriesPageMetaTags: true,
       categoriesPageJsonLdStructuredData: true,

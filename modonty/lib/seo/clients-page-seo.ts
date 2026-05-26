@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 export interface ClientsPageSeo {
   metadata: Metadata | null;
@@ -9,7 +10,8 @@ export interface ClientsPageSeo {
 // Read cached Metadata + JSON-LD for the clients page from Settings (SOT).
 // Does not build or mutate SEO – it only reads what admin flows cached.
 export async function getClientsPageSeo(): Promise<ClientsPageSeo> {
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       clientsPageMetaTags: true,
       clientsPageJsonLdStructuredData: true,
@@ -44,7 +46,8 @@ export interface B2bPanelSettings {
 }
 
 export async function getB2bPanelSettings(): Promise<B2bPanelSettings> {
-  const settings = await db.settings.findFirst({
+  const settings = await db.settings.findUnique({
+    where: SETTINGS_SINGLETON_WHERE,
     select: {
       b2bLabel: true,
       b2bHeadline: true,

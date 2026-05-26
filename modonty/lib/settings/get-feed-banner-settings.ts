@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 
 interface FeedBannerSettings {
   platformTagline: string | null;
@@ -8,7 +9,7 @@ interface FeedBannerSettings {
 
 export const getFeedBannerSettings = unstable_cache(
   async (): Promise<FeedBannerSettings> => {
-    const settings = await db.settings.findFirst();
+    const settings = await db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE });
     if (!settings) return { platformTagline: null, platformDescription: null };
     const raw = settings as unknown as Record<string, unknown>;
     return {

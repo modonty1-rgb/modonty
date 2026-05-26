@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import {
   getPendingArticles,
   getPublishedArticles,
@@ -31,7 +32,7 @@ export default async function ArticlesPage({
       getPublishedArticles(clientId),
       getAllArticles(clientId),
       getPendingArticlesCount(clientId),
-      db.settings.findFirst({ select: { siteUrl: true } }),
+      db.settings.findUnique({ where: SETTINGS_SINGLETON_WHERE, select: { siteUrl: true } }),
     ]);
 
   const siteUrl = settings?.siteUrl ?? "";

@@ -1857,6 +1857,10 @@ model ArticleLinkClick {
 model Settings {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
+  // Singleton lock — guarantees only ONE Settings doc ever exists.
+  // All callers MUST use upsert({where: {singletonKey: "global"}}) — never findFirst+create.
+  singletonKey String @unique @default("global")
+
   // Cascade progress tracking (T1.8 — UI feedback for Save & Publish)
   cascadeStatus      String?   // "running" | "done" | "error" | null = idle
   cascadeProgress    Json?     // { total, completed, phase: "articles"|"clients"|"categories"|"tags"|"industries"|"listings" }

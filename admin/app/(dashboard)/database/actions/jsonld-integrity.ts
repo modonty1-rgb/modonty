@@ -40,6 +40,26 @@ function detectStaleHosts(cache: string, expectedSiteUrl: string | null): string
       const expectedHost = new URL(expectedSiteUrl).host;
       const insecure = `http://${expectedHost}`;
       if (cache.includes(insecure)) found.add(insecure);
+
+      // Host-mismatch detection — catches www vs non-www (and any other host drift).
+      // Matches the canonical-url-sanitizer policy: storedHost !== expectedHost = stale.
+      // Regex scans every absolute URL in the JSON cache and compares hosts.
+      const urlRe = /https?:\/\/([^\s"'/]+)/g;
+      let m: RegExpExecArray | null;
+      while ((m = urlRe.exec(cache)) !== null) {
+        const storedHost = m[1];
+        if (storedHost && storedHost !== expectedHost) {
+          // Ignore third-party hosts (Cloudinary, schema.org, etc.). Drift only matters
+          // when the stored host is a near-twin of expected (likely the site itself
+          // pointing at the wrong subdomain). Compare apex domain ignoring www.
+          const apexExpected = expectedHost.replace(/^www\./, "");
+          const apexStored = storedHost.replace(/^www\./, "");
+          if (apexExpected === apexStored) {
+            found.add(`host-mismatch:${storedHost} (expected ${expectedHost})`);
+            break; // one signal per cache entry is enough
+          }
+        }
+      }
     } catch {
       // ignore malformed siteUrl
     }

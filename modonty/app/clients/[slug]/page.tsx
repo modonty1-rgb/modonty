@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { getClientForMetadata } from "./helpers/client-metadata";
 import { getClientPageData } from "./helpers/client-page-data";
 import { getClientReviewsBySlug } from "./helpers/client-reviews";
@@ -62,7 +63,8 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         where: { slug: decodedSlug },
         select: { nextjsMetadata: true },
       }),
-      db.settings.findFirst({
+      db.settings.findUnique({
+        where: SETTINGS_SINGLETON_WHERE,
         select: { siteUrl: true },
       }),
     ]);
