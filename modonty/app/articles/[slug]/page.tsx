@@ -191,24 +191,10 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
   const slug = decodeURIComponent(rawSlug);
 
   try {
-    // RESILIENCE: each side-fetch fails open instead of crashing the whole page.
-    // Single transient cold-start failure (auth lib init, settings DB query) won't
-    // turn an indexable article into a 500 — Googlebot retries 500s and de-prioritizes
-    // those URLs. Only the article query itself remains hard-required (line 195).
-    // Each failure logs so Vercel runtime logs surface the actual cause.
     const [session, articleDefaults, platformSocialLinks] = await Promise.all([
-      auth().catch((err) => {
-        console.error(`[articles/${slug}] auth() failed — proceeding as anonymous:`, err);
-        return null;
-      }),
-      getArticleDefaultsFromSettings().catch((err) => {
-        console.error(`[articles/${slug}] getArticleDefaultsFromSettings failed — using empty defaults:`, err);
-        return {} as Awaited<ReturnType<typeof getArticleDefaultsFromSettings>>;
-      }),
-      getPlatformSocialLinks().catch((err) => {
-        console.error(`[articles/${slug}] getPlatformSocialLinks failed — proceeding with no social links:`, err);
-        return [];
-      }),
+      auth(),
+      getArticleDefaultsFromSettings(),
+      getPlatformSocialLinks(),
     ]);
     const userId = session?.user?.id;
 
@@ -222,8 +208,6 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
     // Fetch FAQs + related articles + pending FAQs server-side
     // → Q&A text + internal links appear in raw HTML (Googlebot + AI engines can read them)
-    // Each failure falls back to empty array — sidebar widgets degrade gracefully,
-    // main article content still renders + indexes.
     const [
       articleFaqsForJsonLd,
       relatedArticles,
@@ -231,20 +215,15 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       moreFromAuthor,
       pendingFaqs,
     ] = await Promise.all([
-      (articleRaw._count.faqs > 0 ? getArticleFaqs(articleRaw.id) : Promise.resolve([]))
-        .catch((err) => { console.error(`[articles/${slug}] getArticleFaqs failed:`, err); return []; }),
-      getRelatedArticlesByArticleId(articleRaw.id)
-        .catch((err) => { console.error(`[articles/${slug}] getRelatedArticlesByArticleId failed:`, err); return []; }),
-      (articleRaw.clientId
+      articleRaw._count.faqs > 0 ? getArticleFaqs(articleRaw.id) : Promise.resolve([]),
+      getRelatedArticlesByArticleId(articleRaw.id),
+      articleRaw.clientId
         ? getRelatedArticlesByClient(articleRaw.clientId, articleRaw.id)
-        : Promise.resolve([]))
-        .catch((err) => { console.error(`[articles/${slug}] getRelatedArticlesByClient failed:`, err); return []; }),
-      (articleRaw.authorId
+        : Promise.resolve([]),
+      articleRaw.authorId
         ? getRelatedArticlesByAuthor(articleRaw.authorId, articleRaw.id)
-        : Promise.resolve([]))
-        .catch((err) => { console.error(`[articles/${slug}] getRelatedArticlesByAuthor failed:`, err); return []; }),
-      (userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]))
-        .catch((err) => { console.error(`[articles/${slug}] getPendingFaqsForCurrentUser failed:`, err); return []; }),
+        : Promise.resolve([]),
+      userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
     ]);
 
     // Get cached JSON-LD from database (Phase 6)

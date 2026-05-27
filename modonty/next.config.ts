@@ -27,7 +27,14 @@ const nextConfig: NextConfig = {
       ],
     },
   ],
-  cacheComponents: true,
+  // cacheComponents: true,  // DISABLED 2026-05-27 — Next.js 16 PPR/Cache Components
+  // auto-generates `x-next-cache-tags` HTTP header that includes the dynamic route path.
+  // Arabic slugs (e.g. /articles/دليلك-الشامل-...) contain non-ASCII chars → throws
+  // `TypeError: Invalid character in header content` (ERR_INVALID_CHAR) on every request
+  // for articles NOT in build-time static prerender. Result: 100% 500 from origin for
+  // Arabic-slugged articles, Google reports "Page fetch: NOT_FOUND" in GSC.
+  // Trade-off: lose PPR streaming benefit (~ms latency); gain working Arabic article URLs.
+  // Re-enable when Next.js fixes auto-tag URL-encoding for non-ASCII routes.
   serverExternalPackages: ["cohere-ai"],
   images: {
     remotePatterns: [
