@@ -1,7 +1,37 @@
 # 🚨 CRITICAL TODO — مشاكل بانتظار حل لاحق
 
-> **آخر تحديث:** 2026-05-26
+> **آخر تحديث:** 2026-05-27
 > **الغرض:** مهام مهمة لكنها مؤجّلة الآن لوجود أولويات أعلى. لا تُحذف ولا تُهمل — كل واحدة تحتاج جلسة مخصّصة.
+
+---
+
+## CRIT-005 🔴 GUARDRAIL — `.env.shared` migration broke PROD silently for 4 weeks
+
+**الحالة:** ✅ مُحلَّل + مُصلَح في 2026-05-27 — لكن لازم guardrails دائمة
+**التاريخ:** المشكلة بدأت 2026-04-30 (commit `3d3ad5d`) واتكشفت 2026-05-26 عبر GSC reports
+
+### الحدث
+
+نقلتُ كل المتغيرات إلى `.env.shared` (gitignored). نسيت إضافة الـ 5 vars يدويًا على Vercel modonty. CDN cache غطّى المشكلة 4 أسابيع. كل المقالات الجديدة كانت ترجع 500 من الـ origin، Google صنّفها 404/5xx، de-indexing فعلي.
+
+### Guardrails المطلوبة (لازم تُنفَّذ قبل أي migration env مستقبلية)
+
+1. **Vercel env var diff script** — `pnpm vercel:env:diff` يقارن `.env.shared.example` ضد ما هو موجود فعليًا على Vercel projects (modonty/admin/console) ويصرخ على أي var ناقصة
+2. **Post-deploy smoke test** — بعد كل deploy، استدعاء غير مُكاش لـ `/api/health` يتأكد إن DB connection شغّال (يفشل CI/CD لو رجع 500)
+3. **CDN cache buster after env changes** — لما تتغير env vars في Vercel، لازم purge للـ CDN cache (مش بس redeploy)، عشان نكشف المشكلة فورًا مش بعد أسبوع لما الكاش ينتهي
+4. **next.config.ts: fail loud if `.env.shared` not found AND not on Vercel** — حاليًا `loadDotenv` يفشل بصمت. لازم throw error في dev mode لو الملف مش موجود
+5. **GSC URL Inspection daily cron** — تنبيه Telegram لو أي مقال جديد رجع verdict ≠ INDEXING_ALLOWED
+
+### Why: السبب الجذري للحدث
+
+- ملف بيلد config (`next.config.ts`) كان يقرأ من ملف gitignored
+- نسيت أنشر القيم على Vercel بعد النقل
+- النظام كله "بدا" شغّال لأن CDN cache غطّى المشكلة
+- الكشف الوحيد كان عبر Google (متأخر 4 أسابيع + خسارة فهرسة فعلية)
+
+### How to apply
+
+أي migration مستقبلي يلامس env vars لازم يمر بـ 5 الخطوات أعلاه قبل الاعتبار "complete". لا استثناءات.
 
 ---
 
