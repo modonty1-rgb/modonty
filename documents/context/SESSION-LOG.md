@@ -1,4 +1,50 @@
-# Session Context — Last Updated: 2026-05-27 (FROZEN by `us>` early morning · ENV FIX SHIPPED + FRESH BUILD DEPLOYED · 2 REMAINING BUGS DIAGNOSED BUT NOT FIXED: (1) intermittent 500 from origin on dynamic article rendering (cold-start failure, 3/5 reproduction rate), (2) Vercel URL normalizer corrupts Arabic ʾalif chars (أ إ آ) on raw URLs → 308 → 404 · NEEDS MORNING WORK WITH VERCEL DASHBOARD LOG ACCESS)
+# Session Context — Last Updated: 2026-05-27 16:25 (FULLY RESOLVED · root cause identified as Next.js 16 cacheComponents auto-tagging non-ASCII slugs → PR #93601 in next@16.3.0-canary.17 fixed it · upgraded modonty + verified 10/10 + GSC confirms "URL is available to Google" · GOLDEN RULE saved: discuss complex bugs WITH Khalid first, never solo-guess)
+
+## Session: 2026-05-27 (late afternoon) — ARABIC SLUG SAGA RESOLVED via Next.js canary.17 upgrade
+
+### 🎯 The actual fix (v1.49.0 — commit 6be6d28)
+- Pinned `next` from `^16.2.2` → `16.3.0-canary.17` in modonty/package.json (eslint-config-next same)
+- Contains PR #93601 (merged May 7 by Hendrik Liebau) — adds `encodeCacheTag()` helper in `packages/next/src/server/lib/encode-cache-tag.ts`
+- Applied to `implicit-tags.ts` which was injecting raw Arabic pathname into `x-next-cache-tags` HTTP header → ERR_INVALID_CHAR
+- Verified: 10/10 PASS on `/articles/دليلك-الشامل-...` (was 0/10 all day) · GSC Live Test confirms "URL is available to Google"
+
+### ❌ What failed earlier today (v1.48.3 → v1.48.8 — 5 hours wasted on solo guessing)
+- **v1.48.3** maxDuration + catch handlers — didn't help
+- **v1.48.4** disable cacheComponents globally — build failed (24 files need it)
+- **v1.48.5** force-dynamic — build failed (incompatible with cacheComponents)
+- **v1.48.6** `connection()` — BROKE PRERENDER for all articles, made site fully down
+- **v1.48.7** rollback connection — partial restore but still broken
+- **v1.48.8** replace unstable_cache in proxy with in-memory cache — didn't help
+
+### 🥇 KEY LESSON saved as memory rule
+- `feedback_discuss_complex_bugs_first.md` — for ANY complex framework/cache/infra bug: STOP, present findings, discuss with Khalid FIRST
+- 5 hours solo guessing accomplished nothing · 15 minutes thinking together found PR #93601
+- Khalid is 20+ years full-stack senior — his pattern recognition + experience is invaluable
+
+### 🔬 Research method that worked (do this from now on for hard bugs)
+1. Build a clean scientific isolation test (English-only article confirmed Arabic-specific failure)
+2. Launch 5 parallel agents covering: GitHub vercel/next.js · Stack Overflow + community · Vercel docs/Discord · i18n communities · Next.js source code
+3. One agent found exact bug report (#93142) + the fix PR (#93601) + verified file existence at canary.17
+
+### 📂 Files touched (this session)
+- `modonty/package.json` — version + next pin
+- `modonty/app/articles/[slug]/page.tsx` — clean state (all today's failed mods reverted)
+- `modonty/next.config.ts` — clean state (cacheComponents stays enabled)
+- `modonty/lib/archive-cache.ts` — kept the in-memory rewrite (no harm, no benefit)
+- `pnpm-lock.yaml` — updated for canary.17
+- `admin/scripts/add-changelog.ts` — v1.49.0 entry
+- `documents/tasks/ARABIC-SLUG-DECISION.md` — full decision history (NEW)
+- `documents/context/SESSION-LOG.md` — this entry
+
+### 🧹 Cleanup completed
+- Test article + category + author DELETED from PROD DB at 16:18
+- Test scripts (`test-cache-components-create.ts` + `test-cache-components-cleanup.ts`) removed from repo
+- Decision registry marked ✅ DELETED
+
+### 🚀 Follow-up (LOW priority)
+- When `next@16.2.7` ships stable → switch from canary pin
+- Manually use GSC "Request Indexing" for 17 articles that GSC marked 404 last week
+- Monitor GSC over next 48h for crawl improvement
 
 ## Session: 2026-05-27 — GSC 404/5xx FULLY RESOLVED — env-var root cause fixed end-to-end
 
