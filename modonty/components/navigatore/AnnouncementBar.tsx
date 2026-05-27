@@ -7,13 +7,17 @@ import { IconClose } from "@/lib/icons";
 const DISMISS_KEY = "modonty_announcement_v1";
 
 export function AnnouncementBar() {
-  const [visible, setVisible] = useState(false);
+  // Inverted from previous logic to eliminate CLS for first-time visitors:
+  // bar is rendered by default (in SSR HTML), only hides if the visitor previously
+  // dismissed it. The old `useState(false) → setVisible(true)` pushed all content
+  // down ~36px after hydration on mobile — major CLS contributor (PSI score 0.21).
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem(DISMISS_KEY)) setVisible(true);
+    if (localStorage.getItem(DISMISS_KEY)) setDismissed(true);
   }, []);
 
-  if (!visible) return null;
+  if (dismissed) return null;
 
   return (
     <div className="md:hidden w-full bg-accent text-white">
@@ -37,7 +41,7 @@ export function AnnouncementBar() {
         <button
           onClick={() => {
             localStorage.setItem(DISMISS_KEY, "1");
-            setVisible(false);
+            setDismissed(true);
           }}
           className="shrink-0 p-1 rounded-full hover:bg-white/20 transition-colors"
           aria-label="إغلاق الإعلان"

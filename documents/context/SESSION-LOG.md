@@ -1,4 +1,218 @@
-# Session Context — Last Updated: 2026-05-27 16:25 (FULLY RESOLVED · root cause identified as Next.js 16 cacheComponents auto-tagging non-ASCII slugs → PR #93601 in next@16.3.0-canary.17 fixed it · upgraded modonty + verified 10/10 + GSC confirms "URL is available to Google" · GOLDEN RULE saved: discuss complex bugs WITH Khalid first, never solo-guess)
+# Session Context — Last Updated: 2026-05-27 20:30 (FROZEN by `us>` · Publish workflow refactored to single-gate · Performance fixes for CLS+LCP regression · Mariam prompt v3→v4 · IndexNow executed for 20 articles · ALL CHANGES UNCOMMITTED — Playwright MCP needs reconnect before live test + push)
+
+## Session: 2026-05-27 (evening, 18:00 → 20:30) — Publish workflow refactor + Performance fixes (CLS/LCP)
+
+### 🎯 Where I stopped
+- **Last task in progress:** Live test via Playwright for BOTH publish refactor + perf fixes — BLOCKED: Playwright MCP server disconnected when user typed `pl>`.
+- **Next concrete action when resuming:** (1) Ensure Playwright MCP reconnects → (2) Resize to mobile (375x667) → (3) Navigate to http://localhost:3000/ → verify AnnouncementBar in initial HTML + no CLS shift → (4) Switch to admin port 3001 → login modonty@modonty.com / Modonty123! → open test article (id `69d4f72c769fbb50b610e3e8`) → verify NO status dropdown + badge text "لتغيير الحالة، استخدم Workflow" → open Workflow page → transition a draft article to PUBLISHED → verify IndexNow fires + revalidate → (5) version bump + changelog + backup → (6) push.
+
+### ✅ Done this session
+
+**Mariam audit cycle (3 reports read + acted on):**
+- audit #2 (18:01) — Score 78/100 (+17 from previous). All 5 fixes from audit #1 verified deployed: ERR_INVALID_CHAR fix, image-sitemap.xml HTTP 200, JSON-LD author.name inline, og:url www, lang="ar-SA". Mariam confirmed "No code changes needed this sprint."
+- audit #3 (18:49) — Score 72/100 (-6 regression). Performance dropped: LCP 5.4s, CLS 0.242. Pillar 6 GEO included this time. ChatGPT/Perplexity did NOT cite modonty for relevant queries (competitors cited instead).
+- PSI verification (19:48) — 3-run median revealed truth: LCP=3.3s (5.4 was outlier), CLS=0.242 (confirmed real regression in 3/3 runs). Mariam attributed CLS to `<footer>` (shift score 0.210, 87% of total).
+
+**Mariam prompt upgraded v3 → v4 in `documents/seo/PROMPT-COPY-PASTE.md`:**
+- v3 added `<completeness_contract>` (Mariam as execution engineer, not data collector) + strengthened pillar_2 (Request Indexing exhaustively) + hardened pillar_6 GEO with MANDATORY DELIVERABLES + `<closing_checklist_before_report>` (17 checkboxes).
+- v4 removed Vercel Dashboard from her tools (after she 404'd guessing `vercel.com/modonty/modonty-blog/logs`) + added `<tools_NOT_in_your_scope>` section listing Vercel/MongoDB/GitHub/admin panels with explicit alternatives via Handoff.
+
+**Performance regression — verified hypothesis via Context7 + code inspection (NOT Mariam's blame):**
+- Mariam thought hero image needed `priority` (WRONG — `PostCardHeroImage.tsx:62-63` already has `loading="eager" + fetchPriority="high"`)
+- Mariam thought GTM/Hotjar were render-blocking (WRONG — both `strategy="lazyOnload"` already)
+- Mariam thought images lacked width/height (WRONG — uses `fill`)
+- **TRUE culprit (Mariam was right on this one indirectly):** `AnnouncementBar.tsx` had classic `useState(false) → useEffect → setVisible(true)` pattern → bar appeared after hydration, pushed all content (including footer) down ~36px on mobile.
+
+**Performance fixes applied:**
+- `modonty/components/navigatore/AnnouncementBar.tsx` — INVERTED the visibility logic: default `dismissed=false` (bar visible in SSR HTML), `useEffect` reads localStorage and only sets `dismissed=true` for returning users. Result: new visitors (= PSI tester) see no shift.
+- `modonty/components/feed/FeedContainer.tsx` — added `<Suspense fallback={<InfiniteFeedSkeleton count={3} />}>` around `<CategoryFeedSection serverPosts={posts} />`. The Suspense had NO fallback before; `useSearchParams()` inside CategoryFeedSection caused suspend → empty area → CLS + LCP delay. Skeleton reserves card-shaped space.
+
+**Publish workflow refactor (workflow = ONLY publish path):**
+- DELETED `admin/app/api/articles/publish/route.ts` + its parent dir (was a dead API endpoint, no client called it)
+- DELETED `admin/app/(dashboard)/articles/actions/publish-action.ts` (barrel)
+- DELETED `admin/app/(dashboard)/articles/actions/publish-action/publish-article.ts` (function `publishArticle`)
+- DELETED `admin/app/(dashboard)/articles/actions/publish-action/publish-article-by-id.ts` (function `publishArticleById`, was already dead)
+- DELETED `admin/app/(dashboard)/articles/actions/publish-action/index.ts` (re-export barrel)
+- DELETED entire `admin/app/(dashboard)/articles/actions/publish-action/` directory
+- DELETED `admin/app/api/cron/publish-scheduled/route.ts` + parent dir (Khalid said he never uses it)
+- REMOVED `crons` array from `admin/vercel.json`
+- REMOVED `publishArticle()` method + `isPublishing` + `publishError` state from `admin/app/(dashboard)/articles/components/article-form-store.ts` (was dead — no UI button triggered it)
+- STRENGTHENED `admin/app/(dashboard)/articles/workflow/actions/transition-article.ts` — added (when toStatus===PUBLISHED): SEO score gate (MIN_SEO_SCORE=60), compliance check (`checkCompliance`), JSON-LD regen, metadata regen, IndexNow submission (`submitToIndexNow`), slug-specific `revalidatePath`. This is now the sole place where all PUBLISH side effects fire.
+- REMOVED status `<FormNativeSelect>` dropdown from `admin/app/(dashboard)/articles/components/sections/meta-section.tsx` — replaced with read-only `<Badge>` + Arabic text "لتغيير الحالة، استخدم شاشة Workflow". Removed imports: `FormNativeSelect`, `ArticleStatus`, `getAvailableStatuses`. Kept `updateField` (still used by featured checkbox).
+- Reverted my earlier broader status-change guard in `update-article.ts` per Khalid's explicit instruction: "no guard, just remove from UI". Restored the original `isValidTransition` check.
+
+**Mariam shortcut & identity saved to memory:**
+- New: `C:\Users\w2nad\.claude\projects\c--Users-w2nad-Desktop-dreamToApp-MODONTY\memory\project_mariam_identity.md` — full identity + tools + limits + meaning of "اديني لـ مريم" (= prepare paste-ready prompt for Chrome extension, do NOT execute myself).
+- Already existed: `feedback_check_audit_shortcut.md` (the "check audit" trigger).
+
+**Other side actions:**
+- IndexNow curl executed (HTTP 200) for 20 under-indexed articles → Bing/Yandex/Brave/Seznam notified.
+- New strategy doc created: `documents/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` (13 sections, 8 open questions for Khalid to study — proposes "Partner Doctor" program for compounding YMYL backlinks).
+
+**TSC state:**
+- admin app: ✅ zero NEW errors from my changes. 2 pre-existing errors (`use-client-media-modal.ts:30` + `use-client-form.ts:40` — TS2589 deep type instantiation in client hooks, unrelated to publish refactor). Verified after EACH phase via NODE_OPTIONS=--max-old-space-size=8192 pnpm tsc --noEmit.
+- modonty app: ✅ verified zero new errors after performance fixes (`AnnouncementBar.tsx` + `FeedContainer.tsx` edits).
+
+**Build state:** NOT RUN. Should run `pnpm build` for both before push.
+
+**Live test state:** NOT DONE — Playwright MCP server disconnected when `pl>` triggered.
+
+### 📝 Decisions taken (with reasoning)
+
+- **Delete the scheduled-publish cron entirely** (vs keeping it) → Khalid: "ما أحتاجه". Verified no orphan usage (only `vercel.json` referenced it; Workflow page handles SCHEDULED → PUBLISHED via manual transitions which still work via `transition-article.ts`).
+- **Workflow as the SOLE publish gate** (vs keeping multiple paths) → Khalid: "بس من الـ workflow بس من الـ workflow". Reason: single source of truth for SEO gates + IndexNow + revalidate. Cleaner than scattered guards.
+- **Remove status dropdown from form UI** (vs adding a server-side guard) → Khalid explicitly: "ما يحتاج تعمل guard. شيل الكود من الـ form تبع التعديل." → simpler: no guard logic, just no UI to trigger it. Server still has `isValidTransition` as defensive layer.
+- **Skip status-utils modification** (don't filter out PUBLISHED from `getAvailableStatuses()`) → would break the read-only Badge display for already-PUBLISHED articles. Kept the helper returning ALL statuses; only the dropdown UI was removed.
+- **Inverted AnnouncementBar logic** (vs SSR with cookie) → minimal-change fix. Cookie approach would require server-side rewrite + Server Action for dismiss button. Inverted state achieves zero CLS for fresh visitors (the PSI test scenario) with 4-line change.
+- **Reject OAuth setup for GSC Request Indexing** → Khalid: "لو ما حيديني full automation ما أحتاج". Verified honestly: OAuth wouldn't unlock Article Request Indexing (Google's official Indexing API only supports JobPosting + BroadcastEvent for non-JS). Mariam (browser session) remains the only path for Google Request Indexing on articles.
+- **PSI 3-run median before any code fix** → Khalid: "ما نخمن، ممكن؟" → verified with Mariam's PSI verification report (19:48) that LCP regression was real (3.3s median, not the 5.4s outlier from single run).
+
+### 🚧 Pending / blocked
+
+- **Live test (BLOCKED on Playwright MCP):** server disconnected; need user to reconnect Playwright MCP or restart Claude Code.
+- **Version bump:** `modonty/package.json` 1.49.2 → 1.49.3 (proposed). `admin/package.json` needs bump too (publish refactor + cron removal).
+- **Changelog entry:** `admin/scripts/add-changelog.ts` — needs entry documenting both apps' changes (workflow refactor + performance fixes).
+- **Backup:** `bash scripts/backup.sh` before push (Khalid's standing rule).
+- **Push:** only after live test passes — Khalid's strict rule.
+- **Tomorrow (after Google quota reset at midnight UTC):** Mariam Request Indexing for the 20 remaining under-indexed articles (audit #3 listed them all by URL).
+- **Strategy review:** Khalid to study `GROWTH-STRATEGY-PARTNER-BACKLINKS.md` and answer the 8 open questions (Partner Program design decisions).
+
+### 📂 Files touched this session
+
+**Created:**
+- `documents/seo/GROWTH-STRATEGY-PARTNER-BACKLINKS.md` — Partner backlinks growth strategy (13 sections, 8 open questions)
+- `C:\Users\w2nad\.claude\projects\.../memory/project_mariam_identity.md` — Mariam memory entry
+
+**Modified:**
+- `documents/seo/PROMPT-COPY-PASTE.md` — Mariam prompt v3 + v4 upgrades (completeness contract, GEO enforcement, closing checklist, Vercel scope removal)
+- `admin/vercel.json` — removed `crons` array
+- `admin/app/(dashboard)/articles/components/article-form-store.ts` — removed dead publishArticle method + state
+- `admin/app/(dashboard)/articles/components/sections/meta-section.tsx` — removed status dropdown, added read-only badge
+- `admin/app/(dashboard)/articles/workflow/actions/transition-article.ts` — strengthened to sole publish gate with full quality + side effects
+- `modonty/components/navigatore/AnnouncementBar.tsx` — inverted visibility logic
+- `modonty/components/feed/FeedContainer.tsx` — added Suspense skeleton fallback
+
+**Deleted:**
+- `admin/app/api/articles/publish/route.ts` (+ parent dir `admin/app/api/articles/publish/`)
+- `admin/app/api/cron/publish-scheduled/route.ts` (+ parent dirs `cron/publish-scheduled/` + `cron/`)
+- `admin/app/(dashboard)/articles/actions/publish-action.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/publish-article.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/publish-article-by-id.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/index.ts`
+- `admin/app/(dashboard)/articles/actions/publish-action/` directory itself
+
+### 🔁 Git / deploy state
+
+- **Branch:** main
+- **Uncommitted changes:** YES — substantial. All performance + workflow refactor + Mariam prompt v4 + strategy doc + Mariam memory.
+- **Last commit:** `75d9ad7 modonty v1.49.2: hreflang fix on homepage + IndexNow submitted for 7 stale 5xx URLs`
+- **Pushed:** NO
+- **Vercel/deploy:** No deploy triggered. Previous deploy (v1.49.2) confirmed working in Mariam audit #2.
+
+### 🚀 How to resume in 30 seconds
+
+1. Open project: `c:/Users/w2nad/Desktop/dreamToApp/MODONTY/`
+2. Verify Playwright MCP connected (Claude Code config — MCP server "playwright" must show ✅)
+3. Run live test sequence:
+   - Resize 375x667 → navigate http://localhost:3000/ → screenshot → check no AnnouncementBar shift
+   - Navigate http://localhost:3001/articles/69d4f72c769fbb50b610e3e8/edit → confirm no status dropdown, badge present
+   - Navigate http://localhost:3001/articles/workflow → click a transition button → verify IndexNow fires
+4. If live test passes: bump versions → run `cd admin && pnpm changelog` (after editing `scripts/add-changelog.ts`) → `bash scripts/backup.sh` → `git add -A && git commit` → ask Khalid for explicit "push" before `git push`
+5. Tomorrow morning: trigger Mariam with `audit modonty` to complete Request Indexing for the 20 remaining articles (quota resets at midnight UTC).
+
+### 🧠 Key context Khalid should remember
+
+- The CLS "footer shift" Mariam reported was actually the AnnouncementBar pushing content (PSI reports the element that moved, not the element that appeared).
+- IndexNow does NOT cover Google. Only Bing/Yandex/Brave/Seznam. Google still requires GSC Request Indexing (Mariam's browser session).
+- The 50/day GSC Request Indexing quota cannot be bought — it's standard from Google. The faster path to coverage is backlinks (hence the Partner Program proposal).
+- transition-article.ts is now the ONLY place where SEO score validation + IndexNow + revalidate happen on PUBLISHED. Any future publish-related changes must touch this file.
+
+---
+
+## Session: 2026-05-27 (afternoon-evening) — SEO Specialist agent "Mariam" — automation loop design
+
+### 🎯 What we built (after the morning's Arabic-slug saga resolved)
+Built a full system prompt for a Chrome-extension Claude instance to serve as **continuous SEO Specialist** for modonty.com — treated as a permanent employee, not a one-shot tool.
+
+### 📁 Files created
+- `documents/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` — full design doc (workflow, persona, output format, severity rubric)
+- `documents/seo/PROMPT-COPY-PASTE.md` — clean copy-paste-ready XML-tagged prompt for the Chrome extension Custom Instructions
+
+### 🤖 The agent (persona: "Mariam")
+- 10-year Technical SEO Specialist (Arabic-language Saudi/Egyptian market focus)
+- Permanent employee role (proactive, owns outcomes, doesn't wait to be asked)
+- Has full browser access (as if Khalid is using browser himself)
+- Acts as **operator** not just auditor — clicks Request Indexing, submits to IndexNow API, resubmits sitemaps, removes URLs, purges Vercel cache, etc.
+- Only hands off to VS Code Claude what requires CODE changes (next.config.ts, page.tsx, JSON-LD generators, DB schema)
+
+### 🔄 Automation loop (zero manual work for Khalid)
+```
+1. Khalid: "audit modonty" in Chrome extension
+2. Mariam audits 5 pillars (Crawlability → Indexing → Performance → Schema → AI Search) in GSC + live site
+3. Mariam fixes EVERYTHING she can herself (Request Indexing, IndexNow, sitemap submit, cache purge, Live Test verification)
+4. Mariam downloads structured markdown report to: C:\Users\w2nad\Downloads\modonty-seo-audit-YYYY-MM-DD-HHMM.md
+5. Khalid: "@VS-Code-Claude read latest audit and fix" → I glob the Downloads folder, read latest, fix code per handoff section, push, deploy
+6. Khalid: "Mariam re-audit" → loop closes with verification
+```
+
+### 📊 Output format (in audit report)
+- Score 0-100 (compared to last audit)
+- Per-pillar scores + trends
+- Critical/Important/Nice-to-have issues
+- Each issue: affected URLs (FULL list, no truncation) + root cause hypothesis + fix needed (in code OR self-fixed) + evidence + verification step
+- Self-fixes section (what Mariam did this run)
+- Handoff section for VS Code Claude (me)
+- Trends since last audit
+
+### 🥇 KEY ACHIEVEMENT TODAY (morning) — Arabic slug bug RESOLVED
+- v1.49.0 (commit 6be6d28): upgraded modonty next from ^16.2.2 → 16.3.0-canary.17 (exact pin)
+- Contains PR #93601 (merged May 7 by Hendrik Liebau) — `encodeCacheTag()` helper
+- Verified: 10/10 PASS on hamza-alif Arabic URL · GSC Live Test confirms "URL is available to Google" · 40/40 PASS across 5 search bots
+- 5 hours of solo guessing this morning (v1.48.3 → v1.48.8) accomplished nothing
+- 15 minutes of thinking WITH Khalid + 30 min of parallel agent research found the official fix
+
+### 🥇 GOLDEN RULE SAVED (memory)
+- File: `~/.claude/projects/...MODONTY/memory/feedback_discuss_complex_bugs_first.md`
+- Indexed at top of MEMORY.md
+- Rule: for complex framework/cache/infra bugs → STOP, discuss with Khalid FIRST, never solo-guess
+
+### 🎯 Where I stopped (end of session)
+- Mariam prompt finalized in `documents/seo/PROMPT-COPY-PASTE.md` — ready for Khalid to paste into Chrome extension
+- Next concrete action when resuming: Khalid pastes prompt + triggers first audit ("audit modonty") → first report appears in Downloads → VS Code Claude reads + acts
+
+### 🚧 Pending (low priority)
+- First Mariam audit run (waiting for Khalid to paste prompt + trigger)
+- When `next@16.2.7` ships stable: switch from canary pin
+- Optional: file Next.js GitHub issue (we have clean reproduction of bug #93142) — though already CLOSED, our evidence could be linked
+
+### 🚀 How to resume in 30 seconds
+1. Khalid pastes `documents/seo/PROMPT-COPY-PASTE.md` (block between `===` markers) into Chrome extension Custom Instructions
+2. Khalid sends: `audit modonty`
+3. Wait for `C:\Users\w2nad\Downloads\modonty-seo-audit-YYYY-MM-DD-HHMM.md` to appear
+4. Khalid pings VS Code Claude: "اقرأ آخر audit وصلح"
+5. VS Code Claude globs the Downloads folder, reads the audit, applies code fixes per handoff section
+
+### 📂 Files touched this afternoon
+- `modonty/package.json` — next 16.2.x → 16.3.0-canary.17 exact pin
+- `modonty/lib/archive-cache.ts` — clean (in-memory cache kept, no harm with the canary fix)
+- `modonty/app/articles/[slug]/page.tsx` — clean (all failed today's mods reverted)
+- `modonty/next.config.ts` — clean (cacheComponents still true)
+- `pnpm-lock.yaml` — updated for canary.17
+- `admin/scripts/add-changelog.ts` — v1.49.0 entry
+- `documents/seo/PROMPT-EXTENSION-SEO-AUDITOR.md` (NEW)
+- `documents/seo/PROMPT-COPY-PASTE.md` (NEW — copy-paste ready)
+- `documents/tasks/ARABIC-SLUG-DECISION.md` (NEW — full decision history)
+- `documents/context/SESSION-LOG.md` — this entry
+
+### 🔁 Git / deploy state
+- Branch: main · Last commit: 7d5fdea (docs cleanup, after 6be6d28 v1.49.0)
+- Uncommitted (intentional): SEO prompt files in `documents/seo/` — not yet committed because Khalid wanted to test the prompt first
+- Vercel modonty: READY on c7c3842? — check before resuming
+- Production status: ALL articles return 200 (verified via 40/40 search bot test)
+
+---
+
+
 
 ## Session: 2026-05-27 (late afternoon) — ARABIC SLUG SAGA RESOLVED via Next.js canary.17 upgrade
 

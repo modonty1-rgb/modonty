@@ -72,10 +72,6 @@ interface ArticleFormStore {
   validationError: string | null;
   validateArticle: () => Promise<FullPageValidationResult>;
 
-  // Publish state
-  isPublishing: boolean;
-  publishError: string | null;
-  publishArticle: () => Promise<FormSubmitResult>;
 }
 
 const initialFormData: ArticleFormData = {
@@ -133,8 +129,6 @@ export const useArticleFormStore = create<ArticleFormStore>()(
         validationResults: null,
         isValidating: false,
         validationError: null,
-        isPublishing: false,
-        publishError: null,
 
         // Initialize form
         initializeForm: (data) => {
@@ -311,46 +305,6 @@ export const useArticleFormStore = create<ArticleFormStore>()(
             throw error;
           } finally {
             set({ isValidating: false }, false, 'validateArticle:complete');
-          }
-        },
-
-        // Publish article (uses publishArticle action for new articles)
-        publishArticle: async () => {
-          const state = get();
-          set({ isPublishing: true, publishError: null }, false, 'publishArticle:start');
-
-          try {
-            if (!state.onSubmit) {
-              return { success: false, error: 'Submit handler not set. Please save the article first.' };
-            }
-
-            const publishActionModule = await import('../actions/publish-action');
-            if (!('publishArticle' in publishActionModule) || typeof publishActionModule.publishArticle !== 'function') {
-              return { success: false, error: 'Publish action not available' };
-            }
-            const result = await publishActionModule.publishArticle(state.formData);
-
-            if (result.success) {
-              set(
-                {
-                  isDirty: false,
-                  errors: {},
-                  publishError: null,
-                },
-                false,
-                'publishArticle:success',
-              );
-            } else {
-              set({ publishError: result.error || 'Failed to publish article' }, false, 'publishArticle:error');
-            }
-
-            return result;
-          } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to publish article';
-            set({ publishError: errorMessage }, false, 'publishArticle:exception');
-            return { success: false, error: errorMessage };
-          } finally {
-            set({ isPublishing: false }, false, 'publishArticle:complete');
           }
         },
     }),

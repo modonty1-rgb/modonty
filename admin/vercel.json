@@ -2,11 +2,5 @@
   "buildCommand": "pnpm --filter @modonty/admin build",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ./ ../dataLayer/ ../.env.shared ../package.json ../pnpm-lock.yaml",
-  "crons": [
-    {
-      "path": "/api/cron/publish-scheduled",
-      "schedule": "*/5 * * * *"
-    }
-  ]
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ./ ../dataLayer/ ../.env.shared ../package.json ../pnpm-lock.yaml"
 }

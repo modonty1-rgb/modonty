@@ -5,6 +5,7 @@ import { RightSidebar } from "@/components/layout/RightSidebar/RightSidebar";
 import { LeftSidebarSkeleton, RightSidebarSkeleton } from "@/components/layout/SidebarSkeletons";
 import { FeedDeferredUI } from "@/components/feed/FeedDeferredUI";
 import { CategoryFeedSection } from "@/components/feed/CategoryFeedSection";
+import { InfiniteFeedSkeleton } from "@/components/feed/infiniteScroll/InfiniteFeedSkeleton";
 import type { FeedPost } from "@/lib/types";
 
 interface FeedContainerProps {
@@ -44,7 +45,7 @@ export function FeedContainer({ posts, platformTagline, platformDescription }: F
               <h2 id="articles-feed-heading" className="sr-only">
                 آخر المقالات
               </h2>
-              <Suspense>
+              <Suspense fallback={<InfiniteFeedSkeleton count={3} />}>
                 <CategoryFeedSection serverPosts={posts} />
               </Suspense>
             </section>
