@@ -1,3 +1,4 @@
+// Build trigger: 2026-05-27 v0.63.4 cache rebuild
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
