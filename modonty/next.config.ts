@@ -7,10 +7,13 @@ import type { NextConfig } from "next";
 loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
-  redirects: async () => [
-    // /articles used to exist; now the homepage IS the articles feed
-    { source: '/articles', destination: '/', permanent: true },
-  ],
+  // NO global /articles → / redirect.
+  // Reason: when a request arrives as /articles/{arabic-slug} (raw, non-percent-encoded),
+  // Vercel's URL normalizer corrupts the Arabic chars to "?" placeholders,
+  // turning the path into /articles?-??-????? which then matches a `source: '/articles'`
+  // rule and redirects to / (homepage). Google interpreted the chain as soft-404
+  // → "Not found (404)" in URL Inspection → de-indexing risk for 17+ articles.
+  // Safer to let /articles 404 cleanly for legacy bookmarks than break new article URLs.
   headers: async () => [
     {
       source: "/(.*)",

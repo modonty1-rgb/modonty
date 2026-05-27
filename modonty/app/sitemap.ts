@@ -32,6 +32,15 @@ function maxDate(dates: Array<Date | null | undefined>): Date | undefined {
   return new Date(Math.max(...valid.map((d) => d.getTime())));
 }
 
+/**
+ * Exclude YMYL-test fixture slugs from sitemap (slugs ending in `-test`).
+ * They're development leftovers that pollute Google's view + waste crawl budget.
+ * If a real content slug ever legitimately ends in `-test`, rename it.
+ */
+function notTestSlug<T extends { slug: string }>(e: T): boolean {
+  return !e.slug.endsWith("-test");
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
@@ -49,11 +58,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
       orderBy: { datePublished: "desc" },
     }),
-    db.category.findMany({ select: { slug: true, updatedAt: true } }),
-    db.client.findMany({ select: { slug: true, updatedAt: true } }),
-    db.author.findMany({ select: { slug: true, updatedAt: true } }),
-    db.tag.findMany({ select: { slug: true, updatedAt: true } }),
-    db.industry.findMany({ select: { slug: true, updatedAt: true } }),
+    db.category.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.client.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
   ]);
 
   // ── DYNAMIC ENTITY URLS (lastmod from real DB timestamps) ────────────
