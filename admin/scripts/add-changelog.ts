@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.48.7 (modonty)",
-    title: "modonty v1.48.7 — emergency rollback: removed connection() (v1.48.6 broke PRERENDER for ALL articles). Site restored to known partial-working state (PRERENDER + CDN HIT serve 200; only fresh-MISS still hits underlying Next.js cache-tag bug)",
+    version: "1.48.8 (modonty)",
+    title: "modonty v1.48.8 — TRUE ROOT-CAUSE FIX: replaced unstable_cache in proxy.ts with module-scoped in-memory cache (was triggering ERR_INVALID_CHAR on x-next-cache-tags for ALL Arabic-slugged article requests)",
     items: [
-      { type: "fix" as const, text: "v1.48.6 added `await connection()` at top of ArticlePageContent per Next.js official docs recommendation. BUT: this opted EVERY article URL out of static prerender — converted PRERENDER HIT (200) into runtime MISS (500). Made the problem worse: yesterday only Arabic-hamza-alif slugs failed; today after v1.48.6 ALL article URLs failed including the previously-working ones (ما-هو-السيو etc)." },
-      { type: "fix" as const, text: "Removed `await connection()` + the import. Article page is back to using PRERENDER cache from build time. ما-هو-السيو and other non-hamza-alif slugs now return 200 from PRERENDER. Hamza-alif slugs (دليلك-... etc) still 500 on origin MISS due to the underlying Next.js ERR_INVALID_CHAR on x-next-cache-tags bug." },
-      { type: "fix" as const, text: "Lesson learned: connection() forces opt-out of static prerender for the ENTIRE route, not just for the cache-tag write. Per docs this is correct behavior but unsuitable for our case where we WANT prerender to serve fast cached responses + only want to skip the failing cache-tag write." },
-      { type: "fix" as const, text: "Next investigation path: (a) check if `'use cache'` directive in getArticleSlugsForStaticParams is what causes the cache tag to include slug — maybe removing it from generateStaticParams helps; (b) explore Next.js GitHub issue #73965 for any community workarounds; (c) consider URL rewrite at Vercel CDN level to mask the cache-tag header for /articles routes." },
+      { type: "fix" as const, text: "Found the REAL culprit via Vercel runtime log analysis: error source is `serverless-middleware` (i.e. proxy.ts), NOT the page handler. proxy.ts calls `isPublishedSlug(slug)` which uses `unstable_cache` from `next/cache`. Next.js 16 cache layer writes `x-next-cache-tags` HTTP header on every cache hit/miss. This header validation rejects non-ASCII chars — and the request route path (which contains Arabic slug) ends up in the header → ERR_INVALID_CHAR → 500 from origin on EVERY uncached article request." },
+      { type: "fix" as const, text: "Replaced `unstable_cache` with a simple module-scoped in-memory `Set<string>` + 5-minute TTL + inFlight dedupe in modonty/lib/archive-cache.ts. Identical 5-min refresh semantics, identical fail-open behavior (DB error = treat as published), but ZERO touching of Next.js cache infrastructure → no auto-tag header write → no ERR_INVALID_CHAR." },
+      { type: "fix" as const, text: "Trade-off: lose `revalidateTag('published-slugs')` programmatic invalidation. Mitigation: simply wait up to 5 min after publish/unpublish OR redeploy to force-clear in-memory cache. Modonty publishes a few articles per week — 5min delay is acceptable. Added `clearPublishedSlugsCache()` export for future explicit invalidation if needed." },
+      { type: "fix" as const, text: "All previous fix attempts (v1.48.3 catch handlers, v1.48.4 disable cacheComponents, v1.48.5 force-dynamic, v1.48.6 connection(), v1.48.7 rollback) were chasing the wrong layer. The proxy.ts cache was the ACTUAL bug source — page-level fixes can't help when proxy crashes first." },
     ],
   },
 ];
