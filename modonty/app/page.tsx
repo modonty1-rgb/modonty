@@ -53,6 +53,14 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       ...(safeMetadata as { alternates?: object } | null)?.alternates,
       canonical: `${SITE_URL}/`,
+      // Mariam audit: Next.js replaces `alternates` entirely from generateMetadata —
+      // inherited languages from layout.tsx get lost. Must re-declare here.
+      languages: {
+        "ar-SA": `${SITE_URL}/`,
+        "ar-EG": `${SITE_URL}/`,
+        ar: `${SITE_URL}/`,
+        "x-default": `${SITE_URL}/`,
+      },
     },
     openGraph: {
       ...baseOpenGraph,
