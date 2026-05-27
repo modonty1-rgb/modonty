@@ -12,13 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.48.6 (modonty)",
-    title: "modonty v1.48.6 — correct fix per Next.js 16 official docs: `connection()` API on article route (replaces deprecated `dynamic='force-dynamic'` which is incompatible with cacheComponents)",
+    version: "1.48.7 (modonty)",
+    title: "modonty v1.48.7 — emergency rollback: removed connection() (v1.48.6 broke PRERENDER for ALL articles). Site restored to known partial-working state (PRERENDER + CDN HIT serve 200; only fresh-MISS still hits underlying Next.js cache-tag bug)",
     items: [
-      { type: "fix" as const, text: "v1.48.5 build failed with `Route segment config 'dynamic' is not compatible with nextConfig.cacheComponents. Please remove it.` — Next.js 16 deprecated `export const dynamic = 'force-dynamic'` when cacheComponents is enabled. From official migration guide (https://nextjs.org/docs/app/guides/migrating-to-cache-components): with Cache Components, all pages are dynamic by default; force-dynamic is unnecessary." },
-      { type: "fix" as const, text: "Modern replacement (per https://nextjs.org/docs/app/api-reference/functions/connection): import `connection` from `next/server` and call `await connection()` at the top of the page component. This semantically ties dynamic rendering to the incoming request, explicit + Next.js-16-compatible, and skips the PPR cache-tag write that was triggering ERR_INVALID_CHAR for Arabic slugs." },
-      { type: "fix" as const, text: "Applied `await connection();` at the top of ArticlePageContent in modonty/app/articles/[slug]/page.tsx. TSC clean. Build should succeed (no segment config conflict). Runtime: response is marked not-cacheable → Vercel skips the `x-next-cache-tags` header write that crashes with non-ASCII slugs." },
-      { type: "fix" as const, text: "Trade-off unchanged from v1.48.5 reasoning: every article view triggers full SSR (no PPR streaming benefit). Acceptable for ~25 articles + Vercel CDN still caches the SSR response via standard HTTP cache headers." },
+      { type: "fix" as const, text: "v1.48.6 added `await connection()` at top of ArticlePageContent per Next.js official docs recommendation. BUT: this opted EVERY article URL out of static prerender — converted PRERENDER HIT (200) into runtime MISS (500). Made the problem worse: yesterday only Arabic-hamza-alif slugs failed; today after v1.48.6 ALL article URLs failed including the previously-working ones (ما-هو-السيو etc)." },
+      { type: "fix" as const, text: "Removed `await connection()` + the import. Article page is back to using PRERENDER cache from build time. ما-هو-السيو and other non-hamza-alif slugs now return 200 from PRERENDER. Hamza-alif slugs (دليلك-... etc) still 500 on origin MISS due to the underlying Next.js ERR_INVALID_CHAR on x-next-cache-tags bug." },
+      { type: "fix" as const, text: "Lesson learned: connection() forces opt-out of static prerender for the ENTIRE route, not just for the cache-tag write. Per docs this is correct behavior but unsuitable for our case where we WANT prerender to serve fast cached responses + only want to skip the failing cache-tag write." },
+      { type: "fix" as const, text: "Next investigation path: (a) check if `'use cache'` directive in getArticleSlugsForStaticParams is what causes the cache tag to include slug — maybe removing it from generateStaticParams helps; (b) explore Next.js GitHub issue #73965 for any community workarounds; (c) consider URL rewrite at Vercel CDN level to mask the cache-tag header for /articles routes." },
     ],
   },
 ];

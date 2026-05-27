@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound, unstable_rethrow } from "next/navigation";
-import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
@@ -190,17 +189,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 async function ArticlePageContent({ params }: ArticlePageProps) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
-
-  // Per Next.js 16 official docs: with cacheComponents enabled, `connection()` is the
-  // recommended way to explicitly opt out of static prerender + caching for THIS route.
-  // Source: https://nextjs.org/docs/app/api-reference/functions/connection
-  // Why we need it: PPR auto-generates `x-next-cache-tags` HTTP header from the route path.
-  // Arabic slugs (e.g. /articles/دليلك-الشامل-...) contain non-ASCII chars → throws
-  // `TypeError: Invalid character in header content` (ERR_INVALID_CHAR) on every request.
-  // Reproduced 10/10 origin failures. `connection()` marks response as not-cacheable,
-  // skipping the auto-tag write that crashes.
-  // Known Next.js limitation tracked at https://github.com/vercel/next.js/issues/73965
-  await connection();
 
   try {
     const [session, articleDefaults, platformSocialLinks] = await Promise.all([
