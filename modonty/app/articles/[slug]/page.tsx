@@ -536,8 +536,17 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       </>
     );
   } catch (err) {
+    // Re-throw Next.js navigation signals (notFound/redirect) untouched.
     unstable_rethrow(err);
-    notFound();
+    // CRITICAL: NEVER fall through to notFound() here.
+    // A blanket catch-all that converts every transient error (cold-start DB
+    // timeout, settings fetch flake, auth library throw) into 404 caused
+    // Google Search Console to mark valid articles as "Not found (404)"
+    // during Live Test → de-indexing risk. Instead: log + rethrow so the
+    // error boundary (articles/[slug]/error.tsx) renders + Vercel logs see
+    // the real cause + Google sees a transient 500 (which it retries).
+    console.error(`[articles/${slug}] render failed:`, err);
+    throw err;
   }
 }
 
