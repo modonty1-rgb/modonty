@@ -62,6 +62,23 @@ interface ArticlePageProps {
 // Set to 60 not 800 to keep cost predictable; observed renders complete in <3s when warm.
 export const maxDuration = 60;
 
+// CRITICAL — bypass Next.js 16 PPR / cacheComponents for THIS route only.
+// Next.js 16 auto-generates `x-next-cache-tags` HTTP header from the dynamic route path.
+// Arabic-slugged articles (e.g. /articles/دليلك-الشامل-...) contain non-ASCII chars,
+// which throw `TypeError: Invalid character in header content` (ERR_INVALID_CHAR) on every
+// request not served from build-time prerender. Reproduced 10/10 origin failures.
+// Sources:
+//   - https://github.com/vercel/next.js/discussions/26758 (Arabic chars in [slug] not supported)
+//   - https://github.com/vercel/next.js/issues/73965 (Non-ASCII characters in slug break routing)
+//   - https://nextjs.org/docs/app/api-reference/functions/cacheTag (tag must be valid HTTP header content)
+// `force-dynamic` opts out of PPR/cache layer for this route, eliminating auto-tag generation.
+// Trade-off: every article request runs full SSR (no PRERENDER cache, no PPR streaming).
+// Acceptable because: (1) modonty has ~25 articles, low volume; (2) Vercel CDN still caches
+// the SSR response normally via standard HTTP cache headers; (3) reliable Arabic URL indexing
+// is more valuable than the ~milliseconds saved by PPR streaming.
+// Re-evaluate when Next.js fixes auto-tag URL-encoding for non-ASCII routes (track via #73965).
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   try {
     const articles = await getArticleSlugsForStaticParams();
