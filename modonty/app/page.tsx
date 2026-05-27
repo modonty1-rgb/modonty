@@ -42,12 +42,21 @@ function mapArticle(article: ArticleResponse): FeedPost {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getHomePageSeo();
+  const safeMetadata = metadata ?? {};
+  // Mariam audit 2026-05-27: homepage og:url was https://modonty.com (no www) from DB
+  // Settings.homeMetaTags column — mismatched the canonical (www). Force override here so
+  // www-only canonical is honored across all metadata fields until DB row is updated.
+  const baseOpenGraph = (safeMetadata as { openGraph?: Record<string, unknown> }).openGraph ?? {};
   return {
     description: "مودونتي — منصة المحتوى العربي المتخصصة. اكتشف مقالات في التقنية والأعمال والتسويق والسياحة والأزياء من أبرز الكتّاب والخبراء العرب.",
-    ...(metadata ?? {}),
+    ...safeMetadata,
     alternates: {
-      ...(metadata as { alternates?: object } | null)?.alternates,
+      ...(safeMetadata as { alternates?: object } | null)?.alternates,
       canonical: `${SITE_URL}/`,
+    },
+    openGraph: {
+      ...baseOpenGraph,
+      url: `${SITE_URL}/`,
     },
   };
 }

@@ -226,19 +226,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       userId ? getPendingFaqsForCurrentUser(articleRaw.id) : Promise.resolve([]),
     ]);
 
-    // Get cached JSON-LD from database (Phase 6)
-    let jsonLdGraph: object | null = null;
-    if (article.jsonLdStructuredData) {
-      try {
-        jsonLdGraph = JSON.parse(article.jsonLdStructuredData);
-      } catch {
-        // Invalid JSON-LD, fall through to generate live
-      }
-    }
-    // SEO-A2: fallback — generate live when DB cache not yet built
-    if (!jsonLdGraph) {
-      jsonLdGraph = generateArticleStructuredData(article);
-    }
+    // Generate JSON-LD live every render (Mariam audit 2026-05-27 found stale DB cache
+    // missing author.name inline + image as @id reference → Rich Results validator failed
+    // for all articles). Live generation pulls current author + image data from this render's
+    // article object; no risk of stale cache. The 'use cache' on data fetchers above already
+    // caches the article data, so this is fast — only the JSON-LD construction runs every time.
+    // Re-enable DB cache (article.jsonLdStructuredData) only after we ship a regeneration job
+    // that runs on every article update + ensures author.name + image are always inlined.
+    const jsonLdGraph: object = generateArticleStructuredData(article);
 
     const breadcrumbJsonLd = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },

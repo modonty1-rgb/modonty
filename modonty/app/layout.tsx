@@ -36,6 +36,17 @@ export const metadata: Metadata = {
     template: "%s | مودونتي",
   },
   description: "منصة مدونات احترافية لإدارة المحتوى عبر عملاء متعددين",
+  // Site-wide hreflang signals to AI search engines + Google geo-targeting.
+  // Mariam audit 2026-05-27: site had ZERO hreflang on homepage; only ar+x-default on articles.
+  // Per-page generateMetadata can override `alternates.canonical` but inherits these languages.
+  alternates: {
+    languages: {
+      "ar-SA": "/",
+      "ar-EG": "/",
+      ar: "/",
+      "x-default": "/",
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -51,7 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="ar"
+      lang="ar-SA"
       dir="rtl"
       suppressHydrationWarning
       className={`${tajawal.variable} ${montserrat.variable}`}
