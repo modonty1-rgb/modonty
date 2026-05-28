@@ -5,8 +5,6 @@ import { getBrokenReferences } from "@/app/(dashboard)/database/actions/broken-r
 import { getSessionCleanerStats } from "@/app/(dashboard)/database/actions/session-cleaner";
 import { getStaleVersionsStats } from "@/app/(dashboard)/database/actions/stale-versions";
 import { getDuplicateSlugs } from "@/app/(dashboard)/database/actions/duplicate-slugs";
-import { getJsonLdIntegrityStats } from "@/app/(dashboard)/database/actions/jsonld-integrity";
-import { getCanonicalUrlSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-url-sanitizer";
 import { getLegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
 import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { MaintenancePageShell } from "./components/maintenance-page-shell";
@@ -20,8 +18,6 @@ export default async function MaintenancePage() {
     sessionStats,
     staleVersions,
     duplicateSlugs,
-    jsonLdIntegrity,
-    canonicalSanitizer,
     legalFormSanitizer,
     siteUrlDrift,
   ] = await Promise.all([
@@ -32,8 +28,6 @@ export default async function MaintenancePage() {
     getSessionCleanerStats(),
     getStaleVersionsStats(),
     getDuplicateSlugs(),
-    getJsonLdIntegrityStats(),
-    getCanonicalUrlSanitizerStats(),
     getLegalFormSanitizerStats(),
     getSiteUrlDriftStatus(),
   ]);
@@ -47,8 +41,6 @@ export default async function MaintenancePage() {
       sessionStats={sessionStats}
       staleVersions={staleVersions}
       duplicateSlugs={duplicateSlugs}
-      jsonLdIntegrity={jsonLdIntegrity}
-      canonicalSanitizer={canonicalSanitizer}
       legalFormSanitizer={legalFormSanitizer}
       siteUrlDrift={siteUrlDrift}
     />

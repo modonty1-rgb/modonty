@@ -6,16 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, Wand2, CheckCircle2, XCircle, Circle, RotateCcw } from "lucide-react";
 import {
-  runStepOtps,
-  runStepSessions,
-  runStepVersions,
-  runStepTtl,
-  runStepLegalForm,
-  runStepCloudinaryOrphans,
-  runStepSoftDeletedComments,
-  revalidateDatabasePage,
-  type MaintenanceStepResult,
-} from "../actions/run-all-maintenance";
+  runSeoStepJsonLd,
+  runSeoStepCanonical,
+  runSeoStepSitemap,
+  runSeoStepHreflang,
+  revalidateSeoPage,
+  type SeoMaintenanceStepResult,
+} from "../actions/run-seo-maintenance";
 
 type Status = "idle" | "pending" | "running" | "done" | "failed";
 
@@ -23,29 +20,46 @@ interface StepDef {
   key: string;
   label: string;
   description: string;
-  runner: () => Promise<MaintenanceStepResult>;
+  runner: () => Promise<SeoMaintenanceStepResult>;
 }
 
 const STEPS: StepDef[] = [
-  { key: "otps", label: "Expired OTPs", description: "Slug-change codes past expiry", runner: runStepOtps },
-  { key: "sessions", label: "Expired Sessions", description: "NextAuth sessions + verification tokens", runner: runStepSessions },
-  { key: "versions", label: "Stale Versions (30d+)", description: "Article version snapshots older than 30 days", runner: runStepVersions },
-  { key: "ttl", label: "TTL Indexes", description: "Missing TTL indexes for auto-expiry", runner: runStepTtl },
-  { key: "legalform", label: "Legal Forms", description: "Clients with non-canonical legalForm values", runner: runStepLegalForm },
-  { key: "cloudinary", label: "Cloudinary Orphans", description: "Files in Cloudinary (Modonty folders only) with no DB record", runner: runStepCloudinaryOrphans },
-  { key: "softDeletedComments", label: "Soft-Deleted Comments (30d+)", description: "Permanently delete comments marked DELETED older than 30 days", runner: runStepSoftDeletedComments },
+  {
+    key: "jsonld",
+    label: "JSON-LD Regeneration",
+    description: "Articles with stale hosts in cached JSON-LD",
+    runner: runSeoStepJsonLd,
+  },
+  {
+    key: "canonical",
+    label: "Canonical URLs (7 tables)",
+    description: "Stale canonical hosts across Article + Client + Category + Tag + Industry + Author + Modonty",
+    runner: runSeoStepCanonical,
+  },
+  {
+    key: "sitemap",
+    label: "Sitemap Refresh (GSC)",
+    description: "Resubmit stale sitemaps to Google Search Console",
+    runner: runSeoStepSitemap,
+  },
+  {
+    key: "hreflang",
+    label: "hreflang Locales Sync",
+    description: "Ensure Settings.defaultAlternateLanguages has all GCC + Egypt + generic + x-default locales (idempotent — adds missing only)",
+    runner: runSeoStepHreflang,
+  },
 ];
 
 interface StepState {
   status: Status;
-  result?: MaintenanceStepResult;
+  result?: SeoMaintenanceStepResult;
 }
 
 const idleState: Record<string, StepState> = Object.fromEntries(
   STEPS.map((s) => [s.key, { status: "idle" as Status }]),
 );
 
-export function AutoMaintenancePanel({ attentionCount }: { attentionCount: number }) {
+export function SeoAutoMaintenance({ attentionCount }: { attentionCount: number }) {
   const router = useRouter();
   const [running, setRunning] = useState(false);
   const [started, setStarted] = useState(false);
@@ -60,7 +74,6 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setStarted(true);
     setFinished(false);
     setElapsedMs(null);
-    // Mark all as pending
     setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
     const startedAt = Date.now();
 
@@ -76,7 +89,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setElapsedMs(Date.now() - startedAt);
     setFinished(true);
     setRunning(false);
-    await revalidateDatabasePage();
+    await revalidateSeoPage();
     router.refresh();
   };
 
@@ -87,19 +100,28 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setElapsedMs(null);
   };
 
-  const completedCount = STEPS.filter((s) => steps[s.key].status === "done" || steps[s.key].status === "failed").length;
+  const completedCount = STEPS.filter(
+    (s) => steps[s.key].status === "done" || steps[s.key].status === "failed",
+  ).length;
   const overallPercent = Math.round((completedCount / STEPS.length) * 100);
   const totalFixed = Object.values(steps).reduce((sum, s) => sum + (s.result?.count ?? 0), 0);
   const failedCount = Object.values(steps).filter((s) => s.status === "failed").length;
 
   return (
     <div className="rounded-lg border bg-card overflow-hidden">
-      {/* Header */}
       <div className="p-4 flex items-center justify-between gap-3 flex-wrap border-b">
-        <div className="space-y-0.5">
-          <p className="text-sm font-semibold">Auto-Maintenance</p>
+        <div className="space-y-1 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold">⚡ Quick Maintenance</p>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-300 font-medium">
+              ~5s · runs 4 fixes
+            </span>
+          </div>
           <p className="text-xs text-muted-foreground">
-            Runs 7 safe, deterministic clean-ups in one click. SEO maintenance is at /seo.
+            Fast housekeeping: regenerates stale JSON-LD, fixes canonical URLs, refreshes sitemap, syncs hreflang locales.
+          </p>
+          <p className="text-[11px] text-muted-foreground/80">
+            <span className="font-medium">Use when:</span> daily/weekly check, or after small content edits.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -116,11 +138,17 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
             variant={hasWork || started ? "default" : "outline"}
           >
             {running ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Running…</>
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Running…
+              </>
             ) : finished ? (
-              <><Wand2 className="h-4 w-4" /> Run Again</>
+              <>
+                <Wand2 className="h-4 w-4" /> Run Again
+              </>
             ) : (
-              <><Wand2 className="h-4 w-4" /> Run All Auto-Maintenance</>
+              <>
+                <Wand2 className="h-4 w-4" /> Run All SEO Fixes
+              </>
             )}
             {hasWork && !started && (
               <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none bg-primary-foreground/20 text-primary-foreground">
@@ -131,7 +159,6 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
         </div>
       </div>
 
-      {/* Status strip — visible when running or finished */}
       {started && (
         <div className="p-4 space-y-3 bg-muted/20">
           <div className="space-y-1.5">
@@ -148,7 +175,8 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
                   </span>
                 ) : (
                   <span className="flex items-center gap-1.5 text-destructive">
-                    <XCircle className="h-3 w-3" /> Finished with {failedCount} error{failedCount === 1 ? "" : "s"}
+                    <XCircle className="h-3 w-3" /> Finished with {failedCount} error
+                    {failedCount === 1 ? "" : "s"}
                   </span>
                 )}
               </span>
@@ -159,7 +187,6 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
             <Progress value={overallPercent} className="h-2" />
           </div>
 
-          {/* Per-step rows */}
           <ul className="space-y-2.5 pt-1">
             {STEPS.map((step) => {
               const state = steps[step.key];
@@ -209,7 +236,6 @@ function StatusLabel({ state }: { state: StepState }) {
   if (state.status === "running") return <span className="text-primary">running…</span>;
   if (state.status === "failed")
     return <span className="text-destructive">{state.result?.detail ?? "failed"}</span>;
-  // done
   const count = state.result?.count ?? 0;
   const detail = state.result?.detail;
   return (

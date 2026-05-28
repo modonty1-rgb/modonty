@@ -32,7 +32,7 @@ import {
   Code2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { bulkFixArticleSeo, type ArticleSeoHealth, type BulkFixResult } from "./actions/articles-seo-actions";
+import { bulkFixArticleSeo, type ArticleSeoHealth, type BulkFixResult } from "@/app/(dashboard)/seo/actions/articles-seo-actions";
 
 interface ArticlesSeoHealthProps {
   articles: ArticleSeoHealth[];
@@ -252,13 +252,24 @@ export function ArticlesSeoHealth({ articles }: ArticlesSeoHealthProps) {
       {/* Stats Banner */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-blue-500" />
-              <CardTitle className="text-base">Articles SEO Health</CardTitle>
-              <Badge variant="secondary" className="text-xs">{articles.length}</Badge>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div className="space-y-1 flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <FileText className="h-4 w-4 text-violet-500" />
+                <CardTitle className="text-base">🩺 Per-Article Surgery</CardTitle>
+                <Badge variant="secondary" className="text-xs">{articles.length}</Badge>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-600 dark:text-violet-300 font-medium">
+                  targeted fixes
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Pick specific articles, fix them individually (missing title, description, canonical, image alt, etc.).
+              </p>
+              <p className="text-[11px] text-muted-foreground/80">
+                <span className="font-medium">Use when:</span> one or a few articles have known issues. Otherwise use Quick Maintenance / Full Rebuild above.
+              </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 text-xs">
                 <span className="h-2 w-2 rounded-full bg-red-500" />
                 <span className="text-muted-foreground">{redCount} below 60%</span>

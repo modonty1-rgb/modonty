@@ -20,14 +20,10 @@ import type { SlugIssue } from "../actions/slug-integrity";
 import type { BrokenRefsResult } from "../actions/broken-references";
 import type { SessionCleanerStats } from "../actions/session-cleaner";
 import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
-import type { JsonLdIntegrityStats } from "../actions/jsonld-integrity";
-import type { CanonicalSanitizerStats } from "../actions/canonical-url-sanitizer";
 import type { LegalFormSanitizerStats } from "../actions/legalform-sanitizer";
 import { cleanExpiredOtps } from "../actions/orphan-cleaner";
 import { cleanExpiredSessions } from "../actions/session-cleaner";
 import { createTTLIndex } from "../actions/index-health";
-import { regenerateAllStaleJsonLd } from "../actions/jsonld-integrity";
-import { regenerateAllStaleCanonicalUrls } from "../actions/canonical-url-sanitizer";
 import { sanitizeAllLegalForms } from "../actions/legalform-sanitizer";
 
 interface Props {
@@ -37,8 +33,6 @@ interface Props {
   brokenRefs: BrokenRefsResult;
   sessionStats: SessionCleanerStats;
   duplicateSlugs: DuplicateSlugStats;
-  jsonLdIntegrity: JsonLdIntegrityStats;
-  canonicalSanitizer: CanonicalSanitizerStats;
   legalFormSanitizer: LegalFormSanitizerStats;
 }
 
@@ -49,8 +43,6 @@ export function DbToolsSection({
   brokenRefs,
   sessionStats,
   duplicateSlugs,
-  jsonLdIntegrity,
-  canonicalSanitizer,
   legalFormSanitizer,
 }: Props) {
   const { toast } = useToast();
@@ -58,8 +50,6 @@ export function DbToolsSection({
   const [currentOrphans, setCurrentOrphans] = useState(orphans);
   const [currentSessions, setCurrentSessions] = useState(sessionStats);
   const [currentIndexHealth, setCurrentIndexHealth] = useState(indexHealth);
-  const [currentJsonLd, setCurrentJsonLd] = useState(jsonLdIntegrity);
-  const [currentCanonical, setCurrentCanonical] = useState(canonicalSanitizer);
   const [currentLegalForm, setCurrentLegalForm] = useState(legalFormSanitizer);
   const [cleaningAction, setCleaningAction] = useState<string | null>(null);
 
@@ -79,13 +69,11 @@ export function DbToolsSection({
   const hasDuplicateSlugs = duplicateSlugs.crossClientSlugs > 0;
   const hasTtlMissing = ttlMissing > 0;
   const hasSlugIssues = slugTotal > 0;
-  const hasJsonLdStale = currentJsonLd.staleCount > 0;
-  const hasCanonicalStale = currentCanonical.staleCount > 0;
   const hasLegalForm = currentLegalForm.mappableCount + currentLegalForm.unmappedCount > 0;
   const hasBrokenRefs = brokenRefs.total > 0;
   const showAttentionEmpty =
     !hasOrphans && !hasSessions && !hasDuplicateSlugs &&
-    !hasTtlMissing && !hasSlugIssues && !hasJsonLdStale && !hasCanonicalStale && !hasLegalForm && !hasBrokenRefs;
+    !hasTtlMissing && !hasSlugIssues && !hasLegalForm && !hasBrokenRefs;
 
   return (
     <div className="space-y-6">
@@ -320,222 +308,6 @@ export function DbToolsSection({
             </tbody>
           </table>
         </div>
-      </div>
-      )}
-
-      {/* ── JSON-LD Cache Integrity ── */}
-      {hasJsonLdStale && (
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-            JSON-LD Cache Integrity
-          </h2>
-          <Badge variant="destructive" className="text-xs font-normal">
-            {currentJsonLd.staleCount} stale
-          </Badge>
-        </div>
-        <Card>
-          <CardContent className="pt-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                {currentJsonLd.staleCount === 0 ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                ) : (
-                  <AlertTriangle className="h-4 w-4 text-yellow-500 shrink-0" />
-                )}
-                <div>
-                  <p className="text-sm font-medium">
-                    Cached JSON-LD with non-canonical URLs
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Articles whose stored JSON-LD points to localhost or a host other than{" "}
-                    <span className="font-mono">
-                      {currentJsonLd.expectedSiteUrl ?? "(no Settings.siteUrl)"}
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <span className="text-sm font-semibold">
-                {currentJsonLd.staleCount} / {currentJsonLd.withCache}
-              </span>
-            </div>
-
-            {currentJsonLd.detectedBadHosts.length > 0 && (
-              <div className="border-t pt-3">
-                <p className="text-xs text-muted-foreground mb-1.5">Detected bad hosts:</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {currentJsonLd.detectedBadHosts.map((host) => (
-                    <code
-                      key={host}
-                      className="text-[11px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded"
-                    >
-                      {host}
-                    </code>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {currentJsonLd.sample.length > 0 && (
-              <div className="border-t pt-3">
-                <p className="text-xs text-muted-foreground mb-1.5">Sample affected articles:</p>
-                <ul className="space-y-1">
-                  {currentJsonLd.sample.map((a) => (
-                    <li key={a.id} className="text-xs flex items-center gap-2">
-                      <span className="text-muted-foreground truncate max-w-[400px]">
-                        {a.title}
-                      </span>
-                      <a
-                        href={`/articles/${a.id}/edit`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline flex items-center gap-1"
-                      >
-                        Open <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {currentJsonLd.staleCount > 0 && (
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={isPending}
-                className="w-full h-8 text-xs"
-                onClick={() =>
-                  run("jsonld", async () => {
-                    const r = await regenerateAllStaleJsonLd();
-                    toast({
-                      title: `Regenerated ${r.successful} of ${r.attempted} articles`,
-                      description: r.failed > 0 ? `${r.failed} failed` : undefined,
-                      variant: r.failed > 0 ? "destructive" : "default",
-                    });
-                    setCurrentJsonLd({
-                      ...currentJsonLd,
-                      staleCount: r.failed,
-                      sample: [],
-                      detectedBadHosts: [],
-                    });
-                  })
-                }
-              >
-                {cleaningAction === "jsonld" ? (
-                  <Loader2 className="h-3 w-3 animate-spin me-1" />
-                ) : (
-                  <RefreshCw className="h-3 w-3 me-1" />
-                )}
-                Regenerate All Stale JSON-LD
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-      )}
-
-      {/* ── Canonical URL Sanitizer ── */}
-      {hasCanonicalStale && (
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-            Canonical URL Sanitizer
-          </h2>
-          <Badge variant="destructive" className="text-xs font-normal">
-            {currentCanonical.staleCount} stale
-          </Badge>
-        </div>
-        <Card>
-          <CardContent className="pt-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <AlertTriangle className="h-4 w-4 text-yellow-500 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">
-                    Articles with stale <code className="text-xs">canonicalUrl</code> field
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Stored canonical does not match the URL modonty.com would emit for the current slug. Expected base:{" "}
-                    <span className="font-mono">{currentCanonical.expectedBase ?? "(no Settings.siteUrl)"}</span>
-                  </p>
-                </div>
-              </div>
-              <span className="text-sm font-semibold">
-                {currentCanonical.staleCount} / {currentCanonical.withCanonical}
-              </span>
-            </div>
-
-            {currentCanonical.detectedBadHosts.length > 0 && (
-              <div className="border-t pt-3">
-                <p className="text-xs text-muted-foreground mb-1.5">Detected bad hosts:</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {currentCanonical.detectedBadHosts.map((host) => (
-                    <code
-                      key={host}
-                      className="text-[11px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded"
-                    >
-                      {host}
-                    </code>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {currentCanonical.sample.length > 0 && (
-              <div className="border-t pt-3">
-                <p className="text-xs text-muted-foreground mb-1.5">Sample affected articles:</p>
-                <ul className="space-y-1">
-                  {currentCanonical.sample.map((a) => (
-                    <li key={a.id} className="text-xs flex items-center gap-2">
-                      <span className="text-muted-foreground truncate max-w-[400px]" title={a.title}>
-                        {a.title}
-                      </span>
-                      <a
-                        href={`/articles/${a.id}/edit`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline flex items-center gap-1"
-                      >
-                        Open <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={isPending}
-              className="w-full h-8 text-xs"
-              onClick={() =>
-                run("canonical", async () => {
-                  const r = await regenerateAllStaleCanonicalUrls();
-                  toast({
-                    title: `Sanitized ${r.successful} of ${r.attempted} articles`,
-                    description: r.failed > 0 ? `${r.failed} failed` : undefined,
-                    variant: r.failed > 0 ? "destructive" : "default",
-                  });
-                  setCurrentCanonical({
-                    ...currentCanonical,
-                    staleCount: r.failed,
-                    sample: [],
-                    detectedBadHosts: [],
-                  });
-                })
-              }
-            >
-              {cleaningAction === "canonical" ? (
-                <Loader2 className="h-3 w-3 animate-spin me-1" />
-              ) : (
-                <RefreshCw className="h-3 w-3 me-1" />
-              )}
-              Sanitize All Stale Canonical URLs
-            </Button>
-          </CardContent>
-        </Card>
       </div>
       )}
 

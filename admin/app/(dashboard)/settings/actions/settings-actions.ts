@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import type { Prisma } from "@prisma/client";
-import { cascadeSettingsToAllEntities } from "./cascade-all-seo";
+import { cascadeSettingsToAllEntities } from "@/app/(dashboard)/seo/actions/cascade-all-seo";
 import { SETTINGS_SINGLETON_WHERE, ensureSettingsId } from "@/lib/settings/settings-singleton";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

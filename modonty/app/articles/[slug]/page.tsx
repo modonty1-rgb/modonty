@@ -4,6 +4,28 @@ import { notFound, unstable_rethrow } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData, generateArticleStructuredData } from "@/lib/seo";
 import { getArticleDefaultsFromSettings } from "@/lib/seo/get-article-defaults-from-settings";
+
+// Source of truth: Settings.defaultAlternateLanguages (seeded via /seo Auto-Maintenance hreflang Sync step).
+// Entries without `url` default to the article's canonical (Arabic single-source content for all GCC + Egypt).
+function buildLanguagesMap(
+  alternateLanguages: unknown,
+  canonicalUrl: string,
+  siteUrl: string,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (Array.isArray(alternateLanguages)) {
+    for (const entry of alternateLanguages as Array<{ hreflang?: string; url?: string }>) {
+      const key = entry?.hreflang?.trim();
+      if (!key) continue;
+      const url = entry?.url?.trim();
+      out[key] = url
+        ? (url.startsWith("http") ? url : `${siteUrl}${url.startsWith("/") ? url : `/${url}`}`)
+        : canonicalUrl;
+    }
+  }
+  if (!out["x-default"]) out["x-default"] = canonicalUrl;
+  return out;
+}
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -102,9 +124,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
         if (stored.title) {
           // Always regenerate canonical + hreflang — stored values may be stale/truncated.
           // Source of truth: NEXT_PUBLIC_SITE_URL env (mirror of admin Settings.siteUrl).
-          // No more www workaround — admin canonical generator now always emits www host.
           const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-          // URL constructor percent-encodes non-ASCII slug for consistency with JSON-LD + sitemap
           const canonicalUrl = new URL(`/articles/${slug}`, siteUrl).href;
           return {
             ...stored,
@@ -115,7 +135,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
             alternates: {
               ...(stored.alternates as object | undefined),
               canonical: canonicalUrl,
-              languages: { ar: canonicalUrl, "x-default": canonicalUrl },
+              languages: buildLanguagesMap(
+                articleDefaults.alternateLanguages,
+                canonicalUrl,
+                siteUrl,
+              ),
             },
           };
         }
@@ -143,15 +167,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const urlForMetadata = `/articles/${slug}`;
     const canonicalUrlFull = new URL(urlForMetadata, siteUrl).href;
 
-    const languages: Record<string, string> = { ar: canonicalUrlFull, "x-default": canonicalUrlFull };
-    if (Array.isArray(articleDefaults.alternateLanguages)) {
-      for (const a of articleDefaults.alternateLanguages as Array<{ hreflang?: string; url?: string }>) {
-        if (a.hreflang?.trim() && a.url?.trim()) {
-          const href = a.url.startsWith("http") ? a.url : `${siteUrl}${a.url.startsWith("/") ? a.url : `/${a.url}`}`;
-          languages[a.hreflang.trim()] = href;
-        }
-      }
-    }
+    const languages = buildLanguagesMap(
+      articleDefaults.alternateLanguages,
+      canonicalUrlFull,
+      siteUrl,
+    );
 
     return generateMetadataFromSEO({
       title,

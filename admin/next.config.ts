@@ -7,6 +7,10 @@ import type { NextConfig } from "next";
 loadDotenv({ path: path.resolve(process.cwd(), "../.env.shared") });
 
 const nextConfig: NextConfig = {
+  redirects: async () => [
+    { source: "/seo-overview", destination: "/seo", permanent: true },
+    { source: "/seo-overview/:path*", destination: "/seo", permanent: true },
+  ],
   headers: async () => [
     {
       source: "/(.*)",

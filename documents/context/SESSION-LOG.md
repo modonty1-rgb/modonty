@@ -1,4 +1,115 @@
-# Session Context — Last Updated: 2026-05-27 20:30 (FROZEN by `us>` · Publish workflow refactored to single-gate · Performance fixes for CLS+LCP regression · Mariam prompt v3→v4 · IndexNow executed for 20 articles · ALL CHANGES UNCOMMITTED — Playwright MCP needs reconnect before live test + push)
+# Session Context — Last Updated: 2026-05-28 ~15:50 (FROZEN by `us>` · `/seo` unified SEO admin page built across 7 phases + 7b cleanup · Cascade now visible · `/seo-overview` deleted with 308 redirect · SEO removed from `/maintenance` · TSC clean · live tested cascade 30 articles end-to-end · awaiting push confirmation)
+
+## Session: 2026-05-28 (~10:30 → ~15:50) — Build unified `/seo` admin page (SEO Maintenance centralization)
+
+### 🎯 Where I stopped
+- **Last task in progress:** Phase 7b cleanup complete (removed SEO from `/maintenance` UI). TSC admin: ZERO errors. /seo + /maintenance both live-tested.
+- **Next concrete action when resuming:** Khalid says "push" → (1) bump admin/package.json version (currently 0.64.0, suggest 0.65.0 — feature addition + cleanup) → (2) run `bash scripts/backup.sh` → (3) add Changelog entry in DB → (4) git commit + push.
+- **Phase 8 deferred to next session:** hreflang Settings field (`defaultAlternateLanguages` schema exists, needs admin UI + modonty consumer).
+
+### ✅ Done this session
+- **Built `/seo` unified admin page** in 8 phases:
+  - **Phase 1:** Scaffolded `/admin/(dashboard)/seo/{page,loading,error}.tsx` + `seo-page-shell.tsx` (minimal, header-only, no dead placeholders) + sidebar "SEO Overview" → "SEO" with `/seo`
+  - **Phase 2:** Moved 7 SEO action files from `/settings/actions/`, `/database/actions/`, `/seo-overview/actions/` → `/seo/actions/`. Updated 8 importers (all absolute `@/` paths). Deleted orphan duplicate `settings/actions/regenerate-all-seo.ts`. Deleted empty `seo-overview/actions/` directory.
+  - **Phase 3:** Built `seo-health-summary.tsx` (3 indicators 🟢🟡🔴: JSON-LD, Canonical, Sitemap) + `seo-kpi-strip.tsx` (4 cards: Published Articles, JSON-LD Coverage %, Stale JSON-LD, Stale Canonicals). Page.tsx fetches via `Promise.all`.
+  - **Phase 4:** Built `cascade-status-panel.tsx` (client component) wiring the orphan `cascade-step-actions.ts`. Live progress per phase (Categories, Tags, Industries, Clients done/total, Articles done/total, Listings). Concurrency 5. "Trigger Full Cascade" → "Retry Cascade" on error.
+  - **Phase 5:** Built `seo-auto-maintenance.tsx` (Run All SEO Fixes: 3 SEO steps in sequence) + `run-seo-maintenance.ts` (3 step wrappers: JSON-LD, Canonical, Sitemap). Mirrors `/database` pattern but SEO-only.
+  - **Phase 6:** Moved `articles-seo-health.tsx` from `/seo-overview` → `/seo/components/article-coverage-panel.tsx`. Wired into shell. Table shows score, missing flags, status. Reuses existing `bulkFixArticleSeo`.
+  - **Phase 7:** Deleted `/seo-overview/{page,seo-overview-client,loading}.tsx` + dir. Added 308 redirect in `admin/next.config.ts` (`/seo-overview` + `/seo-overview/:path*` → `/seo`).
+  - **Phase 7b:** Removed SEO from `/maintenance` UI: cleaned `db-tools-section.tsx` (removed JSON-LD + Canonical cards + state + imports), `auto-maintenance-panel.tsx` (removed 3 SEO step entries + imports), `run-all-maintenance.ts` (removed runStepJsonLd/runStepCanonical/runStepSitemapFreshness functions), `maintenance-page-shell.tsx` (removed SEO props + computeAutoFixableCount entries), `maintenance/page.tsx` (removed SEO data fetches). Updated header copy "Runs 7 safe... SEO maintenance is at /seo."
+- **Live tests on modonty_dev (DATABASE_URL verified)**:
+  - `Run All SEO Fixes` clicked → 3/3 done in 2.1s · JSON-LD clean · Canonical clean · Sitemap 1 fixed
+  - `Trigger Full Cascade` clicked → DONE in 279s · all 119 entities regenerated (25 categories + 35 tags + 20 industries + 8 clients + 30 articles + 1 listing)
+  - `/seo-overview` → HTTP 308 → `/seo` ✅
+  - `/database` h1 = "Database" ✅
+  - `/maintenance` h1 = "Maintenance" — 7 tools healthy (down from 9, SEO removed), NO JSON-LD/Canonical/Sitemap references ✅
+  - `/settings/modonty` h1 = "Modonty Homepage" ✅
+  - `/seo` renders all 5 sections (Health + KPI + Auto-Maintenance + Cascade + Articles) ✅
+  - Console: zero application errors across all interactions (only Node zlib deprecation warning unrelated)
+- **TSC state**: admin ZERO errors after EVERY phase (exit 0 ×8)
+- **Docs created/updated**:
+  - `documents/tasks/SEO-MAINTENANCE-PAGE-PLAN.md` (comprehensive master plan with phase checklists + decisions + deferrals)
+  - `documents/tasks/MARIAM-AUDIT-OPEN-ITEMS.md` (last updated header)
+  - Memory: added `feedback_no_standalone_db_scripts.md` (Khalid: no scripts, use admin UI)
+- **Mariam prompts**: Gave Khalid 2 copy-paste prompts for "Request Indexing sweep" (50/day quota)
+
+### 📝 Decisions taken (with reasoning)
+- **Final route name: `/seo`** → short, no naming conflict (replaced `/seo-overview`)
+- **Sidebar entry: "SEO" replaces "SEO Overview"** → manages cognitive overload
+- **Activity Log: deferred** → don't build features without consumer; existing console logs sufficient
+- **Schema Validator: deferred (use existing reports)** → `jsonLdValidationReport` already cached per article; surface those instead of new Adobe API calls
+- **hreflang: Phase 8 (not now)** → don't conflate centralization with feature additions
+- **No standalone DB scripts** → Khalid hard rule: admin UI (Settings/Maintenance) only, no `*.ts` in admin/scripts for mutations
+- **Contextual SEO tools STAY** (quality-check workflow gate + in-editor seo-health-score + analyzer): they're context-aware, belong where the user is. Reviewed/improved in Phase 8+ separately.
+- **`/maintenance` cleanup was originally deferred (Phase 7b) but Khalid challenged the deferral**; verified the SEO bits in /maintenance call THE SAME underlying functions as /seo (`regenerateAllStaleJsonLd`, `regenerateAllStaleCanonicalUrls`, `refreshAllSitemaps`); confirmed 100% duplicate, then executed surgery.
+- **Cascade visibility approach**: Wire orphan `cascade-step-actions.ts` for client-driven cascade with live progress (vs polling Settings.cascade* fields which were dead data). Settings.cascade* fields untouched — left for potential future use or deletion.
+- **Article coverage UX**: Reused the existing well-built `articles-seo-health.tsx` from /seo-overview (had checkboxes, score badges, bulk fix dialog) — moved instead of rewriting.
+
+### 🚧 Pending / blocked
+- **Push** — blocker: needs Khalid's explicit "push" confirmation. All prerequisites green (TSC × all phases, live test 5/5 pages, cascade end-to-end on dev DB).
+- **Phase 8 hreflang** — `defaultAlternateLanguages` Json? field exists in Settings schema (line 1925) but no admin UI form. modonty `lib/seo/get-article-defaults-from-settings.ts` reads it. Needs: (1) UI form field in `/settings/articles`, (2) modonty article page to pass into `alternates.languages`.
+- **Phase 8+ contextual SEO tools review** — quality-check page + editor SEO health score + analyzer. Could pull validation rules from new `/seo` registry for SOT.
+
+### 📂 Files touched (newly created or modified this session)
+**New files (created):**
+- `admin/app/(dashboard)/seo/page.tsx`
+- `admin/app/(dashboard)/seo/loading.tsx`
+- `admin/app/(dashboard)/seo/error.tsx`
+- `admin/app/(dashboard)/seo/components/seo-page-shell.tsx`
+- `admin/app/(dashboard)/seo/components/seo-health-summary.tsx`
+- `admin/app/(dashboard)/seo/components/seo-kpi-strip.tsx`
+- `admin/app/(dashboard)/seo/components/cascade-status-panel.tsx`
+- `admin/app/(dashboard)/seo/components/seo-auto-maintenance.tsx`
+- `admin/app/(dashboard)/seo/components/article-coverage-panel.tsx` (moved from /seo-overview/articles-seo-health.tsx)
+- `admin/app/(dashboard)/seo/actions/run-seo-maintenance.ts`
+- `documents/tasks/SEO-MAINTENANCE-PAGE-PLAN.md`
+
+**Moved (git renames):**
+- `admin/app/(dashboard)/settings/actions/cascade-all-seo.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/settings/actions/cascade-step-actions.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/database/actions/jsonld-integrity.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/database/actions/canonical-url-sanitizer.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/database/actions/sitemap-freshness.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/seo-overview/actions/seo-overview-actions.ts` → `admin/app/(dashboard)/seo/actions/`
+- `admin/app/(dashboard)/seo-overview/actions/articles-seo-actions.ts` → `admin/app/(dashboard)/seo/actions/`
+
+**Deleted:**
+- `admin/app/(dashboard)/seo-overview/` (entire folder: page.tsx, seo-overview-client.tsx, loading.tsx, articles-seo-health.tsx, actions dir)
+- `admin/app/(dashboard)/settings/actions/regenerate-all-seo.ts` (orphan duplicate)
+
+**Modified:**
+- `admin/components/admin/sidebar.tsx` (SEO Overview → SEO entry)
+- `admin/next.config.ts` (added 308 redirect for /seo-overview → /seo)
+- `admin/app/(dashboard)/settings/actions/settings-actions.ts` (updated cascade import path)
+- `admin/app/(dashboard)/database/actions/run-all-maintenance.ts` (removed runStepJsonLd, runStepCanonical, runStepSitemapFreshness)
+- `admin/app/(dashboard)/database/components/auto-maintenance-panel.tsx` (removed 3 SEO step entries + imports + header copy "Runs 7 safe...")
+- `admin/app/(dashboard)/database/components/db-tools-section.tsx` (removed JSON-LD + Canonical cards + state + props + imports — ~210 LOC removed)
+- `admin/app/(dashboard)/maintenance/components/maintenance-page-shell.tsx` (removed SEO type props + computations)
+- `admin/app/(dashboard)/maintenance/page.tsx` (removed SEO data fetches)
+- `documents/tasks/MARIAM-AUDIT-OPEN-ITEMS.md` (Last Updated header)
+
+### 🔁 Git / deploy state
+- **Branch:** main
+- **Uncommitted changes:** YES — extensive (see Files touched). All staged/unstaged.
+- **Last commit:** `d50f5c7 modonty v1.49.3 + admin v0.64.0: workflow-only publish gate + CLS/LCP regression fix (Mariam audit)`
+- **Pushed:** no
+- **Vercel:** not deployed (awaiting push)
+
+### 🚀 How to resume in 30 seconds
+1. Khalid says "push" or any push trigger → suggest version bump `admin/package.json` from `0.64.0` → `0.65.0` (feature addition + centralization cleanup)
+2. Run `bash scripts/backup.sh` (mandatory per Khalid's rules)
+3. Add Changelog DB entry for `admin v0.65.0` (description: "Centralized /seo admin page — JSON-LD + Canonical + Sitemap + Cascade + Article Coverage in one place. Deleted /seo-overview. Removed SEO from /maintenance.")
+4. `git add . && git commit -m "..."` + `git push`
+5. After push, verify Vercel deploy succeeds
+6. Then move to Phase 8 (hreflang Settings field + admin UI form)
+7. Live test article: published article on modonty.com should show full hreflang set in `<head>`
+
+### Mariam status
+- Indexing prompt given (twice in different formats) — Khalid copy-pasted, Mariam should be processing on her side. No report file yet in `C:\Users\w2nad\Downloads\modonty-indexing-sweep-2026-05-28-*.md`.
+
+---
+
+
 
 ## Session: 2026-05-27 (evening, 18:00 → 20:30) — Publish workflow refactor + Performance fixes (CLS/LCP)
 

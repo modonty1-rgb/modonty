@@ -5,11 +5,8 @@ import { cleanExpiredOtps } from "./orphan-cleaner";
 import { cleanExpiredSessions } from "./session-cleaner";
 import { cleanStaleVersions } from "./stale-versions";
 import { createTTLIndex, getIndexHealth } from "./index-health";
-import { regenerateAllStaleJsonLd } from "./jsonld-integrity";
-import { regenerateAllStaleCanonicalUrls } from "./canonical-url-sanitizer";
 import { sanitizeAllLegalForms } from "./legalform-sanitizer";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
-import { refreshAllSitemaps } from "./sitemap-freshness";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 
 export interface MaintenanceStepResult {
@@ -70,36 +67,6 @@ export async function runStepTtl(): Promise<MaintenanceStepResult> {
   }
 }
 
-export async function runStepJsonLd(): Promise<MaintenanceStepResult> {
-  try {
-    const r = await regenerateAllStaleJsonLd();
-    return {
-      key: "jsonld",
-      label: "JSON-LD Regenerated",
-      ok: r.failed === 0,
-      count: r.successful,
-      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
-    };
-  } catch (e) {
-    return fail("jsonld", "JSON-LD Regenerated", e);
-  }
-}
-
-export async function runStepCanonical(): Promise<MaintenanceStepResult> {
-  try {
-    const r = await regenerateAllStaleCanonicalUrls();
-    return {
-      key: "canonical",
-      label: "Canonical URLs Sanitized",
-      ok: r.failed === 0,
-      count: r.successful,
-      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
-    };
-  } catch (e) {
-    return fail("canonical", "Canonical URLs Sanitized", e);
-  }
-}
-
 export async function runStepLegalForm(): Promise<MaintenanceStepResult> {
   try {
     const r = await sanitizeAllLegalForms();
@@ -127,21 +94,6 @@ export async function runStepCloudinaryOrphans(): Promise<MaintenanceStepResult>
     };
   } catch (e) {
     return fail("cloudinary", "Cloudinary Orphans Swept", e);
-  }
-}
-
-export async function runStepSitemapFreshness(): Promise<MaintenanceStepResult> {
-  try {
-    const r = await refreshAllSitemaps();
-    return {
-      key: "sitemap",
-      label: "Sitemaps Refreshed (GSC)",
-      ok: r.failed === 0,
-      count: r.successful,
-      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
-    };
-  } catch (e) {
-    return fail("sitemap", "Sitemaps Refreshed (GSC)", e);
   }
 }
 

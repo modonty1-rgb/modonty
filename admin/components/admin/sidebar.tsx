@@ -174,7 +174,7 @@ const menuGroups: MenuGroup[] = [
 const topItems: MenuItem[] = [
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
-  { icon: LineChart, label: "SEO Overview", href: "/seo-overview" },
+  { icon: LineChart, label: "SEO", href: "/seo" },
   { icon: CreditCard, label: "Pricing & Leads", href: "/subscription-tiers" },
 ];
 
