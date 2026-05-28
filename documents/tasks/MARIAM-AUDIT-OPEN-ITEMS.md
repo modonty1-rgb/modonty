@@ -31,10 +31,10 @@
   - تحت threshold (0.1) لكن قريب
   - السبب المحتمل: صور أو embeds في article body بدون reserved height
 
-- [ ] **hreflang ar-SA + ar-EG على صفحات المقالات** (audit #3)
-  - **الموقع:** [modonty/app/articles/[slug]/page.tsx](modonty/app/articles/[slug]/page.tsx) — `generateMetadata`
-  - **الحالي:** فقط `ar` + `x-default`
-  - **المطلوب:** `ar-SA`، `ar-EG`، `ar`، `x-default`
+- [x] ~~**hreflang ar-SA + ar-EG على صفحات المقالات** (audit #3)~~ ✅ DONE 2026-05-28 (admin v0.65.0)
+  - حلّ شامل: 9 locales (GCC كاملة + مصر + ar + x-default) عبر Settings.defaultAlternateLanguages
+  - مُدار من admin UI: /seo → Quick Maintenance → hreflang Sync
+  - Live verified: curl https://www.modonty.com/articles/ما-هو-السيو → 9 `<link rel="alternate" hreflang="..."/>` tags
 
 - [ ] **og:url trailing slash على الرئيسية** (audit #3)
   - **الموقع:** [modonty/app/page.tsx](modonty/app/page.tsx) — `generateMetadata.openGraph.url`

@@ -175,6 +175,26 @@ export function generateArticleKnowledgeGraph(
   // 5. BreadcrumbList
   graph.push(generateBreadcrumbNode(article, articleUrl, ids.breadcrumb, siteUrl));
 
+  // 5b. FAQPage — only when published FAQs with answers exist (Mariam audit #3 nice-to-have).
+  // Filters: status PUBLISHED + non-empty answer. Excludes PENDING reader submissions.
+  const publishedFaqs = (article.faqs ?? []).filter(
+    (f) => f.status === "PUBLISHED" && (f.answer ?? "").trim().length > 0
+  );
+  if (publishedFaqs.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      "@id": `${articleUrl}#faq`,
+      mainEntity: publishedFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.answer,
+        },
+      })),
+    });
+  }
+
   // 6. YMYL nodes (Medical/Legal/Financial org + Physician/Attorney reviewer + MedicalWebPage wrapper for medical)
   if (article.client.isYmyl) {
     const ymylNodes = buildYmylJsonLdGraph({

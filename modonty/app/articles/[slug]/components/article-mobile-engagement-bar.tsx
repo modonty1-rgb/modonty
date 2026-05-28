@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { IconMenu, IconComment, IconShare } from "@/lib/icons";
 import { ArticleInteractionButtons } from "./article-interaction-buttons";
 import { AskClientDialog } from "./ask-client-dialog";
@@ -82,7 +83,7 @@ export function ArticleMobileEngagementBar({
       {clientId && clientName && (
         <div className="flex items-center gap-1.5 w-full">
           {clientSlug && (
-            <a href={`/clients/${clientSlug}`} aria-label={clientName} className="shrink-0">
+            <Link href={`/clients/${clientSlug}`} aria-label={clientName} className="shrink-0">
               <div className="h-7 w-7 rounded-full overflow-hidden ring-2 ring-border bg-background flex items-center justify-center">
                 {clientLogo ? (
                   <Image
@@ -96,7 +97,7 @@ export function ArticleMobileEngagementBar({
                   <span className="text-xs font-bold text-primary">{clientName.charAt(0)}</span>
                 )}
               </div>
-            </a>
+            </Link>
           )}
           <AskClientDialog
             articleId={articleId}
