@@ -22,6 +22,8 @@ import { db } from "@/lib/db";
 import { getCachedTopPages } from "@/lib/gsc/cached";
 import { analyzeGscCoverage, getAllPublishedArticles } from "@/lib/gsc/coverage";
 import { getCachedInspectionsByUrls, type InspectionRecord } from "@/lib/gsc/inspection-cache";
+import { fetchAndParseSitemap } from "@/lib/gsc/parse-sitemap";
+import type { GscRow } from "@/lib/gsc/types";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
 import {
@@ -83,13 +85,34 @@ export default async function SearchConsolePage({
       ? filterParam
       : "all";
 
-  const [topPages, publishedArticles] = await Promise.all([
-    getCachedTopPages(28, 100).catch(() => []),
+  // Source-of-truth: sitemap URLs (every page Google can discover) — NOT top 100 by traffic.
+  // Top 100 by traffic misses indexed pages with zero impressions in the 28-day window.
+  // Merge: sitemap as base + traffic data attached where available.
+  const baseUrl = await loadSiteUrl();
+  const sitemapUrl = `${baseUrl.replace(/\/$/, "")}/sitemap.xml`;
+  const [sitemap, topPages, publishedArticles] = await Promise.all([
+    fetchAndParseSitemap(sitemapUrl).catch(() => ({ entries: [] as Array<{ loc: string }> })),
+    getCachedTopPages(28, 1000).catch(() => []),
     getAllPublishedArticles(),
   ]);
 
+  // Build traffic lookup from GSC top pages (28d window)
+  const trafficByUrl = new Map<string, { clicks: number; impressions: number; ctr: number; position: number }>();
+  for (const row of topPages) {
+    const url = row.keys?.[0];
+    if (url) trafficByUrl.set(url, { clicks: row.clicks, impressions: row.impressions, ctr: row.ctr, position: row.position });
+  }
+
+  // Union of (sitemap URLs ∪ GSC top URLs) — sitemap is exhaustive, GSC catches discovered-but-not-in-sitemap edge cases
+  const allUrls = new Set<string>([...sitemap.entries.map((e) => e.loc), ...topPages.map((r) => r.keys?.[0] ?? "")].filter(Boolean));
+
+  const mergedRows: GscRow[] = Array.from(allUrls).map((url) => {
+    const t = trafficByUrl.get(url) ?? { clicks: 0, impressions: 0, ctr: 0, position: 0 };
+    return { keys: [url], clicks: t.clicks, impressions: t.impressions, ctr: t.ctr, position: t.position };
+  });
+
   const { pages, summary, pendingIndexing } = await analyzeGscCoverage(
-    topPages,
+    mergedRows,
     publishedArticles,
   );
 

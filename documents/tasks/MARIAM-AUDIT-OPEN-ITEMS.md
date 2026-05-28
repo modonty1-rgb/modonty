@@ -1,6 +1,11 @@
 # Mariam Audit — Open Items (Backlog)
 
-> **آخر تحديث:** 2026-05-28 (بعد فحص SEO الكامل — راجع [SEO-MAINTENANCE-PAGE-PLAN.md](SEO-MAINTENANCE-PAGE-PLAN.md))
+> **آخر تحديث:** 2026-05-28 18:30 — **ملف SEO مغلق نهائياً** بعد investigation الكامل.
+> **Investigation result (2026-05-28):**
+>   - **9 fetch errors** (NOT 7): كلهم 200 على curl live. السبب = GSC stale cache من قبل v1.49.x slug encoding fix. الحل = ping Google عبر IndexNow.
+>   - **5 canonical mismatches** (NOT 4): كل الـ 5 pages تُرسل `www.modonty.com` صح على live. السبب = Google يحتفظ بـ canonical قديم من قبل v1.49.1. سيختفي مع الـ recrawl التالي.
+>   - **النتيجة:** صفر bugs في الكود. كله stale GSC data.
+> **Open (deferred — non-blocking):** بكرة Mariam تكمل indexing sweep (Google quota reset 00:00 UTC).
 > **المصدر:** كل تقارير Mariam (audits + PSI + verification + diagnostic)
 > **القاعدة:** بعد كل تقرير → نحدّث هذا الملف، البنود المنجزة تنتقل لـ Done (مش تُحذف)
 
