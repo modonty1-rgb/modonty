@@ -175,7 +175,7 @@ const topItems: MenuItem[] = [
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
   { icon: LineChart, label: "SEO", href: "/seo" },
-  { icon: CreditCard, label: "Pricing & Leads", href: "/subscription-tiers" },
+  { icon: CreditCard, label: "Subscription Tiers", href: "/subscription-tiers" },
 ];
 
 function NavLink({

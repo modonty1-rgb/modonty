@@ -22,11 +22,8 @@ export function TierDistribution({ tiers }: { tiers: TierInfo[] }) {
 
   if (totalClients === 0) {
     return (
-      <div className="rounded-xl border border-dashed bg-card p-6 text-center">
-        <p className="text-sm font-medium">No clients on active plans yet</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          When clients subscribe, their distribution across plans will appear here.
-        </p>
+      <div className="rounded-md border border-dashed bg-card px-3 py-2 text-xs text-muted-foreground">
+        No clients on active plans yet.
       </div>
     );
   }
@@ -34,18 +31,13 @@ export function TierDistribution({ tiers }: { tiers: TierInfo[] }) {
   const sorted = [...active].sort((a, b) => b._count.clients - a._count.clients);
 
   return (
-    <div className="rounded-xl border bg-card p-4 space-y-3">
-      <div className="flex items-baseline justify-between">
-        <div>
-          <h2 className="text-sm font-semibold">Client Distribution</h2>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            How your {totalClients} client{totalClients === 1 ? "" : "s"} spread across the active plans
-          </p>
-        </div>
-      </div>
+    <div className="rounded-md border bg-card px-3 py-2 flex items-center gap-3 flex-wrap">
+      <span className="text-xs font-semibold text-muted-foreground shrink-0">
+        Distribution · {totalClients}
+      </span>
 
-      {/* Stacked horizontal bar */}
-      <div className="h-3 rounded-full overflow-hidden flex bg-muted">
+      {/* Thin inline bar */}
+      <div className="h-1.5 rounded-full overflow-hidden flex bg-muted flex-1 min-w-[160px]">
         {sorted.map((tier, i) => {
           if (tier._count.clients === 0) return null;
           const pct = (tier._count.clients / totalClients) * 100;
@@ -54,39 +46,27 @@ export function TierDistribution({ tiers }: { tiers: TierInfo[] }) {
               key={tier.id}
               className={PALETTE[i % PALETTE.length]}
               style={{ width: `${pct}%` }}
-              title={`${tier.name} — ${tier._count.clients} clients (${pct.toFixed(1)}%)`}
+              title={`${tier.name} — ${tier._count.clients} (${pct.toFixed(0)}%)`}
             />
           );
         })}
       </div>
 
-      {/* Legend */}
-      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 pt-1">
+      {/* Inline legend — compact pills */}
+      <div className="flex items-center gap-x-3 gap-y-1 flex-wrap">
         {sorted.map((tier, i) => {
+          if (tier._count.clients === 0) return null;
           const pct = (tier._count.clients / totalClients) * 100;
           return (
-            <li
-              key={tier.id}
-              className={`flex items-center justify-between gap-2 text-xs ${
-                tier._count.clients === 0 ? "opacity-50" : ""
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <span className={`h-2.5 w-2.5 rounded-sm shrink-0 ${PALETTE[i % PALETTE.length]}`} />
-                <span className="truncate">{tier.name}</span>
-              </div>
-              <div className="flex items-center gap-2 shrink-0 tabular-nums text-muted-foreground">
-                <span>
-                  {tier._count.clients} client{tier._count.clients === 1 ? "" : "s"}
-                </span>
-                <span className="font-semibold text-foreground w-10 text-end">
-                  {pct.toFixed(1)}%
-                </span>
-              </div>
-            </li>
+            <span key={tier.id} className="flex items-center gap-1.5 text-[11px]">
+              <span className={`h-2 w-2 rounded-sm shrink-0 ${PALETTE[i % PALETTE.length]}`} />
+              <span className="text-muted-foreground">{tier.name}</span>
+              <span className="font-semibold tabular-nums">{tier._count.clients}</span>
+              <span className="text-muted-foreground/70 tabular-nums">({pct.toFixed(0)}%)</span>
+            </span>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }

@@ -6,17 +6,17 @@ import { db } from "@/lib/db";
 import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { getCachedInspection } from "@/lib/gsc/inspection-cache";
 
-import { getManualTrackState } from "../../actions/removal-tracking-actions";
+import { getManualTrackState } from "../../../search-console/actions/removal-tracking-actions";
 import { PipelineRunner } from "./pipeline-runner";
 
 export default async function IndexingPipelinePage({
   params,
 }: {
-  params: Promise<{ articleId: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { articleId } = await params;
+  const { id } = await params;
   const article = await db.article.findUnique({
-    where: { id: articleId },
+    where: { id },
     select: {
       id: true,
       slug: true,
@@ -38,14 +38,14 @@ export default async function IndexingPipelinePage({
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="space-y-1.5">
           <Link
-            href="/search-console"
+            href={`/articles/${article.id}/edit`}
             className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-3 w-3" />
-            Back to Search Console
+            Back to article
           </Link>
           <h1 className="text-2xl font-semibold leading-tight">
-            Indexing Pipeline
+            SEO Pipeline
           </h1>
           <p className="text-sm text-muted-foreground">
             13 quality gates · article must pass all of them at 100% before being requested for indexing

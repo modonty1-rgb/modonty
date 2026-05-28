@@ -1,10 +1,11 @@
 # Mariam Audit — Open Items (Backlog)
 
-> **آخر تحديث:** 2026-05-28 18:30 — **ملف SEO مغلق نهائياً** بعد investigation الكامل.
+> **آخر تحديث:** 2026-05-28 22:00 — **/search-console refactor مكتمل + ملف SEO نظيف.**
 > **Investigation result (2026-05-28):**
 >   - **9 fetch errors** (NOT 7): كلهم 200 على curl live. السبب = GSC stale cache من قبل v1.49.x slug encoding fix. الحل = ping Google عبر IndexNow.
 >   - **5 canonical mismatches** (NOT 4): كل الـ 5 pages تُرسل `www.modonty.com` صح على live. السبب = Google يحتفظ بـ canonical قديم من قبل v1.49.1. سيختفي مع الـ recrawl التالي.
 >   - **النتيجة:** صفر bugs في الكود. كله stale GSC data.
+> **/search-console v0.65.3 (2026-05-28):** restructured — sole source-of-truth = live PROD sitemap (hardcoded `https://www.modonty.com/sitemap.xml`), DB = enrichment only, auto-background-inspect on page load (no manual button), cache TTL 7d → 24h. Verified live on PROD DB: TOTAL=102 (exact sitemap), LIVE=102, Coverage=100%, 102/102 inspected.
 > **Open (deferred — non-blocking):** بكرة Mariam تكمل indexing sweep (Google quota reset 00:00 UTC).
 > **المصدر:** كل تقارير Mariam (audits + PSI + verification + diagnostic)
 > **القاعدة:** بعد كل تقرير → نحدّث هذا الملف، البنود المنجزة تنتقل لـ Done (مش تُحذف)
@@ -52,6 +53,17 @@
 
 ---
 
+## 🆕 Phase 9 — Indexing Reasons Dashboard (added 2026-05-28)
+
+- [ ] **Add `coverageState` breakdown UI on /search-console** — replicate GSC dropdown
+  - **Data source:** already stored in `GscUrlInspection.coverageState` (no new API calls needed)
+  - **15 official GSC reasons** (verified via Google docs 2026-05-28): Server error (5xx) · Redirect error · Blocked by robots.txt · Marked 'noindex' · Soft 404 · Unauthorized (401) · Not found (404) · Forbidden (403) · Other 4xx · Crawled – not indexed · Discovered – not indexed · Alternate page with canonical · Duplicate without canonical · Duplicate, Google chose different · Page with redirect
+  - **UI design:** aggregate counts per coverageState + drill-down to URL list per reason
+  - **Why:** Khalid wants full visibility in admin without needing an external SEO specialist
+  - **Confirmed by docs:** URL Inspection API returns the SAME data as GSC dashboard, but realtime (not 6-day stale)
+
+---
+
 ## 🟢 Nice-to-have
 
 - [ ] **FAQPage schema على مقالات SEO** (audit #3)
@@ -83,6 +95,27 @@
 - [x] **Performance Desktop: 65 → 92** — +27 نقطة 🚀
 - [x] **SEO score: 100/100**
 - [x] **Accessibility: 100/100**
+
+---
+
+## ✅ Done — 2026-05-28 (search-console restructure)
+
+- [x] **/search-console: source-of-truth = live PROD sitemap only** — v0.65.3
+  - Was: `sitemap ∪ GSC top 1000` (110 URLs — included 8 phantom URLs Google discovered but we don't publish)
+  - Now: hardcoded `https://www.modonty.com/sitemap.xml` ONLY (102 URLs — exact match to what we publish)
+  - DB used ONLY for enrichment (entity name + status per URL type)
+  - Verified live on PROD DB: TOTAL=102, LIVE=102, MISSING=0, Coverage=100%
+
+- [x] **/search-console: enrichment extended to all entity types** — v0.65.3
+  - Was: only Articles looked up in DB → authors/categories/tags/industries showed `n/a` and were wrong-counted
+  - Now: parallel batch lookup for Article + Author + Category + Tag + Industry + Client
+  - Result: LIVE 27 → 102 (full enrichment, no false 'other')
+
+- [x] **/search-console: auto-background-inspect on page load** — v0.65.3
+  - Was: manual `<InspectBulkButton>` with confirm dialog
+  - Now: `<BackgroundInspector>` auto-fires on mount for stale URLs (>24h or never cached), shows live chip in header, `router.refresh()` when complete
+  - Quota-safe: caps at 200 URLs per run, concurrency=3
+  - Cache TTL lowered from 7d to 24h so fresh data is the new normal
 
 ---
 

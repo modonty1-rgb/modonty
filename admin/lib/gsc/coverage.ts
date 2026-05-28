@@ -21,6 +21,8 @@ export interface EnrichedPage {
   dbStatus: DbStatus;
   articleId?: string;
   articleTitle?: string;
+  /** Generic display name for non-article entities (author/category/tag/industry/client). */
+  entityName?: string;
   clicks: number;
   impressions: number;
   ctr: number;
@@ -106,7 +108,10 @@ export function parseUrl(rawUrl: string): { type: PathType; path: string; slug?:
   if (authorSlug) return { type: "author", path, slug: authorSlug };
 
   // Static pages: /about, /contact, /privacy, /terms, etc.
-  if (/^\/(about|contact|privacy|terms|search|trending|saved)$/.test(path)) {
+  if (/^\/(about|contact|privacy|terms|search|trending|saved|news|categories|clients|tags|authors|industries)$/.test(path)) {
+    return { type: "static", path };
+  }
+  if (path.startsWith("/legal") || path.startsWith("/help")) {
     return { type: "static", path };
   }
 
@@ -127,9 +132,9 @@ export async function getAllPublishedArticles(): Promise<PublishedArticleRef[]> 
 }
 
 /**
- * Match GSC pages with DB articles and produce enriched per-page status + summary.
- * Optional `publishedArticles` enables the "pending indexing" computation.
- * Single batch DB query — performant for any GSC page list size.
+ * Match GSC pages with DB articles + all other entity types (author/category/tag/industry/client).
+ * Source of truth = URL list passed in (typically the live PROD sitemap).
+ * DB is used ONLY for enrichment — status/name/id per URL.
  */
 export async function analyzeGscCoverage(
   gscPages: GscRow[],
@@ -142,25 +147,73 @@ export async function analyzeGscCoverage(
   // Parse all URLs first
   const parsed = gscPages.map((p) => ({ row: p, info: parseUrl(p.keys[0] ?? "") }));
 
-  // Collect article slugs that need a DB lookup
-  const articleSlugs = parsed
-    .filter((p) => p.info.type === "article" && p.info.slug)
-    .map((p) => p.info.slug!);
-
-  // Batch fetch matching articles
-  let articleMap = new Map<
-    string,
-    { id: string; slug: string; title: string; status: DbStatus }
-  >();
-  if (articleSlugs.length > 0) {
-    const articles = await db.article.findMany({
-      where: { slug: { in: articleSlugs } },
-      select: { id: true, slug: true, title: true, status: true },
-    });
-    articleMap = new Map(
-      articles.map((a) => [a.slug, { ...a, status: a.status as DbStatus }]),
-    );
+  // Collect slugs per entity type for batch DB lookups
+  const slugsByType = {
+    article: new Set<string>(),
+    author: new Set<string>(),
+    category: new Set<string>(),
+    tag: new Set<string>(),
+    industry: new Set<string>(),
+    client: new Set<string>(),
+  };
+  for (const { info } of parsed) {
+    if (!info.slug) continue;
+    if (info.type === "article") slugsByType.article.add(info.slug);
+    else if (info.type === "author") slugsByType.author.add(info.slug);
+    else if (info.type === "category") slugsByType.category.add(info.slug);
+    else if (info.type === "tag") slugsByType.tag.add(info.slug);
+    else if (info.type === "industry") slugsByType.industry.add(info.slug);
+    else if (info.type === "client") slugsByType.client.add(info.slug);
   }
+
+  // Batch fetch — all entity types in parallel
+  const [articles, authors, categories, tags, industries, clients] = await Promise.all([
+    slugsByType.article.size > 0
+      ? db.article.findMany({
+          where: { slug: { in: [...slugsByType.article] } },
+          select: { id: true, slug: true, title: true, status: true },
+        })
+      : Promise.resolve([]),
+    slugsByType.author.size > 0
+      ? db.author.findMany({
+          where: { slug: { in: [...slugsByType.author] } },
+          select: { id: true, slug: true, name: true },
+        })
+      : Promise.resolve([]),
+    slugsByType.category.size > 0
+      ? db.category.findMany({
+          where: { slug: { in: [...slugsByType.category] } },
+          select: { id: true, slug: true, name: true },
+        })
+      : Promise.resolve([]),
+    slugsByType.tag.size > 0
+      ? db.tag.findMany({
+          where: { slug: { in: [...slugsByType.tag] } },
+          select: { id: true, slug: true, name: true },
+        })
+      : Promise.resolve([]),
+    slugsByType.industry.size > 0
+      ? db.industry.findMany({
+          where: { slug: { in: [...slugsByType.industry] } },
+          select: { id: true, slug: true, name: true },
+        })
+      : Promise.resolve([]),
+    slugsByType.client.size > 0
+      ? db.client.findMany({
+          where: { slug: { in: [...slugsByType.client] } },
+          select: { id: true, slug: true, name: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const articleMap = new Map(
+    articles.map((a) => [a.slug, { ...a, status: a.status as DbStatus }]),
+  );
+  const authorMap = new Map(authors.map((a) => [a.slug, a]));
+  const categoryMap = new Map(categories.map((c) => [c.slug, c]));
+  const tagMap = new Map(tags.map((t) => [t.slug, t]));
+  const industryMap = new Map(industries.map((i) => [i.slug, i]));
+  const clientMap = new Map(clients.map((c) => [c.slug, c]));
 
   // Build enriched rows
   const pages: EnrichedPage[] = parsed.map(({ row, info }) => {
@@ -176,7 +229,7 @@ export async function analyzeGscCoverage(
       position: row.position,
     };
 
-    if (info.type === "homepage") {
+    if (info.type === "homepage" || info.type === "static") {
       base.dbStatus = "PUBLISHED";
       return base;
     }
@@ -187,6 +240,61 @@ export async function analyzeGscCoverage(
         base.articleId = article.id;
         base.articleTitle = article.title;
         base.dbStatus = article.status;
+      } else {
+        base.dbStatus = "missing";
+      }
+      return base;
+    }
+
+    if (info.type === "author" && info.slug) {
+      const author = authorMap.get(info.slug);
+      if (author) {
+        base.entityName = author.name;
+        base.dbStatus = "PUBLISHED";
+      } else {
+        base.dbStatus = "missing";
+      }
+      return base;
+    }
+
+    if (info.type === "category" && info.slug) {
+      const category = categoryMap.get(info.slug);
+      if (category) {
+        base.entityName = category.name;
+        base.dbStatus = "PUBLISHED";
+      } else {
+        base.dbStatus = "missing";
+      }
+      return base;
+    }
+
+    if (info.type === "tag" && info.slug) {
+      const tag = tagMap.get(info.slug);
+      if (tag) {
+        base.entityName = tag.name;
+        base.dbStatus = "PUBLISHED";
+      } else {
+        base.dbStatus = "missing";
+      }
+      return base;
+    }
+
+    if (info.type === "industry" && info.slug) {
+      const industry = industryMap.get(info.slug);
+      if (industry) {
+        base.entityName = industry.name;
+        base.dbStatus = "PUBLISHED";
+      } else {
+        base.dbStatus = "missing";
+      }
+      return base;
+    }
+
+    if (info.type === "client" && info.slug) {
+      const client = clientMap.get(info.slug);
+      if (client) {
+        base.entityName = client.name;
+        base.dbStatus = "PUBLISHED";
       } else {
         base.dbStatus = "missing";
       }

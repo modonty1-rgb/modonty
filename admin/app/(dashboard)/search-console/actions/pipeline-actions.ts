@@ -15,7 +15,6 @@ import {
   refreshInspection,
   type InspectionRecord,
 } from "@/lib/gsc/inspection-cache";
-import { requestIndexing } from "@/lib/gsc/indexing";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 interface PipelineRunResponse {
@@ -36,11 +35,6 @@ interface FinalCheckResponse {
   ok: boolean;
   error?: string;
   inspection?: InspectionRecord;
-}
-
-interface IndexingResponse {
-  ok: boolean;
-  error?: string;
 }
 
 async function requireAuth() {
@@ -248,29 +242,3 @@ export async function autoFixSchemaAction(
   }
 }
 
-/** Stage 14 — fire URL_UPDATED to Google Indexing API. */
-export async function requestArticleIndexingAction(
-  articleId: string,
-): Promise<IndexingResponse> {
-  try {
-    await requireAuth();
-    const article = await db.article.findUnique({
-      where: { id: articleId },
-      select: { slug: true },
-    });
-    if (!article) return { ok: false, error: "Article not found" };
-
-    const url = buildArticleUrlFromBase(article.slug, await loadSiteUrl());
-    const result = await requestIndexing(url);
-    if (result.success) {
-      revalidateTag("gsc-dashboard", "max");
-      return { ok: true };
-    }
-    return { ok: false, error: result.error ?? "Indexing API rejected the request" };
-  } catch (e) {
-    return {
-      ok: false,
-      error: e instanceof Error ? e.message : "Indexing request failed",
-    };
-  }
-}

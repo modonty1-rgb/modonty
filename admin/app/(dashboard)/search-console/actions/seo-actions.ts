@@ -4,23 +4,9 @@ import { revalidateTag } from "next/cache";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import {
-  notifyDeleted,
-  requestIndexing,
-  notifyDeletedBatch,
-  requestIndexingBatch,
-  type IndexingResult,
-} from "@/lib/gsc/indexing";
 import { bulkInspect } from "@/lib/gsc/inspection-cache";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { buildArticleUrlFromBase } from "@/lib/seo/url-builders";
-
-interface ActionResponse {
-  ok: boolean;
-  result?: IndexingResult;
-  results?: IndexingResult[];
-  error?: string;
-}
 
 interface BulkInspectionResponse {
   ok: boolean;
@@ -34,54 +20,6 @@ async function requireAuth() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   return session.user;
-}
-
-export async function notifyGoogleDeletedAction(url: string): Promise<ActionResponse> {
-  try {
-    await requireAuth();
-    const result = await notifyDeleted(url);
-    if (result.success) revalidateTag("gsc-dashboard", "max");
-    return { ok: result.success, result, error: result.error };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Failed to notify Google" };
-  }
-}
-
-export async function requestIndexingAction(url: string): Promise<ActionResponse> {
-  try {
-    await requireAuth();
-    const result = await requestIndexing(url);
-    if (result.success) revalidateTag("gsc-dashboard", "max");
-    return { ok: result.success, result, error: result.error };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Failed to request indexing" };
-  }
-}
-
-export async function notifyGoogleDeletedBulkAction(urls: string[]): Promise<ActionResponse> {
-  try {
-    await requireAuth();
-    if (urls.length === 0) return { ok: true, results: [] };
-    if (urls.length > 50) return { ok: false, error: "Too many URLs (max 50 per batch)" };
-    const results = await notifyDeletedBatch(urls);
-    revalidateTag("gsc-dashboard", "max");
-    return { ok: true, results };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Bulk notification failed" };
-  }
-}
-
-export async function requestIndexingBulkAction(urls: string[]): Promise<ActionResponse> {
-  try {
-    await requireAuth();
-    if (urls.length === 0) return { ok: true, results: [] };
-    if (urls.length > 50) return { ok: false, error: "Too many URLs (max 50 per batch)" };
-    const results = await requestIndexingBatch(urls);
-    revalidateTag("gsc-dashboard", "max");
-    return { ok: true, results };
-  } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Bulk indexing failed" };
-  }
 }
 
 /** Bulk inspect — defaults to all PUBLISHED articles when no urls passed. */

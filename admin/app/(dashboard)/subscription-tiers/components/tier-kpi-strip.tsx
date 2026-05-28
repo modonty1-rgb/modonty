@@ -24,7 +24,7 @@ export function TierKpiStrip({
   signups,
 }: {
   tiers: TierInfo[];
-  signups: SignupsSummary;
+  signups: SignupsSummary | null;
 }) {
   const activeTiers = tiers.filter((t) => t.isActive);
   const totalClients = activeTiers.reduce((s, t) => s + t._count.clients, 0);
@@ -45,12 +45,12 @@ export function TierKpiStrip({
   );
   const avgQuota = totalClients > 0 ? Math.round(weightedQuotaSum / totalClients) : 0;
 
-  const syncedHint = signups.lastSyncedAt
+  const syncedHint = signups?.lastSyncedAt
     ? `last synced ${timeAgo(signups.lastSyncedAt)}`
     : "never synced";
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+    <div className={`grid grid-cols-2 gap-3 ${signups ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
       <KpiCard
         tone="violet"
         icon={<Users className="h-4 w-4" />}
@@ -88,13 +88,15 @@ export function TierKpiStrip({
         value={avgQuota.toString()}
         hint="weighted by client count"
       />
-      <KpiCard
-        tone="pink"
-        icon={<Inbox className="h-4 w-4" />}
-        label="jbrseo Signups"
-        value={signups.total.toString()}
-        hint={syncedHint}
-      />
+      {signups && (
+        <KpiCard
+          tone="pink"
+          icon={<Inbox className="h-4 w-4" />}
+          label="jbrseo Signups"
+          value={signups.total.toString()}
+          hint={syncedHint}
+        />
+      )}
     </div>
   );
 }

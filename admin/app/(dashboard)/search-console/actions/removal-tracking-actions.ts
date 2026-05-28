@@ -32,7 +32,7 @@ export async function markManualOpenedAction(
       update: { openedAt: new Date(), openedByUserId: userId },
     });
     revalidatePath("/search-console");
-    revalidatePath(`/search-console/pipeline`);
+    revalidatePath(`/articles`, "layout");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Failed" };
@@ -58,7 +58,7 @@ export async function markManualDoneAction(
       update: { doneAt: new Date(), doneByUserId: userId },
     });
     revalidatePath("/search-console");
-    revalidatePath(`/search-console/pipeline`);
+    revalidatePath(`/articles`, "layout");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Failed" };
@@ -77,7 +77,7 @@ export async function unmarkManualDoneAction(
       data: { doneAt: null, doneByUserId: null },
     });
     revalidatePath("/search-console");
-    revalidatePath(`/search-console/pipeline`);
+    revalidatePath(`/articles`, "layout");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Failed" };

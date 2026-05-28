@@ -10,7 +10,7 @@ import Link from "next/link";
 import { getStatusLabel, getStatusVariant } from "../helpers/status-utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Eye, FolderOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Eye, FolderOpen, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { analyzeArticleSEO } from "../analyzer";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
@@ -199,12 +199,15 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
                   {getSortIcon("datePublished")}
                 </div>
               </TableHead>
+              <TableHead className="w-[80px]">
+                <div className="flex items-center justify-center">Pipeline</div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No articles found</p>
                     <p className="text-xs">Try adjusting your filters or search terms</p>
@@ -303,6 +306,20 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
                             {format(new Date(article.createdAt), "MMM d, yyyy")}
                           </span>
                         )}
+                    </div>
+                  </TableCell>
+
+                  {/* Pipeline action */}
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-center">
+                      <Link
+                        href={`/articles/pipeline/${article.id}`}
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 text-xs font-medium transition-colors"
+                        title="Open SEO pipeline"
+                      >
+                        <Workflow className="h-3.5 w-3.5" />
+                        Pipeline
+                      </Link>
                     </div>
                   </TableCell>
 

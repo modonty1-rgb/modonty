@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 import { inspectUrl } from "./inspection";
 
-const TTL_DAYS = 7;
+const TTL_DAYS = 1; // 24-hour freshness — auto-refresh on page load for stale URLs
 const TTL_MS = TTL_DAYS * 24 * 60 * 60 * 1000;
 
 export interface InspectionRecord {

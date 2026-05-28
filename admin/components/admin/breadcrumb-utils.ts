@@ -8,11 +8,11 @@ export interface BreadcrumbItem {
 
 /**
  * URL segments that are NOT real routes — they only exist as parent paths for
- * dynamic children (e.g. /search-console/pipeline → no page.tsx, only [articleId]).
+ * dynamic children (no page.tsx at the segment, only at the child).
  * Clicking these in breadcrumb produces a 404. Render them as text instead.
  */
 const NON_NAVIGABLE_SEGMENTS = new Set([
-  "pipeline",        // /search-console/pipeline (parent of [articleId])
+  "pipeline",        // /articles/[id]/pipeline — page is dynamic-only
   "workflow",        // /articles/workflow (parent of [transition] + quality-check)
   "quality-check",   // /articles/workflow/quality-check (parent of [articleId])
 ]);

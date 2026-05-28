@@ -5,6 +5,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsPageClient } from "./components/clients-page-client";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
+import { ClientsTabs } from "./components/clients-tabs";
+import {
+  getJbrseoSubscribers,
+  getJbrseoSubscriberStats,
+} from "../subscription-tiers/helpers/jbrseo-queries";
+import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
+import { TierDistribution } from "../subscription-tiers/components/tier-distribution";
 
 function TableSkeleton() {
   return (
@@ -18,14 +25,23 @@ function TableSkeleton() {
 }
 
 async function ClientsContent({ filters }: { filters: ClientFilters }) {
-  const [clients, stats] = await Promise.all([
+  const [clients, stats, signupsRows, signupStats, tiers] = await Promise.all([
     getClients(filters),
     getClientsStats(),
+    getJbrseoSubscribers(),
+    getJbrseoSubscriberStats(),
+    getTierConfigs(),
   ]);
 
   return (
     <ClientsHeaderWrapper clientCount={clients.length} stats={stats}>
-      <ClientsPageClient clients={clients} />
+      <ClientsTabs
+        clientsCount={clients.length}
+        signupsCount={signupStats.total}
+        signupsRows={signupsRows}
+        clientsSlot={<ClientsPageClient clients={clients} />}
+        distributionSlot={<TierDistribution tiers={tiers} />}
+      />
     </ClientsHeaderWrapper>
   );
 }
