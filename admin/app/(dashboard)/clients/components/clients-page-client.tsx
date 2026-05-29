@@ -6,12 +6,13 @@ import type { ClientForList } from "../actions/clients-actions/types";
 
 interface ClientsPageClientProps {
   clients: ClientForList[];
+  defaultLogoUrl?: string | null;
 }
 
-export function ClientsPageClient({ clients }: ClientsPageClientProps) {
+export function ClientsPageClient({ clients, defaultLogoUrl }: ClientsPageClientProps) {
   const { search } = useSearchContext();
 
   return (
-    <ClientTable clients={clients} search={search} />
+    <ClientTable clients={clients} search={search} defaultLogoUrl={defaultLogoUrl} />
   );
 }

@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import Image from "next/image";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -34,6 +33,8 @@ import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
+import { ActivateClientButton } from "./activate-client-button";
+import { ClientAvatar } from "./client-avatar";
 
 type ListValidationError = { message?: string } | string;
 
@@ -58,6 +59,7 @@ interface ListValidationReport {
 interface ClientTableProps {
   clients: ClientForList[];
   search?: string;
+  defaultLogoUrl?: string | null;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -195,7 +197,7 @@ function getCriticalItems(client: ClientForList): string[] {
   return items;
 }
 
-export function ClientTable({ clients, search: externalSearch }: ClientTableProps) {
+export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }: ClientTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState(externalSearch || "");
   const [currentPage, setCurrentPage] = useState(1);
@@ -332,7 +334,7 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
     <div className="space-y-4">
       <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[80px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[96px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -455,21 +457,11 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                     >
                     <TableCell>
                       <div className="flex items-center gap-2.5">
-                        <div className="relative h-8 w-8 shrink-0 rounded-full overflow-hidden bg-muted border border-border">
-                          {client.logoMedia?.url ? (
-                            <Image
-                              src={client.logoMedia.url}
-                              alt={client.logoMedia.altText || client.name}
-                              fill
-                              className="object-cover"
-                              sizes="32px"
-                            />
-                          ) : (
-                            <div className="h-full w-full flex items-center justify-center text-xs font-bold text-muted-foreground">
-                              {client.name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
+                        <ClientAvatar
+                          url={client.logoMedia?.url}
+                          fallbackUrl={defaultLogoUrl}
+                          name={client.name}
+                        />
                         <div className="flex flex-col gap-0.5 min-w-0">
                           <Link
                             href={`/clients/${client.id}`}
@@ -501,7 +493,14 @@ export function ClientTable({ clients, search: externalSearch }: ClientTableProp
                         );
                       })()}
                     </TableCell>
-                    <TableCell className="text-center">{getStatusBadge()}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        {getStatusBadge()}
+                        {client.subscriptionStatus === SubscriptionStatus.PENDING && (
+                          <ActivateClientButton clientId={client.id} clientName={client.name} />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-center px-2">
                       <span className={cn("text-sm font-medium", client._count.articles === 0 ? "text-muted-foreground/50" : "text-foreground")}>
                         {client._count.articles}

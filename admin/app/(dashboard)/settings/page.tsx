@@ -8,6 +8,7 @@ import {
   Newspaper,
   Flame,
   Shield,
+  ImageIcon,
   ArrowRight,
   Check,
 } from "lucide-react";
@@ -75,6 +76,13 @@ const CARDS: CardSpec[] = [
     description: "SEO and metadata for the trending articles page.",
     icon: Flame,
     cacheKey: "trendingPageJsonLdLastGenerated",
+  },
+  {
+    href: "/settings/defaults",
+    title: "Default Images",
+    description: "Fallback logo, article, and hero images shown when an entity has none.",
+    icon: ImageIcon,
+    cacheKey: null,
   },
   {
     href: "/settings/system",

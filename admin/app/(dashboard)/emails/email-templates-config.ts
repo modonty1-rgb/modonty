@@ -14,4 +14,5 @@ export const EMAIL_TEMPLATES: EmailTemplateConfig[] = [
   { id: "newsletter-welcome", label: "Newsletter Welcome", description: "New newsletter subscriber", group: "Modonty Emails" },
   { id: "article-pending", label: "Article Pending", description: "Article awaiting client approval", group: "Admin Emails" },
   { id: "article-published", label: "Article Published", description: "Article published confirmation to client", group: "Admin Emails" },
+  { id: "client-welcome", label: "Client Welcome", description: "Sent when a jbrseo subscriber is converted to a client", group: "Admin Emails" },
 ];

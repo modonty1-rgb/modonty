@@ -64,6 +64,7 @@ enum MediaType {
   POST
   OGIMAGE
   TWITTER_IMAGE
+  HERO
   GENERAL
 }
 
@@ -620,9 +621,38 @@ model JbrseoSubscriber {
   jbrseoCreatedAt DateTime                  // الـ createdAt الأصلي من jbrseo
   syncedAt        DateTime @default(now())
 
+  // ─── Subscriber → Client conversion tracking ───
+  convertedToClientId String?   @db.ObjectId   // null = لسه، موجود = اتحوّل لعميل
+  convertedAt         DateTime?                 // متى تم التحويل
+
   @@index([country])
   @@index([jbrseoCreatedAt])
+  @@index([convertedToClientId])
   @@map("jbrseo_subscribers")
+}
+
+// ============================================
+// EMAIL EVENTS (Resend webhook tracking)
+// ============================================
+// Generic, reusable log of Resend email events (delivered, opened, clicked, bounced...).
+// Linked to an entity via tags sent with the email (clientId + emailType). No formal
+// relation — query by clientId directly (same pattern as conversion tracking).
+model EmailEvent {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  emailId   String                         // Resend data.email_id
+  type      String                         // delivered | opened | clicked | bounced | sent | complained | delivery_delayed
+  recipient String?                        // data.to[0]
+  subject   String?
+  emailType String?                        // our tag: e.g. "client-welcome"
+  clientId  String?   @db.ObjectId         // our tag: which client this email was about
+  eventAt   DateTime?                      // Resend data.created_at (when the event happened)
+  createdAt DateTime  @default(now())       // when we received the webhook
+
+  @@index([emailId])
+  @@index([clientId])
+  @@index([type])
+  @@index([emailType])
+  @@map("email_events")
 }
 
 // ============================================

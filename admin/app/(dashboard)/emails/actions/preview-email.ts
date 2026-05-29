@@ -9,6 +9,7 @@ import { faqReplyEmail } from "@/lib/email/templates/faq-reply";
 import { newsletterWelcomeEmail } from "@/lib/email/templates/newsletter-welcome";
 import { articlePendingEmail } from "@/lib/email/templates/article-pending";
 import { articlePublishedEmail } from "@/lib/email/templates/article-published";
+import { clientWelcomeEmail } from "@/lib/email/templates/client-welcome";
 import { sendEmailWithRetry } from "@/lib/email/resend-client";
 import { EMAIL_TEMPLATES } from "../email-templates-config";
 
@@ -26,6 +27,8 @@ const MOCK = {
   clientName: "عيادات بلسم الطبية",
   authorName: "أحمد العمر",
   publishedAt: "٢٠ أبريل ٢٠٢٦",
+  consoleUrl: "https://console.modonty.com",
+  password: "ahmed@example.com",
 };
 
 function renderTemplate(id: string): { subject: string; html: string; text: string } {
@@ -67,6 +70,13 @@ function renderTemplate(id: string): { subject: string; html: string; text: stri
         articleTitle: MOCK.articleTitle,
         articleUrl: MOCK.articleUrl,
         publishedAt: MOCK.publishedAt,
+      });
+    case "client-welcome":
+      return clientWelcomeEmail({
+        clientName: MOCK.clientName,
+        email: MOCK.email,
+        password: MOCK.password,
+        consoleUrl: MOCK.consoleUrl,
       });
     default:
       throw new Error(`Unknown template: ${id}`);

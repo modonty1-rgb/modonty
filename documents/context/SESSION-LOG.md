@@ -1,3 +1,258 @@
+# Session Context — Last Updated: 2026-05-29 ~19:40 (FROZEN by `us>` before machine restart to clear cache · TEST-DATA buttons feature built (Seed + Remove Test Data, pattern-scoped to `test-`, now allowed in prod for a ONE-TIME prod test, to be removed next push) · admin bumped 0.65.4 + backup done · admin build kept crashing locally with V8 OOM (exit 134) → re-running with NODE_OPTIONS=--max-old-space-size=8192 (THIS is why Khalid is restarting). NOT committed, NOT pushed. RESUME = re-run admin build → commit → push → prod config. Vercel console BUILD_STUCK on ae46ccd = infra hang, NOT a code bug.)
+
+## Session: 2026-05-29 ~19:00 → ~19:40 — Test-data Seed+Remove buttons for prod test + version bump (continuation)
+
+### 🎯 Where I stopped
+- Machine restart imminent (Khalid clearing cache) — it WILL kill the running admin build (bg id was `b27bf5oyw`, heap-raised). That's fine.
+- **Next concrete action on resume:** re-run admin build with raised heap, confirm exit 0, then commit + push 0.65.4.
+  - Exact build cmd: `cd admin && NODE_OPTIONS="--max-old-space-size=8192" pnpm build` (plain `pnpm build` crashes with V8 OOM exit 134 on this machine — NOT a code error; admin builds fine on Vercel).
+  - If Prisma `EPERM ... query_engine-windows.dll.node` on build → `taskkill //F //IM node.exe` first, then build (golden rule).
+
+### ✅ Done this continuation
+- **NEW feature — test-data management buttons (TEMP, prod-allowed, remove next push):**
+  - `admin/.../clients/actions/remove-test-subscribers.ts` (NEW): `removeTestSubscribersAction()` + `countTestSubscribersAction()`. **Pattern-scoped: only matches `jbrseoId` startsWith `"test-"`** → physically cannot touch real subscribers/clients. Deletes per test sub: EmailEvent (by clientId) → Client → the subscriber. (NOTE: SEO is fields ON Client, no separate ClientSEO model — removed that wrong deleteMany.)
+  - `admin/.../clients/components/remove-test-subscribers-button.tsx` (NEW): red dashed "Remove Test Data" btn + AlertDialog showing live counts ("حيتم حذف X مشترك + Y عميل") via countTestSubscribersAction on open; confirm disabled when count 0.
+  - Removed prod guard: `seed-test-subscribers.ts` (dropped the `NODE_ENV==="production"` early-return, marked TEMP) + `clients-tabs.tsx` (dropped `process.env.NODE_ENV !== "production" &&` wrapper, now renders BOTH SeedTestSubscribersButton + RemoveTestSubscribersButton, marked TEMP).
+  - Reason: Khalid wants to seed→convert→remove on PRODUCTION for a one-time live test. Safe because pattern-scoped.
+- **Version bump admin 0.65.3 → 0.65.4** (admin/package.json). **Backup done** (`bash scripts/backup.sh` → backup-2026-05-29_19-25, 67 collections, 4.2M).
+- **Verified Vercel console ERROR** = `errorCode: BUILD_STUCK` on dpl_33qVGN23 (commit ae46ccd) = Vercel infra hang/timeout, NOT a code bug. Console prod still serves last good build. Next push 22a903f was CANCELED by ignoreCommand (correct). To put console on latest → manual Redeploy.
+- **My-files TSC clean.** Pre-existing 2 errors (NOT mine, unchanged files): `use-client-media-modal.ts:30` + `use-client-form.ts:40` → TS2589 "excessively deep" — already live in prod, not blockers.
+
+### 📝 Decisions
+- Keep Seed + Remove buttons in PROD temporarily (this push) → after Khalid live-tests the full flow on prod, REMOVE both buttons + restore guards next push. (Tracked as pending below.)
+- Remove action is pattern-scoped (`test-`) NOT env-gated → safety comes from the pattern, not the environment.
+
+### 🚧 Pending / blocked (RESUME HERE)
+1. Re-run admin build (heap-raised) → exit 0.
+2. Commit + push 0.65.4 (Khalid already authorized this push: "اعمل post على الproduction عشان نجرب هناك"). Stage ONLY relevant files — do NOT commit admin/.env.local (has RESEND_WEBHOOK_SECRET, gitignored). Skip stray untracked .md files (convert-dialog.md, converted-row.md, whatsapp-channel-content-strategy.md) unless intended.
+3. After push — PROD config checklist for Khalid:
+   - Resend prod webhook ALREADY set: URL `https://admin.modonty.com/api/resend/webhook`, Enabled, listening incl email.delivered (Khalid confirmed via screenshot). BUT endpoint code only goes live AFTER this push.
+   - Set `RESEND_WEBHOOK_SECRET` in **Vercel admin env** = the **signing secret of THIS prod webhook** (from its Resend page) — NOT the `.env.local` one (that was the old cloudflared test webhook).
+   - Confirm Open Tracking enabled on the Resend domain (needed for 👀 فُتح).
+4. **NEXT push (after prod test done): REMOVE both test buttons + restore the `NODE_ENV` guards.**
+5. Run `cd admin && pnpm changelog` after push (DB changelog entry for 0.65.4).
+6. Older pending (still open): Defaults P5b (other render sites).
+
+### 📂 Files touched this continuation
+- `admin/app/(dashboard)/clients/actions/remove-test-subscribers.ts` — NEW (pattern-scoped delete + count).
+- `admin/app/(dashboard)/clients/components/remove-test-subscribers-button.tsx` — NEW (confirm dialog + counts).
+- `admin/app/(dashboard)/clients/actions/seed-test-subscribers.ts` — dropped prod guard (TEMP).
+- `admin/app/(dashboard)/clients/components/clients-tabs.tsx` — import + render both test buttons, no env guard (TEMP).
+- `admin/package.json` — version 0.65.4.
+
+### 🔁 Git / deploy (this continuation)
+- Branch `main`. Last commit `22a903f` (v0.65.3). **Everything from BOTH session blocks below + this one = uncommitted, NOT pushed.** This push bundles the WHOLE accumulated session (conversion + email tracking + defaults + webhook + test buttons).
+- Webhook for prod: `https://admin.modonty.com/api/resend/webhook`.
+
+### 🚀 Resume in 30 seconds
+1. `cd admin && NODE_OPTIONS="--max-old-space-size=8192" pnpm build` (if Prisma DLL EPERM → `taskkill //F //IM node.exe` first).
+2. On exit 0 → commit (stage relevant files only, NOT .env.local) → push (authorized).
+3. Then give Khalid the PROD config checklist (item 3 above) + queue the "remove test buttons next push" todo.
+
+---
+
+# Session Context — Last Updated: 2026-05-29 ~16:30 (FROZEN by `us>` · TWO features COMPLETE + fully live-tested on DEV, NOT pushed (Khalid tests/pushes himself): (1) Subscriber→Client conversion — done; (2) Platform Default Images — done incl. P5a logo fallback. React key warning FIXED. Subscribers table = 2-line cards. Convert dialog polished. Welcome email enhanced (WhatsApp «تم الدخول» line + legal footer). NEW golden rule saved: batch doc updates at milestones only. Pending: cleanup test data + push. Both apps on `modonty_dev`.)
+
+## Session: 2026-05-29 ~15:00 → ~16:30 — Polish + defaults P5 + key-warning fix + email enhancements (continuation)
+
+### 🎯 Where I stopped
+- Everything BUILT + live-tested on DEV. **NOT pushed** (Khalid pushes himself). **Next:** cleanup test data (2 test clients: Test—مجاني, Test—الزخم + 4 test subscribers modonty1+free/starter/growth/scale) → then push (bump admin 0.65.3→0.65.4, backup, changelog, commit, push, `cd admin && pnpm changelog`).
+- Optional remaining: Defaults **P5b** (extend logo/article/hero fallback to modonty public + console render sites) · convert remaining plans الانطلاقة (low value, same path).
+
+### ✅ Done this continuation
+- **Default Images P5a (fallback wiring):** new `admin/.../clients/components/client-avatar.tsx` (onError: own logo → platform default → letter). Threaded `defaultLogoUrl` (from `getPlatformDefaults().LOGO`) through `clients/page.tsx` → ClientsTabs → ClientsPageClient → ClientTable. Removed now-unused `Image` import from client-table. LIVE-VERIFIED: missing-logo clients (Test—مجاني) AND broken-404 clients (بسيطة, Dream to App) now show the default modonty image.
+- **Khalid uploaded the default image** via `/settings/defaults` (Cloudinary og-image `v1769772312/og-image_ueprdl.png`) into all 3 slots (logo/article/hero). Saved as PLATFORM media. Verified persisted + rendering.
+- **React key warning — FIXED (3rd attempt, root-caused):** cause = `clientsSlot`/`distributionSlot` were JSX elements created in Server Component (ClientsContent) passed as props across RSC→client boundary to ClientsTabs (React 19 reconciles as keyless list). Fix = pass DATA not elements: ClientsTabs now takes `clients`/`defaultLogoUrl`/`tiers` and builds `<ClientsPageClient>` + `<TierDistribution>` internally. Verified clean console on BOTH tabs. (Earlier 2 attempts — div-wrap + element keys — failed; reverted.)
+- **Subscribers table redesigned** (`subscription-tiers/components/subscribers-table.tsx`): cramped 9-col table → clean **2-line cards** (line 1: name·business·plan·country·billing; line 2: email·phone·date; action button always visible right). No more clipping.
+- **Convert dialog polish** (`convert-subscriber-dialog.tsx`): (a) "تأكيد التحويل" disabled when slug empty; (b) slug pre-filled from `slugify(subscriber.name)` (editable). Verified live.
+- **Expanded live test:** converted الزخم → client Plan=**Pro** quota 0/8 (mapping read from SubscriptionTierConfig, NOT hardcoded — مجاني=Basic/1, الزخم=Pro/8). Activated Test—الزخم → badge shows **Active** (temp-fix paymentStatus=PAID verified live). Email arrival confirmed by Khalid earlier.
+- **Welcome email enhanced** (`admin/lib/email/templates/client-welcome.ts`):
+  - WhatsApp instruction line (FINAL wording after 3 corrections): "📱 بعد ما تسجّل دخول وتتأكّد إن إيميلك وكلمة المرور شغّالة، أرسل لنا رسالة «تم الدخول» على واتساب 00966560299034 — ومدير حسابك حيتواصل معك مباشرة لإكمال التفعيل." (client manually messages us → account manager contacts them). HTML has wa.me/966560299034 link.
+  - **Legal footer added to `admin/lib/email/templates/base.ts`** (shows on ALL emails): "شركة جبر الجنوبية · السجل التجاري 4030524305 · الرقم الوطني الموحّد 7036024383 · جدة — حي الشرفية — شارع أبو بكر الصديق · رأس المال 8,000,000 ﷼". (No phone, no email per Khalid. Modonty official email = modonty@modonty.com.)
+  - Wired `client-welcome` into `/emails` preview (email-templates-config.ts + preview-email.ts) — previewable + send-test.
+- **NEW golden rule (memory):** `feedback_batch_doc_updates.md` + MEMORY.md pointer — update task MD/SESSION-LOG only at milestones, track via TodoWrite only, don't update per-step (Khalid: hook reminder wastes tokens/time). Flagged the hook itself as the real token drain (offered to trim settings.json — awaiting Khalid).
+- **TSC:** admin exit 0 after every chunk (verified repeatedly).
+
+### 🚧 Pending / blocked
+- Cleanup test data (2 test clients + 4 test subscribers) before push.
+- Push (Khalid decides timing — he tests himself first).
+- Defaults P5b (other render sites) — later.
+- Decision: trim/remove the UserPromptSubmit TODO hook in settings.json (token saver).
+
+### 🔁 Git / deploy
+- Branch `main`, last commit `22a903f` (v0.65.3). **All this session = uncommitted, NOT pushed.** Version still 0.65.3.
+- Schema changes prisma-generated locally: JbrseoSubscriber.convertedToClientId/convertedAt + MediaType HERO.
+
+### 🚀 Resume in 30s
+1. `cd admin && pnpm dev:admin` (modonty_dev, localhost:3000).
+2. Ask Khalid: cleanup test data + push now? (bump 0.65.4, backup, changelog).
+3. Test clients to delete: Test—مجاني (6a197c0fd801b965bab90da4), Test—الزخم (6a1996c8fbabc1e278f66cd8). Test subscribers: jbrseoId test-free/starter/growth/scale.
+
+---
+> _(Earlier same-day block ~15:00 below is superseded by this one but kept intact.)_
+
+## Session: 2026-05-29 ~10:00 → ~15:00 — Subscriber→Client conversion (built+tested) + Platform Default Images (built P1-P4)
+
+### 🎯 Where I stopped
+- **Conversion feature:** fully BUILT + live-tested on DEV. Code complete. Awaiting Khalid's explicit push (he wants to test himself first). NOT pushed.
+- **Default Images feature:** BUILT P1-P4 (HERO enum + backend + Settings card/page/form, live-verified rendering). **Next concrete action:** Khalid opens `/settings/defaults`, pastes 3 Cloudinary URLs (logo/article/hero), saves. THEN I do P5 = wire the fallback (entity with no/broken image → platform default), starting with admin clients table.
+- **TSC at freeze:** re-run launched after the Tooltip runtime fix; prior full run was clean (exit 0). Confirm `pnpm tsc --noEmit` in admin on resume.
+
+### ✅ Done this session
+
+**FEATURE 1 — Subscriber→Client conversion (BUILT + LIVE-TESTED, not pushed):**
+- **Phase 1 (schema):** added `convertedToClientId String? @db.ObjectId` + `convertedAt DateTime?` + `@@index([convertedToClientId])` to `JbrseoSubscriber`. No formal relation (UI builds `/clients/{id}` link manually). prisma generate clean.
+- **Tier mapping decision (Khalid):** NO hardcoded map. Match `JbrseoSubscriber.planName` → `SubscriptionTierConfig.name` (مجاني/الانطلاقة/الزخم/الريادة, synced from jbrseo). Pull `tier` enum + `articlesPerMonth` + `subscriptionTierConfigId` from the config. Enum = BASIC/STANDARD/PRO/PREMIUM (no FREE).
+- **Email decision (Khalid):** real send via Resend; test account email = `modonty1@gmail.com` (uses +alias: modonty1+free/starter/growth/scale@gmail.com so all land in Khalid's inbox).
+- **Phase 3 (backend):** `admin/lib/email/templates/client-welcome.ts` (plain-HTML, matches base.ts pattern — verified via Resend docs that React-Email vs plain-HTML is spam-irrelevant; deliverability = SPF/DKIM/DMARC + text alt) + `admin/app/(dashboard)/clients/actions/convert-subscriber-to-client.ts` (auth, slug-unique check, tier lookup by name, bcrypt(email) password, status PENDING, welcome email, generateClientSEO, revalidate).
+- **Phase 4 (UI):** `convert-subscriber-dialog.tsx` (slug + read-only summary) + Action column in `subscription-tiers/components/subscribers-table.tsx` (Convert button for non-converted, green "تم التحويل" badge + `/clients/{id}` link for converted). Added `convertedToClientId`/`convertedAt` to `JbrseoSubscriberRow` type.
+- **Phase 5 (activate + slug lock):** `activate-client.ts` (PENDING→ACTIVE) + `activate-client-button.tsx` (AlertDialog) wired into `client-table.tsx` Status cell (shows for PENDING). **Slug lock = NO new code** — admin slug already read-only + OTP-via-Telegram protected; console has no slug field. Khalid confirmed OTP is enough.
+- **TEMP FIX (in activate-client.ts):** activate also sets `paymentStatus: "PAID"` so the status badge reads "Active" (the existing getStatusBadge shows yellow "Pending" for ACTIVE-but-unpaid). Documented in `documents/tasks/CLIENT-WORKFLOW-REVIEW.md` as temporary — proper fix belongs to a future full client-workflow redesign (like the article workflow).
+- **Dev-only test tool:** `seed-test-subscribers.ts` action + `seed-test-subscribers-button.tsx` (renders only when NODE_ENV !== production, double-guarded in action) — seeds 4 test subscribers (one per plan) in the jbrseo Subscribers tab. Reuses admin UI (respects no-standalone-scripts rule).
+- **LIVE TEST PASSED (Playwright, DEV, localhost:3000):** seeded 4 → converted مجاني → client created with Plan=Basic + quota 0/1 (مجاني→BASIC mapping + articlesPerMonth correct) + welcome email SENT (toast no warning) + green "تم التحويل" badge + `/clients/{id}` link → Activate → button disappeared (status ACTIVE). Email verification = Khalid checks modonty1+free@gmail.com inbox.
+
+**FEATURE 2 — Platform Default Images (BUILT P1-P4, not pushed):**
+- **Design (after several Khalid corrections):** the 3 defaults (client LOGO, ARTICLE featured, client HERO) are stored AS media (so existing media-reading code picks them up — no parallel Settings source that breaks the flow), are SYSTEM-INTERNAL (hidden from /media library), and managed only from a Settings card. Implementation = `Media` rows with `clientId: null, scope: "PLATFORM", type: LOGO|POST|HERO`. NO platform-client needed (create-media accepts clientId null).
+- **P1:** added `HERO` to `MediaType` enum (was LOGO/POST/OGIMAGE/TWITTER_IMAGE/GENERAL). prisma generate clean.
+- **P2:** `admin/app/(dashboard)/settings/defaults/actions/defaults-actions.ts` — `getPlatformDefaults()` + `savePlatformDefault(role, url)` (upsert/delete PLATFORM media by type).
+- **P3:** /media listing ALREADY excludes PLATFORM (get-media.ts line ~39-42) — no change needed.
+- **P4:** `/settings/defaults/page.tsx` + `components/defaults-form.tsx` (3 ImageField slots reusing settings/_shared/image-field.tsx — paste Cloudinary URL + preview + Save) + new "Default Images" card on settings dashboard (page.tsx, ImageIcon). Fixed runtime error: wrapped form in `<TooltipProvider>` (Field's hint Tooltip needs it). Live-verified: page renders 3 sections cleanly.
+
+### 📝 Decisions taken (with reasoning)
+- **Conversion tier mapping = match by planName→SubscriptionTierConfig.name** (not hardcoded) → Khalid: "الباقات نجيبها من jbrseo، راجع الكود". Single source of truth, zero guessing.
+- **Default images = PLATFORM-scope media, NOT a Settings field, NOT a 'platform' client** → Khalid rejected Settings field ("client table reads from media, you'll break the flow") and rejected creating a user-client ("هذا مو عميل user"). Final = media rows clientId=null scope=PLATFORM, identified by type.
+- **HERO added to MediaType** → needed a 3rd role marker (logo=LOGO, article=POST, hero=HERO). 1-line enum add, Khalid approved.
+- **React-Email vs plain-HTML for welcome email = plain-HTML** → verified via Resend docs: templating method is spam-irrelevant; kept existing base.ts pattern.
+- **Activate temp-fix sets paymentStatus=PAID** → Khalid wanted a quick fix for the misleading "Pending" badge; real fix deferred to client-workflow redesign.
+
+### 🚧 Pending / blocked
+- **Default Images P5 (fallback wiring)** — blocked on Khalid uploading the 3 Cloudinary default images via `/settings/defaults`. Then wire fallback (no/broken image → platform default) starting with admin clients table, then expand to ~12 render sites across admin/modonty/console.
+- **React key warning in ClientsTabs** — dev-only console warning ("child in a list needs key", points at page.tsx:43 distributionSlot). Root cause = React 19 RSC element-prop boundary (slots created in Server Component ClientsContent, passed as props to client ClientsTabs). TWO fix attempts FAILED + reverted (div-wrap; element keys). Cosmetic only (stripped in prod). Deferred — logged here. Proper fix likely = restructure ClientsTabs to take children instead of element props.
+- **Image 404s in clients table** — pre-existing data (client logos deleted on Cloudinary). This is exactly what the Default Images feature will fix once P5 lands.
+- **Conversion feature push** — awaiting Khalid's explicit "push" after he tests.
+
+### 📂 Files touched (this session)
+- `dataLayer/prisma/schema/schema.prisma` — JbrseoSubscriber convertedToClientId/convertedAt/index + MediaType HERO (NOTE: Settings.defaultMedia was added then REVERTED — not in final)
+- `admin/lib/email/templates/client-welcome.ts` (new)
+- `admin/app/(dashboard)/clients/actions/convert-subscriber-to-client.ts` (new)
+- `admin/app/(dashboard)/clients/actions/activate-client.ts` (new)
+- `admin/app/(dashboard)/clients/actions/seed-test-subscribers.ts` (new, dev-only)
+- `admin/app/(dashboard)/clients/components/convert-subscriber-dialog.tsx` (new)
+- `admin/app/(dashboard)/clients/components/activate-client-button.tsx` (new)
+- `admin/app/(dashboard)/clients/components/seed-test-subscribers-button.tsx` (new, dev-only)
+- `admin/app/(dashboard)/clients/components/client-table.tsx` — Activate button in Status cell + status col width 80→96
+- `admin/app/(dashboard)/clients/components/clients-tabs.tsx` — Seed button (dev-only) next to SyncButton
+- `admin/app/(dashboard)/subscription-tiers/components/subscribers-table.tsx` — Action column + convert dialog
+- `admin/app/(dashboard)/subscription-tiers/helpers/jbrseo-queries.ts` — added converted fields to type
+- `admin/app/(dashboard)/settings/defaults/actions/defaults-actions.ts` (new)
+- `admin/app/(dashboard)/settings/defaults/page.tsx` (new)
+- `admin/app/(dashboard)/settings/defaults/components/defaults-form.tsx` (new)
+- `admin/app/(dashboard)/settings/page.tsx` — "Default Images" card
+- `documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md` — updated (phases done)
+- `documents/tasks/CLIENT-WORKFLOW-REVIEW.md` (new — backlog for client workflow redesign + the paymentStatus temp-fix note)
+
+### 🔁 Git / deploy state
+- Branch: `main`. Last commit: `22a903f` (admin v0.65.3, prior session).
+- **Uncommitted: YES** — all the above files. NOTHING pushed this session (Khalid tests first).
+- Version NOT bumped yet (still 0.65.3). Bump to 0.65.4 when ready to push.
+
+### 🚀 How to resume in 30 seconds
+1. `cd admin && pnpm dev:admin` (DEV DB modonty_dev, localhost:3000). Confirm `pnpm tsc --noEmit` is clean.
+2. Ask Khalid: did he upload the 3 Cloudinary defaults at `/settings/defaults`? If yes → build P5 (fallback). If testing conversion → he checks modonty1+free@gmail.com for the welcome email.
+3. Conversion feature is done — when Khalid says "push": bump admin 0.65.3→0.65.4, backup, changelog, commit, push. (Schema changes: JbrseoSubscriber fields + MediaType HERO — already prisma-generated locally; will deploy with push.)
+
+## Session: 2026-05-28 ~22:00 → 2026-05-29 ~00:30 — v0.65.3 ship + Subscriber→Client conversion design
+
+### 🎯 Where I stopped
+- **Last action complete:** wrote `documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md` — full 7-phase plan with all design decisions captured, after a 4-round one-question-at-a-time Q&A session with Khalid.
+- **Awaiting Khalid to:** review the MD plan + answer 2 remaining decisions:
+  - **Q-A:** plan tier mapping (مجاني → BASIC? or new FREE? الانطلاقة → BASIC? الزخم → STANDARD? الريادة → PRO?)
+  - **Q-B:** in test mode, should welcome email be logged to console (no real send) or sent to `one@modonty.com` for real?
+- **Next concrete action on resume:** Khalid answers Q-A + Q-B → I start Phase 1 (Prisma schema update).
+
+### ✅ Done this session
+- **PUSHED admin v0.65.3** ([commit 22a903f](https://github.com/modonty1-rgb/modonty/commit/22a903f))
+  - 34 files changed (1,938 insertions, 1,427 deletions)
+  - All earlier session work (Search Console rebuild, Clients tabs, Pipeline relocation, ToS cleanup, React key fix)
+  - Backup before push: 66 collections, 4.2M, 10/10 backups maintained
+  - TSC: zero errors (except 2 pre-existing TS2589 in clients/use-client-*)
+  - Changelog written to LOCAL + PROD DBs (id `6a189bb49e482f69311615eb`)
+  - Vercel auto-deploy triggered
+- **Design Q&A for Subscriber→Client conversion (4 rounds, one question at a time per Khalid's request):**
+  - **Q1 — Password mechanism:** Khalid chose `password = email` initially (KISS), email explains user should change it. No forced change, no token, no reset link. Rationale: no financial transactions = acceptable risk for simplicity.
+  - **Q2 — Onboarding location:** Nothing in console UX. All instructions go in welcome email. Client navigates manually after login. Decision driven by Khalid's "ما أبغى أعقد".
+  - **Q3 — Inactive client follow-up:** No automation. Team will do manual follow-up calls.
+  - **Q4 — Activation trigger:** Manual — team calls client, confirms completion, then admin clicks "Activate" button in `/clients` table. Button placement: inline next to existing Status badge (no new column). When status === PENDING → shows orange "Pending" badge + small green "Activate" button.
+  - **Q4-extra — admin override during PENDING:** Already supported (current `/clients/[id]/edit` is open to all fields, no role restrictions).
+- **Discovered + documented:** slug lock requirement = PENDING → ACTIVE transition locks the slug PERMANENTLY (slug is used in 20+ places: public URLs, JSON-LD, canonical URLs, sitemap, GTM tracking, OG metadata, etc.). Changing it post-activation = broken URLs + SEO damage.
+- **PLAN MD file created:** [documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md](documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md)
+  - 9 confirmed decisions in a quick-reference table
+  - 2 remaining decision points clearly flagged
+  - 7 implementation phases with file paths, code snippets, time estimates
+  - Test account spec: `one@modonty.com` (Khalid wrote "one@medonet.com" but meant @modonty.com domain)
+  - Risks + mitigations table
+  - Definition of Done checklist
+- **2 deep audits run** (general-purpose explore agents):
+  - Audit 1: Client + JbrseoSubscriber + admin creation flow + console auth + slug usage + email infrastructure
+  - Audit 2: Console layout + dashboard pages + profile form + existing modals/banners + auth redirect logic
+- **Audits revealed (key findings):**
+  - `JbrseoSubscriber` has NO link to Client → need to add `convertedToClientId` field
+  - `Client.password` is OPTIONAL in current admin create flow (can be null, bcrypt when present)
+  - Console has `FirstTimeWelcome` modal pattern + localStorage flag — can reuse if needed
+  - Sidebar in console: Profile is the FIRST item (highest visibility)
+  - No `convertSubscriber` action exists anywhere → must build from scratch
+  - No client welcome email template exists → must build (Resend already wired)
+  - Status PENDING is already a valid enum value (used as default at creation)
+  - Profile form in console has 6 sectioned form with progress indicator (good template)
+- **Updated MARIAM-AUDIT-OPEN-ITEMS.md** (auto-updated earlier in session block) — Removal Queue restored as Done.
+- **TSC state:** admin clean (zero functional errors). Console: not run this session (no console changes).
+- **Build state:** not run.
+
+### 📝 Decisions taken (with reasoning)
+- **Push v0.65.3 NOW** (before starting big new feature) → Khalid: "اعمل push عشان حننتقل لمرحلة كبيرة. عندنا شغل مرة كبير، فاعمل push الآن عشان نشتغل وإحنا مطمئنين". Reasoning: clean baseline + everything from past sessions in production + new feature builds on top of stable state.
+- **One question at a time during design** → Khalid: "اسألني سؤال واحد واحد عشان أجاوبك عليه واحد واحد". Slower but each answer compounds → fewer reversals later.
+- **MD file before code** → Khalid: "اديني الخطة على ملف MD file، خليني أراجعها أول حاجة". Lets him think + verify scope before any keystroke.
+- **Test account = real email syntax** (`one@modonty.com` not `test@example.com`) → enables real Resend send if needed in Phase 6.
+- **Slug-lock golden rule** → designed at architecture level, enforced at BOTH admin AND console update actions, plus UI disabled state on both sides. No backdoor, no exception.
+- **Activate button INLINE with Status badge** (Khalid's call) → "نضيف زر تفعيل في الـ status column" → instant visual scan + 1-click activation, no need to open edit page.
+- **Conversion creates Client with password = bcrypt(email)** → matches Khalid's simplicity decision. Welcome email explains the temporary nature.
+
+### 🚧 Pending / blocked
+- **Waiting on Khalid:**
+  1. Answer Q-A (plan tier mapping — مجاني/الانطلاقة/الزخم/الريادة → SubscriptionTier enum values)
+  2. Answer Q-B (welcome email behavior in test: console.log vs real Resend send)
+  3. Review of `SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md` (confirm scope OR request changes)
+- **After approval:** start Phase 1 (Prisma schema add `convertedToClientId` + `convertedAt` on JbrseoSubscriber).
+- **Tested production state (already shipped, no action needed):**
+  - admin v0.65.3 live at admin.modonty.com — Search Console + clients tabs + pipeline relocation all available
+  - Vercel deploy from commit 22a903f should be complete (typically 2-3 min after push)
+  - Khalid hasn't reported any production issues
+- **Cloudinary 404 issue on client logos** (pre-existing, low priority) — 4 logos in DB reference URLs that no longer exist on Cloudinary. Cleanup task for future session.
+
+### 📂 Files touched (this session block)
+- [documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md](documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md) — NEW (the design doc)
+- [documents/context/SESSION-LOG.md](documents/context/SESSION-LOG.md) — this update
+- [admin/scripts/add-changelog.ts](admin/scripts/add-changelog.ts) — expanded v0.65.3 entry to 9 items (covered all session work, not just the partial earlier 5)
+- [admin/package.json](admin/package.json) — 0.65.3 (already bumped earlier)
+
+### 🔁 Git / deploy state
+- **Branch:** main
+- **Uncommitted changes:** YES (only the plan MD file + SESSION-LOG update from this session — NOT yet committed, will commit with Phase 1 work)
+- **Last commit:** `22a903f` — admin v0.65.3 SHIPPED (pushed during this session)
+- **Pushed:** YES (today)
+- **Vercel deploy:** triggered from 22a903f, should be complete by resume time
+
+### 🚀 How to resume in 30 seconds
+1. Read [documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md](documents/tasks/SUBSCRIBER-TO-CLIENT-CONVERSION-PLAN.md) — full design doc
+2. Wait for Khalid to answer Q-A (tier mapping) + Q-B (test email behavior) — both flagged at top of plan
+3. After answers: start Phase 1 (Prisma schema)
+4. Process management gotcha: BEFORE `pnpm prisma:generate`, ALWAYS run `taskkill //F //IM node.exe` (Windows file lock issue)
+5. Test account spec: `email: one@modonty.com`, businessName: "Modonty Test", planName: مجاني, country: SA — already in the plan
+6. Slug-lock enforcement: 3 places (admin update action + admin form section + console profile form) — DON'T forget any of them
+7. Welcome email template: new file at `admin/lib/emails/client-welcome.tsx` (React Email) — content already drafted in the plan
+
+---
+
 # Session Context — Last Updated: 2026-05-28 ~22:00 (FROZEN by `us>` · `/subscription-tiers` simplified to Plans only · `/clients` rebuilt with tabs (Clients · jbrseo Subscribers) · auto-sync from jbrseo MongoDB on tab open with sticky status banner · TierDistribution moved into Subscribers tab as compact inline strip · sidebar renamed "Pricing & Leads" → "Subscription Tiers" · React key warning fixed (Radix TabsContent Children.toArray issue resolved by consolidating siblings into single wrapper) · all sessions zero functional errors · awaiting push confirmation)
 
 ## Session: 2026-05-28 (~18:00 → ~22:00) — Clients page tabs + jbrseo auto-sync + sidebar polish + React key bug fix

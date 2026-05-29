@@ -38,6 +38,8 @@ export interface SendEmailParams {
   html: string;
   text?: string;
   replyTo?: string;
+  // Resend tags — surface in webhook payloads to identify the email (e.g. clientId, emailType).
+  tags?: { name: string; value: string }[];
 }
 
 /**
@@ -137,6 +139,7 @@ export async function sendEmailWithRetry(
         html: params.html,
         text: params.text,
         replyTo: params.replyTo,
+        tags: params.tags,
       };
 
       console.log(`[Email] Attempt ${attempt + 1}/${maxRetries} - SENDING TO RESEND:`, {

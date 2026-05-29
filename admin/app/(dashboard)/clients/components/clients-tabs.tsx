@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
@@ -10,23 +10,32 @@ import { useToast } from "@/hooks/use-toast";
 
 import { SyncButton } from "../../subscription-tiers/components/sync-button";
 import { SubscribersTable } from "../../subscription-tiers/components/subscribers-table";
-import type { JbrseoSubscriberRow } from "../../subscription-tiers/helpers/jbrseo-queries";
+import { SeedTestSubscribersButton } from "./seed-test-subscribers-button";
+import { RemoveTestSubscribersButton } from "./remove-test-subscribers-button";
+import { ClientsPageClient } from "./clients-page-client";
+import { TierDistribution } from "../../subscription-tiers/components/tier-distribution";
+import type { ClientForList } from "../actions/clients-actions/types";
+import type { JbrseoSubscriberRow, WelcomeEmailStatus } from "../../subscription-tiers/helpers/jbrseo-queries";
 import { syncJbrseoSubscribersAction } from "../../subscription-tiers/actions/sync-subscribers";
 
 interface Props {
   clientsCount: number;
   signupsCount: number;
   signupsRows: JbrseoSubscriberRow[];
-  clientsSlot: ReactNode;
-  distributionSlot?: ReactNode;
+  emailStatuses: Record<string, WelcomeEmailStatus>;
+  clients: ClientForList[];
+  defaultLogoUrl?: string | null;
+  tiers: React.ComponentProps<typeof TierDistribution>["tiers"];
 }
 
 export function ClientsTabs({
   clientsCount,
   signupsCount,
   signupsRows,
-  clientsSlot,
-  distributionSlot,
+  emailStatuses,
+  clients,
+  defaultLogoUrl,
+  tiers,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
@@ -85,7 +94,9 @@ export function ClientsTabs({
       </TabsList>
 
       <TabsContent value="clients" className="mt-4">
-        <div>{clientsSlot}</div>
+        <div>
+          <ClientsPageClient clients={clients} defaultLogoUrl={defaultLogoUrl} />
+        </div>
       </TabsContent>
 
       <TabsContent value="signups" className="mt-4">
@@ -118,7 +129,7 @@ export function ClientsTabs({
             </div>
           ) : null}
 
-          {distributionSlot}
+          <TierDistribution tiers={tiers} />
 
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div>
@@ -127,11 +138,16 @@ export function ClientsTabs({
                 People who signed up via jbrseo&apos;s pricing page · auto-synced on tab open
               </p>
             </div>
-            <SyncButton />
+            <div className="flex items-center gap-2">
+              {/* TEMP test tools — allowed in prod for a one-time test, removed next push */}
+              <SeedTestSubscribersButton />
+              <RemoveTestSubscribersButton />
+              <SyncButton />
+            </div>
           </div>
           <Card>
             <CardContent className="pt-6">
-              <SubscribersTable rows={signupsRows} />
+              <SubscribersTable rows={signupsRows} emailStatuses={emailStatuses} />
             </CardContent>
           </Card>
         </div>

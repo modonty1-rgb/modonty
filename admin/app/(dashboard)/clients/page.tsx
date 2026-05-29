@@ -3,15 +3,15 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
-import { ClientsPageClient } from "./components/clients-page-client";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
 import { ClientsTabs } from "./components/clients-tabs";
 import {
   getJbrseoSubscribers,
   getJbrseoSubscriberStats,
+  getWelcomeEmailStatuses,
 } from "../subscription-tiers/helpers/jbrseo-queries";
 import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
-import { TierDistribution } from "../subscription-tiers/components/tier-distribution";
+import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
 
 function TableSkeleton() {
   return (
@@ -25,13 +25,19 @@ function TableSkeleton() {
 }
 
 async function ClientsContent({ filters }: { filters: ClientFilters }) {
-  const [clients, stats, signupsRows, signupStats, tiers] = await Promise.all([
+  const [clients, stats, signupsRows, signupStats, tiers, defaults] = await Promise.all([
     getClients(filters),
     getClientsStats(),
     getJbrseoSubscribers(),
     getJbrseoSubscriberStats(),
     getTierConfigs(),
+    getPlatformDefaults(),
   ]);
+
+  const convertedClientIds = signupsRows
+    .map((r) => r.convertedToClientId)
+    .filter((id): id is string => Boolean(id));
+  const emailStatuses = await getWelcomeEmailStatuses(convertedClientIds);
 
   return (
     <ClientsHeaderWrapper clientCount={clients.length} stats={stats}>
@@ -39,8 +45,10 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
         clientsCount={clients.length}
         signupsCount={signupStats.total}
         signupsRows={signupsRows}
-        clientsSlot={<ClientsPageClient clients={clients} />}
-        distributionSlot={<TierDistribution tiers={tiers} />}
+        emailStatuses={emailStatuses}
+        clients={clients}
+        defaultLogoUrl={defaults.LOGO}
+        tiers={tiers}
       />
     </ClientsHeaderWrapper>
   );
