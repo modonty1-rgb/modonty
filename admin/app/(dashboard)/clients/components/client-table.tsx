@@ -33,7 +33,6 @@ import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
 import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
-import { ActivateClientButton } from "./activate-client-button";
 import { ClientAvatar } from "./client-avatar";
 
 type ListValidationError = { message?: string } | string;
@@ -436,7 +435,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                   if (isActive) {
                     return (
                       <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-500">
-                        Pending
+                        Unpaid
                       </span>
                     );
                   }
@@ -446,7 +445,11 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                   if (client.subscriptionStatus === SubscriptionStatus.CANCELLED) {
                     return <span className="text-sm text-muted-foreground">Cancelled</span>;
                   }
-                  return <span className="text-sm text-muted-foreground">Pending</span>;
+                  return (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-500/15 text-slate-500">
+                      Pending
+                    </span>
+                  );
                 };
 
                 return (
@@ -493,14 +496,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                         );
                       })()}
                     </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        {getStatusBadge()}
-                        {client.subscriptionStatus === SubscriptionStatus.PENDING && (
-                          <ActivateClientButton clientId={client.id} clientName={client.name} />
-                        )}
-                      </div>
-                    </TableCell>
+                    <TableCell className="text-center">{getStatusBadge()}</TableCell>
                     <TableCell className="text-center px-2">
                       <span className={cn("text-sm font-medium", client._count.articles === 0 ? "text-muted-foreground/50" : "text-foreground")}>
                         {client._count.articles}

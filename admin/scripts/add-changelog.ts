@@ -12,16 +12,12 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.66.0 (admin) + 1.49.6 (modonty)",
-    title: "Client Accounts page + invoice issuing (number · email · statement) · non-active clients hidden on public site",
+    version: "0.66.1 (admin)",
+    title: "Clients table cleanup: inline Activate button removed · clearer status badges (Unpaid vs Pending) · Activate/Suspend pages",
     items: [
-      { type: "feat" as const, text: "admin 0.66.0 — NEW client Account page at /accounts/[clientId]: compact header strip (name + subscription stats + status badges), an 'Issue Invoice' form, and an account statement timeline. Replaces the old per-row invoice dialog — the Accounts list row now links to the full account page." },
-      { type: "feat" as const, text: "admin 0.66.0 — Issue Invoice form: tier select (with live reference-price badge from jbrseo config), monthly/annual toggle, manual amount + currency (SAR/EGP) unified field, payment method (incl. InstaPay), payment status (paid/due), and manual subscription start/end dates. Live blue invoice-summary card. NO auto-calculations — all values manual. The 'Issue' button is disabled until all required fields are complete." },
-      { type: "feat" as const, text: "admin 0.66.0 — invoice backend: new Invoice + Counter Prisma models. Atomic gapless invoice numbering MOD-YYYY-NNNNN via a per-year counter. Issuing creates the Invoice AND updates the client's live subscription (tier, start/end dates, articlesPerMonth, paymentStatus, status). Account statement reads real invoices; click a row → details dialog." },
-      { type: "feat" as const, text: "admin 0.66.0 — invoice email via Resend: a full invoice template (number, tier+period, payment method, issue/payment date, subscription start & end, status, total) is emailed to the client on issue. Footer carries contact: mobile 0560299034 + modonty@modonty.com." },
-      { type: "fix" as const, text: "modonty 1.49.6 — non-ACTIVE clients (PENDING/EXPIRED/CANCELLED) are now hidden on the public site: client page returns 404, and they're excluded from the clients listing, search, sitemap, generateStaticParams, related-clients, and metadata. Mirrors the existing /industries ACTIVE-only logic." },
-      { type: "fix" as const, text: "admin 0.66.0 — non-ACTIVE clients also removed from the article-creation client picker and the media client selector (admin only shows ACTIVE clients where it matters)." },
-      { type: "fix" as const, text: "admin 0.66.0 — removed the temporary 'Seed/Remove Test Subscribers' buttons (one-time prod-test tooling) and their server actions now that prod test data is cleaned." },
+      { type: "fix" as const, text: "admin 0.66.1 — removed the inline 'Activate' button from the /clients table. Activation now lives only on the dedicated /clients/activate page — kills the confusing 'Pending + Activate side by side looks like two statuses' problem." },
+      { type: "fix" as const, text: "admin 0.66.1 — status badges disambiguated: an ACTIVE client with payment not recorded now shows 'Unpaid' (amber) instead of 'Pending'; a not-yet-activated client shows 'Pending' (slate) as a proper colored badge. Same 'Unpaid' wording is now used on the Account page header (was raw 'PENDING') — table and account page are consistent." },
+      { type: "feat" as const, text: "admin 0.66.1 — added the Activate Client and Suspend Client pages (/clients/activate, /clients/suspend) linked from the sidebar: list of Pending (resp. Active) clients with a per-row confirm button." },
     ],
   },
 ];

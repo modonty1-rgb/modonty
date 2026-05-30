@@ -55,6 +55,13 @@ const PAYMENT_TONE: Record<string, string> = {
   OVERDUE: "bg-red-500/15 text-red-600 dark:text-red-400",
 };
 
+// Display labels — match the /clients table wording (DB PENDING payment = "Unpaid").
+const PAYMENT_LABEL: Record<string, string> = {
+  PAID: "Paid",
+  PENDING: "Unpaid",
+  OVERDUE: "Overdue",
+};
+
 interface PageProps {
   params: Promise<{ clientId: string }>;
 }
@@ -168,7 +175,7 @@ export default async function ClientAccountPage({ params }: PageProps) {
               <span
                 className={`text-[11px] px-2 py-1 rounded-full font-medium ${PAYMENT_TONE[client.paymentStatus] || "bg-muted text-muted-foreground"}`}
               >
-                {client.paymentStatus}
+                {PAYMENT_LABEL[client.paymentStatus] ?? client.paymentStatus}
               </span>
             </div>
           </div>
