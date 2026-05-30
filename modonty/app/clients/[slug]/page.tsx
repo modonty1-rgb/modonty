@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
@@ -28,6 +29,7 @@ interface ClientPageProps {
 export async function generateStaticParams() {
   try {
     const clients = await db.client.findMany({
+      where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
       select: { slug: true },
     });
 

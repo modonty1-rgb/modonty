@@ -11,6 +11,8 @@ import bcrypt from "bcryptjs";
 import type { Prisma } from "@prisma/client";
 
 const CONSOLE_URL = "https://console.modonty.com";
+// Temp password sent in the welcome email — the client changes it from the console.
+const TEMP_PASSWORD = "admin123";
 
 interface ConvertParams {
   subscriberId: string;
@@ -63,8 +65,8 @@ export async function convertSubscriberToClientAction(
       };
     }
 
-    // 4. Build client (password = email, status PENDING)
-    const hashedPassword = await bcrypt.hash(subscriber.email, 10);
+    // 4. Build client (temp password, status PENDING)
+    const hashedPassword = await bcrypt.hash(TEMP_PASSWORD, 10);
 
     const createData: Prisma.ClientCreateInput = {
       name: subscriber.businessName || subscriber.contactName || subscriber.email,
@@ -102,7 +104,7 @@ export async function convertSubscriberToClientAction(
       const email = clientWelcomeEmail({
         clientName: client.name,
         email: subscriber.email,
-        password: subscriber.email,
+        password: TEMP_PASSWORD,
         consoleUrl: CONSOLE_URL,
       });
       await sendEmailWithRetry({

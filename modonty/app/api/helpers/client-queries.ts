@@ -5,7 +5,7 @@
 
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus } from "@prisma/client";
+import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import type { ClientResponse } from "@/lib/types";
 
 type ClientWithArticles = Prisma.ClientGetPayload<{
@@ -50,6 +50,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
   cacheTag("clients");
   cacheLife("hours");
   const clients = await db.client.findMany({
+    where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
     include: {
       logoMedia: {
         select: {
@@ -173,6 +174,7 @@ export async function getClientsSearch(
   const orderBy = clientOrderBy(sortBy);
   const clients = await db.client.findMany({
     where: {
+      subscriptionStatus: SubscriptionStatus.ACTIVE,
       OR: [
         { name: { contains: trimmed, mode: "insensitive" } },
         { legalName: { contains: trimmed, mode: "insensitive" } },
@@ -249,8 +251,8 @@ export async function getClientsSearch(
 
 export async function getClientPageStats() {
   const [totalClients, totalIndustries, totalArticles] = await Promise.all([
-    db.client.count(),
-    db.industry.count({ where: { clients: { some: {} } } }),
+    db.client.count({ where: { subscriptionStatus: SubscriptionStatus.ACTIVE } }),
+    db.industry.count({ where: { clients: { some: { subscriptionStatus: SubscriptionStatus.ACTIVE } } } }),
     db.article.count({ 
       where: { 
         status: ArticleStatus.PUBLISHED,
@@ -264,7 +266,8 @@ export async function getClientPageStats() {
 
 export async function getClientBySlug(slug: string) {
   const client: ClientWithArticles | null = await db.client.findUnique({
-    where: { slug },
+    // Only ACTIVE clients are public.
+    where: { slug, subscriptionStatus: SubscriptionStatus.ACTIVE },
     include: {
       logoMedia: {
         select: {
@@ -351,6 +354,7 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
   cacheLife("hours");
 
   const clients = await db.client.findMany({
+    where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
     select: {
       id: true,
       name: true,

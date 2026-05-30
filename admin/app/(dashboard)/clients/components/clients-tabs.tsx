@@ -10,8 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 
 import { SyncButton } from "../../subscription-tiers/components/sync-button";
 import { SubscribersTable } from "../../subscription-tiers/components/subscribers-table";
-import { SeedTestSubscribersButton } from "./seed-test-subscribers-button";
-import { RemoveTestSubscribersButton } from "./remove-test-subscribers-button";
 import { ClientsPageClient } from "./clients-page-client";
 import { TierDistribution } from "../../subscription-tiers/components/tier-distribution";
 import type { ClientForList } from "../actions/clients-actions/types";
@@ -76,61 +74,62 @@ export function ClientsTabs({
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <TabsList className="h-auto p-1 bg-muted/40 border">
-        <TabsTrigger value="clients" className="gap-2">
-          Clients
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 tabular-nums font-bold">
-            {clientsCount}
-          </span>
-        </TabsTrigger>
-        <TabsTrigger value="signups" className="gap-2">
-          jbrseo Subscribers
-          {signupsCount > 0 && (
-            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none bg-pink-500/20 text-pink-600 dark:text-pink-400">
-              {signupsCount}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <TabsList className="h-auto p-1 bg-muted/40 border">
+          <TabsTrigger value="clients" className="gap-2">
+            Clients
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/15 tabular-nums font-bold">
+              {clientsCount}
             </span>
-          )}
-        </TabsTrigger>
-      </TabsList>
+          </TabsTrigger>
+          <TabsTrigger value="signups" className="gap-2">
+            jbrseo Subscribers
+            {signupsCount > 0 && (
+              <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold leading-none bg-pink-500/20 text-pink-600 dark:text-pink-400">
+                {signupsCount}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="clients" className="mt-4">
+        {/* Distribution bar lives on the tab row (signups tab only) to save vertical space */}
+        {tab === "signups" && (
+          <div className="flex-1 min-w-[240px]">
+            <TierDistribution tiers={tiers} />
+          </div>
+        )}
+
+        {/* Compact inline sync status — sits on the tab row, no extra vertical space */}
+        {autoSyncState === "running" ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Syncing from jbrseo…
+          </span>
+        ) : autoSyncState === "done" && syncSummary ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            {syncSummary.created > 0 || syncSummary.updated > 0
+              ? `+${syncSummary.created} new · ${syncSummary.updated} updated`
+              : "Up to date"}
+            <span className="text-muted-foreground font-normal">
+              · {syncSummary.total} subs · {syncSummary.durationMs}ms
+            </span>
+          </span>
+        ) : autoSyncState === "failed" ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400">
+            Sync failed — use manual Sync
+          </span>
+        ) : null}
+      </div>
+
+      <TabsContent value="clients" className="mt-3">
         <div>
           <ClientsPageClient clients={clients} defaultLogoUrl={defaultLogoUrl} />
         </div>
       </TabsContent>
 
-      <TabsContent value="signups" className="mt-4">
-        <div className="space-y-4">
-          {autoSyncState === "running" ? (
-            <div className="rounded-md border border-blue-500/30 bg-blue-500/10 px-4 py-3 flex items-center gap-3">
-              <Loader2 className="h-4 w-4 animate-spin text-blue-600 dark:text-blue-400" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-blue-700 dark:text-blue-400">Auto-syncing from jbrseo...</div>
-                <div className="text-xs text-blue-600/70 dark:text-blue-400/70">Pulling latest subscribers — usually 1–3 seconds</div>
-              </div>
-            </div>
-          ) : autoSyncState === "done" && syncSummary ? (
-            <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 flex items-center gap-3">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                  {syncSummary.created > 0 || syncSummary.updated > 0
-                    ? `Synced — pulled ${syncSummary.created} new and updated ${syncSummary.updated}`
-                    : "Synced — already up to date with jbrseo"}
-                </div>
-                <div className="text-xs text-emerald-600/70 dark:text-emerald-400/70">
-                  {syncSummary.total} total subscribers · finished in {syncSummary.durationMs}ms
-                </div>
-              </div>
-            </div>
-          ) : autoSyncState === "failed" ? (
-            <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-              Auto-sync failed. Use the manual Sync button.
-            </div>
-          ) : null}
-
-          <TierDistribution tiers={tiers} />
-
+      <TabsContent value="signups" className="mt-3">
+        <div className="space-y-2">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div>
               <h2 className="text-sm font-semibold">jbrseo Signups</h2>
@@ -139,14 +138,11 @@ export function ClientsTabs({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              {/* TEMP test tools — allowed in prod for a one-time test, removed next push */}
-              <SeedTestSubscribersButton />
-              <RemoveTestSubscribersButton />
               <SyncButton />
             </div>
           </div>
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-4">
               <SubscribersTable rows={signupsRows} emailStatuses={emailStatuses} />
             </CardContent>
           </Card>

@@ -478,6 +478,9 @@ model Client {
   // Campaign sales lead (from teaser CTA)
   campaignInterest CampaignInterest?
 
+  // Billing
+  invoices Invoice[]
+
   @@index([industryId])
   @@index([userId])
   @@index([createdAt])
@@ -2409,4 +2412,40 @@ model GscManualRequest {
   @@unique([url, type])
   @@index([type, doneAt])
   @@map("gsc_removal_requests")
+}
+
+// ============================================
+// BILLING — Invoices issued from the Accounts page
+// ============================================
+model Invoice {
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  number            String           @unique // human invoice number e.g. MOD-2026-00042
+  clientId          String           @db.ObjectId
+  client            Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  tier              SubscriptionTier
+  tierName          String // display-name snapshot at issue time (e.g. "الزخم")
+  period            String // "monthly" | "annual"
+  currency          String // "SAR" | "EGP"
+  amount            Float
+  paymentMethod     String // bank_transfer | mada | instapay | card | stc_pay | apple_pay | cash
+  paymentStatus     String // "PAID" | "DUE"
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+  issuedAt          DateTime         @default(now())
+  issuedByUserId    String?          @db.ObjectId
+  emailSentAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([clientId, issuedAt])
+  @@map("invoices")
+}
+
+/// Atomic sequential counters (e.g. gapless invoice numbering per year).
+model Counter {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String @unique // e.g. "invoice-2026"
+  value Int    @default(0)
+
+  @@map("counters")
 }

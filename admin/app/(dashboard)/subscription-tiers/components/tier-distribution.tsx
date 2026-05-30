@@ -36,22 +36,6 @@ export function TierDistribution({ tiers }: { tiers: TierInfo[] }) {
         Distribution · {totalClients}
       </span>
 
-      {/* Thin inline bar */}
-      <div className="h-1.5 rounded-full overflow-hidden flex bg-muted flex-1 min-w-[160px]">
-        {sorted.map((tier, i) => {
-          if (tier._count.clients === 0) return null;
-          const pct = (tier._count.clients / totalClients) * 100;
-          return (
-            <div
-              key={tier.id}
-              className={PALETTE[i % PALETTE.length]}
-              style={{ width: `${pct}%` }}
-              title={`${tier.name} — ${tier._count.clients} (${pct.toFixed(0)}%)`}
-            />
-          );
-        })}
-      </div>
-
       {/* Inline legend — compact pills */}
       <div className="flex items-center gap-x-3 gap-y-1 flex-wrap">
         {sorted.map((tier, i) => {

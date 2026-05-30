@@ -1,4 +1,5 @@
 import { cacheTag, cacheLife } from "next/cache";
+import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export async function getClientForMetadata(slug: string) {
@@ -7,7 +8,8 @@ export async function getClientForMetadata(slug: string) {
   cacheLife("hours");
 
   return db.client.findUnique({
-    where: { slug },
+    // Only ACTIVE clients are public — non-active resolve to "not found" metadata.
+    where: { slug, subscriptionStatus: SubscriptionStatus.ACTIVE },
     select: {
       seoTitle: true,
       name: true,

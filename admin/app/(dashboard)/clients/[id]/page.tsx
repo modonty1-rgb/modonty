@@ -1,6 +1,10 @@
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
+
+// MongoDB ObjectId = 24 hex chars. Guards against reserved words / garbage ids
+// (e.g. /clients/verify) hitting Prisma with a malformed id and crashing with a 500.
+const isValidObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id);
 import { getClientById, getClientArticles, getClientAnalytics, getClientMedia } from "../actions/clients-actions";
 import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
@@ -11,6 +15,9 @@ import { loadSiteUrl } from "@/lib/seo/site-url";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;
+    if (!isValidObjectId(id)) {
+      return { title: "Client Not Found - Modonty" };
+    }
     const client = await getClientById(id);
 
     if (!client) {
@@ -154,7 +161,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ClientViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  
+
+  if (!isValidObjectId(id)) {
+    notFound();
+  }
+
   const [client, articles, analytics, media] = await Promise.all([
     getClientById(id),
     getClientArticles(id),

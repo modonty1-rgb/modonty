@@ -1,6 +1,15 @@
 {
   "permissions": {
     "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Write(documents/audits/**)",
       "Read(//c/Users/w2nad/AppData/Local/Temp/claude/c--Users-w2nad-Desktop-dreamToApp-MODONTY/8f403441-dada-4806-a21e-4eed2d3a5e50/tasks/**)",
       "Bash(nohup bash:*)",
       "Bash(node -e ':*)",

@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { ArticleStatus } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getClientStats, getRelatedClients } from "./client-stats";
 
@@ -13,7 +13,8 @@ export const getClientPageData = cache(async (rawSlug: string) => {
 
   const [client, stats] = await Promise.all([
     db.client.findUnique({
-      where: { slug: decodedSlug },
+      // Only ACTIVE clients are public — PENDING/EXPIRED/CANCELLED → 404.
+      where: { slug: decodedSlug, subscriptionStatus: SubscriptionStatus.ACTIVE },
       include: {
         logoMedia: {
           select: {

@@ -57,8 +57,9 @@ import {
   Briefcase,
   UserPlus,
   BadgeCheck,
-  Send,
   Globe,
+  Wallet,
+  PauseCircle,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -100,8 +101,9 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Users2, label: "All Clients", href: "/clients", exact: true },
       { icon: UserPlus, label: "New Client", href: "/clients/new" },
-      { icon: BadgeCheck, label: "Verify Client", href: "/clients/verify" },
-      { icon: Send, label: "Publish Client", href: "/clients/publish" },
+      { icon: BadgeCheck, label: "Activate Client", href: "/clients/activate" },
+      { icon: PauseCircle, label: "Suspend Client", href: "/clients/suspend" },
+      { icon: Wallet, label: "Accounts", href: "/accounts" },
     ],
   },
   {

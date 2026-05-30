@@ -27,7 +27,7 @@ export function clientWelcomeEmail({
           <p style="margin:0 0 10px;font-size:13px;font-weight:bold;color:#0E065A;">🔑 بيانات الدخول</p>
           <p style="margin:0 0 6px;font-size:13px;color:#333;">الرابط: <a href="${consoleUrl}" style="color:#3030FF;">${consoleUrl}</a></p>
           <p style="margin:0 0 6px;font-size:13px;color:#333;">اسم المستخدم: <strong>${email}</strong></p>
-          <p style="margin:0;font-size:13px;color:#333;">كلمة المرور المؤقتة: <strong>${password}</strong> (نفس بريدك)</p>
+          <p style="margin:0;font-size:13px;color:#333;">كلمة المرور المؤقتة: <strong>${password}</strong></p>
         </td>
       </tr>
     </table>
@@ -36,7 +36,7 @@ export function clientWelcomeEmail({
       <tr>
         <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
           <strong style="font-size:14px;color:#0E065A;">1️⃣ سجّل دخول</strong>
-          <p style="margin:4px 0 0;font-size:13px;color:#666;">من الرابط أعلاه باستخدام بريدك ككلمة مرور</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#666;">من الرابط أعلاه ببيانات الدخول الموضّحة فوق</p>
         </td>
       </tr>
       <tr>
@@ -68,7 +68,7 @@ export function clientWelcomeEmail({
 بيانات الدخول:
 - الرابط: ${consoleUrl}
 - اسم المستخدم: ${email}
-- كلمة المرور المؤقتة: ${password} (نفس بريدك)
+- كلمة المرور المؤقتة: ${password}
 
 الخطوات الأولى:
 1. سجّل دخول من الرابط أعلاه

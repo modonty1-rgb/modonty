@@ -1,7 +1,7 @@
 // Build trigger: 2026-05-27 v0.63.4 cache rebuild
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { ArticleStatus } from "@prisma/client";
+import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
 
 /**
  * Main sitemap (Google's primary trust signal).
@@ -60,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       orderBy: { datePublished: "desc" },
     }),
     db.category.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
-    db.client.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
+    db.client.findMany({ where: { subscriptionStatus: SubscriptionStatus.ACTIVE }, select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.author.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.tag.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),
     db.industry.findMany({ select: { slug: true, updatedAt: true } }).then((rows) => rows.filter(notTestSlug)),

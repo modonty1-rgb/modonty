@@ -1,7 +1,55 @@
 # 🚨 CRITICAL TODO — مشاكل بانتظار حل لاحق
 
-> **آخر تحديث:** 2026-05-27
+> **آخر تحديث:** 2026-05-30
 > **الغرض:** مهام مهمة لكنها مؤجّلة الآن لوجود أولويات أعلى. لا تُحذف ولا تُهمل — كل واحدة تحتاج جلسة مخصّصة.
+
+---
+
+## CRIT-007 🟡 توحيد تسمية الباقات — مصدر واحد (jbrseo → SubscriptionTierConfig) بدل ازدواجية enum
+
+**الحالة:** مؤجّل — قرار خالد 2026-05-30 (نشتغل UI أولاً، الـ schema/refactor لاحقاً)
+**التاريخ:** 2026-05-30
+
+### المشكلة (الجذر)
+ازدواجية تسمية للباقات تسبّب لخبطة:
+- **enum تقني** `SubscriptionTier` (schema.prisma:42): `BASIC · STANDARD · PRO · PREMIUM` — مخزّن في كل عميل (`client.subscriptionTier`)
+- **الأسماء + الأسعار الحقيقية** في `SubscriptionTierConfig` (DB، متزامنة من jbrseo): `مجاني · الانطلاقة · الزخم · الريادة` + `pricing {SA/EG, mo/yr}` + `jbrseoId (free/starter/growth/scale)`
+
+التطابق: BASIC=مجاني(free) · STANDARD=الانطلاقة(starter) · PRO=الزخم(growth) · PREMIUM=الريادة(scale). الـ enum **ما يطابق** الأسماء العربية → لخبطة في كل UI يعرض الباقة.
+
+### الحلّان (خالد يختار في الجلسة المخصّصة)
+- **أ) جذري ثقيل:** حذف الـ enum، العميل يرتبط بالـ config بـ relation. يلمس **~65 ملف** (admin 53 · modonty 10 · console 2) + migration للبيانات. خطر/وقت عالي.
+- **ب) جذري ذكي (توصية Claude):** الـ enum يبقى مفتاح داخلي ثابت، **مصدر واحد** `getTierDisplay(tier)` يترجمه للاسم+السعر من `SubscriptionTierConfig`. يلمس فقط أسطح العرض (قِلّة) — بدون migration. اللخبطة تختفي من الجذر، خطر أقل بكثير.
+
+### Why
+الأسماء والأسعار متناثرة بدون نقطة توحيد. مصدر jbrseo موجود ومتزامن أصلاً (`pricing` JSON + `FALLBACK_PRICING_BY_NAME` + `resolvePricing()` في `admin/.../subscription-tiers/lib/pricing.ts`) — نستهلكه، ما نعيد بناءه.
+
+### How to apply
+في الجلسة المخصّصة: ابدأ بالخيار (ب) — helper مركزي واحد، استبدل كل عرض خام للـ enum به، اختبر live على أسطح العرض. لا تلمس قيمة الـ enum المخزّنة في DB.
+
+---
+
+## CRIT-006 🟡 مراجعة مفاتيح env اللي أُضيفت لـ Vercel (2026-05-29) + تعارض GTM على modonty
+
+**الحالة:** غير عاجل — لا يؤثر حالياً (مفاتيح إضافية فقط، تسري بعد redeploy)
+**التاريخ:** 2026-05-29
+
+### السياق
+خلال محاولة مزامنة env، أضفتُ ~٢٠ مفتاح تحليلات/تسويق كـ Shared Env Vars على Vercel (GTM_* · GA4_* · NEXT_PUBLIC_HOTJAR_* · NEXT_PUBLIC_SALES_* · NEXT_PUBLIC_CEO_EMAIL · GEMINI_API_KEY · INDEXNOW_KEY) عبر `scripts/sync-env-to-vercel.mjs`. **أُضيفت بناءً على مقارنة ناقصة** (قرأت صفحة وحدة من ٦٦ متغير — الـ API يرجّع ٢٥/صفحة) فظننت admin ناقص ٤٠ مفتاح. **الحقيقة:** المفاتيح الحرجة (DATABASE_URL=prod · RESEND_API_KEY · RESEND_FROM · CLOUDINARY · GSC · OPENAI) كانت موجودة ومربوطة بالثلاثة من البداية — إنذار كاذب.
+
+### المطلوب (جلسة مخصّصة)
+1. **مراجعة الـ ~٢٠ مفتاح المضاف** — تأكيد إن كل واحد صحيح القيمة + مربوط بالمشروع الصح + فعلاً مطلوب. (آمنة ومفيدة غالباً، بس أُضيفت بدون تحقق كامل.)
+2. **GTM على modonty — مقصود، مش تعارض (وضّحه خالد 2026-05-29):** `NEXT_PUBLIC_GTM_CONTAINER_ID` له قيمتان:
+   - project-level على modonty = `GTM-MNRR2NS9` (حاوية **مدوّنتي**)
+   - shared = `GTM-P43DC5FM` (حاوية **جبر SEO** — افتراضي مشترك)
+   - Vercel يرجّح الـ project-level، فمدوّنتي تطلق حاويتها الصحيحة `GTM-MNRR2NS9`. **سليم — لا إجراء مطلوب.** (تنظيف اختياري لاحقاً: فكّ ربط حاوية جبر SEO عن مشروع modonty لتقليل اللبس، لكنها غير ضارة لأنها مُتجاوَزة.)
+3. **٥ مفاتيح أخرى مكررة على modonty (project + shared)** — قديمة (قبل اليوم، مش مني): DATABASE_URL · GOOGLE_CLIENT_ID · GOOGLE_CLIENT_SECRET · AUTH_TRUST_HOST · NEXT_PUBLIC_SITE_URL. الـ ٣ الأخيرة تأكدنا إنها متطابقة القيمة (غير ضارة)؛ DATABASE_URL + GOOGLE_CLIENT_* نوع sensitive (ما نقدر نقرأ قيمتها عبر API) → تتأكد منها أنت من dashboard.
+
+### Why
+الـ env drift خطر مثبت (انظر CRIT-005). المفاتيح المضافة آمنة حالياً بس تحتاج تدقيق عشان ما نراكم تعارضات صامتة.
+
+### How to apply
+الأداة `scripts/sync-env-to-vercel.mjs` لها dry-run افتراضي + يطبع CREATE/LINK/SKIP. شغّلها dry-run أول لمراجعة الحالة قبل أي تعديل. القاعدة الذهبية الجديدة (في `~/.claude/CLAUDE.md`): paginate القائمة كاملة قبل أي استنتاج.
 
 ---
 

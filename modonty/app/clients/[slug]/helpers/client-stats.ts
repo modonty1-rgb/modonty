@@ -1,4 +1,5 @@
 import { cacheTag, cacheLife } from "next/cache";
+import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export async function getClientStats(clientId: string) {
@@ -32,6 +33,7 @@ export async function getRelatedClients(clientId: string, industryId?: string | 
       where: {
         industryId: industryId,
         id: { not: clientId },
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
       },
       take: limit,
       include: {

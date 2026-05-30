@@ -1,3 +1,86 @@
+# Session Context — Last Updated: 2026-05-29 ~21:00 (FROZEN by `us>` · ✅ EMAIL DELIVERY+OPEN TRACKING VERIFIED END-TO-END ON PRODUCTION. admin v0.65.4 PUSHED (commit bbe9ed7) + Vercel build READY + redeployed so RESEND_WEBHOOK_SECRET active. Resend Open Tracking enabled (track.modonty.com CNAME verified). False-alarm "prod missing 40 env keys" was MY pagination bug — keys were there all along. 2 NEW golden rules added to ~/.claude/CLAUDE.md. REMAINING: (1) cleanup prod test data via "Remove Test Data" button, (2) NEXT push removes the temp Seed/Remove buttons + restores guards, (3) `cd admin && pnpm changelog` for 0.65.4.)
+
+## Session: 2026-05-30 ~13:00 — Client Account/Invoice feature (UI+backend+email) + status-visibility fix + UI/UX skill — FINAL CHECK DONE
+
+### 🎯 Where I stopped / resume
+- **Invoice feature COMPLETE + TS-clean.** Servers OFF (killed for TSC). Resume: `cd admin && pnpm dev` → open `http://localhost:3000/accounts/69e8927b6a15f350c2158a2e`.
+- **Next:** live-test issuing one invoice end-to-end (⚠️ sends a REAL email to client + mutates subscription — pick a test client / Khalid's own email). DB=modonty_dev (safe).
+
+### ✅ Done
+**A) Client Account page `/accounts/[clientId]` — NEW, NOT pushed:**
+- Files (NEW): `page.tsx`, `components/issue-invoice-form.tsx`, `components/account-statement.tsx`, `components/statement-entry-row.tsx`, `actions/create-invoice.ts`, `lib/email/templates/invoice.ts`.
+- Form: الباقة(+emerald ref-price badge) · الفترة(toggle) · المبلغ+العملة(unified) · طريقة الدفع(+InstaPay) · حالة الدفع(toggle) · بداية/نهاية اشتراك(manual). **Issue disabled until all complete** (shows "أكمل: …"). Live blue summary card. NO formulas.
+- Backend `create-invoice.ts`: atomic number `MOD-YYYY-NNNNN` (Counter), creates Invoice, **updates client subscription** (tier/dates/articlesPerMonth/paymentStatus/status = option B), sends invoice email (Resend), revalidates.
+- Email template: full data (رقم·الباقة·طريقة·تاريخ الدفع·بداية·نهاية·الحالة·الإجمالي) + contact (جوال 0560299034 · modonty@modonty.com).
+- كشف الحساب = real invoices timeline, click row → details dialog.
+- `accounts/components/accounts-table.tsx` row → "فتح الحساب" link.
+- **Schema:** `model Invoice` + `model Counter` + `Client.invoices` added; **prisma generate DONE**.
+
+**B) Status-visibility fix (earlier this session, NOT pushed):** modonty 7 files (non-ACTIVE clients → 404 + out of listing/search/sitemap) + admin 2 files (article + media client pickers ACTIVE-only). Verified live.
+
+**C) UI/UX standard:** `memory/feedback_uiux_standards.md` + `.claude/skills/modonty-uiux/SKILL.md` (NEW, loaded).
+
+**D) CRIT-007 logged** (tier enum vs jbrseo-name duality, deferred).
+
+### 🔬 FINAL CHECK (TSC, both apps)
+- **My invoice-feature code = 0 errors (clean).** Fixed 1 real error: `accounts/page.tsx` (LIST) articlesPerMonth `?? 0`.
+- **Remaining = PRE-EXISTING TS2589 "deep instantiation" (zod/RHF), unrelated to this work:** admin×2 (use-client-media-modal, use-client-form) + modonty×5 (ask-client-dialog, profile settings ×3, register-form). Must be addressed before any push (separate concern).
+- Build: not run. Live invoice issue: NOT done.
+
+### 🔁 Git / deploy
+- Branch main · Uncommitted: YES (large) · NOT pushed · Prisma client regenerated (Invoice/Counter).
+
+---
+
+## Session: 2026-05-29 ~19:00 → ~21:00 — Prod email tracking verified + Vercel env false-alarm + 2 golden rules (continuation)
+
+### 🎯 Where I stopped
+- **Email feature 100% verified on PRODUCTION** — converted a NEW test subscriber (الزخم / modonty1+growth@gmail.com) AFTER enabling Resend Open Tracking → email shows BOTH 📬 وصل (delivered) AND 👀 فُتح (opened). The older converted one (الريادة / modonty1+scale) shows وصل only (sent before tracking was enabled — no pixel, expected).
+- **Next concrete action on resume:** Khalid clicks **Remove Test Data** on admin.modonty.com/clients to clean the 2 converted test clients + test subscribers (pattern-scoped to `test-`, safe). Then NEXT push removes the temp buttons.
+
+### ✅ Done this continuation
+- **admin v0.65.4 committed (bbe9ed7) + PUSHED to main.** Vercel build went READY (local build kept OOM-crashing exit 134 — a MACHINE memory issue, NOT code; Vercel built fine with more RAM — lesson: trust Vercel build as the real gate when local OOMs).
+- **Then redeployed admin via API** (`POST /v13/deployments` with `{name, deploymentId, target:"production"}`) because RESEND_WEBHOOK_SECRET was added 9 min AFTER the original deploy → Vercel env vars only apply to deployments built after they exist. Verified active: `POST https://admin.modonty.com/api/resend/webhook` (unsigned) returns **400 Invalid signature** = secret present + verifying (500 would mean missing).
+- **RESEND_WEBHOOK_SECRET** added to `.env.shared` (local) + created as Vercel Shared Env Var linked to admin+console+modonty (used official `PATCH /v1/env {"updates":{"<id>":{"projectId":[...]}}}` to link, verified via docs — POST /v1/env ignores per-ev projectId, needs the PATCH link step).
+- **Resend Open Tracking ENABLED** (Khalid, via dashboard): Domains → modonty.com → Configuration → Enable tracking metrics → created tracking subdomain `track` → CNAME `track → links1.resend-dns.com` added in Namecheap → **Verified**. (Open tracking is OFF by default in Resend, pixel injected at send time → only emails sent AFTER enabling are tracked. Confirmed via official Resend docs.)
+- **🔥 FALSE ALARM corrected (this upset Khalid — own it):** I read ONE page of `GET /v1/env` (25 of 66 shared vars — the API paginates 25/page with `pagination.next`) and loudly declared "مصيبة — admin prod missing DATABASE_URL/RESEND_API_KEY + 40 keys". FALSE — all keys were present on later pages. DATABASE_URL verified = single var, value=`modonty` (prod), created 2026-04-30, untouched by me. Email feature would have worked on prod all along.
+- **My env-sync run (`scripts/sync-env-to-vercel.mjs --apply`) net effect:** created ~20 genuinely-missing analytics/marketing keys (GTM_*/GA4_*/HOTJAR/SALES_*/CEO/GEMINI/INDEXNOW) linked to missing projects. 21 "creates" failed (already existed) = no-ops. Verified ZERO same-project duplicates on admin+console. 6 pre-existing dup keys on modonty (project+shared) are NOT mine + GTM (`GTM-MNRR2NS9` modonty vs `GTM-P43DC5FM` jbrseo) is INTENTIONAL per Khalid (project-level wins = modonty fires its own container). Logged as CRIT-006.
+- **2 NEW golden rules added to `~/.claude/CLAUDE.md`:**
+  1. "Evidence before claims; finish investigation 100% before ANY judgment" (never say مصيبة/تمام without raw evidence; paginate fully; hand Khalid the way to verify himself).
+  2. "Production env vars can drift from local .env.shared" (corrected to note the false alarm; DATABASE_URL prod=modonty/local=modonty_dev is the ONLY env-specific value; paginate /v1/env fully before concluding).
+
+### 📝 Decisions
+- Keep the ~20 added Vercel keys (harmless/useful) — logged for later audit in CRIT-006, not reverted.
+- Keep `scripts/sync-env-to-vercel.mjs` (untracked) as a reusable tool (dry-run default + DATABASE_URL prod-guard that aborts if it resolves to a dev DB).
+- Local admin build OOM (exit 134) is a machine limit, not code — use `NODE_OPTIONS=--max-old-space-size=8192` OR just trust the Vercel build.
+
+### 🚧 Pending / blocked (RESUME HERE)
+1. **Cleanup prod test data** — Khalid clicks "Remove Test Data" on /clients (deletes test subscribers + their converted clients, pattern-scoped to `test-`). OR via the button anytime.
+2. **NEXT push** — REMOVE the temp `SeedTestSubscribersButton` + `RemoveTestSubscribersButton` from clients-tabs + restore the `NODE_ENV !== "production"` guards in `seed-test-subscribers.ts` + `clients-tabs.tsx`. (Both currently marked TEMP in code comments.)
+3. `cd admin && pnpm changelog` — DB changelog entry for 0.65.4.
+4. (Later, non-urgent) CRIT-006: audit the ~20 added Vercel keys.
+
+### 📂 Files touched this continuation
+- `admin/.../clients/actions/remove-test-subscribers.ts` — NEW (pattern-scoped delete + count) [committed in bbe9ed7]
+- `admin/.../clients/components/remove-test-subscribers-button.tsx` — NEW [committed]
+- `admin/.../clients/actions/seed-test-subscribers.ts` + `clients-tabs.tsx` — dropped prod guard (TEMP) [committed]
+- `admin/package.json` — 0.65.4 [committed]
+- `scripts/sync-env-to-vercel.mjs` — NEW, UNTRACKED (env-sync tool)
+- `.env.shared` — added RESEND_WEBHOOK_SECRET (local, gitignored)
+- `~/.claude/CLAUDE.md` — 2 new golden rules (global, outside repo)
+- `documents/tasks/🚨 CRITICAL-TODO.md` — added CRIT-006
+
+### 🔁 Git / deploy (this continuation)
+- Branch `main`. **Last commit `bbe9ed7` (v0.65.4) — PUSHED.** Vercel admin: READY + redeployed (RESEND_WEBHOOK_SECRET active).
+- Only untracked file of substance: `scripts/sync-env-to-vercel.mjs`.
+- Prod webhook live + verified: `https://admin.modonty.com/api/resend/webhook` returns 400 to unsigned POST (secret active).
+
+### 🚀 Resume in 30 seconds
+1. If continuing test cleanup → tell Khalid to click "Remove Test Data" on admin.modonty.com/clients.
+2. For the NEXT push → remove temp test buttons (2 files) + restore NODE_ENV guards, bump 0.65.5, backup, build (use NODE_OPTIONS heap if local OOM), commit, push, `cd admin && pnpm changelog`.
+
+---
+
 # Session Context — Last Updated: 2026-05-29 ~19:40 (FROZEN by `us>` before machine restart to clear cache · TEST-DATA buttons feature built (Seed + Remove Test Data, pattern-scoped to `test-`, now allowed in prod for a ONE-TIME prod test, to be removed next push) · admin bumped 0.65.4 + backup done · admin build kept crashing locally with V8 OOM (exit 134) → re-running with NODE_OPTIONS=--max-old-space-size=8192 (THIS is why Khalid is restarting). NOT committed, NOT pushed. RESUME = re-run admin build → commit → push → prod config. Vercel console BUILD_STUCK on ae46ccd = infra hang, NOT a code bug.)
 
 ## Session: 2026-05-29 ~19:00 → ~19:40 — Test-data Seed+Remove buttons for prod test + version bump (continuation)
