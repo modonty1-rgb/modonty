@@ -12,10 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.66.2 (admin)",
-    title: "Media: 'Fix broken images' scanner — replaces deleted Cloudinary assets with platform defaults",
+    version: "0.66.3 (admin)",
+    title: "Media rename hardening — use Cloudinary's returned secure_url instead of a hand-built URL",
     items: [
-      { type: "feat" as const, text: "admin 0.66.2 — new 'Fix broken images' button on the Media page. Scans every media file against Cloudinary (HEAD request); any image whose asset is missing (404/410) gets its DB url swapped to the matching platform default (LOGO→logo default, HERO→hero default, everything else→article/POST default). Keeps the public site showing the placeholder instead of a broken image until the creative re-uploads the real one. Read-only for healthy images; only broken rows are touched." },
+      { type: "fix" as const, text: "admin 0.66.3 — when renaming a Cloudinary asset (triggered by editing a media file's alt text/title), the new URL is now taken from the rename API's response (result.secure_url) instead of being constructed manually from version+format. Manual construction could produce a dead URL (broken image) if the version/format were guessed wrong even though the file existed. Manual build kept only as a last-resort fallback." },
     ],
   },
 ];

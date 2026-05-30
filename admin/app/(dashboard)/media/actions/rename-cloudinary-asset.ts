@@ -137,14 +137,15 @@ export async function renameCloudinaryAsset(
       result,
     });
 
-    // Extract format from result or from old public_id
-    // Cloudinary rename API returns the resource with format
+    // Prefer the canonical URL Cloudinary returns in the response (always valid).
+    // Only fall back to manual construction if the API omits it — manual building
+    // can produce a dead URL if version/format are guessed wrong.
     const format = result.format || oldPublicId.split('.').pop() || "png";
-    // Use version from result, or extract from old URL if available
     const version = result.version || null;
-
-    // Construct new URL with version and format
-    const newUrl = buildCloudinaryUrl(cloudName, resourceType, result.public_id, format, version);
+    const newUrl =
+      result.secure_url ||
+      result.url ||
+      buildCloudinaryUrl(cloudName, resourceType, result.public_id, format, version);
 
     return {
       success: true,
