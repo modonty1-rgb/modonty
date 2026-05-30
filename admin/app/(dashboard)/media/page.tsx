@@ -5,6 +5,7 @@ import { MediaFilters as MediaFiltersComponent } from "./components/media-filter
 import { MediaPageClient } from "./components/media-page-client";
 import { MediaStats } from "./components/media-stats";
 import { UnusedMediaButton } from "./components/unused-media-button";
+import { FixBrokenMediaButton } from "./components/fix-broken-media-button";
 
 export default async function MediaPage({
   searchParams,
@@ -73,7 +74,10 @@ export default async function MediaPage({
           </div>
           <MediaStats stats={stats} />
         </div>
-        <MediaFiltersComponent clients={clients} defaultClientId={params.clientId} />
+        <div className="flex items-center gap-2">
+          <FixBrokenMediaButton />
+          <MediaFiltersComponent clients={clients} defaultClientId={params.clientId} />
+        </div>
       </div>
 
       <UnusedMediaButton items={unusedItems} />

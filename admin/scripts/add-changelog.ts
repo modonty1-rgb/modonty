@@ -12,12 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.66.1 (admin)",
-    title: "Clients table cleanup: inline Activate button removed · clearer status badges (Unpaid vs Pending) · Activate/Suspend pages",
+    version: "0.66.2 (admin)",
+    title: "Media: 'Fix broken images' scanner — replaces deleted Cloudinary assets with platform defaults",
     items: [
-      { type: "fix" as const, text: "admin 0.66.1 — removed the inline 'Activate' button from the /clients table. Activation now lives only on the dedicated /clients/activate page — kills the confusing 'Pending + Activate side by side looks like two statuses' problem." },
-      { type: "fix" as const, text: "admin 0.66.1 — status badges disambiguated: an ACTIVE client with payment not recorded now shows 'Unpaid' (amber) instead of 'Pending'; a not-yet-activated client shows 'Pending' (slate) as a proper colored badge. Same 'Unpaid' wording is now used on the Account page header (was raw 'PENDING') — table and account page are consistent." },
-      { type: "feat" as const, text: "admin 0.66.1 — added the Activate Client and Suspend Client pages (/clients/activate, /clients/suspend) linked from the sidebar: list of Pending (resp. Active) clients with a per-row confirm button." },
+      { type: "feat" as const, text: "admin 0.66.2 — new 'Fix broken images' button on the Media page. Scans every media file against Cloudinary (HEAD request); any image whose asset is missing (404/410) gets its DB url swapped to the matching platform default (LOGO→logo default, HERO→hero default, everything else→article/POST default). Keeps the public site showing the placeholder instead of a broken image until the creative re-uploads the real one. Read-only for healthy images; only broken rows are touched." },
     ],
   },
 ];
