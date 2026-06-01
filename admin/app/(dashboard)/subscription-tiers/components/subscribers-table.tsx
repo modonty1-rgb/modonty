@@ -12,6 +12,9 @@ import { ConvertSubscriberDialog } from "../../clients/components/convert-subscr
 interface Props {
   rows: JbrseoSubscriberRow[];
   emailStatuses?: Record<string, WelcomeEmailStatus>;
+  // email (lowercased) → existing client id. A signup whose email is already a
+  // client is treated as "already a client" and dropped from the to-convert list.
+  clientByEmail?: Record<string, string>;
 }
 
 const dateFmt = new Intl.DateTimeFormat("en-GB", {
@@ -24,10 +27,12 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
 
 function SubscriberCard({
   r,
+  clientId,
   emailStatuses,
   onConvert,
 }: {
   r: JbrseoSubscriberRow;
+  clientId: string | null;
   emailStatuses: Record<string, WelcomeEmailStatus>;
   onConvert: (r: JbrseoSubscriberRow) => void;
 }) {
@@ -70,18 +75,18 @@ function SubscriberCard({
       </div>
 
       <div className="shrink-0 flex flex-col items-end gap-1.5">
-        {r.convertedToClientId ? (
+        {clientId ? (
           <>
             <Link
-              href={`/clients/${r.convertedToClientId}`}
+              href={`/clients/${clientId}`}
               className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 whitespace-nowrap"
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
-              تم التحويل
+              {r.convertedToClientId ? "تم التحويل" : "عميل بالفعل"}
               <ExternalLink className="h-3 w-3 opacity-60" />
             </Link>
-            {(() => {
-              const st = emailStatuses[r.convertedToClientId!];
+            {r.convertedToClientId && (() => {
+              const st = emailStatuses[r.convertedToClientId];
               return (
                 <div className="flex items-center gap-1.5 text-[10px]">
                   <span
@@ -116,7 +121,7 @@ function SubscriberCard({
   );
 }
 
-export function SubscribersTable({ rows, emailStatuses = {} }: Props) {
+export function SubscribersTable({ rows, emailStatuses = {}, clientByEmail = {} }: Props) {
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState<"all" | "SA" | "EG">("all");
   const [billing, setBilling] = useState<"all" | "annual" | "monthly">("all");
@@ -137,8 +142,13 @@ export function SubscribersTable({ rows, emailStatuses = {} }: Props) {
     );
   });
 
-  const pending = filtered.filter((r) => !r.convertedToClientId);
-  const converted = filtered.filter((r) => r.convertedToClientId);
+  // A signup counts as "already a client" if it was converted via this tool OR
+  // its email already exists as a client — both are excluded from "للتحويل".
+  const clientIdFor = (r: JbrseoSubscriberRow): string | null =>
+    r.convertedToClientId ?? clientByEmail[r.email.trim().toLowerCase()] ?? null;
+
+  const pending = filtered.filter((r) => !clientIdFor(r));
+  const converted = filtered.filter((r) => clientIdFor(r));
   const list = view === "converted" ? converted : pending;
 
   return (
@@ -231,7 +241,7 @@ export function SubscribersTable({ rows, emailStatuses = {} }: Props) {
       ) : (
         <div className="space-y-2">
           {list.map((r) => (
-            <SubscriberCard key={r.id} r={r} emailStatuses={emailStatuses} onConvert={setConvertTarget} />
+            <SubscriberCard key={r.id} r={r} clientId={clientIdFor(r)} emailStatuses={emailStatuses} onConvert={setConvertTarget} />
           ))}
         </div>
       )}

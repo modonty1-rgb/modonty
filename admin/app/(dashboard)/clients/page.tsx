@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { db } from "@/lib/db";
 import { getClients, getClientsStats, ClientFilters } from "./actions/clients-actions";
 import { ClientsHeaderWrapper } from "./components/clients-header-wrapper";
 import { ClientsTabs } from "./components/clients-tabs";
@@ -25,14 +26,22 @@ function TableSkeleton() {
 }
 
 async function ClientsContent({ filters }: { filters: ClientFilters }) {
-  const [clients, stats, signupsRows, signupStats, tiers, defaults] = await Promise.all([
+  const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails] = await Promise.all([
     getClients(filters),
     getClientsStats(),
     getJbrseoSubscribers(),
     getJbrseoSubscriberStats(),
     getTierConfigs(),
     getPlatformDefaults(),
+    // ALL clients (filter-independent) — used to hide already-clients from the
+    // jbrseo "to convert" list by matching email.
+    db.client.findMany({ select: { id: true, email: true } }),
   ]);
+
+  const clientByEmail: Record<string, string> = {};
+  for (const c of allClientEmails) {
+    if (c.email) clientByEmail[c.email.trim().toLowerCase()] = c.id;
+  }
 
   const convertedClientIds = signupsRows
     .map((r) => r.convertedToClientId)
@@ -47,6 +56,7 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
         signupsRows={signupsRows}
         emailStatuses={emailStatuses}
         clients={clients}
+        clientByEmail={clientByEmail}
         defaultLogoUrl={defaults.LOGO}
         tiers={tiers}
       />

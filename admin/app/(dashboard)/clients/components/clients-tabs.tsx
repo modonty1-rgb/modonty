@@ -22,6 +22,9 @@ interface Props {
   signupsRows: JbrseoSubscriberRow[];
   emailStatuses: Record<string, WelcomeEmailStatus>;
   clients: ClientForList[];
+  // email (lowercased) → client id, for ALL clients (filter-independent) — used to
+  // hide signups that are already clients from the to-convert list.
+  clientByEmail: Record<string, string>;
   defaultLogoUrl?: string | null;
   tiers: React.ComponentProps<typeof TierDistribution>["tiers"];
 }
@@ -32,6 +35,7 @@ export function ClientsTabs({
   signupsRows,
   emailStatuses,
   clients,
+  clientByEmail,
   defaultLogoUrl,
   tiers,
 }: Props) {
@@ -143,7 +147,7 @@ export function ClientsTabs({
           </div>
           <Card>
             <CardContent className="pt-4">
-              <SubscribersTable rows={signupsRows} emailStatuses={emailStatuses} />
+              <SubscribersTable rows={signupsRows} emailStatuses={emailStatuses} clientByEmail={clientByEmail} />
             </CardContent>
           </Card>
         </div>

@@ -12,10 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.68.1 (admin)",
-    title: "Client page 'Brief' tab is now driven by the live questionnaire",
+    version: "0.68.2 (admin)",
+    title: "jbrseo signups: hide people who are already clients from the 'to convert' list",
     items: [
-      { type: "fix" as const, text: "The client page Brief tab used to show a fixed, hardcoded set of fields — newly-added intake questions never appeared there. It now renders the SAME questions defined in Content → Intake Questions (1:1 with the client console), so any question you add shows up automatically with the client's answer. Choice answers display their human label; renamed to 'بيانات نشاط العميل'." },
+      { type: "fix" as const, text: "On the Clients → jbrseo Subscribers tab, a signup whose email already exists as a client used to still appear under 'للتحويل' (to convert). Now any signup matching an existing client (by email) is treated as 'عميل بالفعل', moved out of the to-convert list, and linked to the matching client — so you only ever convert people who aren't clients yet. Matches against ALL clients, independent of the current search filter." },
     ],
   },
 ];
