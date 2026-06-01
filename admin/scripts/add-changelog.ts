@@ -12,13 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.68.0 (admin) + 0.12.0 (console)",
-    title: "Intake questionnaire is now admin-managed — add/edit questions, clients answer in their console",
+    version: "0.12.1 (console)",
+    title: "Fix: intake form hydration warning (saved-time timestamp)",
     items: [
-      { type: "feature" as const, text: "New Admin → Content → Intake Questions page: add, edit, reorder, hide or delete the client questionnaire questions. Questions + their options now live in the database (was hardcoded in the console). Any change appears in the client console immediately." },
-      { type: "feature" as const, text: "Console intake form is now driven by the database — it renders whatever questions admin defines, by type (short text / long text / pick one / pick several / yes-no). Falls back to the legacy form until seeded. Answers keep their stable storage shape, so the publish audit + JSON-LD keep working unchanged." },
-      { type: "improve" as const, text: "Simple, non-technical editor: a question is just its text + answer type (+ choices). Removed all internal/technical fields from the admin UI." },
-      { type: "fix" as const, text: "Disabled the Cloudinary 'orphan sweep' maintenance step — it could permanently delete production images when Run-All was triggered against a non-production database (shared Cloudinary account). A review-before-delete redesign is tracked." },
+      { type: "fix" as const, text: "Console intake form — the 'saved at <time>' label now renders after mount, so the server (UTC) and the browser timezone no longer disagree on first paint. Removes a React hydration warning (#418). No functional change — the time still shows." },
     ],
   },
 ];

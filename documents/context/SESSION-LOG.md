@@ -30,7 +30,9 @@
 - memory: `project_runall_cloudinary_dev_hazard.md` (new) + MEMORY.md pointer
 
 ### 🔁 Git / deploy state
-- Branch: main · **Uncommitted: YES** (cont.4 intake files + cont.5 Cloudinary disable) · Last commit `aa7034d` · Pushed: NO · Vercel: not triggered.
+- **✅ PUSHED + DEPLOYED 2026-06-01** — commit `c255b22` (admin v0.68.0 + console v0.12.0). `aa7034d..c255b22 main -> main`. Vercel: all 3 apps **READY** (verified via API). Changelog row written to dev + prod. Backup taken (dev, 73 collections). admin/console/modonty TSC all green pre-push.
+- **⏳ AWAITING: Khalid runs admin.modonty.com → Maintenance → Run All** to seed the questionnaire into the prod `modonty` DB (the one remaining step to activate the feature on prod; safe now — Cloudinary step removed).
+- **PROD note:** the deploy does NOT seed the questionnaire into prod (no `db push`/migration in build — new `intake_*` collections are created on first write). To activate on prod: after deploy, admin.modonty.com → Maintenance → Run All (now safe, Cloudinary step removed) seeds it into the `modonty` prod DB. Until then, console prod falls back to the legacy hardcoded form (non-breaking).
 
 ### 🚀 How to resume in 30 seconds
 1. Everything works on dev. To ship: bump `admin/package.json` + `console/package.json` versions, add changelog entry, `bash scripts/backup.sh`, commit, push (ask Khalid first).

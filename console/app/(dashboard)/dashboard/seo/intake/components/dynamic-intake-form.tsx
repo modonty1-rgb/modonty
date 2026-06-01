@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo, useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -106,6 +106,10 @@ export function DynamicIntakeForm({
   const [pending, startTransition] = useTransition();
   const [savedAt, setSavedAt] = useState<Date | null>(intakeUpdatedAt);
   const [error, setError] = useState<string | null>(null);
+  // Render the saved-time only after mount — the formatted time differs between
+  // server (UTC) and browser timezone, which would cause a hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Seed state from saved answers; pre-fill auto-detected GBP if that field is empty.
   const [data, setData] = useState<AnyObj>(() => {
@@ -245,7 +249,7 @@ export function DynamicIntakeForm({
             {pending ? (
               <><Loader2 className="h-4 w-4 animate-spin text-primary" /><span className="text-muted-foreground">جارٍ الحفظ...</span></>
             ) : savedAt ? (
-              <><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="font-medium text-emerald-700">حُفظ · {new Intl.DateTimeFormat("ar-SA", { timeStyle: "short" }).format(savedAt)}</span></>
+              <><CheckCircle2 className="h-4 w-4 text-emerald-600" /><span className="font-medium text-emerald-700">حُفظ{mounted ? ` · ${new Intl.DateTimeFormat("ar-SA", { timeStyle: "short" }).format(savedAt)}` : ""}</span></>
             ) : (
               <span className="text-muted-foreground">جاهز للحفظ</span>
             )}
