@@ -29,6 +29,31 @@
 
 ---
 
+## 🛑 CRIT-004 — Cloudinary Orphan Sweep: DESTROYED PROD assets — DISABLED, needs redesign *(2026-06-01)*
+
+**Priority:** 🔴 CRITICAL · **Status:** سُدّ الخطر فوراً (disabled + removed from Run-All) · **NOT pushed yet**
+
+### الكارثة (مؤكّدة بالكود + البيئة)
+- خطوة **"Cloudinary Orphans Swept"** داخل admin Database → **Run All Auto-Maintenance** كانت تحذف من Cloudinary أي أصل (بادئات `modonty/ general/ clients/ admins/`) ما له سجل `cloudinaryPublicId` في **الـ DB المتّصل حالياً**.
+- حساب Cloudinary **مشترك dev↔prod**. تشغيل Run-All محلياً (admin متّصل بـ `modonty_dev`، سجلات أقل) → اعتبر أصول **الإنتاج** يتيمة و **حذفها نهائياً** (`destroy({ invalidate: true })`).
+- **لا حاجز بيئة، لا dry-run، لا مراجعة.** الزناد الوحيد = زر Run-All اليدوي (لا cron).
+- **مرجّح جداً هذا سبب [CRIT-001] (21 صورة Cloudinary مكسورة على PROD)** — أداة `fix-broken-media.ts` بُنيت لعلاج العَرَض (تبدّل المكسور بصورة افتراضية). الميكانيكية مثبتة؛ السببية التاريخية قوية لكن غير مثبتة بسجل.
+
+### ما تم هذه الجلسة (سدّ الخطر — كود جاهز، لم يُدفع)
+- [x] `sweepCloudinaryOrphans` → حاجز قاطع في أول الدالة يرجع `{0,0,0}` قبل أي حذف.
+- [x] أُزيلت خطوة `cloudinary` من `STEPS` في `auto-maintenance-panel.tsx` + حُذف الـ import.
+- [x] admin TSC أخضر.
+- الملفات: `admin/app/(dashboard)/database/actions/cloudinary-orphans.ts` · `admin/app/(dashboard)/database/components/auto-maintenance-panel.tsx`
+
+### إعادة التصميم المطلوبة (طريقة غير الحالية)
+- [ ] **حاجز بيئة صارم:** يرفض أي حذف إلا إذا اسم الـ DB = الإنتاج (`modonty`) — يمنع تكرار الكارثة من dev.
+- [ ] **مراجعة-قبل-حذف:** صفحة تعرض قائمة اليتامى (مع معاينة + بادئة + عمر) → الأدمن يراجع ويأكّد → ثم حذف. مطابق لقاعدة [[project_auto_maintenance_rule]] (أداة تحتاج مراجعة بشرية تنفصل عن Run-All).
+- [ ] **(اختياري) soft-delete / حجر مؤقت** بدل `destroy` الفوري — قابلية تراجع.
+- [ ] بعد الإصلاح: تشغيل آمن على الإنتاج فقط لتنظيف اليتامى الحقيقيين.
+- مرجع: ذاكرة `project_runall_cloudinary_dev_hazard`.
+
+---
+
 ## 🚨 ARCH-01 — Background Jobs for Article SEO Cascade *(ملاحظة مهمة جداً — Session 85)*
 
 **Priority:** HIGH · يجب معالجتها قبل أي عميل عنده أكثر من 50 مقال

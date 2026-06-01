@@ -2449,3 +2449,98 @@ model Counter {
 
   @@map("counters")
 }
+
+// ============================================
+// INTAKE ENGINE — admin-managed questionnaire
+// Questions/options live in DB (admin-editable); client answers stay in
+// Client.intake JSON keyed by IntakeQuestion.key, so downstream consumers
+// (pre-publish audit, JSON-LD, admin brief) keep reading the same shape.
+// ============================================
+
+enum IntakeQuestionType {
+  SELECT // single choice, dropdown
+  RADIO // single choice, visible list
+  MULTI_PILL // multi-select chips
+  CHECKBOX // multi-select checkboxes
+  TEXT // single-line text
+  TEXTAREA // multi-line text
+  BOOLEAN // single toggle
+  REPEATED_GROUP // repeats a set of sub-fields (e.g. competitors) — shape in `config`
+  GROUP // fixed nested sub-fields (e.g. YMYL reviewer) — shape in `config`
+}
+
+/// A questionnaire definition. One row today ("intake"); the parent table lets
+/// new forms (onboarding, review) be added later with zero schema change.
+model IntakeForm {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  key         String          @unique // "intake"
+  title       String
+  description String?
+  version     Int             @default(1)
+  enabled     Boolean         @default(true)
+  sections    IntakeSection[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("intake_forms")
+}
+
+/// A group of questions inside a form (e.g. "نبرة الكتابة", "سياسة المحتوى").
+model IntakeSection {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  formId      String           @db.ObjectId
+  form        IntakeForm       @relation(fields: [formId], references: [id], onDelete: Cascade)
+  key         String // stable section key: "voice", "policy", ...
+  title       String
+  description String?
+  icon        String? // lucide icon name (e.g. "Mic2")
+  order       Int              @default(0)
+  enabled     Boolean          @default(true)
+  visibility  Json? // conditional display, e.g. { ymylOnly: true } or { market: ["SA"] }
+  questions   IntakeQuestion[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([formId, key])
+  @@map("intake_sections")
+}
+
+/// A single question. `key` is the STABLE semantic path the answer is stored
+/// under in Client.intake (e.g. "policy.forbiddenKeywords") — never changes on
+/// edit, so downstream code never breaks. Editing label/options is always safe.
+model IntakeQuestion {
+  id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  sectionId   String             @db.ObjectId
+  section     IntakeSection      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  key         String // stable answer path, e.g. "policy.forbiddenKeywords"
+  label       String
+  helpText    String?
+  placeholder String?
+  type        IntakeQuestionType
+  required    Boolean            @default(false)
+  maxLength   Int?
+  order       Int                @default(0)
+  enabled     Boolean            @default(true)
+  visibility  Json? // per-question conditional + market scope
+  config      Json? // type-specific shape (e.g. REPEATED_GROUP/GROUP sub-fields)
+  options     IntakeOption[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([sectionId, key])
+  @@map("intake_questions")
+}
+
+/// A predefined choice for SELECT/RADIO/MULTI_PILL/CHECKBOX questions.
+model IntakeOption {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionId  String         @db.ObjectId
+  question    IntakeQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value       String // stored value
+  label       String // shown label
+  order       Int            @default(0)
+  enabled     Boolean        @default(true)
+  marketScope String? // "SA" | "EG" | null (all markets)
+
+  @@map("intake_options")
+}

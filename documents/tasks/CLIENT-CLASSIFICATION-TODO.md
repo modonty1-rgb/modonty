@@ -39,7 +39,7 @@
 - **D. Sanitizer** uses shared normalize, covers both fields, wired into Run-All.
 - **E. Full live test PASSED** — devnadish saved, `hasMap` gone on modonty, console=admin canonical.
 
-**Not yet pushed.** Pending: version bump (admin + console) + changelog + secret-scan + push (needs Khalid's go-ahead).
+**PUSHED + DEPLOYED + LIVE-VERIFIED (2026-06-01).** Commit `aa7034d` → main. admin v0.67.0 · console v0.11.0. Vercel: all 3 READY (dataLayer touched → all rebuilt, none skipped). **Live test on PROD:** كيما زون scheduled article published via "Publish Now" with NO forbidden-word error (was blocked by "رخيص"-in-"ترخيص"); status→Published, datePublished=Jun 1, scheduled count 1→0; article live on modonty.com (HTTP 200, canonical=www). Pending tiny: changelog entry (UI "✨ جديد" didn't open via automation — add manually).
 
 ### Pre-push deploy-safety check (Vercel / dataLayer shared imports) — VERIFIED 2026-06-01
 Khalid flagged: this batch is the FIRST to import shared SOURCE from `@modonty/database` (prod never did this). Risk = raw-TS workspace pkg, no `transpilePackages`, no tsconfig `paths` → "dev works, build fails" on Vercel.

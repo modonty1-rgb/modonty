@@ -60,6 +60,7 @@ import {
   Globe,
   Wallet,
   PauseCircle,
+  ClipboardList,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -131,6 +132,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Tag, label: "Tags", href: "/tags" },
       { icon: UserPen, label: "Authors", href: "/authors" },
       { icon: Factory, label: "Industries", href: "/industries" },
+      { icon: ClipboardList, label: "Intake Questions", href: "/intake" },
     ],
   },
   {

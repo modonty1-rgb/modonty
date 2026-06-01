@@ -9,6 +9,7 @@ import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
+import { seedIntakeForm } from "./seed-intake";
 
 export interface MaintenanceStepResult {
   key: string;
@@ -139,6 +140,22 @@ export async function runStepSoftDeletedComments(): Promise<MaintenanceStepResul
     );
   } catch (e) {
     return fail("softDeletedComments", "Soft-Deleted Comments Purged (30d+)", e);
+  }
+}
+
+export async function runStepIntakeSeed(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await seedIntakeForm();
+    const created =
+      (r.formCreated ? 1 : 0) + r.sectionsCreated + r.questionsCreated + r.optionsCreated;
+    const parts: string[] = [];
+    if (r.formCreated) parts.push("form");
+    if (r.sectionsCreated) parts.push(`${r.sectionsCreated} sections`);
+    if (r.questionsCreated) parts.push(`${r.questionsCreated} questions`);
+    if (r.optionsCreated) parts.push(`${r.optionsCreated} options`);
+    return ok("intakeSeed", "Intake Questionnaire Seeded", created, parts.join(" · ") || undefined);
+  } catch (e) {
+    return fail("intakeSeed", "Intake Questionnaire Seeded", e);
   }
 }
 

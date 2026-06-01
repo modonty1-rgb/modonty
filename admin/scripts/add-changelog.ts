@@ -12,10 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.66.3 (admin)",
-    title: "Media rename hardening — use Cloudinary's returned secure_url instead of a hand-built URL",
+    version: "0.68.0 (admin) + 0.12.0 (console)",
+    title: "Intake questionnaire is now admin-managed — add/edit questions, clients answer in their console",
     items: [
-      { type: "fix" as const, text: "admin 0.66.3 — when renaming a Cloudinary asset (triggered by editing a media file's alt text/title), the new URL is now taken from the rename API's response (result.secure_url) instead of being constructed manually from version+format. Manual construction could produce a dead URL (broken image) if the version/format were guessed wrong even though the file existed. Manual build kept only as a last-resort fallback." },
+      { type: "feature" as const, text: "New Admin → Content → Intake Questions page: add, edit, reorder, hide or delete the client questionnaire questions. Questions + their options now live in the database (was hardcoded in the console). Any change appears in the client console immediately." },
+      { type: "feature" as const, text: "Console intake form is now driven by the database — it renders whatever questions admin defines, by type (short text / long text / pick one / pick several / yes-no). Falls back to the legacy form until seeded. Answers keep their stable storage shape, so the publish audit + JSON-LD keep working unchanged." },
+      { type: "improve" as const, text: "Simple, non-technical editor: a question is just its text + answer type (+ choices). Removed all internal/technical fields from the admin UI." },
+      { type: "fix" as const, text: "Disabled the Cloudinary 'orphan sweep' maintenance step — it could permanently delete production images when Run-All was triggered against a non-production database (shared Cloudinary account). A review-before-delete redesign is tracked." },
     ],
   },
 ];

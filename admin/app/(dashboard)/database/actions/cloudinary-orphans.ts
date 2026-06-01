@@ -146,6 +146,16 @@ export async function sweepCloudinaryOrphans(): Promise<{
   successful: number;
   failed: number;
 }> {
+  // ⛔ HARD-DISABLED 2026-06-01 — DO NOT RE-ENABLE without a review-before-delete redesign.
+  // This blind mass-delete permanently destroyed PRODUCTION Cloudinary assets: when Run-All
+  // ran against a non-prod DB (dev `media` rows ≠ the SHARED Cloudinary account), real prod
+  // assets were flagged as "orphans" and `destroy()`-ed. The Cloudinary account is shared
+  // across environments, so there is no safe way to run this from a blind one-click step.
+  // The kill-switch below is intentionally never enabled; redesign tracked in MASTER-TODO.
+  // See memory project_runall_cloudinary_dev_hazard.
+  const SWEEP_ENABLED: boolean = false;
+  if (!SWEEP_ENABLED) return { attempted: 0, successful: 0, failed: 0 };
+
   const cloudinary = await getCloudinary();
   if (!cloudinary) return { attempted: 0, successful: 0, failed: 0 };
 

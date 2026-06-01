@@ -13,8 +13,8 @@ import {
   runStepLegalForm,
   runStepOrganizationType,
   runStepCanonical,
-  runStepCloudinaryOrphans,
   runStepSoftDeletedComments,
+  runStepIntakeSeed,
   revalidateDatabasePage,
   type MaintenanceStepResult,
 } from "../actions/run-all-maintenance";
@@ -36,8 +36,11 @@ const STEPS: StepDef[] = [
   { key: "legalform", label: "Legal Forms", description: "Clients with non-canonical legalForm values", runner: runStepLegalForm },
   { key: "organizationType", label: "Organization Types", description: "Clients with non-canonical organizationType values", runner: runStepOrganizationType },
   { key: "canonical", label: "Canonical URLs", description: "Wrong-host or double-encoded canonical URLs across articles, clients, categories, tags, industries, authors", runner: runStepCanonical },
-  { key: "cloudinary", label: "Cloudinary Orphans", description: "Files in Cloudinary (Modonty folders only) with no DB record", runner: runStepCloudinaryOrphans },
+  // ⛔ "Cloudinary Orphans" removed 2026-06-01 — blind mass-delete destroyed PROD assets when
+  // run against dev. Disabled at source (sweepCloudinaryOrphans) + dropped from Run-All.
+  // Redesign as review-before-delete (MASTER-TODO).
   { key: "softDeletedComments", label: "Soft-Deleted Comments (30d+)", description: "Permanently delete comments marked DELETED older than 30 days", runner: runStepSoftDeletedComments },
+  { key: "intakeSeed", label: "Intake Questionnaire", description: "Bootstrap the client intake questions into the DB (create-only — never overwrites edits)", runner: runStepIntakeSeed },
 ];
 
 interface StepState {
