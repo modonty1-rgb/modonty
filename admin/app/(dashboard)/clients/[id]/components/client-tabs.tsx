@@ -13,11 +13,10 @@ import { AdditionalTab } from "./tabs/additional-tab";
 import { SettingsTab } from "./tabs/settings-tab";
 import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
-import { IntakeBrief } from "./intake-brief";
+import { IntakeBrief, type BriefForm } from "./intake-brief";
 import { ArticleStatus } from "@prisma/client";
 import type { MediaType } from "@prisma/client";
 import { calculateDeliveryRate } from "../../helpers/client-display-utils";
-import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
 
 type ClientTabsProps = {
   client: {
@@ -117,6 +116,7 @@ type ClientTabsProps = {
     category: { name: string } | null;
     author: { name: string } | null;
   }>;
+  form: BriefForm | null;
   articlesThisMonth: number;
   analytics: {
     totalViews: number;
@@ -215,6 +215,7 @@ export function ClientTabs({
   articlesThisMonth,
   analytics,
   media,
+  form,
 }: ClientTabsProps) {
   // Delivery
   const promised =
@@ -240,11 +241,6 @@ export function ClientTabs({
         ? "warning"
         : "good";
 
-  const ymylCategoryLabel =
-    client.isYmyl && client.ymylCategory
-      ? YMYL_CATEGORIES[client.ymylCategory as YmylCategory]?.label.ar ?? null
-      : null;
-
   return (
     <Tabs defaultValue="brief" dir="rtl">
       <TabsList className="mb-4">
@@ -257,10 +253,10 @@ export function ClientTabs({
       {/* ── Tab 0: Brief (the intake — heart of the page for a writer) ── */}
       <TabsContent value="brief">
         <IntakeBrief
+          form={form}
           intake={client.intake}
           intakeUpdatedAt={client.intakeUpdatedAt}
           isYmyl={client.isYmyl}
-          ymylCategoryLabel={ymylCategoryLabel}
         />
       </TabsContent>
 

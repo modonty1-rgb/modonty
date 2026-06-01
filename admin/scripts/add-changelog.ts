@@ -12,10 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.12.1 (console)",
-    title: "Fix: intake form hydration warning (saved-time timestamp)",
+    version: "0.68.1 (admin)",
+    title: "Client page 'Brief' tab is now driven by the live questionnaire",
     items: [
-      { type: "fix" as const, text: "Console intake form — the 'saved at <time>' label now renders after mount, so the server (UTC) and the browser timezone no longer disagree on first paint. Removes a React hydration warning (#418). No functional change — the time still shows." },
+      { type: "fix" as const, text: "The client page Brief tab used to show a fixed, hardcoded set of fields — newly-added intake questions never appeared there. It now renders the SAME questions defined in Content → Intake Questions (1:1 with the client console), so any question you add shows up automatically with the client's answer. Choice answers display their human label; renamed to 'بيانات نشاط العميل'." },
     ],
   },
 ];

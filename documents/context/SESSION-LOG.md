@@ -31,7 +31,8 @@
 
 ### 🔁 Git / deploy state
 - **✅ PUSHED + DEPLOYED 2026-06-01** — commit `c255b22` (admin v0.68.0 + console v0.12.0). `aa7034d..c255b22 main -> main`. Vercel: all 3 apps **READY** (verified via API). Changelog row written to dev + prod. Backup taken (dev, 73 collections). admin/console/modonty TSC all green pre-push.
-- **⏳ AWAITING: Khalid runs admin.modonty.com → Maintenance → Run All** to seed the questionnaire into the prod `modonty` DB (the one remaining step to activate the feature on prod; safe now — Cloudinary step removed).
+- **✅ PROD ACTIVE + VERIFIED 2026-06-01:** Khalid ran Run-All on prod → questionnaire seeded into the `modonty` prod DB. Verified live: admin.modonty.com/intake shows all 11 sections; console.modonty.com renders the DB-driven dynamic form (20/22 for the live client) with answers persisted. Full circle works on production.
+- **✅ Hydration fix shipped — commit `f7f73e0` (console v0.12.1):** the prod console intake had one React #418 (saved-time formatted in server UTC ≠ browser tz). Fixed by rendering the timestamp only after mount. Verified on dev (0 errors) then on PROD after deploy (`console.modonty.com/dashboard/seo/intake` → **0 console errors**). Same latent pattern still exists in the legacy `intake-form.tsx` fallback (dormant, slated for Phase 6 deletion).
 - **PROD note:** the deploy does NOT seed the questionnaire into prod (no `db push`/migration in build — new `intake_*` collections are created on first write). To activate on prod: after deploy, admin.modonty.com → Maintenance → Run All (now safe, Cloudinary step removed) seeds it into the `modonty` prod DB. Until then, console prod falls back to the legacy hardcoded form (non-breaking).
 
 ### 🚀 How to resume in 30 seconds

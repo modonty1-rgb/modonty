@@ -6,6 +6,7 @@ import Link from "next/link";
 // (e.g. /clients/verify) hitting Prisma with a malformed id and crashing with a 500.
 const isValidObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id);
 import { getClientById, getClientArticles, getClientAnalytics, getClientMedia } from "../actions/clients-actions";
+import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-actions";
 import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
@@ -168,11 +169,12 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  const [client, articles, analytics, media] = await Promise.all([
+  const [client, articles, analytics, media, intakeForm] = await Promise.all([
     getClientById(id),
     getClientArticles(id),
     getClientAnalytics(id),
     getClientMedia(id),
+    getIntakeForm(),
   ]);
 
   if (!client) {
@@ -278,6 +280,7 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
           articlesThisMonth={articlesThisMonth}
           analytics={analytics}
           media={media}
+          form={intakeForm}
         />
       </div>
     </div>
