@@ -141,6 +141,14 @@ export type OpeningHoursDay = {
   closed: boolean;
 }
 
+/** Minimal media shape used only to feed the live SEO validation preview. */
+export interface MediaPreview {
+  url?: string;
+  altText?: string | null;
+  width?: number | null;
+  height?: number | null;
+}
+
 export interface ClientFormData {
   name: string;
   slug: string;
@@ -149,6 +157,11 @@ export interface ClientFormData {
   // Centralized media references
   logoMediaId?: string | null;
   heroImageMediaId?: string | null;
+  // Read-only media snapshots — fed into the live SEO validation preview so it
+  // reflects the actual saved logo/hero (NOT persisted; zod strips them on submit).
+  logoMedia?: MediaPreview | null;
+  heroImageMedia?: MediaPreview | null;
+  ogImageMedia?: MediaPreview | null;
   sameAs?: string[];
   email: string;
   phone?: string;

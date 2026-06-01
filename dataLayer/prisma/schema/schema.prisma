@@ -307,7 +307,7 @@ model Client {
 
   // Contact
   email String
-  phone String?
+  phone String? @unique
 
   // Security
   password String? // Hashed password for client authentication

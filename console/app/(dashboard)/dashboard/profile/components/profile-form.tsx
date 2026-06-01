@@ -9,7 +9,48 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateProfile } from "../actions/profile-actions";
-import { Building2, Phone, MapPin, Scale, Briefcase, Link2, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import {
+  LEGAL_FORMS,
+  ORGANIZATION_TYPES,
+  normalizeLegalForm,
+  normalizeOrganizationType,
+} from "@modonty/database/lib/constants/client-classification";
+import { Building2, Phone, MapPin, Scale, Briefcase, Link2, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+
+type OpeningHoursSpec = {
+  dayOfWeek: string;
+  opens: string;
+  closes: string;
+  closed: boolean;
+};
+
+const DAY_ORDER = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
+const DAY_LABELS_AR: Record<string, string> = {
+  Saturday: "السبت",
+  Sunday: "الأحد",
+  Monday: "الإثنين",
+  Tuesday: "الثلاثاء",
+  Wednesday: "الأربعاء",
+  Thursday: "الخميس",
+  Friday: "الجمعة",
+};
+
+function buildHours(initial: unknown): OpeningHoursSpec[] {
+  const arr = Array.isArray(initial) ? (initial as Record<string, unknown>[]) : [];
+  const byDay = new Map<string, Record<string, unknown>>();
+  for (const row of arr) {
+    if (row && typeof row.dayOfWeek === "string") byDay.set(row.dayOfWeek, row);
+  }
+  return DAY_ORDER.map((day) => {
+    const r = byDay.get(day);
+    return {
+      dayOfWeek: day,
+      opens: typeof r?.opens === "string" && r.opens ? r.opens : "09:00",
+      closes: typeof r?.closes === "string" && r.closes ? r.closes : "17:00",
+      closed: typeof r?.closed === "boolean" ? r.closed : false,
+    };
+  });
+}
 
 type ProfileInitial = {
   name: string;
@@ -38,6 +79,7 @@ type ProfileInitial = {
   foundingDate?: Date | string | null;
   sameAs?: string[];
   canonicalUrl?: string | null;
+  openingHoursSpecification?: unknown;
 };
 
 type Industry = { id: string; name: string };
@@ -77,7 +119,7 @@ function SectionHeader({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-muted-foreground">{step}/6</span>
+          <span className="text-xs font-bold text-muted-foreground">{step}/7</span>
           <h3 className="text-base font-bold">{title}</h3>
           {complete && <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="مكتمل" />}
         </div>
@@ -116,13 +158,18 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
     commercialRegistrationNumber: initial.commercialRegistrationNumber ?? "",
     vatID: initial.vatID ?? "",
     taxID: initial.taxID ?? "",
-    legalForm: initial.legalForm ?? "",
+    legalForm: normalizeLegalForm(initial.legalForm) ?? "",
     industryId: initial.industryId ?? "",
-    organizationType: initial.organizationType ?? "",
+    organizationType: normalizeOrganizationType(initial.organizationType) ?? "",
     foundingDate: toDateStr(initial.foundingDate),
     sameAs: (initial.sameAs ?? []).join("\n"),
     canonicalUrl: initial.canonicalUrl ?? "",
   });
+
+  const [hours, setHours] = useState<OpeningHoursSpec[]>(() => buildHours(initial.openingHoursSpecification));
+
+  const updateHour = (day: string, patch: Partial<OpeningHoursSpec>) =>
+    setHours((p) => p.map((h) => (h.dayOfWeek === day ? { ...h, ...patch } : h)));
 
   const update = (k: keyof typeof form, v: string) => setForm((p) => ({ ...p, [k]: v }));
   const filledCount = (keys: (keyof typeof form)[]) =>
@@ -179,6 +226,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         foundingDate: form.foundingDate || null,
         sameAs: form.sameAs.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
         canonicalUrl: form.canonicalUrl || null,
+        openingHoursSpecification: hours,
       });
       if (res.success) {
         setSavedAt(new Date());
@@ -234,6 +282,31 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         <option value="">— اختر —</option>
         {industries.map((i) => (
           <option key={i.id} value={i.id}>{i.name}</option>
+        ))}
+      </select>
+    </div>
+  );
+
+  // Static dropdown fed from the shared dataLayer classification lists. Shows the
+  // Arabic label, stores the canonical English value — so the console can never
+  // write a free-text value the admin's enum would reject.
+  const optionSelect = (
+    k: "legalForm" | "organizationType",
+    label: string,
+    options: readonly { value: string; ar: string }[]
+  ) => (
+    <div key={String(k)} className="space-y-1.5">
+      <Label htmlFor={String(k)} className="text-sm">{label}</Label>
+      <select
+        id={String(k)}
+        value={form[k]}
+        onChange={(e) => update(k, e.target.value)}
+        disabled={loading}
+        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+      >
+        <option value="">— اختر —</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.ar}</option>
         ))}
       </select>
     </div>
@@ -349,7 +422,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
           {field("commercialRegistrationNumber", ar.profile.commercialRegistrationNumber, { placeholder: "رقم السجل التجاري" })}
           {field("vatID", ar.profile.vatID, { placeholder: "300xxxxxxxxxxx3" })}
           {field("taxID", ar.profile.taxID)}
-          {field("legalForm", ar.profile.legalForm, { placeholder: "ذ.م.م / مساهمة / فردية" })}
+          {optionSelect("legalForm", ar.profile.legalForm, LEGAL_FORMS)}
         </CardContent>
       </Card>
 
@@ -365,7 +438,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         />
         <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {select("industryId", ar.profile.industry)}
-          {field("organizationType", ar.profile.organizationType, { placeholder: "شركة / مؤسسة / محل" })}
+          {optionSelect("organizationType", ar.profile.organizationType, ORGANIZATION_TYPES)}
           {field("foundingDate", ar.profile.foundingDate, { type: "date" })}
           {textarea("sameAs", ar.profile.socialProfiles, ar.profile.socialProfilesHint)}
         </CardContent>
@@ -383,6 +456,56 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         />
         <CardContent className="p-6">
           {field("canonicalUrl", ar.profile.canonicalUrl, { type: "url" })}
+        </CardContent>
+      </Card>
+
+      {/* ─── 7. Business Hours ──────────────────────────────────────────── */}
+      <Card className="overflow-hidden p-0">
+        <SectionHeader
+          icon={Clock}
+          step={7}
+          title="ساعات العمل"
+          description="أوقات الدوام لكل يوم — تظهر في بيانات الشركة المنظّمة"
+          filled={hours.filter((h) => !h.closed).length}
+          total={7}
+        />
+        <CardContent className="p-6 space-y-2">
+          {hours.map((h) => (
+            <div
+              key={h.dayOfWeek}
+              className="grid grid-cols-[5rem_auto_1fr_1fr] items-center gap-3 py-1.5 border-b last:border-b-0"
+            >
+              <span className="text-sm font-medium">{DAY_LABELS_AR[h.dayOfWeek]}</span>
+              <label className="flex items-center gap-1.5 text-xs text-muted-foreground select-none">
+                <input
+                  type="checkbox"
+                  checked={!h.closed}
+                  onChange={(e) => updateHour(h.dayOfWeek, { closed: !e.target.checked })}
+                  disabled={loading}
+                  className="h-4 w-4 rounded border-input accent-primary"
+                />
+                {h.closed ? "مغلق" : "مفتوح"}
+              </label>
+              <Input
+                type="time"
+                value={h.opens}
+                onChange={(e) => updateHour(h.dayOfWeek, { opens: e.target.value })}
+                disabled={loading || h.closed}
+                dir="ltr"
+                className="text-start"
+                aria-label={`${DAY_LABELS_AR[h.dayOfWeek]} — وقت الفتح`}
+              />
+              <Input
+                type="time"
+                value={h.closes}
+                onChange={(e) => updateHour(h.dayOfWeek, { closes: e.target.value })}
+                disabled={loading || h.closed}
+                dir="ltr"
+                className="text-start"
+                aria-label={`${DAY_LABELS_AR[h.dayOfWeek]} — وقت الإغلاق`}
+              />
+            </div>
+          ))}
         </CardContent>
       </Card>
 

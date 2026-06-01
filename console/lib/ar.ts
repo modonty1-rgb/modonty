@@ -66,6 +66,7 @@ export const ar = {
     subscribers: "مشتركو النشرة",
     leads: "العملاء المحتملون",
     profile: "بيانات شركتك",
+    verification: "التوثيق المهني",
     settings: "الإعدادات",
     support: "الدعم",
     signOut: "تسجيل الخروج",

@@ -22,17 +22,15 @@ import {
   SearchCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createOrganizationSEOConfigFull, organizationSEOConfig } from "../helpers/client-seo-config";
 import { SortableValue } from "@/lib/types";
 import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
 import {
   getSubscriptionDaysRemaining,
   calculateDeliveryRate,
 } from "../helpers/business-metrics";
-import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
 import type { ClientForList } from "../actions/clients-actions/types";
-import { buildClientSeoData } from "../helpers/build-client-seo-data";
-import { createClientSEOGroupScores } from "../helpers/client-seo-group-scores";
+import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 import { ClientAvatar } from "./client-avatar";
 
 type ListValidationError = { message?: string } | string;
@@ -62,10 +60,6 @@ interface ClientTableProps {
 }
 
 type SortDirection = "asc" | "desc" | null;
-
-// Precompute full config and group scorers once for the list
-const organizationSEOConfigFull = createOrganizationSEOConfigFull();
-const computeGroupScores = createClientSEOGroupScores(organizationSEOConfigFull);
 
 /**
  * Extract a normalized validation report from the client (list-safe)
@@ -309,19 +303,16 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
   const clientComputedMap = useMemo(() => {
     const map = new Map<string, {
       seoScore: number;
-      metaScore: number;
-      jsonLdScore: number;
       daysRemaining: number | null;
       delivery: ReturnType<typeof calculateDeliveryRate>;
     }>();
     for (const client of paginatedData) {
-      const seoDataForScoring = buildClientSeoData(client);
-      const seoScoreResult = calculateSEOScore(seoDataForScoring, organizationSEOConfig);
-      const groupScores = computeGroupScores(seoDataForScoring);
+      // SHARED scorer — same number as the client SEO page, detail banner + console.
+      const { score: seoScore } = computeClientSeoScore(
+        clientToSeoInput(client as unknown as Record<string, unknown>),
+      );
       map.set(client.id, {
-        seoScore: seoScoreResult.percentage,
-        metaScore: groupScores.meta.percentage,
-        jsonLdScore: groupScores.jsonLd.percentage,
+        seoScore,
         daysRemaining: getSubscriptionDaysRemaining(client),
         delivery: calculateDeliveryRate(client, client.articles?.length ?? 0),
       });
@@ -552,29 +543,18 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                     </TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       {seoScore ? (
-                        <div className="flex items-center justify-center">
-                          {(() => {
-                            const r = 11;
-                            const circ = 2 * Math.PI * r;
-                            const filled = (seoScore / 100) * circ;
-                            const color = seoScore >= 80 ? "#22c55e" : seoScore >= 60 ? "#eab308" : "#ef4444";
-                            return (
-                              <svg width="28" height="28" viewBox="0 0 28 28">
-                                <circle cx="14" cy="14" r={r} fill="none" stroke="currentColor" strokeWidth="2.5" className="text-muted" />
-                                <circle
-                                  cx="14" cy="14" r={r} fill="none"
-                                  stroke={color} strokeWidth="2.5"
-                                  strokeDasharray={`${filled} ${circ - filled}`}
-                                  strokeLinecap="round"
-                                  transform="rotate(-90 14 14)"
-                                />
-                                <text x="14" y="14" textAnchor="middle" dominantBaseline="central" fontSize="7" fontWeight="600" fill={color}>
-                                  {seoScore}%
-                                </text>
-                              </svg>
-                            );
-                          })()}
-                        </div>
+                        <span
+                          className={cn(
+                            "inline-flex items-center justify-center min-w-[3rem] px-2 py-0.5 rounded-md text-sm font-bold tabular-nums",
+                            seoScore >= 80
+                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                              : seoScore >= 50
+                                ? "bg-amber-500/15 text-amber-600 dark:text-amber-500"
+                                : "bg-red-500/15 text-red-600 dark:text-red-400",
+                          )}
+                        >
+                          {seoScore}%
+                        </span>
                       ) : (
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/clients/${client.id}/seo`}>Setup SEO</Link>

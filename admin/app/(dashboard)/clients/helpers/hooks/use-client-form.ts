@@ -14,16 +14,56 @@ import { updateClient, createClient } from "../../actions/clients-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { getActiveTierConfigs } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 
+// Friendly labels for the "can't save" toast so it names the blocking fields
+// in human terms instead of raw schema keys.
+const FIELD_LABELS: Record<string, string> = {
+  name: "Client Name",
+  slug: "Slug",
+  email: "Email",
+  phone: "Phone",
+  industryId: "Industry",
+  subscriptionTier: "Subscription Tier",
+  businessBrief: "Business Brief",
+  logoMediaId: "Logo",
+  heroImageMediaId: "Hero Image",
+  seoTitle: "SEO Title",
+  seoDescription: "SEO Description",
+  canonicalUrl: "Canonical URL",
+  url: "Website URL",
+  legalForm: "Legal Form",
+  organizationType: "Organization Type",
+};
+
+// Turn raw zod messages into plain guidance an admin (non-developer) understands —
+// never expose enum internals like "Invalid enum value. Expected 'LLC' | ...".
+function friendlyMessage(rawMessage?: string): string {
+  const m = (rawMessage || "").toLowerCase();
+  if (!m) return "needs a valid value";
+  if (m.includes("enum") || m.includes("expected") || m.includes("invalid type")) {
+    return "this value isn't allowed — pick one from the list";
+  }
+  if (m.includes("required")) return "is required";
+  if (m.includes("email")) return "must be a valid email";
+  if (m.includes("url")) return "must be a valid link";
+  // Length / format messages are already readable — keep them as-is.
+  return rawMessage || "needs a valid value";
+}
+
 interface UseClientFormOptions {
   initialData?: Partial<ClientWithRelations>;
   clientId?: string;
+  // Create mode only: fires after a successful create so the caller can show the
+  // welcome-email confirm dialog before navigating (instead of the default push).
+  onCreated?: (client: { id: string; name: string; email: string }) => void;
 }
 
-export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
+export function useClientForm({ initialData, clientId, onCreated }: UseClientFormOptions) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Plain-language list of what's blocking the save — shown as a top banner.
+  const [invalidFields, setInvalidFields] = useState<string[]>([]);
   const [tierConfigs, setTierConfigs] = useState<Array<{
     id: string;
     tier: SubscriptionTier;
@@ -107,6 +147,7 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
     async (data) => {
       setLoading(true);
       setError(null);
+      setInvalidFields([]);
 
       // Convert form data to ClientFormData format
       const submitData = {
@@ -149,12 +190,17 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
         newsletterCtaText: data.newsletterCtaText || null,
         organizationType: data.organizationType || null,
         parentOrganizationId: data.parentOrganizationId || null,
-        twitterCard: data.twitterCard && data.twitterCard !== "auto" ? data.twitterCard : null,
-        twitterTitle: data.twitterTitle || null,
-        twitterDescription: data.twitterDescription || null,
-        twitterSite: data.twitterSite || null,
+        // (Twitter card/title/site/description are generated from Settings + hero
+        // image, not Client columns — no longer submitted.)
         canonicalUrl: data.canonicalUrl || null,
         metaRobots: data.metaRobots || null,
+        // Google Business Profile + Local SEO (explicit so they survive submit)
+        gbpProfileUrl: (data as { gbpProfileUrl?: string | null }).gbpProfileUrl || null,
+        gbpPlaceId: (data as { gbpPlaceId?: string | null }).gbpPlaceId || null,
+        gbpAccountId: (data as { gbpAccountId?: string | null }).gbpAccountId || null,
+        gbpLocationId: (data as { gbpLocationId?: string | null }).gbpLocationId || null,
+        gbpCategory: (data as { gbpCategory?: string | null }).gbpCategory || null,
+        priceRange: (data as { priceRange?: string | null }).priceRange || null,
         // YMYL verification fields
         isYmyl: data.isYmyl ?? false,
         ymylCategory: data.ymylCategory ?? null,
@@ -174,6 +220,16 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
             : `${clientName} has been created successfully and is ready for use.`,
         });
         setLoading(false);
+        // Create mode with a handler: hand control to the caller (welcome-email
+        // dialog) instead of navigating immediately. result.data carries id/email.
+        if (!isEditMode && onCreated && "client" in result && result.client) {
+          onCreated({
+            id: result.client.id,
+            name: result.client.name,
+            email: result.client.email ?? "",
+          });
+          return;
+        }
         router.push("/clients");
         router.refresh();
       } else {
@@ -182,38 +238,22 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
       }
     },
     (errors) => {
-      // Handle validation errors - aggregate all field errors
-      const errorMessages: string[] = [];
+      // Validation failed. Instead of a silent dead button (or a technical toast),
+      // collect a plain-language list of what's blocking the save. The form renders
+      // it as a prominent banner at the top so the admin sees exactly what to fix.
+      const items = (Object.keys(errors) as string[])
+        .filter((key) => key !== "root")
+        .map((key) => {
+          const label =
+            FIELD_LABELS[key] ??
+            key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+          return `${label} — ${friendlyMessage((errors as Record<string, { message?: string }>)[key]?.message)}`;
+        });
+      setInvalidFields(items);
 
-      if (errors.name) {
-        errorMessages.push(`Name: ${errors.name.message}`);
-      }
-      if (errors.slug) {
-        errorMessages.push(`Slug: ${errors.slug.message}`);
-      }
-      if (errors.subscriptionTier) {
-        errorMessages.push(`Subscription Tier: ${errors.subscriptionTier.message}`);
-      }
-      if (errors.businessBrief) {
-        errorMessages.push(`Business Brief: ${errors.businessBrief.message}`);
-      }
-
-      // Add other field errors
-      Object.entries(errors).forEach(([field, error]) => {
-        if (field !== "name" && field !== "slug" && field !== "subscriptionTier" && field !== "businessBrief" && error?.message) {
-          const fieldLabel = field.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
-          errorMessages.push(`${fieldLabel}: ${error.message}`);
-        }
-      });
-
-      // Set aggregated error message
-      if (errorMessages.length > 0) {
-        setError(`Please fix the following errors:\n${errorMessages.join("\n")}`);
-      }
-
-      // Focus on first error field (exclude "root")
-      const errorKeys = Object.keys(errors).filter(key => key !== "root") as Array<keyof ClientFormData>;
-      const firstErrorField = errorKeys[0];
+      // Focus first error field (exclude "root"). The form reveals every accordion
+      // section on a failed submit, so the field is mounted in the DOM.
+      const firstErrorField = (Object.keys(errors).filter((key) => key !== "root") as Array<keyof ClientFormData>)[0];
       if (firstErrorField && form) {
         try {
           form.setFocus(firstErrorField as any);
@@ -230,6 +270,8 @@ export function useClientForm({ initialData, clientId }: UseClientFormOptions) {
     loading,
     error,
     setError,
+    invalidFields,
+    setInvalidFields,
     tierConfigs,
     isEditMode,
   };

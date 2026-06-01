@@ -56,7 +56,7 @@ export function generateClientTestData(
     numberOfEmployees: "50-100",
     commercialRegistrationNumber: "1234567890",
     businessBrief,
-    industryId: industry?.id ?? null,
+    industryId: industry?.id ?? "",
     foundingDate: new Date("2020-01-15"),
     organizationType: "Organization",
     // Address (Information tab)
@@ -96,11 +96,7 @@ export function generateClientTestData(
     parentOrganizationId: parent?.id ?? null,
     businessActivityCode: "62010",
     isicV4: "6201",
-    // --- Media tab (Twitter; media IDs require DB, left null) ---
-    twitterCard: "summary_large_image",
-    twitterTitle: name,
-    twitterDescription: "وصف تجريبي لبطاقة تويتر.",
-    twitterSite: "@example",
+    // (Twitter fields removed — generated from Settings + hero image, not Client columns.)
     // --- Security tab (dev-only placeholder) ---
     password: "TestPass123!",
   };

@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
 import { FormInput, FormSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
+import { LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
 interface LegalSectionProps {
@@ -20,18 +21,16 @@ export function LegalSection({ form }: LegalSectionProps) {
           label="Legal Form"
           name="legalForm"
           value={watch("legalForm") || undefined}
-          onValueChange={(value) => setValue("legalForm", value ? (value as "LLC" | "JSC" | "Sole Proprietorship" | "Partnership" | "Limited Partnership" | "Simplified Joint Stock Company" | "One-Person Company") : null, { shouldValidate: true })}
+          onValueChange={(value) => setValue("legalForm", value ? (value as LegalForm) : null, { shouldValidate: true })}
           error={errors.legalForm?.message}
           hint={messages.hints.client.legalForm}
           placeholder="Select Legal Form"
         >
-          <SelectItem value="LLC">شركة ذات مسؤولية محدودة (LLC)</SelectItem>
-          <SelectItem value="JSC">شركة مساهمة (JSC)</SelectItem>
-          <SelectItem value="Sole Proprietorship">مؤسسة فردية</SelectItem>
-          <SelectItem value="Partnership">شركة تضامن</SelectItem>
-          <SelectItem value="Limited Partnership">شركة توصية بسيطة</SelectItem>
-          <SelectItem value="Simplified Joint Stock Company">شركة مساهمة مبسطة</SelectItem>
-          <SelectItem value="One-Person Company">شركة الشخص الواحد</SelectItem>
+          {LEGAL_FORMS.map((o) => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.value} — {o.ar}
+            </SelectItem>
+          ))}
         </FormSelect>
         <FormInput
           name="vatID"

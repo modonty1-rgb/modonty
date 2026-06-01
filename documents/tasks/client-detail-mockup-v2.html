@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client Detail — Mockup v2 (banner + tabs + intake)</title>
+<style>
+  :root{
+    --bg:#0b0f14; --card:#11161d; --card2:#0e1318; --border:#222b36; --muted:#8b95a3; --fg:#eef2f6;
+    --primary:#4f6bff; --primary-soft:rgba(79,107,255,.14);
+    --green:#22c55e; --green-soft:rgba(34,197,94,.14);
+    --amber:#f59e0b; --amber-soft:rgba(245,158,11,.14);
+    --red:#ef4444; --red-soft:rgba(239,68,68,.14);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--fg);padding:20px;line-height:1.55}
+  .wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .muted{color:var(--muted)}
+  .mono{font-family:ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:isolate}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+  .pad{padding:16px}
+  .row{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 13px;border-radius:10px;border:1px solid var(--border);background:#161c24;cursor:pointer;color:var(--fg);text-decoration:none}
+  .btn:hover{border-color:#33404f}
+  .btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .btn.green{color:var(--green);border-color:rgba(34,197,94,.35)}
+  .btn.ghost{background:transparent}
+  .btn.sm{padding:5px 9px;font-size:12px}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+
+  /* ── HERO BANNER (cover image + logo overlay) ── */
+  .banner{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+  .banner .cover{height:150px;background:linear-gradient(120deg,#1b2330,#2a3550 60%,#3a2d5a);position:relative}
+  .banner .cover .editcover{position:absolute;top:10px;inset-inline-end:10px}
+  .banner .body{background:var(--card);padding:0 18px 16px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .banner .left{display:flex;align-items:flex-end;gap:14px;min-width:0}
+  .logo{width:84px;height:84px;border-radius:18px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:32px;font-weight:800;flex-shrink:0;border:3px solid var(--card);margin-top:-38px;position:relative}
+  .logo .cam{position:absolute;bottom:-4px;inset-inline-end:-4px;width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:11px;border:2px solid var(--card)}
+  .banner h1{font-size:22px;font-weight:800;display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding-top:12px}
+  .sub{display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap}
+  .urlpill{font-size:11px;padding:2px 9px;border-radius:999px;background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+  .actions{display:flex;gap:7px;flex-wrap:wrap;padding-bottom:4px}
+
+  /* ── STATUS ALERT ── */
+  .alert{display:flex;align-items:center;justify-content:space-between;gap:14px;border-radius:var(--radius);padding:12px 16px;border:1px solid}
+  .alert.amber{background:var(--amber-soft);border-color:rgba(245,158,11,.3)}
+  .alert .t{font-weight:700;font-size:13.5px}
+  .alert .s{font-size:12px;opacity:.8}
+
+  /* ── KPI ── */
+  .kpis{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:11px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+  .kpi .lbl{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-bottom:5px}
+  .kpi .big{font-size:28px;font-weight:800;line-height:1}
+  .kpi .big small{font-size:12px;font-weight:600;color:var(--muted)}
+  .kpi .val{font-size:16px;font-weight:700}
+  .kpi.hero-kpi{background:linear-gradient(135deg,var(--primary-soft),transparent)}
+
+  /* ── TABS ── */
+  .tabs{display:flex;gap:4px;background:#0e1318;border:1px solid var(--border);border-radius:12px;padding:4px;overflow-x:auto}
+  .tab{font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;color:var(--muted);cursor:pointer;white-space:nowrap;border:0;background:transparent}
+  .tab.active{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+  .tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-inline-start:5px;vertical-align:middle}
+
+  /* ── SECTION + INFO ── */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .sec-head{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--border)}
+  .sec-head .ttl{font-size:13.5px;font-weight:700}
+  .sec-head .src{margin-inline-start:auto;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .src.client{background:var(--violet-soft);color:var(--violet)}
+  .src.auto{background:var(--primary-soft);color:var(--primary)}
+  .info{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border)}
+  .info:last-child{border-bottom:0}
+  .info .k{font-size:11.5px;color:var(--muted);min-width:120px}
+  .info .v{font-size:13px;font-weight:600;flex:1;word-break:break-word}
+  .info .v.empty{color:#5b6573;font-weight:500;font-style:italic}
+  .copy{margin-inline-start:auto;font-size:10.5px;color:var(--primary);cursor:pointer;border:1px solid var(--border);border-radius:7px;padding:1px 7px;background:transparent}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--muted);padding:2px 4px}
+  .legend .chip{font-size:10px}
+  .muted-note{font-size:11.5px}
+  /* intake banner + completeness bar + tags */
+  .intake-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,var(--violet-soft),transparent);border:1px solid rgba(167,139,250,.3);border-radius:var(--radius);padding:13px 16px}
+  .prog{width:120px;height:7px;border-radius:999px;background:#1c2430;overflow:hidden}
+  .prog span{display:block;height:100%;background:var(--amber);border-radius:999px}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:7px;background:#1a2230;border:1px solid var(--border);margin-inline-end:4px}
+  .tag.red{background:var(--red-soft);color:#fda4a4;border-color:rgba(239,68,68,.3)}
+  @media(max-width:860px){.kpis{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── HERO BANNER: cover (heroImage) + logo overlay + identity + actions ── -->
+  <div class="banner">
+    <div class="cover">
+      <button class="btn sm ghost editcover" style="background:rgba(0,0,0,.4)">🖼️ تغيير الغلاف</button>
+    </div>
+    <div class="body">
+      <div class="left">
+        <div class="logo">د<span class="cam">📷</span></div>
+        <div>
+          <h1>
+            devnadish YMYL
+            <span class="chip" style="background:var(--amber-soft);color:var(--amber)">● غير مفعّل</span>
+            <span class="chip" style="background:var(--violet-soft);color:var(--violet)">🛡️ YMYL · طبّي</span>
+          </h1>
+          <div class="sub">
+            <span class="muted mono" style="font-size:12px">devnadish-ymyl</span>
+            <span class="urlpill mono">modonty.com/clients/devnadish-ymyl ↗</span>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="#">🖥️ كونسول العميل</a>
+        <a class="btn primary" href="#">✎ تعديل</a>
+        <a class="btn ghost sm" href="#" title="حذف" style="color:var(--red)">🗑️</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI (content-writer focus — no money) ── -->
+  <div class="kpis">
+    <div class="kpi hero-kpi">
+      <div class="lbl">📄 إجمالي المقالات</div>
+      <div class="big">128 <small>منشور · 12/شهر</small></div>
+    </div>
+    <div class="kpi"><div class="lbl">🏷️ الصناعة</div><div class="val">الرعاية الصحية</div></div>
+    <div class="kpi"><div class="lbl">📈 SEO</div><div class="val" style="color:var(--amber)">50%</div></div>
+    <div class="kpi"><div class="lbl">📥 اكتمال بيانات العميل</div><div class="val" style="color:var(--amber)">40%</div></div>
+  </div>
+
+  <!-- ── TABS (data is large → tabbed, not stacked) ── -->
+  <div class="tabs">
+    <button class="tab active">نظرة عامة</button>
+    <button class="tab">العمل والجمهور <span class="dot" title="ناقص بيانات من العميل"></span></button>
+    <button class="tab">العنوان والمعرّفات <span class="dot"></span></button>
+    <button class="tab">SEO</button>
+    <button class="tab">التوثيق YMYL <span class="dot"></span></button>
+    <button class="tab">المحتوى</button>
+  </div>
+
+  <div class="legend">
+    <span><span class="chip src auto">تلقائي/أدمن</span> يولّده النظام أو يضبطه الأدمن</span>
+    <span><span class="chip src client">أدخلها العميل</span> من بروفايل الكونسول</span>
+  </div>
+
+  <!-- ── TAB: نظرة عامة (الأهم فقط — تواصل + ملخّص العمل) ── -->
+  <div class="grid2">
+
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--primary-soft);color:var(--primary)">✉️</span>
+        <div class="ttl">التواصل والدخول</div>
+        <span class="src auto">تلقائي/أدمن</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">الإيميل (اسم الدخول)</span><span class="v mono">devnadish@gmail.com</span><button class="copy">نسخ</button></div>
+        <div class="info"><span class="k">الجوال</span><span class="v mono">+966 54 564 2264</span><button class="copy">نسخ</button></div>
+        <div class="info"><span class="k">الموقع</span><span class="v empty">لم يُدخله العميل</span></div>
+        <div class="info"><span class="k">نوع التواصل</span><span class="v empty">—</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--violet-soft);color:var(--violet)">💼</span>
+        <div class="ttl">ملخّص العمل</div>
+        <span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">الاسم القانوني</span><span class="v empty">لم يُدخله العميل</span></div>
+        <div class="info"><span class="k">التأسيس</span><span class="v empty">—</span></div>
+        <div class="info"><span class="k">الموظفون</span><span class="v empty">—</span></div>
+        <div class="info"><span class="k">نبذة العمل</span><span class="v empty">بانتظار إدخال العميل من الكونسول</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       THE INTAKE — the heart of the page for a content writer.
+       Everything the client filled from the console, grouped + with completeness.
+       (This is the «بريف الكاتب» tab — what they actually write from.)
+  ═══════════════════════════════════════════════════════════════════════ -->
+
+  <div class="intake-banner">
+    <div class="row" style="gap:10px">
+      <span class="ico" style="background:var(--violet-soft);color:var(--violet)">📋</span>
+      <div>
+        <div class="ttl" style="font-size:14px;font-weight:800">بريف الكاتب — بيانات العميل (Intake)</div>
+        <div class="muted" style="font-size:11.5px">كل ما عبّاه العميل من الكونسول · هذا ما تكتب منه</div>
+      </div>
+    </div>
+    <div class="row" style="gap:10px">
+      <div class="prog"><span style="width:40%"></span></div>
+      <span style="font-size:12px;font-weight:700;color:var(--amber)">مكتمل 40%</span>
+      <span class="muted" style="font-size:11px">آخر تحديث: <span class="empty">لم يُحدّث</span></span>
+    </div>
+  </div>
+
+  <!-- Row 1: Voice & Audience · Goals -->
+  <div class="grid2">
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--violet-soft);color:var(--violet)">🗣️</span>
+        <div class="ttl">العلامة الصوتية والجمهور</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">نبرة الكتابة</span><span class="v">ودّي · موثوق · مبسّط</span></div>
+        <div class="info"><span class="k">سمات الصوت</span><span class="v"><span class="tag">إنساني</span><span class="tag">علمي</span><span class="tag">طمأنة</span></span></div>
+        <div class="info"><span class="k">الجمهور المستهدف</span><span class="v">مرضى يبحثون عن معلومة طبية موثوقة قبل زيارة العيادة</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--primary-soft);color:var(--primary)">🎯</span>
+        <div class="ttl">الأهداف</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">الهدف الأساسي</span><span class="v">زيادة حجوزات الكشف عبر محتوى توعوي</span></div>
+        <div class="info"><span class="k">مؤشرات النجاح</span><span class="v empty">لم يُدخلها العميل</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Story (E-E-A-T) — full width, the trust spine -->
+  <div class="card">
+    <div class="sec-head">
+      <span class="ico" style="background:var(--green-soft);color:var(--green)">📖</span>
+      <div class="ttl">قصة العمل والخبرة (E-E-A-T)</div><span class="src client">أدخلها العميل</span>
+    </div>
+    <div class="pad" style="padding-top:2px">
+      <div class="info"><span class="k">قصة التأسيس</span><span class="v">عيادة تأسست 2018 على يد استشاري… تركّز على الطب الوقائي</span></div>
+      <div class="info"><span class="k">مجال الخبرة</span><span class="v empty">لم يُدخله العميل</span></div>
+      <div class="info"><span class="k">مواسم مهمة</span><span class="v empty">—</span></div>
+    </div>
+  </div>
+
+  <!-- Row 3: Customers · Strategy -->
+  <div class="grid2">
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--amber-soft);color:var(--amber)">👥</span>
+        <div class="ttl">ذكاء العملاء</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">المشكلة الكبرى</span><span class="v">الخوف من التشخيص الخاطئ وكثرة المعلومات المتضاربة</span></div>
+        <div class="info"><span class="k">الاعتراضات</span><span class="v"><span class="tag">التكلفة</span><span class="tag">وقت الانتظار</span></span></div>
+        <div class="info"><span class="k">أسئلة متكررة</span><span class="v empty">لم يُدخلها العميل</span></div>
+        <div class="info"><span class="k">مرحلة القمع</span><span class="v empty">—</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--primary-soft);color:var(--primary)">🧭</span>
+        <div class="ttl">استراتيجية المحتوى</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">التركيز الأساسي</span><span class="v">الطب الوقائي والفحوصات الدورية</span></div>
+        <div class="info"><span class="k">أفكار مواضيع</span><span class="v empty">لم يُدخلها العميل</span></div>
+        <div class="info"><span class="k">CTA المفضّل</span><span class="v">احجز استشارتك</span></div>
+        <div class="info"><span class="k">مصادر الاستشهاد</span><span class="v empty">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Policy (guardrails) · Competition -->
+  <div class="grid2">
+    <div class="card" style="border-color:rgba(239,68,68,.25)">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--red-soft);color:var(--red)">🚫</span>
+        <div class="ttl">السياسات والمحظورات</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">كلمات ممنوعة</span><span class="v"><span class="tag red">ضمان الشفاء</span><span class="tag red">علاج نهائي</span></span></div>
+        <div class="info"><span class="k">ادعاءات ممنوعة</span><span class="v">أي وعد بنتيجة طبية مؤكّدة</span></div>
+        <div class="info"><span class="k">ذكر المنافسين</span><span class="v">غير مسموح</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-head">
+        <span class="ico" style="background:var(--amber-soft);color:var(--amber)">⚔️</span>
+        <div class="ttl">المنافسة</div><span class="src client">أدخلها العميل</span>
+      </div>
+      <div class="pad" style="padding-top:2px">
+        <div class="info"><span class="k">المنافسون</span><span class="v empty">لم يُدخلهم العميل</span></div>
+        <div class="info"><span class="k">الفجوات</span><span class="v empty">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 5: YMYL reviewer (only when isYmyl) -->
+  <div class="card" style="border-color:rgba(167,139,250,.3);background:var(--violet-soft)">
+    <div class="sec-head" style="border-color:rgba(167,139,250,.25)">
+      <span class="ico" style="background:#fff;color:var(--violet)">🛡️</span>
+      <div class="ttl">المراجِع المؤهّل — YMYL طبّي</div><span class="src client">أدخلها العميل</span>
+    </div>
+    <div class="pad" style="padding-top:2px">
+      <div class="info" style="border-color:rgba(167,139,250,.2)"><span class="k">اسم المراجِع</span><span class="v empty">بانتظار إدخال العميل — لا يُنشر محتوى طبّي بدونه</span></div>
+      <div class="info" style="border-color:rgba(167,139,250,.2)"><span class="k">المؤهّل</span><span class="v empty">—</span></div>
+      <div class="info"><span class="k">رابط الملف</span><span class="v empty">—</span></div>
+    </div>
+  </div>
+
+  <div class="muted-note muted" style="text-align:center;padding:4px">
+    الأقسام الثانية (التواصل/الدخول · العنوان والمعرّفات السعودية · SEO · المقالات) تظهر في تبويباتها — هذا تبويب «بريف الكاتب».
+  </div>
+
+</div>
+</body>
+</html>

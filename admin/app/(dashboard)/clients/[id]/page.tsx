@@ -11,6 +11,8 @@ import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { loadSiteUrl } from "@/lib/seo/site-url";
+import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
@@ -177,37 +179,11 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
     redirect("/clients");
   }
 
-  // Calculate SEO score from cached data (same logic as list page)
-  let seoScore = 0;
-  const meta = client.nextjsMetadata as Record<string, any> | null;
-  if (meta && typeof meta === "object") {
-    const title = typeof meta.title === "string" ? meta.title.trim() : "";
-    const desc = typeof meta.description === "string" ? meta.description.trim() : "";
-    const ogImages = meta.openGraph?.images;
-    const hasOg =
-      Array.isArray(ogImages) && ogImages.length > 0 && !!(ogImages[0] as any)?.url;
-    if (title) seoScore += 20;
-    if (desc) seoScore += 20;
-    if (hasOg) seoScore += 10;
-  }
-  if (client.jsonLdStructuredData) {
-    try {
-      const parsed = JSON.parse(client.jsonLdStructuredData);
-      if (
-        typeof parsed === "object" &&
-        parsed !== null &&
-        "@context" in parsed &&
-        "@graph" in parsed
-      ) {
-        seoScore += 30;
-        const rep = client.jsonLdValidationReport as Record<string, any> | null;
-        const errs =
-          (Array.isArray(rep?.adobe?.errors) ? (rep.adobe.errors as unknown[]).length : 0) +
-          (Array.isArray(rep?.custom?.errors) ? (rep.custom.errors as unknown[]).length : 0);
-        if (errs === 0) seoScore += 20;
-      }
-    } catch {}
-  }
+  // SEO score — SHARED helper (single source of truth used by admin SEO page +
+  // console portal) so every surface shows the SAME number from the same data.
+  const { score: seoScore } = computeClientSeoScore(
+    clientToSeoInput(client as unknown as Record<string, unknown>),
+  );
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -221,9 +197,49 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
       new Date(article.datePublished) <= endOfMonth
   ).length;
 
+  const publicBaseUrl = await loadSiteUrl();
+  const promised =
+    client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
+  const memberSince = new Intl.DateTimeFormat("ar-SA", {
+    year: "numeric",
+    month: "long",
+  }).format(new Date(client.createdAt));
+
   return (
     <div className="space-y-4">
-      <ClientHeader client={client as any} seoScore={seoScore} />
+      <ClientHeader client={client as any} publicBaseUrl={publicBaseUrl} seoScore={seoScore} />
+
+      {/* KPI strip — content-writer focus (no billing). Dominant = total articles. */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Link
+          href={`/articles?clientId=${id}`}
+          className="rounded-xl border bg-gradient-to-br from-primary/[0.07] to-transparent p-4 hover:border-primary/40 transition-colors"
+        >
+          <div className="text-xs text-muted-foreground mb-1.5">📄 إجمالي المقالات</div>
+          <div className="text-3xl font-extrabold leading-none">
+            {client._count.articles}
+            <span className="text-xs font-semibold text-muted-foreground ms-1.5">
+              منشور{promised > 0 ? ` · ${promised}/شهر` : ""}
+            </span>
+          </div>
+        </Link>
+        <div className="rounded-xl border bg-card p-4">
+          <div className="text-xs text-muted-foreground mb-1.5">📅 هذا الشهر</div>
+          <div className="text-lg font-bold">
+            {articlesThisMonth}
+            {promised > 0 && <span className="text-sm font-normal text-muted-foreground"> / {promised}</span>}
+          </div>
+        </div>
+        <div className="rounded-xl border bg-card p-4">
+          <div className="text-xs text-muted-foreground mb-1.5">🏷️ الصناعة</div>
+          <div className="text-base font-bold truncate">{client.industry?.name ?? "—"}</div>
+        </div>
+        <div className="rounded-xl border bg-card p-4">
+          <div className="text-xs text-muted-foreground mb-1.5">🗓️ عميل منذ</div>
+          <div className="text-base font-bold">{memberSince}</div>
+        </div>
+      </div>
+
       {seoScore < 80 && (
         <div className="bg-muted/30 border border-border rounded-lg p-4 flex items-center gap-4">
           <div

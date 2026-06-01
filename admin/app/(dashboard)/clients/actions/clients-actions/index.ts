@@ -12,4 +12,5 @@ export { generateClientSEO } from "./generate-client-seo";
 export { updateClientMedia } from "./update-client-media";
 export { updateClientLogo } from "./update-client-logo";
 export { updateClientHero } from "./update-client-hero";
+export { sendClientWelcome } from "./send-client-welcome";
 

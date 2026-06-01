@@ -21,10 +21,12 @@ import type { BrokenRefsResult } from "../actions/broken-references";
 import type { SessionCleanerStats } from "../actions/session-cleaner";
 import type { DuplicateSlugStats } from "../actions/duplicate-slugs";
 import type { LegalFormSanitizerStats } from "../actions/legalform-sanitizer";
+import type { CanonicalSanitizerStats } from "../actions/canonical-sanitizer";
 import { cleanExpiredOtps } from "../actions/orphan-cleaner";
 import { cleanExpiredSessions } from "../actions/session-cleaner";
 import { createTTLIndex } from "../actions/index-health";
 import { sanitizeAllLegalForms } from "../actions/legalform-sanitizer";
+import { sanitizeAllCanonicals } from "../actions/canonical-sanitizer";
 
 interface Props {
   orphans: OrphanStats;
@@ -34,6 +36,7 @@ interface Props {
   sessionStats: SessionCleanerStats;
   duplicateSlugs: DuplicateSlugStats;
   legalFormSanitizer: LegalFormSanitizerStats;
+  canonicalSanitizer: CanonicalSanitizerStats;
 }
 
 export function DbToolsSection({
@@ -44,6 +47,7 @@ export function DbToolsSection({
   sessionStats,
   duplicateSlugs,
   legalFormSanitizer,
+  canonicalSanitizer,
 }: Props) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -51,6 +55,7 @@ export function DbToolsSection({
   const [currentSessions, setCurrentSessions] = useState(sessionStats);
   const [currentIndexHealth, setCurrentIndexHealth] = useState(indexHealth);
   const [currentLegalForm, setCurrentLegalForm] = useState(legalFormSanitizer);
+  const [currentCanonical, setCurrentCanonical] = useState(canonicalSanitizer);
   const [cleaningAction, setCleaningAction] = useState<string | null>(null);
 
   const run = (key: string, fn: () => Promise<void>) => {
@@ -70,10 +75,11 @@ export function DbToolsSection({
   const hasTtlMissing = ttlMissing > 0;
   const hasSlugIssues = slugTotal > 0;
   const hasLegalForm = currentLegalForm.mappableCount + currentLegalForm.unmappedCount > 0;
+  const hasCanonical = currentCanonical.issueCount > 0;
   const hasBrokenRefs = brokenRefs.total > 0;
   const showAttentionEmpty =
     !hasOrphans && !hasSessions && !hasDuplicateSlugs &&
-    !hasTtlMissing && !hasSlugIssues && !hasLegalForm && !hasBrokenRefs;
+    !hasTtlMissing && !hasSlugIssues && !hasLegalForm && !hasCanonical && !hasBrokenRefs;
 
   return (
     <div className="space-y-6">
@@ -433,6 +439,104 @@ export function DbToolsSection({
                 Sanitize {currentLegalForm.mappable.length} Auto-Mappable Client{currentLegalForm.mappable.length === 1 ? "" : "s"}
               </Button>
             )}
+          </CardContent>
+        </Card>
+      </div>
+      )}
+
+      {/* ── Canonical URL Sanitizer ── */}
+      {hasCanonical && (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            Canonical URL Sanitizer
+          </h2>
+          <Badge variant="destructive" className="text-xs font-normal">
+            {currentCanonical.issueCount} need fixing
+          </Badge>
+        </div>
+        <Card>
+          <CardContent className="pt-4 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="h-4 w-4 text-yellow-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Wrong-host or double-encoded canonical URLs</p>
+                  <p className="text-xs text-muted-foreground">
+                    Every canonical must point to{" "}
+                    <code className="text-[11px]">{currentCanonical.expectedOrigin || "—"}</code>.
+                    Legacy data had non-www hosts or double-encoded Arabic slugs
+                    (<span className="font-mono">%25…</span>), which split Google&apos;s ranking signals.
+                    Fix corrects the stored URL <em>and</em> regenerates the page SEO so the live page updates.
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm font-semibold whitespace-nowrap">
+                {currentCanonical.issueCount} / {currentCanonical.totalChecked}
+              </span>
+            </div>
+
+            {currentCanonical.issues.length > 0 && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-muted-foreground mb-1.5">
+                  Will be corrected ({currentCanonical.issues.length}):
+                </p>
+                <ul className="space-y-2">
+                  {currentCanonical.issues.slice(0, 10).map((it) => (
+                    <li key={`${it.kind}-${it.id}`} className="text-xs space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="uppercase text-[10px] font-semibold bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                          {it.kind}
+                        </span>
+                        <span className="text-muted-foreground truncate max-w-[220px]" title={it.slug}>{it.slug}</span>
+                      </div>
+                      <div className="ps-1 space-y-0.5">
+                        <code className="block text-[11px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded break-all">
+                          {it.before || "(empty)"}
+                        </code>
+                        <code className="block text-[11px] bg-green-500/10 text-green-700 dark:text-green-300 px-1.5 py-0.5 rounded break-all">
+                          {it.after}
+                        </code>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                {currentCanonical.issues.length > 10 && (
+                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                    +{currentCanonical.issues.length - 10} more…
+                  </p>
+                )}
+              </div>
+            )}
+
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={isPending}
+              className="w-full h-8 text-xs"
+              onClick={() =>
+                run("canonical", async () => {
+                  const r = await sanitizeAllCanonicals();
+                  toast({
+                    title: `Fixed ${r.successful} of ${r.attempted} canonical URLs`,
+                    description: r.failed > 0 ? `${r.failed} failed — check logs` : undefined,
+                    variant: r.failed > 0 ? "destructive" : "default",
+                  });
+                  setCurrentCanonical({
+                    ...currentCanonical,
+                    issueCount: r.failed,
+                    issues: currentCanonical.issues.filter((it) => r.errors.some((e) => e.id === it.id)),
+                  });
+                })
+              }
+            >
+              {cleaningAction === "canonical" ? (
+                <Loader2 className="h-3 w-3 animate-spin me-1" />
+              ) : (
+                <RefreshCw className="h-3 w-3 me-1" />
+              )}
+              Fix {currentCanonical.issues.length} Canonical URL{currentCanonical.issues.length === 1 ? "" : "s"}
+            </Button>
           </CardContent>
         </Card>
       </div>

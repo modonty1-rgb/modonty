@@ -68,16 +68,47 @@ function resolveForbiddenClaims(client: ClientForCompliance | null | undefined):
   return readPolicyArray(client.intake, "forbiddenClaims") ?? client.forbiddenClaims ?? [];
 }
 
+// Arabic diacritics (tashkeel) + tatweel — stripped so "رَخِيص" still matches "رخيص".
+const ARABIC_DIACRITICS = /[ً-ْٰـ]/g;
+
+function stripDiacritics(s: string): string {
+  return s.replace(ARABIC_DIACRITICS, "");
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Separable Arabic proclitics (و ف ب ك ل) + definite article (ال) and combos — longest first.
+const PROCLITIC = "(?:وال|فال|بال|كال|ولل|فلل|لل|ال|و|ف|ب|ك|ل)?";
+// Common inflectional/possessive enclitics — longest first.
+const ENCLITIC = "(?:كما|هما|هم|هن|كم|كن|ها|نا|ين|ون|ات|ان|ة|ه|ك|ي|ا)?";
+
+// Whole-word match: keyword must NOT be embedded inside another word.
+// "رخيص" matches "رخيص" / "الرخيص" / "رخيصة" but NOT "ترخيص" / "وترخيصه".
+// Allows Arabic clitics around the word; works for Latin keywords too (boundary only).
+function buildKeywordRegex(keyword: string): RegExp | null {
+  const kw = stripDiacritics(keyword).trim();
+  if (!kw) return null;
+  // Escape, then treat any internal whitespace as flexible (\s+) for multi-word phrases.
+  const core = escapeRegex(kw).replace(/ +/g, "\\s+");
+  return new RegExp(
+    `(?<![\\p{L}\\p{M}\\p{N}])${PROCLITIC}${core}${ENCLITIC}(?![\\p{L}\\p{M}\\p{N}])`,
+    "iu"
+  );
+}
+
 function scanForbidden(
   text: string,
   list: string[]
 ): string[] {
   if (!text?.trim() || !list?.length) return [];
+  const normText = stripDiacritics(text);
   const found: string[] = [];
-  const lower = text.toLowerCase();
   for (const item of list) {
-    if (!item?.trim()) continue;
-    if (lower.includes(item.toLowerCase())) found.push(item);
+    const re = buildKeywordRegex(item);
+    if (!re) continue;
+    if (re.test(normText)) found.push(item);
   }
   return found;
 }

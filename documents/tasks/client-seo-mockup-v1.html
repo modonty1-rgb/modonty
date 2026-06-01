@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client SEO — Mockup v1</title>
+<style>
+  :root{
+    --bg:#0b0f14; --card:#11161d; --border:#222b36; --muted:#8b95a3; --fg:#eef2f6;
+    --primary:#4f6bff; --primary-soft:rgba(79,107,255,.14);
+    --green:#22c55e; --green-soft:rgba(34,197,94,.14);
+    --amber:#f59e0b; --amber-soft:rgba(245,158,11,.14);
+    --red:#ef4444; --red-soft:rgba(239,68,68,.14);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--fg);padding:20px;line-height:1.55}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .muted{color:var(--muted)}
+  .mono{font-family:ui-monospace,Menlo,monospace;direction:ltr;unicode-bidi:isolate}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+  .pad{padding:16px}
+  .row{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:9px 16px;border-radius:10px;border:1px solid var(--border);background:#161c24;cursor:pointer;color:var(--fg)}
+  .btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+  .lbl{font-size:12px;color:var(--muted);margin-bottom:6px;display:block;font-weight:600}
+  input,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--fg);font-family:inherit;font-size:13px;padding:9px 11px}
+  input:focus,textarea:focus{outline:none;border-color:var(--primary)}
+  .hint{font-size:11px;margin-top:5px;display:flex;justify-content:space-between}
+  .hint .ok{color:var(--green)} .hint .warn{color:var(--amber)} .hint .neutral{color:var(--muted)}
+
+  /* ── DOMINANT HEADER: readiness score ── */
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .score{display:flex;align-items:center;gap:16px}
+  .ring{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:800;flex-shrink:0;
+        background:conic-gradient(var(--amber) 0deg 180deg,#1c2430 180deg 360deg);position:relative}
+  .ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--card)}
+  .ring span{position:relative;z-index:1}
+  .hero h1{font-size:20px;font-weight:800}
+  .hero .checklist{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
+  .pill{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px}
+  .pill.done{background:var(--green-soft);color:var(--green)}
+  .pill.miss{background:var(--amber-soft);color:var(--amber)}
+
+  /* ── 2-COL: form + live preview ── */
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;align-items:start}
+  .sec-head{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--border)}
+  .sec-head .ttl{font-size:13.5px;font-weight:700}
+  .sec-head .badge{margin-inline-start:auto;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px}
+  .badge.auto{background:var(--primary-soft);color:var(--primary)}
+  .badge.ok{background:var(--green-soft);color:var(--green)}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+
+  /* ── live previews (sticky) ── */
+  .sticky{position:sticky;top:14px;display:flex;flex-direction:column;gap:14px}
+  .serp .url{color:#9bb8ff;font-size:12px;direction:ltr}
+  .serp .title{color:#9 db1ff;color:#a7c0ff;font-size:18px;margin:2px 0 3px;direction:ltr}
+  .serp .t2{color:#bcd;direction:rtl;font-size:18px;margin:2px 0 3px;font-weight:600}
+  .serp .desc{color:#cfd6df;font-size:12.5px}
+  .ogc{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .ogc .img{height:120px;background:linear-gradient(120deg,#1b2330,#2a3550);display:grid;place-items:center;color:var(--muted);font-size:12px}
+  .ogc .meta{padding:10px 12px}
+  .ogc .meta .d{font-size:11px;color:var(--muted);direction:ltr}
+  .ogc .meta .t{font-size:13.5px;font-weight:700;margin-top:2px}
+
+  /* ── JSON-LD read-only ── */
+  .jsonld{background:#0c1118;border:1px dashed var(--border);border-radius:10px;padding:12px;font-size:11.5px;color:#9fb0c4;direction:ltr;white-space:pre;overflow:auto;max-height:160px}
+
+  /* ── sticky save bar ── */
+  .savebar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.3)}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.sticky{position:static}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- DOMINANT: readiness score -->
+  <div class="hero card pad">
+    <div class="score">
+      <div class="ring"><span>50%</span></div>
+      <div>
+        <h1>جاهزية SEO — عيادات سمايل تاون</h1>
+        <div class="muted" style="font-size:12.5px">أكمل العناصر الناقصة عشان يظهر العميل صح في Google ومنصّات التواصل</div>
+        <div class="checklist">
+          <span class="pill done">✓ Meta Title</span>
+          <span class="pill miss">○ Meta Description</span>
+          <span class="pill miss">○ Open Graph صورة</span>
+          <span class="pill done">✓ JSON-LD صالح</span>
+          <span class="pill miss">○ Canonical</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn">↗ معاينة الصفحة العامة</button>
+  </div>
+
+  <!-- 2-col: form (right in RTL) + live preview -->
+  <div class="grid">
+
+    <!-- FORM COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="sec-head">
+          <span class="ico" style="background:var(--primary-soft);color:var(--primary)">🔎</span>
+          <span class="ttl">Meta — العنوان والوصف</span>
+          <span class="badge auto">يظهر في Google</span>
+        </div>
+        <div class="pad">
+          <div class="field">
+            <label class="lbl">SEO Title</label>
+            <input value="عيادات سمايل تاون لطب الأسنان | الرياض" />
+            <div class="hint"><span class="ok">✓ طول ممتاز</span><span class="ok">42 / 60</span></div>
+          </div>
+          <div class="field">
+            <label class="lbl">SEO Description</label>
+            <textarea rows="3" placeholder="وصف يلخّص خدمات العميل في 120–160 حرف…"></textarea>
+            <!-- NEUTRAL on untouched, not red -->
+            <div class="hint"><span class="neutral">يُفضّل 120–160 حرف للظهور الكامل</span><span class="neutral">0 / 160</span></div>
+          </div>
+          <div class="field">
+            <label class="lbl">Description <span class="muted" style="font-weight:400">(وصف Schema.org — مختلف عن وصف Google)</span></label>
+            <textarea rows="2" placeholder="وصف المنظمة للبيانات المهيكلة…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-head">
+          <span class="ico" style="background:var(--primary-soft);color:var(--primary)">🖼️</span>
+          <span class="ttl">Open Graph + Twitter — مشاركة التواصل</span>
+        </div>
+        <div class="pad">
+          <div class="field">
+            <label class="lbl">OG / Twitter صورة <span class="muted" style="font-weight:400">(1200×630)</span></label>
+            <div class="row" style="gap:10px">
+              <div style="width:90px;height:50px;border:1px dashed var(--border);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:11px">رفع</div>
+              <span class="muted" style="font-size:12px">لو فاضي، يُستخدم شعار العميل تلقائياً</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="lbl">OG Title <span class="muted" style="font-weight:400">(فاضي = نفس SEO Title)</span></label>
+            <input placeholder="اتركه فاضي ليرث SEO Title" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-head">
+          <span class="ico" style="background:var(--primary-soft);color:var(--primary)">🔗</span>
+          <span class="ttl">Canonical + الفهرسة</span>
+        </div>
+        <div class="pad">
+          <div class="field">
+            <label class="lbl">Canonical URL</label>
+            <input class="mono" value="https://modonty.com/clients/smile-town" />
+          </div>
+          <div class="field">
+            <label class="lbl">Meta Robots</label>
+            <input value="index, follow" />
+          </div>
+        </div>
+      </div>
+
+      <!-- JSON-LD: AUTO-GENERATED, read-only preview (project rule) -->
+      <div class="card">
+        <div class="sec-head">
+          <span class="ico" style="background:var(--green-soft);color:var(--green)">{ }</span>
+          <span class="ttl">JSON-LD — بيانات مهيكلة</span>
+          <span class="badge ok">✓ يُولّد تلقائياً · صالح</span>
+        </div>
+        <div class="pad">
+          <p class="muted" style="font-size:12px;margin-bottom:8px">يُبنى تلقائياً من بيانات العميل — لا يُكتب يدوياً. هذه معاينة فقط.</p>
+          <div class="jsonld">{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "MedicalClinic",
+      "name": "عيادات سمايل تاون",
+      "url": "https://modonty.com/clients/smile-town" }
+  ]
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW COLUMN (sticky) -->
+    <div class="sticky">
+      <div class="card">
+        <div class="sec-head"><span class="ico" style="background:var(--green-soft);color:var(--green)">🔍</span><span class="ttl">معاينة Google (SERP)</span></div>
+        <div class="pad serp">
+          <div class="url">modonty.com › clients › smile-town</div>
+          <div class="t2">عيادات سمايل تاون لطب الأسنان | الرياض</div>
+          <div class="desc">— الوصف فاضي. أضف SEO Description ليظهر هنا سطر جذّاب يرفع نسبة النقر.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-head"><span class="ico" style="background:var(--primary-soft);color:var(--primary)">📱</span><span class="ttl">معاينة مشاركة التواصل</span></div>
+        <div class="pad">
+          <div class="ogc">
+            <div class="img">شعار العميل (لا توجد صورة OG)</div>
+            <div class="meta">
+              <div class="d">MODONTY.COM</div>
+              <div class="t">عيادات سمايل تاون لطب الأسنان | الرياض</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STICKY SAVE BAR -->
+  <div class="savebar">
+    <span class="muted" style="font-size:12.5px">آخر حفظ: قبل ٣ أيام · تغييرات غير محفوظة</span>
+    <div class="row">
+      <button class="btn">إلغاء</button>
+      <button class="btn primary">💾 حفظ بيانات SEO</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Quote,
   Activity,
+  ShieldCheck,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ interface SidebarProps {
   leadsCount: number;
   pendingFaqsCount: number;
   pendingClientCommentsCount: number;
+  isYmyl: boolean;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
@@ -43,6 +45,7 @@ export function Sidebar({
   leadsCount,
   pendingFaqsCount,
   pendingClientCommentsCount,
+  isYmyl,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
 }: SidebarProps) {
@@ -119,6 +122,15 @@ export function Sidebar({
           label={ar.nav.profile}
           isCollapsed={isCollapsed}
         />
+        {isYmyl && (
+          <SidebarNavItem
+            href="/dashboard/verification"
+            icon={ShieldCheck}
+            label={ar.nav.verification}
+            badgeLabel="مطلوب"
+            isCollapsed={isCollapsed}
+          />
+        )}
         <SidebarNavItem
           href="/dashboard/seo"
           icon={Sparkles}

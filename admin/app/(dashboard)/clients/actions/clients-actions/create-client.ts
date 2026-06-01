@@ -11,6 +11,7 @@ import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
 import { clientServerSchema } from "./client-server-schema";
+import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import bcrypt from "bcryptjs";
 
 export async function createClient(data: ClientFormData) {
@@ -32,6 +33,26 @@ export async function createClient(data: ClientFormData) {
     });
     if (existingClient) {
       return { success: false, error: "This slug is already in use" };
+    }
+
+    // Email + phone must be globally unique. App-level guard (the DB index may not be synced).
+    const dupConds: Array<{ email?: string; phone?: string }> = [];
+    if (parsed.data.email) dupConds.push({ email: parsed.data.email });
+    if (parsed.data.phone) dupConds.push({ phone: parsed.data.phone });
+    if (dupConds.length > 0) {
+      const dup = await db.client.findFirst({
+        where: { OR: dupConds },
+        select: { email: true, phone: true },
+      });
+      if (dup) {
+        const sameEmail = Boolean(parsed.data.email) && dup.email === parsed.data.email;
+        return {
+          success: false,
+          error: sameEmail
+            ? "هذا البريد الإلكتروني مستخدم من عميل آخر."
+            : "رقم الجوال مستخدم من عميل آخر.",
+        };
+      }
     }
 
     let articlesPerMonth = data.articlesPerMonth || null;
@@ -70,13 +91,11 @@ export async function createClient(data: ClientFormData) {
       clientData.subscriptionTier = mappedData.subscriptionTier;
     }
 
-    // Hash password if provided
-    if (data.password && data.password.trim() !== "") {
-      clientData.password = await bcrypt.hash(data.password, 10);
-    } else {
-      // Remove password field if not provided to avoid storing empty strings
-      delete clientData.password;
-    }
+    // Admins don't set a password. The client gets the default password
+    // (sent via the welcome email) and changes it from the console on first login.
+    const rawPassword =
+      data.password && data.password.trim() !== "" ? data.password : DEFAULT_CLIENT_PASSWORD;
+    clientData.password = await bcrypt.hash(rawPassword, 10);
 
     // Whitelist: only pass fields Prisma accepts on client.create()
     const allowedFields = [

@@ -5,7 +5,8 @@ import { cleanExpiredOtps } from "./orphan-cleaner";
 import { cleanExpiredSessions } from "./session-cleaner";
 import { cleanStaleVersions } from "./stale-versions";
 import { createTTLIndex, getIndexHealth } from "./index-health";
-import { sanitizeAllLegalForms } from "./legalform-sanitizer";
+import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
+import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 
@@ -79,6 +80,36 @@ export async function runStepLegalForm(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("legalform", "Legal Forms Sanitized", e);
+  }
+}
+
+export async function runStepOrganizationType(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await sanitizeAllOrganizationTypes();
+    return {
+      key: "organizationType",
+      label: "Organization Types Sanitized",
+      ok: r.failed === 0,
+      count: r.successful,
+      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+    };
+  } catch (e) {
+    return fail("organizationType", "Organization Types Sanitized", e);
+  }
+}
+
+export async function runStepCanonical(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await sanitizeAllCanonicals();
+    return {
+      key: "canonical",
+      label: "Canonical URLs Fixed",
+      ok: r.failed === 0,
+      count: r.successful,
+      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+    };
+  } catch (e) {
+    return fail("canonical", "Canonical URLs Fixed", e);
   }
 }
 

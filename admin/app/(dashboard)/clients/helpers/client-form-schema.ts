@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SubscriptionTier, SubscriptionStatus, PaymentStatus } from "@prisma/client";
+import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/database/lib/constants/client-classification";
 
 /**
  * Zod validation schema for Client form
@@ -8,14 +9,6 @@ import { SubscriptionTier, SubscriptionStatus, PaymentStatus } from "@prisma/cli
 
 // URL validation helper
 const urlSchema = z.string().url("Must be a valid URL").optional().nullable().or(z.literal(""));
-
-// Twitter site validation (format: @username)
-const twitterSiteSchema = z
-  .string()
-  .regex(/^@?[\w]+$/, "Twitter site must be a valid username (e.g., @username)")
-  .optional()
-  .nullable()
-  .or(z.literal(""));
 
 // Email validation (required)
 const emailSchema = z.string().email("Must be a valid email address").min(1, "Email is required");
@@ -63,40 +56,11 @@ const metaRobotsSchema = z
   .optional()
   .nullable();
 
-// Twitter Card validation
-const twitterCardSchema = z
-  .enum(["summary_large_image", "summary", "auto"])
-  .optional()
-  .nullable();
+// Legal Form validation — values come from the shared dataLayer source of truth
+const legalFormSchema = z.enum(LEGAL_FORM_VALUES).optional().nullable();
 
-// Legal Form validation
-const legalFormSchema = z
-  .enum([
-    "LLC",
-    "JSC",
-    "Sole Proprietorship",
-    "Partnership",
-    "Limited Partnership",
-    "Simplified Joint Stock Company",
-    "One-Person Company",
-  ])
-  .optional()
-  .nullable();
-
-// Organization Type validation
-const organizationTypeSchema = z
-  .enum([
-    "Organization",
-    "Corporation",
-    "LocalBusiness",
-    "NonProfit",
-    "EducationalOrganization",
-    "GovernmentOrganization",
-    "SportsOrganization",
-    "NGO",
-  ])
-  .optional()
-  .nullable();
+// Organization Type validation — values come from the shared dataLayer source of truth
+const organizationTypeSchema = z.enum(ORGANIZATION_TYPE_VALUES).optional().nullable();
 
 // Region/Province validation (optional field - allows any text for international clients)
 const addressRegionSchema = z
@@ -123,7 +87,7 @@ export const clientFormSchema = z
 
     // Contact
     email: emailSchema,
-    phone: z.string().max(50, "Phone must be less than 50 characters").optional().nullable().or(z.literal("")),
+    phone: z.string().min(1, "Phone number is required").max(50, "Phone must be less than 50 characters"),
 
     // Security
     password: z
@@ -167,12 +131,14 @@ export const clientFormSchema = z
     metaRobots: metaRobotsSchema,
     canonicalUrl: urlSchema,
 
-    // Business Information
+    // Business Information — client-owned (filled from console profile), not required at admin create
     businessBrief: z
       .string()
-      .min(100, "Business brief must be at least 100 characters")
-      .max(5000, "Business brief must be less than 5000 characters"),
-    industryId: z.string().optional().nullable(),
+      .max(5000, "Business brief must be less than 5000 characters")
+      .optional()
+      .nullable()
+      .or(z.literal("")),
+    industryId: z.string().min(1, "Industry is required"),
     targetAudience: z
       .string()
       .max(1000, "Target audience must be less than 1000 characters")
@@ -262,16 +228,16 @@ export const clientFormSchema = z
     // Relationships
     parentOrganizationId: z.string().optional().nullable(),
 
-    // Twitter Cards
-    twitterCard: twitterCardSchema,
-    twitterTitle: z.string().max(70, "Twitter title must be less than 70 characters").optional().nullable().or(z.literal("")),
-    twitterDescription: z
-      .string()
-      .max(200, "Twitter description must be less than 200 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    twitterSite: twitterSiteSchema,
+    // Google Business Profile + Local SEO (feed the JSON-LD generator)
+    gbpProfileUrl: z.string().max(500).optional().nullable().or(z.literal("")),
+    gbpPlaceId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpAccountId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpLocationId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpCategory: z.string().max(200).optional().nullable().or(z.literal("")),
+    priceRange: z.string().max(20).optional().nullable().or(z.literal("")),
+
+    // (Twitter card/title/site/description are NOT Client columns — they live in
+    // nextjsMetadata, generated from Settings + the client's hero image. No form fields.)
 
     // YMYL (Your Money Your Life) verification — admin-controlled per client.
     // When isYmyl=true + ymylCategory is set, ymylData carries category-specific fields
@@ -288,17 +254,7 @@ export const clientFormSchema = z
     articlesPerMonth: z.number().int().min(0).max(100).optional().nullable(),
     subscriptionStatus: subscriptionStatusSchema,
     paymentStatus: paymentStatusSchema,
-  })
-  .refine(
-    (data) => {
-      // Business brief is required - must be at least 100 characters
-      return data.businessBrief && data.businessBrief.trim().length >= 100;
-    },
-    {
-      message: "Business brief is required and must be at least 100 characters long",
-      path: ["businessBrief"],
-    }
-  );
+  });
 
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
 

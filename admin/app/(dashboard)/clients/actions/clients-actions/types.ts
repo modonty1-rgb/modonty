@@ -26,6 +26,7 @@ export type ClientForList = {
   subscriptionEndDate: Date | null;
   articlesPerMonth: number | null;
   nextjsMetadata: unknown;
+  jsonLdStructuredData: string | null;
   jsonLdValidationReport: unknown;
   seoTitle: string | null;
   seoDescription: string | null;

@@ -6,6 +6,7 @@ import { getSessionCleanerStats } from "@/app/(dashboard)/database/actions/sessi
 import { getStaleVersionsStats } from "@/app/(dashboard)/database/actions/stale-versions";
 import { getDuplicateSlugs } from "@/app/(dashboard)/database/actions/duplicate-slugs";
 import { getLegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
+import { getCanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
 import { getSiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { MaintenancePageShell } from "./components/maintenance-page-shell";
 
@@ -19,6 +20,7 @@ export default async function MaintenancePage() {
     staleVersions,
     duplicateSlugs,
     legalFormSanitizer,
+    canonicalSanitizer,
     siteUrlDrift,
   ] = await Promise.all([
     getOrphanStats(),
@@ -29,6 +31,7 @@ export default async function MaintenancePage() {
     getStaleVersionsStats(),
     getDuplicateSlugs(),
     getLegalFormSanitizerStats(),
+    getCanonicalSanitizerStats(),
     getSiteUrlDriftStatus(),
   ]);
 
@@ -42,6 +45,7 @@ export default async function MaintenancePage() {
       staleVersions={staleVersions}
       duplicateSlugs={duplicateSlugs}
       legalFormSanitizer={legalFormSanitizer}
+      canonicalSanitizer={canonicalSanitizer}
       siteUrlDrift={siteUrlDrift}
     />
   );

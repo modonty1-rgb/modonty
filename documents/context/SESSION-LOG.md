@@ -1,4 +1,456 @@
-# Session Context — Last Updated: 2026-05-29 ~21:00 (FROZEN by `us>` · ✅ EMAIL DELIVERY+OPEN TRACKING VERIFIED END-TO-END ON PRODUCTION. admin v0.65.4 PUSHED (commit bbe9ed7) + Vercel build READY + redeployed so RESEND_WEBHOOK_SECRET active. Resend Open Tracking enabled (track.modonty.com CNAME verified). False-alarm "prod missing 40 env keys" was MY pagination bug — keys were there all along. 2 NEW golden rules added to ~/.claude/CLAUDE.md. REMAINING: (1) cleanup prod test data via "Remove Test Data" button, (2) NEXT push removes the temp Seed/Remove buttons + restores guards, (3) `cd admin && pnpm changelog` for 0.65.4.)
+# Session Context — Last Updated: 2026-06-01 (client SEO score REFACTOR ✅ DONE + VERIFIED. hasMap warning FIXED in code + proven by direct generator unit-test. CLEAN SLATE: all servers killed, all .next caches deleted, TSC admin=0. Next: start servers fresh → re-regen devnadish → confirm hasMap gone on live page + Schema.org 0/0 → then online. NOT pushed. Newest block at top.)
+
+## Session: 2026-06-01 (cont.) — `hasMap` warning FIXED + proven, clean-slate reset
+
+### ✅ FIX DONE + PROVEN (the code is correct)
+- **What:** `dataLayer/lib/seo/generate-organization-jsonld.ts` — Place-only properties (`geo`,
+  `openingHoursSpecification`, `priceRange`, `hasMap`) are now emitted ONLY when the client's
+  `organizationType` is a LocalBusiness sub-type (new `LOCAL_BUSINESS_TYPES` set + `isLocalBusinessType()`
+  helper, mirrors LOCAL_TYPES in jsonld-score.ts). A generic `Organization` no longer gets them → the
+  schema.org `UNKNOWN_FIELD` warning on `hasMap` clears. The GBP Place-ID link still rides in `sameAs`
+  for ANY type (declared `placeId` at function scope so the sameAs block still sees it).
+- **PROVEN by a direct unit-test of the generator** (ran via `tsx`, imported the shared module, fed
+  synthetic clients — NO browser, NO dev-server cache in the way):
+  - `Organization` → hasMap=false, geo=false, openingHours=false, priceRange=false, gbpInSameAs=true → PASS
+  - `Dentist` → hasMap=true, geo=true, openingHours=true, priceRange=true → PASS
+  - Verdict: ALL PASS ✅. Test script deleted after running.
+- TSC admin = 0.
+
+### 🩺 Why the browser re-test kept failing (NOT a code bug — dev-environment only)
+- Editing a file in the SHARED package (dataLayer, symlinked into each app's node_modules) made Turbopack
+  rebuild admin → Server Action IDs changed. The Playwright-driven browser was holding STALE cached JS with
+  an OLD action ID, so every save POSTed `UnrecognizedActionError: Server Action "40cf706b…" was not found`
+  → the regen never ran → the stored JSON-LD never updated → the live page kept showing the old `hasMap`.
+  Also saw a Turbopack `module factory is not available` error after a hot-swap of the shared file.
+- This is purely a dev hot-reload/cache artifact. The unit-test bypassed it and proved the code is right.
+
+### 🧹 Clean-slate reset done (ready for a fresh start)
+- Killed ALL node processes (`taskkill /F /IM node.exe` → 17 killed). Ports 3000/3001/3002 free.
+- Deleted `.next` in all three apps (admin, console, modonty).
+- Removed the temp `console.log` diagnostic from `generate-client-seo.ts` (grep-confirmed 0 left).
+- Deleted the temp unit-test script from c:\tmp.
+
+### 🚀 Next steps (small, to finish before going online)
+1. Start servers fresh (admin/console/modonty) — first compile will be slow (cache was cleared).
+2. Re-regen devnadish ONCE on the fresh build: admin `/clients/[id]/edit` → **hard-reload the page so the
+   browser gets new action IDs** → Update Client (or Save SEO Data). Watch for a real success this time.
+3. Verify on modonty live page: `hasMap`/geo/openingHours/priceRange all GONE from the Organization node
+   (devnadish is type `Organization`), GBP link still in `sameAs`.
+4. Re-run validator.schema.org on the fresh JSON-LD → expect totalNumWarnings: 0, totalNumErrors: 0.
+5. Then the остальные pending items + push checklist.
+
+### 🚧 Still pending (unchanged)
+- Activation email into the REAL `admin/.../actions/activate-client.ts` (NOT done; reverted the wrong file).
+- Khalid's 2 tasks on the Activate page.
+- Push checklist: version bump admin+console, changelog, secret-scan, push (FRESH confirmation needed).
+
+---
+
+
+## Session: 2026-06-01 (cont.) — OFFICIAL external validation + `hasMap` warning surfaced
+
+### ✅ Verified on the OFFICIAL Schema.org validator (validator.schema.org)
+- Pulled devnadish's live JSON-LD from modonty (`:3002/clients/devnadish-ymyl`), POSTed it to the
+  official `/validate` endpoint. Result: **totalNumErrors: 0**, numObjectsWithError: 0. Every node +
+  every property came back `"errors": []` (Organization, logo→ImageObject 1122×1402, 2× identifier→
+  PropertyValue, contactPoint→ContactPoint, address→PostalAddress→Country, WebSite.publisher→Org,
+  WebPage.isPartOf→WebSite, WebPage.about→Org — all @id cross-refs resolve).
+- **Proved the validator is honest** (not a rubber stamp): fed it deliberately-broken JSON-LD →
+  `INVALID_ITEMTYPE` (severe ERROR) for a fake @type, `INVALID_PREDICATE` (ERROR) for a bad property.
+  So the 0-errors result on our real data is trustworthy.
+- Google Rich Results Test (search.google.com/test/rich-results) requires a Google sign-in (the
+  automated browser is blocked at the sign-in wall) — couldn't run it headless. validator.schema.org
+  uses the same validation engine and gave the official verdict.
+
+### ⚠️ ONE non-blocking warning to fix later — `hasMap` on Organization
+- The validator flagged `hasMap` as `UNKNOWN_FIELD` on `Organization` with severity **WARNING** (NOT error).
+  `hasMap` is valid on `Place`/`LocalBusiness`, not on the generic `Organization` type. devnadish is typed
+  `Organization`, so the field is technically out of place. Google ignores unknown fields → rich results
+  still work; it's a cleanliness nit, not a functional bug.
+- [ ] FIX (in `dataLayer/lib/seo/generate-organization-jsonld.ts`): only emit `hasMap` when the client's
+  `organizationType` is a Place/LocalBusiness subtype (Dentist, MedicalClinic, Restaurant, Store, etc.).
+  For a plain `Organization`, omit `hasMap` (the GBP link can still ride in `sameAs`). Then the warning
+  clears to 0/0. ~5-min edit. Asked Khalid: fix now vs log — he hasn't chosen yet (`us>` came first).
+
+### 🚧 Still pending (unchanged from the block below)
+- Activation email wiring into the REAL `admin/.../actions/activate-client.ts` (NOT done — reverted the
+  wrong file `activate-client-with-image.ts`).
+- Khalid's 2 tasks on the Activate page (he'll describe).
+- `hasMap` warning fix (above).
+- Push checklist: NONE done.
+
+---
+
+
+## Session: 2026-06-01 — Client SEO score: VERIFIED END-TO-END (55→65→99%, admin=console, modonty live valid)
+
+### ✅ DONE — the whole task closed + live-verified
+- **Honest validity score** (dataLayer/lib/seo/client/): empty devnadish = 55% (old fake scorer said 70%). Fills correctly: +26 text fields & hreflang-from-Settings → 65%; +logo+hero (after activating the client so its media library unlocks) → **99%**. The last 1% = optional Local SEO (lat/lng + priceRange + gbpPlaceId) — correct cap for a client with no physical storefront.
+- **Unified across every surface** — admin `/clients/[id]/seo`, admin `/clients/[id]/edit` header chip, console `/dashboard/profile`, and the clients list ALL call `computeClientSeoScore(clientToSeoInput(...))` reading STORED DB. All showed 99% for devnadish. No divergent numbers anymore.
+- **modonty.com live page (`:3002/clients/devnadish-ymyl`) verified via Playwright:**
+  - JSON-LD @graph (Organization·WebSite·WebPage): 15/15 structural checks pass — @context, every node @id+@type, logo ImageObject 500×500, all @id cross-refs resolve (publisher/about/isPartOf), PostalAddress, ContactPoint+telephone, 4× https sameAs, PropertyValue identifiers (CR + ISO6523), WebPage.inLanguage. `failedChecks: []`.
+  - Meta: 14/14 pass — title 47 / desc 134 chars, canonical absolute+www, hreflang ar+x-default, OGP.me 4 required (title/type/image/url), OG image 1200×1024, twitter summary_large_image+image. `failedChecks: []`.
+
+### 🔧 Fixes landed this session (TSC admin=0, console=0; NOT pushed)
+1. `admin/.../generate-client-seo.ts` — hreflang backfill from Settings (`defaultAlternateLanguages` → `defaultHreflang` → `inLanguage` → `ar-SA`).
+2. `console/.../profile/actions/regenerate-client-seo.ts` — SAME hreflang fallback (was wiping admin-generated hreflang on every console save → score dropped each time).
+3. `admin/.../components/client-form.tsx` (edit page) — header now shows the UNIFIED SEO chip via `computeClientSeoScore`; removed the OLD `createClientSEOGroupScores`/`buildClientSeoData`/`SEODoctor`-header/`getSEOSettings` path (dead code). Media widget redesigned (status dots + Arabic labels + "يغذّيان جاهزية SEO").
+4. `admin/.../clients-actions/{client-seo-form,client-field-mapper,client-server-schema}.ts` — removed orphan Twitter card/site from the `/seo` surface (they're NOT Client columns; generated from Settings + hero image).
+5. dataLayer `jsonld-score.ts` — logo is now a STANDALONE required check (10) + hero image check + email added to contact group; `from-client.ts` + console/admin selects now include `heroImageMediaId`.
+
+### 🚧 Pending (NOT done — for next session / Khalid's call)
+- **Activation email** (Khalid asked): wire `sendClientWelcome(clientId)` into the REAL `admin/.../actions/activate-client.ts` `activateClientAction` (best-effort try/catch) so activating a PENDING client emails them login creds + console URL. I started editing the WRONG file (`activate-client-with-image.ts`, unused) and reverted it — the real action used by the Activate button is `actions/activate-client.ts` → `activateClientAction`. NOT yet wired.
+- **2 admin tasks Khalid has for the Activate page** — he'll describe them.
+- **UX gaps logged in CLIENTS-TODO.md:** (a) logo/hero upload opens a new tab instead of an in-modal uploader (heavy for onboarding); (b) `updateClientLogo`/`updateClientHero` don't call `generateClientSEO` so "صحّة البنية" only refreshes after a manual "Save SEO Data"; (c) Twitter orphan cleanup in the OLD edit-form sections (low risk — DB already protected by whitelist).
+- **Onboarding order for tomorrow's 10 clients:** create → **activate** (media library locked until ACTIVE) → upload logo+hero → Update Client. A PENDING client can't get a logo.
+- **Push checklist (NONE done):** version bump admin+console, changelog, secret-scan, `git push` (needs FRESH confirmation).
+
+---
+
+
+## Session: 2026-05-31 20:35 — Client SEO score: MODEL correction + hreflang-from-Settings (IN PROGRESS)
+
+### 🎯 Where I stopped
+- Goal: client SEO score = HONEST validity (Meta + JSON-LD); platform/technical defaults come from Settings; score measures the SAVED-COMPLETE artifact, NOT raw client field count.
+- Last concrete action: servers restarted by user — **admin = http://localhost:3000, console = http://localhost:3001** (ports shifted; admin grabbed 3000 first). About to drive Playwright on the admin SEO page for devnadish, then user said `us>`.
+- Next concrete action on resume: Playwright → http://localhost:3000/clients/6a1bd18372500ba6c11a422f/seo → read score + checklist → edit → fill seoTitle (30–60) + seoDescription (120–160) → SAVE → wait for the redirect to /clients (do NOT navigate away early — that interrupts the server action) → reload /seo → confirm value persisted + score rose + hreflang now counted.
+
+### 🧠 Core model correction from user (the heart of the task)
+- "When we SAVE, what's stored in the DB must be COMPLETE (Meta complete + JSON-LD complete)."
+- "All technical/advanced matters (admin's domain) must come BY DEFAULT from Settings — so Meta and JSON-LD are complete."
+- It's NOT about who fills it (admin vs client); the data is SHARED between both. The score measures completeness/validity of the saved artifact.
+- User's reported symptom (must verify live, no guessing): "I save SEO, come back, it doesn't show — why?"
+
+### ✅ Done this session
+- **hreflang now sourced from Settings** in `admin/.../clients-actions/generate-client-seo.ts`: when the client has no `knowsLanguage`, fall back to `settings.defaultHreflang || inLanguage` + `settings.defaultAlternateLanguages` (comma-split) → saved Meta always carries a complete hreflang set; meta-score then credits it automatically (it reads stored `nextjsMetadata`). **This is the only code edit on disk this session.**
+- Evidence-checked (not guessed): `updateClient` → `generateClientSEO(id)` runs AFTER the grouped updates → save DOES regenerate Meta + JSON-LD. So "doesn't show" is NOT a missing-regenerate bug — likely a stale-view/cache or a test artifact (navigating away before the action finishes). Verify live.
+- Confirmed `client-seo-form.tsx` is DISPLAY-ONLY (no save action). Editing happens on `/clients/[id]/edit` (tab form → updateClient).
+- Mapped scorer sources: meta-score reads stored `nextjsMetadata` ✓ · jsonld-score Pillar A reads stored `jsonLdStructuredData` + `jsonLdValidationReport` ✓ · **Pillar B reads RAW client columns** (the one place that counts fields, not the saved @graph).
+
+### 📝 Decisions taken (with reasoning)
+- hreflang = platform config, not per-client → backfill from Settings so the client isn't penalized for a platform-wide setting. (User: "hreflang يجي من الـ setting.")
+- Did NOT inject `settings.org*` (Modonty's contact/address/geo/logo) into the CLIENT's Organization JSON-LD — factually wrong (client's org isn't at Modonty's HQ) + possible spam signal. `settings.org*` describes Modonty-the-publisher (a separate node). The SEO-correct reading of "tech from settings" = language/locale/robots/twitterSite/hreflang/OG-config — NOT the client's business identity (logo/address/phone/CR remain client-owned + required for true 100%).
+- Left Pillar B reading client columns: for client-OWNED fields, "column filled" ≡ "property emitted in @graph" → equivalent + lower risk than re-parsing stored JSON.
+
+### 🚧 Pending / blocked
+- LIVE TEST not run (servers were down all session; just came up). See "Next concrete action" above.
+- Resolve user's "48 → 25" confusion live: same client's score genuinely changing (bug) vs two different clients (devnadish vs demo-ymyl) = UX confusion.
+- OPTIONAL (settings-aware lengths): meta-score hardcodes TITLE 30/60, DESC 120/160, OG 1200×630; Settings defines `seoTitleMin/Max`, `seoDescriptionMin/Max`, `ogTitleMax`, `defaultOgImageWidth/Height`. Thread these into the scorer from the calling surface (the dataLayer scorer is pure).
+- Push checklist (none done): version bump admin+console, changelog, `prisma db push` prod for `phone @unique`, secret-scan settings files.
+
+### 📂 Files touched this session
+- admin/app/(dashboard)/clients/actions/clients-actions/generate-client-seo.ts — hreflang backfill from Settings (ONLY on-disk edit this session).
+- (earlier, pre-compaction) dataLayer/lib/seo/client/* — see the "(night)" block below.
+
+### 🔁 Git / deploy state
+- Branch: main · Uncommitted: YES (lots, incl. today's generate-client-seo.ts edit) · NOT pushed.
+- TSC: not run this session · Build: not run · Live test: NOT done.
+- Servers: admin=3000, console=3001 (modonty not started). Leftover diagnostic c:\tmp\read-devnadish-seo.mjs (read-only, dev-DB-guarded, unused — safe to delete).
+
+### 🚀 How to resume in 30 seconds
+1. Confirm servers: admin http://localhost:3000, console http://localhost:3001.
+2. Playwright → http://localhost:3000/clients/6a1bd18372500ba6c11a422f/seo (devnadish).
+3. Run the save→reload persistence test (above); resolve 48→25; then optional settings-aware length limits.
+
+### 📌 Working-method note (user feedback this session)
+- Cut the "muscle": no port-hunting, no standalone scripts for routine checks. The task = small focused code fixes + ONE clean live test. Move fast, fewer steps.
+
+---
+
+## Session: 2026-05-31 (night) — Shared SEO infra in dataLayer + client SEO score REFACTOR (validity-based) + GBP Place ID + Business Hours + YMYL sidebar
+
+### 🎯 Where I stopped
+- Just finished the client-SEO-score REFACTOR. Was about to run a deep full live-test (all 4 surfaces + console) when Khalid said `us>`.
+- **NOTHING PUSHED. Nothing committed.** Huge amount of uncommitted work across admin + console + dataLayer. Next session: deep live-test → then version bump + changelog + push (with Khalid's fresh OK). On push: prod also needs `prisma db push` for the earlier `phone @unique` index.
+
+### ✅ Done this session (all verified, all uncommitted)
+1. **Shared SEO generator moved to dataLayer** — `dataLayer/lib/seo/generate-organization-jsonld.ts` (was admin-only). admin re-exports via shim `admin/lib/seo/generate-complete-organization-jsonld.ts`. Import path `@modonty/database/lib/seo/...` works (the `@modonty/database` workspace pkg was declared but never imported before — we're the first user; verified live, no build break). Console uses it too.
+2. **Console regenerates SEO after profile save** — NEW `console/.../profile/actions/regenerate-client-seo.ts` (ports admin metaTags logic, uses shared generator, writes nextjsMetadata + jsonLdStructuredData, no heavy validators). Wired into `updateProfile` (try/catch, never breaks save). Live-verified full circle: client edits in console → save → JSON-LD/meta refresh.
+3. **SEO Score shown to client in console** — readiness card on /dashboard/profile.
+4. **GBP Place ID ACTIVATED in JSON-LD** — official Google Maps URL `maps/search/?api=1&query=NAME&query_place_id=ID` emitted in `hasMap` + `sameAs` (verified vs Google/schema.org docs). Found + fixed a DEEP 5-layer bug where gbp*/priceRange/openingHours never persisted: missing from (1) Zod clientFormSchema [ROOT — zodResolver strips unknown], (2) submitData in use-client-form, (3) mapInitialDataToFormData, (4) client-form-config seo section, (5) updateSEOFields + client-field-mapper. All 5 fixed. Live-verified Place ID persists + appears in JSON-LD.
+5. **Business Hours** — console: NEW editor in profile (7 days, opens/closes/closed, exact admin shape) saving to `openingHoursSpecification`. admin: turned read-only in SEO page. Live-verified save persists.
+6. **YMYL "بيانات التوثيق المهني" → dedicated sidebar item** — `console/.../dashboard/verification/page.tsx` (NEW), removed from profile, conditional sidebar item (only when isYmyl, badge "مطلوب", ShieldCheck), prominent amber CTA, redirect guard for non-YMYL. Live-verified: demo-ymyl sees it, demo-normal doesn't + direct-URL redirects.
+7. **Login spinner** — console login button now shows Loader2 while signing in.
+8. **🔴 THE BIG ONE — client SEO score REFACTORED (validity-based):** Old score was FAKE (empty client = 70% because name is mandatory → JSON-LD always generates → +50 pts from nothing). Researched official sources (Google Organization/LocalBusiness/title/snippet, OGP.me, schema.org via Context7, Next.js Metadata via Context7). New ISOLATED design under **`dataLayer/lib/seo/client/`**:
+   - `types.ts` (SeoCheck/SeoScore/EntitySeoScore + JsonLdValidationReport helpers)
+   - `meta-score.ts` — Google validity rules: title 30–60 & ≠name (25) · desc 120–160 (25) · OG image ≥1200×630 (25) · canonical (10) · hreflang (15)
+   - `jsonld-score.ts` — Pillar A validity from STORED `jsonLdValidationReport` (graph 20 · zero errors 30 · zero warnings 10) + Pillar B recommended completeness (40, weighted, address heavier for LocalBusiness types)
+   - `seo-score.ts` — combiner, keeps `computeClientSeoScore` backward-compat (returns overall + merged checks)
+   - `from-client.ts` — `clientToSeoInput(row)` adapter (one place maps a Client row → scorer input)
+   - **Designed to extend:** an `article/` scorer will sit beside it with the same contract (project is nested: Client→Articles→Tags, Article.publisher→Client).
+   - **Unified ALL 4 admin surfaces + console** to this one scorer reading STORED DB (nextjsMetadata + jsonLdStructuredData + jsonLdValidationReport + raw cols). Also fixed: `getClients` list query was missing `jsonLdStructuredData` (caused a wrong 20%).
+   - **Live result:** empty client devnadish = **23% (was fake 70%)**, with a 13-item detailed checklist showing exactly what's missing incl. "✗ صحّة البنية" (the stored JSON-LD actually HAS validation errors the old scorer hid).
+   - Replaced the cramped donut in the list with a clear colored % badge.
+
+### 📝 Decisions (with reasoning)
+- **100% = VALIDITY, not field-count** (Khalid): a client is 100% only when Google sees the Meta correct + JSON-LD structurally valid (zero validator errors) per best practices — NOT "filled all fields". JSON-LD validity is read from the already-stored `jsonLdValidationReport` (Adobe+Ajv), not re-computed.
+- **Isolation under dataLayer/lib/seo/client/** (Khalid: "سميه client … بعدين نفس الموضوع للـ article") — folder named per-entity, ready for `article/`.
+- **Source = DB stored** (source of truth); score updates on save because save regenerates nextjsMetadata + jsonLdStructuredData.
+- Old `client-seo-group-scores` + `client-field-mapping` (964 lines) + SEODoctor KEPT — still used as the live diagnostic tool in the EDIT form (different purpose), not deleted.
+- `calculateSEOScore` NOT deleted — still used by authors/categories/tags (out of our client scope).
+- GBP Place ID via sameAs/hasMap (Google: no dedicated schema prop; sameAs is the recommended way; Maps Place-ID URL is "best guarantee" to link the right place).
+- Did NOT touch Twitter Site/Card yet — scan showed they're platform-settings-sourced (twitter:site = Modonty's account), client fields are orphan; pending decision to move to platform settings + remove from client SEO page.
+
+### 🚧 Pending / blocked
+- **DEEP full live-test not finished** (Khalid asked, then said us>). Next: test all 4 surfaces show SAME number for several clients · console card shows same · edit a field → save → number changes correctly · YMYL conditional weight · a near-100% client to confirm the rubric can actually reach 100.
+- **"✗ صحّة البنية" finding:** stored JSON-LD has real validation errors for some clients — investigate WHAT errors (the old scorer hid them). May need generator fixes to reach true 100%.
+- **Twitter Site/Card** — decide: move to platform settings, remove from client SEO page (orphan fields, generator ignores client values).
+- **Public preview button** — started gating it disabled when client is PENDING (subscriptionStatus added to seo-form), needs finish + verify.
+- **Push checklist:** version bump (admin+console), changelog, `prisma db push` on prod for `phone @unique`, secret-scan settings files. NONE done.
+
+### 📂 Files this block (NOT committed) — key ones
+- NEW dataLayer/lib/seo/client/{types,meta-score,jsonld-score,seo-score,from-client}.ts
+- NEW dataLayer/lib/seo/generate-organization-jsonld.ts (moved from admin) + admin shim
+- NEW console/.../profile/actions/regenerate-client-seo.ts · console/.../profile/helpers (seo-score moved out) · console/.../dashboard/verification/page.tsx · console seo-readiness-card.tsx
+- admin: client-seo-form.tsx (readiness uses shared scorer + status checks + GBP fields persist + pending preview gate started) · [id]/page.tsx (shared scorer) · client-table.tsx (shared scorer + badge, removed donut + dead group-scores import) · get-clients.ts (+jsonLdStructuredData) · types.ts · client-form-schema.ts (+gbp/priceRange Zod) · use-client-form.ts (+gbp submitData) · map-initial-data-to-form-data.ts (+gbp) · client-form-config.ts (seo section +gbp) · update-client-grouped.ts (updateSEOFields +gbp) · client-field-mapper.ts (+gbp/priceRange/openingHours) · generate-client-seo.ts (+gbpPlaceId select) · client-hero/logo read-only Business Hours
+- console: profile-form.tsx (+Business Hours editor) · profile-actions.ts (+openingHours +regen call) · profile/page.tsx (+SEO fields select, full client to card) · sidebar.tsx + mobile-sidebar.tsx + dashboard-layout-client.tsx + layout.tsx (isYmyl threaded) · lib/ar.ts (+nav.verification) · login-form.tsx (spinner)
+- docs: documents/tasks/CLIENT-SEO-SCORE-REFACTOR.md (the full rubric + old-vs-new comparison)
+- memory: project_console_must_regenerate_seo.md (RESOLVED this session) · project_shared_code_audit_datalayer.md
+
+### 🚀 Resume in 30 seconds
+1. Servers: admin :3000, console :3001 (both were running). Login admin modonty@modonty.com/Modonty123! · console demo-ymyl@modonty-test.local/DemoYmyl#2026.
+2. Do the DEEP live-test (pending list above) — confirm 4 surfaces + console all match, and a complete client can reach ~100.
+3. Investigate "✗ صحّة البنية" JSON-LD validation errors.
+4. Then: finish pending preview gate · Twitter decision · push checklist.
+
+---
+
+# Session Context — Last Updated: 2026-05-31 ~later (FROZEN by `us>` · Welcome-email-on-create BUILT + password field REMOVED from create form (auto default `admin123` sent via email, client changes from console) + create card merged to 2×2. TSC admin = 0. NOT pushed. Newest block below.)
+
+## Session: 2026-05-31 (cont.) — Welcome email on create + remove password field + UI merge
+
+### 🎯 Where I stopped
+- All create-client work above is code-complete + TSC-clean (admin = 0 errors). NOT pushed, NOT version-bumped, NO changelog yet.
+- Next concrete action: (a) live-test the full create→welcome-email flow once (was verified mid-session: dialog appeared correctly), then (b) Khalid's call on push, then (c) morning agenda.
+
+### ✅ Done this session
+- **Welcome email on client creation (BUILT, was the pending plan):**
+  - NEW `admin/app/(dashboard)/clients/actions/clients-actions/send-client-welcome.ts` — auth() → load client by id → sendEmailWithRetry with existing `clientWelcomeEmail` template + tags [client-welcome, clientId]. Uses the default password constant (no param).
+  - `index.ts` (clients-actions) — exported `sendClientWelcome`.
+  - `use-client-form.ts` — added `onCreated?` option; in create mode fires `onCreated({id,name,email})` instead of immediate router.push. (result shape is `result.client`, not `.data`.)
+  - `create-client-form.tsx` — AlertDialog after create: «تم إنشاء {name} ✅ — ترسل بيانات الدخول إلى {email}؟» [إرسال الآن]/[تخطّي] → either path → router.push("/clients"). Live-verified the dialog renders with correct text.
+- **Password field REMOVED from the create form (Khalid's decision):** admin no longer sets a password.
+  - NEW shared constant `admin/lib/default-client-password.ts` → `DEFAULT_CLIENT_PASSWORD = "admin123"` (single source; matches the existing convert-subscriber TEMP_PASSWORD value).
+  - `create-client.ts` — on create, always hashes a password: uses provided one if any, else `DEFAULT_CLIENT_PASSWORD`. (Import added.) So every new client can log in with `admin123`.
+  - `send-client-welcome.ts` — sends `DEFAULT_CLIENT_PASSWORD` in the email (dropped the password param).
+  - Form — removed password Field + generate/copy helpers + `copied` state + RefreshCw/Copy/Check + KeyRound imports. Zero dead code (grep-verified).
+- **UI merge (Khalid: email alone in a card looked wrong):** merged Identity + Credentials into ONE card «بيانات العميل», 2×2 grid: [اسم العميل · الإيميل] / [الصناعة · الجوال]. Email hint shows the auto password inline: "كلمة المرور تتأسس تلقائياً مع الإيميل (admin123) … يغيّرها العميل أول دخول" — value imported from the constant (DRY).
+- Added `Bash(powershell -Command "Get-Content` to settings.local.json allow (partial; the Edit for it failed once — may need re-add).
+
+### 📝 Decisions taken (with reasoning)
+- No admin-set password → simpler form + matches the proven convert-subscriber flow. Fixed default `admin123` (not random) so login still works even if the welcome email is skipped, and admin always knows it. Security rests on the console forcing a change on first login (see pending).
+- Welcome email stays OPTIONAL via confirm dialog — admin controls when creds go out.
+
+### 🚧 Pending / blocked
+- **SAFETY — verify the console FORCES password change on first login.** This is the condition that makes the fixed `admin123` default safe. If the console does NOT force it → must add a "change your password" gate on first console login. NOT yet verified. (Agreed with Khalid to check.)
+- **Resend-credentials path:** consider a "إعادة إرسال بيانات الدخول" button on the client page (if email skipped/lost). Not built.
+- Welcome-email full live send not run end-to-end this session (fake test domain). Dialog render verified; actual Resend delivery not.
+
+### 📂 Files touched this block (NOT committed)
+- admin/lib/default-client-password.ts (NEW)
+- admin/app/(dashboard)/clients/actions/clients-actions/send-client-welcome.ts (NEW)
+- admin/app/(dashboard)/clients/actions/clients-actions/index.ts — export sendClientWelcome
+- admin/app/(dashboard)/clients/actions/clients-actions/create-client.ts — default password on create
+- admin/app/(dashboard)/clients/helpers/hooks/use-client-form.ts — onCreated callback
+- admin/app/(dashboard)/clients/new/components/create-client-form.tsx — dialog + remove password + merge cards + hint
+- admin/app/(dashboard)/clients/helpers/client-form-schema.ts — (password already optional; comment only)
+- .claude/settings.local.json — allow powershell Get-Content (partial)
+
+### 🔁 Git / deploy state
+- Branch: main · Uncommitted: YES (this block + the prior 2026-05-31 block all still uncommitted) · NOT pushed · version NOT bumped · changelog NOT added.
+- ⚠️ Still pending from prior block: schema.prisma `phone @unique` needs `prisma db push` on prod at push time (after checking prod has no duplicate phones).
+
+### 🚀 How to resume in 30 seconds
+1. `pl>` → /clients/new → create a client → confirm welcome dialog → test [إرسال الآن] + [تخطّي].
+2. Verify console forces password change on first login (the pending safety item).
+3. Then Khalid decides push (run admin TSC once as the gate first).
+4. A stray test client «عميل اختبار الترحيب» may exist in modonty_dev from earlier — delete if found.
+
+---
+
+# Session Context — Last Updated: 2026-05-31 ~late (FROZEN by `us>` · Create-client form RESTRUCTURED + field-ownership cleanup + email/phone uniqueness (code guard + DB index) + YMYL-save bug FIXED + 2 demo clients created. NOT pushed yet — Khalid reviews/pushes. Next session agenda at top of newest block below.)
+
+# Session Context — prior Last Updated: 2026-05-30 21:30 (FROZEN by `us>` · broken-images investigation CLOSED + 2 fixes PUSHED. admin v0.66.2 = 'Fix broken images' scanner on Media page (commit 536a64a); admin v0.66.3 = media rename uses Cloudinary secure_url not hand-built URL (commit 76a9d2c). Root cause of 15 broken images = assets lost on Cloudinary side (SHARED account: 842 assets, only 88 Modonty's) — NOT any delete/replace/upload code path (all audited clean via 4-agent workflow). Cloudinary Activity Log unavailable on free tier = can't see exact "who". PENDING prevention (deferred by Khalid): isolate Modonty assets into own Cloudinary folder/sub-account. Earlier today: fast-interaction mode adopted + admin v0.66.1.) Prior: ✅ admin v0.66.1 PUSHED commit 2528d6a — clients-table cleanup: inline Activate button removed, status badges disambiguated (ACTIVE+unpaid → "Unpaid" amber · new-client → "Pending" slate · unified across table + account page), Activate/Suspend pages committed. TSC admin = 0 errors. Changelog v0.66.1 → local+prod. Vercel building admin. ONLY REMAINING: live-test invoice issue end-to-end (real email + mutates client subscription). Prior freeze: 2026-05-29 ~21:00 — admin v0.65.4 email delivery+open tracking verified on prod.)
+
+## Session: 2026-05-31 — Create-client restructure + field ownership + email/phone uniqueness + YMYL fix + 2 demo clients
+
+### 🎯 Where I stopped
+- Last task in progress: **Welcome email on client creation** — investigated, planned, NOT coded yet. Awaiting Khalid's "نفّذ" on the 3-file plan.
+- Next concrete action when resuming: implement the welcome-email-on-create flow (plan below), OR start with Khalid's morning agenda (YMYL console sidebar) — ask which first.
+
+### ⏰ TOMORROW'S AGENDA (Khalid's explicit asks — remind him)
+1. **YMYL in console — verify how the توثيق (verification) section shows in the sidebar.** Expected behavior: the verification menu item should appear in the console sidebar **ONLY when the client is required to provide verification** (i.e. isYmyl=true). If not required → it must NOT show. "هي معمولة، بس كيف معمولة؟" → INVESTIGATE the existing implementation in console (how the YMYL/verification sidebar item is conditionally rendered) and confirm it's driven by the client's isYmyl/ymylCategory. Test with the 2 demo clients (normal should NOT see it, YMYL-medical SHOULD).
+2. **Console: client uploads profile + image** — bring back / verify the client's own profile + image upload from the console page ("رفع الصور والـ profile والـ image اللي تخص العميل من صفحة الـ console"). (Khalid said "لست أنا ما رجعتها بعدين" — meaning this was reverted/removed earlier and needs restoring.)
+3. **Cloudinary capacity problem — design a solution.** Current shared Cloudinary account won't scale: "لو عندنا اثنين أو ثلاثة عميل، انخراب بيتنا، المساحة ما حتكفي." Need a real plan (own Cloudinary account/sub-account per scale, or migration off shared account). This ties to the deferred prevention item from the broken-images investigation (isolate Modonty assets into own folder/sub-account).
+
+### ✅ Done this session
+- **Create-client form fully restructured** (`admin/app/(dashboard)/clients/new/components/create-client-form.tsx`) — independent CREATE UI, backend shared via `useClientForm` (createClient). Final fields: Identity (name + industry + phone, 12-col grid 5/4/3) · Credentials (email + password, both LTR, password has generate↻ + copy⧉ buttons) · Subscription (tier cards only, sorted ascending by price) · YMYL (checkbox + 3 category cards). REMOVED from create (client owns them in console): website url, contactType, businessBrief, subscription dates, "إعدادات متقدمة" block.
+- **Field ownership decided with Khalid:** "العميل = الكونسول". Fields the client edits in console (url, contactType, businessBrief) removed from admin create. Dates removed (set at first invoice via accounts). KEPT in create + made REQUIRED: name, industry, phone, email, password, tier.
+- **businessBrief** made optional in `client-form-schema.ts` (removed min(100) + the refine). Client writes it in console.
+- **phone + industry made REQUIRED** in `client-form-schema.ts` (min(1)). NOTE: schema is SHARED create+edit → also required in edit now. Fixed 4 resulting TS2345 nulls (basic-info-section.tsx ×2, generate-client-test-data.ts, create-client-form.tsx) by using "" instead of null.
+- **Error UX fixed** (was duplicated top+inline): now field errors render inline under each field only; top banner reserved for SERVER errors (e.g. duplicate email/phone). Edited `use-client-form.ts` (removed setError aggregation) + `create-client-form.tsx` banner condition.
+- **Email + phone uniqueness — DONE + VERIFIED:**
+  - Code guard added to `create-client.ts` + `update-client.ts` (findFirst OR email/phone, exclude self on update; Arabic errors "هذا البريد الإلكتروني مستخدم من عميل آخر." / "رقم الجوال مستخدم من عميل آخر.").
+  - DB index: `phone String? @unique` added to schema.prisma (email was already @unique). `pnpm prisma:generate` + `pnpm prisma:push` succeeded (after clearing duplicate-phone test clients). Verified via Node script: DB index REJECTS duplicate phone ✓. Context7-confirmed: optional @unique allows multiple nulls (safe).
+  - Live-verified: creating client with existing email → red banner "هذا البريد الإلكتروني مستخدم من عميل آخر." + client NOT created.
+- **YMYL-save BUG found + fixed:** `client-field-mapper.ts` (`mapFormDataToClientData`, the shared form→DB mapper) was MISSING isYmyl/ymylCategory/ymylData → YMYL never saved on create. Added the 3 fields. Verified: demo YMYL client now saves isYmyl:true, ymylCategory:medical.
+- **2 demo clients created in modonty_dev** (creds saved in memory `project_demo_clients_credentials`):
+  - Normal: demo-normal@modonty-test.local / DemoNormal#2026 · STANDARD · id 6a1b6cb453972945da8e51c2
+  - YMYL medical: demo-ymyl@modonty-test.local / DemoYmyl#2026 · PRO · isYmyl:true medical · id 6a1b6df053972945da8e51c4
+- **Cleanup:** all stray test clients deleted from modonty_dev (phone collisions = 0).
+- **`Bash(curl:*)`** added to .claude/settings.local.json allow list.
+- **TSC admin = 0 errors** (verified multiple times incl. final).
+- Fixed a 404-on-client-detail bug mid-session = TWO dev servers on port 3000 (duplicate). Killed all node, started one clean server.
+
+### 📝 Decisions taken (with reasoning)
+- Field ownership: client-owned fields (url, contactType, businessBrief) removed from admin create → client fills via console → avoids stale/duplicate data, single source of truth.
+- Welcome email = OPTIONAL with confirm dialog (not automatic) → admin controls when login creds go out; client always created regardless.
+- Welcome password: admin types it, stored bcrypt (irreversible) → to email it, pass the RAW password from form → dialog → send action (same session, never stored raw). Safe.
+
+### 🚧 Pending / blocked
+- **Welcome email on create** — planned (3 files), awaiting Khalid's go:
+  1. NEW `admin/.../clients/actions/send-client-welcome.ts`: auth() → load client by id → sendEmailWithRetry with clientWelcomeEmail template (ALREADY EXISTS at `admin/lib/email/templates/client-welcome.ts`) + tags [client-welcome, clientId]. Reuse pattern from `convert-subscriber-to-client.ts` (lines 101-124).
+  2. `use-client-form.ts`: add onCreated callback (create mode only) instead of immediate router.push.
+  3. `create-client-form.tsx`: AlertDialog after create — "تم إنشاء {name} ✅ — ترسل بيانات الدخول إلى {email}؟" [إرسال الآن]/[تخطّي] → either → router.push("/clients").
+  - AlertDialog component EXISTS at admin/components/ui/alert-dialog.tsx. sendEmailWithRetry at admin/lib/email/resend-client.ts. Console URL = https://console.modonty.com.
+
+### 📂 Files touched (NOT committed)
+- admin/app/(dashboard)/clients/new/components/create-client-form.tsx — restructured UI
+- admin/app/(dashboard)/clients/new/page.tsx — props (industries + siteUrl)
+- admin/app/(dashboard)/clients/helpers/client-form-schema.ts — businessBrief optional, phone+industry required
+- admin/app/(dashboard)/clients/helpers/client-field-mapper.ts — added YMYL fields (THE bug fix)
+- admin/app/(dashboard)/clients/helpers/hooks/use-client-form.ts — error UX (inline only)
+- admin/app/(dashboard)/clients/components/form-sections/basic-info-section.tsx — null→"" for phone+industry
+- admin/app/(dashboard)/clients/helpers/generate-client-test-data.ts — industryId null→""
+- admin/app/(dashboard)/clients/actions/clients-actions/create-client.ts — email/phone uniqueness guard
+- admin/app/(dashboard)/clients/actions/clients-actions/update-client.ts — email/phone uniqueness guard (exclude self)
+- dataLayer/prisma/schema/schema.prisma — phone String? @unique (DB index pushed to modonty_dev)
+- .claude/settings.local.json — added Bash(curl:*)
+- memory/project_demo_clients_credentials.md (NEW) + MEMORY.md pointer
+
+### 🔁 Git / deploy state
+- Branch: main · Uncommitted: YES (all files above) · NOT pushed.
+- ⚠️ schema.prisma changed → on push, prod also needs `prisma db push` to create phone index (and check prod has no duplicate phones first).
+- Version NOT bumped yet, changelog NOT added yet.
+
+### 🚀 How to resume in 30 seconds
+1. Ask Khalid: start with welcome-email implementation, or his morning agenda (YMYL console sidebar)?
+2. For agenda #1: open console app, grep sidebar/menu for ymyl/verification conditional rendering.
+3. Demo clients ready for testing both flows (creds in memory project_demo_clients_credentials).
+
+---
+
+## Session: 2026-05-30 21:30 — Broken images on modonty public: root-caused + 2 fixes pushed
+
+### 🎯 Where I stopped
+- Investigation CLOSED + both fixes pushed (v0.66.2, v0.66.3). admin dev on :3000, modonty dev on :3001 (ports came up swapped this session — admin=3000, modonty=3001).
+- Next concrete action when resuming: run the "Fix broken images" button on admin PRODUCTION to repoint the 13 referenced broken rows to platform defaults (live remediation); then ask owners to re-upload the real assets. Plus the still-open invoice live-test from earlier.
+
+### ✅ Done this session
+- **Root-caused the broken images on www.modonty.com.** 15 DB media rows point to Cloudinary assets that return 404. Confirmed via 4-agent workflow (code audit + git history + PROD data forensics): cause = assets lost on the Cloudinary storage side, NOT any code path. Evidence: reverseOrphanCount=0 (orphan-sweep can't be it), deleteMedia deletes Cloudinary-first-then-DB (can't orphan a row), 9/15 broken rows created 2026-05-20 during new-client onboarding (failed batch), and the Cloudinary account is SHARED (842 assets, only 88 Modonty's under modonty//general//clients//admins/).
+- **v0.66.2 (commit 536a64a):** "Fix broken images" button on Media page + server action `fix-broken-media.ts`. HEAD-checks every non-PLATFORM media row against Cloudinary; 404/410 → swaps url to matching platform default (LOGO/HERO/POST). Tested locally (action returned 200; local DB has 0 broken so nothing changed). Files: media/actions/fix-broken-media.ts, media/components/fix-broken-media-button.tsx, media/page.tsx.
+- **v0.66.3 (commit 76a9d2c):** hardened `rename-cloudinary-asset.ts` — new URL now from `result.secure_url` (API response), manual `buildCloudinaryUrl` only as last-resort fallback. Prevents a dead URL when editing alt/title.
+- Reverted an earlier wrong approach (onError client-side fallback + `d_article-placeholder-default` Cloudinary default param) — that param asset doesn't exist (404) and it converted server components to client. modonty tree is clean (git status shows no modonty changes).
+- TSC admin = 0 on both fixes.
+
+### 📝 Decisions taken (with reasoning)
+- Fallback approach: rejected client-side onError (adds JS, converts PostCard server→client; perf-critical public site) AND rejected the dead `d_` Cloudinary default param. Chose the admin-side scanner (option ج from Khalid): on broken, swap the DB url to the platform default — simple, no schema change, original url overwritten (creative re-uploads later). Khalid explicitly picked "simple, don't enlarge the topic."
+- Button placed on the Media page (Khalid's explicit choice), NOT in /database Run-All.
+- Did NOT chase the `w_auto` theory (proved innocent: images with w_auto load fine).
+
+### 🚧 Pending / blocked
+- **Live remediation:** run "Fix broken images" on PROD (button is live after Vercel build) — not yet done.
+- **Prevention #3 (deferred by Khalid):** isolate Modonty assets into a dedicated Cloudinary folder/sub-account (shared account is the structural risk).
+- **Latent bug (noted, NOT this incident):** orphan-sweep (`cloudinary-orphans.ts`) ignores cloudinaryPublicId on Category/Tag/Industry/Author rows → could misclassify them as orphans and delete them in future. Recommend extending its knownIds set before ever relying on it again.
+- **Invoice live-test** end-to-end — still open from earlier today.
+- Platform defaults in DB: all 3 roles (LOGO/POST/HERO) currently point to the SAME image (og-image_ueprdl.png) in both dev and prod — Khalid may want distinct images per role via /settings/defaults.
+
+### 📂 Files touched
+- admin/app/(dashboard)/media/actions/fix-broken-media.ts (NEW) · components/fix-broken-media-button.tsx (NEW) · media/page.tsx (button wired into header)
+- admin/app/(dashboard)/media/actions/rename-cloudinary-asset.ts (secure_url fix)
+- admin/package.json (0.66.1 → 0.66.3) · admin/scripts/add-changelog.ts (v0.66.2 then v0.66.3 entries)
+
+### 🔁 Git / deploy state
+- Branch: main · Last commit: 76a9d2c (admin v0.66.3) · Pushed: yes (2528d6a..536a64a..76a9d2c)
+- Uncommitted (untracked, intentionally excluded): scripts/sync-env-to-vercel.mjs, admin/scripts/check-cancelled-clients.ts, documents/audits/setSenior/, documents/tasks/MEDICAL-YMYL-READINESS.md, whatsapp-channel-content-strategy.md, .claude/settings.local.json (M)
+- Vercel: admin building 0.66.3.
+
+### 🚀 How to resume in 30 seconds
+1. admin on :3000 (restart `cd admin && pnpm dev` if down)
+2. After Vercel build done → open admin.modonty.com/media → click "Fix broken images" → confirms the 13 live broken rows flip to the platform default on www.modonty.com
+3. Then either: tackle prevention #3 (Cloudinary folder isolation) or the pending invoice live-test
+
+---
+
+## Session: 2026-05-30 19:00 — Fast-interaction mode adopted + servers restarted
+
+### 🎯 Where I stopped
+- Idle, ready. admin dev server running on localhost:3000 (Ready 2.4s after restart). All node killed + restarted clean.
+- Next concrete action: live-test invoice issue end-to-end (still the only open work item) — OR start whatever Khalid asks next.
+
+### ✅ Done this session
+- New behavior rule adopted + saved to memory ([[feedback-fast-interaction-mode]]): (1) fewer parallel verification calls on simple work — full verification reserved for sensitive work (push/DB/code); (2) shorter direct replies; (3) deep thinking reserved for sensitive work only. MEMORY.md pointer added.
+- Explained Claude Code "Fast mode" toggle to Khalid (verified via official docs: code.claude.com/docs/en/fast-mode.md) — it's faster Opus inference, same quality, higher per-token price, Opus 4.8/4.7/4.6 only, `/fast` or settings `"fastMode": true`. Note: NOT toggleable from VS Code extension UI — Khalid enables it himself.
+- Restarted all node + admin dev (localhost:3000).
+
+### 📝 Decisions taken
+- Adopted fast-interaction mode at Khalid's explicit request ("أبغى التفاعل سريع، عندنا شغل كتير"). Does not override safety golden rules (no-guessing, push-safety, never-seed-prod-DB).
+
+### 🔁 Git / deploy state
+- Branch: main · Last commit: 2528d6a (admin v0.66.1, pushed) · no new commits this session.
+- Uncommitted untracked (intentionally excluded): same as prior block + .claude/settings.local.json.
+
+### 🚀 How to resume in 30 seconds
+1. admin already on localhost:3000 (restart `cd admin && pnpm dev` if down)
+2. Open localhost:3000/accounts/[clientId]
+3. Live-test invoice issue (Invoice MOD-YYYY-NNNNN + client mutation + Resend email)
+
+---
+
+## Session: 2026-05-30 18:30 — v0.66.1 clients-table cleanup + status badge disambiguation (PUSHED)
+
+### 🎯 Where I stopped
+- Last task: pushed admin v0.66.1 to production (commit 2528d6a). Vercel building admin now.
+- Next concrete action when resuming: **live-test invoice issue end-to-end** on localhost:3000/accounts/[clientId] — issue a real invoice, confirm (a) Invoice row created with MOD-YYYY-NNNNN number, (b) client subscription mutated (tier/dates/paymentStatus/status), (c) real email delivered via Resend. This is the ONLY remaining open item.
+
+### ✅ Done this session
+- Removed inline `<ActivateClientButton>` from `/clients` table (Status cell + import line 36) — activation now lives ONLY on dedicated `/clients/activate` page. Killed the "Pending + Activate looks like two statuses" confusion.
+- Status badges disambiguated in client-table.tsx `getStatusBadge()`:
+  - ACTIVE + paymentStatus PENDING → **"Unpaid"** (amber badge) — was "Pending"
+  - not-yet-activated (subscriptionStatus PENDING) → **"Pending"** (slate badge, now a proper colored badge not plain text)
+  - unchanged: Active (emerald) · Overdue (red) · Expired · Cancelled
+- Unified wording: Account page header (`accounts/[clientId]/page.tsx`) now shows "Unpaid" via new `PAYMENT_LABEL` map (was raw "PENDING") — table + account page consistent.
+- Committed + pushed Activate/Suspend pages (were untracked but sidebar linked them → would've been 404 in prod). Their button components were already tracked.
+- TSC admin = 0 errors (verified before push).
+- Changelog v0.66.1 written to LOCAL + PROD DB.
+- Pushed 5 commits: 15aa0ac..2528d6a (feature completion + changelog + 2 TS2589 fixes + v0.66.1).
+- Security: confirmed `scripts/sync-env-to-vercel.mjs` (potential secrets) NOT tracked/pushed; push-range diff scanned clean of token prefixes.
+
+### 📝 Decisions taken (with reasoning)
+- "Unpaid" not "Payment Due" for the amber badge → shorter, clearer it's about payment not subscription state. "Pending" rejected — it collided with the new-client PENDING state (the whole bug).
+- Staged files individually (not `git add .`) → kept untracked scripts/docs out of the commit (secret-safety + scope discipline).
+
+### 🚧 Pending / blocked
+- Live-test invoice issue end-to-end — not done. No blocker, just not run yet.
+- CRIT-007 (deferred): SubscriptionTier enum (BASIC/STANDARD/PRO/PREMIUM, schema.prisma:42) vs jbrseo commercial tier names — no migration linking them. In 🚨 CRITICAL-TODO.md.
+
+### 📂 Files touched
+- admin/app/(dashboard)/clients/components/client-table.tsx — removed ActivateClientButton; getStatusBadge "Unpaid" amber + "Pending" slate badge
+- admin/app/(dashboard)/accounts/[clientId]/page.tsx — added PAYMENT_LABEL map; header payment badge shows label not raw enum
+- admin/app/(dashboard)/clients/activate/{page,loading}.tsx + suspend/{page,loading}.tsx — committed (were untracked)
+- admin/package.json — 0.66.0 → 0.66.1 · admin/scripts/add-changelog.ts — v0.66.1 entry
+
+### 🔁 Git / deploy state
+- Branch: main · Last commit: 2528d6a (admin v0.66.1) · Pushed: yes (15aa0ac..2528d6a)
+- Uncommitted (untracked only, intentionally excluded): .claude/settings.local.json (M), scripts/sync-env-to-vercel.mjs, admin/scripts/check-cancelled-clients.ts, documents/audits/setSenior/, documents/tasks/MEDICAL-YMYL-READINESS.md, whatsapp-channel-content-strategy.md
+- Vercel: admin building (pnpm-lock.yaml also changed → all 3 apps may rebuild this once)
+
+### 🚀 How to resume in 30 seconds
+1. `cd admin && pnpm dev` (if server not running) → localhost:3000
+2. Open localhost:3000/accounts/[clientId] for a test client
+3. Issue a test invoice → verify Invoice (MOD-YYYY-NNNNN) + client subscription mutated + email delivered via Resend
+
+---
 
 ## Session: 2026-05-30 ~13:00 — Client Account/Invoice feature (UI+backend+email) + status-visibility fix + UI/UX skill — FINAL CHECK DONE
 

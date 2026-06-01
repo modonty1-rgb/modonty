@@ -167,7 +167,7 @@ export function BasicInfoSection({
           name="phone"
           label="Phone"
           value={phone || ""}
-          onChange={(e) => form.setValue("phone", e.target.value || null, { shouldValidate: true })}
+          onChange={(e) => form.setValue("phone", e.target.value || "", { shouldValidate: true })}
           error={errors.phone?.message}
           placeholder="+966 11 123 4567"
           hint={messages.hints.client.phone}
@@ -202,7 +202,7 @@ export function BasicInfoSection({
           label="Industry"
           name="industryId"
           value={industryId || undefined}
-          onValueChange={(value) => form.setValue("industryId", value ? value : null, { shouldValidate: true })}
+          onValueChange={(value) => form.setValue("industryId", value ? value : "", { shouldValidate: true })}
           error={errors.industryId?.message}
           placeholder="Select industry"
           hint="Used in SEO, client listing pages, and industry directory."

@@ -9,6 +9,7 @@ import type { SessionCleanerStats } from "@/app/(dashboard)/database/actions/ses
 import type { StaleVersionsStats } from "@/app/(dashboard)/database/actions/stale-versions";
 import type { DuplicateSlugStats } from "@/app/(dashboard)/database/actions/duplicate-slugs";
 import type { LegalFormSanitizerStats } from "@/app/(dashboard)/database/actions/legalform-sanitizer";
+import type { CanonicalSanitizerStats } from "@/app/(dashboard)/database/actions/canonical-sanitizer";
 import type { SiteUrlDriftStatus } from "@/lib/seo/site-url";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -21,6 +22,7 @@ interface Props {
   staleVersions: StaleVersionsStats;
   duplicateSlugs: DuplicateSlugStats;
   legalFormSanitizer: LegalFormSanitizerStats;
+  canonicalSanitizer: CanonicalSanitizerStats;
   siteUrlDrift: SiteUrlDriftStatus;
 }
 
@@ -32,6 +34,7 @@ function computeToolStatuses(props: Props) {
     ttlIndex: props.indexHealth.filter((i) => !i.exists).length > 0,
     slugIntegrity: props.slugIssues.reduce((s, i) => s + i.emptySlugs, 0) > 0,
     legalForm: props.legalFormSanitizer.mappableCount > 0,
+    canonical: props.canonicalSanitizer.issueCount > 0,
     brokenRefs: props.brokenRefs.total > 0,
   };
   const attention = Object.values(statuses).filter(Boolean).length;
@@ -46,6 +49,7 @@ function computeAutoFixableCount(props: Props) {
   if (props.staleVersions.stale30Days > 0) n++;
   if (props.indexHealth.some((i) => !i.exists)) n++;
   if (props.legalFormSanitizer.mappableCount > 0) n++;
+  if (props.canonicalSanitizer.issueCount > 0) n++;
   return n;
 }
 
@@ -82,6 +86,7 @@ export function MaintenancePageShell(props: Props) {
         sessionStats={props.sessionStats}
         duplicateSlugs={props.duplicateSlugs}
         legalFormSanitizer={props.legalFormSanitizer}
+        canonicalSanitizer={props.canonicalSanitizer}
       />
     </div>
   );

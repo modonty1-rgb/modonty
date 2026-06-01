@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getClientById } from "../../actions/clients-actions";
 import { loadSiteUrl } from "@/lib/seo/site-url";
-import { ClientFormHeaderWrapper } from "../../components/client-form-header-wrapper";
 import { ClientSeoForm } from "../../components/client-seo-form";
 
 export default async function ClientSeoPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,11 +11,10 @@ export default async function ClientSeoPage({ params }: { params: Promise<{ id: 
     redirect("/clients");
   }
 
+  // No page title bar — the SEO readiness header inside the form is the page header.
   return (
     <div className="max-w-[1200px] mx-auto">
-      <ClientFormHeaderWrapper title={`${client.name} — SEO Setup`}>
-        <ClientSeoForm initialData={client} clientId={id} siteUrl={siteUrl} />
-      </ClientFormHeaderWrapper>
+      <ClientSeoForm initialData={client} clientId={id} siteUrl={siteUrl} />
     </div>
   );
 }

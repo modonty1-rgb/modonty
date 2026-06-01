@@ -352,6 +352,12 @@ export async function updateSEOFields(
         seoDescription: true,
         description: true,
         canonicalUrl: true,
+        gbpProfileUrl: true,
+        gbpPlaceId: true,
+        gbpAccountId: true,
+        gbpLocationId: true,
+        gbpCategory: true,
+        priceRange: true,
       },
     });
 
@@ -364,6 +370,12 @@ export async function updateSEOFields(
       seoDescription: data.seoDescription ?? null,
       description: data.description ?? null,
       canonicalUrl: data.canonicalUrl ?? null,
+      gbpProfileUrl: data.gbpProfileUrl ?? null,
+      gbpPlaceId: data.gbpPlaceId ?? null,
+      gbpAccountId: data.gbpAccountId ?? null,
+      gbpLocationId: data.gbpLocationId ?? null,
+      gbpCategory: data.gbpCategory ?? null,
+      priceRange: data.priceRange ?? null,
     };
 
     const updateData = buildGroupUpdateData("seo", client as Record<string, unknown>, newData);

@@ -1,4 +1,4 @@
-import type { ClientFormData } from "@/lib/types";
+import type { ClientFormData, MediaPreview } from "@/lib/types";
 import type { ClientWithRelations } from "@/lib/types";
 
 /**
@@ -54,6 +54,13 @@ export function mapInitialDataToFormData(
     isYmyl: false,
     ymylCategory: null,
     ymylData: null,
+    // Google Business Profile + Local SEO
+    gbpProfileUrl: "",
+    gbpPlaceId: "",
+    gbpAccountId: "",
+    gbpLocationId: "",
+    gbpCategory: "",
+    priceRange: "",
   };
 
   if (!initialData) {
@@ -71,6 +78,11 @@ export function mapInitialDataToFormData(
     // Media IDs
     logoMediaId: initialData.logoMediaId || null,
     heroImageMediaId: initialData.heroImageMediaId || null,
+    // Media snapshots for the live SEO preview (so it shows the REAL logo/hero
+    // instead of falsely reporting "Logo missing"). Hero doubles as the OG image.
+    logoMedia: (initialData.logoMedia as MediaPreview | null | undefined) ?? null,
+    heroImageMedia: (initialData.heroImageMedia as MediaPreview | null | undefined) ?? null,
+    ogImageMedia: (initialData.heroImageMedia as MediaPreview | null | undefined) ?? null,
 
     // Social profiles
     sameAs: initialData.sameAs || [],
@@ -128,6 +140,14 @@ export function mapInitialDataToFormData(
 
     // Relationships
     parentOrganizationId: initialData.parentOrganizationId || null,
+
+    // Google Business Profile + Local SEO
+    gbpProfileUrl: (initialData as { gbpProfileUrl?: string | null }).gbpProfileUrl || "",
+    gbpPlaceId: (initialData as { gbpPlaceId?: string | null }).gbpPlaceId || "",
+    gbpAccountId: (initialData as { gbpAccountId?: string | null }).gbpAccountId || "",
+    gbpLocationId: (initialData as { gbpLocationId?: string | null }).gbpLocationId || "",
+    gbpCategory: (initialData as { gbpCategory?: string | null }).gbpCategory || "",
+    priceRange: (initialData as { priceRange?: string | null }).priceRange || "",
 
     // YMYL verification
     isYmyl: (initialData as { isYmyl?: boolean }).isYmyl ?? false,

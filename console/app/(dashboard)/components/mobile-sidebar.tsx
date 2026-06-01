@@ -17,6 +17,7 @@ import {
   HelpCircle,
   Quote,
   Activity,
+  ShieldCheck,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ interface MobileSidebarProps {
   leadsCount: number;
   pendingFaqsCount: number;
   pendingClientCommentsCount: number;
+  isYmyl: boolean;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -47,6 +49,7 @@ export function MobileSidebar({
   leadsCount,
   pendingFaqsCount,
   pendingClientCommentsCount,
+  isYmyl,
   isOpen,
   onOpenChange,
 }: MobileSidebarProps) {
@@ -82,6 +85,15 @@ export function MobileSidebar({
             label={ar.nav.profile}
             isCollapsed={false}
           />
+          {isYmyl && (
+            <SidebarNavItem
+              href="/dashboard/verification"
+              icon={ShieldCheck}
+              label={ar.nav.verification}
+              badgeLabel="مطلوب"
+              isCollapsed={false}
+            />
+          )}
           <SidebarNavItem
             href="/dashboard/seo"
             icon={Sparkles}

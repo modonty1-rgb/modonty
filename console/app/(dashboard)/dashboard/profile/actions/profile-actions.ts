@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 import { auth } from "@/lib/auth";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
+import { regenerateClientSeo } from "./regenerate-client-seo";
+import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 
 function str(v: string | undefined | null) {
   return v === undefined ? undefined : (v?.trim() || null);
@@ -17,6 +19,13 @@ function dt(v: string | undefined | null) {
   const d = new Date(v);
   return isNaN(d.getTime()) ? undefined : d;
 }
+
+type OpeningHoursSpec = {
+  dayOfWeek: string;
+  opens: string;
+  closes: string;
+  closed: boolean;
+};
 
 type ProfileUpdate = {
   name?: string;
@@ -47,6 +56,7 @@ type ProfileUpdate = {
   businessBrief?: string | null;
   sameAs?: string[];
   canonicalUrl?: string | null;
+  openingHoursSpecification?: OpeningHoursSpec[] | null;
   technicalProfile?: Record<string, unknown> | null;
   seoGoals?: Record<string, unknown> | null;
   seoMetrics?: Record<string, unknown> | null;
@@ -89,14 +99,17 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
     if (data.commercialRegistrationNumber !== undefined) u.commercialRegistrationNumber = str(data.commercialRegistrationNumber);
     if (data.vatID !== undefined) u.vatID = str(data.vatID);
     if (data.taxID !== undefined) u.taxID = str(data.taxID);
-    if (data.legalForm !== undefined) u.legalForm = str(data.legalForm);
+    // Normalize to the canonical enum (shared dataLayer) so the DB never stores a
+    // free-text value the admin's strict enum would later reject and block saves.
+    if (data.legalForm !== undefined) u.legalForm = normalizeLegalForm(data.legalForm);
     if (data.industryId !== undefined) u.industryId = str(data.industryId) || null;
     if (data.targetAudience !== undefined) u.targetAudience = str(data.targetAudience);
-    if (data.organizationType !== undefined) u.organizationType = str(data.organizationType);
+    if (data.organizationType !== undefined) u.organizationType = normalizeOrganizationType(data.organizationType);
     if (data.foundingDate !== undefined) u.foundingDate = dt(data.foundingDate) ?? null;
     if (data.businessBrief !== undefined) u.businessBrief = str(data.businessBrief);
     if (data.sameAs !== undefined) u.sameAs = arr(data.sameAs) ?? [];
     if (data.canonicalUrl !== undefined) u.canonicalUrl = str(data.canonicalUrl);
+    if (data.openingHoursSpecification !== undefined) u.openingHoursSpecification = data.openingHoursSpecification;
 
     if (data.technicalProfile !== undefined) u.technicalProfile = data.technicalProfile;
     if (data.seoGoals !== undefined) u.seoGoals = data.seoGoals;
@@ -185,6 +198,15 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
       where: { id: clientId },
       data: u,
     });
+
+    // Profile saved. Regenerate cached SEO (metadata + JSON-LD) off the back of
+    // the save so the public client page stays in sync — but a regen failure must
+    // NEVER fail the save (which already succeeded).
+    try {
+      await regenerateClientSeo(clientId);
+    } catch {
+      // swallow — save already succeeded; SEO regen is best-effort
+    }
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/profile");

@@ -9,6 +9,64 @@
 
 ---
 
+## 🔴 Active (added 2026-06-01)
+
+### ✅ Client SEO score — VERIFIED END-TO-END to 99% (admin = console parity)
+Live test 2026-06-01 (devnadish), every step via Playwright + verified on BOTH surfaces:
+- empty client = **55%** (honest baseline; the old fake scorer showed 70%)
+- 26 text fields (console profile) + hreflang-from-Settings fix → **65%** (11/15 green)
+- **client activated** (PENDING → ACTIVE) so the media library unlocks (admin uploaded logo + hero via
+  `/media/upload` → picked them in the logo/hero modals → Update Client) → **99%** 🎉
+- **admin SEO page = console profile = 99%**, 14/15 checks green on BOTH. صحّة البنية (structural validity)
+  turned ✓ automatically once the logo existed + a full save regenerated the JSON-LD.
+- ONLY remaining 1%: ○ **Local SEO** (`addressLatitude`/`addressLongitude` + `priceRange` + `gbpPlaceId`) —
+  optional local-business fields on the admin SEO page. A client without a physical storefront legitimately
+  caps at 99%; that's correct, not a bug.
+- **CONCLUSION:** the scorer is honest + accurate + identical across admin/console. A fully-onboarded client
+  (text + logo + hero) reaches 99% automatically. 100% needs the 3 Local SEO fields.
+- Earlier TODO drafts guessed 78→88→97% BEFORE verifying — those were wrong. Real verified path:
+  55 → 65 (text) → 99 (logo+hero). Recorded straight from the live UI.
+- **Image upload prerequisite (important for tomorrow's 10-client onboarding):** the client must be
+  **ACTIVE** before its media library accepts uploads — a PENDING client shows "No media available" and
+  can't get a logo. So the onboarding order is: create → **activate** → upload logo+hero → Update Client.
+
+### ✅ DONE this session (2026-06-01 cont.) — three small items closed
+- ✅ **Activation email** — `admin/.../actions/activate-client.ts` `activateClientAction` now calls
+  `sendClientWelcome(clientId)` (best-effort try/catch) after activating, so a PENDING→ACTIVE client gets
+  their login creds + console URL by email. Toast reports whether the mail went out. TSC admin=0.
+- ✅ **Twitter orphan cleanup** — removed the 4 dead Twitter fields (card/title/site/description) from the
+  edit form: `form-sections/seo-section.tsx` (UI + hints + error aggregate), `client-form-schema.ts`
+  (zod fields + twitterSiteSchema + twitterCardSchema), `hooks/use-client-form.ts` (submitData),
+  `generate-client-test-data.ts` (test seed). They were never Client columns (generated from Settings +
+  hero image). TSC admin=0.
+  - NOTE (low-priority leftover): display-only tabs still reference `client.twitter*` —
+    `[id]/components/tabs/{details-tab,seo-tab,media-social-tab}.tsx` + `client-seo-config/*` +
+    `build-client-seo-data.ts` + `client-field-mapping.ts` (docs). All render behind `client.x && (...)`
+    so they show nothing (DB value is always null). Harmless; clean up if/when touching those tabs.
+- ✅ **`hasMap` schema.org warning** — FIXED in `dataLayer/lib/seo/generate-organization-jsonld.ts`:
+  Place-only props (geo/hasMap/openingHours/priceRange) now emitted ONLY for LocalBusiness sub-types
+  (new `isLocalBusinessType`). Generic `Organization` no longer triggers the UNKNOWN_FIELD warning; GBP
+  link still rides in `sameAs`. PROVEN by a direct generator unit-test (Organization→omitted,
+  Dentist→present). ⏳ awaiting one VISUAL confirm on the live page after servers restart + re-regen.
+
+### ✅ Already correct (TODO was stale) — logo/hero DO regenerate SEO
+- `updateClientLogo` + `updateClientHero` already call `generateClientSEO(clientId)` (line 35 of each).
+  The earlier TODO claim that they don't was wrong — that's why "صحّة البنية" flipped ✓ automatically when
+  the logo was uploaded in the live test. No action needed.
+
+### 🐛 UX GAP (open) — logo/hero upload opens a new tab instead of an in-modal uploader
+The logo modal's MediaPicker shows existing media + "Select Media", but a fresh client with NO media has only
+an "Upload" button that navigates to `/media/upload?clientId=...` in a NEW TAB. So onboarding a new client is:
+new tab → upload → come back → reopen modal → Select Media → Save. Heavy for the most common step.
+- [ ] Decide: add an inline drag-drop uploader inside the logo/hero modal (best UX), OR keep the two-step
+  flow (works, just slow). Low priority — the flow works for tomorrow's 10-client onboarding.
+
+### Earlier session fixes (kept for history)
+- ✅ FIXED + LIVE-VERIFIED this session: console `regenerate-client-seo.ts` hreflang now falls back to Settings (`defaultAlternateLanguages` → `defaultHreflang` → `inLanguage` → `"ar-SA"`). Was wiping admin-generated hreflang on every console save → score dropped each time. After fix + console save: hreflang ✓ on BOTH surfaces, score 57→65%, admin=console=65% parity. TSC console = 0.
+- ✅ DONE + LIVE-VERIFIED this session: admin `/clients/[id]/edit` header now shows the UNIFIED SEO chip ("SEO 65%") via `computeClientSeoScore(clientToSeoInput(initialData))` — was reading the OLD `createClientSEOGroupScores` system (different number from every other surface). Removed dead code (SEODoctor header node + buildClientSeoData memo + group-score config + getSEOSettings fetch + seoFieldsKey + clientFormSections/getVisibleFieldCount imports). Media widget redesigned: status dots (logo missing = amber "مطلوب لظهور المنظمة في Google"; present = green) + clearer Arabic labels + "يغذّيان جاهزية SEO مباشرةً" hint. TSC admin = 0.
+
+---
+
 ## 🎯 ملخّص القرارات النهائية
 
 ### العميل (Client)

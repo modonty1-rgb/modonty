@@ -1,84 +1,74 @@
 "use server";
 
 import { db } from "@/lib/db";
+import {
+  normalizeLegalForm,
+  normalizeOrganizationType,
+} from "@modonty/database/lib/constants/client-classification";
 
 /**
- * Legal Form Sanitizer
+ * Classification sanitizer (legalForm + organizationType).
  *
- * Reason: `Client.legalForm` must be one of 7 canonical English enum values
- * (enforced by the form's Zod schema). Legacy/free-text Arabic values (e.g.
- * "شركة شخص واحد") block ALL form saves on the affected client — including
- * unrelated fields like password — because RHF validates the whole schema.
+ * Reason: legacy/free-text Arabic values (e.g. "مؤسسة فردية") block ALL form saves
+ * on the affected client — admin's Zod enum validates the whole schema. The console
+ * now writes canonical values (dropdown + normalize), but old rows still need fixing.
  *
- * This tool: (1) detects non-canonical values, (2) maps Arabic → English via
- * a 10-rule table (longest-match first), (3) sanitizes in bulk on demand.
+ * Single source of truth: the canonical lists + mapping live in
+ * `@modonty/database/lib/constants/client-classification`. This tool only scans the
+ * DB and applies `normalize*()` — no mapping table is duplicated here.
  */
 
-const VALID_ENUM = new Set([
-  "LLC",
-  "JSC",
-  "Sole Proprietorship",
-  "Partnership",
-  "Limited Partnership",
-  "Simplified Joint Stock Company",
-  "One-Person Company",
-]);
+type ClassificationField = "legalForm" | "organizationType";
 
-const MAPPING: Array<{ pattern: RegExp; to: string }> = [
-  { pattern: /شركة\s*الشخص\s*الواحد/i, to: "One-Person Company" },
-  { pattern: /شركة\s*شخص\s*واحد/i, to: "One-Person Company" },
-  { pattern: /شركة\s*مساهمة\s*مبسطة/i, to: "Simplified Joint Stock Company" },
-  { pattern: /شركة\s*مساهمة/i, to: "JSC" },
-  { pattern: /شركة\s*توصية\s*بسيطة/i, to: "Limited Partnership" },
-  { pattern: /شركة\s*تضامن/i, to: "Partnership" },
-  { pattern: /مؤسسة\s*فردية/i, to: "Sole Proprietorship" },
-  { pattern: /شركة\s*ذات\s*مسؤولية\s*محدودة/i, to: "LLC" },
-  { pattern: /ش\.?\s*ذ\.?\s*م\.?\s*م/i, to: "LLC" },
-  { pattern: /شركة\s*ذم\.?م/i, to: "LLC" },
-];
-
-function mapValue(raw: string): string | null {
-  const v = raw.trim();
-  if (!v) return null;
-  if (VALID_ENUM.has(v)) return v;
-  for (const rule of MAPPING) {
-    if (rule.pattern.test(v)) return rule.to;
-  }
-  return null;
-}
-
-export interface LegalFormIssue {
+export interface ClassificationIssue {
   id: string;
   name: string | null;
   before: string;
   after: string | null; // null = no mapping rule matched (manual fix needed)
 }
 
-export interface LegalFormSanitizerStats {
+export interface SanitizerStats {
   totalClients: number;
   canonicalOrNull: number;
   mappableCount: number;
   unmappedCount: number;
-  mappable: LegalFormIssue[];
-  unmapped: LegalFormIssue[];
+  mappable: ClassificationIssue[];
+  unmapped: ClassificationIssue[];
 }
 
-export async function getLegalFormSanitizerStats(): Promise<LegalFormSanitizerStats> {
-  const clients = await db.client.findMany({
-    select: { id: true, name: true, legalForm: true },
-  });
+export interface SanitizerResult {
+  attempted: number;
+  successful: number;
+  failed: number;
+  errors: Array<{ id: string; error: string }>;
+}
 
-  const mappable: LegalFormIssue[] = [];
-  const unmapped: LegalFormIssue[] = [];
+function normalizerFor(field: ClassificationField) {
+  return field === "legalForm" ? normalizeLegalForm : normalizeOrganizationType;
+}
+
+async function scan(field: ClassificationField): Promise<SanitizerStats> {
+  const clients = await db.client.findMany({
+    select: { id: true, name: true, legalForm: true, organizationType: true },
+  });
+  const normalize = normalizerFor(field);
+
+  const mappable: ClassificationIssue[] = [];
+  const unmapped: ClassificationIssue[] = [];
   let canonicalOrNull = 0;
 
   for (const c of clients) {
-    if (!c.legalForm || VALID_ENUM.has(c.legalForm)) {
+    const current = c[field];
+    if (!current) {
       canonicalOrNull++;
       continue;
     }
-    const mapped = mapValue(c.legalForm);
-    const issue: LegalFormIssue = { id: c.id, name: c.name, before: c.legalForm, after: mapped };
+    const mapped = normalize(current);
+    if (mapped === current) {
+      canonicalOrNull++; // already canonical
+      continue;
+    }
+    const issue: ClassificationIssue = { id: c.id, name: c.name, before: current, after: mapped };
     if (mapped) mappable.push(issue);
     else unmapped.push(issue);
   }
@@ -93,26 +83,17 @@ export async function getLegalFormSanitizerStats(): Promise<LegalFormSanitizerSt
   };
 }
 
-export interface SanitizerResult {
-  attempted: number;
-  successful: number;
-  failed: number;
-  errors: Array<{ id: string; error: string }>;
-}
-
-export async function sanitizeAllLegalForms(): Promise<SanitizerResult> {
-  const stats = await getLegalFormSanitizerStats();
-  const result: SanitizerResult = {
-    attempted: stats.mappable.length,
-    successful: 0,
-    failed: 0,
-    errors: [],
-  };
+async function sanitize(field: ClassificationField): Promise<SanitizerResult> {
+  const stats = await scan(field);
+  const result: SanitizerResult = { attempted: stats.mappable.length, successful: 0, failed: 0, errors: [] };
 
   for (const issue of stats.mappable) {
     if (!issue.after) continue;
     try {
-      await db.client.update({ where: { id: issue.id }, data: { legalForm: issue.after } });
+      await db.client.update({
+        where: { id: issue.id },
+        data: field === "legalForm" ? { legalForm: issue.after } : { organizationType: issue.after },
+      });
       result.successful++;
     } catch (e) {
       result.failed++;
@@ -121,4 +102,23 @@ export async function sanitizeAllLegalForms(): Promise<SanitizerResult> {
   }
 
   return result;
+}
+
+// ─── legalForm (legacy export names preserved for existing UI) ───────────────
+export type LegalFormIssue = ClassificationIssue;
+export type LegalFormSanitizerStats = SanitizerStats;
+
+export async function getLegalFormSanitizerStats(): Promise<SanitizerStats> {
+  return scan("legalForm");
+}
+export async function sanitizeAllLegalForms(): Promise<SanitizerResult> {
+  return sanitize("legalForm");
+}
+
+// ─── organizationType ────────────────────────────────────────────────────────
+export async function getOrganizationTypeSanitizerStats(): Promise<SanitizerStats> {
+  return scan("organizationType");
+}
+export async function sanitizeAllOrganizationTypes(): Promise<SanitizerResult> {
+  return sanitize("organizationType");
 }

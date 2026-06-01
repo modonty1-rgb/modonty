@@ -4,10 +4,12 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
+import { sendClientWelcome } from "./clients-actions/send-client-welcome";
 
 interface ActivateResult {
   ok: boolean;
   error?: string;
+  emailSent?: boolean;
 }
 
 export async function activateClientAction(clientId: string): Promise<ActivateResult> {
@@ -36,10 +38,21 @@ export async function activateClientAction(clientId: string): Promise<ActivateRe
       },
     });
 
+    // Email the client their login credentials + console URL now that the account
+    // is active. Best-effort: a mail failure must NEVER fail the activation
+    // (which already succeeded in the DB).
+    let emailSent = false;
+    try {
+      const r = await sendClientWelcome(clientId);
+      emailSent = r.success;
+    } catch {
+      // swallow — activation already persisted; email is best-effort
+    }
+
     revalidatePath("/clients");
     await revalidateModontyTag("clients");
 
-    return { ok: true };
+    return { ok: true, emailSent };
   } catch (error) {
     const message = error instanceof Error ? error.message : "فشل تفعيل العميل";
     return { ok: false, error: message };

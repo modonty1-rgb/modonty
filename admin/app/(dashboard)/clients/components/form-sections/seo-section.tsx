@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
 import { FormInput, FormTextarea, FormSelect, FormNativeSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
+import { ORGANIZATION_TYPES, type OrganizationType } from "@modonty/database/lib/constants/client-classification";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
@@ -45,14 +46,6 @@ export function SEOSection({
     ? `وصف SEO — الطول الأمثل ${seoSettings.seoDescriptionMin}-${seoSettings.seoDescriptionMax} حرف`
     : "وصف SEO — الطول الأمثل 120-160 حرف";
 
-  const twitterTitleHint = seoSettings
-    ? `عنوان X/Twitter — حد أقصى ${seoSettings.twitterTitleMax} حرف`
-    : "عنوان X/Twitter — حد أقصى 70 حرف";
-
-  const twitterDescriptionHint = seoSettings
-    ? `وصف X/Twitter — حد أقصى ${seoSettings.twitterDescriptionMax} حرف`
-    : "وصف X/Twitter — حد أقصى 200 حرف";
-
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -77,11 +70,7 @@ export function SEOSection({
     errors.seoTitle ||
       errors.seoDescription ||
       errors.canonicalUrl ||
-      errors.metaRobots ||
-      errors.twitterCard ||
-      errors.twitterTitle ||
-      errors.twitterDescription ||
-      errors.twitterSite,
+      errors.metaRobots,
   );
   const hasSchemaContentErrors = Boolean(
     errors.description || errors.keywords || errors.knowsLanguage
@@ -220,102 +209,30 @@ export function SEOSection({
               placeholder="https://example.com/page"
               hint={messages.hints.client.canonical}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormSelect
-                label="Meta Robots"
-                name="metaRobots"
-                value={watch("metaRobots") || undefined}
-                onValueChange={(value) =>
-                  setValue(
-                    "metaRobots",
-                    value
-                      ? (value as "index, follow" | "noindex, follow" | "index, nofollow" | "noindex, nofollow")
-                      : null,
-                    { shouldValidate: true }
-                  )
-                }
-                error={errors.metaRobots?.message}
-                hint={messages.hints.client.robots}
-                placeholder="Select robots directive"
-              >
-                <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
-                <SelectItem value="noindex, follow">noindex, follow (Don't index, but follow links)</SelectItem>
-                <SelectItem value="index, nofollow">index, nofollow (Index, but don't follow links)</SelectItem>
-                <SelectItem value="noindex, nofollow">noindex, nofollow (Don't index or follow)</SelectItem>
-              </FormSelect>
-              <FormSelect
-                label="Twitter Card Type"
-                name="twitterCard"
-                value={watch("twitterCard") || "auto"}
-                onValueChange={(value) => setValue("twitterCard", value === "auto" ? null : (value as "summary" | "summary_large_image"), { shouldValidate: true })}
-                error={errors.twitterCard?.message}
-                hint={messages.hints.client.twitterCard}
-              >
-                <SelectItem value="auto">Auto-generate from OG tags</SelectItem>
-                <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
-                <SelectItem value="summary">Summary</SelectItem>
-              </FormSelect>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <FormInput
-                  label="Twitter Title"
-                  name="twitterTitle"
-                  value={watch("twitterTitle") || ""}
-                  onChange={(e) =>
-                    setValue("twitterTitle", e.target.value || null, { shouldValidate: true })
-                  }
-                  error={errors.twitterTitle?.message}
-                  hint={twitterTitleHint}
-                />
-                {seoSettings && (
-                  <div className="mt-1">
-                    <CharacterCounter
-                      current={(watch("twitterTitle") || "").length}
-                      max={seoSettings.twitterTitleMax}
-                      restrict={seoSettings.twitterTitleRestrict}
-                      className="ml-1"
-                      aboveMaxHint="Exceeds Twitter Cards limit (70 chars). May be truncated in posts (X Developer Docs)."
-                    />
-                  </div>
-                )}
-              </div>
-              <FormInput
-                label="Twitter Site"
-                name="twitterSite"
-                value={watch("twitterSite") || ""}
-                onChange={(e) =>
-                  setValue("twitterSite", e.target.value || null, { shouldValidate: true })
-                }
-                error={errors.twitterSite?.message}
-                placeholder="@username"
-                hint={messages.hints.client.twitterHandle}
-              />
-            </div>
-            <div>
-              <FormTextarea
-                label="Twitter Description"
-                name="twitterDescription"
-                value={watch("twitterDescription") || ""}
-                onChange={(e) =>
-                  setValue("twitterDescription", e.target.value || null, { shouldValidate: true })
-                }
-                rows={2}
-                error={errors.twitterDescription?.message}
-                hint={twitterDescriptionHint}
-              />
-              {seoSettings && (
-                <div className="mt-1">
-                  <CharacterCounter
-                    current={(watch("twitterDescription") || "").length}
-                    max={seoSettings.twitterDescriptionMax}
-                    restrict={seoSettings.twitterDescriptionRestrict}
-                    className="ml-1"
-                    aboveMaxHint="Exceeds Twitter Cards limit (200 chars). May be truncated in posts (X Developer Docs)."
-                  />
-                </div>
-              )}
-            </div>
+            {/* Twitter card/title/site/description are NOT Client columns — they're
+                generated from Settings + the client's hero image. No per-client input. */}
+            <FormSelect
+              label="Meta Robots"
+              name="metaRobots"
+              value={watch("metaRobots") || undefined}
+              onValueChange={(value) =>
+                setValue(
+                  "metaRobots",
+                  value
+                    ? (value as "index, follow" | "noindex, follow" | "index, nofollow" | "noindex, nofollow")
+                    : null,
+                  { shouldValidate: true }
+                )
+              }
+              error={errors.metaRobots?.message}
+              hint={messages.hints.client.robots}
+              placeholder="Select robots directive"
+            >
+              <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
+              <SelectItem value="noindex, follow">noindex, follow (Don't index, but follow links)</SelectItem>
+              <SelectItem value="index, nofollow">index, nofollow (Index, but don't follow links)</SelectItem>
+              <SelectItem value="noindex, nofollow">noindex, nofollow (Don't index or follow)</SelectItem>
+            </FormSelect>
           </div>
         )}
       </div>
@@ -485,17 +402,7 @@ export function SEOSection({
               onValueChange={(value) =>
                 setValue(
                   "organizationType",
-                  value
-                    ? (value as
-                        | "Organization"
-                        | "Corporation"
-                        | "LocalBusiness"
-                        | "NonProfit"
-                        | "EducationalOrganization"
-                        | "GovernmentOrganization"
-                        | "SportsOrganization"
-                        | "NGO")
-                    : null,
+                  value ? (value as OrganizationType) : null,
                   { shouldValidate: true }
                 )
               }
@@ -503,14 +410,11 @@ export function SEOSection({
               hint={messages.hints.client.organizationType}
               placeholder="Select Organization Type"
             >
-              <SelectItem value="Organization">Organization</SelectItem>
-              <SelectItem value="Corporation">Corporation</SelectItem>
-              <SelectItem value="LocalBusiness">LocalBusiness</SelectItem>
-              <SelectItem value="NonProfit">NonProfit</SelectItem>
-              <SelectItem value="EducationalOrganization">EducationalOrganization</SelectItem>
-              <SelectItem value="GovernmentOrganization">GovernmentOrganization</SelectItem>
-              <SelectItem value="SportsOrganization">SportsOrganization</SelectItem>
-              <SelectItem value="NGO">NGO</SelectItem>
+              {ORGANIZATION_TYPES.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.value} — {o.ar}
+                </SelectItem>
+              ))}
             </FormSelect>
           </div>
         )}

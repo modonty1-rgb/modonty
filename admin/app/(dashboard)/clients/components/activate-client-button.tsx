@@ -33,7 +33,13 @@ export function ActivateClientButton({ clientId, clientName }: Props) {
     startTransition(async () => {
       const res = await activateClientAction(clientId);
       if (res.ok) {
-        toast({ title: "تم تفعيل العميل", description: clientName });
+        toast({
+          title: "تم تفعيل العميل",
+          description:
+            "emailSent" in res && res.emailSent
+              ? `${clientName} — أُرسلت بيانات الدخول للعميل عبر الإيميل.`
+              : `${clientName} — نشط الآن. (تعذّر إرسال إيميل الدخول — أرسله يدوياً.)`,
+        });
         setOpen(false);
         router.refresh();
       } else {

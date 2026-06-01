@@ -80,11 +80,23 @@ export function mapFormDataToClientData(data: ClientFormData) {
     // Relationships
     parentOrganizationId: data.parentOrganizationId || null,
 
-    // Twitter Cards
-    twitterCard: data.twitterCard || null,
-    twitterTitle: data.twitterTitle || null,
-    twitterDescription: data.twitterDescription || null,
-    twitterSite: data.twitterSite || null,
+    // YMYL verification (admin-controlled classification)
+    isYmyl: data.isYmyl ?? false,
+    ymylCategory: data.ymylCategory ?? null,
+    ymylData: data.ymylData ?? null,
+
+    // (Twitter card/site/title/description are NOT Client columns — they live in
+    // nextjsMetadata, generated from Settings + the client's hero image. No mapping.)
+
+    // Google Business Profile + Local SEO (feed the JSON-LD generator:
+    // gbpPlaceId → Maps Place-ID link, priceRange, opening hours)
+    gbpProfileUrl: data.gbpProfileUrl || null,
+    gbpPlaceId: data.gbpPlaceId || null,
+    gbpAccountId: data.gbpAccountId || null,
+    gbpLocationId: data.gbpLocationId || null,
+    gbpCategory: data.gbpCategory || null,
+    priceRange: data.priceRange || null,
+    openingHoursSpecification: data.openingHoursSpecification || null,
 
     // Subscription Management
     subscriptionTier: data.subscriptionTier || null,

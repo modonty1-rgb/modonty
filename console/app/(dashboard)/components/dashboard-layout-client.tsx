@@ -18,6 +18,7 @@ interface DashboardLayoutClientProps {
   pendingSupportCount: number;
   pendingFaqsCount: number;
   pendingClientCommentsCount: number;
+  isYmyl: boolean;
   children: React.ReactNode;
 }
 
@@ -32,6 +33,7 @@ export function DashboardLayoutClient({
   pendingSupportCount,
   pendingFaqsCount,
   pendingClientCommentsCount,
+  isYmyl,
   children,
 }: DashboardLayoutClientProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -48,6 +50,7 @@ export function DashboardLayoutClient({
         leadsCount={leadsCount}
         pendingFaqsCount={pendingFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
+        isYmyl={isYmyl}
         isCollapsed={isSidebarCollapsed}
         onCollapsedChange={setIsSidebarCollapsed}
       />
@@ -59,6 +62,7 @@ export function DashboardLayoutClient({
         leadsCount={leadsCount}
         pendingFaqsCount={pendingFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
+        isYmyl={isYmyl}
         isOpen={isMobileOpen}
         onOpenChange={setIsMobileOpen}
       />

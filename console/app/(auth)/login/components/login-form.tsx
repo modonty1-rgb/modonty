@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Lock } from "lucide-react";
+import { LogIn, Lock, Loader2 } from "lucide-react";
 
 type LoginFormVariant = "default" | "inline";
 
@@ -131,9 +131,14 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         type="submit"
         disabled={loading}
         size="lg"
+        aria-busy={loading}
         className="w-full transition-colors hover:bg-primary/90"
       >
-        <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+        {loading ? (
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+        ) : (
+          <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+        )}
         <span>{loading ? ar.login.signingIn : ar.login.signIn}</span>
       </Button>
     </form>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Create Client — Restructure Mockup v1</title>
+<style>
+  :root{
+    --bg:#0a0e14; --card:#111722; --card2:#0d131c; --border:#1e2738;
+    --border2:#2a3650; --text:#e6edf6; --muted:#8b97ab; --muted2:#5f6b7e;
+    --primary:#3b82f6; --primary-soft:rgba(59,130,246,.12);
+    --emerald:#10b981; --emerald-soft:rgba(16,185,129,.12);
+    --amber:#f59e0b; --amber-soft:rgba(245,158,11,.12);
+    --radius:12px; --font:"Tajawal","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;padding:28px}
+  .wrap{max-width:1040px;margin:0 auto}
+
+  /* Header */
+  .pagehead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:6px}
+  .pagehead h1{font-size:22px;font-weight:700}
+  .pagehead .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .btn-primary{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(59,130,246,.3)}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:10px;padding:10px 18px;font-family:var(--font);font-size:14px;cursor:pointer}
+
+  /* Progress strip (focal point) */
+  .steps{display:flex;gap:8px;margin:18px 0 22px}
+  .step{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+  .step .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--border);color:var(--muted);flex-shrink:0}
+  .step.active{border-color:var(--primary);background:linear-gradient(180deg,var(--primary-soft),transparent)}
+  .step.active .n{background:var(--primary);color:#fff}
+  .step .lbl{font-size:12.5px;font-weight:600}
+  .step .hint{font-size:10.5px;color:var(--muted2)}
+
+  /* Card */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+  .card-head{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid var(--border)}
+  .card-head .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+  .ic.blue{background:var(--primary-soft);color:#7eb0ff}
+  .ic.green{background:var(--emerald-soft);color:#43d6a3}
+  .ic.amber{background:var(--amber-soft);color:#f5b94b}
+  .ic.violet{background:rgba(139,92,246,.14);color:#b79bff}
+  .card-head .t{font-size:14.5px;font-weight:700}
+  .card-head .d{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .card-head .pill{margin-inline-start:auto;font-family:ui-monospace,monospace;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--emerald-soft);color:#43d6a3;border:1px solid rgba(16,185,129,.25)}
+  .card-body{padding:18px}
+
+  /* Grid + fields */
+  .grid{display:grid;gap:14px 16px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  .field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:#cdd6e3}
+  .field label .req{color:#f87171;margin-inline-start:3px}
+  .field label .opt{color:var(--muted2);font-weight:400;font-size:10.5px;margin-inline-start:5px}
+  .field input,.field select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:9px;padding:11px 12px;color:var(--text);font-family:var(--font);font-size:13.5px}
+  .field input::placeholder{color:var(--muted2)}
+  .field .help{font-size:10.5px;color:var(--muted2);margin-top:5px}
+  .full{grid-column:1/-1}
+
+  /* Credentials highlight */
+  .cred{background:linear-gradient(180deg,rgba(59,130,246,.06),transparent);border:1px solid rgba(59,130,246,.22)}
+
+  /* Tier selector */
+  .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tier{position:relative;background:var(--card2);border:1.5px solid var(--border2);border-radius:11px;padding:14px 12px;cursor:pointer;text-align:center;transition:.15s}
+  .tier:hover{border-color:#3a4a68}
+  .tier.sel{border-color:var(--primary);background:linear-gradient(180deg,var(--primary-soft),transparent)}
+  .tier .nm{font-size:13px;font-weight:700}
+  .tier .pr{font-size:18px;font-weight:800;margin-top:6px}
+  .tier .pr small{font-size:11px;font-weight:500;color:var(--muted)}
+  .tier .meta{font-size:10.5px;color:var(--muted2);margin-top:4px}
+  .tier.sel::after{content:"✓";position:absolute;top:8px;inset-inline-end:8px;width:18px;height:18px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;display:grid;place-items:center}
+
+  /* advanced toggle */
+  .adv{margin-top:14px;border-top:1px dashed var(--border2);padding-top:14px}
+  .adv summary{cursor:pointer;font-size:12px;color:var(--muted);font-weight:600;list-style:none;display:flex;align-items:center;gap:6px}
+  .adv summary::-webkit-details-marker{display:none}
+  .adv summary::before{content:"▸";transition:.2s}
+  .adv[open] summary::before{transform:rotate(90deg)}
+  .adv .grid{margin-top:14px}
+
+  /* YMYL */
+  .ymyl-row{display:flex;align-items:flex-start;gap:12px}
+  .chk{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border2);background:var(--card2);flex-shrink:0;margin-top:1px;display:grid;place-items:center}
+  .chk.on{background:var(--primary);border-color:var(--primary);color:#fff;font-size:13px}
+  .ymyl-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+  .cat{background:var(--card2);border:1.5px solid var(--border2);border-radius:10px;padding:13px;cursor:pointer;display:flex;align-items:center;gap:10px}
+  .cat.sel{border-color:#b79bff;background:rgba(139,92,246,.1)}
+  .cat .cic{font-size:18px}
+  .cat .cn{font-size:13px;font-weight:700}
+  .cat .cd{font-size:10.5px;color:var(--muted2)}
+
+  .note{font-size:11px;color:var(--muted);background:var(--amber-soft);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:9px 12px;margin-top:12px;display:flex;gap:8px}
+
+  .footer-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;padding-top:18px;border-top:1px solid var(--border)}
+  .tag-mock{position:fixed;top:10px;inset-inline-start:10px;background:var(--amber);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;z-index:99}
+</style>
+</head>
+<body>
+<div class="tag-mock">MOCKUP v1 — للمراجعة فقط</div>
+<div class="wrap">
+
+  <div class="pagehead">
+    <div>
+      <h1>إنشاء عميل جديد</h1>
+      <div class="sub">عبّي الأساسيات، اختر الباقة، وحدّد التصنيف — كله في صفحة واحدة منظّمة.</div>
+    </div>
+    <button class="btn-primary">＋ إنشاء العميل</button>
+  </div>
+
+  <!-- Focal point: what this page asks, as 4 quick groups -->
+  <div class="steps">
+    <div class="step active"><span class="n">1</span><div><div class="lbl">الهوية</div><div class="hint">الاسم + الصناعة</div></div></div>
+    <div class="step"><span class="n">2</span><div><div class="lbl">بيانات الدخول</div><div class="hint">إيميل + باسورد</div></div></div>
+    <div class="step"><span class="n">3</span><div><div class="lbl">الباقة</div><div class="hint">التير + المدة</div></div></div>
+    <div class="step"><span class="n">4</span><div><div class="lbl">التصنيف</div><div class="hint">YMYL اختياري</div></div></div>
+  </div>
+
+  <!-- 1. Identity -->
+  <div class="card">
+    <div class="card-head">
+      <span class="ic blue">🏢</span>
+      <div><div class="t">هوية العميل</div><div class="d">الاسم اللي يظهر في المقالات وصفحة العميل</div></div>
+      <span class="pill">modonty.com/clients/dream-to-app</span>
+    </div>
+    <div class="card-body">
+      <div class="grid g2">
+        <div class="field">
+          <label>اسم العميل <span class="req">*</span></label>
+          <input placeholder="مثال: دريم تو آب" />
+          <div class="help">يظهر في المقالات والمحتوى المنشور</div>
+        </div>
+        <div class="field">
+          <label>الصناعة <span class="opt">(اختياري)</span></label>
+          <select><option>اختر الصناعة…</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Credentials (highlighted) -->
+  <div class="card cred">
+    <div class="card-head">
+      <span class="ic green">🔑</span>
+      <div><div class="t">بيانات دخول العميل</div><div class="d">تُرسل للعميل للدخول على لوحة التحكم وإدارة محتواه</div></div>
+    </div>
+    <div class="card-body">
+      <div class="grid g2">
+        <div class="field">
+          <label>الإيميل — اسم المستخدم <span class="req">*</span></label>
+          <input placeholder="client@example.com" />
+        </div>
+        <div class="field">
+          <label>كلمة المرور <span class="req">*</span></label>
+          <input placeholder="كلمة مرور قوية" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Contact -->
+  <div class="card">
+    <div class="card-head">
+      <span class="ic blue">📞</span>
+      <div><div class="t">بيانات التواصل</div><div class="d">للتواصل + ContactPoint في بيانات SEO</div></div>
+    </div>
+    <div class="card-body">
+      <div class="grid g3">
+        <div class="field"><label>الجوال <span class="opt">(اختياري)</span></label><input placeholder="+966 5x xxx xxxx" /></div>
+        <div class="field"><label>نوع التواصل <span class="opt">(اختياري)</span></label><select><option>اختر…</option></select></div>
+        <div class="field"><label>الموقع الإلكتروني <span class="opt">(اختياري)</span></label><input placeholder="https://www.example.com" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Subscription -->
+  <div class="card">
+    <div class="card-head">
+      <span class="ic green">💳</span>
+      <div><div class="t">الاشتراك</div><div class="d">اختر الباقة وحدّد فترة الاشتراك</div></div>
+    </div>
+    <div class="card-body">
+      <div class="tiers">
+        <div class="tier"><div class="nm">Free</div><div class="pr">0 <small>ريال</small></div><div class="meta">تجربة</div></div>
+        <div class="tier"><div class="nm">Basic</div><div class="pr">499 <small>ريال</small></div><div class="meta">4 مقالات/شهر</div></div>
+        <div class="tier sel"><div class="nm">Standard</div><div class="pr">1٬299 <small>ريال</small></div><div class="meta">8 مقالات/شهر</div></div>
+        <div class="tier"><div class="nm">Premium</div><div class="pr">2٬999 <small>ريال</small></div><div class="meta">+ ريلز</div></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="field"><label>بداية الاشتراك <span class="req">*</span></label><input type="date" /></div>
+        <div class="field"><label>نهاية الاشتراك <span class="req">*</span></label><input type="date" /></div>
+      </div>
+
+      <details class="adv">
+        <summary>إعدادات متقدمة — مكافآت + حالة الدفع</summary>
+        <div class="grid g3">
+          <div class="field"><label>أشهر مكافأة</label><input type="number" placeholder="0" /></div>
+          <div class="field"><label>مقالات مكافأة</label><input type="number" placeholder="0" /></div>
+          <div class="field"><label>حالة الدفع</label><select><option>مدفوعة</option><option>مستحقّة</option></select></div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 5. YMYL classification -->
+  <div class="card">
+    <div class="card-head">
+      <span class="ic violet">🛡️</span>
+      <div><div class="t">تصنيف YMYL</div><div class="d">للمجالات الطبية / القانونية / المالية — Google يطبّق تدقيق E-E-A-T إضافي</div></div>
+    </div>
+    <div class="card-body">
+      <div class="ymyl-row">
+        <span class="chk on">✓</span>
+        <div>
+          <div style="font-weight:700;font-size:13.5px">اعتبر هذا العميل ضمن مجالات YMYL</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:2px">يفعّل حقول التوثيق ويربط نشر المقالات بمراجع مؤهّل + رخصة كاملة</div>
+        </div>
+      </div>
+
+      <div class="ymyl-cats">
+        <div class="cat"><span class="cic">🩺</span><div><div class="cn">طبّي</div><div class="cd">Medical</div></div></div>
+        <div class="cat sel"><span class="cic">⚖️</span><div><div class="cn">قانوني</div><div class="cd">Legal</div></div></div>
+        <div class="cat"><span class="cic">💰</span><div><div class="cn">مالي</div><div class="cd">Financial</div></div></div>
+      </div>
+
+      <div class="note">ℹ️ <span>الأدمن يحدّد التصنيف فقط. حقول التوثيق (رقم الرخصة، الجهة…) يملأها العميل من الكونسول.</span></div>
+    </div>
+  </div>
+
+  <div class="footer-actions">
+    <button class="btn-ghost">إلغاء</button>
+    <button class="btn-primary">＋ إنشاء العميل</button>
+  </div>
+
+</div>
+</body>
+</html>

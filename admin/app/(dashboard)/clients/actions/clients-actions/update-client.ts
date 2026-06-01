@@ -45,6 +45,26 @@ export async function updateClient(id: string, data: ClientFormData) {
       return { success: false, error: "Client not found" };
     }
 
+    // Email + phone must stay globally unique (exclude current client).
+    const dupConds: Array<{ email?: string; phone?: string }> = [];
+    if (parsed.data.email) dupConds.push({ email: parsed.data.email });
+    if (parsed.data.phone) dupConds.push({ phone: parsed.data.phone });
+    if (dupConds.length > 0) {
+      const dup = await db.client.findFirst({
+        where: { OR: dupConds, NOT: { id } },
+        select: { email: true, phone: true },
+      });
+      if (dup) {
+        const sameEmail = Boolean(parsed.data.email) && dup.email === parsed.data.email;
+        return {
+          success: false,
+          error: sameEmail
+            ? "هذا البريد الإلكتروني مستخدم من عميل آخر."
+            : "رقم الجوال مستخدم من عميل آخر.",
+        };
+      }
+    }
+
     // Normalize and prepare data - convert null to undefined for ClientFormData
     const normalizedData = {
       ...data,

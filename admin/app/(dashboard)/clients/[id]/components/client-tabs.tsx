@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { AddressTab } from "./tabs/address-tab";
 import { LegalTab } from "./tabs/legal-tab";
 import { MediaSocialTab } from "./tabs/media-social-tab";
@@ -14,9 +13,11 @@ import { AdditionalTab } from "./tabs/additional-tab";
 import { SettingsTab } from "./tabs/settings-tab";
 import { ClientAnalytics } from "./client-analytics";
 import { ClientArticles } from "./client-articles";
+import { IntakeBrief } from "./intake-brief";
 import { ArticleStatus } from "@prisma/client";
 import type { MediaType } from "@prisma/client";
-import { getTierDisplayName, calculateDeliveryRate } from "../../helpers/client-display-utils";
+import { calculateDeliveryRate } from "../../helpers/client-display-utils";
+import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
 
 type ClientTabsProps = {
   client: {
@@ -90,6 +91,10 @@ type ClientTabsProps = {
     legalForm: string | null;
     businessActivityCode: string | null;
     isicV4: string | null;
+    intake: unknown;
+    intakeUpdatedAt: Date | null;
+    isYmyl: boolean;
+    ymylCategory: string | null;
     parentOrganization: {
       id: string;
       name: string;
@@ -235,20 +240,29 @@ export function ClientTabs({
         ? "warning"
         : "good";
 
-  // Subscription
-  const subExpired = client.subscriptionStatus === "EXPIRED";
-  const subOverdue = client.paymentStatus === "OVERDUE";
-  const tierLabel = client.subscriptionTier
-    ? getTierDisplayName(client.subscriptionTier)
-    : "—";
+  const ymylCategoryLabel =
+    client.isYmyl && client.ymylCategory
+      ? YMYL_CATEGORIES[client.ymylCategory as YmylCategory]?.label.ar ?? null
+      : null;
 
   return (
-    <Tabs defaultValue="overview" dir="rtl">
+    <Tabs defaultValue="brief" dir="rtl">
       <TabsList className="mb-4">
+        <TabsTrigger value="brief">Brief</TabsTrigger>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="details">Details</TabsTrigger>
         <TabsTrigger value="content">Content</TabsTrigger>
       </TabsList>
+
+      {/* ── Tab 0: Brief (the intake — heart of the page for a writer) ── */}
+      <TabsContent value="brief">
+        <IntakeBrief
+          intake={client.intake}
+          intakeUpdatedAt={client.intakeUpdatedAt}
+          isYmyl={client.isYmyl}
+          ymylCategoryLabel={ymylCategoryLabel}
+        />
+      </TabsContent>
 
       {/* ── Tab 1: Overview ── */}
       <TabsContent value="overview" className="space-y-4">
@@ -313,93 +327,7 @@ export function ClientTabs({
           )}
         </SectionCard>
 
-        {/* ② Subscription */}
-        <SectionCard
-          title="Subscription"
-          badge={
-            subExpired ? (
-              <Badge
-                variant="outline"
-                className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
-              >
-                Expired
-              </Badge>
-            ) : subOverdue ? (
-              <Badge
-                variant="outline"
-                className="text-xs text-red-500 border-red-500/40 bg-red-500/10"
-              >
-                Overdue
-              </Badge>
-            ) : (
-              <Badge
-                variant="outline"
-                className="text-xs text-green-500 border-green-500/40 bg-green-500/10"
-              >
-                Active
-              </Badge>
-            )
-          }
-        >
-          <Grid cols={4}>
-            <Field label="Plan">
-              <Badge variant="secondary" className="text-xs">
-                {tierLabel}
-              </Badge>
-            </Field>
-            <Field label="Articles/Month">
-              <span className="text-lg font-medium">{promised}</span>
-            </Field>
-            <Field label="Status">
-              <span
-                className={cn(
-                  "text-sm font-medium",
-                  client.subscriptionStatus === "ACTIVE"
-                    ? "text-green-500"
-                    : "text-red-600 dark:text-red-400",
-                )}
-              >
-                {client.subscriptionStatus}
-              </span>
-            </Field>
-            <Field label="Payment">
-              <span
-                className={cn(
-                  "text-sm font-medium",
-                  client.paymentStatus === "PAID"
-                    ? "text-green-500"
-                    : "text-red-600 dark:text-red-400",
-                )}
-              >
-                {client.paymentStatus}
-              </span>
-            </Field>
-            {client.subscriptionStartDate && (
-              <Field label="Start Date">
-                <span>
-                  {format(new Date(client.subscriptionStartDate), "MMM d, yyyy")}
-                </span>
-              </Field>
-            )}
-            {client.subscriptionEndDate && (
-              <Field label="End Date">
-                <span className={cn(subExpired && "text-destructive font-medium")}>
-                  {format(new Date(client.subscriptionEndDate), "MMM d, yyyy")}
-                </span>
-              </Field>
-            )}
-          </Grid>
-          {(subExpired || subOverdue) && (
-            <div className="mt-3 pt-3 border-t text-xs text-amber-600/80 dark:text-amber-500/80 flex items-center gap-1.5">
-              ⚠{" "}
-              {subExpired
-                ? "Subscription expired — contact client for renewal"
-                : "Payment overdue — follow up with client"}
-            </div>
-          )}
-        </SectionCard>
-
-        {/* ③ Delivery This Month */}
+        {/* ② Delivery This Month */}
         <SectionCard
           title="Delivery This Month"
           badge={

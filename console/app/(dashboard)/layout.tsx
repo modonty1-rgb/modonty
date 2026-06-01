@@ -37,7 +37,7 @@ export default async function DashboardLayout({
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
-        select: { logoMedia: { select: { url: true } } },
+        select: { logoMedia: { select: { url: true } }, isYmyl: true },
       }),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
@@ -50,6 +50,7 @@ export default async function DashboardLayout({
     ]);
   const pendingFaqsCount = faqStats.pending;
   const clientLogoUrl = client?.logoMedia?.url ?? null;
+  const isYmyl = client?.isYmyl ?? false;
 
   return (
     <DashboardLayoutClient
@@ -63,6 +64,7 @@ export default async function DashboardLayout({
       pendingSupportCount={pendingSupportCount}
       pendingFaqsCount={pendingFaqsCount}
       pendingClientCommentsCount={pendingClientCommentsCount}
+      isYmyl={isYmyl}
     >
       {children}
     </DashboardLayoutClient>

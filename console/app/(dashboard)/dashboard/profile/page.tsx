@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ar } from "@/lib/ar";
 import { ProfileForm } from "./components/profile-form";
-import { YmylSection } from "./components/ymyl-section";
+import { SeoReadinessCard } from "./components/seo-readiness-card";
 
 export const dynamic = "force-dynamic";
 
@@ -41,10 +41,20 @@ export default async function ProfilePage() {
         foundingDate: true,
         sameAs: true,
         canonicalUrl: true,
-        // YMYL verification
-        isYmyl: true,
-        ymylCategory: true,
-        ymylData: true,
+        openingHoursSpecification: true,
+        // Local SEO + identity fields the SEO scorer reads
+        logoMediaId: true,
+        heroImageMediaId: true,
+        addressLatitude: true,
+        addressLongitude: true,
+        priceRange: true,
+        gbpPlaceId: true,
+        businessActivityCode: true,
+        numberOfEmployees: true,
+        // Cached SEO + validation report (for the readiness card)
+        nextjsMetadata: true,
+        jsonLdStructuredData: true,
+        jsonLdValidationReport: true,
       },
     }),
     db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
@@ -61,16 +71,11 @@ export default async function ProfilePage() {
           {ar.profile.description}
         </p>
       </header>
+      <SeoReadinessCard client={client} />
       <ProfileForm
         clientId={clientId}
         initial={client}
         industries={industries}
-      />
-      <YmylSection
-        isYmyl={client.isYmyl}
-        ymylCategory={client.ymylCategory}
-        ymylData={(client.ymylData ?? null) as Record<string, unknown> | null}
-        country={client.addressCountry}
       />
     </div>
   );

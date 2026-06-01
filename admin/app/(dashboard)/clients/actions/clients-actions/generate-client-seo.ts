@@ -103,6 +103,7 @@ export async function generateClientSEO(clientId: string) {
         openingHoursSpecification: true,
         priceRange: true,
         gbpProfileUrl: true,
+        gbpPlaceId: true,
         // Relationships
         parentOrganizationId: true,
         logoMedia: {
@@ -232,9 +233,13 @@ export async function generateClientSEO(clientId: string) {
       metaTags.openGraph.localeAlternate = uniqueLocales.filter((l) => l !== "ar_SA");
     }
 
-    // alternates.languages for hreflang (Google i18n SEO)
+    // alternates.languages for hreflang (Google i18n SEO).
+    // Client languages (knowsLanguage) win; otherwise fall back to the PLATFORM
+    // defaults from Settings (defaultHreflang / inLanguage + defaultAlternateLanguages)
+    // so every saved page carries a complete, correct hreflang set — hreflang is
+    // platform config, not a per-client field the client must fill.
+    const hreflangMap: Record<string, string> = {};
     if (Array.isArray(client.knowsLanguage) && client.knowsLanguage.length > 0) {
-      const hreflangMap: Record<string, string> = {};
       for (const lang of client.knowsLanguage) {
         const lower = lang.toLowerCase();
         if (lower.includes("arabic") || lower.includes("ar")) {
@@ -243,9 +248,26 @@ export async function generateClientSEO(clientId: string) {
           hreflangMap["en"] = canonicalUrl;
         }
       }
-      if (Object.keys(hreflangMap).length > 0) {
-        metaTags.alternates = { languages: hreflangMap };
+    }
+    if (Object.keys(hreflangMap).length === 0) {
+      // Settings.defaultAlternateLanguages is a JSON array of { hreflang, url }
+      // (seeded by the hreflang-sync action: GCC + Egypt + ar + x-default; url is
+      // empty by design — we fill it with this client's canonical here).
+      const altList = Array.isArray(settings.defaultAlternateLanguages)
+        ? (settings.defaultAlternateLanguages as Array<{ hreflang?: unknown }>)
+        : [];
+      for (const entry of altList) {
+        const code = typeof entry?.hreflang === "string" ? entry.hreflang.trim() : "";
+        if (code) hreflangMap[code] = canonicalUrl;
       }
+      // Always guarantee a primary entry even if Settings hasn't been seeded yet.
+      const primaryHreflang = (settings.defaultHreflang || inLanguage || "ar-SA").trim();
+      if (primaryHreflang && !hreflangMap[primaryHreflang]) {
+        hreflangMap[primaryHreflang] = canonicalUrl;
+      }
+    }
+    if (Object.keys(hreflangMap).length > 0) {
+      metaTags.alternates = { languages: hreflangMap };
     }
 
     const orgName = client.name;

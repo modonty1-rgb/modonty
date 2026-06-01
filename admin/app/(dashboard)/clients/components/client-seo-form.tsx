@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -28,6 +28,8 @@ import {
 import { MediaSocialSection } from "./form-sections/media-social-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
 import { SEODoctor } from "@/components/shared/seo-doctor";
+import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
+import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 
 type OpeningHoursDay = {
   dayOfWeek: string;
@@ -83,6 +85,32 @@ function getIssueCounts(items: ClientSEOGroupAnalysis["meta"]["items"]) {
   return { error, warning, good };
 }
 
+// Always-open section card (replaced the collapsible accordion for readability).
+function SeoSection({ title, badge, children }: { title: string; badge?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="border rounded-lg bg-card overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-3 border-b bg-muted/20">
+        <span className="text-sm font-bold">{title}</span>
+        {badge && <span className="ms-auto">{badge}</span>}
+      </div>
+      <div className="px-4 py-4">{children}</div>
+    </section>
+  );
+}
+
+// Read-only display of a client-owned field (edited in the console, not here).
+function ReadonlyRow({ k, v }: { k: string; v?: string | null }) {
+  const has = typeof v === "string" && v.trim().length > 0;
+  return (
+    <div className="flex gap-3">
+      <span className="w-40 shrink-0 text-muted-foreground">{k}</span>
+      <span className={`flex-1 min-w-0 break-words ${has ? "font-medium" : "text-muted-foreground/60 italic"}`}>
+        {has ? v : "لم يُدخله العميل"}
+      </span>
+    </div>
+  );
+}
+
 export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormProps) {
   const { form, handleSubmit, loading, error, isEditMode } = useClientForm({
     initialData,
@@ -119,8 +147,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
     alternateName: watchField<string | null>("alternateName"),
     commercialRegistrationNumber: watchField<string | null>("commercialRegistrationNumber"),
     vatID: watchField<string | null>("vatID"),
-    twitterSite: watchField<string | null>("twitterSite"),
-    twitterCard: watchField<string | null>("twitterCard"),
     sameAs: watchField<string[]>("sameAs"),
     gbpProfileUrl: watchField<string | null>("gbpProfileUrl"),
     gbpPlaceId: watchField<string | null>("gbpPlaceId"),
@@ -156,8 +182,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
       watchedFields.alternateName,
       watchedFields.commercialRegistrationNumber,
       watchedFields.vatID,
-      watchedFields.twitterSite,
-      watchedFields.twitterCard,
       watchedFields.sameAs,
       watchedFields.gbpProfileUrl,
       watchedFields.gbpPlaceId,
@@ -204,6 +228,12 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
   const base = (siteUrl || "").replace(/\/+$/, "");
   const clientUrl = base && slug ? `${base}/clients/${slug}` : "";
 
+  // Client activation state — a PENDING/inactive client has no live public page yet,
+  // so the public preview must be disabled until activated.
+  const subscriptionStatus =
+    (initialData as { subscriptionStatus?: string })?.subscriptionStatus ?? "PENDING";
+  const isActive = subscriptionStatus === "ACTIVE";
+
   const openingHours = ensureOpeningHours(watchedFields.openingHoursSpecification);
 
   const technicalPreviewRows = [
@@ -222,6 +252,22 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
   const metaCounts = getIssueCounts(metaIssues);
   const jsonLdCounts = getIssueCounts(jsonLdIssues);
 
+  // Readiness = SHARED validity score from STORED data (same scorer everywhere).
+  const { score: overallReadiness, checks: readinessChecks } = computeClientSeoScore(
+    clientToSeoInput(initialData as Record<string, unknown> | undefined),
+  );
+  const readinessTone =
+    overallReadiness >= 80
+      ? { ring: "#16a34a", text: "text-green-600 dark:text-green-500", label: "جاهز" }
+      : overallReadiness >= 50
+        ? { ring: "#d97706", text: "text-amber-600 dark:text-amber-500", label: "شبه مكتمل" }
+        : { ring: "#dc2626", text: "text-red-600 dark:text-red-500", label: "ناقص" };
+
+  // Live preview values (SERP + social share).
+  const previewTitle = (watchedFields.seoTitle || "").trim() || watchedFields.name || "عنوان الصفحة";
+  const previewDesc = (watchedFields.seoDescription || "").trim();
+  const previewUrl = clientUrl || (base ? `${base}/clients/...` : "modonty.com/clients/...");
+
   return (
     <form id="client-seo-form" onSubmit={handleSubmit}>
       <div className="space-y-6">
@@ -235,14 +281,73 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
           </div>
         )}
 
+        {/* Dominant header — SEO readiness score + checklist */}
+        <div className="rounded-xl border bg-card p-5 flex items-center justify-between gap-6 flex-wrap">
+          <div className="flex items-center gap-5">
+            <div
+              className="relative h-[72px] w-[72px] rounded-full grid place-items-center shrink-0"
+              style={{ background: `conic-gradient(${readinessTone.ring} ${overallReadiness * 3.6}deg, hsl(var(--muted)) 0deg)` }}
+            >
+              <div className="absolute inset-[7px] rounded-full bg-card" />
+              <span className={`relative text-xl font-extrabold ${readinessTone.text}`}>{overallReadiness}%</span>
+            </div>
+            <div>
+              <p className="text-base font-extrabold text-foreground leading-tight">
+                {(initialData as { name?: string })?.name || "العميل"}
+              </p>
+              <h2 className="text-sm font-bold text-muted-foreground flex items-center gap-2 mt-0.5">
+                جاهزية SEO
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${readinessTone.text} bg-muted`}>
+                  {readinessTone.label}
+                </span>
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                أكمل العناصر الناقصة عشان يظهر العميل صح في Google ومنصّات التواصل
+              </p>
+              <div className="flex flex-wrap gap-1.5 mt-2.5">
+                {readinessChecks.map((c) => {
+                  const good = c.status === "good";
+                  return (
+                    <span
+                      key={c.key}
+                      title={c.hint}
+                      className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                        good
+                          ? "bg-green-500/12 text-green-600 dark:text-green-400"
+                          : c.status === "error"
+                            ? "bg-red-500/12 text-red-600 dark:text-red-400"
+                            : "bg-amber-500/12 text-amber-600 dark:text-amber-500"
+                      }`}
+                    >
+                      {good ? "✓" : c.status === "error" ? "✗" : "○"} {c.label}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          {clientUrl && (
+            isActive ? (
+              <Button type="button" variant="outline" size="sm" asChild>
+                <a href={clientUrl} target="_blank" rel="noopener noreferrer">↗ معاينة الصفحة العامة</a>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled
+                title="تُتاح المعاينة بعد تفعيل العميل — الصفحة العامة غير منشورة بعد"
+              >
+                ↗ معاينة الصفحة العامة
+              </Button>
+            )
+          )}
+        </div>
+
         <div className="flex gap-6">
-          <div className="flex-1 min-w-0 space-y-6">
-            <Accordion type="multiple" defaultValue={["meta"]} className="w-full">
-              <AccordionItem value="meta" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  Meta
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+          <div className="flex-1 min-w-0 space-y-4">
+              <SeoSection title="Meta — العنوان والوصف">
                   <div className="space-y-4">
                     <div>
                       <FormInput
@@ -281,15 +386,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                         />
                       </div>
                     </div>
-                    <FormTextarea
-                      label="Description"
-                      name="description"
-                      value={watchedFields.description || ""}
-                      onChange={(e) => setValue("description", e.target.value || null)}
-                      rows={3}
-                      placeholder="Business description for search engines"
-                    />
-
                     <div className="rounded-md border border-border bg-background">
                       <button
                         type="button"
@@ -312,74 +408,30 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       )}
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+              </SeoSection>
 
-              <AccordionItem value="schema" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  Schema Data
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+              <SeoSection title="Schema Data — التواصل والهوية">
                   <div className="space-y-4">
-                    <FormInput
-                      label="Legal Name"
-                      name="legalName"
-                      value={watchedFields.legalName || ""}
-                      onChange={(e) => setValue("legalName", e.target.value || null)}
-                    />
-                    <FormInput
-                      label="Alternate Name"
-                      name="alternateName"
-                      value={watchedFields.alternateName || ""}
-                      onChange={(e) => setValue("alternateName", e.target.value || null)}
-                    />
-                    <FormInput
-                      label="Commercial Registration Number"
-                      name="commercialRegistrationNumber"
-                      value={watchedFields.commercialRegistrationNumber || ""}
-                      onChange={(e) => setValue("commercialRegistrationNumber", e.target.value || null)}
-                    />
-                    <FormInput
-                      label="VAT ID"
-                      name="vatID"
-                      value={watchedFields.vatID || ""}
-                      onChange={(e) => setValue("vatID", e.target.value || null)}
-                    />
+                    {/* Legal Name / Alternate Name / CR / VAT / Same As are owned by the
+                        client (console profile). Shown read-only below to avoid duplicate
+                        sources of truth — editing happens in the console. */}
+                    <div className="rounded-md border border-violet-500/25 bg-violet-500/[0.05] p-3 text-xs space-y-1.5">
+                      <div className="font-semibold text-violet-600 dark:text-violet-400 mb-1.5">
+                        🏢 بيانات هوية العميل — يدخلها العميل من الكونسول
+                      </div>
+                      <ReadonlyRow k="Legal Name" v={watchedFields.legalName} />
+                      <ReadonlyRow k="Alternate Name" v={watchedFields.alternateName} />
+                      <ReadonlyRow k="Commercial Registration" v={watchedFields.commercialRegistrationNumber} />
+                      <ReadonlyRow k="VAT ID" v={watchedFields.vatID} />
+                      <ReadonlyRow
+                        k="Same As"
+                        v={Array.isArray(watchedFields.sameAs) && watchedFields.sameAs.length ? watchedFields.sameAs.join("، ") : null}
+                      />
+                    </div>
 
-                    <FormInput
-                      label="Twitter Site"
-                      name="twitterSite"
-                      value={watchedFields.twitterSite || ""}
-                      onChange={(e) => setValue("twitterSite", e.target.value || null)}
-                      placeholder="@username"
-                    />
-                    <FormSelect
-                      label="Twitter Card"
-                      name="twitterCard"
-                      value={watchedFields.twitterCard || undefined}
-                      onValueChange={(value) =>
-                        setValue("twitterCard", value ? (value as "summary_large_image" | "summary") : null)
-                      }
-                      placeholder="Select card type"
-                    >
-                      <SelectItem value="summary_large_image">summary_large_image</SelectItem>
-                      <SelectItem value="summary">summary</SelectItem>
-                    </FormSelect>
-
-                    <FormTextarea
-                      label="Same As"
-                      name="sameAs"
-                      value={Array.isArray(watchedFields.sameAs) ? watchedFields.sameAs.join(", ") : ""}
-                      onChange={(e) => {
-                        const urls = e.target.value
-                          .split(",")
-                          .map((v) => v.trim())
-                          .filter(Boolean);
-                        setValue("sameAs", urls);
-                      }}
-                      rows={2}
-                      placeholder="https://x.com/... , https://instagram.com/..."
-                    />
+                    {/* Twitter card + site are platform-level (from Settings) and the
+                        card image is derived from the client's hero image automatically —
+                        no per-client input needed, so they're intentionally not shown here. */}
 
                     <FormInput
                       label="GBP Profile URL"
@@ -389,17 +441,12 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       placeholder="https://g.page/..."
                     />
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+              </SeoSection>
 
-              <AccordionItem value="gbp" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  <span className="flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-muted-foreground" />
-                    Google Business Profile
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+              <SeoSection
+                title="Google Business Profile"
+                badge={<span className="inline-block w-2 h-2 rounded-full bg-muted-foreground" />}
+              >
                   <div className="border-l-2 border-[#4285f4] pl-4 space-y-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-sm font-semibold">Not Connected</div>
@@ -445,73 +492,30 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       </ul>
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+              </SeoSection>
 
-              <AccordionItem value="address" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  Address
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+              <SeoSection title="Address — العنوان">
                   <div className="space-y-4">
+                    {/* The postal address is owned by the client (console profile) —
+                        read-only here. Only the map coordinates (which the client
+                        doesn't enter) remain editable by the admin for GeoCoordinates. */}
+                    <div className="rounded-md border border-violet-500/25 bg-violet-500/[0.05] p-3 text-xs space-y-1.5">
+                      <div className="font-semibold text-violet-600 dark:text-violet-400 mb-1.5">
+                        📍 العنوان — يدخله العميل من الكونسول
+                      </div>
+                      <ReadonlyRow k="City" v={watchedFields.addressCity} />
+                      <ReadonlyRow k="Neighborhood" v={watchedFields.addressNeighborhood} />
+                      <ReadonlyRow k="Street" v={watchedFields.addressStreet} />
+                      <ReadonlyRow k="Region" v={watchedFields.addressRegion} />
+                      <ReadonlyRow k="Country" v={watchedFields.addressCountry} />
+                      <ReadonlyRow k="Building No." v={watchedFields.addressBuildingNumber} />
+                      <ReadonlyRow k="Additional No." v={watchedFields.addressAdditionalNumber} />
+                      <ReadonlyRow k="Postal Code" v={watchedFields.addressPostalCode} />
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormInput
-                        label="City"
-                        name="addressCity"
-                        value={watchedFields.addressCity || ""}
-                        onChange={(e) => setValue("addressCity", e.target.value || null)}
-                      />
-                      <FormInput
-                        label="Neighborhood"
-                        name="addressNeighborhood"
-                        value={watchedFields.addressNeighborhood || ""}
-                        onChange={(e) => setValue("addressNeighborhood", e.target.value || null)}
-                      />
-                    </div>
-                    <FormInput
-                      label="Street"
-                      name="addressStreet"
-                      value={watchedFields.addressStreet || ""}
-                      onChange={(e) => setValue("addressStreet", e.target.value || null)}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormInput
-                        label="Region"
-                        name="addressRegion"
-                        value={watchedFields.addressRegion || ""}
-                        onChange={(e) => setValue("addressRegion", e.target.value || null)}
-                      />
-                      <FormInput
-                        label="Country"
-                        name="addressCountry"
-                        value={watchedFields.addressCountry || ""}
-                        onChange={(e) => setValue("addressCountry", e.target.value || null)}
-                        placeholder="SA"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormInput
-                        label="Building Number"
-                        name="addressBuildingNumber"
-                        value={watchedFields.addressBuildingNumber || ""}
-                        onChange={(e) => setValue("addressBuildingNumber", e.target.value || null)}
-                      />
-                      <FormInput
-                        label="Additional Number"
-                        name="addressAdditionalNumber"
-                        value={watchedFields.addressAdditionalNumber || ""}
-                        onChange={(e) => setValue("addressAdditionalNumber", e.target.value || null)}
-                      />
-                      <FormInput
-                        label="Postal Code"
-                        name="addressPostalCode"
-                        value={watchedFields.addressPostalCode || ""}
-                        onChange={(e) => setValue("addressPostalCode", e.target.value || null)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormInput
-                        label="Latitude"
+                        label="Latitude (map — admin)"
                         name="addressLatitude"
                         value={watchedFields.addressLatitude == null ? "" : String(watchedFields.addressLatitude)}
                         onChange={(e) =>
@@ -520,7 +524,7 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                         type="number"
                       />
                       <FormInput
-                        label="Longitude"
+                        label="Longitude (map — admin)"
                         name="addressLongitude"
                         value={watchedFields.addressLongitude == null ? "" : String(watchedFields.addressLongitude)}
                         onChange={(e) =>
@@ -530,14 +534,9 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       />
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+              </SeoSection>
 
-              <AccordionItem value="business-details" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  Business Details
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+              <SeoSection title="Business Details — تفاصيل العمل">
                   <div className="space-y-4">
                     <FormSelect
                       label="Price Range"
@@ -566,80 +565,41 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       placeholder="ar"
                     />
 
-                    <div className="rounded-md border border-border bg-background p-3">
-                      <div className="text-sm font-semibold mb-3">Business Hours</div>
-                      <div className="space-y-2">
+                    {/* Business Hours are owned by the client (console profile) —
+                        read-only here to keep a single source of truth. */}
+                    <div className="rounded-md border border-violet-500/25 bg-violet-500/[0.05] p-3">
+                      <div className="text-xs font-semibold text-violet-600 dark:text-violet-400 mb-2.5">
+                        🕒 ساعات العمل — يدخلها العميل من الكونسول
+                      </div>
+                      <div className="space-y-1.5">
                         {openingHours.map((day, idx) => (
-                          <div key={day.dayOfWeek} className="grid grid-cols-12 gap-2 items-center">
-                            <div className="col-span-2 text-sm text-muted-foreground">
+                          <div key={day.dayOfWeek} className="grid grid-cols-12 gap-2 items-center text-xs">
+                            <div className="col-span-3 text-muted-foreground">
                               {DAYS[idx]?.label ?? day.dayOfWeek}
                             </div>
-                            <div className="col-span-2">
-                              <label className="flex items-center gap-2 text-sm">
-                                <input
-                                  type="checkbox"
-                                  checked={!day.closed}
-                                  onChange={(e) => {
-                                    const next = [...openingHours];
-                                    next[idx] = { ...next[idx], closed: !e.target.checked };
-                                    setValue("openingHoursSpecification", next);
-                                  }}
-                                />
-                                Open
-                              </label>
-                            </div>
-                            <div className="col-span-4">
-                              <input
-                                type="time"
-                                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                                value={day.opens}
-                                disabled={day.closed}
-                                onChange={(e) => {
-                                  const next = [...openingHours];
-                                  next[idx] = { ...next[idx], opens: e.target.value };
-                                  setValue("openingHoursSpecification", next);
-                                }}
-                              />
-                            </div>
-                            <div className="col-span-4">
-                              <input
-                                type="time"
-                                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                                value={day.closes}
-                                disabled={day.closed}
-                                onChange={(e) => {
-                                  const next = [...openingHours];
-                                  next[idx] = { ...openingHours[idx], closes: e.target.value };
-                                  setValue("openingHoursSpecification", next);
-                                }}
-                              />
+                            <div className="col-span-9 font-medium">
+                              {day.closed ? (
+                                <span className="text-muted-foreground/60">مغلق</span>
+                              ) : (
+                                <span dir="ltr">{day.opens} – {day.closes}</span>
+                              )}
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+              </SeoSection>
 
               {isEditMode && (
-                <AccordionItem value="media" className="border rounded-lg bg-card">
-                  <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                    Media
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-5 pt-3">
+                <SeoSection title="Media — الشعار والصورة">
                     <div className="space-y-6">
                       <MediaSocialSection form={form} />
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
+                </SeoSection>
               )}
 
-              <AccordionItem value="analysis" className="border rounded-lg bg-card">
-                <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                  SEO Analysis
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-5 pt-3">
+              <SeoSection title="SEO Analysis — التحليل">
                   <div className="space-y-6">
                     <ClientSEOValidationSection
                       formData={seoData}
@@ -648,13 +608,46 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                       siteUrl={siteUrl}
                     />
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+              </SeoSection>
           </div>
 
           <div className="w-60 shrink-0">
             <div className="sticky top-[calc(57px+57px+16px)] z-30 space-y-4">
+              {/* Live preview — Google SERP + social share (updates as you type) */}
+              <Card className="p-4 space-y-3">
+                <div className="text-xs font-semibold text-muted-foreground">معاينة Google</div>
+                <div dir="ltr" className="text-left">
+                  <div className="text-[11px] text-muted-foreground truncate">{previewUrl}</div>
+                  <div className="text-[15px] text-[#7c93ff] leading-snug line-clamp-2 mt-0.5" dir="auto">
+                    {previewTitle}
+                  </div>
+                  {previewDesc ? (
+                    <div className="text-[12px] text-muted-foreground line-clamp-2 mt-0.5" dir="auto">
+                      {previewDesc}
+                    </div>
+                  ) : (
+                    <div className="text-[12px] text-amber-600/80 dark:text-amber-500/80 mt-0.5">
+                      أضف SEO Description ليظهر سطر جذّاب يرفع نسبة النقر
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-1 border-t">
+                  <div className="text-xs font-semibold text-muted-foreground mb-2">مشاركة التواصل</div>
+                  <div className="rounded-lg border overflow-hidden">
+                    <div className="h-20 bg-gradient-to-br from-primary/15 to-violet-500/15 grid place-items-center text-[11px] text-muted-foreground">
+                      شعار العميل / صورة OG
+                    </div>
+                    <div className="p-2.5">
+                      <div className="text-[10px] uppercase text-muted-foreground" dir="ltr">
+                        {base ? base.replace(/^https?:\/\//, "") : "modonty.com"}
+                      </div>
+                      <div className="text-[12.5px] font-bold line-clamp-2 mt-0.5" dir="auto">{previewTitle}</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
               {seoDoctorNode}
 
               <Card className="p-4 space-y-4">

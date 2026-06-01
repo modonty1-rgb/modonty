@@ -138,7 +138,7 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "SEO",
     description: "SEO metadata and meta tags",
     icon: "Search",
-    fields: ["seoTitle", "seoDescription", "description", "canonicalUrl", "metaRobots", "organizationType", "keywords", "knowsLanguage", "parentOrganizationId", "businessActivityCode", "isicV4"],
+    fields: ["seoTitle", "seoDescription", "description", "canonicalUrl", "metaRobots", "organizationType", "keywords", "knowsLanguage", "parentOrganizationId", "businessActivityCode", "isicV4", "gbpProfileUrl", "gbpPlaceId", "gbpAccountId", "gbpLocationId", "gbpCategory", "priceRange"],
     required: [],
     priority: "secondary",
     availableInCreate: true,

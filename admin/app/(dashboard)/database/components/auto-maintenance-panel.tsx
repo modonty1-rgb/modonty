@@ -11,6 +11,8 @@ import {
   runStepVersions,
   runStepTtl,
   runStepLegalForm,
+  runStepOrganizationType,
+  runStepCanonical,
   runStepCloudinaryOrphans,
   runStepSoftDeletedComments,
   revalidateDatabasePage,
@@ -32,6 +34,8 @@ const STEPS: StepDef[] = [
   { key: "versions", label: "Stale Versions (30d+)", description: "Article version snapshots older than 30 days", runner: runStepVersions },
   { key: "ttl", label: "TTL Indexes", description: "Missing TTL indexes for auto-expiry", runner: runStepTtl },
   { key: "legalform", label: "Legal Forms", description: "Clients with non-canonical legalForm values", runner: runStepLegalForm },
+  { key: "organizationType", label: "Organization Types", description: "Clients with non-canonical organizationType values", runner: runStepOrganizationType },
+  { key: "canonical", label: "Canonical URLs", description: "Wrong-host or double-encoded canonical URLs across articles, clients, categories, tags, industries, authors", runner: runStepCanonical },
   { key: "cloudinary", label: "Cloudinary Orphans", description: "Files in Cloudinary (Modonty folders only) with no DB record", runner: runStepCloudinaryOrphans },
   { key: "softDeletedComments", label: "Soft-Deleted Comments (30d+)", description: "Permanently delete comments marked DELETED older than 30 days", runner: runStepSoftDeletedComments },
 ];
@@ -99,7 +103,7 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
         <div className="space-y-0.5">
           <p className="text-sm font-semibold">Auto-Maintenance</p>
           <p className="text-xs text-muted-foreground">
-            Runs 7 safe, deterministic clean-ups in one click. SEO maintenance is at /seo.
+            Runs {STEPS.length} safe, deterministic clean-ups in one click. SEO maintenance is at /seo.
           </p>
         </div>
         <div className="flex items-center gap-2">

@@ -84,7 +84,6 @@ export const clientServerSchema = z.object({
   subscriptionStatus: z.string().optional().nullable(),
   paymentStatus: z.string().optional().nullable(),
   metaRobots: z.string().optional().nullable(),
-  twitterCard: z.string().optional().nullable(),
 
   // Dates — accept string or Date
   foundingDate: z.union([z.string(), z.date(), z.null()]).optional().nullable(),
