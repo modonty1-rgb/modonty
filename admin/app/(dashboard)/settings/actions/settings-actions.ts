@@ -38,6 +38,8 @@ export interface SocialMediaSettings {
   tiktokUrl: string | null;
   pinterestUrl: string | null;
   snapchatUrl: string | null;
+  whatsappChannelUrl: string | null;
+  telegramChannelUrl: string | null;
 }
 
 export interface MediaSettings {
@@ -196,6 +198,8 @@ const DEFAULT_SETTINGS: AllSettings = {
   tiktokUrl: null,
   pinterestUrl: null,
   snapchatUrl: null,
+  whatsappChannelUrl: null,
+  telegramChannelUrl: null,
   siteUrl: null,
   siteName: null,
   brandDescription: null,
@@ -312,6 +316,8 @@ export async function getSameAsFromSettings(): Promise<string[]> {
     all.twitterUrl,
     all.youtubeUrl,
     all.pinterestUrl,
+    all.whatsappChannelUrl,
+    all.telegramChannelUrl,
   ]
     .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
     .map((v) => v.trim());
@@ -374,6 +380,8 @@ export async function getAllSettings(): Promise<AllSettings> {
         tiktokUrl: newSettings.tiktokUrl,
         pinterestUrl: newSettings.pinterestUrl,
         snapchatUrl: newSettings.snapchatUrl,
+        whatsappChannelUrl: newSettings.whatsappChannelUrl,
+        telegramChannelUrl: newSettings.telegramChannelUrl,
         siteUrl: newSettings.siteUrl,
         siteName: newSettings.siteName,
         brandDescription: newSettings.brandDescription,
@@ -502,6 +510,8 @@ export async function getAllSettings(): Promise<AllSettings> {
       tiktokUrl: settings.tiktokUrl,
       pinterestUrl: settings.pinterestUrl,
       snapchatUrl: settings.snapchatUrl,
+      whatsappChannelUrl: settings.whatsappChannelUrl,
+      telegramChannelUrl: settings.telegramChannelUrl,
       siteUrl: settings.siteUrl,
       siteName: settings.siteName,
       brandDescription: settings.brandDescription,
@@ -765,6 +775,8 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
         tiktokUrl: data.tiktokUrl,
         pinterestUrl: data.pinterestUrl,
         snapchatUrl: data.snapchatUrl,
+        whatsappChannelUrl: data.whatsappChannelUrl,
+        telegramChannelUrl: data.telegramChannelUrl,
       },
     });
     revalidatePath("/settings");
@@ -887,6 +899,8 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           tiktokUrl: data.tiktokUrl,
           pinterestUrl: data.pinterestUrl,
           snapchatUrl: data.snapchatUrl,
+          whatsappChannelUrl: data.whatsappChannelUrl,
+          telegramChannelUrl: data.telegramChannelUrl,
         },
       });
       // Split into 2 chunks (each < 50 fields) — MongoDB Atlas limits

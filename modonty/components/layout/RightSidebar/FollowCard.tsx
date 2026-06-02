@@ -9,6 +9,8 @@ import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
 import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
+import { Whatsapp } from "@/components/icons/whatsapp";
+import { Telegram } from "@/components/icons/telegram";
 import type { ComponentType, SVGProps } from "react";
 import { FollowCardInteractive } from "./FollowCardInteractive";
 
@@ -22,6 +24,8 @@ const ICON_MAP: Record<string, IconComponent> = {
   instagram: Instagram,
   tiktok:    TiktokLogoLight,
   snapchat:  RoundSnapchat,
+  whatsapp:  Whatsapp,
+  telegram:  Telegram,
 };
 
 export async function FollowCard() {

@@ -1936,6 +1936,8 @@ model Settings {
   tiktokUrl    String?
   pinterestUrl String?
   snapchatUrl  String?
+  whatsappChannelUrl String? // Modonty WhatsApp Channel link
+  telegramChannelUrl String? // Modonty Telegram Channel link
 
   // Site & Organization (from .env defaults, editable in Settings UI)
   siteUrl             String?

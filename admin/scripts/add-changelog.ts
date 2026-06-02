@@ -12,10 +12,12 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.68.3 (admin)",
-    title: "Resend the welcome email to a converted client",
+    version: "0.69.0 (admin) + 1.50.0 (modonty)",
+    title: "Settings redesign + WhatsApp/Telegram channel links",
     items: [
-      { type: "feature" as const, text: "On the Clients → jbrseo Subscribers → 'تم تحويلهم' tab, each converted client now has a small send icon next to the 'تم التحويل' badge. Click it to resend the welcome email (login credentials) to that client — handy when the original email was missed. Reuses the existing send-welcome action. Note: the email always contains the default password, so it's most useful for clients who haven't logged in and changed it yet." },
+      { type: "improve" as const, text: "Settings hub (/settings) redesigned — areas grouped by purpose with one clear focal point, live data counts per listing (clients/categories/tags/industries/articles), and everything fits one screen (no long scroll)." },
+      { type: "improve" as const, text: "Modonty Homepage settings reorganized into 4 clear tabs (SEO & Sharing · Business Info · Social Links · Homepage Banner) with per-tab save — each tab saves only its own fields, and the OG/Share image + Logo now live under SEO & Sharing where they belong." },
+      { type: "feature" as const, text: "Added WhatsApp Channel and Telegram Channel links under Social Links. They now show in the public 'تابعنا' card on modonty.com (homepage + article sidebar) and flow into the Organization sameAs structured data. Enter the real channel URLs in Settings → Social Links and they appear instantly." },
     ],
   },
 ];

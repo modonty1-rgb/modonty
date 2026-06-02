@@ -18,6 +18,8 @@ const SOCIAL_FIELDS: { key: string; field: string; label: string }[] = [
   { key: "instagram", field: "instagramUrl", label: "انستغرام"    },
   { key: "tiktok",    field: "tiktokUrl",    label: "تيك توك"     },
   { key: "snapchat",  field: "snapchatUrl",  label: "سناب شات"    },
+  { key: "whatsapp",  field: "whatsappChannelUrl", label: "واتساب"  },
+  { key: "telegram",  field: "telegramChannelUrl", label: "تيليجرام" },
 ];
 
 export async function getPlatformSocialLinks(): Promise<SocialLink[]> {
@@ -34,6 +36,8 @@ export async function getPlatformSocialLinks(): Promise<SocialLink[]> {
       instagramUrl: true,
       tiktokUrl: true,
       snapchatUrl: true,
+      whatsappChannelUrl: true,
+      telegramChannelUrl: true,
     },
   });
 
