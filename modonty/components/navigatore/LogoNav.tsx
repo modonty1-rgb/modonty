@@ -7,25 +7,14 @@ import { BRAND_AR } from "@/lib/brand";
 
 interface LogoNavProps {
   className?: string;
-  /** "full" = wide wordmark (desktop) · "icon" = small mark (mobile, falls back to full). */
-  variant?: "full" | "icon";
 }
 
-// Logo is admin-managed (Settings, single source of truth):
-//   - full  → Settings.logoUrl (desktop)
-//   - icon  → Settings.logoIconUrl, falling back to logoUrl (mobile)
-// If neither exists, we gracefully show the brand name as text — the admin is alerted to
-// upload the logo(s) via the EssentialSeoDialog in the admin app.
-export async function LogoNav({ className, variant = "full" }: LogoNavProps) {
-  const { logoUrl, logoIconUrl } = await getBrandMedia();
-  const src = variant === "icon" ? logoIconUrl || logoUrl : logoUrl;
-
-  const isIcon = variant === "icon";
-  const width = isIcon ? 40 : 120;
-  const height = 40;
-  const imgClass = isIcon
-    ? "object-contain h-9 w-9"
-    : "object-contain h-9 w-[100px] md:h-10 md:w-[120px]";
+// One logo for the whole navbar — the wide wordmark (Settings.logoUrl, single source of truth).
+// Same logo on desktop and mobile; only the size differs (mobile is rendered larger for legibility).
+// If no logo is set, we gracefully show the brand name as text — the admin is alerted to
+// upload the logo via the EssentialSeoDialog in the admin app.
+export async function LogoNav({ className }: LogoNavProps) {
+  const { logoUrl } = await getBrandMedia();
 
   return (
     <Link
@@ -33,16 +22,16 @@ export async function LogoNav({ className, variant = "full" }: LogoNavProps) {
       className="inline-block shrink-0 transition-transform duration-200 hover:scale-[1.03]"
       aria-label={`${BRAND_AR} - الصفحة الرئيسية`}
     >
-      {src ? (
+      {logoUrl ? (
         <Image
-          src={getOptimizedLogoUrl(src)}
+          src={getOptimizedLogoUrl(logoUrl)}
           alt={BRAND_AR}
-          width={width}
-          height={height}
+          width={351}
+          height={85}
           loading="eager"
           fetchPriority="high"
-          sizes={isIcon ? "40px" : "120px"}
-          className={`${imgClass} ${className ?? ""}`}
+          sizes="(max-width: 768px) 150px, 120px"
+          className={`object-contain h-9 w-[150px] md:h-10 md:w-[120px] ${className ?? ""}`}
         />
       ) : (
         <span className="text-lg font-bold text-primary">{BRAND_AR}</span>

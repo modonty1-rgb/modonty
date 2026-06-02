@@ -238,8 +238,8 @@ export function ModontyForm({ initialSettings }: Props) {
                   label="Logo (Desktop)"
                   value={settings.logoUrl ?? ""}
                   onChange={(v) => set("logoUrl", v)}
-                  hint="Wide wordmark — desktop navbar. Also your Organization logo in Google."
-                  aspect="square"
+                  hint="Wide wordmark (≈351×85) — desktop navbar. Also your Organization logo in Google."
+                  aspect="wide"
                 />
                 <ImageField
                   label="Logo (Mobile Icon)"
@@ -274,7 +274,8 @@ export function ModontyForm({ initialSettings }: Props) {
                     title={settings.modontySeoTitle?.trim() || settings.siteName?.trim() || "مدوّنتي"}
                     description={settings.modontySeoDescription?.trim() || settings.brandDescription?.trim() || ""}
                     imageUrl={settings.ogImageUrl?.trim() || settings.logoUrl?.trim() || undefined}
-                    logoUrl={settings.logoUrl?.trim() || settings.ogImageUrl?.trim() || undefined}
+                    // Favicon Google shows = modonty's static app/icon.svg (not a DB field). Mirror it here so the preview is truthful.
+                    logoUrl="/modonty-favicon.svg"
                   />
                 </div>
               </div>

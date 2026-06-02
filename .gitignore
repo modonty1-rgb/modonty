@@ -66,4 +66,7 @@ backups/
 # Playwright MCP snapshots
 .playwright-mcp/
 *.png
+# Brand favicon assets — tracked despite the *.png ignore above
+!modonty/app/apple-icon.png
+!brand/favicon/*.png
 .vercel

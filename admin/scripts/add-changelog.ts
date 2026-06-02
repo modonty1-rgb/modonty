@@ -12,13 +12,20 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.70.0 (admin)",
-    title: "Modonty Homepage settings — SEO/UX redesign",
+    version: "1.52.0 (modonty)",
+    title: "Brand logo + favicon refresh",
     items: [
-      { type: "improve" as const, text: "Modonty Homepage → SEO & Sharing tab redesigned with a live Google + social-card preview that updates as you type, grouped sections (Search appearance · Brand identity · Images), and smart counters that cap each field at its best-practice length (title 60 · description 160 · brand 250 · alt 125)." },
-      { type: "improve" as const, text: "Brand Description moved into the SEO & Sharing tab (it's the brand's identity description used in Google's Knowledge Panel and on every article) with a clear Arabic guide on what to write and where it appears." },
-      { type: "improve" as const, text: "Cleaner page: trimmed header, two-column layout with a sticky preview, and the Business Info / Social Links / Homepage Banner tabs reorganized into clear groups. Removed the separate 'Regenerate cache' button — saving any tab already refreshes the homepage automatically." },
-      { type: "feature" as const, text: "Added a standalone JBR SEO settings card, a platform Google Business Profile URL field (feeds Organization sameAs), and fixed the business hours to 24/7 for the online platform." },
+      { type: "improve" as const, text: "Navbar now uses one brand logo on both desktop and mobile — and the mobile logo is bigger and easier to read (it was a tiny icon before)." },
+      { type: "improve" as const, text: "In light mode the top bar got a subtle off-white tint so the brand mark stands out clearly." },
+      { type: "feature" as const, text: "New clean square favicon (the 'm' mark) now shows in the browser tab and next to the site in Google results, at every size (16–512), plus an Apple touch icon for iPhones." },
+    ],
+  },
+  {
+    version: "0.71.1 (admin)",
+    title: "Modonty settings — logo preview fixes",
+    items: [
+      { type: "fix" as const, text: "The 'Logo (Desktop)' preview in Modonty settings no longer crops the wide logo — it now shows the full wordmark." },
+      { type: "improve" as const, text: "The Google preview now shows the real site favicon (the 'm' mark) instead of a placeholder, so what you see matches what Google actually shows." },
     ],
   },
 ];

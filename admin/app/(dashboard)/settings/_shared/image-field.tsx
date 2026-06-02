@@ -10,25 +10,36 @@ interface Props {
   value: string;
   onChange: (v: string) => void;
   hint?: string;
-  aspect: "square" | "og";
+  aspect: "square" | "og" | "wide";
 }
 
 export function ImageField({ label, value, onChange, hint, aspect }: Props) {
   const [imgError, setImgError] = useState(false);
   const hasUrl = value.trim().length > 0;
-  const previewWrapper = aspect === "og" ? "aspect-[1200/630] w-full max-w-[280px]" : "h-20 w-20";
+  const previewWrapper =
+    aspect === "og"
+      ? "aspect-[1200/630] w-full max-w-[280px]"
+      : aspect === "wide"
+        ? "h-16 w-full max-w-[300px]"
+        : "h-20 w-20";
+  const imgSize =
+    aspect === "og"
+      ? { width: 280, height: 147 }
+      : aspect === "wide"
+        ? { width: 300, height: 73 }
+        : { width: 80, height: 80 };
 
   return (
     <Field label={label} hint={hint}>
       <div className="space-y-2">
-        <div className={`${previewWrapper} shrink-0 rounded-md border bg-muted/30 overflow-hidden flex items-center justify-center`}>
+        <div className={`${previewWrapper} shrink-0 rounded-md border bg-muted/30 overflow-hidden flex items-center justify-center p-1`}>
           {hasUrl && !imgError ? (
             <NextImage
               src={value}
               alt={label}
-              width={aspect === "og" ? 280 : 80}
-              height={aspect === "og" ? 147 : 80}
-              className="object-cover w-full h-full"
+              width={imgSize.width}
+              height={imgSize.height}
+              className="object-contain w-full h-full"
               onError={() => setImgError(true)}
               unoptimized
             />

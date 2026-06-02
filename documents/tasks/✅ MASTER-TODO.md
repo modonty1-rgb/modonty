@@ -26,6 +26,7 @@
 - [Perfect-SEO-Plan](Perfect-SEO-Plan.md) — 108 مهمة عبر 13 phase
 - [Dashboard Action Plan](Dashboard-Action-Plan.md)
 - [URL Lifecycle Plan](URL-Lifecycle-Plan.md)
+- 🧹 **[DEFERRED] حذف حقل `logoIconUrl` الميّت** — النافبار صار شعار واحد (`logoUrl`)، والـ favicon ثابت في الكود (`app/icon.svg`)، ومعاينة الأدمن تقرأ favicon ثابت — فحقل **«Logo (Mobile Icon)»** ما عاد له أي مستهلك. **الطريقة البسيطة (ننفّذها متى رجعنا):** إزالة الحقل من admin modonty-form + `essential-seo-fields` + `settings-actions` + modonty `get-brand-media`. **الطريقة الكاملة (لاحقاً):** حذف `logoIconUrl` من `schema.prisma` عبر Prisma ritual (kill node → generate → restart). MongoDB schemaless → القيم القديمة تبقى مهملة، آمن.
 - 🏷️ **[Brand Centralization TODO](BRAND-CENTRALIZATION-TODO.md)** — ✅ **modonty كامل** (الشعار + OG ديناميكيان من Settings · شعاران desktop/mobile · تصحيح تهجئة «مدونتي» 100% · Dialog تنبيه للأدمن لو حقل SEO أساسي ناقص · ملفات ثابتة + إيميلات + شاتبوت). **⏸️ مؤجّل (لا يؤثر SEO إطلاقاً — noindex):** تصحيح تهجئة «مودونتي»→«مدونتي» في **admin (≈19 ملف)** + **console (≈29 ملف)**. ⚠️ console حسّاس: ملفات الصوت تستخدم «مُدَوَّنَتِي» (تشكيل) — لا مسح أعمى. نعالجها بعد الـ push.
 
 ---
