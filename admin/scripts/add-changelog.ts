@@ -12,10 +12,10 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.68.2 (admin)",
-    title: "jbrseo signups: hide people who are already clients from the 'to convert' list",
+    version: "0.68.3 (admin)",
+    title: "Resend the welcome email to a converted client",
     items: [
-      { type: "fix" as const, text: "On the Clients → jbrseo Subscribers tab, a signup whose email already exists as a client used to still appear under 'للتحويل' (to convert). Now any signup matching an existing client (by email) is treated as 'عميل بالفعل', moved out of the to-convert list, and linked to the matching client — so you only ever convert people who aren't clients yet. Matches against ALL clients, independent of the current search filter." },
+      { type: "feature" as const, text: "On the Clients → jbrseo Subscribers → 'تم تحويلهم' tab, each converted client now has a small send icon next to the 'تم التحويل' badge. Click it to resend the welcome email (login credentials) to that client — handy when the original email was missed. Reuses the existing send-welcome action. Note: the email always contains the default password, so it's most useful for clients who haven't logged in and changed it yet." },
     ],
   },
 ];

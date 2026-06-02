@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Search, Inbox, UserPlus, CheckCircle2, ExternalLink, Mail, Phone, CalendarDays } from "lucide-react";
+import { Search, Inbox, UserPlus, CheckCircle2, ExternalLink, Mail, Phone, CalendarDays, Send, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import type { JbrseoSubscriberRow, WelcomeEmailStatus } from "../helpers/jbrseo-queries";
 import { ConvertSubscriberDialog } from "../../clients/components/convert-subscriber-dialog";
+import { sendClientWelcome } from "../../clients/actions/clients-actions/send-client-welcome";
 
 interface Props {
   rows: JbrseoSubscriberRow[];
@@ -24,6 +26,45 @@ const dateFmt = new Intl.DateTimeFormat("en-GB", {
   hour: "2-digit",
   minute: "2-digit",
 });
+
+// Resend the welcome email (login credentials) to an already-created client.
+// Reuses the same server action used on client creation/conversion.
+function ResendWelcomeButton({ clientId }: { clientId: string }) {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+
+  const handleResend = () => {
+    startTransition(async () => {
+      const res = await sendClientWelcome(clientId);
+      if (res.success) {
+        toast({
+          title: "تم إرسال إيميل الترحيب",
+          description: "أُعيد إرسال بيانات الدخول للعميل على إيميله.",
+        });
+      } else {
+        toast({
+          title: "فشل الإرسال",
+          description: res.error,
+          variant: "destructive",
+        });
+      }
+    });
+  };
+
+  return (
+    <Button
+      size="icon"
+      variant="ghost"
+      className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+      onClick={handleResend}
+      disabled={isPending}
+      aria-label="إعادة إرسال إيميل الترحيب للعميل"
+      title="إعادة إرسال إيميل الترحيب (بيانات الدخول) للعميل"
+    >
+      {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+    </Button>
+  );
+}
 
 function SubscriberCard({
   r,
@@ -77,14 +118,17 @@ function SubscriberCard({
       <div className="shrink-0 flex flex-col items-end gap-1.5">
         {clientId ? (
           <>
-            <Link
-              href={`/clients/${clientId}`}
-              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 whitespace-nowrap"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              {r.convertedToClientId ? "تم التحويل" : "عميل بالفعل"}
-              <ExternalLink className="h-3 w-3 opacity-60" />
-            </Link>
+            <div className="flex items-center gap-1.5">
+              <Link
+                href={`/clients/${clientId}`}
+                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 whitespace-nowrap"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                {r.convertedToClientId ? "تم التحويل" : "عميل بالفعل"}
+                <ExternalLink className="h-3 w-3 opacity-60" />
+              </Link>
+              <ResendWelcomeButton clientId={clientId} />
+            </div>
             {r.convertedToClientId && (() => {
               const st = emailStatuses[r.convertedToClientId];
               return (
