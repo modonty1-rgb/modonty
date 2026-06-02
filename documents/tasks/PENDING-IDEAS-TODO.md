@@ -1,6 +1,6 @@
 # 💭 Pending Ideas — Brainstorm & Future Features
 
-**Last Updated:** 2026-05-22 (7 active ideas + 5 done · Vercel billing audit added · settings cascade fix in progress)
+**Last Updated:** 2026-06-02 (Homepage SEO keywords post-deploy task · Google Reviews Premium feature · Vercel billing audit)
 **Purpose:** ملف يجمع كل الأفكار المُلتقطة عبر shortcut **"reminder"** قبل ما تتحوّل لخطط تفصيلية.
 
 > **القاعدة:** كل فكرة هنا = `[ ]` فارغ، عنوان قصير + وصف موجز + تاريخ الإضافة.
@@ -9,6 +9,23 @@
 ---
 
 ## 💡 أفكار قيد التفكير
+
+### 🔑 Homepage SEO keywords — صياغة خبير بعد الـ deploy (added 2026-06-02)
+
+- [ ] **بعد ما نطلع الإنتاج:** أتصرّف كـ SEO expert وأصيغ أفضل الكلمات المفتاحية والكلمات القوية لحقول الصفحة الرئيسية — `modontySeoTitle` · `modontySeoDescription` · `brandDescription`.
+- **الهدف:** كلمات يبحث عنها الناس فعليًا (search volume عالٍ) في السوق السعودي/المصري، مش كلمات عامة.
+- **لماذا الانتظار للإنتاج:** هذي الحقول تغذّي الـ meta والـ JSON-LD للصفحة الرئيسية (القلب النابض) — أي صياغة تحتاج بحث كلمات حقيقي + مراجعة GSC بعد ما يكون عندنا داتا فعلية.
+- **المنهجية:** بحث كلمات (volume + intent) → اقتراح عناوين/أوصاف → مراجعة خالد → تعبئة عبر فورم Business Info + SEO → Regenerate cache.
+- **مرتبط بـ:** قيم الإنتاج في [[project_prod_business_info_values]] + قاعدة [[project_seo_dominance_goal]].
+
+### ⭐ Google Reviews على صفحة العميل — ميزة Premium فقط (added 2026-06-02)
+
+- [ ] **عرض (قراءة فقط) تقييم ومراجعات Google للعميل على صفحته في مودونتي.** حصري للباقة **Premium (الريادة)**.
+- **كيف:** الشرط `subscriptionTier === PREMIUM` **و** `gbpPlaceId` متعبّأ → Places API «Place Details» يرجّع: التقييم + عدد المراجعات + حتى 5 مراجعات → نعرضها بإسناد الكاتب (اسم/صورة/رابط).
+- **مسموح ✅** (تحقّقت من دوك Google رسميًا): العرض البصري عبر Places API جائز. **ممنوع ❌** تعليمها كـ `AggregateRating` markup (نجوم في نتائج البحث) — تجميع تقييمات طرف ثالث + تقييم ذاتي = مخالفة.
+- **قيود لازمة:** إسناد الكاتب إلزامي · **ممنوع تخزين/كاش** المراجعات (الجلب لحظي؛ `place_id` فقط يُكاش) · إظهار ترتيب + رابط إبلاغ.
+- **القلق الرئيسي:** كل جلب من Places API **مدفوع** → الحصر على Premium يضبط التكلفة. نحتاج rate-limit/كاش قصير ضمن ToS.
+- **الحقل موجود:** `Client.gbpPlaceId` (الفريق يعبّيه للعملاء Premium فقط).
 
 ### 🚨 Vercel Billing Audit — تقرير صرف كامل (added 2026-05-22)
 

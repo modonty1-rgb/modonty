@@ -50,7 +50,7 @@ export interface BuildMetaFromSettingsOverrides {
   path?: string;
 }
 
-const FALLBACK_SITE_URL = "https://modonty.com";
+const FALLBACK_SITE_URL = "https://www.modonty.com";
 const FALLBACK_TITLE = "Modonty";
 const FALLBACK_ROBOTS = "index, follow";
 const FALLBACK_OG_TYPE = "website";
@@ -65,6 +65,19 @@ const FALLBACK_OG_IMAGE_WIDTH = 1200;
 const FALLBACK_OG_IMAGE_HEIGHT = 630;
 const FALLBACK_HREFLANG = "x-default";
 const FALLBACK_PATH = "/";
+
+/** Derive the OG image MIME type from the file extension so the declared type always matches the actual file. */
+function imageMimeFromUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const clean = url.split(/[?#]/)[0].toLowerCase();
+  if (clean.endsWith(".png")) return "image/png";
+  if (clean.endsWith(".jpg") || clean.endsWith(".jpeg")) return "image/jpeg";
+  if (clean.endsWith(".webp")) return "image/webp";
+  if (clean.endsWith(".gif")) return "image/gif";
+  if (clean.endsWith(".svg")) return "image/svg+xml";
+  if (clean.endsWith(".avif")) return "image/avif";
+  return undefined;
+}
 
 export function buildMetaFromSettings(
   settings: SettingsForMeta,
@@ -87,7 +100,8 @@ export function buildMetaFromSettings(
 
   const imageUrl = (settings.ogImageUrl ?? settings.logoUrl ?? "").trim();
   const absImage = imageUrl ? (ensureAbsoluteUrl(imageUrl, siteUrl) || imageUrl) : undefined;
-  const ogImageType = settings.defaultOgImageType?.trim() || FALLBACK_OG_IMAGE_TYPE;
+  // Derive the OG image MIME type from the actual file extension so the declared type always matches the file.
+  const ogImageType = imageMimeFromUrl(absImage) || settings.defaultOgImageType?.trim() || FALLBACK_OG_IMAGE_TYPE;
   const ogImageWidth = settings.defaultOgImageWidth ?? FALLBACK_OG_IMAGE_WIDTH;
   const ogImageHeight = settings.defaultOgImageHeight ?? FALLBACK_OG_IMAGE_HEIGHT;
   const ogImageAlt = (settings.altImage ?? settings.siteName ?? "").trim();

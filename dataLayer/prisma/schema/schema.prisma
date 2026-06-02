@@ -1938,6 +1938,7 @@ model Settings {
   snapchatUrl  String?
   whatsappChannelUrl String? // Modonty WhatsApp Channel link
   telegramChannelUrl String? // Modonty Telegram Channel link
+  googleBusinessProfileUrl String? // Modonty/JBR Google Business Profile (Maps) URL — feeds Organization sameAs; team pastes it after creating + verifying the profile
 
   // Site & Organization (from .env defaults, editable in Settings UI)
   siteUrl             String?

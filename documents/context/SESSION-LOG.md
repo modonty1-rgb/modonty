@@ -1,8 +1,89 @@
-# Session Context — Last Updated: 2026-06-01 (PUSHED `aa7034d` — admin v0.67.0 + console v0.11.0. Forbidden-word publish false-positive FIXED + LIVE-verified on prod. dataLayer shared-source imports = FIRST-ever in prod → deploy-safety verified.)
+# Session Context — Last Updated: 2026-06-02 (PUSHED — admin v0.70.0: Modonty Homepage settings full SEO/UX redesign — SEO tab live preview (Google/Social) + dynamic favicon + grouped tabs + smart counters w/ hard maxLength + removed redundant Regenerate button + 2-column layout + standalone JBR SEO card + platform googleBusinessProfileUrl field + brandDescription moved to SEO tab. dataLayer schema: googleBusinessProfileUrl on Settings (optional). TSC ×3 clean, live-verified. All 3 apps redeploy (schema change). After deploy: fill PROD Business Info values + Regenerate.)
 
 > 📦 **Older sessions (40 blocks, up to 2026-06-01) archived →** [SESSION-LOG-archive-until-2026-06-01.md](./SESSION-LOG-archive-until-2026-06-01.md)
 > This active file keeps only the latest session(s) so the most important state stays in front. `us>` appends here (newest at top).
 > **Rotation rule:** when this file grows large again, copy it to a new dated archive (`SESSION-LOG-archive-until-YYYY-MM-DD.md`), then trim this file back to the latest 1–2 blocks + update the link above.
+
+---
+
+## Session: 2026-06-02 (later) — Modonty Homepage settings: full SEO/UX redesign — PUSHED v0.70.0
+
+### 🎯 Where I stopped
+- Last task: full UI/UX + SEO redesign of admin → Settings → Modonty Homepage. **Done + pushed as admin v0.70.0.** No open thread.
+- Next when resuming: after Vercel deploys all 3 apps READY → fill PROD Business Info values ([[project_prod_business_info_values]]) + Regenerate cache → then the post-deploy SEO-keywords task (PENDING-IDEAS).
+
+### ✅ Done this session
+- **brandDescription moved** Business Info tab → SEO & Sharing tab (it's the Organization identity description, grouped with the search snippet). `F.search`/`F.business` updated; per-tab save follows.
+- **SEO & Sharing tab redesigned:** live SERP + social-card preview (new `seo-preview.tsx`; **dynamic favicon = logoUrl**, falls back to letter), 3 grouped sections (Search appearance / Brand identity / Images), smart color-coded counters via new `Field` `counterMin` prop, **hard `maxLength`** caps (Title 60 · Desc 160 · Brand 250 · Alt 125), Arabic guidance box under Brand Description (إيش تكتب/وين تظهر).
+- **Removed redundant "Regenerate cache" button** — verified Save already regenerates home cache via background cascade (`updateAllSettings → after() → cascadeSettingsToAllEntities → regenerateAllListingCaches` incl. `home`). Cache strip is now info-only ("Updates automatically on Save"). Cleaned `handleRegenerate`/`isRegenerating`/`RefreshCw`.
+- **Whole-page restructure (Track A):** trimmed header (dropped Arabic duplicate), removed 🎯 note, **2-column SEO tab** (fields left · sticky preview right). Other tabs: Business Info → 3 groups (Contact/Address/Location & Google); Social Links → 2 groups + 3-col grid; Homepage Banner → 2-col with live banner preview + counters.
+- (earlier this session) standalone **JBR SEO** settings card + page; hours hardcoded **24/7**; platform **`googleBusinessProfileUrl`** wired into Organization `sameAs`; home SEO generator unified.
+- TSC: admin + modonty + console **all zero errors**. Live test: ✅ all 4 tabs in admin (dark) + favicon=logo + banner on modonty homepage `/` (top of feed). Homepage console has 4× `JWTSessionError` — pre-existing local dev cookie/AUTH_SECRET mismatch (OBS-118), non-blocking, not prod.
+
+### 📝 Decisions
+- brandDescription → SEO tab (identity description ≠ search snippet) — Khalid's call after discussion.
+- Save = single source of cache regeneration; manual Regenerate button removed (redundant).
+- Banner tagline/desc = soft counters (no hard cap — visible marketing text); SEO fields = hard cap.
+
+### 📂 Files touched (this session's UI work)
+- `admin/app/(dashboard)/settings/modonty/components/modonty-form.tsx` — restructure + groups + counters + maxLength + banner preview + removed Regenerate
+- `admin/app/(dashboard)/settings/modonty/components/seo-preview.tsx` (NEW) — live SERP/social preview + dynamic favicon
+- `admin/app/(dashboard)/settings/_shared/field.tsx` — `counterMin` graded counter
+- `admin/app/(dashboard)/settings/modonty/page.tsx` — trimmed header
+- (earlier) `settings/page.tsx`, `settings/jbr-seo/*`, `settings/clients/*`, SEO generators, `settings-actions.ts`, `dataLayer/prisma/schema/schema.prisma`
+- `documents/tasks/PENDING-IDEAS-TODO.md` (SEO keywords task), `CRITICAL-TODO.md`, mockups in `documents/tasks/`
+
+### 🔁 Git / deploy
+- Branch: main · admin 0.69.0 → **0.70.0** · changelog v0.70.0 (local+prod) · backup ran
+- `schema.prisma` changed → ignoreCommand triggers **all 3 apps** to redeploy (expected; prisma client regen)
+
+### 🚀 Resume in 30s
+1. Vercel: confirm admin + modonty + console all READY.
+2. admin.modonty.com → Settings → Modonty Homepage → Business Info → fill prod values ([[project_prod_business_info_values]]) → Save.
+3. Verify live JSON-LD/meta on modonty.com homepage.
+
+---
+
+## Session: 2026-06-02 11:15 — Resend welcome email to converted clients — PUSHED + prod-verified
+
+### 🎯 Where I stopped
+- Last task: resend-welcome feature — **fully done, pushed (`c9bd981`), deployed READY, prod-verified.** No open thread.
+- Next concrete action when resuming: nothing pending on this feature. Pick up whatever Khalid asks next. (Standing future items live under 🚧 below.)
+
+### ✅ Done this session
+- **Resend welcome email feature (admin v0.68.3):** Clients → jbrseo Subscribers → «تم تحويلهم» — each converted client now has a compact send-icon (✈️) next to the «تم التحويل» badge that resends the welcome email (login credentials). Reuses the existing `sendClientWelcome(clientId)` server action — zero duplicated logic. Toast on success/fail + pending spinner via `useTransition`.
+- **UX iteration (Khalid feedback):** first built as a full-width text button below the status badges; Khalid asked to put it on the «تم التحويل» badge → moved it to a small icon-only button (`size="icon"`, `aria-label`+`title`) inline beside the badge. Status badges (وصل/فُتح) sit below. Available for both `convertedToClientId` and email-matched («عميل بالفعل») clients (any clientId).
+- TSC: admin zero errors (ran twice — after add, after restructure). Build: not run (single UI-component change). Live test: ✅ LOCAL render + ✅ PROD render (icon next to badge on all converted cards). **Did NOT click the icon** anywhere — avoids sending a real Resend email to a real client.
+- Backup ran (`scripts/backup.sh` → 73 collections, 4.3M). Changelog v0.68.3 written to local `modonty_dev` + prod `modonty`.
+- Deploy verified via Vercel API: admin **READY** (`c9bd981`), console + modonty **CANCELED** (ignoreCommand working as designed).
+
+### 📝 Decisions taken (with reasoning)
+- **Reuse `sendClientWelcome`, don't write a new action** → DRY; it already sends the welcome with tags for delivered/opened tracking. Alternative (new resend-specific action) rejected — no behavioral difference needed.
+- **Icon-only inline button, not a labelled row** → Khalid explicitly wanted it on the badge; keeps the card compact. Tooltip + aria-label preserve clarity for a non-technical admin.
+- **Left the default-password behavior as-is** (email always shows `admin123`) → matches the existing create/convert flow; changing it (e.g. per-client real password) is out of scope and the system assumes first-login password change. Flagged the caveat to Khalid rather than silently "fixing".
+- **Pushed straight to `main`** → project convention (Vercel auto-deploys from main; ignoreCommand scopes the build). Not branching, per established repo workflow.
+
+### 🚧 Pending / blocked (standing future items — none blocking)
+- **Phase 6 (intake engine cleanup):** delete legacy hardcoded `intake-form.tsx` + the `buildLegacyMirror` block in `save-intake.ts` + legacy `Client` strategy columns — only after the DB-driven intake is proven stable in prod. Not started.
+- **CRIT-004 (Cloudinary orphan sweep):** redesign as review-before-delete with a prod-DB guard before re-enabling. Currently hard-disabled. Tracked in MASTER-TODO.
+- **Console SEO regen after profile save** (memory `project_console_must_regenerate_seo`): `updateProfile` in console doesn't call `generateClientSEO` → stale JSON-LD when a client edits their data. Fix deferred to console work.
+
+### 📂 Files touched this session
+- `admin/app/(dashboard)/subscription-tiers/components/subscribers-table.tsx` — added `ResendWelcomeButton` (icon) + imports (`useTransition`, `useToast`, `Send`, `Loader2`, `sendClientWelcome`); placed inline next to the converted badge; removed the earlier standalone button
+- `admin/package.json` — 0.68.2 → 0.68.3
+- `admin/scripts/add-changelog.ts` — v0.68.3 entry
+- `documents/context/SESSION-LOG.md` — this block (header line updated too)
+
+### 🔁 Git / deploy state
+- Branch: `main`
+- Last commit: `c9bd981` — "admin v0.68.3: resend welcome email to a converted client" — **pushed**
+- Uncommitted in working tree (pre-existing, NOT mine to commit without ask): `documents/context/SESSION-LOG.md` (this file), `documents/tasks/CLIENT-CLASSIFICATION-TODO.md`, untracked `documents/context/SESSION-LOG-archive-until-2026-06-01.md`
+- Vercel: admin READY · console CANCELED · modonty CANCELED (ignoreCommand verified via API)
+
+### 🚀 How to resume in 30 seconds
+1. `git -C "c:/Users/w2nad/Desktop/dreamToApp/MODONTY" log --oneline -3` → confirm `c9bd981` is latest.
+2. Open `admin/app/(dashboard)/subscription-tiers/components/subscribers-table.tsx` if revisiting the resend UI.
+3. Decide: start a new task, or pick up a 🚧 standing item (Phase 6 cleanup / CRIT-004 / console SEO regen) — each needs Khalid's go.
 
 ---
 
@@ -32,6 +113,7 @@
 ### 🔁 Git / deploy state
 - **✅ PUSHED + DEPLOYED 2026-06-01** — commit `c255b22` (admin v0.68.0 + console v0.12.0). `aa7034d..c255b22 main -> main`. Vercel: all 3 apps **READY** (verified via API). Changelog row written to dev + prod. Backup taken (dev, 73 collections). admin/console/modonty TSC all green pre-push.
 - **✅ PROD ACTIVE + VERIFIED 2026-06-01:** Khalid ran Run-All on prod → questionnaire seeded into the `modonty` prod DB. Verified live: admin.modonty.com/intake shows all 11 sections; console.modonty.com renders the DB-driven dynamic form (20/22 for the live client) with answers persisted. Full circle works on production.
+- **✅ jbrseo signups dedup vs clients — commit `a229baa` (admin v0.68.2):** on Clients → jbrseo Subscribers, a signup whose email already exists as a client kept showing under "للتحويل" (split was only by `convertedToClientId`). Now `subscribers-table.tsx` also matches signup email → existing client; `clients/page.tsx` builds an email→id map over ALL clients (filter-independent, via `db.client.findMany({select:{id,email}})`) passed through `clients-tabs.tsx`. Already-clients show "عميل بالفعل" + link, excluded from to-convert. Verified on dev AND **on PROD after deploy**: "للتحويل" dropped 5→3, "تم تحويلهم" 9→11, 2 signups now labeled "عميل بالفعل". Fix confirmed live.
 - **✅ Brief made dynamic — commit `dbd5c4b` (admin v0.68.1):** the client page **Brief tab** was hardcoded (new intake questions never appeared there). Rewrote `intake-brief.tsx` to render dynamically from the same DB questionnaire (`getIntakeForm()` passed via `page.tsx` → `client-tabs.tsx`), mapping choice values → labels, respecting YMYL visibility, renamed to "بيانات نشاط العميل". Verified on dev (added a test question → appeared in Brief → deleted it) AND on PROD (`admin.modonty.com` client "Catchers" Brief renders the DB questions + the client's real answers, completeness matches console). Removed now-unused `ymylCategoryLabel`/`YMYL_CATEGORIES` from client-tabs.
 - **✅ Hydration fix shipped — commit `f7f73e0` (console v0.12.1):** the prod console intake had one React #418 (saved-time formatted in server UTC ≠ browser tz). Fixed by rendering the timestamp only after mount. Verified on dev (0 errors) then on PROD after deploy (`console.modonty.com/dashboard/seo/intake` → **0 console errors**). Same latent pattern still exists in the legacy `intake-form.tsx` fallback (dormant, slated for Phase 6 deletion).
 - **PROD note:** the deploy does NOT seed the questionnaire into prod (no `db push`/migration in build — new `intake_*` collections are created on first write). To activate on prod: after deploy, admin.modonty.com → Maintenance → Run All (now safe, Cloudinary step removed) seeds it into the `modonty` prod DB. Until then, console prod falls back to the legacy hardcoded form (non-breaking).

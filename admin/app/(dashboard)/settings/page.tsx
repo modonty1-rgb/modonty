@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Building2,
+  Target,
   Briefcase,
   FolderTree,
   Tag,
@@ -37,15 +38,23 @@ const HERO: CardSpec = {
   cacheKey: "jsonLdLastGenerated",
 };
 
+// Sales channel — JBR SEO B2B promo ("بوابة البيع"). Its own area; the panel is shown on the clients hero.
+const SALES: CardSpec = {
+  href: "/settings/jbr-seo",
+  title: "JBR SEO",
+  description: "B2B sales channel — the promo panel pitching JBR SEO services on the clients page (CTA → jbrseo.com).",
+  icon: Target,
+  cacheKey: null,
+};
+
 // Secondary, homogeneous group — SEO + metadata for each public listing.
 const LISTINGS: CardSpec[] = [
   {
     href: "/settings/clients",
     title: "Clients",
-    description: "SEO + Hero B2B panel for the clients listing.",
+    description: "SEO and metadata for the clients listing.",
     icon: Briefcase,
     cacheKey: "clientsPageJsonLdLastGenerated",
-    tag: "+ Hero B2B",
   },
   {
     href: "/settings/categories",
@@ -163,7 +172,7 @@ export default async function SettingsDashboardPage() {
     .map((d) => new Date(d as Date | string).getTime());
   const freshest = allDates.length ? new Date(Math.max(...allDates)) : null;
 
-  const editableCount = 1 + LISTINGS.length + 1; // homepage + listings + default images
+  const editableCount = 2 + LISTINGS.length + 1; // homepage + jbr + listings + default images
   const total = editableCount + 1; // + system (read-only)
 
   const HeroIcon = HERO.icon;
@@ -213,6 +222,23 @@ export default async function SettingsDashboardPage() {
           <Freshness date={cacheOf(HERO.cacheKey)} />
           <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
         </div>
+      </Link>
+
+      {/* ── Sales channel — JBR SEO (بوابة البيع) ── */}
+      <SectionLabel>Sales channel</SectionLabel>
+      <Link
+        href={SALES.href}
+        title={SALES.description}
+        className="group flex items-center gap-3.5 rounded-xl border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
+      >
+        <div className="h-10 w-10 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
+          <SALES.icon className="h-5 w-5" />
+        </div>
+        <h3 className="text-sm font-bold truncate">{SALES.title}</h3>
+        <span className="flex-none text-[9.5px] font-bold tracking-wide text-primary bg-primary/10 border border-primary/25 rounded-full px-2 py-0.5">
+          B2B · jbrseo.com
+        </span>
+        <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
       </Link>
 
       {/* ── Listing pages — secondary, homogeneous ── */}

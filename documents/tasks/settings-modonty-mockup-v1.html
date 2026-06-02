@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Modonty Homepage Settings — Mockup v1 (tabs + per-tab save)</title>
+<style>
+  :root{
+    --bg:#0a0a0b; --card:#151517; --card-2:#1b1b1e; --border:#26262b; --border-2:#34343b;
+    --fg:#fafafa; --muted:#a1a1aa; --muted-2:#71717a;
+    --accent:#6366f1; --accent-soft:rgba(99,102,241,.12);
+    --emerald:#34d399; --amber:#fbbf24;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',Roboto,system-ui,sans-serif;padding:32px 28px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .sub{font-size:13px;color:var(--muted);margin-top:5px}
+
+  /* cache strip (once, above tabs) */
+  .cache-strip{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--muted)}
+  .cache-strip .left{display:flex;align-items:center;gap:10px}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .dot.ok{background:var(--emerald)} .dot.warn{background:var(--amber)}
+  .btn-ghost{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border-2);color:var(--muted);
+    border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer}
+  .btn-ghost:hover{color:var(--fg);border-color:#46464e}
+
+  /* tab bar */
+  .tabs{margin-top:18px;display:flex;gap:4px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .tab{position:relative;display:inline-flex;align-items:center;gap:7px;padding:9px 15px;font-size:13px;font-weight:600;color:var(--muted-2);
+    border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--fg)}
+  .tab.active{color:var(--fg);border-bottom-color:var(--accent)}
+  .tab .udot{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+  .tab .cnt{font-size:10px;color:var(--muted-2);background:var(--card-2);border:1px solid var(--border);border-radius:999px;padding:0 6px;font-weight:600}
+
+  /* panel */
+  .panel{margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .panel-head{padding:16px 20px 0}
+  .panel-head h2{font-size:15px;font-weight:700}
+  .panel-head p{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .panel-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:16px}
+
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--fg);margin-bottom:6px}
+  .field .hint{font-size:11px;color:var(--muted-2);font-weight:400;margin-left:6px}
+  .input,.textarea{width:100%;background:var(--bg);border:1px solid var(--border-2);border-radius:9px;color:var(--fg);
+    padding:9px 11px;font-size:13px;font-family:inherit}
+  .textarea{min-height:64px;resize:none}
+  .input:focus,.textarea:focus{outline:none;border-color:var(--accent)}
+  .ar{direction:rtl;text-align:right}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  .imgfield .box{border:1px dashed var(--border-2);border-radius:10px;height:120px;display:grid;place-items:center;background:var(--bg);overflow:hidden;margin-bottom:8px}
+  .imgfield.square .box{width:120px}
+  .imgfield .og{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-weight:700;font-size:20px;width:100%;display:grid;place-items:center}
+
+  /* per-tab save footer */
+  .panel-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 20px;border-top:1px solid var(--border);background:var(--card-2)}
+  .status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+  .btn-save{display:inline-flex;align-items:center;gap:7px;background:var(--fg);color:#0a0a0b;border:none;border-radius:9px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer}
+  .btn-save.disabled{background:var(--card);color:var(--muted-2);border:1px solid var(--border);cursor:not-allowed}
+
+  .note{margin-top:22px;font-size:11px;color:var(--muted-2);text-align:center;border-top:1px solid var(--border);padding-top:14px}
+  svg{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-2);margin-bottom:8px">
+    <span>Settings</span><span>/</span><span style="color:var(--muted)">Modonty Homepage</span>
+  </div>
+  <h1>Modonty Homepage</h1>
+  <p class="sub">The first page visitors see on modonty.com — identity, SEO, banner, contact, address & social.</p>
+
+  <!-- Cache strip (homepage-wide, once) -->
+  <div class="cache-strip">
+    <div class="left">
+      <span><span class="dot ok"></span> Homepage SEO cache</span>
+      <span style="color:var(--muted-2)">·</span>
+      <span>refreshed <b style="color:var(--fg)">4 days ago</b></span>
+    </div>
+    <button class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></svg>
+      Regenerate cache
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active">Identity <span class="cnt">4</span></button>
+    <button class="tab">SEO <span class="cnt">2</span></button>
+    <button class="tab">Banner <span class="cnt">2</span></button>
+    <button class="tab">Contact <span class="cnt">3</span></button>
+    <button class="tab">Address <span class="cnt">7</span></button>
+    <button class="tab">Social <span class="udot" title="unsaved changes"></span></button>
+  </div>
+
+  <!-- Active panel: Identity -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Site Identity</h2>
+      <p>The logo, brand image, and short description shown across modonty.com and in search results.</p>
+    </div>
+    <div class="panel-body">
+      <div class="field">
+        <label>Brand Description <span class="hint">Used in Organization JSON-LD (~160 chars)</span></label>
+        <textarea class="textarea ar" placeholder="منصة المحتوى العربي الرائدة...">منصة محتوى عربي احترافي للمسوقين ورواد الأعمال في السعودية ومصر.</textarea>
+      </div>
+      <div class="two">
+        <div class="field imgfield square">
+          <label>Logo <span class="hint">Square, min 112×112</span></label>
+          <div class="box"><span style="color:#6366f1;font-weight:800;font-size:30px">dc</span></div>
+          <input class="input" value="https://res.cloudinary.com/.../modontyLogo.png" />
+        </div>
+        <div class="field imgfield">
+          <label>Main Image (Open Graph) <span class="hint">1200×630</span></label>
+          <div class="box"><div class="og">modonty</div></div>
+          <input class="input" value="https://res.cloudinary.com/.../og-image.png" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Alt Text <span class="hint">Accessibility text for logo & OG image</span></label>
+        <input class="input ar" value="مدونتي — منصة المحتوى العربي" />
+      </div>
+    </div>
+    <!-- Per-tab save -->
+    <div class="panel-foot">
+      <div class="status"><span class="dot ok"></span> All changes saved</div>
+      <button class="btn-save disabled">Save Identity</button>
+    </div>
+  </div>
+
+  <div class="note">Mockup v1 · Modonty Homepage settings — 6 tabs (= the 6 sections), per-tab save, one cache strip above. The "Social" tab shows an amber dot = unsaved changes example. Not production code.</div>
+
+</div>
+</body>
+</html>

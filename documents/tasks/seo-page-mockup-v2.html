@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modonty Homepage settings — restructure v2</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background: #0b1220; color: #e2e8f0; }
+    .ar { font-family: 'Tajawal', sans-serif; }
+    .card { background: #131c2e; border: 1px solid #233048; }
+    .serp-title { color: #8ab4f8; }
+    .clamp2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    input,textarea{ background:#0e1626; border:1px solid #2a3a55; color:#e2e8f0; }
+  </style>
+</head>
+<body class="p-6">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- BEFORE/AFTER note -->
+    <p class="mb-4 text-center text-[11px] text-slate-500">mockup v2 · admin restructure — trimmed header + 2-column (fields | sticky preview)</p>
+
+    <!-- 1) Trimmed header — ONE concise line, no Arabic duplicate -->
+    <div class="mb-3">
+      <h1 class="text-lg font-semibold text-white">Modonty Homepage</h1>
+      <p class="text-xs text-slate-400 mt-0.5">SEO, structured data, business info &amp; social links for modonty.com's homepage.</p>
+    </div>
+
+    <!-- 2) Single thin cache strip (the 🎯 note is gone — section subtitles carry the meaning) -->
+    <div class="card mb-4 flex items-center justify-between gap-3 rounded-lg px-4 py-2 text-xs">
+      <span class="inline-flex items-center gap-2 text-slate-400"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Homepage cache · refreshed 1 hr ago</span>
+      <span class="text-[11px] text-slate-500">Regenerates automatically on Save</span>
+    </div>
+
+    <!-- tabs -->
+    <div class="flex gap-1 border-b border-[#233048]">
+      <button class="border-b-2 border-violet-500 px-4 py-2.5 text-sm font-medium text-white">SEO &amp; Sharing <span class="text-[10px] text-slate-500">6</span></button>
+      <button class="border-b-2 border-transparent px-4 py-2.5 text-sm text-slate-500">Business Info <span class="text-[10px]">6</span></button>
+      <button class="border-b-2 border-transparent px-4 py-2.5 text-sm text-slate-500">Social Links <span class="text-[10px]">12</span></button>
+      <button class="border-b-2 border-transparent px-4 py-2.5 text-sm text-slate-500">Homepage Banner <span class="text-[10px]">2</span></button>
+    </div>
+
+    <!-- content card -->
+    <div class="card mt-4 rounded-xl">
+      <div class="border-b border-[#233048] px-5 py-3.5">
+        <h2 class="text-base font-semibold text-white">SEO &amp; Sharing</h2>
+        <p class="text-xs text-slate-400 mt-0.5">How the homepage appears in Google and when shared on social media.</p>
+      </div>
+
+      <!-- ███ 2-COLUMN: fields (left) | sticky preview (right) ███ -->
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 p-5">
+
+        <!-- LEFT: field groups -->
+        <div class="space-y-6 min-w-0">
+          <!-- Group 1 -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="grid h-6 w-6 place-items-center rounded-md bg-violet-500/15 text-violet-300 text-xs">🔍</span>
+              <h3 class="text-sm font-semibold text-slate-200">Search appearance</h3>
+            </div>
+            <div>
+              <div class="mb-1 flex items-center justify-between">
+                <label class="text-[13px] text-slate-300">SEO Title</label>
+                <span id="cTitle" class="rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums bg-emerald-500/15 text-emerald-400">37 / 60</span>
+              </div>
+              <input id="inTitle" dir="rtl" class="ar w-full rounded-lg px-3 py-2 text-sm outline-none" value="مدوّنتي | منصة المحتوى العربي الرائدة" />
+            </div>
+            <div>
+              <div class="mb-1 flex items-center justify-between">
+                <label class="text-[13px] text-slate-300">SEO Description</label>
+                <span id="cDesc" class="rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums bg-emerald-500/15 text-emerald-400">120 / 160</span>
+              </div>
+              <textarea id="inDesc" dir="rtl" rows="3" class="ar w-full resize-none rounded-lg px-3 py-2 text-sm outline-none">تصفّح آلاف المقالات المتخصصة من نخبة الكتّاب العرب في الصحة والأعمال والتقنية — محتوى عربي موثوق ومحدّث.</textarea>
+            </div>
+          </div>
+
+          <!-- Group 2 -->
+          <div class="space-y-3 border-t border-[#233048] pt-5">
+            <div class="flex items-center gap-2">
+              <span class="grid h-6 w-6 place-items-center rounded-md bg-amber-500/15 text-amber-300 text-xs">🏷️</span>
+              <h3 class="text-sm font-semibold text-slate-200">Brand identity</h3>
+            </div>
+            <div>
+              <div class="mb-1 flex items-center justify-between">
+                <label class="text-[13px] text-slate-300">Brand Description</label>
+                <span id="cBrand" class="rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums bg-emerald-500/15 text-emerald-400">98 / 250</span>
+              </div>
+              <textarea id="inBrand" dir="rtl" rows="2" class="ar w-full resize-none rounded-lg px-3 py-2 text-sm outline-none">مدوّنتي منظومة محتوى عربية تمنح كل نشاط صفحة موثّقة ومحتوى احترافي وتحليلات مباشرة.</textarea>
+              <div dir="rtl" class="ar mt-2 flex items-start gap-2 rounded-md border-r-4 border-violet-500 bg-violet-500/10 px-3 py-2 text-[12px] text-slate-300">
+                <span>✍️</span>
+                <div class="space-y-1">
+                  <p><span class="font-semibold text-violet-300">إيش تكتب؟</span> عرّف مدوّنتي بجملة وحدة واضحة — معلومة ثابتة، مش عرض مؤقّت.</p>
+                  <p><span class="font-semibold text-violet-300">وين تظهر؟</span> في البطاقة التعريفية بجوجل + كسطر الناشر تحت كل مقال وكل صفحة كاتب.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group 3 -->
+          <div class="space-y-3 border-t border-[#233048] pt-5">
+            <div class="flex items-center gap-2">
+              <span class="grid h-6 w-6 place-items-center rounded-md bg-emerald-500/15 text-emerald-300 text-xs">🖼️</span>
+              <h3 class="text-sm font-semibold text-slate-200">Images &amp; alt text</h3>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="mb-1 block text-[13px] text-slate-300">Share Image <span class="text-slate-500">· 1200×630</span></label>
+                <div class="aspect-[1200/630] rounded-lg border-2 border-dashed border-[#2a3a55] bg-[#0e1626] grid place-items-center text-xs text-slate-500">pick image</div>
+              </div>
+              <div>
+                <label class="mb-1 block text-[13px] text-slate-300">Logo <span class="text-slate-500">· square</span></label>
+                <div class="aspect-square max-w-[120px] rounded-lg border-2 border-dashed border-[#2a3a55] bg-[#0e1626] grid place-items-center text-xs text-slate-500">logo</div>
+              </div>
+            </div>
+            <div>
+              <div class="mb-1 flex items-center justify-between">
+                <label class="text-[13px] text-slate-300">Image Alt Text</label>
+                <span class="text-[11px] tabular-nums text-slate-500">28 / 125</span>
+              </div>
+              <input dir="rtl" class="ar w-full rounded-lg px-3 py-2 text-sm outline-none" value="مدوّنتي — منصة المحتوى العربي" />
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: sticky live preview -->
+        <div class="min-w-0">
+          <div class="sticky top-4 overflow-hidden rounded-xl border border-[#233048] bg-[#0e1626]">
+            <div class="flex items-center justify-between border-b border-[#233048] px-3 py-2">
+              <span class="text-xs font-semibold text-slate-300">Live preview</span>
+              <div class="flex gap-1 text-xs">
+                <button id="tabG" class="rounded-md bg-violet-600 px-2.5 py-1 font-medium text-white">Google</button>
+                <button id="tabS" class="rounded-md px-2.5 py-1 font-medium text-slate-400">Social</button>
+              </div>
+            </div>
+            <div id="pG" class="p-3">
+              <div dir="rtl" class="rounded-lg bg-[#131c2e] p-3">
+                <div class="flex items-center gap-2">
+                  <div class="grid h-5 w-5 place-items-center rounded-full bg-violet-500/20 text-[9px] text-violet-300 ar">م</div>
+                  <div class="leading-tight"><div class="text-[12px] ar text-slate-300">مدوّنتي</div><div class="text-[11px] text-emerald-500">https://www.modonty.com</div></div>
+                </div>
+                <div id="gT" class="serp-title ar mt-1 text-[16px] leading-snug">مدوّنتي | منصة المحتوى العربي الرائدة</div>
+                <div id="gD" class="ar mt-1 text-[12px] leading-relaxed text-slate-400 clamp2">تصفّح آلاف المقالات المتخصصة من نخبة الكتّاب العرب — محتوى عربي موثوق.</div>
+              </div>
+              <p class="mt-2 text-center text-[10px] text-slate-600">Approximate — Google may rewrite.</p>
+            </div>
+            <div id="pS" class="p-3 hidden">
+              <div class="overflow-hidden rounded-lg border border-[#233048]">
+                <div class="aspect-[1200/630] bg-gradient-to-br from-violet-500 to-indigo-600 grid place-items-center text-white ar text-xs">1200×630</div>
+                <div dir="rtl" class="px-3 py-2 bg-[#131c2e]">
+                  <div class="text-[10px] uppercase tracking-wide text-slate-500">WWW.MODONTY.COM</div>
+                  <div id="sT" class="ar text-[14px] font-bold leading-snug text-white">مدوّنتي | منصة المحتوى العربي الرائدة</div>
+                  <div id="sD" class="ar text-[11px] text-slate-400 clamp2">تصفّح آلاف المقالات المتخصصة من نخبة الكتّاب العرب.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- save footer -->
+      <div class="flex items-center justify-between border-t border-[#233048] bg-[#0e1626] px-5 py-3.5">
+        <span class="inline-flex items-center gap-2 text-[12px] text-slate-400"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Saved · 1 hr ago</span>
+        <button class="rounded-md bg-violet-600 px-4 py-1.5 text-sm font-medium text-white">✓ Save SEO</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const g=document.getElementById('tabG'),s=document.getElementById('tabS'),pg=document.getElementById('pG'),ps=document.getElementById('pS');
+    g.onclick=()=>{pg.classList.remove('hidden');ps.classList.add('hidden');g.className='rounded-md bg-violet-600 px-2.5 py-1 font-medium text-white';s.className='rounded-md px-2.5 py-1 font-medium text-slate-400';};
+    s.onclick=()=>{ps.classList.remove('hidden');pg.classList.add('hidden');s.className='rounded-md bg-violet-600 px-2.5 py-1 font-medium text-white';g.className='rounded-md px-2.5 py-1 font-medium text-slate-400';};
+    const inT=document.getElementById('inTitle'),inD=document.getElementById('inDesc'),inB=document.getElementById('inBrand');
+    const gT=document.getElementById('gT'),gD=document.getElementById('gD'),sT=document.getElementById('sT'),sD=document.getElementById('sD');
+    const cT=document.getElementById('cTitle'),cD=document.getElementById('cDesc'),cB=document.getElementById('cBrand');
+    function col(el,len,lo,hi){el.className='rounded px-1.5 py-0.5 text-[11px] font-medium tabular-nums '+(len>hi?'bg-rose-500/15 text-rose-400':len<lo?'bg-amber-500/15 text-amber-400':'bg-emerald-500/15 text-emerald-400');}
+    function sync(){gT.textContent=inT.value||'—';sT.textContent=inT.value||'—';gD.textContent=inD.value||'—';sD.textContent=inD.value||'—';cT.textContent=inT.value.length+' / 60';col(cT,inT.value.length,30,60);cD.textContent=inD.value.length+' / 160';col(cD,inD.value.length,120,160);cB.textContent=inB.value.length+' / 250';col(cB,inB.value.length,40,250);}
+    [inT,inD,inB].forEach(e=>e.addEventListener('input',sync));sync();
+  </script>
+</body>
+</html>

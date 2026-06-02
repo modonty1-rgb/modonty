@@ -59,6 +59,33 @@ function ensureAbsoluteUrl(url: string | null | undefined, siteUrl: string): str
   return `https://${u}`;
 }
 
+/** Normalize a country value to ISO 3166-1 alpha-2 (schema.org recommended). Maps known full names; upper-cases 2-letter codes. */
+function normalizeCountryToISO(raw: string | null | undefined): string | undefined {
+  const v = (raw ?? "").trim();
+  if (!v) return undefined;
+  const map: Record<string, string> = {
+    "المملكة العربية السعودية": "SA",
+    "السعودية": "SA",
+    "saudi arabia": "SA",
+    "ksa": "SA",
+    "مصر": "EG",
+    "egypt": "EG",
+  };
+  const hit = map[v.toLowerCase()] ?? map[v];
+  if (hit) return hit;
+  if (/^[A-Za-z]{2}$/.test(v)) return v.toUpperCase();
+  return v;
+}
+
+// Modonty is a 24/7 online platform — its contact is always available, so this is a fixed fact (not editable).
+// Google best practice for round-the-clock availability: opens 00:00, closes 23:59, every day of the week.
+const ALWAYS_OPEN_24_7 = {
+  "@type": "OpeningHoursSpecification",
+  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+  opens: "00:00",
+  closes: "23:59",
+};
+
 /** Parse language string to BCP 47 format: single string or array for multiple. */
 function parseLanguageCodes(raw: string | null | undefined, fallback = "ar"): string | string[] {
   const val = (raw ?? fallback).trim();
@@ -128,7 +155,7 @@ export function buildHomeJsonLdFromSettings(
       ...(settings.orgAreaServed && { areaServed: settings.orgAreaServed }),
       availableLanguage: availLangCodes,
       ...(settings.orgContactOption?.trim() && { contactOption: settings.orgContactOption.trim() }),
-      ...(settings.orgContactHoursAvailable?.trim() && { hoursAvailable: settings.orgContactHoursAvailable.trim() }),
+      hoursAvailable: ALWAYS_OPEN_24_7,
     };
   }
 
@@ -142,28 +169,28 @@ export function buildHomeJsonLdFromSettings(
     !Number.isNaN(settings.orgGeoLatitude) &&
     !Number.isNaN(settings.orgGeoLongitude);
 
-  if (hasAddress || hasGeo) {
-    const place: Record<string, unknown> = {
-      "@type": "Place",
+  // Google Organization spec: the postal address goes DIRECTLY on the Organization (not nested under location).
+  if (hasAddress) {
+    const isoCountry = normalizeCountryToISO(settings.orgAddressCountry);
+    org.address = {
+      "@type": "PostalAddress",
+      ...(settings.orgStreetAddress && { streetAddress: settings.orgStreetAddress }),
+      ...(settings.orgAddressLocality && { addressLocality: settings.orgAddressLocality }),
+      ...(settings.orgAddressRegion && { addressRegion: settings.orgAddressRegion }),
+      ...(settings.orgPostalCode && { postalCode: settings.orgPostalCode }),
+      ...(isoCountry && { addressCountry: isoCountry }),
     };
-    if (hasAddress) {
-      place.address = {
-        "@type": "PostalAddress",
-        ...(settings.orgStreetAddress && { streetAddress: settings.orgStreetAddress }),
-        ...(settings.orgAddressLocality && { addressLocality: settings.orgAddressLocality }),
-        ...(settings.orgAddressRegion && { addressRegion: settings.orgAddressRegion }),
-        ...(settings.orgPostalCode && { postalCode: settings.orgPostalCode }),
-        ...(settings.orgAddressCountry && { addressCountry: settings.orgAddressCountry }),
-      };
-    }
-    if (hasGeo) {
-      place.geo = {
+  }
+  // GeoCoordinates isn't a direct Organization property — expose via a minimal Place only when coords exist.
+  if (hasGeo) {
+    org.location = {
+      "@type": "Place",
+      geo: {
         "@type": "GeoCoordinates",
         latitude: settings.orgGeoLatitude,
         longitude: settings.orgGeoLongitude,
-      };
-    }
-    org.location = place;
+      },
+    };
   }
 
   const website: Record<string, unknown> = {
@@ -175,17 +202,7 @@ export function buildHomeJsonLdFromSettings(
     inLanguage: inLangCodes,
     publisher: { "@id": orgId },
   };
-  const searchTemplate = settings.orgSearchUrlTemplate?.trim();
-  if (searchTemplate) {
-    website.potentialAction = {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: searchTemplate.includes("{") ? searchTemplate : `${searchTemplate}?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    };
-  }
+  // Sitelinks Searchbox (WebSite SearchAction) was deprecated by Google in Nov 2024 — intentionally not emitted.
 
   const itemListElements = articles.slice(0, 20).map((article, index) => {
     const articleUrl = `${siteUrl}/articles/${article.slug}`;
@@ -389,7 +406,7 @@ export function buildListPageJsonLdFromSettings(
       ...(settings.orgAreaServed && { areaServed: settings.orgAreaServed }),
       availableLanguage: availLangCodes,
       ...(settings.orgContactOption?.trim() && { contactOption: settings.orgContactOption.trim() }),
-      ...(settings.orgContactHoursAvailable?.trim() && { hoursAvailable: settings.orgContactHoursAvailable.trim() }),
+      hoursAvailable: ALWAYS_OPEN_24_7,
     };
   }
 

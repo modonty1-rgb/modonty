@@ -12,8 +12,7 @@ export default async function ModontySettingsPage() {
     <div className="max-w-[1200px] mx-auto">
       <SettingsPageHeader
         title="Modonty Homepage"
-        description="The first page visitors see on modonty.com — manage its SEO & sharing, business info, social links, and homepage banner."
-        arabicDescription="إعدادات الصفحة الرئيسية لـ modonty.com — الـ SEO والمشاركة، بيانات النشاط، روابط التواصل، وبانر الصفحة الرئيسية."
+        description="SEO, structured data, business info & social links for modonty.com's homepage."
       />
       <Suspense fallback={<div className="py-12 text-center text-sm text-muted-foreground">Loading settings...</div>}>
         <ModontyForm initialSettings={settings} />

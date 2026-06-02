@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useCallback } from "react";
-import { Check, Loader2, RefreshCw } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -16,22 +16,34 @@ import { ImageField } from "../../_shared/image-field";
 import { StatusBadge } from "../../_shared/status-badge";
 import { formatTimeAgo } from "../../_shared/format-time-ago";
 import { SEO_HINTS } from "../../_shared/seo-hints";
+import { SeoPreview } from "./seo-preview";
 
 interface Props {
   initialSettings: AllSettings;
 }
 
+// Small grouping sub-header used inside the SEO tab to chunk fields by purpose.
+function GroupHeader({ icon, title, note, tone }: { icon: string; title: string; note?: string; tone: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`grid h-6 w-6 place-items-center rounded-md text-xs ${tone}`}>{icon}</span>
+      <h3 className="text-sm font-semibold text-foreground/80">{title}</h3>
+      {note && <span className="text-[11px] text-muted-foreground">— {note}</span>}
+    </div>
+  );
+}
+
 // Fields owned by each tab — grouped BY PURPOSE, not by raw schema name.
 // Each tab saves ONLY its own fields.
 const F = {
-  // How the homepage looks in Google + when shared (meta + OG/Twitter image).
-  search: ["modontySeoTitle", "modontySeoDescription", "ogImageUrl", "logoUrl", "altImage"],
-  // The organization's official details — Organization structured data (Knowledge Panel).
+  // How the homepage looks in Google + when shared (meta + OG/Twitter image) + the brand description used in structured data.
+  search: ["modontySeoTitle", "modontySeoDescription", "brandDescription", "ogImageUrl", "logoUrl", "altImage"],
+  // The organization's factual details — contact, address, social profiles (Organization structured data).
   business: [
-    "brandDescription",
-    "orgContactEmail", "orgContactTelephone", "orgContactHoursAvailable",
+    "orgContactEmail", "orgContactTelephone",
     "orgStreetAddress", "orgAddressLocality", "orgAddressRegion", "orgPostalCode",
     "orgAddressCountry", "orgGeoLatitude", "orgGeoLongitude",
+    "googleBusinessProfileUrl",
   ],
   // Social profile URLs (sameAs) + X card handles.
   social: [
@@ -60,7 +72,6 @@ export function ModontyForm({ initialSettings }: Props) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [savingTab, setSavingTab] = useState<string | null>(null);
   const [isSaving, startSaving] = useTransition();
-  const [isRegenerating, startRegenerating] = useTransition();
 
   const set = useCallback(<K extends keyof AllSettings>(key: K, value: AllSettings[K]) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -89,18 +100,6 @@ export function ModontyForm({ initialSettings }: Props) {
     });
   }
 
-  function handleRegenerate() {
-    startRegenerating(async () => {
-      try {
-        const gen = await import("@/lib/seo/listing-page-seo-generator");
-        await gen.regenerateHomePageCache();
-        toast({ title: "تم تحديث الكاش", description: "Homepage SEO cache regenerated.", variant: "success" });
-      } catch (e) {
-        toast({ title: messages.error.operation_failed, description: e instanceof Error ? e.message : "Unknown error", variant: "destructive" });
-      }
-    });
-  }
-
   const cacheLabel = formatTimeAgo(settings.jsonLdLastGenerated);
 
   // Per-tab save footer — bleeds to the Section card edges.
@@ -126,16 +125,7 @@ export function ModontyForm({ initialSettings }: Props) {
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           Homepage SEO cache · refreshed <span className="font-medium text-foreground">{cacheLabel}</span>
         </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
-          onClick={handleRegenerate}
-          disabled={isRegenerating || isSaving}
-        >
-          <RefreshCw className={`h-3 w-3 ${isRegenerating ? "animate-spin" : ""}`} />
-          Regenerate cache
-        </Button>
+        <span className="text-[11px] text-muted-foreground/70">Updates automatically on Save</span>
       </div>
 
       <Tabs defaultValue="search" className="w-full">
@@ -157,56 +147,132 @@ export function ModontyForm({ initialSettings }: Props) {
         <TabsContent value="search" className="mt-4">
           <Section
             title="SEO & Sharing"
-            description="How the homepage appears in Google search results and when shared on X, Facebook & LinkedIn."
+            description="How the homepage appears in Google search results and when shared on social media."
           >
-            <Field
-              label="SEO Title"
-              hint={SEO_HINTS.title}
-              counter={settings.modontySeoTitle?.length ?? 0}
-              counterMax={60}
-            >
-              <Input
-                value={settings.modontySeoTitle ?? ""}
-                onChange={(e) => set("modontySeoTitle", e.target.value)}
-                placeholder="مدونتي | منصة المحتوى العربي"
-              />
-            </Field>
-            <Field
-              label="SEO Description"
-              hint={SEO_HINTS.description}
-              counter={settings.modontySeoDescription?.length ?? 0}
-              counterMax={160}
-            >
-              <Textarea
-                value={settings.modontySeoDescription ?? ""}
-                onChange={(e) => set("modontySeoDescription", e.target.value)}
-                placeholder="تصفح آلاف المقالات من أفضل الكتّاب..."
-                className="resize-none min-h-[72px]"
-              />
-            </Field>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-border">
-              <ImageField
-                label="Share Image"
-                value={settings.ogImageUrl ?? ""}
-                onChange={(v) => set("ogImageUrl", v)}
-                hint="1200×630 px — the Open Graph image shown when the page is shared on social media."
-                aspect="og"
-              />
-              <ImageField
-                label="Logo"
-                value={settings.logoUrl ?? ""}
-                onChange={(v) => set("logoUrl", v)}
-                hint="Square, min 112×112 px — also used as your Organization logo in Google."
-                aspect="square"
-              />
+            {/* 2-column: field groups (left) + sticky live preview (right) */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+              <div className="min-w-0 space-y-6">
+            {/* Group 1 — Search appearance */}
+            <div className="space-y-3">
+              <GroupHeader icon="🔍" title="Search appearance" note="the snippet shown in Google" tone="bg-primary/10 text-primary" />
+              <Field
+                label="SEO Title"
+                hint={SEO_HINTS.title}
+                counter={settings.modontySeoTitle?.length ?? 0}
+                counterMax={60}
+                counterMin={30}
+              >
+                <Input
+                  value={settings.modontySeoTitle ?? ""}
+                  onChange={(e) => set("modontySeoTitle", e.target.value)}
+                  placeholder="مدونتي | منصة المحتوى العربي"
+                  maxLength={60}
+                />
+              </Field>
+              <Field
+                label="SEO Description"
+                hint={SEO_HINTS.description}
+                counter={settings.modontySeoDescription?.length ?? 0}
+                counterMax={160}
+                counterMin={120}
+              >
+                <Textarea
+                  value={settings.modontySeoDescription ?? ""}
+                  onChange={(e) => set("modontySeoDescription", e.target.value)}
+                  placeholder="تصفح آلاف المقالات من أفضل الكتّاب..."
+                  className="resize-none min-h-[72px]"
+                  maxLength={160}
+                />
+              </Field>
             </div>
-            <Field label="Image Alt Text" hint="Accessibility text for the logo and share image (also used as the image caption).">
-              <Input
-                value={settings.altImage ?? ""}
-                onChange={(e) => set("altImage", e.target.value)}
-                placeholder="مدونتي — منصة المحتوى العربي"
+
+            {/* Group 2 — Brand identity */}
+            <div className="space-y-3 border-t border-border pt-4">
+              <GroupHeader
+                icon="🏷️"
+                title="Brand identity"
+                note="Organization description — Knowledge Panel + every page"
+                tone="bg-amber-500/15 text-amber-600"
               />
-            </Field>
+              <Field
+                label="Brand Description"
+                hint="Modonty's identity in one or two evergreen sentences. Different from the SEO Description above (which is only the homepage search snippet)."
+                counter={settings.brandDescription?.length ?? 0}
+                counterMax={250}
+                counterMin={40}
+              >
+                <Textarea
+                  value={settings.brandDescription ?? ""}
+                  onChange={(e) => set("brandDescription", e.target.value)}
+                  placeholder="منصة المحتوى العربي الرائدة التي تمنح كل نشاط صفحة موثّقة ومحتوى احترافي..."
+                  className="resize-none min-h-[64px]"
+                  maxLength={250}
+                />
+                <div dir="rtl" className="mt-2 flex items-start gap-2 rounded-md border-s-4 border-primary bg-primary/10 px-3 py-2 text-[12px] leading-relaxed text-foreground/90">
+                  <span aria-hidden className="mt-0.5 text-sm leading-none">✍️</span>
+                  <div className="space-y-1">
+                    <p>
+                      <span className="font-semibold text-primary">إيش تكتب؟</span> عرّف مدوّنتي بجملة وحدة واضحة — معلومة ثابتة، مش عرض مؤقّت.
+                    </p>
+                    <p>
+                      <span className="font-semibold text-primary">وين تظهر؟</span> في البطاقة التعريفية بجوجل + كسطر الناشر تحت{" "}
+                      <span className="font-semibold text-foreground">كل مقال وكل صفحة كاتب</span> — مش بس الصفحة الرئيسية.
+                    </p>
+                  </div>
+                </div>
+              </Field>
+            </div>
+
+            {/* Group 3 — Images & alt */}
+            <div className="space-y-3 border-t border-border pt-4">
+              <GroupHeader icon="🖼️" title="Images & alt text" tone="bg-emerald-500/15 text-emerald-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ImageField
+                  label="Share Image"
+                  value={settings.ogImageUrl ?? ""}
+                  onChange={(v) => set("ogImageUrl", v)}
+                  hint="1200×630 px — the Open Graph image shown when the page is shared on social media."
+                  aspect="og"
+                />
+                <ImageField
+                  label="Logo"
+                  value={settings.logoUrl ?? ""}
+                  onChange={(v) => set("logoUrl", v)}
+                  hint="Square, min 112×112 px — also used as your Organization logo in Google."
+                  aspect="square"
+                />
+              </div>
+              <Field
+                label="Image Alt Text"
+                hint="Accessibility text for the logo and share image (also used as the image caption)."
+                counter={settings.altImage?.length ?? 0}
+                counterMax={125}
+              >
+                <Input
+                  value={settings.altImage ?? ""}
+                  onChange={(e) => set("altImage", e.target.value)}
+                  placeholder="مدونتي — منصة المحتوى العربي"
+                  maxLength={125}
+                />
+              </Field>
+            </div>
+              </div>
+
+              {/* RIGHT: sticky live preview */}
+              <div className="min-w-0">
+                <div className="lg:sticky lg:top-4">
+                  <SeoPreview
+                    siteName={settings.siteName?.trim() || "مدوّنتي"}
+                    siteUrl={settings.siteUrl?.trim() || "https://www.modonty.com"}
+                    title={settings.modontySeoTitle?.trim() || settings.siteName?.trim() || "مدوّنتي"}
+                    description={settings.modontySeoDescription?.trim() || settings.brandDescription?.trim() || ""}
+                    imageUrl={settings.ogImageUrl?.trim() || settings.logoUrl?.trim() || undefined}
+                    logoUrl={settings.logoUrl?.trim() || settings.ogImageUrl?.trim() || undefined}
+                  />
+                </div>
+              </div>
+            </div>
+
             {tabFooter("search", F.search, "SEO")}
           </Section>
         </TabsContent>
@@ -215,62 +281,75 @@ export function ModontyForm({ initialSettings }: Props) {
         <TabsContent value="business" className="mt-4">
           <Section
             title="Business Info"
-            description="Your organization's official details — used in Google's structured data (Knowledge Panel) and reused across the whole site."
+            description="Your organization's factual details — contact, address & location. Used in Google's structured data (Knowledge Panel)."
           >
-            <Field
-              label="Brand Description"
-              hint="One line about Modonty — feeds the Organization schema (Google Knowledge Panel) and the publisher info on every page. This is NOT the homepage search snippet (see the SEO & Sharing tab)."
-            >
-              <Textarea
-                value={settings.brandDescription ?? ""}
-                onChange={(e) => set("brandDescription", e.target.value)}
-                placeholder="منصة المحتوى العربي الرائدة..."
-                className="resize-none min-h-[64px]"
-              />
-            </Field>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-border">
-              <Field label="Email">
-                <Input type="email" value={settings.orgContactEmail ?? ""} onChange={(e) => set("orgContactEmail", e.target.value)} placeholder="info@modonty.com" />
-              </Field>
-              <Field label="Phone">
-                <Input value={settings.orgContactTelephone ?? ""} onChange={(e) => set("orgContactTelephone", e.target.value)} placeholder="+966500000000" />
-              </Field>
-              <Field label="Hours">
-                <Input value={settings.orgContactHoursAvailable ?? ""} onChange={(e) => set("orgContactHoursAvailable", e.target.value)} placeholder="Su-Th 09:00-18:00" />
-              </Field>
+            {/* Contact */}
+            <div className="space-y-3">
+              <GroupHeader icon="📞" title="Contact" note="Organization contactPoint" tone="bg-primary/10 text-primary" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Email">
+                  <Input type="email" value={settings.orgContactEmail ?? ""} onChange={(e) => set("orgContactEmail", e.target.value)} placeholder="info@modonty.com" />
+                </Field>
+                <Field label="Phone">
+                  <Input value={settings.orgContactTelephone ?? ""} onChange={(e) => set("orgContactTelephone", e.target.value)} placeholder="+966500000000" />
+                </Field>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Hours: always 24/7 (online platform) — emitted automatically as round-the-clock structured data.
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Street">
-                <Input value={settings.orgStreetAddress ?? ""} onChange={(e) => set("orgStreetAddress", e.target.value)} />
-              </Field>
-              <Field label="City">
-                <Input value={settings.orgAddressLocality ?? ""} onChange={(e) => set("orgAddressLocality", e.target.value)} />
-              </Field>
-              <Field label="Region">
-                <Input value={settings.orgAddressRegion ?? ""} onChange={(e) => set("orgAddressRegion", e.target.value)} />
-              </Field>
-              <Field label="Postal Code">
-                <Input value={settings.orgPostalCode ?? ""} onChange={(e) => set("orgPostalCode", e.target.value)} />
-              </Field>
+
+            {/* Address */}
+            <div className="space-y-3 border-t border-border pt-4">
+              <GroupHeader icon="📍" title="Address" tone="bg-amber-500/15 text-amber-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Street">
+                  <Input value={settings.orgStreetAddress ?? ""} onChange={(e) => set("orgStreetAddress", e.target.value)} />
+                </Field>
+                <Field label="City">
+                  <Input value={settings.orgAddressLocality ?? ""} onChange={(e) => set("orgAddressLocality", e.target.value)} />
+                </Field>
+                <Field label="Region">
+                  <Input value={settings.orgAddressRegion ?? ""} onChange={(e) => set("orgAddressRegion", e.target.value)} />
+                </Field>
+                <Field label="Postal Code">
+                  <Input value={settings.orgPostalCode ?? ""} onChange={(e) => set("orgPostalCode", e.target.value)} />
+                </Field>
+                <Field label="Country" hint="Two-letter code (e.g. SA, EG)">
+                  <Input value={settings.orgAddressCountry ?? ""} onChange={(e) => set("orgAddressCountry", e.target.value)} placeholder="SA" />
+                </Field>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Field label="Country" hint="Two-letter code (e.g. SA, EG)">
-                <Input value={settings.orgAddressCountry ?? ""} onChange={(e) => set("orgAddressCountry", e.target.value)} placeholder="SA" />
-              </Field>
-              <Field label="Latitude">
+
+            {/* Location & Google */}
+            <div className="space-y-3 border-t border-border pt-4">
+              <GroupHeader icon="🗺️" title="Location & Google" note="map pin + verified business link" tone="bg-emerald-500/15 text-emerald-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="Latitude">
+                  <Input
+                    type="number"
+                    step="any"
+                    value={settings.orgGeoLatitude ?? ""}
+                    onChange={(e) => set("orgGeoLatitude", e.target.value ? parseFloat(e.target.value) : null)}
+                  />
+                </Field>
+                <Field label="Longitude">
+                  <Input
+                    type="number"
+                    step="any"
+                    value={settings.orgGeoLongitude ?? ""}
+                    onChange={(e) => set("orgGeoLongitude", e.target.value ? parseFloat(e.target.value) : null)}
+                  />
+                </Field>
+              </div>
+              <Field
+                label="Google Business Profile URL"
+                hint="Paste the Google Maps / Business Profile link after the team creates & verifies it — feeds the Organization sameAs (proves you're a real, verified business)."
+              >
                 <Input
-                  type="number"
-                  step="any"
-                  value={settings.orgGeoLatitude ?? ""}
-                  onChange={(e) => set("orgGeoLatitude", e.target.value ? parseFloat(e.target.value) : null)}
-                />
-              </Field>
-              <Field label="Longitude">
-                <Input
-                  type="number"
-                  step="any"
-                  value={settings.orgGeoLongitude ?? ""}
-                  onChange={(e) => set("orgGeoLongitude", e.target.value ? parseFloat(e.target.value) : null)}
+                  value={settings.googleBusinessProfileUrl ?? ""}
+                  onChange={(e) => set("googleBusinessProfileUrl", e.target.value)}
+                  placeholder="https://g.co/kgs/… أو https://maps.google.com/?cid=…"
                 />
               </Field>
             </div>
@@ -284,45 +363,54 @@ export function ModontyForm({ initialSettings }: Props) {
             title="Social Links"
             description="Links to your accounts on each network (shown in the footer + Organization sameAs) and your X handles for share cards."
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Twitter / X">
-                <Input value={settings.twitterUrl ?? ""} onChange={(e) => set("twitterUrl", e.target.value)} placeholder="https://x.com/modonty" />
-              </Field>
-              <Field label="LinkedIn">
-                <Input value={settings.linkedInUrl ?? ""} onChange={(e) => set("linkedInUrl", e.target.value)} placeholder="https://linkedin.com/company/modonty" />
-              </Field>
-              <Field label="Facebook">
-                <Input value={settings.facebookUrl ?? ""} onChange={(e) => set("facebookUrl", e.target.value)} placeholder="https://facebook.com/modonty" />
-              </Field>
-              <Field label="Instagram">
-                <Input value={settings.instagramUrl ?? ""} onChange={(e) => set("instagramUrl", e.target.value)} placeholder="https://instagram.com/modonty" />
-              </Field>
-              <Field label="YouTube">
-                <Input value={settings.youtubeUrl ?? ""} onChange={(e) => set("youtubeUrl", e.target.value)} placeholder="https://youtube.com/@modonty" />
-              </Field>
-              <Field label="TikTok">
-                <Input value={settings.tiktokUrl ?? ""} onChange={(e) => set("tiktokUrl", e.target.value)} placeholder="https://tiktok.com/@modonty" />
-              </Field>
-              <Field label="Pinterest">
-                <Input value={settings.pinterestUrl ?? ""} onChange={(e) => set("pinterestUrl", e.target.value)} placeholder="https://pinterest.com/modonty" />
-              </Field>
-              <Field label="Snapchat">
-                <Input value={settings.snapchatUrl ?? ""} onChange={(e) => set("snapchatUrl", e.target.value)} placeholder="https://snapchat.com/add/modonty" />
-              </Field>
-              <Field label="WhatsApp Channel">
-                <Input value={settings.whatsappChannelUrl ?? ""} onChange={(e) => set("whatsappChannelUrl", e.target.value)} placeholder="https://whatsapp.com/channel/..." />
-              </Field>
-              <Field label="Telegram Channel">
-                <Input value={settings.telegramChannelUrl ?? ""} onChange={(e) => set("telegramChannelUrl", e.target.value)} placeholder="https://t.me/modonty" />
-              </Field>
+            {/* Social profiles */}
+            <div className="space-y-3">
+              <GroupHeader icon="🔗" title="Social profiles" note="footer links + Organization sameAs" tone="bg-primary/10 text-primary" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Field label="Twitter / X">
+                  <Input value={settings.twitterUrl ?? ""} onChange={(e) => set("twitterUrl", e.target.value)} placeholder="https://x.com/modonty" />
+                </Field>
+                <Field label="LinkedIn">
+                  <Input value={settings.linkedInUrl ?? ""} onChange={(e) => set("linkedInUrl", e.target.value)} placeholder="https://linkedin.com/company/modonty" />
+                </Field>
+                <Field label="Facebook">
+                  <Input value={settings.facebookUrl ?? ""} onChange={(e) => set("facebookUrl", e.target.value)} placeholder="https://facebook.com/modonty" />
+                </Field>
+                <Field label="Instagram">
+                  <Input value={settings.instagramUrl ?? ""} onChange={(e) => set("instagramUrl", e.target.value)} placeholder="https://instagram.com/modonty" />
+                </Field>
+                <Field label="YouTube">
+                  <Input value={settings.youtubeUrl ?? ""} onChange={(e) => set("youtubeUrl", e.target.value)} placeholder="https://youtube.com/@modonty" />
+                </Field>
+                <Field label="TikTok">
+                  <Input value={settings.tiktokUrl ?? ""} onChange={(e) => set("tiktokUrl", e.target.value)} placeholder="https://tiktok.com/@modonty" />
+                </Field>
+                <Field label="Pinterest">
+                  <Input value={settings.pinterestUrl ?? ""} onChange={(e) => set("pinterestUrl", e.target.value)} placeholder="https://pinterest.com/modonty" />
+                </Field>
+                <Field label="Snapchat">
+                  <Input value={settings.snapchatUrl ?? ""} onChange={(e) => set("snapchatUrl", e.target.value)} placeholder="https://snapchat.com/add/modonty" />
+                </Field>
+                <Field label="WhatsApp Channel">
+                  <Input value={settings.whatsappChannelUrl ?? ""} onChange={(e) => set("whatsappChannelUrl", e.target.value)} placeholder="https://whatsapp.com/channel/..." />
+                </Field>
+                <Field label="Telegram Channel">
+                  <Input value={settings.telegramChannelUrl ?? ""} onChange={(e) => set("telegramChannelUrl", e.target.value)} placeholder="https://t.me/modonty" />
+                </Field>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
-              <Field label="X Site Handle" hint="Used in the Twitter Card meta tag.">
-                <Input value={settings.twitterSite ?? ""} onChange={(e) => set("twitterSite", e.target.value)} placeholder="@modonty" />
-              </Field>
-              <Field label="X Creator Handle" hint="Author/creator handle for Twitter Cards.">
-                <Input value={settings.twitterCreator ?? ""} onChange={(e) => set("twitterCreator", e.target.value)} placeholder="@modonty" />
-              </Field>
+
+            {/* X / Twitter card handles */}
+            <div className="space-y-3 border-t border-border pt-4">
+              <GroupHeader icon="🐦" title="X / Twitter card handles" note="used in the Twitter Card meta" tone="bg-sky-500/15 text-sky-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field label="X Site Handle" hint="Used in the Twitter Card meta tag.">
+                  <Input value={settings.twitterSite ?? ""} onChange={(e) => set("twitterSite", e.target.value)} placeholder="@modonty" />
+                </Field>
+                <Field label="X Creator Handle" hint="Author/creator handle for Twitter Cards.">
+                  <Input value={settings.twitterCreator ?? ""} onChange={(e) => set("twitterCreator", e.target.value)} placeholder="@modonty" />
+                </Field>
+              </div>
             </div>
             {tabFooter("social", F.social, "Social")}
           </Section>
@@ -334,21 +422,52 @@ export function ModontyForm({ initialSettings }: Props) {
             title="Homepage Banner"
             description="The welcome banner shown at the top of the homepage feed on modonty.com (visible on-page text)."
           >
-            <Field label="Tagline">
-              <Input
-                value={settings.platformTagline ?? ""}
-                onChange={(e) => set("platformTagline", e.target.value)}
-                placeholder="مرحباً بك في مودونتي"
-              />
-            </Field>
-            <Field label="Description">
-              <Textarea
-                value={settings.platformDescription ?? ""}
-                onChange={(e) => set("platformDescription", e.target.value)}
-                placeholder="منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين..."
-                className="resize-none min-h-[72px]"
-              />
-            </Field>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* Fields */}
+              <div className="space-y-4">
+                <Field
+                  label="Tagline"
+                  counter={settings.platformTagline?.length ?? 0}
+                  counterMax={80}
+                  counterMin={10}
+                >
+                  <Input
+                    value={settings.platformTagline ?? ""}
+                    onChange={(e) => set("platformTagline", e.target.value)}
+                    placeholder="مرحباً بك في مودونتي"
+                  />
+                </Field>
+                <Field
+                  label="Description"
+                  counter={settings.platformDescription?.length ?? 0}
+                  counterMax={200}
+                  counterMin={30}
+                >
+                  <Textarea
+                    value={settings.platformDescription ?? ""}
+                    onChange={(e) => set("platformDescription", e.target.value)}
+                    placeholder="منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين..."
+                    className="resize-none min-h-[72px]"
+                  />
+                </Field>
+              </div>
+
+              {/* Live preview of the on-page banner */}
+              <div className="min-w-0">
+                <p className="mb-2 text-[11px] font-semibold text-muted-foreground">Preview on the homepage</p>
+                <div
+                  dir="rtl"
+                  className="flex min-h-[150px] flex-col items-center justify-center rounded-lg border bg-gradient-to-br from-primary/10 via-card to-background p-6 text-center"
+                >
+                  <h3 className="text-xl font-bold text-foreground">
+                    {settings.platformTagline?.trim() || "مرحباً بك في مدوّنتي"}
+                  </h3>
+                  <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                    {settings.platformDescription?.trim() || "منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين."}
+                  </p>
+                </div>
+              </div>
+            </div>
             {tabFooter("banner", F.banner, "Banner")}
           </Section>
         </TabsContent>

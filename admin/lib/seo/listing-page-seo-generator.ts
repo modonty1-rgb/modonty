@@ -305,7 +305,7 @@ export async function regenerateArticlesListingCache(): Promise<{ success: boole
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// PAGE: HOME (أهم صفحة — WebSite + Organization + WebPage + SearchAction)
+// PAGE: HOME (أهم صفحة — meta here + JSON-LD delegated to the rich validated home builder)
 // ═══════════════════════════════════════════════════════════════════
 
 export async function regenerateHomePageCache(): Promise<{ success: boolean; error?: string }> {
@@ -316,88 +316,34 @@ export async function regenerateHomePageCache(): Promise<{ success: boolean; err
     const siteName = getSiteName(s);
     const title = (s.modontySeoTitle as string) || siteName;
     const description = (s.modontySeoDescription as string) || (s.brandDescription as string) || "منصة محتوى عربية متخصصة";
-    const logoUrl = (s.logoUrl as string) || (s.ogImageUrl as string) || undefined;
     const ogImageUrl = (s.ogImageUrl as string) || undefined;
-    const inLanguage = (s.inLanguage as string) || "ar-SA";
 
-    // Collect social links
-    const sameAs: string[] = [];
-    for (const key of ["facebookUrl", "twitterUrl", "linkedInUrl", "instagramUrl", "youtubeUrl", "tiktokUrl", "pinterestUrl", "snapchatUrl"]) {
-      const url = s[key] as string | null;
-      if (url) sameAs.push(url);
-    }
-
-    // Build metadata
+    // Build metadata (valid Next.js Metadata shape — consumed directly by modonty getHomePageSeo).
     const twitterSite = (s.twitterSite as string) || undefined;
     const ogMeta: Record<string, unknown> = { title, description, type: "website", url: siteUrl, siteName, locale: "ar_SA" };
-    if (ogImageUrl) ogMeta.images = [{ url: ogImageUrl, width: 1200, height: 630, alt: title }];
+    if (ogImageUrl) ogMeta.images = [{ url: ogImageUrl, width: 1200, height: 630, alt: (s.altImage as string) || title }];
     const twMeta: Record<string, unknown> = { card: ogImageUrl ? "summary_large_image" : "summary", title, description };
     if (twitterSite) twMeta.site = twitterSite;
     if (ogImageUrl) twMeta.images = [ogImageUrl];
-
     const metadata = { title, description, robots: "index, follow", alternates: { canonical: siteUrl }, openGraph: ogMeta, twitter: twMeta };
 
-    // Build JSON-LD — 3 schemas: WebSite + Organization + WebPage
-    const searchTemplate = s.orgSearchUrlTemplate as string | null;
-    const orgEmail = s.orgContactEmail as string | null;
-    const orgPhone = s.orgContactTelephone as string | null;
-    const orgContactType = s.orgContactType as string | null;
-    const orgLang = s.orgContactAvailableLanguage as string | null;
-    const orgArea = s.orgAreaServed as string | null;
-    const orgStreet = s.orgStreetAddress as string | null;
-    const orgCity = s.orgAddressLocality as string | null;
-    const orgRegion = s.orgAddressRegion as string | null;
-    const orgCountry = s.orgAddressCountry as string | null;
-    const orgPostal = s.orgPostalCode as string | null;
-    const orgLat = s.orgGeoLatitude as number | null;
-    const orgLng = s.orgGeoLongitude as number | null;
-
-    // WebSite schema
-    const webSite: Record<string, unknown> = { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: siteName, url: siteUrl, description, inLanguage };
-    if (searchTemplate) {
-      webSite.potentialAction = { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: searchTemplate }, "query-input": "required name=search_term_string" };
+    // JSON-LD — SINGLE SOURCE OF TRUTH: reuse the rich, validated home builder
+    // (Organization + WebSite + CollectionPage + ItemList of latest articles).
+    // sameAs (incl. WhatsApp/Telegram channels) flows in via getSameAsFromSettings inside previewPageSeo.
+    const { previewPageSeo } = await import("@/app/(dashboard)/modonty/setting/actions/generate-home-and-list-page-seo");
+    const preview = await previewPageSeo("home");
+    if (!preview.success || !preview.data) {
+      return { success: false, error: preview.error || "Home JSON-LD generation failed" };
     }
 
-    // Organization schema
-    const org: Record<string, unknown> = { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, description };
-    if (logoUrl) org.logo = { "@type": "ImageObject", "@id": `${siteUrl}/#logo`, url: logoUrl, contentUrl: logoUrl };
-    if (orgEmail) {
-      const cp: Record<string, unknown> = { "@type": "ContactPoint" };
-      if (orgEmail) cp.email = orgEmail;
-      if (orgPhone) cp.telephone = orgPhone;
-      if (orgContactType) cp.contactType = orgContactType;
-      if (orgLang) cp.availableLanguage = orgLang.split(",").map(l => l.trim());
-      if (orgArea) cp.areaServed = orgArea;
-      org.contactPoint = cp;
-    }
-    if (orgCountry) {
-      const addr: Record<string, unknown> = { "@type": "PostalAddress" };
-      if (orgStreet) addr.streetAddress = orgStreet;
-      if (orgCity) addr.addressLocality = orgCity;
-      if (orgRegion) addr.addressRegion = orgRegion;
-      if (orgCountry) addr.addressCountry = orgCountry;
-      if (orgPostal) addr.postalCode = orgPostal;
-      org.address = addr;
-    }
-    if (orgLat && orgLng) org.geo = { "@type": "GeoCoordinates", latitude: orgLat, longitude: orgLng };
-    if (sameAs.length > 0) org.sameAs = sameAs;
-
-    // WebPage schema
-    const webPage: Record<string, unknown> = { "@type": "WebPage", "@id": siteUrl, url: siteUrl, name: title, description, inLanguage, isPartOf: { "@id": `${siteUrl}/#website` }, about: { "@id": `${siteUrl}/#organization` } };
-    if (ogImageUrl) webPage.primaryImageOfPage = { "@type": "ImageObject", url: ogImageUrl };
-
-    const jsonLd = { "@context": "https://schema.org", "@graph": [webSite, org, webPage] };
-
-    // Save to Settings
     const id = await ensureSettingsId();
-
     await db.settings.update({
       where: { id },
       data: {
         homeMetaTags: JSON.parse(JSON.stringify(metadata)) as Prisma.InputJsonValue,
-        jsonLdStructuredData: JSON.stringify(jsonLd),
+        jsonLdStructuredData: preview.data.jsonLd,
         jsonLdLastGenerated: new Date(),
-        jsonLdValidationReport: { valid: true, generatedAt: new Date().toISOString(), schemas: ["WebSite", "Organization", "WebPage"] } as Prisma.InputJsonValue,
+        jsonLdValidationReport: preview.data.report as Prisma.InputJsonValue,
       },
     });
     await revalidateModontyTag("settings");

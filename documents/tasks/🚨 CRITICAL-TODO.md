@@ -1,7 +1,37 @@
 # 🚨 CRITICAL TODO — مشاكل بانتظار حل لاحق
 
-> **آخر تحديث:** 2026-05-30
+> **آخر تحديث:** 2026-06-02
 > **الغرض:** مهام مهمة لكنها مؤجّلة الآن لوجود أولويات أعلى. لا تُحذف ولا تُهمل — كل واحدة تحتاج جلسة مخصّصة.
+
+---
+
+## CRIT-008 🟡 توحيد حقلَي GBP عند العميل (`gbpProfileUrl` vs `googleBusinessProfileUrl`)
+
+**الحالة:** مؤجّل — قرار خالد 2026-06-02 (لا حذف الآن؛ الحذف السريع غير آمن — له side effects كبيرة)
+**التاريخ:** 2026-06-02
+
+### المشكلة (الجذر)
+العميل عنده **حقلان** يحملان رابط ملف Google التجاري، يخدمان تدفّقين مختلفين:
+- **`gbpProfileUrl`** (`schema.prisma` ضمن بلوك GBP: + `gbpPlaceId`/`gbpAccountId`/`gbpLocationId`/`gbpCategory`) — الملف الذي **تديره مودونتي** للعميل عبر الـ API. يُحرَّر في فورم الأدمن (`client-seo-form.tsx`) ويغذّي structured data العميل (`build-client-seo-data.ts`).
+- **`googleBusinessProfileUrl`** (ضمن قسم SEO Intake) — رابط الملف **الذي يلتقطه الكونسول** أثناء الإنتيك: يُكتشف تلقائيًا من موقع العميل، يُخزَّن في `client.intake.technical.googleBusinessProfileUrl`، ويُنسَخ للعمود القديم عبر `save-intake.ts`.
+
+التضارب: حقلان لنفس المفهوم (رابط GBP للعميل) → لخبطة في مصدر الحقيقة.
+
+### ليه الحذف السريع غير آمن (side effects مؤكّدة)
+`googleBusinessProfileUrl` **مستخدَم فعليًا** عبر:
+- **الكونسول**: `intake/page.tsx` · `intake-types.ts` (IntakeTechnical) · `intake-form.tsx` + `dynamic-intake-form.tsx` (UI + auto-detect) · `save-intake.ts` (mirror) · `profile-actions.ts`.
+- **الأدمن**: `create-client.ts` · `client-server-schema.ts` (Zod).
+- **seed**: `intake-seed-definition.ts` (`technical.googleBusinessProfileUrl`).
+حذف العمود = كسر فورم الإنتيك بالكونسول + `save-intake` + تحديث البروفايل + إنشاء العميل.
+
+### الحلّ (جلسة مخصّصة)
+توحيد مدروس وليس حذفًا: نقرّر **مصدر الحقيقة الواحد** + اتجاه المزامنة بين الإنتيك (`client.intake.technical.*`) والـ GBP المُدار (`gbpProfileUrl` + معرّفات الـ API). على الأرجح: الإنتيك = إدخال العميل/الاكتشاف، والـ `gbpProfileUrl` المُدار = المصدر النهائي للـ structured data؛ نزامنهما باتجاه واحد واضح ونزيل الازدواج تدريجيًا.
+
+### Why
+حقلان لنفس البيان = خطر تعارض + ارتباك أي صيانة مستقبلية. لكن كلاهما حيّ، فالتوحيد يحتاج تخطيطًا لا حذفًا متسرّعًا.
+
+### How to apply
+في الجلسة المخصّصة: ارسم خريطة القرّاء/الكتّاب للحقلين أولًا → قرّر المصدر الواحد → اكتب mirror باتجاه واحد → اختبر فورم الإنتيك (كونسول) + إنشاء/تعديل العميل (أدمن) + structured data العميل على modonty live قبل إزالة أي عمود. (منهجية الطبقة الكاملة modonty ↕ admin ↕ console).
 
 ---
 

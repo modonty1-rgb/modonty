@@ -11,8 +11,8 @@ export default async function ClientsSettingsPage() {
     <div className="max-w-[1200px] mx-auto">
       <SettingsPageHeader
         title="Clients Page"
-        description="SEO + Hero B2B panel shown at the top of the clients listing on modonty.com."
-        arabicDescription="إعدادات صفحة العملاء — الـ SEO + بانر Hero B2B اللي يظهر للزائرين أصحاب الأعمال."
+        description="SEO and metadata for the clients listing on modonty.com."
+        arabicDescription="إعدادات صفحة العملاء — الـ SEO والميتاداتا لقائمة العملاء على modonty.com."
       />
       <Suspense fallback={<div className="py-12 text-center text-sm text-muted-foreground">Loading...</div>}>
         <ClientsForm initialSettings={settings} />

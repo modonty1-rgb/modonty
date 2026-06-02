@@ -40,6 +40,7 @@ export interface SocialMediaSettings {
   snapchatUrl: string | null;
   whatsappChannelUrl: string | null;
   telegramChannelUrl: string | null;
+  googleBusinessProfileUrl: string | null;
 }
 
 export interface MediaSettings {
@@ -200,6 +201,7 @@ const DEFAULT_SETTINGS: AllSettings = {
   snapchatUrl: null,
   whatsappChannelUrl: null,
   telegramChannelUrl: null,
+  googleBusinessProfileUrl: null,
   siteUrl: null,
   siteName: null,
   brandDescription: null,
@@ -318,6 +320,7 @@ export async function getSameAsFromSettings(): Promise<string[]> {
     all.pinterestUrl,
     all.whatsappChannelUrl,
     all.telegramChannelUrl,
+    all.googleBusinessProfileUrl,
   ]
     .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
     .map((v) => v.trim());
@@ -382,6 +385,7 @@ export async function getAllSettings(): Promise<AllSettings> {
         snapchatUrl: newSettings.snapchatUrl,
         whatsappChannelUrl: newSettings.whatsappChannelUrl,
         telegramChannelUrl: newSettings.telegramChannelUrl,
+        googleBusinessProfileUrl: newSettings.googleBusinessProfileUrl,
         siteUrl: newSettings.siteUrl,
         siteName: newSettings.siteName,
         brandDescription: newSettings.brandDescription,
@@ -512,6 +516,7 @@ export async function getAllSettings(): Promise<AllSettings> {
       snapchatUrl: settings.snapchatUrl,
       whatsappChannelUrl: settings.whatsappChannelUrl,
       telegramChannelUrl: settings.telegramChannelUrl,
+      googleBusinessProfileUrl: settings.googleBusinessProfileUrl,
       siteUrl: settings.siteUrl,
       siteName: settings.siteName,
       brandDescription: settings.brandDescription,
@@ -777,6 +782,7 @@ export async function saveSocialMediaSettings(data: Partial<SocialMediaSettings>
         snapchatUrl: data.snapchatUrl,
         whatsappChannelUrl: data.whatsappChannelUrl,
         telegramChannelUrl: data.telegramChannelUrl,
+        googleBusinessProfileUrl: data.googleBusinessProfileUrl,
       },
     });
     revalidatePath("/settings");
@@ -901,6 +907,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           snapchatUrl: data.snapchatUrl,
           whatsappChannelUrl: data.whatsappChannelUrl,
           telegramChannelUrl: data.telegramChannelUrl,
+          googleBusinessProfileUrl: data.googleBusinessProfileUrl,
         },
       });
       // Split into 2 chunks (each < 50 fields) — MongoDB Atlas limits

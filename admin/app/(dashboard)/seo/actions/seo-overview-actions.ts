@@ -185,6 +185,15 @@ export async function regenerateListPageSeo(pageId: string) {
     return { success: false, error: `${pageId.charAt(0).toUpperCase() + pageId.slice(1)} page SEO generator is under development — will be available in next update` };
   }
   try {
+    // Home is owned solely by regenerateHomePageCache — it writes a Next.js-Metadata-compatible
+    // meta shape (which modonty's getHomePageSeo reads directly) + the rich validated JSON-LD.
+    // Routing home through savePageSeo here would write an incompatible meta shape and break home meta.
+    if (pageId === "home") {
+      const { regenerateHomePageCache } = await import("@/lib/seo/listing-page-seo-generator");
+      const r = await regenerateHomePageCache();
+      revalidatePath("/seo-overview", "page");
+      return r;
+    }
     const preview = await previewPageSeo(pageId as PageKey);
     if (!preview.success || !preview.data) {
       return { success: false, error: preview.error || "Preview generation failed" };
