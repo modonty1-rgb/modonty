@@ -3,14 +3,16 @@ import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/app/contact/components/contact-form";
 
-export const metadata: Metadata = generateMetadataFromSEO({
-  title: "إرسال ملاحظات",
-  description: "شاركنا ملاحظاتك واقتراحاتك لمساعدتنا على تحسين منصة مودونتي",
-  keywords: ["ملاحظات", "اقتراحات", "تغذية راجعة", "تحسين"],
-  url: "/help/feedback",
-  type: "website",
-  robots: "noindex,nofollow",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataFromSEO({
+    title: "إرسال ملاحظات",
+    description: "شاركنا ملاحظاتك واقتراحاتك لمساعدتنا على تحسين منصة مدونتي",
+    keywords: ["ملاحظات", "اقتراحات", "تغذية راجعة", "تحسين"],
+    url: "/help/feedback",
+    type: "website",
+    robots: "noindex,nofollow",
+  });
+}
 
 export default function FeedbackPage() {
   return (
@@ -24,7 +26,7 @@ export default function FeedbackPage() {
       />
       <h1 className="text-3xl font-bold mb-6">إرسال ملاحظات</h1>
       <p className="text-muted-foreground mb-8">
-        نحن نقدر ملاحظاتك واقتراحاتك! شاركنا أفكارك لمساعدتنا على تحسين منصة مودونتي
+        نحن نقدر ملاحظاتك واقتراحاتك! شاركنا أفكارك لمساعدتنا على تحسين منصة مدونتي
         وتقديم تجربة أفضل لك.
       </p>
       <ContactForm />

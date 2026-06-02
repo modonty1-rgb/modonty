@@ -1991,9 +1991,10 @@ model Settings {
   orgLogoUrl          String?
 
   // Media Settings (Cloudinary URLs)
-  logoUrl    String?
-  ogImageUrl String?
-  altImage   String?  // Default alt text for logo/OG image when none set
+  logoUrl     String? // Wide wordmark logo — desktop navbar
+  logoIconUrl String? // Small icon/mark logo — mobile navbar (falls back to logoUrl if empty)
+  ogImageUrl  String?
+  altImage    String?  // Default alt text for logo/OG image when none set
 
   // Modonty app defaults (fallback when page has no SEO title/description)
   modontySeoTitle       String?

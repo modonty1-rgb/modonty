@@ -1,4 +1,5 @@
 import { baseTemplate, ctaButton, divider, heading, paragraph, warningBox } from "./base";
+import { BRAND_AR } from "@/lib/brand";
 
 export interface EmailVerificationParams {
   userName: string;
@@ -11,19 +12,19 @@ export function emailVerificationEmail({ userName, verifyUrl }: EmailVerificatio
   text: string;
 } {
   const content = `
-    ${heading("تفعيل حسابك في مودونتي")}
+    ${heading(`تفعيل حسابك في ${BRAND_AR}`)}
     ${paragraph(`أهلاً ${userName}،`)}
-    ${paragraph("شكراً لتسجيلك في مودونتي! خطوة واحدة فقط تفصلك عن الوصول الكامل — اضغط على الزر أدناه لتفعيل بريدك الإلكتروني.")}
+    ${paragraph(`شكراً لتسجيلك في ${BRAND_AR}! خطوة واحدة فقط تفصلك عن الوصول الكامل — اضغط على الزر أدناه لتفعيل بريدك الإلكتروني.`)}
     ${ctaButton("تفعيل الحساب", verifyUrl)}
     ${divider()}
     ${warningBox("⏰ هذا الرابط صالح لمدة 24 ساعة فقط.")}
-    ${paragraph("إذا لم تقم بإنشاء حساب في مودونتي، تجاهل هذا الإيميل.")}
+    ${paragraph(`إذا لم تقم بإنشاء حساب في ${BRAND_AR}، تجاهل هذا الإيميل.`)}
     <p style="margin:0;font-size:12px;color:#666;word-break:break-all;direction:ltr;text-align:left;">${verifyUrl}</p>
   `;
 
   return {
-    subject: "فعّل حسابك في مودونتي",
-    html: baseTemplate(content, "فعّل بريدك الإلكتروني للوصول لحسابك في مودونتي"),
-    text: `أهلاً ${userName}،\n\nشكراً لتسجيلك في مودونتي!\n\nفعّل حسابك عبر هذا الرابط:\n${verifyUrl}\n\nهذا الرابط صالح لـ 24 ساعة.\n\n— فريق مودونتي`,
+    subject: `فعّل حسابك في ${BRAND_AR}`,
+    html: baseTemplate(content, `فعّل بريدك الإلكتروني للوصول لحسابك في ${BRAND_AR}`),
+    text: `أهلاً ${userName}،\n\nشكراً لتسجيلك في ${BRAND_AR}!\n\nفعّل حسابك عبر هذا الرابط:\n${verifyUrl}\n\nهذا الرابط صالح لـ 24 ساعة.\n\n— فريق ${BRAND_AR}`,
   };
 }

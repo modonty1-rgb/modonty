@@ -18,7 +18,7 @@ export function FeedContainer({ posts, platformTagline, platformDescription }: F
   return (
     <>
       <FeedDeferredUI />
-      <h2 className="sr-only">أحدث المقالات والمدونات - مودونتي</h2>
+      <h2 className="sr-only">أحدث المقالات والمدونات - مدونتي</h2>
       <div className="container mx-auto max-w-[1128px] px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <Suspense fallback={<LeftSidebarSkeleton />}>
@@ -27,7 +27,7 @@ export function FeedContainer({ posts, platformTagline, platformDescription }: F
           <div className="w-full lg:flex-1 lg:max-w-[600px] space-y-4 pb-20 md:pb-0 [&>article:first-of-type]:!mt-0">
             <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 border-t-2 border-t-accent flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground">{platformTagline ?? "مرحباً بك في مودونتي"}</p>
+                <p className="text-sm font-semibold text-foreground">{platformTagline ?? "مرحباً بك في مدونتي"}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{platformDescription ?? "منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين في مجالات متنوعة."}</p>
               </div>
               <Link
@@ -38,7 +38,7 @@ export function FeedContainer({ posts, platformTagline, platformDescription }: F
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-60" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
                 </span>
-                جديد مودونتي
+                جديد مدونتي
               </Link>
             </div>
             <section aria-labelledby="articles-feed-heading" className="space-y-4 [&>*:nth-child(2)]:!mt-0">

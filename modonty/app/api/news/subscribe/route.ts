@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Notify Telegram group — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendTelegramMessage(`🔔 <b>مشترك جديد — نشرة مودونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
+    sendTelegramMessage(`🔔 <b>مشترك جديد — نشرة مدونتي</b>\n📧 ${normalizedEmail}\n📅 ${now}`).catch(() => null);
 
     // Send welcome email — non-blocking, failure doesn't affect subscription
     const welcomeEmail = newsletterWelcomeEmail({ email: normalizedEmail });

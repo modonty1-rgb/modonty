@@ -23,10 +23,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const industry = await getIndustryBySlug(decodeURIComponent(slug));
-  if (!industry) return { title: "صناعة غير موجودة - مودونتي" };
+  if (!industry) return { title: "صناعة غير موجودة - مدونتي" };
   return {
-    title: `${industry.name} - الصناعات | مودونتي`,
-    description: industry.description ?? `استعرض شركات قطاع ${industry.name} الموثوقة على مودونتي`,
+    title: `${industry.name} - الصناعات | مدونتي`,
+    description: industry.description ?? `استعرض شركات قطاع ${industry.name} الموثوقة على مدونتي`,
   };
 }
 

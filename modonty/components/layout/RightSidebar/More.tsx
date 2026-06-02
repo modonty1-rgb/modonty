@@ -30,9 +30,9 @@ export function More() {
         <IconCategories aria-hidden />
         الوسوم
       </Link>
-      <Link href="/news" className={linkClass} aria-label="أخبار مودونتي">
+      <Link href="/news" className={linkClass} aria-label="أخبار مدونتي">
         <IconFeed aria-hidden />
-        أخبار مودونتي
+        أخبار مدونتي
       </Link>
       <Link href="/about" className={linkClass}>
         <IconInfo aria-hidden />

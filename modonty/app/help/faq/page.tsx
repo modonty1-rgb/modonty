@@ -9,17 +9,16 @@ import Link from "@/components/link";
 import { IconArrowRight, IconEmail, IconHelpCircle } from "@/lib/icons";
 import { FAQPageContent } from "./components/faq-page-content";
 
-const FALLBACK_METADATA: Metadata = generateMetadataFromSEO({
-  title: "الأسئلة الشائعة",
-  description: "إجابات على الأسئلة الأكثر شيوعاً حول منصة مودونتي",
-  keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
-  url: "/help/faq",
-  type: "website",
-});
-
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getFaqPageSeo();
-  return metadata ?? FALLBACK_METADATA;
+  if (metadata) return metadata;
+  return generateMetadataFromSEO({
+    title: "الأسئلة الشائعة",
+    description: "إجابات على الأسئلة الأكثر شيوعاً حول منصة مدونتي",
+    keywords: ["أسئلة", "شائعة", "مساعدة", "دعم"],
+    url: "/help/faq",
+    type: "website",
+  });
 }
 
 function sanitizeJsonLd(json: unknown): string {
@@ -57,7 +56,7 @@ export default async function FAQPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-semibold mb-2">الأسئلة الشائعة</h1>
           <p className="text-muted-foreground">
-            ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مودونتي
+            ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مدونتي
           </p>
         </div>
 

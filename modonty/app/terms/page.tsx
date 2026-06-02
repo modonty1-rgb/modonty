@@ -5,6 +5,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getTermsPageForMetadata } from "./helpers/terms-metadata";
 import { getTermsPageContent } from "./helpers/terms-content";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -12,17 +14,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
     if (!page) {
       return {
-        title: "الشروط والأحكام - مودونتي",
-        description: "اقرأ شروط وأحكام استخدام منصة مودونتي",
+        title: "الشروط والأحكام - مدونتي",
+        description: "اقرأ شروط وأحكام استخدام منصة مدونتي",
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-    const siteName = page.ogSiteName || "مودونتي";
+    const siteUrl = SITE_URL;
+    const siteName = page.ogSiteName || BRAND_AR;
     const title = page.seoTitle || page.title || "الشروط والأحكام";
-    const description = page.seoDescription || "اقرأ شروط وأحكام استخدام منصة مودونتي";
+    const description = page.seoDescription || "اقرأ شروط وأحكام استخدام منصة مدونتي";
     const canonicalUrl = page.canonicalUrl || `${siteUrl}/terms`;
-    const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
+    const brandMedia = await getBrandMedia();
+    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
     const robotsDirective = page.metaRobots || "index,follow";
@@ -34,14 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: siteName,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: page.socialImageAlt || title,
-        },
-      ],
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
+        : undefined,
       locale: locale,
       type: (page.ogType as "website" | "article" | "profile") || "website",
     };
@@ -50,11 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     };
 
-    const twitterSite = page.twitterSite || process.env.NEXT_PUBLIC_TWITTER_SITE;
-    const twitterCreator = page.twitterCreator || process.env.NEXT_PUBLIC_TWITTER_CREATOR;
+    const twitterSite = page.twitterSite || brandMedia.twitterSite;
+    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
     if (twitterSite) {
       twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
     }
@@ -86,8 +84,8 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {
     console.error("Error generating metadata for terms page:", error);
     return {
-      title: "الشروط والأحكام - مودونتي",
-      description: "اقرأ شروط وأحكام استخدام منصة مودونتي",
+      title: "الشروط والأحكام - مدونتي",
+      description: "اقرأ شروط وأحكام استخدام منصة مدونتي",
     };
   }
 }
@@ -125,15 +123,15 @@ async function TermsContent() {
   const fallbackTitle = "الشروط والأحكام";
   const fallbackContent = `
     <p>
-      مرحباً بك في منصة مودونتي. يرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام خدماتنا.
+      مرحباً بك في منصة مدونتي. يرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام خدماتنا.
     </p>
     <h2>1. قبول الشروط</h2>
     <p>
-      باستخدام منصة مودونتي، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، فيرجى عدم استخدام خدماتنا.
+      باستخدام منصة مدونتي، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، فيرجى عدم استخدام خدماتنا.
     </p>
     <h2>2. استخدام الخدمة</h2>
     <p>
-      يجب استخدام منصة مودونتي فقط للأغراض القانونية وبما يتوافق مع جميع القوانين واللوائح المعمول بها.
+      يجب استخدام منصة مدونتي فقط للأغراض القانونية وبما يتوافق مع جميع القوانين واللوائح المعمول بها.
     </p>
     <h2>3. المحتوى</h2>
     <p>
@@ -154,8 +152,8 @@ async function TermsContent() {
 
   const structuredData = generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مودونتي`,
-    description: "اقرأ شروط وأحكام استخدام منصة مودونتي",
+    name: `${pageTitle} - مدونتي`,
+    description: "اقرأ شروط وأحكام استخدام منصة مدونتي",
     url: "/terms",
   });
 

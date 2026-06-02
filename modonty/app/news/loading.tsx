@@ -6,7 +6,7 @@ export default function NewsLoading() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "أخبار مودونتي" },
+          { label: "أخبار مدونتي" },
         ]}
       />
       <div className="mt-8 animate-pulse space-y-10">

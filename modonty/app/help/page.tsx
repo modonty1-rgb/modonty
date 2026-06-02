@@ -5,13 +5,15 @@ import Link from "@/components/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { IconHelpCircle, IconFaqQuestion, IconEmail } from "@/lib/icons";
 
-export const metadata: Metadata = generateMetadataFromSEO({
-  title: "مركز المساعدة",
-  description: "مركز المساعدة والدعم لمنصة مودونتي - ابحث عن إجابات لأسئلتك",
-  keywords: ["مساعدة", "دعم", "مركز المساعدة", "أسئلة"],
-  url: "/help",
-  type: "website",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataFromSEO({
+    title: "مركز المساعدة",
+    description: "مركز المساعدة والدعم لمنصة مدونتي - ابحث عن إجابات لأسئلتك",
+    keywords: ["مساعدة", "دعم", "مركز المساعدة", "أسئلة"],
+    url: "/help",
+    type: "website",
+  });
+}
 
 export default function HelpPage() {
   return (
@@ -36,7 +38,7 @@ export default function HelpPage() {
                 الأسئلة الشائعة
               </CardTitle>
               <CardDescription>
-                ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مودونتي
+                ابحث عن إجابات للأسئلة الأكثر شيوعاً حول منصة مدونتي
               </CardDescription>
             </CardHeader>
           </Card>

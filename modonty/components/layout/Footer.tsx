@@ -1,6 +1,7 @@
 import Link from "@/components/link";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { BRAND_AR } from "@/lib/brand";
 const linkClass =
   "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
 
@@ -36,7 +37,7 @@ export function Footer() {
         <Link href="/industries" className={linkClass}>الصناعات</Link>
         <Link href="/tags" className={linkClass}>الوسوم</Link>
         <Link href="/help" className={linkClass}>المساعدة</Link>
-        <Link href="/about" className={linkClass}>عن مودونتي</Link>
+        <Link href="/about" className={linkClass}>عن {BRAND_AR}</Link>
       </nav>
 
       {/* Legal links */}

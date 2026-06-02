@@ -1,4 +1,5 @@
 import { baseTemplate, ctaButton, heading, paragraph, divider } from "./base";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 export interface CommentReplyEmailParams {
   userName: string;
@@ -29,12 +30,12 @@ export function commentReplyEmail({
     </div>
     ${divider()}
     ${ctaButton("عرض الرد والمشاركة في النقاش", articleUrl)}
-    ${paragraph(`<span style="font-size:13px;color:#999;">لإيقاف إشعارات التعليقات، يمكنك تعديل إعداداتك من <a href="https://modonty.com/users/settings" style="color:#3030FF;">صفحة الحساب</a>.</span>`)}
+    ${paragraph(`<span style="font-size:13px;color:#999;">لإيقاف إشعارات التعليقات، يمكنك تعديل إعداداتك من <a href="${SITE_URL}/users/settings" style="color:#3030FF;">صفحة الحساب</a>.</span>`)}
   `;
 
   return {
     subject: `ردّ جديد على تعليقك — ${articleTitle}`,
-    html: baseTemplate(content, `${replyAuthor} ردّ على تعليقك في مودونتي`),
-    text: `مرحباً ${userName}،\n\nردّ ${replyAuthor} على تعليقك في: ${articleTitle}\n\nالرد: ${replyContent}\n\nشاهد الرد: ${articleUrl}\n\n— فريق مودونتي`,
+    html: baseTemplate(content, `${replyAuthor} ردّ على تعليقك في ${BRAND_AR}`),
+    text: `مرحباً ${userName}،\n\nردّ ${replyAuthor} على تعليقك في: ${articleTitle}\n\nالرد: ${replyContent}\n\nشاهد الرد: ${articleUrl}\n\n— فريق ${BRAND_AR}`,
   };
 }

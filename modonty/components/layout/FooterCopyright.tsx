@@ -1,3 +1,5 @@
+import { BRAND_AR } from "@/lib/brand";
+
 export function FooterCopyright({ year }: { year: number }) {
-  return <>© {year} مودونتي</>;
+  return <>© {year} {BRAND_AR}</>;
 }

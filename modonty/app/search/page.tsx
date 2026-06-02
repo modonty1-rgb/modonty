@@ -56,8 +56,8 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   return generateMetadataFromSEO({
     title: q ? `بحث: ${q.slice(0, 43)}` : "بحث",
     description: q
-      ? `نتائج البحث عن "${q}" في مقالات وعملاء مودونتي`
-      : "ابحث في مقالات وعملاء مدونة مودونتي",
+      ? `نتائج البحث عن "${q}" في مقالات وعملاء مدونتي`
+      : "ابحث في مقالات وعملاء مدونة مدونتي",
     url: q ? `/search?q=${encodeURIComponent(q)}${typeParam}` : "/search",
     robots: "noindex,nofollow",
   });

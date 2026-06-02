@@ -1,13 +1,15 @@
 import { Metadata } from "next";
 import { generateMetadataFromSEO } from "@/lib/seo";
 
-export const metadata: Metadata = generateMetadataFromSEO({
-  title: "الملف الشخصي",
-  description: "عرض وتحديث الملف الشخصي",
-  url: "/users/profile",
-  type: "profile",
-  robots: "noindex,nofollow",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataFromSEO({
+    title: "الملف الشخصي",
+    description: "عرض وتحديث الملف الشخصي",
+    url: "/users/profile",
+    type: "profile",
+    robots: "noindex,nofollow",
+  });
+}
 
 export default function ProfileLayout({
   children,

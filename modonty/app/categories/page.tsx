@@ -17,7 +17,7 @@ import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getCategoriesPageSeo();
   return {
-    description: "استعرض جميع تصنيفات مودونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.",
+    description: "استعرض جميع تصنيفات مدونتي — اختر تصنيفك المفضل وتابع أحدث المقالات في التقنية والأعمال والتسويق وغيرها من المجالات.",
     ...(metadata ?? {}),
   };
 }

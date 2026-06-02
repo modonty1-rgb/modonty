@@ -2,6 +2,7 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { ArticleStatus, SubscriptionStatus } from "@prisma/client";
+import { SITE_URL } from "@/lib/brand";
 
 /**
  * Main sitemap (Google's primary trust signal).
@@ -43,7 +44,7 @@ function notTestSlug<T extends { slug: string }>(e: T): boolean {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const baseUrl = SITE_URL;
 
   const [articles, categories, clients, authors, tags, industries] = await Promise.all([
     db.article.findMany({

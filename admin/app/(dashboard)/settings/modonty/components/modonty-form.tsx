@@ -37,7 +37,7 @@ function GroupHeader({ icon, title, note, tone }: { icon: string; title: string;
 // Each tab saves ONLY its own fields.
 const F = {
   // How the homepage looks in Google + when shared (meta + OG/Twitter image) + the brand description used in structured data.
-  search: ["modontySeoTitle", "modontySeoDescription", "brandDescription", "ogImageUrl", "logoUrl", "altImage"],
+  search: ["modontySeoTitle", "modontySeoDescription", "brandDescription", "ogImageUrl", "logoUrl", "logoIconUrl", "altImage"],
   // The organization's factual details — contact, address, social profiles (Organization structured data).
   business: [
     "orgContactEmail", "orgContactTelephone",
@@ -235,10 +235,17 @@ export function ModontyForm({ initialSettings }: Props) {
                   aspect="og"
                 />
                 <ImageField
-                  label="Logo"
+                  label="Logo (Desktop)"
                   value={settings.logoUrl ?? ""}
                   onChange={(v) => set("logoUrl", v)}
-                  hint="Square, min 112×112 px — also used as your Organization logo in Google."
+                  hint="Wide wordmark — desktop navbar. Also your Organization logo in Google."
+                  aspect="square"
+                />
+                <ImageField
+                  label="Logo (Mobile Icon)"
+                  value={settings.logoIconUrl ?? ""}
+                  onChange={(v) => set("logoIconUrl", v)}
+                  hint="Small square mark for the mobile navbar. Falls back to the desktop logo if empty."
                   aspect="square"
                 />
               </div>

@@ -10,7 +10,7 @@ import { ArticleStatus } from "@prisma/client";
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataFromSEO({
     title: "الوسوم",
-    description: "تصفح جميع الوسوم في مودونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات",
+    description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع والاهتمامات",
     url: "/tags",
     type: "website",
   });
@@ -50,8 +50,8 @@ export default async function TagsPage() {
   const collectionData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "الوسوم - مودونتي",
-    description: "تصفح جميع الوسوم في مودونتي واكتشف المقالات المصنّفة حسب المواضيع",
+    name: "الوسوم - مدونتي",
+    description: "تصفح جميع الوسوم في مدونتي واكتشف المقالات المصنّفة حسب المواضيع",
     url: `${siteUrl}/tags`,
     mainEntity: {
       "@type": "ItemList",

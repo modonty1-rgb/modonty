@@ -45,6 +45,7 @@ export interface SocialMediaSettings {
 
 export interface MediaSettings {
   logoUrl: string | null;
+  logoIconUrl: string | null;
   ogImageUrl: string | null;
   altImage: string | null;
 }
@@ -251,6 +252,7 @@ const DEFAULT_SETTINGS: AllSettings = {
   orgSearchUrlTemplate: null,
   orgLogoUrl: null,
   logoUrl: null,
+  logoIconUrl: null,
   ogImageUrl: null,
   altImage: null,
   modontySeoTitle: null,
@@ -435,6 +437,7 @@ export async function getAllSettings(): Promise<AllSettings> {
         orgSearchUrlTemplate: newSettings.orgSearchUrlTemplate,
         orgLogoUrl: newSettings.orgLogoUrl,
         logoUrl: newSettings.logoUrl,
+        logoIconUrl: newSettings.logoIconUrl,
         ogImageUrl: newSettings.ogImageUrl,
         altImage: newSettings.altImage,
         modontySeoTitle: newSettings.modontySeoTitle,
@@ -566,6 +569,7 @@ export async function getAllSettings(): Promise<AllSettings> {
       orgSearchUrlTemplate: settings.orgSearchUrlTemplate,
       orgLogoUrl: settings.orgLogoUrl,
       logoUrl: settings.logoUrl,
+      logoIconUrl: settings.logoIconUrl,
       ogImageUrl: settings.ogImageUrl,
       altImage: settings.altImage,
       modontySeoTitle: settings.modontySeoTitle,
@@ -813,6 +817,7 @@ export async function saveMediaSettings(data: Partial<MediaSettings>): Promise<{
       where: { id },
       data: {
         logoUrl: data.logoUrl,
+        logoIconUrl: data.logoIconUrl,
         orgLogoUrl: data.logoUrl, // always in sync — no separate org logo
         ogImageUrl: data.ogImageUrl,
         altImage: data.altImage,
@@ -966,6 +971,7 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
         where: { id },
         data: {
           logoUrl: data.logoUrl,
+          logoIconUrl: data.logoIconUrl,
           ogImageUrl: data.ogImageUrl,
           altImage: data.altImage,
           modontySeoTitle: data.modontySeoTitle,

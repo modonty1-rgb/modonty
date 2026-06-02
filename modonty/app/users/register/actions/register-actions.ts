@@ -45,7 +45,7 @@ export async function registerUser(data: RegisterFormData) {
 
     // Notify Telegram group — non-blocking
     const now = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh", dateStyle: "short", timeStyle: "short" });
-    sendTelegramMessage(`👤 <b>مستخدم جديد — مودونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
+    sendTelegramMessage(`👤 <b>مستخدم جديد — مدونتي</b>\n📧 ${user.email}\n🙋 ${user.name || "—"}\n📅 ${now}`).catch(() => null);
 
     if (user.email) {
       const welcome = welcomeEmail({ userName: user.name ?? user.email });

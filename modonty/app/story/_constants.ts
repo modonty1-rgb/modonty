@@ -1,6 +1,7 @@
 /**
  * Shared constants for /story page components.
  */
+import { BRAND_AR, LEGAL } from "@/lib/brand";
 
 // Brand logo — used by spotlight widgets + page.tsx OG_IMAGE
 export const MODONTY_LOGO_URL =
@@ -13,14 +14,14 @@ export const STORY_OG_IMAGE = MODONTY_LOGO_URL;
  * Single source of truth for CR + capital + DBA + address + verification.
  */
 export const LEGAL_ENTITY = {
-  brand: "مدونتي",
-  dba: "حديقة البستان للديكور",
-  cr: "4030560460",
-  capital: "8,000,000",
+  brand: BRAND_AR,
+  dba: LEGAL.dba,
+  cr: LEGAL.cr,
+  capital: LEGAL.capital,
   currency: "ر.س",
-  city: "جدة",
-  country: "السعودية",
+  city: LEGAL.city,
+  country: LEGAL.country,
   countryFull: "المملكة العربية السعودية",
-  foundedYear: "2024",
+  foundedYear: LEGAL.foundedYear,
   verifyUrl: "https://mc.gov.sa/ar/eservices/Pages/Commercial-data.aspx",
 } as const;

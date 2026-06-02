@@ -7,8 +7,8 @@ import { getArticles } from "@/app/api/helpers/article-queries";
 import { IconEmail, IconCheckCircle, IconForward } from "@/lib/icons";
 
 export const metadata: Metadata = {
-  title: "أخبار مودونتي",
-  description: "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مودونتي في بريدك.",
+  title: "أخبار مدونتي",
+  description: "اشترك في النشرة الإخبارية واحصل على رؤى وتحديثات أسبوعية من مدونتي في بريدك.",
 };
 
 export default async function NewsPage() {
@@ -19,14 +19,14 @@ export default async function NewsPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "أخبار مودونتي" },
+          { label: "أخبار مدونتي" },
         ]}
       />
 
       <div className="mt-8">
-        <h1 className="text-3xl font-bold mb-6">أخبار مودونتي</h1>
+        <h1 className="text-3xl font-bold mb-6">أخبار مدونتي</h1>
         <p className="text-muted-foreground mb-8">
-          نقطة التجمع لكل ما هو جديد من مودونتي. اشترك في النشرة لتحصل على أهم الأخبار
+          نقطة التجمع لكل ما هو جديد من مدونتي. اشترك في النشرة لتحصل على أهم الأخبار
           والمقالات في رسالة أسبوعية مختصرة.
         </p>
 
@@ -34,10 +34,10 @@ export default async function NewsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconEmail className="h-5 w-5" />
-              النشرة الإخبارية لأخبار مودونتي
+              النشرة الإخبارية لأخبار مدونتي
             </CardTitle>
             <CardDescription>
-              رسالة أسبوعية واحدة تجمع لك أبرز المقالات، التحديثات، ونصائح فريق مودونتي.
+              رسالة أسبوعية واحدة تجمع لك أبرز المقالات، التحديثات، ونصائح فريق مدونتي.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -70,7 +70,7 @@ export default async function NewsPage() {
         {articles.length > 0 && (
           <section aria-labelledby="news-articles-heading">
             <h2 id="news-articles-heading" className="text-sm font-semibold text-foreground mb-3">
-              من أحدث المقالات على مودونتي
+              من أحدث المقالات على مدونتي
             </h2>
             <ul className="space-y-2">
               {articles.map((a) => (

@@ -3,14 +3,16 @@ import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { SubscribeForm } from "./components/subscribe-form";
 
-export const metadata: Metadata = generateMetadataFromSEO({
-  title: "اشترك في النشرة",
-  description: "اشترك في النشرة الإخبارية لمودونتي واحصل على آخر الأخبار والمقالات",
-  keywords: ["اشتراك", "نشرة", "إخبارية", "بريد إلكتروني"],
-  url: "/subscribe",
-  type: "website",
-  robots: "noindex,nofollow",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataFromSEO({
+    title: "اشترك في النشرة",
+    description: "اشترك في النشرة الإخبارية لمدونتي واحصل على آخر الأخبار والمقالات",
+    keywords: ["اشتراك", "نشرة", "إخبارية", "بريد إلكتروني"],
+    url: "/subscribe",
+    type: "website",
+    robots: "noindex,nofollow",
+  });
+}
 
 export default function SubscribePage() {
   return (
@@ -23,7 +25,7 @@ export default function SubscribePage() {
       />
       <h1 className="text-3xl font-bold mb-6">اشترك في النشرة الإخبارية</h1>
       <p className="text-muted-foreground mb-8">
-        ابق على اطلاع بآخر الأخبار والمقالات من مودونتي. اشترك الآن واحصل على المحتوى
+        ابق على اطلاع بآخر الأخبار والمقالات من مدونتي. اشترك الآن واحصل على المحتوى
         الأفضل مباشرة في بريدك الإلكتروني.
       </p>
       <SubscribeForm />

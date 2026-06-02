@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BRAND_AR, CONTACT_EMAIL } from "@/lib/brand";
 import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Play,
@@ -81,9 +82,8 @@ const JBRSEO_PRICING_URL = "https://www.jbrseo.com/pricing";
 const SALES_WHATSAPP = process.env.NEXT_PUBLIC_SALES_WHATSAPP || "966541018020";
 const SALES_WHATSAPP_DISPLAY =
   process.env.NEXT_PUBLIC_SALES_WHATSAPP_DISPLAY || "+966 54 101 8020";
-const SALES_EMAIL = process.env.NEXT_PUBLIC_SALES_EMAIL || "modonty@modonty.com";
-const SALES_WHATSAPP_PREFILL =
-  "السلام عليكم، شفت قصة مدونتي وعندي سؤال:";
+const SALES_EMAIL = process.env.NEXT_PUBLIC_SALES_EMAIL || CONTACT_EMAIL;
+const SALES_WHATSAPP_PREFILL = `السلام عليكم، شفت قصة ${BRAND_AR} وعندي سؤال:`;
 const SALES_WHATSAPP_URL = `https://wa.me/${SALES_WHATSAPP}?text=${encodeURIComponent(SALES_WHATSAPP_PREFILL)}`;
 const SALES_EMAIL_URL = `mailto:${SALES_EMAIL}`;
 

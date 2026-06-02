@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { buildAspectRatiosArray } from "./image-aspect-ratios";
+import { BRAND_AR, BRAND_EN, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export interface SEOData {
   title?: string;
@@ -35,7 +37,7 @@ export interface MetadataOptions {
   robots?: string;
 }
 
-export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions): Metadata {
+export async function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions): Promise<Metadata> {
   const {
     title,
     description,
@@ -44,7 +46,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     imageAlt,
     url,
     type = "website",
-    siteName = "مودونتي",
+    siteName = BRAND_AR,
     locale = "ar_SA",
     firstName,
     lastName,
@@ -60,7 +62,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
   } = data;
 
   const fullTitle = title ? `${title} - ${siteName}` : siteName;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const siteUrl = SITE_URL;
   let canonicalUrl: string;
   if (!url) {
     canonicalUrl = siteUrl;
@@ -69,8 +71,15 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
   } else {
     canonicalUrl = `${siteUrl}${url}`;
   }
-  const ogImage = image || `${siteUrl}/og-image.jpg`;
-  const imageAltResolved = imageAlt || title || siteName;
+  // OG/share image: page-specific image, else the admin-managed Settings.ogImageUrl
+  // (single source of truth). If neither exists, og:image is OMITTED — no static fallback.
+  // The admin is alerted to fill it via the EssentialSeoDialog in the admin app.
+  const brandMedia = await getBrandMedia();
+  const ogImage = image || brandMedia.ogImageUrl || undefined;
+  const imageAltResolved = imageAlt || title || brandMedia.altImage || siteName;
+  const ogImages = ogImage
+    ? [{ url: ogImage, width: 1200, height: 630, alt: imageAltResolved }]
+    : undefined;
 
   const robotsDirective = data.robots || options?.robots || "index,follow";
   const shouldIndex = !robotsDirective.includes("noindex");
@@ -81,14 +90,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     description: description || "",
     url: canonicalUrl,
     siteName: siteName,
-    images: [
-      {
-        url: ogImage,
-        width: 1200,
-        height: 630,
-        alt: imageAltResolved,
-      },
-    ],
+    images: ogImages,
     locale: locale,
     ...(localeAlternate && localeAlternate.length > 0 && { localeAlternate }),
     type: type,
@@ -123,7 +125,7 @@ export function generateMetadataFromSEO(data: SEOData, options?: MetadataOptions
     card: "summary_large_image",
     title: fullTitle,
     description: description || "",
-    images: [{ url: ogImage, alt: imageAltResolved }],
+    images: ogImage ? [{ url: ogImage, alt: imageAltResolved }] : undefined,
   };
 
   if (twitterCreator) {
@@ -174,7 +176,7 @@ export function generateStructuredData(data: {
   [key: string]: unknown;
 }): object {
   const { type, name, description, url, image, ...additionalData } = data;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const siteUrl = SITE_URL;
 
   const baseSchema = {
     "@context": "https://schema.org",
@@ -190,7 +192,7 @@ export function generateStructuredData(data: {
 }
 
 export function generateBreadcrumbStructuredData(items: Array<{ name: string; url: string }>): object {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const siteUrl = SITE_URL;
 
   return {
     "@context": "https://schema.org",
@@ -206,7 +208,7 @@ export function generateBreadcrumbStructuredData(items: Array<{ name: string; ur
 }
 
 export function generateArticleStructuredData(article: any) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const siteUrl = SITE_URL;
   // Always build from current slug — never trust article.canonicalUrl (may be stale after slug rename)
   const articleUrl = new URL(`/articles/${article.slug}`, siteUrl).href;
 
@@ -224,7 +226,7 @@ export function generateArticleStructuredData(article: any) {
     dateModified: article.dateModified?.toISOString() || article.updatedAt?.toISOString(),
     author: {
       "@type": "Person",
-      name: article.author.name || "Modonty",
+      name: article.author.name || BRAND_EN,
       ...(article.author.url && { url: article.author.url }),
       ...(article.author.image && { image: article.author.image }),
     },
@@ -479,7 +481,7 @@ export function generateOrganizationStructuredData(client: any) {
 }
 
 export function generateFAQPageStructuredData(faqs: any[]) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const siteUrl = SITE_URL;
   const faqPageUrl = `${siteUrl}/help/faq`;
 
   const structuredData: any = {

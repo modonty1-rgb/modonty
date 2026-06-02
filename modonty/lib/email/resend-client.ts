@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { NOREPLY_FROM } from "@/lib/brand";
 
 let resendInstance: Resend | null = null;
 
@@ -21,7 +22,7 @@ export interface SendEmailParams {
 export async function sendEmail(params: SendEmailParams): Promise<{ success: boolean; error?: string }> {
   try {
     const resend = getResendClient();
-    const from = process.env.RESEND_FROM?.trim() ?? "Modonty <no-reply@modonty.com>";
+    const from = process.env.RESEND_FROM?.trim() ?? NOREPLY_FROM;
 
     const { error } = await resend.emails.send({
       from,

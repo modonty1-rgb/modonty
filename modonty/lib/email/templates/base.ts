@@ -1,3 +1,5 @@
+import { BRAND_AR, SITE_URL, LOGO_URL } from "@/lib/brand";
+
 // Brand colors
 const NAVY = "#0E065A";
 const BLUE = "#3030FF";
@@ -7,13 +9,14 @@ const LIGHT_GRAY = "#f5f5f5";
 const BORDER = "#dbdbdb";
 
 export function baseTemplate(content: string, previewText = ""): string {
+  const host = SITE_URL.replace(/^https?:\/\//, "");
   return `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>مودونتي</title>
+  <title>${BRAND_AR}</title>
   <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
 </head>
 <body style="margin:0;padding:0;background-color:${LIGHT_GRAY};font-family:Arial,Helvetica,sans-serif;direction:rtl;">
@@ -26,7 +29,7 @@ export function baseTemplate(content: string, previewText = ""): string {
           <!-- HEADER -->
           <tr>
             <td style="background-color:#ffffff;padding:28px 32px;text-align:center;border-bottom:3px solid ${NAVY};">
-              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1769683590/modontyLogo_ftf4yf.png" alt="مودونتي" width="160" height="auto" style="display:inline-block;max-height:56px;object-fit:contain;" />
+              <img src="${LOGO_URL}" alt="${BRAND_AR}" width="160" height="auto" style="display:inline-block;max-height:56px;object-fit:contain;" />
             </td>
           </tr>
 
@@ -42,9 +45,9 @@ export function baseTemplate(content: string, previewText = ""): string {
             <td style="background-color:${LIGHT_GRAY};padding:24px 32px;border-top:1px solid ${BORDER};text-align:center;">
               <p style="margin:0 0 8px;font-size:12px;color:${GRAY};">هذا إيميل آلي — لا ترد عليه مباشرةً.</p>
               <p style="margin:0;font-size:12px;color:${GRAY};">
-                <a href="https://modonty.com" style="color:${BLUE};text-decoration:none;">modonty.com</a>
+                <a href="${SITE_URL}" style="color:${BLUE};text-decoration:none;">${host}</a>
                 &nbsp;·&nbsp;
-                <a href="https://modonty.com/privacy" style="color:${BLUE};text-decoration:none;">سياسة الخصوصية</a>
+                <a href="${SITE_URL}/privacy" style="color:${BLUE};text-decoration:none;">سياسة الخصوصية</a>
               </p>
             </td>
           </tr>

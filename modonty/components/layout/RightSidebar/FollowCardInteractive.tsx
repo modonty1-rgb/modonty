@@ -94,7 +94,7 @@ export function FollowCardInteractive() {
 
       {expanded && (
         <nav aria-label="روابط إضافية" className="flex flex-col gap-0.5 border-t border-border pt-2">
-          <Link href="/news" className={linkClass}><IconFeed aria-hidden />أخبار مودونتي</Link>
+          <Link href="/news" className={linkClass}><IconFeed aria-hidden />أخبار مدونتي</Link>
           <Link href="/about" className={linkClass}><IconInfo aria-hidden />من نحن</Link>
           <Link href="/help" className={linkClass}><IconHelpCircle aria-hidden />مركز المساعدة</Link>
           <Link href="/help/feedback" className={linkClass}><IconMessage aria-hidden />إرسال ملاحظات</Link>

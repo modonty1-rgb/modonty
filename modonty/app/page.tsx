@@ -6,8 +6,7 @@ import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
 import { getFeedBannerSettings } from "@/lib/settings/get-feed-banner-settings";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+import { SITE_URL, BRAND_AR, BRAND_EN } from "@/lib/brand";
 
 function mapArticle(article: ArticleResponse): FeedPost {
   return {
@@ -26,7 +25,7 @@ function mapArticle(article: ArticleResponse): FeedPost {
     hasAudio: article.hasAudio,
     author: {
       id: article.author.id,
-      name: article.author.name || "Modonty",
+      name: article.author.name || BRAND_EN,
       title: "",
       company: article.client.name,
       avatar: article.author.image || "",
@@ -48,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // www-only canonical is honored across all metadata fields until DB row is updated.
   const baseOpenGraph = (safeMetadata as { openGraph?: Record<string, unknown> }).openGraph ?? {};
   return {
-    description: "مودونتي — منصة المحتوى العربي المتخصصة. اكتشف مقالات في التقنية والأعمال والتسويق والسياحة والأزياء من أبرز الكتّاب والخبراء العرب.",
+    description: `${BRAND_AR} — منصة المحتوى العربي المتخصصة. اكتشف مقالات في التقنية والأعمال والتسويق والسياحة والأزياء من أبرز الكتّاب والخبراء العرب.`,
     ...safeMetadata,
     alternates: {
       ...(safeMetadata as { alternates?: object } | null)?.alternates,
@@ -90,7 +89,7 @@ export default async function HomePage() {
           dangerouslySetInnerHTML={{ __html: jsonLd }}
         />
       )}
-      <h1 className="sr-only">مودونتي — منصة المحتوى العربي</h1>
+      <h1 className="sr-only">مدونتي — منصة المحتوى العربي</h1>
       <FeedContainer
         posts={posts}
         platformTagline={feedBanner.platformTagline}

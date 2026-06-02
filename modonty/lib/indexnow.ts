@@ -6,8 +6,10 @@
  * Docs: https://www.indexnow.org/documentation
  */
 
+import { SITE_URL } from "@/lib/brand";
+
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
-const HOST = "www.modonty.com";
+const HOST = new URL(SITE_URL).host;
 
 export interface IndexNowResult {
   ok: boolean;

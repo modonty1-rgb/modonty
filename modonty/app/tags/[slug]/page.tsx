@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       },
     });
 
-    if (!tag) return { title: "وسم غير موجود - مودونتي" };
+    if (!tag) return { title: "وسم غير موجود - مدونتي" };
 
     if (tag.nextjsMetadata) {
       const { robots: _r, ...stored } = tag.nextjsMetadata as Metadata & { robots?: unknown };
@@ -48,13 +48,13 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
       title: (tag.seoTitle || `مقالات وسم: ${tag.name}`)?.slice(0, 51),
       description:
         tag.seoDescription ||
-        `استكشف جميع المقالات المصنّفة تحت وسم "${tag.name}" في مودونتي`,
+        `استكشف جميع المقالات المصنّفة تحت وسم "${tag.name}" في مدونتي`,
       url: `/tags/${decodedSlug}`,
       type: "website",
       image: tag.socialImage || undefined,
     });
   } catch {
-    return { title: "الوسوم - مودونتي" };
+    return { title: "الوسوم - مدونتي" };
   }
 }
 
@@ -130,7 +130,7 @@ export default async function TagPage({ params }: TagPageProps) {
       },
       author: {
         id: a.author.id,
-        name: a.author.name ?? "مودونتي",
+        name: a.author.name ?? "مدونتي",
         slug: a.author.slug ?? undefined,
         image: a.author.image ?? undefined,
       },

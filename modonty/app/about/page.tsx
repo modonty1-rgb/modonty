@@ -7,6 +7,8 @@ import { generateStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
 import { getAboutPageContent } from "./helpers/about-content";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -14,17 +16,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
     if (!page) {
       return {
-        title: "من نحن - مودونتي",
-        description: "تعرف على منصة مودونتي - منصة المدونات الاحترافية متعددة العملاء",
+        title: "من نحن - مدونتي",
+        description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-    const siteName = page.ogSiteName || "مودونتي";
+    const siteUrl = SITE_URL;
+    const siteName = page.ogSiteName || BRAND_AR;
     const title = page.seoTitle || page.title || "من نحن";
-    const description = page.seoDescription || "تعرف على منصة مودونتي";
+    const description = page.seoDescription || "تعرف على منصة مدونتي";
     const canonicalUrl = page.canonicalUrl || `${siteUrl}/about`;
-    const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
+    const brandMedia = await getBrandMedia();
+    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
     const robotsDirective = page.metaRobots || "index,follow";
@@ -36,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: siteName,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }],
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }] : undefined,
       locale: locale,
       type: (page.ogType as "website" | "article" | "profile") || "website",
     };
@@ -45,11 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     };
 
-    const twitterSite = page.twitterSite || process.env.NEXT_PUBLIC_TWITTER_SITE;
-    const twitterCreator = page.twitterCreator || process.env.NEXT_PUBLIC_TWITTER_CREATOR;
+    const twitterSite = page.twitterSite || brandMedia.twitterSite;
+    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
     if (twitterSite) twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
     if (twitterCreator) twitter.creator = `@${twitterCreator.replace(/^@/, "")}`;
 
@@ -67,8 +70,8 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch {
     return {
-      title: "من نحن - مودونتي",
-      description: "تعرف على منصة مودونتي - منصة المدونات الاحترافية متعددة العملاء",
+      title: "من نحن - مدونتي",
+      description: "تعرف على منصة مدونتي - منصة المدونات الاحترافية متعددة العملاء",
     };
   }
 }
@@ -107,7 +110,7 @@ async function AboutContent() {
   const fallbackTitle = "من نحن";
   const fallbackContent = `
     <p>
-      مودونتي هي منصة مدونات احترافية متعددة العملاء تهدف إلى توفير حل شامل لإدارة
+      مدونتي هي منصة مدونات احترافية متعددة العملاء تهدف إلى توفير حل شامل لإدارة
       المحتوى وإنشاء المدونات للشركات والمؤسسات.
     </p>
     <h2>رؤيتنا</h2>
@@ -137,8 +140,8 @@ async function AboutContent() {
 
   const structuredData = generateStructuredData({
     type: "AboutPage",
-    name: `${pageTitle} - مودونتي`,
-    description: "تعرف على منصة مودونتي",
+    name: `${pageTitle} - مدونتي`,
+    description: "تعرف على منصة مدونتي",
     url: "/about",
   });
 
@@ -159,7 +162,7 @@ async function AboutContent() {
           <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg">
             <NextImage
               src={heroImage}
-              alt={heroImageAlt || "من نحن - مودونتي"}
+              alt={heroImageAlt || "من نحن - مدونتي"}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 800px"
@@ -176,7 +179,7 @@ async function AboutContent() {
         <div className="mt-12 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-primary/20 p-8">
           <h2 className="text-2xl font-bold text-foreground mb-3">للشركات والأعمال</h2>
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            هل تريد عملاء من جوجل بدون إعلانات؟ مودونتي تُنشئ لك محتوى SEO احترافياً يظهر في أعلى نتائج البحث ويجذب عملاء حقيقيين.
+            هل تريد عملاء من جوجل بدون إعلانات؟ مدونتي تُنشئ لك محتوى SEO احترافياً يظهر في أعلى نتائج البحث ويجذب عملاء حقيقيين.
           </p>
           <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
             {[

@@ -13,7 +13,7 @@ export function TopNavDesktop({ activeSection, favoritesCount }: TopNavDesktopPr
   return (
     <div className="hidden md:grid md:grid-cols-[1fr_4.5fr_1fr] h-14 items-center gap-4 px-4">
       <div className="flex items-center gap-2 flex-1">
-        <LogoNav />
+        <LogoNav variant="full" />
       </div>
       <DesktopNavLinks activeSection={activeSection} favoritesCount={favoritesCount} />
       <div className="flex items-center justify-end gap-3">

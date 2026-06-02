@@ -5,6 +5,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getCopyrightPolicyPageForMetadata } from "./helpers/copyright-policy-metadata";
 import { getCopyrightPolicyPageContent } from "./helpers/copyright-policy-content";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -13,17 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
     if (!page) {
       // Fallback to default metadata
       return {
-        title: "سياسة حقوق النشر - مودونتي",
-        description: "سياسة حقوق النشر والملكية الفكرية لمنصة مودونتي",
+        title: "سياسة حقوق النشر - مدونتي",
+        description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-    const siteName = page.ogSiteName || "مودونتي";
+    const siteUrl = SITE_URL;
+    const siteName = page.ogSiteName || BRAND_AR;
     const title = page.seoTitle || page.title || "سياسة حقوق النشر";
-    const description = page.seoDescription || "سياسة حقوق النشر والملكية الفكرية لمنصة مودونتي";
+    const description = page.seoDescription || "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي";
     const canonicalUrl = page.canonicalUrl || `${siteUrl}/legal/copyright-policy`;
-    const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
+    const brandMedia = await getBrandMedia();
+    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
     // Parse robots directive
@@ -36,14 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: siteName,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: page.socialImageAlt || title,
-        },
-      ],
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
+        : undefined,
       locale: locale,
       type: (page.ogType as "website" | "article" | "profile") || "website",
     };
@@ -52,11 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     };
 
-    const twitterSite = page.twitterSite || process.env.NEXT_PUBLIC_TWITTER_SITE;
-    const twitterCreator = page.twitterCreator || process.env.NEXT_PUBLIC_TWITTER_CREATOR;
+    const twitterSite = page.twitterSite || brandMedia.twitterSite;
+    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
     if (twitterSite) {
       twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
     }
@@ -89,8 +87,8 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Error generating metadata for copyright policy page:", error);
     // Fallback to default metadata
     return {
-      title: "سياسة حقوق النشر - مودونتي",
-      description: "سياسة حقوق النشر والملكية الفكرية لمنصة مودونتي",
+      title: "سياسة حقوق النشر - مدونتي",
+      description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
     };
   }
 }
@@ -129,13 +127,13 @@ async function CopyrightPolicyContent() {
   const fallbackTitle = "سياسة حقوق النشر";
   const fallbackContent = `
     <p>
-      جميع المحتويات الموجودة على منصة مودونتي محمية بحقوق الطبع والنشر. توضح هذه
+      جميع المحتويات الموجودة على منصة مدونتي محمية بحقوق الطبع والنشر. توضح هذه
       السياسة حقوق الملكية الفكرية وكيفية استخدام المحتوى.
     </p>
     <h2>1. حقوق الملكية</h2>
     <p>
       جميع المحتويات الموجودة على المنصة، بما في ذلك النصوص والصور والتصاميم، محمية
-      بحقوق الطبع والنشر وهي ملك لصاحبها أو لصالح مودونتي.
+      بحقوق الطبع والنشر وهي ملك لصاحبها أو لصالح مدونتي.
     </p>
     <h2>2. استخدام المحتوى</h2>
     <p>
@@ -164,8 +162,8 @@ async function CopyrightPolicyContent() {
 
   const structuredData = generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مودونتي`,
-    description: "سياسة حقوق النشر والملكية الفكرية لمنصة مودونتي",
+    name: `${pageTitle} - مدونتي`,
+    description: "سياسة حقوق النشر والملكية الفكرية لمنصة مدونتي",
     url: "/legal/copyright-policy",
   });
 

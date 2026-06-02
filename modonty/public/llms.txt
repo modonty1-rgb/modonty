@@ -1,6 +1,6 @@
 # Modonty
 
-> Modonty (مودونتي) is a bilingual Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. We publish SEO-optimized articles and detailed business profiles for Arabic-speaking audiences.
+> Modonty (مدونتي) is a bilingual Arabic-first content platform and business directory focused on Saudi Arabia and Egypt. We publish SEO-optimized articles and detailed business profiles for Arabic-speaking audiences.
 
 Modonty connects businesses with readers through high-quality content, structured data, and industry-specific classification. The platform supports Organization and LocalBusiness profiles with full contact, address, and social media integration.
 

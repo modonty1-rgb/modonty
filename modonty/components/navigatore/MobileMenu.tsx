@@ -109,7 +109,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
 
           {/* Company Section */}
           <p className="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-muted-foreground/70 tracking-wide">
-            مودونتي
+            مدونتي
           </p>
           {navLinksConfig.company.map((link) => {
             const iconMap: Record<string, ComponentType<{ className?: string }>> = {

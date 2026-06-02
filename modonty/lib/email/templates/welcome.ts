@@ -1,4 +1,5 @@
 import { baseTemplate, ctaButton, heading, paragraph, divider } from "./base";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 export interface WelcomeEmailParams {
   userName: string;
@@ -10,8 +11,8 @@ export function welcomeEmail({ userName }: WelcomeEmailParams): {
   text: string;
 } {
   const content = `
-    ${heading(`أهلاً بك في مودونتي، ${userName}! 🎉`)}
-    ${paragraph("حسابك جاهز. أنت الآن جزء من مجتمع مودونتي — منصة المحتوى الطبي والصحي الموثوق في السعودية والخليج.")}
+    ${heading(`أهلاً بك في ${BRAND_AR}، ${userName}! 🎉`)}
+    ${paragraph(`حسابك جاهز. أنت الآن جزء من مجتمع ${BRAND_AR} — منصة المحتوى الطبي والصحي الموثوق في السعودية والخليج.`)}
     ${divider()}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
       <tr>
@@ -36,12 +37,12 @@ export function welcomeEmail({ userName }: WelcomeEmailParams): {
         </td>
       </tr>
     </table>
-    ${ctaButton("ابدأ الاستكشاف", "https://modonty.com")}
+    ${ctaButton("ابدأ الاستكشاف", SITE_URL)}
   `;
 
   return {
-    subject: `أهلاً بك في مودونتي، ${userName}!`,
-    html: baseTemplate(content, "حسابك جاهز — ابدأ رحلتك مع مودونتي"),
-    text: `أهلاً ${userName}،\n\nأهلاً بك في مودونتي! حسابك جاهز الآن.\n\nابدأ الاستكشاف: https://modonty.com\n\n— فريق مودونتي`,
+    subject: `أهلاً بك في ${BRAND_AR}، ${userName}!`,
+    html: baseTemplate(content, `حسابك جاهز — ابدأ رحلتك مع ${BRAND_AR}`),
+    text: `أهلاً ${userName}،\n\nأهلاً بك في ${BRAND_AR}! حسابك جاهز الآن.\n\nابدأ الاستكشاف: ${SITE_URL}\n\n— فريق ${BRAND_AR}`,
   };
 }

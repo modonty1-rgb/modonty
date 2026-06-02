@@ -10,7 +10,7 @@ import { ClientsSection } from "./components/clients-section";
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getClientsPageSeo();
   return {
-    description: "اكتشف أبرز العلامات التجارية والشركات الناشرة على مودونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
+    description: "اكتشف أبرز العلامات التجارية والشركات الناشرة على مدونتي — محتوى عربي متخصص وموثوق من مصادر معتمدة في السعودية ومصر والخليج.",
     ...(metadata ?? {}),
   };
 }
@@ -63,7 +63,7 @@ export default async function ClientsPage() {
               هل تريد عملاء من جوجل — بدون إعلانات؟
             </h2>
             <p className="relative mt-3 text-base text-primary-foreground/80 sm:text-lg">
-              انضم لعملاء مودونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
+              انضم لعملاء مدونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
             </p>
             <CtaTrackedLink
               href="https://www.jbrseo.com"

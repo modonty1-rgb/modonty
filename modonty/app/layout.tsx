@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
 import { MobileFooterWithFavorites } from "@/components/navigatore/MobileFooterWithFavorites";
 import { AnnouncementBar } from "@/components/navigatore/AnnouncementBar";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -28,12 +29,10 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"
-  ),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "مودونتي - منصة المدونات متعددة العملاء",
-    template: "%s | مودونتي",
+    default: `${BRAND_AR} - منصة المدونات متعددة العملاء`,
+    template: `%s | ${BRAND_AR}`,
   },
   description: "منصة مدونات احترافية لإدارة المحتوى عبر عملاء متعددين",
   // Site-wide hreflang signals to AI search engines + Google geo-targeting.

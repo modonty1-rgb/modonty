@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       }
 
       return {
-        title: "مستخدم غير موجود - مودونتي",
+        title: "مستخدم غير موجود - مدونتي",
       };
     }
 
@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
     });
   } catch {
     return {
-      title: "الملف الشخصي - مودونتي",
+      title: "الملف الشخصي - مدونتي",
     };
   }
 }

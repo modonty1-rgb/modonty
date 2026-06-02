@@ -11,7 +11,7 @@ interface ShareClientButtonProps {
 }
 
 export function ShareClientButton({ clientName, clientUrl, clientId, clientSlug }: ShareClientButtonProps) {
-  const title = `اطلع على ${clientName} على مودونتي`;
+  const title = `اطلع على ${clientName} على مدونتي`;
 
   const onShare = (platform: string) => {
     const bodyPlatform = platform === "copy" ? "COPY_LINK" : platform.toUpperCase();

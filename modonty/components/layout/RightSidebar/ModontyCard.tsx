@@ -24,11 +24,11 @@ export function ModontyCard({ articles }: ModontyCardProps) {
     <Card
       className="flex-none overflow-x-hidden border-0"
       role="complementary"
-      aria-label="جديد مودونتي"
+      aria-label="جديد مدونتي"
     >
       <CardContent className="p-3 flex flex-col min-w-0 gap-0.5">
         <div className="flex items-center justify-between mb-1.5">
-          <h2 className="text-xs font-semibold text-foreground">جديد مودونتي</h2>
+          <h2 className="text-xs font-semibold text-foreground">جديد مدونتي</h2>
           {hasMore && (
             <button
               onClick={() => setExpanded((v) => !v)}

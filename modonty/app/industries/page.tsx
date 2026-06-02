@@ -7,7 +7,7 @@ import { BuildingIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "الصناعات",
-  description: "استعرض جميع القطاعات والصناعات على مودونتي — اكتشف الشركات والخبراء في كل مجال من التقنية والرعاية الصحية والتجارة الإلكترونية وغيرها.",
+  description: "استعرض جميع القطاعات والصناعات على مدونتي — اكتشف الشركات والخبراء في كل مجال من التقنية والرعاية الصحية والتجارة الإلكترونية وغيرها.",
 };
 
 export default async function IndustriesPage() {

@@ -5,6 +5,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
 import { getUserAgreementPageContent } from "./helpers/user-agreement-content";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -12,17 +14,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
     if (!page) {
       return {
-        title: "اتفاقية المستخدم - مودونتي",
-        description: "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
+        title: "اتفاقية المستخدم - مدونتي",
+        description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-    const siteName = page.ogSiteName || "مودونتي";
+    const siteUrl = SITE_URL;
+    const siteName = page.ogSiteName || BRAND_AR;
     const title = page.seoTitle || page.title || "اتفاقية المستخدم";
-    const description = page.seoDescription || "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة";
+    const description = page.seoDescription || "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة";
     const canonicalUrl = page.canonicalUrl || `${siteUrl}/legal/user-agreement`;
-    const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
+    const brandMedia = await getBrandMedia();
+    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
     const robotsDirective = page.metaRobots || "index,follow";
@@ -34,14 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: siteName,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: page.socialImageAlt || title,
-        },
-      ],
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
+        : undefined,
       locale: locale,
       type: (page.ogType as "website" | "article" | "profile") || "website",
     };
@@ -50,11 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     };
 
-    const twitterSite = page.twitterSite || process.env.NEXT_PUBLIC_TWITTER_SITE;
-    const twitterCreator = page.twitterCreator || process.env.NEXT_PUBLIC_TWITTER_CREATOR;
+    const twitterSite = page.twitterSite || brandMedia.twitterSite;
+    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
     if (twitterSite) {
       twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
     }
@@ -84,8 +82,8 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {
     console.error("Error generating metadata for user agreement page:", error);
     return {
-      title: "اتفاقية المستخدم - مودونتي",
-      description: "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
+      title: "اتفاقية المستخدم - مدونتي",
+      description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
     };
   }
 }
@@ -124,17 +122,17 @@ async function UserAgreementContent() {
   const fallbackTitle = "اتفاقية المستخدم";
   const fallbackContent = `
     <p>
-      هذه الاتفاقية تحكم استخدامك لمنصة مودونتي. من خلال الوصول إلى المنصة أو استخدامها،
+      هذه الاتفاقية تحكم استخدامك لمنصة مدونتي. من خلال الوصول إلى المنصة أو استخدامها،
       فإنك توافق على الالتزام بهذه الشروط والأحكام.
     </p>
     <h2>1. قبول الشروط</h2>
     <p>
-      عند الوصول إلى منصة مودونتي واستخدامها، فإنك تقر بأنك قد قرأت وفهمت ووافقت على
+      عند الوصول إلى منصة مدونتي واستخدامها، فإنك تقر بأنك قد قرأت وفهمت ووافقت على
       الالتزام بهذه الاتفاقية وجميع القوانين واللوائح المعمول بها.
     </p>
     <h2>2. استخدام المنصة</h2>
     <p>
-      يمكنك استخدام منصة مودونتي للأغراض القانونية فقط. لا يجوز لك استخدام المنصة
+      يمكنك استخدام منصة مدونتي للأغراض القانونية فقط. لا يجوز لك استخدام المنصة
       بأي طريقة قد تتعارض مع القوانين المعمول بها أو تنتهك حقوق الآخرين.
     </p>
     <h2>3. المحتوى</h2>
@@ -158,8 +156,8 @@ async function UserAgreementContent() {
 
   const structuredData = generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مودونتي`,
-    description: "اتفاقية استخدام منصة مودونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
+    name: `${pageTitle} - مدونتي`,
+    description: "اتفاقية استخدام منصة مدونتي - الشروط والأحكام التي تحكم استخدامك للمنصة",
     url: "/legal/user-agreement",
   });
 

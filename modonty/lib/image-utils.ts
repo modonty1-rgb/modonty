@@ -1,11 +1,8 @@
-const CLOUDINARY_LOGO =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1769683590/modontyLogo_ftf4yf.png";
+import { CHARACTER_URL } from "@/lib/brand";
 
-export const MODONTY_CHARACTER_URL =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1770899986/modontyAvatar_gn8wxj.webp";
+export const MODONTY_CHARACTER_URL = CHARACTER_URL;
 
-const CHARACTER_BASE =
-  "https://res.cloudinary.com/dfegnpgwx/image/upload/v1770899986/modontyAvatar_gn8wxj.webp";
+const CHARACTER_BASE = CHARACTER_URL;
 
 export function getOptimizedCharacterUrl(width = 96): string {
   if (!CHARACTER_BASE.includes("res.cloudinary.com")) return CHARACTER_BASE;
@@ -21,12 +18,14 @@ export function getOptimizedCharacterUrl(width = 96): string {
   }
 }
 
-export function getOptimizedLogoUrl(): string {
-  if (!CLOUDINARY_LOGO.includes("res.cloudinary.com")) return CLOUDINARY_LOGO;
-  const uploadIndex = CLOUDINARY_LOGO.indexOf("/upload/");
-  if (uploadIndex === -1) return CLOUDINARY_LOGO;
-  const beforeUpload = CLOUDINARY_LOGO.substring(0, uploadIndex + 8);
-  const afterUpload = CLOUDINARY_LOGO.substring(uploadIndex + 8);
+// Applies Cloudinary optimization to an admin-managed logo URL (from Settings.logoUrl).
+// Non-Cloudinary URLs are returned unchanged.
+export function getOptimizedLogoUrl(logoUrl: string): string {
+  if (!logoUrl.includes("res.cloudinary.com")) return logoUrl;
+  const uploadIndex = logoUrl.indexOf("/upload/");
+  if (uploadIndex === -1) return logoUrl;
+  const beforeUpload = logoUrl.substring(0, uploadIndex + 8);
+  const afterUpload = logoUrl.substring(uploadIndex + 8);
   return `${beforeUpload}f_auto,q_auto,w_300,c_limit/${afterUpload}`;
 }
 

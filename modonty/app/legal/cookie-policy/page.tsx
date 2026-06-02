@@ -5,6 +5,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getCookiePolicyPageForMetadata } from "./helpers/cookie-policy-metadata";
 import { getCookiePolicyPageContent } from "./helpers/cookie-policy-content";
+import { BRAND_AR, SITE_URL } from "@/lib/brand";
+import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -13,17 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
     if (!page) {
       // Fallback to default metadata
       return {
-        title: "سياسة ملفات تعريف الارتباط - مودونتي",
-        description: "تعرف على كيفية استخدام منصة مودونتي لملفات تعريف الارتباط (Cookies)",
+        title: "سياسة ملفات تعريف الارتباط - مدونتي",
+        description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
-    const siteName = page.ogSiteName || "مودونتي";
+    const siteUrl = SITE_URL;
+    const siteName = page.ogSiteName || BRAND_AR;
     const title = page.seoTitle || page.title || "سياسة ملفات تعريف الارتباط";
-    const description = page.seoDescription || "تعرف على كيفية استخدام منصة مودونتي لملفات تعريف الارتباط (Cookies)";
+    const description = page.seoDescription || "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)";
     const canonicalUrl = page.canonicalUrl || `${siteUrl}/legal/cookie-policy`;
-    const ogImage = page.ogImage || page.socialImage || `${siteUrl}/og-image.jpg`;
+    const brandMedia = await getBrandMedia();
+    const ogImage = page.ogImage || page.socialImage || brandMedia.ogImageUrl || undefined;
     const locale = page.ogLocale || page.inLanguage || "ar_SA";
 
     // Parse robots directive
@@ -36,14 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: siteName,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: page.socialImageAlt || title,
-        },
-      ],
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: page.socialImageAlt || title }]
+        : undefined,
       locale: locale,
       type: (page.ogType as "website" | "article" | "profile") || "website",
     };
@@ -52,11 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: (page.twitterCard as "summary" | "summary_large_image") || "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     };
 
-    const twitterSite = page.twitterSite || process.env.NEXT_PUBLIC_TWITTER_SITE;
-    const twitterCreator = page.twitterCreator || process.env.NEXT_PUBLIC_TWITTER_CREATOR;
+    const twitterSite = page.twitterSite || brandMedia.twitterSite;
+    const twitterCreator = page.twitterCreator || brandMedia.twitterCreator;
     if (twitterSite) {
       twitter.site = twitterSite.startsWith("@") ? twitterSite : `@${twitterSite}`;
     }
@@ -89,8 +87,8 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Error generating metadata for cookie policy page:", error);
     // Fallback to default metadata
     return {
-      title: "سياسة ملفات تعريف الارتباط - مودونتي",
-      description: "تعرف على كيفية استخدام منصة مودونتي لملفات تعريف الارتباط (Cookies)",
+      title: "سياسة ملفات تعريف الارتباط - مدونتي",
+      description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
     };
   }
 }
@@ -116,7 +114,7 @@ async function CookiePolicyContent() {
   const fallbackTitle = "سياسة ملفات تعريف الارتباط";
   const fallbackContent = `
     <p>
-      تستخدم منصة مودونتي ملفات تعريف الارتباط (Cookies) لتحسين تجربتك على المنصة.
+      تستخدم منصة مدونتي ملفات تعريف الارتباط (Cookies) لتحسين تجربتك على المنصة.
       توضح هذه السياسة أنواع ملفات تعريف الارتباط التي نستخدمها وكيفية استخدامها.
     </p>
     <h2>1. ما هي ملفات تعريف الارتباط</h2>
@@ -147,8 +145,8 @@ async function CookiePolicyContent() {
 
   const structuredData = generateStructuredData({
     type: "WebPage",
-    name: `${pageTitle} - مودونتي`,
-    description: "تعرف على كيفية استخدام منصة مودونتي لملفات تعريف الارتباط (Cookies)",
+    name: `${pageTitle} - مدونتي`,
+    description: "تعرف على كيفية استخدام منصة مدونتي لملفات تعريف الارتباط (Cookies)",
     url: "/legal/cookie-policy",
   });
 

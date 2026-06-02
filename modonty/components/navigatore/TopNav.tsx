@@ -23,7 +23,7 @@ export function TopNav({ activeSection, favoritesCount }: TopNavProps) {
       <div className="container mx-auto max-w-[1128px]">
         {/* Mobile Layout: Logo | Actions */}
         <div className="flex md:hidden h-14 items-center justify-between px-4">
-          <LogoNav />
+          <LogoNav variant="icon" />
           <div className="flex items-center gap-1.5">
             <NotificationsBell />
             <ChatTriggerButton variant="nav" />

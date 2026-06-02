@@ -4,8 +4,8 @@ import Link from "@/components/link";
 import { NewsSubscribeForm } from "./components/news-subscribe-form";
 
 export const metadata: Metadata = {
-  title: "اشتراك في أخبار مودونتي",
-  description: "اشترك في النشرة الإخبارية لمودونتي واحصل على آخر الأخبار والمقالات في بريدك.",
+  title: "اشتراك في أخبار مدونتي",
+  description: "اشترك في النشرة الإخبارية لمدونتي واحصل على آخر الأخبار والمقالات في بريدك.",
   robots: { index: false, follow: false },
 };
 
@@ -15,11 +15,11 @@ export default function NewsSubscribePage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "أخبار مودونتي", href: "/news" },
+          { label: "أخبار مدونتي", href: "/news" },
           { label: "اشترك في النشرة" },
         ]}
       />
-      <h1 className="text-3xl font-bold mb-6">اشتراك في أخبار مودونتي</h1>
+      <h1 className="text-3xl font-bold mb-6">اشتراك في أخبار مدونتي</h1>
       <p className="text-muted-foreground mb-8">
         احصل على آخر الأخبار والمقالات مباشرة في بريدك الإلكتروني.{" "}
         <Link href="/news" className="text-primary underline underline-offset-2">

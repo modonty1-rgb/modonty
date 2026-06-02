@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
 
     if (!client) {
       return {
-        title: "عميل غير موجود - مودونتي",
+        title: "عميل غير موجود - مدونتي",
       };
     }
     // DB cache first
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         return {
           ...stored,
           // Always regenerate description — stored value may be empty
-          description: (stored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مودونتي`,
+          description: (stored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مدونتي`,
           openGraph: {
             ...(stored.openGraph as object | undefined),
             url: canonicalUrl,
@@ -109,7 +109,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
     });
   } catch {
     return {
-      title: "العملاء - مودونتي",
+      title: "العملاء - مدونتي",
     };
   }
 }
@@ -263,7 +263,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-semibold text-foreground">أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور</p>
-            <p className="text-sm text-muted-foreground mt-0.5">انضم لعملاء مودونتي واجعل جوجل يجلب لك العملاء</p>
+            <p className="text-sm text-muted-foreground mt-0.5">انضم لعملاء مدونتي واجعل جوجل يجلب لك العملاء</p>
           </div>
           <CtaTrackedLink
             href="https://www.jbrseo.com"

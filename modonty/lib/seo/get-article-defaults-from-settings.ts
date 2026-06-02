@@ -1,6 +1,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
+import { BRAND_AR } from "@/lib/brand";
 
 export type ArticleDefaultsFromSettings = {
   inLanguage: string;
@@ -41,7 +42,7 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
       isAccessibleForFree: true,
       alternateLanguages: undefined,
       contentFormat: "rich_text",
-      siteName: "مودونتي",
+      siteName: BRAND_AR,
     };
   }
   return {
@@ -58,7 +59,7 @@ export async function getArticleDefaultsFromSettings(): Promise<ArticleDefaultsF
     isAccessibleForFree: settings.defaultIsAccessibleForFree ?? true,
     alternateLanguages: settings.defaultAlternateLanguages ?? undefined,
     contentFormat: settings.defaultContentFormat?.trim() || "rich_text",
-    siteName: settings.siteName?.trim() || "مودونتي",
+    siteName: settings.siteName?.trim() || BRAND_AR,
   };
 }
 

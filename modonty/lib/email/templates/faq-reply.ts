@@ -1,4 +1,5 @@
 import { baseTemplate, ctaButton, heading, paragraph, divider } from "./base";
+import { BRAND_AR } from "@/lib/brand";
 
 export interface FaqReplyEmailParams {
   userName: string;
@@ -39,7 +40,7 @@ export function faqReplyEmail({
 
   return {
     subject: `تمّت الإجابة على سؤالك — ${articleTitle}`,
-    html: baseTemplate(content, "تمّت الإجابة على سؤالك في مودونتي"),
-    text: `مرحباً ${userName}،\n\nتمّت الإجابة على سؤالك:\nسؤالك: ${question}\n\nالإجابة: ${answer}\n\nشاهد الإجابة: ${articleUrl}\n\n— فريق مودونتي`,
+    html: baseTemplate(content, `تمّت الإجابة على سؤالك في ${BRAND_AR}`),
+    text: `مرحباً ${userName}،\n\nتمّت الإجابة على سؤالك:\nسؤالك: ${question}\n\nالإجابة: ${answer}\n\nشاهد الإجابة: ${articleUrl}\n\n— فريق ${BRAND_AR}`,
   };
 }

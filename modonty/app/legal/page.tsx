@@ -4,8 +4,8 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconChevronLeft } from "@/lib/icons";
 
 export const metadata: Metadata = {
-  title: "الصفحات القانونية - مودونتي",
-  description: "اطلع على سياسات مودونتي القانونية: سياسة الخصوصية، سياسة ملفات الارتباط، حقوق النشر، واتفاقية المستخدم.",
+  title: "الصفحات القانونية - مدونتي",
+  description: "اطلع على سياسات مدونتي القانونية: سياسة الخصوصية، سياسة ملفات الارتباط، حقوق النشر، واتفاقية المستخدم.",
   robots: { index: true, follow: true },
 };
 
@@ -28,7 +28,7 @@ const legalPages = [
   {
     href: "/legal/user-agreement",
     title: "اتفاقية المستخدم",
-    description: "الشروط والأحكام الخاصة باستخدام منصة مودونتي",
+    description: "الشروط والأحكام الخاصة باستخدام منصة مدونتي",
   },
 ];
 

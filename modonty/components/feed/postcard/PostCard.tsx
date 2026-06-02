@@ -25,7 +25,10 @@ export function PostCard({ className, index, isLcp, hideClient, featured, ...res
         articleTitle={rest.post.title}
         featured={featured}
       />
-      <div className="p-4 space-y-3">
+      {/* data-nosnippet: keep client article text out of Google's snippet for LISTING pages
+          (homepage feed, etc.) so the platform's own meta description wins. The article's own
+          page is unaffected. Official: Google honors data-nosnippet on div/span/section. */}
+      <div data-nosnippet className="p-4 space-y-3">
         <PostCardHeader post={rest.post} index={index} hideClient={hideClient} />
         <PostCardBody
           post={rest.post}

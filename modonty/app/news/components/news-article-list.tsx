@@ -18,7 +18,7 @@ export function NewsArticleList({ articles }: NewsArticleListProps) {
   }
 
   return (
-    <ul className="space-y-4" aria-label="أخبار مودونتي">
+    <ul className="space-y-4" aria-label="أخبار مدونتي">
       {articles.map((article) => (
         <li key={article.id}>
           <Link href={`/articles/${article.slug}`}>

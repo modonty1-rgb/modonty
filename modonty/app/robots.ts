@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/brand";
 
 /**
  * Modonty robots.txt — global AI-visibility policy (2026).
@@ -19,7 +20,7 @@ import { MetadataRoute } from "next";
  *   - Generic scrapers: Scrapy, img2dataset
  */
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
+  const baseUrl = SITE_URL;
 
   const SENSITIVE_PATHS = ["/api/", "/admin/", "/users/"];
 

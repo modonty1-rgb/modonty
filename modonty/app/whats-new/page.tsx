@@ -3,8 +3,8 @@ import Link from "next/link";
 import { IconArrowRight, IconBell, IconFeatured, IconZap, IconShield, IconUsers } from "@/lib/icons";
 
 export const metadata: Metadata = {
-  title: "جديد مودونتي | قريباً",
-  description: "تابع آخر تحديثات وميزات منصة مودونتي — محتوى عربي احترافي يتطور معك.",
+  title: "جديد مدونتي | قريباً",
+  description: "تابع آخر تحديثات وميزات منصة مدونتي — محتوى عربي احترافي يتطور معك.",
   robots: { index: false },
 };
 
@@ -39,7 +39,7 @@ export default function WhatsNewPage() {
           {/* Heading */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground leading-tight mb-4">
             جديد{" "}
-            <span className="text-accent">مودونتي</span>
+            <span className="text-accent">مدونتي</span>
           </h1>
 
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-10 max-w-md mx-auto">

@@ -4,13 +4,15 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ContactForm } from "./components/contact-form";
 import { auth } from "@/lib/auth";
 
-export const metadata: Metadata = generateMetadataFromSEO({
-  title: "اتصل بنا",
-  description: "تواصل مع فريق مودونتي. نحن هنا للإجابة على أسئلتك ومساعدتك",
-  keywords: ["اتصال", "دعم", "مساعدة", "تواصل"],
-  url: "/contact",
-  type: "website",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataFromSEO({
+    title: "اتصل بنا",
+    description: "تواصل مع فريق مدونتي. نحن هنا للإجابة على أسئلتك ومساعدتك",
+    keywords: ["اتصال", "دعم", "مساعدة", "تواصل"],
+    url: "/contact",
+    type: "website",
+  });
+}
 
 function sanitizeJsonLd(json: object): string {
   return JSON.stringify(json).replace(/</g, '\\u003c');
@@ -22,8 +24,8 @@ export default async function ContactPage() {
   const defaultEmail = session?.user?.email ?? null;
   const structuredData = generateStructuredData({
     type: "ContactPage",
-    name: "اتصل بنا - مودونتي",
-    description: "صفحة التواصل مع فريق مودونتي",
+    name: "اتصل بنا - مدونتي",
+    description: "صفحة التواصل مع فريق مدونتي",
     url: "/contact",
   });
 

@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
 
     if (!category) {
       return {
-        title: "فئة غير موجودة - مودونتي",
+        title: "فئة غير موجودة - مدونتي",
       };
     }
 
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: CategoryDetailPageParams): Pr
     });
   } catch {
     return {
-      title: "الفئات - مودونتي",
+      title: "الفئات - مدونتي",
     };
   }
 }
