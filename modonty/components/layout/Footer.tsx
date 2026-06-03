@@ -45,6 +45,7 @@ export function Footer() {
         className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
         aria-label="روابط قانونية"
       >
+        <Link href="/trust" className={linkClass}>الموثوقية</Link>
         <Link href="/terms" className={linkClass}>الشروط والأحكام</Link>
         <Link href="/legal/user-agreement" className={linkClass}>اتفاقية المستخدم</Link>
         <Link href="/legal/privacy-policy" className={linkClass}>سياسة الخصوصية</Link>

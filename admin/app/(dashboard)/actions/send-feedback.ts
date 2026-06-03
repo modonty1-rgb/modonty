@@ -45,7 +45,7 @@ export async function sendFeedback(data: {
 
     // Send email
     await sendEmailWithRetry({
-      from: process.env.RESEND_FROM || "noreply@modonty.com",
+      from: process.env.RESEND_FROM || "Modonty <modonty@modonty.com>",
       to: FEEDBACK_EMAIL,
       subject: `[${data.type.toUpperCase()}] from ${data.name} (${data.app}) — Modonty Admin`,
       html: `

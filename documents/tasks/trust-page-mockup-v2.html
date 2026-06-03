@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>صفحة الموثوقية — مدونتي (Mockup v2 · LinkedIn style)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f3f2ef;            /* LinkedIn warm gray */
+    --card: #ffffff;
+    --border: #e0e0de;
+    --primary: #0a66c2;       /* LinkedIn blue */
+    --primary-hover: #004182;
+    --ink: #000000;
+    --muted: #666666;
+    --muted2: #8a8a8a;
+    --success: #057642;       /* LinkedIn green */
+    --radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.08);
+    --shadow-md: 0 2px 6px rgba(0,0,0,.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .page { max-width: 1128px; margin: 0 auto; padding: 24px 16px 56px; }
+
+  /* card */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: 16px; overflow: hidden; }
+  .card-pad { padding: 24px; }
+  .card-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+  .card-title .ic { color: var(--primary); display: inline-flex; }
+  .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+
+  /* ---------- identity header (LinkedIn company header) ---------- */
+  .cover { height: 116px; background: linear-gradient(120deg, #eaf1f8 0%, #d7e6f3 55%, #cfe0f0 100%); position: relative; }
+  .cover::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(10,102,194,.06) 1.5px, transparent 1.5px); background-size: 20px 20px; }
+  .id-head { padding: 0 24px 22px; position: relative; }
+  .id-logo {
+    width: 84px; height: 84px; border-radius: 14px; background: var(--primary);
+    color: #fff; display: grid; place-items: center; font-size: 42px; font-weight: 900;
+    border: 4px solid #fff; margin-top: -42px; box-shadow: var(--shadow-sm);
+  }
+  .id-name { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .id-name h1 { font-size: 24px; font-weight: 700; }
+  .verified { display: inline-flex; align-items: center; gap: 6px; color: var(--primary); font-weight: 700; font-size: 14px; background: #eaf2fb; border: 1px solid #cfe0f3; padding: 4px 10px; border-radius: 999px; }
+  .id-tag { font-size: 15px; color: var(--ink); margin-top: 6px; }
+  .id-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; color: var(--muted); font-size: 14px; }
+  .id-meta span { display: inline-flex; align-items: center; gap: 6px; }
+  .id-meta b { color: var(--ink); font-weight: 500; }
+
+  /* ---------- official record ---------- */
+  .record { display: grid; grid-template-columns: 1.05fr .95fr; gap: 24px; align-items: start; }
+  .cert { margin: 0; }
+  .cert a { display: block; cursor: zoom-in; }
+  .cert img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+  .cert figcaption { font-size: 12.5px; color: var(--muted); margin-top: 8px; text-align: center; }
+  .facts { list-style: none; display: grid; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .facts li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; font-size: 15px; border-bottom: 1px solid var(--border); }
+  .facts li:last-child { border-bottom: 0; }
+  .facts .k { color: var(--muted); }
+  .facts .v { font-weight: 700; text-align: end; }
+  .facts .v.ltr { direction: ltr; }
+  .verify { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  .verify .lead { font-size: 14px; font-weight: 700; }
+  .verify a { color: var(--primary); font-weight: 600; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+  .verify a:hover { opacity: .8; }
+  .verify .tbd { color: #b45309; }
+  .umbrella { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted); }
+  .umbrella b { color: var(--ink); font-weight: 700; }
+
+  /* ---------- trust pillars ---------- */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .pillar { border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+  .pillar .ic { width: 40px; height: 40px; border-radius: 999px; background: #eaf2fb; color: var(--primary); display: grid; place-items: center; margin-bottom: 12px; }
+  .pillar h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .pillar p { font-size: 14px; color: var(--muted); }
+
+  /* ---------- location ---------- */
+  .loc { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+  .loc-list { list-style: none; display: grid; gap: 16px; align-content: start; }
+  .loc-list li { display: flex; gap: 12px; }
+  .loc-list .ic { width: 36px; height: 36px; border-radius: 8px; background: #eaf2fb; color: var(--primary); display: grid; place-items: center; flex: none; }
+  .loc-list .k { font-size: 13px; color: var(--muted); }
+  .loc-list .v { font-weight: 700; font-size: 15px; }
+  .map { display: block; text-decoration: none; border: 1px solid var(--border); border-radius: 8px; min-height: 210px; background: linear-gradient(135deg, #eaf1f8, #dfeaf5); display: grid; place-items: center; text-align: center; position: relative; transition: box-shadow .2s; }
+  .map:hover { box-shadow: var(--shadow-md); }
+  .map .pin { font-size: 34px; }
+  .map .lbl { position: absolute; bottom: 12px; inset-inline-start: 12px; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; }
+
+  /* ---------- transparency ---------- */
+  .checks { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .checks li { display: flex; gap: 10px; }
+  .checks .ck { color: var(--success); flex: none; font-weight: 900; }
+  .checks b { display: block; font-size: 15px; }
+  .checks span { font-size: 14px; color: var(--muted); }
+
+  /* ---------- CTA ---------- */
+  .cta { text-align: center; }
+  .cta h2 { font-size: 22px; font-weight: 700; }
+  .cta p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .btn { font-weight: 700; font-size: 15px; padding: 10px 22px; border-radius: 6px; text-decoration: none; transition: background .15s, opacity .15s; cursor: pointer; border: 1px solid transparent; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-secondary { background: #fff; color: var(--primary); border-color: var(--primary); }
+  .btn-secondary:hover { background: #eaf2fb; }
+
+  .note { background: #fff8e6; border: 1px solid #f5d98a; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #8a6d1f; margin-bottom: 16px; }
+  .tbd-i { color: #b45309; font-weight: 700; }
+
+  @media (max-width: 760px) {
+    .record { grid-template-columns: 1fr; }
+    .pillars { grid-template-columns: 1fr; }
+    .loc { grid-template-columns: 1fr; }
+    .checks { grid-template-columns: 1fr; }
+    .card-pad { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="note">⚠️ Mockup v2 — نمط LinkedIn (نمط الموقع). البيانات الرسمية من <code>lib/brand.ts</code> + شهادة وزارة التجارة. البنود 🟠 تحتاج تأكيد خالد.</div>
+
+    <!-- ===== Identity header (company-profile style) ===== -->
+    <section class="card">
+      <div class="cover"></div>
+      <div class="id-head">
+        <div class="id-logo">m</div>
+        <div class="id-name">
+          <h1>مدونتي</h1>
+          <span class="verified">✔ موثّقة لدى وزارة التجارة</span>
+        </div>
+        <div class="id-tag">منصة المحتوى العربي للأعمال — تعمل ضمن مظلّة شركة جبر الجنوبية للمقاولات.</div>
+        <div class="id-meta">
+          <span>🟢 <b style="color:var(--success)">السجل نشط</b></span>
+          <span>📍 المقر: <b>جدة، السعودية</b></span>
+          <span>🧾 السجل التجاري: <b style="direction:ltr">4030524305</b></span>
+          <span>📅 السجل صادر: <b>2023</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Official commercial record ===== -->
+    <section class="card">
+      <div class="card-pad">
+        <div class="card-title"><span class="ic">🏛️</span> السجل التجاري الرسمي</div>
+        <div class="card-sub">الكيان القانوني المُشغِّل للمنصّة — صادر عن وزارة التجارة، المملكة العربية السعودية.</div>
+
+        <div class="record">
+          <figure class="cert">
+            <a href="jabr-cr-cert.png" target="_blank">
+              <img src="jabr-cr-cert.png" alt="شهادة السجل التجاري — شركة جبر الجنوبية للمقاولات، الرقم الموحّد 7036024383، وزارة التجارة" loading="lazy" />
+            </a>
+            <figcaption>الشهادة الرسمية · اضغط للتكبير · امسح الـ QR للتحقّق المباشر</figcaption>
+          </figure>
+
+          <div>
+            <ul class="facts">
+              <li><span class="k">الاسم القانوني</span><span class="v">شركة جبر الجنوبية للمقاولات</span></li>
+              <li><span class="k">الحالة</span><span class="v" style="color:var(--success)">● نشط</span></li>
+              <li><span class="k">رقم السجل التجاري</span><span class="v ltr">4030524305</span></li>
+              <li><span class="k">الرقم الوطني الموحّد</span><span class="v ltr">7036024383</span></li>
+              <li><span class="k">نوع الكيان</span><span class="v">شركة ذات مسؤولية محدودة</span></li>
+              <li><span class="k">تاريخ القيد</span><span class="v ltr">13/09/2023</span></li>
+            </ul>
+
+            <div class="verify">
+              <span class="lead">تحقّق بنفسك:</span>
+              <a href="https://eauthenticate.saudibusiness.gov.sa/inquiry" target="_blank">المركز السعودي للأعمال ↗</a>
+            </div>
+
+            <div class="umbrella">🏛️ تعمل منصّة <b>مدونتي</b> ضمن مظلّة <b>شركة جبر الجنوبية للمقاولات</b> — كيان سعودي مسجّل رسمياً.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Why trust us ===== -->
+    <section class="card">
+      <div class="card-pad">
+        <div class="card-title"><span class="ic">🤝</span> ليش تثق فينا</div>
+        <div class="card-sub">نفس المبدأ اللي نكشف فيه أوراقنا، نطبّقه على شغلنا معك.</div>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="ic">📊</div>
+            <h3>الأرقام = الواقع 100%</h3>
+            <p>لوحة تحليلات حيّة تشوف فيها ظهورك وزياراتك وعملاءك بأرقام حقيقية — لا تقارير مجمّلة.</p>
+          </div>
+          <div class="pillar">
+            <div class="ic">🛡️</div>
+            <h3>حضور لا وعود</h3>
+            <p>ما نقول «مضمون» ولا «تصدّر خلال أيام». نبني لك حضوراً تراكمياً حقيقياً على جوجل بهدوء.</p>
+          </div>
+          <div class="pillar">
+            <div class="ic">🧾</div>
+            <h3>أسعار شاملة وواضحة</h3>
+            <p>السعر اللي تشوفه شامل كل الرسوم والضرائب — بدون مفاجآت ولا بنود مخفية.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Location & contact ===== -->
+    <section class="card">
+      <div class="card-pad">
+        <div class="card-title"><span class="ic">📍</span> فين تلقانا</div>
+        <div class="card-sub">عنوان حقيقي ووسائل تواصل مباشرة.</div>
+        <div class="loc">
+          <ul class="loc-list">
+            <li><div class="ic">📍</div><div><div class="k">العنوان (حسب السجل الرسمي)</div><div class="v">جدة — حي الشرفية — شارع أبو بكر الصديق</div></div></li>
+            <li><div class="ic">✉️</div><div><div class="k">البريد الرسمي</div><div class="v" style="direction:ltr;text-align:right">modonty@modonty.com</div></div></li>
+            <li><div class="ic">🕓</div><div><div class="k">ساعات العمل</div><div class="v">على مدار الساعة — 24/7</div></div></li>
+            <li><div class="ic">💬</div><div><div class="k">تواصل مباشر</div><div class="v">واتساب + نموذج تواصل + دعم داخل اللوحة</div></div></li>
+          </ul>
+          <a class="map" href="https://www.google.com/maps?q=21.502370834350586,39.1859245300293" target="_blank">
+            <div>
+              <div class="pin">📍</div>
+              <div style="font-weight:700;color:var(--ink)">مقر جبر الجنوبية — جدة</div>
+              <div style="font-size:13px;color:var(--primary);text-decoration:underline;margin-top:4px">افتح في خرائط جوجل ↗</div>
+            </div>
+            <span class="lbl" style="direction:ltr">21.50237, 39.18592</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Transparency / commitments ===== -->
+    <section class="card">
+      <div class="card-pad">
+        <div class="card-title"><span class="ic">✅</span> شفافيتنا معك</div>
+        <div class="card-sub">وضوح من أول يوم — تعاملنا معك موثّق بالفاتورة والباقة، بلا التزامات غامضة. ونلتزم بمتطلبات نظام التجارة الإلكترونية السعودي.</div>
+        <ul class="checks">
+          <li><span class="ck">✓</span><div><b>فاتورة وسند رسمي</b><span>اشتراكك موثّق بفاتورة وسند رسمي — علاقتنا واضحة من أول لحظة، بدون عقود غامضة.</span></div></li>
+          <li><span class="ck">✓</span><div><b>باقة محدّدة بمميزاتها</b><span>تعرف بالضبط وش تشمل باقتك قبل ما تشترك — بدون مفاجآت.</span></div></li>
+          <li><span class="ck">✓</span><div><b>دفع آمن</b><span>قنوات دفع موثوقة، وبياناتك محميّة.</span></div></li>
+          <li><span class="ck">✓</span><div><b>سياسات معلنة</b><span>الخصوصية والاستخدام والاسترجاع — صفحات منشورة.</span></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="card">
+      <div class="card-pad cta">
+        <h2>عندك سؤال قبل تبدأ؟</h2>
+        <p>تواصل معنا مباشرة، أو شوف الباقات والأسعار بكل وضوح.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#">تواصل معنا</a>
+          <a class="btn btn-secondary" href="#">شوف الباقات</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

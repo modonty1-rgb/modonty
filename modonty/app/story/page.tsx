@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { StoryClientLoader } from "./StoryClientLoader";
 import { STORY_OG_IMAGE as OG_IMAGE } from "./_constants";
+import { ORGANIZATION_JSONLD as ORGANIZATION } from "@/lib/organization-jsonld";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 const PAGE_URL = `${SITE_URL}/story`;
@@ -34,64 +35,8 @@ export const metadata: Metadata = {
   },
 };
 
-const ORGANIZATION = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "مدونتي",
-  alternateName: "Modonty",
-  legalName: "شركة حديقة البستان للديكور",
-  url: SITE_URL,
-  logo: { "@type": "ImageObject", url: OG_IMAGE },
-  identifier: [
-    {
-      "@type": "PropertyValue",
-      propertyID: "Saudi Commercial Registration",
-      value: "4030560460",
-    },
-    {
-      "@type": "PropertyValue",
-      propertyID: "Saudi Unified Entity Number",
-      value: "7040602091",
-    },
-  ],
-  foundingDate: "2024",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "٨١٧١، علي سليمان علي حقوي",
-    addressLocality: "جدة",
-    postalCode: "23816",
-    addressCountry: "SA",
-  },
-  hasCredential: {
-    "@type": "EducationalOccupationalCredential",
-    credentialCategory: "Capital",
-    name: "رأس المال المدفوع",
-    description: "8000000 SAR",
-  },
-  contactPoint: [
-    {
-      "@type": "ContactPoint",
-      contactType: "customer support",
-      email: "support@jbrseo.com",
-      telephone: "+966554113107",
-      availableLanguage: ["ar", "en"],
-    },
-  ],
-  knowsAbout: [
-    "Saudi Vision 2030",
-    "رؤية المملكة 2030",
-    "National Transformation Program",
-    "برنامج التحول الوطني",
-    "Saudi SMEs digital transformation",
-    "Arabic SEO",
-    "Content marketing for Arab businesses",
-  ],
-  areaServed: {
-    "@type": "AdministrativeArea",
-    name: "Saudi Arabia",
-    alternateName: "المملكة العربية السعودية",
-  },
-} as const;
+// Organization schema now comes from the shared canonical builder (@/lib/organization-jsonld)
+// so /story and /trust never drift. Verified legal data lives in @/lib/brand → LEGAL.
 
 const PODCAST_SERIES = {
   "@context": "https://schema.org",

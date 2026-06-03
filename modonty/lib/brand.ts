@@ -37,13 +37,27 @@ export const CONTACT_EMAIL = "modonty@modonty.com";
 // Transactional email "from" header.
 export const NOREPLY_FROM = `${BRAND_EN} <no-reply@modonty.com>`;
 
-// Legal entity facts (Saudi commercial registration) — were hardcoded in app/story/_constants.ts.
+// Legal entity facts — VERIFIED from the official Ministry of Commerce commercial-registration
+// certificate via its QR (qr.saudibusiness.gov.sa) on 2026-06-03. «جبر الجنوبية» هي الكيان المظلّة
+// المُشغِّل لمنصّة مدونتي (وحديقة البستان تحتها). تُستهلك في /trust + شريط الثقة و JSON-LD في /story.
 export const LEGAL = {
-  dba: "حديقة البستان للديكور",
-  cr: "4030560460",
-  uen: "7040602091",
+  legalName: "شركة جبر الجنوبية للمقاولات",
+  dba: "شركة جبر الجنوبية للمقاولات", // back-compat alias used by /story trust strip
+  cr: "4030524305", // رقم السجل التجاري
+  unifiedNumber: "7036024383", // الرقم الوطني الموحّد للمنشأة
+  entityType: "شركة ذات مسؤولية محدودة",
+  status: "نشط",
   capital: "8,000,000",
   city: "جدة",
   country: "السعودية",
-  foundedYear: "2024",
+  countryCode: "SA",
+  region: "منطقة مكة المكرمة",
+  district: "حي الشرفية",
+  street: "شارع أبو بكر الصديق",
+  foundedYear: "2023",
+  registrationDateAr: "١٣ سبتمبر ٢٠٢٣",
+  // Official MC certificate image (basic data + verification QR) — served from /public.
+  certificateImage: "/trust/jabr-cr-certificate.png",
+  // Public verification — Saudi Business Center authentication inquiry.
+  verifyUrl: "https://eauthenticate.saudibusiness.gov.sa/inquiry",
 } as const;

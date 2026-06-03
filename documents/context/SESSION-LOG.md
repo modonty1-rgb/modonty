@@ -1,8 +1,52 @@
-# Session Context — Last Updated: 2026-06-02 (PUSHED — admin v0.70.0: Modonty Homepage settings full SEO/UX redesign — SEO tab live preview (Google/Social) + dynamic favicon + grouped tabs + smart counters w/ hard maxLength + removed redundant Regenerate button + 2-column layout + standalone JBR SEO card + platform googleBusinessProfileUrl field + brandDescription moved to SEO tab. dataLayer schema: googleBusinessProfileUrl on Settings (optional). TSC ×3 clean, live-verified. All 3 apps redeploy (schema change). After deploy: fill PROD Business Info values + Regenerate.)
+# Session Context — Last Updated: 2026-06-03 (PUSHED — brand: ONE navbar logo (wordmark desktop=mobile, mobile enlarged to 150px) + light-mode nav slate-100 contrast + NEW clean square favicon (icon.svg + favicon.ico + apple-icon.png, every size, canonical brand/favicon/ store). modonty v1.52.0 + admin v0.71.1 · commit 2956e31 · modonty+admin READY on prod · all favicon URLs verified 200 + 4-engine search check done. IN PROGRESS: homepage Meta Title/Description/Brand revision — see documents/seo/HOMEPAGE-META-REVISION-PLAN.md + MODONTY-FOUNDATION.md (evidence-backed copy ready, awaiting decision: apply vs free Keyword Planner). PENDING: rotate Mongo password — in git history + 3 changelog scripts.)
 
 > 📦 **Older sessions (40 blocks, up to 2026-06-01) archived →** [SESSION-LOG-archive-until-2026-06-01.md](./SESSION-LOG-archive-until-2026-06-01.md)
 > This active file keeps only the latest session(s) so the most important state stays in front. `us>` appends here (newest at top).
 > **Rotation rule:** when this file grows large again, copy it to a new dated archive (`SESSION-LOG-archive-until-YYYY-MM-DD.md`), then trim this file back to the latest 1–2 blocks + update the link above.
+
+---
+
+## Session: 2026-06-03 — Brand logo + favicon (PUSHED) + homepage Meta revision (in progress)
+
+### 🎯 Where I stopped
+- Logo + favicon: **DONE + pushed (commit `2956e31`) + verified on prod.** No open thread.
+- Homepage Meta (Title/Description/Brand): **research done, evidence-backed copy ready, AWAITING Khalid's decision.** Khalid tired → sleep → continue tomorrow.
+- Next concrete action: open `documents/seo/HOMEPAGE-META-REVISION-PLAN.md` → decide: apply revised copy in admin `/settings/modonty`, OR pull free Keyword Planner numbers first.
+
+### ✅ Done this session
+- **Logo unified:** one wordmark (`modontyLogo_ftf4yf.png`, 351×85) desktop+mobile; mobile enlarged 48px-square → 150px wordmark; removed `variant`/`logoIconUrl` from nav. Light-mode nav `bg-white`→`bg-slate-100/95` so the logo's white "m" tile shows.
+- **New favicon:** cleaned source SVG (trimmed viewBox → `14.67 20.9 70.65 70.65`); full size set; canonical repo-root `brand/favicon/`; adopted in `modonty/app/` (`icon.svg`+`favicon.ico`+`apple-icon.png`, replaced invalid `apple-icon.svg`). `.gitignore` exceptions for favicon PNGs. Prod: all 3 favicon URLs 200 ✓.
+- **Admin Google-preview** now reads real static favicon (`/modonty-favicon.svg`), not DB `logoIconUrl`.
+- **4-engine check:** Google shows "m" + sitelinks; Bing/Yandex/DDG show our title+desc but default favicon (**pending re-crawl — timing, not config**; Bing `.ico` ✓, robots not blocking ✓). Wrote `documents/seo/WEBMASTER-REINDEX-REQUEST.md`.
+- **SEO foundation:** subagent studied brand/strategy docs → `documents/seo/MODONTY-FOUNDATION.md` (identity: Arabic content-SaaS, "حضور لا وعود", 5 verticals, vocabulary, "don't chase client keywords").
+- **Keyword research (free):** GSC top queries + Google Autocomplete → evidence-backed proposals in `HOMEPAGE-META-REVISION-PLAN.md`.
+- TSC: modonty + admin **zero errors**. Live test: 4 states (desktop/mobile × light/dark) passed local + prod.
+
+### 📝 Decisions
+- Logo = ONE wordmark both viewports. Favicon STATIC in code (brand identity).
+- Light-mode nav tint = `slate-100` (vs slate-50 too-faint / slate-200 too-gray) — Khalid approved.
+- Homepage Meta reflects modonty IDENTITY (content-SaaS), NOT the client "سيو" keyword. Evidence keywords: «تسويق المحتوى»/«منصة محتوى»/«كتابة محتوى سيو»; avoid bare «محتوى عربي» (wrong intent).
+- Honest: can't GUARANTEE engagement lift (Google rewrites desc + ranking-dependent) — measure in GSC 4-8 wks.
+
+### 🚧 Pending / blocked
+- **Homepage Meta:** awaiting Khalid decision → `HOMEPAGE-META-REVISION-PLAN.md`.
+- 🔴 **SECURITY (Khalid):** rotate Mongo password `2053712713` — git history + hardcoded in 3 changelog scripts (`add-changelog.ts`/`changelog-local.ts`/`changelog-prod.ts`). Rotate Atlas → update `.env.shared` + Vercel + 3 scripts.
+- **DEFERRED:** `logoIconUrl` dead-field removal — in MASTER-TODO.
+
+### 📂 Files touched
+- modonty: `components/navigatore/{LogoNav,TopNav,TopNavDesktop}.tsx` · `app/icon.svg` · `app/favicon.ico` (new) · `app/apple-icon.png` (new) · deleted `app/apple-icon.svg` · `package.json` (1.52.0)
+- admin: `settings/_shared/image-field.tsx` · `settings/modonty/components/modonty-form.tsx` · `public/modonty-favicon.svg` (new) · `scripts/add-changelog.ts` · `package.json` (0.71.1)
+- root: `brand/favicon/*` (new) · `.gitignore`
+- docs: `documents/seo/{WEBMASTER-REINDEX-REQUEST,MODONTY-FOUNDATION,HOMEPAGE-META-REVISION-PLAN}.md` (new) · `documents/tasks/✅ MASTER-TODO.md`
+
+### 🔁 Git / deploy
+- Branch: main · Last commit: `2956e31` "brand: one navbar logo + clean square favicon" · **Pushed: yes** · Vercel: modonty+admin **READY** (console QUEUED — no change). Backup: 73 collections.
+- Uncommitted after push: the 3 new SEO docs + this SESSION-LOG update — docs only, commit with next push.
+
+### 🚀 How to resume in 30 seconds
+1. Open `documents/seo/HOMEPAGE-META-REVISION-PLAN.md` (resume point) + `MODONTY-FOUNDATION.md` (identity).
+2. Ask Khalid: apply revised Title/Desc/Brand in admin `/settings/modonty`, OR Keyword Planner numbers first?
+3. If apply → set 3 fields → Save → live-verify the preview.
 
 ---
 

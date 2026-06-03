@@ -116,7 +116,7 @@ export async function createInvoiceAction(input: CreateInvoiceInput): Promise<Cr
           subscriptionEnd: subEnd,
         });
         await sendEmailWithRetry({
-          from: process.env.RESEND_FROM?.trim() || "Modonty <noreply@modonty.com>",
+          from: process.env.RESEND_FROM?.trim() || "Modonty <modonty@modonty.com>",
           to: client.email,
           subject: tpl.subject,
           html: tpl.html,

@@ -23,5 +23,5 @@ export const LEGAL_ENTITY = {
   country: LEGAL.country,
   countryFull: "المملكة العربية السعودية",
   foundedYear: LEGAL.foundedYear,
-  verifyUrl: "https://mc.gov.sa/ar/eservices/Pages/Commercial-data.aspx",
+  verifyUrl: "https://eauthenticate.saudibusiness.gov.sa/inquiry",
 } as const;

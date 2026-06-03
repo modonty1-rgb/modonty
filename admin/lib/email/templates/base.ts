@@ -31,9 +31,9 @@ export function baseTemplate(content: string, previewText = ""): string {
           </tr>
           <tr>
             <td style="background-color:${LIGHT_GRAY};padding:20px 32px;border-top:1px solid ${BORDER};text-align:center;">
-              <p style="margin:0 0 10px;font-size:12px;color:${GRAY};">هذا إيميل آلي من نظام مُدَوَّنَتِي — لا ترد عليه.</p>
+              <p style="margin:0 0 10px;font-size:12px;color:${GRAY};">لأي استفسار، ردّ على هذا الإيميل أو راسلنا على <a href="mailto:modonty@modonty.com" style="color:${BLUE};text-decoration:none;">modonty@modonty.com</a>.</p>
               <p style="margin:0;font-size:11px;color:${GRAY};line-height:1.7;">
-                شركة جبر الجنوبية &nbsp;·&nbsp; السجل التجاري 4030524305 &nbsp;·&nbsp; الرقم الوطني الموحّد 7036024383<br/>
+                شركة جبر الجنوبية للمقاولات &nbsp;·&nbsp; السجل التجاري 4030524305 &nbsp;·&nbsp; الرقم الوطني الموحّد 7036024383<br/>
                 جدة — حي الشرفية — شارع أبو بكر الصديق &nbsp;·&nbsp; رأس المال 8,000,000 ﷼
               </p>
             </td>
