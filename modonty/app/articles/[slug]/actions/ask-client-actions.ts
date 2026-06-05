@@ -79,6 +79,7 @@ export async function submitAskClient(
       answer: null,
       position,
       status: ArticleFAQStatus.PENDING,
+      source: "user", // reader submission → routes to the console questions inbox (filters source user|chatbot)
       submittedByName,
       submittedByEmail,
     },

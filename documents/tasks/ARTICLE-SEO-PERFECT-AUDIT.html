@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>مراجعة صفحة المقال — المعيار الشامل (مطبّق مقابل ناقص)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--primary:#0d9488;
+      --ok:#059669;--warn:#d97706;--bad:#dc2626;--info:#2563eb;--grey:#64748b;
+      --okbg:#dcfce7;--warnbg:#fef3c7;--badbg:#fee2e2;--infobg:#dbeafe;--greybg:#f1f5f9;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Tajawal',system-ui,sans-serif;background:#0b1220;color:var(--ink);line-height:1.65;padding:20px 10px 80px}
+    .wrap{max-width:1500px;width:97%;margin:0 auto}
+    header.top{background:linear-gradient(135deg,#0f766e,#155e63);color:#fff;border-radius:16px;padding:22px;margin-bottom:16px}
+    header.top h1{font-size:23px;font-weight:800;margin-bottom:4px}
+    header.top p{opacity:.92;font-size:13.5px}
+    header.top .meta{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;font-size:12px}
+    header.top .meta span{background:rgba(255,255,255,.15);padding:4px 10px;border-radius:999px}
+    .score{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+    .score .box{flex:1;min-width:120px;background:#fff;border-radius:14px;padding:14px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+    .score .box .num{font-size:30px;font-weight:800;line-height:1}
+    .score .box .lbl{font-size:12.5px;color:var(--muted);margin-top:5px;font-weight:700}
+    .score .ok .num{color:var(--ok)} .score .bad .num{color:var(--bad)} .score .warn .num{color:var(--warn)}
+    .score .info .num{color:var(--info)} .score .grey .num{color:var(--grey)}
+    .legend{background:#fff;border-radius:12px;padding:11px 16px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+    .facts{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:13px 16px;margin-bottom:14px;font-size:13px}
+    .facts b{color:#92400e}
+    .facts ul{margin:6px 18px 0}
+    section.card{background:#fff;border-radius:16px;margin-bottom:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+    .card h2{font-size:17px;font-weight:800;padding:14px 18px;background:#f8fafc;border-bottom:2px solid var(--line)}
+    table{width:100%;border-collapse:collapse;font-size:13.5px}
+    th,td{text-align:right;padding:9px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+    th{background:#f1f5f9;font-weight:800;color:#334155;font-size:12px}
+    td.st{font-weight:800;white-space:nowrap;text-align:center;width:108px}
+    td.st.ok{background:var(--okbg);color:var(--ok)} td.st.bad{background:var(--badbg);color:var(--bad)}
+    td.st.warn{background:var(--warnbg);color:var(--warn)} td.st.info{background:var(--infobg);color:var(--info)}
+    td.st.grey{background:var(--greybg);color:var(--grey)}
+    td.crit{font-weight:700;white-space:nowrap} td.val{font-size:12.5px;color:#334155} td.src{font-size:11px;color:var(--muted)}
+    code{background:#f1f5f9;border-radius:5px;padding:1px 5px;font-size:11.5px;font-family:ui-monospace,monospace;direction:ltr;display:inline-block}
+    .fixrow td{background:#fff7ed;font-size:12px;color:#9a3412;padding-top:3px}
+    .fixrow td::before{content:"💡 الحل: ";font-weight:800}
+    .pad{padding:13px 18px} .pad.muted{font-size:12.5px;color:var(--muted)}
+    pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:13px;overflow:auto;direction:ltr;font-size:11px;line-height:1.55;margin:14px 18px}
+    ul.clean{list-style:none;padding:0 6px} ul.clean li{padding:3px 0;font-size:13px;display:flex;gap:8px}
+    ul.clean li::before{content:"✓";color:var(--ok);font-weight:800}
+    footer{color:#94a3b8;font-size:12px;text-align:center;margin-top:18px}
+    a.s{color:var(--info);text-decoration:none;border-bottom:1px dotted var(--info)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>المعيار الشامل لمراجعة صفحة المقال — ✅ مطبّق / ❌ ناقص</h1>
+    <p>7 محاور · مبنية من المصادر الرسمية الكبيرة (Google Search Central · web.dev · Schema.org · Semrush · Ahrefs · Moz · Backlinko · GEO). كل بند جنبه حالته الفعلية + المصدر.</p>
+    <div class="meta">
+      <span>📅 2026-06-04</span>
+      <span>🔬 العيّنة: <code>ما-هو-السيو</code></span>
+      <span>⚖️ كل ❌ و⚠️ = must-fix</span>
+      <span>📌 بعض البنود من تحقّق سابق (تقرير الجولات) لا قياس هذه الجلسة</span>
+    </div>
+  </header>
+
+  <div class="score">
+    <div class="box ok"><div class="num">53</div><div class="lbl">✅ مطبّق</div></div>
+    <div class="box warn"><div class="num">5</div><div class="lbl">⚠️ جزئي</div></div>
+    <div class="box bad"><div class="num">0</div><div class="lbl">❌ ناقص</div></div>
+    <div class="box info"><div class="num">3</div><div class="lbl">📊 لم يُقَس</div></div>
+    <div class="box grey"><div class="num">6</div><div class="lbl">⚪ محتوى/اختياري</div></div>
+  </div>
+
+  <div class="legend">
+    <span><b style="color:var(--ok)">✅ مطبّق</b> موجود وصحيح</span>
+    <span><b style="color:var(--warn)">⚠️ جزئي</b> موجود لكن ناقص/خلل</span>
+    <span><b style="color:var(--bad)">❌ ناقص</b> غير موجود (must-fix)</span>
+    <span><b style="color:var(--info)">📊 لم يُقَس</b> يحتاج أداة</span>
+    <span><b style="color:var(--grey)">⚪ محتوى/اختياري</b> يعتمد على نص المقال</span>
+  </div>
+
+  <div class="facts">
+    <b>حقائق رسمية مهمة (Google) — تُريحنا من جهد ضائع:</b>
+    <ul>
+      <li>للظهور في AI Overviews / AI Mode: <b>لا توجد متطلبات إضافية ولا schema خاصة ولا ملف <code>llms.txt</code></b> — يكفي أن تكون الصفحة مفهرسة ومؤهّلة لـ snippet. أفضل ممارسات السيو هي نفسها لـ AI.</li>
+      <li>الشرط: السماح بالزحف (robots) + محتوى نصّي + مطابقة الـ structured data للمحتوى المرئي.</li>
+      <li>E-E-A-T: <b>الثقة (Trust) الأهم</b>، وتتضاعف أهميتها في YMYL (صحة/مال/قانون).</li>
+      <li>CWV تُقاس عند <b>المئين 75</b> لمستخدمين حقيقيين (CrUX)، منفصلة جوال/سطح مكتب.</li>
+    </ul>
+  </div>
+
+  <!-- AXIS 1 -->
+  <section class="card">
+    <h2>🔧 المحور 1 — التقني والفهرسة + السوشيال (مقيس على الحقيقي)</h2>
+    <table>
+      <tr><th>المعيار</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">canonical</td><td>مطلق + www + ذاتي المرجع</td><td class="st ok">✅ مطبّق</td><td class="val"><code>www.modonty.com/articles/…</code></td><td class="src">Google Canonical</td></tr>
+      <tr><td class="crit">إشارة canonical واحدة</td><td>لا تعارض (rel + sitemap متّسقان) · لا robots/removal للتقنين</td><td class="st ok">✅ مطبّق</td><td class="val">متّسقة</td><td class="src">Google Canonical</td></tr>
+      <tr><td class="crit">robots (meta)</td><td>index, follow</td><td class="st ok">✅ مطبّق</td><td class="val"><code>index, follow</code></td><td class="src">Search Central</td></tr>
+      <tr><td class="crit">robots.txt</td><td>يسمح بالزحف + موارد الـ render + بوتات بحث AI</td><td class="st ok">✅ مطبّق</td><td class="val">العام مسموح · بوتات بحث AI (OAI-SearchBot/Perplexity) مسموحة · بوتات التدريب محجوبة عمداً</td><td class="src">Search Essentials</td></tr>
+      <tr><td class="crit">hreflang — return links</td><td>كل نسخة تشير للبقية + لنفسها (وإلا تُتجاهل)</td><td class="st ok">✅ مطبّق</td><td class="val">×9 (نفس الـ URL — استراتيجية مصدر عربي واحد)</td><td class="src">Google hreflang</td></tr>
+      <tr><td class="crit">x-default</td><td>موجود</td><td class="st ok">✅ مطبّق</td><td class="val">موجود</td><td class="src">Google hreflang</td></tr>
+      <tr><td class="crit">الجوال</td><td>responsive + viewport</td><td class="st ok">✅ مطبّق</td><td class="val">responsive</td><td class="src">Page Experience</td></tr>
+      <tr><td class="crit">الاكتشاف (sitemap)</td><td>داخل sitemap.xml</td><td class="st ok">✅ مطبّق</td><td class="val">sitemap ديناميكي</td><td class="src">Search Central</td></tr>
+      <tr><td class="crit">HTTPS</td><td>إشارة ترتيب</td><td class="st ok">✅ مطبّق</td><td class="val">HTTPS · 200</td><td class="src">Search Essentials</td></tr>
+      <tr><td class="crit">روابط قابلة للزحف</td><td><code>&lt;a href&gt;</code> + نص وصفي</td><td class="st ok">✅ مطبّق</td><td class="val">روابط HTML وصفية</td><td class="src">Search Essentials</td></tr>
+      <tr><td class="crit">سياسات السبام</td><td>لا cloaking/keyword-stuffing/محتوى آلي بلا قيمة</td><td class="st ok">✅ مطبّق</td><td class="val">محتوى نظيف</td><td class="src">Spam Policies</td></tr>
+      <tr><td class="crit">OG / Twitter</td><td>OG كامل + صورة ≥ 1200×630</td><td class="st ok">✅ مطبّق</td><td class="val">OG كامل · og:image + twitter:image = 1200×630 (Cloudinary c_fill — متحقَّق بالبكسل: الصورة المسلَّمة 1200×630 فعلاً)</td><td class="src">Open Graph</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 2 -->
+  <section class="card">
+    <h2>🧩 المحور 2 — البيانات المنظّمة (JSON-LD) — أكثر محور فيه نواقص</h2>
+    <table>
+      <tr><th>الحقل</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">Article type</td><td>نوع صحيح</td><td class="st ok">✅ مطبّق</td><td class="val"><code>Article</code> في <code>@graph</code></td><td class="src" rowspan="6"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google Article SD</a> · <a class="s" href="https://schema.org/Article">Schema.org</a></td></tr>
+      <tr><td class="crit">headline</td><td>موجز</td><td class="st ok">✅ مطبّق</td><td class="val">موجود</td></tr>
+      <tr><td class="crit">datePublished</td><td>ISO 8601</td><td class="st ok">✅ مطبّق</td><td class="val">موجود</td></tr>
+      <tr><td class="crit">BreadcrumbList</td><td>مسار كامل</td><td class="st ok">✅ مطبّق</td><td class="val">4 عناصر</td></tr>
+      <tr><td class="crit">mainEntityOfPage</td><td>موجود</td><td class="st ok">✅ مطبّق</td><td class="val">موجود</td></tr>
+      <tr><td class="crit">inLanguage</td><td>BCP 47</td><td class="st ok">✅ مطبّق</td><td class="val"><code>ar-SA</code></td></tr>
+      <tr><td class="crit">image (ImageObject)</td><td>ImageObject + أبعاد + نِسَب 16:9·4:3·1:1</td><td class="st ok">✅ مطبّق</td><td class="val">ImageObject ×3 + width/height (1:1·4:3·16:9) — <code>buildArticleImageObjects</code></td><td class="src"></td></tr>
+      <tr><td class="crit">author.url</td><td>كاتب معرّف (type + url/sameAs)</td><td class="st ok">✅ مطبّق</td><td class="val">author = Organization «مدونتي» مربوط بـ <code>@id #organization</code> · url = <code>www.modonty.com</code> (متحقَّق حيّ)</td><td class="src"></td></tr>
+      <tr><td class="crit">publisher.logo</td><td>logo ImageObject</td><td class="st ok">✅ مطبّق</td><td class="val">logo ImageObject من <code>client.logoMedia.url</code> (متحقَّق حيّ)</td><td class="src"></td></tr>
+      <tr><td class="crit">Organization + WebSite</td><td>عقدة عُليا مستقلّة (Organization + WebSite)</td><td class="st ok">✅ مطبّق</td><td class="val">Organization (logo + sameAs ×5) + WebSite مربوطان بـ <code>@id</code> · بلا SearchAction (Google ألغى الـ sitelinks searchbox 2024)</td><td class="src"></td></tr>
+      <tr><td class="crit">هروب XSS</td><td><code>&lt; → <</code> عند الحقن</td><td class="st ok">✅ مطبّق</td><td class="val"><code>jsonLdHtml()</code> يهرّب <code>&lt;</code> في كل حقن JSON-LD (الأساسي + اللاب)</td><td class="src">Next.js</td></tr>
+      <tr><td class="crit">author</td><td>كاتب معرّف (Person أو Organization)</td><td class="st ok">✅ مطبّق</td><td class="val">Organization «Modonty» (قرار: الكاتب = البراند، فالفريق يتغيّر) — مطابق للـ byline المرئي</td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google author best-practices</a></td></tr>
+      <tr><td class="crit">dateModified</td><td>تعديل محتوى حقيقي + اتّساق</td><td class="st ok">✅ مطبّق</td><td class="val">من الحقل الحقيقي <code>dateModified</code> (لا updatedAt المزعج) · OG = JSON-LD متّسقان (متحقَّق حيّ <code>consistent:true</code>)</td><td class="src"></td></tr>
+      <tr><td class="crit">publisher</td><td>name + logo</td><td class="st ok">✅ مطبّق</td><td class="val">name + url + logo ImageObject ✓</td><td class="src"></td></tr>
+      <tr><td class="crit">حقول إثراء</td><td>wordCount · articleSection · keywords · isAccessibleForFree</td><td class="st ok">✅ مطبّق</td><td class="val">wordCount + articleSection + keywords (الوسوم) + isAccessibleForFree (متحقَّق حيّ) · articleBody مُستبعَد عمداً (يضاعف وزن الصفحة بلا فائدة — الأداء أولوية)</td><td class="src">Schema.org</td></tr>
+      <tr><td class="crit">مطابقة المرئي</td><td>SD يطابق ما يراه الزائر</td><td class="st ok">✅ مطبّق</td><td class="val">متطابق</td><td class="src">Google AI Features</td></tr>
+      <tr><td class="crit">FAQPage</td><td>لمّا توجد أسئلة</td><td class="st grey">⚪ محتوى</td><td class="val">هذا المقال بلا أسئلة</td><td class="src"></td></tr>
+      <tr><td class="crit">speakable</td><td>للصوت (اختياري)</td><td class="st grey">⚪ اختياري</td><td class="val">غير مطبّق</td><td class="src">Schema.org</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 3 -->
+  <section class="card">
+    <h2>📝 المحور 3 — On-page والمحتوى (Google · Moz · Ahrefs · Backlinko)</h2>
+    <table>
+      <tr><th>المعيار</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">H1</td><td>واحد = الكلمة المفتاحية</td><td class="st ok">✅ مطبّق</td><td class="val">H1 واحد</td><td class="src">Moz · Backlinko</td></tr>
+      <tr><td class="crit">هرمية العناوين</td><td>H2/H3 منطقية + الكلمة في H2</td><td class="st ok">✅ مطبّق</td><td class="val">43 H2 + 10 H3</td><td class="src">Backlinko</td></tr>
+      <tr><td class="crit">عمق + شمول</td><td>شامل يغطّي الموضوع</td><td class="st ok">✅ مطبّق</td><td class="val">2,914 كلمة</td><td class="src">Semrush · Backlinko</td></tr>
+      <tr><td class="crit">مطابقة نيّة البحث</td><td>يلبّي ما يريده الباحث</td><td class="st ok">✅ مطبّق</td><td class="val">معلوماتي «ما هو السيو» ✓</td><td class="src">Ahrefs</td></tr>
+      <tr><td class="crit">meta description</td><td>فريدة · محدّدة · 150-160 · الكلمة طبيعية · مرئية</td><td class="st ok">✅ مطبّق</td><td class="val">خاص بالمقال</td><td class="src">Google · Moz</td></tr>
+      <tr><td class="crit">الرابط (URL)</td><td>قصير + يحوي الكلمة</td><td class="st ok">✅ مطبّق</td><td class="val">slug = الكلمة</td><td class="src">Backlinko</td></tr>
+      <tr><td class="crit">title — الكلمة أولاً</td><td>الكلمة في البداية · فريد · لا حشو</td><td class="st ok">✅ مطبّق</td><td class="val">وصفي + فريد</td><td class="src">Moz · Google</td></tr>
+      <tr><td class="crit">title — الطول</td><td>≤ ~60 حرف (يُقصّ)</td><td class="st warn">⚠️ جزئي</td><td class="val">80 حرف (القالب يلحق الناشر)</td><td class="src">Moz</td></tr>
+      <tr class="fixrow"><td colspan="5">تقليم عناوين SEO ≤ 60 أو إعادة هيكلة القالب.</td></tr>
+      <tr><td class="crit">روابط داخلية</td><td>روابط فريدة + داخل النص</td><td class="st warn">⚠️ جزئي</td><td class="val">«اقرأ أيضاً» 11 فريد ✓ · جسم المقال بلا روابط سياقية</td><td class="src">Ahrefs · Semrush</td></tr>
+      <tr class="fixrow"><td colspan="5">إضافة روابط داخلية سياقية داخل نص المقال.</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 4 -->
+  <section class="card">
+    <h2>🖼️ المحور 4 — تحسين الصور (Image SEO) — محور جديد</h2>
+    <table>
+      <tr><th>المعيار</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">alt وصفي</td><td>غني بالمعلومات · زخرفي=""</td><td class="st ok">✅ مطبّق</td><td class="val">alt موجود · الفارغ زخرفي مقصود</td><td class="src" rowspan="7"><a class="s" href="https://developers.google.com/search/docs/appearance/google-images">Google Images</a></td></tr>
+      <tr><td class="crit">عنصر <code>&lt;img&gt;</code></td><td>HTML قياسي (لا CSS bg)</td><td class="st ok">✅ مطبّق</td><td class="val">next/image &lt;img&gt;</td></tr>
+      <tr><td class="crit">صور responsive</td><td>srcset / picture</td><td class="st ok">✅ مطبّق</td><td class="val">next/image srcset</td></tr>
+      <tr><td class="crit">قرب النص</td><td>الصورة قرب نص متعلّق</td><td class="st ok">✅ مطبّق</td><td class="val">صور داخل المحتوى</td></tr>
+      <tr><td class="crit">جودة عالية</td><td>صور حادّة للـ thumbnail</td><td class="st ok">✅ مطبّق</td><td class="val">عالية</td></tr>
+      <tr><td class="crit">image sitemap</td><td>موجود</td><td class="st ok">✅ مطبّق</td><td class="val"><code>/image-sitemap.xml</code></td></tr>
+      <tr><td class="crit">اسم الملف وصفي</td><td>مثل <code>maine-coon.jpg</code></td><td class="st warn">⚠️ جزئي</td><td class="val">أسماء Cloudinary مشفّرة (غير وصفية)</td></tr>
+      <tr class="fixrow"><td colspan="5">استخدام أسماء ملفات وصفية عند الرفع (أو إعادة تسمية في Cloudinary).</td></tr>
+      <tr><td class="crit">image structured data</td><td>ImageObject / primaryImageOfPage</td><td class="st ok">✅ مطبّق</td><td class="val">ImageObject ×3 + width/height (= بند image المحور 2)</td><td class="src">Google Images</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 5 -->
+  <section class="card">
+    <h2>⚡ المحور 5 — Core Web Vitals</h2>
+    <table>
+      <tr><th>المقياس</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">CLS</td><td>≤ 0.1</td><td class="st ok">✅ مطبّق</td><td class="val">0 (قياس حيّ)</td><td class="src" rowspan="4"><a class="s" href="https://web.dev/articles/vitals">web.dev/vitals</a></td></tr>
+      <tr><td class="crit">LCP</td><td>≤ 2.5s</td><td class="st info">📊 لم يُقَس</td><td class="val">يحتاج Lighthouse إنتاج (TTFB + render-blocking)</td></tr>
+      <tr><td class="crit">INP</td><td>≤ 200ms (بدّل FID 2024)</td><td class="st info">📊 لم يُقَس</td><td class="val">يحتاج Lighthouse إنتاج (TBT)</td></tr>
+      <tr><td class="crit">بيانات حقلية (CrUX)</td><td>المئين 75 · جوال+سطح</td><td class="st info">📊 لم يُقَس</td><td class="val">لا بيانات حقلية بعد (يحتاج زيارات)</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 6 -->
+  <section class="card">
+    <h2>🏅 المحور 6 — E-E-A-T والمحتوى المفيد (Helpful Content)</h2>
+    <table>
+      <tr><th>المعيار</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">هوية الناشر (Trust)</td><td>موثّقة (الأهم في E-E-A-T)</td><td class="st ok">✅ مطبّق</td><td class="val">جبر سيو + <code>/trust</code></td><td class="src" rowspan="7"><a class="s" href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Google Helpful Content</a></td></tr>
+      <tr><td class="crit">المصادر/الاستشهاد</td><td>جهات معتبرة + clear sourcing</td><td class="st ok">✅ مطبّق</td><td class="val">قسم Citations</td></tr>
+      <tr><td class="crit">Byline ظاهر (Who)</td><td>اسم/خلفية الكاتب واضحة للزائر</td><td class="st ok">✅ مطبّق</td><td class="val">ArticleHeader + سيرة الكاتب</td></tr>
+      <tr><td class="crit">أصالة وشمول وعمق</td><td>معلومة أصلية + تحليل يتجاوز البديهي</td><td class="st ok">✅ مطبّق</td><td class="val">محتوى شامل</td></tr>
+      <tr><td class="crit">كاتب معرّف في JSON-LD</td><td>Person أو Organization + كيان</td><td class="st ok">✅ مطبّق</td><td class="val">Organization «مدونتي» مربوط بـ <code>#organization</code> (logo + sameAs ×5)</td></tr>
+      <tr><td class="crit">صفحة تعريف الكاتب + About</td><td>الكاتب معرّف + صفحة «من نحن»</td><td class="st ok">✅ مطبّق</td><td class="val">الكاتب = مدونتي (Organization) · التعريف موجود في <code>/story</code> + <code>/trust</code></td></tr>
+      <tr><td class="crit">تحديث (freshness)</td><td>dateModified/lastReviewed حقيقي</td><td class="st warn">⚠️ جزئي</td><td class="val">كودياً: المولّد يقرأ الحقل الحقيقي + OG↔JSON-LD متّسقان ✓ · لكن دقّة القيمة كـ«تعديل فعلي» + lastReviewed = بيانات/محتوى (غير متحقَّق)</td></tr>
+      <tr><td class="crit">الإفصاح عن AI (How)</td><td>الإفصاح لو المحتوى AI + السبب</td><td class="st grey">⚪ سياسة</td><td class="val">حسب سياسة الإنتاج</td><td class="src">Google How</td></tr>
+    </table>
+  </section>
+
+  <!-- AXIS 7 -->
+  <section class="card">
+    <h2>🤖 المحور 7 — AI / GEO (الظهور في AI Overviews + LLMs)</h2>
+    <table>
+      <tr><th>المعيار</th><th>الهدف</th><th>الحالة</th><th>الفعلي</th><th>المصدر</th></tr>
+      <tr><td class="crit">محتوى نصّي قابل للزحف</td><td>HTML خام (server) + robots يسمح</td><td class="st ok">✅ مطبّق</td><td class="val">server-rendered + بوتات بحث AI مسموحة</td><td class="src">Google AI Features</td></tr>
+      <tr><td class="crit">بنية دلالية</td><td>عناوين واضحة + أهم النقاط</td><td class="st ok">✅ مطبّق</td><td class="val">TL;DR + عناوين</td><td class="src">GEO</td></tr>
+      <tr><td class="crit">SD يطابق المرئي</td><td>(لا schema/llms.txt خاص لـ AI)</td><td class="st ok">✅ مطبّق</td><td class="val">JSON-LD يطابق المحتوى</td><td class="src">Google AI Features</td></tr>
+      <tr><td class="crit">ضوابط المعاينة</td><td>لا nosnippet/noindex بالخطأ</td><td class="st ok">✅ مطبّق</td><td class="val">snippet مسموح</td><td class="src">Google</td></tr>
+      <tr><td class="crit">freshness لـ AI</td><td>تحديث حديث (AI يرجّح الأحدث)</td><td class="st warn">⚠️ جزئي</td><td class="val">الإشارة متّسقة وسليمة المصدر ✓ · «الأحدثية» الفعلية = تحديث المحتوى دورياً (محتوى لا كود)</td><td class="src">GEO</td></tr>
+      <tr><td class="crit">إجابة مبكّرة (أول 200 كلمة)</td><td>أول 200 كلمة تجيب السؤال مباشرة</td><td class="st grey">⚪ محتوى</td><td class="val">يُفحص لكل مقال</td><td class="src">GEO</td></tr>
+      <tr><td class="crit">عناوين على شكل أسئلة</td><td>H2 تطابق صيغ البحث («ما هو…؟»)</td><td class="st grey">⚪ محتوى</td><td class="val">يُفحص لكل مقال</td><td class="src">GEO</td></tr>
+      <tr><td class="crit">بيانات/بحث أصلي</td><td>أرقام/دراسة أصلية تجذب الاستشهاد</td><td class="st grey">⚪ محتوى</td><td class="val">يُفحص لكل مقال</td><td class="src">GEO</td></tr>
+    </table>
+  </section>
+
+  <!-- TOOL -->
+  <section class="card">
+    <h2>🛠️ أداة الفحص السريع (console المتصفح)</h2>
+    <pre>(() => {
+  const lds=[...document.querySelectorAll('script[type="application/ld+json"]')].map(s=>{try{return JSON.parse(s.textContent)}catch{return{}}});
+  let a=null,b=null,f=null; const scan=n=>{const t=[].concat(n['@type']||[]).join(',');
+    if(/Article|BlogPosting/.test(t))a=n; if(/BreadcrumbList/.test(t))b=n; if(/FAQPage/.test(t))f=n;};
+  lds.forEach(l=> l['@graph']? l['@graph'].forEach(scan): scan(l));
+  const c=document.querySelector('#article-content'), imgs=[...document.querySelectorAll('img')];
+  console.table({
+    titleLen: document.title.length, canonical: document.querySelector('link[rel=canonical]')?.href||'❌',
+    robots: document.querySelector('meta[name=robots]')?.content||'index', hreflang: document.querySelectorAll('link[hreflang]').length,
+    ogImage: document.querySelector('meta[property="og:image"]')?.content||'❌', h1: document.querySelectorAll('h1').length,
+    h2: c?c.querySelectorAll('h2').length:0, words: c?c.innerText.trim().split(/\s+/).length:0,
+    internalLinks: document.querySelectorAll('a[href*="/articles/"]').length,
+    author: a?.author?.name+' / '+(a?.author?.url||'❌no-url'), publisherLogo: !!a?.publisher?.logo,
+    imageIsObject: typeof a?.image?.[0]==='object', wordCountField: a?.wordCount||'❌', articleSection: a?.articleSection||'❌',
+    faq: f? f.mainEntity?.length+'Q':'none',
+  });
+})();</pre>
+    <div class="pad muted">الأداء (LCP/INP/CrUX): Lighthouse على build إنتاج + PageSpeed/CrUX — لا تعتمد أرقام dev.</div>
+  </section>
+
+  <!-- EVIDENCE / QUOTES -->
+  <section class="card">
+    <h2>🔎 الأدلة والاقتباسات الرسمية — اضغط الرابط وتحقّق بنفسك (جُلبت حرفيّاً 2026-06-04)</h2>
+    <table>
+      <tr><th>المعيار</th><th>الاقتباس الحرفي من المصدر</th><th>المصدر (اضغط)</th></tr>
+      <tr><td class="crit">image — نِسَب الصور</td><td class="val"><em>“For best results, we recommend providing multiple high-resolution images (minimum of 50K pixels when multiplying width and height) with the following aspect ratios: 16x9, 4x3, and 1x1.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google Article SD</a></td></tr>
+      <tr><td class="crit">dateModified</td><td class="val"><em>“Add the dateModified property if you want to provide more accurate date information to Google.”</em> (ISO 8601 + timezone)</td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google Article SD</a></td></tr>
+      <tr><td class="crit">headline / العنوان</td><td class="val"><em>“The title of the article. Consider using a concise title, as long titles may be truncated on some devices.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google Article SD</a></td></tr>
+      <tr><td class="crit">author = Person أو Organization</td><td class="val"><em>“Use the Person type for people, and the Organization type for organizations.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google author best-practices</a></td></tr>
+      <tr><td class="crit">author يطابق المرئي</td><td class="val"><em>“Make sure that all the authors that are presented as authors on the web page are also included in markup.”</em> + <em>“Only specify the author's name in the author.name property.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Google author best-practices</a></td></tr>
+      <tr><td class="crit">طول الـ title</td><td class="val"><em>“While there's no limit on how long a &lt;title&gt; element can be, the title link is truncated in Google Search results as needed, typically to fit the device width.”</em> + <em>“descriptive and concise”</em> → «≤60» قاعدة Moz عملية لا قاعدة Google</td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/title-link">Google Title link</a></td></tr>
+      <tr><td class="crit">canonical — إشارة واحدة</td><td class="val"><em>“Don't specify different URLs as canonical for the same page using different canonicalization techniques…”</em> + <em>“Don't use the robots.txt file for canonicalization purposes.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls">Google Canonical</a></td></tr>
+      <tr><td class="crit">hreflang — return links</td><td class="val"><em>“Each language version must list itself as well as all other language versions.”</em> + x-default للاحتياطي</td><td class="src"><a class="s" href="https://developers.google.com/search/docs/specialty/international/localized-versions">Google hreflang</a></td></tr>
+      <tr><td class="crit">Core Web Vitals</td><td class="val"><em>“LCP should occur within 2.5 seconds…”</em> · <em>“pages should have a INP of 200 milliseconds or less”</em> · <em>“a CLS of 0.1 or less”</em> · <em>“75th percentile… mobile and desktop”</em> · <em>“INP became a stable Core Web Vital metric in 2024”</em></td><td class="src"><a class="s" href="https://web.dev/articles/vitals">web.dev Vitals</a></td></tr>
+      <tr><td class="crit">AI / لا schema خاصة</td><td class="val"><em>“You don't need to create new machine readable files, AI text files, or markup to appear in these features. There's also no special schema.org structured data that you need to add.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/ai-features">Google AI Features</a></td></tr>
+      <tr><td class="crit">E-E-A-T — Trust الأهم</td><td class="val"><em>“Of these aspects, trust is most important. The others contribute to trust, but content doesn't necessarily have to demonstrate all of them.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Google Helpful Content</a></td></tr>
+      <tr><td class="crit">اسم الصورة وصفي</td><td class="val"><em>“use filenames that are short, but descriptive. For example, my-new-black-kitten.jpg is better than IMG00023.JPG.”</em> + <em>“Google doesn't index CSS images.”</em></td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/google-images">Google Images</a></td></tr>
+      <tr><td class="crit">schema.org Article — الأنواع</td><td class="val"><em>author → Person/Organization · image → ImageObject/URL · wordCount → Integer · keywords → DefinedTerm/Text/URL · articleBody → Text</em></td><td class="src"><a class="s" href="https://schema.org/Article">Schema.org Article</a></td></tr>
+      <tr><td class="crit">WebSite SearchAction ملغى</td><td class="val"><em>“The sitelinks search box feature is no longer available in Google Search results.”</em> (تغيير نوفمبر 2024 — لذلك لم نضِف SearchAction)</td><td class="src"><a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/sitelinks-searchbox">Google (deprecation)</a></td></tr>
+    </table>
+    <div class="pad muted">كل اقتباس أعلاه مأخوذ حرفيّاً من الصفحة المربوطة (جُلبت هذه الجلسة). افتح الرابط وابحث عن النص للتأكّد بنفسك.</div>
+  </section>
+
+  <!-- SOURCES -->
+  <section class="card">
+    <h2>🔗 المصادر الرسمية (متحقَّقة 2026-06-04)</h2>
+    <div class="pad">
+      <ul class="clean">
+        <li>Google Search Central — <a class="s" href="https://developers.google.com/search/docs/essentials">Search Essentials</a> · <a class="s" href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">Helpful Content / E-E-A-T</a> · <a class="s" href="https://developers.google.com/search/docs/appearance/structured-data/article">Article SD</a></li>
+        <li>Google — <a class="s" href="https://developers.google.com/search/docs/appearance/google-images">Image SEO</a> · <a class="s" href="https://developers.google.com/search/docs/appearance/title-link">Title</a> · <a class="s" href="https://developers.google.com/search/docs/appearance/snippet">Snippet</a> · <a class="s" href="https://developers.google.com/search/docs/appearance/ai-features">AI Features</a></li>
+        <li>Google — <a class="s" href="https://developers.google.com/search/docs/specialty/international/localized-versions">hreflang</a> · <a class="s" href="https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls">Canonical</a></li>
+        <li><a class="s" href="https://schema.org/Article">Schema.org Article</a> · <a class="s" href="https://web.dev/articles/vitals">web.dev Core Web Vitals</a></li>
+        <li><a class="s" href="https://www.semrush.com/blog/on-page-seo-checklist/">Semrush On-page</a> · <a class="s" href="https://ahrefs.com/blog/on-page-seo-checklist/">Ahrefs On-page</a> · <a class="s" href="https://backlinko.com/on-page-seo">Backlinko On-page</a> · Moz · GEO (Search Engine Land)</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>مدوّنتي · المقال = قلب المشروع · 7 محاور · كل ❌ و⚠️ = must-fix قبل الختم</footer>
+</div>
+</body>
+</html>

@@ -47,3 +47,45 @@ export function buildAspectRatiosArray(url: string | null | undefined, width = 1
   }
   return ASPECT_RATIOS.map((ar) => buildAspectRatioUrl(url, ar, width));
 }
+
+export interface ArticleImageObject {
+  "@type": "ImageObject";
+  url: string;
+  width?: number;
+  height?: number;
+}
+
+// Width:height numerators for each Google-recommended aspect ratio.
+const RATIO_DIMS: Record<AspectRatio, { w: number; h: number }> = {
+  "1:1": { w: 1, h: 1 },
+  "4:3": { w: 4, h: 3 },
+  "16:9": { w: 16, h: 9 },
+};
+
+/**
+ * Build the Article `image` property as schema.org ImageObject[] (richer than bare URLs):
+ * each carries explicit width/height — improves Google Images + AI understanding.
+ * Cloudinary URLs → 3 ImageObjects (1:1, 4:3, 16:9). Non-Cloudinary → single ImageObject.
+ * @see https://developers.google.com/search/docs/appearance/structured-data/article
+ */
+export function buildArticleImageObjects(
+  url: string | null | undefined,
+  width = 1200,
+  fallbackDims?: { width?: number | null; height?: number | null },
+): ArticleImageObject[] {
+  if (!url) return [];
+  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) {
+    const w = fallbackDims?.width ?? undefined;
+    const h = fallbackDims?.height ?? undefined;
+    return [{ "@type": "ImageObject", url, ...(w ? { width: w } : {}), ...(h ? { height: h } : {}) }];
+  }
+  return ASPECT_RATIOS.map((ar) => {
+    const dims = RATIO_DIMS[ar];
+    return {
+      "@type": "ImageObject" as const,
+      url: buildAspectRatioUrl(url, ar, width),
+      width,
+      height: Math.round((width * dims.h) / dims.w),
+    };
+  });
+}

@@ -1,7 +1,7 @@
 # Image Issues — Fix TODO
-**Status:** COMPLETE ✅
-**Last Updated:** 2026-04-09 (All Scopes Done)
-**Verified against:** Next.js official docs via Context7 (2026-04-09)
+**Status:** img→next/image migration COMPLETE ✅ · 1 NEW pending → §4 (descriptive filenames, admin upload)
+**Last Updated:** 2026-06-04 (added §4 image-SEO filenames)
+**Verified against:** Next.js official docs via Context7 (2026-04-09) · Google Images SEO doc (2026-06-04)
 **Scope:** All 3 apps — modonty (public), admin (dashboard), console (client)
 
 ---
@@ -104,3 +104,22 @@
 
 ### 📌 CORRECT — No action needed
 - `console/app/components/modonty-logo.tsx` — aspect-[3/1] + object-cover ✅
+
+---
+
+## 4. Image SEO — Descriptive filenames at upload (NEW · 2026-06-04 · admin upload flow)
+
+**Source of the gap:** SEO audit (`ARTICLE-SEO-PERFECT-AUDIT.html`, محور 4) — Cloudinary public_ids are hashed/non-descriptive. Google Images doc: *"use filenames that are short, but descriptive. For example, `my-new-black-kitten.jpg` is better than `IMG00023.JPG`."*
+**SEO weight:** 🟢 LOW — a minor "clue" only. alt text + context + ImageObject + sitemap (all ✅) carry the real weight. NOT urgent.
+
+### 🟢 LOW — IMG-SEO-1: auto-generate descriptive Latin filename on new uploads
+- [ ] At upload, set Cloudinary `public_id` to pattern `{latin}-{role}-{shortid}.webp`
+  - **No Arabic** in the name (Arabic in URL → `%D8%A7%..` = unreadable + weaker). Latin only.
+  - **`{latin}`** = transliteration of the article slug (automatic — user types nothing). [Decision pending: transliterate slug (A) vs optional English keyword (B); Khalid leaning A.]
+  - **`{role}`** = `featured` / `gallery` / `og`.
+  - **`{shortid}`** = uniqueness suffix (avoid collisions).
+- **Where:** admin image-upload flow (the Cloudinary upload action) — NOT modonty read-code.
+- **⚠️ Constraint:** apply to NEW uploads only. **Never rename existing Cloudinary public_ids** — breaks live URLs + sitemap (404s).
+- **Verify:** new upload → public_id is Latin + descriptive + role + unique; existing images untouched.
+
+> Added per Khalid 2026-06-04: "نظبطها من عندنا الـ Admin" — deferred to when we work on the admin upload flow.

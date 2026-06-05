@@ -31,7 +31,7 @@ export async function LogoNav({ className }: LogoNavProps) {
           loading="eager"
           fetchPriority="high"
           sizes="(max-width: 768px) 150px, 120px"
-          className={`object-contain h-9 w-[150px] md:h-10 md:w-[120px] ${className ?? ""}`}
+          className={`object-contain h-7 w-20 md:h-10 md:w-[120px] ${className ?? ""}`}
         />
       ) : (
         <span className="text-lg font-bold text-primary">{BRAND_AR}</span>

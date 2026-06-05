@@ -1,7 +1,48 @@
 import { Metadata } from "next";
-import { buildAspectRatiosArray } from "./image-aspect-ratios";
-import { BRAND_AR, BRAND_EN, SITE_URL } from "@/lib/brand";
+import { buildArticleImageObjects } from "./image-aspect-ratios";
+import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/lib/brand";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
+
+/**
+ * Serialize JSON-LD for safe inline injection inside <script type="application/ld+json">.
+ * Escapes `<` → `<` so a string field containing `</script>` (or any markup) can't
+ * break out of the tag (XSS / parser-breakout). Use this everywhere instead of bare JSON.stringify.
+ */
+export function jsonLdHtml(data: object): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/**
+ * Force a Cloudinary image to the OG-recommended 1200×630 (smart crop, keeps focal subject)
+ * so the declared og:image width/height are truthful. Non-Cloudinary or already-transformed
+ * URLs pass through unchanged.
+ */
+export function toOgImage1200x630(url: string): string {
+  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) return url;
+  if (/\/upload\/[^/]*(?:c_|w_|h_|ar_)/.test(url)) return url; // already transformed
+  const i = url.indexOf("/upload/") + 8;
+  return `${url.slice(0, i)}c_fill,g_auto,w_1200,h_630,f_auto,q_auto/${url.slice(i)}`;
+}
+
+/**
+ * Normalize cached og:image entries to the OG-recommended 1200×630 (Cloudinary smart crop)
+ * with truthful declared width/height. Accepts the loose Metadata openGraph.images shape
+ * (string | object | array) and always returns a clean array (or undefined when empty).
+ */
+export function normalizeOgImages(
+  images: unknown,
+): Array<{ url: string; width: number; height: number; alt?: string }> | undefined {
+  const list = Array.isArray(images) ? images : images ? [images] : [];
+  const out = list
+    .map((entry) => {
+      const url = typeof entry === "string" ? entry : (entry as { url?: string } | null)?.url;
+      if (!url || typeof url !== "string") return null;
+      const alt = typeof entry === "object" && entry ? (entry as { alt?: string }).alt : undefined;
+      return { url: toOgImage1200x630(url), width: 1200, height: 630, ...(alt ? { alt } : {}) };
+    })
+    .filter((x): x is { url: string; width: number; height: number; alt?: string } => x !== null);
+  return out.length > 0 ? out : undefined;
+}
 
 export interface SEOData {
   title?: string;
@@ -75,7 +116,9 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
   // (single source of truth). If neither exists, og:image is OMITTED — no static fallback.
   // The admin is alerted to fill it via the EssentialSeoDialog in the admin app.
   const brandMedia = await getBrandMedia();
-  const ogImage = image || brandMedia.ogImageUrl || undefined;
+  const ogImageRaw = image || brandMedia.ogImageUrl || undefined;
+  // Normalize to 1200×630 so the declared og:image dimensions are accurate (Open Graph rec).
+  const ogImage = ogImageRaw ? toOgImage1200x630(ogImageRaw) : undefined;
   const imageAltResolved = imageAlt || title || brandMedia.altImage || siteName;
   const ogImages = ogImage
     ? [{ url: ogImage, width: 1200, height: 630, alt: imageAltResolved }]
@@ -191,6 +234,43 @@ export function generateStructuredData(data: {
   return baseSchema;
 }
 
+/**
+ * Site identity @graph: Organization (Modonty brand entity) + WebSite, linked by @id.
+ * Establishes the brand/publisher entity for the knowledge graph + AI/GEO understanding.
+ * NO SearchAction — Google deprecated the sitelinks searchbox (Nov 2024), so adding it
+ * has zero rich-result value. sameAs = the platform's verified social profiles.
+ */
+export function generateSiteIdentityStructuredData(options?: { sameAs?: string[] }): object {
+  const orgId = `${SITE_URL}/#organization`;
+  const siteId = `${SITE_URL}/#website`;
+  const sameAs = (options?.sameAs || []).filter(
+    (u) => typeof u === "string" && u.trim().length > 0,
+  );
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": orgId,
+        name: BRAND_EN,
+        alternateName: BRAND_AR,
+        url: SITE_URL,
+        logo: { "@type": "ImageObject", url: LOGO_URL },
+        ...(sameAs.length > 0 && { sameAs }),
+      },
+      {
+        "@type": "WebSite",
+        "@id": siteId,
+        name: BRAND_EN,
+        alternateName: BRAND_AR,
+        url: SITE_URL,
+        inLanguage: "ar",
+        publisher: { "@id": orgId },
+      },
+    ],
+  };
+}
+
 export function generateBreadcrumbStructuredData(items: Array<{ name: string; url: string }>): object {
   const siteUrl = SITE_URL;
 
@@ -217,23 +297,36 @@ export function generateArticleStructuredData(article: any) {
     "@type": "Article",
     headline: article.title,
     description: article.seoDescription || article.excerpt || "",
-    // Google Article rich results: provide 3 aspect ratios (1:1, 4:3, 16:9)
-    // when image is on Cloudinary; falls back to single URL otherwise.
+    // Google Article rich results: 3 aspect ratios (1:1, 4:3, 16:9) as ImageObject[]
+    // with explicit width/height (richer than bare URLs → better Google Images + AI).
     image: article.featuredImage?.url
-      ? buildAspectRatiosArray(article.featuredImage.url)
+      ? buildArticleImageObjects(article.featuredImage.url, 1200, {
+          width: article.featuredImage.width,
+          height: article.featuredImage.height,
+        })
       : undefined,
     datePublished: article.datePublished?.toISOString(),
-    dateModified: article.dateModified?.toISOString() || article.updatedAt?.toISOString(),
+    // Accurate, not noisy: real edit date → else publish date (NOT updatedAt, which bumps on any
+    // DB write and would fake freshness — against Google guidelines). updatedAt only as last resort.
+    dateModified: (article.dateModified || article.datePublished || article.updatedAt)?.toISOString(),
+    // Author = Modonty (the platform brand). The team/writers change, but the brand is the
+    // constant author. Organization type per Google's author best-practices; linked via @id
+    // to the #organization entity (logo + url + sameAs) so Google resolves the full identity.
+    // url = canonical site (www) — fixes the stale homepage value. Visible byline already
+    // shows the same name (schema ↔ visible match, required by Google).
     author: {
-      "@type": "Person",
-      name: article.author.name || BRAND_EN,
-      ...(article.author.url && { url: article.author.url }),
-      ...(article.author.image && { image: article.author.image }),
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: article.author?.name || BRAND_EN,
+      url: siteUrl,
     },
     publisher: {
       "@type": "Organization",
       name: article.client.name,
-      ...(article.client.logo && { logo: { "@type": "ImageObject", url: article.client.logo } }),
+      // Logo as ImageObject — data carries it at client.logoMedia.url (fallback to legacy client.logo)
+      ...((article.client.logoMedia?.url || article.client.logo) && {
+        logo: { "@type": "ImageObject", url: article.client.logoMedia?.url || article.client.logo },
+      }),
       ...(article.client.url && { url: article.client.url }),
     },
     mainEntityOfPage: {
@@ -244,6 +337,10 @@ export function generateArticleStructuredData(article: any) {
       articleSection: article.category.name,
     }),
     ...(article.wordCount && { wordCount: article.wordCount }),
+    // keywords = the article's visible tags (matches on-page content → safe enrichment)
+    ...(Array.isArray(article.tags) && article.tags.length > 0 && {
+      keywords: article.tags.map((t: any) => t?.tag?.name).filter(Boolean),
+    }),
     inLanguage: article.inLanguage || "ar",
     isAccessibleForFree: article.isAccessibleForFree ?? true,
     ...(article.license && { license: article.license }),

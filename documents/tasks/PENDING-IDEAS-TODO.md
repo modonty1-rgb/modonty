@@ -1,6 +1,6 @@
 # 💭 Pending Ideas — Brainstorm & Future Features
 
-**Last Updated:** 2026-06-02 (Homepage SEO keywords post-deploy task · Google Reviews Premium feature · Vercel billing audit)
+**Last Updated:** 2026-06-04 (🔍 Article SEO audit updated → 0 ❌ · title-length + internal-links + filename = admin/editorial TODO · ⚡ Lighthouse+GZIP perf check before push · Homepage SEO keywords · Google Reviews Premium · Vercel billing audit)
 **Purpose:** ملف يجمع كل الأفكار المُلتقطة عبر shortcut **"reminder"** قبل ما تتحوّل لخطط تفصيلية.
 
 > **القاعدة:** كل فكرة هنا = `[ ]` فارغ، عنوان قصير + وصف موجز + تاريخ الإضافة.
@@ -9,6 +9,41 @@
 ---
 
 ## 💡 أفكار قيد التفكير
+
+### 🔍 Article SEO «Perfect 100%» — حالة محدّثة 2026-06-04
+
+- **المرجع المعتمد:** `documents/tasks/ARTICLE-SEO-PERFECT-AUDIT.html` (HTML بحالة لكل معيار + 15 اقتباساً رسمياً). اللوحة: **53 ✅ · 5 ⚠️ · 0 ❌**.
+- ✅ **منجز ومتحقَّق حيّاً (2026-06-04) في `modonty/lib/seo/index.ts` المشترك:** image → ImageObject ×3 + أبعاد · `publisher.logo` (من logoMedia) · هروب XSS (`jsonLdHtml`) · عقدة Organization + WebSite (بلا SearchAction الملغى) · author = Organization «مدونتي» مربوط بـ `#organization` · keywords (الوسوم) · OG/Twitter 1200×630 · `dateModified` اتّساق OG↔JSON-LD + مصدر الحقل الحقيقي.
+- **قرار مثبّت:** الكاتب = **مدونتي (Organization)** دائماً (الفريق يتغيّر، البراند ثابت) — مطابق author best-practices.
+
+#### ⚠️ المتبقّي (مهام أدمن/تحرير — مش كود رِندَر المقال):
+
+- [ ] **طول الـ meta title — إزالة البراند المكرّر** (مهمة أدمن + regenerate)
+  - **المشكلة:** العنوان 80 حرف ببرندين: « - شركة جبر سيو **|** مدونتي ».
+  - **المصدر 1 (لاحقة العميل):** [admin/lib/seo/metadata-generator.ts:138](admin/lib/seo/metadata-generator.ts#L138) → `` `${effectiveTitle} - ${siteName}` `` حيث `siteName = client.name`.
+  - **المصدر 2 (لاحقة البراند):** [modonty/app/layout.tsx:35](modonty/app/layout.tsx#L35) → `` template: `%s | ${BRAND_AR}` ``.
+  - **best practice:** «العنوان (كلمة مفتاحية أولاً) **| براند واحد**». Google = لا حدّ أحرف، القصّ بالبكسل (~600px) — «60» heuristic من Moz لا قاعدة Google.
+  - **الحل الموصى:** حذف لاحقة العميل (سطر 138 → `effectiveTitle` فقط) والاكتفاء بقالب «| مدونتي» → ثم **regenerate** ميتاداتا المقالات.
+
+- [ ] **روابط داخلية سياقية في متن المقال** (تحريري / ميزة auto-linker)
+  - الآن: «اقرأ أيضاً» ✅ لكن جسم المقال بلا روابط. الحل = الكاتب يضيفها، أو ميزة auto-linker (محفوفة بمخاطر — تُناقش).
+
+- [ ] **اسم الصورة الوصفي** → منقول لـ `IMAGE-ISSUES-TODO.md` §4 (IMG-SEO-1). أولوية 🟢 منخفضة.
+
+- [ ] **freshness/dateModified accuracy** — الكود خلص (مصدر+اتّساق ✅)؛ الباقي = بيانات (تاريخ تعديل حقيقي) + محتوى (تحديث فعلي).
+
+- **متبقّي تحقّق:** Rich Results validation + توسعة على عدّة مقالات + Lighthouse (إنتاج).
+
+### ⚡ Lighthouse + GZIP + bundle — قياس أداء modonty (آخر خطوة قبل الـ push) (added 2026-06-03)
+
+- [ ] **🔔 ذكّر خالد بهذا البند قبل أي `git push` للإنتاج.** الأداء أولوية #1 على الموقع الرئيسي (خالد كرّرها 3× يوم 2026-06-03 — راجع [[feedback_modonty_performance_first]]).
+- **متى:** آخر حاجة — بعد ما نخلّص الـ tasks الحالية + التقديم. القياس قبل الإطلاق مباشرةً.
+- **المطلوب:**
+  - `pnpm build` + الـ bundle analyzer (سكربت `build:analyze`) → First Load JS بالضبط لكل route.
+  - Lighthouse / PageSpeed على: الرئيسية + مقال + صفحة عميل → LCP/CLS/INP فعلية مقابل عتبات Google.
+  - التأكد من تفعيل ضغط GZIP/Brotli على استجابات الإنتاج (Vercel يفعّله افتراضياً — نتحقق بدليل).
+- **لماذا الانتظار:** القياس الفعلي يحتاج production build + بيئة إنتاج، ويجي آخر بوابة قبل الإطلاق.
+- **مرتبط بـ:** [[feedback_modonty_performance_first]] · [[project_performance_standards]] · [[project_seo_dominance_goal]].
 
 ### 🔑 Homepage SEO keywords — صياغة خبير بعد الـ deploy (added 2026-06-02)
 

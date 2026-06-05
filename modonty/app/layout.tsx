@@ -5,10 +5,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProviderWrapper } from "@/components/providers/SessionProviderWrapper";
 import { GTMContainer } from "@/components/gtm/GTMContainer";
+import { WebVitals } from "@/components/gtm/WebVitals";
 import { HotjarScript } from "@/components/hotjar/HotjarScript";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
-import { MobileFooterWithFavorites } from "@/components/navigatore/MobileFooterWithFavorites";
+import { ChatFloatingButton } from "@/components/chatbot/ChatFloatingButton";
 import { AnnouncementBar } from "@/components/navigatore/AnnouncementBar";
 import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
@@ -78,6 +79,7 @@ export default function RootLayout({
       </head>
       <body className="bg-background font-sans overflow-x-hidden">
         <GTMContainer />
+        <WebVitals />
         <HotjarScript />
         <ThemeProvider
           attribute="class"
@@ -92,11 +94,9 @@ export default function RootLayout({
                 <Suspense fallback={<header className="h-14 border-b bg-card" />}>
                   <TopNavWithFavorites />
                 </Suspense>
-                <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
+                <main id="main-content" className="flex-1">{children}</main>
                 <Footer />
-                <Suspense fallback={<footer className="md:hidden h-16 border-t bg-card" />}>
-                  <MobileFooterWithFavorites />
-                </Suspense>
+                <ChatFloatingButton />
               </div>
             </SessionProviderWrapper>
           </Suspense>

@@ -187,6 +187,19 @@
   margin-bottom: 0.6em;
 }
 
+/* Dark-mode article readability fix.
+   Editor (TipTap) bakes inline `color: rgb(0,0,0)` into ~every span of pasted content.
+   Black-on-dark = invisible in dark mode. Force the theme foreground (overrides plain
+   inline color — inline styles here are not !important). Light mode is untouched. */
+.dark .article-body,
+.dark .article-body :where(p, span, li, h1, h2, h3, h4, h5, h6, blockquote, figcaption, td, th, strong, em, b, i, mark) {
+  color: hsl(var(--foreground)) !important;
+}
+.dark .article-body a,
+.dark .article-body a :where(span) {
+  color: hsl(var(--primary)) !important;
+}
+
 /* ── Phase 4: Skeleton shimmer ────────────────────────────── */
 .skeleton-shimmer {
   background-color: hsl(var(--muted));

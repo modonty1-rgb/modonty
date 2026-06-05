@@ -107,6 +107,18 @@ export interface LeadQualifiedParams extends ClientContext {
   conversion_type: "lead_qualified";
 }
 
+// ─── Performance (1) — Core Web Vitals (RUM / field data) ────────────────────
+
+export interface WebVitalsParams {
+  metric_name: string; // LCP | INP | CLS | FCP | TTFB
+  metric_value: number; // milliseconds (CLS ×1000 to keep an integer)
+  metric_rating?: string; // good | needs-improvement | poor
+  metric_id?: string; // unique per page load (for percentile / dedup)
+  metric_delta?: number;
+  metric_nav_type?: string;
+  page_path?: string;
+}
+
 // ─── Event registry (single source of truth) ─────────────────────────────────
 
 export const GA4_EVENTS = {
@@ -131,6 +143,7 @@ export const GA4_EVENTS = {
   campaign_interest: "campaign_interest",
   conversion_complete: "conversion_complete",
   lead_qualified: "lead_qualified",
+  web_vitals: "web_vitals",
 } as const;
 
 export type GA4EventName = (typeof GA4_EVENTS)[keyof typeof GA4_EVENTS];
@@ -207,3 +220,7 @@ export const trackConversionComplete = (p: ConversionCompleteParams, o?: TrackOp
 // Deferred
 export const trackLeadQualified = (p: LeadQualifiedParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.lead_qualified, p, o);
+
+// Performance — Core Web Vitals (RUM field data; same server-side MP path as all events)
+export const trackWebVitals = (p: WebVitalsParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.web_vitals, p, o);

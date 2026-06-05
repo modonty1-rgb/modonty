@@ -1,8 +1,112 @@
-# Session Context — Last Updated: 2026-06-03 (PUSHED — brand: ONE navbar logo (wordmark desktop=mobile, mobile enlarged to 150px) + light-mode nav slate-100 contrast + NEW clean square favicon (icon.svg + favicon.ico + apple-icon.png, every size, canonical brand/favicon/ store). modonty v1.52.0 + admin v0.71.1 · commit 2956e31 · modonty+admin READY on prod · all favicon URLs verified 200 + 4-engine search check done. IN PROGRESS: homepage Meta Title/Description/Brand revision — see documents/seo/HOMEPAGE-META-REVISION-PLAN.md + MODONTY-FOUNDATION.md (evidence-backed copy ready, awaiting decision: apply vs free Keyword Planner). PENDING: rotate Mongo password — in git history + 3 changelog scripts.)
+# Session Context — Last Updated: 2026-06-04 (Article LAB mobile **center client dock** redesign + final SCAN → **9-gap port plan** to graft the lab layout INTO the real `/articles/[slug]`; amber «احجز الآن» CTA = **MOCKUP only** (booking deferred); **NOTHING pushed** — large uncommitted tree [prior-session global nav relocation + `articles-lab/` + shadcn skill + mockups]. Article = heart of project → max care. See top block ↓. ⟵ prior 2026-06-03 PM: PUSHED — NEW `/trust` company-verification page + email-sender fix. Official entity verified via the CR PDF's QR: **شركة جبر الجنوبية للمقاولات · سجل 4030524305 · موحّد 7036024383 · نشط · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M**. Page = OG-banner hero + square favicon mark + official certificate image (+QR) + verify link + LinkedIn-style cards; footer «الموثوقية» link; fixed `lib/brand.ts` LEGAL + shared `organization-jsonld.ts` (also corrected /story's old حديقة البستان data). Email: `RESEND_FROM`→modonty@modonty.com (.env.shared + Vercel env updated) + base.ts footer «reply» + fallbacks. **modonty v1.53.0 + admin v0.71.2 · commit `85381ee` · prod /trust verified LIVE.** PROD DATA set in admin.modonty.com: CS WhatsApp **+966560299034** (sales=966541018020 separate) + email modonty@modonty.com + address الشرفية/أبو بكر الصديق → revalidated via /api/revalidate/tag, wa.me live. PENDING: **Khalid's Trello notes (incoming)** · changelog v1.53.0/v0.71.2 · Vercel RESEND_FROM activates on next deploy · rotate Mongo password.)
 
 > 📦 **Older sessions (40 blocks, up to 2026-06-01) archived →** [SESSION-LOG-archive-until-2026-06-01.md](./SESSION-LOG-archive-until-2026-06-01.md)
 > This active file keeps only the latest session(s) so the most important state stays in front. `us>` appends here (newest at top).
 > **Rotation rule:** when this file grows large again, copy it to a new dated archive (`SESSION-LOG-archive-until-YYYY-MM-DD.md`), then trim this file back to the latest 1–2 blocks + update the link above.
+
+---
+
+## Session: 2026-06-04 — Article LAB mobile redesign (center client dock) + final scan → port plan
+
+### 🎯 Where I stopped
+- Finished the LAB article **mobile bottom-bar redesign** (center client dock). Ran the **final scan** comparing the lab vs the real `/articles/[slug]` → the lab dropped production-critical pieces → produced a **9-gap port checklist** (now in TodoWrite).
+- Was **about to start the port** when `us>` fired. **NOTHING pushed.**
+- Next concrete action: begin the port — graft the lab layout INTO `modonty/app/articles/[slug]/page.tsx` (keep its metadata/SSG/trackers/data/error-handling untouched). FIRST re-read to wire correctly: `article-sidebar-engagement.tsx` (real like/save/share), `article-mobile-layout.tsx` (CLS approach), components `index.ts`, `article-lab-read-more.tsx` (server-rendered? preserves internal links?).
+
+### ✅ Done this session
+- **NEW `modonty/app/articles-lab/[slug]/components/article-lab-bottom-dock.tsx`** (client): mobile sticky bottom bar = إعجاب·حفظ ‖ **center docked client logo chip** ‖ تعليق·مشاركة. Chip (56px, `ring-2 ring-primary/60` + white outline + shadow) is a `SheetTrigger asChild` → opens the EXISTING `ArticleLabClientCard` in a bottom `Sheet` (card passed as `children` from the server → **reused, not rebuilt**). Engagement icons 24px (`size-6`), targets ≥48px.
+- Dock label evolved live on جبر سيو: «العميل» → removed → client name (truncate) → **final: amber `bg-amber-500 text-black` «احجز الآن» pill** (matches the card's اسأل CTA). Lift tuned 27→4→8→**12px**; chip bottom aligned with neighbor labels (no نشاز). **⚠️ «احجز الآن» = MOCKUP — booking feature not built.**
+- Cleaned dead code: removed WhatsApp/`asBottomBar` from `article-lab-engagement.tsx` (now desktop-aside only); **deleted** `article-lab-ask-fab.tsx`.
+- **Verified official sources (corrected my OWN earlier wrong advice):** Material 3 **REMOVED the notch/cradle** (bottom app bar deprecated → docked toolbar; FAB flat) → "add a cradle" was outdated M2. NN/g: always a **visible label** (ambiguous icons hurt discovery). WCAG 2.5.8 = 24px AA / 44 AAA. Apple HIG ≤5 tabs, 44pt. Thumb-zone 96% vs 61%.
+- **Final SCAN** (lab vs real): lab great UX but **omits production-critical pieces** → 9-gap checklist.
+- Added **shadcn agent skill** (`.agents/skills/shadcn/` + `.claude/skills/shadcn/` + `skills-lock.json`); used its rules (kept installed `Sheet` over `Drawer`/vaul for bundle).
+- TSC modonty = 0. No build, no push.
+
+### 📝 Decisions taken
+- **Strategy: graft lab layout INTO the real `/articles/[slug]`** (not rebuild as a new route). Why: the real page already has trackers + full metadata + SSG + AuthorBio + related → grafting only the JSX auto-preserves them = lowest de-index risk. Touch only the `return` JSX + imports.
+- **`Sheet` (installed) over `Drawer`/vaul** — shadcn "use existing" + modonty bundle sensitivity.
+- «العميل» dropped (confusing); name-word extraction rejected (fragile).
+- **Amber «احجز الآن» = LAB mockup only.** Live article (booking deferred) must NOT show a fake CTA → default dock label = **client name (truncate)** until booking ships. (Khalid leans احجز; turns on then.)
+- Booking = its own later phase (touches admin + console), AFTER UI port + performance + Mariam SEO file.
+
+### 🚧 Pending / blocked
+- **9-gap port checklist (TodoWrite, ALL PENDING, not started):** 1) trackers (GTM/View/BodyLink) · 2) full metadata+hreflang+SSG+Suspense · 3) ArticleAuthorBio · 4) SEO internal-link sections (verify ReadMore server-rendered) · 5) bottom-bar CLS-safe · 6) wire engagement to real server actions (currently optimistic-only) · 7) **dock label decision** (default client-name) · 8) dedupe client card (end + Sheet) · 9) cleanup mockup HTMLs.
+- **Roadmap after port:** performance pass → «اعتبر نفسك جوجل» Mariam SEO file → **booking** (`Client.bookingUrl` schema + console input + wiring).
+- Real `modonty/app/articles/[slug]/page.tsx` **already modified (uncommitted, pre-this-session)** — review that diff before grafting.
+
+### 📂 Files touched / state (ALL UNCOMMITTED)
+- **This session NEW:** `…/articles-lab/[slug]/components/article-lab-bottom-dock.tsx`; mockups `documents/tasks/article-bottom-dock-mockup-v1.html` + `modonty/public/_article-bottom-dock-mockup.html`.
+- **This session EDIT:** `…/articles-lab/[slug]/page.tsx`; `…/components/article-lab-engagement.tsx`. **DELETED** `…/components/article-lab-ask-fab.tsx`.
+- **Prior-session uncommitted (global nav relocation):** `modonty/components/navigatore/*` (TopNav, TopNavDesktop, TopNavWithFavorites, LogoNav, MobileMenuTrigger, NavLinksClient, nav-config + NEW TopNavMobileLinks), `modonty/app/layout.tsx`, `UserMenuDropdown.tsx`, NEW `components/chatbot/ChatFloatingButton.tsx`, NEW `lib/notifications/`, `app/globals.css`, entire `app/articles-lab/`, Ask-Client leak fix `ask-client-actions.ts`, `comment-form-dialog.tsx`, `article-table-of-contents.tsx`.
+- **TEMP — DELETE before push:** all `modonty/public/_*.html` + `documents/tasks/*mockup*.html`.
+- **Other untracked:** `.agents/` + `.claude/skills/shadcn/` + `skills-lock.json`; `admin/scripts/_check-article-faqs.ts` + `_fix-article-headings.ts`; `documents/tasks/ARTICLE-SEO-PERFECT-AUDIT.md`; `logoModonty.svg` (mystery, exclude).
+
+### 🔁 Git / deploy state
+- Branch: `main` · last commit `85381ee` (the /trust push — unchanged this session) · **nothing committed/pushed this session.**
+- Working tree: LARGE uncommitted set (prior-session nav relocation + this-session lab work + shadcn skill + mockups).
+- Before push: branch off `main`, delete mockups, TSC both apps = 0, build, **full live test** (heart-of-project).
+
+### 🚀 How to resume in 30 seconds
+1. Read this block. **The article is the heart of the project — max care.**
+2. Open the TodoWrite 9-gap checklist. Strategy = graft lab JSX into real `/articles/[slug]/page.tsx`, keep its metadata/SSG/trackers/data/error-handling.
+3. FIRST read (before editing): `article-sidebar-engagement.tsx`, `article-mobile-layout.tsx`, components `index.ts`, `article-lab-read-more.tsx`; review the existing uncommitted diff on the real `page.tsx`.
+4. Lab test: `localhost:3000/articles-lab/ما-هو-السيو` (client جبر سيو, **modonty_dev**, port 3000). Playwright here renders **dpr=0.5** → set viewport width **180** to get 360 CSS px.
+5. Prod dock label = client name (truncate) until booking built; amber «احجز الآن» stays a lab mockup.
+6. Next 16 (AGENTS.md): read `node_modules/next/dist/docs/` before any new Next API; the graft only preserves existing APIs.
+
+---
+
+## Session: 2026-06-03 PM — `/trust` verification page (PUSHED + prod data) + email sender fix
+
+### 🎯 Where I stopped
+- `/trust` page + email fix: **DONE, pushed (commit `85381ee`), verified LIVE on prod**, prod Business Info data set in admin, Vercel `RESEND_FROM` env updated.
+- **Waiting on Khalid's Trello notes** (he's fetching them) → next batch of work.
+- Next concrete action: receive Trello notes → work through them → **ONE final push (Trello fixes + changelog)** which ALSO activates the `RESEND_FROM` env change on prod (env changes need a redeploy).
+
+### ✅ Done this session
+- **New `/trust` page** (company verification, public): `modonty/app/trust/page.tsx` + `loading.tsx`. LinkedIn-style (matches `documents/07-design-ui/DESIGN_SYSTEM.md`): OG-image banner + square favicon mark avatar + official MC certificate image (with scannable QR) + "تحقّق بنفسك" → المركز السعودي للأعمال + facts + why-trust + location(map) + transparency + CTAs (تواصل واتساب + شوف الباقات→jbrseo.com/pricing).
+- **Verified legal entity via the CR PDF's QR** (decoded → `qr.saudibusiness.gov.sa/viewcr`, rendered the SPA in Playwright): شركة جبر الجنوبية للمقاولات · رقم السجل **4030524305** · الرقم الموحّد **7036024383** · نشط · ش.ذ.م.م · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M · مدير محمد حسني حسيني محمد · جوال السجل 0548030915. (جبر الجنوبية = المظلّة؛ حديقة البستان تحتها.)
+- **Corrected `modonty/lib/brand.ts` LEGAL** (was حديقة البستان + wrong cr 4030560460/uen 7040602091 → جبر الجنوبية + correct numbers + status/address/cert path).
+- **Shared `modonty/lib/organization-jsonld.ts`** (Organization JSON-LD from brand.ts) used by /trust + /story → fixed /story's stale Organization data (verified: old حديقة البستان gone, جبر الجنوبية present ×2).
+- **Cert image** `modonty/public/trust/jabr-cr-certificate.png` (PDF→PNG via PyMuPDF) + **square mark** `modonty/public/modonty-mark.svg` (copy of app/icon.svg); `.gitignore` exception for the trust png.
+- **Footer** «الموثوقية» link → /trust.
+- **Email sender fix:** `admin/lib/email/templates/base.ts` footer («لا ترد عليه» → reply + modonty@modonty.com link; capital kept) + fallbacks in `send-feedback.ts` & `create-invoice.ts` (noreply→modonty@) + `.env.shared` RESEND_FROM→modonty@. Confirmed **Client Welcome template IS already in admin /emails** (under "Admin Emails" — not missing).
+- **Capital:** Khalid reversed (show it) → present in /trust facts + email footer.
+- **TSC** modonty 0 + admin 0 · **backup** (73 collections) · versions modonty 1.52→1.53, admin 0.71.1→0.71.2 · **committed + pushed `85381ee`**.
+- **Prod verified:** www.modonty.com/trust LIVE (cert loads, جبر الجنوبية + 4030524305 + capital, no broken imgs, verify link).
+- **PROD data fixed in admin.modonty.com** → Business Info: Phone **+966560299034** (CS WhatsApp mobile, replaced landline 966125810431), Email **modonty@modonty.com** (was support@jbrseo.com), Street شارع أبو بكر الصديق → Saved → **revalidated modonty "settings" cache** via `POST /api/revalidate/tag` (secret in `.env.shared`) → /trust WhatsApp now `wa.me/966560299034` (verified live).
+- **Vercel:** shared `RESEND_FROM` env (`env_JThI3TNsGt0zSwPhthudg1lm`, 3 projects, prod+preview+dev) PATCHed → `Modonty <modonty@modonty.com>`. **Activates on next deploy.**
+
+### 📝 Decisions taken
+- Display the **umbrella entity جبر الجنوبية** (Khalid confirmed; حديقة البستان is a sub-entity). All numbers/address from the official CR (via QR), not the stale code values.
+- **CS WhatsApp = +966560299034** (Khalid's number; the CR's registered 0548030915 was NOT used). Sales = 966541018020 (separate, not on /trust).
+- **Hero = OG banner + square mark.** Rejected: big homepage trust badge + a banner trust-pill (both shown via Playwright inject → Khalid: "unprofessional/clutter"). /trust reached via footer link + direct URL for ad campaigns.
+- **Capital shown** (reversed the earlier hide-it decision).
+- Email sender controlled by the shared **`RESEND_FROM`** env (not code) → changed the Vercel value; takes effect on next deploy.
+
+### 🚧 Pending / blocked
+- **Khalid's Trello notes** — incoming, next work batch.
+- **Changelog** v1.53.0 / v0.71.2 — do with the next push.
+- **Vercel `RESEND_FROM` activation** — next deploy (next push) activates modonty@ as the email sender.
+- 🔴 **SECURITY:** rotate Mongo password `2053712713` (hardcoded in `admin/scripts/add-changelog.ts` + changelog-local/prod scripts + git history) — Khalid's action.
+- **Homepage Meta revision** (separate thread) — `documents/seo/HOMEPAGE-META-REVISION-PLAN.md`, awaiting decision.
+- `logoModonty.svg` untracked at repo root (mystery file, NOT committed) — Khalid to decide keep/remove.
+
+### 📂 Files touched (committed in 85381ee)
+- `modonty/app/trust/page.tsx` + `loading.tsx` (new) · `modonty/lib/organization-jsonld.ts` (new) · `modonty/lib/settings/get-whatsapp-contact.ts` (new) · `modonty/lib/brand.ts` · `modonty/components/layout/Footer.tsx` · `modonty/app/story/page.tsx` + `_constants.ts` · `modonty/public/trust/jabr-cr-certificate.png` + `modonty/public/modonty-mark.svg` (new) · `admin/lib/email/templates/base.ts` · `admin/app/(dashboard)/actions/send-feedback.ts` · `admin/app/(dashboard)/accounts/[clientId]/actions/create-invoice.ts` · `.gitignore` · both `package.json` · docs (this log + seo + trust mockups).
+- NOT committed/code: `.env.shared` RESEND_FROM (local) · Vercel env (API) · prod admin Business Info data (DB).
+
+### 🔁 Git / deploy state
+- Branch: `main` · last commit `85381ee` (pushed) · prev `2956e31`.
+- Vercel: modonty + admin deployed from 85381ee; **prod /trust verified LIVE**.
+- Uncommitted now: this SESSION-LOG update (+ `logoModonty.svg` untracked, intentionally excluded).
+
+### 🚀 How to resume in 30 seconds
+1. Read this block (top of SESSION-LOG).
+2. Get Khalid's **Trello notes** → triage + work through them.
+3. Final push = Trello fixes **+ changelog** (`admin/scripts/add-changelog.ts` entries for v1.53.0/v0.71.2) → this push also **activates the Vercel RESEND_FROM** change (emails → modonty@modonty.com).
+4. Prod data edits → **admin.modonty.com** (authenticated in Playwright). After any Settings save, **force modonty refresh**: `POST https://www.modonty.com/api/revalidate/tag` `{tag:"settings", secret:$REVALIDATE_SECRET}` (secret in `.env.shared`).
+5. Vercel: team `team_OIl7TDxOqFj8NnBlo4ZAtx5B`; env list paginates 25/page (66 total — paginate!); `RESEND_FROM` id `env_JThI3TNsGt0zSwPhthudg1lm`.
 
 ---
 

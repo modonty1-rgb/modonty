@@ -16,7 +16,7 @@ export function MobileMenuTrigger({ onClick }: MobileMenuTriggerProps) {
       aria-label="Open menu"
       onClick={onClick}
     >
-      <IconMoreVertical className="h-5 w-5" />
+      <IconMoreVertical className="h-6 w-6" />
     </Button>
   );
 }

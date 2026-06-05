@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>نموذج الهيدر — صف واحد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { sans: ["Tajawal","sans-serif"] }, colors: { primary:"#0d9488", brandpink:"#db2777" } } } };
+</script>
+<style>
+  body { font-family:"Tajawal",sans-serif; }
+  ::-webkit-scrollbar{ width:0; height:0 }
+  .wrap{ max-width:430px; margin-inline:auto }
+</style>
+</head>
+<body class="bg-slate-100 text-slate-900">
+
+  <!-- ★ SINGLE-ROW TOP HEADER (all in one nav bar) -->
+  <header class="wrap sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="flex h-14 items-center gap-1 px-2">
+      <!-- compact logo -->
+      <span class="shrink-0 text-[15px] font-extrabold tracking-tight"><span class="text-brandpink">m</span><span class="text-teal-600">odonty</span></span>
+
+      <!-- primary nav (icon-only) — الرئيسية removed: the logo already links home (standard UX) -->
+      <nav class="flex flex-1 items-center justify-center gap-1.5 text-slate-500">
+        <a href="#" class="flex h-10 w-10 items-center justify-center rounded-lg" aria-label="الرائجة"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></a>
+        <a href="#" class="flex h-10 w-10 items-center justify-center rounded-lg" aria-label="العملاء"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></a>
+        <a href="#" class="flex h-10 w-10 items-center justify-center rounded-lg" aria-label="بحث"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></a>
+      </nav>
+
+      <!-- existing actions + burger -->
+      <div class="flex shrink-0 items-center gap-0 text-slate-500">
+        <button class="flex h-9 w-9 items-center justify-center rounded-lg" aria-label="إشعارات"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></svg></button>
+        <button class="flex h-9 w-9 items-center justify-center rounded-lg" aria-label="مساعد"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></button>
+        <button class="flex h-9 w-9 items-center justify-center rounded-lg" aria-label="حسابي"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></button>
+        <button class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-700" aria-label="القائمة"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- content -->
+  <main class="wrap bg-white px-4 pb-24">
+    <nav class="flex items-center gap-1 pt-3 text-[11px] text-slate-400"><span>الرئيسية</span><span>›</span><span>العملاء</span><span>›</span><span class="text-slate-500">جبر سيو</span></nav>
+    <h1 class="pt-2 text-[22px] font-extrabold leading-snug">ما هي محركات البحث مثل Google ولماذا لا تظهر بعض المواقع؟</h1>
+    <div class="mt-4 aspect-[16/9] rounded-xl bg-gradient-to-br from-slate-800 to-teal-800"></div>
+    <p class="mt-4 text-[16px] leading-[1.85] text-slate-700">تخيّل أن الإنترنت مكتبة ضخمة بلا فهرس. وظيفة محرّك البحث أن يقرأ كل صفحة ويرتّبها ثم يعطيك أنسب إجابة في ثوانٍ.</p>
+    <div class="mt-8 rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center text-sm text-amber-700">⬇️ الشريط السفلي الآن <b>متفرّغ بالكامل</b></div>
+  </main>
+
+</body>
+</html>

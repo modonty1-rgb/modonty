@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconUser, IconLogout, IconSettings } from "@/lib/icons";
+import { IconUser, IconLogout, IconSettings, IconEmail } from "@/lib/icons";
 import { handleLogout } from "@/lib/logout";
 import { UserAvatarButton } from "@/components/auth/UserAvatarButton";
 
@@ -34,6 +34,12 @@ export function UserMenuDropdown({ user }: UserMenuDropdownProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/users/notifications" className="flex items-center gap-2">
+            <IconEmail className="h-4 w-4" />
+            صندوق البريد
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/users/profile" className="flex items-center gap-2">
             <IconUser className="h-4 w-4" />
