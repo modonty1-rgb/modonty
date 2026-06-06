@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Lock, Loader2 } from "lucide-react";
+import { LogIn, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 
 type LoginFormVariant = "default" | "inline";
 
@@ -34,6 +34,7 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const clearError = () => {
     if (error) setError(null);
@@ -111,21 +112,38 @@ export function LoginForm({ variant = "default" }: LoginFormProps) {
         <Label htmlFor={ID_PASSWORD} className="text-foreground">
           {ar.login.password}
         </Label>
-        <Input
-          id={ID_PASSWORD}
-          type="password"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            clearError();
-          }}
-          required
-          disabled={loading}
-          className="h-11 border-input bg-background transition-colors focus-visible:ring-ring"
-          {...errorProps}
-        />
+        <div className="relative">
+          <Input
+            id={ID_PASSWORD}
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearError();
+            }}
+            required
+            disabled={loading}
+            className="h-11 border-input bg-background pe-11 transition-colors focus-visible:ring-ring"
+            {...errorProps}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((s) => !s)}
+            disabled={loading}
+            tabIndex={-1}
+            aria-label={showPassword ? ar.login.hidePassword : ar.login.showPassword}
+            aria-pressed={showPassword}
+            className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" aria-hidden />
+            ) : (
+              <Eye className="h-4 w-4" aria-hidden />
+            )}
+          </button>
+        </div>
       </div>
       <Button
         type="submit"

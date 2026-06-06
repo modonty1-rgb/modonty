@@ -33,6 +33,8 @@ export const ar = {
     emailOrSlug: "البريد أو معرف العميل",
     placeholderIdentifier: "example@mail.com أو معرف-العميل",
     password: "كلمة المرور",
+    showPassword: "إظهار كلمة المرور",
+    hidePassword: "إخفاء كلمة المرور",
     invalidCredentials: "البريد أو كلمة المرور غير صحيحة.",
     somethingWrong: "حدث خطأ. جرّب مرة أخرى.",
   },
