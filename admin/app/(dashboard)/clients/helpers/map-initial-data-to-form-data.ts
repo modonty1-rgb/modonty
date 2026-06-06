@@ -54,6 +54,10 @@ export function mapInitialDataToFormData(
     isYmyl: false,
     ymylCategory: null,
     ymylData: null,
+    // Primary CTA defaults
+    ctaMode: "NONE",
+    ctaLabel: "",
+    ctaUrl: "",
     // Google Business Profile + Local SEO
     gbpProfileUrl: "",
     gbpPlaceId: "",
@@ -153,6 +157,11 @@ export function mapInitialDataToFormData(
     isYmyl: (initialData as { isYmyl?: boolean }).isYmyl ?? false,
     ymylCategory: (initialData as { ymylCategory?: "medical" | "legal" | "financial" | null }).ymylCategory ?? null,
     ymylData: (initialData as { ymylData?: Record<string, unknown> | null }).ymylData ?? null,
+
+    // Primary CTA («احجز الآن») — admin-controlled
+    ctaMode: (initialData as { ctaMode?: "NONE" | "FORM" | "LINK" | null }).ctaMode ?? "NONE",
+    ctaLabel: (initialData as { ctaLabel?: string | null }).ctaLabel ?? "",
+    ctaUrl: (initialData as { ctaUrl?: string | null }).ctaUrl ?? "",
 
     // Subscription Management
     subscriptionTier: initialData.subscriptionTier || null,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SubscriptionTier, SubscriptionStatus, PaymentStatus } from "@prisma/client";
+import { SubscriptionTier, SubscriptionStatus, PaymentStatus, ClientCtaMode } from "@prisma/client";
 import { LEGAL_FORM_VALUES, ORGANIZATION_TYPE_VALUES } from "@modonty/database/lib/constants/client-classification";
 
 /**
@@ -246,6 +246,12 @@ export const clientFormSchema = z
     ymylCategory: z.enum(["medical", "legal", "financial"]).optional().nullable(),
     ymylData: z.record(z.unknown()).optional().nullable(),
 
+    // Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled per client.
+    // NONE = no button anywhere · FORM = booking sheet · LINK = external link.
+    ctaMode: z.nativeEnum(ClientCtaMode).optional().default(ClientCtaMode.NONE),
+    ctaLabel: z.string().max(40, "Button label must be 40 characters or less").optional().nullable().or(z.literal("")),
+    ctaUrl: z.string().max(500, "Link must be less than 500 characters").optional().nullable().or(z.literal("")),
+
     // Subscription Management
     subscriptionTier: subscriptionTierSchema,
     subscriptionTierConfigId: z.string().optional().nullable(),
@@ -254,6 +260,25 @@ export const clientFormSchema = z
     articlesPerMonth: z.number().int().min(0).max(100).optional().nullable(),
     subscriptionStatus: subscriptionStatusSchema,
     paymentStatus: paymentStatusSchema,
+  })
+  .superRefine((data, ctx) => {
+    // LINK mode needs a destination; FORM/NONE don't.
+    if (data.ctaMode === ClientCtaMode.LINK) {
+      const url = (data.ctaUrl ?? "").trim();
+      if (!url) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["ctaUrl"],
+          message: "Add the action link (LINK mode is on)",
+        });
+      } else if (!/^(https?:\/\/|tel:|mailto:)/i.test(url)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["ctaUrl"],
+          message: "Link must start with https://, tel:, or mailto:",
+        });
+      }
+    }
   });
 
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;

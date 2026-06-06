@@ -31,6 +31,7 @@ import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
 import { getAuthorityOptions, validateYmylData } from "@/lib/seo/ymyl-helpers";
 
 import { updateYmylData } from "../actions/profile-actions";
+import { CloudinaryLicenseUpload } from "./cloudinary-license-upload";
 
 interface YmylSectionProps {
   isYmyl: boolean;
@@ -233,11 +234,9 @@ export function YmylSection({ isYmyl, ymylCategory, ymylData: initialData, count
                       {field.label.ar}
                       {field.required && <span className="text-destructive ms-1">*</span>}
                     </Label>
-                    <Input
+                    <CloudinaryLicenseUpload
                       value={typeof value === "string" ? value : ""}
-                      onChange={(e) => updateField(field.key, e.target.value)}
-                      placeholder="رابط الصورة (سيتم دعم الرفع المباشر لاحقاً)"
-                      aria-invalid={Boolean(error)}
+                      onChange={(url) => updateField(field.key, url)}
                     />
                     {field.helpText && (
                       <p className="text-[11px] text-muted-foreground">{field.helpText.ar}</p>

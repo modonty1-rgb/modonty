@@ -8,6 +8,7 @@ import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-qu
 import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
 import { getSubscribersCount } from "./dashboard/subscribers/helpers/subscriber-queries";
 import { getLeadsCount } from "./dashboard/leads/helpers/lead-queries";
+import { getNewBookingsCount } from "./dashboard/bookings/helpers/booking-queries";
 import { getNewSupportMessagesCount } from "./dashboard/support/helpers/support-queries-enhanced";
 import { getFaqStats } from "./dashboard/faqs/helpers/faq-queries";
 import { getPendingClientCommentsCount } from "./dashboard/client-comments/helpers/client-comment-queries";
@@ -33,7 +34,7 @@ export default async function DashboardLayout({
   const clientId = (session as { clientId?: string }).clientId!;
   const clientName = (session as { clientName?: string }).clientName ?? ar.common.clientFallback;
 
-  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, pendingSupportCount, faqStats, pendingClientCommentsCount] =
+  const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingClientCommentsCount] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
@@ -44,6 +45,7 @@ export default async function DashboardLayout({
       getPendingQuestionsCount(clientId),
       getSubscribersCount(clientId),
       getLeadsCount(clientId),
+      getNewBookingsCount(clientId),
       getNewSupportMessagesCount(clientId),
       getFaqStats(clientId),
       getPendingClientCommentsCount(clientId),
@@ -61,6 +63,7 @@ export default async function DashboardLayout({
       pendingQuestionsCount={pendingQuestionsCount}
       subscribersCount={subscribersCount}
       leadsCount={leadsCount}
+      newBookingsCount={newBookingsCount}
       pendingSupportCount={pendingSupportCount}
       pendingFaqsCount={pendingFaqsCount}
       pendingClientCommentsCount={pendingClientCommentsCount}

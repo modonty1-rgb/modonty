@@ -97,4 +97,9 @@ export const clientServerSchema = z.object({
   isYmyl: z.boolean().optional(),
   ymylCategory: z.enum(["medical", "legal", "financial"]).optional().nullable(),
   ymylData: z.record(z.unknown()).optional().nullable(),
+
+  // Primary CTA («احجز الآن») — admin-controlled
+  ctaMode: z.enum(["NONE", "FORM", "LINK"]).optional().nullable(),
+  ctaLabel: z.string().max(40).optional().nullable(),
+  ctaUrl: z.string().max(500).optional().nullable(),
 }).passthrough(); // Allow extra fields from form that aren't listed here

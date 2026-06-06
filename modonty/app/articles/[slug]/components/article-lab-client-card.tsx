@@ -4,7 +4,7 @@ import type { ComponentType, SVGProps } from "react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconCalendar } from "@/lib/icons";
+import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
@@ -15,6 +15,8 @@ import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
 
 import { AskClientDialog } from "@/app/articles/[slug]/components/ask-client-dialog";
+import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 type IconC = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -65,6 +67,19 @@ interface ArticleLabClientCardProps {
     user: { name: string | null; email: string | null } | null;
     pendingFaqs?: PendingFaq[];
   };
+  /**
+   * Primary CTA config (admin-controlled). When `hideOwnCta` is true the card is
+   * inside the booking sheet, which renders the CTA itself — so the card hides its own.
+   */
+  cta?: {
+    mode: "NONE" | "FORM" | "LINK";
+    label?: string | null;
+    url?: string | null;
+    articleId?: string | null;
+    source: BookingSource;
+    user: { name: string | null; email: string | null } | null;
+    hideOwnCta?: boolean;
+  };
 }
 
 interface PendingFaq {
@@ -76,7 +91,7 @@ interface PendingFaq {
 const railBtn =
   "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted/40 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors";
 
-export function ArticleLabClientCard({ client, askClientProps }: ArticleLabClientCardProps) {
+export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLabClientCardProps) {
   const logoUrl = client.logoMedia?.url ?? null;
   const heroUrl = client.heroImageMedia?.url ?? null;
   const hasPhone = !!client.phone?.trim();
@@ -183,17 +198,33 @@ export function ArticleLabClientCard({ client, askClientProps }: ArticleLabClien
           />
         )}
 
-        {/* Online booking — placeholder until Client.bookingUrl field exists */}
-        <button
-          type="button"
-          disabled
-          title="ميزة قادمة — تحتاج حقل رابط الحجز"
-          className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md bg-primary/80 px-3 py-2.5 text-sm font-semibold text-primary-foreground opacity-70"
-        >
-          <IconCalendar className="h-4 w-4" />
-          احجز أونلاين
-          <span className="rounded bg-white/20 px-1.5 py-0.5 text-[10px]">قريباً</span>
-        </button>
+        {/* Primary CTA — FORM (booking dialog) or LINK (external store), per admin config.
+            Hidden when the booking sheet owns the CTA (cta.hideOwnCta). NONE → nothing. */}
+        {cta && !cta.hideOwnCta && cta.mode === "FORM" && (
+          <BookingDialog
+            clientId={client.id}
+            articleId={cta.articleId}
+            clientName={client.name}
+            source={cta.source}
+            user={cta.user}
+            label={cta.label}
+          />
+        )}
+        {cta && !cta.hideOwnCta && cta.mode === "LINK" && cta.url && (
+          <CtaTrackedLink
+            href={cta.url}
+            label={cta.label?.trim() || "تسوّق الآن"}
+            type="LINK"
+            articleId={cta.articleId ?? undefined}
+            clientId={client.id}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            <IconExternal className="h-4 w-4" />
+            {cta.label?.trim() || "تسوّق الآن"}
+          </CtaTrackedLink>
+        )}
       </div>
     </Card>
   );

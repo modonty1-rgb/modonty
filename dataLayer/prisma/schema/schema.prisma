@@ -98,6 +98,8 @@ enum ConversionType {
   PHONE_CLICK
   EMAIL_CLICK
   DIRECTORY_VIEW
+  BOOKING // FORM submit (احجز الآن)
+  LINK_CLICK // external CTA click (تسوّق الآن) — known logged-in user = warm lead
 }
 
 enum CTAType {
@@ -106,6 +108,12 @@ enum CTAType {
   FORM
   BANNER
   POPUP
+}
+
+enum ClientCtaMode {
+  NONE
+  FORM
+  LINK
 }
 
 enum SharePlatform {
@@ -201,6 +209,7 @@ model User {
   contactMessages      ContactMessage[]
   notifications        Notification[]
   ownedClients         Client[]         @relation("ClientOwner")
+  bookingRequests      BookingRequest[]
 
   @@index([role])
   @@map("users")
@@ -421,6 +430,16 @@ model Client {
   telegramConnectedAt      DateTime? // وقت اكتمال الربط
   telegramEventPreferences Json?     // { commentNew: true, articleView: false, ... } — 26 event toggle
 
+  // ============ Primary CTA («احجز الآن») — admin-controlled ============
+  ctaMode  ClientCtaMode @default(NONE) // NONE | FORM | LINK
+  ctaLabel String?                      // override default button text (احجز الآن / تسوّق الآن)
+  ctaUrl   String?                      // mode=LINK only (https / wa.me / tel:)
+
+  // Content-responsibility acknowledgement (acceptance proof; editable text lives on Settings)
+  disclaimerAcceptedAt       DateTime?
+  disclaimerAcceptedByUserId String?   @db.ObjectId
+  disclaimerAcceptedVersion  Int? // snapshot of Settings.disclaimerVersion at accept time
+
   // Unified Intake — single JSON home for all content/SEO strategy answers
   // Replaces the scattered fields below + the SeoIntake model (Phase 2 will remove them).
   intake          Json?      // { voice, audience, goals, policy, technical, business, story, customers, strategy, competition, ymylReviewer, version }
@@ -469,6 +488,7 @@ model Client {
   engagementDuration EngagementDuration[]
   contactMessages  ContactMessage[]
   notifications    Notification[]
+  bookingRequests  BookingRequest[]
 
   // SEO Intake relations
   seoIntakes     SeoIntake[]
@@ -485,6 +505,34 @@ model Client {
   @@index([userId])
   @@index([createdAt])
   @@map("clients")
+}
+
+/// Booking / lead requests from the «احجز الآن» CTA (FORM submits) + warm-lead «تسوّق الآن» clicks (LINK).
+/// Login is required, so name/email are snapshotted from the session; phone is collected by the form.
+model BookingRequest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientId    String   @db.ObjectId
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  articleId   String?  @db.ObjectId // null when booked from client page / listing (not an article)
+  article     Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  userId      String?  @db.ObjectId // SetNull on account deletion — snapshot below preserves the lead
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source      String // article_dock | article_card | client_page | client_list
+  name        String // snapshot from session
+  email       String // snapshot from session
+  phone       String // collected by the form (User has no phone field)
+  preferredAt DateTime? // optional preferred date/time (future)
+  message     String?
+  status      String   @default("new") // new | contacted | done | archived
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@index([status])
+  @@map("booking_requests")
 }
 
 // ============================================
@@ -946,6 +994,7 @@ model Article {
   linkClicks        ArticleLinkClick[]
   campaignTracking  CampaignTracking[]
   engagementDuration EngagementDuration[]
+  bookingRequests   BookingRequest[]
 
   @@unique([clientId, slug]) // Slug unique per client
   @@index([clientId, status, datePublished])
@@ -1939,6 +1988,14 @@ model Settings {
   whatsappChannelUrl String? // Modonty WhatsApp Channel link
   telegramChannelUrl String? // Modonty Telegram Channel link
   googleBusinessProfileUrl String? // Modonty/JBR Google Business Profile (Maps) URL — feeds Organization sameAs; team pastes it after creating + verifying the profile
+
+  // Content-responsibility disclaimer (admin-edited central text; clients accept it in console)
+  disclaimerText    String? @db.String // full acknowledgement text shown to clients
+  disclaimerVersion Int     @default(1) // bump when text changes → clients re-prompted
+
+  // Telegram — admin activity feed. When true, ALL client Telegram events are
+  // mirrored to TELEGRAM_ADMIN_CHAT_ID (full site-activity firehose for the admin).
+  telegramAdminMirrorAll Boolean @default(true)
 
   // Site & Organization (from .env defaults, editable in Settings UI)
   siteUrl             String?

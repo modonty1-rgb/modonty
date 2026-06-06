@@ -42,7 +42,45 @@ export async function sendTelegramMessage(
         chat_id: chatId,
         text,
         parse_mode: "HTML",
-        disable_web_page_preview: true,
+        link_preview_options: { is_disabled: true },
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      return { success: false, error: `Telegram ${res.status}: ${body.slice(0, 200)}` };
+    }
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Unknown Telegram error",
+    };
+  }
+}
+
+/**
+ * Mirror a message to the admin-global alerts chat
+ * (`TELEGRAM_ADMIN_CHAT_ID` via the admin bot `TELEGRAM_BOT_TOKEN`).
+ * Lets the admin watch high-signal client events in one place, independent of
+ * whether the client connected their own Telegram. No-ops if not configured.
+ */
+export async function sendAdminTelegram(text: string): Promise<SendMessageResult> {
+  const token = process.env.TELEGRAM_BOT_TOKEN ?? null;
+  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID ?? null;
+  if (!token || !chatId) {
+    return { success: false, error: "Admin Telegram not configured" };
+  }
+
+  try {
+    const res = await fetch(`${TG_API}/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+        link_preview_options: { is_disabled: true },
       }),
     });
 

@@ -85,6 +85,11 @@ export function mapFormDataToClientData(data: ClientFormData) {
     ymylCategory: data.ymylCategory ?? null,
     ymylData: data.ymylData ?? null,
 
+    // Primary CTA («احجز الآن») — admin-controlled
+    ctaMode: data.ctaMode ?? "NONE",
+    ctaLabel: data.ctaLabel || null,
+    ctaUrl: data.ctaUrl || null,
+
     // (Twitter card/site/title/description are NOT Client columns — they live in
     // nextjsMetadata, generated from Settings + the client's hero image. No mapping.)
 

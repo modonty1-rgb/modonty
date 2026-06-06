@@ -35,6 +35,9 @@ interface ClientData {
   subscriptionTier?: string;
   createdAt: Date;
   isVerified: boolean;
+  ctaMode?: "NONE" | "FORM" | "LINK" | null;
+  ctaLabel?: string;
+  ctaUrl?: string;
 }
 
 interface IndustryData {

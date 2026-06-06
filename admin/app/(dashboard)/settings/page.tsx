@@ -10,6 +10,8 @@ import {
   Flame,
   Shield,
   ImageIcon,
+  ScrollText,
+  Send,
   ArrowRight,
   Lock,
 } from "lucide-react";
@@ -106,6 +108,22 @@ const SYSTEM: CardSpec = {
   title: "System",
   description: "Technical defaults — charset, robots, OG types, sitemap.",
   icon: Shield,
+  cacheKey: null,
+};
+
+const DISCLAIMER: CardSpec = {
+  href: "/settings/disclaimer",
+  title: "Content Disclaimer",
+  description: "Content-responsibility text clients accept before saving sensitive data.",
+  icon: ScrollText,
+  cacheKey: null,
+};
+
+const TELEGRAM: CardSpec = {
+  href: "/settings/telegram",
+  title: "Telegram",
+  description: "Admin activity feed — mirror client events to the admin Telegram channel (more bot controls later).",
+  icon: Send,
   cacheKey: null,
 };
 
@@ -310,6 +328,32 @@ export default async function SettingsDashboardPage() {
             Read-only
           </span>
           <ArrowRight className="h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+        </Link>
+
+        {/* Content disclaimer — editable */}
+        <Link
+          href={DISCLAIMER.href}
+          title={DISCLAIMER.description}
+          className="group flex items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-colors hover:bg-muted/30"
+        >
+          <div className="h-9 w-9 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
+            <DISCLAIMER.icon className="h-[18px] w-[18px]" />
+          </div>
+          <h3 className="text-sm font-semibold truncate">{DISCLAIMER.title}</h3>
+          <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+        </Link>
+
+        {/* Telegram — admin activity feed (editable) */}
+        <Link
+          href={TELEGRAM.href}
+          title={TELEGRAM.description}
+          className="group flex items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-colors hover:bg-muted/30"
+        >
+          <div className="h-9 w-9 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
+            <TELEGRAM.icon className="h-[18px] w-[18px]" />
+          </div>
+          <h3 className="text-sm font-semibold truncate">{TELEGRAM.title}</h3>
+          <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
         </Link>
       </div>
     </div>

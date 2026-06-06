@@ -29,6 +29,7 @@ const routeLabels: Record<string, string> = {
   "/dashboard/questions": ar.nav.questions,
   "/dashboard/subscribers": ar.nav.subscribers,
   "/dashboard/leads": ar.nav.leads,
+  "/dashboard/bookings": ar.nav.bookings,
   "/dashboard/settings": ar.nav.settings,
   "/dashboard/support": ar.nav.support,
 };

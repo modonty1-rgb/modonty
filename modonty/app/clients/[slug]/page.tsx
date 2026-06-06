@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { SubscriptionStatus } from "@prisma/client";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { getClientForMetadata } from "./helpers/client-metadata";
@@ -119,7 +120,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, articlesResult, reviewsData, followers, comments, engagementData, cachedSeo, clientFaqs] = await Promise.all([
+    const [data, articlesResult, reviewsData, followers, comments, engagementData, cachedSeo, clientFaqs, session] = await Promise.all([
       getClientPageData(slug),
       getArticles({ page: 1, limit: FEED_PAGE_SIZE, client: decodedSlug }),
       getClientReviewsBySlug(slug),
@@ -131,6 +132,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         select: { jsonLdStructuredData: true },
       }),
       getClientPublishedFaqs(decodedSlug),
+      auth(),
     ]);
 
     if (!data) {
@@ -138,6 +140,9 @@ async function ClientPageContent({ params }: ClientPageProps) {
     }
 
     const { client, stats, relatedClients } = data;
+    const userBox = session?.user
+      ? { name: session.user.name ?? null, email: session.user.email ?? null }
+      : null;
     const reviews = reviewsData?.reviews ?? [];
     const engagement = engagementData ?? {
       followersCount: 0,
@@ -212,7 +217,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         <ClientViewTracker clientSlug={client.slug} />
         {/* 3 col: left | feed | right - grid for consistent top alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
-          <ClientPageLeft client={client} />
+          <ClientPageLeft client={client} user={userBox} />
           <ClientPageFeed posts={posts} clientName={client.name} clientId={client.id} relatedClientsCount={relatedClients.length} />
           <ClientPageRight
           client={client}

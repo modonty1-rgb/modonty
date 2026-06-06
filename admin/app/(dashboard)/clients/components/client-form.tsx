@@ -14,6 +14,7 @@ import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { SubscriptionSection } from "./form-sections/subscription-section";
 import { BusinessSection } from "./form-sections/business-section";
 import { YmylSection } from "./form-sections/ymyl-section";
+import { CtaSection } from "./form-sections/cta-section";
 import { SEOSection } from "./form-sections/seo-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
 import { SettingsSection } from "./form-sections/settings-section";
@@ -23,7 +24,7 @@ import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 
 // Every accordion section in edit mode — opened all at once on a failed submit so
 // the blocking field is never hidden inside a collapsed section.
-const EDIT_SECTION_IDS = ["client-info", "company", "ymyl", "seo", "seo-validation", "settings"];
+const EDIT_SECTION_IDS = ["client-info", "company", "ymyl", "cta", "seo", "seo-validation", "settings"];
 
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
@@ -343,6 +344,24 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     <AccordionContent className="px-4 pb-5 pt-3">
                       <div className="space-y-6">
                         <YmylSection form={form} />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="cta" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
+                      <div className="flex items-center justify-between w-full pe-2">
+                        <span>Primary CTA</span>
+                        {watchedValues.ctaMode && watchedValues.ctaMode !== "NONE" && (
+                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase">
+                            {watchedValues.ctaMode}
+                          </span>
+                        )}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-5 pt-3">
+                      <div className="space-y-6">
+                        <CtaSection form={form} />
                       </div>
                     </AccordionContent>
                   </AccordionItem>

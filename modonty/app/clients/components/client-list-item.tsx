@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
+import { ClientCardCta } from "./client-card-cta";
 
 interface ClientListItemProps {
   id: string;
@@ -24,6 +25,9 @@ interface ClientListItemProps {
   favoritesCount: number;
   subscriptionTier?: string;
   isVerified: boolean;
+  ctaMode?: "NONE" | "FORM" | "LINK" | null;
+  ctaLabel?: string;
+  ctaUrl?: string;
 }
 
 export function ClientListItem(props: ClientListItemProps) {
@@ -138,6 +142,9 @@ export function ClientListItem(props: ClientListItemProps) {
               </div>
             </div>
 
+            {props.ctaMode === "LINK" && props.ctaUrl && (
+              <ClientCardCta clientId={props.id} url={props.ctaUrl} label={props.ctaLabel} />
+            )}
             <Button size="sm" variant="outline" className="flex-shrink-0">
               عرض
             </Button>

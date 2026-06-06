@@ -1,6 +1,27 @@
 # CLAUDE — Live Test Observation Log
 
-**Last Updated:** 2026-05-22 — OBS-227 (Settings save 10min → 2.3s via `after()` + parallel cascade · 4 files changed · TSC clean · live verified [cascade] done 96s · awaiting push) ✅ DONE in DEV.
+**Last Updated:** 2026-06-06 — OBS-229 (Booking feature live test: 4/4 cases PASS — client+article × desktop+mobile · anti-spam works · DB persist proven · Telegram mirror env SET) + OBS-228 (mobile booking Sheet shows full clientCard above form — should be booking-focused) 🟡 TODO.
+
+## Session: 2026-06-06 — Booking feature live test (Session 105)
+
+### OBS-229 ✅ DONE (LIVE TEST PASS) — Booking flow verified end-to-end on جبر سيو (modonty :3001, modonty_dev)
+- **Scope:** verify the booking CTA (ctaMode=FORM) works 100% across both entry points × both viewports, with real Playwright interactions only (no DOM scripts).
+- **Test matrix (4 cases, all PASS):**
+  1. **Client page · Desktop** — filled phone (0555123456) + note + date chip (غدًا) + period (صباحًا) → "تأكيد الحجز" → success state "تم استلام طلبك ✨" + "شركة جبر سيو بيتواصل معك قريبًا" rendered. Notification counter ٣→٤ (in-app Notification written).
+  2. **Client page · Mobile (390px)** — dialog layout stacks correctly; second submit (same user×client within 1h) → anti-spam alert "أرسلت طلب حجز لهذه الشركة مؤخراً — انتظر قليلاً قبل إرسال طلب جديد." shown at top of form (correct UX).
+  3. **Article page · Desktop** (`/articles/ما-هو-السيو`, جبر سيو article) — same dialog opens via "احجز موعد", wired to same `submitBookingRequest` action (anti-spam alert confirmed it fires from article entry too).
+  4. **Article page · Mobile (390px)** — bottom-dock "احجز موعد — شركة جبر سيو" opens the Sheet; full form renders (phone/date/period/note/privacy).
+- **DB persistence proven (2 independent signals):** (a) in-app notification counter incremented ٣→٤ after the successful booking; (b) anti-spam rejected the 2nd+3rd attempts — which only triggers when a real `BookingRequest` row exists within the last hour for that (user × client).
+- **Telegram admin mirror:** all 3 env keys present locally in `.env.shared` (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ADMIN_CHAT_ID`, `TELEGRAM_CLIENT_BOT_TOKEN`); the successful booking invoked `sendAdminTelegram` with zero console errors. Final delivery confirmation = Khalid checks his admin Telegram chat (real prod bot). Firehose (`telegramAdminMirrorAll`) stays ON.
+- **Admin /settings/telegram checkbox** verified earlier this session: toggles + persists both directions (singleton read/write sound).
+- **Console (web-vitals 400 + "use cache" stuck) errors are pre-existing dev-only Next.js noise — unrelated to booking.**
+
+### OBS-228 🟡 TODO (MOBILE UX) — Article-dock booking Sheet shows the full client card above the form
+- **Where:** `modonty/app/articles/[slug]/components/article-lab-bottom-dock.tsx:145-184` — `<SheetContent side="bottom">`.
+- **What:** On mobile, opening "احجز موعد" from the article bottom-dock renders `{clientCard}` (logo + description + socials + "اسأل الشركة") ABOVE `<BookingForm>` (line 150 then line 153-164). The reader must scroll past the whole client card before reaching "تأكيد الحجز". Wasted vertical space at the moment of intent.
+- **Note:** component already uses shadcn `Sheet` (not a Drawer) — the fix is content, not the wrapper. Make the mobile booking Sheet **booking-focused**: show `BookingForm` only (drop the full `clientCard`, or collapse it to a one-line client header).
+- **Severity:** 🟡 MEDIUM — flow works, but conversion UX is hurt by the scroll distance to the submit button.
+- **Decision (Khalid 2026-06-06):** keep in TODO, do NOT implement now. Firehose stays ON meanwhile.
 
 ## Session: 2026-05-22 (Session 104h) — Settings cascade fix: 10 minutes → 2.3 seconds
 

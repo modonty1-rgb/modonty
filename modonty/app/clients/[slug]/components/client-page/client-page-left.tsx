@@ -3,16 +3,57 @@ import { CardTitleWithIcon } from "@/components/ui/card-title-with-icon";
 import { ClientAbout } from "../client-about";
 import { ClientContact } from "../client-contact";
 import { ClientNewsletterCard } from "../client-newsletter-card";
-import { IconRead, IconClients, IconCalendar, IconUsers } from "@/lib/icons";
+import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import { ClientVerifiedCredentials } from "../client-verified-credentials";
+import { IconRead, IconClients, IconCalendar, IconUsers, IconExternal } from "@/lib/icons";
 import type { ClientPageClient } from "./types";
 
 interface ClientPageLeftProps {
   client: ClientPageClient;
+  user: { name: string | null; email: string | null } | null;
 }
 
-export function ClientPageLeft({ client }: ClientPageLeftProps) {
+export function ClientPageLeft({ client, user }: ClientPageLeftProps) {
   return (
     <div className="w-full min-w-0 order-2 lg:order-1 space-y-4 pt-4">
+      {/* Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled, prominent at the top */}
+      {client.ctaMode === "FORM" && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="p-4">
+            <BookingDialog
+              clientId={client.id}
+              articleId={null}
+              clientName={client.name}
+              source="client_page"
+              user={user}
+              label={client.ctaLabel}
+            />
+          </CardContent>
+        </Card>
+      )}
+      {client.ctaMode === "LINK" && client.ctaUrl && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="p-4">
+            <CtaTrackedLink
+              href={client.ctaUrl}
+              label={client.ctaLabel?.trim() || "تسوّق الآن"}
+              type="LINK"
+              clientId={client.id}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <IconExternal className="h-4 w-4" />
+              {client.ctaLabel?.trim() || "تسوّق الآن"}
+            </CtaTrackedLink>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Verified credentials (YMYL clients) — trust signal, linked to /trust */}
+      <ClientVerifiedCredentials client={client} />
+
       {(client.description || client.seoDescription) && (
         <Card>
           <CardHeader>

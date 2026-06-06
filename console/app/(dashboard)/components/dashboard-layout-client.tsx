@@ -15,6 +15,7 @@ interface DashboardLayoutClientProps {
   pendingQuestionsCount: number;
   subscribersCount: number;
   leadsCount: number;
+  newBookingsCount: number;
   pendingSupportCount: number;
   pendingFaqsCount: number;
   pendingClientCommentsCount: number;
@@ -30,6 +31,7 @@ export function DashboardLayoutClient({
   pendingQuestionsCount,
   subscribersCount,
   leadsCount,
+  newBookingsCount,
   pendingSupportCount,
   pendingFaqsCount,
   pendingClientCommentsCount,
@@ -48,6 +50,7 @@ export function DashboardLayoutClient({
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
+        newBookingsCount={newBookingsCount}
         pendingFaqsCount={pendingFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
         isYmyl={isYmyl}
@@ -60,6 +63,7 @@ export function DashboardLayoutClient({
         pendingArticlesCount={pendingArticlesCount}
         subscribersCount={subscribersCount}
         leadsCount={leadsCount}
+        newBookingsCount={newBookingsCount}
         pendingFaqsCount={pendingFaqsCount}
         pendingClientCommentsCount={pendingClientCommentsCount}
         isYmyl={isYmyl}

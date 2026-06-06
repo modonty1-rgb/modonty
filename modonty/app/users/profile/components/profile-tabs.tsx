@@ -9,6 +9,7 @@ import {
   IconUsers,
   IconComment,
   IconLike,
+  IconCalendar,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +42,12 @@ export function ProfileTabs() {
       icon: IconSaved,
     },
     {
+      value: "bookings",
+      label: "حجوزاتي",
+      href: "/users/profile/bookings",
+      icon: IconCalendar,
+    },
+    {
       value: "following",
       label: "المتابعون",
       href: "/users/profile/following",
@@ -58,13 +65,15 @@ export function ProfileTabs() {
     ? "liked"
     : pathname.includes("/favorites")
     ? "favorites"
+    : pathname.includes("/bookings")
+    ? "bookings"
     : pathname.includes("/following")
     ? "following"
     : "overview";
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-3 md:grid-cols-5 gap-2 p-1 bg-muted rounded-lg">
+      <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-2 p-1 bg-muted rounded-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;

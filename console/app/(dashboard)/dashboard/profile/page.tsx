@@ -1,17 +1,23 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ar } from "@/lib/ar";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { ProfileForm } from "./components/profile-form";
 import { SeoReadinessCard } from "./components/seo-readiness-card";
+import { DisclaimerAcceptance } from "./components/disclaimer-acceptance";
 
 export const dynamic = "force-dynamic";
+
+// Fallback shown before an admin saves a custom disclaimer (provisional wording).
+const DEFAULT_DISCLAIMER_TEXT =
+  "كل ما أزوّد به مُدوّنتي — من بيانات وصور ووثائق وتراخيص وفيديوهات — صحيح وملكي وأملك حق نشره، وأنا المسؤول الوحيد عنه قانونياً. دور مُدوّنتي هو النشر فقط، وهي غير مسؤولة عن صحّته أو مصدره أو قانونيّته.";
 
 export default async function ProfilePage() {
   const session = await auth();
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) return null;
 
-  const [client, industries] = await Promise.all([
+  const [client, industries, settings] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
@@ -55,9 +61,16 @@ export default async function ProfilePage() {
         nextjsMetadata: true,
         jsonLdStructuredData: true,
         jsonLdValidationReport: true,
+        // Disclaimer acceptance state
+        disclaimerAcceptedAt: true,
+        disclaimerAcceptedVersion: true,
       },
     }),
     db.industry.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    db.settings.findUnique({
+      where: SETTINGS_SINGLETON_WHERE,
+      select: { disclaimerText: true, disclaimerVersion: true },
+    }),
   ]);
   if (!client) return null;
 
@@ -71,6 +84,12 @@ export default async function ProfilePage() {
           {ar.profile.description}
         </p>
       </header>
+      <DisclaimerAcceptance
+        text={settings?.disclaimerText?.trim() || DEFAULT_DISCLAIMER_TEXT}
+        currentVersion={settings?.disclaimerVersion ?? 1}
+        acceptedVersion={client.disclaimerAcceptedVersion ?? null}
+        acceptedAt={client.disclaimerAcceptedAt ?? null}
+      />
       <SeoReadinessCard client={client} />
       <ProfileForm
         clientId={clientId}

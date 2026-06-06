@@ -19,12 +19,33 @@ function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+/**
+ * Generate a code that is not currently active on any OTHER client. Without
+ * this, two clients could hold the same random code in the same 10-min window,
+ * and redeemPairing's findFirst could bind the chat to the wrong client.
+ */
+async function generateUniqueCode(): Promise<string> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateCode();
+    const clash = await db.client.findFirst({
+      where: {
+        telegramPairingCode: code,
+        telegramPairingExpiresAt: { gt: new Date() },
+      },
+      select: { id: true },
+    });
+    if (!clash) return code;
+  }
+  // Astronomically unlikely after 5 tries; last code is still valid to use.
+  return generateCode();
+}
+
 export async function generatePairingCode(clientId: string): Promise<{
   success: true;
   code: string;
   expiresAt: Date;
 } | { success: false; error: string }> {
-  const code = generateCode();
+  const code = await generateUniqueCode();
   const expiresAt = new Date(Date.now() + CODE_TTL_MINUTES * 60 * 1000);
 
   try {

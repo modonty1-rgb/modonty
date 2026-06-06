@@ -697,3 +697,51 @@ export async function updateYmylFields(
     return { success: false, error: message, groupName: "ymyl" };
   }
 }
+
+/**
+ * Updates Primary CTA fields («احجز الآن» / «تسوّق الآن») — admin-controlled.
+ * - ctaMode: NONE | FORM | LINK
+ * - ctaLabel: optional button text override
+ * - ctaUrl: external destination (LINK mode only)
+ * Normalizes so stale label/url don't linger when the mode changes.
+ */
+export async function updateCtaFields(
+  clientId: string,
+  data: Partial<ClientFormData>
+): Promise<GroupUpdateResult> {
+  try {
+    const client = await db.client.findUnique({
+      where: { id: clientId },
+      select: { ctaMode: true, ctaLabel: true, ctaUrl: true },
+    });
+
+    if (!client) {
+      return { success: false, error: "Client not found", groupName: "cta" };
+    }
+
+    const mode = (data.ctaMode as "NONE" | "FORM" | "LINK" | undefined) ?? "NONE";
+    const newData: Record<string, unknown> = {
+      ctaMode: mode,
+      // NONE → no label; FORM/LINK → keep the override if provided
+      ctaLabel: mode === "NONE" ? null : (data.ctaLabel || null),
+      // Only LINK carries a destination
+      ctaUrl: mode === "LINK" ? (data.ctaUrl || null) : null,
+    };
+
+    const updateData = buildGroupUpdateData("cta", client as Record<string, unknown>, newData);
+
+    if (Object.keys(updateData).length === 0) {
+      return { success: true, groupName: "cta", fieldsUpdated: 0 };
+    }
+
+    await db.client.update({
+      where: { id: clientId },
+      data: updateData,
+    });
+
+    return { success: true, groupName: "cta", fieldsUpdated: Object.keys(updateData).length };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to update CTA fields";
+    return { success: false, error: message, groupName: "cta" };
+  }
+}

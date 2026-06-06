@@ -155,6 +155,10 @@ export async function createClient(data: ClientFormData) {
       "isYmyl",
       "ymylCategory",
       "ymylData",
+      // Primary CTA («احجز الآن») — admin-controlled
+      "ctaMode",
+      "ctaLabel",
+      "ctaUrl",
     ];
     // Strategy fields removed (Plan B): targetAudience, forbiddenKeywords, forbiddenClaims,
     // competitiveMentionsAllowed — these are now client-managed via console intake.

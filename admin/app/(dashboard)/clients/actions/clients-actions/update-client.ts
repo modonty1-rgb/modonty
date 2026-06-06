@@ -20,6 +20,7 @@ import {
   updateAdditionalFields,
   updateSettingsFields,
   updateYmylFields,
+  updateCtaFields,
 } from "./update-client-grouped";
 import { generateClientSEO } from "./generate-client-seo";
 
@@ -92,6 +93,7 @@ export async function updateClient(id: string, data: ClientFormData) {
       hasGroupData("additional", groupedData.additional) ? updateAdditionalFields(id, groupedData.additional) : Promise.resolve({ success: true, groupName: "additional", fieldsUpdated: 0 } as const),
       hasGroupData("settings", groupedData.settings) ? updateSettingsFields(id, groupedData.settings) : Promise.resolve({ success: true, groupName: "settings", fieldsUpdated: 0 } as const),
       hasGroupData("ymyl", groupedData.ymyl ?? {}) ? updateYmylFields(id, groupedData.ymyl ?? {}) : Promise.resolve({ success: true, groupName: "ymyl", fieldsUpdated: 0 } as const),
+      hasGroupData("cta", groupedData.cta ?? {}) ? updateCtaFields(id, groupedData.cta ?? {}) : Promise.resolve({ success: true, groupName: "cta", fieldsUpdated: 0 } as const),
     ]);
 
     // Check for failures

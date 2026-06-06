@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 import { auth } from "@/lib/auth";
+import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 import { regenerateClientSeo } from "./regenerate-client-seo";
 import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
@@ -267,6 +268,42 @@ export async function updateYmylData(
       where: { id: clientId },
       data: {
         ymylData: data as object,
+      },
+    });
+
+    revalidatePath("/dashboard/profile");
+    return { success: true };
+  } catch {
+    return { success: false, error: messages.error.serverError };
+  }
+}
+
+/**
+ * Records the client's acceptance of the content-responsibility disclaimer.
+ * Snapshots WHO (the accepting account), WHEN, and the WHICH version was current —
+ * so a later admin version bump re-prompts the client.
+ */
+export async function acceptDisclaimer(): Promise<
+  { success: true } | { success: false; error: string }
+> {
+  try {
+    const session = await auth();
+    const clientId = (session as { clientId?: string })?.clientId;
+    const userId = (session as { user?: { id?: string } })?.user?.id ?? clientId;
+    if (!clientId) return { success: false, error: messages.error.unauthorized };
+
+    const settings = await db.settings.findUnique({
+      where: SETTINGS_SINGLETON_WHERE,
+      select: { disclaimerVersion: true },
+    });
+    const version = settings?.disclaimerVersion ?? 1;
+
+    await db.client.update({
+      where: { id: clientId },
+      data: {
+        disclaimerAcceptedAt: new Date(),
+        disclaimerAcceptedByUserId: userId ?? clientId,
+        disclaimerAcceptedVersion: version,
       },
     });
 

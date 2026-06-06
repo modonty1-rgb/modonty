@@ -419,6 +419,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                       user: userBox,
                       pendingFaqs,
                     }}
+                    cta={{
+                      mode: article.client.ctaMode,
+                      label: article.client.ctaLabel,
+                      url: article.client.ctaUrl,
+                      articleId: article.id,
+                      source: "article_card",
+                      user: userBox,
+                    }}
                   />
                 )}
                 <ArticleTableOfContents content={article.content} collapsible />
@@ -584,6 +592,12 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 userId={userId}
                 clientName={article.client.name}
                 clientLogoUrl={article.client.logoMedia?.url ?? null}
+                cta={{
+                  mode: article.client.ctaMode,
+                  label: article.client.ctaLabel,
+                  url: article.client.ctaUrl,
+                }}
+                bookingUser={userBox}
                 clientCard={
                   <ArticleLabClientCard
                     client={article.client}
@@ -593,6 +607,14 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                       articleTitle: article.title,
                       user: userBox,
                       pendingFaqs,
+                    }}
+                    cta={{
+                      mode: article.client.ctaMode,
+                      label: article.client.ctaLabel,
+                      url: article.client.ctaUrl,
+                      hideOwnCta: true,
+                      source: "article_dock",
+                      user: userBox,
                     }}
                   />
                 }

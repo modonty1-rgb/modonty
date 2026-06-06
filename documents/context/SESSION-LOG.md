@@ -1,8 +1,115 @@
-# Session Context — Last Updated: 2026-06-04 (Article LAB mobile **center client dock** redesign + final SCAN → **9-gap port plan** to graft the lab layout INTO the real `/articles/[slug]`; amber «احجز الآن» CTA = **MOCKUP only** (booking deferred); **NOTHING pushed** — large uncommitted tree [prior-session global nav relocation + `articles-lab/` + shadcn skill + mockups]. Article = heart of project → max care. See top block ↓. ⟵ prior 2026-06-03 PM: PUSHED — NEW `/trust` company-verification page + email-sender fix. Official entity verified via the CR PDF's QR: **شركة جبر الجنوبية للمقاولات · سجل 4030524305 · موحّد 7036024383 · نشط · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M**. Page = OG-banner hero + square favicon mark + official certificate image (+QR) + verify link + LinkedIn-style cards; footer «الموثوقية» link; fixed `lib/brand.ts` LEGAL + shared `organization-jsonld.ts` (also corrected /story's old حديقة البستان data). Email: `RESEND_FROM`→modonty@modonty.com (.env.shared + Vercel env updated) + base.ts footer «reply» + fallbacks. **modonty v1.53.0 + admin v0.71.2 · commit `85381ee` · prod /trust verified LIVE.** PROD DATA set in admin.modonty.com: CS WhatsApp **+966560299034** (sales=966541018020 separate) + email modonty@modonty.com + address الشرفية/أبو بكر الصديق → revalidated via /api/revalidate/tag, wa.me live. PENDING: **Khalid's Trello notes (incoming)** · changelog v1.53.0/v0.71.2 · Vercel RESEND_FROM activates on next deploy · rotate Mongo password.)
+# Session Context — Last Updated: 2026-06-06 (⏳ **IN PROGRESS — NOTHING PUSHED:** Booking «احجز الآن» CTA — full booking-form/dialog **redesign** (research-backed, Arabic non-technical audience) + **Telegram admin-mirror firehose** as a Settings-backed checkbox at admin `/settings/telegram` (`Settings.telegramAdminMirrorAll @default(true)`, notify.ts reads it in modonty+console) + machine **100%-disk-activity fix** + **pnpm**/MCP restore after fresh Win11. TSC ×3 clean. Live test: booking redesign verified desktop **client-page**; **PENDING** = verify `/settings/telegram` checkbox live + booking live test on **article page + client page × desktop + mobile**. Large uncommitted tree on main. ⟵ prior 2026-06-05: ✅ **PUSHED + DEPLOYED v1.54.0** commit `ec7d021`: the LAB article design is now the REAL `/articles/[slug]` LIVE on www.modonty.com — verified: **robots=index** · new design (engagement strip + gallery + read-more + mobile dock) · JSON-LD intact · **0 console errors**. **Core Web Vitals** RUM wired via the server-side Measurement Protocol (NEW `WebVitals.tsx` + `/api/track/web-vitals` route + `web_vitals` in events-registry → GA4 **HTTP 204**), NOT a GTM tag. Full hard test PASSED: build **176/176 ×2** · 3 adversarial agents (parity 100% · no bugs · side-effects backward-compatible · de-index safe) · real test user like/save **persisted to DB** across reload · validate-events **21/21**. Fixed `ChatFloatingButton` mobile overlap (`/articles-lab`→`/articles/`). Commit shipped the coupled app set (article+navbar+chatbot+notifications+CWV+seo — `layout.tsx` couples them); held back `.agents`/`.claude/skills`/`skills-lock.json`/admin temp `_*.ts`/`logoModonty.svg`. PENDING (non-critical): changelog v1.54.0 via admin UI · field CWV over ~28d (Search Console+GA4) · booking feature (`Client.bookingUrl`) separate. ⟵ prior 2026-06-04: Article LAB mobile **center client dock** redesign + final SCAN → **9-gap port plan** to graft the lab layout INTO the real `/articles/[slug]`; amber «احجز الآن» CTA = **MOCKUP only** (booking deferred); **NOTHING pushed** — large uncommitted tree [prior-session global nav relocation + `articles-lab/` + shadcn skill + mockups]. Article = heart of project → max care. See top block ↓. ⟵ prior 2026-06-03 PM: PUSHED — NEW `/trust` company-verification page + email-sender fix. Official entity verified via the CR PDF's QR: **شركة جبر الجنوبية للمقاولات · سجل 4030524305 · موحّد 7036024383 · نشط · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M**. Page = OG-banner hero + square favicon mark + official certificate image (+QR) + verify link + LinkedIn-style cards; footer «الموثوقية» link; fixed `lib/brand.ts` LEGAL + shared `organization-jsonld.ts` (also corrected /story's old حديقة البستان data). Email: `RESEND_FROM`→modonty@modonty.com (.env.shared + Vercel env updated) + base.ts footer «reply» + fallbacks. **modonty v1.53.0 + admin v0.71.2 · commit `85381ee` · prod /trust verified LIVE.** PROD DATA set in admin.modonty.com: CS WhatsApp **+966560299034** (sales=966541018020 separate) + email modonty@modonty.com + address الشرفية/أبو بكر الصديق → revalidated via /api/revalidate/tag, wa.me live. PENDING: **Khalid's Trello notes (incoming)** · changelog v1.53.0/v0.71.2 · Vercel RESEND_FROM activates on next deploy · rotate Mongo password.)
 
 > 📦 **Older sessions (40 blocks, up to 2026-06-01) archived →** [SESSION-LOG-archive-until-2026-06-01.md](./SESSION-LOG-archive-until-2026-06-01.md)
 > This active file keeps only the latest session(s) so the most important state stays in front. `us>` appends here (newest at top).
 > **Rotation rule:** when this file grows large again, copy it to a new dated archive (`SESSION-LOG-archive-until-YYYY-MM-DD.md`), then trim this file back to the latest 1–2 blocks + update the link above.
+
+---
+
+## Session: 2026-06-06 21:44 — Booking «احجز الآن» CTA redesign + Telegram admin-mirror checkbox + machine disk fix + pnpm/MCP restore
+
+### 🎯 Where I stopped
+- **Mid-live-test, NOTHING pushed.** All code written + TSC ×3 clean. Was verifying the new admin `/settings/telegram` checkbox: started admin dev server on :3000 (detached), navigated to `/settings/telegram` → redirected to `/login`, filled `modonty@modonty.com` / `Modonty123!` and clicked Sign In — **login result not yet confirmed** (last snapshot still showed /login).
+- **Next concrete action when resuming:** `browser_snapshot` to confirm login landed → verify checkbox renders/toggles/persists; THEN run the booking live test on **article page + client page** at **desktop + mobile** (`browser_resize` ~390px) as a fresh non-rate-limited user.
+
+### ✅ Done this session
+- **Toolchain restored** (fresh Win11 wiped it): installed `pnpm@10.12.3` via `npm i -g` (corepack EPERM, no admin needed); reconnected 5 global MCP packages; Playwright MCP → `--browser msedge` (uses pre-installed Edge, avoids Chromium download). Memory: `project_mcp_servers_fresh_windows_fix`.
+- **Machine 100%-disk-activity diagnosed + fixed** (was freezing on dev-server start): it's disk **activity** not space — Windows Search indexing dev folders + Defender on a slow **Kingston SA400** SSD (no DRAM) on **RAID** bus + old Intel RST driver (iaStorAC.sys v17.8.1.1066, 2019). Fix: Defender exclusions + disabled WSearch/SysMain/DiagTrack (Active 18%→1.5%). Rule learned: deleting node_modules = WRONG lever (readers were the cause). One dev server at a time. Memory: `project_machine_disk_thrash_fix`.
+- **Booking redesign** (Khalid: "الـ UI/UX جداً سيء"): fully rewrote `booking-form.tsx` — phone `<Input type="tel">` +966 default + green Check tick on valid + trust microcopy; date = day chips (today/tomorrow/dayafter via `addDays` + Intl ar-SA day names + «تاريخ آخر» native date) + period chips (morning/noon/evening, past disabled on today) → `recompute()` writes into RHF `preferredAt` via `setValue`; note textarea; privacy box; success state «تم استلام طلبك ✨». **Fixed layout bug**: submit was `sticky bottom-0` floating over mid-content → changed to normal-flow footer + DialogContent `max-h-[88dvh] overflow-y-auto`. Research-backed mockup: `documents/tasks/booking-dialog-redesign-mockup.html`.
+- **Telegram admin mirror = full site-activity firehose** (Khalid wants the "noise" to monitor traffic): every client event also mirrors to the admin channel. Implemented as a **Settings-backed checkbox** at admin `/settings/telegram` — NEW schema field `Settings.telegramAdminMirrorAll Boolean @default(true)` (prisma generated); `notifyTelegram` (modonty + console) now `Promise.all`-loads the flag, `adminWants = mirrorAll || ADMIN_MIRROR_EVENTS.has(eventKey)` (high-signal fallback set = booking/support/askClient/campaign), sends `sendAdminTelegram` prefixed with client name. NEW `sendAdminTelegram()` in both `lib/telegram/client.ts`. Per-client delivery already **PROVEN in prod** (Kimazone) + admin mirror **CONFIRMED** received by Khalid.
+- **Bug fixed:** admin `/settings/disclaimer` page blank → `"use server"` file illegally exported a const → moved `DEFAULT_DISCLAIMER_TEXT` + `DisclaimerSettings` interface to NEW `disclaimer-constants.ts`. Verified fixed.
+- TSC: admin 0 · modonty 0 · console 0 (×3 clean, after clearing `.next` for console false-positives). Build: not run. Live: booking redesign renders+submits on desktop client-page; rest pending.
+
+### 📝 Decisions taken (with reasoning)
+- **Admin mirror as a Settings checkbox, not env/hardcode** (Khalid: "هيديني checkbox أشغلها وأقفلها… ضيفها في Setting Box للـ Telegram") → live toggle, no redeploy; box is expandable (more bot settings land there later). Default `true` = firehose ON (he wants the noise now).
+- **`telegramAdminMirrorAll` additive optional with `@default(true)`** → no MongoDB migration; existing Settings doc reads the default on first access.
+- **Booking date as chips not a raw date picker** → non-technical Arabic user; today/tomorrow/dayafter + period covers ~90% of intent with one tap; «تاريخ آخر» escape-hatch for the rest.
+- **NO DOM/script form-filling in live tests** (Khalid: "اعتبر نفسك user") → only real Playwright fill/type/click from here on.
+
+### 🚧 Pending / blocked
+- **Live-verify `/settings/telegram` checkbox** renders + toggles + persists (was mid-login).
+- **Booking live test** from article page + client page × desktop + mobile, as a fresh non-rate-limited user (rate limit = 1 booking per user×client per hour).
+- **Telegram pairing webhook** must be set in **prod** (`console.modonty.com/api/telegram/webhook`) before connecting NEW clients (e.g. جبر سيو) — outbound sending needs no webhook, only RECEIVING pairing codes does. `getWebhookInfo` url currently empty.
+- Local Telegram end-to-end test impossible (Kimazone creds are prod-only + webhook can't reach localhost) — admin mirror tested live instead.
+
+### 📂 Files touched (ALL UNCOMMITTED)
+- `dataLayer/prisma/schema/schema.prisma` — added `Settings.telegramAdminMirrorAll Boolean @default(true)`
+- `modonty/lib/telegram/{client,notify}.ts` + `console/lib/telegram/{client,notify}.ts` — `sendAdminTelegram()` + firehose mirror logic
+- NEW `admin/app/(dashboard)/settings/telegram/` — `page.tsx` + `actions/telegram-settings-actions.ts` + `components/telegram-settings-form.tsx`
+- `admin/app/(dashboard)/settings/page.tsx` — TELEGRAM card added
+- NEW `admin/app/(dashboard)/settings/disclaimer/` — `disclaimer-constants.ts` (+ form/actions split) — use-server const bug fix
+- NEW `modonty/app/articles/[slug]/components/booking-{form,dialog}.tsx` + `actions/booking-actions.ts` + `helpers/schemas/booking-schema.ts` — booking CTA
+- `modonty/app/articles/[slug]/components/article-lab-{bottom-dock,client-card}.tsx` + `page.tsx` — CTA wiring
+- NEW `modonty/app/clients/[slug]/components/client-verified-credentials.tsx` + `client-card-cta.tsx` + client-page edits — CTA on client page
+- NEW `modonty/app/users/profile/bookings/` + `helpers/profile-bookings.ts` — user's bookings view
+- NEW `console/app/(dashboard)/dashboard/bookings/` + profile cloudinary-license-upload + disclaimer-acceptance components
+- NEW `admin/.../clients/components/form-sections/cta-section.tsx` + client actions/schema/mapper edits — admin CTA config
+- `documents/tasks/{BOOK-NOW-CTA-PRD.html,.md, booking-dialog-redesign-mockup.html}`
+
+### 🔁 Git / deploy state
+- Branch: **main**
+- Uncommitted: **YES — large tree** (booking CTA feature + Telegram admin mirror + disclaimer fix + client-CTA across all 3 apps + prior held-back `.agents/`, `.claude/skills/`, `skills-lock.json`, `logoModonty.svg`, admin `_*.ts`)
+- Last commit: **`ec7d021`** — v1.54.0 article design + CWV (prior session, already pushed)
+- Pushed: **NO** — nothing from this session pushed
+- Pre-push gate still owed: version bump ×3 + backup + changelog + secret scan + full live test green.
+
+### 🚀 How to resume in 30 seconds
+1. `cd modonty && pnpm dev` (one server only — weak machine). For admin test: admin on :3000.
+2. Live-verify `/settings/telegram` checkbox (admin `modonty@modonty.com` / `Modonty123!`).
+3. Booking live test: article + client page × desktop + mobile, fresh test user. Test clients in modonty_dev: جبر سيو `support@jbrseo.com` / `JabrTest2026!` · demo-normal/demo-ymyl (see memory).
+4. Do NOT push until live test 100% green AND Khalid says "push".
+
+---
+
+## Session: 2026-06-05 13:15 — Ported LAB → real `/articles/[slug]` · CWV RUM · full hard test · PUSHED + DEPLOYED v1.54.0
+
+### 🎯 Where I stopped
+- **DONE + DEPLOYED.** The lab article design is now the production `/articles/[slug]`. Commit `ec7d021` pushed to main, Vercel modonty-modonty **READY**, verified live on www.modonty.com.
+- Next concrete action when resuming: (1) add the **v1.54.0 changelog** entry via admin UI (deferred — DB write); (2) review **field CWV** in Search Console + GA4 after data accumulates (~28d); (3) build the **booking feature** (separate task).
+
+### ✅ Done this session
+- **Lab→real parity (1ت):** added 3 trackers (GTM/View/BodyLink); wired `ArticleLabEngagementStrip` like/save to real `likeArticle`/`favoriteArticle` (optimistic+reconcile, no dislike); **removed end-of-article engagement bar** (desync); category badge + `/tags` link; gallery caption; real `pendingFaqs`; gallery+client-hero → `OptimizedImage`; read-more **no cap**; logged-out «سجّل الدخول» hint (strip+dock).
+- **Transplant:** moved 6 `article-lab-*` components into `articles/[slug]/components/`; rewrote `page.tsx` keeping the shell (generateMetadata+SSG+Suspense+try/catch+**robots=index**, dropped lab noindex); **deleted** `/articles-lab` + 4 public temp HTMLs.
+- **CWV (official-sourced web.dev + Next.js):** lab pass CLS=0; RUM via server MP — NEW `components/gtm/WebVitals.tsx` (`useReportWebVitals`→`sendBeacon`) + NEW `app/api/track/web-vitals/route.ts` + `web_vitals` in events-registry → GA4 (verified **HTTP 204**). NOT a GTM dashboard tag.
+- **Fixed:** `ChatFloatingButton` `/articles-lab`→`/articles/` (mobile dock overlap) + WebVitals fetch `.catch`.
+- **FULL HARD TEST:** `next build` **176/176 ×2**; 3 adversarial agents (parity 100% · no bugs · shared-component edits backward-compatible · de-index safe); registered **cwv-tester@modonty-test.local** + like/save **PERSIST to DB** across reload (then cleaned up); validate-events **21/21**; final live 0 console errors.
+- TSC: modonty 0 · admin 0. Build: 176/176 PASS. Live: PASS (local prod + production www.modonty.com).
+
+### 📝 Decisions taken (with reasoning)
+- **End-bar removed** (not kept+synced): sole source of like-state desync vs persistent strip/dock; real article never had it → removal = parity + simpler. (Khalid: "remove".)
+- **Read-more no cap** (Khalid "ما في انتهاء"): max internal links for SEO; pool already bounded by query takes; matches real page.
+- **CWV via server Measurement Protocol, not GTM tag**: repo sends ALL events to GA4 server-side → same path = guaranteed delivery, no dashboard dependency, no double-count.
+- **Commit scope:** shipped coupled app code (article+navbar+chatbot+notifications+CWV+seo — `layout.tsx` couples them, can't split); held back `.agents`/`.claude/skills`/`skills-lock.json`/admin `_*.ts`/`logoModonty.svg`.
+
+### 🚧 Pending / blocked
+- **changelog v1.54.0** — add via admin UI (DB write; deferred to avoid blind prod write).
+- **Field CWV** — accumulates ~28d in Search Console + GA4; review later.
+- **Booking feature** — «احجز الآن» dock + «احجز أونلاين قريباً» card are placeholders → needs `Client.bookingUrl` + console input + wiring. Separate task.
+- Minor (follow-up): web-vitals route has no rate limiting; 2 optional engagement nits (state drift across breakpoints · busy-disabled edge).
+
+### 📂 Files touched (committed in `ec7d021`)
+- `modonty/app/articles/[slug]/page.tsx` — transplanted real article (lab body + preserved shell)
+- `modonty/app/articles/[slug]/components/article-lab-{client-card,gallery,read-more,engagement,bottom-dock,mobile-identity}.tsx` — moved from lab
+- `comment-form-dialog.tsx` (bare/trigger) · `sidebar/article-table-of-contents.tsx` (collapsible) · `actions/ask-client-actions.ts`
+- NEW `components/gtm/WebVitals.tsx` · NEW `app/api/track/web-vitals/route.ts` · `lib/analytics/events-registry.ts`
+- `components/chatbot/ChatFloatingButton.tsx` · `app/layout.tsx` · `app/globals.css`
+- `lib/seo/index.ts` + `lib/seo/image-aspect-ratios.ts` (prior-session SEO generator)
+- `components/navigatore/*` + `components/auth/UserMenuDropdown.tsx` + `lib/notifications/get-unread-count.ts` (prior-session navbar/notifications, shipped coupled)
+- `modonty/package.json` → 1.54.0 · `documents/**`
+- **DELETED:** `modonty/app/articles-lab/` + `modonty/public/_seo-audit.html` + 3 public mockup HTMLs
+
+### 🔁 Git / deploy state
+- Branch: **main**
+- Uncommitted: yes — only intentionally held-back (`.agents/`, `.claude/skills/shadcn/`, `skills-lock.json`, `admin/scripts/_*.ts`, `logoModonty.svg`)
+- Last commit: **`ec7d021`** — "modonty v1.54.0: new article page design + real-user CWV → GA4 (incl. navbar/chat/notifications)"
+- Pushed: **YES** (origin main, `85381ee..ec7d021`)
+- Vercel/deploy: modonty-modonty **READY** ✅ · console **CANCELED** ✅ · admin built. Verified live www.modonty.com (real كيما-زون article): robots=index · design · JSON-LD · **0 console errors**.
+
+### 🚀 How to resume in 30 seconds
+1. Field CWV: Search Console → Core Web Vitals + GA4 → `web_vitals` event (builds over ~28d).
+2. Changelog: admin.modonty.com → add v1.54.0 entry.
+3. Next build task = booking feature (`Client.bookingUrl` + console + wire dock/card).
+- Local: a `next start` prod server was on :3000 (task `bj5er82dh`); for dev run `cd modonty && pnpm dev`. Test user: `cwv-tester@modonty-test.local` / `CwvTest#2026` (modonty_dev only).
 
 ---
 

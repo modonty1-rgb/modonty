@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
 import { MetricChip } from "./metric-chip";
 import { ClientCardExternalLink } from "./client-card-external-link";
+import { ClientCardCta } from "./client-card-cta";
 
 interface ClientCardProps {
   id: string;
@@ -38,6 +39,10 @@ interface ClientCardProps {
   subscriptionTier?: string;
   isVerified: boolean;
   url?: string;
+  /** Primary CTA («تسوّق الآن» → external store) — admin-controlled. LINK mode only on listing. */
+  ctaMode?: "NONE" | "FORM" | "LINK" | null;
+  ctaLabel?: string;
+  ctaUrl?: string;
   /** When set, highlights this query in name, legalName, and description (e.g. search results). */
   highlightQuery?: string;
 }
@@ -213,7 +218,11 @@ export function ClientCard(props: ClientCardProps) {
           <Button size="sm" className="flex-1 group-hover:shadow-md transition-shadow duration-300">
             عرض الملف
           </Button>
-          {props.url && <ClientCardExternalLink url={props.url} />}
+          {props.ctaMode === "LINK" && props.ctaUrl ? (
+            <ClientCardCta clientId={props.id} url={props.ctaUrl} label={props.ctaLabel} />
+          ) : (
+            props.url && <ClientCardExternalLink url={props.url} />
+          )}
         </CardFooter>
       </Card>
     </Link>

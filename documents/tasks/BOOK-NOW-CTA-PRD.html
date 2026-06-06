@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRD — «احجز الآن» / الإجراء الرئيسي للعميل</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --border:#2a2f3a;
+    --text:#e7eaf0; --muted:#9aa3b2; --primary:#3b82f6; --primary-soft:#1e3a5f;
+    --green:#22c55e; --green-soft:#14331f; --amber:#f59e0b; --amber-soft:#3a2c0a;
+    --red:#ef4444; --red-soft:#3a1414; --lock:#a78bfa; --lock-soft:#2a2342;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Tajawal","Segoe UI",Tahoma,sans-serif; line-height:1.85;
+    font-size:16px; padding:0 0 80px;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px}
+  header.hero{
+    background:linear-gradient(135deg,#1a2436,#11141b); border-bottom:1px solid var(--border);
+    padding:34px 0 28px; margin-bottom:28px;
+  }
+  header.hero h1{margin:0 0 10px; font-size:30px; font-weight:800}
+  .meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+  .pill{font-size:12.5px; padding:5px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel2); color:var(--muted)}
+  .pill.status{background:var(--amber-soft); color:#fcd34d; border-color:#5a4410}
+  h2{font-size:22px; margin:38px 0 14px; padding-bottom:10px; border-bottom:2px solid var(--border); font-weight:800}
+  h2 .num{color:var(--primary); margin-inline-end:8px}
+  h3{font-size:17px; margin:22px 0 10px; color:#cdd5e3}
+  p{margin:10px 0}
+  .muted{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin:14px 0}
+  .callout{border-radius:14px; padding:16px 20px; margin:16px 0; border:1px solid}
+  .callout.lock{background:var(--lock-soft); border-color:#4c3f7a}
+  .callout.good{background:var(--green-soft); border-color:#1f5132}
+  .callout.warn{background:var(--amber-soft); border-color:#5a4410}
+  .callout b{color:#fff}
+  .badge{display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:6px; white-space:nowrap}
+  .b-lock{background:var(--lock-soft); color:#c4b5fd}
+  .b-open{background:var(--amber-soft); color:#fcd34d}
+  .b-yes{background:var(--green-soft); color:#86efac}
+  .b-no{background:var(--red-soft); color:#fca5a5}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:14.5px; background:var(--panel); border-radius:12px; overflow:hidden}
+  th,td{padding:11px 13px; text-align:start; border-bottom:1px solid var(--border); vertical-align:top}
+  th{background:var(--panel2); font-weight:700; color:#cdd5e3; font-size:13.5px}
+  tr:last-child td{border-bottom:none}
+  code{background:#0b0d11; border:1px solid var(--border); border-radius:5px; padding:1.5px 6px; font-size:13px; font-family:"Cascadia Code",Consolas,monospace; color:#7dd3fc; direction:ltr; display:inline-block}
+  pre{background:#0b0d11; border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow:auto; direction:ltr; text-align:left; font-size:13px; line-height:1.6}
+  pre code{background:none; border:none; padding:0; color:#cdd5e3; display:block}
+  .tok-c{color:#6b7280} .tok-k{color:#c084fc} .tok-s{color:#86efac} .tok-t{color:#7dd3fc}
+  .modes{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0}
+  @media(max-width:680px){.modes{grid-template-columns:1fr}}
+  .mode{border:1px solid var(--border); border-radius:14px; padding:16px; background:var(--panel)}
+  .mode h4{margin:0 0 6px; font-size:16px}
+  .mode .tag{font-family:monospace; font-size:12px; color:#7dd3fc; direction:ltr}
+  .dec{border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin:12px 0; background:var(--panel)}
+  .dec .q{font-weight:700; color:#fff; margin-bottom:6px}
+  .dec .rec{background:var(--green-soft); border:1px solid #1f5132; border-radius:8px; padding:8px 12px; margin-top:8px; font-size:14px}
+  .dec .rec b{color:#86efac}
+  .phases td:first-child{font-weight:700; color:var(--primary); text-align:center; width:54px}
+  .foot{margin-top:40px; padding:18px 20px; border-radius:14px; background:var(--primary-soft); border:1px solid #2c5282; text-align:center; font-size:16px; font-weight:700}
+  .en-terms{margin-top:30px; font-size:13px; color:var(--muted); border-top:1px dashed var(--border); padding-top:14px; direction:ltr; text-align:left}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; margin:8px 0 0; font-size:12.5px; color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>📅 PRD — «احجز الآن» / الإجراء الرئيسي للعميل</h1>
+    <p class="muted" style="margin:0">Primary Client CTA — وثيقة نقاش</p>
+    <div class="meta-row">
+      <span class="pill status" style="background:var(--green-soft); color:#86efac; border-color:#1f5132">🟢 v1.0 — كل القرارات مقفولة + الملاحق مثبّتة</span>
+      <span class="pill">Owner: خالد</span>
+      <span class="pill">drafted: 2026-06-05</span>
+      <span class="pill">لا كود قبل ما تقول «done»</span>
+    </div>
+    <div class="legend">
+      <span><span class="badge b-lock">🔒 مقفول</span> اتفقنا</span>
+      <span><span class="badge b-open">❓ مفتوح</span> نناقشه</span>
+      <span><span class="badge b-yes">✅ موجود</span> بالكود</span>
+      <span><span class="badge b-no">❌ ناقص</span> نبنيه</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2><span class="num">1)</span>المشكلة والهدف</h2>
+  <div class="card">
+    <p><b>المشكلة:</b> عندنا الآن زرّان معطّلان (placeholders): «احجز الآن» في الدوك السفلي للجوال، و«احجز أونلاين قريباً» في كارت العميل. والفكرة الأصلية تفترض إن كل عميل عنده «مواعيد» — بينما جمهور مُدوّنتي عريض (دكتور · محامي · مستشار · متجر · تاجر). فرض «احجز موعد» على متجر إلكتروني = بلا معنى.</p>
+    <p><b>الهدف:</b> زرّ إجراء رئيسي <b>واحد</b>، <b>قابل للتهيئة لكل عميل</b>، يظهر في كل مكان يظهر فيه العميل (المقال + الكارت + صفحة العميل لاحقاً)، ويوصّل lead فوري للعميل عبر القنوات الموجودة عندنا أصلاً.</p>
+  </div>
+
+  <h2><span class="num">2)</span>القرار الجوهري <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ وافق خالد 2026-06-05</span></h2>
+  <div class="callout lock">
+    <p style="margin-top:0">الزرّ <b>مو ثابت</b> — هو نسخة من «إجراء رئيسي» يتكوّن من:</p>
+    <p style="text-align:center; font-size:17px; color:#fff"><b>الإجراء = النوع (mode) + التسمية (label) + الوجهة (target)</b></p>
+    <p style="margin-bottom:0">نرتكز على <b>نوع الإجراء</b>، مو على <b>المهنة</b> — لأن مهنتين متطابقتين قد يبغون إجراءين مختلفين، والربط بالمهنة يفرض جدول صيانة بلا فايدة.</p>
+  </div>
+
+  <div class="modes">
+    <div class="mode">
+      <h4>🗂️ فورم داخلي <span class="tag">FORM</span></h4>
+      <p class="muted" style="margin:4px 0">لمن: خدمات (دكتور / محامي / مستشار)</p>
+      <p style="margin:4px 0">يفتح فورم حجز → lead للعميل.</p>
+      <p style="margin:4px 0">التسمية الافتراضية: <b>«احجز الآن»</b></p>
+    </div>
+    <div class="mode">
+      <h4>🔗 رابط خارجي <span class="tag">LINK</span></h4>
+      <p class="muted" style="margin:4px 0">لمن: متجر / واتساب / صفحة حجز جاهزة</p>
+      <p style="margin:4px 0">يفتح رابط في تبويب جديد.</p>
+      <p style="margin:4px 0">التسمية الافتراضية: <b>«تسوّق الآن»</b></p>
+    </div>
+  </div>
+  <div class="callout good">
+    <b>إجابة سؤال المتجر الإلكتروني = <code>LINK</code></b> — يوديه لمتجره مباشرة (عنده checkout أصلاً). الواتساب والاتصال يندرجان تحت <code>LINK</code> (<code>wa.me/…</code> · <code>tel:…</code>) فما نحتاج نوع ثالث.
+  </div>
+
+  <h2><span class="num">3)</span>إيش موجود فعلاً <span class="muted" style="font-size:14px">(دليل من الكود — نعيد استخدامه مو نبنيه)</span></h2>
+  <div class="callout good">
+    أهم خبر: <b>~٨٠٪ من البنية التحتية موجودة.</b> الإضافة الحقيقية صغيرة.
+  </div>
+  <table>
+    <tr><th>المكوّن</th><th>الحالة</th><th>الموديل / الملف</th><th>كيف نستخدمه</th></tr>
+    <tr><td>Telegram للعميل</td><td><span class="badge b-yes">✅ كامل</span></td><td><code>Client.telegramChatId</code> + ربط بكود + <code>telegramEventPreferences</code> (٢٢ حدث) + <code>notifyTelegram()</code></td><td>نضيف حدث <code>bookingRequest</code> + نستدعي <code>notifyTelegram</code></td></tr>
+    <tr><td>إشعارات داخلية</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>model Notification</code></td><td>إشعار لمالك العميل عند وصول حجز</td></tr>
+    <tr><td>تتبّع CTA</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>CTAClick</code> + <code>CTAType{FORM,LINK…}</code> + <code>CtaTrackedLink</code></td><td>كل ضغطة زر → <code>CTAClick</code></td></tr>
+    <tr><td>التحويلات</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>Conversion</code> + <code>ConversionType{DEMO_REQUEST…}</code></td><td>حجز ناجح → <code>Conversion</code></td></tr>
+    <tr><td>GA4</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>events-registry.ts</code> <code>trackEvent</code></td><td>نضيف حدث حجز للـ GA4</td></tr>
+    <tr><td>تصنيف العميل</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>industryId</code> · <code>isYmyl</code>+<code>ymylCategory</code> · <code>organizationType</code></td><td><b>ما نضيف «نوع عميل» جديد</b> — نضيف فقط حقول الإجراء</td></tr>
+    <tr><td>رسائل تواصل</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>model ContactMessage</code></td><td>مرشّح لإعادة الاستخدام (انظر ❓2)</td></tr>
+    <tr><td>فورم بروفايل الكونسول</td><td><span class="badge b-yes">✅ موجود</span></td><td><code>profile-actions.ts → updateProfile</code></td><td>مكان محتمل لتهيئة الإجراء من العميل (❓1)</td></tr>
+    <tr><td><code>Client.bookingUrl</code></td><td><span class="badge b-no">❌ ناقص</span></td><td>—</td><td>placeholders فقط بالأزرار المعطّلة</td></tr>
+  </table>
+
+  <h2><span class="num">4)</span>تغييرات البيانات المقترحة</h2>
+  <h3>4.1 — حقول جديدة على <code>Client</code></h3>
+  <pre><code><span class="tok-c">// الإجراء الرئيسي — الفعل التحويلي الوحيد اللي يبغى العميل القارئ يسوّيه</span>
+ctaMode  <span class="tok-t">ClientCtaMode</span> @default(NONE)  <span class="tok-c">// FORM | LINK | NONE</span>
+ctaLabel <span class="tok-t">String?</span>                        <span class="tok-c">// نص الزر إن خالف الافتراضي</span>
+ctaUrl   <span class="tok-t">String?</span>                        <span class="tok-c">// لـ mode=LINK فقط</span>
+
+<span class="tok-k">enum</span> ClientCtaMode { NONE FORM LINK }</code></pre>
+  <p class="muted"><code>NONE</code> افتراضي → ما يظهر زر ميّت لأي عميل غير مهيّأ (انظر ❓5).</p>
+
+  <h3>4.2 — موديل الحجوزات <span class="muted" style="font-size:13px">(لو اخترنا dedicated — ❓2)</span></h3>
+  <pre><code><span class="tok-k">model</span> <span class="tok-t">BookingRequest</span> {
+  id          String   @id @default(auto()) @map(<span class="tok-s">"_id"</span>) @db.ObjectId
+  clientId    String   @db.ObjectId
+  client      Client   @relation(...)
+  articleId   String?  @db.ObjectId   <span class="tok-c">// null لو الحجز من صفحة العميل/القائمة (مو من مقال)</span>
+  userId      String?  @db.ObjectId   <span class="tok-c">// SetNull عند حذف الحساب — الـ snapshot يحفظ الـ lead</span>
+  source      String                  <span class="tok-c">// article_dock | article_card | client_page | client_list</span>
+  name        String                  <span class="tok-c">// snapshot من الجلسة</span>
+  email       String                  <span class="tok-c">// snapshot من الجلسة</span>
+  phone       String                  <span class="tok-c">// يجمعه الفورم (User ما فيه جوال)</span>
+  preferredAt DateTime?               <span class="tok-c">// الموعد المفضّل (اختياري، مستقبلي)</span>
+  message     String?
+  status      String   @default(<span class="tok-s">"new"</span>)  <span class="tok-c">// new|contacted|done|archived</span>
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  @@index([clientId, createdAt])
+  @@index([userId])
+  @@map(<span class="tok-s">"booking_requests"</span>)
+}</code></pre>
+
+  <h3>4.3 — حدث Telegram جديد</h3>
+  <p>في <code>lib/telegram/events.ts</code> مجموعة <code>direct</code>:</p>
+  <pre><code>{ key: <span class="tok-s">"bookingRequest"</span>, group: <span class="tok-s">"direct"</span>, label: <span class="tok-s">"طلب حجز جديد"</span>, emoji: <span class="tok-s">"📅"</span> }</code></pre>
+
+  <div class="callout warn">
+    ⚠️ أي تعديل على <code>schema.prisma</code> = رقصة Prisma الإلزامية: إيقاف كل سيرفرات node → <code>prisma:generate</code> → إعادة التشغيل.
+  </div>
+
+  <h2><span class="num">5)</span>الأسطح + تحليل UX <span class="badge b-yes">✅ خالد 2026-06-05</span></h2>
+
+  <div class="callout warn">
+    <b>🐞 مشكلة UX في دوك الجوال (نصلحها):</b> الزر المركزي مكتوب «احجز الآن» لكن ضغطه يفتح <b>كارت العميل</b> مو الحجز → (١) عدم تطابق التسمية مع الفعل، (٢) نقرتان للحجز (تفتح الكارت ثم تدوّر الزر جواه). احتكاك يقتل التحويل.
+  </div>
+
+  <div class="card">
+    <p><b>الحل — «شيت كامل يبدأ بالحجز» (booking-first):</b> ضغطة واحدة على شعار العميل تفتح <b>شيت طويل ~90vh</b> (كأنه صفحة جوال مخصّصة، تحكّم كامل) — عبر مكوّن <code>Sheet</code> الحالي <b>بدون مكتبة جديدة</b> (حماية bundle مودونتي؛ <code>vaul</code>/<code>Drawer</code> غير مثبّت ولا يستاهل يُضاف).</p>
+    <p style="margin:4px 0"><b>الترتيب من فوق لتحت (في نفس الشيت — بدون drawer ثانٍ):</b></p>
+    <p style="margin:4px 0">• <b>١. بيانات كارت العميل الكامل</b> — نعيد استخدام الكارت الموجود <code>ArticleLabClientCard</code> نفسه (DRY): شعار/هيرو + اسم + ✓موثّق + المدينة + نبذة + تواصل/سوشال.</p>
+    <p style="margin:4px 0">• <b>٢. الفورم</b> — جوال (إلزامي) + موعد مفضّل (اختياري) + رسالة (اختياري). <span class="muted">[للـ <code>FORM</code> فقط]</span></p>
+    <p style="margin:4px 0">• <b>٣. Footer ثابت — زر «تأكيد الحجز»</b> = الـ CTA الواضح (submit الفورم). للـ <code>LINK</code>: نفس الكارت بدون فورم، والفوتر = زر «تسوّق الآن».</p>
+    <p style="margin:4px 0" class="muted">تمرير داخلي للمحتوى · الفوتر ثابت دايماً ظاهر · إغلاق: X + سحب لتحت + ضغط الـ 10% الفاضية فوق + Escape (إتاحة، تركيز محبوس).</p>
+  </div>
+
+  <div class="card">
+    <p style="margin-top:0"><b>حالات تسجيل الدخول (غطّينا الأربعة):</b> كارت العميل يظهر دايماً (مسجّل أو لا).</p>
+    <table style="margin:6px 0">
+      <tr><th>الحالة</th><th>السلوك</th></tr>
+      <tr><td>FORM · مسجّل</td><td>الفورم شغّال مباشرة + فوتر «تأكيد الحجز»</td></tr>
+      <tr><td>FORM · غير مسجّل</td><td>الفورم مموّه (blurred) + overlay فيه «سجّل الدخول للحجز»</td></tr>
+      <tr><td>LINK · مسجّل</td><td>الشيت يعرض الكارت + فوتر «تسوّق الآن» (→ المتجر، يُسجَّل تحويل)</td></tr>
+      <tr><td>LINK · غير مسجّل</td><td>الشيت يعرض الكارت + فوتر «سجّل الدخول»</td></tr>
+    </table>
+    <p style="margin-bottom:0" class="muted">زر تسجيل الدخول يحمل <code>callbackUrl</code> يرجّعه لنفس المقال بعد الدخول — ما يضيع ويكمّل حجزه.</p>
+  </div>
+
+  <table>
+    <tr><th>السطح</th><th>السلوك</th><th>الهرمية</th></tr>
+    <tr><td>🖥️ سطح المكتب (المقال)</td><td>الزر بكارت العميل → dialog حجز (FORM) أو رابط (LINK)</td><td>عادي — لا مشكلة</td></tr>
+    <tr><td>📱 دوك الجوال (المقال)</td><td>شعار العميل → <b>الشيت دايماً</b> (الفوتر حسب الإعداد: تأكيد الحجز / تسوّق الآن / بدون)</td><td>الحجز = البؤرة</td></tr>
+    <tr><td>👤 صفحة العميل <code>/clients/[slug]</code></td><td>زر إجراء حسب <code>ctaMode</code></td><td><b>بارز/مهيمن</b></td></tr>
+    <tr><td>🗂️ قائمة العملاء <code>/clients</code> (الكروت)</td><td>زر إجراء مدمج بكل كرت</td><td><b>ثانوي</b> (المهيمن = «عرض العميل»)</td></tr>
+  </table>
+  <p class="muted">لو <code>ctaMode = NONE</code> → ما يظهر أي زر في كل الأسطح (لا أزرار ميتة).</p>
+
+  <h2><span class="num">6)</span>التدفّقات</h2>
+  <div class="modes">
+    <div class="mode">
+      <h4>🗂️ mode = FORM <span class="badge b-yes" style="font-size:10px">تسجيل دخول إلزامي</span></h4>
+      <p style="margin:4px 0">٠. غير المسجّل → «سجّل الدخول للحجز». المسجّل → يفتح الفورم.</p>
+      <p style="margin:4px 0">١. الفورم: الجوال (إلزامي) · موعد مفضّل (اختياري) · رسالة. الاسم/الإيميل من الجلسة، الدولة من IP.</p>
+      <p style="margin:4px 0">٢. Submit → <code>BookingRequest</code> + <code>Notification</code> + <code>notifyTelegram</code> + <code>Conversion</code> + <code>CTAClick</code> + GA4.</p>
+      <p style="margin:4px 0">٣. العميل يشوف: Telegram خاص + إشعار داخلي + الحجز بصندوق الحجوزات (❓6).</p>
+    </div>
+    <div class="mode">
+      <h4>🔗 mode = LINK <span class="badge b-yes" style="font-size:10px">تسجيل دخول إلزامي</span></h4>
+      <p style="margin:4px 0">٠. غير المسجّل → «سجّل الدخول». المسجّل → يكمّل.</p>
+      <p style="margin:4px 0">١. ضغط الزر → <code>CTAClick</code> + <code>Conversion</code> (مربوطة بـ <code>userId</code> = lead دافئ) + GA4.</p>
+      <p style="margin:4px 0">٢. فتح <code>ctaUrl</code> <b>مباشرة</b> في تبويب جديد (<code>rel="noopener"</code>) — بدون شيت. نعيد استخدام <code>CtaTrackedLink</code>.</p>
+    </div>
+  </div>
+
+  <div class="callout good">
+    <b>🔗 ربط الإجراء بحساب الزائر (مهم):</b> كل إجراء (فورم + رابط) مربوط بـ <code>userId</code> تلقائياً (إلزامي بالموديل) — <b>بدون تعديل سكيما إضافي</b>. ثلاث فوائد:
+    <p style="margin:6px 0 0">١. <b>الزائر</b> يشوف «حجوزاتي/نشاطي» ببروفايله + حالة كل حجز. <span class="muted">(عرض — Phase 5)</span></p>
+    <p style="margin:2px 0">٢. <b>العميل</b> يشوف الـ leads الواصلة له. <span class="muted">(عرض — Phase 5)</span></p>
+    <p style="margin:2px 0">٣. <b>مستقبلاً:</b> نستخرج «العملاء الحقيقيين» = الزوار عالي النية → فرص تحويل. <span class="muted">(تحليلات مستقبلية)</span></p>
+  </div>
+
+  <h2><span class="num">7)</span>الملكية: مين يهيّئ الإجراء؟ <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></h2>
+  <div class="card">
+    <div class="rec" style="background:var(--green-soft); border:1px solid #1f5132; border-radius:8px; padding:10px 14px"><b>القرار:</b> <b>الأدمن فقط</b> — يهيّئ الإجراء عند <b>تأسيس العميل + تعديله</b>. <b>مو بالكونسول</b> — عمداً، عشان العميل ما يتشتّت ويخبط وهو مش فاهم.</div>
+    <p style="margin-top:10px">كذا الإجراء صار <b>إعداد إداري</b> مو حقل بروفايل يملكه العميل — فينحلّ تعارض ذاكرة <code>project_client_field_ownership</code> (تلك للحقول اللي يملكها العميل؛ هذا إعداد مركزي).</p>
+  </div>
+
+  <h2><span class="num">8)</span>المراحل المقترحة</h2>
+  <table class="phases">
+    <tr><th>#</th><th>الوصف</th><th>تحقّق</th></tr>
+    <tr><td>1</td><td>السكيما: حقول <code>Client</code> + enum + <code>BookingRequest</code> + حدث Telegram</td><td>رقصة Prisma → tsc 0</td></tr>
+    <tr><td>2</td><td>UI تهيئة الإجراء في الأدمن فقط (فورم تأسيس + تعديل العميل) + اقتراح YMYL الافتراضي = FORM</td><td>حفظ + قراءة صحيحة</td></tr>
+    <tr><td>3</td><td>فورم الحجز + server action + إشعارات + tracking</td><td>إرسال حقيقي + Telegram + إشعار</td></tr>
+    <tr><td>4</td><td>ربط زر الدوك + الكارت بالتهيئة الحقيقية</td><td>الزر يشتغل حسب mode</td></tr>
+    <tr><td>5</td><td><b>أساسي:</b> صندوق الحجوزات بالكونسول (العميل يدير leads + يغيّر الحالة) + «حجوزاتي» ببروفايل الزائر</td><td>عرض/تحديث الحالة (userId/clientId)</td></tr>
+    <tr><td>6</td><td>زر صفحة العميل <code>/clients/[slug]</code> (يتداخل مع Track B)</td><td>—</td></tr>
+    <tr><td>7</td><td><b>توثيق YMYL:</b> رفّاع Cloudinary لصورة الترخيص بالكونسول (يستبدل خانة URL الحالية)</td><td>رفع فعلي + حفظ في <code>ymylData</code></td></tr>
+    <tr><td>8</td><td><b>توثيق YMYL:</b> عرض «التراخيص الموثّقة» بصفحة العميل (<code>isYmyl</code>) + ربط <code>/trust</code></td><td>صورة + رقم + جهة + شارة موثّق</td></tr>
+    <tr><td>9</td><td><b>إقرار المسؤولية:</b> صفحة أدمن (نص كامل + default) + عرض بارز بالكونسول + checkbox إلزامي + تسجيل القبول</td><td>ما ينحفظ بدون قبول</td></tr>
+    <tr><td>10</td><td>تست شامل + <b>بروتوكول ما قبل الـ push</b>: bump نسخ ٣ تطبيقات + backup + tsc صفر ×٣ + changelog + SESSION-LOG + secret scan</td><td>build + live test + كل البوابات خضراء</td></tr>
+  </table>
+
+  <h2><span class="num">9)</span>خارج النطاق الآن</h2>
+  <div class="card">
+    <p style="margin:4px 0">• إعادة تصميم صفحة العميل بالكامل (Track B) — مهمة منفصلة بعد «احجز الآن».</p>
+    <p style="margin:4px 0">• جدولة مواعيد حقيقية / تقويم / تأكيد تلقائي (الفورم يجمع lead فقط).</p>
+    <p style="margin:4px 0">• الدفع.</p>
+  </div>
+
+  <h2><span class="num">10)</span>القرارات المفتوحة <span class="badge b-open">❓ نقفلها وحدة وحدة</span></h2>
+
+  <div class="dec"><div class="q">❓1 — الملكية <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">مين يهيّئ الإجراء؟</div><div class="rec"><b>القرار:</b> <b>الأدمن فقط</b> (تأسيس + تعديل العميل). مو بالكونسول — عشان العميل ما يتشتّت.</div></div>
+
+  <div class="dec"><div class="q">❓2 — مخزن الحجوزات <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">موديل مخصّص أو إعادة استخدام رسائل التواصل؟</div><div class="rec"><b>القرار:</b> موديل مخصّص <code>BookingRequest</code> (منظّم: جوال + موعد + حالة).</div></div>
+
+  <div class="dec"><div class="q">❓3 — تسجيل الدخول <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">هل الحجز يحتاج تسجيل دخول؟</div><div class="rec"><b>القرار:</b> <b>إلزامي للنوعين (فورم + رابط)</b> — لازم الزائر مسجّل في مدونتي. يعطينا lead موثّق + اسم/إيميل جاهز من الجلسة + سبام أقل + كل ضغطة رابط = هوية معروفة للمتابعة (❓4). غير المسجّل يشوف «سجّل الدخول» (نفس نمط اللايك/الحفظ).</div></div>
+
+  <div class="dec"><div class="q">❓4 — ضغطة الرابط = تحويل؟ <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">تُسجَّل ضغطة <code>LINK</code> كـ <code>Conversion</code>؟</div><div class="rec"><b>القرار:</b> <b>نعم</b> — بما إن الـ CTA يتطلّب تسجيل دخول، الضغطة مربوطة بمستخدم معروف = <b>lead دافئ موثّق</b> («أبدى نية وما أكمل» → العميل يتابعه). تتسجّل <code>CTAClick</code> + <code>Conversion</code> (مربوطة بـ <code>userId</code>). قيمة enum تُختار وقت التنفيذ (<code>BOOKING</code> للفورم · قيمة منفصلة للرابط).</div></div>
+
+  <div class="dec"><div class="q">❓5 — العميل غير المهيّأ <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">إيش يصير لما <code>ctaMode = NONE</code>؟</div><div class="rec"><b>القرار:</b> الـ CTA «احجز/تسوّق» <b>يختفي تماماً</b> (لا أزرار ميتة). <b>لكن</b> شريحة العميل بدوك الجوال تبقى تفتح الشيت (كارت + تواصل) — الشيت ثابت دايماً.</div></div>
+
+  <div class="dec"><div class="q">❓6 — صندوق الحجوزات بالكونسول <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">ضمن النطاق الآن أو لاحقاً؟</div><div class="rec"><b>القرار:</b> <b>أساسي — ضمن هذا الـ task</b>. العميل يشوف كل الحجوزات بالكونسول + يدير الحالة (جديد/تواصل/تم/أرشيف). نقفل الـ task كامل بدون رجعة.</div></div>
+
+  <div class="dec"><div class="q">❓7 — حقول الفورم <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">بما إن تسجيل الدخول إلزامي، الاسم + الإيميل من الجلسة.</div><div class="rec"><b>القرار:</b> الزائر يكتب فقط: <b>الجوال (إلزامي، افتراض +966)</b> + <b>موعد مفضّل (اختياري)</b> + <b>رسالة (اختياري)</b>. الاسم/الإيميل من الجلسة. <b>لا خانة بلد</b> — الدولة من الـ IP (منظومة geo جاهزة + فوتر Telegram يعرضها).</div></div>
+
+  <div class="dec"><div class="q">❓8 — اقتراح تلقائي YMYL <span class="badge b-lock">🔒 مقفول</span> <span class="badge b-yes">✅ خالد 2026-06-05</span></div><div class="muted">عملاء medical/legal/financial نخلّي الافتراضي عندهم <code>FORM</code>؟</div><div class="rec"><b>القرار:</b> <b>نضمّه</b> — لما الأدمن يعلّم عميل YMYL، الدروب-داون يجي مختار <code>FORM</code> تلقائياً (<b>اقتراح، الأدمن يقدر يغيّره</b> — مو إجبار). جزء من إقفال الموضوع كامل.</div></div>
+
+  <h2><span class="num">11)</span>ملاحق التوثيق + إقرار المسؤولية <span class="badge b-yes">✅ مثبّتة — جزء من المشروع</span></h2>
+  <div class="callout warn">
+    <b>📌 مثبّتة هنا عشان ما تُنسى</b> — مهام فرعية ضمن المشروع الرئيسي، تُنفّذ بعد زر الحجز (Phases 7-9).
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">أ. رفع الترخيص — إصلاح ناقص <span class="badge b-no" style="font-size:10px">ناقص حالياً</span></h3>
+    <p>حقل صورة الترخيص بالكونسول حالياً <b>خانة نص URL فقط</b> (الـ placeholder نفسه: «سيتم دعم الرفع المباشر لاحقاً» — <code>ymyl-section.tsx:236</code>). نبنيه <b>رفّاع Cloudinary حقيقي</b> يحفظ في <code>Client.ymylData</code>. الحقول معرّفة أصلاً في <code>ymyl-config.ts</code> (طبي: صورة ترخيص <b>مطلوبة</b> · قانوني: شهادة قيد · مالي: ترخيص).</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">ب. عرض «التراخيص الموثّقة» بصفحة العميل <span class="badge b-no" style="font-size:10px">اتشال 2026-05-24</span></h3>
+    <p>صف الترخيص اتشال من <code>client-official-data.tsx:131</code> ومعلّق كـ «Future» — ما اتنفّذ. نعرض بطاقة لعملاء <code>isYmyl</code>: صورة الترخيص + الرقم + الجهة المُرخِّصة + شارة «موثّق»، ونربطها بصفحة <code>/trust</code> الموجودة.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">ج. إقرار المسؤولية عن المحتوى — شامل (كل ما يسلّمه العميل)</h3>
+    <p><b>يغطّي:</b> بيانات · صور · وثائق · تراخيص · <b>فيديوهات</b> — أي شي يسلّمه العميل = على مسؤوليته الكاملة. مُدوّنتي تنشر فقط بلا أي مسؤولية.</p>
+    <p style="margin:4px 0">• <b>الأدمن:</b> صفحة تحرير نص الإقرار الكامل + قيمة افتراضية (Default) — قابل للتعديل مركزياً.</p>
+    <p style="margin:4px 0">• <b>الكونسول:</b> النص يظهر <b>بارز</b> للعميل + <code>checkbox</code> إلزامي قبل الحفظ/الموافقة.</p>
+    <p style="margin:4px 0">• <b>تسجيل القبول:</b> مين (<code>userId</code>) + متى (<code>acceptedAt</code>) + نسخة النص (<code>version</code>) — وإلا الإقرار بلا قيمة إثباتية.</p>
+    <p style="margin:4px 0">• <b>⚠️ تنبيه:</b> محامي يراجع النص النهائي قبل الإنتاج (YMYL حسّاس قانونياً بالسعودية/مصر). الصياغة أدناه عملية، مو فتوى قانونية.</p>
+    <div class="callout" style="background:var(--panel2); border-color:var(--border); margin-top:10px">
+      <b>النص الافتراضي المقترح (قابل للتعديل بالأدمن):</b>
+      <p style="margin:8px 0 0; color:#cdd5e3">«كل ما أزوّد به مُدوّنتي — من بيانات وصور ووثائق وتراخيص وفيديوهات — صحيح وملكي وأملك حق نشره، وأنا المسؤول الوحيد عنه قانونياً. دور مُدوّنتي هو النشر فقط، وهي غير مسؤولة عن صحّته أو مصدره أو قانونيّته.»</p>
+      <p style="margin:8px 0 0">☑ <b>موافق وأتحمّل المسؤولية الكاملة</b></p>
+    </div>
+  </div>
+
+  <h2><span class="num">13)</span>نتائج المسح (٥ agents) + القرارات الهندسية النهائية <span class="badge b-yes">✅ مقفولة — senior best-practice</span></h2>
+  <div class="callout good">
+    <b>مسح كامل للكود بـ ٥ agents (read-only)</b> أكّد إن البنية ~٨٠٪ موجودة فعلاً. كشفوا ثغرات حقيقية — وهذي قراراتي الهندسية لسدّها، كلها مقفولة عشان one-shot بلا رجعة.
+  </div>
+
+  <h3>أ. السكيما — الدلتا النهائي (Phase 1)</h3>
+  <table>
+    <tr><th>العنصر</th><th>القرار</th></tr>
+    <tr><td><code>Client</code> CTA</td><td>+ <code>ctaMode</code> (enum <code>ClientCtaMode NONE|FORM|LINK</code> default NONE) + <code>ctaLabel</code> + <code>ctaUrl</code></td></tr>
+    <tr><td><code>ConversionType</code></td><td>+ <code>BOOKING</code> (فورم) + <code>LINK_CLICK</code> (رابط) — <b>نقفلهم الحين، مو وقت التنفيذ</b></td></tr>
+    <tr><td><code>BookingRequest</code></td><td><code>userId</code> اختياري + <b>SetNull</b> (الحجز ينجو لو الزائر حذف حسابه — الـ snapshot يحفظه) · + <code>source</code> + <code>ipAddress</code> + <code>userAgent</code> · index على <code>userId</code></td></tr>
+    <tr><td>onDelete</td><td>Client→<b>Cascade</b> · Article→<b>SetNull</b> · User→<b>SetNull</b></td></tr>
+    <tr><td>إقرار المسؤولية</td><td><code>Settings.disclaimerText</code> + <code>disclaimerVersion</code> (نص الأدمن) · <code>Client.disclaimerAcceptedAt</code> + <code>disclaimerAcceptedByUserId</code> + <code>disclaimerAcceptedVersion</code> (إثبات). نعيد الطلب لو نسخة القبول < الحالية</td></tr>
+  </table>
+
+  <h3>ب. ثغرة Telegram حرجة (Phase 3) — محلولة</h3>
+  <div class="callout warn">
+    لو أضفنا حدث <code>bookingRequest</code> عادي = <b>OFF لكل العملاء الحاليين</b> (تفضيلاتهم JSON ما فيها المفتاح → <code>!== true</code>). يعني العميل ما يوصله أهم lead! <b>الحل:</b> نخلّيه <b>default-ON</b> (نعامل المفتاح الناقص = true لهذا الحدث تحديداً في <code>isTelegramEventEnabled</code>). + نضيف الحدث في <code>events.ts</code> بالمودنتي <b>والكونسول</b> (الملفان متطابقان byte-by-byte — لازم الاثنين).
+  </div>
+
+  <h3>ج. سلوك LINK — التوضيح النهائي (٢×٢: السطح × الوضع)</h3>
+  <table>
+    <tr><th>السطح</th><th><code>FORM</code></th><th><code>LINK</code></th></tr>
+    <tr><td>📱 دوك الجوال (مقال)</td><td>الشيت: كارت + فورم + «تأكيد الحجز»</td><td>الشيت: كارت + فوتر «تسوّق الآن» → المتجر</td></tr>
+    <tr><td>🖥️ كارت العميل (مكتب/مقال)</td><td>dialog/شيت فورم</td><td>رابط مباشر (<code>CtaTrackedLink</code>)</td></tr>
+    <tr><td>👤 صفحة العميل</td><td>زر → فورم</td><td>رابط مباشر</td></tr>
+    <tr><td>🗂️ قائمة العملاء</td><td>زر مدمج → فورم</td><td>رابط مباشر</td></tr>
+  </table>
+  <p class="muted">القاعدة: <b>الجوال = الشيت دايماً</b> (لأن الكارت لازم يظهر) · <b>المكتب/القائمة = مباشر</b>.</p>
+
+  <h3>د. سؤالك عن articleId — محلول</h3>
+  <div class="card">
+    <p><b>الحجز برّه المقال (صفحة العميل / القائمة):</b> <code>articleId = null</code> (اختياري). وبدل ما نعتمد عليه، أضفنا حقل <code>source</code> يسجّل من وين جا الحجز بالضبط (<code>article_dock / article_card / client_page / client_list</code>) — فالتتبّع دقيق ١٠٠٪ في كل الأسطح، و«سبانك» انحلّ: ما نعتمد على المقال، نعتمد على المصدر.</p>
+  </div>
+
+  <h3>هـ. باقي القرارات الهندسية</h3>
+  <div class="card">
+    <p style="margin:4px 0">• <b>تحقّق الفورم (Zod):</b> جوال سعودي/مصري E.164 (افتراض +966) · رسالة بحد أقصى · الموعد لازم مستقبلي.</p>
+    <p style="margin:4px 0">• <b>منع التكرار/السبام:</b> حجز واحد لكل (مستخدم × عميل) كل ساعة.</p>
+    <p style="margin:4px 0">• <b>شفافية PII:</b> ملاحظة صغيرة بالفورم «ببياناتك تُرسل للشركة للتواصل».</p>
+    <p style="margin:4px 0">• <b>صندوق إشعارات العميل:</b> الكونسول ما فيه إشعارات داخلية للعميل (بس الأدمن عنده) → صندوق الحجوزات + جرس إشعارات للعميل ضمن Phase 5.</p>
+    <p style="margin:4px 0">• <b>«حجوزاتي» للزائر:</b> تبويب جديد <code>/users/profile/bookings</code> (الـ hub موجود).</p>
+    <p style="margin:4px 0">• <b>⚠️ خطر بنيوي — قائمة /clients:</b> الكرت كله ملفوف في <code>&lt;Link&gt;</code> واحد → زر CTA جواه = anchor متداخل (HTML غير صالح). نعيد هيكلة الكرت (الخارجي مو anchor) في Phase 6.</p>
+    <p style="margin:4px 0">• <b>رفع Cloudinary بالكونسول:</b> الكونسول <b>ما فيه رفع إطلاقاً</b> (الأدمن عنده نمط unsigned upload جاهز) → Phase 7 ننقل نمط الأدمن للكونسول (مو reuse مكوّن).</p>
+    <p style="margin:4px 0">• <b>حالة الحجز:</b> تغييرها بالكونسول بنفس نمط الصناديق الموجودة (auth + ensureOwned per-client).</p>
+  </div>
+
+  <h2><span class="num">14)</span>معيار UI/UX + المهارات (Skills) <span class="badge b-yes">✅ مثبّتة ومربوطة</span></h2>
+  <div class="callout good">
+    <b>التزام:</b> ما نرجع لـ UI/UX تاني — أشتغل <b>senior بأفضل الممارسات افتراضياً</b> على كل قطعة في هذا المشروع.
+  </div>
+  <div class="card">
+    <p><b>المعتمد (مثبّت عندي):</b> skill <code>modonty-uiux</code> + ذاكرات <code>feedback_uiux_standards</code> + <code>reference_uiux_books</code>. تتضمّن قواعد: Anthropic Frontend Design · Vercel Web Design Guidelines (100+) · Vercel React Best Practices (57) · Vercel Composition Patterns · WCAG 2.1/2.2 · Bencium UX · Dashboard-UX.</p>
+    <p><b>المساران في هذا المشروع:</b></p>
+    <p style="margin:4px 0">• <b>Track B (visitor):</b> زر الحجز على المقال + صفحة العميل + القائمة + الشيت — تميّز بصري ضمن قيود الـ stack، <b>أداء + bundle حسّاس على مودونتي</b> (أصغر client boundary).</p>
+    <p style="margin:4px 0">• <b>Track A (admin/console):</b> فورم الأدمن + صندوق الحجوزات بالكونسول — وضوح + هرمية + progressive disclosure + بؤرة مهيمنة.</p>
+    <p><b>الطقس الإلزامي قبل أي UI بنيوي:</b> brief (٢٠ كلمة) ← هرمية ← <b>mockup HTML أول</b> ← مراجعتك ← كود مرّة وحدة. <b>الشيت (90vh) + صندوق الحجوزات = بنيوية → mockup أول قبل الكود.</b></p>
+    <p><b>التحقّق قبل الـ push:</b> live test (Playwright) مكتب + جوال RTL · صفر overflow · a11y (aria على الأزرار الأيقونية + focus trap بالشيت) · صفر console errors.</p>
+    <p class="muted">ملاحظة صادقة: ما أقدر «أنزّل» skills خارجية عشوائية من النت، لكن قواعد Vercel/Anthropic/WCAG الصناعية <b>مدمجة أصلاً</b> في skill <code>modonty-uiux</code> المعتمد — وربطتها هنا عشان تكون مُلزِمة لهذا البناء.</p>
+  </div>
+
+  <h2><span class="num">15)</span>Task لاحق منفصل — مراجعة وتبسيط Telegram <span class="badge b-open">لاحقاً · نركّز فيه لحاله</span></h2>
+  <div class="callout warn">
+    <b>📌 مثبّت عشان ما يُنسى</b> — <b>مو ضمن بناء الحجز</b>. task توضيحي مستقل نركّز فيه بعد ما نخلص الحجز.
+  </div>
+  <div class="card">
+    <p><b>المشكلة (خالد 2026-06-05):</b> «لسّا ملخبط في الـ Telegram والقناة» — كيف يشتغل، الفرق بين البوت والقناة، كيف العميل يربط، وإيش يوصله.</p>
+    <p><b>المطلوب:</b></p>
+    <p style="margin:4px 0">• <b>تسهيل للعميل:</b> ربط Telegram بخطوات واضحة جداً بالكونسول + اختيار الأحداث (موجود ٢٢ حدث) — مراجعة الـ UX وتبسيطه.</p>
+    <p style="margin:4px 0">• <b>تسهيل للإدارة:</b> توضيح كيف البوت/الـ webhook يشتغل + لوحة حالة واضحة.</p>
+    <p style="margin:4px 0">• <b>توضيح «القناة»:</b> الفرق بين بوت الإشعارات الخاص (chat مباشر مع العميل) والقناة العامة — هذا مصدر اللخبطة.</p>
+    <p style="margin:4px 0" class="muted">نبدأ بجلسة توضيح: أشرح الوضع الحالي بالكامل أول، قبل أي تعديل. (ملاحظة: بناء الحجز يضيف حدث <code>bookingRequest</code> واحد للمنظومة الموجودة — التبسيط الكامل هو هذا الـ task.)</p>
+  </div>
+
+  <div class="foot">كل القرارات ❓1–❓8 مقفولة ✅ · ملاحق التوثيق مثبّتة ✅ · task الـ Telegram مثبّت (لاحق) ✅ — قول «done» أبدأ التنفيذ من Phase 1 🚀</div>
+
+  <div class="en-terms">
+    English terms: Telegram · WhatsApp · GA4 · Prisma · Zod · checkout · CTA · YMYL · lead · onboarding
+  </div>
+
+</div>
+</body>
+</html>

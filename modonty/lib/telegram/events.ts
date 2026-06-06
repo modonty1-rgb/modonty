@@ -32,7 +32,8 @@ export type TelegramEventKey =
   // ─── Direct contact
   | "supportMessage"
   | "campaignInterest"
-  | "askClientQuestion";
+  | "askClientQuestion"
+  | "bookingRequest";
 
 export type TelegramEventGroup = "article" | "clientPage" | "direct";
 
@@ -67,10 +68,11 @@ export const TELEGRAM_EVENTS: TelegramEventDef[] = [
   { key: "clientComment", group: "clientPage", label: "تعليق على صفحة الشركة", emoji: "💬" },
   { key: "clientSubscribe", group: "clientPage", label: "اشتراك مباشر بالشركة", emoji: "📧" },
 
-  // Direct (3)
+  // Direct (4)
   { key: "supportMessage", group: "direct", label: "رسالة دعم جديدة", emoji: "📩" },
   { key: "campaignInterest", group: "direct", label: "تسجيل اهتمام بحملة", emoji: "📣" },
   { key: "askClientQuestion", group: "direct", label: "سؤال مباشر للشركة", emoji: "🙋" },
+  { key: "bookingRequest", group: "direct", label: "طلب حجز جديد", emoji: "📅" },
 ];
 
 export const TELEGRAM_EVENT_GROUPS: Record<
@@ -95,10 +97,18 @@ export type TelegramEventPreferences = Partial<
   Record<TelegramEventKey, boolean>
 >;
 
+// Events that default to ON when a client never explicitly set a preference.
+// bookingRequest is the most valuable lead — existing clients' prefs JSON lacks
+// the key, so without this they'd silently miss every booking. Opt-out, not opt-in.
+const DEFAULT_ON_EVENTS: ReadonlySet<TelegramEventKey> = new Set([
+  "bookingRequest",
+]);
+
 export function isTelegramEventEnabled(
   prefs: TelegramEventPreferences | null | undefined,
   key: TelegramEventKey
 ): boolean {
-  if (!prefs) return false;
-  return prefs[key] === true;
+  const pref = prefs?.[key];
+  if (pref === undefined && DEFAULT_ON_EVENTS.has(key)) return true;
+  return pref === true;
 }

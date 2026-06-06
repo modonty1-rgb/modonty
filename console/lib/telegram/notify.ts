@@ -9,7 +9,7 @@
  */
 
 import { db } from "@/lib/db";
-import { sendTelegramMessage, escapeTgHtml } from "./client";
+import { sendTelegramMessage, sendAdminTelegram, escapeTgHtml } from "./client";
 import {
   TELEGRAM_EVENTS,
   isTelegramEventEnabled,
@@ -78,11 +78,26 @@ function formatMessage(
   return lines.join("\n");
 }
 
+// Admin mirror — copies client events to the admin alerts chat (TELEGRAM_ADMIN_CHAT_ID),
+// independent of whether the client connected Telegram. The "mirror everything"
+// switch lives in Settings.telegramAdminMirrorAll (toggled from the admin UI):
+//   true  → full firehose: EVERY event (site-activity monitoring).
+//   false → only the high-signal events below.
+const ADMIN_MIRROR_EVENTS: ReadonlySet<TelegramEventKey> = new Set([
+  "bookingRequest",
+  "supportMessage",
+  "askClientQuestion",
+  "campaignInterest",
+]);
+
 /**
  * Public entry point. Safe to call from any server action.
  *  - clientId: the Client whose Telegram chat should receive the message
  *  - eventKey: one of the 26 supported events
  *  - payload: optional content (visitor name, article title, link, etc.)
+ *
+ * Sends to the client's own chat (if connected + event enabled) AND mirrors
+ * high-signal events to the admin chat (prefixed with the client name).
  */
 export async function notifyTelegram(
   clientId: string | null | undefined,
@@ -92,26 +107,43 @@ export async function notifyTelegram(
   if (!clientId) return;
 
   try {
-    const client = await db.client.findUnique({
-      where: { id: clientId },
-      select: {
-        telegramChatId: true,
-        telegramEventPreferences: true,
-      },
-    });
-    if (!client?.telegramChatId) return;
+    const [client, settings] = await Promise.all([
+      db.client.findUnique({
+        where: { id: clientId },
+        select: {
+          name: true,
+          telegramChatId: true,
+          telegramEventPreferences: true,
+        },
+      }),
+      db.settings.findUnique({
+        where: { singletonKey: "global" },
+        select: { telegramAdminMirrorAll: true },
+      }),
+    ]);
+    if (!client) return;
 
     const prefs = (client.telegramEventPreferences ??
       null) as TelegramEventPreferences | null;
-    if (!isTelegramEventEnabled(prefs, eventKey)) return;
+    const clientWants =
+      Boolean(client.telegramChatId) && isTelegramEventEnabled(prefs, eventKey);
+    const mirrorAll = settings?.telegramAdminMirrorAll ?? true;
+    const adminWants = mirrorAll || ADMIN_MIRROR_EVENTS.has(eventKey);
+    if (!clientWants && !adminWants) return;
 
-    // Resolve geo (free path first, IP API as fallback)
+    // Resolve geo (free path first, IP API as fallback) — once for both sends.
     let geo: GeoInfo | null = payload.geo ?? null;
     if (!geo && payload.headers) geo = readGeoFromHeaders(payload.headers);
     if (!geo && payload.ipAddress) geo = await lookupGeoByIp(payload.ipAddress);
 
     const text = formatMessage(eventKey, payload) + buildTelegramFooter(geo);
-    await sendTelegramMessage(client.telegramChatId, text);
+
+    if (clientWants && client.telegramChatId) {
+      await sendTelegramMessage(client.telegramChatId, text);
+    }
+    if (adminWants) {
+      await sendAdminTelegram(`👤 <b>${escapeTgHtml(client.name)}</b>\n${text}`);
+    }
   } catch {
     // Never let Telegram failures break business flows.
   }

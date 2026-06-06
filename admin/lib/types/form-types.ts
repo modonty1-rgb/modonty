@@ -1,4 +1,4 @@
-import { ArticleStatus, SubscriptionTier, SubscriptionStatus, PaymentStatus, UserRole } from "@prisma/client";
+import { ArticleStatus, SubscriptionTier, SubscriptionStatus, PaymentStatus, UserRole, ClientCtaMode } from "@prisma/client";
 
 export interface FAQItem {
   question: string;
@@ -239,6 +239,11 @@ export interface ClientFormData {
   isYmyl?: boolean;
   ymylCategory?: "medical" | "legal" | "financial" | null;
   ymylData?: Record<string, unknown> | null;
+
+  // Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled per client.
+  ctaMode?: ClientCtaMode | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
 }
 
 export interface AuthorFormData {

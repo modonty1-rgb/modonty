@@ -11,6 +11,7 @@ import {
   Megaphone,
   Mail,
   UserPlus,
+  CalendarCheck,
   ChevronLeft,
   LogOut,
   Building2,
@@ -30,6 +31,7 @@ interface SidebarProps {
   pendingArticlesCount: number;
   subscribersCount: number;
   leadsCount: number;
+  newBookingsCount: number;
   pendingFaqsCount: number;
   pendingClientCommentsCount: number;
   isYmyl: boolean;
@@ -43,6 +45,7 @@ export function Sidebar({
   pendingArticlesCount,
   subscribersCount,
   leadsCount,
+  newBookingsCount,
   pendingFaqsCount,
   pendingClientCommentsCount,
   isYmyl,
@@ -175,6 +178,13 @@ export function Sidebar({
           icon={UserPlus}
           label={ar.nav.leads}
           badge={leadsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/bookings"
+          icon={CalendarCheck}
+          label={ar.nav.bookings}
+          badge={newBookingsCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem

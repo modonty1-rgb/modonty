@@ -21,6 +21,15 @@ export interface ClientPageClient {
   email?: string | null;
   phone?: string | null;
   contactType?: string | null;
+  // Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled
+  ctaMode?: "NONE" | "FORM" | "LINK" | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  // YMYL verified credentials (admin-controlled flag + client-entered data).
+  // ymylData is Prisma Json (JsonValue) — kept as unknown; the consumer narrows it.
+  isYmyl?: boolean | null;
+  ymylCategory?: string | null;
+  ymylData?: unknown;
   articles?: Array<{
     id: string;
     slug: string;

@@ -132,6 +132,9 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
       subscriptionTier: client.subscriptionTier || undefined,
       createdAt: client.createdAt,
       isVerified: client.subscriptionTier === 'PRO' || client.subscriptionTier === 'PREMIUM',
+      ctaMode: client.ctaMode,
+      ctaLabel: client.ctaLabel || undefined,
+      ctaUrl: client.ctaUrl || undefined,
     };
   });
 }
