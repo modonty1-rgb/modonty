@@ -15,7 +15,7 @@ export function PartnerRow({ slug, children }: PartnerRowProps) {
 
   return (
     <div
-      className={`group flex items-center gap-1 rounded transition-colors ${
+      className={`group flex items-start gap-1 rounded transition-colors ${
         isActive
           ? "bg-primary/10 ring-1 ring-inset ring-primary/40"
           : "hover:bg-muted/50"

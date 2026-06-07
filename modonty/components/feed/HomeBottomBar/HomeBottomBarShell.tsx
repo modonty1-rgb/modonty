@@ -253,7 +253,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                         {/* Mirrors desktop NewClientItem: name/logo → partner page · bordered chip → feed filter */}
                         <div
                           className={cn(
-                            "flex items-center gap-1 rounded-lg transition-colors",
+                            "flex items-start gap-1 rounded-lg transition-colors",
                             isActive
                               ? "bg-primary/10 ring-1 ring-inset ring-primary/40"
                               : "hover:bg-muted/50"
@@ -263,9 +263,9 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                           <Link
                             href={`/clients/${encodeURIComponent(p.slug)}`}
                             onClick={closePartners}
-                            className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2"
+                            className="flex min-w-0 flex-1 items-start gap-3 px-2 py-2"
                           >
-                            <Avatar className="h-8 w-8 shrink-0 overflow-hidden rounded-full">
+                            <Avatar className="h-8 w-8 shrink-0 overflow-hidden rounded-full mt-0.5">
                               <AvatarImage
                                 src={p.logo}
                                 alt={p.name}
@@ -278,7 +278,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                               </AvatarFallback>
                             </Avatar>
                             <span className="min-w-0 flex-1">
-                              <span className="block truncate text-sm font-medium text-foreground">{p.name}</span>
+                              <span className="block break-words text-sm font-medium text-foreground">{p.name}</span>
                               {p.industry && (
                                 <span className="block truncate text-xs text-muted-foreground">{p.industry}</span>
                               )}
@@ -291,7 +291,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                             aria-label={`اعرض مقالات ${p.name} في الموجز (${p.count})`}
                             title={`مقالات ${p.name}`}
                             className={cn(
-                              "me-2 inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold transition-colors",
+                              "me-2 mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold transition-colors",
                               isActive
                                 ? "border-primary/50 bg-primary/10 text-primary"
                                 : "border-border bg-muted/40 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
