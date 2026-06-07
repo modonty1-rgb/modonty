@@ -12,7 +12,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MazayaSheet } from "@/components/layout/MazayaSheet";
 import { HeroSlider } from "@/components/layout/RightSidebar/HeroSlider";
@@ -90,7 +89,7 @@ function FilterList({
           </Link>
         )}
       </div>
-      <ScrollArea className="flex-1 min-h-0" dir="rtl">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-thin" dir="rtl">
         <ul className="px-4 pb-6 space-y-0.5">
           {items.length === 0 ? (
             <li className="py-3 text-xs text-muted-foreground">لا يوجد عناصر حالياً</li>
@@ -120,7 +119,7 @@ function FilterList({
             })
           )}
         </ul>
-      </ScrollArea>
+      </div>
     </div>
   );
 }
@@ -241,7 +240,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                 <HeroSlider slides={heroSlides} />
               </div>
             )}
-            <ScrollArea className="flex-1 min-h-0" dir="rtl">
+            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-thin" dir="rtl">
               <ul className="px-4 pb-6 space-y-1">
                 {partners.length === 0 ? (
                   <li className="py-3 text-xs text-muted-foreground">لا يوجد شركاء حالياً</li>
@@ -284,7 +283,9 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                               )}
                             </span>
                           </Link>
-                          {/* Secondary action — filter the home feed to this partner */}
+                          {/* Secondary action — filter the home feed to this partner.
+                              Hidden when the partner has no articles yet (mirrors desktop). */}
+                          {p.count > 0 && (
                           <Link
                             href={`/?client=${encodeURIComponent(p.slug)}`}
                             onClick={closePartners}
@@ -300,13 +301,14 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                             <IconFilter className="h-3.5 w-3.5" aria-hidden />
                             <span className="tabular-nums">{formatCount(p.count)}</span>
                           </Link>
+                          )}
                         </div>
                       </li>
                     );
                   })
                 )}
               </ul>
-            </ScrollArea>
+            </div>
           </SheetContent>
         </Sheet>
 

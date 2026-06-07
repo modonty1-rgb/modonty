@@ -402,7 +402,8 @@ export interface ClientHeroSlide {
 }
 
 // Active partners that have a hero image — feeds the CSS-only sidebar slider.
-export async function getClientHeroSlides(limit = 5): Promise<ClientHeroSlide[]> {
+// limit omitted ⇒ ALL partners with a hero image (no cap); pass a number to cap.
+export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSlide[]> {
   "use cache";
   cacheTag("clients");
   cacheLife("hours");
@@ -418,7 +419,7 @@ export async function getClientHeroSlides(limit = 5): Promise<ClientHeroSlide[]>
       heroImageMedia: { select: { url: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: limit,
+    ...(limit ? { take: limit } : {}),
   });
 
   return clients

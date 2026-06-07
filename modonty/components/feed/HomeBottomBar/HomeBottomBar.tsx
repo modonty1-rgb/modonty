@@ -15,7 +15,7 @@ export async function HomeBottomBar() {
     getIndustriesWithCounts(),
     getTagsWithCounts(),
     getClientsForSidebar(20),
-    getClientHeroSlides(5),
+    getClientHeroSlides(),
   ]);
 
   const categoryOptions: FilterOption[] = categories
@@ -31,9 +31,10 @@ export async function HomeBottomBar() {
     .sort((a, b) => b.articleCount - a.articleCount)
     .map((t) => ({ name: t.name, slug: t.slug, count: t.articleCount }));
 
+  // Mirror the desktop sidebar 1:1 — show ALL active partners (incl. those with no
+  // articles yet), same order (createdAt desc from getClientsForSidebar). The feed-filter
+  // chip is hidden per-row when count === 0 (see HomeBottomBarShell), matching desktop.
   const partnerOptions: FilterOption[] = clients
-    .filter((c) => c.articleCount > 0)
-    .sort((a, b) => b.articleCount - a.articleCount)
     .map((c) => ({ name: c.name, slug: c.slug, count: c.articleCount, logo: c.logo, industry: c.industry }));
 
   return (

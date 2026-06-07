@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { NewsletterSubscribeForm } from "@/components/layout/RightSidebar/NewsletterSubscribeForm";
 import {
   IconGift,
@@ -69,7 +68,7 @@ export function MazayaSheet({ open, onOpenChange }: MazayaSheetProps) {
           </SheetDescription>
         </div>
 
-        <ScrollArea className="flex-1 min-h-0" dir="rtl">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-thin" dir="rtl">
           <div className="px-5 pb-4 pt-4">
             {/* متاح الآن — prominent */}
             <div className="mb-3 flex items-center gap-2 px-1 text-xs font-bold text-muted-foreground">
@@ -117,7 +116,7 @@ export function MazayaSheet({ open, onOpenChange }: MazayaSheetProps) {
               ))}
             </ul>
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Sticky CTA + help links */}
         <div className="border-t border-border bg-gradient-to-t from-card to-card/85 px-5 py-4">

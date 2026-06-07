@@ -123,6 +123,11 @@
     overflow: hidden;
   }
 
+  .scrollbar-thin {
+    scrollbar-width: thin;                                       /* Firefox / standard */
+    scrollbar-color: hsl(var(--muted-foreground) / 0.7) transparent;
+  }
+
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;   /* vertical scrollbar thickness */
     height: 4px;  /* horizontal scrollbar thickness */

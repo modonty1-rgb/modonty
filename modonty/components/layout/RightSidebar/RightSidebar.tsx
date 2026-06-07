@@ -9,7 +9,7 @@ interface RightSidebarProps {
 export async function RightSidebar({ className }: RightSidebarProps) {
   const [clients, heroSlides] = await Promise.all([
     getClientsForSidebar(20),
-    getClientHeroSlides(5),
+    getClientHeroSlides(),
   ]);
 
   return (
