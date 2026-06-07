@@ -1,6 +1,6 @@
 # 💭 Pending Ideas — Brainstorm & Future Features
 
-**Last Updated:** 2026-06-04 (🔍 Article SEO audit updated → 0 ❌ · title-length + internal-links + filename = admin/editorial TODO · ⚡ Lighthouse+GZIP perf check before push · Homepage SEO keywords · Google Reviews Premium · Vercel billing audit)
+**Last Updated:** 2026-06-07 (🔁 NEW: full Quality-Check gate UX review — fresh redesign, deferred · stale-cache vs auto-fix distinction · «fix» wording for missing-data only)
 **Purpose:** ملف يجمع كل الأفكار المُلتقطة عبر shortcut **"reminder"** قبل ما تتحوّل لخطط تفصيلية.
 
 > **القاعدة:** كل فكرة هنا = `[ ]` فارغ، عنوان قصير + وصف موجز + تاريخ الإضافة.
@@ -9,6 +9,33 @@
 ---
 
 ## 💡 أفكار قيد التفكير
+
+### 🔁 مراجعة كاملة لـ UX بوابة الجودة / Quality Check (من الصفر) (added 2026-06-07)
+
+- [ ] **نعيد تصميم تجربة بوابة جودة المقال (pre-publish gate) من جديد — الـ UX حالياً مربك لخالد.** مؤجّل (خالد طلبه صراحةً «بس مش الآن» 2026-06-07).
+- **المشكلة الجوهرية المكتشفة حيّاً اليوم:** القائمة (`/articles/workflow/draft-to-approval`) تعرض شارة خطأ حمرا من **كاش قديم** (`jsonLdValidationReport`)، وأول ما تفتح صفحة الجودة تختفي المشكلة — لأن صفحة الجودة تعيد توليد JSON-LD تلقائياً (`needsRegeneration → regenerateJsonLd`) بينما القائمة **تقرأ فقط** بدون إعادة توليد. النتيجة: القائمة «تكذب» — تقول blocked لمشكلة متصلّحة أصلاً بمجرد الفتح.
+- **التمييز اللي لازم يظهر في الـ UX (نوعان مختلفان جذرياً):**
+  1. **مشاكل محسوبة/مشتقّة** (JSON-LD، الميتا، نوع المنشأة) → تتصلّح **تلقائياً** عند الفتح، لأنها تُحسب من بيانات موجودة بقواعد ثابتة (مثال: `safeOrganizationType` يرجّع نوع غير صالح إلى `Organization`). صفر تخمين.
+  2. **بيانات ناقصة** (صورة بارزة، شعار، كاتب) → **ما تتصلّح تلقائياً أبداً** — الكود ما يقدر يخترع صورة. تحتاج إدخال يدوي.
+- **اقتراحاتي للتنفيذ (اتّفقنا عليها مبدئياً، تُراجع عند البدء):**
+  1. القائمة تعيد التوليد **قبل** عرض الحالة (أو على الأقل تشغّل نفس فحص صفحة الجودة) — عشان ما تعرض أخطاء وهمية متصلّحة.
+  2. المشاكل المحسوبة لو اتصلّحت تلقائياً → تظهر **«✓ اتصلّح تلقائياً»** خضرا، مو شارة حمرا تخوّف.
+  3. كلمة **«fix»** تُحجَز للنوع الثاني (بيانات ناقصة) فقط — هو الوحيد اللي يحتاج تدخّل خالد.
+- **ملفات ذات صلة:** `admin/lib/seo/article-validator-db.ts` (الـ validator + `humanizeSchemaError`) · `admin/app/(dashboard)/articles/workflow/quality-check/[articleId]/page.tsx` (Step 1 = needsRegeneration→regenerate · CheckCard · getFixTab) · `admin/lib/seo/jsonld-storage.ts` (`needsRegeneration`/`regenerateJsonLd`) · `dataLayer/lib/seo/organization-schema-types.ts` (`safeOrganizationType`).
+- **✅ DONE 2026-06-07 — خلل «loading ثم يرجع فاضي» على زر Send (بوابة YMYL كانت غير معروضة):** كانت صفحة الجودة تشغّل **21 فحص SEO فقط**، بينما زر Send يستدعي `gatedTransitionAction` اللي يفحص **الـ 21 + بوابة YMYL** (`checkYmylPublishGate`) → الصفحة تعرض «Ready» والزر مفتوح، والضغط يفشل بصمت (toast أحمر يطير). **الإصلاح المنفّذ:** صفحة الجودة `quality-check/[articleId]/page.tsx` صارت تشغّل نفس بوابة YMYL (`isYmylClientComplete` + فحص `reviewedById`) وتعرضها كفحصين critical ضمن القائمة، وتدمجها في `allPassed` → الزر يتعطّل والشريط يصير «❌ N issues blocking». توثيق العميل → ملاحظة «client completes this in their console»؛ المُراجِع → رابط «Open article → assign reviewer». متحقَّق حيّاً (21/23 · زر معطّل) + TSC أدمن صفر أخطاء. **مش مدفوع بعد.**
+  - **يبقى ضمن المراجعة الشاملة:** نفس النمط لأي بوابة مستقبلية + توحيد عرض القائمة (الكاش القديم) مع صفحة الجودة.
+- [x] **✅ DONE + متحقَّق حيّاً 2026-06-07 (الشريحة المركّزة) — المُراجِع = طبيب العميل، يُختَم لحظة موافقته في الكونسول.** المنفّذ: (1) حقلا `reviewerName` (مطلوب) + `reviewerQualification` (اختياري) أُضيفا لـ `ymyl-config.ts` في الكونسول **والأدمن** (medical/legal/financial) مع hint إن الموافقة = شهادة الطبيب · (2) `approveArticle` بالكونسول يضبط `lastReviewed = now` ضمن نفس الـ update الذرّي (status SCHEDULED) · (3) بوابة الإرسال بالأدمن صارت تعتمد `isYmylClientComplete` (اللي يتطلب `reviewerName`) بدل تعيين مُراجِع مسبق — شرط `reviewedById` أُزيل من `checkYmylPublishGate` · (4) صفحة الجودة تعرض فحص توثيق العميل critical. **دليل خام (قاعدة modonty_dev):** «ابتسامة هوليود» (سمايل تاون · medical) → `status=SCHEDULED` · `lastReviewed=2026-06-07T20:35:35` · `reviewerName="د. محمد شينو"` · `reviewerQualification="استشاري طب الفم والأسنان"`. TSC أدمن+كونسول صفر أخطاء. **مش مدفوع بعد.**
+  - **مؤجّل (البناء التأسيسي الأكبر — `documents/tasks/MEDICAL-YMYL-READINESS.md`، ~32 ساعة):** إخراج `MedicalWebPage`+`reviewedBy`(Physician)+`lastReviewed` في JSON-LD العام · ربط الطبيب كـ `Author(Physician)` عبر `reviewedById` · شارة مُراجِع عامة على صفحة المقال · بنود SFDA. الشريحة المركّزة تكفي E-E-A-T حالياً (الاسم + التاريخ مخزّنان)؛ الباقي تحسين عرض عام.
+- [ ] **🧭 سؤال تصميمي (مرجع) — مَن «مُراجِع» مقال YMYL؟** الحالي: `Article.reviewedById` يشير لـ `Author` مختص **يعيّنه الأدمن يدوياً قبل الإرسال**؛ و`approveArticle` في الكونسول (موافقة الطبيب) يضبط `SCHEDULED` فقط ولا يلمس `reviewedById` — فموافقة الطبيب الحقيقية تُهدر. **اقتراح خالد (أصدق E-E-A-T):** المُراجِع = الطبيب/العميل اللي يوافق في الكونسول؛ لحظة الموافقة تضبط `reviewedById`. **يتطلب:** (1) إنشاء/ربط `Author` (Person) للطبيب من بيانات التوثيق — والحقول الطبية الحالية بلا اسم طبيب · (2) نقل شرط المُراجِع من بوابة الإرسال إلى `approveArticle` · (3) بوابة الإرسال تكتفي بتوثيق العميل. **قرار معلّق** — لم يُنفَّذ.
+- **حالة اليوم (متحقّق حيّاً 2026-06-07):** مقال «ابتسامة هوليود» (عيادة سمايل تاون · YMYL طبي) بعد ما صار **21/21 passed**، الضغط على Send فشل ببوابة YMYL — سببان شرعيان: (1) **توثيق العميل YMYL ناقص** (نفس مشكلة قائمة الجهة المرخِّصة المقفولة اللي أصلحناها بـ Reference Data — العميل لازم يكمّله من الكونسول) + (2) **المقال ما له مُراجِع مختص** (`reviewedById` فاضي). المنع صح منطقياً؛ الخلل في الـ UX فقط (الصفحة تعرض «جاهز» بينما هي مو جاهزة). الرسالة الأولى (Organization Type) بُسّطت ومحلولة.
+
+### 🎁 عروض الشركاء في الشريط الجانبي (added 2026-06-07)
+
+- [ ] **إعادة توظيف كرت «تابعنا» (FollowCard) في الجانب الأيمن لعرض عروض الشركاء** بدل النشرة المكرّرة (النشرة موجودة أصلاً في شيت المزايا موبايل + ديسكتوب).
+- **القرار المتّفق عليه (خالد 2026-06-07):** نبسّطها — نستغل نظام الميديا الموجود بدل موديل عروض جديد. **نضيف قيمة `OFFER` لـ `enum MediaType`** في `dataLayer/prisma/schema/schema.prisma` (الأنواع الحالية: LOGO/POST/OGIMAGE/TWITTER_IMAGE/HERO/GENERAL).
+- **آلية العرض:** صورة العرض ترفع للشريط عبر admin media (scope=CLIENT)، تُؤشّر `type=OFFER` من صفحة تعديل الميديا (القائمة موجودة، نضيف لها OFFER). الجانب يعرض أحدث صورة OFFER للشريط، يربطها تلقائياً بصفحته (`clientId` موجود في الميديا — لا نحتاج حقل رابط).
+- **⚠️ قرار معلّق قبل التنفيذ:** هل العرض مؤقت (له تاريخ انتهاء)؟ لو نعم → نحتاج `validUntil` + تفعيل؛ والأنظف موديل `Offer` صغير يشير لصورة الميديا بدل تلويث موديل الميديا بحقول أعمال. لو دائم → ميديا-بس تكفي.
+- **الحالة:** مؤجّل — الآن نشتغل على بديله المباشر: **سلايدر صور الـ hero للشركاء** (أوتوماتيكي) في نفس مكان كرت «تابعنا».
 
 ### 🔍 Article SEO «Perfect 100%» — حالة محدّثة 2026-06-04
 

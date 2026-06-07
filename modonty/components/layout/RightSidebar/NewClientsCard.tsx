@@ -17,7 +17,7 @@ export function NewClientsCard({ clients }: NewClientsCardProps) {
           <div className="flex items-center gap-2">
             <IconClients className="h-4 w-4 shrink-0 text-primary" />
             <h2 className="text-xs font-semibold text-muted-foreground uppercase">
-              شركاء النجاح
+              الشركاء
             </h2>
           </div>
           <Link
@@ -28,8 +28,8 @@ export function NewClientsCard({ clients }: NewClientsCardProps) {
             استكشف
           </Link>
         </div>
-        {/* offset = navbar(3.5) + FollowCard(~9) + gap(1) + card-header(2.75) = 16.25 → 17rem */}
-        <ScrollArea className="h-[calc(100dvh-19.5rem)]" dir="rtl">
+        {/* offset = navbar(3.5) + HeroSlider(~11.7) + gap(1) + card-header(2.75) + paddings ≈ 22rem */}
+        <ScrollArea className="h-[calc(100dvh-22rem)]" dir="rtl">
           <div className="pb-4">
           {clients.length > 0 ? (
             clients.map((client) => (
@@ -39,6 +39,7 @@ export function NewClientsCard({ clients }: NewClientsCardProps) {
                 clientSlug={client.slug}
                 clientLogo={client.logo}
                 industry={client.industry}
+                articleCount={client.articleCount}
               />
             ))
           ) : (

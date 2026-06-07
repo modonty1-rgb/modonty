@@ -106,6 +106,7 @@ export function generateAuthorStructuredData(author: Author): PersonStructuredDa
 }
 
 import { OrganizationStructuredData } from "@/lib/types";
+import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
 
 export function generateOrganizationStructuredData(client: Client & {
   logoMedia?: { url: string; width?: number | null; height?: number | null } | null;
@@ -113,7 +114,7 @@ export function generateOrganizationStructuredData(client: Client & {
 }): OrganizationStructuredData {
   const structuredData: OrganizationStructuredData = {
     "@context": "https://schema.org",
-    "@type": (client.organizationType as "Organization" | "Corporation" | "LocalBusiness" | "NonProfit" | undefined) || "Organization",
+    "@type": safeOrganizationType(client.organizationType),
     name: client.name,
     ...(client.legalName && { legalName: client.legalName }),
     ...(client.alternateName && { alternateName: client.alternateName }),

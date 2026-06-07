@@ -49,7 +49,7 @@ export default function ClientError({
               <Link href="/clients">
                 <Button variant="outline" className="gap-2">
                   <IconForward className="h-4 w-4" />
-                  العودة إلى العملاء
+                  العودة إلى الشركاء
                 </Button>
               </Link>
               <Link href="/">

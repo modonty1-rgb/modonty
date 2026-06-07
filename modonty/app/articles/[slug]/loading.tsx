@@ -9,7 +9,7 @@ export default function ArticleLoading() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "العملاء", href: "/clients" },
+          { label: "الشركاء", href: "/clients" },
           { label: "..." },
           { label: "..." },
         ]}

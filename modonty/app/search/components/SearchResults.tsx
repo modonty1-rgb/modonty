@@ -91,7 +91,7 @@ export function SearchResults({
       />
       {(scope === "all" || scope === "clients") && clients.length > 0 && (
         <div className={scope === "clients" ? "" : "mb-8"}>
-          <h3 className="text-lg font-semibold text-foreground mb-3">العملاء</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-3">الشركاء</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {clients.map((client) => (
               <ClientCard

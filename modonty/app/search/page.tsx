@@ -56,8 +56,8 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   return generateMetadataFromSEO({
     title: q ? `بحث: ${q.slice(0, 43)}` : "بحث",
     description: q
-      ? `نتائج البحث عن "${q}" في مقالات وعملاء مدونتي`
-      : "ابحث في مقالات وعملاء مدونة مدونتي",
+      ? `نتائج البحث عن "${q}" في مقالات وشركاء مدونتي`
+      : "ابحث في مقالات وشركاء مدونة مدونتي",
     url: q ? `/search?q=${encodeURIComponent(q)}${typeParam}` : "/search",
     robots: "noindex,nofollow",
   });
@@ -73,10 +73,10 @@ function formatResultsCount(count: number): string {
 
 function formatClientResultsCount(count: number): string {
   if (count === 0) return "";
-  if (count === 1) return "تم العثور على عميل واحد";
-  if (count === 2) return "تم العثور على عميلين";
-  if (count <= 10) return `تم العثور على ${count} عملاء`;
-  return `تم العثور على ${count} عميل`;
+  if (count === 1) return "تم العثور على شريك واحد";
+  if (count === 2) return "تم العثور على شريكين";
+  if (count <= 10) return `تم العثور على ${count} شركاء`;
+  return `تم العثور على ${count} شريك`;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {

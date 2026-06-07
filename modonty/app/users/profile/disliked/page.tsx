@@ -45,7 +45,7 @@ export default async function DislikedPage() {
                 icon={IconLike}
                 iconWrapperClassName="hidden"
                 title="لا توجد عناصر غير معجبة"
-                description="لم تعبر عن عدم إعجابك بأي محتوى بعد. ابدأ بالتفاعل مع العملاء والمقالات والتعليقات!"
+                description="لم تعبر عن عدم إعجابك بأي محتوى بعد. ابدأ بالتفاعل مع الشركاء والمقالات والتعليقات!"
                 actionLabel="استكشف المحتوى"
                 actionHref="/"
               />

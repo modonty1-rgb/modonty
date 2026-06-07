@@ -55,16 +55,16 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
       <Link
         href="/clients"
         className="sm:hidden flex items-center gap-1 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        aria-label="رجوع إلى قائمة العملاء"
+        aria-label="رجوع إلى قائمة الشركاء"
       >
         <IconChevronRight className="h-4 w-4 rtl:rotate-0" aria-hidden />
-        العملاء
+        الشركاء
       </Link>
 
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "العملاء", href: "/clients" },
+          { label: "الشركاء", href: "/clients" },
           { label: client.name },
         ]}
         className="hidden sm:block"

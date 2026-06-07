@@ -33,7 +33,7 @@ export function Footer() {
       >
         <Link href="/" className={linkClass}>الرئيسية</Link>
         <Link href="/trending" className={linkClass}>الرائجة</Link>
-        <Link href="/clients" className={linkClass}>العملاء</Link>
+        <Link href="/clients" className={linkClass}>الشركاء</Link>
         <Link href="/industries" className={linkClass}>الصناعات</Link>
         <Link href="/tags" className={linkClass}>الوسوم</Link>
         <Link href="/help" className={linkClass}>المساعدة</Link>

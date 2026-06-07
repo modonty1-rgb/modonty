@@ -12,6 +12,7 @@ import {
   IconSearch,
   IconCategory,
   IconFeed,
+  IconClose,
 } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/link";
@@ -21,6 +22,7 @@ interface InfiniteArticleListProps {
   initialPosts: FeedPost[];
   initialStartIndex?: number;
   categorySlug?: string;
+  clientSlug?: string;
   initialPage?: number;
 }
 
@@ -28,6 +30,7 @@ export function InfiniteArticleList({
   initialPosts,
   initialStartIndex = 0,
   categorySlug,
+  clientSlug,
   initialPage = 1,
 }: InfiniteArticleListProps) {
   const searchParams = useSearchParams();
@@ -38,6 +41,7 @@ export function InfiniteArticleList({
   const [error, setError] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const ignoredRef = useRef(false);
+  const loadingRef = useRef(false); // synchronous guard — prevents double fetch when observer + initial-load fire together
 
   const totalSeen = initialStartIndex + posts.length;
 
@@ -49,17 +53,19 @@ export function InfiniteArticleList({
   }, []);
 
   const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
+    if (loadingRef.current || !hasMore) return;
 
+    loadingRef.current = true;
     setLoading(true);
     setError(false);
     const nextPage = page + 1;
     const requestCategory = categorySlug;
+    const requestClient = clientSlug;
 
     try {
-      const result = await loadMoreArticles(nextPage, requestCategory);
+      const result = await loadMoreArticles(nextPage, requestCategory, requestClient);
       if (ignoredRef.current) return;
-      if (requestCategory !== categorySlug) return;
+      if (requestCategory !== categorySlug || requestClient !== clientSlug) return;
       if (result.articles.length > 0) {
         setPosts((prev) => [...prev, ...result.articles]);
         setPage(nextPage);
@@ -74,9 +80,10 @@ export function InfiniteArticleList({
     } catch {
       if (!ignoredRef.current) setError(true);
     } finally {
+      loadingRef.current = false;
       if (!ignoredRef.current) setLoading(false);
     }
-  }, [loading, hasMore, page, categorySlug]);
+  }, [hasMore, page, categorySlug, clientSlug]);
 
   const loadMoreRef = useRef(loadMore);
   loadMoreRef.current = loadMore;
@@ -87,7 +94,15 @@ export function InfiniteArticleList({
     setPage(initialPage);
     setHasMore(true);
     setError(false);
-  }, [categorySlug, initialPage]);
+  }, [categorySlug, clientSlug, initialPage]);
+
+  // First-page load that doesn't depend solely on the IntersectionObserver firing on mount
+  // (covers sentinel-already-in-view and hot-reload resets — prevents a stuck empty feed).
+  useEffect(() => {
+    if (posts.length === 0 && hasMore && !error) {
+      loadMoreRef.current();
+    }
+  }, [posts.length, hasMore, error, categorySlug, clientSlug]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -114,6 +129,20 @@ export function InfiniteArticleList({
 
   return (
     <>
+      {clientSlug && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-4 py-2.5">
+          <p className="min-w-0 truncate text-sm text-foreground">
+            تعرض مقالات{posts[0]?.clientName ? ` ${posts[0].clientName}` : " هذا الشريك"}
+          </p>
+          <Link
+            href="/"
+            className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            <IconClose className="h-3.5 w-3.5" aria-hidden />
+            عرض الكل
+          </Link>
+        </div>
+      )}
       {posts.length > 0 ? (
         <div className="space-y-4">
           {posts.map((post, index) => (
@@ -150,7 +179,7 @@ export function InfiniteArticleList({
               <Button asChild variant="outline" className="gap-2">
                 <Link href="/clients">
                   <IconFeed className="h-4 w-4" />
-                  استكشف العملاء
+                  استكشف الشركاء
                 </Link>
               </Button>
             </div>

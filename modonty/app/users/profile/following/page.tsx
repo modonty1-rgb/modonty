@@ -42,15 +42,15 @@ export default async function FollowingPage() {
               <EmptyState
                 icon={IconUsers}
                 title="لا تتابع أحداً"
-                description="تابع العملاء للحصول على توصيات محتوى مخصصة والبقاء على اطلاع بأحدث مقالاتهم."
-                actionLabel="تصفح العملاء"
+                description="تابع الشركاء للحصول على توصيات محتوى مخصصة والبقاء على اطلاع بأحدث مقالاتهم."
+                actionLabel="تصفح الشركاء"
                 actionHref="/clients"
               />
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">
-                    العملاء المتابعون ({following.length})
+                    الشركاء المتابعون ({following.length})
                   </h3>
                 </div>
                 <div className="grid gap-4">

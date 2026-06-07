@@ -9,12 +9,13 @@ export interface LoadMoreArticlesResult {
   hasMore: boolean;
 }
 
-export async function loadMoreArticles(page: number, categorySlug?: string): Promise<LoadMoreArticlesResult> {
+export async function loadMoreArticles(page: number, categorySlug?: string, clientSlug?: string): Promise<LoadMoreArticlesResult> {
   try {
     const { articles, pagination } = await getArticles({
       page,
       limit: FEED_PAGE_SIZE,
       ...(categorySlug && { category: categorySlug }),
+      ...(clientSlug && { client: clientSlug }),
     });
 
     const posts: FeedPost[] = articles.map((article: ArticleResponse) => ({

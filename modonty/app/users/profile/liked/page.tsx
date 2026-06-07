@@ -44,7 +44,7 @@ export default async function LikedPage() {
               <EmptyState
                 icon={IconLike}
                 title="لا توجد إعجابات"
-                description="لم تعجبك أي محتوى بعد. ابدأ بالإعجاب بالعملاء والمقالات والتعليقات!"
+                description="لم تعجبك أي محتوى بعد. ابدأ بالإعجاب بالشركاء والمقالات والتعليقات!"
                 actionLabel="استكشف المحتوى"
                 actionHref="/"
               />

@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
   // rule and redirects to / (homepage). Google interpreted the chain as soft-404
   // → "Not found (404)" in URL Inspection → de-indexing risk for 17+ articles.
   // Safer to let /articles 404 cleanly for legacy bookmarks than break new article URLs.
+  // Retired /whats-new (merged into /news). ASCII path → safe to redirect (no Arabic-slug corruption).
+  redirects: async () => [
+    { source: "/whats-new", destination: "/news", permanent: true },
+  ],
   headers: async () => [
     {
       source: "/(.*)",

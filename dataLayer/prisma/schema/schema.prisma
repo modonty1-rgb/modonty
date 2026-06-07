@@ -2605,3 +2605,55 @@ model IntakeOption {
 
   @@map("intake_options")
 }
+
+// ============================================
+// REFERENCE DATA — admin-managed foundational lookups
+// (Settings → Reference Data). Countries drive the client country picker;
+// licensing authorities power YMYL verification. Read by console + SEO,
+// written by admin. Replaces the hardcoded matrix in ymyl-config.ts.
+// ============================================
+
+/// Fixed YMYL category set. Mirrors Client.ymylCategory string values
+/// ("medical" | "legal" | "financial"). Kept an enum here to enforce a valid
+/// category on every authority row.
+enum YmylCategory {
+  medical
+  legal
+  financial
+}
+
+/// A supported country. `code` (ISO 3166-1 alpha-2) is the value stored on
+/// Client.addressCountry and used to resolve licensing authorities.
+model Country {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  code      String  @unique // ISO 3166-1 alpha-2: SA, EG, AE
+  nameAr    String
+  nameEn    String
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("countries")
+}
+
+/// A licensing/regulatory body a YMYL client picks during verification.
+/// Linked to a country by ISO `countryCode` (no relation — resolved in queries).
+model LicensingAuthority {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  countryCode String // → Country.code (ISO 3166-1 alpha-2)
+  category    YmylCategory
+  code        String // short identifier shown alongside the name (MOH, SCFHS, CMA…)
+  nameAr      String
+  nameEn      String
+  isActive    Boolean      @default(true)
+  sortOrder   Int          @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryCode, category, code])
+  @@index([countryCode, category])
+  @@map("licensing_authorities")
+}

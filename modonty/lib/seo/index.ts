@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
 import { buildArticleImageObjects } from "./image-aspect-ratios";
 import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/lib/brand";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
@@ -439,7 +440,7 @@ export function generateAuthorStructuredData(author: any) {
 export function generateOrganizationStructuredData(client: any) {
   const structuredData: any = {
     "@context": "https://schema.org",
-    "@type": client.organizationType || "Organization",
+    "@type": safeOrganizationType(client.organizationType),
     name: client.name,
     ...(client.legalName && { legalName: client.legalName }),
     ...(client.alternateName && { alternateName: client.alternateName }),

@@ -7,6 +7,7 @@ import { ArrowLeft, ExternalLink, Pencil, ShieldCheck, ShieldX, AlertTriangle, C
 import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
 import { needsRegeneration, regenerateJsonLd } from "@/lib/seo/jsonld-storage";
+import { isYmylClientComplete } from "@/lib/seo/ymyl-helpers";
 import type { ValidationCheck } from "@/lib/seo/article-validator";
 import { SendToClientButton } from "./components/send-to-client-button";
 import { ReRunButton } from "./components/re-run-button";
@@ -88,9 +89,14 @@ export default async function QualityCheckPage({ params }: PageProps) {
       author: { select: { name: true } },
       client: {
         select: {
+          id: true,
           name: true,
           slug: true,
           logoMedia: { select: { url: true, width: true, height: true } },
+          isYmyl: true,
+          ymylCategory: true,
+          ymylData: true,
+          addressCountry: true,
         },
       },
     },
@@ -147,10 +153,35 @@ export default async function QualityCheckPage({ params }: PageProps) {
       : null,
   });
 
-  const failed = validation.checks.filter((c) => !c.passed);
-  const passed = validation.checks.filter((c) => c.passed);
+  // YMYL publish gate — the SAME gate that "Send for Approval" enforces. Surface it here
+  // so the page tells the truth instead of showing "Ready" then failing silently on Send.
+  const ymylChecks: ValidationCheck[] = [];
+  if (article.client?.isYmyl) {
+    const clientVerified = isYmylClientComplete({
+      isYmyl: true,
+      ymylCategory: article.client.ymylCategory ?? null,
+      ymylData: article.client.ymylData ?? null,
+      addressCountry: article.client.addressCountry ?? null,
+    });
+    ymylChecks.push({
+      id: "ymyl-client-verification",
+      label: "Client professional verification is complete (YMYL)",
+      severity: "critical",
+      passed: clientVerified,
+      detail: clientVerified
+        ? undefined
+        : "This is a medical/legal/financial (YMYL) client. Their professional verification is incomplete — the client must finish it in their console (including the reviewing professional's name) before this article can be sent. The actual review happens when the client approves the article in their console.",
+    });
+  }
+
+  const allChecks = [...validation.checks, ...ymylChecks];
+  const failed = allChecks.filter((c) => !c.passed);
+  const passed = allChecks.filter((c) => c.passed);
   const allPassed = failed.length === 0;
+  const totalChecks = allChecks.length;
+  const passedCount = passed.length;
   const articleEditUrl = `/articles/${article.id}/edit`;
+  const clientEditUrl = article.client?.id ? `/clients/${article.client.id}/edit` : null;
 
   return (
     <div className="max-w-[1100px] mx-auto space-y-5">
@@ -191,13 +222,13 @@ export default async function QualityCheckPage({ params }: PageProps) {
                 }`}
               >
                 {allPassed
-                  ? `✅ Ready to send — all ${validation.totalChecks} checks passed`
+                  ? `✅ Ready to send — all ${totalChecks} checks passed`
                   : `❌ ${failed.length} issue${failed.length === 1 ? "" : "s"} blocking the send`}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 {allPassed
                   ? "This article meets all SEO requirements and is ready for client review."
-                  : `Article passes ${validation.passedCount}/${validation.totalChecks} checks. Fix every issue below before sending — no overrides allowed.`}
+                  : `Article passes ${passedCount}/${totalChecks} checks. Fix every issue below before sending — no overrides allowed.`}
               </p>
             </div>
           </div>
@@ -260,7 +291,12 @@ export default async function QualityCheckPage({ params }: PageProps) {
           </div>
           <div className="divide-y">
             {failed.map((c) => (
-              <CheckCard key={c.id} check={c} articleEditUrl={articleEditUrl} />
+              <CheckCard
+                key={c.id}
+                check={c}
+                articleEditUrl={articleEditUrl}
+                clientEditUrl={clientEditUrl}
+              />
             ))}
           </div>
         </Card>
@@ -317,7 +353,7 @@ export default async function QualityCheckPage({ params }: PageProps) {
                 Article is technically clean ({article.status})
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                All {validation.totalChecks} SEO checks pass. Use the workflow page action button to advance this article.
+                All {totalChecks} checks pass. Use the workflow page action button to advance this article.
               </p>
             </div>
           </div>
@@ -330,15 +366,23 @@ export default async function QualityCheckPage({ params }: PageProps) {
 function CheckCard({
   check,
   articleEditUrl,
+  clientEditUrl,
 }: {
   check: ValidationCheck;
   articleEditUrl: string;
+  clientEditUrl: string | null;
 }) {
   const fixTab = getFixTab(check.id);
   const isJsonLd = check.id.startsWith("jsonld-");
+  // Logo + publisher live in the client's profile, not the article editor.
+  const isClientIssue = check.id === "publisher-logo" || check.id === "publisher-present";
+  // YMYL verification is client-owned (entered + completed in the console).
+  const isYmylClientVerification = check.id === "ymyl-client-verification";
+  // Lead with the actual problem (detail), not the pass-phrased check name.
+  const problem = check.detail ?? check.label;
 
   return (
-    <div className="px-5 py-4 space-y-2">
+    <div className="px-5 py-4 space-y-2.5">
       <div className="flex items-center gap-2 flex-wrap">
         <XCircle
           className={`h-4 w-4 shrink-0 ${
@@ -349,7 +393,7 @@ function CheckCard({
                 : "text-slate-500"
           }`}
         />
-        <span className="font-semibold text-sm">{check.label}</span>
+        <span className="font-semibold text-sm">{problem}</span>
         <span
           className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
             check.severity === "critical"
@@ -362,29 +406,27 @@ function CheckCard({
           {check.severity}
         </span>
       </div>
-      {check.detail && <div className="text-xs text-muted-foreground ms-6">{check.detail}</div>}
-      {check.fix && (
-        <div className="text-xs flex items-start gap-1.5 px-3 py-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 ms-6">
-          <span className="font-bold shrink-0">💡 How to fix:</span>
-          <span>{check.fix}</span>
-        </div>
-      )}
       <div className="ms-6">
-        {isJsonLd ? (
+        {isYmylClientVerification ? (
+          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
+            <AlertTriangle className="h-3 w-3" />
+            The client completes this in their console — no admin action
+          </span>
+        ) : isJsonLd ? (
           <Link
             href="/search-console"
             className="inline-flex items-center gap-1 text-xs font-medium text-violet-600 hover:underline"
           >
             <ExternalLink className="h-3 w-3" />
-            Open Search Console pipeline
+            Open Search Console
           </Link>
-        ) : fixTab ? (
+        ) : isClientIssue && clientEditUrl ? (
           <Link
-            href={articleEditUrl}
+            href={clientEditUrl}
             className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
           >
             <Pencil className="h-3 w-3" />
-            Open article — fix in {getFixLabel(fixTab)}
+            Open client profile
           </Link>
         ) : (
           <Link
@@ -392,7 +434,7 @@ function CheckCard({
             className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
           >
             <Pencil className="h-3 w-3" />
-            Open article
+            {fixTab ? `Open article → ${getFixLabel(fixTab)}` : "Open article"}
           </Link>
         )}
       </div>

@@ -116,7 +116,7 @@ export function SearchInput({
               onChange={() => setScope("clients")}
               className="rounded-full border-border text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             />
-            <span className="text-sm text-foreground">العملاء</span>
+            <span className="text-sm text-foreground">الشركاء</span>
           </label>
         </div>
       </fieldset>

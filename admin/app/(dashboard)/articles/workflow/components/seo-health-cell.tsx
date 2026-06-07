@@ -20,16 +20,31 @@ export function SeoHealthCell({ articleId, result }: Props) {
     : "border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20";
 
   const Icon = ready ? CheckCircle2 : AlertCircle;
-  const label = ready ? "Ready to send" : `${errors} issue${errors === 1 ? "" : "s"} to fix`;
+
+  // Name the actual problem on the list — admin shouldn't have to click in to
+  // find out what's wrong. Show the first issue's plain-language description
+  // (detail), falling back to the check name, + a "+N" when there's more.
+  const firstIssue = result.checks.find((c) => !c.passed);
+  const issueText = firstIssue?.detail || firstIssue?.label;
+  const label = ready
+    ? "Ready to send"
+    : issueText
+      ? `${issueText}${errors > 1 ? ` +${errors - 1} more` : ""}`
+      : `${errors} to fix`;
+  const hoverHint = ready
+    ? "All checks passed — ready to send"
+    : firstIssue
+      ? `${firstIssue.label}: ${firstIssue.detail ?? ""}`.trim()
+      : "Click to see what to fix";
 
   return (
     <Link
       href={`/articles/workflow/quality-check/${articleId}`}
-      className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md border h-8 px-3 text-xs font-medium transition-colors ${tone}`}
-      title="View quality check details"
+      className={`inline-flex items-center justify-center gap-1.5 rounded-md border h-8 px-3 text-xs font-medium transition-colors ${tone}`}
+      title={hoverHint}
     >
-      <Icon className="h-3.5 w-3.5" />
-      <span>{label}</span>
+      <Icon className="h-3.5 w-3.5 shrink-0" />
+      <span className="max-w-[15rem] truncate">{label}</span>
     </Link>
   );
 }

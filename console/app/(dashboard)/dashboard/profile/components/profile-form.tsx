@@ -88,6 +88,7 @@ interface ProfileFormProps {
   clientId: string;
   initial: ProfileInitial;
   industries: Industry[];
+  countries: { code: string; nameAr: string; nameEn: string }[];
 }
 
 function toDateStr(d: Date | string | null | undefined): string {
@@ -132,7 +133,7 @@ function SectionHeader({
   );
 }
 
-export function ProfileForm({ clientId, initial, industries }: ProfileFormProps) {
+export function ProfileForm({ clientId, initial, industries, countries }: ProfileFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -287,6 +288,27 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
     </div>
   );
 
+  // Country dropdown fed from the admin-managed Countries list (Reference Data).
+  // Stores the ISO code (SA/EG/AE) — which is what resolves licensing authorities
+  // on the verification page. Replaces the old free-text country box.
+  const countrySelect = (label: string) => (
+    <div key="addressCountry" className="space-y-1.5">
+      <Label htmlFor="addressCountry" className="text-sm">{label}</Label>
+      <select
+        id="addressCountry"
+        value={form.addressCountry}
+        onChange={(e) => update("addressCountry", e.target.value)}
+        disabled={loading}
+        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+      >
+        <option value="">— اختر —</option>
+        {countries.map((c) => (
+          <option key={c.code} value={c.code}>{c.nameAr}</option>
+        ))}
+      </select>
+    </div>
+  );
+
   // Static dropdown fed from the shared dataLayer classification lists. Shows the
   // Arabic label, stores the canonical English value — so the console can never
   // write a free-text value the admin's enum would reject.
@@ -398,7 +420,7 @@ export function ProfileForm({ clientId, initial, industries }: ProfileFormProps)
         />
         <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("addressCity", ar.profile.addressCity, { placeholder: "الرياض، جدة، الدمام..." })}
-          {field("addressCountry", ar.profile.addressCountry, { placeholder: "السعودية" })}
+          {countrySelect(ar.profile.addressCountry)}
           {field("addressRegion", ar.profile.addressRegion)}
           {field("addressNeighborhood", ar.profile.addressNeighborhood)}
           {field("addressStreet", ar.profile.addressStreet)}

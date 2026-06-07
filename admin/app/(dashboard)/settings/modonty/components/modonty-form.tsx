@@ -435,27 +435,30 @@ export function ModontyForm({ initialSettings }: Props) {
               <div className="space-y-4">
                 <Field
                   label="Tagline"
+                  hint="سطر واحد فقط — يظهر في كرت الترحيب أعلى الصفحة الرئيسية."
                   counter={settings.platformTagline?.length ?? 0}
-                  counterMax={80}
+                  counterMax={45}
                   counterMin={10}
                 >
                   <Input
                     value={settings.platformTagline ?? ""}
                     onChange={(e) => set("platformTagline", e.target.value)}
                     placeholder="مرحباً بك في مودونتي"
+                    maxLength={45}
                   />
                 </Field>
                 <Field
                   label="Description"
+                  hint="سطر واحد فقط — أي نص زائد يُقصّ في الكرت."
                   counter={settings.platformDescription?.length ?? 0}
-                  counterMax={200}
-                  counterMin={30}
+                  counterMax={80}
+                  counterMin={20}
                 >
-                  <Textarea
+                  <Input
                     value={settings.platformDescription ?? ""}
                     onChange={(e) => set("platformDescription", e.target.value)}
                     placeholder="منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين..."
-                    className="resize-none min-h-[72px]"
+                    maxLength={80}
                   />
                 </Field>
               </div>
@@ -467,10 +470,10 @@ export function ModontyForm({ initialSettings }: Props) {
                   dir="rtl"
                   className="flex min-h-[150px] flex-col items-center justify-center rounded-lg border bg-gradient-to-br from-primary/10 via-card to-background p-6 text-center"
                 >
-                  <h3 className="text-xl font-bold text-foreground">
+                  <h3 className="text-xl font-bold text-foreground line-clamp-1 w-full">
                     {settings.platformTagline?.trim() || "مرحباً بك في مدوّنتي"}
                   </h3>
-                  <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                  <p className="mt-2 max-w-md text-sm text-muted-foreground line-clamp-1 w-full">
                     {settings.platformDescription?.trim() || "منصة المحتوى العربي — اكتشف مقالات من خبراء ومتخصصين."}
                   </p>
                 </div>

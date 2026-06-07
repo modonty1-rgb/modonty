@@ -335,7 +335,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     const jsonLdGraph: object = generateArticleStructuredData(article);
     const breadcrumbJsonLd = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
-      { name: "العملاء", url: "/clients" },
+      { name: "الشركاء", url: "/clients" },
       { name: article.client.name, url: `/clients/${article.client.slug}` },
       { name: article.title, url: `/articles/${article.slug}` },
     ]);
@@ -387,7 +387,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
         <Breadcrumb
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-            { label: "العملاء", href: "/clients" },
+            { label: "الشركاء", href: "/clients" },
             { label: article.client.name, href: `/clients/${article.client.slug}` },
             { label: article.title },
           ]}

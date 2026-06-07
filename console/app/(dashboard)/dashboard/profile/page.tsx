@@ -17,7 +17,7 @@ export default async function ProfilePage() {
   const clientId = (session as { clientId?: string })?.clientId;
   if (!clientId) return null;
 
-  const [client, industries, settings] = await Promise.all([
+  const [client, industries, settings, countries] = await Promise.all([
     db.client.findUnique({
       where: { id: clientId },
       select: {
@@ -71,6 +71,11 @@ export default async function ProfilePage() {
       where: SETTINGS_SINGLETON_WHERE,
       select: { disclaimerText: true, disclaimerVersion: true },
     }),
+    db.country.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }],
+      select: { code: true, nameAr: true, nameEn: true },
+    }),
   ]);
   if (!client) return null;
 
@@ -95,6 +100,7 @@ export default async function ProfilePage() {
         clientId={clientId}
         initial={client}
         industries={industries}
+        countries={countries}
       />
     </div>
   );

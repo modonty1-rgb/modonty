@@ -110,7 +110,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
     });
   } catch {
     return {
-      title: "العملاء - مدونتي",
+      title: "الشركاء - مدونتي",
     };
   }
 }
@@ -171,7 +171,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
 
     const breadcrumbData = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
-      { name: "العملاء", url: "/clients" },
+      { name: "الشركاء", url: "/clients" },
       { name: client.name, url: `/clients/${encodeURIComponent(slug)}` },
     ]);
 
@@ -268,7 +268,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
         <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-semibold text-foreground">أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور</p>
-            <p className="text-sm text-muted-foreground mt-0.5">انضم لعملاء مدونتي واجعل جوجل يجلب لك العملاء</p>
+            <p className="text-sm text-muted-foreground mt-0.5">انضم لشركاء مدونتي واجعل جوجل يجلب لك العملاء</p>
           </div>
           <CtaTrackedLink
             href="https://www.jbrseo.com"

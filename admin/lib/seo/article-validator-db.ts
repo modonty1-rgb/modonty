@@ -123,7 +123,7 @@ function pushStatusCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "Article status is publishable",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : `Status is ${a.status} — not eligible for publishing`,
+    detail: ok ? undefined : `The article's status (${a.status}) can't be published yet`,
     fix: ok ? undefined : "Move article through normal workflow stages before publishing.",
   });
 }
@@ -136,7 +136,11 @@ function pushSlugCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "URL slug is valid",
     severity: "critical",
     passed: ok,
-    detail: !slug ? "Slug is empty" : !ok ? `Slug contains invalid characters: ${slug}` : undefined,
+    detail: !slug
+      ? "The article's URL (slug) is empty"
+      : !ok
+        ? `The article's URL contains invalid characters: ${slug}`
+        : undefined,
     fix: ok ? undefined : "Edit slug — use Arabic letters, numbers, hyphens or underscores only.",
   });
 }
@@ -152,7 +156,7 @@ function pushArticleBodyTextCheck(checks: ValidationCheck[], a: DbArticleInput) 
     label: "Plain-text body cache populated",
     severity: "medium",
     passed: ok,
-    detail: ok ? undefined : "articleBodyText cache is empty or too short",
+    detail: ok ? undefined : "The article's text hasn't been saved to cache yet",
     fix: ok ? undefined : "Auto-fix: re-save the article — system regenerates the plain-text cache.",
   });
 }
@@ -166,7 +170,7 @@ function pushAuthorCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "Author assigned with name",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : "No author or author name is empty",
+    detail: ok ? undefined : "No author is assigned to this article",
     fix: ok ? undefined : "Assign an author in Article editor → Basic tab → Author field.",
   });
 }
@@ -178,7 +182,7 @@ function pushPublisherCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "Publisher (Client) assigned",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : "Article not linked to a client",
+    detail: ok ? undefined : "This article isn't linked to a client",
     fix: ok ? undefined : "Assign a client in Article editor → Basic tab → Client field.",
   });
 }
@@ -194,9 +198,9 @@ function pushPublisherLogoCheck(checks: ValidationCheck[], a: DbArticleInput) {
     severity: "high",
     passed: ok,
     detail: !hasUrl
-      ? "Publisher (client) has no logo set"
+      ? "The client has no logo"
       : !hasDims
-        ? "Publisher logo missing width/height"
+        ? "The client's logo is missing its width/height"
         : undefined,
     fix: ok
       ? undefined
@@ -215,7 +219,7 @@ function pushFeaturedImageCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "Featured image set",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : "No featured image assigned",
+    detail: ok ? undefined : "This article has no featured image",
     fix: ok ? undefined : "Add a featured image in Article editor → Media tab → Featured Image.",
   });
 }
@@ -231,7 +235,7 @@ function pushFeaturedImageSizeCheck(checks: ValidationCheck[], a: DbArticleInput
     label: "Featured image ≥ 50,000 pixels (Google requirement)",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : `Featured image is ${w}×${h} = ${pixels} pixels (Google minimum is 50,000)`,
+    detail: ok ? undefined : `The featured image is too small: ${w}×${h} (needs at least 50,000 pixels)`,
     fix: ok ? undefined : "Replace with a higher-resolution image. Recommended: ≥1200×675 (16:9).",
   });
 }
@@ -244,7 +248,7 @@ function pushFeaturedImageAltCheck(checks: ValidationCheck[], a: DbArticleInput)
     label: "Featured image has alt text",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : "Featured image alt text is empty",
+    detail: ok ? undefined : "The featured image has no alt text",
     fix: ok ? undefined : "Edit the image in Media library and add descriptive alt text.",
   });
 }
@@ -258,7 +262,7 @@ function pushBodyImageAltCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: `All body images have alt text (${images.length} found)`,
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : `${missing.length}/${images.length} body images missing alt text`,
+    detail: ok ? undefined : `${missing.length} of ${images.length} images in the article have no alt text`,
     fix: ok
       ? undefined
       : "Edit each body image in the article — set descriptive alt text in Media library.",
@@ -280,7 +284,7 @@ function pushInternalLinksAnchorsCheck(checks: ValidationCheck[], a: DbArticleIn
     label: "Descriptive anchor text",
     severity: "medium",
     passed: ok,
-    detail: ok ? undefined : `${bad.length} link${bad.length === 1 ? "" : "s"} use generic text (e.g. "${bad[0]?.text}")`,
+    detail: ok ? undefined : `${bad.length} internal link${bad.length === 1 ? "" : "s"} use vague text (e.g. "${bad[0]?.text}")`,
     fix: ok ? undefined : 'Replace generic anchors ("اضغط هنا", "click here") with descriptive keywords.',
   });
 }
@@ -294,7 +298,7 @@ function pushJsonLdCacheCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "JSON-LD cache populated",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : "No JSON-LD cached for this article",
+    detail: ok ? undefined : "Search-engine data hasn't been generated for this article yet",
     fix: ok ? undefined : "Auto-fix: open Search Console → Auto-fix schema, OR re-save the article.",
   });
 }
@@ -306,7 +310,7 @@ function pushJsonLdArticleCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "JSON-LD contains Article type",
     severity: "high",
     passed: hasArticle,
-    detail: hasArticle ? undefined : "Cached JSON-LD missing Article/NewsArticle/BlogPosting",
+    detail: hasArticle ? undefined : "The search-engine data is missing the Article type",
     fix: hasArticle ? undefined : "Auto-fix: regenerate JSON-LD via Search Console pipeline.",
   });
 }
@@ -316,15 +320,25 @@ function pushJsonLdArticleCheck(checks: ValidationCheck[], a: DbArticleInput) {
 
 function pushJsonLdAdobeErrorsCheck(checks: ValidationCheck[], a: DbArticleInput) {
   const report = parseValidationReport(a.jsonLdValidationReport);
-  const count = report?.adobe?.errors?.length ?? 0;
-  const ok = count === 0;
+  const rawErrors = (report?.adobe?.errors ?? []) as unknown[];
+  // Adobe entries may be strings or objects ({message}) — normalize, then drop any
+  // error a clearer dedicated check already reports (no duplicate messages).
+  const remaining = rawErrors
+    .map((e) =>
+      typeof e === "string" ? e : (e as { message?: string })?.message ?? "Invalid structured data",
+    )
+    .filter((msg) => !isCoveredByDedicatedCheck(msg, checks));
+  const ok = remaining.length === 0;
+  const messages = remaining.map(humanizeSchemaError);
   checks.push({
     id: "jsonld-adobe-errors",
-    label: "Schema.org official validator (Adobe): zero errors",
+    label: "Search-engine data passes the official validator",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : `Adobe validator reports ${count} error${count === 1 ? "" : "s"}`,
-    fix: ok ? undefined : "Open Search Console → View schema.org report — fix the underlying data.",
+    detail: ok ? undefined : messages.join(" · "),
+    fix: ok
+      ? undefined
+      : "Usually a missing client detail (logo, business type) or a stale schema. Fix the client's profile, then re-save the article or run Auto-fix schema.",
   });
 }
 
@@ -333,15 +347,20 @@ function pushJsonLdAdobeErrorsCheck(checks: ValidationCheck[], a: DbArticleInput
 
 function pushJsonLdCustomErrorsCheck(checks: ValidationCheck[], a: DbArticleInput) {
   const report = parseValidationReport(a.jsonLdValidationReport);
-  const count = report?.custom?.errors?.length ?? 0;
-  const ok = count === 0;
+  const rawErrors = (report?.custom?.errors ?? []) as string[];
+  // Drop any error a clearer dedicated check already reports (no duplicates).
+  const remaining = rawErrors.filter((msg) => !isCoveredByDedicatedCheck(msg, checks));
+  const ok = remaining.length === 0;
   checks.push({
     id: "jsonld-custom-errors",
-    label: "Modonty business rules: zero errors",
+    label: "Search-engine data passes Modonty's content rules",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : `Business rules report ${count} error${count === 1 ? "" : "s"}`,
-    fix: ok ? undefined : "Open Search Console → View schema.org report — fix business rule violations.",
+    // Plain-language reason(s) — not the raw schema jargon.
+    detail: ok ? undefined : remaining.map(humanizeSchemaError).join(" · "),
+    fix: ok
+      ? undefined
+      : "Most of these come from the client's profile (business type, logo, details). Fix them there, then re-save the article or run Auto-fix schema.",
   });
 }
 
@@ -352,7 +371,7 @@ function pushJsonLdCacheFreshnessCheck(checks: ValidationCheck[], a: DbArticleIn
       label: "JSON-LD cache up to date",
       severity: "high",
       passed: false,
-      detail: "JSON-LD has never been generated",
+      detail: "Search-engine data hasn't been generated yet",
       fix: "Auto-fix: open Search Console → Auto-fix schema OR re-save the article.",
     });
     return;
@@ -368,7 +387,7 @@ function pushJsonLdCacheFreshnessCheck(checks: ValidationCheck[], a: DbArticleIn
     label: "JSON-LD cache up to date",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : `Article was modified ${Math.round(drift / 1000)}s after JSON-LD was last generated — cache stale`,
+    detail: ok ? undefined : "The article changed after its search-engine data was generated — it's now out of date",
     fix: ok ? undefined : "Auto-fix: re-save the article OR run Auto-fix schema in Search Console.",
   });
 }
@@ -384,7 +403,7 @@ function pushCanonicalCheck(checks: ValidationCheck[], a: DbArticleInput) {
     passed: ok,
     detail: ok
       ? undefined
-      : `canonicalUrl in DB points to ${a.canonicalUrl} (different host from article URL)`,
+      : `The article's canonical link points to a different site (${a.canonicalUrl})`,
     fix: ok
       ? undefined
       : "Edit Article SEO tab → clear canonicalUrl OR set it to match the article URL exactly.",
@@ -398,7 +417,7 @@ function pushNextjsMetadataCacheCheck(checks: ValidationCheck[], a: DbArticleInp
     label: "Next.js metadata cache populated",
     severity: "medium",
     passed: ok,
-    detail: ok ? undefined : "Next.js metadata cache is empty",
+    detail: ok ? undefined : "The page's metadata hasn't been generated yet",
     fix: ok ? undefined : "Auto-fix: re-save the article — system regenerates metadata cache.",
   });
 }
@@ -414,7 +433,7 @@ function pushDatePublishedCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "datePublished present (when published)",
     severity: "critical",
     passed: ok,
-    detail: ok ? undefined : "Article is PUBLISHED but datePublished is null",
+    detail: ok ? undefined : "The article is published but has no publish date",
     fix: ok ? undefined : "Set datePublished — usually auto-set on publish transition.",
   });
 }
@@ -426,7 +445,7 @@ function pushDateModifiedCheck(checks: ValidationCheck[], a: DbArticleInput) {
       label: "dateModified ≥ datePublished",
       severity: "high",
       passed: false,
-      detail: "dateModified is null",
+      detail: "The article has no 'last modified' date",
       fix: "Auto-fix: re-save the article.",
     });
     return;
@@ -447,7 +466,7 @@ function pushDateModifiedCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "dateModified ≥ datePublished",
     severity: "high",
     passed: ok,
-    detail: ok ? undefined : "dateModified is earlier than datePublished — invalid timeline",
+    detail: ok ? undefined : "The article's 'last modified' date is before its publish date",
     fix: ok ? undefined : "Auto-fix: re-save the article to refresh dateModified.",
   });
 }
@@ -469,7 +488,7 @@ function pushScheduledAtCheck(checks: ValidationCheck[], a: DbArticleInput) {
     label: "scheduledAt is in the future",
     severity: "medium",
     passed: ok,
-    detail: ok ? undefined : "Article is SCHEDULED but scheduledAt is in the past or null",
+    detail: ok ? undefined : "The article is scheduled, but its scheduled time is missing or already passed",
     fix: ok ? undefined : "Edit article → set a future date in Schedule field.",
   });
 }
@@ -563,6 +582,60 @@ function parseJsonLdTypes(jsonLd: string | null): {
     // malformed — both stay false
   }
   return { hasArticle, hasBreadcrumb };
+}
+
+/**
+ * De-duplication. A schema-validator error is "covered" when a dedicated, clearer
+ * data check already reports the same root cause (e.g. a missing client logo is
+ * caught by the publisher-logo check). When covered, we suppress it on the schema
+ * check so the admin sees ONE clear message — not the same problem twice in jargon.
+ * Only suppresses against checks that ACTUALLY FAILED, so genuine schema/generation
+ * problems (not explained by a missing field) still surface.
+ */
+function isCoveredByDedicatedCheck(raw: string, checks: ValidationCheck[]): boolean {
+  const failed = (id: string) => checks.some((c) => c.id === id && !c.passed);
+  const r = raw.toLowerCase();
+  if (r.includes("logo") && failed("publisher-logo")) return true;
+  if (r.includes("publisher reference") && failed("publisher-present")) return true;
+  if (r.includes("author") && failed("author-present")) return true;
+  if (r.includes("image") && failed("featured-image")) return true;
+  if (
+    (r.includes("missing article node") || r.includes("must contain @graph")) &&
+    (failed("jsonld-cache") || failed("jsonld-article"))
+  )
+    return true;
+  return false;
+}
+
+/**
+ * Turn a raw schema-validator message (developer jargon) into a plain, actionable
+ * sentence for the non-technical admin — and say WHERE to fix it.
+ */
+function humanizeSchemaError(raw: string): string {
+  const map: Record<string, string> = {
+    "Publisher Organization node not found in @graph":
+      "The client's Organization Type is missing or invalid — open the client's profile and pick a valid Organization Type.",
+    "Publisher logo missing (required for Article rich results)":
+      "The client's logo is missing — upload it in the client's profile.",
+    "Missing publisher reference in Article":
+      "The article isn't linked to a client — assign one.",
+    "Missing author reference in Article":
+      "The article's author isn't set — assign an author.",
+    "Author node not found in @graph (expected Person or Organization)":
+      "The article's author isn't set correctly — re-assign the author.",
+    "Author name missing": "The author has no name — set the author's name.",
+    "Missing headline in Article": "The article title is missing.",
+    "Missing Article node in @graph":
+      "The search-engine data is malformed — re-generate it (Auto-fix schema or re-save).",
+    "JSON-LD must contain @graph array":
+      "The search-engine data is malformed — re-generate it (Auto-fix schema or re-save).",
+  };
+  if (map[raw]) return map[raw];
+  // Ajv path-style / "must …" messages → generic, non-technical guidance.
+  if (/^\//.test(raw) || /must (have|not|be)/i.test(raw)) {
+    return "A required field is missing in the search-engine data — re-generate it (Auto-fix schema or re-save).";
+  }
+  return raw;
 }
 
 function parseValidationReport(value: Prisma.JsonValue | null): ValidationReport | null {

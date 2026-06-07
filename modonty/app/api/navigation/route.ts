@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
       { icon: "Home", label: "الرئيسية", href: "/" },
       { icon: "Tags", label: "الفئات", href: "/categories" },
       { icon: "Hash", label: "الوسوم", href: "/tags" },
-      { icon: "Building2", label: "العملاء", href: "/clients" },
+      { icon: "Building2", label: "الشركاء", href: "/clients" },
     ];
 
     const response: ApiResponse<NavigationItem[]> = {

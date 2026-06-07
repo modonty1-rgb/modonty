@@ -36,7 +36,9 @@ export interface ArticleStructuredData extends StructuredDataBase {
 }
 
 export interface OrganizationStructuredData extends StructuredDataBase {
-  "@type": "Organization" | "Corporation" | "LocalBusiness" | "NonProfit" | "EducationalOrganization" | "GovernmentOrganization" | "SportsOrganization" | "NGO";
+  // Any valid schema.org Organization subtype (incl. LocalBusiness/medical types
+  // like Dentist, MedicalClinic). Validated via ORGANIZATION_SCHEMA_TYPES, not the type.
+  "@type": string;
   name: string;
   legalName?: string;
   alternateName?: string;

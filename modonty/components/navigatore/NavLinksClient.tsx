@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { SearchLink } from "@/components/navigatore/SearchLink";
 import { DesktopNavItem } from "@/components/navigatore/DesktopNavItem";
+import { MazayaNavTrigger } from "@/components/navigatore/MazayaNavTrigger";
 import { mainNavItems } from "@/components/navigatore/nav-config";
 
 const FAVORITES_HREF = "/users/profile/favorites";
@@ -33,6 +34,7 @@ export function DesktopNavLinks({ favoritesCount }: DesktopNavLinksProps) {
             />
           );
         })}
+        <MazayaNavTrigger />
       </nav>
     </div>
   );

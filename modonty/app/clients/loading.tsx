@@ -8,7 +8,7 @@ export default function ClientsLoading() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "العملاء" },
+          { label: "الشركاء" },
         ]}
       />
 

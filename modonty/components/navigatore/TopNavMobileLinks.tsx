@@ -10,7 +10,7 @@ import { IconTrending, IconClients, IconSearch } from "@/lib/icons";
 // الرئيسية is intentionally omitted — the logo already links home (standard UX).
 const items = [
   { href: "/trending", label: "الرائجة", icon: IconTrending },
-  { href: "/clients", label: "العملاء", icon: IconClients },
+  { href: "/clients", label: "الشركاء", icon: IconClients },
   { href: "/search", label: "بحث", icon: IconSearch },
 ];
 

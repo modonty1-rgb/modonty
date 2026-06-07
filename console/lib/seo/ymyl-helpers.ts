@@ -85,7 +85,7 @@ export interface YmylValidationResult {
 export function validateYmylData(
   category: string | null | undefined,
   ymylData: unknown,
-  options: { country?: string | null } = {}
+  options: { country?: string | null; authorityCodes?: string[] } = {}
 ): YmylValidationResult {
   const cfg = getYmylConfig(category);
   if (!cfg) {
@@ -105,7 +105,10 @@ export function validateYmylData(
     if (isEmpty) continue;
 
     if (field.type === "dropdown" && typeof value === "string") {
-      const allowed = getAuthorityOptions(category, options.country ?? null, field.key);
+      // Prefer the live admin-managed authority codes (Reference Data); fall back
+      // to the legacy hardcoded matrix when not supplied.
+      const allowed =
+        options.authorityCodes ?? getAuthorityOptions(category, options.country ?? null, field.key);
       if (allowed.length > 0 && !allowed.includes(value)) {
         errors[field.key] = `قيمة غير صحيحة لحقل "${field.label.ar}"`;
       }

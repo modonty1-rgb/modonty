@@ -31,11 +31,16 @@ export async function approveArticle(articleId: string, clientId: string) {
     // Per workflow design: client approval ≠ publish. Admin sees the article in
     // /articles/workflow/scheduled-to-published queue and decides when to publish.
     // datePublished is intentionally NOT set here — it's set when admin publishes.
+    //
+    // The client's approval IS the professional review (E-E-A-T): for YMYL clients
+    // the reviewing professional's name lives in ymylData.reviewerName, and this
+    // approval stamps lastReviewed = now → "Reviewed by Dr. X on <date>".
     await db.article.update({
       where: { id: articleId },
       data: {
         status: ArticleStatus.SCHEDULED,
         ogArticleModifiedTime: now,
+        lastReviewed: now,
       },
     });
 

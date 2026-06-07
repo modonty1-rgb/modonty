@@ -119,6 +119,26 @@ export const YMYL_CATEGORIES: Record<YmylCategory, YmylCategoryConfig> = {
           en: "Upload license certificate (image or PDF)",
         },
       },
+      {
+        key: "reviewerName",
+        type: "text",
+        label: { ar: "اسم الطبيب المُراجِع", en: "Reviewing Doctor's Name" },
+        required: true,
+        helpText: {
+          ar: "الطبيب الذي يراجع مقالاتك. اسمه يظهر للقرّاء ولـ Google كـ«روجِع بواسطة د. فلان». بموافقتك على أي مقال تُقرّ أن الطبيب راجعه — ويُختَم اسمه وتاريخ المراجعة عليه تلقائياً.",
+          en: "The doctor who reviews your articles. Shown to readers and Google as 'Reviewed by Dr. X'. Approving an article attests the doctor reviewed it — their name and the review date are stamped on it automatically.",
+        },
+      },
+      {
+        key: "reviewerQualification",
+        type: "text",
+        label: { ar: "مؤهل/تخصص الطبيب المُراجِع (اختياري)", en: "Reviewer Qualification (optional)" },
+        required: false,
+        helpText: {
+          ar: "مثال: استشاري طب أسنان.",
+          en: "e.g., Consultant Dentist.",
+        },
+      },
     ],
   },
   legal: {
@@ -185,6 +205,26 @@ export const YMYL_CATEGORIES: Record<YmylCategory, YmylCategoryConfig> = {
           en: "Upload bar membership certificate (optional but boosts trust)",
         },
       },
+      {
+        key: "reviewerName",
+        type: "text",
+        label: { ar: "اسم المحامي المُراجِع", en: "Reviewing Lawyer's Name" },
+        required: true,
+        helpText: {
+          ar: "المحامي الذي يراجع مقالاتك. اسمه يظهر كـ«روجِع بواسطة المحامي فلان». بموافقتك على أي مقال تُقرّ أنه راجعه — ويُختَم اسمه وتاريخ المراجعة عليه تلقائياً.",
+          en: "The lawyer who reviews your articles. Shown as 'Reviewed by [Lawyer]'. Approving an article attests they reviewed it — name and review date are stamped automatically.",
+        },
+      },
+      {
+        key: "reviewerQualification",
+        type: "text",
+        label: { ar: "مؤهل/تخصص المُراجِع (اختياري)", en: "Reviewer Qualification (optional)" },
+        required: false,
+        helpText: {
+          ar: "مثال: محامٍ ومستشار قانوني.",
+          en: "e.g., Attorney & Legal Consultant.",
+        },
+      },
     ],
   },
   financial: {
@@ -248,6 +288,26 @@ export const YMYL_CATEGORIES: Record<YmylCategory, YmylCategoryConfig> = {
         helpText: {
           ar: "ارفع صورة الترخيص (اختياري لكن يزيد الثقة)",
           en: "Upload license image (optional but boosts trust)",
+        },
+      },
+      {
+        key: "reviewerName",
+        type: "text",
+        label: { ar: "اسم المستشار المُراجِع", en: "Reviewing Advisor's Name" },
+        required: true,
+        helpText: {
+          ar: "المستشار المالي الذي يراجع مقالاتك. اسمه يظهر كـ«روجِع بواسطة فلان». بموافقتك على أي مقال تُقرّ أنه راجعه — ويُختَم اسمه وتاريخ المراجعة عليه تلقائياً.",
+          en: "The financial advisor who reviews your articles. Shown as 'Reviewed by [Advisor]'. Approving an article attests they reviewed it — name and review date are stamped automatically.",
+        },
+      },
+      {
+        key: "reviewerQualification",
+        type: "text",
+        label: { ar: "مؤهل/تخصص المُراجِع (اختياري)", en: "Reviewer Qualification (optional)" },
+        required: false,
+        helpText: {
+          ar: "مثال: مستشار مالي معتمد.",
+          en: "e.g., Certified Financial Advisor.",
         },
       },
     ],

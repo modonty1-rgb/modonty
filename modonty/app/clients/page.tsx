@@ -39,7 +39,7 @@ export default async function ClientsPage() {
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-          { label: "العملاء" },
+          { label: "الشركاء" },
         ]}
       />
 
@@ -63,7 +63,7 @@ export default async function ClientsPage() {
               هل تريد عملاء من جوجل — بدون إعلانات؟
             </h2>
             <p className="relative mt-3 text-base text-primary-foreground/80 sm:text-lg">
-              انضم لعملاء مدونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
+              انضم لشركاء مدونتي واجعل المحتوى يبيع لصالحك على مدار الساعة
             </p>
             <CtaTrackedLink
               href="https://www.jbrseo.com"

@@ -15,8 +15,15 @@ import { useReportWebVitals } from "next/web-vitals";
  * device/network — real-user field data is the source of truth Google ranks on
  * (web.dev). The 'use client' boundary is confined to this component (returns null).
  */
+// Server route accepts only the 5 Core Web Vitals; next/web-vitals also emits custom
+// framework metrics (Next.js-hydration/render/route-change) we don't forward — filtering
+// them here avoids needless beacons + 400 console noise. Static Set lives outside render.
+const CORE_METRICS = new Set(["LCP", "INP", "CLS", "FCP", "TTFB"]);
+
 export function WebVitals() {
   useReportWebVitals((metric) => {
+    if (!CORE_METRICS.has(metric.name)) return;
+
     // CLS is unitless → ×1000 to keep an integer for GA4; the rest are milliseconds.
     const isCls = metric.name === "CLS";
     const body = JSON.stringify({

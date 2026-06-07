@@ -1,14 +1,16 @@
-import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
+import { getClientsForSidebar, getClientHeroSlides } from "@/app/api/helpers/client-queries";
 import { cn } from "@/lib/utils";
-import { FollowCard } from "./FollowCard";
-import { NewClientsCard } from "./NewClientsCard";
+import { RightSidebarContent } from "./RightSidebarContent";
 
 interface RightSidebarProps {
   className?: string;
 }
 
 export async function RightSidebar({ className }: RightSidebarProps) {
-  const clients = await getClientsForSidebar(20);
+  const [clients, heroSlides] = await Promise.all([
+    getClientsForSidebar(20),
+    getClientHeroSlides(5),
+  ]);
 
   return (
     <aside
@@ -18,10 +20,7 @@ export async function RightSidebar({ className }: RightSidebarProps) {
         className
       )}
     >
-      <div className="flex flex-col gap-4">
-        <FollowCard />
-        <NewClientsCard clients={clients} />
-      </div>
+      <RightSidebarContent clients={clients} heroSlides={heroSlides} />
     </aside>
   );
 }

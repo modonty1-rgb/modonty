@@ -9,6 +9,7 @@
 import Validator from "@adobe/structured-data-validator";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { ORGANIZATION_SCHEMA_TYPES } from "@modonty/database/lib/seo/organization-schema-types";
 
 // Validation result structure
 export interface ValidationResult {
@@ -409,12 +410,12 @@ export async function validateBusinessRules(
   if (!publisherRef || !publisherId) {
     errors.push("Missing publisher reference in Article");
   } else {
-    // Find Organization node (includes subtypes like EducationalOrganization, LocalBusiness, etc.)
-    const orgTypes = ["Organization", "EducationalOrganization", "LocalBusiness", "Corporation", "GovernmentOrganization", "NGO", "MedicalOrganization"];
+    // Accept any valid schema.org Organization subtype (Dentist, MedicalClinic,
+    // LocalBusiness, NonProfit, …) — same canonical set the generators emit.
     const orgNode = graph.find(
       (n: unknown) => {
         const nType = (n as { "@type"?: string })["@type"] || "";
-        return orgTypes.includes(nType) &&
+        return ORGANIZATION_SCHEMA_TYPES.has(nType) &&
           ((n as { "@id"?: string })["@id"] === publisherId || (n as { id?: string }).id === publisherId);
       }
     ) as Record<string, unknown> | undefined;
@@ -433,20 +434,12 @@ export async function validateBusinessRules(
   if (!authorRef || !authorId) {
     errors.push("Missing author reference in Article");
   } else {
-    const validAuthorTypes = [
-      "Person",
-      "Organization",
-      "EducationalOrganization",
-      "LocalBusiness",
-      "Corporation",
-      "GovernmentOrganization",
-      "NGO",
-      "MedicalOrganization",
-    ];
+    // Author may be a Person or any valid Organization subtype (in-house
+    // articles use the publisher Organization itself as author).
     const authorNode = graph.find((n: unknown) => {
       const t = (n as { "@type"?: string })["@type"] ?? "";
       const id = (n as { "@id"?: string; id?: string })["@id"] ?? (n as { id?: string }).id;
-      return validAuthorTypes.includes(t) && id === authorId;
+      return (t === "Person" || ORGANIZATION_SCHEMA_TYPES.has(t)) && id === authorId;
     }) as Record<string, unknown> | undefined;
 
     if (!authorNode) {

@@ -8,12 +8,12 @@ import { useChatSheetStore } from "@/components/chatbot/chat-sheet-store";
 import { cn } from "@/lib/utils";
 
 // Mobile-only floating chat launcher — the assistant character avatar + an "online" dot.
-// Lifts itself above the article's sticky bottom engagement dock so the two never overlap.
-// Article detail pages (/articles/<slug>) render the sticky mobile dock; the /articles
-// list and other routes do not — so match the trailing-slash detail path only.
+// Lifts itself above any sticky bottom bar so the two never overlap:
+//  - article detail pages (/articles/<slug>) render the sticky mobile engagement dock
+//  - the homepage ("/") renders the mobile action bar (filters + newsletter)
 export function ChatFloatingButton() {
   const pathname = usePathname();
-  const overBottomBar = pathname?.includes("/articles/") ?? false;
+  const overBottomBar = (pathname?.includes("/articles/") || pathname === "/") ?? false;
 
   return (
     <button

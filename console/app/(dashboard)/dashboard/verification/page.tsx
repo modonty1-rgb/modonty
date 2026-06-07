@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { ShieldCheck, AlertTriangle } from "lucide-react";
 
+import { YmylCategory } from "@prisma/client";
+
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -28,6 +30,21 @@ export default async function VerificationPage() {
   if (!client || !client.isYmyl) {
     redirect("/dashboard");
   }
+
+  // Licensing authorities for THIS client's country + category, from the
+  // admin-managed Reference Data. Empty until the client sets their country.
+  const authorities =
+    client.addressCountry && client.ymylCategory
+      ? await db.licensingAuthority.findMany({
+          where: {
+            isActive: true,
+            countryCode: client.addressCountry,
+            category: client.ymylCategory as YmylCategory,
+          },
+          orderBy: [{ sortOrder: "asc" }, { code: "asc" }],
+          select: { code: true, nameAr: true },
+        })
+      : [];
 
   return (
     <div className="space-y-6">
@@ -65,6 +82,7 @@ export default async function VerificationPage() {
         ymylCategory={client.ymylCategory}
         ymylData={(client.ymylData ?? null) as Record<string, unknown> | null}
         country={client.addressCountry}
+        authorities={authorities}
       />
     </div>
   );

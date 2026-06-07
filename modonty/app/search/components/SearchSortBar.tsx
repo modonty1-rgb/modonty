@@ -91,7 +91,7 @@ export function SearchSortBar({ scope, query, sortArticles, sortClients }: Searc
       )}
       {showClientSort && (
         <div className="flex items-center gap-2">
-          {scope === "all" && <span className="text-sm text-muted-foreground">ترتيب العملاء:</span>}
+          {scope === "all" && <span className="text-sm text-muted-foreground">ترتيب الشركاء:</span>}
           <SortDropdown value={sortClients} onChange={handleClientSort} />
         </div>
       )}

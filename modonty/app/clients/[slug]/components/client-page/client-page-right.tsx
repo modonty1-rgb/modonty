@@ -50,7 +50,7 @@ export function ClientPageRight({ client, relatedClients, reviews, followers, en
       />
       <section aria-labelledby="client-related-heading">
         <h2 id="client-related-heading" className="sr-only">
-          عملاء مشابهون
+          شركاء مشابهون
         </h2>
         <RelatedClients clients={relatedClients} clientId={client.id} />
       </section>

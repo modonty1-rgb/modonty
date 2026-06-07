@@ -1,4 +1,5 @@
 import { Client } from "@prisma/client";
+import { safeOrganizationType } from "./organization-schema-types";
 
 interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   logoMedia?: {
@@ -120,7 +121,7 @@ export function generateCompleteOrganizationJsonLd(
   const webPageId = absoluteClientPageUrl;
 
   const organizationNode: JsonLdNode = {
-    "@type": (client.organizationType as string) || "Organization",
+    "@type": safeOrganizationType(client.organizationType),
     "@id": organizationId,
     name: client.name,
   };

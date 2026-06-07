@@ -28,7 +28,7 @@ import {
 import { toast } from "sonner";
 
 import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
-import { getAuthorityOptions, validateYmylData } from "@/lib/seo/ymyl-helpers";
+import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 
 import { updateYmylData } from "../actions/profile-actions";
 import { CloudinaryLicenseUpload } from "./cloudinary-license-upload";
@@ -38,9 +38,17 @@ interface YmylSectionProps {
   ymylCategory: string | null;
   ymylData: Record<string, unknown> | null;
   country: string | null;
+  /** Licensing authorities for this client's country + category (from admin Reference Data). */
+  authorities: { code: string; nameAr: string }[];
 }
 
-export function YmylSection({ isYmyl, ymylCategory, ymylData: initialData, country }: YmylSectionProps) {
+export function YmylSection({
+  isYmyl,
+  ymylCategory,
+  ymylData: initialData,
+  country,
+  authorities,
+}: YmylSectionProps) {
   const [data, setData] = useState<Record<string, unknown>>(initialData ?? {});
   const [pending, startTransition] = useTransition();
   const [savedAt, setSavedAt] = useState<Date | null>(null);
@@ -53,7 +61,10 @@ export function YmylSection({ isYmyl, ymylCategory, ymylData: initialData, count
   // Don't render at all when YMYL is not enabled for this client.
   if (!isYmyl || !config) return null;
 
-  const validation = validateYmylData(ymylCategory, data, { country });
+  const validation = validateYmylData(ymylCategory, data, {
+    country,
+    authorityCodes: authorities.map((a) => a.code),
+  });
   const requiredFields = config.fields.filter((f) => f.required);
   const filledCount = requiredFields.filter((f) => {
     const v = data[f.key];
@@ -160,7 +171,6 @@ export function YmylSection({ isYmyl, ymylCategory, ymylData: initialData, count
               }
 
               if (field.type === "dropdown") {
-                const options = getAuthorityOptions(ymylCategory, country, field.key);
                 return (
                   <div key={field.key} className="space-y-1.5">
                     <Label className="text-sm font-medium">
@@ -170,21 +180,21 @@ export function YmylSection({ isYmyl, ymylCategory, ymylData: initialData, count
                     <Select
                       value={typeof value === "string" ? value : undefined}
                       onValueChange={(v) => updateField(field.key, v)}
-                      disabled={options.length === 0}
+                      disabled={authorities.length === 0}
                     >
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            options.length === 0
+                            authorities.length === 0
                               ? "حدّد الدولة في قسم العنوان أولاً"
                               : `اختر ${field.label.ar}`
                           }
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {options.map((opt) => (
-                          <SelectItem key={opt} value={opt}>
-                            {opt}
+                        {authorities.map((a) => (
+                          <SelectItem key={a.code} value={a.code}>
+                            {a.nameAr} ({a.code})
                           </SelectItem>
                         ))}
                       </SelectContent>

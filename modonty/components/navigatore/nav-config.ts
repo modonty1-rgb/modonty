@@ -10,6 +10,6 @@ export interface MainNavItem {
 export const mainNavItems: MainNavItem[] = [
   { icon: IconHome, label: "الرئيسية", href: "/" },
   { icon: IconTrending, label: "الرائجة", href: "/trending" },
-  { icon: IconClients, label: "العملاء", href: "/clients" },
+  { icon: IconClients, label: "الشركاء", href: "/clients" },
 ];
 

@@ -58,7 +58,7 @@ export function ClientPageFeed({ posts, clientName, clientId, relatedClientsCoun
                   clientId={clientId}
                 >
                   <Button variant="outline" size="sm">
-                    تصفح العملاء المشابهين
+                    تصفح الشركاء المشابهين
                   </Button>
                 </CtaTrackedLink>
               )}
@@ -69,7 +69,7 @@ export function ClientPageFeed({ posts, clientName, clientId, relatedClientsCoun
                 clientId={clientId}
               >
                 <Button variant="outline" size="sm">
-                  تصفح العملاء
+                  تصفح الشركاء
                 </Button>
               </CtaTrackedLink>
               <CtaTrackedLink href="/" label="Empty state – الرئيسية" type="LINK" clientId={clientId}>

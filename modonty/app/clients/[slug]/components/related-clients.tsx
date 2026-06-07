@@ -26,7 +26,7 @@ export function RelatedClients({ clients, clientId }: RelatedClientsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitleWithIcon title="عملاء مشابهون" icon={IconClients} />
+        <CardTitleWithIcon title="شركاء مشابهون" icon={IconClients} />
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">

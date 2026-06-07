@@ -42,7 +42,7 @@ export function FeaturedClients({ clients }: FeaturedClientsProps) {
       <div className="container mx-auto max-w-[1128px] px-4">
         <div className="flex items-center gap-2 mb-8">
           <IconFeatured className="h-5 w-5 text-accent fill-accent" />
-          <h2 className="text-3xl font-bold">عملاء مميزون</h2>
+          <h2 className="text-3xl font-bold">شركاء مميزون</h2>
         </div>
         
         <div dir="ltr">

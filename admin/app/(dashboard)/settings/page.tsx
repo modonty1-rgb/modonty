@@ -14,6 +14,7 @@ import {
   Send,
   ArrowRight,
   Lock,
+  Landmark,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { getAllSettings, type AllSettings } from "./actions/settings-actions";
@@ -94,6 +95,17 @@ const LISTINGS: CardSpec[] = [
     cacheKey: "trendingPageJsonLdLastGenerated",
   },
 ];
+
+// Reference data — admin-managed foundational lookups (countries + licensing
+// authorities) reused across the platform (YMYL client verification, etc.).
+const REFERENCE: CardSpec = {
+  href: "/settings/reference-data",
+  title: "Reference Data",
+  description:
+    "Foundational lookups — countries and the licensing authorities used for YMYL client verification (medical, legal, financial).",
+  icon: Landmark,
+  cacheKey: null,
+};
 
 const DEFAULTS: CardSpec = {
   href: "/settings/defaults",
@@ -296,6 +308,23 @@ export default async function SettingsDashboardPage() {
           );
         })}
       </div>
+
+      {/* ── Reference data — admin-managed foundational lookups ── */}
+      <SectionLabel>Reference data</SectionLabel>
+      <Link
+        href={REFERENCE.href}
+        title={REFERENCE.description}
+        className="group flex items-center gap-3.5 rounded-xl border bg-card px-4 py-3.5 transition-colors hover:bg-muted/30"
+      >
+        <div className="h-10 w-10 flex-none rounded-lg bg-muted text-muted-foreground grid place-items-center transition-colors group-hover:text-foreground">
+          <REFERENCE.icon className="h-5 w-5" />
+        </div>
+        <h3 className="text-sm font-bold truncate">{REFERENCE.title}</h3>
+        <span className="flex-none text-[9.5px] font-bold tracking-wide text-primary bg-primary/10 border border-primary/25 rounded-full px-2 py-0.5">
+          Countries · Authorities
+        </span>
+        <ArrowRight className="ms-auto h-4 w-4 flex-none text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+      </Link>
 
       {/* ── Assets & system ── */}
       <SectionLabel>Assets &amp; system</SectionLabel>

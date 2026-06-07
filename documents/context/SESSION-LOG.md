@@ -1,8 +1,101 @@
-# Session Context — Last Updated: 2026-06-06 (⏳ **IN PROGRESS — NOTHING PUSHED:** Booking «احجز الآن» CTA — full booking-form/dialog **redesign** (research-backed, Arabic non-technical audience) + **Telegram admin-mirror firehose** as a Settings-backed checkbox at admin `/settings/telegram` (`Settings.telegramAdminMirrorAll @default(true)`, notify.ts reads it in modonty+console) + machine **100%-disk-activity fix** + **pnpm**/MCP restore after fresh Win11. TSC ×3 clean. Live test: booking redesign verified desktop **client-page**; **PENDING** = verify `/settings/telegram` checkbox live + booking live test on **article page + client page × desktop + mobile**. Large uncommitted tree on main. ⟵ prior 2026-06-05: ✅ **PUSHED + DEPLOYED v1.54.0** commit `ec7d021`: the LAB article design is now the REAL `/articles/[slug]` LIVE on www.modonty.com — verified: **robots=index** · new design (engagement strip + gallery + read-more + mobile dock) · JSON-LD intact · **0 console errors**. **Core Web Vitals** RUM wired via the server-side Measurement Protocol (NEW `WebVitals.tsx` + `/api/track/web-vitals` route + `web_vitals` in events-registry → GA4 **HTTP 204**), NOT a GTM tag. Full hard test PASSED: build **176/176 ×2** · 3 adversarial agents (parity 100% · no bugs · side-effects backward-compatible · de-index safe) · real test user like/save **persisted to DB** across reload · validate-events **21/21**. Fixed `ChatFloatingButton` mobile overlap (`/articles-lab`→`/articles/`). Commit shipped the coupled app set (article+navbar+chatbot+notifications+CWV+seo — `layout.tsx` couples them); held back `.agents`/`.claude/skills`/`skills-lock.json`/admin temp `_*.ts`/`logoModonty.svg`. PENDING (non-critical): changelog v1.54.0 via admin UI · field CWV over ~28d (Search Console+GA4) · booking feature (`Client.bookingUrl`) separate. ⟵ prior 2026-06-04: Article LAB mobile **center client dock** redesign + final SCAN → **9-gap port plan** to graft the lab layout INTO the real `/articles/[slug]`; amber «احجز الآن» CTA = **MOCKUP only** (booking deferred); **NOTHING pushed** — large uncommitted tree [prior-session global nav relocation + `articles-lab/` + shadcn skill + mockups]. Article = heart of project → max care. See top block ↓. ⟵ prior 2026-06-03 PM: PUSHED — NEW `/trust` company-verification page + email-sender fix. Official entity verified via the CR PDF's QR: **شركة جبر الجنوبية للمقاولات · سجل 4030524305 · موحّد 7036024383 · نشط · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M**. Page = OG-banner hero + square favicon mark + official certificate image (+QR) + verify link + LinkedIn-style cards; footer «الموثوقية» link; fixed `lib/brand.ts` LEGAL + shared `organization-jsonld.ts` (also corrected /story's old حديقة البستان data). Email: `RESEND_FROM`→modonty@modonty.com (.env.shared + Vercel env updated) + base.ts footer «reply» + fallbacks. **modonty v1.53.0 + admin v0.71.2 · commit `85381ee` · prod /trust verified LIVE.** PROD DATA set in admin.modonty.com: CS WhatsApp **+966560299034** (sales=966541018020 separate) + email modonty@modonty.com + address الشرفية/أبو بكر الصديق → revalidated via /api/revalidate/tag, wa.me live. PENDING: **Khalid's Trello notes (incoming)** · changelog v1.53.0/v0.71.2 · Vercel RESEND_FROM activates on next deploy · rotate Mongo password.)
+# Session Context — Last Updated: 2026-06-07 (🆕 **HOMEPAGE FEED — FILTER BY PARTNER** built + live-tested desktop+mobile, **NOT pushed**: bordered chip (funnel+article-count, hidden if 0) on each «شركاء النجاح» row → `/?client=slug` server-side filter (same machinery as `?category=`) + active-filter banner «تعرض مقالات X · ✕ عرض الكل» + active partner highlight (tiny `PartnerRow` client wrapper, cache-safe) + InfiniteArticleList hardening (sync loading guard + explicit initial-load = no stuck empty feed). 7 files, TSC clean, 0 new deps. SEO moot (canonical already `/`). **Golden rule saved to memory:** on modonty client-side is last resort, server-side first, lazy when unavoidable. Next: Homepage **Bottom Bar** (mobile). ⟵ earlier 2026-06-07: ✅ **TELEGRAM CLIENT PAIRING LIVE IN PROD** — `setWebhook` registered for client bot → real client (baseetasa) paired + got confirmation = full circle works. Root cause was empty webhook url (`pending=11`); Vercel env verified all 5 TELEGRAM keys + DATABASE_URL linked to console (66 shared vars). **2 pushes deployed READY:** `4823b28` console v0.13.1 (login password show/hide toggle) + `3d31f2c` (modonty v1.55.0 · admin v0.72.0 · console v0.13.0). Vercel token kept, NO rotate per Khalid (Windows env + c:/tmp/vc.txt). PENDING: changelog via admin UI · MongoDB Tools reinstall (backups broke post-format) · OBS-228 mobile sheet · structural-foundation brief. ⟵ earlier same session: **PUSHED — commit `3d31f2c`:** «احجز الآن» booking CTA (form/dialog + `BookingRequest` model) + Telegram admin-mirror firehose (`Settings.telegramAdminMirrorAll`) + client-page CTA/verified-credentials + content disclaimer + Cloudinary license upload. **3 Vercel deploys triggered** (dataLayer shared → all 3 build). **Backup SKIPPED** — `mongodump` gone after Win11 format; schema changes are **additive** (BookingRequest + optional/default fields) = zero data risk (Khalid approved skip). Pre-push gate passed: TSC ×3 clean · secret scan clean · dev-tooling excluded (`.agents`/`.claude/skills`/`.mcp.json`/`settings.local`/`_*.ts`/`logoModonty.svg`/mockup). **PENDING after deploy:** changelog v1.55.0 via admin UI · `setWebhook` on prod (`console.modonty.com/api/telegram/webhook`) for client Telegram pairing · **rotate Vercel token** (was pasted in chat → compromised) · install MongoDB Database Tools for future backups · OBS-228 mobile booking-sheet booking-focus · Khalid confirm booking Telegram received. Vercel token now in Windows User env (persists across restart). ⟵ prior session ⏳ IN PROGRESS — NOTHING PUSHED: Booking «احجز الآن» CTA — full booking-form/dialog **redesign** (research-backed, Arabic non-technical audience) + **Telegram admin-mirror firehose** as a Settings-backed checkbox at admin `/settings/telegram` (`Settings.telegramAdminMirrorAll @default(true)`, notify.ts reads it in modonty+console) + machine **100%-disk-activity fix** + **pnpm**/MCP restore after fresh Win11. TSC ×3 clean. Live test: booking redesign verified desktop **client-page**; **PENDING** = verify `/settings/telegram` checkbox live + booking live test on **article page + client page × desktop + mobile**. Large uncommitted tree on main. ⟵ prior 2026-06-05: ✅ **PUSHED + DEPLOYED v1.54.0** commit `ec7d021`: the LAB article design is now the REAL `/articles/[slug]` LIVE on www.modonty.com — verified: **robots=index** · new design (engagement strip + gallery + read-more + mobile dock) · JSON-LD intact · **0 console errors**. **Core Web Vitals** RUM wired via the server-side Measurement Protocol (NEW `WebVitals.tsx` + `/api/track/web-vitals` route + `web_vitals` in events-registry → GA4 **HTTP 204**), NOT a GTM tag. Full hard test PASSED: build **176/176 ×2** · 3 adversarial agents (parity 100% · no bugs · side-effects backward-compatible · de-index safe) · real test user like/save **persisted to DB** across reload · validate-events **21/21**. Fixed `ChatFloatingButton` mobile overlap (`/articles-lab`→`/articles/`). Commit shipped the coupled app set (article+navbar+chatbot+notifications+CWV+seo — `layout.tsx` couples them); held back `.agents`/`.claude/skills`/`skills-lock.json`/admin temp `_*.ts`/`logoModonty.svg`. PENDING (non-critical): changelog v1.54.0 via admin UI · field CWV over ~28d (Search Console+GA4) · booking feature (`Client.bookingUrl`) separate. ⟵ prior 2026-06-04: Article LAB mobile **center client dock** redesign + final SCAN → **9-gap port plan** to graft the lab layout INTO the real `/articles/[slug]`; amber «احجز الآن» CTA = **MOCKUP only** (booking deferred); **NOTHING pushed** — large uncommitted tree [prior-session global nav relocation + `articles-lab/` + shadcn skill + mockups]. Article = heart of project → max care. See top block ↓. ⟵ prior 2026-06-03 PM: PUSHED — NEW `/trust` company-verification page + email-sender fix. Official entity verified via the CR PDF's QR: **شركة جبر الجنوبية للمقاولات · سجل 4030524305 · موحّد 7036024383 · نشط · جدة/الشرفية/أبو بكر الصديق · رأس مال 8M**. Page = OG-banner hero + square favicon mark + official certificate image (+QR) + verify link + LinkedIn-style cards; footer «الموثوقية» link; fixed `lib/brand.ts` LEGAL + shared `organization-jsonld.ts` (also corrected /story's old حديقة البستان data). Email: `RESEND_FROM`→modonty@modonty.com (.env.shared + Vercel env updated) + base.ts footer «reply» + fallbacks. **modonty v1.53.0 + admin v0.71.2 · commit `85381ee` · prod /trust verified LIVE.** PROD DATA set in admin.modonty.com: CS WhatsApp **+966560299034** (sales=966541018020 separate) + email modonty@modonty.com + address الشرفية/أبو بكر الصديق → revalidated via /api/revalidate/tag, wa.me live. PENDING: **Khalid's Trello notes (incoming)** · changelog v1.53.0/v0.71.2 · Vercel RESEND_FROM activates on next deploy · rotate Mongo password.)
 
 > 📦 **Older sessions (40 blocks, up to 2026-06-01) archived →** [SESSION-LOG-archive-until-2026-06-01.md](./SESSION-LOG-archive-until-2026-06-01.md)
 > This active file keeps only the latest session(s) so the most important state stays in front. `us>` appends here (newest at top).
 > **Rotation rule:** when this file grows large again, copy it to a new dated archive (`SESSION-LOG-archive-until-YYYY-MM-DD.md`), then trim this file back to the latest 1–2 blocks + update the link above.
+
+---
+
+## Session: 2026-06-07 (later) — Homepage feed: filter by partner (icon+count+banner+active-highlight) — NOT pushed
+
+### 🎯 Where I stopped
+- Partner-filter feature **built + live-tested on localhost:3000** (desktop + mobile). **Nothing committed/pushed.** Pivoting now to the Homepage **Bottom Bar** (mobile bottom nav) — Khalid will state the specific point next.
+- Next concrete action: locate the homepage mobile bottom bar component, understand Khalid's ask, discuss → agree → build (per his workflow: point → think → agree → write).
+
+### ✅ Done this session
+- **Feature — filter home feed by partner:** each «شركاء النجاح» sidebar row got a bordered pill chip (funnel `IconFilter` + published-article count, Arabic-Indic via Intl ar-SA; **hidden when count 0**) → `<Link href="/?client=slug">` (encodeURIComponent for Arabic slugs). Reuses the existing `?category=` machinery.
+- **Server query:** `getClientsForSidebar` + `SidebarClient` now return `articleCount` via Prisma `_count` (published + non-future, matches feed filter exactly).
+- **Server action:** `loadMoreArticles(page, categorySlug?, clientSlug?)` — passes `client` to `getArticles` (already supported).
+- **CategoryFeedSection:** reads `?client=` (client filter wins over category).
+- **InfiniteArticleList:** `clientSlug` prop + active-filter banner («تعرض مقالات [name] · ✕ عرض الكل», name from `posts[0].clientName`) + **hardening** (synchronous `loadingRef` guard + explicit initial-load effect → fixes the stuck-empty-feed Khalid hit, which was an HMR artifact).
+- **Active partner highlight:** new `PartnerRow.tsx` (tiny `"use client"` wrapper, `useSearchParams`) highlights the active partner (bg + ring). Cache-safe: page stays `"use cache"`, content stays server-rendered; under existing RightSidebar Suspense (no CSR de-opt).
+- **TSC ×1 (modonty) clean.** Live tested: hard-load + soft-nav switch (جبر سيو ↔ كيما زون), banner, ✕ عرض الكل, mobile responsive, 0-count hidden, active highlight moves. Counts verified: جبر سيو ١٢ · الجنوبية ٧ · كيما زون ٢ · Dream/باقتك ١.
+
+### 📝 Decisions taken (with reasoning)
+- **Server-side filter via `?client=` URL param**, NOT client-side state → golden rule (modonty: server-first). Saved as memory update to `feedback_modonty_performance_first` (client-side = last resort + lazy).
+- **SEO: no code needed** — filtering is client-side over the cached shell, server HTML for `/?client=` == `/`, and homepage canonical is already `/` → Google consolidates automatically; no thin pages. (Avoided touching homepage `generateMetadata` = no cache risk.)
+- **Active highlight as a client wrapper** (not server) → server reading searchParams would break homepage `"use cache"` (the real perf hit). Client `PartnerRow` is cache-safe, SSRs, follows the existing `CategoryFeedSection` useSearchParams-under-Suspense pattern.
+- **Bordered chip** for the filter button → Khalid couldn't distinguish icon from the partner-name link; persistent border/bg makes it read as a distinct button.
+
+### 🚧 Pending / blocked
+- **NOT committed/pushed** — bundle with the day's other work into one push later (version bump + changelog + backup tools first).
+- **Mobile: no trigger.** The filter chip lives in RightSidebar which is `hidden lg:block` → desktop-only entry point (feature itself works on mobile via URL). Open decision: add a mobile entry point or leave desktop-only.
+- **Pre-existing (not from this feature):** `/api/track/web-vitals` returns 400 on homepage — flagged, fix later.
+- Carried over: changelog via admin UI · install MongoDB Database Tools · OBS-228 mobile booking sheet · structural-foundation brief.
+
+### 📂 Files touched (7, all modonty, uncommitted)
+- `app/api/helpers/client-queries.ts` — `SidebarClient.articleCount` + `_count` in `getClientsForSidebar`.
+- `app/actions/article-actions.ts` — `loadMoreArticles` optional `clientSlug`.
+- `components/feed/infiniteScroll/InfiniteArticleList.tsx` — `clientSlug` prop, active-filter banner, sync loading guard, explicit initial-load.
+- `components/feed/CategoryFeedSection.tsx` — read `?client=` (precedence over category).
+- `components/layout/RightSidebar/NewClientsCard.tsx` — pass `articleCount`.
+- `components/layout/RightSidebar/NewClientItem.tsx` — bordered filter chip + wrap row in `PartnerRow`.
+- `components/layout/RightSidebar/PartnerRow.tsx` — NEW client wrapper for active highlight.
+
+### 🔁 Git / deploy state
+- Branch: `main`. Uncommitted: yes (7 files above + prior accumulated tree). Last commit: `4823b28`. Pushed: no new push. Deploy: none triggered.
+
+### 🚀 How to resume in 30 seconds
+1. Dev server: `cd modonty && pnpm dev` (localhost:3000). Filter test URL: `/?client=شركة-جبر-سيو`.
+2. Open `components/layout/MobileFooter` / homepage mobile bottom-bar component (locate first) for the Bottom Bar task.
+3. Decide with Khalid: what changes on the Homepage Bottom Bar.
+
+---
+
+## Session: 2026-06-07 00:30 — Telegram client pairing LIVE in prod + 2 pushes (booking/mirror feature set + login toggle)
+
+### 🎯 Where I stopped
+- Everything pushed + deployed + verified live. Telegram fully working in prod (firehose + client pairing). **Awaiting Khalid's brief on a "structural foundation" (أساس بنيوي) task** he flagged.
+- Next concrete action: receive the structural-foundation brief → PRD-first if large/sensitive, else plan-and-build.
+
+### ✅ Done this session
+- **Booking live test** — 4 cases (client page + article page × desktop + mobile) PASS; success state «تم استلام طلبك ✨»; anti-spam (1 per user×client / hour) confirmed; DB persistence proven (in-app notif counter +1 + anti-spam fires on real BookingRequest row). Logged as **OBS-229** in documents/tasks/CLAUDE.md.
+- **New Vercel token** (post-format) validated (HTTP 200 · team modonty `team_OIl7TDxOqFj8NnBlo4ZAtx5B` · all 9 projects) + persisted to **Windows User env** (durable) + `c:/tmp/vc.txt` (this session). Git push verified (SSH auth `modonty1-rgb` ok, dry-run clean).
+- **Pre-push gate:** TSC ×3 clean · secret scan clean (staged + .claude settings + .mcp.json) · version bump (modonty 1.54→1.55.0 · admin 0.71.2→0.72.0 · console 0.12.1→0.13.0). **Backup SKIPPED** — `mongodump.exe` gone after Win11 format; schema changes additive (BookingRequest model + optional/default fields) = zero data-loss risk (Khalid approved).
+- **PUSHED `3d31f2c`** → 3 deploys READY: booking «احجز الآن» CTA + Telegram admin-mirror firehose + client-page CTA/verified-credentials + content disclaimer + Cloudinary license + client redesign. Excluded dev tooling (.agents/.claude skills/.mcp.json/settings.local/admin _*.ts/logoModonty.svg/mockup).
+- **Telegram client pairing FIXED + LIVE:** diagnosed empty webhook (`getWebhookInfo` url="" · pending=11). Verified Vercel env has all 5 TELEGRAM keys + DATABASE_URL linked to console (66 shared vars — API uses `data` field, must paginate; first query was blind using wrong `envs` field). Ran `setWebhook` (client bot → `console.modonty.com/api/telegram/webhook`, secret from shared env, drop_pending_updates) → url set, pending 0, no error. **Real client (baseetasa) generated code, sent to bot, paired + received confirmation** = full circle.
+- **Login password show/hide toggle** (Eye/EyeOff, RTL-aware, aria-label, i18n ar.login.show/hidePassword) → console v0.13.1, commit **`4823b28`**, deployed READY.
+
+### 📝 Decisions taken (with reasoning)
+- **Skip pre-push backup** → additive schema = zero data loss; mongodump unavailable post-format. Reinstall tools later.
+- **Keep Vercel token, NO rotate** (Khalid: no time, used often) → accept low residual risk (token in chat transcript). Stored Windows env + c:/tmp/vc.txt.
+- **Exclude dev tooling** from commits (same pattern as prior sessions).
+- **Changelog via admin UI** (not a script) → avoid blind prod-DB write.
+- **OBS-228 deferred** by Khalid (mobile booking sheet polish).
+
+### 🚧 Pending / blocked
+- **Changelog** v1.55.0 + v0.13.1 via admin UI.
+- **Install MongoDB Database Tools** (`winget install MongoDB.DatabaseTools`) so `scripts/backup.sh` works again.
+- **OBS-228** — make article-dock booking Sheet booking-focused (BookingForm only, drop full clientCard): `modonty/app/articles/[slug]/components/article-lab-bottom-dock.tsx:148-164`.
+- **Structural foundation task** — brief pending from Khalid.
+- Vercel token visible in this chat transcript (kept; rotate only if leaked).
+
+### 📂 Files touched
+- Push `3d31f2c`: 61 code files across admin+modonty+console+dataLayer (booking/telegram-mirror/cta/disclaimer/cloudinary/client-redesign) — see block below for the per-area list.
+- Push `4823b28`: `console/app/(auth)/login/components/login-form.tsx` (eye toggle) · `console/lib/ar.ts` (show/hidePassword) · `console/package.json` (0.13.1).
+- `documents/tasks/CLAUDE.md` (OBS-228/229) · `documents/context/SESSION-LOG.md` (this).
+
+### 🔁 Git / deploy state
+- Branch: **main**. Pushed commits: **`3d31f2c`** then **`4823b28`**. All Vercel deploys **READY** (modonty/admin/console).
+- Uncommitted: dev tooling only (`.agents/`, `.claude/skills/shadcn/`, `skills-lock.json`, `.claude/settings.local.json`, `.mcp.json`, `admin/scripts/_*.ts`, `logoModonty.svg`, mockup html).
+- Telegram client-bot webhook: **registered** (one-time, persists across deploys).
+
+### 🚀 How to resume in 30 seconds
+1. Vercel token: auto-loaded from Windows env next session; this-session file `c:/tmp/vc.txt`. Team `team_OIl7TDxOqFj8NnBlo4ZAtx5B`.
+2. Await Khalid's structural-foundation brief → PRD-first if large.
+3. Housekeeping if asked: changelog via admin UI · `winget install MongoDB.DatabaseTools`.
+4. OBS-228 ready to build (`article-lab-bottom-dock.tsx`).
+5. Local dev: ONE server at a time (weak machine). Local `DATABASE_URL` = `modonty_dev`; prod = `modonty`.
 
 ---
 

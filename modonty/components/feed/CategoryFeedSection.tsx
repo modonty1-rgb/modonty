@@ -12,7 +12,20 @@ interface CategoryFeedSectionProps {
 
 export function CategoryFeedSection({ serverPosts }: CategoryFeedSectionProps) {
   const searchParams = useSearchParams();
+  const client = searchParams.get('client') ?? undefined;
   const category = searchParams.get('category') ?? undefined;
+
+  // Client filter wins over category — it's the more specific intent.
+  if (client) {
+    return (
+      <InfiniteArticleList
+        initialPosts={[]}
+        initialStartIndex={0}
+        clientSlug={client}
+        initialPage={0}
+      />
+    );
+  }
 
   if (category) {
     return (

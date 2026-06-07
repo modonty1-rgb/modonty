@@ -1,3 +1,4 @@
+import dns from "node:dns";
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { MongoClient, IndexDescription } from "mongodb";
@@ -63,6 +64,16 @@ export async function POST(_req: NextRequest) {
       const send = (event: SseEvent) => {
         controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
       };
+
+      // Some Windows setups leave Node's c-ares resolver pointed at 127.0.0.1
+      // (where no DNS server listens), which breaks the SRV lookup that
+      // `mongodb+srv://` needs — even though the OS resolver (Prisma, nslookup)
+      // works. Fall back to public DNS only when the resolver is loopback.
+      // dev-only route; never runs in production.
+      const currentDns = dns.getServers();
+      if (currentDns.some((s) => s.startsWith("127.") || s === "::1")) {
+        dns.setServers(["1.1.1.1", "8.8.8.8"]);
+      }
 
       const prodClient = new MongoClient(PROD_DATABASE_URL);
       const localClient = new MongoClient(localUrl);

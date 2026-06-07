@@ -36,7 +36,7 @@ export default function GlobalNotFound() {
               <Link href="/clients">
                 <Button variant="ghost" className="gap-2">
                   <IconClients className="h-4 w-4" />
-                  العملاء
+                  الشركاء
                 </Button>
               </Link>
             </div>

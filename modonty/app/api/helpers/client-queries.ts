@@ -349,6 +349,7 @@ export interface SidebarClient {
   slug: string;
   logo?: string;
   industry?: string;
+  articleCount: number;
 }
 
 export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]> {
@@ -364,6 +365,21 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
       slug: true,
       logoMedia: { select: { url: true } },
       industry:  { select: { name: true } },
+      // Published, non-future article count — matches the feed filter exactly so the
+      // badge number == what the filtered feed shows.
+      _count: {
+        select: {
+          articles: {
+            where: {
+              status: ArticleStatus.PUBLISHED,
+              OR: [
+                { datePublished: null },
+                { datePublished: { lte: new Date() } },
+              ],
+            },
+          },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: limit,
@@ -375,6 +391,42 @@ export async function getClientsForSidebar(limit = 20): Promise<SidebarClient[]>
     slug:     c.slug,
     logo:     c.logoMedia?.url || undefined,
     industry: c.industry?.name || undefined,
+    articleCount: c._count?.articles ?? 0,
   }));
+}
+
+export interface ClientHeroSlide {
+  slug: string;
+  name: string;
+  heroImage: string;
+}
+
+// Active partners that have a hero image — feeds the CSS-only sidebar slider.
+export async function getClientHeroSlides(limit = 5): Promise<ClientHeroSlide[]> {
+  "use cache";
+  cacheTag("clients");
+  cacheLife("hours");
+
+  const clients = await db.client.findMany({
+    where: {
+      subscriptionStatus: SubscriptionStatus.ACTIVE,
+      heroImageMediaId: { not: null },
+    },
+    select: {
+      name: true,
+      slug: true,
+      heroImageMedia: { select: { url: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+
+  return clients
+    .filter(c => Boolean(c.heroImageMedia?.url))
+    .map(c => ({
+      slug: c.slug,
+      name: c.name,
+      heroImage: c.heroImageMedia!.url,
+    }));
 }
 

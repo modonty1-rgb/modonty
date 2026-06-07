@@ -190,9 +190,10 @@ export function checkYmylPublishGate(input: {
     blockers.push("بيانات YMYL للعميل غير مكتملة — أكمل التوثيق قبل النشر");
   }
 
-  if (!article.reviewedById) {
-    blockers.push("مقال YMYL يحتاج مُراجِع مختص — اختر مُراجِع قبل النشر");
-  }
+  // NOTE: The reviewer is no longer required at SEND time. Per the agreed model,
+  // the client's professional (doctor/lawyer/advisor) reviews the article when they
+  // APPROVE it in the console — that approval stamps lastReviewed + the reviewer's
+  // name (kept in ymylData.reviewerName, which isYmylClientComplete already requires).
 
   const forbidden = findForbiddenClaims(client.ymylCategory, article.content);
   if (forbidden.length > 0) {

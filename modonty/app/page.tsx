@@ -1,11 +1,14 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { FeedContainer } from "@/components/feed/FeedContainer";
+import { HomeBottomBar } from "@/components/feed/HomeBottomBar/HomeBottomBar";
 import { getArticles } from "@/app/api/helpers/article-queries";
 import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
 import { getFeedBannerSettings } from "@/lib/settings/get-feed-banner-settings";
+import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { SITE_URL, BRAND_AR, BRAND_EN } from "@/lib/brand";
 
 function mapArticle(article: ArticleResponse): FeedPost {
@@ -73,10 +76,11 @@ export default async function HomePage() {
   cacheLife("minutes");
   cacheTag("homepage", "articles", "settings");
 
-  const [{ jsonLd }, { articles }, feedBanner] = await Promise.all([
+  const [{ jsonLd }, { articles }, feedBanner, socialLinks] = await Promise.all([
     getHomePageSeo(),
     getArticles({ page: 1, limit: FEED_PAGE_SIZE }),
     getFeedBannerSettings(),
+    getPlatformSocialLinks(),
   ]);
 
   const posts: FeedPost[] = articles.map(mapArticle);
@@ -94,7 +98,12 @@ export default async function HomePage() {
         posts={posts}
         platformTagline={feedBanner.platformTagline}
         platformDescription={feedBanner.platformDescription}
+        socialLinks={socialLinks}
       />
+      {/* Mobile-only action bar (filters + newsletter) — homepage only, lazy client shell */}
+      <Suspense fallback={null}>
+        <HomeBottomBar />
+      </Suspense>
     </>
   );
 }

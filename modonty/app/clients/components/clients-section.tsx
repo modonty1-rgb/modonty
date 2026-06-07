@@ -75,14 +75,14 @@ export function ClientsSection({ featuredClients, allClients, industries }: Clie
       {featuredClients.length > 0 && (
         <section aria-labelledby="featured-clients-heading">
           <h2 id="featured-clients-heading" className="sr-only">
-            العملاء المميزون
+            الشركاء المميزون
           </h2>
           <FeaturedClients clients={featuredClients} />
         </section>
       )}
       <section aria-labelledby="all-clients-heading">
         <h2 id="all-clients-heading" className="sr-only">
-          جميع العملاء
+          جميع الشركاء
         </h2>
         <ClientsContent initialClients={allClients} industries={industries} />
       </section>

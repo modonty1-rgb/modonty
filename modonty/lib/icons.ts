@@ -151,3 +151,9 @@ export { VolumeX          as IconVolumeX       } from 'lucide-react';
 export { Pause            as IconPause         } from 'lucide-react';
 export { Circle           as IconCircle        } from 'lucide-react';
 export { MoreHorizontal   as IconMoreHorizontal } from 'lucide-react';
+
+// ── Incentives / Marketing ───────────────────────────────────────────────────
+export { Gift             as IconGift          } from 'lucide-react';
+export { BadgePercent     as IconDiscount      } from 'lucide-react';
+export { Ticket           as IconTicket        } from 'lucide-react';
+export { Compass          as IconCompass       } from 'lucide-react';

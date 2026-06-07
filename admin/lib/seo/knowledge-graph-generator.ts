@@ -13,6 +13,7 @@
  */
 
 import { SITE_NAME } from "@/lib/constants/site-name";
+import { safeOrganizationType } from "@modonty/database/lib/seo/organization-schema-types";
 import {
   Article,
   Client,
@@ -521,7 +522,7 @@ function generateOrganizationNode(
   siteUrl: string
 ): JsonLdNode {
   const node: JsonLdNode = {
-    "@type": (client.organizationType as string) || "Organization",
+    "@type": safeOrganizationType(client.organizationType),
     "@id": id,
     name: client.name,
     ...(client.legalName && { legalName: client.legalName }),
