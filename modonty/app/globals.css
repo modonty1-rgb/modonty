@@ -201,6 +201,45 @@
   margin-bottom: 0.6em;
 }
 
+/* Responsive article content — editor (TipTap) HTML can exceed the mobile viewport.
+   Tables are wrapped by sanitizeHtml in .article-table-scroll → the table scrolls
+   within its own box; the page never scrolls horizontally. Desktop is unchanged
+   (the wrapper is full-width and only scrolls when the table is wider than it). */
+.article-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.article-table-scroll > table {
+  margin-block: 0;
+}
+.article-body img,
+.article-content img {
+  max-width: 100%;
+  height: auto;
+}
+.article-body pre,
+.article-content pre {
+  overflow-x: auto;
+}
+.article-body :where(p, h1, h2, h3, h4, h5, h6, li, a),
+.article-content :where(p, h1, h2, h3, h4, h5, h6, li, a) {
+  overflow-wrap: break-word;
+}
+
+/* Mobile bottom clearance for the global footer. Article/home pages render a fixed
+   bottom bar (lg/md:hidden) that overlays the viewport bottom — reserve space so the
+   footer content stays ABOVE it (+ safe-area for notch/home-indicator devices).
+   Reverts to normal padding on desktop (≥lg), where the bar is hidden. */
+footer[role="contentinfo"] {
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  footer[role="contentinfo"] {
+    padding-bottom: 1rem;
+  }
+}
+
 /* Dark-mode article readability fix.
    Editor (TipTap) bakes inline `color: rgb(0,0,0)` into ~every span of pasted content.
    Black-on-dark = invisible in dark mode. Force the theme foreground (overrides plain

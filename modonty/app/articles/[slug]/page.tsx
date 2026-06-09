@@ -393,7 +393,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           ]}
         />
 
-        <div className="container mx-auto max-w-[1128px] px-4 py-6 pb-24 sm:px-6 md:py-8 lg:px-8 lg:pb-8">
+        <div className="container mx-auto max-w-[1128px] px-4 py-6 pb-8 sm:px-6 md:py-8 lg:px-8">
           <div className="flex flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-[300px_1fr] lg:items-start">
 
             {/* RIGHT (RTL first): engagement strip + client card + TOC + gallery */}

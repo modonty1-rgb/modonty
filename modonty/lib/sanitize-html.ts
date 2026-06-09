@@ -48,5 +48,14 @@ export function sanitizeHtml(dirty: string): string {
     return stripDisallowedAttributes(match);
   });
 
+  // Responsive tables: wrap each <table> in a horizontally-scrollable box so a wide
+  // editor table scrolls WITHIN itself on mobile instead of breaking the whole page
+  // layout (responsive-table best practice). Runs last so the injected wrapper isn't
+  // stripped by the tag pass above. Article tables aren't nested → non-greedy match is safe.
+  clean = clean.replace(
+    /<table\b[\s\S]*?<\/table>/gi,
+    (m) => `<div class="article-table-scroll">${m}</div>`,
+  );
+
   return clean;
 }
