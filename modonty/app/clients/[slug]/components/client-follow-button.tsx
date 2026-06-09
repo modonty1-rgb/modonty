@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IconUsers, IconLoading, IconCheck } from "@/lib/icons";
 
@@ -25,6 +25,8 @@ export function ClientFollowButton({
 }: ClientFollowButtonProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [followersCount, setFollowersCount] = useState(initialFollowersCount);
   const [loading, setLoading] = useState(false);
@@ -53,7 +55,7 @@ export function ClientFollowButton({
 
   const handleFollow = async () => {
     if (!session?.user) {
-      router.push("/users/login");
+      router.push(loginHref);
       return;
     }
 

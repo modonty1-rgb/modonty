@@ -106,7 +106,25 @@ export function generateCompleteOrganizationJsonLd(
     updatedAt: Date;
   },
   clientPageUrl: string,
-  options?: { siteUrl?: string; siteName?: string }
+  options?: {
+    siteUrl?: string;
+    siteName?: string;
+    // Customer reviews of this organization (ClientReview, APPROVED only).
+    aggregateRating?: { ratingValue: number; reviewCount: number };
+    reviews?: Array<{
+      author: string;
+      rating: number;
+      body: string;
+      datePublished: string; // ISO 8601
+    }>;
+    // Client-page gallery (Media type=GALLERY, scope=CLIENT) → Organization.image[].
+    galleryImages?: Array<{
+      url: string;
+      altText?: string | null;
+      width?: number | null;
+      height?: number | null;
+    }>;
+  }
 ): JsonLdGraph {
   // Caller MUST pass options.siteUrl (loaded from loadSiteUrl()). Hardcoded fallback only as a safety net.
   const siteUrl = options?.siteUrl || "https://www.modonty.com";
@@ -490,6 +508,99 @@ export function generateCompleteOrganizationJsonLd(
   }
   if (knowsAbout.length > 0) {
     organizationNode.knowsAbout = knowsAbout;
+  }
+
+  // ===== Client-page presentation (mini-site) → JSON-LD =====
+  // Services → OfferCatalog. Each service becomes an Offer wrapping a Service.
+  if (Array.isArray(client.services) && client.services.length > 0) {
+    organizationNode.hasOfferCatalog = {
+      "@type": "OfferCatalog",
+      name: `خدمات ${client.name}`,
+      itemListElement: client.services.map((s) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: s.title,
+          ...(s.description ? { description: s.description } : {}),
+        },
+      })),
+    };
+  }
+
+  // Team members → employee: Person[]
+  if (Array.isArray(client.teamMembers) && client.teamMembers.length > 0) {
+    organizationNode.employee = client.teamMembers.map((m) => {
+      const person: JsonLdNode = { "@type": "Person", name: m.name };
+      if (m.role) person.jobTitle = m.role;
+      const img = ensureAbsoluteUrl(m.photoUrl, siteUrl);
+      if (img) person.image = img;
+      return person;
+    });
+  }
+
+  // Credentials → hasCredential: EducationalOccupationalCredential[]
+  if (Array.isArray(client.credentials) && client.credentials.length > 0) {
+    organizationNode.hasCredential = client.credentials.map((c) => {
+      const cred: JsonLdNode = {
+        "@type": "EducationalOccupationalCredential",
+        name: c.name,
+      };
+      if (c.authority) cred.recognizedBy = { "@type": "Organization", name: c.authority };
+      if (c.year) cred.dateCreated = c.year;
+      const url = ensureAbsoluteUrl(c.url, siteUrl);
+      if (url) cred.url = url;
+      return cred;
+    });
+  }
+  // Gallery → image: ImageObject[] (client-page gallery, Media type=GALLERY).
+  // schema.org/Organization supports `image`; ImageObject (vs bare URL) lets us
+  // carry dimensions + caption for Google image search.
+  if (Array.isArray(options?.galleryImages) && options.galleryImages.length > 0) {
+    const galleryNodes = options.galleryImages
+      .map((g) => {
+        const u = ensureAbsoluteUrl(g.url, siteUrl);
+        if (!u) return null;
+        const node: JsonLdNode = { "@type": "ImageObject", url: u, contentUrl: u };
+        if (g.width) node.width = g.width;
+        if (g.height) node.height = g.height;
+        if (g.altText) node.caption = g.altText;
+        return node;
+      })
+      .filter((n): n is JsonLdNode => n !== null);
+    if (galleryNodes.length > 0) {
+      organizationNode.image = galleryNodes;
+    }
+  }
+
+  // NOTE: introVideoUrl → VideoObject is intentionally NOT emitted yet — a valid
+  // VideoObject needs name + description + thumbnailUrl + uploadDate to avoid a
+  // Google "missing field" warning. Revisit once that metadata is captured.
+
+  // Customer reviews of this organization (ClientReview, APPROVED). Hosted on
+  // Modonty (third-party platform, not the client's own site) → eligible for the
+  // review rich result. bestRating/worstRating explicit per Google guidelines.
+  if (options?.aggregateRating && options.aggregateRating.reviewCount > 0) {
+    organizationNode.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: Math.round(options.aggregateRating.ratingValue * 10) / 10,
+      reviewCount: options.aggregateRating.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+  if (options?.reviews && options.reviews.length > 0) {
+    organizationNode.review = options.reviews.map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.author },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      reviewBody: r.body,
+      datePublished: r.datePublished,
+    }));
   }
 
   graph.push(organizationNode);

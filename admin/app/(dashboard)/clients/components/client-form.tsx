@@ -9,6 +9,7 @@ import { Plus, Pencil, Loader2, ImageIcon, AlertTriangle, X } from "lucide-react
 import NextImage from "next/image";
 import { ClientLogoModal } from "./client-logo-modal";
 import { ClientHeroModal } from "./client-hero-modal";
+import { ClientVerificationModal } from "./client-verification-modal";
 import { useClientForm } from "../helpers/hooks/use-client-form";
 import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { SubscriptionSection } from "./form-sections/subscription-section";
@@ -41,12 +42,16 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
   const formRef = useRef<HTMLFormElement>(null);
   const [logoModalOpen, setLogoModalOpen] = useState(false);
   const [heroModalOpen, setHeroModalOpen] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [openSections, setOpenSections] = useState<string[]>(["client-info"]);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
     (initialData?.logoMedia as { url?: string } | null)?.url ?? null
   );
   const [currentHeroUrl, setCurrentHeroUrl] = useState<string | null>(
     (initialData?.heroImageMedia as { url?: string } | null)?.url ?? null
+  );
+  const [currentVerificationUrl, setCurrentVerificationUrl] = useState<string | null>(
+    (initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null
   );
 
   useEffect(() => {
@@ -56,6 +61,10 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
   useEffect(() => {
     setCurrentHeroUrl((initialData?.heroImageMedia as { url?: string } | null)?.url ?? null);
   }, [(initialData?.heroImageMedia as { url?: string } | null)?.url]);
+
+  useEffect(() => {
+    setCurrentVerificationUrl((initialData as { verificationImageUrl?: string | null })?.verificationImageUrl ?? null);
+  }, [(initialData as { verificationImageUrl?: string | null })?.verificationImageUrl]);
 
   const { form, handleSubmit, loading, error, setError, invalidFields, setInvalidFields, tierConfigs, isEditMode } = useClientForm({
     initialData,
@@ -299,6 +308,44 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </div>
                   </div>
                 )}
+                {/* Verification («التوثيق») — admin-controlled trust anchor, separate
+                    from the SEO-feeding logo/hero. Plain Cloudinary URL, shown on the public page. */}
+                {clientId && (
+                  <div className="border rounded-lg bg-card p-4 mb-2">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest">التوثيق</p>
+                      <span className="text-[11px] text-muted-foreground">مودونتي توثّق — العميل لا يوثّق نفسه</span>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3">
+                      <button
+                        type="button"
+                        onClick={() => setVerificationModalOpen(true)}
+                        className={`relative group w-32 h-20 rounded-lg border-2 ${currentVerificationUrl ? "border-emerald-500/40" : "border-dashed border-border"} hover:border-primary/60 transition-colors overflow-hidden flex-shrink-0 bg-background`}
+                      >
+                        {currentVerificationUrl ? (
+                          <NextImage src={currentVerificationUrl} alt="Verification" fill className="object-contain p-1" sizes="128px" />
+                        ) : (
+                          <div className="flex items-center justify-center h-full">
+                            <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Pencil className="h-4 w-4 text-white" />
+                        </div>
+                      </button>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`h-2 w-2 rounded-full ${currentVerificationUrl ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
+                          <p className="text-sm font-semibold">صورة التوثيق</p>
+                        </div>
+                        <p className="text-sm">{currentVerificationUrl ? "تغيير صورة التوثيق" : "إضافة صورة التوثيق"}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          صورة السجل التجاري / الترخيص — تظهر في صفحة العميل
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <Accordion type="multiple" value={openSections} onValueChange={setOpenSections} className="w-full">
                   <AccordionItem value="client-info" className="border rounded-lg bg-card">
                     <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
@@ -419,6 +466,12 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     clientId={clientId}
                     initialHeroUrl={currentHeroUrl}
                     initialHeroMediaId={(initialData?.heroImageMedia as { id?: string } | null)?.id ?? null}
+                  />
+                  <ClientVerificationModal
+                    open={verificationModalOpen}
+                    onOpenChange={setVerificationModalOpen}
+                    clientId={clientId}
+                    initialVerificationUrl={currentVerificationUrl}
                   />
                   </>
                 )}

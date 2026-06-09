@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/components/providers/SessionContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,8 @@ const initialState: ClientCommentFormState = { ok: false, message: "" };
 export function ClientCommentForm({ clientSlug }: ClientCommentFormProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
   const formRef = useRef<HTMLFormElement>(null);
   const [content, setContent] = useState("");
   const [state, formAction, pending] = useActionState(
@@ -54,7 +56,7 @@ export function ClientCommentForm({ clientSlug }: ClientCommentFormProps) {
           يجب{" "}
           <button
             type="button"
-            onClick={() => router.push("/users/login")}
+            onClick={() => router.push(loginHref)}
             className="text-primary underline"
           >
             تسجيل الدخول

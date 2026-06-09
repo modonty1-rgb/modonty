@@ -1,13 +1,9 @@
-import { Suspense, ReactNode } from "react";
+import { ReactNode } from "react";
 import dynamicImport from "next/dynamic";
 import { notFound } from "next/navigation";
 import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { IconChevronRight } from "@/lib/icons";
-import { ClientHero } from "./components/hero/client-hero";
-import { ClientStickyProvider } from "./components/client-tabs-nav";
-import { ClientMobileCta } from "./components/client-mobile-cta";
-import { ALL_TAB_ITEMS } from "./components/client-tab-items";
 import { getClientPageData } from "./helpers/client-page-data";
 
 // Dynamic import for GTM tracker (SSR enabled; component guards browser APIs)
@@ -21,6 +17,12 @@ interface ClientLayoutProps {
   params: Promise<{ slug: string }>;
 }
 
+/**
+ * Client mini-site layout = platform chrome only (GTM + breadcrumb). The hero,
+ * scroll-spy nav, sections, and mobile dock all live in the single-page shell
+ * rendered by page.tsx (mockup is a single page; /about + /contact sub-routes
+ * are 301-redirected here).
+ */
 export default async function ClientLayout({ children, params }: ClientLayoutProps) {
   const { slug } = await params;
 
@@ -30,15 +32,7 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
     notFound();
   }
 
-  const { client, stats } = data;
-
-  const hiddenSet = new Set([
-    ...(client._count.articles === 0 ? ["reels"] : []),
-    ...(stats.followers === 0 ? ["likes"] : []),
-  ]);
-  const tabItems = ALL_TAB_ITEMS.filter(
-    (item) => item.segment === null || !hiddenSet.has(item.segment)
-  );
+  const { client } = data;
 
   return (
     <>
@@ -70,25 +64,7 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
         className="hidden sm:block"
       />
 
-      <ClientHero
-        client={client}
-        stats={{
-          followers: stats.followers,
-          articles: client._count.articles,
-          totalViews: stats.totalViews,
-        }}
-        initialIsFollowing={false}
-      />
-
-      <main className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-        <ClientStickyProvider clientSlug={client.slug} clientName={client.name} clientId={client.id} items={tabItems}>
-          <Suspense fallback={<div className="h-64 bg-muted rounded-md animate-pulse" />}>
-            {children}
-          </Suspense>
-        </ClientStickyProvider>
-      </main>
-      <ClientMobileCta clientSlug={client.slug} />
+      <main className="mx-auto w-full max-w-[1128px] flex-1">{children}</main>
     </>
   );
 }
-

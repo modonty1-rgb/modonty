@@ -1,14 +1,16 @@
 import { z } from "zod";
 
 /**
- * Booking form input. Name + email come from the session (login required),
- * so the visitor only provides phone (required) + optional preferred date + note.
+ * Booking form input. No login required — the phone number identifies the lead.
+ * Visitor provides phone (required) + optional name + optional preferred date + note.
+ * For logged-in users the name prefills from the session; email is taken server-side.
  * Phone accepts Saudi (+9665…) or Egyptian (+201…) mobiles, including the local
  * 05…/01… forms which the server normalizes to E.164.
  */
 const phoneRegex = /^(\+?9665\d{8}|\+?201\d{9}|05\d{8}|01\d{9})$/;
 
 export const bookingSchema = z.object({
+  name: z.string().trim().max(80, "الاسم طويل جداً").optional().or(z.literal("")),
   phone: z
     .string()
     .trim()

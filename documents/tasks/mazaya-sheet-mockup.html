@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mazaya Sheet — Mockup</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Real modonty dark-theme tokens */
+    --bg: hsl(245 50% 8%);
+    --fg: hsl(0 0% 98%);
+    --card: hsl(245 40% 12%);
+    --primary: hsl(240 100% 65%);
+    --primary-fg: hsl(245 87% 19%);
+    --accent: hsl(180 100% 50%);
+    --accent-fg: hsl(245 87% 19%);
+    --muted: hsl(245 40% 15%);
+    --muted-fg: hsl(215 20% 65%);
+    --border: hsl(245 40% 20%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Tajawal", sans-serif;
+    background: #060814;
+    color: var(--fg);
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  /* ---------- Phone frame ---------- */
+  .phone {
+    width: 390px;
+    height: 800px;
+    border-radius: 36px;
+    background: var(--bg);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 10px #11131f, 0 0 0 12px #2a2d44;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Header (depth) ---------- */
+  .sheet-header {
+    position: relative;
+    padding: 26px 20px 22px;
+    background:
+      radial-gradient(120% 90% at 85% 0%, hsl(180 100% 50% / .18), transparent 60%),
+      radial-gradient(120% 90% at 10% 0%, hsl(240 100% 65% / .22), transparent 55%),
+      var(--card);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .sheet-header::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(hsl(0 0% 100% / .05) 1px, transparent 1px);
+    background-size: 14px 14px;
+    opacity: .5;
+    pointer-events: none;
+  }
+  .close {
+    position: absolute; top: 16px; left: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--muted-fg); background: hsl(0 0% 100% / .06);
+    border: none; cursor: pointer;
+  }
+  .hero-icon {
+    width: 52px; height: 52px; border-radius: 16px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--primary-fg);
+    box-shadow: 0 8px 24px hsl(240 100% 65% / .35);
+    margin-bottom: 14px;
+  }
+  .hero-icon svg { width: 26px; height: 26px; }
+  .sheet-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+  .sheet-header p { margin-top: 6px; font-size: 13px; line-height: 1.6; color: var(--muted-fg); max-width: 30ch; }
+
+  /* ---------- Body ---------- */
+  .sheet-body { flex: 1; overflow-y: auto; padding: 18px 20px 10px; }
+  .sheet-body::-webkit-scrollbar { width: 6px; }
+  .sheet-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+
+  .section-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; color: var(--muted-fg);
+    margin: 4px 2px 12px;
+    text-transform: none;
+  }
+  .section-label .live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e; box-shadow: 0 0 0 4px hsl(142 71% 45% / .2);
+  }
+  .section-label.soon { margin-top: 22px; }
+  .soon-pill {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    background: hsl(180 100% 50% / .12); border: 1px solid hsl(180 100% 50% / .25);
+    padding: 2px 8px; border-radius: 999px;
+  }
+
+  /* Ready perks — prominent */
+  .perk {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 12px; border-radius: 14px;
+    background: hsl(0 0% 100% / .02);
+    border: 1px solid transparent;
+    opacity: 0; transform: translateY(8px);
+    animation: rise .5s ease forwards;
+  }
+  .perk:hover { border-color: var(--border); background: hsl(0 0% 100% / .04); }
+  .perk .ic {
+    width: 38px; height: 38px; border-radius: 11px; flex: none;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, hsl(240 100% 65% / .18), hsl(180 100% 50% / .18));
+    color: var(--accent);
+  }
+  .perk .ic svg { width: 19px; height: 19px; }
+  .perk .t { font-size: 14.5px; font-weight: 700; }
+  .perk .d { font-size: 12px; color: var(--muted-fg); margin-top: 2px; line-height: 1.5; }
+
+  /* Soon perks — condensed, muted, 2-col */
+  .soon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .soon-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px; border-radius: 12px;
+    background: var(--muted); border: 1px dashed var(--border);
+    opacity: 0; transform: translateY(8px);
+    animation: rise .5s ease forwards;
+  }
+  .soon-item .ic {
+    width: 28px; height: 28px; border-radius: 8px; flex: none;
+    display: grid; place-items: center;
+    background: hsl(0 0% 100% / .05); color: var(--muted-fg);
+  }
+  .soon-item .ic svg { width: 15px; height: 15px; }
+  .soon-item .t { font-size: 12px; font-weight: 600; color: hsl(0 0% 90%); line-height: 1.3; }
+
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---------- Sticky footer (CTA) ---------- */
+  .sheet-footer {
+    border-top: 1px solid var(--border);
+    background: linear-gradient(to top, var(--card), hsl(245 40% 12% / .85));
+    backdrop-filter: blur(8px);
+    padding: 14px 20px 16px;
+  }
+  .cta-row { display: flex; gap: 8px; }
+  .cta-row input {
+    flex: 1; height: 44px; border-radius: 12px;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); padding: 0 14px; font-family: inherit; font-size: 14px;
+  }
+  .cta-row input::placeholder { color: var(--muted-fg); }
+  .cta-row button {
+    height: 44px; padding: 0 22px; border: none; border-radius: 12px;
+    background: var(--accent); color: var(--accent-fg);
+    font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer;
+    box-shadow: 0 6px 18px hsl(180 100% 50% / .3);
+  }
+  .reassure {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 10px; font-size: 11px; color: var(--muted-fg);
+  }
+  .reassure svg { width: 13px; height: 13px; }
+  .help {
+    display: flex; justify-content: center; gap: 18px;
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+  }
+  .help a {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--muted-fg); text-decoration: none;
+  }
+  .help a:hover { color: var(--accent); }
+  .help svg { width: 14px; height: 14px; }
+
+  /* ---------- Notes panel ---------- */
+  .notes {
+    width: 360px; color: #c7cbe6; font-size: 14px; line-height: 1.8;
+    background: #0d1020; border: 1px solid #232745; border-radius: 18px; padding: 24px;
+  }
+  .notes h3 { color: #fff; font-size: 17px; margin-bottom: 6px; }
+  .notes .sub { color: #7c81a8; font-size: 12px; margin-bottom: 18px; }
+  .notes h4 { color: var(--accent); font-size: 13px; margin: 18px 0 6px; }
+  .notes ul { padding-inline-start: 18px; }
+  .notes li { margin-bottom: 7px; }
+  .notes .before { color: #ff8a8a; }
+  .notes .after { color: #7ee0a0; }
+</style>
+</head>
+<body>
+
+  <!-- ============ PHONE MOCKUP ============ -->
+  <div class="phone">
+    <div class="sheet-header">
+      <button class="close" aria-label="إغلاق"><i data-lucide="x"></i></button>
+      <div class="hero-icon"><i data-lucide="gift"></i></div>
+      <h2>خلّ مدوّنتي تجيك</h2>
+      <p>اشترك ببريدك، وتوصلك المقالات والمزايا أول بأول — بدون إزعاج.</p>
+    </div>
+
+    <div class="sheet-body">
+      <!-- READY -->
+      <div class="section-label"><span class="live"></span> متاح الآن</div>
+
+      <div class="perk" style="animation-delay:.05s">
+        <span class="ic"><i data-lucide="zap"></i></span>
+        <div><div class="t">تكون أول من يعرف</div><div class="d">أحدث المقالات توصلك قبل الكل.</div></div>
+      </div>
+      <div class="perk" style="animation-delay:.1s">
+        <span class="ic"><i data-lucide="list"></i></span>
+        <div><div class="t">خلاصة جاهزة</div><div class="d">أهم المقالات ملخّصة، توفّر وقتك.</div></div>
+      </div>
+      <div class="perk" style="animation-delay:.15s">
+        <span class="ic"><i data-lucide="volume-2"></i></span>
+        <div><div class="t">النسخة الصوتية توصلك</div><div class="d">اسمع المقال في طريقك بدل ما تقرأ.</div></div>
+      </div>
+      <div class="perk" style="animation-delay:.2s">
+        <span class="ic"><i data-lucide="rocket"></i></span>
+        <div><div class="t">جديد الشركاء أول</div><div class="d">إطلاقات وخدمات الشركاء قبل غيرك.</div></div>
+      </div>
+
+      <!-- SOON -->
+      <div class="section-label soon">قريباً للمشتركين <span class="soon-pill">على الطريق</span></div>
+      <div class="soon-grid">
+        <div class="soon-item" style="animation-delay:.25s"><span class="ic"><i data-lucide="badge-percent"></i></span><div class="t">عروض وخصومات</div></div>
+        <div class="soon-item" style="animation-delay:.28s"><span class="ic"><i data-lucide="gift"></i></span><div class="t">سحوبات وهدايا</div></div>
+        <div class="soon-item" style="animation-delay:.31s"><span class="ic"><i data-lucide="ticket"></i></span><div class="t">كوبون ترحيبي</div></div>
+        <div class="soon-item" style="animation-delay:.34s"><span class="ic"><i data-lucide="lock"></i></span><div class="t">محتوى حصري</div></div>
+        <div class="soon-item" style="animation-delay:.37s"><span class="ic"><i data-lucide="bell"></i></span><div class="t">تنبيه العروض</div></div>
+        <div class="soon-item" style="animation-delay:.4s"><span class="ic"><i data-lucide="target"></i></span><div class="t">توصيات على ذوقك</div></div>
+      </div>
+    </div>
+
+    <div class="sheet-footer">
+      <div class="cta-row">
+        <input type="email" placeholder="أدخل بريدك الإلكتروني" />
+        <button>اشترك</button>
+      </div>
+      <div class="reassure"><i data-lucide="shield"></i> بريدك بأمان · بدون سبام · تلغي وقت ما تبي</div>
+      <div class="help">
+        <a href="#"><i data-lucide="help-circle"></i> مركز المساعدة</a>
+        <a href="#"><i data-lucide="message-square"></i> إرسال ملاحظات</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ NOTES ============ -->
+  <div class="notes">
+    <h3>Sheet «المزايا» — النسخة المحسّنة</h3>
+    <div class="sub">Track B (واجهة الزائر) · معيار modonty-uiux · دارك ثيم حقيقي</div>
+
+    <h4>المشكلة → الحل</h4>
+    <ul>
+      <li><span class="before">10 مزايا بوزن واحد</span> → <span class="after">مجموعتان: «متاح الآن» (4) بارزة + «قريباً» (6) مجمّعة ومخفّفة.</span></li>
+      <li><span class="before">«قريباً» مكرّرة 6 مرات</span> → <span class="after">عنوان قسم واحد «قريباً» بدل 6 شارات — أصدق وأنظف، والوعود تبقى ظاهرة.</span></li>
+      <li><span class="before">مسطّح وأدمن-شكل</span> → <span class="after">هيدر فيه عمق (تدرّج + أيقونة بارزة) + دخول متدرّج للبطاقات.</span></li>
+    </ul>
+
+    <h4>ثابت ما تغيّر</h4>
+    <ul>
+      <li>نفس الفورم والـ CTA (تركوازي) ثابت تحت.</li>
+      <li>الرابطان (مركز المساعدة · إرسال ملاحظات) في الأسفل.</li>
+      <li>كل الوعود موجودة — «قريباً» شفّافة، ما نوهم إنها جاهزة.</li>
+      <li>CSS فقط — صفر مكتبات، يحترم حساسية الباندل.</li>
+    </ul>
+
+    <h4>قرار محتاج رأيك</h4>
+    <ul>
+      <li>«قريباً» شبكة عمودين مختصرة (بدون وصف). أوكي؟ ولا تبيها صفّ كامل بوصف؟</li>
+      <li>الهوك «خلّ مدوّنتي تجيك» — يعجبك ولا أرجّع «اشترك واستفد»؟</li>
+    </ul>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

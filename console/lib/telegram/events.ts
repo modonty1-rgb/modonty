@@ -61,17 +61,17 @@ export const TELEGRAM_EVENTS: TelegramEventDef[] = [
   { key: "leadHigh", group: "article", label: "Lead باهتمام عالٍ", emoji: "🔥" },
 
   // Client Page (6)
-  { key: "clientView", group: "clientPage", label: "زيارة صفحة الشركة", emoji: "👁" },
-  { key: "clientFollow", group: "clientPage", label: "متابعة الشركة", emoji: "➕" },
-  { key: "clientShare", group: "clientPage", label: "مشاركة صفحة الشركة", emoji: "↗" },
-  { key: "clientFavorite", group: "clientPage", label: "حفظ صفحة الشركة", emoji: "⭐" },
-  { key: "clientComment", group: "clientPage", label: "تعليق على صفحة الشركة", emoji: "💬" },
-  { key: "clientSubscribe", group: "clientPage", label: "اشتراك مباشر بالشركة", emoji: "📧" },
+  { key: "clientView", group: "clientPage", label: "زيارة صفحة نشاطك", emoji: "👁" },
+  { key: "clientFollow", group: "clientPage", label: "متابعة نشاطك", emoji: "➕" },
+  { key: "clientShare", group: "clientPage", label: "مشاركة صفحة نشاطك", emoji: "↗" },
+  { key: "clientFavorite", group: "clientPage", label: "حفظ صفحة نشاطك", emoji: "⭐" },
+  { key: "clientComment", group: "clientPage", label: "تعليق على صفحة نشاطك", emoji: "💬" },
+  { key: "clientSubscribe", group: "clientPage", label: "اشتراك مباشر بنشاطك", emoji: "📧" },
 
   // Direct (4)
   { key: "supportMessage", group: "direct", label: "رسالة دعم جديدة", emoji: "📩" },
   { key: "campaignInterest", group: "direct", label: "تسجيل اهتمام بحملة", emoji: "📣" },
-  { key: "askClientQuestion", group: "direct", label: "سؤال مباشر للشركة", emoji: "🙋" },
+  { key: "askClientQuestion", group: "direct", label: "سؤال مباشر لنشاطك", emoji: "🙋" },
   { key: "bookingRequest", group: "direct", label: "طلب حجز جديد", emoji: "📅" },
 ];
 
@@ -81,11 +81,11 @@ export const TELEGRAM_EVENT_GROUPS: Record<
 > = {
   article: {
     label: "أحداث المقال",
-    description: "كل ما يحدث على مقالات شركتك في مدونتي.",
+    description: "كل ما يحدث على مقالات نشاطك في مدونتي.",
   },
   clientPage: {
-    label: "أحداث صفحة الشركة",
-    description: "كل ما يحدث على صفحة شركتك العامة.",
+    label: "أحداث صفحة نشاطك",
+    description: "كل ما يحدث على صفحة نشاطك العامة.",
   },
   direct: {
     label: "تواصل مباشر",

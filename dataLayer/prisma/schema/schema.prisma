@@ -66,6 +66,7 @@ enum MediaType {
   TWITTER_IMAGE
   HERO
   GENERAL
+  GALLERY // Client-page gallery image (ImageObject[])
 }
 
 enum MediaScope {
@@ -185,6 +186,7 @@ model User {
   // Interaction relations
   comments              Comment[]
   clientComments        ClientComment[]
+  clientReviews         ClientReview[]
   articleLikes          ArticleLike[]
   articleDislikes       ArticleDislike[]
   articleFavorites      ArticleFavorite[]
@@ -297,6 +299,36 @@ model ChatbotMessage {
 // ============================================
 // CLIENT/ORGANIZATION MODELS
 // ============================================
+
+// ---- Client-page presentation (embedded composite types, MongoDB) ----
+// Stored ON the Client document (read-together, bounded, no independent lifecycle).
+// JSON-LD: services→OfferCatalog · teamMembers→employee:Person[] · credentials→hasCredential.
+
+type ClientServiceItem {
+  title       String
+  description String?
+  icon        String? // lucide icon name (optional)
+}
+
+type ClientTeamMember {
+  name     String
+  role     String?
+  bio      String?
+  photoUrl String? // Cloudinary
+}
+
+type ClientAchievement {
+  value String // e.g. "12+", "98%"
+  label String // e.g. "سنة خبرة"
+  icon  String?
+}
+
+type ClientCredential {
+  name      String // e.g. "ISO 9001"
+  authority String? // issuing body
+  year      String?
+  url       String? // proof / certificate link
+}
 
 model Client {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId // wiil use as unique for gtm integration
@@ -467,6 +499,14 @@ model Client {
   ymylCategory  String? // "medical" | "legal" | "financial"
   ymylData      Json?   // shape varies per ymylCategory — see ymyl-config.ts
 
+  // ============ Client Page (mini-site presentation) ============
+  introVideoUrl        String?             // VideoObject — intro/promo video (Cloudinary/YouTube)
+  verificationImageUrl String?             // صورة التوثيق (سجل/ترخيص) — Cloudinary, displayed on page (admin-controlled)
+  services             ClientServiceItem[] // OfferCatalog
+  teamMembers          ClientTeamMember[]  // employee: Person[]
+  achievements         ClientAchievement[] // stats counters
+  credentials          ClientCredential[]  // hasCredential
+
   // Relationships
   articles          Article[]
   subscribers       Subscriber[]
@@ -476,6 +516,8 @@ model Client {
 
   // Interaction relations
   comments        ClientComment[]
+  clientFaqs      ClientFAQ[]
+  reviews         ClientReview[]
   likes           ClientLike[]
   dislikes        ClientDislike[]
   favorites       ClientFavorite[]
@@ -1258,6 +1300,28 @@ model ArticleFAQ {
   @@map("faqs")
 }
 
+model ClientFAQ {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  question String // Schema.org Question
+  answer   String? // Optional until client answers (reader submissions)
+  position Int // Order in FAQ list
+  status   ArticleFAQStatus @default(PENDING) // reuse existing enum — PENDING until answered, then PUBLISHED
+
+  submittedByName  String? // Set for reader submissions
+  submittedByEmail String? // Set for reader submissions
+  source           String? @default("manual") // "manual" | "chatbot" | "user"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, position])
+  @@index([clientId, status])
+  @@map("client_faqs")
+}
+
 model RelatedArticle {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   articleId String  @db.ObjectId
@@ -1509,6 +1573,29 @@ model ClientComment {
   @@index([parentId])
   @@index([status])
   @@map("client_comments")
+}
+
+/// Customer review of a CLIENT's service — stars + text, one per visitor per client.
+/// Separate from ClientComment (discussion): rating is required, @@unique enforces
+/// one review per author, feeds AggregateRating + Review[] JSON-LD on the client page.
+model ClientReview {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String @db.ObjectId
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  authorId String @db.ObjectId
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  rating  Int    // 1–5 (required)
+  comment String // review text
+
+  status CommentStatus @default(PENDING) // PENDING until moderated → APPROVED feeds the page
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([clientId, authorId]) // one review per visitor per client
+  @@index([clientId, status])
+  @@map("client_reviews")
 }
 
 model ClientLike {

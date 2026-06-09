@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صفحة العميل — موقع كامل · مدونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#070b1a;--bg:#0a0e22;--panel:#0e1430;--card:#141b3a;--card2:#18204a;
+    --line:#232d57;--line2:#2e3a6e;--txt:#eef1fb;--muted:#9aa3c7;--muted2:#6b76a3;
+    --primary:#4d63ff;--primary2:#6d6cff;--accent:#00e0d8;--accent2:#2ad8ff;
+    --good:#34d399;--gold:#f5c451;--wa:#25d366;
+    --primary-soft:rgba(77,99,255,.14);--accent-soft:rgba(0,224,216,.12);--radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Tajawal",system-ui,sans-serif;
+    background:radial-gradient(900px 500px at 85% -5%, rgba(77,99,255,.14), transparent 60%),
+      radial-gradient(700px 400px at 0% 10%, rgba(0,224,216,.08), transparent 55%),var(--bg);
+    color:var(--txt);line-height:1.6;padding:24px 14px 80px;-webkit-font-smoothing:antialiased}
+  .page{max-width:1320px;margin:0 auto}
+
+  h1.title{font-size:26px;font-weight:900;letter-spacing:-.4px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;font-size:12.5px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  .badge-new{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#06121a;font-weight:800;font-size:10px;padding:2px 7px;border-radius:999px}
+  .badge-imp{background:var(--primary-soft);color:var(--primary2);font-weight:800;font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid var(--line2)}
+
+  .frameLabel{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;margin:30px 0 14px}
+  .frameLabel .pill{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:3px 11px}
+  .frames{display:flex;flex-direction:column;gap:44px;align-items:center}
+
+  /* device — NO overflow:hidden (so sticky works); corners via topbar/dock radius */
+  .device{background:var(--navy);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px -40px rgba(0,0,0,.9);position:relative}
+  .desktop{width:880px;max-width:100%}
+  .mobile{width:390px;max-width:100%}
+  .topbar{height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(10,14,34,.95);border-bottom:1px solid var(--line);border-radius:22px 22px 0 0;position:relative;z-index:6}
+  .logo{font-weight:900;font-size:16px;background:linear-gradient(90deg,#fff,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .topnav{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+  .topnav .on{color:var(--accent)}
+
+  /* HERO */
+  .hero{position:relative}
+  .cover{height:150px;background:linear-gradient(120deg,#0b1230 0%,#15246e 45%,#1b3aa0 100%);position:relative;overflow:hidden}
+  .cover::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 20% 30%,rgba(0,224,216,.25),transparent 40%),repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 12px,transparent 12px 24px)}
+  .cover .ribbon{position:absolute;top:12px;inset-inline-start:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(7,11,26,.7);backdrop-filter:blur(6px);border:1px solid rgba(0,224,216,.4);color:var(--accent);font-size:11px;font-weight:700;padding:5px 11px;border-radius:999px}
+  .cover .verify{position:absolute;top:12px;inset-inline-end:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.4);color:var(--good);font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px}
+  .heroCard{margin:-46px 18px 0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative;z-index:2}
+  .heroTop{display:flex;gap:14px;align-items:flex-start}
+  .avatar{width:84px;height:84px;border-radius:20px;flex:0 0 84px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--accent));color:#06121a;font-weight:900;font-size:30px;border:3px solid var(--card);margin-top:-44px;box-shadow:0 10px 30px -10px rgba(77,99,255,.6)}
+  .nameRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .nameRow h2{font-size:21px;font-weight:900;letter-spacing:-.3px}
+  .vchip{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:12px;font-weight:700}
+  .vchip svg{width:16px;height:16px}
+  .tagline{color:var(--muted);font-size:13px;margin-top:3px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+  .chip{font-size:11.5px;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;display:inline-flex;align-items:center;gap:5px}
+  .chip.indu{color:var(--accent2);border-color:var(--line2)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:14px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .stat{background:var(--card);padding:11px 8px;text-align:center}
+  .stat b{display:block;font-size:18px;font-weight:900;color:var(--txt)}
+  .stat b .u{font-size:11px;color:var(--muted);font-weight:600}
+  .stat span{font-size:11px;color:var(--muted)}
+  .stat.hl b{color:var(--accent)}
+  /* dominant CTA bar in hero (focal point) */
+  .ctaRow{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:11px;font-weight:800;font-size:13.5px;padding:11px 16px;cursor:pointer;border:1px solid transparent;transition:.15s;white-space:nowrap;text-decoration:none}
+  .btn svg{width:16px;height:16px}
+  .btn-primary{background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 10px 26px -8px rgba(77,99,255,.75);flex:1;min-width:160px;font-size:14.5px;padding:13px 18px}
+  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-ghost{background:var(--card2);color:var(--txt);border-color:var(--line2)}
+  .btn-wa{background:rgba(37,211,102,.14);color:var(--wa);border-color:rgba(37,211,102,.4)}
+  .btn-ico{background:var(--card2);border-color:var(--line2);color:var(--muted);width:42px;padding:11px 0}
+  .socials{display:flex;gap:7px;margin-inline-start:auto}
+  .soc{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+
+  /* TABS — sticky + scroll-spy */
+  .tabs{display:flex;gap:4px;padding:8px 14px;margin-top:14px;overflow-x:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(10,14,34,.97);backdrop-filter:blur(6px);position:sticky;top:0;z-index:5;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{font-size:13px;font-weight:700;color:var(--muted);padding:8px 13px;border-radius:9px;white-space:nowrap;cursor:pointer;user-select:none;transition:.15s}
+  .tab.on{background:var(--accent-soft);color:var(--accent)}
+
+  .body{padding:18px}
+  .grid2{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+  .mobile .grid2{grid-template-columns:1fr}
+  .col{display:flex;flex-direction:column;gap:16px}
+  /* sticky sidebar — fills the whitespace as main scrolls */
+  .desktop .sidebar{position:sticky;top:56px;align-self:start}
+
+  .block{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;scroll-margin-top:62px}
+  .block.glow{border-color:var(--line2);box-shadow:inset 0 0 0 1px rgba(0,224,216,.06)}
+  /* dominant feature block (الخدمات) — focal point in the body */
+  .block.feature{background:linear-gradient(135deg,rgba(77,99,255,.14),rgba(0,224,216,.07));border-color:var(--line2);box-shadow:0 14px 40px -22px rgba(77,99,255,.6)}
+  .block.feature>.bhead{border-bottom-color:var(--line2)}
+  .block.feature>.bhead h3{font-size:17px}
+  .block.feature>.bhead h3 .ic{background:linear-gradient(135deg,var(--primary),var(--accent));color:#06121a}
+  .bhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 15px;border-bottom:1px solid var(--line)}
+  .bhead h3{font-size:15px;font-weight:800;display:inline-flex;align-items:center;gap:8px}
+  .bhead h3 .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary2)}
+  .bhead .more{font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:3px}
+  .bbody{padding:15px}
+
+  .svc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mobile .svc{grid-template-columns:1fr}
+  .svcCard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:13px;display:flex;gap:11px;align-items:flex-start;transition:.15s}
+  .svcCard:hover{border-color:var(--line2);transform:translateY(-2px)}
+  .svcCard .si{width:38px;height:38px;border-radius:10px;flex:0 0 38px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary-soft),var(--accent-soft));color:var(--accent2);font-size:18px}
+  .svcCard h4{font-size:13.5px;font-weight:800;margin-bottom:2px}
+  .svcCard p{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+  .aboutTxt{font-size:13px;color:var(--muted);line-height:1.75}
+  .video{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:linear-gradient(135deg,#15246e,#0e7a86);display:grid;place-items:center;margin-bottom:14px}
+  .video .play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--primary);display:grid;place-items:center;box-shadow:0 8px 24px -6px rgba(0,0,0,.5)}
+  .video .play svg{width:22px;height:22px;margin-inline-start:3px}
+  .video .vlbl{position:absolute;bottom:10px;inset-inline-start:12px;background:rgba(7,11,26,.7);color:#fff;font-size:11px;padding:4px 9px;border-radius:7px}
+  .creds{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .cred{display:inline-flex;align-items:center;gap:6px;background:rgba(245,196,81,.1);border:1px solid rgba(245,196,81,.3);color:var(--gold);font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:10px}
+
+  .art{display:flex;gap:12px;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--card2);margin-bottom:10px}
+  .art:last-child{margin-bottom:0}
+  .art .thumb{width:96px;height:68px;border-radius:9px;flex:0 0 96px;background:linear-gradient(135deg,#15246e,#1b3aa0)}
+  .art .thumb.t2{background:linear-gradient(135deg,#1a2a5e,#0e7a86)}
+  .art .thumb.t3{background:linear-gradient(135deg,#2a1a5e,#6d6cff)}
+  .art h4{font-size:13.5px;font-weight:700;line-height:1.45}
+  .art .meta{font-size:11px;color:var(--muted2);margin-top:5px;display:flex;gap:8px}
+
+  .gal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .mobile .gal{grid-template-columns:repeat(3,1fr)}
+  .gal div{aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#15246e,#0e7a86)}
+  .gal div:nth-child(2){background:linear-gradient(135deg,#2a1a5e,#6d6cff)}
+  .gal div:nth-child(3){background:linear-gradient(135deg,#1b3aa0,#00e0d8)}
+  .gal div:nth-child(4){background:linear-gradient(135deg,#15246e,#1b3aa0)}
+
+  .team{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  .mobile .team{grid-template-columns:1fr 1fr}
+  .tm{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center}
+  .tm .av{width:56px;height:56px;border-radius:50%;margin:0 auto 9px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#06121a;font-weight:800;display:grid;place-items:center;font-size:19px}
+  .tm h4{font-size:12.5px;font-weight:800}
+  .tm span{font-size:11px;color:var(--muted)}
+  .tm .tsoc{margin-top:8px;display:flex;gap:7px;justify-content:center;color:var(--muted2);font-size:11px}
+
+  .aggr{display:flex;align-items:center;gap:8px;font-size:12px}
+  .aggr .big{font-size:18px;font-weight:900;color:var(--gold)}
+  .aggr .st{color:var(--gold);letter-spacing:1px}
+  .aggr .cnt{color:var(--muted)}
+  .rev{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--card2);margin-bottom:10px}
+  .rev:last-child{margin-bottom:0}
+  .rev .who{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .rev .ra{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:#06121a;font-weight:800;display:grid;place-items:center;font-size:13px}
+  .rev .stars{color:var(--gold);font-size:12px;margin-inline-start:auto}
+  .rev p{font-size:12.5px;color:var(--muted);line-height:1.55}
+
+  .faq{display:flex;flex-direction:column;gap:8px}
+  .fq{border:1px solid var(--line);border-radius:11px;background:var(--card2);overflow:hidden}
+  .fq summary{list-style:none;cursor:pointer;padding:12px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .fq summary::-webkit-details-marker{display:none}
+  .fq summary::after{content:"+";color:var(--accent);font-weight:900;font-size:18px;flex:0 0 auto}
+  .fq[open] summary::after{content:"–"}
+  .fq .fa{padding:0 14px 13px;font-size:12.5px;color:var(--muted);line-height:1.6}
+
+  .mapWrap{border-radius:12px;overflow:hidden;border:1px solid var(--line);height:230px;background:var(--card2)}
+  .mobile .mapWrap{height:175px}
+  .map{width:100%;height:100%;border:0;display:block}
+  .gbp{margin-top:13px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .gbpHead{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+  .glogo{width:42px;height:42px;border-radius:11px;flex:0 0 42px;display:grid;place-items:center;font-weight:900;font-size:22px;background:#fff;color:#4285F4;box-shadow:0 5px 16px -5px rgba(66,133,244,.55)}
+  .gbpHead b{display:block;font-size:13px;font-weight:800}
+  .gbpHead span{font-size:11.5px;color:var(--muted)}
+  .gbpBtns{display:flex;gap:9px}
+  .gbpBtns .btn{flex:1;padding:10px 12px;font-size:12.5px}
+  .addr{margin-top:12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;justify-content:center}
+
+  /* sidebar QR card (moved here) */
+  .qrSide{width:150px;height:150px;margin:0 auto;background:#fff;border-radius:12px;padding:9px;display:grid;place-items:center}
+  .qrSide img{width:100%;height:100%;display:block}
+
+  .quick{display:flex;flex-direction:column;gap:8px}
+  .qrow{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--card2);border:1px solid var(--line);font-size:13px}
+  .qrow .qi{width:34px;height:34px;border-radius:9px;flex:0 0 34px;display:grid;place-items:center}
+  .qrow.wa .qi{background:rgba(37,211,102,.15);color:var(--wa)}
+  .qrow.tel .qi{background:var(--primary-soft);color:var(--primary2)}
+  .qrow.mail .qi{background:var(--accent-soft);color:var(--accent2)}
+  .qrow.loc .qi{background:rgba(245,196,81,.14);color:var(--gold)}
+  .qrow b{display:block;font-size:9.5px;color:var(--muted2);font-weight:600}
+  .qrow span{font-size:12.5px;font-weight:600}
+
+  .hours{display:flex;flex-direction:column;gap:7px}
+  .hrow{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .hrow:last-child{border:0}
+  .hrow .day{color:var(--muted)}
+  .hrow .time{font-weight:700}
+  .hrow.now{color:var(--good)}
+  .openNow{display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--good);font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:999px;margin-bottom:10px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(52,211,153,.25)}
+
+  .inf{display:flex;flex-direction:column;gap:11px}
+  .iline{display:flex;gap:9px}
+  .iline .ii{color:var(--muted2);margin-top:2px}
+  .iline b{display:block;font-size:10.5px;color:var(--muted2)}
+  .iline span{font-size:13px;font-weight:600}
+
+  .trust{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,224,216,.06));border:1px solid rgba(52,211,153,.3)}
+  .trust .bbody{display:flex;gap:11px;align-items:center}
+  .trust .tshield{width:42px;height:42px;border-radius:12px;background:rgba(52,211,153,.16);color:var(--good);display:grid;place-items:center;flex:0 0 42px}
+  .trust h4{font-size:13.5px;font-weight:800}
+  .trust p{font-size:11.5px;color:var(--muted)}
+  .trust a{color:var(--accent);font-size:11.5px;font-weight:700}
+
+  .news .bbody{text-align:center}
+  .news .nf{display:flex;gap:7px;margin-top:10px}
+  .news input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:9px;padding:9px 11px;color:var(--txt);font-family:inherit;font-size:12px}
+  .rel{display:flex;align-items:center;gap:10px;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card2);margin-bottom:8px}
+  .rel:last-child{margin-bottom:0}
+  .rel .rc{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#06121a;font-weight:800;display:grid;place-items:center;font-size:13px}
+  .rel b{font-size:12.5px;font-weight:700}
+  .rel span{font-size:10.5px;color:var(--muted)}
+
+  .dock{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(7,11,26,.97);position:sticky;bottom:0;border-radius:0 0 22px 22px}
+  .dock .btn{flex:1}
+
+  .fcta{margin:16px 18px 18px;background:linear-gradient(120deg,var(--primary),var(--primary2));border-radius:var(--radius);padding:18px;text-align:center}
+  .fcta h3{font-size:16px;font-weight:900;color:#fff}
+  .fcta p{font-size:12.5px;color:rgba(255,255,255,.85);margin:4px 0 12px}
+  .fcta .btn{background:#fff;color:var(--primary);display:inline-flex}
+
+  .note{margin-top:24px;font-size:13px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-inline-start:3px solid var(--accent);border-radius:12px;padding:16px 18px;line-height:1.85}
+  .note b{color:var(--txt)}
+  .note code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:12px;color:var(--accent2)}
+  .note h4{color:var(--accent);font-size:14px;margin:14px 0 6px}
+  .seoTable{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+  .seoTable th,.seoTable td{border:1px solid var(--line);padding:7px 9px;text-align:start}
+  .seoTable th{background:var(--card2);color:var(--txt);font-weight:800}
+  .seoTable code{color:var(--accent2)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1 class="title">صفحة العميل — <span style="color:var(--accent)">موقع كامل</span></h1>
+  <p class="sub">شركة جبر سيو (بيانات حقيقية) · ترتيب محسّن للتحويل · سايدبار ثابت · تبويب يتفعّل مع التمرير · بؤرة مهيمنة.</p>
+
+  <div class="legend">
+    <span><i class="badge-new">جديد ✨</i> قسم/خدمة جديدة</span>
+    <span><i class="badge-imp">محسّن 🔧</i> موجود، أُعيد تصميمه</span>
+    <span>👆 التبويب يتفعّل تلقائياً مع التمرير</span>
+  </div>
+
+  <!-- ============================ DESKTOP ============================ -->
+  <div class="frameLabel">🖥️ الديسكتوب <span class="pill">سايدبار ثابت + scroll-spy</span></div>
+  <div class="frames">
+    <div class="device desktop">
+      <div class="topbar"><div class="logo">modonty</div><div class="topnav"><span>الرئيسية</span><span>الرائجة</span><span class="on">الشركاء</span><span>المساعدة</span></div></div>
+
+      <!-- HERO -->
+      <div class="hero" data-sec="overview">
+        <div class="cover"><span class="ribbon">⭐ شريك مميّز</span><span class="verify">✔ موثّق من مدونتي</span></div>
+        <div class="heroCard">
+          <div class="heroTop">
+            <div class="avatar">ج</div>
+            <div style="flex:1;min-width:0">
+              <div class="nameRow">
+                <h2>شركة جبر سيو</h2>
+                <span class="vchip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.6-.9 2.9.9 2.9-2.4 1.6-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15l.9-2.9-.9-2.9 2.4-1.6 1-2.8 3-.1z"/></svg> موثّق</span>
+              </div>
+              <p class="tagline">حلول ذكية ونتائج حقيقية — نرفع ترتيبك على Google ونجلب لك عملاء بلا إعلانات.</p>
+              <div class="chips">
+                <span class="chip indu">🏷️ تحسين محركات البحث</span>
+                <span class="chip">📍 جدة، السعودية</span>
+                <span class="chip">🗓️ تأسست 2021</span>
+              </div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat hl"><b>12</b><span>مقال منشور</span></div>
+            <div class="stat"><b>4<span class="u"> سنوات</span></b><span>خبرة</span></div>
+            <div class="stat"><b>1.2<span class="u">k</span></b><span>مشاهدة</span></div>
+            <div class="stat"><b>4.9<span class="u">★</span></b><span>تقييم</span></div>
+          </div>
+          <div class="ctaRow">
+            <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> احجز الآن</button>
+            <button class="btn btn-wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2z"/></svg> واتساب</button>
+            <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 11a4 4 0 10-8 0M12 7v8m-4 0h8"/></svg> متابعة</button>
+            <button class="btn btn-ico" title="مشاركة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+            <div class="socials"><span class="soc">in</span><span class="soc">𝕏</span><span class="soc">f</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS (order follows the conversion-optimized sections) -->
+      <div class="tabs">
+        <span class="tab on" data-sec="overview">نظرة عامة</span><span class="tab" data-sec="services">الخدمات ✨</span><span class="tab" data-sec="reviews">آراء العملاء</span><span class="tab" data-sec="gallery">معرض الأعمال</span><span class="tab" data-sec="team">فريق العمل ✨</span><span class="tab" data-sec="about">عن الشركة</span><span class="tab" data-sec="articles">المقالات (12)</span><span class="tab" data-sec="faq">الأسئلة الشائعة ✨</span><span class="tab" data-sec="contact">الموقع والتواصل ✨</span>
+      </div>
+
+      <!-- BODY -->
+      <div class="body">
+        <div class="grid2">
+          <!-- MAIN -->
+          <div class="col">
+
+            <!-- 1) SERVICES (dominant feature block) -->
+            <div class="block feature" data-sec="services">
+              <div class="bhead"><h3><span class="ic">🧩</span> خدماتنا <i class="badge-new">جديد ✨</i></h3><a class="more">الكل ›</a></div>
+              <div class="bbody"><div class="svc">
+                <div class="svcCard"><span class="si">🔍</span><div><h4>تحسين محركات البحث</h4><p>نرفع ترتيب موقعك على Google بمحتوى يجلب عملاء.</p></div></div>
+                <div class="svcCard"><span class="si">📝</span><div><h4>كتابة المحتوى</h4><p>مقالات احترافية محسّنة للسيو وللقارئ معاً.</p></div></div>
+                <div class="svcCard"><span class="si">📊</span><div><h4>تحليل المنافسين</h4><p>نكشف فرص السوق ونبني خطة تتفوّق بها.</p></div></div>
+                <div class="svcCard"><span class="si">⚙️</span><div><h4>السيو التقني</h4><p>سرعة، فهرسة، وبنية موقع نظيفة لمحركات البحث.</p></div></div>
+              </div></div>
+            </div>
+
+            <!-- 2) REVIEWS + aggregate rating (social proof early) -->
+            <div class="block" data-sec="reviews">
+              <div class="bhead"><h3><span class="ic">⭐</span> آراء العملاء</h3>
+                <span class="aggr"><span class="big">4.9</span><span class="st">★★★★★</span><span class="cnt">من 23 تقييم</span></span>
+              </div>
+              <div class="bbody">
+                <div class="rev"><div class="who"><span class="ra">م</span><div><b style="font-size:12.5px">محمد العتيبي</b></div><span class="stars">★★★★★</span></div><p>خدمة احترافية، ترتيب موقعنا قفز خلال شهرين. أنصح بهم بقوة.</p></div>
+                <div class="rev"><div class="who"><span class="ra">ن</span><div><b style="font-size:12.5px">نورة الشمري</b></div><span class="stars">★★★★★</span></div><p>محتوى ممتاز وتعامل راقٍ — حقيقي مش مجرد كلام.</p></div>
+              </div>
+            </div>
+
+            <!-- 3) GALLERY -->
+            <div class="block glow" data-sec="gallery">
+              <div class="bhead"><h3><span class="ic">🖼️</span> معرض الأعمال <i class="badge-new">جديد ✨</i></h3><a class="more">الكل ›</a></div>
+              <div class="bbody"><div class="gal"><div></div><div></div><div></div><div></div></div></div>
+            </div>
+
+            <!-- 4) TEAM -->
+            <div class="block glow" data-sec="team">
+              <div class="bhead"><h3><span class="ic">👥</span> فريق العمل <i class="badge-new">جديد ✨</i></h3><a class="more">الكل ›</a></div>
+              <div class="bbody"><div class="team">
+                <div class="tm"><div class="av">ع</div><h4>عبدالله جبر</h4><span>المؤسس · خبير سيو</span><div class="tsoc"><span>in</span><span>𝕏</span></div></div>
+                <div class="tm"><div class="av">س</div><h4>سارة الحربي</h4><span>مديرة المحتوى</span><div class="tsoc"><span>in</span></div></div>
+                <div class="tm"><div class="av">ف</div><h4>فهد القحطاني</h4><span>محلل بيانات</span><div class="tsoc"><span>in</span></div></div>
+              </div></div>
+            </div>
+
+            <!-- 5) ABOUT (نبذة + فيديو + شهادات) -->
+            <div class="block" data-sec="about">
+              <div class="bhead"><h3><span class="ic">🏢</span> عن الشركة</h3></div>
+              <div class="bbody">
+                <div class="video">
+                  <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                  <span class="vlbl">▶ فيديو تعريفي · 1:24 <i class="badge-new" style="margin-inline-start:6px">جديد ✨</i></span>
+                </div>
+                <p class="aboutTxt">شركة جبر سيو متخصّصة في تحسين محركات البحث وصناعة المحتوى الذي يجلب عملاء حقيقيين بلا إعلانات مدفوعة. نبني لك حضوراً رقمياً يتصدّر نتائج Google في السوق السعودي، بخبرة ميدانية وفريق متخصّص.</p>
+                <div class="creds">
+                  <span class="cred">🏅 سجل تجاري 4030524305</span>
+                  <span class="cred">✅ شريك Google معتمد</span>
+                  <span class="cred">🎖️ عضو هيئة السيو السعودية</span>
+                </div>
+                <div class="inf" style="margin-top:14px">
+                  <div class="iline"><span class="ii">🏛️</span><div><b>الاسم القانوني</b><span>شركة جبر الجنوبية للمقاولات</span></div></div>
+                  <div class="iline"><span class="ii">👥</span><div><b>حجم الشركة</b><span>11–50 موظف</span></div></div>
+                  <div class="iline"><span class="ii">🗓️</span><div><b>سنة التأسيس</b><span>2021</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6) ARTICLES -->
+            <div class="block" data-sec="articles">
+              <div class="bhead"><h3><span class="ic">📰</span> أحدث المقالات <i class="badge-imp">محسّن 🔧</i></h3><a class="more">عرض الـ 12 ›</a></div>
+              <div class="bbody">
+                <div class="art"><div class="thumb"></div><div><h4>ما هو السيو؟ الدليل الشامل للسيطرة على نتائج البحث 2026</h4><div class="meta"><span>قبل 17 يوم</span>·<span>⏱️ 14 دقيقة</span>·<span>👁️ 53</span></div></div></div>
+                <div class="art"><div class="thumb t2"></div><div><h4>كيف يضاعف السيو مبيعاتك؟ طريقك لتصدّر السوق السعودي</h4><div class="meta"><span>قبل 17 يوم</span>·<span>⏱️ 6 دقائق</span>·<span>👁️ 16</span></div></div></div>
+                <div class="art"><div class="thumb t3"></div><div><h4>ما هي صفحات نتائج البحث SERP وكيف يختار Google ما يعرضه؟</h4><div class="meta"><span>قبل 18 يوم</span>·<span>⏱️ 9 دقائق</span>·<span>👁️ 31</span></div></div></div>
+              </div>
+            </div>
+
+            <!-- 7) FAQ -->
+            <div class="block glow" data-sec="faq">
+              <div class="bhead"><h3><span class="ic">❓</span> الأسئلة الشائعة <i class="badge-new">جديد ✨</i></h3></div>
+              <div class="bbody"><div class="faq">
+                <details class="fq" open><summary>كم يستغرق ظهور نتائج السيو؟</summary><div class="fa">عادةً من ٣ إلى ٦ أشهر حسب المنافسة وحالة الموقع — نعطيك تقارير شهرية بالتقدّم.</div></details>
+                <details class="fq"><summary>هل تكتبون المحتوى أم أكتبه بنفسي؟</summary><div class="fa">نكتبه كاملاً — بحث كلمات مفتاحية + كتابة + تحسين تقني + نشر، وأنت تعتمد فقط.</div></details>
+                <details class="fq"><summary>هل أحتاج دفع إعلانات مع خدماتكم؟</summary><div class="fa">لا — هدفنا جلب عملاء من البحث المجاني (Organic)، بلا ميزانية إعلانات.</div></details>
+              </div></div>
+            </div>
+
+            <!-- 8) LOCATION + MAP + GBP -->
+            <div class="block glow" data-sec="contact">
+              <div class="bhead"><h3><span class="ic">📍</span> الموقع والتواصل <i class="badge-new">جديد ✨</i></h3></div>
+              <div class="bbody">
+                <div class="mapWrap"><iframe class="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=21.50237,39.18592&hl=ar&z=15&output=embed"></iframe></div>
+                <div class="gbp">
+                  <div class="gbpHead"><span class="glogo">G</span><div><b>بطاقة العمل على Google</b><span>شركة جبر سيو · جدة، السعودية</span></div></div>
+                  <div class="gbpBtns">
+                    <a class="btn btn-ghost" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> عرض على Google</a>
+                    <a class="btn btn-primary" href="#" style="flex:1;min-width:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg> الاتجاهات</a>
+                  </div>
+                </div>
+                <div class="addr"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> جدة · حي الشرفية · المملكة العربية السعودية</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SIDEBAR (sticky) -->
+          <div class="col sidebar">
+            <div class="block glow">
+              <div class="bhead"><h3><span class="ic">⚡</span> تواصل سريع <i class="badge-imp">محسّن 🔧</i></h3></div>
+              <div class="bbody"><div class="quick">
+                <div class="qrow wa"><span class="qi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2z"/></svg></span><div><b>واتساب — رد فوري</b><span>+966 56 029 9034</span></div></div>
+                <div class="qrow tel"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7l.5 2.5a2 2 0 01-.5 1.8L8 9.3a16 16 0 006 6l1.3-1.1a2 2 0 011.8-.5l2.5.5a2 2 0 011.7 2z"/></svg></span><div><b>اتصال مباشر</b><span>+966 54 101 8020</span></div></div>
+                <div class="qrow mail"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></span><div><b>البريد</b><span>support@jbrseo.com</span></div></div>
+              </div></div>
+            </div>
+
+            <!-- QR moved to sidebar (always visible while scrolling) -->
+            <div class="block glow">
+              <div class="bhead"><h3><span class="ic">📱</span> شارك صفحتك <i class="badge-new">جديد ✨</i></h3></div>
+              <div class="bbody" style="text-align:center">
+                <div class="qrSide"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.modonty.com/clients/jbrseo" alt="QR صفحة جبر سيو"></div>
+                <p style="font-size:11.5px;color:var(--muted);margin:10px 0 11px">امسح الكود لفتح الصفحة · أو احفظ جهة الاتصال في جوالك مباشرة.</p>
+                <div style="display:flex;gap:7px">
+                  <a class="btn btn-ghost" href="#" style="flex:1;padding:9px;font-size:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="9" y="2" width="6" height="4" rx="1"/></svg> احفظ جهة الاتصال</a>
+                  <a class="btn btn-ghost" href="#" style="flex:0;padding:9px 11px" title="حمّل QR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="block glow">
+              <div class="bhead"><h3><span class="ic">🕐</span> ساعات العمل <i class="badge-new">جديد ✨</i></h3></div>
+              <div class="bbody">
+                <span class="openNow"><span class="dot"></span> مفتوح الآن · يغلق 6:00 م</span>
+                <div class="hours"><div class="hrow now"><span class="day">السبت – الخميس</span><span class="time">9:00 ص – 6:00 م</span></div><div class="hrow"><span class="day">الجمعة</span><span class="time">مغلق</span></div></div>
+              </div>
+            </div>
+
+            <div class="block trust">
+              <div class="bbody">
+                <span class="tshield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div><h4>موثّق من مدونتي</h4><p style="margin:2px 0 4px">سجل تجاري 4030524305 · نشط</p><a>عرض التوثيق ›</a></div>
+              </div>
+            </div>
+
+            <div class="block news">
+              <div class="bbody">
+                <h3 style="font-size:14px;font-weight:800">📬 نشرة جبر سيو</h3>
+                <p style="font-size:12px;color:var(--muted);margin-top:3px">جديد المقالات والعروض أول بأول.</p>
+                <div class="nf"><input placeholder="بريدك الإلكتروني"><button class="btn btn-primary" style="flex:0">اشترك</button></div>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="bhead"><h3><span class="ic">🔗</span> شركاء مشابهون</h3></div>
+              <div class="bbody">
+                <div class="rel"><span class="rc">ك</span><div><b>كيما زون</b><br><span>الرعاية الصحية</span></div></div>
+                <div class="rel"><span class="rc">م</span><div><b>متجر باقتك</b><br><span>الاتصالات</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fcta">
+        <h3>نشاطك التجاري يستحق نفس الحضور</h3>
+        <p>انضم لشركاء مدونتي واجعل Google يجلب لك العملاء — بلا إعلانات.</p>
+        <button class="btn">عملاء بلا إعلانات ↗</button>
+      </div>
+    </div>
+
+    <!-- ============================ MOBILE ============================ -->
+    <div>
+      <div class="frameLabel">📱 الموبايل <span class="pill">عمود واحد + Dock سفلي</span></div>
+      <div class="device mobile">
+        <div class="topbar"><div class="logo" style="font-size:14px">modonty</div><div class="topnav" style="font-size:11px"><span>☰</span><span>🔍</span></div></div>
+
+        <div class="hero" data-sec="overview">
+          <div class="cover" style="height:110px"><span class="verify" style="font-size:10px">✔ موثّق</span></div>
+          <div class="heroCard" style="margin:-40px 12px 0;padding:14px">
+            <div class="heroTop" style="gap:11px">
+              <div class="avatar" style="width:68px;height:68px;flex-basis:68px;font-size:24px;margin-top:-38px;border-radius:18px">ج</div>
+              <div style="flex:1;min-width:0">
+                <div class="nameRow"><h2 style="font-size:18px">شركة جبر سيو</h2><span class="vchip"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.6-.9 2.9.9 2.9-2.4 1.6-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15l.9-2.9-.9-2.9 2.4-1.6 1-2.8 3-.1z"/></svg></span></div>
+                <p class="tagline" style="font-size:12px">نرفع ترتيبك على Google ونجلب لك عملاء.</p>
+              </div>
+            </div>
+            <div class="chips" style="margin-top:8px"><span class="chip indu">🏷️ السيو</span><span class="chip">📍 جدة</span></div>
+            <div class="stats" style="margin-top:12px">
+              <div class="stat hl"><b>12</b><span>مقال</span></div>
+              <div class="stat"><b>4<span class="u">س</span></b><span>خبرة</span></div>
+              <div class="stat"><b>1.2<span class="u">k</span></b><span>مشاهدة</span></div>
+              <div class="stat"><b>4.9<span class="u">★</span></b><span>تقييم</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs" style="margin-top:12px">
+          <span class="tab on" data-sec="overview">نظرة عامة</span><span class="tab" data-sec="services">الخدمات ✨</span><span class="tab" data-sec="reviews">آراء</span><span class="tab" data-sec="team">الفريق ✨</span><span class="tab" data-sec="articles">المقالات</span><span class="tab" data-sec="faq">أسئلة ✨</span><span class="tab" data-sec="contact">الموقع ✨</span>
+        </div>
+
+        <div class="body" style="padding:14px">
+          <div class="col">
+            <div class="block glow"><div class="bhead"><h3><span class="ic">⚡</span> تواصل سريع</h3></div><div class="bbody"><div class="quick">
+              <div class="qrow wa"><span class="qi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2z"/></svg></span><div><b>واتساب — رد فوري</b><span>+966 56 029 9034</span></div></div>
+              <div class="qrow tel"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7l.5 2.5a2 2 0 01-.5 1.8L8 9.3a16 16 0 006 6l1.3-1.1a2 2 0 011.8-.5l2.5.5a2 2 0 011.7 2z"/></svg></span><div><b>اتصال</b><span>+966 54 101 8020</span></div></div>
+            </div></div></div>
+
+            <div class="block feature" data-sec="services"><div class="bhead"><h3><span class="ic">🧩</span> خدماتنا <i class="badge-new">جديد ✨</i></h3></div><div class="bbody"><div class="svc">
+              <div class="svcCard"><span class="si">🔍</span><div><h4>تحسين محركات البحث</h4><p>ترتيب أعلى على Google.</p></div></div>
+              <div class="svcCard"><span class="si">📝</span><div><h4>كتابة المحتوى</h4><p>مقالات محسّنة للسيو.</p></div></div>
+            </div></div></div>
+
+            <div class="block" data-sec="reviews"><div class="bhead"><h3><span class="ic">⭐</span> آراء العملاء</h3><span class="aggr"><span class="big">4.9</span><span class="st">★</span></span></div><div class="bbody">
+              <div class="rev"><div class="who"><span class="ra">م</span><div><b style="font-size:12.5px">محمد العتيبي</b></div><span class="stars">★★★★★</span></div><p>ترتيب موقعنا قفز خلال شهرين. أنصح بهم بقوة.</p></div>
+            </div></div>
+
+            <div class="block glow" data-sec="team"><div class="bhead"><h3><span class="ic">👥</span> فريق العمل <i class="badge-new">جديد ✨</i></h3></div><div class="bbody"><div class="team">
+              <div class="tm"><div class="av">ع</div><h4>عبدالله جبر</h4><span>المؤسس</span></div>
+              <div class="tm"><div class="av">س</div><h4>سارة الحربي</h4><span>مديرة المحتوى</span></div>
+            </div></div></div>
+
+            <div class="block" data-sec="articles"><div class="bhead"><h3><span class="ic">📰</span> أحدث المقالات</h3><a class="more">الـ 12 ›</a></div><div class="bbody">
+              <div class="art"><div class="thumb"></div><div><h4>ما هو السيو؟ الدليل الشامل 2026</h4><div class="meta"><span>⏱️ 14 د</span>·<span>👁️ 53</span></div></div></div>
+              <div class="art"><div class="thumb t2"></div><div><h4>كيف يضاعف السيو مبيعاتك؟</h4><div class="meta"><span>⏱️ 6 د</span>·<span>👁️ 16</span></div></div></div>
+            </div></div>
+
+            <div class="block glow" data-sec="faq"><div class="bhead"><h3><span class="ic">❓</span> الأسئلة الشائعة <i class="badge-new">جديد ✨</i></h3></div><div class="bbody"><div class="faq">
+              <details class="fq" open><summary>كم يستغرق ظهور نتائج السيو؟</summary><div class="fa">من ٣ إلى ٦ أشهر حسب المنافسة — مع تقارير شهرية.</div></details>
+              <details class="fq"><summary>هل تكتبون المحتوى بأنفسكم؟</summary><div class="fa">نعم — بحث + كتابة + تحسين + نشر، وأنت تعتمد فقط.</div></details>
+            </div></div></div>
+
+            <div class="block glow" data-sec="contact"><div class="bhead"><h3><span class="ic">📍</span> الموقع والتواصل <i class="badge-new">جديد ✨</i></h3></div><div class="bbody">
+              <div class="mapWrap"><iframe class="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=21.50237,39.18592&hl=ar&z=15&output=embed"></iframe></div>
+              <div class="gbp">
+                <div class="gbpHead"><span class="glogo">G</span><div><b>بطاقة العمل على Google</b><span>جدة، السعودية</span></div></div>
+                <div class="gbpBtns">
+                  <a class="btn btn-ghost" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> Google</a>
+                  <a class="btn btn-primary" href="#" style="flex:1;min-width:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg> الاتجاهات</a>
+                </div>
+              </div>
+              <div class="qrSide" style="margin-top:13px"><img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://www.modonty.com/clients/jbrseo" alt="QR"></div>
+              <a class="btn btn-ghost" href="#" style="margin-top:10px;width:100%">احفظ جهة الاتصال</a>
+            </div></div>
+
+            <div class="block glow"><div class="bhead"><h3><span class="ic">🕐</span> ساعات العمل <i class="badge-new">جديد ✨</i></h3></div><div class="bbody">
+              <span class="openNow"><span class="dot"></span> مفتوح الآن · يغلق 6:00 م</span>
+              <div class="hours"><div class="hrow now"><span class="day">السبت – الخميس</span><span class="time">9ص – 6م</span></div><div class="hrow"><span class="day">الجمعة</span><span class="time">مغلق</span></div></div>
+            </div></div>
+
+            <div class="block trust"><div class="bbody"><span class="tshield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><div><h4>موثّق من مدونتي</h4><p>سجل 4030524305 · نشط</p><a>عرض التوثيق ›</a></div></div></div>
+          </div>
+        </div>
+
+        <div class="dock">
+          <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> احجز الآن</button>
+          <button class="btn btn-wa" style="flex:0 0 52px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.5A10 10 0 1012 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO / JSON-LD / META DOC -->
+  <div class="note">
+    <b>🔍 SEO · JSON-LD · Meta — لكل قسم نوع نتيجة غنية في Google:</b>
+    <table class="seoTable">
+      <tr><th>القسم</th><th>JSON-LD (schema.org)</th><th>الفائدة في البحث</th></tr>
+      <tr><td>الأساس (الشركة)</td><td><code>LocalBusiness</code> (address · geo · openingHours · telephone · priceRange · sameAs · image)</td><td>أهلية الـ Local Pack + بطاقة المعرفة</td></tr>
+      <tr><td>الخدمات</td><td><code>Service</code> / <code>OfferCatalog</code> (makesOffer)</td><td>إبراز الخدمات في البحث</td></tr>
+      <tr><td>التقييمات</td><td><code>AggregateRating</code> + <code>Review</code></td><td>⭐ نجوم تظهر تحت النتيجة (CTR أعلى)</td></tr>
+      <tr><td>الأسئلة الشائعة</td><td><code>FAQPage</code> (Question/Answer)</td><td>نتيجة موسّعة قابلة للطي</td></tr>
+      <tr><td>الفيديو</td><td><code>VideoObject</code></td><td>أهلية تبويب الفيديو + مقتطف</td></tr>
+      <tr><td>فريق العمل</td><td><code>Organization.employee: Person[]</code></td><td>E-E-A-T</td></tr>
+      <tr><td>الشهادات</td><td><code>hasCredential</code> / <code>award</code></td><td>إشارات ثقة</td></tr>
+      <tr><td>معرض الأعمال</td><td><code>ImageObject[]</code></td><td>أهلية Google Images</td></tr>
+      <tr><td>المقالات</td><td><code>Article</code> + <code>BreadcrumbList</code> (موجود)</td><td>مقتطفات + مسار التنقّل</td></tr>
+    </table>
+    <h4>Meta tags</h4>
+    <code>title</code>/<code>description</code> (من <code>seoTitle</code>/<code>seoDescription</code>) · <code>canonical</code> · OpenGraph (image=الغلاف/الشعار) · Twitter Card · hreflang (<code>ar</code>+<code>x-default</code>) · robots(index,follow).
+    <h4>التحسينات في هذه النسخة</h4>
+    ١) الترتيب للتحويل: الخدمات → آراء العملاء → معرض → فريق → عن الشركة → مقالات → أسئلة → الموقع. ٢) سايدبار <b>sticky</b> (يتابع التمرير، يملأ الفراغ) + QR انتقل له. ٣) التبويب يتفعّل تلقائياً مع التمرير (<b>scroll-spy</b>). ٤) «الخدمات» بؤرة مهيمنة (تدرّج + ظل + عنوان أكبر).
+  </div>
+
+</div>
+
+<script>
+  // 1) click a tab → scroll to its section (scoped per device)
+  document.querySelectorAll('.tabs').forEach(function (bar) {
+    var tabs = bar.querySelectorAll('.tab');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('on'); });
+        tab.classList.add('on');
+        var sec = tab.getAttribute('data-sec');
+        var device = tab.closest('.device');
+        var target = device && device.querySelector('[data-sec="' + sec + '"]');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  });
+
+  // 2) scroll-spy → highlight the tab whose section is in view
+  document.querySelectorAll('.device').forEach(function (device) {
+    var bar = device.querySelector('.tabs');
+    if (!bar) return;
+    var tabs = bar.querySelectorAll('.tab');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var sec = e.target.getAttribute('data-sec');
+        tabs.forEach(function (t) { t.classList.toggle('on', t.getAttribute('data-sec') === sec); });
+        var active = bar.querySelector('.tab.on');
+        if (active) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    device.querySelectorAll('[data-sec]').forEach(function (s) { io.observe(s); });
+  });
+</script>
+</body>
+</html>

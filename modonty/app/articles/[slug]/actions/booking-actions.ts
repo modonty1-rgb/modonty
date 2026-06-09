@@ -33,13 +33,7 @@ export async function submitBookingRequest(
   data: BookingFormData,
   ctx: BookingContext
 ): Promise<{ success: boolean; error?: string }> {
-  // 1. Auth — booking requires a logged-in visitor (warm, identified lead)
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false, error: "يجب تسجيل الدخول للحجز" };
-  }
-
-  // 2. Validate
+  // 1. Validate
   const parsed = bookingSchema.safeParse(data);
   if (!parsed.success) {
     const f = parsed.error.flatten().fieldErrors;
@@ -49,7 +43,7 @@ export async function submitBookingRequest(
     };
   }
 
-  // 3. Client must exist + be in FORM mode (never accept bookings for NONE/LINK)
+  // 2. Client must exist + be in FORM mode (never accept bookings for NONE/LINK)
   const client = await db.client.findUnique({
     where: { id: ctx.clientId },
     select: { id: true, name: true, slug: true, userId: true, ctaMode: true },
@@ -59,23 +53,15 @@ export async function submitBookingRequest(
     return { success: false, error: "الحجز غير متاح لهذه الشركة" };
   }
 
-  // 4. Anti-spam — one booking per (user × client) per hour
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-  const recent = await db.bookingRequest.count({
-    where: { userId: session.user.id, clientId: client.id, createdAt: { gte: oneHourAgo } },
-  });
-  if (recent > 0) {
-    return {
-      success: false,
-      error: "أرسلت طلب حجز لهذه الشركة مؤخراً — انتظر قليلاً قبل إرسال طلب جديد.",
-    };
-  }
+  // 3. Session is OPTIONAL — no login required; the phone number identifies the lead.
+  const session = await auth();
+  const userId = session?.user?.id ?? null;
 
   const phone = normalizePhone(parsed.data.phone);
   const preferredAt = parsed.data.preferredAt ? new Date(parsed.data.preferredAt) : null;
   const message = (parsed.data.message || "").trim() || null;
 
-  // Request context (IP + UA snapshot)
+  // Request context (IP + UA snapshot) — also used for anti-spam.
   const h = await headers();
   const ipAddress =
     h.get("x-forwarded-for")?.split(",")[0].trim() ||
@@ -84,8 +70,29 @@ export async function submitBookingRequest(
     null;
   const userAgent = h.get("user-agent") || null;
 
-  const name = session.user.name ?? "";
-  const email = session.user.email ?? "";
+  // 4. Anti-spam (no auth) — one booking per (phone × client) per hour + per-IP burst cap.
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const recent = await db.bookingRequest.count({
+    where: { clientId: client.id, phone, createdAt: { gte: oneHourAgo } },
+  });
+  if (recent > 0) {
+    return {
+      success: false,
+      error: "أرسلت طلب حجز لهذه الشركة مؤخراً — انتظر قليلاً قبل إرسال طلب جديد.",
+    };
+  }
+  if (ipAddress) {
+    const ipBurst = await db.bookingRequest.count({
+      where: { ipAddress, createdAt: { gte: oneHourAgo } },
+    });
+    if (ipBurst >= 8) {
+      return { success: false, error: "وصلت للحد الأقصى من الطلبات مؤقتاً — حاول لاحقاً." };
+    }
+  }
+
+  // Identity snapshot — form name (or session name) identifies the lead; email if logged in.
+  const name = (parsed.data.name || "").trim() || session?.user?.name || "زائر";
+  const email = session?.user?.email ?? "";
 
   // 5. Persist the lead
   let bookingId: string;
@@ -94,7 +101,7 @@ export async function submitBookingRequest(
       data: {
         clientId: client.id,
         articleId: ctx.articleId ?? null,
-        userId: session.user.id,
+        userId,
         source: ctx.source,
         name,
         email,
@@ -153,7 +160,7 @@ export async function submitBookingRequest(
   // 8. Conversion (records Conversion row + GA4 conversion_complete + opt-in conversion Telegram)
   await createConversion({
     type: ConversionType.BOOKING,
-    userId: session.user.id,
+    userId: userId ?? undefined,
     clientId: client.id,
     articleId: ctx.articleId ?? undefined,
     ipAddress: ipAddress ?? undefined,
@@ -168,7 +175,7 @@ export async function submitBookingRequest(
         label: "احجز الآن",
         articleId: ctx.articleId ?? undefined,
         clientId: client.id,
-        userId: session.user.id,
+        userId: userId ?? undefined,
       },
     })
     .catch(() => {});

@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       if (res.success) {
         await sendTelegramMessage(
           chatIdStr,
-          `✅ تم الربط بنجاح!\nشركتك: <b>${res.clientName}</b>\nمن الآن، إشعارات مدونتي راح توصلك هنا حسب اللي اخترته في الإعدادات.`
+          `✅ تم الربط بنجاح!\nنشاطك: <b>${res.clientName}</b>\nمن الآن، إشعارات مدونتي راح توصلك هنا حسب اللي اخترته في الإعدادات.`
         );
       } else {
         await sendTelegramMessage(

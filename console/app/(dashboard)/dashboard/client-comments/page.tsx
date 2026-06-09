@@ -24,16 +24,16 @@ export default async function ClientCommentsPage() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold leading-tight text-foreground">
-          آراء حول شركتك
+          آراء حول نشاطك
         </h1>
         <p className="text-muted-foreground mt-1 max-w-2xl">
-          تعليقات الزوار على صفحة شركتك. وافق أو ارفض قبل النشر.
+          تعليقات الزوار على صفحة نشاطك. وافق أو ارفض قبل النشر.
         </p>
         <div className="mt-3 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
           <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
           <p className="text-xs leading-relaxed text-foreground">
-            هذي تعليقات الزوار على صفحة شركتك العامة (مش على المقالات). كل تعليق
-            ينحفظ بحالة «بانتظار المراجعة» حتى توافق عليه — ثم يظهر في صفحة الشركة.
+            هذي تعليقات الزوار على صفحة نشاطك العامة (مش على المقالات). كل تعليق
+            ينحفظ بحالة «بانتظار المراجعة» حتى توافق عليه — ثم يظهر في صفحة نشاطك.
           </p>
         </div>
       </header>

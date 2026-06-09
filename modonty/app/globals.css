@@ -50,7 +50,12 @@
     --chart-3: 245 87% 19%;            /* Brand navy */
     --chart-4: 240 80% 70%;            /* Light blue variant */
     --chart-5: 180 80% 60%;            /* Light teal variant */
-    
+
+    /* Semantic accents (not brand palette) — client-page rating + status */
+    --star: 38 91% 55%;                /* #f5a623 gold — rating stars */
+    --success: 142 71% 45%;            /* #16a34a green — open-now + verification */
+    --success-foreground: 0 0% 100%;
+
     --radius: 0.5rem;
   }
 
@@ -96,6 +101,10 @@
     --brand-navy: 220 60% 80%;
     --brand-blue: 240 100% 75%;
     --brand-teal: 180 100% 55%;
+
+    --star: 38 92% 58%;
+    --success: 142 60% 50%;
+    --success-foreground: 0 0% 100%;
   }
 }
 

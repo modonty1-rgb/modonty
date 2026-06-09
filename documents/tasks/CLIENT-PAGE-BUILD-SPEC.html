@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صفحة العميل — مرجع البناء الكامل (Build Spec)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E065A; --blue:#3030FF; --teal:#00D8D8;
+    --bg:#f3f2ef; --card:#fff; --border:#dbdbdb; --muted:#5b5b5b; --ink:#1a1a1a;
+    --radius:8px; --radius-sm:6px;
+    --ok:#0a8a3f; --ok-bg:#e8f7ee; --miss:#c0392b; --miss-bg:#fdecea;
+    --warn:#9a6700; --warn-bg:#fff6e0; --out:#6b7280; --out-bg:#eef0f2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',sans-serif;line-height:1.7;font-size:15px}
+  .wrap{max-width:1128px;margin:0 auto;padding:24px 18px 80px}
+  header.hero{background:linear-gradient(135deg,var(--navy),#1b1290);color:#fff;border-radius:var(--radius);padding:28px 26px;margin-bottom:18px;box-shadow:0 6px 24px rgba(14,6,90,.18)}
+  header.hero h1{margin:0 0 6px;font-size:26px;font-weight:900}
+  header.hero p{margin:4px 0;color:#d7d4f5;font-size:14px}
+  .pill{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:3px 10px;border-radius:999px;font-size:12px;margin-inline-end:6px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+  .stat .n{font-size:26px;font-weight:900;color:var(--navy)}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .stat.green .n{color:var(--ok)} .stat.red .n{color:var(--miss)} .stat.teal .n{color:#0892a5}
+  nav.toc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:18px}
+  nav.toc b{display:block;color:var(--navy);margin-bottom:8px;font-size:13px}
+  nav.toc a{display:inline-block;color:var(--blue);text-decoration:none;font-size:13px;margin:3px 0;padding:3px 9px;background:#f1f1ff;border-radius:999px}
+  nav.toc a:hover{background:#e2e2ff}
+  section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+  h2{color:var(--navy);font-size:20px;font-weight:900;margin:0 0 4px;border-bottom:2px solid var(--teal);padding-bottom:8px;display:flex;align-items:center;gap:8px}
+  h2 .num{background:var(--navy);color:#fff;width:28px;height:28px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+  h3{color:var(--navy);font-size:16px;font-weight:700;margin:18px 0 8px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:start;vertical-align:top}
+  th{background:#f6f6f9;color:var(--navy);font-weight:700}
+  tr:nth-child(even) td{background:#fbfbfd}
+  code,.mono{font-family:'Cascadia Code',Consolas,monospace;background:#eef0f7;color:#0b2;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#1b3a6b;direction:ltr;display:inline-block}
+  pre{background:#0d1b2a;color:#e6edf3;border-radius:var(--radius);padding:16px 18px;overflow-x:auto;direction:ltr;text-align:left;font-family:'Cascadia Code',Consolas,monospace;font-size:12.5px;line-height:1.6}
+  pre .c{color:#7d8590} pre .k{color:#ff7b72} pre .t{color:#79c0ff} pre .s{color:#a5d6ff}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+  .b-ok{background:var(--ok-bg);color:var(--ok)} .b-miss{background:var(--miss-bg);color:var(--miss)}
+  .b-warn{background:var(--warn-bg);color:var(--warn)} .b-out{background:var(--out-bg);color:var(--out)}
+  .callout{border-radius:var(--radius-sm);padding:12px 16px;margin:12px 0;border-inline-start:4px solid}
+  .c-info{background:#eef4ff;border-color:var(--blue)}
+  .c-warn{background:var(--warn-bg);border-color:var(--warn)}
+  .c-danger{background:var(--miss-bg);border-color:var(--miss)}
+  .callout b{color:var(--navy)}
+  ul{margin:8px 0;padding-inline-start:22px} li{margin:4px 0}
+  .chk{font-family:'Cascadia Code',Consolas,monospace;background:#0d1b2a;color:#e6edf3;border-radius:var(--radius);padding:16px 18px;direction:rtl;font-size:13px;line-height:1.9}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .filebox{background:#0d1b2a;color:#9ad;border-radius:var(--radius-sm);padding:8px 12px;direction:ltr;font-family:monospace;font-size:12px;margin-top:6px}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="position:fixed;top:12px;left:12px;z-index:999;background:#00D8D8;color:#0E065A;font-weight:900;padding:6px 14px;border-radius:999px;box-shadow:0 2px 12px rgba(0,0,0,.25);font-family:'Tajawal',sans-serif;font-size:13px;letter-spacing:.3px">SPEC BUILD 17</div>
+<div class="wrap">
+
+<header class="hero">
+  <h1>صفحة العميل — مرجع البناء الكامل</h1>
+  <p>المصدر الوحيد للحقيقة (single source of truth) لبناء صفحة العميل المصغّرة <code style="background:rgba(255,255,255,.15);color:#fff">/clients/[slug]</code></p>
+  <p style="font-weight:700;color:#fff">صفر تخمين · صفر غلط · صفر مضيعة وقت — كل ما هنا مُتحقَّق من السكيما الفعلية ومن الـ docs الرسمية.</p>
+  <div style="margin-top:12px">
+    <span class="pill" style="background:#00D8D8;color:#0E065A;font-weight:900;border-color:#00D8D8">SPEC BUILD 17</span>
+    <span class="pill">العقد البصري: client-page-light-mockup.html (BUILD 15)</span>
+    <span class="pill">Last Updated: 2026-06-08</span>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat green"><div class="n">~80%</div><div class="l">من الموكب مغطّى بالسكيما الحالية ✅</div></div>
+  <div class="stat red"><div class="n">10</div><div class="l">بنود ناقصة ❌</div></div>
+  <div class="stat teal"><div class="n">0</div><div class="l">migration (كله إضافي)</div></div>
+  <div class="stat"><div class="n">2</div><div class="l">مراحل بناء (Phase 1 + 2)</div></div>
+</div>
+
+<nav class="toc">
+  <b>المحتويات</b>
+  <a href="#s1">١. النطاق</a>
+  <a href="#smap">🗺️ أين يحصل التعديل</a>
+  <a href="#todo">✅ خطة العمل (TODO)</a>
+  <a href="#s2">٢. القرار المعماري</a>
+  <a href="#s3">٣. الموكب = العقد</a>
+  <a href="#s4">٤. موجود ✅</a>
+  <a href="#s5">٥. الناقص ❌ + كود Prisma</a>
+  <a href="#s6">٦. خريطة الأقسام + JSON-LD</a>
+  <a href="#s7">٧. خطة البناء</a>
+  <a href="#s8">٨. JSON-LD</a>
+  <a href="#s9">٩. قواعد إلزامية</a>
+  <a href="#s10">١٠. الحالات الثلاث</a>
+  <a href="#s11">١١. نافذة التوثيق</a>
+  <a href="#s12">١٢. معايير القبول</a>
+  <a href="#s13">١٣. الملفات المرجعية</a>
+</nav>
+
+<!-- 1 -->
+<section id="s1">
+  <h2><span class="num">١</span> النطاق (Scope)</h2>
+  <p><span class="badge b-ok">داخل النطاق</span> يُبنى عند «ابروف»: <b>محتوى صفحة العميل جوا فقط</b> — الهيرو · الخدمات · الإنجازات · المعرض · الفريق · عن الشركة + فيديو + اعتمادات · المقالات · النقاشات · الأسئلة · آراء العملاء · الموقع · التوثيق · الشريط الجانبي · CTA الحجز · واتساب عائم.</p>
+  <div class="callout c-danger">
+    <b>🚧 خارج النطاق — لا يُعدَّل إطلاقاً عند البناء:</b>
+    <ul>
+      <li><b>النافبار العلوي</b> + <b>الفوتر</b> + <b>البار السفلي للجوال</b> = واجهة مودونتي العامة، مشتركة في كل الموقع. الموكب يعرضها مبسّطة كـ placeholder فقط.</li>
+      <li>أي تحسين عليها = <b>بند منصة منفصل</b>. الـ breadcrumb يتولّاه الموقع الرئيسي.</li>
+    </ul>
+    المرجع في الذاكرة: <code>feedback_mockup_is_the_contract</code> (حدّ النطاق).
+  </div>
+</section>
+
+<!-- map -->
+<section id="smap">
+  <h2><span class="num">🗺️</span> أين يحصل التعديل (A→Z عبر التطبيقات)</h2>
+  <table>
+    <tr><th>التطبيق</th><th>إيش يتعدّل فيه</th><th>الحجم</th></tr>
+    <tr><td><b>dataLayer</b> (السكيما)</td><td>الـ ١٠ بنود — مرة واحدة</td><td><span class="badge b-ok">صغير</span></td></tr>
+    <tr><td><b>console</b> (العميل يدخل بياناته)</td><td>فورمات: خدمات · فريق · إنجازات · اعتمادات · فيديو · رفع المعرض · رد الأسئلة + <b>إعادة توليد SEO عند الحفظ</b></td><td><span class="badge b-miss">الأكبر — إدخال</span></td></tr>
+    <tr><td><b>admin</b> (مودونتي توثّق)</td><td><b>فقط</b> رفع صورة التوثيق: <code>verificationImageUrl</code> (Cloudinary)</td><td><span class="badge b-ok">صغير جداً</span></td></tr>
+    <tr><td><b>modonty</b> (العرض العام)</td><td>عرض كل الأقسام على <code>/clients/[slug]</code> + JSON-LD</td><td><span class="badge b-miss">الأكبر — عرض</span></td></tr>
+  </table>
+  <div class="callout c-info">العميل يدخل بياناته من <b>الكونسول</b> (مش الأدمن) · الأدمن <b>فقط</b> يوثّق · المراجعات والأسئلة يشرف عليها العميل من الكونسول (موجود أصلاً).</div>
+</section>
+
+<!-- todo -->
+<section id="todo">
+  <h2><span class="num">✅</span> خطة العمل الكاملة (TODO)</h2>
+  <p style="color:var(--muted);font-size:13px">نشطّب كل بند ✅ أول ما نخلصه. كل ميزة = دائرة كاملة: سكيما → كونسول/أدمن → عرض مودونتي + JSON-LD → اختبار حيّ.</p>
+
+  <h3>✅ الخطوة 0 — السكيما (dataLayer · مرة واحدة) — <span style="color:#0a8">مكتملة</span></h3>
+  <div class="chk">
+    ✅ composite types: ClientServiceItem · ClientTeamMember · ClientAchievement · ClientCredential<br>
+    ✅ حقول Client: services[] · teamMembers[] · achievements[] · credentials[] · introVideoUrl · verificationImageUrl · clientFaqs<br>
+    ⚠️ ClientComment.rating (Int?) — <b>يُلغى</b> (قرار BUILD 10: المراجعات صارت موديل مستقل ClientReview، مش تعليق-بنجمة)<br>
+    ✅ MediaType += GALLERY<br>
+    ✅ موديل ClientFAQ جديد<br>
+    ✅ طقس Prisma: prisma validate ✓ + prisma generate ✓ (ما فيه سيرفرات dev شغّالة فما احتجنا إيقاف node · db push للـ indexes مؤجَّل لـ DB الصح)<br>
+    ✅ tsc ×3 (admin · modonty · console) = صفر (exit 0 للثلاثة)
+  </div>
+
+  <h3>Phase 1 — الأقسام الأساسية</h3>
+  <div class="chk">
+    <b>١) المراجعات (موديل مستقل <code>ClientReview</code>)</b><br>
+    ✅ سكيما: <code>ClientReview</code> أُضيف + <code>rating</code> اتشال من <code>ClientComment</code> + علاقتا Client/User · validate+generate ✓ &nbsp;·&nbsp; ▢ مودونتي: فورم تقييم (نجوم+نص، مرة وحدة) + عرض testimonials + stat «تقييم» + رابط Google &nbsp;·&nbsp; ✅ كونسول: إشراف (موافقة/رفض/حذف/استعادة + بحث/فلاتر + nav + شارة عدّاد) · tsc ✓ &nbsp;·&nbsp; ✅ JSON-LD: AggregateRating + Review[] (مولّد dataLayer + مستدعيا admin/console + hook إعادة توليد عند الإشراف · شكل مؤكَّد من Google) · tsc×3 ✓ &nbsp;·&nbsp; ▢ مودونتي (مؤجّل للبناء البصري): فورم تقييم + عرض + رابط Google &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٢) التوثيق (verificationImageUrl)</b><br>
+    ✅ أدمن: رفع صورة Cloudinary (مودال + كرت «التوثيق» في فورم العميل + أكشن) · tsc ✓ &nbsp;·&nbsp; ✅ JSON-LD: Organization.identifier (موجود أصلاً من CR/vatID/legalName — لا تغيير) &nbsp;·&nbsp; ▢ مودونتي: نافذة التوثيق + الصورة (مؤجّل للبناء البصري) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٣) الخدمات (services[])</b><br>
+    ✅ كونسول: محرّر قائمة (صفحة «محتوى صفحتك») &nbsp;·&nbsp; ✅ JSON-LD: OfferCatalog (مولّد + مستدعيان · tsc×3 ✓) &nbsp;·&nbsp; ▢ مودونتي: عرض (مؤجّل) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٤) الإنجازات (achievements[])</b><br>
+    ✅ كونسول: فورم (صفحة «محتوى صفحتك») &nbsp;·&nbsp; ▢ مودونتي: عرض (بلا JSON-LD · مؤجّل) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٥) المعرض (GALLERY)</b><br>
+    ✅ كونسول: رفع Cloudinary (صفحة «معرض الصور» + nav · رفع متعدد + alt + حذف · <code>Media</code> type=GALLERY · tsc admin/console ✓) &nbsp;·&nbsp; ✅ JSON-LD: <code>Organization.image</code> ImageObject[] (مولّد + مستدعيا admin/console) &nbsp;·&nbsp; ▢ مودونتي: شبكة (مؤجّل للبناء البصري) &nbsp;·&nbsp; ▢ اختبار
+  </div>
+
+  <h3>Phase 2 — الأقسام الغنية</h3>
+  <div class="chk">
+    <b>٦) الفريق (teamMembers[])</b><br>
+    ✅ كونسول: فورم (صفحة «محتوى صفحتك») &nbsp;·&nbsp; ✅ JSON-LD: employee Person[] (tsc×3 ✓) &nbsp;·&nbsp; ▢ مودونتي: بطاقات (مؤجّل) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٧) الاعتمادات (credentials[])</b><br>
+    ✅ كونسول: فورم (صفحة «محتوى صفحتك») &nbsp;·&nbsp; ✅ JSON-LD: hasCredential (tsc×3 ✓) &nbsp;·&nbsp; ▢ مودونتي: عرض (مؤجّل) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٨) فيديو التعريف (introVideoUrl)</b><br>
+    ✅ كونسول: حقل (صفحة «محتوى صفحتك») &nbsp;·&nbsp; ⚠️ JSON-LD: VideoObject مؤجَّل (يحتاج thumbnailUrl+uploadDate+description لتفادي تحذير Google — نضيفها لاحقاً أو نكتفي بالعرض) &nbsp;·&nbsp; ▢ مودونتي: مشغّل lazy (مؤجّل) &nbsp;·&nbsp; ▢ اختبار<br><br>
+    <b>٩) الأسئلة (ClientFAQ)</b><br>
+    ✅ كونسول: إدارة كاملة (صفحة «أسئلة صفحتك» + nav + شارة عدّاد · إضافة/تعديل/رد→نشر/رفض/استرجاع/حذف · tsc ✓) &nbsp;·&nbsp; ✅ مودونتي: أكشن استقبال سؤال الزائر (<code>submitClientPageQuestion</code> · auth + anti-spam + Telegram) + read helper (tsc ✓) &nbsp;·&nbsp; ▢ مودونتي: accordion + فورم سؤال + ربط FAQPage بـ ClientFAQ (مؤجّل للبناء البصري — الصفحة حالياً تعرض FAQ المقالات) &nbsp;·&nbsp; ▢ اختبار
+  </div>
+
+  <h3>الإغلاق</h3>
+  <div class="chk">
+    ▢ ربط إعادة توليد SEO عند حفظ الكونسول (الإصلاح المعروف)<br>
+    ▢ تبويب «بروفايل النشاط» في الكونسول (تجميع الإدخال)<br>
+    ▢ اختبار حيّ شامل: ديسكتوب + موبايل · ٣ حالات (قوي/فقير/قيد التجهيز) · RTL · صفر console errors<br>
+    ▢ بناء + tsc ×3 صفر قبل أي push
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2><span class="num">٢</span> القرار المعماري المقفول</h2>
+  <p><b>المبدأ:</b> نقسّم حسب <b>شكل البيانات</b>، مش حسب حجم الجدول. ونحن على MongoDB (مُستندي)، مش SQL.</p>
+  <table>
+    <tr><th>نوع البيانات</th><th>القرار</th><th>السبب</th></tr>
+    <tr><td>قوائم مهيكَلة تُقرأ مع الصفحة وحجمها محدود (خدمات/فريق/إنجازات/اعتمادات)</td><td><span class="badge b-ok">composite type مضمّن</span> على Client</td><td>«البيانات اللي تُقرأ مع بعض تُخزَّن مع بعض» — صفر join · أداء كامل · type-safe</td></tr>
+    <tr><td>قوائم لها دورة حياة مستقلة (إشراف/حالة/مصدر) — الأسئلة</td><td><span class="badge b-ok">موديل مستقل + relation</span></td><td>تحتاج status + source + استعلام مستقل؛ والـ composite type ما يقبل <code>@relation</code></td></tr>
+    <tr><td>المراجعات (نجوم + نص)</td><td><span class="badge b-ok">موديل مستقل <code>ClientReview</code></span></td><td>أفضل ممارسة (Amazon/Google يفصلون التقييم عن النقاش) · نجوم إجبارية + مراجعة واحدة لكل زائر (<code>@@unique</code>) · يغذّي <code>AggregateRating</code> بنقاء</td></tr>
+    <tr><td>حقول مفردة ١:١ (verificationImageUrl/introVideoUrl)</td><td><span class="badge b-ok">حقول مباشرة</span> على Client</td><td>١:١ يُقرأ مع العميل دايماً</td></tr>
+  </table>
+  <h3>قرارات مرفوضة (مع السبب)</h3>
+  <ul>
+    <li><span class="badge b-miss">مرفوض</span> <b>collection منفصل ١:١ للبروفايل</b> → على مونغو = استعلام ثانٍ على أسخن قراءة (يضرب أداء مودونتي #1) + مزامنة + خطر orphan + يخالف القاعدة الرسمية. التجميع يصير في <b>فورم الكونسول (UI)</b>.</li>
+    <li><span class="badge b-miss">مرفوض</span> <b>wrapper اسمه <code>businessProfile</code></b> → نص الحقول (legalName/slogan/vatID/foundingDate) موجودة flat أصلاً؛ لفّ الجديد فقط = تشطير غير متّسق، ولفّ القديم = migration على بيانات إنتاج. <b>نكمّل flat.</b></li>
+    <li><span class="badge b-miss">مرفوض</span> <b><code>Json</code> الخام للقوائم</b> → الشكل معروف، فالصح <b>composite type</b>. الـ <code>Json</code> فقط للبيانات غير المتوقّعة الشكل.</li>
+  </ul>
+  <div class="callout c-info">المصادر: prisma.io/docs (composite types / relations) · MongoDB Manual — data-modeling best practices. تمّ التحقّق عبر Context7 بتاريخ 2026-06-08.</div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2><span class="num">٣</span> الموكب = العقد البصري</h2>
+  <p>الموكب يتبع الـ <b>System Design الموجود</b> (<code>globals.css</code> · <code>components/ui</code> · <code>modonty-uiux</code>) — نستخدم الموجود <b>كما هو</b>، ما نخترع ولا نطوّع. لو ظهر عنصر في الموكب ما له مقابل جاهز → <b>نوقف ونسأل</b>.</p>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2><span class="num">٤</span> موجود أصلاً — لا يُعاد بناؤه</h2>
+  <p>~٨٠٪ من الموكب مغطّى بالسكيما الحالية. الموجود (لا تبنيه من جديد): الهوية (اسم/شعار/كوفر/تاغلاين/تصنيف/موقع/تأسيس) · السوشال (<code>sameAs</code>) · الإحصائيات (مقال/مشاهدة/متابع) · CTA الحجز (<code>ctaMode</code> + <code>BookingRequest</code>) · التواصل + ساعات العمل · الموقع (<code>addressLatitude/Longitude</code> + <code>gbp*</code>) · المراجعات والنقاشات (<code>ClientComment</code>) · المقالات + عدّاداتها + <code>audioUrl</code>/<code>citations</code> · المعرض (أساس <code>Media</code>) · الوصف (<code>description</code>) · بيانات التوثيق الرسمية · <code>subscriptionTier</code> · JSON-LD المكاش.</p>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2><span class="num">٥</span> الناقص — ❌ ١٠ بنود (كلها إضافية = صفر migration)</h2>
+  <div class="callout c-info">الملف: <code>dataLayer/prisma/schema/schema.prisma</code> (ملف واحد). مونغو schemaless → إضافة composite type / حقل / موديل / enum = آمنة، صفر migration.</div>
+
+  <h3>٥.١ — أربعة composite types (مستوى <code>type</code>، MongoDB-only)</h3>
+<pre><span class="c">/// Embedded service offering — «الخدمات»</span>
+<span class="k">type</span> <span class="t">ClientServiceItem</span> {
+  title       <span class="t">String</span>
+  description <span class="t">String?</span>
+  icon        <span class="t">String?</span> <span class="c">// icon key / emoji</span>
+}
+
+<span class="c">/// Embedded team member — «فريق العمل»</span>
+<span class="k">type</span> <span class="t">ClientTeamMember</span> {
+  name     <span class="t">String</span>
+  role     <span class="t">String?</span>
+  bio      <span class="t">String?</span>
+  photoUrl <span class="t">String?</span> <span class="c">// Cloudinary URL — composite types can't hold @relation</span>
+}
+
+<span class="c">/// Embedded achievement stat — «إنجازاتنا بالأرقام». Free-form per industry.</span>
+<span class="k">type</span> <span class="t">ClientAchievement</span> {
+  value <span class="t">String</span>  <span class="c">// e.g. "+500"</span>
+  label <span class="t">String</span>  <span class="c">// e.g. "عميل سعيد"</span>
+  icon  <span class="t">String?</span>
+}
+
+<span class="c">/// Embedded credential / certification — «عن الشركة»</span>
+<span class="k">type</span> <span class="t">ClientCredential</span> {
+  name      <span class="t">String</span>
+  authority <span class="t">String?</span> <span class="c">// issuing body</span>
+  year      <span class="t">String?</span>
+  url       <span class="t">String?</span> <span class="c">// verification / proof link</span>
+}</pre>
+  <div class="callout c-warn"><b>قيد composite type (مُتحقَّق رسمياً):</b> يدعم <code>@default</code>/<code>@map</code>/native types، و<b>لا يدعم</b> <code>@id</code>/<code>@unique</code>/<code>@relation</code>/<code>@updatedAt</code>. لهذا الأسئلة موديل مستقل.</div>
+
+  <h3>٥.٢ — حقول جديدة على <code>model Client</code></h3>
+<pre><span class="c">// ===== Client-page presentation (embedded, read-with-page) =====</span>
+services      <span class="t">ClientServiceItem[]</span>
+teamMembers   <span class="t">ClientTeamMember[]</span>
+achievements  <span class="t">ClientAchievement[]</span>
+credentials   <span class="t">ClientCredential[]</span>
+introVideoUrl <span class="t">String?</span>              <span class="c">// intro video URL (YouTube/Vimeo/MP4)</span>
+
+<span class="c">// ===== Verification («التوثيق») — Modonty-controlled =====</span>
+verificationImageUrl <span class="t">String?</span>  <span class="c">// صورة التوثيق (سجل/ترخيص) — Cloudinary، تُعرَض في الصفحة</span>
+
+<span class="c">// ===== Client-page relations =====</span>
+clientFaqs    <span class="t">ClientFAQ[]</span>
+reviews       <span class="t">ClientReview[]</span></pre>
+  <p style="font-size:12px;color:var(--muted)">+ على <code>model User</code>: <code>clientReviews ClientReview[]</code> (الطرف الآخر للعلاقة).</p>
+
+  <h3>٥.٣ — موديل جديد <code>ClientReview</code> (مستقل — مراجعات خدمة العميل)</h3>
+<pre><span class="k">model</span> <span class="t">ClientReview</span> {
+  id       <span class="t">String</span> <span class="k">@id</span> @default(auto()) @map(<span class="s">"_id"</span>) @db.ObjectId
+  clientId <span class="t">String</span> @db.ObjectId
+  client   <span class="t">Client</span> @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  authorId <span class="t">String</span> @db.ObjectId
+  author   <span class="t">User</span>   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  rating   <span class="t">Int</span>            <span class="c">// 1–5 (إجباري)</span>
+  comment  <span class="t">String</span>         <span class="c">// نص المراجعة</span>
+  status   <span class="t">CommentStatus</span> @default(PENDING) <span class="c">// enum موجود: PENDING/APPROVED/REJECTED/DELETED</span>
+
+  createdAt <span class="t">DateTime</span> @default(now())
+  updatedAt <span class="t">DateTime</span> @updatedAt
+
+  @@unique([clientId, authorId])  <span class="c">// مراجعة واحدة لكل زائر لكل عميل</span>
+  @@index([clientId, status])
+  @@map(<span class="s">"client_reviews"</span>)
+}</pre>
+  <div class="callout c-info"><b>ليش موديل مستقل (مش <code>ClientComment</code> + rating):</b>
+    <ul>
+      <li>المواقع الكبيرة تفصل التقييم عن النقاش (Amazon / Google).</li>
+      <li>نجوم <b>إجبارية</b> + <b>مراجعة واحدة لكل زائر</b> (<code>@@unique</code>) — مستحيل على comment (متعدد).</li>
+      <li>يغذّي <code>AggregateRating</code> بنقاء — ما يختلط بتعليقات بلا نجوم.</li>
+      <li>الزائر يقيّم <b>خدمة العميل</b> — مش المقالات. ممنوع العميل يقيّم نفسه (<code>authorId != client.userId</code>).</li>
+      <li><code>ClientComment</code> يبقى للنقاش فقط — <b>خارج نطاق الموكب الحالي</b> (الموكب ما فيه قسم نقاش).</li>
+    </ul>
+  </div>
+
+  <h3>٥.٤ — تعديل <code>enum MediaType</code> (قيمة جديدة)</h3>
+<pre><span class="k">enum</span> <span class="t">MediaType</span> {
+  LOGO  POST  OGIMAGE  TWITTER_IMAGE  HERO
+  GALLERY   <span class="c">// ← جديد: صورة معرض أعمال «معرض الأعمال»</span>
+  GENERAL
+}</pre>
+  <p>صور المعرض = <code>Media</code> بـ <code>type=GALLERY</code> + <code>scope=CLIENT</code> + <code>clientId</code>. لا موديل جديد.</p>
+
+  <h3>٥.٥ — موديل جديد <code>ClientFAQ</code> (نسخة مطابقة لـ <code>ArticleFAQ</code>)</h3>
+<pre><span class="k">model</span> <span class="t">ClientFAQ</span> {
+  id       <span class="t">String</span> <span class="k">@id</span> @default(auto()) @map(<span class="s">"_id"</span>) @db.ObjectId
+  clientId <span class="t">String</span> @db.ObjectId
+  client   <span class="t">Client</span> @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  question <span class="t">String</span>
+  answer   <span class="t">String?</span>          <span class="c">// اختياري لحين رد العميل</span>
+  position <span class="t">Int</span>              <span class="c">// ترتيب السؤال</span>
+  status   <span class="t">ArticleFAQStatus</span> @default(PENDING) <span class="c">// enum موجود: PENDING/PUBLISHED/REJECTED</span>
+
+  submittedByName  <span class="t">String?</span>
+  submittedByEmail <span class="t">String?</span>
+  source           <span class="t">String?</span>  @default(<span class="s">"manual"</span>) <span class="c">// "manual" | "chatbot" | "user"</span>
+
+  createdAt <span class="t">DateTime</span> @default(now())
+  updatedAt <span class="t">DateTime</span> @updatedAt
+
+  @@index([clientId, position])
+  @@index([clientId, status])
+  @@map(<span class="s">"client_faqs"</span>)
+}</pre>
+
+  <h3>ملخّص الـ ١٠ بنود</h3>
+  <table>
+    <tr><th>#</th><th>البند</th><th>النوع</th></tr>
+    <tr><td>1–4</td><td><code>ClientServiceItem</code> · <code>ClientTeamMember</code> · <code>ClientAchievement</code> · <code>ClientCredential</code></td><td><span class="badge b-miss">composite types</span></td></tr>
+    <tr><td>5</td><td>arrays + <code>introVideoUrl</code></td><td><span class="badge b-miss">حقول Client</span></td></tr>
+    <tr><td>6</td><td><code>verificationImageUrl</code> (صورة Cloudinary)</td><td><span class="badge b-miss">حقل Client</span></td></tr>
+    <tr><td>7</td><td><code>clientFaqs</code> relation</td><td><span class="badge b-miss">حقل Client</span></td></tr>
+    <tr><td>8</td><td><code>model ClientReview</code> (+ علاقتا Client/User)</td><td><span class="badge b-miss">موديل جديد</span></td></tr>
+    <tr><td>9</td><td><code>MediaType += GALLERY</code></td><td><span class="badge b-warn">قيمة enum</span></td></tr>
+    <tr><td>10</td><td><code>model ClientFAQ</code></td><td><span class="badge b-miss">موديل جديد</span></td></tr>
+  </table>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2><span class="num">٦</span> خريطة الأقسام: الموكب ↔ البيانات ↔ JSON-LD ↔ مالك الإدخال</h2>
+  <table>
+    <tr><th>قسم الموكب</th><th>مصدر البيانات</th><th>JSON-LD (schema.org)</th><th>مالك الإدخال</th></tr>
+    <tr><td>الهيرو / الهوية</td><td>name·logo·hero·slogan·industry·address·foundingDate</td><td><code>Organization</code> / <code>LocalBusiness</code></td><td>كونسول</td></tr>
+    <tr><td>التوثيق</td><td>legalName·CR·vatID·taxID (موجود) + <code>verificationImageUrl</code> (صورة)</td><td><code>Organization.identifier</code> + legalName</td><td>البيانات: كونسول · <b>صورة التوثيق: أدمن</b></td></tr>
+    <tr><td>الخدمات</td><td><code>services[]</code></td><td><code>Service</code> / <code>OfferCatalog</code></td><td>كونسول</td></tr>
+    <tr><td>الإنجازات</td><td><code>achievements[]</code></td><td>— (تسويقي، عرض فقط)</td><td>كونسول</td></tr>
+    <tr><td>آراء العملاء</td><td><code>ClientReview</code> (APPROVED)</td><td><code>AggregateRating</code> + <code>Review[]</code></td><td>الزائر (نجوم+نص) · إشراف: كونسول</td></tr>
+    <tr><td>المعرض</td><td><code>Media</code> (GALLERY)</td><td><code>ImageObject[]</code></td><td>كونسول (رفع)</td></tr>
+    <tr><td>الفريق</td><td><code>teamMembers[]</code></td><td><code>employee: Person[]</code></td><td>كونسول</td></tr>
+    <tr><td>عن الشركة + فيديو</td><td><code>description</code> + <code>introVideoUrl</code></td><td>description + <code>VideoObject</code></td><td>كونسول</td></tr>
+    <tr><td>الاعتمادات</td><td><code>credentials[]</code></td><td><code>hasCredential</code></td><td>كونسول</td></tr>
+    <tr><td>المقالات</td><td><code>Article</code> + counts + audioUrl + citations</td><td><code>Article</code> + <code>BreadcrumbList</code> (الموقع الرئيسي)</td><td>آلي</td></tr>
+    <tr><td>النقاشات <span class="badge b-warn">خارج النطاق</span></td><td><code>ClientComment</code> (يبقى للأرشيف — مش في الموكب)</td><td>—</td><td>—</td></tr>
+    <tr><td>الأسئلة</td><td><code>ClientFAQ</code> (PUBLISHED)</td><td><code>FAQPage</code></td><td>أسئلة: زائر/شات بوت · أجوبة: كونسول</td></tr>
+    <tr><td>الموقع</td><td>addressLat/Long + gbp*</td><td><code>GeoCoordinates</code> + address</td><td>كونسول</td></tr>
+    <tr><td>ساعات العمل</td><td><code>openingHoursSpecification</code></td><td><code>OpeningHoursSpecification</code></td><td>كونسول</td></tr>
+    <tr><td>stat «تقييم»</td><td><code>AVG(ClientReview.rating)</code> (APPROVED)</td><td><code>AggregateRating</code></td><td>محسوب</td></tr>
+  </table>
+  <div class="callout c-warn"><b>قاعدة الملكية:</b> بيانات البروفايل تُدخَل من <b>الكونسول</b> (<code>updateProfile</code>) — فورم الأدمن تُركت بدونها عمداً (<code>project_client_field_ownership</code>). <b>الاستثناء:</b> صورة التوثيق (<code>verificationImageUrl</code>) = أدمن (مودونتي توثّق؛ العميل ما يوثّق نفسه — مرساة الثقة «مش نصب»).</div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2><span class="num">٧</span> خطة البناء — الدائرة الكاملة لكل ميزة</h2>
+  <div class="callout c-info">لكل ميزة: <b>schema ← console form ← modonty display + JSON-LD ← live test</b> (ديسكتوب + موبايل، RTL، صفر console errors). لا «منجزة» قبل إغلاق الدائرة. الموكب يُبنى ديسكتوب + موبايل في <b>تمريرة responsive واحدة</b>.</div>
+
+  <h3>الخطوة 0 — السكيما (تمريرة واحدة، كل الـ ١٠ بنود) + طقس Prisma الإلزامي</h3>
+<pre><span class="c"># أي تعديل سكيما لازم هذا الترتيب بالضبط:</span>
+1. taskkill /F /IM node.exe        <span class="c"># أوقف السيرفرات (Turbopack يمسك file handles)</span>
+2. pnpm prisma:generate
+3. أعد تشغيل سيرفرات dev بعد اكتمال generate
+<span class="c"># verify: pnpm tsc --noEmit على modonty/admin/console = صفر</span></pre>
+
+  <div class="grid2">
+    <div>
+      <h3>Phase 1 — الأقسام الأساسية</h3>
+      <ol>
+        <li><b>آراء العملاء (rating)</b> — أبسط بند، البنية موجودة. نجوم + testimonials + <code>AggregateRating</code> + stat «تقييم».</li>
+        <li><b>التوثيق (صورة Cloudinary)</b> — الأدمن يرفع <code>verificationImageUrl</code> + تُعرَض في نافذة التوثيق.</li>
+        <li><b>الخدمات (services[])</b> — محرّر قائمة كونسول + عرض + <code>OfferCatalog</code>.</li>
+        <li><b>الإنجازات (achievements[])</b> — فورم كونسول + عرض (بلا JSON-LD).</li>
+        <li><b>المعرض (GALLERY)</b> — رفع كونسول (Cloudinary) + شبكة + <code>ImageObject[]</code>.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Phase 2 — الأقسام الغنية</h3>
+      <ol start="6">
+        <li><b>الفريق (teamMembers[])</b> — فورم + بطاقات + <code>employee: Person[]</code>.</li>
+        <li><b>الاعتمادات (credentials[])</b> — فورم + عرض + <code>hasCredential</code>.</li>
+        <li><b>فيديو التعريف (introVideoUrl)</b> — حقل + مشغّل lazy + <code>VideoObject</code>.</li>
+        <li><b>الأسئلة (ClientFAQ)</b> — فورم أجوبة + استقبال أسئلة الزائر + accordion + <code>FAQPage</code>.</li>
+      </ol>
+      <h3>الخطوة الأخيرة</h3>
+      <p>تبويب «بروفايل النشاط» في الكونسول يجمع كل الحقول ككتلة واحدة (التجميع UI، مش DB).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+  <h2><span class="num">٨</span> JSON-LD — قواعد إلزامية</h2>
+  <ul>
+    <li><b>مسؤولية الكود مش الأدمن</b> (<code>project_jsonld_is_code_responsibility</code>) — يُولَّد آلياً، لا يكتبه أحد يدوياً.</li>
+    <li>يُضاف لكل قسم ضمن <b>مولّد SEO للعميل</b> (<code>generateClientSEO</code>) ويُكاش في <code>Client.jsonLdStructuredData</code>.</li>
+  </ul>
+  <div class="callout c-danger"><b>🔴 مشكلة معروفة لازم تُحل في هذا البناء:</b> <code>updateProfile</code> بالكونسول <b>ما يستدعي <code>generateClientSEO</code></b> → الكاش يبقى قديم بعد تعديل العميل (<code>project_console_must_regenerate_seo</code>). بما إننا نضيف حقولاً يُدخلها الكونسول وتغذّي JSON-LD، <b>لازم نربط إعادة التوليد في حفظ الكونسول</b> ضمن هذا العمل.</div>
+  <p>الأرقام التسويقية (achievements) <b>بلا نوع schema.org</b> → عرض فقط، ممنوع نختلق نوعاً.</p>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+  <h2><span class="num">٩</span> قواعد وطقوس إلزامية</h2>
+  <ul>
+    <li><b>الأداء أولوية #1:</b> صفحة العميل = visitor page → Server Components للهيكل · <code>dynamic()</code> للتفاعلي · <code>&lt;Suspense&gt;</code> للبطيء · <b>lazy-load للخريطة</b> · <code>next/image priority</code> فوق الطية فقط.</li>
+    <li><b>RTL:</b> <code>ps/pe/ms/me/start/end</code> فقط، ممنوع <code>pl/pr/left/right</code>. أيقونات الاتجاه <code>rtl:rotate-180</code>.</li>
+    <li><b>shadcn/ui أول</b> — لا تبني من الصفر لو فيه مكوّن جاهز.</li>
+    <li><b>ممنوع أرقام وهمية</b> — إنجازات/نتائج = حقيقية مُتحقَّقة فقط، تُخفى لو غير موجودة.</li>
+    <li><b>Prisma:</b> <code>select</code> للحقول المحددة (لا <code>include</code> أعمى) · <code>take</code> دايماً للقوائم.</li>
+    <li><b>بعد كل mutation:</b> <code>revalidatePath</code>/<code>revalidateTag</code>.</li>
+    <li><b>Zod</b> لكل input + <code>auth()</code> لكل server action.</li>
+    <li><b>الدائرة الكاملة:</b> modonty ↔ admin ↔ console الثلاثة صح ١٠٠٪.</li>
+  </ul>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <h2><span class="num">١٠</span> حالات الصفحة الثلاث</h2>
+  <table>
+    <tr><th>الحالة</th><th>المعالجة</th></tr>
+    <tr><td><b>عميل قوي</b> (بيانات كاملة)</td><td>كل الأقسام تظهر</td></tr>
+    <tr><td><b>عميل فقير</b> (بيانات شحيحة)</td><td>أقسام أساسية دايماً · الاختيارية تُخفى لو فاضية (hide-if-empty) — لا أقسام فاضية محرجة</td></tr>
+    <tr><td><b>قيد التجهيز</b> (مفعّل، الصفحة مش جاهزة)</td><td>لوحة «قيد التجهيز» + <code>noindex</code> (وقت البناء، مش الموكب)</td></tr>
+  </table>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+  <h2><span class="num">١١</span> نافذة التوثيق — مواصفة دقيقة</h2>
+  <ul>
+    <li>تُفتح من «عرض التوثيق ›» (الموكب: <code>#verifyModal</code> عبر CSS <code>:target</code>).</li>
+    <li><b>بيانات رسمية (حقول موجودة):</b> <code>legalName</code> · <code>commercialRegistrationNumber</code> · الجهة = «وزارة التجارة» (ثابت) · <code>vatID</code> · المقر (address*) · <code>foundingDate</code>.</li>
+    <li><b>صورة التوثيق:</b> <code>verificationImageUrl</code> — صورة (سجل تجاري / ترخيص / شهادة) من Cloudinary، يرفعها الأدمن وتُعرَض للزائر في الصفحة.</li>
+    <li><span class="badge b-miss">لا «معروف»</span> — منصة سعودية فقط؛ مودونتي تخدم مصر وغيرها، فالتوثيق = الصورة، تشتغل لأي بلد. (تمييز «موثّق» الأزرق لمدوّنتي يبقى منفصلاً).</li>
+  </ul>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+  <h2><span class="num">١٢</span> معايير القبول (لكل ميزة)</h2>
+  <div class="chk">
+    □ schema: الحقل/الموديل مُضاف + prisma generate نجح + tsc ×3 صفر<br>
+    □ console: فورم الإدخال (Zod + auth) يحفظ + revalidate + يستدعي generateClientSEO<br>
+    □ modonty: العرض يطابق الموكب ١٠٠٪ (عرض/مكوّن/حواف/ألوان/خط)<br>
+    □ JSON-LD: النوع الصحيح يُولَّد + يُكاش + يُتحقَّق منه (لا تحذير)<br>
+    □ أداء: Server Component + lazy للثقيل + صفر JS زائد فوق الطية<br>
+    □ live test: ديسكتوب + موبايل · RTL سليم · لا overflow · صفر console errors<br>
+    □ الحالات: قوي يعرض · فقير يُخفي الفاضي · قيد التجهيز noindex<br>
+    □ الدائرة الكاملة: modonty ↔ admin ↔ console الثلاثة صح
+  </div>
+</section>
+
+<!-- 13 -->
+<section id="s13">
+  <h2><span class="num">١٣</span> الملفات المرجعية</h2>
+  <table>
+    <tr><th>الغرض</th><th>المسار</th></tr>
+    <tr><td>العقد البصري (الموكب)</td><td><code>documents/tasks/client-page-light-mockup.html</code> (BUILD 15)</td></tr>
+    <tr><td>السكيما</td><td><code>dataLayer/prisma/schema/schema.prisma</code> (Client@301 · ClientComment@1476 · MediaType@62 · ArticleFAQ@1239)</td></tr>
+    <tr><td>الصفحة الحالية</td><td><code>modonty/app/clients/[slug]/page.tsx</code> + hero + client-engagement.ts + client-faqs.ts</td></tr>
+    <tr><td>design tokens</td><td><code>modonty/app/globals.css</code></td></tr>
+    <tr><td>المرجع التقني (MD، توأم هذا الملف)</td><td><code>documents/tasks/CLIENT-PAGE-BUILD-SPEC.md</code></td></tr>
+    <tr><td>الـ TODO الجاري</td><td><code>documents/tasks/CLIENT-PAGE-FULLSITE-TODO.md</code></td></tr>
+  </table>
+</section>
+
+<footer>SPEC BUILD 17 · هذا الملف يخصّ قراراتك أنت. تفاصيل البناء + سجل الإصدارات في الـ MD التوأم. — مدوّنتي 2026-06-08</footer>
+
+</div>
+</body>
+</html>

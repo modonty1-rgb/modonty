@@ -59,7 +59,7 @@ export async function checkDns(host: string): Promise<HealthCheckResult[]> {
           metric: "dns_mx_record",
           status: "warn",
           message: "لا توجد سجلات MX — لن تستلم بريد على هذا النطاق",
-          recommendation: "اضبط MX لو تستخدم بريد الشركة (example@yourdomain)",
+          recommendation: "اضبط MX لو تستخدم بريد نشاطك (example@yourdomain)",
         };
 
   // SPF + DMARC from TXT

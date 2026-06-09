@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/components/providers/SessionContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Loader2, BookmarkCheck } from "lucide-react";
 
@@ -25,6 +25,8 @@ export function ClientFavoriteButton({
 }: Props) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
@@ -45,7 +47,7 @@ export function ClientFavoriteButton({
 
   const handleToggle = async () => {
     if (!session?.user) {
-      router.push("/users/login");
+      router.push(loginHref);
       return;
     }
     if (isPending.current) return;

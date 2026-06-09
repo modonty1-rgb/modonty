@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>نافذة الحجز — إعادة تصميم مبنية على أبحاث UX (v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1020; --panel:#0f1626; --field:#0c1322;
+    --border:#243049; --border-soft:#1b2438;
+    --text:#eaf0ff; --muted:#93a0bd; --faint:#6b7690;
+    --accent:#6366f1; --accent-2:#818cf8; --accent-soft:rgba(99,102,241,.14);
+    --emerald:#34d399;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(160deg,#070b16,#0b1020 40%,#0a1424);color:var(--text);
+       font-family:'Tajawal',system-ui,sans-serif;padding:26px 16px 70px;line-height:1.7}
+  h1.page{font-size:21px;font-weight:800;margin:0 0 4px;text-align:center}
+  p.page{color:var(--muted);text-align:center;margin:0 0 22px;font-size:13.5px}
+  .stage{display:flex;gap:42px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+  .col{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .col .tag{font-size:13px;color:var(--faint);font-weight:700}
+
+  .dialog{background:linear-gradient(180deg,var(--panel),#0c1322);border:1px solid var(--border);
+          border-radius:var(--radius);box-shadow:0 30px 80px -20px rgba(0,0,0,.7);overflow:hidden;position:relative}
+  .desktop{width:450px}
+  .mobile{width:344px}
+  .dialog::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;
+                  background:linear-gradient(90deg,var(--accent),var(--accent-2),transparent)}
+
+  .head{padding:20px 22px 12px;display:flex;gap:12px;align-items:flex-start}
+  .head .ico{width:44px;height:44px;border-radius:13px;flex:0 0 auto;display:grid;place-items:center;
+             background:var(--accent-soft);color:var(--accent-2);border:1px solid rgba(99,102,241,.3)}
+  .head .ico svg{width:22px;height:22px}
+  .head .htxt{flex:1;min-width:0}
+  .head h2{margin:0;font-size:18px;font-weight:700}
+  .head .sub{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+  .head .x{flex:0 0 auto;width:32px;height:32px;border-radius:9px;border:1px solid var(--border-soft);
+           background:transparent;color:var(--muted);font-size:15px;cursor:pointer}
+
+  .body{padding:8px 22px 22px;display:flex;flex-direction:column;gap:18px}
+
+  .field > label{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:8px}
+  .field > label .opt{color:var(--faint);font-weight:400;font-size:12px}
+  .field > label svg{width:15px;height:15px;color:var(--accent-2);opacity:.85}
+  .help{font-size:11.5px;color:var(--faint);margin:7px 2px 0;display:flex;align-items:center;gap:5px}
+  .help svg{width:12px;height:12px;color:var(--emerald)}
+
+  /* phone */
+  .phone{display:flex;align-items:stretch;background:var(--field);border:1px solid var(--border);
+         border-radius:13px;overflow:hidden;transition:.15s;min-height:50px}
+  .phone:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .phone input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;
+               padding:0 14px;font-family:inherit;direction:ltr;text-align:right}
+  .phone input::placeholder{color:var(--faint)}
+  .phone .prefix{display:flex;align-items:center;gap:6px;padding:0 13px;background:#0a1120;
+                 border-inline-start:1px solid var(--border-soft);color:var(--muted);font-size:14.5px;font-weight:600;direction:ltr}
+  .phone .tick{display:flex;align-items:center;padding-inline-end:12px;color:var(--emerald)}
+  .phone .tick svg{width:18px;height:18px}
+
+  /* date chips */
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{min-height:46px;padding:7px 14px;border-radius:12px;border:1px solid var(--border);background:var(--field);
+        color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;transition:.12s;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center}
+  .chip:hover{border-color:var(--accent-2);color:var(--text)}
+  .chip.on{background:var(--accent-soft);border-color:var(--accent);color:#dfe3ff}
+  .chip .d1{font-weight:700;font-size:13.5px}
+  .chip .d2{font-size:10.5px;color:var(--faint)}
+  .chip.on .d2{color:var(--accent-2)}
+  .chip.calc{flex-direction:row;gap:6px}
+  .subrow{margin-top:12px}
+  .subrow .lbl{font-size:11.5px;color:var(--faint);margin-bottom:7px}
+  .timechip{min-height:42px;flex-direction:row;gap:7px}
+
+  textarea{width:100%;background:var(--field);border:1px solid var(--border);border-radius:13px;
+           color:var(--text);font-family:inherit;font-size:15px;padding:12px 14px;resize:none;min-height:70px;outline:0;transition:.15s}
+  textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  textarea::placeholder{color:var(--faint)}
+
+  .privacy{display:flex;gap:9px;align-items:flex-start;background:#0a1322;border:1px solid var(--border-soft);
+           border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--muted);line-height:1.6}
+  .privacy svg{width:15px;height:15px;flex:0 0 auto;color:var(--emerald);margin-top:2px}
+
+  .cta{width:100%;min-height:52px;border:0;border-radius:14px;cursor:pointer;font-family:inherit;
+       font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;
+       background:linear-gradient(180deg,var(--accent-2),var(--accent));box-shadow:0 10px 24px -8px rgba(99,102,241,.7)}
+  .cta svg{width:19px;height:19px}
+  .trust{text-align:center;font-size:11px;color:var(--faint)}
+
+  .ok{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:30px 14px 34px}
+  .ok .ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:rgba(52,211,153,.13);
+            border:1px solid rgba(52,211,153,.4);color:var(--emerald)}
+  .ok .ring svg{width:30px;height:30px}
+  .ok h3{margin:4px 0 0;font-size:17px;font-weight:700}
+  .ok p{margin:0;font-size:13px;color:var(--muted)}
+
+  /* calendar popover (for "تاريخ آخر") */
+  .calwrap{margin-top:10px;background:var(--field);border:1px solid var(--border);border-radius:13px;padding:12px}
+  .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:700}
+  .calhead .nav{display:flex;gap:6px}
+  .calhead .nav button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border-soft);background:transparent;color:var(--muted);cursor:pointer}
+  .calhead .hijri{font-size:10.5px;color:var(--faint);font-weight:500}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .grid .dow{font-size:10px;color:var(--faint);text-align:center;padding:3px 0}
+  .grid .day{aspect-ratio:1;display:grid;place-items:center;border-radius:8px;font-size:12.5px;color:var(--text);cursor:pointer;border:1px solid transparent}
+  .grid .day:hover{border-color:var(--accent-2)}
+  .grid .day.off{color:var(--faint);opacity:.4}
+  .grid .day.sel{background:var(--accent);color:#fff;font-weight:700}
+  .grid .day.today{border-color:var(--accent-2)}
+
+  .ev{max-width:1100px;margin:34px auto 0;background:#0e1626;border:1px solid var(--border-soft);border-radius:14px;padding:16px 20px;font-size:13px;color:var(--muted)}
+  .ev h3{margin:0 0 10px;font-size:14.5px;color:var(--text)}
+  .ev table{width:100%;border-collapse:collapse}
+  .ev td{padding:7px 6px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+  .ev td:first-child{color:var(--text);font-weight:700;white-space:nowrap;width:34%}
+  .ev .src{color:var(--accent-2)}
+  .ev .small{font-size:11.5px;color:var(--faint);margin-top:10px}
+</style>
+</head>
+<body>
+  <h1 class="page">نافذة «احجز موعد» — إعادة تصميم مبنية على أبحاث UX (v2)</h1>
+  <p class="page">قرارات مبنية على Baymard · NN/g · أبحاث الجوال/الهاتف/التاريخ + قواعد RTL عربي — للمستخدم غير التقني</p>
+
+  <div class="stage">
+    <!-- DESKTOP -->
+    <div class="col">
+      <div class="tag">🖥️ ديسكتوب</div>
+      <div class="dialog desktop">
+        <div class="head">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="htxt"><h2>احجز موعد</h2><div class="sub">مع <span style="color:#dfe3ff">شركة جبر سيو</span> — نوصل طلبك للشركة وتتواصل معك.</div></div>
+          <button class="x">✕</button>
+        </div>
+        <div class="body">
+          <!-- phone: only required, tel keypad, +966, validation tick, trust copy -->
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg> رقم جوالك</label>
+            <div class="phone">
+              <input inputmode="tel" placeholder="5XX XXX XXX" value="555 000 111" />
+              <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <span class="prefix">🇸🇦 +966</span>
+            </div>
+            <div class="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> نحتاجه عشان الشركة تتواصل معك بطلبك — بدون رسائل تسويقية.</div>
+          </div>
+
+          <!-- date: chips with day-of-week, avoid native picker -->
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> وقت يناسبك للتواصل <span class="opt">— اختياري</span></label>
+            <div class="chips">
+              <span class="chip on"><span class="d1">اليوم</span><span class="d2">الأحد ٨ يونيو</span></span>
+              <span class="chip"><span class="d1">غدًا</span><span class="d2">الإثنين ٩</span></span>
+              <span class="chip"><span class="d1">بعد غد</span><span class="d2">الثلاثاء ١٠</span></span>
+              <span class="chip calc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> تاريخ آخر</span>
+            </div>
+            <div class="subrow">
+              <div class="lbl">الفترة التقريبية</div>
+              <div class="chips">
+                <span class="chip timechip">صباحًا · ٩–١٢</span>
+                <span class="chip timechip on">ظهرًا · ١٢–٤</span>
+                <span class="chip timechip">مساءً · ٤–٨</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> تحب تضيف تفاصيل؟ <span class="opt">— اختياري</span></label>
+            <textarea placeholder="مثال: أبغى استشارة عن تحسين متجري على جوجل…"></textarea>
+          </div>
+
+          <div class="privacy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>بياناتك (اسمك وجوالك) تُرسل لـ«شركة جبر سيو» فقط، لهذا الطلب — لا تُنشر ولا تُستخدم للإعلانات.</span>
+          </div>
+
+          <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> أرسل الطلب</button>
+          <div class="trust">عادةً يردّون خلال ساعات العمل</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="col">
+      <div class="tag">📱 جوال</div>
+      <div class="dialog mobile">
+        <div class="head">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="htxt"><h2>احجز موعد</h2><div class="sub">مع <span style="color:#dfe3ff">شركة جبر سيو</span></div></div>
+          <button class="x">✕</button>
+        </div>
+        <div class="body">
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg> رقم جوالك</label>
+            <div class="phone">
+              <input inputmode="tel" placeholder="5XX XXX XXX" />
+              <span class="prefix">🇸🇦 +966</span>
+            </div>
+            <div class="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> للتواصل بطلبك فقط — بدون رسائل تسويقية.</div>
+          </div>
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> وقت يناسبك <span class="opt">— اختياري</span></label>
+            <div class="chips">
+              <span class="chip on"><span class="d1">اليوم</span><span class="d2">الأحد ٨</span></span>
+              <span class="chip"><span class="d1">غدًا</span><span class="d2">الإثنين</span></span>
+              <span class="chip"><span class="d1">بعد غد</span><span class="d2">الثلاثاء</span></span>
+              <span class="chip calc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+            </div>
+            <div class="subrow">
+              <div class="lbl">الفترة</div>
+              <div class="chips">
+                <span class="chip timechip">صباحًا</span>
+                <span class="chip timechip on">ظهرًا</span>
+                <span class="chip timechip">مساءً</span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> تفاصيل؟ <span class="opt">— اختياري</span></label>
+            <textarea placeholder="أي تفاصيل تساعد في خدمتك…"></textarea>
+          </div>
+          <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> أرسل الطلب</button>
+          <div class="trust">يردّون خلال ساعات العمل</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- "تاريخ آخر" calendar + success -->
+    <div class="col">
+      <div class="tag">📅 «تاريخ آخر» (تقويم مخصّص — لا native)</div>
+      <div class="dialog mobile">
+        <div class="head">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="htxt"><h2>اختر التاريخ</h2><div class="sub">ميلادي + هجري</div></div>
+          <button class="x">✕</button>
+        </div>
+        <div class="body" style="padding-top:4px">
+          <div class="calwrap" style="margin-top:0">
+            <div class="calhead">
+              <div>يونيو ٢٠٢٦ <span class="hijri">· ذو الحجة ١٤٤٧</span></div>
+              <div class="nav"><button>›</button><button>‹</button></div>
+            </div>
+            <div class="grid">
+              <span class="dow">أحد</span><span class="dow">اثن</span><span class="dow">ثلا</span><span class="dow">أرب</span><span class="dow">خمي</span><span class="dow">جمع</span><span class="dow">سبت</span>
+              <span class="day off">١</span><span class="day off">٢</span><span class="day off">٣</span><span class="day off">٤</span><span class="day off">٥</span><span class="day off">٦</span><span class="day off">٧</span>
+              <span class="day today">٨</span><span class="day">٩</span><span class="day sel">١٠</span><span class="day">١١</span><span class="day">١٢</span><span class="day">١٣</span><span class="day">١٤</span>
+              <span class="day">١٥</span><span class="day">١٦</span><span class="day">١٧</span><span class="day">١٨</span><span class="day">١٩</span><span class="day">٢٠</span><span class="day">٢١</span>
+            </div>
+          </div>
+          <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> تأكيد</button>
+        </div>
+      </div>
+
+      <div class="tag" style="margin-top:6px">✅ بعد الإرسال</div>
+      <div class="dialog mobile">
+        <div class="ok">
+          <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3>تم استلام طلبك ✨</h3>
+          <p>«شركة جبر سيو» بتتواصل معك قريبًا<br>على الرقم اللي أدخلته.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ev">
+    <h3>القرارات ← مبنية على الأدلة (لا تخمين)</h3>
+    <table>
+      <tr><td>3 حقول فقط (جوال + وقت + ملاحظة)</td><td>كل حقل زائد ≈ −7% تحويل؛ 4 حقول تتفوّق. <span class="src">Baymard · NN/g</span></td></tr>
+      <tr><td>عمود واحد · label فوق الحقل</td><td>+15% تحويل، فهم أسرع 28%. <span class="src">NN/g · Baymard</span></td></tr>
+      <tr><td>«اختياري» بدل النجمة `*`</td><td>تعليم الاختياري يرفع التحويل ~25%؛ الجوال يبان أساسي بلا تشويش. <span class="src">Baymard</span></td></tr>
+      <tr><td>جوال: `tel` + `inputmode` + +966 + ✓</td><td>لوحة أرقام تلقائياً، تنسيق مرن، كود الدولة ظاهر، تحقّق فوري. <span class="src">Evil Martians · Zuko · UX Planet</span></td></tr>
+      <tr><td>سطر ثقة تحت الجوال</td><td>«ليش نطلبه» يقلّل الهجر. <span class="src">Zuko</span></td></tr>
+      <tr><td>التاريخ: شرائح + اسم اليوم (لا native)</td><td>تجنّب datetime الأصلي؛ الشرائح/البطاقات وإظهار اليوم أفضل للحجز. <span class="src">Eleken · UX Movement · Smashing</span></td></tr>
+      <tr><td>«تاريخ آخر» → تقويم ميلادي+هجري</td><td>السعودية تستخدم الهجري كثيراً؛ عرض الاثنين أفضل. <span class="src">UserQ · ExtraDigital</span></td></tr>
+      <tr><td>أهداف لمس ≥ 48px · تقليل bold</td><td>1سم لمس على الجوال؛ الـ bold يصعّب الحروف العربية المتصلة. <span class="src">NN/g · UserQ</span></td></tr>
+    </table>
+    <p class="small">ملاحظة كود: نضيف `autocomplete="tel"` (−30% جهد إدخال)، وكل الأيقونات تصير lucide فعلية. التقويم خفيف بدون مكتبة ثقيلة (Track B — أداء modonty).</p>
+  </div>
+</body>
+</html>

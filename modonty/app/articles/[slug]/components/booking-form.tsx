@@ -1,12 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Check, CheckCircle2, Lock, MessageSquare, Phone, ShieldCheck } from "lucide-react";
+import { CalendarDays, Check, CheckCircle2, MessageSquare, Phone, ShieldCheck, User } from "lucide-react";
 
-import Link from "@/components/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +18,7 @@ interface BookingFormProps {
   articleId?: string | null;
   source: BookingSource;
   clientName?: string;
-  /** Session user — booking requires login. null/no-email = logged out. */
+  /** Session user (optional) — prefills the name + attaches the lead to the account when present. */
   user: { name: string | null; email: string | null } | null;
   /** Default button label override from the client config. */
   submitLabel?: string;
@@ -72,9 +70,6 @@ export function BookingForm({
   user,
   submitLabel = "أرسل الطلب",
 }: BookingFormProps) {
-  const pathname = usePathname();
-  const isLoggedIn = Boolean(user?.email);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -92,7 +87,7 @@ export function BookingForm({
     formState: { errors },
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { phone: "+966 ", preferredAt: "", message: "" },
+    defaultValues: { name: user?.name ?? "", phone: "+966 ", preferredAt: "", message: "" },
   });
 
   const phoneVal = watch("phone") ?? "";
@@ -173,22 +168,31 @@ export function BookingForm({
     );
   }
 
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname || "/")}`;
-
   return (
     <div className="relative">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        dir="rtl"
-        className={!isLoggedIn ? "pointer-events-none select-none blur-[2px] opacity-60" : ""}
-        aria-hidden={!isLoggedIn}
-      >
+      <form onSubmit={handleSubmit(onSubmit)} dir="rtl">
         <div className="space-y-5 pb-2">
           {submitError && (
             <p className="rounded-md bg-destructive/10 p-2 text-sm text-destructive" role="alert">
               {submitError}
             </p>
           )}
+
+          {/* Name — optional (prefilled when logged in) */}
+          <div className="space-y-2">
+            <Label htmlFor="booking-name" className="flex items-center gap-1.5 text-sm font-semibold">
+              <User className="h-4 w-4 text-primary/80" />
+              اسمك <span className="text-xs font-normal text-muted-foreground">— اختياري</span>
+            </Label>
+            <Input
+              id="booking-name"
+              {...register("name")}
+              placeholder="مثال: أحمد محمد"
+              autoComplete="name"
+              className="h-12 text-right text-base"
+            />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          </div>
 
           {/* Phone — the only required field */}
           <div className="space-y-2">
@@ -331,18 +335,6 @@ export function BookingForm({
           <p className="pt-2 text-center text-[11px] text-muted-foreground">عادةً يردّون خلال ساعات العمل</p>
         </div>
       </form>
-
-      {/* Logged-out overlay — form is blurred behind this */}
-      {!isLoggedIn && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg bg-background/40 p-4 text-center backdrop-blur-[1px]">
-          <Lock className="h-7 w-7 text-primary" />
-          <p className="text-sm font-semibold">سجّل الدخول للحجز</p>
-          <p className="text-xs text-muted-foreground">لازم تكون مسجّل في مدوّنتي عشان ترسل طلب حجز.</p>
-          <Button asChild className="w-full max-w-[220px]">
-            <Link href={loginHref}>تسجيل الدخول</Link>
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

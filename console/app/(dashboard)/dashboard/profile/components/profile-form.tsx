@@ -377,7 +377,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
           icon={Building2}
           step={1}
           title={ar.profile.basicInfo}
-          description="اسم الشركة، الموقع الإلكتروني، والشعار"
+          description="اسم النشاط، الموقع الإلكتروني، والشعار"
           filled={filledCount(basicKeys)}
           total={basicKeys.length}
         />
@@ -414,7 +414,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
           icon={MapPin}
           step={3}
           title={ar.profile.address}
-          description="الموقع الفعلي للشركة"
+          description="الموقع الفعلي للنشاط"
           filled={filledCount(addressKeys)}
           total={addressKeys.length}
         />
@@ -472,7 +472,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
           icon={Link2}
           step={6}
           title={ar.profile.canonicalUrl}
-          description="الرابط الموحّد للشركة في موقع مودونتي (يمنع تكرار الفهرسة)"
+          description="الرابط الموحّد للنشاط في موقع مودونتي (يمنع تكرار الفهرسة)"
           filled={filledCount(canonicalKeys)}
           total={canonicalKeys.length}
         />
@@ -487,7 +487,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
           icon={Clock}
           step={7}
           title="ساعات العمل"
-          description="أوقات الدوام لكل يوم — تظهر في بيانات الشركة المنظّمة"
+          description="أوقات الدوام لكل يوم — تظهر في بيانات النشاط المنظّمة"
           filled={hours.filter((h) => !h.closed).length}
           total={7}
         />

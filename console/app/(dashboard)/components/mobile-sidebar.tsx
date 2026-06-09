@@ -8,6 +8,8 @@ import {
   Newspaper,
   PenLine,
   Images,
+  ImagePlus,
+  LayoutTemplate,
   Megaphone,
   Mail,
   UserPlus,
@@ -16,7 +18,9 @@ import {
   Building2,
   Sparkles,
   HelpCircle,
+  MessageCircleQuestion,
   Quote,
+  Star,
   Activity,
   ShieldCheck,
 } from "lucide-react";
@@ -37,7 +41,9 @@ interface MobileSidebarProps {
   leadsCount: number;
   newBookingsCount: number;
   pendingFaqsCount: number;
+  pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
+  pendingClientReviewsCount: number;
   isYmyl: boolean;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -51,7 +57,9 @@ export function MobileSidebar({
   leadsCount,
   newBookingsCount,
   pendingFaqsCount,
+  pendingPageFaqsCount,
   pendingClientCommentsCount,
+  pendingClientReviewsCount,
   isYmyl,
   isOpen,
   onOpenChange,
@@ -101,6 +109,25 @@ export function MobileSidebar({
             href="/dashboard/seo"
             icon={Sparkles}
             label={ar.nav.seo}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/page-content"
+            icon={LayoutTemplate}
+            label={ar.nav.pageContent}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/gallery"
+            icon={ImagePlus}
+            label={ar.nav.gallery}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/page-faq"
+            icon={MessageCircleQuestion}
+            label={ar.nav.pageFaq}
+            badge={pendingPageFaqsCount}
             isCollapsed={false}
           />
           <SidebarNavItem
@@ -162,6 +189,13 @@ export function MobileSidebar({
             icon={Quote}
             label={ar.nav.clientComments}
             badge={pendingClientCommentsCount}
+            isCollapsed={false}
+          />
+          <SidebarNavItem
+            href="/dashboard/client-reviews"
+            icon={Star}
+            label={ar.nav.clientReviews}
+            badge={pendingClientReviewsCount}
             isCollapsed={false}
           />
           <SidebarNavItem

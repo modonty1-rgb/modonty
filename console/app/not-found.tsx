@@ -57,7 +57,7 @@ export default function NotFound() {
               href="/dashboard/profile"
               className="text-primary hover:underline"
             >
-              معلومات الشركة
+              معلومات النشاط
             </Link>
             <span className="text-muted-foreground">·</span>
             <Link

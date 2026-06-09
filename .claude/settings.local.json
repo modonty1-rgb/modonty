@@ -461,12 +461,32 @@
       "Bash(git -c core.quotepath=false diff HEAD -- modonty/app/clients/page.tsx)",
       "Read(//c/Program Files/MongoDB/**)",
       "Read(//c/Program Files/**)",
-      "Bash(where.exe mongodump *)"
+      "Bash(where.exe mongodump *)",
+      "Bash(node -e \"const fs=require\\('fs'\\);for\\(const f of ['console/lib/ar.ts','console/app/\\(dashboard\\)/dashboard/profile/actions/profile-actions.ts','dataLayer/lib/seo/generate-organization-jsonld.ts']\\){const t=fs.readFileSync\\(f,'utf8'\\);const i=t.indexOf\\('openingHours'\\);console.log\\('====',f,'===='\\);console.log\\(t.slice\\(Math.max\\(0,i-400\\),i+600\\)\\);}\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);const t=fs.readFileSync\\('console/app/\\(dashboard\\)/dashboard/profile/actions/profile-actions.ts','utf8'\\);const i=t.indexOf\\('type OpeningHoursSpec'\\);console.log\\(t.slice\\(i,i+200\\)\\);\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);const g=require\\('child_process'\\);\")",
+      "Bash(findstr /i \"client-hours client-open-now sidebar\")",
+      "Bash(cd modonty *)",
+      "Read(//c/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty/dataLayer/prisma/schema/**)",
+      "Bash(findstr LISTENING)",
+      "Bash(node -e \"for\\(const a of ['admin','console','modonty']\\){const p=require\\('./'+a+'/package.json'\\);console.log\\(a, '=>', p.scripts.dev\\)}\")",
+      "Bash(pnpm -C c:/Users/w2nad/Desktop/dreamToApp/MODONTY/console exec next dev -p 3002)",
+      "Bash(pnpm -C c:/Users/w2nad/Desktop/dreamToApp/MODONTY/admin exec next dev -p 3001)",
+      "Bash(find app *)",
+      "Bash(pnpm -C c:/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty exec next dev -p 3000)",
+      "Bash(Select-Object -First 40)",
+      "Bash(rm \"/c/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty/app/clients/[slug]/components/client-whatsapp-fab.tsx\" && echo DELETED)",
+      "Bash(rm \"/c/Users/w2nad/Desktop/dreamToApp/MODONTY/modonty/app/clients/[slug]/components/states/client-grow-note.tsx\" && echo DELETED)",
+      "Bash(echo \"MODONTY-BUILD-EXIT=$?\")",
+      "Bash(echo \"ADMIN-BUILD-EXIT=$?\")",
+      "Bash(echo \"CONSOLE-BUILD-EXIT=$?\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "c:\\Users\\w2nad\\.claude\\projects\\c--Users-w2nad-Desktop-dreamToApp-MODONTY\\memory",
-      "c:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\app\\industries"
+      "c:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\app\\industries",
+      "C:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\app\\clients\\[slug]\\components",
+      "C:\\Users\\w2nad\\Desktop\\dreamToApp\\MODONTY\\modonty\\app\\clients\\[slug]\\components\\states"
     ]
   },
   "hooks": {

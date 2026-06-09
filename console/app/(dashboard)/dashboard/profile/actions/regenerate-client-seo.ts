@@ -117,6 +117,11 @@ export async function regenerateClientSeo(
         slogan: true,
         keywords: true,
         knowsLanguage: true,
+        // Client-page presentation (mini-site) → JSON-LD
+        services: true,
+        teamMembers: true,
+        credentials: true,
+        introVideoUrl: true,
         organizationType: true,
         openingHoursSpecification: true,
         priceRange: true,
@@ -318,10 +323,54 @@ export async function regenerateClientSeo(
       metaTags.twitter.imageAlt = ogImageAlt || defaultAlt;
     }
 
+    // Customer reviews (ClientReview, APPROVED) → AggregateRating + Review[].
+    // Gallery (Media type=GALLERY) → Organization.image[].
+    const [approvedReviews, reviewAgg, galleryMedia] = await Promise.all([
+      db.clientReview.findMany({
+        where: { clientId, status: "APPROVED" },
+        select: { rating: true, comment: true, createdAt: true, author: { select: { name: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      db.clientReview.aggregate({
+        where: { clientId, status: "APPROVED" },
+        _avg: { rating: true },
+        _count: true,
+      }),
+      db.media.findMany({
+        where: { clientId, type: "GALLERY" },
+        select: { url: true, altText: true, width: true, height: true },
+        orderBy: { createdAt: "desc" },
+        take: 30,
+      }),
+    ]);
+    const reviewOptions =
+      reviewAgg._count > 0
+        ? {
+            aggregateRating: {
+              ratingValue: reviewAgg._avg.rating ?? 0,
+              reviewCount: reviewAgg._count,
+            },
+            reviews: approvedReviews.map((r) => ({
+              author: r.author?.name ?? "زائر",
+              rating: r.rating,
+              body: r.comment,
+              datePublished: r.createdAt.toISOString().slice(0, 10),
+            })),
+          }
+        : {};
+
+    const galleryImages = galleryMedia.map((m) => ({
+      url: m.url,
+      altText: m.altText,
+      width: m.width,
+      height: m.height,
+    }));
+
     const jsonLdGraph = generateCompleteOrganizationJsonLd(
       client as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
       clientPageUrl,
-      { siteUrl, siteName },
+      { siteUrl, siteName, ...reviewOptions, galleryImages },
     );
 
     // Stringify graph for storage (no validation in console)

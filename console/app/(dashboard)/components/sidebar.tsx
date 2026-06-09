@@ -8,6 +8,8 @@ import {
   Newspaper,
   PenLine,
   Images,
+  ImagePlus,
+  LayoutTemplate,
   Megaphone,
   Mail,
   UserPlus,
@@ -17,7 +19,9 @@ import {
   Building2,
   Sparkles,
   HelpCircle,
+  MessageCircleQuestion,
   Quote,
+  Star,
   Activity,
   ShieldCheck,
 } from "lucide-react";
@@ -33,7 +37,9 @@ interface SidebarProps {
   leadsCount: number;
   newBookingsCount: number;
   pendingFaqsCount: number;
+  pendingPageFaqsCount: number;
   pendingClientCommentsCount: number;
+  pendingClientReviewsCount: number;
   isYmyl: boolean;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
@@ -47,7 +53,9 @@ export function Sidebar({
   leadsCount,
   newBookingsCount,
   pendingFaqsCount,
+  pendingPageFaqsCount,
   pendingClientCommentsCount,
+  pendingClientReviewsCount,
   isYmyl,
   isCollapsed: isCollapsedProp,
   onCollapsedChange,
@@ -141,6 +149,25 @@ export function Sidebar({
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem
+          href="/dashboard/page-content"
+          icon={LayoutTemplate}
+          label={ar.nav.pageContent}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/gallery"
+          icon={ImagePlus}
+          label={ar.nav.gallery}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/page-faq"
+          icon={MessageCircleQuestion}
+          label={ar.nav.pageFaq}
+          badge={pendingPageFaqsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
           href="/dashboard/articles"
           icon={Newspaper}
           label={ar.nav.articles}
@@ -199,6 +226,13 @@ export function Sidebar({
           icon={Quote}
           label={ar.nav.clientComments}
           badge={pendingClientCommentsCount}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarNavItem
+          href="/dashboard/client-reviews"
+          icon={Star}
+          label={ar.nav.clientReviews}
+          badge={pendingClientReviewsCount}
           isCollapsed={isCollapsed}
         />
         <SidebarNavItem

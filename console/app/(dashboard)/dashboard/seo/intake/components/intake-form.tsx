@@ -533,7 +533,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
           totalSections={totalSections}
           icon={MapPin}
           step={10}
-          title="بطاقة شركتك على Google Maps"
+          title="بطاقة نشاطك على Google Maps"
           description="رابط Google Business Profile (اختياري) — يفيد في البحث المحلي"
           filled={counts.technical}
           total={totals.technical}
@@ -546,7 +546,7 @@ export function IntakeForm({ initial, intakeUpdatedAt, detected, industryName, c
           ) : (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
               💡 ما لقينا الرابط من موقعك. لو عندك بطاقة على Google Maps، أضف الرابط هنا.
-              تقدر تجدّه بالبحث في Google عن اسم شركتك ثم نسخ رابط البطاقة.
+              تقدر تجدّه بالبحث في Google عن اسم نشاطك ثم نسخ رابط البطاقة.
             </div>
           )}
           <div className="space-y-2">

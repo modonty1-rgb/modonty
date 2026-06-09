@@ -8,20 +8,14 @@ import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStru
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { getClientForMetadata } from "./helpers/client-metadata";
 import { getClientPageData } from "./helpers/client-page-data";
-import { getClientReviewsBySlug } from "./helpers/client-reviews";
-import { getClientFollowers } from "./helpers/client-followers";
-import { getClientComments } from "./helpers/client-comments";
-import { getClientEngagementBySlug } from "./helpers/client-engagement";
-import { articleToFeedPost } from "./helpers/article-to-feed-post";
-import { getClientPublishedFaqs } from "./helpers/client-faqs";
-import { getArticles } from "@/app/api/helpers/article-queries";
-import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
-import type { FeedPost } from "@/lib/types";
-import { ClientPageLeft, ClientPageFeed, ClientPageRight } from "./components/client-page";
+import { getClientReviews, getClientReviewsBySlug } from "./helpers/client-reviews";
+import { getClientPageFaqs } from "./helpers/client-faqs";
+import { getClientGallery } from "./helpers/client-gallery";
+import { resolveClientPageState } from "./components/client-page-state";
+import { ClientPageShell, type ShellClient } from "./components/client-page/client-page-shell";
+import { ClientNotReadyPanel } from "./components/states/client-not-ready-panel";
 import { ClientViewTracker } from "./components/client-view-tracker";
-import { ClientCommentsSection } from "./components/client-comments-section";
 import ClientLoading from "./loading";
-import { CtaTrackedLink } from "@/components/cta-tracked-link";
 
 interface ClientPageProps {
   params: Promise<{ slug: string }>;
@@ -35,8 +29,6 @@ export async function generateStaticParams() {
     });
 
     if (!clients || clients.length === 0) {
-      // Next.js with Cache Components requires at least one result during build-time.
-      // Return a placeholder so the build can complete; the page will render `notFound()` later.
       return [{ slug: "__no_clients__" }];
     }
 
@@ -44,7 +36,6 @@ export async function generateStaticParams() {
       slug: client.slug,
     }));
   } catch {
-    // Same reasoning as above: ensure we always return at least one param for build-time validation.
     return [{ slug: "__no_clients__" }];
   }
 }
@@ -61,7 +52,7 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
       };
     }
     // DB cache first
-    const [cached, settings] = await Promise.all([
+    const [cached, settings, pageData] = await Promise.all([
       db.client.findUnique({
         where: { slug: decodedSlug },
         select: { nextjsMetadata: true },
@@ -70,19 +61,36 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         where: SETTINGS_SINGLETON_WHERE,
         select: { siteUrl: true },
       }),
+      getClientPageData(slug),
     ]);
     const rawSiteUrl = settings?.siteUrl || "https://www.modonty.com";
     // Normalize: modonty.com → www.modonty.com
     const siteUrl = rawSiteUrl.replace(/^(https?:\/\/)(?!www\.)modonty\.com/, "$1www.modonty.com").replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`;
 
+    // Thin "قيد التجهيز" pages → noindex,follow (perfect-before-index golden rule).
+    let robots: Metadata["robots"] | undefined;
+    if (pageData) {
+      const c = pageData.client;
+      const ps = resolveClientPageState({
+        aboutText: c.description || c.seoDescription,
+        servicesCount: c.services?.length ?? 0,
+        articlesCount: c._count.articles,
+        teamCount: c.teamMembers?.length ?? 0,
+        achievementsCount: c.achievements?.length ?? 0,
+        galleryCount: 0,
+        hasContact: !!(c.phone || c.email || c.addressCity),
+      });
+      if (ps === "not-ready") robots = { index: false, follow: true };
+    }
+
     if (cached?.nextjsMetadata) {
       const stored = cached.nextjsMetadata as Metadata;
       if (stored.title) {
         return {
           ...stored,
-          // Always regenerate description — stored value may be empty
           description: (stored.description as string | undefined) || client.seoDescription || `استكشف مقالات وخدمات ${client.name} على مدونتي`,
+          ...(robots ? { robots } : {}),
           openGraph: {
             ...(stored.openGraph as object | undefined),
             url: canonicalUrl,
@@ -97,17 +105,20 @@ export async function generateMetadata({ params }: ClientPageProps): Promise<Met
         };
       }
     }
-    return generateMetadataFromSEO({
-      title: (client.seoTitle || client.name)?.slice(0, 51),
-      description: client.seoDescription || `استكشف مقالات ${client.name}`,
-      image: client.heroImageMedia?.url || client.logoMedia?.url || undefined,
-      url: `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`,
-      type: "website",
-      languages: {
-        ar: canonicalUrl,
-        "x-default": canonicalUrl,
-      },
-    });
+    return {
+      ...generateMetadataFromSEO({
+        title: (client.seoTitle || client.name)?.slice(0, 51),
+        description: client.seoDescription || `استكشف مقالات ${client.name}`,
+        image: client.heroImageMedia?.url || client.logoMedia?.url || undefined,
+        url: `${siteUrl}/clients/${encodeURIComponent(decodedSlug)}`,
+        type: "website",
+        languages: {
+          ar: canonicalUrl,
+          "x-default": canonicalUrl,
+        },
+      }),
+      ...(robots ? { robots } : {}),
+    };
   } catch {
     return {
       title: "الشركاء - مدونتي",
@@ -120,18 +131,16 @@ async function ClientPageContent({ params }: ClientPageProps) {
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [data, articlesResult, reviewsData, followers, comments, engagementData, cachedSeo, clientFaqs, session] = await Promise.all([
+    const [data, reviews, discussionsData, gallery, faqs, cachedSeo, session] = await Promise.all([
       getClientPageData(slug),
-      getArticles({ page: 1, limit: FEED_PAGE_SIZE, client: decodedSlug }),
-      getClientReviewsBySlug(slug),
-      getClientFollowers(slug),
-      getClientComments(slug),
-      getClientEngagementBySlug(slug),
+      getClientReviews(slug),
+      getClientReviewsBySlug(slug), // ARTICLE comments → repurposed as "discussions"
+      getClientGallery(decodedSlug),
+      getClientPageFaqs(decodedSlug), // page-level ClientFAQ
       db.client.findUnique({
         where: { slug: decodedSlug },
         select: { jsonLdStructuredData: true },
       }),
-      getClientPublishedFaqs(decodedSlug),
       auth(),
     ]);
 
@@ -143,13 +152,29 @@ async function ClientPageContent({ params }: ClientPageProps) {
     const userBox = session?.user
       ? { name: session.user.name ?? null, email: session.user.email ?? null }
       : null;
-    const reviews = reviewsData?.reviews ?? [];
-    const engagement = engagementData ?? {
-      followersCount: 0,
-      favoritesCount: 0,
-      articleLikesCount: 0,
-    };
-    const posts: FeedPost[] = articlesResult.articles.map(articleToFeedPost);
+
+    const discussions = (discussionsData?.reviews ?? []).map((r) => ({
+      id: r.id,
+      content: r.content,
+      createdAt: r.createdAt,
+      author: { name: r.author?.name ?? null, image: r.author?.image ?? null },
+      article: r.article ? { title: r.article.title, slug: r.article.slug } : null,
+    }));
+
+    const pageState = resolveClientPageState({
+      aboutText: client.description || client.seoDescription,
+      servicesCount: client.services?.length ?? 0,
+      articlesCount: client._count.articles,
+      teamCount: client.teamMembers?.length ?? 0,
+      achievementsCount: client.achievements?.length ?? 0,
+      galleryCount: gallery.length,
+      hasContact: !!(
+        client.phone ||
+        client.email ||
+        client.addressCity ||
+        (client.addressLatitude != null && client.addressLongitude != null)
+      ),
+    });
 
     const structuredData = generateStructuredData({
       type: "Client",
@@ -177,7 +202,7 @@ async function ClientPageContent({ params }: ClientPageProps) {
 
     return (
       <>
-        {/* Organization JSON-LD — DB cache if available, fallback to live generation */}
+        {/* Organization JSON-LD — DB cache (rich graph: Service/AggregateRating/Review/employee/hasCredential/image) or live fallback */}
         {cachedSeo?.jsonLdStructuredData ? (
           <script
             type="application/ld+json"
@@ -189,101 +214,57 @@ async function ClientPageContent({ params }: ClientPageProps) {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
           />
         )}
-        {/* BreadcrumbList JSON-LD — always rendered regardless of DB cache */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
         />
-        {/* FAQPage JSON-LD — only when client has published FAQs */}
-        {clientFaqs.length > 0 && (
+        {/* FAQPage JSON-LD — page-level ClientFAQ (answered + published) */}
+        {faqs.length > 0 && (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
-                "mainEntity": clientFaqs.map((faq) => ({
+                mainEntity: faqs.map((faq) => ({
                   "@type": "Question",
-                  "name": faq.question,
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": faq.answer,
-                  },
+                  name: faq.question,
+                  acceptedAnswer: { "@type": "Answer", text: faq.answer },
                 })),
               }),
             }}
           />
         )}
         <ClientViewTracker clientSlug={client.slug} />
-        {/* 3 col: left | feed | right - grid for consistent top alignment */}
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-6 items-start">
-          <ClientPageLeft client={client} user={userBox} />
-          <ClientPageFeed posts={posts} clientName={client.name} clientId={client.id} relatedClientsCount={relatedClients.length} />
-          <ClientPageRight
-          client={client}
-          relatedClients={relatedClients}
-          reviews={reviews}
-          followers={followers ?? []}
-          engagement={engagement}
-        />
-        </div>
 
-        {/* FAQ Section — aggregated published FAQs across all client articles */}
-        {clientFaqs.length > 0 && (
-          <section className="mt-10" aria-labelledby="client-faqs-heading">
-            <h2 id="client-faqs-heading" className="text-xl font-semibold text-foreground mb-4">
-              الأسئلة الشائعة
-            </h2>
-            <div className="space-y-3">
-              {clientFaqs.map((faq) => (
-                <details
-                  key={faq.id}
-                  className="group rounded-lg border border-border bg-card"
-                >
-                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-foreground select-none list-none [&::-webkit-details-marker]:hidden">
-                    <span>{faq.question}</span>
-                    <span className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true">
-                      ▾
-                    </span>
-                  </summary>
-                  <div className="border-t border-border px-4 py-3">
-                    <p className="text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
-                    <a
-                      href={`/articles/${faq.articleSlug}`}
-                      className="mt-2 inline-block text-xs text-primary hover:underline"
-                    >
-                      اقرأ المقال: {faq.articleTitle}
-                    </a>
-                  </div>
-                </details>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Client Comments Section (آراء حول الشركة) — list rendered server-side for SEO */}
-        <ClientCommentsSection clientSlug={client.slug} clientName={client.name} comments={comments} />
-
-        {/* JBRSEO-5: CTA — join as client */}
-        <div className="mt-10 mb-4 rounded-xl border border-primary/20 bg-primary/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <p className="font-semibold text-foreground">أعجبك ما رأيت؟ نشاطك التجاري يستحق نفس الحضور</p>
-            <p className="text-sm text-muted-foreground mt-0.5">انضم لشركاء مدونتي واجعل جوجل يجلب لك العملاء</p>
+        {pageState === "not-ready" ? (
+          <div className="px-4 py-6">
+            <ClientNotReadyPanel
+              clientId={client.id}
+              clientName={client.name}
+              ctaMode={client.ctaMode}
+              ctaUrl={client.ctaUrl}
+              ctaLabel={client.ctaLabel}
+              user={userBox}
+            />
           </div>
-          <CtaTrackedLink
-            href="https://www.jbrseo.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            label="Client Page CTA — عملاء بلا إعلانات"
-            type="BANNER"
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            عملاء بلا إعلانات <span aria-hidden="true">↗</span>
-          </CtaTrackedLink>
-        </div>
+        ) : (
+          <ClientPageShell
+            client={client as unknown as ShellClient}
+            stats={stats}
+            pageState={pageState}
+            reviews={reviews}
+            faqs={faqs}
+            gallery={gallery}
+            discussions={discussions}
+            relatedClients={relatedClients}
+            user={userBox}
+            initialIsFollowing={false}
+          />
+        )}
       </>
     );
-  } catch (error) {
+  } catch {
     notFound();
   }
 }

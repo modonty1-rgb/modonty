@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اسم الشريك الكامل — قبل/بعد · مدونتي</title>
+<style>
+  :root{
+    --bg:#070b16;
+    --panel:#0e1424;
+    --card:#141b2e;
+    --card2:#171f36;
+    --line:#222b45;
+    --line2:#2c3658;
+    --txt:#e9ecf5;
+    --muted:#8b93ad;
+    --primary:#6d6cf0;
+    --primary-soft:rgba(109,108,240,.12);
+    --primary-ring:rgba(109,108,240,.40);
+    --good:#34d399;
+    --bad:#f87171;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Tajawal","Segoe UI",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--txt);
+    line-height:1.6;
+    padding:32px 16px 80px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:24px;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:28px;font-size:13px}
+  .legend b{font-weight:700}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:6px;vertical-align:middle}
+
+  .sectionTitle{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;margin:34px 0 16px}
+  .sectionTitle .pill{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:3px 10px}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.compare{grid-template-columns:1fr}}
+
+  .col h3{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .frame{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+    box-shadow:0 18px 50px -28px rgba(0,0,0,.9);
+  }
+  .frame.mobile{max-width:380px;margin-inline:auto}
+
+  /* sheet header */
+  .sheetHead{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 12px}
+  .sheetHead .t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+  .sheetHead .t svg{width:18px;height:18px;color:var(--primary)}
+  .explore{color:var(--primary);font-size:12px;display:inline-flex;align-items:center;gap:4px}
+  .allpill{font-size:11px;color:var(--muted);background:#1b2238;border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+
+  /* list */
+  ul{list-style:none}
+  .row{
+    display:flex;
+    gap:10px;
+    border-radius:12px;
+    padding:8px;
+    transition:background .15s;
+  }
+  .row:hover{background:rgba(255,255,255,.03)}
+  .row.active{background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary-ring)}
+  .main{display:flex;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit}
+
+  .av{width:34px;height:34px;border-radius:50%;flex:0 0 34px;display:grid;place-items:center;
+      background:var(--primary);color:#fff;font-size:12px;font-weight:700;overflow:hidden}
+  .av.img{background:#0c1326}
+  .av img{width:100%;height:100%;object-fit:cover}
+
+  .names{flex:1;min-width:0}
+  .nm{font-size:14px;font-weight:600;color:var(--txt)}
+  .ind{font-size:12px;color:var(--muted);display:block}
+
+  /* count chip */
+  .chip{
+    flex:0 0 auto;align-self:center;
+    display:inline-flex;align-items:center;gap:4px;
+    border:1px solid var(--line2);background:#161d33;color:var(--muted);
+    border-radius:999px;padding:4px 9px;font-size:11px;font-weight:700;height:fit-content;
+  }
+  .chip svg{width:13px;height:13px}
+
+  /* ===== BEFORE: truncate ===== */
+  .before .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .before .ind{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .before .row{align-items:center}
+
+  /* ===== AFTER: full name wrap + top align ===== */
+  .after .row{align-items:flex-start}
+  .after .main{align-items:flex-start}
+  .after .av{margin-top:1px}
+  .after .nm{white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+  .after .ind{white-space:normal}
+  .after .chip{align-self:flex-start;margin-top:1px}
+
+  .tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px}
+  .tag.bad{color:var(--bad);background:rgba(248,113,113,.12)}
+  .tag.good{color:var(--good);background:rgba(52,211,153,.12)}
+
+  .note{margin-top:14px;font-size:12.5px;color:var(--muted);background:var(--card);
+        border:1px solid var(--line);border-left:3px solid var(--primary);border-radius:10px;padding:10px 13px}
+  .note b{color:var(--txt)}
+  .desktopFrame{max-width:340px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>اسم الشريك الكامل — قبل / بعد</h1>
+  <p class="sub">القرار: اسم الشريك يظهر <b style="color:var(--txt)">كامل بدون قطع</b>. هذا الـ mockup يوري الفرق على الموبايل والديسكتوب بأسماء حقيقية طويلة.</p>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--bad)"></span><b>الحالي</b> — يتقطع بـ «…»</span>
+    <span><span class="dot" style="background:var(--good)"></span><b>المقترح</b> — كامل + محاذاة من الأعلى</span>
+  </div>
+
+  <!-- ============ MOBILE ============ -->
+  <div class="sectionTitle">📱 الموبايل — شيت «الشركاء» <span class="pill">عرض ٨٨٪ من الشاشة</span></div>
+  <div class="compare">
+
+    <!-- before -->
+    <div class="col before">
+      <h3><span class="tag bad">الحالي</span> الاسم يتقطع — معلومة ضايعة</h3>
+      <div class="frame mobile">
+        <div class="sheetHead">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+            الشركاء
+          </span>
+          <span class="allpill">الكل</span>
+        </div>
+        <ul id="mb-before"></ul>
+      </div>
+    </div>
+
+    <!-- after -->
+    <div class="col after">
+      <h3><span class="tag good">المقترح</span> الاسم كامل — يلتف بنظافة</h3>
+      <div class="frame mobile">
+        <div class="sheetHead">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+            الشركاء
+          </span>
+          <span class="allpill">الكل</span>
+        </div>
+        <ul id="mb-after"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DESKTOP ============ -->
+  <div class="sectionTitle">🖥️ الديسكتوب — الشريط الجانبي <span class="pill">عرض ثابت ~٣٠٠ بكسل</span></div>
+  <div class="compare">
+
+    <div class="col before">
+      <h3><span class="tag bad">الحالي</span> الاسم يتقطع</h3>
+      <div class="frame desktopFrame">
+        <div class="sheetHead">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+            الشركاء
+          </span>
+          <span class="explore">استكشف ‹</span>
+        </div>
+        <ul id="dk-before"></ul>
+      </div>
+    </div>
+
+    <div class="col after">
+      <h3><span class="tag good">المقترح</span> الاسم كامل</h3>
+      <div class="frame desktopFrame">
+        <div class="sheetHead">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+            الشركاء
+          </span>
+          <span class="explore">استكشف ‹</span>
+        </div>
+        <ul id="dk-after"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>التعديل تعديلان (مش واحد):</b> ١) نشيل القطع (<code>truncate</code>) فيلتف الاسم كامل · ٢) نخلي محاذاة الصف من الأعلى (<code>items-start</code>) عشان الأيقونة ورقم الفلتر يحاذون أول سطر بدل ما يطفّون بنص الاسم الطويل. يُطبَّق في المكانين: الديسكتوب (<b>NewClientItem</b>) + الموبايل (<b>HomeBottomBarShell</b>).
+  </div>
+
+</div>
+
+<script>
+  const filterSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>';
+
+  // sample partners — long names taken from the real screenshot
+  const partners = [
+    {n:"طب نفسي", i:"الرعاية الصحية", c:3, init:"ط", img:false},
+    {n:"عيادة الدكتور حسام حسني", i:"الرعاية الصحية", c:8, init:"ع", img:false},
+    {n:"اد/ محمد يسري استاذ علاج الفقرات والمفاصل والعمود الفقري", i:"الرعاية الصحية", c:5, init:"ا", img:true, active:true},
+    {n:"هابي سمايل dental clinic", i:"الرعاية الصحية", c:6, init:"ه", img:true},
+    {n:"عيادة دكتور أحمد الصاوي استشاري أمراض الباطنة والكبد", i:"الرعاية الصحية", c:4, init:"ع"},
+    {n:"Nelly Dawoud", i:"الرعاية الصحية", c:2, init:"N"},
+  ];
+
+  const ar = n => new Intl.NumberFormat('ar-SA').format(n);
+
+  function rowHTML(p){
+    const av = p.img
+      ? `<span class="av img"><img src="https://i.pravatar.cc/64?u=${encodeURIComponent(p.n)}" alt=""></span>`
+      : `<span class="av">${p.init}</span>`;
+    return `<li><div class="row ${p.active?'active':''}">
+        <a class="main" href="#">
+          ${av}
+          <span class="names">
+            <span class="nm">${p.n}</span>
+            <span class="ind">${p.i}</span>
+          </span>
+        </a>
+        <span class="chip">${filterSvg}<span>${ar(p.c)}</span></span>
+      </div></li>`;
+  }
+
+  const html = partners.map(rowHTML).join('');
+  ['mb-before','mb-after','dk-before','dk-after'].forEach(id=>{
+    document.getElementById(id).innerHTML = html;
+  });
+</script>
+</body>
+</html>
