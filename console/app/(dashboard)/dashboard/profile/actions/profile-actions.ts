@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 import { regenerateClientSeo } from "./regenerate-client-seo";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { normalizeLegalForm, normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 
 function str(v: string | undefined | null) {
@@ -207,6 +208,16 @@ export async function updateProfile(clientId: string, data: ProfileUpdate) {
       await regenerateClientSeo(clientId);
     } catch {
       // swallow — save already succeeded; SEO regen is best-effort
+    }
+
+    // Close the cross-app circle: bust modonty.com's PUBLIC cache so the freshly
+    // regenerated client JSON-LD/meta goes live. The console's revalidatePath only
+    // touches the console runtime — the separate public modonty deployment caches
+    // by tag and won't refresh without this call (same as admin's updateClient).
+    try {
+      await revalidateModontyTag("clients");
+    } catch {
+      // swallow — best-effort cross-app cache bust, never fail the save
     }
 
     revalidatePath("/dashboard");

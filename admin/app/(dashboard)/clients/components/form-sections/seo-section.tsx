@@ -1,33 +1,22 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { messages } from "@/lib/messages";
-import { FormInput, FormTextarea, FormSelect, FormNativeSelect } from "@/components/admin/form-field";
-import { SelectItem } from "@/components/ui/select";
+import { FormInput, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
-import type { ClientWithRelations } from "@/lib/types";
 import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { useState, useEffect } from "react";
 import { ChevronDown, AlertCircle, AlertTriangle } from "lucide-react";
 
 interface SEOSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
-  initialData?: Partial<ClientWithRelations>;
-  clients?: Array<{ id: string; name: string; slug: string }>;
 }
 
-export function SEOSection({
-  form,
-  initialData,
-  clients = [],
-}: SEOSectionProps) {
+export function SEOSection({ form }: SEOSectionProps) {
   const { watch, setValue, formState: { errors } } = form;
   const [seoSettings, setSeoSettings] = useState<SEOSettings | null>(null);
   const [openSections, setOpenSections] = useState({
     metaBasics: false,
-    schemaContent: false,
-    organization: false,
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -59,25 +48,8 @@ export function SEOSection({
 
   const seoTitleValue = (watch("seoTitle") || "") as string;
   const seoDescriptionValue = (watch("seoDescription") || "") as string;
-  const canonicalUrlValue = (watch("canonicalUrl") || "") as string;
-  const descriptionValue = (watch("description") || "") as string;
-  const keywordsValue = watch("keywords");
-  const knowsLanguageValue = watch("knowsLanguage");
-  const organizationTypeValue = watch("organizationType");
 
-  const hasMetaBasicsErrors = Boolean(
-    errors.seoTitle ||
-      errors.seoDescription ||
-      errors.canonicalUrl ||
-      errors.metaRobots,
-  );
-  const hasSchemaContentErrors = Boolean(
-    errors.description || errors.keywords || errors.knowsLanguage
-  );
-  const hasOrganizationErrors = Boolean(
-    errors.parentOrganizationId ||
-      errors.organizationType
-  );
+  const hasMetaBasicsErrors = Boolean(errors.seoTitle || errors.seoDescription);
 
   const seoTitleLength = seoTitleValue.trim().length;
   const seoDescriptionLength = seoDescriptionValue.trim().length;
@@ -100,15 +72,7 @@ export function SEOSection({
         ? 1
         : seoDescriptionLength < seoDescriptionMin || seoDescriptionLength > seoDescriptionMax
         ? 1
-        : 0) +
-      // Canonical URL: warn when missing
-      (canonicalUrlValue.trim() ? 0 : 1),
-    schemaContent:
-      (descriptionValue.trim().length >= 100 ? 0 : 1) +
-      (Array.isArray(keywordsValue) && keywordsValue.length ? 0 : 1) +
-      (Array.isArray(knowsLanguageValue) && knowsLanguageValue.length ? 0 : 1),
-    organization:
-      (organizationTypeValue ? 0 : 1),
+        : 0),
   } as const;
 
   return (
@@ -198,202 +162,8 @@ export function SEOSection({
                 </div>
               )}
             </div>
-            <FormInput
-              label="Canonical URL"
-              name="canonicalUrl"
-              type="url"
-              value={watch("canonicalUrl") || ""}
-              onChange={(e) => setValue("canonicalUrl", e.target.value || null, { shouldValidate: true })}
-              error={errors.canonicalUrl?.message}
-              placeholder="https://example.com/page"
-              hint={messages.hints.client.canonical}
-            />
-            {/* Twitter card/title/site/description are NOT Client columns — they're
-                generated from Settings + the client's hero image. No per-client input. */}
-            <FormSelect
-              label="Meta Robots"
-              name="metaRobots"
-              value={watch("metaRobots") || undefined}
-              onValueChange={(value) =>
-                setValue(
-                  "metaRobots",
-                  value
-                    ? (value as "index, follow" | "noindex, follow" | "index, nofollow" | "noindex, nofollow")
-                    : null,
-                  { shouldValidate: true }
-                )
-              }
-              error={errors.metaRobots?.message}
-              hint={messages.hints.client.robots}
-              placeholder="Select robots directive"
-            >
-              <SelectItem value="index, follow">index, follow (Default - Allow indexing)</SelectItem>
-              <SelectItem value="noindex, follow">noindex, follow (Don't index, but follow links)</SelectItem>
-              <SelectItem value="index, nofollow">index, nofollow (Index, but don't follow links)</SelectItem>
-              <SelectItem value="noindex, nofollow">noindex, nofollow (Don't index or follow)</SelectItem>
-            </FormSelect>
-          </div>
-        )}
-      </div>
-
-      {/* Schema content */}
-      <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() => toggleSection("schemaContent")}
-          className="flex flex-col gap-1 mb-1 w-full text-left"
-        >
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={`h-3 w-3 text-muted-foreground transition-transform ${
-                  openSections.schemaContent ? "rotate-0" : "-rotate-90"
-                }`}
-              />
-              <h3 className="text-xs font-extrabold text-foreground tracking-wide uppercase whitespace-nowrap">
-                Schema content
-              </h3>
-            </div>
-            <div className="ml-auto flex items-center gap-1">
-              {hasSchemaContentErrors && (
-                <AlertCircle className="h-3 w-3 text-destructive" aria-hidden="true" />
-              )}
-              {warningCounts.schemaContent > 0 && (
-                <span className="inline-flex items-center justify-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-500 border border-amber-500/40">
-                  <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
-                  {warningCounts.schemaContent}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="h-px w-full bg-border" />
-        </button>
-
-        {openSections.schemaContent && (
-          <div className="space-y-3">
-            <div>
-              <FormTextarea
-                label="Organization Description"
-                name="description"
-                value={watch("description") || ""}
-                onChange={(e) => setValue("description", e.target.value || null, { shouldValidate: true })}
-                rows={3}
-                error={errors.description?.message}
-                placeholder="Describe your organization's mission, values, and key achievements..."
-                hint={messages.hints.client.socialDescription}
-              />
-              <div className="mt-1">
-                <CharacterCounter
-                  current={(watch("description") || "").length}
-                  min={100}
-                  max={500}
-                  className="ml-1"
-                  belowMinHint="At least 100 characters recommended for an adequate Schema.org structured data description."
-                  aboveMaxHint="Keep it concise (up to 500 chars) for better clarity in Schema.org. Full description belongs on the About page."
-                />
-              </div>
-            </div>
-            <FormTextarea
-              label="Keywords"
-              name="keywords"
-              value={
-                Array.isArray(watch("keywords"))
-                  ? watch("keywords").join(", ")
-                  : ((typeof watch("keywords") === "string" ? watch("keywords") : "") as string)
-              }
-              onChange={(e) => {
-                const keywords = e.target.value
-                  .split(",")
-                  .map((k) => k.trim())
-                  .filter(Boolean);
-                setValue("keywords", keywords, { shouldValidate: true });
-              }}
-              rows={2}
-              error={errors.keywords?.message}
-              placeholder="e.g., technology, innovation, consulting, digital transformation"
-              hint={messages.hints.client.keywords}
-            />
-            <FormTextarea
-              label="Knows Language"
-              name="knowsLanguage"
-              value={
-                Array.isArray(watch("knowsLanguage"))
-                  ? watch("knowsLanguage").join(", ")
-                  : ((typeof watch("knowsLanguage") === "string" ? watch("knowsLanguage") : "") as string)
-              }
-              onChange={(e) => {
-                const languages = e.target.value
-                  .split(",")
-                  .map((l) => l.trim())
-                  .filter(Boolean);
-                setValue("knowsLanguage", languages, { shouldValidate: true });
-              }}
-              rows={2}
-              error={errors.knowsLanguage?.message}
-              placeholder="e.g., Arabic, English"
-              hint={messages.hints.client.languages}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Organization & hierarchy */}
-      <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() => toggleSection("organization")}
-          className="flex flex-col gap-1 mb-1 w-full text-left"
-        >
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2">
-              <ChevronDown
-                className={`h-3 w-3 text-muted-foreground transition-transform ${
-                  openSections.organization ? "rotate-0" : "-rotate-90"
-                }`}
-              />
-              <h3 className="text-xs font-extrabold text-foreground tracking-wide uppercase whitespace-nowrap">
-                Organization & hierarchy
-              </h3>
-            </div>
-            <div className="ml-auto flex items-center gap-1">
-              {hasOrganizationErrors && (
-                <AlertCircle className="h-3 w-3 text-destructive" aria-hidden="true" />
-              )}
-              {warningCounts.organization > 0 && (
-                <span className="inline-flex items-center justify-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-500 border border-amber-500/40">
-                  <AlertTriangle className="h-3 w-3 mr-1" aria-hidden="true" />
-                  {warningCounts.organization}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="h-px w-full bg-border" />
-        </button>
-
-        {openSections.organization && (
-          <div className="space-y-4">
-            <div>
-              <FormNativeSelect
-                label="Parent Organization"
-                name="parentOrganizationId"
-                value={watch("parentOrganizationId") || ""}
-                onChange={(e) => setValue("parentOrganizationId", e.target.value || null, { shouldValidate: true })}
-                error={errors.parentOrganizationId?.message}
-                placeholder="Select parent organization (optional)"
-                hint={messages.hints.client.parentCompany}
-              >
-                <option value="">None (Independent Organization)</option>
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
-                  </option>
-                ))}
-              </FormNativeSelect>
-              <p className="text-xs text-muted-foreground mt-2">
-                Parent organization is used in Schema.org structured data to create the organizational hierarchy. Only set this if
-                this client is a subsidiary or division of another organization.
-              </p>
-            </div>
+            {/* Meta Robots removed: index/noindex is a PLATFORM default from
+                Settings (settings.defaultMetaRobots), not a per-client field. */}
           </div>
         )}
       </div>

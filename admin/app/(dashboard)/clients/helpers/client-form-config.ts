@@ -35,9 +35,9 @@ export const clientFormSections: FormSectionConfig[] = [
     icon: "User",
     // Admin-owned fields that the grouped-update writers actually persist live in
     // their own groups below (contact/address/legal). Fields kept here are either
-    // written by updateRequiredFields (name/slug/email/businessBrief) OR are
+    // written by updateRequiredFields (name/slug/email) OR are
     // console-owned and intentionally NOT mutated by the admin grouped save
-    // (legalName, foundingDate, slogan, address details, vatID, …) — they stay
+    // (legalName, foundingDate, slogan, businessBrief, address details, vatID, …) — they stay
     // listed so the form still carries their values, but no admin writer touches them.
     fields: [
       "name",
@@ -63,7 +63,7 @@ export const clientFormSections: FormSectionConfig[] = [
       "vatID",
       "organizationType",
     ],
-    required: ["name", "slug", "email", "businessBrief"],
+    required: ["name", "slug", "email"],
     priority: "primary",
     availableInCreate: true,
     availableInEdit: true,
@@ -71,16 +71,14 @@ export const clientFormSections: FormSectionConfig[] = [
   {
     id: "subscription",
     title: "Subscription",
-    description: "Subscription tier, dates, and billing state",
+    description: "Subscription tier",
     icon: "CreditCard",
-    // Fields: subscriptionTier, subscriptionStartDate, subscriptionEndDate (auto-gen, not counted), subscriptionStatus (edit-only), paymentStatus (edit-only), articlesPerMonth, subscriptionTierConfigId
+    // subscriptionStatus + paymentStatus removed (2026-06-10): owned by the Activate/Suspend
+    // sidebar pages. subscriptionStartDate + subscriptionEndDate + articlesPerMonth removed
+    // (2026-06-10): dates come from the invoice workflow (Accounts → createInvoiceAction),
+    // and articlesPerMonth is derived from the tier config — neither is edited in this form.
     fields: [
       "subscriptionTier",
-      "subscriptionStartDate",
-      "subscriptionEndDate",
-      "subscriptionStatus",
-      "paymentStatus",
-      "articlesPerMonth",
       "subscriptionTierConfigId",
     ],
     required: ["subscriptionTier"],
@@ -144,18 +142,8 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "SEO",
     description: "SEO metadata and meta tags",
     icon: "Search",
-    fields: ["seoTitle", "seoDescription", "description", "canonicalUrl", "metaRobots", "organizationType", "keywords", "knowsLanguage", "parentOrganizationId", "businessActivityCode", "isicV4", "gbpProfileUrl", "gbpPlaceId", "gbpAccountId", "gbpLocationId", "gbpCategory", "priceRange"],
-    required: [],
-    priority: "secondary",
-    availableInCreate: true,
-    availableInEdit: true,
-  },
-  {
-    id: "seo-validation",
-    title: "SEO & Validation",
-    description: "JSON-LD validation and rich results preview",
-    icon: "CheckCircle",
-    fields: [],
+    // description (client-owned via console) + canonicalUrl (auto-derived) + keywords (Google ignores meta keywords; JSON-LD falls back to contentPriorities) removed 2026-06-10.
+    fields: ["seoTitle", "seoDescription", "organizationType", "parentOrganizationId", "businessActivityCode", "isicV4", "gbpProfileUrl", "gbpPlaceId", "gbpAccountId", "gbpLocationId", "gbpCategory", "priceRange"],
     required: [],
     priority: "secondary",
     availableInCreate: true,
@@ -186,9 +174,11 @@ export const clientFormSections: FormSectionConfig[] = [
   {
     id: "settings",
     title: "Settings",
-    description: "Client-specific settings and preferences",
+    description: "Subscription/payment status moved to the Activate/Suspend sidebar pages",
     icon: "Settings",
-    fields: ["subscriptionStatus", "paymentStatus"],
+    // Emptied 2026-06-10: the Settings accordion was removed from the edit form.
+    // subscriptionStatus/paymentStatus are now owned by Activate/Suspend only.
+    fields: [],
     required: [],
     priority: "secondary",
     availableInCreate: false,

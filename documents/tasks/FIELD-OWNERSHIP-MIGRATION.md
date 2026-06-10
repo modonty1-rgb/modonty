@@ -7,7 +7,31 @@
 1. **silent-drop في التوجيه (حقيقي، أُصلح):** `client-form-config.ts` كانت مجموعات contact/address/legal `fields:[]` فاضية، فكل الحقول تُخرَّط لـ«required» و`updateRequiredFields` يكتب 9 حقول بس. **الإصلاح:** عبّيت `contact.fields=[url,phone,contactType,sameAs]` · `address.fields=[addressCountry]` · `legal.fields=[legalForm]` وشِلتها من «required» → الدوال المخصّصة (`updateContactFields`/`updateAddressFields`/`updateLegalFields`) تشتغل بتطبيعاتها. **بحقولها فقط** (الدولة في address، الشكل في legal) فحقول الكونسول (vatID/تفاصيل العنوان) تبقى سليمة.
 2. **validation block (سبب فشل اختباراتي):** جبر سيو عنده `industryId=null`، والـ `clientFormSchema` يطلبه string → «Expected string, received null» → الـ form ما يُرسل أصلاً (الـ callback الثاني). أي عميل بـ industryId فاضي ما ينحفظ من الأدمن — **بَق منفصل** (إما نخلّي industryId nullable أو نلزم تعيينه). حلّيته لجبر سيو بتعيين صناعة.
 
-**دليل قاطع (DBG logs):** بعد تعيين صناعة، الحفظ اشتغل → `groupedData.address={"addressCountry":"SA"}` · `results: address fieldsUpdated:1` · `legal fieldsUpdated:1` (Sole Proprietorship) · `contact fieldsUpdated:0` (url/phone بلا تغيير = ما مُسحت). إعادة تحميل = الدولة «السعودية (SA)» باقية بصرياً. **tsc نظيف · DBG logs أُزيلت. لا شيء مدفوع.** متبقّي: dataLayer (addressNeighborhood→streetAddress) + قرار industryId-nullable + version bump + push.
+**دليل قاطع (DBG logs):** بعد تعيين صناعة، الحفظ اشتغل → `groupedData.address={"addressCountry":"SA"}` · `results: address fieldsUpdated:1` · `legal fieldsUpdated:1` (Sole Proprietorship) · `contact fieldsUpdated:0` (url/phone بلا تغيير = ما مُسحت). إعادة تحميل = الدولة «السعودية (SA)» باقية بصرياً. **tsc نظيف · DBG logs أُزيلت.**
+
+**✅ مدفوع 2026-06-10** — commit `b00e804` · admin v0.75.0 · console v0.16.0 (مع إعادة تصميم بروفايل الكونسول). tsc admin+console = 0 · أمان نظيف · الدائرة مقفلة (الكونسول ReadonlyRow ↔ admin inputs).
+
+**✅ تابع (محلي، غير مدفوع) 2026-06-10 — إزالة تاب Settings من فورم تعديل العميل:** شِلت أكورديون Settings + فصلت `subscriptionStatus`/`paymentStatus` عن كل المجموعات في `client-form-config.ts` (groupFieldsByTab يُسقط أي حقل بلا مجموعة → حفظ التعديل ما يلمسهم). ملكيتهم صارت للـ Activate/Suspend بالسايدبار حصراً (التفعيل يخلّي status=ACTIVE + payment=PAID). الملفات: `client-form.tsx` · `client-form-config.ts`. tsc admin=0 · مؤكّد حيّاً (الأقسام 6، Settings اختفى). تعليم `OVERDUE` يدوياً ينتظر workflow الفوترة.
+
+**✅ تابع (محلي، غير مدفوع) 2026-06-10 — قفل دائرة SEO للكونسول + حذف قسم SEO Validation:**
+- **قفل الدائرة (الكونسول):** اكتُشف بالتحقيق إن الذاكرة قديمة — `updateProfile` **يستدعي `regenerateClientSeo`** أصلاً (نفس مولّد الأدمن). الناقص الوحيد = كاش مودونتي العام. أُضيف `console/lib/revalidate-modonty-tag.ts` + نداء `revalidateModontyTag("clients")` في `updateProfile`. يعتمد على `REVALIDATE_SECRET` بـ env الكونسول. **فرق متبقّي:** cascade مقالات العميل (الأدمن يعمله، الكونسول لا) — للنقاش.
+- **حذف قسم SEO Validation من فورم التعديل:** شِلت أكورديون "SEO Validation" + import + `siteUrl` (صار يتيم) من `client-form.tsx` + `loadSiteUrl`/`siteUrl` من صفحة التعديل + مجموعة `seo-validation` من الإعداد. **ملف المكوّن `client-seo-validation-section.tsx` باقٍ عمداً** — صفحة `/clients/[id]/seo` (`client-seo-form.tsx`) تستخدمه = صفر dead code. tsc admin+console=0 · مؤكّد حيّاً (5 أقسام).
+
+### 🔚 آخر بند قبل اكتمال الـ task (خالد 2026-06-10)
+**cascade مقالات العميل من الكونسول.** الأدمن `updateClient` بعد حفظ بيانات العميل يعيد توليد JSON-LD/metadata **لكل مقالات العميل** + `revalidateModontyTag("articles")`. الكونسول `updateProfile` لا يفعل — يكتفي بـ `regenerateClientSeo` (صفحة العميل) + `revalidateModontyTag("clients")`.
+- **الخطر:** لو بيانات العميل (اسم/شعار/publisher) مُضمّنة **فعلياً** داخل JSON-LD المقالات (مش `@id` مرجعي)، فتعديل العميل من الكونسول يترك مقالاته بـ JSON-LD قديم.
+- **الخطوة:** نتحقّق من مولّد JSON-LD للمقال (هل يُضمّن client data أم يرجعه بـ @id)؛ لو مُضمَّن → نضيف نفس الـ cascade للكونسول (مع مراعاة الأداء: إعادة توليد كل المقالات عند كل حفظ بروفايل). + نتأكد `REVALIDATE_SECRET` موجود بـ env الكونسول على Vercel.
+- **الحالة:** معلّق — هذا آخر شي ننفّذه ثم نقفل الـ task.
+
+**متبقّي (غير حاجز، لدفعات لاحقة):**
+1. **dataLayer**: دمج `addressNeighborhood` في `streetAddress` (تنظيف Schema.org PostalAddress).
+2. **قرار industryId**: عملاء بـ `industryId=null` ما ينحفظون من الأدمن (`clientFormSchema` يطلب string) — إما nullable أو نلزم تعيينه.
+3. **معلّق (خالد 2026-06-10) — تنظيف فورم الأدمن من حقول الكونسول:** جرد (قراءة فقط) كشف 3 حقول يعدّلها الكونسول وما زال الأدمن فيه خانة لها:
+   - `description` (وصف المنظمة، قسم SEO) → **يُكتب فعلاً** بـ `updateSEOFields` = خطر دهس قيمة العميل → نشيله/read-only.
+   - `slogan` (Basic Info → BusinessBrief) → **inert** (ما يكتبه أي writer، خانة زومبي مضلّلة) → نشيله.
+   - `name` → مشترك (الأدمن يحتاجه عند الإنشاء + الكونسول يعدّله) → **قرار معلّق**: يبقى أم read-only في الأدمن edit.
+   - الباقي نظيف أصلاً (legalName/foundingDate/العنوان/vatID/taxID/CR/ساعات — الأدمن يراقبها بلا خانة).
+   - ملاحظة جانبية للفحص: `keywords` + `knowsLanguage` (قسم SEO) يبدو إنهم ما يُحفظون من أي writer.
 
 ## ✅ تحقّق السلامة النهائي (2026-06-09) — صفر تأثير على function/save/JSON-LD
 1. **`updateProfile`**: كل حقل محميّ بـ `if (data.X !== undefined)` → الحقول المنقولة للـ read-only تصل `undefined` فلا تُكتب → قيمة الأدمن تبقى. (دليل كود + تست حيّ: بعد حفظ فعلي، كل القيم الموثّقة بقيت سليمة).

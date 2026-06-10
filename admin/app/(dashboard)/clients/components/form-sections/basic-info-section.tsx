@@ -278,7 +278,7 @@ export function BasicInfoSection({
         error={errors.sameAs?.message}
       />
 
-      <BusinessBriefSection form={form} showHeader={false} />
+      <BusinessBriefSection form={form} showHeader={false} isEditMode={isEditMode} />
     </div>
   );
 }

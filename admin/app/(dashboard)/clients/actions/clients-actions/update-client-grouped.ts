@@ -109,7 +109,6 @@ export async function updateRequiredFields(
         subscriptionTier: true,
         subscriptionStartDate: true,
         subscriptionEndDate: true,
-        businessBrief: true,
         subscriptionTierConfigId: true,
         articlesPerMonth: true,
       },
@@ -154,7 +153,6 @@ export async function updateRequiredFields(
       subscriptionTier: data.subscriptionTier,
       subscriptionStartDate: normalizeDate(data.subscriptionStartDate),
       subscriptionEndDate: normalizeDate(data.subscriptionEndDate),
-      businessBrief: data.businessBrief,
       subscriptionTierConfigId,
       articlesPerMonth,
     };
@@ -163,24 +161,6 @@ export async function updateRequiredFields(
 
     if (Object.keys(updateData).length === 0) {
       return { success: true, groupName: "required", fieldsUpdated: 0 };
-    }
-
-    // Mirror businessBrief into intake.business.brief so the unified JSON stays in sync.
-    if ("businessBrief" in updateData) {
-      const current = await db.client.findUnique({
-        where: { id: clientId },
-        select: { intake: true },
-      });
-      const cur = (current?.intake as Record<string, unknown> | null) ?? {};
-      const business = (cur.business as Record<string, unknown> | undefined) ?? {};
-      const next: Record<string, unknown> = {
-        ...cur,
-        version: 1,
-        business: { ...business, brief: data.businessBrief ?? null },
-        updatedAt: new Date().toISOString(),
-      };
-      updateData.intake = next;
-      updateData.intakeUpdatedAt = new Date();
     }
 
     await db.client.update({
@@ -351,8 +331,7 @@ export async function updateSEOFields(
       select: {
         seoTitle: true,
         seoDescription: true,
-        description: true,
-        canonicalUrl: true,
+        parentOrganizationId: true,
         gbpProfileUrl: true,
         gbpPlaceId: true,
         gbpAccountId: true,
@@ -367,11 +346,16 @@ export async function updateSEOFields(
       return { success: false, error: "Client not found", groupName: "seo" };
     }
 
+    // description + canonicalUrl are intentionally NOT written here:
+    //  - description: client-owned (edited in the console profile) — admin must not clobber it.
+    //  - canonicalUrl: auto-derived from the slug by the SEO generator (client.canonicalUrl || `${siteUrl}/clients/${slug}`).
+    // parentOrganizationId IS written (the generator reads it for JSON-LD hierarchy).
+    // knowsLanguage removed: all clients are Arabic-only — the generator defaults to
+    // "ar" / settings.defaultAlternateLanguages, so no per-client language field is needed.
     const newData: Record<string, unknown> = {
       seoTitle: data.seoTitle ?? null,
       seoDescription: data.seoDescription ?? null,
-      description: data.description ?? null,
-      canonicalUrl: data.canonicalUrl ?? null,
+      parentOrganizationId: data.parentOrganizationId ?? null,
       gbpProfileUrl: data.gbpProfileUrl ?? null,
       gbpPlaceId: data.gbpPlaceId ?? null,
       gbpAccountId: data.gbpAccountId ?? null,

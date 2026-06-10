@@ -1,7 +1,6 @@
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import { SubscriptionTier } from "@prisma/client";
 
@@ -18,14 +17,16 @@ interface SubscriptionSectionProps {
   }>;
 }
 
+// NOTE: dates + article count removed (2026-06-10) — dates come from the invoice
+// workflow (Accounts), articles are derived from the tier config. Subscription is
+// owned by the invoice flow; the read-only treatment of this tier is deferred to the
+// dedicated edit-form UI/UX phase.
 export function SubscriptionSection({
   form,
-  isEditMode = false,
   tierConfigs = [],
 }: SubscriptionSectionProps) {
   const { watch, setValue, formState: { errors } } = form;
   const subscriptionTier = watch("subscriptionTier");
-  const articlesPerMonth = watch("articlesPerMonth");
 
   return (
     <div className="space-y-1">
@@ -47,19 +48,6 @@ export function SubscriptionSection({
             {config.name} {config.price > 0 ? config.price.toLocaleString() : "Free"}
           </button>
         ))}
-        <Input type="number" value={articlesPerMonth ?? ""} readOnly className="h-full w-14 text-center text-xs" placeholder="—" />
-        <Input
-          type="date"
-          value={watch("subscriptionStartDate") ? new Date(watch("subscriptionStartDate")!).toISOString().split("T")[0] : ""}
-          onChange={(e) => setValue("subscriptionStartDate", e.target.value ? new Date(e.target.value) : null, { shouldValidate: true })}
-          className="h-full w-36 text-xs"
-        />
-        <Input
-          type="date"
-          value={watch("subscriptionEndDate") ? new Date(watch("subscriptionEndDate")!).toISOString().split("T")[0] : ""}
-          onChange={(e) => setValue("subscriptionEndDate", e.target.value ? new Date(e.target.value) : null, { shouldValidate: true })}
-          className="h-full w-36 text-xs"
-        />
       </div>
       {errors.subscriptionTier && (
         <p className="text-xs text-destructive">{errors.subscriptionTier.message}</p>

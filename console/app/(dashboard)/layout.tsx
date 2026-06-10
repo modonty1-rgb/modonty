@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { ar } from "@/lib/ar";
 import { db } from "@/lib/db";
 import { DashboardLayoutClient } from "./components/dashboard-layout-client";
+import { ImpersonationBanner } from "./components/impersonation-banner";
 import { getPendingArticlesCount } from "./dashboard/articles/helpers/article-queries";
 import { getPendingCommentsCount } from "./dashboard/comments/helpers/comment-queries";
 import { getPendingQuestionsCount } from "./dashboard/questions/helpers/question-queries";
@@ -35,6 +36,7 @@ export default async function DashboardLayout({
 
   const clientId = (session as { clientId?: string }).clientId!;
   const clientName = (session as { clientName?: string }).clientName ?? ar.common.clientFallback;
+  const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
   const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount] =
     await Promise.all([
@@ -59,7 +61,9 @@ export default async function DashboardLayout({
   const isYmyl = client?.isYmyl ?? false;
 
   return (
-    <DashboardLayoutClient
+    <>
+      {impersonated && <ImpersonationBanner clientName={clientName} />}
+      <DashboardLayoutClient
       clientName={clientName}
       clientLogoUrl={clientLogoUrl}
       pendingArticlesCount={pendingArticlesCount}
@@ -77,5 +81,6 @@ export default async function DashboardLayout({
     >
       {children}
     </DashboardLayoutClient>
+    </>
   );
 }

@@ -7,7 +7,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import type { ClientFormData } from "@/lib/types";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { clientServerSchema } from "./client-server-schema";
-import { groupFieldsByTab, hasGroupData } from "../../helpers/group-fields-by-tab";
+import { groupFieldsByTab } from "../../helpers/group-fields-by-tab";
 import {
   updateRequiredFields,
   updateBusinessFields,
@@ -79,21 +79,26 @@ export async function updateClient(id: string, data: ClientFormData) {
     // Map to Prisma types after grouping
     const mappedData = mapFormDataToClientData(normalizedData);
 
-    // Update each group independently
-    // This ensures each update has <50 pipeline stages
+    // Update each group independently (separate updates keep each under the
+    // MongoDB <50-pipeline-stage limit). We always invoke every writer — each one
+    // computes its own changed-fields diff and no-ops (no DB write) when nothing
+    // changed. The old `hasGroupData` gate skipped a writer when all of a group's
+    // fields were empty, which silently dropped legitimate field CLEARS
+    // (e.g. emptying legalForm / addressCountry). Removing the gate lets the diff
+    // see "old value → null" and persist the clear.
     const results = await Promise.all([
-      hasGroupData("required", groupedData.required) ? updateRequiredFields(id, groupedData.required) : Promise.resolve({ success: true, groupName: "required", fieldsUpdated: 0 } as const),
-      hasGroupData("business", groupedData.business) ? updateBusinessFields(id, groupedData.business) : Promise.resolve({ success: true, groupName: "business", fieldsUpdated: 0 } as const),
-      hasGroupData("contact", groupedData.contact) ? updateContactFields(id, groupedData.contact) : Promise.resolve({ success: true, groupName: "contact", fieldsUpdated: 0 } as const),
-      hasGroupData("address", groupedData.address) ? updateAddressFields(id, groupedData.address) : Promise.resolve({ success: true, groupName: "address", fieldsUpdated: 0 } as const),
-      hasGroupData("legal", groupedData.legal) ? updateLegalFields(id, groupedData.legal) : Promise.resolve({ success: true, groupName: "legal", fieldsUpdated: 0 } as const),
-      hasGroupData("seo", groupedData.seo) ? updateSEOFields(id, groupedData.seo) : Promise.resolve({ success: true, groupName: "seo", fieldsUpdated: 0 } as const),
-      hasGroupData("media-social", groupedData["media-social"]) ? updateMediaSocialFields(id, groupedData["media-social"]) : Promise.resolve({ success: true, groupName: "media-social", fieldsUpdated: 0 } as const),
-      hasGroupData("security", groupedData.security) ? updateSecurityFields(id, groupedData.security) : Promise.resolve({ success: true, groupName: "security", fieldsUpdated: 0 } as const),
-      hasGroupData("additional", groupedData.additional) ? updateAdditionalFields(id, groupedData.additional) : Promise.resolve({ success: true, groupName: "additional", fieldsUpdated: 0 } as const),
-      hasGroupData("settings", groupedData.settings) ? updateSettingsFields(id, groupedData.settings) : Promise.resolve({ success: true, groupName: "settings", fieldsUpdated: 0 } as const),
-      hasGroupData("ymyl", groupedData.ymyl ?? {}) ? updateYmylFields(id, groupedData.ymyl ?? {}) : Promise.resolve({ success: true, groupName: "ymyl", fieldsUpdated: 0 } as const),
-      hasGroupData("cta", groupedData.cta ?? {}) ? updateCtaFields(id, groupedData.cta ?? {}) : Promise.resolve({ success: true, groupName: "cta", fieldsUpdated: 0 } as const),
+      updateRequiredFields(id, groupedData.required),
+      updateBusinessFields(id, groupedData.business),
+      updateContactFields(id, groupedData.contact),
+      updateAddressFields(id, groupedData.address),
+      updateLegalFields(id, groupedData.legal),
+      updateSEOFields(id, groupedData.seo),
+      updateMediaSocialFields(id, groupedData["media-social"]),
+      updateSecurityFields(id, groupedData.security),
+      updateAdditionalFields(id, groupedData.additional),
+      updateSettingsFields(id, groupedData.settings),
+      updateYmylFields(id, groupedData.ymyl ?? {}),
+      updateCtaFields(id, groupedData.cta ?? {}),
     ]);
 
     // Check for failures

@@ -1,51 +1,36 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import { useHeaderRef } from "./client-form-header-wrapper";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Plus, Pencil, Loader2, ImageIcon, AlertTriangle, X } from "lucide-react";
-import NextImage from "next/image";
+import { Loader2, AlertTriangle, X } from "lucide-react";
+import { useSidebar } from "@/components/contexts/sidebar-context";
 import { ClientLogoModal } from "./client-logo-modal";
 import { ClientHeroModal } from "./client-hero-modal";
 import { ClientVerificationModal } from "./client-verification-modal";
 import { useClientForm } from "../helpers/hooks/use-client-form";
 import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { SubscriptionSection } from "./form-sections/subscription-section";
-import { BusinessSection } from "./form-sections/business-section";
-import { YmylSection } from "./form-sections/ymyl-section";
-import { CtaSection } from "./form-sections/cta-section";
-import { SEOSection } from "./form-sections/seo-section";
-import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
-import { SettingsSection } from "./form-sections/settings-section";
+import { ClientEditWorkspace } from "./edit-workspace/client-edit-workspace";
+import { OpenClientConsoleButton } from "./edit-workspace/open-client-console-button";
 import type { ClientWithRelations } from "@/lib/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
-
-// Every accordion section in edit mode — opened all at once on a failed submit so
-// the blocking field is never hidden inside a collapsed section.
-const EDIT_SECTION_IDS = ["client-info", "company", "ymyl", "cta", "seo", "seo-validation", "settings"];
 
 interface ClientFormProps {
   initialData?: Partial<ClientWithRelations>;
   industries?: Array<{ id: string; name: string }>;
   clients?: Array<{ id: string; name: string; slug: string }>;
   clientId?: string;
-  /** Site base URL from Settings.siteUrl (passed by server parent). */
-  siteUrl: string;
   /** Active countries for the addressCountry picker (admin-owned field). */
   countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
 }
 
-export function ClientForm({ initialData, industries = [], clients = [], clientId, siteUrl, countries = [] }: ClientFormProps) {
-  const headerRef = useHeaderRef();
-  const router = useRouter();
+export function ClientForm({ initialData, industries = [], clients = [], clientId, countries = [] }: ClientFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const { collapsed } = useSidebar();
   const [logoModalOpen, setLogoModalOpen] = useState(false);
   const [heroModalOpen, setHeroModalOpen] = useState(false);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
-  const [openSections, setOpenSections] = useState<string[]>(["client-info"]);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
     (initialData?.logoMedia as { url?: string } | null)?.url ?? null
   );
@@ -76,15 +61,14 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
 
   const watchedValues = form.watch();
 
-  // Subscribe to submit attempts. On a FAILED submit, reveal every accordion
-  // section (so the blocking field is mounted) and scroll the user up to the
-  // prominent error banner — no more clicking Save with nothing happening.
+  // On a FAILED submit, scroll the user up to the prominent error banner. With the
+  // flat zone layout (no accordion) every field is always mounted, so there's
+  // nothing to expand — we just bring the banner into view.
   const { submitCount } = form.formState;
   useEffect(() => {
     if (submitCount === 0) return;
     const errorKeys = Object.keys(form.formState.errors).filter((k) => k !== "root");
     if (errorKeys.length === 0) return;
-    setOpenSections(EDIT_SECTION_IDS);
     const timer = setTimeout(() => {
       bannerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 120);
@@ -94,67 +78,33 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
 
   // Unified SEO score — SAME scorer + STORED data used by the client SEO page,
   // the clients list, and the console portal. Reads initialData (the stored client
-  // row) so the header chip shows the IDENTICAL number every surface shows (single
-  // source of truth). The live SEO validation preview lives inside the "SEO
-  // Validation" accordion for predictive editing; the header reflects saved state.
-  const { score: unifiedSeoScore } = computeClientSeoScore(
+  // row) so the header chip + left-panel ring show the IDENTICAL number every
+  // surface shows (single source of truth).
+  const { score: unifiedSeoScore, checks: seoChecks } = computeClientSeoScore(
     clientToSeoInput(initialData as Record<string, unknown> | undefined),
   );
-  const seoTone =
-    unifiedSeoScore >= 80
-      ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-      : unifiedSeoScore >= 50
-        ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
-        : "bg-red-500/10 text-red-600 border-red-500/30";
-
-  const seoDoctorNode = clientId ? (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold tabular-nums ${seoTone}`}
-      title="جاهزية SEO — نفس الرقم في صفحة العميل والكونسول (من البيانات المحفوظة)"
-    >
-      <span className="opacity-70">SEO</span>
-      {unifiedSeoScore}%
-    </span>
-  ) : null;
-
-  // Expose action buttons to header via ref
-  const buttonConfig = useMemo(() => {
-    const buttonText = loading ? "Saving..." : isEditMode ? "Update Client" : "Create Client";
-    const buttonIcon = loading ? (
-      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-    ) : isEditMode ? (
-      <Pencil className="h-4 w-4 mr-2" />
-    ) : (
-      <Plus className="h-4 w-4 mr-2" />
-    );
-    return { buttonText, buttonIcon, buttonClassName: undefined };
-  }, [loading, isEditMode]);
-
+  // Track unsaved changes (edit mode) so the bottom save bar appears ONLY when
+  // the live form differs from what's stored. Field onChanges don't all pass
+  // shouldDirty, so RHF's isDirty is unreliable here — snapshot the baseline at
+  // mount and compare live values instead.
+  const baselineRef = useRef<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
   useEffect(() => {
-    if (clientId) {
-      headerRef.current?.setSEODoctor(seoDoctorNode);
+    if (!isEditMode) return;
+    if (baselineRef.current === null) {
+      baselineRef.current = JSON.stringify(form.getValues());
     }
-    headerRef.current?.setActionButtons(
-      <Button
-        type="button"
-        variant="default"
-        className={buttonConfig.buttonClassName}
-        disabled={loading}
-        onClick={() => {
-          if (formRef.current) {
-            formRef.current.requestSubmit();
-          }
-        }}
-      >
-        {buttonConfig.buttonIcon}
-        {buttonConfig.buttonText}
-      </Button>
-    );
-  }, [headerRef, seoDoctorNode, buttonConfig, loading, clientId]);
+    const sub = form.watch((values) => {
+      setIsDirty(JSON.stringify(values) !== baselineRef.current);
+    });
+    return () => sub.unsubscribe();
+  }, [form, isEditMode]);
+
 
   return (
     <form ref={formRef} id="client-form" onSubmit={handleSubmit}>
-      <div className="space-y-6">
+      {/* pb clears the fixed bottom footer so the last fields aren't hidden. */}
+      <div className="space-y-6 pb-24">
         {/* Error Display */}
         {error && (
           <div
@@ -203,258 +153,41 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
           </div>
         )}
 
-        {/* Tab-based Form Sections - Vertical Layout */}
         <div suppressHydrationWarning>
-          <div className="flex gap-6">
-            <div className="flex-1 min-w-0 space-y-6">
-              {!isEditMode && (
-                <div className="space-y-3">
-                  {/* Media info moved to header icon */}
-                  {/* SEO info moved to header icon */}
+          {!isEditMode ? (
+            /* CREATE MODE — flat, essentials only (unchanged) */
+            <div className="space-y-6">
+              {watchedValues.slug && (
+                <div className="flex justify-end">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                    https://modonty.com/clients/{watchedValues.slug}
+                  </span>
                 </div>
               )}
-
-              {isEditMode && (
-                <div className="flex items-center gap-1.5 flex-wrap mb-2">
-                  <span className="text-[10px] text-muted-foreground font-medium">Required:</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Client Name</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Email</span>
-                  <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground">Business Brief</span>
-                </div>
-              )}
-
-              {!isEditMode ? (
-                /* CREATE MODE — flat, essentials only */
-                <div className="space-y-6">
-                  {watchedValues.slug && (
-                    <div className="flex justify-end">
-                      <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                        https://modonty.com/clients/{watchedValues.slug}
-                      </span>
-                    </div>
-                  )}
-                  <BasicInfoSection form={form} industries={industries} countries={countries} />
-                  <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} />
-                </div>
-              ) : (
-                /* EDIT MODE — accordion with all sections */
+              <BasicInfoSection form={form} industries={industries} countries={countries} />
+              <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} />
+            </div>
+          ) : (
+            /* EDIT MODE — logical-zone workspace (left live panel + 5 zones) */
+            <>
+              <ClientEditWorkspace
+                form={form}
+                initialData={initialData}
+                industries={industries}
+                clients={clients}
+                countries={countries}
+                clientId={clientId}
+                seoScore={unifiedSeoScore}
+                seoChecks={seoChecks}
+                currentLogoUrl={currentLogoUrl}
+                currentHeroUrl={currentHeroUrl}
+                currentVerificationUrl={currentVerificationUrl}
+                onOpenLogo={() => setLogoModalOpen(true)}
+                onOpenHero={() => setHeroModalOpen(true)}
+                onOpenVerification={() => setVerificationModalOpen(true)}
+              />
+              {clientId && (
                 <>
-                {/* Media Widget — Logo + Hero. Both feed the SEO score directly:
-                    logo → Organization.logo (required for Google rich results),
-                    hero → OG/Twitter image + JSON-LD primaryImageOfPage. */}
-                {clientId && (
-                  <div className="border rounded-lg bg-card p-4 mb-2">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest">Media</p>
-                      <span className="text-[11px] text-muted-foreground">يغذّيان جاهزية SEO مباشرةً</span>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {/* Logo */}
-                      <div className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3">
-                        <button
-                          type="button"
-                          onClick={() => setLogoModalOpen(true)}
-                          className={`relative group w-20 h-20 rounded-lg border-2 ${currentLogoUrl ? "border-emerald-500/40" : "border-dashed border-amber-500/50"} hover:border-primary/60 transition-colors overflow-hidden flex-shrink-0 bg-background`}
-                        >
-                          {currentLogoUrl ? (
-                            <NextImage src={currentLogoUrl} alt="Client logo" fill className="object-contain p-1" sizes="80px" />
-                          ) : (
-                            <div className="flex items-center justify-center h-full">
-                              <ImageIcon className="h-8 w-8 text-amber-500/50" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Pencil className="h-4 w-4 text-white" />
-                          </div>
-                        </button>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`h-2 w-2 rounded-full ${currentLogoUrl ? "bg-emerald-500" : "bg-amber-500"}`} />
-                            <p className="text-sm font-semibold">الشعار</p>
-                          </div>
-                          <p className="text-sm">{currentLogoUrl ? "تغيير الشعار" : "إضافة الشعار"}</p>
-                          <p className={`text-xs mt-0.5 ${currentLogoUrl ? "text-muted-foreground" : "text-amber-600 font-medium"}`}>
-                            {currentLogoUrl ? "500×500px — نسبة 1:1" : "مطلوب لظهور المنظمة في Google"}
-                          </p>
-                        </div>
-                      </div>
-                      {/* Hero Image */}
-                      <div className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3">
-                        <button
-                          type="button"
-                          onClick={() => setHeroModalOpen(true)}
-                          className={`relative group w-32 h-20 rounded-lg border-2 ${currentHeroUrl ? "border-emerald-500/40" : "border-dashed border-border"} hover:border-primary/60 transition-colors overflow-hidden flex-shrink-0 bg-background`}
-                        >
-                          {currentHeroUrl ? (
-                            <NextImage src={currentHeroUrl} alt="Hero image" fill className="object-cover" sizes="128px" />
-                          ) : (
-                            <div className="flex items-center justify-center h-full">
-                              <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Pencil className="h-4 w-4 text-white" />
-                          </div>
-                        </button>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`h-2 w-2 rounded-full ${currentHeroUrl ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
-                            <p className="text-sm font-semibold">صورة الغلاف</p>
-                          </div>
-                          <p className="text-sm">{currentHeroUrl ? "تغيير الغلاف" : "إضافة الغلاف"}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {currentHeroUrl ? "2400×400px — نسبة 6:1" : "تُستخدم للمشاركة + داخل البيانات المهيكلة"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {/* Verification («التوثيق») — admin-controlled trust anchor, separate
-                    from the SEO-feeding logo/hero. Plain Cloudinary URL, shown on the public page. */}
-                {clientId && (
-                  <div className="border rounded-lg bg-card p-4 mb-2">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest">التوثيق</p>
-                      <span className="text-[11px] text-muted-foreground">مودونتي توثّق — العميل لا يوثّق نفسه</span>
-                    </div>
-                    <div className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3">
-                      <button
-                        type="button"
-                        onClick={() => setVerificationModalOpen(true)}
-                        className={`relative group w-32 h-20 rounded-lg border-2 ${currentVerificationUrl ? "border-emerald-500/40" : "border-dashed border-border"} hover:border-primary/60 transition-colors overflow-hidden flex-shrink-0 bg-background`}
-                      >
-                        {currentVerificationUrl ? (
-                          <NextImage src={currentVerificationUrl} alt="Verification" fill className="object-contain p-1" sizes="128px" />
-                        ) : (
-                          <div className="flex items-center justify-center h-full">
-                            <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Pencil className="h-4 w-4 text-white" />
-                        </div>
-                      </button>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className={`h-2 w-2 rounded-full ${currentVerificationUrl ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
-                          <p className="text-sm font-semibold">صورة التوثيق</p>
-                        </div>
-                        <p className="text-sm">{currentVerificationUrl ? "تغيير صورة التوثيق" : "إضافة صورة التوثيق"}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          صورة السجل التجاري / الترخيص — تظهر في صفحة العميل
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <Accordion type="multiple" value={openSections} onValueChange={setOpenSections} className="w-full">
-                  <AccordionItem value="client-info" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      <div className="flex items-center justify-between w-full pe-2">
-                        <span>Client Info</span>
-                        {watchedValues.slug && (
-                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                            https://modonty.com/clients/{watchedValues.slug}
-                          </span>
-                        )}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <BasicInfoSection form={form} industries={industries} isEditMode clientId={clientId} countries={countries} />
-                        <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="company" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      Company Profile
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <BusinessSection form={form} industries={industries} clients={clients} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="ymyl" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      <div className="flex items-center justify-between w-full pe-2">
-                        <span>YMYL Verification</span>
-                        {watchedValues.isYmyl && watchedValues.ymylCategory && (
-                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase">
-                            {watchedValues.ymylCategory}
-                          </span>
-                        )}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <YmylSection form={form} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="cta" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      <div className="flex items-center justify-between w-full pe-2">
-                        <span>Primary CTA</span>
-                        {watchedValues.ctaMode && watchedValues.ctaMode !== "NONE" && (
-                          <span className="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase">
-                            {watchedValues.ctaMode}
-                          </span>
-                        )}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <CtaSection form={form} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="seo" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      SEO Details
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <SEOSection form={form} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="seo-validation" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      SEO Validation
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <ClientSEOValidationSection
-                          formData={watchedValues}
-                          clientId={clientId}
-                          mode="edit"
-                          siteUrl={siteUrl}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="settings" className="border rounded-lg bg-card">
-                    <AccordionTrigger className="hover:bg-muted/50 data-[state=open]:bg-muted/30 data-[state=open]:hover:bg-muted/60 px-4 py-3">
-                      Settings
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-5 pt-3">
-                      <div className="space-y-6">
-                        <SettingsSection form={form} />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-                {clientId && (
-                  <>
                   <ClientLogoModal
                     open={logoModalOpen}
                     onOpenChange={setLogoModalOpen}
@@ -475,12 +208,53 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     clientId={clientId}
                     initialVerificationUrl={currentVerificationUrl}
                   />
-                  </>
-                )}
                 </>
               )}
-            </div>
+            </>
+          )}
+        </div>
 
+        {/* Persistent footer toolbar — FIXED flush to the viewport bottom,
+            offset by the sidebar width so it spans the content area and the form
+            scrolls cleanly under it. Save is always shown; the unsaved-changes
+            hint + Discard appear only when the form differs from what's stored. */}
+        <div
+          className="fixed bottom-0 right-0 z-30 border-t bg-background/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/85 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.35)] transition-[left] duration-300"
+          style={{ left: collapsed ? "4rem" : "15rem" }}
+        >
+          <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
+            <span className="flex items-center gap-2 text-sm">
+              {isEditMode ? (
+                isDirty ? (
+                  <>
+                    <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                    <span className="font-medium">Unsaved changes</span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground">All changes saved</span>
+                )
+              ) : (
+                <span className="text-muted-foreground">Fill the required fields, then create</span>
+              )}
+            </span>
+            <div className="flex items-center gap-2">
+              {isEditMode && clientId && <OpenClientConsoleButton clientId={clientId} />}
+              {isEditMode && isDirty && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={loading}
+                  onClick={() => form.reset()}
+                >
+                  Discard
+                </Button>
+              )}
+              <Button type="submit" size="sm" disabled={loading}>
+                {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {loading ? "Saving…" : isEditMode ? "Save Changes" : "Create Client"}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

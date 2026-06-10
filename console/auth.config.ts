@@ -2,6 +2,7 @@ import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { verifyConsoleAccessToken } from "@/lib/admin-access";
 
 export const authConfig = {
   pages: {
@@ -47,6 +48,35 @@ export const authConfig = {
         }
       },
     }),
+    // Admin impersonation — opens the client's console AS the client via a signed,
+    // expiring ticket from the admin app. No password; the ticket's signature +
+    // expiry are the gate (verifyConsoleAccessToken).
+    Credentials({
+      id: "admin-impersonation",
+      name: "Admin Access",
+      credentials: {
+        token: { label: "Token", type: "text" },
+      },
+      async authorize(credentials) {
+        const verified = verifyConsoleAccessToken(String(credentials?.token ?? ""));
+        if (!verified) return null;
+        try {
+          const client = await db.client.findUnique({ where: { id: verified.clientId } });
+          if (!client) return null;
+          return {
+            id: client.id,
+            email: client.email ?? undefined,
+            name: client.name,
+            clientId: client.id,
+            clientSlug: client.slug,
+            clientName: client.name,
+            impersonated: true,
+          };
+        } catch {
+          return null;
+        }
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -57,6 +87,7 @@ export const authConfig = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.impersonated = (user as { impersonated?: boolean }).impersonated ?? false;
       }
       return token;
     },
@@ -70,6 +101,8 @@ export const authConfig = {
           token.clientSlug as string;
         (session as { clientName?: string }).clientName =
           token.clientName as string;
+        (session as { impersonated?: boolean }).impersonated =
+          (token.impersonated as boolean) ?? false;
       }
       return session;
     },

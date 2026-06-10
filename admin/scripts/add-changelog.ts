@@ -12,20 +12,19 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.52.0 (modonty)",
-    title: "Brand logo + favicon refresh",
+    version: "0.76.0 (admin)",
+    title: "Client edit page — redesigned + open client console",
     items: [
-      { type: "improve" as const, text: "Navbar now uses one brand logo on both desktop and mobile — and the mobile logo is bigger and easier to read (it was a tiny icon before)." },
-      { type: "improve" as const, text: "In light mode the top bar got a subtle off-white tint so the brand mark stands out clearly." },
-      { type: "feature" as const, text: "New clean square favicon (the 'm' mark) now shows in the browser tab and next to the site in Google results, at every size (16–512), plus an Apple touch icon for iPhones." },
+      { type: "improve" as const, text: "The client edit page was rebuilt into one clean workspace: a live preview on the left (change the logo and cover right on it), five logical sections, and a clear save bar at the bottom — no more cluttered accordions, stacked header, or yellow hint clutter." },
+      { type: "feature" as const, text: "New 'Open Client Console' button (admins only) — opens the client's console as the client so you can edit their data on their behalf, without needing their password." },
+      { type: "fix" as const, text: "Clearing a field (SEO title/description, legal form, country, price range…) now actually saves the empty value instead of silently keeping the old one." },
     ],
   },
   {
-    version: "0.71.1 (admin)",
-    title: "Modonty settings — logo preview fixes",
+    version: "0.17.0 (console)",
+    title: "Admin console access",
     items: [
-      { type: "fix" as const, text: "The 'Logo (Desktop)' preview in Modonty settings no longer crops the wide logo — it now shows the full wordmark." },
-      { type: "improve" as const, text: "The Google preview now shows the real site favicon (the 'm' mark) instead of a placeholder, so what you see matches what Google actually shows." },
+      { type: "feature" as const, text: "An admin can now open your console to help with your data. While they're browsing as you, a clear amber banner shows at the bottom with a one-click exit." },
     ],
   },
 ];

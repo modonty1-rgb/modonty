@@ -1,0 +1,240 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Edit Client — Mockup v3 (final · admin-owned only)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: 'Tajawal', sans-serif; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .zone { scroll-margin-top: 80px; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
+  <div class="mx-auto max-w-[1320px] px-6 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-slate-400">
+      <span>Clients</span><span class="opacity-40">›</span>
+      <span class="text-slate-100 font-medium">شركة جبر سيو</span><span class="opacity-40">›</span><span>Edit</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-[11px] text-slate-500">آخر حفظ: قبل ٣ دقائق</span>
+      <button class="inline-flex items-center gap-2 rounded-md bg-violet-600 hover:bg-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-600/20">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+        حفظ التغييرات
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mx-auto max-w-[1320px] px-6 py-6">
+  <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6 items-start">
+
+    <!-- ══════════ LEFT · LIVE WORKSPACE (sticky) ══════════ -->
+    <aside class="lg:sticky lg:top-20 space-y-4">
+
+      <!-- LIVE CLIENT CARD -->
+      <div class="rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 overflow-hidden">
+        <div class="h-20 bg-gradient-to-br from-blue-900/60 via-violet-900/30 to-slate-900 relative">
+          <span class="absolute top-2 start-2 text-[10px] text-slate-400/70 bg-black/30 rounded px-1.5 py-0.5">معاينة حيّة · صفحة العميل</span>
+        </div>
+        <div class="px-4 pb-4 -mt-8">
+          <div class="flex items-end gap-3">
+            <div class="h-16 w-16 rounded-xl border-2 border-slate-700 bg-slate-950 grid place-items-center shadow-lg">
+              <span class="mono text-[11px] font-bold text-sky-300">JBRSEO</span>
+            </div>
+            <span class="mb-1 inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V5z"/></svg> موثّق
+            </span>
+          </div>
+          <h2 class="mt-2 text-base font-extrabold text-white">شركة جبر سيو</h2>
+          <p class="text-xs text-slate-400 mt-0.5">السيو والتسويق الرقمي · السعودية</p>
+          <div class="mt-3 flex items-center gap-4">
+            <div><p class="text-sm font-bold text-slate-100">12</p><p class="text-[10px] text-slate-500">مقال</p></div>
+            <div class="h-6 w-px bg-slate-800"></div>
+            <div><p class="text-sm font-bold text-slate-100">٣٤٠</p><p class="text-[10px] text-slate-500">متابع</p></div>
+            <div class="h-6 w-px bg-slate-800"></div>
+            <div><p class="text-sm font-bold text-slate-100">١٢ك</p><p class="text-[10px] text-slate-500">مشاهدة</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO READINESS RING -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+        <div class="flex items-center gap-4">
+          <div class="relative h-20 w-20 shrink-0">
+            <svg class="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#1e293b" stroke-width="3.2"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="67 100"/>
+            </svg>
+            <div class="absolute inset-0 grid place-items-center"><span class="text-lg font-extrabold text-amber-300 tabular-nums">67<span class="text-[10px]">%</span></span></div>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-bold text-slate-100">جاهزية SEO</p>
+            <p class="text-[11px] text-amber-400 mt-1 font-medium">٣ بنود (من مسؤولية الأدمن) ناقصة</p>
+          </div>
+        </div>
+        <div class="mt-3 space-y-1.5 border-t border-slate-800 pt-3">
+          <div class="flex items-center gap-2 text-xs text-slate-300"><span class="h-4 w-4 grid place-items-center rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">✓</span> الشعار + الغلاف</div>
+          <div class="flex items-center gap-2 text-xs text-slate-300"><span class="h-4 w-4 grid place-items-center rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">✓</span> عنوان + وصف SEO</div>
+          <div class="flex items-center gap-2 text-xs text-amber-300"><span class="h-4 w-4 grid place-items-center rounded-full bg-amber-500/20 text-amber-400 text-[10px]">!</span> صورة التوثيق ناقصة</div>
+          <div class="flex items-center gap-2 text-xs text-amber-300"><span class="h-4 w-4 grid place-items-center rounded-full bg-amber-500/20 text-amber-400 text-[10px]">!</span> بطاقة Google (GBP) ناقصة</div>
+          <div class="flex items-center gap-2 text-xs text-amber-300"><span class="h-4 w-4 grid place-items-center rounded-full bg-amber-500/20 text-amber-400 text-[10px]">!</span> الكلمات المفتاحية</div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTION (read-only · invoices) -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-3.5 flex items-center justify-between">
+        <div><p class="text-[11px] text-slate-500">الاشتراك <span class="text-slate-600">· من الفواتير</span></p><p class="text-sm font-bold text-slate-100 mt-0.5">الزخم · <span class="text-emerald-400">نشط</span></p></div>
+        <a class="text-xs font-medium text-violet-400 hover:underline whitespace-nowrap">Accounts →</a>
+      </div>
+
+      <!-- JUMP NAV -->
+      <nav class="rounded-2xl border border-slate-800 bg-slate-900 p-2">
+        <a href="#z1" class="flex items-center justify-between rounded-lg px-3 py-2 bg-violet-500/10 text-violet-300 text-sm font-semibold"><span>① الحساب والوصول</span><span class="h-2 w-2 rounded-full bg-emerald-400"></span></a>
+        <a href="#z2" class="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800/50 text-sm"><span>② التواصل والتصنيف</span><span class="h-2 w-2 rounded-full bg-emerald-400"></span></a>
+        <a href="#z3" class="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800/50 text-sm"><span>③ الوسائط والتوثيق</span><span class="h-2 w-2 rounded-full bg-amber-400"></span></a>
+        <a href="#z4" class="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800/50 text-sm"><span>④ السيو</span><span class="h-2 w-2 rounded-full bg-amber-400"></span></a>
+        <a href="#z5" class="flex items-center justify-between rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800/50 text-sm"><span>⑤ متقدّم</span><span class="rounded-full bg-violet-500/20 text-violet-300 text-[9px] font-bold px-1.5">MEDICAL</span></a>
+      </nav>
+
+      <p class="px-2 text-[10px] text-slate-600 leading-relaxed">بيانات البروفايل (العنوان · السجل · الوصف · الشعار النصي) يدخلها العميل من <span class="text-slate-400">الكونسول</span> — تظهر بالمعاينة فوق، ما تُعدّل هنا.</p>
+    </aside>
+
+    <!-- ══════════ RIGHT · ADMIN-OWNED FIELDS (logical zones · no collapse) ══════════ -->
+    <div class="space-y-8">
+
+      <!-- ZONE 1 · ACCOUNT -->
+      <section id="z1" class="zone">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-7 w-7 grid place-items-center rounded-lg bg-violet-500/15 text-violet-300 text-sm font-bold">١</span>
+          <h3 class="text-base font-bold text-white">الحساب والوصول</h3>
+          <span class="text-xs text-slate-500">هوية الحساب — يديرها الأدمن وحده</span>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+          <div class="flex gap-5">
+            <button class="group relative h-24 w-24 shrink-0 rounded-2xl border-2 border-emerald-500/40 bg-slate-950 grid place-items-center overflow-hidden">
+              <span class="mono text-[13px] font-bold text-sky-300">JBRSEO</span>
+              <span class="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition grid place-items-center text-[11px] text-white">تغيير الشعار</span>
+            </button>
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="block text-xs font-medium text-slate-400 mb-1.5">الاسم <span class="text-red-400">*</span></label><input value="شركة جبر سيو" class="w-full h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 outline-none focus:border-violet-500"/></div>
+              <div><label class="block text-xs font-medium text-slate-400 mb-1.5">الرابط (Slug)</label><div class="flex h-10 items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 px-3"><span class="flex-1 text-sm text-slate-300 mono truncate">شركة-جبر-سيو</span><span class="text-[10px] rounded bg-slate-800 px-1.5 py-0.5 text-slate-400">مقفل · OTP</span></div></div>
+              <div><label class="block text-xs font-medium text-slate-400 mb-1.5">البريد <span class="text-red-400">*</span></label><input value="support@jbrseo.com" class="w-full h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 outline-none focus:border-violet-500"/></div>
+              <div><label class="block text-xs font-medium text-slate-400 mb-1.5">كلمة المرور</label><div class="flex h-10 items-center rounded-md border border-slate-700 bg-slate-950 px-3"><span class="flex-1 text-sm text-slate-500">••••••• (اتركها للإبقاء)</span><svg class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ZONE 2 · CONTACT + CLASSIFICATION -->
+      <section id="z2" class="zone">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-7 w-7 grid place-items-center rounded-lg bg-violet-500/15 text-violet-300 text-sm font-bold">٢</span>
+          <h3 class="text-base font-bold text-white">التواصل والتصنيف</h3>
+          <span class="text-xs text-slate-500">يضبطها الأدمن · بعضها مشترك مع الكونسول</span>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><label class="block text-xs text-slate-400 mb-1.5">الموقع الإلكتروني</label><input value="https://jbrseo.com" class="w-full h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-300 mono outline-none focus:border-violet-500"/></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">الجوال <span class="text-[10px] text-slate-600">↔ كونسول</span></label><input value="0555123456" class="w-full h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 outline-none focus:border-violet-500"/></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">نوع التواصل</label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center justify-between">خدمة العملاء <span class="text-slate-500">⌄</span></div></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">الصناعة</label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center justify-between">السيو والتسويق الرقمي <span class="text-slate-500">⌄</span></div></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">نوع المنظمة</label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center justify-between">Organization <span class="text-slate-500">⌄</span></div></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">الدولة <span class="text-[10px] text-slate-600">(الدولة فقط — باقي العنوان من الكونسول)</span></label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center justify-between">السعودية <span class="text-slate-500">⌄</span></div></div>
+          <div><label class="block text-xs text-slate-400 mb-1.5">الشكل القانوني <span class="text-[10px] text-slate-600">(السجل/الضريبة من الكونسول)</span></label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center justify-between">ذ.م.م <span class="text-slate-500">⌄</span></div></div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">الحسابات الاجتماعية (sameAs)</label>
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800/50 px-2.5 py-1 text-xs text-slate-300">𝕏 jbrseo ✕</span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800/50 px-2.5 py-1 text-xs text-slate-300">in jbrseo ✕</span>
+              <span class="inline-flex items-center gap-1 rounded-full border border-dashed border-slate-700 px-2.5 py-1 text-xs text-slate-500 cursor-pointer">+</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ZONE 3 · MEDIA + VERIFICATION -->
+      <section id="z3" class="zone">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-7 w-7 grid place-items-center rounded-lg bg-violet-500/15 text-violet-300 text-sm font-bold">٣</span>
+          <h3 class="text-base font-bold text-white">الوسائط والتوثيق</h3>
+          <span class="text-xs text-slate-500">الغلاف يغذّي SEO · التوثيق مرساة الثقة «مودونتي توثّق»</span>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button class="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-start hover:border-violet-500/40 transition">
+            <div class="h-14 w-24 shrink-0 rounded-md bg-gradient-to-br from-blue-900 to-slate-800 border border-slate-700 grid place-items-center text-[10px] text-slate-500">2400×400</div>
+            <div><div class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-400"></span><span class="text-sm font-semibold text-slate-100">صورة الغلاف</span></div><p class="text-xs text-slate-400 mt-0.5">تغيير — نسبة 6:1</p></div>
+          </button>
+          <button class="flex items-center gap-3 rounded-lg border border-amber-500/40 bg-amber-500/5 p-3 text-start hover:border-amber-400 transition">
+            <div class="h-14 w-24 shrink-0 rounded-md border-2 border-dashed border-slate-700 grid place-items-center text-slate-600"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21"/></svg></div>
+            <div><div class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-amber-400"></span><span class="text-sm font-semibold text-slate-100">صورة التوثيق</span></div><p class="text-xs text-amber-400 mt-0.5">ناقصة — السجل/الترخيص</p></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- ZONE 4 · SEO -->
+      <section id="z4" class="zone">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-7 w-7 grid place-items-center rounded-lg bg-violet-500/15 text-violet-300 text-sm font-bold">٤</span>
+          <h3 class="text-base font-bold text-white">السيو</h3>
+          <span class="text-xs text-slate-500">ميتا الصفحة + الكلمات + بطاقة Google + الشركة الأم</span>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="flex justify-between text-xs text-slate-400 mb-1.5"><span>عنوان SEO</span><span class="text-[10px] text-emerald-400">٤٢/٦٠</span></label><input value="جبر سيو — خدمات تحسين محركات البحث" class="w-full h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 outline-none focus:border-violet-500"/></div>
+            <div><label class="block text-xs text-slate-400 mb-1.5">الشركة الأم (parentOrganization)</label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-500 flex items-center justify-between">بدون <span class="text-slate-500">⌄</span></div></div>
+          </div>
+          <div><label class="flex justify-between text-xs text-slate-400 mb-1.5"><span>وصف SEO</span><span class="text-[10px] text-emerald-400">١٣٨/١٦٠</span></label><textarea rows="2" class="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-violet-500">شركة متخصّصة في السيو والتسويق الرقمي تساعد الأعمال على الظهور في نتائج البحث.</textarea></div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">الكلمات المفتاحية / التخصصات <span class="text-[10px] text-slate-600">→ knowsAbout</span></label>
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-full bg-violet-500/15 border border-violet-500/30 px-2.5 py-1 text-xs text-violet-300">تحسين محركات البحث ✕</span>
+              <span class="rounded-full bg-violet-500/15 border border-violet-500/30 px-2.5 py-1 text-xs text-violet-300">تسويق رقمي ✕</span>
+              <span class="rounded-full border border-dashed border-slate-700 px-2.5 py-1 text-xs text-slate-500 cursor-pointer">+ إضافة</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800 pt-4">
+            <div><label class="block text-xs text-amber-400 mb-1.5">رابط بطاقة Google (GBP) · <span class="text-[10px]">ناقص</span></label><input placeholder="maps.google.com/…" class="w-full h-10 rounded-md border border-amber-500/40 bg-slate-950 px-3 text-sm text-slate-100 mono outline-none focus:border-amber-400"/></div>
+            <div><label class="block text-xs text-slate-400 mb-1.5">نطاق السعر (priceRange)</label><div class="h-10 rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100 flex items-center">$$</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ZONE 5 · ADVANCED -->
+      <section id="z5" class="zone">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-7 w-7 grid place-items-center rounded-lg bg-slate-700/40 text-slate-300 text-sm font-bold">٥</span>
+          <h3 class="text-base font-bold text-white">متقدّم</h3>
+          <span class="text-xs text-slate-500">YMYL (شرطي) · CTA · نص النشرة</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="rounded-2xl border border-violet-500/20 bg-violet-500/5 p-4">
+            <div class="flex items-center justify-between"><p class="text-sm font-bold text-slate-100">YMYL</p><span class="rounded-full bg-violet-500/20 text-violet-300 text-[10px] font-bold px-2 py-0.5">MEDICAL</span></div>
+            <p class="text-xs text-slate-400 mt-1.5">مُراجِع مختص — يظهر لأن الصناعة طبية. <span class="text-violet-300 underline cursor-pointer">تعبئة</span></p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+            <div class="flex items-center justify-between"><p class="text-sm font-bold text-slate-100">Primary CTA</p><span class="rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5">FORM</span></div>
+            <p class="text-xs text-slate-400 mt-1.5">زر «احجز موعد» بنموذج. <span class="text-violet-300 underline cursor-pointer">تعديل</span></p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+            <p class="text-sm font-bold text-slate-100">نص نشرة المقالات</p>
+            <p class="text-xs text-slate-400 mt-1.5">«اشترك ليصلك أحدث المقالات». <span class="text-violet-300 underline cursor-pointer">تعديل</span></p>
+          </div>
+        </div>
+      </section>
+
+      <p class="text-center text-[11px] text-slate-600 pt-2">Mockup v3 (final) · admin-owned fields only · للمراجعة البصرية</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
