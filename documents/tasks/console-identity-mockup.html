@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مهمة ١ — «هويتك وتوثيقك» (دمج: بيانات نشاطك + التوثيق المهني)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --border:#e6e8ec; --border-strong:#d7dbe2;
+    --text:#0f172a; --muted:#697586; --muted-2:#9aa4b2;
+    --primary:#2563eb; --primary-tint:#eef3ff; --primary-soft:#dbe6ff;
+    --success:#10b981; --success-tint:#e7f8f1;
+    --amber:#f59e0b; --amber-tint:#fdf3e2;
+    --radius:14px; --radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .app{display:flex;min-height:100vh}
+  button{font-family:inherit}
+
+  /* slim sidebar (context only) */
+  .sidebar{width:248px;flex:none;background:var(--card);border-inline-start:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .side-head{height:62px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--border)}
+  .side-logo{width:36px;height:36px;border-radius:50%;background:var(--primary-tint);color:var(--primary);display:grid;place-items:center;font-weight:900;border:1px solid var(--border)}
+  .side-name{font-weight:800;font-size:13.5px}.side-name small{display:block;font-weight:500;font-size:11px;color:var(--muted-2)}
+  nav{flex:1;padding:14px 12px}
+  .hint{font-size:10.5px;color:var(--muted-2);padding:8px 12px 4px;font-weight:600}
+  .item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:700;color:#3a4252;position:relative;margin-bottom:3px}
+  .item .ic{width:28px;height:28px;border-radius:8px;background:#f1f3f7;display:grid;place-items:center;font-size:14px;flex:none}
+  .item.active{background:var(--primary-tint);color:var(--primary);font-weight:800}
+  .item.active::before{content:"";position:absolute;inset-inline-start:-12px;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--primary)}
+  .item.active .ic{background:var(--primary-soft);color:var(--primary)}
+  .replaced{font-size:11px;color:var(--muted-2);padding:6px 12px;line-height:1.7}
+  .replaced s{color:#b9c0cc}
+
+  /* main */
+  .main{flex:1;min-width:0}
+  .topbar{height:62px;border-bottom:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:5}
+  .crumb{font-size:13px;color:var(--muted);font-weight:600}.crumb b{color:var(--text);font-weight:800}
+  .brand{font-weight:900;color:var(--primary);font-size:17px}
+  .content{padding:24px 26px;max-width:980px}
+
+  .notice{display:flex;gap:11px;align-items:flex-start;background:var(--amber-tint);border:1px dashed #ecc879;border-radius:var(--radius-sm);padding:12px 15px;font-size:12.5px;color:#7a5207;margin-bottom:18px}
+  .notice b{color:#5e3f04}
+
+  .phead h1{font-size:23px;font-weight:900;letter-spacing:-.3px}
+  .phead p{color:var(--muted);font-size:13.5px;margin-top:2px}
+
+  /* meter + readiness + disclaimer (kept from real page) */
+  .toprow{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin:16px 0 6px}
+  .meter,.ready,.disc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+  .meter .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .meter .lbl{font-size:13px;font-weight:700}.meter .pct{font-size:13px;font-weight:800}
+  .meter .bar{height:8px;border-radius:6px;background:#eef1f5;overflow:hidden}
+  .meter .bar i{display:block;height:100%;width:78%;background:linear-gradient(90deg,#2563eb,#10b981)}
+  .ready{display:flex;gap:10px;align-items:center}
+  .ready .ic{width:38px;height:38px;border-radius:11px;background:var(--success-tint);color:var(--success);display:grid;place-items:center;font-size:18px;flex:none}
+  .ready .t{font-size:13px;font-weight:800}.ready .s{font-size:11.5px;color:var(--muted)}
+  .disc{grid-column:1/-1;display:flex;gap:10px;align-items:center;background:#f4f1ff;border-color:#ddd2fb}
+  .disc .ic{font-size:16px}.disc .t{font-size:12.5px;color:#5b3fb0;flex:1}.disc b{color:#4628a0}
+  .disc .ok{font-size:11px;font-weight:800;color:var(--success);background:var(--success-tint);padding:4px 10px;border-radius:20px;white-space:nowrap}
+
+  /* tabs */
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin:20px 0 0}
+  .tab{display:inline-flex;align-items:center;gap:7px;padding:11px 15px;font-size:13.5px;font-weight:700;color:var(--muted);border-bottom:2.5px solid transparent;cursor:pointer;margin-bottom:-1px;white-space:nowrap;border-top:0;border-inline:0;background:transparent}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:800}
+  .tab .dot{width:7px;height:7px;border-radius:50%}
+  .tab .dot.ok{background:var(--success)}.tab .dot.miss{background:var(--amber)}
+
+  .panel{background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 var(--radius) var(--radius);padding:22px}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+  .panel-head h2{font-size:17px;font-weight:800}
+  .panel-head .where{font-size:11.5px;font-weight:700;color:var(--primary);background:var(--primary-tint);padding:5px 10px;border-radius:20px}
+  .panel-sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+
+  .group{margin-top:18px}
+  .group:first-of-type{margin-top:8px}
+  .group-h{font-size:12.5px;font-weight:800;color:#475569;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .group-h .gi{width:24px;height:24px;border-radius:7px;background:#f1f3f7;display:grid;place-items:center;font-size:12px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .f label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+  .f .inp{min-height:39px;border:1px solid var(--border-strong);border-radius:9px;background:#fafbfc;display:flex;align-items:center;padding:8px 12px;font-size:13px;color:var(--text)}
+  .f .inp.empty{color:var(--muted-2)}
+  .f .inp.ltr{direction:ltr;justify-content:flex-end}
+  .f.full{grid-column:1/-1}
+  .save{margin-top:20px;background:var(--primary);color:#fff;font-weight:800;font-size:13.5px;padding:11px 22px;border-radius:10px;border:0;cursor:pointer}
+  .route{font-size:11px;color:var(--muted-2);margin-top:16px}
+  .route code{background:#f1f3f7;border:1px solid var(--border);border-radius:6px;padding:1px 7px;color:#475569;font-weight:700;direction:ltr;display:inline-block}
+
+  .advnote{display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:12px;color:var(--muted);margin-bottom:14px}
+
+  /* hours */
+  .hours .hrow{display:grid;grid-template-columns:5rem auto 1fr 1fr;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+  .hours .hrow:last-child{border-bottom:0}
+  .hours .day{font-size:13px;font-weight:700}
+  .hours .st{font-size:11.5px;color:var(--muted)}
+  .hours .tinp{height:34px;border:1px solid var(--border-strong);border-radius:8px;background:#fafbfc;display:flex;align-items:center;justify-content:center;font-size:12.5px;direction:ltr}
+
+  /* ymyl gate */
+  .gate{display:flex;gap:14px;align-items:flex-start;background:var(--amber-tint);border:1px solid #f3cf8e;border-radius:var(--radius);padding:16px;margin-bottom:16px}
+  .gate .gic{width:42px;height:42px;border-radius:11px;background:#fbe6bd;color:#a5670a;display:grid;place-items:center;font-size:20px;flex:none}
+  .gate h3{font-size:14.5px;font-weight:800;color:#7a5207}
+  .gate p{font-size:12.5px;color:#8a6313;margin-top:3px}
+  .upload{border:1.5px dashed var(--primary);background:var(--primary-tint);border-radius:11px;padding:18px;text-align:center;color:var(--primary);font-weight:800;font-size:13px;cursor:pointer;margin-top:6px}
+
+  .hide{display:none !important}
+  @media(max-width:860px){.fields,.toprow{grid-template-columns:1fr}.tabs{overflow-x:auto;flex-wrap:nowrap}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== slim sidebar (shows the consolidation) ===== -->
+  <aside class="sidebar">
+    <div class="side-head">
+      <div class="side-logo">ع</div>
+      <div class="side-name">عيادات سمايل تاون<small>لوحة تحكم نشاطك</small></div>
+    </div>
+    <nav>
+      <div class="hint">المجالات الرئيسية</div>
+      <div class="item"><span class="ic">🏠</span>الرئيسية</div>
+      <div class="item active"><span class="ic">🪪</span>هويتك وتوثيقك</div>
+      <div class="item"><span class="ic">✍️</span>المحتوى والمقالات</div>
+      <div class="item"><span class="ic">📣</span>العملاء والتسويق</div>
+      <div class="item"><span class="ic">📊</span>صحة موقعك</div>
+      <div class="replaced">
+        ↑ «هويتك وتوثيقك» تستبدل رابطين قديمين:<br>
+        <s>بيانات نشاطك</s> · <s>التوثيق المهني</s><br><br>
+        أما <s>معلومات نشاطك</s> (ورشة السيو) فنُقلت إلى «صحة موقعك» — مش هنا.
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ===== main ===== -->
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb" id="crumb">هويتك وتوثيقك / <b>التعريف</b></div>
+      <div class="brand">modonty</div>
+    </div>
+
+    <div class="content">
+      <div class="notice">
+        <span style="font-size:16px">🧭</span>
+        <div><b>مهمة ١ — موقفي بالشكل المرئي:</b> دمجنا «بيانات نشاطك» + «التوثيق المهني» في رابط واحد بأربع تبويبات. قسّمنا الـ٣٠ حقل الطويلة لمجموعات بغرض واضح. «معلومات نشاطك» (ورشة السيو) <b>مقصود إنها مش هنا</b> — مكانها صحة الموقع.</div>
+      </div>
+
+      <div class="phead">
+        <h1>هويتك وتوثيقك</h1>
+        <p>كل ما يعرّف نشاطك ويثبت مصداقيته — عبّيه من التبويبات، وكل شيء ينعكس على صفحتك وبيانات Google.</p>
+      </div>
+
+      <div class="toprow">
+        <div class="meter">
+          <div class="top"><span class="lbl">اكتمال الملف</span><span class="pct">19 / 24 حقل · 78٪</span></div>
+          <div class="bar"><i></i></div>
+        </div>
+        <div class="ready">
+          <div class="ic">✅</div>
+          <div><div class="t">جاهزية البيانات المنظّمة</div><div class="s">صالحة — بلا أخطاء في Schema</div></div>
+        </div>
+        <div class="disc">
+          <span class="ic">📜</span>
+          <div class="t"><b>إقرار المسؤولية:</b> كل ما تزوّدنا به من بيانات ووثائق صحيح وملكك.</div>
+          <span class="ok">✓ مقبول · إصدار ١</span>
+        </div>
+      </div>
+
+      <!-- tabs -->
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-tab="identity">🪪 التعريف <span class="dot ok"></span></button>
+        <button class="tab" data-tab="location">📍 الموقع وساعات العمل <span class="dot ok"></span></button>
+        <button class="tab" data-tab="official">📄 الوثائق الرسمية <span class="dot miss"></span></button>
+        <button class="tab" data-tab="verify">🛡️ التوثيق المهني <span class="dot miss"></span></button>
+      </div>
+
+      <!-- ===== TAB 1: التعريف ===== -->
+      <div class="panel tabpanel" data-tabpanel="identity">
+        <div class="panel-head"><h2>🪪 التعريف</h2><span class="where">↗ يظهر في أعلى صفحتك وفي بطاقتك</span></div>
+        <div class="panel-sub">الأساسيات اللي يعرفها الزائر عنك — الاسم، إيش تقدّم، وكيف يتواصل معك.</div>
+
+        <div class="group">
+          <div class="group-h"><span class="gi">🏷️</span> الأساسي</div>
+          <div class="fields">
+            <div class="f"><label>اسم النشاط *</label><div class="inp">عيادات سمايل تاون لطب الفم والأسنان</div></div>
+            <div class="f"><label>الاسم القانوني (اختياري)</label><div class="inp">شركة سمايل تاون الطبية</div></div>
+            <div class="f"><label>اسم بديل / مختصر</label><div class="inp">سمايل تاون</div></div>
+            <div class="f"><label>الموقع الإلكتروني</label><div class="inp ltr">https://smiletown.sa</div></div>
+            <div class="f full"><label>شعار تسويقي موجز</label><div class="inp">ابتسامتك تستاهل الأفضل.</div></div>
+            <div class="f full"><label>وصف نشاطك</label><div class="inp">عناية متكاملة لصحة وجمال أسنانك بإشراف أخصائيين سعوديين مرخّصين.</div></div>
+            <div class="f"><label>القطاع</label><div class="inp">طب الأسنان</div></div>
+            <div class="f"><label>سنة التأسيس</label><div class="inp ltr">2013</div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-h"><span class="gi">📞</span> التواصل</div>
+          <div class="fields">
+            <div class="f"><label>البريد الإلكتروني *</label><div class="inp ltr">info@smiletown.sa</div></div>
+            <div class="f"><label>الجوال / واتساب</label><div class="inp ltr">+966 50 123 4567</div></div>
+            <div class="f"><label>نوع التواصل</label><div class="inp empty">— خدمة العملاء —</div></div>
+            <div class="f full"><label>روابط حساباتك (كل رابط بسطر)</label><div class="inp" style="min-height:64px;align-items:flex-start">instagram.com/smiletown<br>x.com/smiletown</div></div>
+          </div>
+        </div>
+        <button class="save">💾 حفظ التعريف</button>
+        <div class="route">يجمع: «الأساسي» + «التواصل» + «القطاع والروابط» من الفورم القديم &nbsp;·&nbsp; <code>/dashboard/profile</code></div>
+      </div>
+
+      <!-- ===== TAB 2: الموقع وساعات العمل ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="location">
+        <div class="panel-head"><h2>📍 الموقع وساعات العمل</h2><span class="where">↗ يظهر في خريطتك + بيانات النشاط المحلي</span></div>
+        <div class="panel-sub">عنوانك وأوقات دوامك — يساعدوك تظهر في بحث «قريب مني» على Google.</div>
+
+        <div class="group">
+          <div class="group-h"><span class="gi">🗺️</span> العنوان</div>
+          <div class="fields">
+            <div class="f"><label>المدينة</label><div class="inp">جدة</div></div>
+            <div class="f"><label>الدولة</label><div class="inp">السعودية</div></div>
+            <div class="f"><label>المنطقة</label><div class="inp">مكة المكرمة</div></div>
+            <div class="f"><label>الحي</label><div class="inp">الزهراء</div></div>
+            <div class="f"><label>الشارع</label><div class="inp">طريق الأمير سلطان</div></div>
+            <div class="f"><label>رقم المبنى</label><div class="inp ltr">7421</div></div>
+            <div class="f"><label>الرمز البريدي</label><div class="inp ltr">23425</div></div>
+            <div class="f"><label>الرقم الإضافي</label><div class="inp ltr">2890</div></div>
+          </div>
+        </div>
+
+        <div class="group hours">
+          <div class="group-h"><span class="gi">🕐</span> ساعات العمل</div>
+          <div class="hrow"><span class="day">السبت</span><span class="st">✓ مفتوح</span><div class="tinp">09:00</div><div class="tinp">22:00</div></div>
+          <div class="hrow"><span class="day">الأحد</span><span class="st">✓ مفتوح</span><div class="tinp">09:00</div><div class="tinp">22:00</div></div>
+          <div class="hrow"><span class="day">الإثنين</span><span class="st">✓ مفتوح</span><div class="tinp">09:00</div><div class="tinp">22:00</div></div>
+          <div class="hrow"><span class="day">الجمعة</span><span class="st" style="color:#dc2626">✕ مغلق</span><div class="tinp" style="opacity:.4">—</div><div class="tinp" style="opacity:.4">—</div></div>
+        </div>
+        <button class="save">💾 حفظ الموقع والساعات</button>
+        <div class="route">يجمع: «العنوان» + «ساعات العمل» من الفورم القديم &nbsp;·&nbsp; <code>/dashboard/profile</code></div>
+      </div>
+
+      <!-- ===== TAB 3: الوثائق الرسمية ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="official">
+        <div class="panel-head"><h2>📄 الوثائق الرسمية</h2><span class="where">↗ تدخل في البيانات المنظّمة (JSON-LD)</span></div>
+        <div class="advnote">
+          <span style="font-size:14px">💡</span>
+          <div>هذي حقول <b>تقنية ورسمية</b> — لو ما تعرف قيمة منها سيبها، أو خلّ فريق مودونتي يعبّيها لك. مش شرط تكمّلها كلها عشان صفحتك تشتغل.</div>
+        </div>
+        <div class="fields">
+          <div class="f"><label>رقم السجل التجاري</label><div class="inp empty">— غير مُدخل —</div></div>
+          <div class="f"><label>الرقم الضريبي (VAT)</label><div class="inp ltr">300xxxxxxxxxxx3</div></div>
+          <div class="f"><label>المعرّف الضريبي (Tax ID)</label><div class="inp empty">— غير مُدخل —</div></div>
+          <div class="f"><label>الشكل القانوني</label><div class="inp">شركة ذات مسؤولية محدودة</div></div>
+          <div class="f"><label>نوع المنظمة</label><div class="inp">نشاط تجاري محلي</div></div>
+          <div class="f"><label>الرابط الموحّد (Canonical)</label><div class="inp empty">— يُولّد تلقائياً —</div></div>
+        </div>
+        <button class="save">💾 حفظ الوثائق</button>
+        <div class="route">كان قسم «الوثائق الرسمية» + «Canonical» في الفورم القديم &nbsp;·&nbsp; <code>/dashboard/profile</code></div>
+      </div>
+
+      <!-- ===== TAB 4: التوثيق المهني ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="verify">
+        <div class="panel-head"><h2>🛡️ التوثيق المهني</h2><span class="where">↗ شارة «نشاط موثّق» على صفحتك</span></div>
+        <div class="gate">
+          <div class="gic">🛡️</div>
+          <div>
+            <h3>مطلوب قبل نشر مقالاتك الطبية / القانونية / المالية</h3>
+            <p>مجالك يتطلب إثبات مصداقيتك المهنية لـ Google قبل نشر المحتوى. كل ما بياناتك أوضح، زادت ثقة محركات البحث وارتفع ترتيبك.</p>
+          </div>
+        </div>
+        <div class="fields">
+          <div class="f"><label>الجهة المرخِّصة</label><div class="inp">الهيئة السعودية للتخصصات الصحية</div></div>
+          <div class="f"><label>رقم الترخيص</label><div class="inp empty">— غير مُدخل —</div></div>
+          <div class="f"><label>اسم المسؤول المهني</label><div class="inp">د. أحمد العمري</div></div>
+          <div class="f"><label>تاريخ انتهاء الترخيص</label><div class="inp empty">— غير مُدخل —</div></div>
+        </div>
+        <div class="upload" style="margin-top:16px">⬆ ارفع صورة الترخيص — تُراجَع من فريق مودونتي</div>
+        <button class="save">⬆ حفظ وطلب التوثيق</button>
+        <div class="route" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          يظهر فقط للأنشطة YMYL (صحة/مال/قانون) &nbsp;·&nbsp; <code>/dashboard/verification</code>
+          <span style="background:var(--amber-tint);color:#8a6313;border:1px solid #f3cf8e;border-radius:20px;padding:2px 9px;font-weight:800">YMYL فقط</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const labels = {identity:"التعريف", location:"الموقع وساعات العمل", official:"الوثائق الرسمية", verify:"التوثيق المهني"};
+  const crumb = document.getElementById('crumb');
+  document.querySelectorAll('#tabs .tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const key = tab.dataset.tab;
+      document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('active',t===tab));
+      document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('hide',p.dataset.tabpanel!==key));
+      crumb.innerHTML = 'هويتك وتوثيقك / <b>'+labels[key]+'</b>';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>

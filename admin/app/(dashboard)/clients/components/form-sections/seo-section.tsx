@@ -4,7 +4,6 @@ import { UseFormReturn } from "react-hook-form";
 import { messages } from "@/lib/messages";
 import { FormInput, FormTextarea, FormSelect, FormNativeSelect } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
-import { ORGANIZATION_TYPES, type OrganizationType } from "@modonty/database/lib/constants/client-classification";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
@@ -395,27 +394,6 @@ export function SEOSection({
                 this client is a subsidiary or division of another organization.
               </p>
             </div>
-            <FormSelect
-              label="Organization Type"
-              name="organizationType"
-              value={watch("organizationType") || undefined}
-              onValueChange={(value) =>
-                setValue(
-                  "organizationType",
-                  value ? (value as OrganizationType) : null,
-                  { shouldValidate: true }
-                )
-              }
-              error={errors.organizationType?.message}
-              hint={messages.hints.client.organizationType}
-              placeholder="Select Organization Type"
-            >
-              {ORGANIZATION_TYPES.map((o) => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.value} — {o.ar}
-                </SelectItem>
-              ))}
-            </FormSelect>
           </div>
         )}
       </div>

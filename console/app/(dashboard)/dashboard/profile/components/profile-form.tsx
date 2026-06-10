@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ar } from "@/lib/ar";
 import { Card, CardContent } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,16 +16,11 @@ import {
   normalizeLegalForm,
   normalizeOrganizationType,
 } from "@modonty/database/lib/constants/client-classification";
-import { Building2, Phone, MapPin, Scale, Briefcase, Link2, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-
-type OpeningHoursSpec = {
-  dayOfWeek: string;
-  opens: string;
-  closes: string;
-  closed: boolean;
-};
+import { Building2, MapPin, Scale, Clock, CheckCircle2, AlertCircle, Loader2, ShieldCheck, Lock, ChevronDown } from "lucide-react";
 
 const DAY_ORDER = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
+// Default working days for a new client (Sun–Thu) — Sat & Fri off.
+const DEFAULT_WORK_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
 const DAY_LABELS_AR: Record<string, string> = {
   Saturday: "السبت",
   Sunday: "الأحد",
@@ -35,21 +31,20 @@ const DAY_LABELS_AR: Record<string, string> = {
   Friday: "الجمعة",
 };
 
-function buildHours(initial: unknown): OpeningHoursSpec[] {
+// Reads the stored 7-day array into a SIMPLE model: one shared shift + which days
+// are open. A day counts as "open" only if it's present, not closed, and has times.
+function readHours(initial: unknown): { openTime: string; closeTime: string; workDays: Set<string> } {
   const arr = Array.isArray(initial) ? (initial as Record<string, unknown>[]) : [];
-  const byDay = new Map<string, Record<string, unknown>>();
-  for (const row of arr) {
-    if (row && typeof row.dayOfWeek === "string") byDay.set(row.dayOfWeek, row);
-  }
-  return DAY_ORDER.map((day) => {
-    const r = byDay.get(day);
-    return {
-      dayOfWeek: day,
-      opens: typeof r?.opens === "string" && r.opens ? r.opens : "09:00",
-      closes: typeof r?.closes === "string" && r.closes ? r.closes : "17:00",
-      closed: typeof r?.closed === "boolean" ? r.closed : false,
-    };
-  });
+  const working = arr.filter(
+    (r) => r && typeof r.dayOfWeek === "string" && r.closed !== true && r.opens && r.closes
+  );
+  return {
+    openTime: (working[0]?.opens as string) || "09:00",
+    closeTime: (working[0]?.closes as string) || "17:00",
+    workDays: working.length
+      ? new Set(working.map((r) => r.dayOfWeek as string))
+      : new Set<string>(DEFAULT_WORK_DAYS),
+  };
 }
 
 type ProfileInitial = {
@@ -120,7 +115,7 @@ function SectionHeader({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-muted-foreground">{step}/7</span>
+          <span className="text-xs font-bold text-muted-foreground">{step}/3</span>
           <h3 className="text-base font-bold">{title}</h3>
           {complete && <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="مكتمل" />}
         </div>
@@ -129,6 +124,38 @@ function SectionHeader({
       <span className={`flex-shrink-0 text-xs px-2 py-1 rounded-full font-medium ${complete ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-muted text-muted-foreground"}`}>
         {filled}/{total}
       </span>
+    </div>
+  );
+}
+
+// Read-only display row for admin-owned fields the client can see but not edit here.
+function ReadonlyRow({
+  label,
+  value,
+  hint,
+  ltr,
+}: {
+  label: string;
+  value: string | null;
+  hint?: string;
+  ltr?: boolean;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-sm text-muted-foreground">{label}</Label>
+      <div className="flex h-10 items-center overflow-hidden rounded-md border border-dashed bg-muted/40 px-3 text-sm">
+        {value ? (
+          <span
+            className={`truncate font-medium text-foreground ${ltr ? "text-start" : ""}`}
+            dir={ltr ? "ltr" : undefined}
+          >
+            {value}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">لم تُحدّد بعد — تُدار من مودونتي</span>
+        )}
+      </div>
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 }
@@ -142,15 +169,10 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
     name: initial.name ?? "",
     legalName: initial.legalName ?? "",
     alternateName: initial.alternateName ?? "",
-    url: initial.url ?? "",
     slogan: initial.slogan ?? "",
     description: initial.description ?? "",
-    email: initial.email ?? "",
-    phone: initial.phone ?? "",
-    contactType: initial.contactType ?? "",
     addressStreet: initial.addressStreet ?? "",
     addressCity: initial.addressCity ?? "",
-    addressCountry: initial.addressCountry ?? "",
     addressPostalCode: initial.addressPostalCode ?? "",
     addressRegion: initial.addressRegion ?? "",
     addressNeighborhood: initial.addressNeighborhood ?? "",
@@ -159,41 +181,51 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
     commercialRegistrationNumber: initial.commercialRegistrationNumber ?? "",
     vatID: initial.vatID ?? "",
     taxID: initial.taxID ?? "",
-    legalForm: normalizeLegalForm(initial.legalForm) ?? "",
-    industryId: initial.industryId ?? "",
-    organizationType: normalizeOrganizationType(initial.organizationType) ?? "",
     foundingDate: toDateStr(initial.foundingDate),
-    sameAs: (initial.sameAs ?? []).join("\n"),
-    canonicalUrl: initial.canonicalUrl ?? "",
   });
 
-  const [hours, setHours] = useState<OpeningHoursSpec[]>(() => buildHours(initial.openingHoursSpecification));
+  const initialHours = readHours(initial.openingHoursSpecification);
+  const [openTime, setOpenTime] = useState(initialHours.openTime);
+  const [closeTime, setCloseTime] = useState(initialHours.closeTime);
+  const [workDays, setWorkDays] = useState<Set<string>>(initialHours.workDays);
 
-  const updateHour = (day: string, patch: Partial<OpeningHoursSpec>) =>
-    setHours((p) => p.map((h) => (h.dayOfWeek === day ? { ...h, ...patch } : h)));
+  const toggleDay = (day: string) =>
+    setWorkDays((p) => {
+      const next = new Set(p);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
 
   const update = (k: keyof typeof form, v: string) => setForm((p) => ({ ...p, [k]: v }));
   const filledCount = (keys: (keyof typeof form)[]) =>
     keys.filter((k) => String(form[k] ?? "").trim().length > 0).length;
 
-  // ─── Section completion stats ────────────────────────────────────────────
-  const basicKeys: (keyof typeof form)[] = ["name", "legalName", "alternateName", "url", "slogan", "description"];
-  const contactKeys: (keyof typeof form)[] = ["email", "phone", "contactType"];
-  const addressKeys: (keyof typeof form)[] = [
-    "addressStreet", "addressCity", "addressCountry", "addressPostalCode",
-    "addressRegion", "addressNeighborhood", "addressBuildingNumber", "addressAdditionalNumber",
-  ];
-  const legalKeys: (keyof typeof form)[] = ["commercialRegistrationNumber", "vatID", "taxID", "legalForm"];
-  const businessKeys: (keyof typeof form)[] = ["industryId", "organizationType", "foundingDate", "sameAs"];
-  const canonicalKeys: (keyof typeof form)[] = ["canonicalUrl"];
+  // Country-aware fields: Saudi Arabia has extra national-address + tax fields
+  // (additional number, separate VAT+TIN). Country is admin-owned (read-only here),
+  // so derive from the saved value, not form state.
+  const isSaudi = initial.addressCountry === "SA";
 
-  const totalFilled =
-    filledCount(basicKeys) + filledCount(contactKeys) + filledCount(addressKeys) +
-    filledCount(legalKeys) + filledCount(businessKeys) + filledCount(canonicalKeys);
-  const totalFields =
-    basicKeys.length + contactKeys.length + addressKeys.length +
-    legalKeys.length + businessKeys.length + canonicalKeys.length;
-  const progress = Math.round((totalFilled / totalFields) * 100);
+  // ─── Section completion stats ────────────────────────────────────────────
+  const basicKeys: (keyof typeof form)[] = [
+    "name", "legalName", "alternateName", "slogan", "description", "foundingDate",
+    "commercialRegistrationNumber", "vatID",
+  ];
+  const addressKeys: (keyof typeof form)[] = [
+    "addressStreet", "addressCity", "addressPostalCode",
+    "addressRegion", "addressNeighborhood", "addressBuildingNumber",
+    ...(isSaudi ? (["addressAdditionalNumber"] as (keyof typeof form)[]) : []),
+  ];
+
+  // Admin-owned fields shown read-only below (client edits them via Modonty admin, not here).
+  const industryName = industries.find((i) => i.id === initial.industryId)?.name ?? null;
+  const orgTypeLabel =
+    ORGANIZATION_TYPES.find((o) => o.value === normalizeOrganizationType(initial.organizationType))?.ar ?? null;
+  const legalFormLabel =
+    LEGAL_FORMS.find((o) => o.value === normalizeLegalForm(initial.legalForm))?.ar ?? null;
+  const socialProfilesValue =
+    initial.sameAs && initial.sameAs.length ? initial.sameAs.join("، ") : null;
+  const countryName = countries.find((c) => c.code === initial.addressCountry)?.nameAr ?? null;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -204,15 +236,10 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
         name: form.name.trim(),
         legalName: form.legalName || null,
         alternateName: form.alternateName || null,
-        url: form.url || null,
         slogan: form.slogan || null,
         description: form.description || null,
-        email: form.email || null,
-        phone: form.phone || null,
-        contactType: form.contactType || null,
         addressStreet: form.addressStreet || null,
         addressCity: form.addressCity || null,
-        addressCountry: form.addressCountry || null,
         addressPostalCode: form.addressPostalCode || null,
         addressRegion: form.addressRegion || null,
         addressNeighborhood: form.addressNeighborhood || null,
@@ -220,14 +247,17 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
         addressAdditionalNumber: form.addressAdditionalNumber || null,
         commercialRegistrationNumber: form.commercialRegistrationNumber || null,
         vatID: form.vatID || null,
-        taxID: form.taxID || null,
-        legalForm: form.legalForm || null,
-        industryId: form.industryId || null,
-        organizationType: form.organizationType || null,
+        // Non-SA: single field lives in vatID; mirror it into taxID so JSON-LD stays complete.
+        taxID: isSaudi ? form.taxID || null : form.vatID || null,
         foundingDate: form.foundingDate || null,
-        sameAs: form.sameAs.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
-        canonicalUrl: form.canonicalUrl || null,
-        openingHoursSpecification: hours,
+        // Build the 7-day spec from the simple model: only working days are emitted
+        // (omitted days = closed in Schema.org). JSON-LD generator reads opens/closes.
+        openingHoursSpecification: DAY_ORDER.filter((d) => workDays.has(d)).map((d) => ({
+          dayOfWeek: d,
+          opens: openTime,
+          closes: closeTime,
+          closed: false,
+        })),
       });
       if (res.success) {
         setSavedAt(new Date());
@@ -245,11 +275,11 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
   const field = (
     k: keyof typeof form,
     label: string,
-    opts?: { type?: string; placeholder?: string; required?: boolean; hint?: string }
+    opts?: { type?: string; placeholder?: string; required?: boolean; hint?: string; full?: boolean }
   ) => {
     const isLtr = opts?.type === "url" || opts?.type === "email" || opts?.type === "tel" || opts?.type === "number";
     return (
-      <div key={String(k)} className="space-y-1.5">
+      <div key={String(k)} className={`space-y-1.5${opts?.full ? " lg:col-span-2" : ""}`}>
         <Label htmlFor={String(k)} className="text-sm">
           {label}
           {opts?.required && <span className="text-destructive mr-1">*</span>}
@@ -270,71 +300,7 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
     );
   };
 
-  const select = (k: "industryId", label: string) => (
-    <div key={String(k)} className="space-y-1.5">
-      <Label htmlFor={String(k)} className="text-sm">{label}</Label>
-      <select
-        id={String(k)}
-        value={form[k]}
-        onChange={(e) => update(k, e.target.value)}
-        disabled={loading}
-        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-      >
-        <option value="">— اختر —</option>
-        {industries.map((i) => (
-          <option key={i.id} value={i.id}>{i.name}</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  // Country dropdown fed from the admin-managed Countries list (Reference Data).
-  // Stores the ISO code (SA/EG/AE) — which is what resolves licensing authorities
-  // on the verification page. Replaces the old free-text country box.
-  const countrySelect = (label: string) => (
-    <div key="addressCountry" className="space-y-1.5">
-      <Label htmlFor="addressCountry" className="text-sm">{label}</Label>
-      <select
-        id="addressCountry"
-        value={form.addressCountry}
-        onChange={(e) => update("addressCountry", e.target.value)}
-        disabled={loading}
-        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-      >
-        <option value="">— اختر —</option>
-        {countries.map((c) => (
-          <option key={c.code} value={c.code}>{c.nameAr}</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  // Static dropdown fed from the shared dataLayer classification lists. Shows the
-  // Arabic label, stores the canonical English value — so the console can never
-  // write a free-text value the admin's enum would reject.
-  const optionSelect = (
-    k: "legalForm" | "organizationType",
-    label: string,
-    options: readonly { value: string; ar: string }[]
-  ) => (
-    <div key={String(k)} className="space-y-1.5">
-      <Label htmlFor={String(k)} className="text-sm">{label}</Label>
-      <select
-        id={String(k)}
-        value={form[k]}
-        onChange={(e) => update(k, e.target.value)}
-        disabled={loading}
-        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-      >
-        <option value="">— اختر —</option>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.ar}</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  const textarea = (k: "description" | "sameAs", label: string, hint?: string) => (
+  const textarea = (k: "description", label: string, hint?: string) => (
     <div key={String(k)} className="space-y-1.5 lg:col-span-2">
       <Label htmlFor={String(k)} className="text-sm">{label}</Label>
       <Textarea
@@ -350,20 +316,6 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* ─── Top progress strip ─────────────────────────────────────────── */}
-      <div className="rounded-xl border bg-card p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">اكتمال الملف</span>
-          <span className="text-sm font-bold tabular-nums">{totalFilled} / {totalFields} حقل · {progress}%</span>
-        </div>
-        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-          <div
-            className={`h-full transition-all duration-300 ${progress === 100 ? "bg-emerald-500" : "bg-primary"}`}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
-
       {error && (
         <div className="flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
           <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
@@ -371,13 +323,48 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
         </div>
       )}
 
+      {/* ─── Verified info (admin-owned, read-only, collapsible) ─────────── */}
+      <Card className="overflow-hidden p-0">
+        <Collapsible>
+          <CollapsibleTrigger className="group flex w-full items-start gap-3 px-6 pt-6 pb-3 text-start">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl grid place-items-center bg-emerald-100 text-emerald-700">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="block text-base font-bold">بيانات موثّقة من مودونتي</span>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                هذي البيانات تُدار من مودونتي للتوثيق — للتعديل تواصل معنا.
+              </span>
+            </div>
+            <Lock className="h-4 w-4 flex-shrink-0 text-muted-foreground mt-0.5" aria-label="للقراءة فقط" />
+            <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground mt-0.5 transition-transform group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="grid gap-4 border-t p-6 pt-4 sm:grid-cols-2">
+              {/* Digital identity */}
+              <ReadonlyRow label={ar.settings.email} value={initial.email ?? null} hint="معرّف الدخول" ltr />
+              <ReadonlyRow label={ar.profile.url} value={initial.url ?? null} ltr />
+              <ReadonlyRow label={ar.profile.socialProfiles} value={socialProfilesValue} ltr />
+              {/* Classification */}
+              <ReadonlyRow label={ar.profile.industry} value={industryName} />
+              <ReadonlyRow label={ar.profile.organizationType} value={orgTypeLabel} />
+              <ReadonlyRow label={ar.profile.legalForm} value={legalFormLabel} />
+              {/* Contact & location */}
+              <ReadonlyRow label={ar.settings.phone} value={initial.phone ?? null} ltr />
+              <ReadonlyRow label={ar.profile.contactType} value={initial.contactType ?? null} ltr />
+              <ReadonlyRow label={ar.profile.addressCountry} value={countryName} />
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
       {/* ─── 1. Basic Info ──────────────────────────────────────────────── */}
       <Card className="overflow-hidden p-0">
         <SectionHeader
           icon={Building2}
           step={1}
           title={ar.profile.basicInfo}
-          description="اسم النشاط، الموقع الإلكتروني، والشعار"
+          description="اسم نشاطك، شعارك، وصفك، وسجلاتك الرسمية"
           filled={filledCount(basicKeys)}
           total={basicKeys.length}
         />
@@ -385,149 +372,110 @@ export function ProfileForm({ clientId, initial, industries, countries }: Profil
           {field("name", ar.profile.name, { required: true })}
           {field("legalName", ar.profile.legalName)}
           {field("alternateName", ar.profile.alternateName)}
-          {field("url", ar.profile.url, { type: "url", placeholder: "https://example.com" })}
-          {field("slogan", ar.profile.slogan, { placeholder: "كلمة موجزة تميّز نشاطك" })}
+          {field("foundingDate", ar.profile.foundingDate, { type: "date" })}
+          {field("slogan", ar.profile.slogan, { placeholder: "كلمة موجزة تميّز نشاطك", full: true })}
           {textarea("description", ar.profile.organizationDescription)}
+
+          {/* Official records — merged in, separated by a light subheading (not a card) */}
+          <div className="lg:col-span-2 mt-1 flex items-center gap-2 border-t pt-4 text-xs font-semibold text-muted-foreground">
+            <Scale className="h-4 w-4" />
+            <span>السجلات الرسمية</span>
+          </div>
+          {field("commercialRegistrationNumber", ar.profile.commercialRegistrationNumber, { placeholder: "رقم السجل التجاري" })}
+          {isSaudi ? (
+            <>
+              {field("vatID", ar.profile.vatID, { placeholder: "300xxxxxxxxxxx3", hint: ar.profile.vatIDHint })}
+              {field("taxID", ar.profile.taxID)}
+            </>
+          ) : (
+            field("vatID", ar.profile.taxNumber)
+          )}
         </CardContent>
       </Card>
 
-      {/* ─── 2. Contact ─────────────────────────────────────────────────── */}
-      <Card className="overflow-hidden p-0">
-        <SectionHeader
-          icon={Phone}
-          step={2}
-          title={ar.profile.contactInfo}
-          description="كيف يصل إليك العملاء"
-          filled={filledCount(contactKeys)}
-          total={contactKeys.length}
-        />
-        <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
-          {field("email", ar.settings.email, { type: "email", placeholder: ar.settings.placeholderEmail, required: true })}
-          {field("phone", ar.settings.phone, { type: "tel", placeholder: ar.settings.placeholderPhone })}
-          {field("contactType", ar.profile.contactType, { placeholder: "customer service / sales / support" })}
-        </CardContent>
-      </Card>
-
-      {/* ─── 3. Address ─────────────────────────────────────────────────── */}
+      {/* ─── 2. Address & Contact ───────────────────────────────────────── */}
       <Card className="overflow-hidden p-0">
         <SectionHeader
           icon={MapPin}
-          step={3}
+          step={2}
           title={ar.profile.address}
-          description="الموقع الفعلي للنشاط"
+          description="الموقع الفعلي لنشاطك"
           filled={filledCount(addressKeys)}
           total={addressKeys.length}
         />
         <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
           {field("addressCity", ar.profile.addressCity, { placeholder: "الرياض، جدة، الدمام..." })}
-          {countrySelect(ar.profile.addressCountry)}
           {field("addressRegion", ar.profile.addressRegion)}
           {field("addressNeighborhood", ar.profile.addressNeighborhood)}
           {field("addressStreet", ar.profile.addressStreet)}
           {field("addressBuildingNumber", ar.profile.addressBuildingNumber)}
+          {isSaudi &&
+            field("addressAdditionalNumber", ar.profile.addressAdditionalNumber, {
+              type: "number",
+              hint: ar.profile.addressAdditionalNumberHint,
+            })}
           {field("addressPostalCode", ar.profile.addressPostalCode, { type: "number" })}
-          {field("addressAdditionalNumber", ar.profile.addressAdditionalNumber, { type: "number" })}
         </CardContent>
       </Card>
 
-      {/* ─── 4. Legal ───────────────────────────────────────────────────── */}
-      <Card className="overflow-hidden p-0">
-        <SectionHeader
-          icon={Scale}
-          step={4}
-          title={ar.profile.saudiGulf}
-          description="الوثائق الرسمية المطلوبة لـ JSON-LD"
-          filled={filledCount(legalKeys)}
-          total={legalKeys.length}
-        />
-        <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
-          {field("commercialRegistrationNumber", ar.profile.commercialRegistrationNumber, { placeholder: "رقم السجل التجاري" })}
-          {field("vatID", ar.profile.vatID, { placeholder: "300xxxxxxxxxxx3" })}
-          {field("taxID", ar.profile.taxID)}
-          {optionSelect("legalForm", ar.profile.legalForm, LEGAL_FORMS)}
-        </CardContent>
-      </Card>
-
-      {/* ─── 5. Business ────────────────────────────────────────────────── */}
-      <Card className="overflow-hidden p-0">
-        <SectionHeader
-          icon={Briefcase}
-          step={5}
-          title={ar.profile.business}
-          description="القطاع، نوع المنظمة، والروابط الاجتماعية"
-          filled={filledCount(businessKeys)}
-          total={businessKeys.length}
-        />
-        <CardContent className="grid gap-4 p-6 lg:grid-cols-2 [&>div:not([class*='col-span'])]:lg:col-span-1">
-          {select("industryId", ar.profile.industry)}
-          {optionSelect("organizationType", ar.profile.organizationType, ORGANIZATION_TYPES)}
-          {field("foundingDate", ar.profile.foundingDate, { type: "date" })}
-          {textarea("sameAs", ar.profile.socialProfiles, ar.profile.socialProfilesHint)}
-        </CardContent>
-      </Card>
-
-      {/* ─── 6. Canonical URL ───────────────────────────────────────────── */}
-      <Card className="overflow-hidden p-0">
-        <SectionHeader
-          icon={Link2}
-          step={6}
-          title={ar.profile.canonicalUrl}
-          description="الرابط الموحّد للنشاط في موقع مودونتي (يمنع تكرار الفهرسة)"
-          filled={filledCount(canonicalKeys)}
-          total={canonicalKeys.length}
-        />
-        <CardContent className="p-6">
-          {field("canonicalUrl", ar.profile.canonicalUrl, { type: "url" })}
-        </CardContent>
-      </Card>
-
-      {/* ─── 7. Business Hours ──────────────────────────────────────────── */}
+      {/* ─── 3. Business Hours ──────────────────────────────────────────── */}
       <Card className="overflow-hidden p-0">
         <SectionHeader
           icon={Clock}
-          step={7}
+          step={3}
           title="ساعات العمل"
-          description="أوقات الدوام لكل يوم — تظهر في بيانات النشاط المنظّمة"
-          filled={hours.filter((h) => !h.closed).length}
+          description="وقت دوام موحّد لكل أيام العمل — حدّد إجازاتك"
+          filled={workDays.size}
           total={7}
         />
-        <CardContent className="p-6 space-y-2">
-          {hours.map((h) => (
-            <div
-              key={h.dayOfWeek}
-              className="grid grid-cols-[5rem_auto_1fr_1fr] items-center gap-3 py-1.5 border-b last:border-b-0"
-            >
-              <span className="text-sm font-medium">{DAY_LABELS_AR[h.dayOfWeek]}</span>
-              <label className="flex items-center gap-1.5 text-xs text-muted-foreground select-none">
-                <input
-                  type="checkbox"
-                  checked={!h.closed}
-                  onChange={(e) => updateHour(h.dayOfWeek, { closed: !e.target.checked })}
-                  disabled={loading}
-                  className="h-4 w-4 rounded border-input accent-primary"
-                />
-                {h.closed ? "مغلق" : "مفتوح"}
-              </label>
+        <CardContent className="p-6 space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="openTime" className="text-sm">وقت الفتح</Label>
               <Input
+                id="openTime"
                 type="time"
-                value={h.opens}
-                onChange={(e) => updateHour(h.dayOfWeek, { opens: e.target.value })}
-                disabled={loading || h.closed}
+                value={openTime}
+                onChange={(e) => setOpenTime(e.target.value)}
+                disabled={loading}
                 dir="ltr"
                 className="text-start"
-                aria-label={`${DAY_LABELS_AR[h.dayOfWeek]} — وقت الفتح`}
-              />
-              <Input
-                type="time"
-                value={h.closes}
-                onChange={(e) => updateHour(h.dayOfWeek, { closes: e.target.value })}
-                disabled={loading || h.closed}
-                dir="ltr"
-                className="text-start"
-                aria-label={`${DAY_LABELS_AR[h.dayOfWeek]} — وقت الإغلاق`}
               />
             </div>
-          ))}
+            <div className="space-y-1.5">
+              <Label htmlFor="closeTime" className="text-sm">وقت الإغلاق</Label>
+              <Input
+                id="closeTime"
+                type="time"
+                value={closeTime}
+                onChange={(e) => setCloseTime(e.target.value)}
+                disabled={loading}
+                dir="ltr"
+                className="text-start"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-sm">أيام العمل</Label>
+            <div className="flex flex-wrap gap-2">
+              {DAY_ORDER.map((day) => (
+                <label
+                  key={day}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm text-muted-foreground cursor-pointer select-none transition-colors hover:bg-muted/50 has-[:checked]:border-primary has-[:checked]:bg-primary/5 has-[:checked]:text-foreground has-[:checked]:font-medium"
+                >
+                  <input
+                    type="checkbox"
+                    checked={workDays.has(day)}
+                    onChange={() => toggleDay(day)}
+                    disabled={loading}
+                    className="h-4 w-4 rounded border-input accent-primary"
+                  />
+                  {DAY_LABELS_AR[day]}
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">الأيام غير المحددة تظهر «مغلق» في صفحتك.</p>
+          </div>
         </CardContent>
       </Card>
 

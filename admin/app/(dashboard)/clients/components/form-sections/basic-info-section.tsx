@@ -7,7 +7,9 @@ import { FormInput, FormField, FormSelect } from "@/components/admin/form-field"
 import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Link2, RefreshCw } from "lucide-react";
+import { ORGANIZATION_TYPES, type OrganizationType, LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
 import { BusinessBriefSection } from "./business-brief-section";
+import { SocialProfilesInput } from "../social-profiles-input";
 import { SlugChangeDialog } from "../slug-change-dialog";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 
@@ -17,6 +19,7 @@ interface BasicInfoSectionProps {
   isEditMode?: boolean;
   siteUrl?: string | null;
   clientId?: string;
+  countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
 }
 
 export function BasicInfoSection({
@@ -25,6 +28,7 @@ export function BasicInfoSection({
   isEditMode = false,
   siteUrl = null,
   clientId,
+  countries = [],
 }: BasicInfoSectionProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { watch, formState: { errors } } = form;
@@ -42,6 +46,8 @@ export function BasicInfoSection({
   const numberOfEmployees = watch("numberOfEmployees");
   const commercialRegistrationNumber = watch("commercialRegistrationNumber");
   const organizationType = watch("organizationType");
+  const addressCountry = watch("addressCountry");
+  const legalForm = watch("legalForm");
   const alternateName = watch("alternateName");
 
   void (
@@ -49,10 +55,8 @@ export function BasicInfoSection({
     legalName &&
     foundingDate &&
     contactType &&
-    sameAs &&
     numberOfEmployees &&
     commercialRegistrationNumber &&
-    organizationType &&
     alternateName
   );
 
@@ -213,7 +217,66 @@ export function BasicInfoSection({
             </SelectItem>
           ))}
         </FormSelect>
+        <FormSelect
+          label="Organization Type"
+          name="organizationType"
+          value={organizationType || undefined}
+          onValueChange={(value) =>
+            form.setValue(
+              "organizationType",
+              value ? (value as OrganizationType) : null,
+              { shouldValidate: true }
+            )
+          }
+          error={errors.organizationType?.message}
+          placeholder="Select Organization Type"
+          hint={messages.hints.client.organizationType}
+        >
+          {ORGANIZATION_TYPES.map((o) => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.value} — {o.ar}
+            </SelectItem>
+          ))}
+        </FormSelect>
+        <FormSelect
+          label="Country"
+          name="addressCountry"
+          value={addressCountry || undefined}
+          onValueChange={(value) => form.setValue("addressCountry", value || null, { shouldValidate: true })}
+          error={errors.addressCountry?.message}
+          placeholder="Select country"
+          hint="يحدّد حقول الضريبة والعنوان في لوحة العميل (السعودية ↔ غيرها)"
+        >
+          {countries.map((c) => (
+            <SelectItem key={c.code} value={c.code}>
+              {c.nameAr} ({c.code})
+            </SelectItem>
+          ))}
+        </FormSelect>
+        <FormSelect
+          label="Legal Form"
+          name="legalForm"
+          value={legalForm || undefined}
+          onValueChange={(value) => form.setValue("legalForm", value ? (value as LegalForm) : null, { shouldValidate: true })}
+          error={errors.legalForm?.message}
+          placeholder="Select Legal Form"
+          hint={messages.hints.client.legalForm}
+        >
+          {LEGAL_FORMS.map((o) => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.value} — {o.ar}
+            </SelectItem>
+          ))}
+        </FormSelect>
       </div>
+
+      <SocialProfilesInput
+        label="Social Profiles"
+        value={sameAs || []}
+        onChange={(urls) => form.setValue("sameAs", urls, { shouldValidate: true })}
+        hint="Paste any profile URL — the platform is detected automatically. Feeds the client's Organization JSON-LD (sameAs)."
+        error={errors.sameAs?.message}
+      />
 
       <BusinessBriefSection form={form} showHeader={false} />
     </div>

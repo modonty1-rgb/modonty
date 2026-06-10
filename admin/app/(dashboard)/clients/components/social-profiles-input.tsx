@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import {
   Linkedin,
   Twitter,
@@ -16,11 +15,9 @@ import {
   Check,
   X,
   Plus,
-  Info,
 } from "lucide-react";
 import {
   validateSocialUrl,
-  getPlatformIcon,
   getPlatformName,
   type Platform,
 } from "../helpers/url-validation";
@@ -168,6 +165,23 @@ export function SocialProfilesInput({
           Add
         </Button>
       </div>
+
+      {/* Supported platforms — auto-detected from the pasted URL */}
+      <div className="flex items-center gap-2 flex-wrap pt-0.5" dir="ltr">
+        <span className="text-[11px] text-muted-foreground">Auto-detects:</span>
+        {([
+          { Icon: Linkedin, name: "LinkedIn" },
+          { Icon: Twitter, name: "Twitter / X" },
+          { Icon: Instagram, name: "Instagram" },
+          { Icon: Youtube, name: "YouTube" },
+          { Icon: Facebook, name: "Facebook" },
+          { Icon: Music, name: "TikTok" },
+        ] as const).map(({ Icon, name }) => (
+          <Icon key={name} className="h-3.5 w-3.5 text-muted-foreground/70" aria-label={name} />
+        ))}
+      </div>
+
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
 
       {validationResult && !validationResult.isValid && validationResult.error && (
         <p className="text-sm text-destructive">{validationResult.error}</p>

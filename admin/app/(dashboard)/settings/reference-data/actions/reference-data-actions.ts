@@ -99,6 +99,15 @@ export async function getReferenceData(): Promise<{
   return { countries, authorities };
 }
 
+/** Active countries only, for the client country picker (create/edit forms). */
+export async function getActiveCountries(): Promise<CountryDTO[]> {
+  return db.country.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { nameEn: "asc" }],
+    select: COUNTRY_SELECT,
+  });
+}
+
 // ── Countries ────────────────────────────────────────────────────────────────
 export async function saveCountry(
   input: CountryInput,

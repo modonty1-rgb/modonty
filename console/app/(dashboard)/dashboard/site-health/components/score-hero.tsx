@@ -47,7 +47,7 @@ export function ScoreHero({ report }: { report: OverallHealthReport }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4 p-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-5">
+        <div className="flex w-full min-w-0 items-center gap-5 sm:w-auto">
           <div
             className={`grid h-24 w-24 shrink-0 place-items-center rounded-full ring-4 ${colors}`}
           >
@@ -58,7 +58,7 @@ export function ScoreHero({ report }: { report: OverallHealthReport }) {
               <p className="text-xs font-semibold mt-0.5 opacity-80">/100</p>
             </div>
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span
                 className={`inline-flex items-center rounded-full px-3 py-0.5 text-sm font-bold ring-1 ${colors}`}
@@ -69,7 +69,7 @@ export function ScoreHero({ report }: { report: OverallHealthReport }) {
                 {gradeLabel}
               </span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground" dir="ltr">
+            <p className="mt-2 truncate text-sm text-muted-foreground" dir="ltr" title={report.url}>
               {report.url}
             </p>
             <p className="text-xs text-muted-foreground tabular-nums">

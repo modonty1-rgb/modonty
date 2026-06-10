@@ -11,6 +11,7 @@ interface SidebarNavItemProps {
   label: string;
   badge?: number;
   badgeLabel?: string;
+  badgeVariant?: "default" | "danger";
   isCollapsed?: boolean;
 }
 
@@ -20,6 +21,7 @@ export function SidebarNavItem({
   label,
   badge,
   badgeLabel,
+  badgeVariant = "default",
   isCollapsed = false,
 }: SidebarNavItemProps) {
   const pathname = usePathname();
@@ -43,7 +45,20 @@ export function SidebarNavItem({
         <>
           <span className="flex-1">{label}</span>
           {badgeLabel && (
-            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-primary/10 text-primary border border-primary/20">
+            <span
+              className={cn(
+                "relative px-1.5 py-0.5 text-[10px] font-bold rounded border",
+                badgeVariant === "danger"
+                  ? "bg-destructive/10 text-destructive border-destructive/30"
+                  : "bg-primary/10 text-primary border-primary/20"
+              )}
+            >
+              {badgeVariant === "danger" && (
+                <span className="absolute -top-1 -left-1 flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+                </span>
+              )}
               {badgeLabel}
             </span>
           )}
@@ -63,7 +78,10 @@ export function SidebarNavItem({
       )}
       {isCollapsed && badgeLabel && (
         <span
-          className="absolute top-1 end-1 h-2 w-2 rounded-full bg-primary/80"
+          className={cn(
+            "absolute top-1 end-1 h-2 w-2 rounded-full",
+            badgeVariant === "danger" ? "bg-destructive animate-pulse" : "bg-primary/80"
+          )}
           title={badgeLabel}
         />
       )}

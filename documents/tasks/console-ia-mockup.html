@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Console IA — mockup v3 (تفاعلي · مبني على الكونسول الحقيقي)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --border:#e6e8ec; --border-strong:#d7dbe2;
+    --text:#0f172a; --muted:#697586; --muted-2:#9aa4b2;
+    --primary:#2563eb; --primary-tint:#eef3ff; --primary-soft:#dbe6ff;
+    --success:#10b981; --success-tint:#e7f8f1;
+    --amber:#f59e0b; --amber-tint:#fdf3e2; --star:#f5a623;
+    --radius:14px; --radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .app{display:flex;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+
+  /* ===== Sidebar (areas only — 5 items) ===== */
+  .sidebar{width:268px;flex:none;background:var(--card);border-inline-start:1px solid var(--border);
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .side-head{height:62px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--border)}
+  .side-logo{width:38px;height:38px;border-radius:50%;background:var(--primary-tint);color:var(--primary);
+    display:grid;place-items:center;font-weight:900;border:1px solid var(--border)}
+  .side-name{font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side-name small{display:block;font-weight:500;font-size:11px;color:var(--muted-2)}
+  nav{flex:1;padding:14px 12px}
+  .item{display:flex;align-items:center;gap:11px;padding:12px 12px;border-radius:var(--radius-sm);
+    font-size:14px;font-weight:700;color:#3a4252;position:relative;cursor:pointer;transition:background .12s;margin-bottom:3px;width:100%;text-align:start;border:0;background:transparent}
+  .item:hover{background:#f3f5f8}
+  .item .ic{width:30px;height:30px;border-radius:9px;background:#f1f3f7;display:grid;place-items:center;font-size:15px;flex:none}
+  .item .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item.active{background:var(--primary-tint);color:var(--primary);font-weight:800}
+  .item.active::before{content:"";position:absolute;inset-inline-start:-12px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--primary)}
+  .item.active .ic{background:var(--primary-soft);color:var(--primary)}
+  .badge{font-size:11px;font-weight:800;min-width:18px;height:18px;padding:0 5px;border-radius:9px;display:grid;place-items:center;background:var(--primary);color:#fff}
+  .hint{font-size:10.5px;color:var(--muted-2);padding:10px 14px 4px;font-weight:600}
+  .side-foot{border-top:1px solid var(--border);padding:12px}
+  .signout{display:flex;align-items:center;gap:8px;color:#dc2626;font-weight:700;font-size:13px;padding:9px 11px;border-radius:8px;cursor:pointer}
+  .signout:hover{background:#fdeaea}
+
+  /* ===== Main ===== */
+  .main{flex:1;min-width:0}
+  .topbar{height:62px;border-bottom:1px solid var(--border);background:var(--card);display:flex;align-items:center;
+    justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:5}
+  .crumb{font-size:13px;color:var(--muted);font-weight:600}.crumb b{color:var(--text);font-weight:800}
+  .brand{font-weight:900;color:var(--primary);font-size:17px;letter-spacing:.3px}
+  .content{padding:24px 26px;max-width:1040px}
+
+  .notice{display:flex;gap:11px;align-items:flex-start;background:var(--amber-tint);border:1px dashed #ecc879;
+    border-radius:var(--radius-sm);padding:12px 15px;font-size:12.5px;color:#7a5207;margin-bottom:20px}
+  .notice b{color:#5e3f04}
+
+  /* page head + completeness inline */
+  .phead{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+  .phead h1{font-size:23px;font-weight:900;letter-spacing:-.3px}
+  .phead p{color:var(--muted);font-size:13.5px;margin-top:2px}
+  .btn-preview{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;font-weight:800;
+    font-size:13.5px;padding:11px 18px;border-radius:11px;white-space:nowrap;border:0;cursor:pointer;
+    box-shadow:0 8px 18px -8px rgba(37,99,235,.6)}
+  .meter{display:flex;align-items:center;gap:12px;margin:16px 0 4px;background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:13px 16px}
+  .meter .pct{font-size:22px;font-weight:900}
+  .meter .bar{flex:1;height:9px;border-radius:6px;background:#eef1f5;overflow:hidden;max-width:460px}
+  .meter .bar i{display:block;height:100%;width:82%;background:linear-gradient(90deg,#2563eb,#10b981)}
+  .meter .tip{font-size:11.5px;color:var(--muted)}
+
+  /* ===== Tabs (in-page section nav — the ONLY place sections live) ===== */
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin:22px 0 0}
+  .tab{display:inline-flex;align-items:center;gap:7px;padding:11px 14px;font-size:13.5px;font-weight:700;color:var(--muted);
+    border-bottom:2.5px solid transparent;cursor:pointer;margin-bottom:-1px;white-space:nowrap;border-top:0;border-inline:0;background:transparent}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:800}
+  .tab .dot{width:7px;height:7px;border-radius:50%}
+  .tab .dot.ok{background:var(--success)}.tab .dot.miss{background:var(--amber)}.tab .dot.wait{background:var(--primary)}
+
+  /* tab panel */
+  .panel{background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 var(--radius) var(--radius);
+    padding:22px}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+  .panel-head h2{font-size:17px;font-weight:800}
+  .panel-head .where{font-size:11.5px;font-weight:700;color:var(--primary);background:var(--primary-tint);padding:5px 10px;border-radius:20px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .f label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+  .f .inp{min-height:40px;border:1px solid var(--border-strong);border-radius:9px;background:#fafbfc;display:flex;align-items:center;
+    padding:9px 12px;font-size:13px;color:var(--text)}
+  .f.full{grid-column:1/-1}
+  .save{margin-top:18px;background:var(--primary);color:#fff;font-weight:800;font-size:13.5px;padding:11px 22px;border-radius:10px;border:0;cursor:pointer}
+  .route{font-size:11px;color:var(--muted-2);margin-top:14px;font-family:'Tajawal',monospace}
+  .route code{background:#f1f3f7;border:1px solid var(--border);border-radius:6px;padding:1px 7px;color:#475569;font-weight:700;direction:ltr;display:inline-block}
+
+  /* gallery grid mock */
+  .ggrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .gcell{aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#e8edf5,#f4f6fa);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted-2);font-size:22px}
+  .gcell.add{border:1.5px dashed var(--primary);background:var(--primary-tint);color:var(--primary);cursor:pointer;font-weight:800;font-size:13px;flex-direction:column;gap:4px}
+  .infobox{display:flex;gap:10px;align-items:flex-start;background:var(--success-tint);border:1px solid #bfe6d6;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#0b6b4f;margin-bottom:16px}
+  .infobox b{color:#085c43}
+  .vs{display:flex;gap:10px;align-items:flex-start;background:#f4f1ff;border:1px solid #ddd2fb;border-radius:10px;padding:11px 14px;font-size:12px;color:#5b3fb0;margin-top:14px}
+
+  /* review/feedback rows */
+  .frow{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border)}
+  .frow:last-child{border-bottom:0}
+  .av{width:38px;height:38px;border-radius:50%;background:var(--primary-tint);color:var(--primary);display:grid;place-items:center;font-weight:800;flex:none}
+  .frow .body{flex:1;min-width:0}
+  .frow .nm{font-weight:800;font-size:13.5px}
+  .frow .stars{color:var(--star);font-size:13px;letter-spacing:1px}
+  .frow .txt{font-size:13px;color:#475569;margin-top:3px}
+  .pend{font-size:10.5px;font-weight:800;color:var(--amber);background:var(--amber-tint);padding:3px 8px;border-radius:20px}
+  .acts{display:flex;gap:7px;margin-top:8px}
+  .mini{font-size:12px;font-weight:800;padding:6px 13px;border-radius:8px;border:0;cursor:pointer}
+  .mini.ok{background:var(--success);color:#fff}.mini.no{background:#fff;border:1px solid var(--border-strong);color:#dc2626}
+
+  /* consolidation map (for the not-yet-detailed areas) */
+  .maptitle{font-size:13px;font-weight:800;color:var(--muted);margin:4px 0 12px}
+  .mcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .mcard h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  .mcard p{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+  .absorbs{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12px;font-weight:700;background:#f3f5f8;border:1px solid var(--border);border-radius:20px;padding:6px 12px;color:#475569}
+  .chip s{color:var(--muted-2);text-decoration:none}
+  .soon{display:inline-block;margin-inline-start:7px;font-size:10px;font-weight:800;color:var(--muted-2);background:#eef1f5;border-radius:20px;padding:2px 8px}
+
+  /* simple stat cards for home */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+  .stat .n{font-size:24px;font-weight:900}.stat .l{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+  .stat.alert{border-color:#f3cf8e;background:var(--amber-tint)}
+  .stat.alert .n{color:var(--amber)}
+
+  .hide{display:none !important}
+  @media(max-width:860px){.fields,.ggrid,.stats{grid-template-columns:1fr 1fr}.tabs{overflow-x:auto;flex-wrap:nowrap}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== SIDEBAR — AREAS ONLY (5) ===================== -->
+  <aside class="sidebar">
+    <div class="side-head">
+      <div class="side-logo">ع</div>
+      <div class="side-name">عيادات سمايل تاون<small>لوحة تحكم نشاطك</small></div>
+    </div>
+    <nav>
+      <div class="hint">المجالات الرئيسية</div>
+      <button class="item" data-area="home"><span class="ic">🏠</span><span class="lbl">الرئيسية</span></button>
+      <button class="item active" data-area="page"><span class="ic">🪪</span><span class="lbl">صفحتك على مودونتي</span></button>
+      <button class="item" data-area="content"><span class="ic">✍️</span><span class="lbl">المحتوى والمقالات</span><span class="badge">4</span></button>
+      <button class="item" data-area="marketing"><span class="ic">📣</span><span class="lbl">العملاء والتسويق</span><span class="badge">1</span></button>
+      <button class="item" data-area="health"><span class="ic">📊</span><span class="lbl">صحة موقعك</span></button>
+    </nav>
+    <div class="side-foot"><div class="signout"><span>↩</span> تسجيل الخروج</div></div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb" id="crumb">صفحتك على مودونتي / <b>الهوية</b></div>
+      <div class="brand">modonty</div>
+    </div>
+
+    <!-- ========== AREA: صفحتك على مودونتي (fully built) ========== -->
+    <div class="content area" data-area-panel="page">
+      <div class="notice">
+        <span style="font-size:16px">🧭</span>
+        <div><b>mockup v3 — تفاعلي:</b> اضغط أي مجال في القائمة الجانبية وأي تبويب تحت. هذا المجال «صفحتك» يجمع <b>٨ روابط</b> كانت مبعثرة في السايدبار القديم (بيانات/معلومات نشاطك · محتوى صفحتك · معرض الصور · أسئلة صفحتك · التوثيق · تقييمات/آراء نشاطك) في مكان واحد بسبع تبويبات.</div>
+      </div>
+
+      <div class="phead">
+        <div>
+          <h1>صفحتك على مودونتي</h1>
+          <p>كل ما يظهر للزائر في صفحتك — عبّيه من التبويبات تحت، وشوف نسبة الاكتمال.</p>
+        </div>
+        <button class="btn-preview">معاينة صفحتك ↗</button>
+      </div>
+
+      <div class="meter">
+        <span class="pct">82٪</span>
+        <span class="bar"><i></i></span>
+        <span class="tip">باقي: التوثيق المهني · صور أعمالك</span>
+      </div>
+
+      <!-- the ONLY section navigation: in-page tabs -->
+      <div class="tabs" id="pageTabs">
+        <button class="tab active" data-tab="identity">🏷️ الهوية <span class="dot ok"></span></button>
+        <button class="tab" data-tab="search">🔎 الظهور في البحث <span class="dot ok"></span></button>
+        <button class="tab" data-tab="trust">🛡️ التوثيق <span class="dot miss"></span></button>
+        <button class="tab" data-tab="sections">🧩 أقسام صفحتك <span class="dot ok"></span></button>
+        <button class="tab" data-tab="gallery">🖼️ صور أعمالك <span class="dot miss"></span></button>
+        <button class="tab" data-tab="faq">❓ الأسئلة الشائعة <span class="dot ok"></span></button>
+        <button class="tab" data-tab="feedback">⭐ تفاعل الزوار <span class="dot wait"></span></button>
+      </div>
+
+      <!-- ===== TAB: الهوية ===== -->
+      <div class="panel tabpanel" data-tabpanel="identity">
+        <div class="panel-head">
+          <h2>🏷️ هوية نشاطك</h2>
+          <span class="where">↗ تظهر في أعلى صفحتك (الهيدر)</span>
+        </div>
+        <div class="fields">
+          <div class="f"><label>اسم النشاط</label><div class="inp">عيادات سمايل تاون لطب الفم والأسنان</div></div>
+          <div class="f"><label>رقم التواصل / واتساب</label><div class="inp">+966 50 123 4567</div></div>
+          <div class="f"><label>البريد الإلكتروني</label><div class="inp">info@smiletown.sa</div></div>
+          <div class="f"><label>المدينة</label><div class="inp">جدة</div></div>
+          <div class="f full"><label>وصف موجز يميّز نشاطك</label><div class="inp">عناية متكاملة لصحة وجمال أسنانك بإشراف أخصائيين.</div></div>
+        </div>
+        <button class="save">💾 حفظ الهوية</button>
+        <div class="route">يجمع رابطين قديمين: «بيانات نشاطك» + «معلومات نشاطك» &nbsp;·&nbsp; يُدار حالياً في: <code>/dashboard/profile</code></div>
+      </div>
+
+      <!-- ===== TAB: الظهور في البحث ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="search">
+        <div class="panel-head">
+          <h2>🔎 ظهورك في نتائج البحث (SEO)</h2>
+          <span class="where">↗ يحدّد كيف تظهر صفحتك في Google</span>
+        </div>
+        <div class="fields">
+          <div class="f full"><label>عنوان الصفحة في البحث (Title)</label><div class="inp">عيادات سمايل تاون — طب وتجميل الأسنان في جدة</div></div>
+          <div class="f full"><label>الوصف في نتائج البحث (Description)</label><div class="inp">احجز موعدك مع أفضل أخصائيي الأسنان في جدة. تقويم، زراعة، وابتسامة هوليوود.</div></div>
+          <div class="f"><label>الكلمات المفتاحية</label><div class="inp">أسنان، تقويم، زراعة، جدة</div></div>
+          <div class="f"><label>الحالة في Google</label><div class="inp">مفهرسة ✅</div></div>
+        </div>
+        <button class="save">💾 حفظ بيانات البحث</button>
+        <div class="route">كان اسمه «معلومات نشاطك» — وضّحناه لـ«الظهور في البحث» &nbsp;·&nbsp; <code>/dashboard/seo</code></div>
+      </div>
+
+      <!-- ===== TAB: التوثيق ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="trust">
+        <div class="panel-head">
+          <h2>🛡️ التوثيق المهني</h2>
+          <span class="where">↗ شارة «موثّق» + بيانات الترخيص على صفحتك</span>
+        </div>
+        <div class="infobox">
+          <span style="font-size:16px">🔒</span>
+          <div><b>التوثيق هو مرساة الثقة.</b> رفع صورة الترخيص/الهوية المهنية يفعّل شارة «نشاط موثّق» — والزائر يفرّق بينك وبين أي صفحة عادية.</div>
+        </div>
+        <div class="fields">
+          <div class="f"><label>نوع الترخيص</label><div class="inp">ترخيص وزارة الصحة</div></div>
+          <div class="f"><label>رقم الترخيص</label><div class="inp">— غير مُدخل —</div></div>
+          <div class="f full"><label>صورة الترخيص (تُراجَع من الأدمن)</label><div class="inp" style="color:var(--amber);font-weight:700">⬆ لم تُرفع بعد — مطلوبة لتفعيل شارة التوثيق</div></div>
+        </div>
+        <button class="save">⬆ رفع وطلب التوثيق</button>
+        <div class="route">يظهر لنشاط YMYL (صحة/مال/قانون) &nbsp;·&nbsp; <code>/dashboard/verification</code> + مراجعة في الأدمن</div>
+      </div>
+
+      <!-- ===== TAB: أقسام صفحتك ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="sections">
+        <div class="panel-head">
+          <h2>🧩 أقسام صفحتك</h2>
+          <span class="where">↗ الأقسام اللي تظهر في جسم صفحتك</span>
+        </div>
+        <div class="fields">
+          <div class="f full"><label>الخدمات (Services)</label><div class="inp">تقويم الأسنان · زراعة الأسنان · ابتسامة هوليوود · تنظيف وتلميع</div></div>
+          <div class="f full"><label>إنجازات / أرقام</label><div class="inp">+5000 ابتسامة · 12 سنة خبرة · 8 أخصائيين</div></div>
+          <div class="f full"><label>نبذة «من نحن»</label><div class="inp">عيادة متخصصة تأسست 2013، تجمع أحدث التقنيات بفريق سعودي مرخّص.</div></div>
+          <div class="f"><label>فيديو تعريفي (اختياري)</label><div class="inp">— لا يوجد —</div></div>
+          <div class="f"><label>فريق العمل</label><div class="inp">4 أعضاء مضافين</div></div>
+        </div>
+        <button class="save">💾 حفظ الأقسام</button>
+        <div class="route">كان اسمه «محتوى صفحتك» &nbsp;·&nbsp; <code>/dashboard/page-content</code></div>
+      </div>
+
+      <!-- ===== TAB: صور أعمالك (THE client gallery) ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="gallery">
+        <div class="panel-head">
+          <h2>🖼️ صور أعمالك</h2>
+          <span class="where">↗ تظهر في قسم «المعرض» بصفحتك العامة</span>
+        </div>
+        <div class="infobox">
+          <span style="font-size:16px">📸</span>
+          <div><b>هذي صورك أنت.</b> ترفع صور أعمالك / منتجاتك / مقر نشاطك — وتظهر مباشرة في معرض صفحتك العامة للزوار.</div>
+        </div>
+        <div class="ggrid">
+          <div class="gcell add">＋<span>أضف صورة</span></div>
+          <div class="gcell">🦷</div>
+          <div class="gcell">🪥</div>
+          <div class="gcell">🏥</div>
+        </div>
+        <div class="vs">
+          <span style="font-size:15px">↔️</span>
+          <div><b>لا تخلط بينها وبين «مكتبة الصور».</b> صور أعمالك = صورك أنت لصفحتك العامة. أما «مكتبة الصور» (صور المقالات اللي تنتجها مدونتي + الشعار والغلاف) فمكانها في مجال <b>«المحتوى والمقالات»</b> — مخزن أصول، مش معرض عام.</div>
+        </div>
+        <div class="route">كان اسمه «معرض الصور» — وضّحناه لـ«صور أعمالك» &nbsp;·&nbsp; <code>/dashboard/gallery</code> &nbsp;(Media type=GALLERY)</div>
+      </div>
+
+      <!-- ===== TAB: الأسئلة الشائعة ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="faq">
+        <div class="panel-head">
+          <h2>❓ الأسئلة الشائعة في صفحتك</h2>
+          <span class="where">↗ تظهر كقسم «أسئلة شائعة» + Schema في Google</span>
+        </div>
+        <div class="fields">
+          <div class="f full"><label>سؤال ١</label><div class="inp">هل تقبلون التأمين الطبي؟</div></div>
+          <div class="f full"><label>سؤال ٢</label><div class="inp">كم تستغرق جلسة التقويم؟</div></div>
+          <div class="f full"><label>سؤال ٣ <span class="pend">بانتظار مراجعتك — وصل من زائر</span></label><div class="inp">هل يوجد تقسيط على زراعة الأسنان؟</div></div>
+        </div>
+        <button class="save">＋ أضف سؤال</button>
+        <div class="route">كان اسمه «أسئلة صفحتك» &nbsp;·&nbsp; <code>/dashboard/page-faq</code></div>
+      </div>
+
+      <!-- ===== TAB: تفاعل الزوار (reviews + comments merged) ===== -->
+      <div class="panel tabpanel hide" data-tabpanel="feedback">
+        <div class="panel-head">
+          <h2>⭐ تفاعل الزوار</h2>
+          <span class="where">↗ التقييمات والتعليقات على صفحتك (بعد موافقتك)</span>
+        </div>
+        <div class="infobox">
+          <span style="font-size:16px">🛡️</span>
+          <div>أي تقييم أو تعليق من زائر يوصلك هنا <b>بانتظار موافقتك</b> — ما يظهر للعامة إلا لما توافق.</div>
+        </div>
+        <div class="frow">
+          <div class="av">م</div>
+          <div class="body">
+            <div class="nm">محمد الغامدي <span class="pend">بانتظار الموافقة</span></div>
+            <div class="stars">★★★★★</div>
+            <div class="txt">تجربة ممتازة، الطاقم محترف والنتيجة فاقت توقعاتي.</div>
+            <div class="acts"><button class="mini ok">✓ اعتماد</button><button class="mini no">✕ رفض</button></div>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="av">ن</div>
+          <div class="body">
+            <div class="nm">نورة العتيبي <span style="font-size:10.5px;font-weight:800;color:var(--success);background:var(--success-tint);padding:3px 8px;border-radius:20px">معتمد · ظاهر</span></div>
+            <div class="stars">★★★★☆</div>
+            <div class="txt">مواعيد دقيقة وأسعار واضحة.</div>
+          </div>
+        </div>
+        <div class="route">يجمع رابطين: «تقييمات نشاطك» + «آراء حول نشاطك» &nbsp;·&nbsp; <code>/dashboard/client-reviews</code> + <code>/dashboard/client-comments</code></div>
+      </div>
+    </div>
+
+    <!-- ========== AREA: الرئيسية ========== -->
+    <div class="content area hide" data-area-panel="home">
+      <div class="phead"><div><h1>الرئيسية</h1><p>نظرتك السريعة على آخر ٣٠ يوم — وأي شيء يحتاج انتباهك.</p></div></div>
+      <div class="stats">
+        <div class="stat alert"><div class="n">3</div><div class="l">يحتاج انتباهك</div></div>
+        <div class="stat"><div class="n">2,481</div><div class="l">زيارة هذا الشهر</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">مقالات نُشرت</div></div>
+        <div class="stat"><div class="n">82٪</div><div class="l">اكتمال صفحتك</div></div>
+      </div>
+      <div class="mcard">
+        <h3>🔔 يحتاج قرارك</h3>
+        <div class="absorbs">
+          <span class="chip">⭐ تقييم زائر بانتظار الموافقة</span>
+          <span class="chip">❓ سؤال زائر جديد على صفحتك</span>
+          <span class="chip">🛡️ التوثيق المهني غير مكتمل</span>
+        </div>
+      </div>
+      <div class="route">يُدار حالياً في: <code>/dashboard</code></div>
+    </div>
+
+    <!-- ========== AREA: المحتوى والمقالات ========== -->
+    <div class="content area hide" data-area-panel="content">
+      <div class="phead"><div><h1>المحتوى والمقالات</h1><p>المقالات اللي تنتجها مدونتي لك + مخزن الصور والملفات.</p></div></div>
+      <div class="maptitle">يجمع هذه الروابط القديمة:</div>
+
+      <div class="mcard">
+        <h3>📰 المقالات <span class="badge" style="position:static">4</span></h3>
+        <p>مقالاتك المنشورة وقيد الكتابة، وجدول النشر.</p>
+        <div class="absorbs"><span class="chip">المقالات</span><span class="chip">نشاط المحتوى</span></div>
+        <div class="route"><code>/dashboard/articles</code> + <code>/dashboard/content</code></div>
+      </div>
+
+      <div class="mcard">
+        <h3>🗂️ مكتبة الصور</h3>
+        <p><b>مخزن كل الصور المستخدمة:</b> صور المقالات (تنتجها مدونتي) + الشعار + صورة الغلاف. مش معرض عام — أرشيف أصول.</p>
+        <div class="vs" style="margin-top:0">
+          <span style="font-size:15px">↔️</span>
+          <div>مختلفة عن <b>«صور أعمالك»</b> (في مجال «صفحتك») اللي ترفعها أنت وتظهر للزوار. هذي المكتبة للأصول الداخلية.</div>
+        </div>
+        <div class="route"><code>/dashboard/media</code> (كل الأنواع: article · logo · cover · gallery)</div>
+      </div>
+      <p style="font-size:12.5px;color:var(--muted-2);margin-top:6px">↳ نفصّل هذا المجال بالكامل في الخطوة الجاية على إشارتك.</p>
+    </div>
+
+    <!-- ========== AREA: العملاء والتسويق ========== -->
+    <div class="content area hide" data-area-panel="marketing">
+      <div class="phead"><div><h1>العملاء والتسويق</h1><p>كل ما يجيب لك عملاء: الحجوزات، العملاء المحتملين، النشرة، والحملات.</p></div></div>
+      <div class="maptitle">يجمع هذه الروابط القديمة:</div>
+      <div class="mcard">
+        <h3>📣 وصولك للعملاء</h3>
+        <div class="absorbs">
+          <span class="chip">📅 الحجوزات <span class="badge" style="position:static;margin-inline-start:4px">1</span></span>
+          <span class="chip">👥 العملاء المحتملون</span>
+          <span class="chip">✉️ مشتركو النشرة</span>
+          <span class="chip">📢 الحملات <span class="soon">beta</span></span>
+        </div>
+        <div class="route"><code>/dashboard/bookings · /leads · /subscribers · /campaigns</code></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--muted-2);margin-top:6px">↳ نفصّل هذا المجال بالكامل في الخطوة الجاية على إشارتك.</p>
+    </div>
+
+    <!-- ========== AREA: صحة موقعك ========== -->
+    <div class="content area hide" data-area-panel="health">
+      <div class="phead"><div><h1>صحة موقعك</h1><p>سرعة الموقع، الفهرسة في Google، والإحصائيات.</p></div></div>
+      <div class="maptitle">يجمع هذه الروابط القديمة:</div>
+      <div class="mcard">
+        <h3>📊 الأداء والفهرسة</h3>
+        <div class="absorbs">
+          <span class="chip">⚡ صحة الموقع</span>
+          <span class="chip">📈 الإحصائيات</span>
+          <span class="chip">🔑 الكلمات المفتاحية</span>
+        </div>
+        <div class="route"><code>/dashboard/site-health · /analytics · /seo/keywords</code></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--muted-2);margin-top:6px">↳ نفصّل هذا المجال بالكامل في الخطوة الجاية على إشارتك.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ===== area switching (sidebar) =====
+  const areaLabels = {
+    home:"الرئيسية", page:"صفحتك على مودونتي", content:"المحتوى والمقالات",
+    marketing:"العملاء والتسويق", health:"صحة موقعك"
+  };
+  const tabLabels = {
+    identity:"الهوية", search:"الظهور في البحث", trust:"التوثيق", sections:"أقسام صفحتك",
+    gallery:"صور أعمالك", faq:"الأسئلة الشائعة", feedback:"تفاعل الزوار"
+  };
+  const crumb = document.getElementById('crumb');
+
+  function setCrumb(area, tab){
+    if(area==='page' && tab) crumb.innerHTML = areaLabels.page + ' / <b>' + tabLabels[tab] + '</b>';
+    else crumb.innerHTML = '<b>' + areaLabels[area] + '</b>';
+  }
+
+  document.querySelectorAll('.item[data-area]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const area = btn.dataset.area;
+      document.querySelectorAll('.item[data-area]').forEach(b=>b.classList.toggle('active',b===btn));
+      document.querySelectorAll('.area').forEach(p=>p.classList.toggle('hide',p.dataset.areaPanel!==area));
+      const activeTab = document.querySelector('#pageTabs .tab.active');
+      setCrumb(area, area==='page' && activeTab ? activeTab.dataset.tab : null);
+      window.scrollTo(0,0);
+    });
+  });
+
+  // ===== tab switching (within صفحتك) =====
+  document.querySelectorAll('#pageTabs .tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const key = tab.dataset.tab;
+      document.querySelectorAll('#pageTabs .tab').forEach(t=>t.classList.toggle('active',t===tab));
+      document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('hide',p.dataset.tabpanel!==key));
+      setCrumb('page', key);
+    });
+  });
+</script>
+</body>
+</html>

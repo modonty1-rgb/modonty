@@ -6,6 +6,7 @@ import { getFieldsForGroup } from "../../helpers/group-fields-by-tab";
 import { getTierConfigByTier } from "@/app/(dashboard)/subscription-tiers/actions/tier-actions";
 import { SubscriptionTier } from "@prisma/client";
 import { validateAndNormalizeUrls } from "./validate-and-normalize-urls";
+import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 import bcrypt from "bcryptjs";
 
 export interface GroupUpdateResult {
@@ -358,6 +359,7 @@ export async function updateSEOFields(
         gbpLocationId: true,
         gbpCategory: true,
         priceRange: true,
+        organizationType: true,
       },
     });
 
@@ -376,6 +378,10 @@ export async function updateSEOFields(
       gbpLocationId: data.gbpLocationId ?? null,
       gbpCategory: data.gbpCategory ?? null,
       priceRange: data.priceRange ?? null,
+      // organizationType is admin-owned: store only the canonical schema.org value
+      // (same normalizer the console used). It routes here because the field-to-group
+      // map resolves it to the "seo" group.
+      organizationType: normalizeOrganizationType(data.organizationType),
     };
 
     const updateData = buildGroupUpdateData("seo", client as Record<string, unknown>, newData);

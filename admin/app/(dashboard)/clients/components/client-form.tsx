@@ -34,9 +34,11 @@ interface ClientFormProps {
   clientId?: string;
   /** Site base URL from Settings.siteUrl (passed by server parent). */
   siteUrl: string;
+  /** Active countries for the addressCountry picker (admin-owned field). */
+  countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
 }
 
-export function ClientForm({ initialData, industries = [], clients = [], clientId, siteUrl }: ClientFormProps) {
+export function ClientForm({ initialData, industries = [], clients = [], clientId, siteUrl, countries = [] }: ClientFormProps) {
   const headerRef = useHeaderRef();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -231,7 +233,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                       </span>
                     </div>
                   )}
-                  <BasicInfoSection form={form} industries={industries} />
+                  <BasicInfoSection form={form} industries={industries} countries={countries} />
                   <SubscriptionSection form={form} isEditMode={false} tierConfigs={tierConfigs} />
                 </div>
               ) : (
@@ -360,7 +362,7 @@ export function ClientForm({ initialData, industries = [], clients = [], clientI
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-5 pt-3">
                       <div className="space-y-6">
-                        <BasicInfoSection form={form} industries={industries} isEditMode clientId={clientId} />
+                        <BasicInfoSection form={form} industries={industries} isEditMode clientId={clientId} countries={countries} />
                         <SubscriptionSection form={form} isEditMode tierConfigs={tierConfigs} />
                       </div>
                     </AccordionContent>

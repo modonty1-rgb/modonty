@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>موكب — بيانات نشاطك (نسخة مبسّطة v1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Design tokens — mirrored from console globals.css (light) ===== */
+  :root{
+    --background:#f3f2ef;
+    --foreground:#0E065A;           /* navy */
+    --card:#ffffff;
+    --primary:#3030FF;              /* brand blue */
+    --primary-foreground:#ffffff;
+    --accent:#00D8D8;               /* brand teal */
+    --muted:#f5f5f5;
+    --muted-foreground:#5b5b5b;
+    --border:#dbdbdb;
+    --success:#16a34a;
+    --amber-bg:#fffbeb; --amber-bd:#fde68a; --amber-fg:#b45309;
+    --emerald-bg:#ecfdf5; --emerald-bd:#a7f3d0; --emerald-fg:#047857;
+    --radius:0.5rem;
+    --radius-lg:0.75rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Tajawal',sans-serif;
+    background:var(--background);
+    color:var(--foreground);
+    line-height:1.6;
+    padding:24px 16px 140px;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+
+  /* ===== Annotation banner (mockup-only) ===== */
+  .note{
+    background:#0E065A;color:#fff;border-radius:var(--radius-lg);
+    padding:14px 18px;margin-bottom:20px;font-size:13px;line-height:1.8;
+  }
+  .note b{color:var(--accent)}
+  .note ul{margin:6px 18px 0;padding:0}
+  .note li{margin:2px 0}
+
+  /* ===== Header ===== */
+  header.page{
+    display:flex;flex-direction:column;gap:14px;margin-bottom:20px;
+  }
+  @media(min-width:640px){
+    header.page{flex-direction:row;align-items:flex-start;justify-content:space-between}
+  }
+  header.page h1{font-size:24px;font-weight:800;line-height:1.25}
+  header.page p{color:var(--muted-foreground);font-size:14px;margin-top:4px}
+  .chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;
+    border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--border);
+    background:var(--card);cursor:pointer;white-space:nowrap;
+  }
+  .chip svg{width:14px;height:14px}
+  .chip.ok{background:var(--emerald-bg);border-color:var(--emerald-bd);color:var(--emerald-fg)}
+  .chip.warn{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber-fg)}
+  .chip.info{background:#eef0ff;border-color:#c7ccff;color:var(--primary)}
+
+  /* ===== Completeness banner (counts REQUIRED only) ===== */
+  .progress-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:16px 18px;margin-bottom:18px;
+  }
+  .progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .progress-top .lbl{font-size:14px;font-weight:700}
+  .progress-top .pct{font-size:14px;font-weight:800;color:var(--success)}
+  .bar{height:8px;border-radius:999px;background:var(--muted);overflow:hidden}
+  .bar>span{display:block;height:100%;border-radius:999px;background:var(--success);transition:width .3s}
+  .progress-hint{font-size:12px;color:var(--muted-foreground);margin-top:8px}
+
+  /* ===== Cards ===== */
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+    overflow:hidden;margin-bottom:14px;
+  }
+  .sec-head{
+    display:flex;align-items:flex-start;gap:12px;padding:16px 18px;
+  }
+  .sec-icon{
+    flex:0 0 auto;width:40px;height:40px;border-radius:var(--radius);
+    display:grid;place-items:center;background:#eef0ff;color:var(--primary);
+  }
+  .sec-icon.ok{background:var(--emerald-bg);color:var(--emerald-fg)}
+  .sec-icon svg{width:20px;height:20px}
+  .sec-titles{flex:1 1 auto;min-width:0}
+  .sec-titles h3{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .sec-titles p{font-size:12px;color:var(--muted-foreground);margin-top:2px}
+  .count{
+    flex:0 0 auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;
+    background:var(--muted);color:var(--muted-foreground);
+  }
+  .count.ok{background:var(--emerald-bg);color:var(--emerald-fg);border:1px solid var(--emerald-bd)}
+
+  .card-body{padding:0 18px 18px}
+  .grid{display:grid;gap:16px}
+  @media(min-width:640px){.grid.two{grid-template-columns:1fr 1fr}}
+  .full{grid-column:1/-1}
+
+  .field label{display:block;font-size:13px;font-weight:500;margin-bottom:6px}
+  .req{color:var(--primary);font-weight:800;margin-inline-start:3px}
+  .opt{color:var(--muted-foreground);font-size:11px;font-weight:500;margin-inline-start:6px}
+  .field input,.field select,.field textarea{
+    width:100%;height:40px;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--card);font-family:inherit;font-size:14px;color:var(--foreground);
+  }
+  .field textarea{height:auto;padding:10px 12px;resize:vertical}
+  .field input[dir=ltr]{text-align:start}
+  .hint{font-size:11px;color:var(--muted-foreground);margin-top:5px}
+  .ltr{direction:ltr;text-align:start}
+
+  /* ===== Accordion (native details) ===== */
+  details.card>summary{list-style:none;cursor:pointer;outline:none}
+  details.card>summary::-webkit-details-marker{display:none}
+  details.card>summary .sec-head{padding-bottom:16px}
+  .chev{flex:0 0 auto;color:var(--muted-foreground);transition:transform .2s}
+  details[open]>summary .chev{transform:rotate(180deg)}
+  details.card>summary:hover{background:#fafafa}
+  details.card .card-body{border-top:1px solid var(--border);padding-top:16px}
+
+  /* ===== Saudi-only block ===== */
+  .saudi-only{display:none}
+  .saudi-only.show{display:contents}
+  .saudi-tag{
+    display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+    color:var(--primary);background:#eef0ff;border:1px solid #c7ccff;border-radius:999px;
+    padding:2px 8px;margin-bottom:8px;
+  }
+
+  /* ===== Hours ===== */
+  .hours-row{
+    display:grid;grid-template-columns:72px auto 1fr 1fr;align-items:center;gap:10px;
+    padding:7px 0;border-bottom:1px solid var(--border);
+  }
+  .hours-row:last-child{border-bottom:none}
+  .hours-row .day{font-size:13px;font-weight:700}
+  .hours-row .tgl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted-foreground)}
+  .hours-row input[type=time]{height:36px}
+  .hours-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary)}
+
+  /* ===== Sticky save ===== */
+  .savebar{
+    position:fixed;inset-inline:0;bottom:0;z-index:40;
+    padding:12px 16px;background:transparent;
+  }
+  .savebar-inner{
+    max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 8px 24px rgba(14,6,90,.12);
+    padding:12px 14px;
+  }
+  .savebar .status{font-size:12px;color:var(--muted-foreground)}
+  .btn{
+    height:40px;padding:0 22px;border:none;border-radius:var(--radius);cursor:pointer;
+    background:var(--primary);color:#fff;font-family:inherit;font-weight:800;font-size:14px;
+  }
+  .btn:hover{filter:brightness(1.08)}
+
+  .legend{
+    margin-top:26px;background:var(--card);border:1px dashed var(--border);
+    border-radius:var(--radius-lg);padding:16px 18px;font-size:12.5px;line-height:1.9;color:var(--muted-foreground);
+  }
+  .legend h4{color:var(--foreground);font-size:13px;margin-bottom:8px}
+  .legend code{background:var(--muted);padding:1px 5px;border-radius:4px;font-size:11px;direction:ltr;display:inline-block}
+  .ok-dot{color:var(--success);font-weight:800}
+  .pend-dot{color:var(--amber-fg);font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- mockup annotation -->
+  <div class="note">
+    🧪 <b>موكب تقييم — بيانات نشاطك (مبسّطة)</b> · صفر مساس بالـ logic/data: نفس الـ ٢٦ حقل، نفس زر الحفظ، نفس <code style="background:#1a1470;color:#9fa8ff;padding:1px 5px;border-radius:4px">updateProfile</code>.
+    <ul>
+      <li>① «الأساسيات» مفتوح دائمًا · الباقي أقسام تُطوى (مغلقة افتراضيًا — اضغط على رأس القسم).</li>
+      <li>② عدّاد الاكتمال يحسب <b>المطلوب فقط</b> → يوصل ١٠٠٪ لكل العملاء.</li>
+      <li>③ الحقول السعودية (رقم المبنى/الرقم الإضافي) تظهر فقط لو الدولة = السعودية — غيّر الدولة في «العنوان التفصيلي» لتجربتها.</li>
+      <li>④ كل الأوصاف بلُغة بشرية، بلا مصطلحات تقنية.</li>
+    </ul>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="page">
+    <div>
+      <h1>معلومات النشاط</h1>
+      <p>عرّف بنشاطك عشان زوّارك وجوجل يعرفونك صح.</p>
+    </div>
+    <div class="chips">
+      <span class="chip info" title="اكتمال الملف">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        اكتمال الملف ٨٣٪
+      </span>
+      <span class="chip warn" title="جاهزية الظهور في البحث">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        جاهزية البحث ٧٠٪
+      </span>
+      <span class="chip ok" title="تم قبول الإقرار">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        الإقرار مقبول
+      </span>
+    </div>
+  </header>
+
+  <!-- ===== Completeness banner (required only) ===== -->
+  <div class="progress-card">
+    <div class="progress-top">
+      <span class="lbl">اكتمل ملفك الأساسي</span>
+      <span class="pct">٥ من ٦</span>
+    </div>
+    <div class="bar"><span style="width:83%"></span></div>
+    <p class="progress-hint">باقي حقل واحد مطلوب: <b style="color:var(--foreground)">القطاع</b>. التفاصيل الإضافية اختيارية — تقوّي ملفك بس مو شرط.</p>
+  </div>
+
+  <!-- ===== 1. الأساسيات (always open) ===== -->
+  <div class="card">
+    <div class="sec-head">
+      <div class="sec-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+      </div>
+      <div class="sec-titles">
+        <h3>الأساسيات</h3>
+        <p>المعلومات اللي يشوفها زوّارك ويوصلون فيك — املأها وخلاص.</p>
+      </div>
+      <span class="count">٥/٦</span>
+    </div>
+    <div class="card-body">
+      <div class="grid two">
+        <div class="field"><label>اسم النشاط<span class="req">*</span></label><input value="عيادة سمايل تاون" /></div>
+        <div class="field"><label>البريد الإلكتروني<span class="req">*</span></label><input dir="ltr" value="info@smiletown.sa" /></div>
+        <div class="field"><label>رقم الجوال<span class="req">*</span></label><input dir="ltr" value="+966 5xxxxxxxx" /></div>
+        <div class="field"><label>المدينة<span class="req">*</span></label><input value="جدة" /></div>
+        <div class="field">
+          <label>القطاع<span class="req">*</span></label>
+          <select><option value="">— اختر —</option><option selected>الرعاية الصحية والطب</option><option>المطاعم والمقاهي</option><option>المحاماة والاستشارات</option></select>
+        </div>
+        <div class="field full"><label>وصف النشاط<span class="opt">اختياري</span></label><textarea rows="3" placeholder="نبذة قصيرة عن نشاطك وخدماتك"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 2. معلومات إضافية (collapsible) ===== -->
+  <details class="card">
+    <summary>
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <div class="sec-titles">
+          <h3>معلومات إضافية عن النشاط</h3>
+          <p>تفاصيل تكمّل ملفك — مش إلزامية، لكن كل ما عبّيت أكثر، ظهر نشاطك أوضح.</p>
+        </div>
+        <span class="count">٣/٨</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </summary>
+    <div class="card-body">
+      <div class="grid two">
+        <div class="field"><label>الموقع الإلكتروني<span class="opt">اختياري</span></label><input dir="ltr" placeholder="https://example.com" /></div>
+        <div class="field"><label>الشعار (جملة مختصرة)<span class="opt">اختياري</span></label><input placeholder="كلمة موجزة تميّز نشاطك" /></div>
+        <div class="field"><label>الاسم القانوني<span class="opt">اختياري</span></label><input /></div>
+        <div class="field"><label>الاسم البديل<span class="opt">اختياري</span></label><input /></div>
+        <div class="field">
+          <label>نوع جهة الاتصال<span class="opt">اختياري</span></label>
+          <select><option value="">— اختر —</option><option>خدمة العملاء</option><option>المبيعات</option><option>الدعم الفني</option><option>الحجوزات</option></select>
+        </div>
+        <div class="field">
+          <label>نوع المنظمة<span class="opt">اختياري</span></label>
+          <select><option value="">— اختر —</option><option>شركة</option><option>مؤسسة فردية</option><option>منظمة طبية</option></select>
+        </div>
+        <div class="field"><label>تاريخ التأسيس<span class="opt">اختياري</span></label><input type="date" dir="ltr" /></div>
+        <div class="field full"><label>الحسابات الاجتماعية<span class="opt">اختياري</span></label><textarea rows="3" placeholder="رابط واحد في كل سطر (لينكدإن، تويتر، فيسبوك)"></textarea></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===== 3. العنوان التفصيلي (collapsible) ===== -->
+  <details class="card">
+    <summary>
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="sec-titles">
+          <h3>العنوان التفصيلي</h3>
+          <p>موقع نشاطك — يساعد العملاء القريبين يلاقونك.</p>
+        </div>
+        <span class="count">٢/٥</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </summary>
+    <div class="card-body">
+      <div class="grid two">
+        <div class="field">
+          <label>الدولة<span class="opt">اختياري</span></label>
+          <select id="country" onchange="toggleSaudi()">
+            <option value="">— اختر —</option>
+            <option value="SA" selected>السعودية</option>
+            <option value="EG">مصر</option>
+            <option value="AE">الإمارات</option>
+          </select>
+        </div>
+        <div class="field"><label>المنطقة<span class="opt">اختياري</span></label><input placeholder="مكة المكرمة" /></div>
+        <div class="field"><label>الحي<span class="opt">اختياري</span></label><input placeholder="البغدادية الشرقية" /></div>
+        <div class="field"><label>الشارع<span class="opt">اختياري</span></label><input /></div>
+        <div class="field"><label>الرمز البريدي<span class="opt">اختياري</span></label><input dir="ltr" /></div>
+      </div>
+
+      <!-- Saudi National Address only -->
+      <div id="saudiBlock" class="saudi-only show" style="margin-top:16px">
+        <span class="saudi-tag">📍 العنوان الوطني السعودي</span>
+        <div class="grid two">
+          <div class="field"><label>رقم المبنى<span class="opt">اختياري</span></label><input dir="ltr" /></div>
+          <div class="field"><label>الرقم الإضافي<span class="opt">اختياري</span></label><input dir="ltr" /></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===== 4. التوثيق الرسمي (collapsible) ===== -->
+  <details class="card">
+    <summary>
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+        </div>
+        <div class="sec-titles">
+          <h3>التوثيق الرسمي</h3>
+          <p>أرقامك الرسمية (السجل التجاري والضريبة) — تزيد ثقة العملاء فيك.</p>
+        </div>
+        <span class="count">٠/٤</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </summary>
+    <div class="card-body">
+      <div class="grid two">
+        <div class="field"><label>رقم السجل التجاري<span class="opt">اختياري</span></label><input dir="ltr" placeholder="رقم السجل التجاري" /></div>
+        <div class="field"><label>الرقم الضريبي (زاتكا)<span class="opt">اختياري</span></label><input dir="ltr" placeholder="300xxxxxxxxxxx3" /></div>
+        <div class="field"><label>الرقم الضريبي<span class="opt">اختياري</span></label><input dir="ltr" /></div>
+        <div class="field">
+          <label>الشكل القانوني<span class="opt">اختياري</span></label>
+          <select><option value="">— اختر —</option><option>شركة ذات مسؤولية محدودة</option><option>مؤسسة فردية</option><option>شركة مساهمة</option></select>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===== 5. الروابط وساعات العمل (collapsible) ===== -->
+  <details class="card">
+    <summary>
+      <div class="sec-head">
+        <div class="sec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="sec-titles">
+          <h3>الروابط وساعات العمل</h3>
+          <p>أوقات دوامك ورابطك الأساسي.</p>
+        </div>
+        <span class="count">٧ أيام</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </summary>
+    <div class="card-body">
+      <!-- hours -->
+      <div style="margin-bottom:8px">
+        <div class="hours-row"><span class="day">السبت</span><label class="tgl"><input type="checkbox" checked />مفتوح</label><input type="time" value="09:00" dir="ltr" /><input type="time" value="17:00" dir="ltr" /></div>
+        <div class="hours-row"><span class="day">الأحد</span><label class="tgl"><input type="checkbox" checked />مفتوح</label><input type="time" value="09:00" dir="ltr" /><input type="time" value="17:00" dir="ltr" /></div>
+        <div class="hours-row"><span class="day">الإثنين</span><label class="tgl"><input type="checkbox" checked />مفتوح</label><input type="time" value="09:00" dir="ltr" /><input type="time" value="17:00" dir="ltr" /></div>
+        <div class="hours-row"><span class="day">الجمعة</span><label class="tgl"><input type="checkbox" />مغلق</label><input type="time" value="09:00" dir="ltr" disabled /><input type="time" value="17:00" dir="ltr" disabled /></div>
+      </div>
+      <div class="field full" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <label>الرابط الأساسي<span class="opt">تقني — اتركه فارغًا</span></label>
+        <input dir="ltr" placeholder="يضبطه فريق مودونتي تلقائيًا" />
+        <p class="hint">رابط نشاطك الموحّد. اتركه فارغًا إن لم تكن متأكدًا — مودونتي تضبطه نيابةً عنك.</p>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===== Legend / مطابقة ===== -->
+  <div class="legend">
+    <h4>ملاحظات المطابقة (للمراجعة قبل البناء)</h4>
+    <span class="ok-dot">✔</span> صفر تغيير في الـ data: كل الـ ٢٦ حقل موجودة + جدول الساعات + <code>updateProfile</code> كما هو.<br/>
+    <span class="ok-dot">✔</span> فورم واحد بحالة واحدة → زر حفظ واحد يغطّي كل الأقسام (المطوي والمفتوح).<br/>
+    <span class="ok-dot">✔</span> الأقسام تُطوى عبر <code>&lt;details&gt;</code> الأصلي — صفر JavaScript للفتح/الإغلاق (وصول كامل بالكيبورد).<br/>
+    <span class="ok-dot">✔</span> shadcn + tokens من globals.css · RTL بـ <code>start/end</code> · أيقونات lucide.<br/>
+    <span class="pend-dot">◆</span> <b>قرار مطلوب منك:</b> «المطلوب» = الاسم · الإيميل · الجوال · المدينة · القطاع · (وصف؟). العدّاد يحسبها هي فقط. توافق؟<br/>
+    <span class="pend-dot">◆</span> «نوع جهة الاتصال» و«نوع المنظمة» و«الشكل القانوني»: تحوّلت لقوائم بدل نص حرّ — نفس القيم المخزّنة.
+  </div>
+
+</div>
+
+<!-- ===== Sticky save ===== -->
+<div class="savebar">
+  <div class="savebar-inner">
+    <span class="status">جاهز للحفظ</span>
+    <button class="btn">حفظ التغييرات</button>
+  </div>
+</div>
+
+<script>
+  // Saudi National Address fields show only when country = SA (presentation toggle)
+  function toggleSaudi(){
+    var c = document.getElementById('country').value;
+    var blk = document.getElementById('saudiBlock');
+    if(c === 'SA'){ blk.classList.add('show'); } else { blk.classList.remove('show'); }
+  }
+  toggleSaudi();
+</script>
+</body>
+</html>

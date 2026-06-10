@@ -11,6 +11,7 @@ import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
 import { clientServerSchema } from "./client-server-schema";
+import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import bcrypt from "bcryptjs";
 
@@ -168,6 +169,14 @@ export async function createClient(data: ClientFormData) {
       if (key in clientData) {
         cleanData[key] = clientData[key];
       }
+    }
+
+    // organizationType is admin-owned: store only the canonical schema.org value
+    // (same normalizer the console used), so legacy/free-text never reaches the DB.
+    if ("organizationType" in cleanData) {
+      cleanData.organizationType = normalizeOrganizationType(
+        cleanData.organizationType as string | null | undefined
+      );
     }
 
     // Bootstrap intake JSON with businessBrief so the unified strategy bundle is non-empty from creation.

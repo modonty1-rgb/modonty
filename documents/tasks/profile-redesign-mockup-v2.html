@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إعادة تصميم — بيانات نشاطك (v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e7e9ee;
+    --primary:#2563eb; --primary-soft:#eff4ff;
+    --emerald:#059669; --emerald-soft:#ecfdf5; --emerald-line:#a7f3d0;
+    --amber:#b45309; --amber-soft:#fffbeb;
+    --radius:14px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+    --shadow-lg:0 10px 30px -12px rgba(16,24,40,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;padding:32px 16px 120px}
+  .wrap{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+
+  /* Header */
+  .head h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .head p{color:var(--muted);font-size:14px;margin-top:2px}
+  .head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .chip .dot{width:7px;height:7px;border-radius:99px;background:var(--emerald)}
+  .chip.ok{color:var(--emerald);border-color:var(--emerald-line);background:var(--emerald-soft)}
+  .chip.info{color:var(--primary);border-color:#c7dafe;background:var(--primary-soft)}
+  .chip.warn{color:var(--amber);border-color:#fde68a;background:var(--amber-soft)}
+
+  /* URL bar */
+  .urlbar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;box-shadow:var(--shadow)}
+  .urlbar .lbl{font-size:12px;color:var(--muted);white-space:nowrap}
+  .urlbar a{flex:1;min-width:0;color:var(--primary);font-weight:600;font-size:13.5px;text-decoration:none;direction:ltr;text-align:start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .urlbar button{flex-shrink:0;width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);background:#fff;border-radius:9px;color:var(--muted);cursor:pointer}
+  .urlbar button:hover{background:#f1f5f9;color:var(--ink)}
+
+  /* Card */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+
+  /* Section header */
+  .sec-head{display:flex;align-items:flex-start;gap:12px;padding:18px 22px 14px;border-bottom:1px solid var(--line)}
+  .sec-ic{flex-shrink:0;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+  .sec-ic.done{background:var(--emerald-soft);color:var(--emerald)}
+  .sec-meta{flex:1;min-width:0}
+  .sec-step{font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:.04em}
+  .sec-title{font-size:16.5px;font-weight:800;display:flex;align-items:center;gap:7px}
+  .sec-desc{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .pill{flex-shrink:0;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;background:#f1f5f9;color:var(--muted)}
+  .pill.done{background:var(--emerald-soft);color:var(--emerald);border:1px solid var(--emerald-line)}
+
+  /* Grid + fields */
+  .body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1 / -1}
+  label.flbl{font-size:13px;font-weight:500;color:#334155}
+  label.flbl .req{color:#dc2626;margin-inline-start:3px}
+  .inp{height:42px;border:1px solid var(--line);border-radius:var(--radius-sm);padding:0 13px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;transition:border-color .15s,box-shadow .15s;width:100%}
+  .inp:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  textarea.inp{height:auto;padding:11px 13px;resize:vertical;min-height:84px}
+  .ltr{direction:ltr;text-align:start}
+  .hint{font-size:11.5px;color:var(--muted)}
+
+  /* Read-only (verified) */
+  .ro{display:flex;flex-direction:column;gap:6px}
+  .ro .v{height:42px;display:flex;align-items:center;padding:0 13px;border:1px dashed #d6dbe4;border-radius:var(--radius-sm);background:#fafbfc;font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ro .v.empty{color:#94a3b8;font-weight:400}
+  .ro-group{grid-column:1 / -1;font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:.05em;margin-top:4px;display:flex;align-items:center;gap:7px}
+  .ro-group::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* Verified trigger */
+  .vtrig{display:flex;align-items:center;gap:12px;padding:18px 22px;cursor:pointer;width:100%;background:none;border:none;text-align:start;font-family:inherit}
+  .vtrig:hover{background:#fafbfc}
+  .vsub{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .vlock{color:var(--muted);font-size:18px}
+
+  /* subheading inside section */
+  .subhead{grid-column:1 / -1;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:16px;margin-top:2px;font-size:12px;font-weight:800;color:#94a3b8;letter-spacing:.03em}
+
+  /* day chips */
+  .days{display:flex;flex-wrap:wrap;gap:9px}
+  .day{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:11px;font-size:13.5px;color:var(--muted);cursor:pointer;user-select:none;transition:.15s}
+  .day:hover{background:#f8fafc}
+  .day.on{border-color:var(--primary);background:var(--primary-soft);color:var(--ink);font-weight:700}
+  .day .box{width:17px;height:17px;border-radius:5px;border:1.5px solid #cbd5e1;display:grid;place-items:center;flex-shrink:0}
+  .day.on .box{background:var(--primary);border-color:var(--primary);color:#fff}
+
+  /* save bar */
+  .savebar{position:sticky;bottom:16px;margin-top:4px}
+  .savebar-in{display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:13px 16px}
+  .savebar .status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .btn{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 1px 2px rgba(37,99,235,.3)}
+  .btn:hover{background:#1d4ed8}
+
+  svg{width:20px;height:20px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .sec-title svg{width:16px;height:16px;color:var(--emerald)}
+  @media(max-width:640px){.body{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="head">
+    <div class="head-row">
+      <div>
+        <h1>معلومات النشاط</h1>
+        <p>عدّل بيانات نشاطك والتواصل — البيانات الموثّقة تُدار من مودونتي.</p>
+      </div>
+      <div class="chips">
+        <span class="chip ok"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> اكتمال الملف · 100%</span>
+        <span class="chip info"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> SEO · جاهزة 82%</span>
+        <span class="chip"><span class="dot"></span> وافقت على الإقرار</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- URL BAR -->
+  <div class="urlbar">
+    <svg viewBox="0 0 24 24" style="color:var(--primary);width:17px;height:17px"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+    <span class="lbl">رابط صفحتك:</span>
+    <a href="#">https://www.modonty.com/clients/عيادة-سمايل-تاون</a>
+    <button title="نسخ"><svg viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+  </div>
+
+  <!-- VERIFIED (collapsible, emerald) -->
+  <div class="card">
+    <button class="vtrig" onclick="this.parentElement.querySelector('.vbody').classList.toggle('hide');this.querySelector('.chev').style.transform=this.parentElement.querySelector('.vbody').classList.contains('hide')?'':'rotate(180deg)'">
+      <span class="sec-ic done" style="width:42px;height:42px"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <span class="sec-meta">
+        <span class="sec-title" style="color:var(--ink)">بيانات موثّقة من مودونتي</span>
+        <span class="vsub">هذي البيانات تُدار من مودونتي للتوثيق — للتعديل تواصل معنا.</span>
+      </span>
+      <span class="vlock"><svg viewBox="0 0 24 24" style="width:16px;height:16px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+      <span class="chev" style="color:var(--muted);transition:.2s;transform:rotate(180deg)"><svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="m6 9 6 6 6-6"/></svg></span>
+    </button>
+    <div class="vbody body" style="padding-top:6px">
+      <div class="ro-group">الهوية الرقمية</div>
+      <div class="ro"><label class="flbl">البريد الإلكتروني</label><div class="v ltr">mohamedsheno96@gmail.com</div><span class="hint">معرّف الدخول</span></div>
+      <div class="ro"><label class="flbl">الموقع الإلكتروني</label><div class="v ltr">https://www.facebook.com/Smilee.Town.Dental</div></div>
+      <div class="ro" style="grid-column:1/-1"><label class="flbl">الحسابات الاجتماعية</label><div class="v ltr">https://www.facebook.com/Smilee.Town.Dental.Clinic</div></div>
+      <div class="ro-group">التصنيف</div>
+      <div class="ro"><label class="flbl">القطاع</label><div class="v">الرعاية الصحية</div></div>
+      <div class="ro"><label class="flbl">نوع المنظمة</label><div class="v">نشاط تجاري محلي</div></div>
+      <div class="ro"><label class="flbl">الشكل القانوني</label><div class="v">مؤسسة فردية</div></div>
+      <div class="ro-group">التواصل والموقع</div>
+      <div class="ro"><label class="flbl">الهاتف</label><div class="v ltr">+201095266809</div></div>
+      <div class="ro"><label class="flbl">نوع جهة الاتصال</label><div class="v ltr">customer service</div></div>
+      <div class="ro"><label class="flbl">الدولة</label><div class="v">مصر</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="card">
+    <div class="sec-head">
+      <div class="sec-ic done"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div>
+      <div class="sec-meta">
+        <div class="sec-step">القسم 1 / 3</div>
+        <div class="sec-title">البيانات الأساسية <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="sec-desc">اسم نشاطك، شعارك، وصفك، وسجلاتك الرسمية</div>
+      </div>
+      <span class="pill done">8 / 8</span>
+    </div>
+    <div class="body">
+      <div class="field"><label class="flbl">اسم النشاط<span class="req">*</span></label><input class="inp" value="عيادات سمايل تاون لطب الفم و الأسنان"></div>
+      <div class="field"><label class="flbl">الاسم القانوني</label><input class="inp" value="عيادة سمايل تاون لطب الفم و الأسنان"></div>
+      <div class="field"><label class="flbl">الاسم البديل</label><input class="inp ltr" value="Smile Town Dental Clinic"></div>
+      <div class="field"><label class="flbl">تاريخ التأسيس</label><input class="inp ltr" type="date" value="2022-01-19"></div>
+      <div class="field full"><label class="flbl">الشعار</label><input class="inp" value="عيادة طب الفم و الأسنان"></div>
+      <div class="field full"><label class="flbl">وصف النشاط</label><textarea class="inp">عيادة تهتم بعلاج امراض الفم و تجميل الاسنان و استعاضة وظيفتها</textarea></div>
+      <div class="subhead"><svg viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M3 6h18M3 12h18M3 18h18"/></svg> السجلات الرسمية</div>
+      <div class="field"><label class="flbl">رقم السجل التجاري</label><input class="inp ltr" value="566-7890"></div>
+      <div class="field"><label class="flbl">الرقم الضريبي</label><input class="inp ltr" value="565993686246"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="card">
+    <div class="sec-head">
+      <div class="sec-ic done"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="sec-meta">
+        <div class="sec-step">القسم 2 / 3</div>
+        <div class="sec-title">العنوان <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="sec-desc">الموقع الفعلي لنشاطك</div>
+      </div>
+      <span class="pill done">6 / 6</span>
+    </div>
+    <div class="body">
+      <div class="field"><label class="flbl">المدينة</label><input class="inp" value="الجيزة"></div>
+      <div class="field"><label class="flbl">المنطقة</label><input class="inp" value="شارع الملك فيصل"></div>
+      <div class="field"><label class="flbl">الحي</label><input class="inp" value="حي فيصل"></div>
+      <div class="field"><label class="flbl">الشارع</label><input class="inp" value="شارع الملك فيصل الرئيسي"></div>
+      <div class="field"><label class="flbl">رقم المبنى</label><input class="inp ltr" value="13"></div>
+      <div class="field"><label class="flbl">الرمز البريدي</label><input class="inp ltr" value="12511"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="card">
+    <div class="sec-head">
+      <div class="sec-ic done"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="sec-meta">
+        <div class="sec-step">القسم 3 / 3</div>
+        <div class="sec-title">ساعات العمل <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="sec-desc">وقت دوام موحّد لكل أيام العمل — حدّد إجازاتك</div>
+      </div>
+      <span class="pill done">7 / 7</span>
+    </div>
+    <div class="body">
+      <div class="field"><label class="flbl">وقت الفتح</label><input class="inp ltr" type="time" value="09:00"></div>
+      <div class="field"><label class="flbl">وقت الإغلاق</label><input class="inp ltr" type="time" value="17:00"></div>
+      <div class="field full">
+        <label class="flbl">أيام العمل</label>
+        <div class="days">
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>السبت</span>
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>الأحد</span>
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>الإثنين</span>
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>الثلاثاء</span>
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>الأربعاء</span>
+          <span class="day on"><span class="box"><svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg></span>الخميس</span>
+          <span class="day"><span class="box"></span>الجمعة</span>
+        </div>
+        <span class="hint" style="margin-top:8px">الأيام غير المحددة تظهر «مغلق» في صفحتك.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE BAR -->
+  <div class="savebar">
+    <div class="savebar-in">
+      <span class="status"><svg viewBox="0 0 24 24" style="width:15px;height:15px;color:var(--emerald)"><path d="M20 6 9 17l-5-5"/></svg> حُفظ · 8:42 م</span>
+      <button class="btn">حفظ التغييرات</button>
+    </div>
+  </div>
+
+</div>
+<script>
+  document.querySelectorAll('.day').forEach(d=>d.onclick=()=>{
+    d.classList.toggle('on');
+    const b=d.querySelector('.box');
+    b.innerHTML=d.classList.contains('on')?'<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke-width:3"><path d="M20 6 9 17l-5-5"/></svg>':'';
+  });
+</script>
+</body>
+</html>

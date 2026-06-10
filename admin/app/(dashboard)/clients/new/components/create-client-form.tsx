@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, CreditCard, Shield, Plus, Loader2, Mail } from "lucide-react";
 
@@ -18,6 +18,7 @@ import { useClientForm } from "../../helpers/hooks/use-client-form";
 import { sendClientWelcome } from "../../actions/clients-actions";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
 import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
+import { LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
 
 interface CreatedClient {
   id: string;
@@ -28,11 +29,12 @@ interface CreatedClient {
 interface CreateClientFormProps {
   industries?: Array<{ id: string; name: string }>;
   siteUrl?: string | null;
+  countries?: Array<{ code: string; nameAr: string; nameEn: string }>;
 }
 
 // Self-contained CREATE UI. Backend is shared via useClientForm (createClient).
 // Editing has its own UI (ClientForm) — changes here never affect it.
-export function CreateClientForm({ industries = [], siteUrl = null }: CreateClientFormProps) {
+export function CreateClientForm({ industries = [], siteUrl = null, countries = [] }: CreateClientFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [created, setCreated] = useState<CreatedClient | null>(null);
@@ -42,6 +44,16 @@ export function CreateClientForm({ industries = [], siteUrl = null }: CreateClie
     onCreated: (client) => setCreated(client),
   });
   const { watch, setValue, register, formState: { errors } } = form;
+
+  // New clients default to Saudi Arabia (the primary market) so the console's
+  // country-aware logic (isSaudi → tax + national-address fields) is correct from
+  // creation. Admin changes it for EG/AE clients.
+  useEffect(() => {
+    if (!form.getValues("addressCountry")) {
+      setValue("addressCountry", "SA", { shouldValidate: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // After create: either send the welcome email (login creds) or skip — then go to list.
   const finishToList = () => {
@@ -104,6 +116,23 @@ export function CreateClientForm({ industries = [], siteUrl = null }: CreateClie
           </Field>
           <Field label="الجوال" required error={errors.phone?.message}>
             <Input {...register("phone")} dir="ltr" className="text-start" placeholder="+966 5x xxx xxxx" />
+          </Field>
+          <Field label="الدولة" required error={errors.addressCountry?.message}>
+            <Select value={v.addressCountry || "SA"} onValueChange={(val) => setValue("addressCountry", val || null, { shouldValidate: true })}>
+              <SelectTrigger className="w-full"><SelectValue placeholder="اختر الدولة…" /></SelectTrigger>
+              <SelectContent>
+                {countries.map((c) => <SelectItem key={c.code} value={c.code}>{c.nameAr} ({c.code})</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Help>يحدّد حقول الضريبة والعنوان في لوحة العميل (السعودية ↔ غيرها)</Help>
+          </Field>
+          <Field label="الشكل القانوني" optional error={errors.legalForm?.message}>
+            <Select value={v.legalForm || undefined} onValueChange={(val) => setValue("legalForm", val ? (val as LegalForm) : null, { shouldValidate: true })}>
+              <SelectTrigger className="w-full"><SelectValue placeholder="اختر الشكل القانوني…" /></SelectTrigger>
+              <SelectContent>
+                {LEGAL_FORMS.map((o) => <SelectItem key={o.value} value={o.value}>{o.ar} — {o.value}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </Field>
         </div>
       </Card>

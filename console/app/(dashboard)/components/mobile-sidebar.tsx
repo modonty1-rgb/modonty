@@ -22,7 +22,6 @@ import {
   Quote,
   Star,
   Activity,
-  ShieldCheck,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -72,9 +71,9 @@ export function MobileSidebar({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-64 p-0">
+      <SheetContent side="right" className="flex w-64 flex-col p-0">
         <SheetHeader className="border-b border-border p-4">
-          <SheetTitle className="flex items-center gap-2 text-start">
+          <SheetTitle className="flex items-start gap-2 text-start">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-primary/10 text-primary shadow-sm">
               {clientLogoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -85,7 +84,9 @@ export function MobileSidebar({
                 </span>
               )}
             </div>
-            <span className="truncate text-sm font-semibold text-foreground">{clientName}</span>
+            <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground break-words">
+              {clientName}
+            </span>
           </SheetTitle>
         </SheetHeader>
 
@@ -94,17 +95,10 @@ export function MobileSidebar({
             href="/dashboard/profile"
             icon={Building2}
             label={ar.nav.profile}
+            badgeLabel={isYmyl ? "YMYL" : undefined}
+            badgeVariant={isYmyl ? "danger" : undefined}
             isCollapsed={false}
           />
-          {isYmyl && (
-            <SidebarNavItem
-              href="/dashboard/verification"
-              icon={ShieldCheck}
-              label={ar.nav.verification}
-              badgeLabel="مطلوب"
-              isCollapsed={false}
-            />
-          )}
           <SidebarNavItem
             href="/dashboard/seo"
             icon={Sparkles}

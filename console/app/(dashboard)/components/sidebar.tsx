@@ -23,7 +23,6 @@ import {
   Quote,
   Star,
   Activity,
-  ShieldCheck,
 } from "lucide-react";
 import { SidebarNavItem } from "./sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -131,17 +130,10 @@ export function Sidebar({
           href="/dashboard/profile"
           icon={Building2}
           label={ar.nav.profile}
+          badgeLabel={isYmyl ? "YMYL" : undefined}
+          badgeVariant={isYmyl ? "danger" : undefined}
           isCollapsed={isCollapsed}
         />
-        {isYmyl && (
-          <SidebarNavItem
-            href="/dashboard/verification"
-            icon={ShieldCheck}
-            label={ar.nav.verification}
-            badgeLabel="مطلوب"
-            isCollapsed={isCollapsed}
-          />
-        )}
         <SidebarNavItem
           href="/dashboard/seo"
           icon={Sparkles}

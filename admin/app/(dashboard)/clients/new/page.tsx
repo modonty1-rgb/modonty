@@ -1,11 +1,13 @@
 import { getIndustries } from "../../industries/actions/industries-actions";
+import { getActiveCountries } from "../../settings/reference-data/actions/reference-data-actions";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { CreateClientForm } from "./components/create-client-form";
 
 export default async function NewClientPage() {
-  const [industries, siteUrl] = await Promise.all([
+  const [industries, siteUrl, countries] = await Promise.all([
     getIndustries(),
     loadSiteUrl(),
+    getActiveCountries(),
   ]);
 
   return (
@@ -16,7 +18,7 @@ export default async function NewClientPage() {
           عبّي الأساسيات، اختر الباقة، وحدّد التصنيف — كله في صفحة واحدة منظّمة.
         </p>
       </div>
-      <CreateClientForm industries={industries} siteUrl={siteUrl} />
+      <CreateClientForm industries={industries} siteUrl={siteUrl} countries={countries} />
     </div>
   );
 }

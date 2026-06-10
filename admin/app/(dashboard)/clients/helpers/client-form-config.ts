@@ -33,7 +33,12 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Information",
     description: "Key client information needed to create the account",
     icon: "User",
-    // Fields: name, slug, email, legalName, foundingDate, industryId, url, phone, contactType, sameAs, slogan, numberOfEmployees, commercialRegistrationNumber, businessBrief, address fields, legal fields
+    // Admin-owned fields that the grouped-update writers actually persist live in
+    // their own groups below (contact/address/legal). Fields kept here are either
+    // written by updateRequiredFields (name/slug/email/businessBrief) OR are
+    // console-owned and intentionally NOT mutated by the admin grouped save
+    // (legalName, foundingDate, slogan, address details, vatID, …) — they stay
+    // listed so the form still carries their values, but no admin writer touches them.
     fields: [
       "name",
       "slug",
@@ -41,10 +46,6 @@ export const clientFormSections: FormSectionConfig[] = [
       "email",
       "legalName",
       "foundingDate",
-      "url",
-      "phone",
-      "contactType",
-      "sameAs",
       "slogan",
       "numberOfEmployees",
       "commercialRegistrationNumber",
@@ -57,10 +58,8 @@ export const clientFormSections: FormSectionConfig[] = [
       "addressCity",
       "addressRegion",
       "addressPostalCode",
-      "addressCountry",
       "addressLatitude",
       "addressLongitude",
-      "legalForm",
       "vatID",
       "organizationType",
     ],
@@ -105,7 +104,9 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Contact",
     description: "Contact information (moved into Information tab)",
     icon: "Mail",
-    fields: [],
+    // Admin-owned. Routed here so updateContactFields() actually persists them
+    // (it selects + writes exactly these 4, with sameAs URL normalization).
+    fields: ["url", "phone", "contactType", "sameAs"],
     required: [],
     priority: "secondary",
     availableInCreate: true,
@@ -116,7 +117,10 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Address",
     description: "Complete address details for local SEO",
     icon: "MapPin",
-    fields: [],
+    // Only addressCountry is admin-owned (drives the console's isSaudi tax/address logic).
+    // The rest of the address is console-owned, so it is NOT listed here — updateAddressFields()
+    // only diffs the fields in this list, leaving the console-entered address untouched.
+    fields: ["addressCountry"],
     required: [],
     priority: "secondary",
     availableInCreate: true,
@@ -127,7 +131,9 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Legal",
     description: "Legal information and compliance details (moved into Information tab)",
     icon: "FileText",
-    fields: [],
+    // Only legalForm is admin-owned. vatID/taxID/CR are console-owned (country-aware tax),
+    // so they are NOT listed — updateLegalFields() only diffs legalForm, leaving the rest intact.
+    fields: ["legalForm"],
     required: [],
     priority: "secondary",
     availableInCreate: true,
