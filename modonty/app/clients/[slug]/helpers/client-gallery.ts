@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 
 export interface ClientGalleryImage {
@@ -14,6 +15,9 @@ export interface ClientGalleryImage {
  * NOT article featured images. Feeds the gallery grid + Organization.image[] JSON-LD.
  */
 export async function getClientGallery(clientSlug: string): Promise<ClientGalleryImage[]> {
+  "use cache";
+  cacheTag("clients");
+  cacheLife("minutes");
   const images = await db.media.findMany({
     where: { client: { slug: clientSlug }, type: "GALLERY" },
     select: { id: true, url: true, altText: true, width: true, height: true },

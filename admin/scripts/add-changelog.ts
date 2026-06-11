@@ -12,19 +12,24 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.76.0 (admin)",
-    title: "Client edit page — redesigned + open client console",
+    version: "1.58.0 (modonty)",
+    title: "Faster article & client pages",
     items: [
-      { type: "improve" as const, text: "The client edit page was rebuilt into one clean workspace: a live preview on the left (change the logo and cover right on it), five logical sections, and a clear save bar at the bottom — no more cluttered accordions, stacked header, or yellow hint clutter." },
-      { type: "feature" as const, text: "New 'Open Client Console' button (admins only) — opens the client's console as the client so you can edit their data on their behalf, without needing their password." },
-      { type: "fix" as const, text: "Clearing a field (SEO title/description, legal form, country, price range…) now actually saves the empty value instead of silently keeping the old one." },
+      { type: "improve" as const, text: "Article and client pages now cache their heavy content across visitors, so repeat opens of the same page are 4–5× faster. The per-visitor parts (your reactions, live counts) stay live and accurate." },
     ],
   },
   {
-    version: "0.17.0 (console)",
-    title: "Admin console access",
+    version: "0.77.0 (admin)",
+    title: "Client save no longer blocked by client-owned fields",
     items: [
-      { type: "feature" as const, text: "An admin can now open your console to help with your data. While they're browsing as you, a clear amber banner shows at the bottom with a one-click exit." },
+      { type: "fix" as const, text: "Saving a client could fail with errors like 'Description must be less than 1000 characters' on fields the client fills from their console (description, address, VAT/Tax, legal name, slogan…). The admin form now validates only the fields it owns, so these client-owned values never block a save again — 17 fields fixed." },
+    ],
+  },
+  {
+    version: "0.18.0 (console)",
+    title: "Sidebar shows your current company name",
+    items: [
+      { type: "fix" as const, text: "The company name in the sidebar now updates instantly when you change it — it reads the live value from your profile instead of the one saved at login, so it always matches the dashboard greeting." },
     ],
   },
 ];

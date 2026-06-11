@@ -35,14 +35,13 @@ export default async function DashboardLayout({
   }
 
   const clientId = (session as { clientId?: string }).clientId!;
-  const clientName = (session as { clientName?: string }).clientName ?? ar.common.clientFallback;
   const impersonated = (session as { impersonated?: boolean }).impersonated ?? false;
 
   const [client, pendingArticlesCount, pendingCommentsCount, pendingQuestionsCount, subscribersCount, leadsCount, newBookingsCount, pendingSupportCount, faqStats, pendingPageFaqsCount, pendingClientCommentsCount, pendingClientReviewsCount] =
     await Promise.all([
       db.client.findUnique({
         where: { id: clientId },
-        select: { logoMedia: { select: { url: true } }, isYmyl: true },
+        select: { name: true, logoMedia: { select: { url: true } }, isYmyl: true },
       }),
       getPendingArticlesCount(clientId),
       getPendingCommentsCount(clientId),
@@ -59,6 +58,9 @@ export default async function DashboardLayout({
   const pendingFaqsCount = faqStats.pending;
   const clientLogoUrl = client?.logoMedia?.url ?? null;
   const isYmyl = client?.isYmyl ?? false;
+  // Read the client name LIVE from the DB (same source as the dashboard greeting) so the
+  // sidebar header + impersonation banner never show a stale name baked into the JWT at login.
+  const clientName = client?.name ?? ar.common.clientFallback;
 
   return (
     <>

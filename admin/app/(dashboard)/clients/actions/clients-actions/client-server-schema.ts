@@ -5,6 +5,12 @@ import { z } from "zod";
  * Validates required fields + sanitizes input before DB operations.
  * The full form schema (client-form-schema.ts) handles UI validation.
  */
+
+// Console-owned text fields: the CLIENT edits these from the console profile (no length cap
+// there) and the admin form does NOT render them. The admin must impose NO length validation —
+// otherwise a long console value blocks EVERY admin save on a field the admin can't see or fix.
+const consoleOwnedText = z.string().optional().nullable();
+
 export const clientServerSchema = z.object({
   // Required fields
   name: z.string().min(1, "Client name is required").max(200, "Client name is too long"),
@@ -18,35 +24,35 @@ export const clientServerSchema = z.object({
     ),
   email: z.string().email("Invalid email address"),
 
-  // Optional string fields — passthrough with max length
-  legalName: z.string().max(200).optional().nullable(),
+  // Optional string fields. ADMIN-OWNED keep a max; CONSOLE-OWNED use consoleOwnedText (no cap).
+  legalName: consoleOwnedText,
   url: z.string().max(500).optional().nullable(),
   phone: z.string().max(50).optional().nullable(),
   password: z.string().max(100).optional().nullable(),
   contactType: z.string().max(100).optional().nullable(),
   seoTitle: z.string().max(51, "عنوان SEO يجب أن يكون 51 حرف أو أقل (العنوان النهائي في جوجل: 60 حرف)").optional().nullable(),
   seoDescription: z.string().max(160).optional().nullable(),
-  description: z.string().max(1000).optional().nullable(),
+  description: consoleOwnedText,
   canonicalUrl: z.string().max(500).optional().nullable(),
-  businessBrief: z.string().max(5000).optional().nullable(),
-  targetAudience: z.string().max(1000).optional().nullable(),
-  addressStreet: z.string().max(200).optional().nullable(),
-  addressCity: z.string().max(100).optional().nullable(),
+  businessBrief: consoleOwnedText,
+  targetAudience: consoleOwnedText,
+  addressStreet: consoleOwnedText,
+  addressCity: consoleOwnedText,
   addressCountry: z.string().max(100).optional().nullable(),
-  addressPostalCode: z.string().max(20).optional().nullable(),
-  addressRegion: z.string().max(100).optional().nullable(),
-  addressNeighborhood: z.string().max(100).optional().nullable(),
-  addressBuildingNumber: z.string().max(20).optional().nullable(),
-  addressAdditionalNumber: z.string().max(20).optional().nullable(),
-  commercialRegistrationNumber: z.string().max(50).optional().nullable(),
-  vatID: z.string().max(50).optional().nullable(),
-  taxID: z.string().max(50).optional().nullable(),
+  addressPostalCode: consoleOwnedText,
+  addressRegion: consoleOwnedText,
+  addressNeighborhood: consoleOwnedText,
+  addressBuildingNumber: consoleOwnedText,
+  addressAdditionalNumber: consoleOwnedText,
+  commercialRegistrationNumber: consoleOwnedText,
+  vatID: consoleOwnedText,
+  taxID: consoleOwnedText,
   legalForm: z.string().max(50).optional().nullable(),
   businessActivityCode: z.string().max(50).optional().nullable(),
   isicV4: z.string().max(20).optional().nullable(),
-  numberOfEmployees: z.string().max(50).optional().nullable(),
-  alternateName: z.string().max(200).optional().nullable(),
-  slogan: z.string().max(200).optional().nullable(),
+  numberOfEmployees: consoleOwnedText,
+  alternateName: consoleOwnedText,
+  slogan: consoleOwnedText,
   organizationType: z.string().max(50).optional().nullable(),
   gbpProfileUrl: z.string().max(500).optional().nullable(),
   gbpPlaceId: z.string().max(100).optional().nullable(),

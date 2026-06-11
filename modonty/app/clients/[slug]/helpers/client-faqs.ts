@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 
 export interface ClientPublishedFAQ {
@@ -55,6 +56,10 @@ export interface ClientPageFAQ {
  * accordion and the FAQPage JSON-LD.
  */
 export async function getClientPageFaqs(clientSlug: string): Promise<ClientPageFAQ[]> {
+  "use cache";
+  cacheTag("faqs");
+  cacheTag("clients");
+  cacheLife("minutes");
   const faqs = await db.clientFAQ.findMany({
     where: {
       status: "PUBLISHED",

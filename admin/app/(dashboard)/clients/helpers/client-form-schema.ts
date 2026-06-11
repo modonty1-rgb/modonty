@@ -62,20 +62,18 @@ const legalFormSchema = z.enum(LEGAL_FORM_VALUES).optional().nullable();
 // Organization Type validation — values come from the shared dataLayer source of truth
 const organizationTypeSchema = z.enum(ORGANIZATION_TYPE_VALUES).optional().nullable();
 
-// Region/Province validation (optional field - allows any text for international clients)
-const addressRegionSchema = z
-  .string()
-  .max(100, "Region/Province must be less than 100 characters")
-  .optional()
-  .nullable()
-  .or(z.literal(""));
+// Console-owned text fields: the CLIENT edits these from the console profile (which enforces
+// no length cap) and the admin form does NOT render them. The admin must impose NO length
+// validation here — otherwise a long console value blocks EVERY admin save on a field the
+// admin can't see or fix. Completes the field-ownership migration (admin caps were left behind).
+const consoleOwnedText = z.string().optional().nullable().or(z.literal(""));
 
 export const clientFormSchema = z
   .object({
     // Basic fields (required)
     name: z.string().min(1, "Name is required").max(200, "Name must be less than 200 characters"),
     slug: z.string().min(1, "Slug is required").max(200, "Slug must be less than 200 characters"),
-    legalName: z.string().max(200, "Legal name must be less than 200 characters").optional().nullable().or(z.literal("")),
+    legalName: consoleOwnedText,
     url: urlSchema,
 
     // Media (optional in edit mode, set via modal)
@@ -122,69 +120,34 @@ export const clientFormSchema = z
       .optional()
       .nullable()
       .or(z.literal("")),
-    description: z
-      .string()
-      .max(1000, "Description must be less than 1000 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
+    description: consoleOwnedText,
     metaRobots: metaRobotsSchema,
     canonicalUrl: urlSchema,
 
     // Business Information — client-owned (filled from console profile), not required at admin create
-    businessBrief: z
-      .string()
-      .max(5000, "Business brief must be less than 5000 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
+    businessBrief: consoleOwnedText,
     industryId: z.string().min(1, "Industry is required"),
-    targetAudience: z
-      .string()
-      .max(1000, "Target audience must be less than 1000 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
+    targetAudience: consoleOwnedText,
     contentPriorities: stringArraySchema,
     foundingDate: dateSchema,
 
     // Address (for Local SEO)
-    addressStreet: z.string().max(200, "Street address must be less than 200 characters").optional().nullable().or(z.literal("")),
-    addressCity: z.string().max(100, "City must be less than 100 characters").optional().nullable().or(z.literal("")),
+    addressStreet: consoleOwnedText,
+    addressCity: consoleOwnedText,
     addressCountry: z.string().max(100, "Country must be less than 100 characters").optional().nullable().or(z.literal("")),
-    addressPostalCode: z.string().max(20, "Postal code must be less than 20 characters").optional().nullable().or(z.literal("")),
+    addressPostalCode: consoleOwnedText,
 
     // Saudi Arabia & Gulf Identifiers
-    commercialRegistrationNumber: z
-      .string()
-      .max(50, "Commercial registration number must be less than 50 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    vatID: z.string().max(50, "VAT ID must be less than 50 characters").optional().nullable().or(z.literal("")),
-    taxID: z.string().max(50, "Tax ID must be less than 50 characters").optional().nullable().or(z.literal("")),
+    commercialRegistrationNumber: consoleOwnedText,
+    vatID: consoleOwnedText,
+    taxID: consoleOwnedText,
     legalForm: legalFormSchema,
 
     // Address Enhancement (National Address Format)
-    addressRegion: addressRegionSchema,
-    addressNeighborhood: z
-      .string()
-      .max(100, "Neighborhood must be less than 100 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    addressBuildingNumber: z
-      .string()
-      .max(20, "Building number must be less than 20 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    addressAdditionalNumber: z
-      .string()
-      .max(20, "Additional number must be less than 20 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
+    addressRegion: consoleOwnedText,
+    addressNeighborhood: consoleOwnedText,
+    addressBuildingNumber: consoleOwnedText,
+    addressAdditionalNumber: consoleOwnedText,
     addressLatitude: z
       .number()
       .min(-90, "Latitude must be between -90 and 90")
@@ -206,20 +169,10 @@ export const clientFormSchema = z
       .nullable()
       .or(z.literal("")),
     isicV4: z.string().max(20, "ISIC V4 code must be less than 20 characters").optional().nullable().or(z.literal("")),
-    numberOfEmployees: z
-      .string()
-      .max(50, "Number of employees must be less than 50 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
+    numberOfEmployees: consoleOwnedText,
     // Additional Properties
-    alternateName: z
-      .string()
-      .max(200, "Alternate name must be less than 200 characters")
-      .optional()
-      .nullable()
-      .or(z.literal("")),
-    slogan: z.string().max(200, "Slogan must be less than 200 characters").optional().nullable().or(z.literal("")),
+    alternateName: consoleOwnedText,
+    slogan: consoleOwnedText,
     newsletterCtaText: z.string().max(300, "Newsletter CTA must be less than 300 characters").optional().nullable().or(z.literal("")),
     keywords: stringArraySchema,
     knowsLanguage: stringArraySchema,

@@ -261,19 +261,23 @@ export async function getArticleBySlug(slug: string, userId?: string) {
   };
 }
 
-/** Minimal article for initial load: no comments or faqs arrays; use _count for section headers. */
-export async function getArticleBySlugMinimal(slug: string, userId?: string) {
-  const article = await db.article.findFirst({
+/**
+ * Heavy, same-for-everyone article content — identical for every visitor, so it's
+ * cached. Matches the article-queries.ts convention: cacheLife("hours") + the admin
+ * revalidateTag("articles") that fires on every publish/update/delete keeps it fresh.
+ * Deliberately EXCLUDES per-user reactions AND the fast-changing aggregate counts —
+ * those are fetched live (below) so nothing visible goes stale vs the old dynamic page.
+ */
+async function getArticleContentBySlug(slug: string) {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours");
+  return db.article.findFirst({
     where: {
       slug,
       status: ArticleStatus.PUBLISHED,
     },
     include: {
-      ...(userId && {
-        likes: { where: { userId }, take: 1, select: { id: true } },
-        dislikes: { where: { userId }, take: 1, select: { id: true } },
-        favorites: { where: { userId }, take: 1, select: { id: true } },
-      }),
       client: {
         include: {
           logoMedia: { select: { url: true } },
@@ -342,31 +346,74 @@ export async function getArticleBySlugMinimal(slug: string, userId?: string) {
           },
         },
       },
+    },
+  });
+}
+
+/** Live aggregate counts — kept OUT of the cache so the like/view/comment totals stay current. */
+async function getArticleLiveCounts(articleId: string) {
+  return db.article.findUnique({
+    where: { id: articleId },
+    select: {
+      likesCount: true,
+      dislikesCount: true,
+      favoritesCount: true,
+      commentsCount: true,
+      viewsCount: true,
       _count: { select: { faqs: true } },
     },
   });
+}
 
+/** Live per-user reaction state — never cached; reads only this user's like/dislike/favorite. */
+async function getMyArticleReactions(articleId: string, userId: string) {
+  const a = await db.article.findUnique({
+    where: { id: articleId },
+    select: {
+      likes: { where: { userId }, take: 1, select: { id: true } },
+      dislikes: { where: { userId }, take: 1, select: { id: true } },
+      favorites: { where: { userId }, take: 1, select: { id: true } },
+    },
+  });
+  return {
+    userLiked: (a?.likes.length ?? 0) > 0,
+    userDisliked: (a?.dislikes.length ?? 0) > 0,
+    userFavorited: (a?.favorites.length ?? 0) > 0,
+  };
+}
+
+/**
+ * Minimal article for initial load: no comments or faqs arrays; use _count for section headers.
+ * Same return shape as before — cached heavy content + live counts + live per-user reactions,
+ * merged. page.tsx is unchanged: it still calls this and gets the identical object.
+ */
+export async function getArticleBySlugMinimal(slug: string, userId?: string) {
+  const article = await getArticleContentBySlug(slug);
   if (!article) return null;
 
-  const userLiked = (article.likes?.length ?? 0) > 0;
-  const userDisliked = (article.dislikes?.length ?? 0) > 0;
-  const userFavorited = (article.favorites?.length ?? 0) > 0;
-  const { likes, dislikes, favorites, likesCount, dislikesCount, favoritesCount, commentsCount, viewsCount, _count, ...rest } = article;
+  const [counts, reactions] = await Promise.all([
+    getArticleLiveCounts(article.id),
+    userId
+      ? getMyArticleReactions(article.id, userId)
+      : Promise.resolve({ userLiked: false, userDisliked: false, userFavorited: false }),
+  ]);
+
+  const { likesCount, dislikesCount, favoritesCount, commentsCount, viewsCount, ...rest } = article;
 
   return {
     ...rest,
     faqs: [],
     comments: [],
-    userLiked,
-    userDisliked,
-    userFavorited,
+    userLiked: reactions.userLiked,
+    userDisliked: reactions.userDisliked,
+    userFavorited: reactions.userFavorited,
     _count: {
-      faqs: _count.faqs,
-      likes: likesCount,
-      dislikes: dislikesCount,
-      favorites: favoritesCount,
-      comments: commentsCount,
-      views: viewsCount,
+      faqs: counts?._count.faqs ?? 0,
+      likes: counts?.likesCount ?? 0,
+      dislikes: counts?.dislikesCount ?? 0,
+      favorites: counts?.favoritesCount ?? 0,
+      comments: counts?.commentsCount ?? 0,
+      views: counts?.viewsCount ?? 0,
     },
   };
 }
@@ -399,6 +446,9 @@ function flattenCommentsWithContext(comments: any[]): any[] {
 }
 
 export async function getRelatedArticlesByAuthor(authorId: string, currentArticleId: string) {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours");
   const articles = await db.article.findMany({
     where: {
       authorId,
@@ -449,6 +499,9 @@ export async function getRelatedArticlesByAuthor(authorId: string, currentArticl
 }
 
 export async function getRelatedArticlesByClient(clientId: string, currentArticleId: string) {
+  "use cache";
+  cacheTag("articles");
+  cacheLife("hours");
   const articles = await db.article.findMany({
     where: {
       clientId,
