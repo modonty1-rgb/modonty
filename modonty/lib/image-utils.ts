@@ -29,6 +29,31 @@ export function getOptimizedLogoUrl(logoUrl: string): string {
   return `${beforeUpload}f_auto,q_auto,w_300,c_limit/${afterUpload}`;
 }
 
+/**
+ * Strips baked-in Cloudinary transformations (e.g. `f_auto,q_auto,w_auto`) from a
+ * URL so it can be passed to next/image, which does its own width/format/quality
+ * optimization. A pre-sized — especially `w_auto` — source makes Next fetch a tiny
+ * image server-side (no client hints) → blurry output (observed: a 2544px cover
+ * served as 389px). Version segments (`v123…`), folders, and non-Cloudinary URLs
+ * are returned unchanged.
+ */
+export function stripCloudinaryTransforms(url: string | null | undefined): string | null {
+  if (!url || !url.includes("res.cloudinary.com")) return url ?? null;
+  const marker = "/upload/";
+  const uploadIndex = url.indexOf(marker);
+  if (uploadIndex === -1) return url;
+  const afterUpload = url.substring(uploadIndex + marker.length);
+  const firstSlash = afterUpload.indexOf("/");
+  if (firstSlash === -1) return url; // single segment, nothing to strip
+  const firstSeg = afterUpload.substring(0, firstSlash);
+  const isVersion = /^v\d+$/.test(firstSeg);
+  // A transform segment looks like `key_value` pairs (comma-separated), e.g. f_auto,w_300.
+  const isTransform = !isVersion && /(^|,)[a-z]+_[^,/]+/.test(firstSeg);
+  if (!isTransform) return url; // folder/path, keep as-is
+  const beforeUpload = url.substring(0, uploadIndex + marker.length);
+  return beforeUpload + afterUpload.substring(firstSlash + 1);
+}
+
 export function getOptimizedThumbnailUrl(url: string | null | undefined, width = 80): string | null {
   if (!url || !url.includes("res.cloudinary.com")) return url || null;
   if (url.toLowerCase().endsWith(".svg")) return url;
