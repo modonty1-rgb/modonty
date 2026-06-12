@@ -1,4 +1,4 @@
-export type SectionItem = { id: string; label: string };
+export type SectionItem = { id: string; label: string; icon?: string; short?: string };
 
 /** Keep only sections whose anchor element actually exists in the DOM. */
 export function filterPresentSections(

@@ -36,7 +36,7 @@ export function SectionCard({
     <section
       id={id}
       className={cn(
-        "scroll-mt-[66px] overflow-hidden rounded-lg border bg-card shadow-sm",
+        "scroll-mt-[116px] overflow-hidden rounded-lg border bg-card shadow-sm",
         feature &&
           "border-primary/15 bg-gradient-to-br from-primary/[0.06] to-accent/[0.07] shadow-[0_16px_44px_-28px_hsl(var(--primary)/0.45)]",
         className

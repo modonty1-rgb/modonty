@@ -67,7 +67,7 @@ export function ClientSectionNav({ items }: ClientSectionNavProps) {
     <nav
       ref={navRef}
       aria-label="أقسام الصفحة"
-      className="sticky top-0 z-[5] hidden border-y border-border bg-background/95 backdrop-blur lg:flex overflow-x-auto scrollbar-none"
+      className="sticky top-[57px] z-[5] hidden border-y border-border bg-background/95 backdrop-blur lg:flex overflow-x-auto scrollbar-none"
     >
       <div className="flex gap-1 px-4 py-2">
         {items.map((item) => {

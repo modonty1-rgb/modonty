@@ -38,49 +38,52 @@ export function HeroCtaRow({
 }: HeroCtaRowProps) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2.5">
-      {/* Primary CTA — احجز الآن */}
-      {ctaMode === "FORM" && (
-        <div className="min-w-[170px] flex-1">
-          <BookingDialog
+      {/* Booking/link CTA + follow + share are DESKTOP-only here — on mobile they
+          live in the sticky bottom bar (ClientBottomBar), so they're not duplicated.
+          Social links stay visible on every size. */}
+      <div className="hidden flex-wrap items-center gap-2.5 lg:flex">
+        {/* Primary CTA — احجز الآن */}
+        {ctaMode === "FORM" && (
+          <div className="min-w-[170px] flex-1">
+            <BookingDialog
+              clientId={clientId}
+              clientName={clientName}
+              source="client_page"
+              user={user}
+            />
+          </div>
+        )}
+
+        {ctaMode === "LINK" && clientUrl && (
+          <CtaTrackedLink
+            href={clientUrl}
+            label="احجز الآن"
+            type="BUTTON"
             clientId={clientId}
-            clientName={clientName}
-            source="client_page"
-            user={user}
-          />
-        </div>
-      )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-w-[170px] flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
+          >
+            <IconWebsite className="h-4 w-4" />
+            احجز الآن
+          </CtaTrackedLink>
+        )}
 
-      {ctaMode === "LINK" && clientUrl && (
-        <CtaTrackedLink
-          href={clientUrl}
-          label="احجز الآن"
-          type="BUTTON"
+        <ClientFollowButton
+          clientSlug={clientSlug}
+          initialIsFollowing={initialIsFollowing}
+          initialFollowersCount={followers}
+          variant="outline"
+          size="sm"
+        />
+
+        <ShareClientButtonWrapper
+          clientName={clientName}
+          clientUrl={`/clients/${encodeURIComponent(clientSlug)}`}
           clientId={clientId}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex min-w-[170px] flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
-        >
-          <IconWebsite className="h-4 w-4" />
-          احجز الآن
-        </CtaTrackedLink>
-      )}
-
-      {/* Follow */}
-      <ClientFollowButton
-        clientSlug={clientSlug}
-        initialIsFollowing={initialIsFollowing}
-        initialFollowersCount={followers}
-        variant="outline"
-        size="default"
-      />
-
-      {/* Share */}
-      <ShareClientButtonWrapper
-        clientName={clientName}
-        clientUrl={`/clients/${encodeURIComponent(clientSlug)}`}
-        clientId={clientId}
-        clientSlug={clientSlug}
-      />
+          clientSlug={clientSlug}
+        />
+      </div>
 
       {/* Social links */}
       {socialLinks.length > 0 && (

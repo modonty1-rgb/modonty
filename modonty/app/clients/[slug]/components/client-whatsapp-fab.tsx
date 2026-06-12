@@ -12,7 +12,8 @@ interface ClientWhatsAppFabProps {
   clientId?: string;
 }
 
-/** Desktop-only floating WhatsApp button (bottom-start, pulsing, icon-only). Hidden on mobile to avoid the dock. */
+/** Floating WhatsApp button (bottom-start, pulsing, icon-only). On mobile it lifts
+ *  above the sticky bottom bar (bottom-20); on desktop there's no bar so it sits low. */
 export function ClientWhatsAppFab({ phone, clientId }: ClientWhatsAppFabProps) {
   if (!phone) return null;
 
@@ -26,7 +27,7 @@ export function ClientWhatsAppFab({ phone, clientId }: ClientWhatsAppFabProps) {
       rel="noopener noreferrer"
       aria-label="تواصل عبر واتساب"
       title="تواصل عبر واتساب"
-      className="fixed bottom-6 start-6 z-[60] hidden h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_16px_32px_-10px_rgba(37,211,102,0.65)] lg:inline-flex"
+      className="fixed bottom-20 start-4 z-[60] inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-[0_16px_32px_-10px_rgba(37,211,102,0.65)] lg:bottom-6 lg:start-6 lg:h-14 lg:w-14"
       style={{ backgroundColor: WA_GREEN }}
     >
       {/* pulse ring */}
@@ -35,7 +36,7 @@ export function ClientWhatsAppFab({ phone, clientId }: ClientWhatsAppFabProps) {
         className="pointer-events-none absolute inset-0 rounded-full animate-ping"
         style={{ backgroundColor: WA_GREEN, opacity: 0.45 }}
       />
-      <WhatsAppIcon size={28} className="relative" />
+      <WhatsAppIcon className="relative size-6 lg:size-7" />
     </CtaTrackedLink>
   );
 }

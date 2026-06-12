@@ -13,7 +13,7 @@ import {
 import { IconCalendar } from "@/lib/icons";
 import { trackCtaClick } from "@/lib/cta-tracking";
 
-import { BookingForm } from "./booking-form";
+import { BookingForm } from "./booking-form-lazy";
 import type { BookingSource } from "../actions/booking-actions";
 
 interface BookingDialogProps {

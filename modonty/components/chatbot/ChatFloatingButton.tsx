@@ -11,9 +11,15 @@ import { cn } from "@/lib/utils";
 // Lifts itself above any sticky bottom bar so the two never overlap:
 //  - article detail pages (/articles/<slug>) render the sticky mobile engagement dock
 //  - the homepage ("/") renders the mobile action bar (filters + newsletter)
+// Client detail pages (/clients/<slug>) render their own sticky bottom bar AND a raised
+// center logo; the page is focused on the client's own actions, so the global launcher is
+// hidden there on mobile (desktop chat stays in the header). — Khalid's call 2026-06-12.
 export function ChatFloatingButton() {
   const pathname = usePathname();
+  const isClientPage = pathname?.startsWith("/clients/") ?? false;
   const overBottomBar = (pathname?.includes("/articles/") || pathname === "/") ?? false;
+
+  if (isClientPage) return null;
 
   return (
     <button

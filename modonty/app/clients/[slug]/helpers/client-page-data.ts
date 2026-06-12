@@ -28,6 +28,8 @@ async function getClientContentBySlug(decodedSlug: string) {
         heroImageMedia: {
           select: {
             url: true,
+            width: true,
+            height: true,
           },
         },
         industry: {

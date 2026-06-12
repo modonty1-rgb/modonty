@@ -135,6 +135,13 @@ function serverTodayName(): string {
   return DAY_ORDER[(new Date().getDay() + 1) % 7] ?? "Saturday";
 }
 
+/** True when opening-hours data parses to ≥1 visible row — mirrors ClientHours's own render gate (avoids dead nav anchors). */
+export function hasOpeningHours(openingHours: unknown): boolean {
+  const specs = parseSpecs(openingHours);
+  if (specs.length === 0) return false;
+  return buildRows(specs, serverTodayName()).length > 0;
+}
+
 /** Opening hours sidebar card — hides entirely when the data is unparseable/empty. */
 export function ClientHours({ openingHours }: ClientHoursProps) {
   const specs = parseSpecs(openingHours);

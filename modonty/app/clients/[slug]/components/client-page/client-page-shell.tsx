@@ -13,13 +13,13 @@ import { ClientDiscussionsSection } from "../sections/client-discussions-section
 import { ClientFaqSection } from "../sections/client-faq-section";
 import { ClientContactSection } from "../sections/client-contact-section";
 import { ClientQuickContact } from "../sidebar/client-quick-contact";
-import { ClientHours } from "../sidebar/client-hours";
+import { ClientHours, hasOpeningHours } from "../sidebar/client-hours";
 import { ClientTrustCard } from "../sidebar/client-trust-card";
 import { ClientNewsletterCard } from "../client-newsletter-card";
 import { RelatedClients } from "../related-clients";
 import { ClientFooterCta } from "../client-footer-cta";
 import { ClientWhatsAppFab } from "../client-whatsapp-fab";
-import { ClientMobileDock } from "../client-mobile-dock";
+import { ClientBottomBar } from "../client-bottom-bar";
 import { localizeCountry } from "../hero/utils";
 import type { ClientPageState } from "../client-page-state";
 import type { ClientReviewsData } from "../../helpers/client-reviews";
@@ -40,7 +40,7 @@ export interface ShellClient {
   name: string;
   slug: string;
   logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string } | null;
+  heroImageMedia?: { url: string; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -105,6 +105,13 @@ export interface ClientPageShellProps {
   relatedClients: RelatedClientItem[];
   user: { name: string | null; email: string | null } | null;
   initialIsFollowing: boolean;
+  initialIsFavorited: boolean;
+  /**
+   * When false the hero block is skipped — it's rendered separately in the static
+   * shell (ClientHeroBlock in page.tsx) so the real cover/name paint immediately and
+   * never swap from a skeleton (kills above-the-fold CLS). Defaults to true.
+   */
+  renderHero?: boolean;
 }
 
 /**
@@ -124,6 +131,8 @@ export function ClientPageShell({
   relatedClients,
   user,
   initialIsFollowing,
+  initialIsFavorited,
+  renderHero = true,
 }: ClientPageShellProps) {
   const articleCount = client.articles.length;
 
@@ -159,56 +168,94 @@ export function ClientPageShell({
   // Nav tab conditions MUST match each section's own render condition exactly,
   // else a tab points at an anchor that hid → dead scroll target.
   const hasServices = client.services.some((s) => s.title?.trim());
+  const hasResults = client.achievements.some((a) => a.value?.trim() && a.label?.trim());
+  const hasGallery = gallery.some((img) => img.url?.trim());
+  const hasTeam = client.teamMembers.some((m) => m.name?.trim());
+  const hasLegal = !!(
+    client.legalName ||
+    client.commercialRegistrationNumber ||
+    client.legalForm ||
+    client.vatID ||
+    client.numberOfEmployees ||
+    client.foundingDate ||
+    (client.knowsLanguage && client.knowsLanguage.length > 0)
+  );
+  const hasAbout = !!(
+    client.description?.trim() ||
+    client.seoDescription?.trim() ||
+    client.introVideoUrl ||
+    client.credentials.length > 0 ||
+    hasLegal
+  );
+  const hasDiscussions = discussions.length > 0;
   const hasContactSection = !!(
     (client.addressLatitude != null && client.addressLongitude != null) ||
     client.gbpProfileUrl ||
     client.gbpPlaceId ||
     addressLine
   );
+  const hasTrust = !!(
+    client.commercialRegistrationNumber ||
+    client.legalName ||
+    client.verificationImageUrl
+  );
+  const hasHours = hasOpeningHours(client.openingHoursSpecification);
 
-  // Nav items — only the sections that actually render (mockup's 6 tabs subset).
+  // Nav items — every section that actually renders, in mobile scroll order.
+  // The mobile nav promotes the top-priority 3 to visible tabs and tucks the
+  // rest behind «☰ المزيد»; desktop shows them all in a horizontal scroll bar.
   const navItems: SectionItem[] = [
-    { id: "overview", label: "نظرة عامة" },
-    ...(hasServices ? [{ id: "services", label: "الخدمات" }] : []),
-    { id: "reviews", label: "آراء العملاء" },
-    ...(articleCount > 0 ? [{ id: "articles", label: "المقالات" }] : []),
-    { id: "faq", label: "الأسئلة الشائعة" },
-    ...(hasContactSection ? [{ id: "contact", label: "الموقع والتواصل" }] : []),
+    { id: "overview", label: "نظرة عامة", short: "البداية", icon: "🏠" },
+    ...(hasServices ? [{ id: "services", label: "الخدمات", short: "الخدمات", icon: "🧩" }] : []),
+    ...(hasResults ? [{ id: "results", label: "نتائج موثّقة", short: "النتائج", icon: "📈" }] : []),
+    { id: "reviews", label: "آراء العملاء", short: "التقييمات", icon: "⭐" },
+    ...(hasGallery ? [{ id: "gallery", label: "معرض الأعمال", short: "الأعمال", icon: "🖼️" }] : []),
+    ...(hasTeam ? [{ id: "team", label: "فريق العمل", short: "الفريق", icon: "👥" }] : []),
+    ...(hasAbout ? [{ id: "about", label: "عن الشركة", short: "عن الشركة", icon: "🏢" }] : []),
+    ...(articleCount > 0 ? [{ id: "articles", label: "المقالات", short: "المقالات", icon: "📰" }] : []),
+    ...(hasDiscussions ? [{ id: "discussions", label: "نقاشات القرّاء", short: "النقاشات", icon: "💬" }] : []),
+    { id: "faq", label: "الأسئلة الشائعة", short: "الأسئلة", icon: "❓" },
+    ...(hasContactSection ? [{ id: "contact", label: "الموقع والتواصل", short: "التواصل", icon: "📍" }] : []),
+    ...(hasHours ? [{ id: "hours", label: "ساعات العمل", short: "الدوام", icon: "🕐" }] : []),
+    ...(hasTrust ? [{ id: "trust", label: "الموثوقية", short: "الموثوقية", icon: "🛡️" }] : []),
+    { id: "newsletter", label: "النشرة البريدية", short: "النشرة", icon: "📩" },
   ];
 
   return (
     <div className="w-full">
-      <div id="overview">
-        <ClientHeroV2
-          client={{
-            id: client.id,
-            name: client.name,
-            slug: client.slug,
-            logoMedia: client.logoMedia,
-            heroImageMedia: client.heroImageMedia,
-            industry: client.industry,
-            addressCity: client.addressCity,
-            addressRegion: client.addressRegion,
-            addressCountry: client.addressCountry,
-            foundingDate: client.foundingDate,
-            sameAs: client.sameAs,
-            url: client.url,
-            phone: client.phone,
-          }}
-          stats={{
-            followers: stats.followers,
-            articles: articleCount,
-            totalViews: stats.totalViews,
-            rating: reviews.averageRating,
-            reviewCount: reviews.reviewCount,
-          }}
-          pageState={pageState}
-          featured={!!client.isFeatured}
-          ctaMode={client.ctaMode}
-          user={user}
-          initialIsFollowing={initialIsFollowing}
-        />
-      </div>
+      {renderHero && (
+        <div id="overview">
+          <ClientHeroV2
+            client={{
+              id: client.id,
+              name: client.name,
+              slug: client.slug,
+              logoMedia: client.logoMedia,
+              heroImageMedia: client.heroImageMedia,
+              industry: client.industry,
+              addressCity: client.addressCity,
+              addressRegion: client.addressRegion,
+              addressCountry: client.addressCountry,
+              foundingDate: client.foundingDate,
+              sameAs: client.sameAs,
+              url: client.url,
+              phone: client.phone,
+            }}
+            stats={{
+              followers: stats.followers,
+              articles: articleCount,
+              totalViews: stats.totalViews,
+              rating: reviews.averageRating,
+              reviewCount: reviews.reviewCount,
+            }}
+            pageState={pageState}
+            featured={!!client.isFeatured}
+            ctaMode={client.ctaMode}
+            user={user}
+            initialIsFollowing={initialIsFollowing}
+          />
+        </div>
+      )}
 
       <ClientSectionNav items={navItems} />
       <ClientSectionMenu items={navItems} />
@@ -295,7 +342,9 @@ export function ClientPageShell({
               maaroofUrl={null}
               verifiedAt={null}
             />
-            <ClientNewsletterCard clientId={client.id} clientName={client.name} />
+            <div id="newsletter" className="scroll-mt-[116px]">
+              <ClientNewsletterCard clientId={client.id} clientName={client.name} />
+            </div>
             <RelatedClients clients={relatedClients} clientId={client.id} />
           </aside>
         </div>
@@ -306,13 +355,19 @@ export function ClientPageShell({
       </div>
 
       <ClientWhatsAppFab phone={client.phone ?? null} clientId={client.id} />
-      <ClientMobileDock
+      <ClientBottomBar
         clientId={client.id}
         clientName={client.name}
+        clientSlug={client.slug}
+        clientLogoUrl={client.logoMedia?.url ?? null}
         ctaMode={client.ctaMode}
         linkUrl={client.ctaUrl ?? null}
+        ctaLabel={client.ctaLabel ?? null}
         phone={client.phone ?? null}
+        email={client.email ?? null}
         user={user}
+        initialIsFollowing={initialIsFollowing}
+        initialIsFavorited={initialIsFavorited}
       />
     </div>
   );

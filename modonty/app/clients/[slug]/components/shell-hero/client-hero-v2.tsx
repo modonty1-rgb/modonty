@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-import { IconCheck, IconShield } from "@/lib/icons";
+import { IconCheck } from "@/lib/icons";
+import { stripCloudinaryTransforms } from "@/lib/image-utils";
 
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
@@ -15,7 +16,7 @@ interface ClientHeroV2Client {
   name: string;
   slug: string;
   logoMedia?: { url: string } | null;
-  heroImageMedia?: { url: string } | null;
+  heroImageMedia?: { url: string; width?: number | null; height?: number | null } | null;
   industry?: { name: string } | null;
   addressCity?: string | null;
   addressRegion?: string | null;
@@ -70,14 +71,31 @@ export function ClientHeroV2({
         link.platform !== null
     );
 
+  const hero = client.heroImageMedia;
+  const heroSrc = hero?.url ?? null;
+  // Mobile: the cover box height FOLLOWS the image's own aspect ratio, so object-cover
+  // fills it exactly — no letterbox bands (box taller than image) and no crop. Clamped
+  // by max-h so a tall/square cover can't dominate the screen. Desktop keeps the fixed
+  // banner height (sm:h-[170px]).
+  const heroAr = hero?.width && hero?.height ? hero.width / hero.height : 2.4;
+
   return (
     <section className="relative w-full">
       {/* Cover — partner hero image when set, gradient fallback otherwise */}
-      <div className="relative h-[170px] overflow-hidden bg-gradient-to-br from-foreground via-[#2422b8] to-primary">
-        {client.heroImageMedia?.url ? (
+      <div
+        className={
+          heroSrc
+            ? "relative w-full overflow-hidden bg-gradient-to-br from-foreground via-[#2422b8] to-primary aspect-[var(--hero-ar)] max-h-[300px] sm:aspect-auto sm:h-[170px] sm:max-h-none"
+            : "relative h-[170px] w-full overflow-hidden bg-gradient-to-br from-foreground via-[#2422b8] to-primary"
+        }
+        style={heroSrc ? ({ "--hero-ar": heroAr } as React.CSSProperties) : undefined}
+      >
+        {heroSrc ? (
           <>
             <Image
-              src={client.heroImageMedia.url}
+              // Strip baked-in Cloudinary transforms (w_auto) — let next/image size it,
+              // else Next fetches a tiny source server-side and the cover is blurry.
+              src={stripCloudinaryTransforms(heroSrc) ?? heroSrc}
               alt={`غلاف ${client.name}`}
               fill
               priority
@@ -99,50 +117,51 @@ export function ClientHeroV2({
             ⭐ شريك مميّز
           </span>
         )}
-
-        {pageState !== "not-ready" && (
-          <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-white/95 px-3 py-1 text-[11px] font-extrabold text-foreground">
-            <IconShield className="h-3.5 w-3.5 text-accent" />
-            موثّق من مدوّنتي
-          </span>
-        )}
+        {/* «موثّق من مدوّنتي» cover badge removed — verification now lives as a
+            checkmark on the client logo (no duplicate). */}
       </div>
 
-      {/* White hero card overlapping the cover */}
+      {/* White hero card overlapping the cover — compact on mobile, full on desktop */}
       <div className="mx-auto max-w-[1128px] px-4">
-        <div className="relative z-[2] -mt-10 rounded-lg border border-border bg-card p-[18px] shadow-sm">
-          <div className="flex items-start gap-4">
-            {/* Avatar */}
-            <div className="relative -mt-12 h-[90px] w-[90px] flex-shrink-0 overflow-hidden rounded-2xl border-4 border-white shadow-lg">
-              {client.logoMedia?.url ? (
-                <Image
-                  src={client.logoMedia.url}
-                  alt={client.name}
-                  fill
-                  className="object-contain p-1"
-                  sizes="90px"
-                />
-              ) : (
-                <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-foreground to-accent text-3xl font-black text-white">
-                  {initials}
-                </span>
-              )}
+        <div className="relative z-[2] -mt-2 rounded-lg border border-border bg-card p-4 shadow-sm sm:-mt-10 sm:p-[18px]">
+          <div className="flex items-start gap-3 sm:gap-4">
+            {/* Avatar + verified checkmark — DESKTOP only: on mobile the logo lives in
+                the sticky bottom bar (ClientBottomBar), so it isn't duplicated here. */}
+            <div className="relative -mt-5 hidden flex-shrink-0 sm:-mt-12 lg:block">
+              <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-card bg-card shadow-md sm:h-[88px] sm:w-[88px] sm:border-4">
+                {client.logoMedia?.url ? (
+                  <Image
+                    src={stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url}
+                    alt={client.name}
+                    fill
+                    className="object-contain p-1"
+                    sizes="(min-width: 640px) 88px, 64px"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-foreground to-accent text-2xl font-black text-white sm:text-3xl">
+                    {initials}
+                  </span>
+                )}
+              </div>
+              <span
+                className="absolute -bottom-1 -start-1 grid h-6 w-6 place-items-center rounded-full border-2 border-card bg-accent text-white shadow-sm sm:h-7 sm:w-7"
+                aria-label="موثّق من مدوّنتي"
+                title="موثّق من مدوّنتي"
+              >
+                <IconCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </span>
             </div>
 
             {/* Name + tagline + chips */}
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-[22px] font-black leading-tight tracking-tight text-foreground">
-                  {client.name}
-                </h1>
-                <span className="inline-flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-0.5 text-[11.5px] font-extrabold text-accent">
-                  <IconCheck className="h-3.5 w-3.5" />
-                  موثّق
-                </span>
-              </div>
+            <div className="min-w-0 flex-1 pt-0.5">
+              <h1 className="text-[18px] font-black leading-snug tracking-tight text-foreground sm:text-[22px]">
+                {client.name}
+              </h1>
 
               {tagline && (
-                <p className="mt-1 text-[13px] text-muted-foreground">{tagline}</p>
+                <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground sm:text-[13px]">
+                  {tagline}
+                </p>
               )}
 
               <HeroChips client={client} />
