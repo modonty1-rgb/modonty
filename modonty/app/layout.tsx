@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProviderWrapper } from "@/components/providers/SessionProviderWrapper";
 import { GTMContainer } from "@/components/gtm/GTMContainer";
 import { WebVitals } from "@/components/gtm/WebVitals";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import { HotjarScript } from "@/components/hotjar/HotjarScript";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
@@ -83,6 +84,10 @@ export default function RootLayout({
             Suspense boundary (Next 16 cacheComponents). Renders null, so fallback=null. */}
         <Suspense fallback={null}>
           <WebVitals />
+        </Suspense>
+        {/* Counts views on every page Article/Client trackers don't cover. */}
+        <Suspense fallback={null}>
+          <PageViewTracker />
         </Suspense>
         <HotjarScript />
         <ThemeProvider

@@ -1538,6 +1538,30 @@ model ClientView {
   @@map("client_views")
 }
 
+/// Universal page-view log — one row per genuine page entry on ANY surface NOT
+/// already covered by ArticleView/ClientView (home, categories, tags, authors,
+/// help, search, etc.). Feeds the footer "بالأرقام" views total alongside
+/// article + client views (additive, no double-count). Honest count: a
+/// refresh-in-place is suppressed in /api/track/pageview; a genuine return after
+/// navigating elsewhere counts.
+model PageView {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  path     String // pathname, e.g. "/", "/categories", "/tags/seo"
+  pageType String // coarse bucket: home | categories | tags | authors | help | search | other
+
+  userId    String? @db.ObjectId
+  sessionId String?
+
+  userAgent String?
+  referrer  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([createdAt])
+  @@map("page_views")
+}
+
 model ClientComment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 

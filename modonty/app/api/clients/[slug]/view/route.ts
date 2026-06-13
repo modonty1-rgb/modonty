@@ -46,18 +46,15 @@ export async function POST(
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
 
-    // Deduplicate: skip if same session/user viewed within 30 minutes
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    const recentView = await db.clientView.findFirst({
-      where: {
-        clientId: client.id,
-        ...(userId ? { userId } : { sessionId }),
-        createdAt: { gte: thirtyMinutesAgo },
-      },
-      select: { id: true },
+    // Honest views: count every genuine entry; suppress only a refresh-in-place —
+    // i.e. the session's most recent client view is the SAME client (consecutive
+    // duplicate). Returning here after visiting another page counts again.
+    const lastView = await db.clientView.findFirst({
+      where: userId ? { userId } : { sessionId },
+      orderBy: { createdAt: "desc" },
+      select: { clientId: true },
     });
-
-    if (recentView) {
+    if (lastView?.clientId === client.id) {
       return NextResponse.json({ ok: true, deduplicated: true });
     }
 

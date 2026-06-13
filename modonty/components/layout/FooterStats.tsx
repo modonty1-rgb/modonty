@@ -1,18 +1,17 @@
 import type { ComponentType } from "react";
-import { getOverallCategoryAnalytics } from "@/app/api/helpers/category-queries";
+import { getFooterStats } from "@/app/api/helpers/stats-queries";
 import {
   IconArticle,
   IconViews,
   IconActivity,
   IconLike,
-  IconComment,
-  IconTotal,
+  IconClients,
 } from "@/lib/icons";
 
 // «بالأرقام» — moved here from the homepage left sidebar so low early-stage numbers
-// don't greet a partner the moment they land. The query is cached ("use cache",
-// hours) so rendering this on every page (global footer) costs one DB read per
-// cache window. Server Component → zero client JS.
+// don't greet a partner the moment they land. Every value is a live COUNT of real
+// records, cached ~1min ("use cache", minutes) so rendering this on every page
+// (global footer) stays static/fast. Server Component → zero client JS.
 function Stat({
   icon: Icon,
   label,
@@ -36,17 +35,16 @@ function Stat({
 }
 
 export async function FooterStats() {
-  const stats = await getOverallCategoryAnalytics();
+  const stats = await getFooterStats();
 
   return (
     <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
-      <div className="grid grid-cols-3 sm:grid-cols-6 divide-x divide-x-reverse divide-primary-foreground/15">
-        <Stat icon={IconArticle}  label="المقالات" value={stats.totalBlogs.toLocaleString("ar-SA")} />
-        <Stat icon={IconViews}    label="مشاهدات"  value={stats.totalViews.toLocaleString("ar-SA")} />
-        <Stat icon={IconActivity} label="تفاعلات"  value={stats.totalReactions.toLocaleString("ar-SA")} />
-        <Stat icon={IconLike}     label="إعجابات"  value={stats.totalLikes.toLocaleString("ar-SA")} />
-        <Stat icon={IconComment}  label="تعليقات"  value={stats.totalComments.toLocaleString("ar-SA")} />
-        <Stat icon={IconTotal}    label="متوسط"    value={Number(stats.averageCommentsPerBlog).toLocaleString("ar-SA")} highlight />
+      <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">
+        <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString("ar-SA")} />
+        <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString("ar-SA")} highlight />
+        <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString("ar-SA")} />
+        <Stat icon={IconLike}     label="إعجابات"  value={stats.likes.toLocaleString("ar-SA")} />
+        <Stat icon={IconClients}  label="الشركاء"  value={stats.partners.toLocaleString("ar-SA")} />
       </div>
     </div>
   );

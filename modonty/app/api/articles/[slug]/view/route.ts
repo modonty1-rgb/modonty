@@ -89,14 +89,15 @@ export async function POST(
     const session = await auth();
     const userId = session?.user?.id ?? undefined;
 
-    // Deduplicate: one view per (articleId, sessionId) per day
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const alreadyViewed = await db.articleView.findFirst({
-      where: { articleId: article.id, sessionId, createdAt: { gte: today } },
-      select: { id: true },
+    // Honest views: count every genuine entry; suppress only a refresh-in-place —
+    // i.e. the session's most recent view is the SAME article (consecutive
+    // duplicate). Returning here after visiting another article counts again.
+    const lastView = await db.articleView.findFirst({
+      where: { sessionId },
+      orderBy: { createdAt: "desc" },
+      select: { articleId: true },
     });
-    if (alreadyViewed) {
+    if (lastView?.articleId === article.id) {
       return NextResponse.json({ ok: true, analyticsId: null });
     }
 
