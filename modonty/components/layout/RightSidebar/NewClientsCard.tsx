@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { NewClientItem } from "./NewClientItem";
+import { SortMenu } from "./SortMenu";
 import { IconChevronLeft, IconClients, IconFilter } from "@/lib/icons";
 import type { SidebarClient } from "@/app/api/helpers/client-queries";
 
@@ -19,62 +20,102 @@ interface IndustryChip {
   count: number;
 }
 
+// Two independent, client-side sorts (zero fetch / zero DB):
+const INDUSTRY_SORT = [
+  { value: "most", label: "الأكثر شركاءً" },
+  { value: "least", label: "الأقل شركاءً" },
+  { value: "name", label: "أبجديًا" },
+] as const;
+type IndustrySort = (typeof INDUSTRY_SORT)[number]["value"];
+
+const PARTNER_SORT = [
+  { value: "newest", label: "الأحدث" },
+  { value: "name", label: "حسب الاسم" },
+  { value: "articles", label: "الأكثر مقالات" },
+] as const;
+type PartnerSort = (typeof PARTNER_SORT)[number]["value"];
+
 export function NewClientsCard({ clients }: NewClientsCardProps) {
   const [active, setActive] = useState<string | null>(null);
+  const [industrySort, setIndustrySort] = useState<IndustrySort>("most");
+  const [partnerSort, setPartnerSort] = useState<PartnerSort>("newest");
 
-  // Industries present among the loaded partners (+ count). Sorted by count.
   const industries = useMemo<IndustryChip[]>(() => {
     const map = new Map<string, number>();
     for (const c of clients) {
       if (!c.industry) continue;
       map.set(c.industry, (map.get(c.industry) ?? 0) + 1);
     }
-    return [...map.entries()]
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count);
+    return [...map.entries()].map(([name, count]) => ({ name, count }));
   }, [clients]);
+
+  // Sort the INDUSTRY chips (filter box).
+  const sortedIndustries = useMemo(() => {
+    const arr = [...industries];
+    if (industrySort === "name") arr.sort((a, b) => a.name.localeCompare(b.name, "ar"));
+    else if (industrySort === "least") arr.sort((a, b) => a.count - b.count);
+    else arr.sort((a, b) => b.count - a.count);
+    return arr;
+  }, [industries, industrySort]);
 
   const filtered = useMemo(
     () => (active ? clients.filter((c) => c.industry === active) : clients),
     [clients, active]
   );
 
-  // No point showing a one-button filter.
+  // Sort the PARTNERS (partners box). "newest" = the query's original createdAt-desc order.
+  const sortedPartners = useMemo(() => {
+    if (partnerSort === "newest") return filtered;
+    const arr = [...filtered];
+    if (partnerSort === "name") arr.sort((a, b) => a.name.localeCompare(b.name, "ar"));
+    else arr.sort((a, b) => b.articleCount - a.articleCount);
+    return arr;
+  }, [filtered, partnerSort]);
+
   const showFilter = industries.length > 1;
 
   return (
     <div className="flex h-full flex-col gap-3">
-      {/* Industry filter — client-side, instant, no reload. */}
+      {/* ── Filter box: industry chips (scroller) + industry Sort ── */}
       {showFilter && (
         <Card className="flex-none">
           <CardContent className="p-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <IconFilter className="h-3.5 w-3.5 shrink-0 text-accent" />
-                <h2 className="text-xs font-semibold uppercase text-muted-foreground">
+                <h2 className="truncate text-xs font-semibold uppercase text-muted-foreground">
                   تصفية حسب الصناعة
                 </h2>
               </div>
-              {/* "الكل" = reset — appears only once a specific industry is selected. */}
-              {active !== null && (
-                <button
-                  type="button"
-                  onClick={() => setActive(null)}
-                  aria-label="عرض كل الشركاء"
-                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-border"
-                >
-                  <span aria-hidden className="text-[13px] leading-none">×</span>
-                  الكل
-                  <span className="text-[10px] font-bold opacity-60">{clients.length}</span>
-                </button>
-              )}
+              <div className="flex shrink-0 items-center gap-1.5">
+                <SortMenu
+                  ariaLabel="ترتيب الصناعات"
+                  menuLabel="ترتيب الصناعات"
+                  options={INDUSTRY_SORT}
+                  value={industrySort}
+                  onChange={(v) => setIndustrySort(v as IndustrySort)}
+                />
+                {active !== null && (
+                  <button
+                    type="button"
+                    onClick={() => setActive(null)}
+                    aria-label="عرض كل الشركاء"
+                    className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-border"
+                  >
+                    <span aria-hidden className="text-[13px] leading-none">×</span>
+                    الكل
+                    <span className="text-[10px] font-bold opacity-60">{clients.length}</span>
+                  </button>
+                )}
+              </div>
             </div>
+
             <div
-              className="flex flex-wrap gap-1.5"
+              className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1"
               role="tablist"
               aria-label="تصفية الشركاء حسب الصناعة"
             >
-              {industries.map((ind) => (
+              {sortedIndustries.map((ind) => (
                 <Chip
                   key={ind.name}
                   label={ind.name}
@@ -88,28 +129,37 @@ export function NewClientsCard({ clients }: NewClientsCardProps) {
         </Card>
       )}
 
-      {/* Partners list (unchanged rows) — filtered in place. */}
+      {/* ── Partners box: list + its own (partner) Sort ── */}
       <Card className="flex min-h-0 flex-1 flex-col">
         <CardContent className="flex min-h-0 flex-1 flex-col p-4">
           <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-center gap-2">
               <IconClients className="h-4 w-4 shrink-0 text-primary" />
               <h2 className="text-xs font-semibold uppercase text-muted-foreground">
                 الشركاء
               </h2>
             </div>
-            <Link
-              href="/clients"
-              className="inline-flex shrink-0 items-center gap-1 text-xs text-primary hover:underline"
-            >
-              <IconChevronLeft className="h-3.5 w-3.5" aria-hidden />
-              استكشف
-            </Link>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <SortMenu
+                ariaLabel="ترتيب الشركاء"
+                menuLabel="ترتيب الشركاء"
+                options={PARTNER_SORT}
+                value={partnerSort}
+                onChange={(v) => setPartnerSort(v as PartnerSort)}
+              />
+              <Link
+                href="/clients"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                <IconChevronLeft className="h-3.5 w-3.5" aria-hidden />
+                استكشف
+              </Link>
+            </div>
           </div>
           <ScrollArea className="min-h-0 flex-1" dir="rtl">
             <div className="pb-4">
-              {filtered.length > 0 ? (
-                filtered.map((client) => (
+              {sortedPartners.length > 0 ? (
+                sortedPartners.map((client) => (
                   <NewClientItem
                     key={client.id}
                     clientName={client.name}
@@ -150,7 +200,7 @@ function Chip({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] transition-colors",
+        "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] transition-colors",
         active
           ? "bg-accent font-bold text-accent-foreground"
           : "bg-muted font-medium text-muted-foreground hover:bg-border"

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { ClientHeroSlide } from "@/app/api/helpers/client-queries";
 import type { FilterOption } from "./types";
 
 // Golden rule (modonty): client-side is last resort, and when unavoidable it MUST be lazy.
@@ -19,7 +18,6 @@ interface HomeBottomBarLoaderProps {
   industries: FilterOption[];
   tags: FilterOption[];
   partners: FilterOption[];
-  heroSlides: ClientHeroSlide[];
 }
 
 export function HomeBottomBarLoader(props: HomeBottomBarLoaderProps) {

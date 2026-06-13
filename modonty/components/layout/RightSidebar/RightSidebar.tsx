@@ -10,7 +10,9 @@ interface RightSidebarProps {
 // `hidden lg:block` + lazy logos means mobile downloads nothing here; the mobile
 // partner list lives in the bottom-bar sheet instead.
 export async function RightSidebar({ className }: RightSidebarProps) {
-  const clients = await getClientsForSidebar(20);
+  // Load ALL active partners (safety cap 500) so the industry filter shows EVERY
+  // sector that has partners — not only the industries present in the first 20.
+  const clients = await getClientsForSidebar(500);
 
   return (
     <aside

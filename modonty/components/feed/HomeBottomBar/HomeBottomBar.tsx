@@ -1,7 +1,7 @@
 import { getCategoriesWithCounts } from "@/app/api/helpers/category-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { getTagsWithCounts } from "@/app/api/helpers/tag-queries";
-import { getClientsForSidebar, getClientHeroSlides } from "@/app/api/helpers/client-queries";
+import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
 import { HomeBottomBarLoader } from "./HomeBottomBarLoader";
 import type { FilterOption } from "./types";
 
@@ -10,12 +10,11 @@ import type { FilterOption } from "./types";
 // Reuses the same cached queries the sidebars use (zero extra DB cost), then hands minimal
 // data to a lazy client shell.
 export async function HomeBottomBar() {
-  const [categories, industries, tags, clients, heroSlides] = await Promise.all([
+  const [categories, industries, tags, clients] = await Promise.all([
     getCategoriesWithCounts(),
     getIndustriesWithCounts(),
     getTagsWithCounts(),
-    getClientsForSidebar(20),
-    getClientHeroSlides(),
+    getClientsForSidebar(500),
   ]);
 
   const categoryOptions: FilterOption[] = categories
@@ -43,7 +42,6 @@ export async function HomeBottomBar() {
       industries={industryOptions}
       tags={tagOptions}
       partners={partnerOptions}
-      heroSlides={heroSlides}
     />
   );
 }

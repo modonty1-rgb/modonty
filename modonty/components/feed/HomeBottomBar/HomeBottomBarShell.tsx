@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "@/components/link";
 import {
@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MazayaSheet } from "@/components/layout/MazayaSheet";
-import { HeroSlider } from "@/components/layout/RightSidebar/HeroSlider";
+import { SortMenu } from "@/components/layout/RightSidebar/SortMenu";
 import {
   IconCompass,
   IconCategory,
@@ -28,7 +28,6 @@ import {
 } from "@/lib/icons";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { cn } from "@/lib/utils";
-import type { ClientHeroSlide } from "@/app/api/helpers/client-queries";
 import type { FilterOption } from "./types";
 
 interface HomeBottomBarShellProps {
@@ -36,8 +35,14 @@ interface HomeBottomBarShellProps {
   industries: FilterOption[];
   tags: FilterOption[];
   partners: FilterOption[];
-  heroSlides: ClientHeroSlide[];
 }
+
+const PARTNER_SORT = [
+  { value: "newest", label: "الأحدث" },
+  { value: "name", label: "حسب الاسم" },
+  { value: "articles", label: "الأكثر مقالات" },
+] as const;
+type PartnerSort = (typeof PARTNER_SORT)[number]["value"];
 
 const formatCount = (n: number) => new Intl.NumberFormat("ar-SA").format(n);
 
@@ -125,7 +130,7 @@ function FilterList({
   );
 }
 
-export function HomeBottomBarShell({ categories, industries, tags, partners, heroSlides }: HomeBottomBarShellProps) {
+export function HomeBottomBarShell({ categories, industries, tags, partners }: HomeBottomBarShellProps) {
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get("category") ?? undefined;
   const activeClient = searchParams.get("client") ?? undefined;
@@ -136,6 +141,30 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
 
   const closeDiscover = () => setDiscoverOpen(false);
   const closePartners = () => setPartnersOpen(false);
+
+  // Partners sheet: industry filter + one sort — 100% client-side on the loaded list.
+  const [activeIndustry, setActiveIndustry] = useState<string | null>(null);
+  const [partnerSort, setPartnerSort] = useState<PartnerSort>("newest");
+
+  const partnerIndustries = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of partners) {
+      if (!p.industry) continue;
+      map.set(p.industry, (map.get(p.industry) ?? 0) + 1);
+    }
+    return [...map.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [partners]);
+
+  const displayedPartners = useMemo(() => {
+    const base = activeIndustry ? partners.filter((p) => p.industry === activeIndustry) : partners;
+    if (partnerSort === "newest") return base;
+    const arr = [...base];
+    if (partnerSort === "name") arr.sort((a, b) => a.name.localeCompare(b.name, "ar"));
+    else arr.sort((a, b) => b.count - a.count); // الأكثر مقالات (count = articleCount)
+    return arr;
+  }, [partners, activeIndustry, partnerSort]);
 
   return (
     <nav
@@ -235,18 +264,68 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                 اختر شريكاً لعرض مقالاته في الصفحة الرئيسية
               </SheetDescription>
             </SheetHeader>
-            {/* Partner showcase — images load only now (Sheet mounts content on open). */}
-            {heroSlides.length > 0 && (
-              <div className="px-4 pb-3">
-                <HeroSlider slides={heroSlides} />
+            {/* Industry filter (chips scroller) + one client-side sort — مبسّط للموبايل. */}
+            {partnerIndustries.length > 1 && (
+              <div className="space-y-2 px-4 pb-3">
+                <div className="flex items-center justify-between gap-2">
+                  <SortMenu
+                    ariaLabel="ترتيب الشركاء"
+                    menuLabel="ترتيب الشركاء"
+                    options={PARTNER_SORT}
+                    value={partnerSort}
+                    onChange={(v) => setPartnerSort(v as PartnerSort)}
+                  />
+                  {activeIndustry !== null && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveIndustry(null)}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                    >
+                      <span aria-hidden className="text-[13px] leading-none">×</span>
+                      كل الصناعات
+                    </button>
+                  )}
+                </div>
+                <div
+                  className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1"
+                  role="tablist"
+                  aria-label="تصفية الشركاء حسب الصناعة"
+                >
+                  {partnerIndustries.map((ind) => {
+                    const isActive = activeIndustry === ind.name;
+                    return (
+                      <button
+                        key={ind.name}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        onClick={() => setActiveIndustry(ind.name)}
+                        className={cn(
+                          "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] transition-colors",
+                          isActive
+                            ? "bg-accent font-bold text-accent-foreground"
+                            : "bg-muted font-medium text-muted-foreground"
+                        )}
+                      >
+                        {ind.name}
+                        <span className={cn("text-[10px] font-bold", isActive ? "opacity-80" : "opacity-60")}>
+                          {ind.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
+
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-thin" dir="rtl">
               <ul className="px-4 pb-6 space-y-1">
-                {partners.length === 0 ? (
-                  <li className="py-3 text-xs text-muted-foreground">لا يوجد شركاء حالياً</li>
+                {displayedPartners.length === 0 ? (
+                  <li className="py-3 text-xs text-muted-foreground">
+                    {activeIndustry ? "لا شركاء في هذا القطاع" : "لا يوجد شركاء حالياً"}
+                  </li>
                 ) : (
-                  partners.map((p) => {
+                  displayedPartners.map((p) => {
                     const isActive = activeClient === p.slug;
                     return (
                       <li key={p.slug}>
