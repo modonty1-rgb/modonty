@@ -399,10 +399,12 @@ export interface ClientHeroSlide {
   slug: string;
   name: string;
   heroImage: string;
+  logo: string | null;
 }
 
-// Active partners that have a hero image — feeds the CSS-only sidebar slider.
-// limit omitted ⇒ ALL partners with a hero image (no cap); pass a number to cap.
+// Active partners that have a CLIENT_MINI (1.91:1) image — feeds the CSS-only
+// sidebar slider. EXCLUSIVELY Client Mini (NO hero fallback): a partner without a
+// Client Mini does NOT appear here. limit omitted ⇒ ALL such partners (no cap).
 export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSlide[]> {
   "use cache";
   cacheTag("clients");
@@ -411,23 +413,32 @@ export async function getClientHeroSlides(limit?: number): Promise<ClientHeroSli
   const clients = await db.client.findMany({
     where: {
       subscriptionStatus: SubscriptionStatus.ACTIVE,
-      heroImageMediaId: { not: null },
+      media: { some: { type: "CLIENT_MINI" } },
     },
     select: {
       name: true,
       slug: true,
-      heroImageMedia: { select: { url: true } },
+      logoMedia: { select: { url: true } },
+      // The Client Mini (1.91:1) fills the 1200/630 slide box exactly — this is the
+      // ONLY image the slider shows (no 6:1 hero, which would be cropped).
+      media: {
+        where: { type: "CLIENT_MINI" },
+        select: { url: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
     },
     orderBy: { createdAt: "desc" },
     ...(limit ? { take: limit } : {}),
   });
 
   return clients
-    .filter(c => Boolean(c.heroImageMedia?.url))
     .map(c => ({
       slug: c.slug,
       name: c.name,
-      heroImage: c.heroImageMedia!.url,
-    }));
+      heroImage: c.media[0]?.url ?? "",
+      logo: c.logoMedia?.url ?? null,
+    }))
+    .filter(c => Boolean(c.heroImage));
 }
 

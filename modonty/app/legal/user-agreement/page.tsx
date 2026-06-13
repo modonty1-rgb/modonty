@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { generateStructuredData } from "@/lib/seo";
+import { generateStructuredData, buildAlternates } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { FormattedDate } from "@/components/date/FormattedDate";
 import { getUserAgreementPageForMetadata } from "./helpers/user-agreement-metadata";
@@ -64,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: `${title} - ${siteName}`,
       description: description,
-      alternates: { canonical: canonicalUrl },
+      alternates: buildAlternates(canonicalUrl),
       openGraph,
       twitter,
       robots: {

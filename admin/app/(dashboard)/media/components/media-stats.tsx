@@ -21,6 +21,7 @@ interface MediaStatsProps {
       GENERAL: number;
       LOGO: number;
       OGIMAGE: number;
+      CLIENT_MINI: number;
       POST: number;
       TWITTER_IMAGE: number;
       NULL?: number;

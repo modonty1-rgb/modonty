@@ -11,6 +11,7 @@ import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, favoriteArticle } from "@/app/articles/[slug]/actions/article-interactions";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconLike, IconSaved, IconComment, IconShare, IconClients, IconExternal } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -127,7 +128,7 @@ export function ArticleLabBottomDock({
               className="group absolute inset-x-0 bottom-1.5 mx-auto flex w-[72px] flex-col items-center gap-0.5"
             >
               {/* brand chip: logo framed by a primary ring + white outline → distinct, tappable */}
-              <span className="grid size-14 place-items-center overflow-hidden rounded-full bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95">
+              <span className={cn("grid size-14 place-items-center overflow-hidden bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95", BRAND_AVATAR_RADIUS)}>
                 {clientLogoUrl ? (
                   <NextImage src={clientLogoUrl} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
                 ) : (

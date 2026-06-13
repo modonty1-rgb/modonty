@@ -32,9 +32,9 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
   const sortedTags       = [...tags].sort((a, b) => b.articleCount - a.articleCount);
 
   return (
-    <Card className="flex-none">
-      <CardContent className="p-3">
-        <Tabs defaultValue="categories">
+    <Card className="flex-1 min-h-0 flex flex-col">
+      <CardContent className="p-3 flex-1 min-h-0 flex flex-col">
+        <Tabs defaultValue="categories" className="flex-1 min-h-0 flex flex-col">
           <TabsList className="w-full mb-3 h-7">
             <TabsTrigger value="categories" className={triggerClass}><IconCategory className="h-3 w-3 shrink-0" />الفئات</TabsTrigger>
             <TabsTrigger value="industries" className={triggerClass}><IconIndustry className="h-3 w-3 shrink-0" />الصناعات</TabsTrigger>
@@ -42,7 +42,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
           </TabsList>
 
           {/* ─── الفئات ─── */}
-          <TabsContent value="categories" className="mt-0">
+          <TabsContent value="categories" className="mt-0 flex-1 min-h-0 flex-col data-[state=active]:flex">
             <div className="flex items-center justify-between mb-2">
               <Link href="/categories" className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0">
                 <IconChevronLeft className="h-3.5 w-3.5" aria-hidden />
@@ -61,8 +61,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
                 <span className={cn('text-[10px]', !currentCategorySlug ? 'opacity-70' : '')}>{totalArticlesAll}</span>
               </Link>
             </div>
-            {/* offset = navbar(3.5) + Analytics(7.6) + gap(1) + card-header(4.5) + jami3-row(2) = 18.6 + delta(FollowCard-Analytics=1.4) = 20rem */}
-            <ScrollArea className="h-[calc(100dvh-21.5rem)]" dir="rtl">
+            <ScrollArea className="flex-1 min-h-0" dir="rtl">
               <div className="flex flex-col gap-0.5 pe-2 pb-4">
                 {activeCategories.map((c) => (
                   <Link key={c.id} href={`/?category=${c.slug}`} className={cn(rowClass, currentCategorySlug === c.slug && 'bg-primary/10')}>
@@ -81,7 +80,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
           </TabsContent>
 
           {/* ─── الصناعات ─── */}
-          <TabsContent value="industries" className="mt-0">
+          <TabsContent value="industries" className="mt-0 flex-1 min-h-0 flex-col data-[state=active]:flex">
             <div className="flex items-center justify-between mb-2">
               <Link href="/industries" className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0">
                 <IconChevronLeft className="h-3.5 w-3.5" aria-hidden />
@@ -95,7 +94,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
             {sortedIndustries.length === 0 ? (
               <p className="text-xs text-muted-foreground">لا توجد صناعات</p>
             ) : (
-              <ScrollArea className="h-[calc(100dvh-19.5rem)]" dir="rtl">
+              <ScrollArea className="flex-1 min-h-0" dir="rtl">
                 <div className="flex flex-col gap-0.5 pe-2 pb-4">
                   {sortedIndustries.map((ind) => (
                     <Link key={ind.id} href={`/industries/${ind.slug}`} className={rowClass}>
@@ -115,7 +114,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
           </TabsContent>
 
           {/* ─── الوسوم ─── */}
-          <TabsContent value="tags" className="mt-0">
+          <TabsContent value="tags" className="mt-0 flex-1 min-h-0 flex-col data-[state=active]:flex">
             <div className="flex items-center justify-between mb-2">
               <Link href="/tags" className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0">
                 <IconChevronLeft className="h-3.5 w-3.5" aria-hidden />
@@ -129,7 +128,7 @@ export function DiscoveryCard({ categories, totalArticlesAll, industries, tags }
             {sortedTags.length === 0 ? (
               <p className="text-xs text-muted-foreground">لا توجد وسوم</p>
             ) : (
-              <ScrollArea className="h-[calc(100dvh-19.5rem)]" dir="rtl">
+              <ScrollArea className="flex-1 min-h-0" dir="rtl">
                 <div className="flex flex-col gap-0.5 pe-2 pb-4">
                   {sortedTags.map((tag) => (
                     <Link key={tag.id} href={`/tags/${tag.slug}`} className={rowClass}>

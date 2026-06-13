@@ -67,7 +67,13 @@ export function InfiniteArticleList({
       if (ignoredRef.current) return;
       if (requestCategory !== categorySlug || requestClient !== clientSlug) return;
       if (result.articles.length > 0) {
-        setPosts((prev) => [...prev, ...result.articles]);
+        // Drop any article already in the list — guards against page-boundary overlap
+        // when a new article publishes mid-scroll and shifts offset pagination.
+        setPosts((prev) => {
+          const seen = new Set(prev.map((p) => p.id));
+          const fresh = result.articles.filter((a) => !seen.has(a.id));
+          return fresh.length > 0 ? [...prev, ...fresh] : prev;
+        });
         setPage(nextPage);
         setHasMore(result.hasMore);
         // SEO-INF3: update URL so the current scroll position is bookmarkable/shareable

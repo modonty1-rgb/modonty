@@ -62,11 +62,12 @@ enum PaymentStatus {
 enum MediaType {
   LOGO
   POST
-  OGIMAGE
+  OGIMAGE // Social share image (og:image) — reserved for future use
   TWITTER_IMAGE
   HERO
   GENERAL
   GALLERY // Client-page gallery image (ImageObject[])
+  CLIENT_MINI // Client mini/card image (1200×630 · 1.91:1) — sidebar slider + article client card
 }
 
 enum MediaScope {

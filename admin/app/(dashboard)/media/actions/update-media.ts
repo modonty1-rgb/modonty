@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { MediaType, MediaScope } from "@prisma/client";
 import { generateAndSaveJsonLd } from "@/lib/seo";
 import { auth } from "@/lib/auth";
@@ -101,6 +102,10 @@ export async function updateMedia(id: string, data: UpdateMediaData) {
     // Revalidate all article detail pages (dynamic route pattern)
     revalidatePath("/articles/[id]", "page");
     revalidatePath("/articles/[id]/technical", "page");
+    // Editing/replacing media changes what modonty's public surfaces show
+    // (partner slider · client page · article client card) → invalidate its caches.
+    await revalidateModontyTag("clients");
+    await revalidateModontyTag("articles");
     return { success: true, media };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update media";

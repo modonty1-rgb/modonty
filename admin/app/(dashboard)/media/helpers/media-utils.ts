@@ -1,21 +1,11 @@
 import { MediaType } from "@prisma/client";
 import type { BadgeProps } from "@/components/ui/badge";
+import { MEDIA_SPECS } from "@/lib/media/media-specs";
 
+// Single source of truth = MEDIA_SPECS — every role's label lives there
+// (CLIENT_MINI → "Client Mini", HERO → "Client Cover", …) so labels never drift.
 export function getMediaTypeLabel(type: MediaType): string {
-  switch (type) {
-    case "LOGO":
-      return "Logo";
-    case "POST":
-      return "Post";
-    case "OGIMAGE":
-      return "OG Image";
-    case "TWITTER_IMAGE":
-      return "Twitter";
-    case "GENERAL":
-      return "General";
-    default:
-      return "General";
-  }
+  return MEDIA_SPECS[type]?.label ?? "General";
 }
 
 export function getMediaTypeBadgeVariant(type: MediaType): BadgeProps["variant"] {
@@ -26,6 +16,8 @@ export function getMediaTypeBadgeVariant(type: MediaType): BadgeProps["variant"]
       return "secondary"; // Secondary color
     case "OGIMAGE":
       return "outline"; // Accent color (using outline for distinction)
+    case "CLIENT_MINI":
+      return "outline";
     case "TWITTER_IMAGE":
       return "default"; // Info color (using default with different styling)
     case "GENERAL":
@@ -42,6 +34,8 @@ export function getMediaTypeColor(type: MediaType): string {
     case "POST":
       return "bg-secondary text-secondary-foreground";
     case "OGIMAGE":
+      return "bg-accent text-accent-foreground";
+    case "CLIENT_MINI":
       return "bg-accent text-accent-foreground";
     case "TWITTER_IMAGE":
       return "bg-blue-500 text-white";

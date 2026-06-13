@@ -1,16 +1,16 @@
-import { getClientsForSidebar, getClientHeroSlides } from "@/app/api/helpers/client-queries";
+import { getClientsForSidebar } from "@/app/api/helpers/client-queries";
 import { cn } from "@/lib/utils";
-import { RightSidebarContent } from "./RightSidebarContent";
+import { NewClientsCard } from "./NewClientsCard";
 
 interface RightSidebarProps {
   className?: string;
 }
 
+// Partners list — server-rendered directly (the slider moved to the left sidebar).
+// `hidden lg:block` + lazy logos means mobile downloads nothing here; the mobile
+// partner list lives in the bottom-bar sheet instead.
 export async function RightSidebar({ className }: RightSidebarProps) {
-  const [clients, heroSlides] = await Promise.all([
-    getClientsForSidebar(20),
-    getClientHeroSlides(),
-  ]);
+  const clients = await getClientsForSidebar(20);
 
   return (
     <aside
@@ -20,7 +20,7 @@ export async function RightSidebar({ className }: RightSidebarProps) {
         className
       )}
     >
-      <RightSidebarContent clients={clients} heroSlides={heroSlides} />
+      <NewClientsCard clients={clients} />
     </aside>
   );
 }

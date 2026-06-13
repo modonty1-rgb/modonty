@@ -1,16 +1,27 @@
+import { Suspense } from "react";
 import Link from "@/components/link";
 import { FooterCopyright } from "@/components/layout/FooterCopyright";
+import { FooterStats } from "@/components/layout/FooterStats";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { BRAND_AR } from "@/lib/brand";
 const linkClass =
   "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors";
 
+function FooterStatsSkeleton() {
+  return <div className="w-full h-[76px] rounded-lg bg-primary/80 skeleton-shimmer" aria-hidden />;
+}
+
 export function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="border-t bg-card mt-auto container mx-auto max-w-[1128px] px-4 py-4 flex flex-col items-center gap-3"
+      className="border-t bg-card mt-auto container mx-auto max-w-[1128px] px-4 py-4 flex flex-col items-center gap-4"
     >
+      {/* «بالأرقام» — platform stats strip (moved from homepage left sidebar) */}
+      <Suspense fallback={<FooterStatsSkeleton />}>
+        <FooterStats />
+      </Suspense>
+
       {/* jbr SEO CTA */}
       <div className="flex items-center gap-2 text-xs">
         <span className="text-muted-foreground">هل تريد عملاء من جوجل بلا إعلانات؟</span>

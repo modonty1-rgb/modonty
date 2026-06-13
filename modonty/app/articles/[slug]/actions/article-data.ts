@@ -123,6 +123,13 @@ export async function getArticleBySlug(slug: string, userId?: string) {
           newsletterCtaText: true,
           logoMedia: { select: { url: true } },
           heroImageMedia: { select: { url: true } },
+          // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
+          media: {
+            where: { type: "CLIENT_MINI" },
+            select: { url: true },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
       },
       author: {
@@ -282,6 +289,13 @@ async function getArticleContentBySlug(slug: string) {
         include: {
           logoMedia: { select: { url: true } },
           heroImageMedia: { select: { url: true } },
+          // Client Mini (1.91:1) — preferred over the 6:1 hero for the card image.
+          media: {
+            where: { type: "CLIENT_MINI" },
+            select: { url: true },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
       },
       author: {

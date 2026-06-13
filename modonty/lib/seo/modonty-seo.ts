@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
+import { buildAlternates } from "./build-alternates";
 
 interface StoredMeta {
   title?: string;
@@ -40,7 +41,7 @@ function storedMetaToMetadata(meta: StoredMeta | null | undefined): Metadata | n
     title: title || undefined,
     description: description || undefined,
     robots: robots || undefined,
-    alternates: canonical ? { canonical } : undefined,
+    alternates: canonical ? buildAlternates(canonical) : undefined,
     openGraph: og
       ? {
           title: (og.title as string) || title,

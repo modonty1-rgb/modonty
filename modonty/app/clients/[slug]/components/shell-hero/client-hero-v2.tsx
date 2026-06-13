@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconCheck } from "@/lib/icons";
 import { stripCloudinaryTransforms } from "@/lib/image-utils";
 
@@ -128,7 +129,7 @@ export function ClientHeroV2({
             {/* Avatar + verified checkmark — DESKTOP only: on mobile the logo lives in
                 the sticky bottom bar (ClientBottomBar), so it isn't duplicated here. */}
             <div className="relative -mt-5 hidden flex-shrink-0 sm:-mt-12 lg:block">
-              <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-card bg-card shadow-md sm:h-[88px] sm:w-[88px] sm:border-4">
+              <div className={`relative h-16 w-16 overflow-hidden ${BRAND_AVATAR_RADIUS} border-[3px] border-card bg-card shadow-md sm:h-[88px] sm:w-[88px] sm:border-4`}>
                 {client.logoMedia?.url ? (
                   <Image
                     src={stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url}

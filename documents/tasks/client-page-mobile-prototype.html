@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>صفحة العميل — بروتوتايب تفاعلي (موبايل)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --background:45 8% 95%;--foreground:245 87% 19%;--card:0 0% 100%;--muted:240 6% 46%;
+    --primary:240 100% 59%;--accent:180 100% 42%;--border:0 0% 86%;--radius:.5rem;
+    --wa:142 70% 45%;--amber:38 92% 50%;--star:42 96% 50%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:Tajawal,system-ui,sans-serif;color:hsl(var(--foreground));
+    background:radial-gradient(1200px 600px at 50% -10%,#e7e9f6,transparent),linear-gradient(160deg,#eceaf4,#eef0f4 55%,#e7eef0);
+    min-height:100vh;-webkit-font-smoothing:antialiased;padding:24px 14px 80px}
+  .head{max-width:900px;margin:0 auto 16px;text-align:center}
+  .head h1{font-size:20px;font-weight:900;letter-spacing:-.3px}
+  .head p{font-size:13px;color:hsl(var(--muted));margin-top:5px}
+
+  /* control bar */
+  .controls{max-width:560px;margin:0 auto 22px;background:#fff;border:1px solid hsl(var(--border));
+    border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:11px;box-shadow:0 16px 40px -28px rgba(20,18,60,.5)}
+  .ctl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ctl-row > b{font-size:12px;font-weight:800;min-width:104px;color:hsl(var(--foreground))}
+  .seg{display:inline-flex;background:hsl(var(--background));border:1px solid hsl(var(--border));border-radius:11px;padding:3px;gap:2px}
+  .seg button{font-family:inherit;font-size:12px;font-weight:700;border:none;background:transparent;color:hsl(var(--muted));
+    padding:6px 12px;border-radius:8px;cursor:pointer;transition:.18s}
+  .seg button.on{background:hsl(var(--primary));color:#fff;box-shadow:0 4px 10px -4px hsl(var(--primary)/.7)}
+  .ctl-hint{font-size:11px;color:hsl(var(--muted));text-align:center}
+
+  /* phone */
+  .wrap{display:flex;justify-content:center}
+  .phone{width:392px;background:#0b0b14;border-radius:48px;padding:11px;
+    box-shadow:0 50px 90px -30px rgba(20,18,60,.55),0 0 0 2px #23233a inset}
+  .screen{position:relative;width:100%;height:818px;overflow:hidden;background:hsl(var(--background));border-radius:38px}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:25px;background:#0b0b14;border-radius:0 0 15px 15px;z-index:60}
+  .statusbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:55;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12.5px;font-weight:800}
+  .statusbar .r{font-size:11px;letter-spacing:1px}
+
+  .scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-top:34px;scroll-behavior:smooth}
+  .scroll::-webkit-scrollbar{display:none}
+
+  .topbar{position:sticky;top:0;z-index:40;height:46px;display:flex;align-items:center;gap:9px;padding:0 11px;
+    background:hsl(var(--background)/.8);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:.25s}
+  .topbar.scrolled{border-color:hsl(var(--border));background:hsl(var(--background)/.95)}
+  .topbar .back{width:33px;height:33px;display:grid;place-items:center;border-radius:50%;background:#fff;border:1px solid hsl(var(--border));font-size:17px}
+  .topbar .who{display:flex;align-items:center;gap:7px;min-width:0;opacity:0;transform:translateY(4px);transition:.25s}
+  .topbar.scrolled .who{opacity:1;transform:none}
+  .topbar .who img{width:25px;height:25px;border-radius:7px;object-fit:contain;background:#fff;border:1px solid hsl(var(--border))}
+  .topbar .who b{font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .sp{margin-inline-start:auto}
+  .tg{width:33px;height:33px;display:grid;place-items:center;border-radius:50%;background:transparent;border:1px solid hsl(var(--border));color:hsl(var(--muted));font-size:15px;cursor:pointer}
+  .tg.act{color:hsl(var(--primary));border-color:hsl(var(--primary)/.4);background:hsl(var(--primary)/.08)}
+
+  /* hero */
+  .cover{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:linear-gradient(135deg,hsl(var(--foreground)),#2422b8 55%,hsl(var(--primary)))}
+  .cover img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  .cover .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.3),rgba(0,0,0,.04) 40%,rgba(0,0,0,.4))}
+  .vtop{position:absolute;top:11px;inset-inline-end:13px;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.94);
+    color:hsl(var(--foreground));font-size:10.5px;font-weight:800;padding:5px 9px;border-radius:999px;border:1px solid hsl(var(--accent)/.5)}
+  .id-card{position:relative;margin:-26px 13px 0;background:#fff;border:1px solid hsl(var(--border));border-radius:16px;
+    padding:11px 13px 12px;box-shadow:0 12px 30px -18px rgba(20,18,60,.35);z-index:2}
+  .id-top{display:flex;gap:11px;align-items:center}
+  .avatar{width:64px;height:64px;flex:0 0 64px;margin-top:-34px;border-radius:16px;overflow:hidden;border:3px solid #fff;
+    box-shadow:0 8px 20px -8px rgba(0,0,0,.4);background:#fff}
+  .avatar img{width:100%;height:100%;object-fit:contain;padding:3px}
+  .id-main{min-width:0;flex:1}
+  .name-row{display:flex;align-items:center;gap:7px}
+  h1.name{font-size:19px;font-weight:900;line-height:1.15;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip-v{display:inline-flex;align-items:center;gap:3px;background:hsl(var(--accent)/.16);color:hsl(var(--accent));font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:999px;flex:0 0 auto}
+  .cat{font-size:12.5px;color:hsl(var(--muted));font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resp{font-size:11.5px;font-weight:700;color:hsl(var(--wa));margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+  .stats{display:flex;margin-top:10px;border-top:1px solid hsl(var(--border));padding-top:9px}
+  .stat{flex:1;text-align:center;position:relative}
+  .stat+.stat::before{content:"";position:absolute;inset-inline-start:0;top:3px;bottom:3px;width:1px;background:hsl(var(--border))}
+  .stat b{display:block;font-size:16px;font-weight:900;color:hsl(var(--primary))}
+  .stat span{font-size:10.5px;color:hsl(var(--muted));font-weight:600}
+
+  /* pills */
+  .pills-wrap{position:sticky;top:46px;z-index:30;background:hsl(var(--background)/.93);backdrop-filter:blur(10px);border-bottom:1px solid hsl(var(--border))}
+  .pills{position:relative;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding:8px 12px 9px}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;
+    color:hsl(var(--muted));padding:6px 12px;border-radius:999px;transition:.2s}
+  .pill.active{color:hsl(var(--primary));background:hsl(var(--primary)/.1)}
+  .ink{position:absolute;bottom:2px;height:3px;background:hsl(var(--primary));border-radius:999px;width:0;transform:translateX(0);
+    transition:transform .3s cubic-bezier(.22,.61,.36,1),width .3s cubic-bezier(.22,.61,.36,1)}
+
+  /* burger "more" tab + dropdown menu */
+  .pill.more{margin-inline-start:auto;display:inline-flex;align-items:center;gap:4px;color:hsl(var(--foreground))}
+  .pill.more.active{color:hsl(var(--primary));background:hsl(var(--primary)/.1)}
+  .menu-pop{position:absolute;top:calc(100% + 4px);inset-inline-end:10px;z-index:45;min-width:188px;
+    background:#fff;border:1px solid hsl(var(--border));border-radius:14px;box-shadow:0 14px 38px rgba(20,20,40,.2);
+    padding:6px;display:flex;flex-direction:column;gap:1px;opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity .16s,transform .16s,visibility .16s}
+  .menu-pop.open{opacity:1;visibility:visible;transform:translateY(0)}
+  .menu-pop button{display:flex;align-items:center;gap:9px;border:none;background:transparent;cursor:pointer;
+    font-family:inherit;font-size:13.5px;font-weight:700;color:hsl(var(--foreground));padding:9px 11px;border-radius:9px;
+    text-align:start;width:100%;transition:.14s}
+  .menu-pop button span{font-size:14px;width:18px;text-align:center;flex:0 0 18px}
+  .menu-pop button:active{background:hsl(var(--primary)/.08)}
+  .menu-pop button.active{color:hsl(var(--primary));background:hsl(var(--primary)/.1)}
+
+  .body{padding:4px 13px 0}
+  section.sec{scroll-margin-top:98px;margin-top:16px}
+  .sec-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .sec-head .ic{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;background:hsl(var(--primary)/.1);color:hsl(var(--primary));font-size:13px}
+  .sec-head h2{font-size:15.5px;font-weight:800}
+  .sec-head .more{margin-inline-start:auto;font-size:12px;font-weight:700;color:hsl(var(--primary));cursor:pointer}
+  .card{background:#fff;border:1px solid hsl(var(--border));border-radius:14px;padding:13px}
+
+  /* services */
+  .svc{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid hsl(var(--border))}
+  .svc:last-child{border-bottom:none}
+  .svc .si{width:33px;height:33px;flex:0 0 33px;border-radius:9px;display:grid;place-items:center;background:hsl(var(--accent)/.14);color:hsl(var(--accent));font-size:15px}
+  .svc b{font-size:13.5px;font-weight:700;display:block}.svc p{font-size:11.5px;color:hsl(var(--muted));margin-top:2px;line-height:1.5}
+
+  /* gallery */
+  .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .gal img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:hsl(var(--background))}
+
+  /* results */
+  .results{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .rcard{background:#fff;border:1px solid hsl(var(--border));border-radius:12px;padding:12px 6px;text-align:center}
+  .rcard b{display:block;font-size:19px;font-weight:900;color:hsl(var(--accent))}
+  .rcard span{font-size:10.5px;color:hsl(var(--muted));font-weight:600}
+
+  /* articles */
+  .art{display:flex;gap:11px;padding:10px;border:1px solid hsl(var(--border));border-radius:13px;background:#fff;margin-bottom:8px}
+  .art img{width:72px;height:72px;flex:0 0 72px;border-radius:10px;object-fit:cover;background:hsl(var(--background))}
+  .art .meta{min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .art .tag{font-size:10px;font-weight:800;color:hsl(var(--accent));margin-bottom:2px}
+  .art h3{font-size:13.5px;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .art .sub{font-size:11px;color:hsl(var(--muted));margin-top:4px;font-weight:600}
+  .hidden-extra{display:none}
+  body.show-all .hidden-extra{display:flex}
+
+  /* reviews */
+  .rsum{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .rbig{font-size:34px;font-weight:900;line-height:1;color:hsl(var(--foreground))}
+  .rstars{color:hsl(var(--star));font-size:14px;letter-spacing:2px}
+  .rsum small{font-size:11.5px;color:hsl(var(--muted));font-weight:600;display:block;margin-top:3px}
+  .rev{padding:11px 0;border-top:1px solid hsl(var(--border))}
+  .rev .rh{display:flex;align-items:center;gap:8px}
+  .rev .av{width:30px;height:30px;border-radius:50%;background:hsl(var(--primary)/.12);color:hsl(var(--primary));display:grid;place-items:center;font-weight:800;font-size:13px}
+  .rev .rn{font-size:12.5px;font-weight:700}.rev .rd{font-size:10.5px;color:hsl(var(--muted))}
+  .rev p{font-size:12.5px;color:hsl(var(--foreground));line-height:1.6;margin-top:6px}
+  .rev .rstars{font-size:11px}
+
+  /* faq accordion */
+  .faq{border:1px solid hsl(var(--border));border-radius:12px;overflow:hidden;background:#fff;margin-bottom:8px}
+  .faq summary{list-style:none;cursor:pointer;padding:12px 13px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .q{flex:1}.faq summary .ch{color:hsl(var(--primary));font-size:16px;transition:transform .2s}
+  .faq[open] summary .ch{transform:rotate(45deg)}
+  .faq .a{padding:0 13px 13px;font-size:12.5px;color:hsl(var(--muted));line-height:1.7}
+
+  /* trust */
+  .trust{background:linear-gradient(135deg,#fff,hsl(var(--accent)/.07));border:1px solid hsl(var(--accent)/.35)}
+  .trow{display:flex;gap:7px;flex-wrap:wrap}
+  .tchip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;background:#fff;border:1px solid hsl(var(--border));border-radius:999px;padding:5px 10px}
+  .tchip .ok{color:hsl(var(--accent))}
+
+  /* hours */
+  .hrow{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid hsl(var(--border))}
+  .hrow:last-child{border:none}.hrow .d{color:hsl(var(--muted));font-weight:600}.hrow .t{font-weight:700}
+  .hrow.today .t{color:hsl(var(--wa))}
+
+  /* contact */
+  .map{height:120px;border-radius:12px;background:
+    repeating-linear-gradient(0deg,hsl(var(--border)/.5) 0 1px,transparent 1px 26px),
+    repeating-linear-gradient(90deg,hsl(var(--border)/.5) 0 1px,transparent 1px 26px),hsl(var(--background));
+    position:relative;border:1px solid hsl(var(--border));margin-bottom:10px}
+  .map .pin{position:absolute;top:46%;left:50%;transform:translate(-50%,-100%);font-size:26px}
+  .crow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid hsl(var(--border))}
+  .crow:last-child{border:none}
+  .crow .ci{width:33px;height:33px;border-radius:9px;display:grid;place-items:center;background:hsl(var(--primary)/.1);color:hsl(var(--primary));font-size:14px}
+  .crow b{font-size:12.5px}.crow span{font-size:11px;color:hsl(var(--muted));display:block}
+
+  /* newsletter */
+  .news{background:linear-gradient(135deg,hsl(var(--primary)/.06),#fff);border:1px solid hsl(var(--border))}
+  .news b{font-size:13.5px}.news p{font-size:11.5px;color:hsl(var(--muted));margin:4px 0 9px}
+  .news .nin{display:flex;gap:7px}
+  .news input{flex:1;border:1px solid hsl(var(--border));border-radius:9px;padding:8px 10px;font-family:inherit;font-size:12px;background:#fff}
+  .news button{border:none;background:hsl(var(--primary));color:#fff;border-radius:9px;padding:0 16px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer}
+
+  /* team */
+  .team{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .team::-webkit-scrollbar{display:none}
+  .tmember{flex:0 0 auto;text-align:center;width:74px}
+  .tmember .ta{width:58px;height:58px;border-radius:50%;margin:0 auto 6px;background:hsl(var(--primary)/.12);color:hsl(var(--primary));
+    display:grid;place-items:center;font-weight:800;font-size:19px;border:2px solid #fff;box-shadow:0 4px 12px -6px rgba(0,0,0,.3)}
+  .tmember b{font-size:12px;font-weight:700;display:block;line-height:1.3}
+  .tmember span{font-size:10px;color:hsl(var(--muted))}
+  /* social row (in sheet) */
+  .soc-h{font-size:12px;font-weight:700;margin-bottom:9px;color:hsl(var(--muted))}
+  .soc-row{display:flex;gap:9px}
+  .soc{width:42px;height:42px;border-radius:11px;border:1px solid hsl(var(--border));display:grid;place-items:center;
+    font-size:16px;font-weight:800;color:hsl(var(--foreground));text-decoration:none;background:#fff;cursor:pointer}
+  .credrow{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+
+  .hidnote{margin-top:14px;border:1px dashed hsl(var(--border));border-radius:12px;padding:11px;font-size:11.5px;color:hsl(var(--muted));text-align:center}
+  .hidnote b{color:hsl(var(--foreground))}
+  body:not(.empty) .empty-only{display:none}
+  body.empty .full-only{display:none}
+
+  .spacer{height:104px}
+
+  /* fixed action bar */
+  .actionbar{position:absolute;left:0;right:0;bottom:0;z-index:45;display:flex;gap:9px;align-items:center;padding:10px 12px 18px;
+    background:hsl(var(--card)/.92);backdrop-filter:blur(14px);border-top:1px solid hsl(var(--border))}
+  .cta-p{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border:none;border-radius:14px;
+    font-family:inherit;font-size:15.5px;font-weight:800;cursor:pointer;color:#fff;background:hsl(var(--primary));box-shadow:0 10px 22px -10px hsl(var(--primary)/.8);transition:.2s}
+  body.cta-wa .cta-p{background:hsl(var(--wa));box-shadow:0 10px 22px -10px hsl(var(--wa)/.8)}
+  .cta-s{width:54px;height:54px;flex:0 0 54px;border-radius:14px;display:grid;place-items:center;background:#fff;border:1px solid hsl(var(--border));font-size:21px;cursor:pointer}
+  .homebar{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:124px;height:5px;border-radius:999px;background:hsl(var(--foreground)/.22);z-index:50}
+
+  /* bottom sheet */
+  .sheet-backdrop{position:absolute;inset:0;z-index:70;background:rgba(10,8,40,.4);opacity:0;pointer-events:none;transition:.28s}
+  .sheet-backdrop.open{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;left:0;right:0;bottom:0;z-index:71;background:#fff;border-radius:22px 22px 0 0;padding:8px 16px calc(20px);
+    transform:translateY(101%);transition:transform .32s cubic-bezier(.22,.61,.36,1);box-shadow:0 -20px 50px -20px rgba(0,0,0,.4)}
+  .sheet.open{transform:translateY(0)}
+  .grab{width:38px;height:4px;border-radius:99px;background:hsl(var(--border));margin:4px auto 12px}
+  .sheet h3{font-size:16px;font-weight:900;margin-bottom:3px}
+  .sheet .sub{font-size:12px;color:hsl(var(--muted));margin-bottom:14px}
+  .opt{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid hsl(var(--border));border-radius:13px;margin-bottom:9px;cursor:pointer;transition:.15s}
+  .opt:active{background:hsl(var(--background))}
+  .opt .oi{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:19px;color:#fff;flex:0 0 42px}
+  .opt b{font-size:14px;display:block}.opt span{font-size:11.5px;color:hsl(var(--muted))}
+  .opt .go{margin-inline-start:auto;color:hsl(var(--muted));font-size:18px}
+  .fld{margin-bottom:10px}.fld label{font-size:12px;font-weight:700;display:block;margin-bottom:5px}
+  .fld input,.fld textarea{width:100%;border:1px solid hsl(var(--border));border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;background:hsl(var(--background))}
+  .submit{width:100%;min-height:50px;border:none;border-radius:13px;background:hsl(var(--primary));color:#fff;font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;margin-top:4px}
+
+  @media (prefers-reduced-motion:no-preference){
+    @keyframes ru{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .reveal{animation:ru .5s cubic-bezier(.22,.61,.36,1) both}
+  }
+  @media(max-width:460px){body{padding:14px 6px 60px}.phone{width:100%;max-width:392px}}
+</style>
+</head>
+<body class="cta-wa">
+  <div class="head">
+    <h1>صفحة العميل — بروتوتايب تفاعلي</h1>
+    <p>تفاعل فعليًا: اسحب · اضغط الـ pills · افتح الأقسام · جرّب زر الـ CTA. بدّل الإعدادات تحت لتشوف كيف تتكيّف الصفحة.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <b>نوع الـ CTA</b>
+      <div class="seg" id="segCta">
+        <button data-cta="wa" class="on">واتساب</button>
+        <button data-cta="form">حجز فورم</button>
+        <button data-cta="link">رابط خارجي</button>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <b>بيانات العميل</b>
+      <div class="seg" id="segState">
+        <button data-state="full" class="on">كامل</button>
+        <button data-state="empty">ناقص (0 تقييم/سؤال)</button>
+      </div>
+    </div>
+    <div class="ctl-hint">↑ غيّرها وشوف الزر السفلي + ظهور/إخفاء التقييمات والأسئلة يتبدّل حيًّا</div>
+  </div>
+
+  <div class="wrap">
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span class="r">● ● ● ●  5G ▮▮▮</span></div>
+
+      <div class="scroll" id="scroll">
+        <div class="topbar" id="topbar">
+          <div class="back">‹</div>
+          <div class="who"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt=""><b>شركة جبر سيو</b></div>
+          <div class="sp"></div>
+          <div class="tg" id="followTop" title="متابعة">♡</div>
+          <div class="tg" title="مشاركة">↗</div>
+        </div>
+
+        <!-- HERO -->
+        <div class="cover">
+          <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780840147/clients/69d5ec61e2087dee91fe99a1/img-3u8ndjjz5.png" alt="غلاف">
+          <div class="scrim"></div>
+          <span class="vtop">🛡️ موثّق من مدوّنتي</span>
+        </div>
+        <div class="id-card">
+          <div class="id-top">
+            <div class="avatar"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt=""></div>
+            <div class="id-main">
+              <div class="name-row"><h1 class="name">شركة جبر سيو</h1><span class="chip-v">✓ موثّق</span></div>
+              <div class="cat">التقنية والذكاء الاصطناعي · السعودية</div>
+              <div class="resp">🟢 يرد عادةً خلال ساعة</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><b>١٢</b><span>مقال</span></div>
+            <div class="stat full-only"><b>٤.٨</b><span>تقييم</span></div>
+            <div class="stat"><b>٦٢</b><span>مشاهدة</span></div>
+            <div class="stat"><b>٧</b><span>مواضيع</span></div>
+          </div>
+        </div>
+
+        <!-- PILLS — 3 lead tabs + burger for the rest -->
+        <div class="pills-wrap">
+          <div class="pills" id="pills">
+            <button class="pill active" data-t="s-services">الخدمات</button>
+            <button class="pill" data-t="s-articles">المقالات</button>
+            <button class="pill full-only" data-t="s-reviews">آراء العملاء</button>
+            <button class="pill more" id="moreBtn" aria-label="المزيد من الأقسام">☰ المزيد</button>
+            <span class="ink" id="ink"></span>
+          </div>
+          <div class="menu-pop" id="menuPop">
+            <button data-t="s-overview"><span>🏠</span>نظرة عامة</button>
+            <button data-t="s-work"><span>🖼️</span>معرض الأعمال</button>
+            <button data-t="s-results"><span>🏆</span>نتائج موثّقة</button>
+            <button data-t="s-about"><span>🏢</span>عن الشركة</button>
+            <button data-t="s-team"><span>👥</span>فريق العمل</button>
+            <button class="full-only" data-t="s-discussions"><span>💬</span>نقاشات القرّاء</button>
+            <button data-t="s-faq"><span>❓</span>الأسئلة الشائعة</button>
+            <button data-t="s-trust"><span>🛡️</span>الموثوقية</button>
+            <button data-t="s-hours"><span>🕐</span>ساعات العمل</button>
+            <button data-t="s-contact"><span>📍</span>الموقع والتواصل</button>
+            <button data-t="s-news"><span>📩</span>النشرة البريدية</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <span id="s-overview"></span>
+
+          <!-- ARTICLES (richest first) -->
+          <section class="sec reveal" id="s-articles">
+            <div class="sec-head"><span class="ic">📰</span><h2>أحدث المقالات</h2><span class="more" id="moreArticles">عرض الكل ›</span></div>
+            <div class="art"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_180/v1780345607/clients/69d5ec61e2087dee91fe99a1/img-vnszur873.webp"><div class="meta"><div class="tag">🔥 الأكثر قراءة</div><h3>ما هو السيو؟ الدليل الكامل لتصدّر نتائج البحث</h3><div class="sub">٢١ مايو · ⏱️ ١٤ دقيقة</div></div></div>
+            <div class="art"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_180/v1780347525/clients/69d5ec61e2087dee91fe99a1/img-voy2kpt8q.webp"><div class="meta"><div class="tag"># تحسين محركات البحث</div><h3>كيف يساعد السيو في زيادة المبيعات؟</h3><div class="sub">٢١ مايو · ⏱️ ٦ دقائق</div></div></div>
+            <div class="art"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_180/v1776066161/clients/69d5ec61e2087dee91fe99a1/serp-ww2i22z5z.png"><div class="meta"><div class="tag"># SERP</div><h3>ما هي صفحات نتائج البحث وكيف يختار جوجل ما يعرضه؟</h3><div class="sub">٩ أبريل · ⏱️ ٤ دقائق</div></div></div>
+            <div class="art hidden-extra"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_180/v1775996121/clients/69d5ec61e2087dee91fe99a1/seo-vqdbime7n.png"><div class="meta"><div class="tag"># تسويق رقمي</div><h3>ماهو السيو وأهميته في التسويق الرقمي؟</h3><div class="sub">٨ أبريل · ⏱️ ٤ دقائق</div></div></div>
+            <div class="art hidden-extra"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_180/v1776068096/clients/69d5ec61e2087dee91fe99a1/img-wx83etm4j.png"><div class="meta"><div class="tag"># جوجل</div><h3>لماذا لا يظهر موقعك في جوجل؟ الأسباب والحلول</h3><div class="sub">⏱️ ٣ دقائق</div></div></div>
+          </section>
+
+          <!-- SERVICES -->
+          <section class="sec reveal" id="s-services">
+            <div class="sec-head"><span class="ic">⚙️</span><h2>الخدمات</h2></div>
+            <div class="card">
+              <div class="svc"><span class="si">🔍</span><div><b>تحسين محركات البحث (SEO)</b><p>تصدُّر نتائج جوجل بالكلمات اللي يبحث عنها عملاؤك.</p></div></div>
+              <div class="svc"><span class="si">✍️</span><div><b>كتابة محتوى احترافي</b><p>مقالات موثّقة تبني الثقة وتجلب زيارات مستمرة.</p></div></div>
+              <div class="svc"><span class="si">🔗</span><div><b>بناء روابط (Backlinks)</b><p>روابط قويّة ترفع ترتيب موقعك ومصداقيّته.</p></div></div>
+              <div class="svc"><span class="si">📈</span><div><b>تقارير ونتائج شهرية</b><p>متابعة الترتيب والظهور بأرقام واضحة كل شهر.</p></div></div>
+            </div>
+          </section>
+
+          <!-- WORK / GALLERY -->
+          <section class="sec reveal" id="s-work">
+            <div class="sec-head"><span class="ic">🖼️</span><h2>أعمالنا</h2></div>
+            <div class="gal">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1780345607/clients/69d5ec61e2087dee91fe99a1/img-vnszur873.webp">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1780347525/clients/69d5ec61e2087dee91fe99a1/img-voy2kpt8q.webp">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1776066161/clients/69d5ec61e2087dee91fe99a1/serp-ww2i22z5z.png">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1775996121/clients/69d5ec61e2087dee91fe99a1/seo-vqdbime7n.png">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1776068096/clients/69d5ec61e2087dee91fe99a1/img-wx83etm4j.png">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_220/v1776067506/clients/69d5ec61e2087dee91fe99a1/img-wwvg5pktz.png">
+            </div>
+          </section>
+
+          <!-- RESULTS -->
+          <section class="sec reveal" id="s-results">
+            <div class="sec-head"><span class="ic">🏆</span><h2>نتائج موثّقة</h2></div>
+            <div class="results">
+              <div class="rcard"><b>#١</b><span>ترتيب جوجل</span></div>
+              <div class="rcard"><b>+٣٠٠٪</b><span>زيارات عضوية</span></div>
+              <div class="rcard"><b>٥</b><span>سنوات خبرة</span></div>
+            </div>
+          </section>
+
+          <!-- ABOUT -->
+          <section class="sec reveal" id="s-about">
+            <div class="sec-head"><span class="ic">🏢</span><h2>عن الشركة</h2></div>
+            <div class="card">
+              <p style="font-size:13px;line-height:1.85">شركة متخصّصة في تحسين محركات البحث والذكاء الاصطناعي — نساعد الأعمال السعودية تجيب عملاء من جوجل بلا إعلانات، عبر محتوى موثّق ونتائج تُقاس.</p>
+              <div class="hrow"><span class="d">الشكل القانوني</span><span class="t">مؤسسة فردية</span></div>
+              <div class="hrow"><span class="d">السجل التجاري</span><span class="t">٤٠٣٠٥٢٤٣٠٥</span></div>
+              <div class="hrow"><span class="d">الرقم الضريبي</span><span class="t">٣٠٠١٢٣٤٥٦٧٨٩٠٠٣</span></div>
+              <div class="hrow"><span class="d">عدد الموظفين</span><span class="t">١١ – ٥٠</span></div>
+              <div class="hrow"><span class="d">سنة التأسيس</span><span class="t">٢٠٢١</span></div>
+              <div class="hrow"><span class="d">لغات العمل</span><span class="t">العربية · الإنجليزية</span></div>
+              <div class="credrow">
+                <span class="tchip"><span class="ok">🎓</span> Google Partner</span>
+                <span class="tchip"><span class="ok">🏅</span> شهادة SEO معتمدة</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- TEAM -->
+          <section class="sec reveal" id="s-team">
+            <div class="sec-head"><span class="ic">👥</span><h2>فريق العمل</h2></div>
+            <div class="card">
+              <div class="team">
+                <div class="tmember"><div class="ta">ع</div><b>عبدالله</b><span>مدير الحسابات</span></div>
+                <div class="tmember"><div class="ta">س</div><b>سارة</b><span>كاتبة محتوى</span></div>
+                <div class="tmember"><div class="ta">م</div><b>ماجد</b><span>أخصائي SEO</span></div>
+                <div class="tmember"><div class="ta">ر</div><b>ريم</b><span>تصميم</span></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- REVIEWS (full only; hidden entirely when empty) -->
+          <section class="sec reveal full-only" id="s-reviews">
+            <div class="sec-head"><span class="ic">⭐</span><h2>آراء العملاء</h2><span class="more">عرض الكل ›</span></div>
+            <div class="card">
+              <div class="rsum"><div class="rbig">٤.٨</div><div><div class="rstars">★★★★★</div><small>من ٢٤ تقييمًا · ١٠٠٪ يوصون به</small></div></div>
+              <div class="rev"><div class="rh"><div class="av">م</div><div><div class="rn">محمد العتيبي</div><div class="rstars">★★★★★</div></div><div class="rd" style="margin-inline-start:auto">قبل أسبوع</div></div><p>خدمة ممتازة، موقعنا صار يطلع أول صفحة في جوجل خلال شهرين. شغل احترافي وتقارير واضحة.</p></div>
+              <div class="rev"><div class="rh"><div class="av">ن</div><div><div class="rn">نورة الشهري</div><div class="rstars">★★★★★</div></div><div class="rd" style="margin-inline-start:auto">قبل شهر</div></div><p>تعامل راقٍ ونتائج حقيقية. زادت زياراتنا بشكل ملحوظ والمحتوى ممتاز.</p></div>
+            </div>
+          </section>
+
+          <!-- DISCUSSIONS (reader comments on the client's articles — full only, hidden when empty) -->
+          <section class="sec reveal full-only" id="s-discussions">
+            <div class="sec-head"><span class="ic">💬</span><h2>نقاشات القرّاء</h2><span class="more">عرض الكل ›</span></div>
+            <div class="card">
+              <div class="rev"><div class="rh"><div class="av">خ</div><div><div class="rn">خالد المطيري</div><div class="rd">على مقال: «ما هو السيو؟»</div></div><div class="rd" style="margin-inline-start:auto">قبل ٣ أيام</div></div><p>شرح ممتاز وواضح، استفدت منه كثير في تحسين موقعي. عندي سؤال عن الكلمات المفتاحية الطويلة؟</p></div>
+              <div class="rev"><div class="rh"><div class="av">ل</div><div><div class="rn">لمى عبدالله</div><div class="rd">على مقال: «دليل نتائج البحث»</div></div><div class="rd" style="margin-inline-start:auto">قبل أسبوع</div></div><p>معلومات قيّمة. هل تنصحون بأدوات معيّنة لمتابعة الترتيب؟</p></div>
+            </div>
+          </section>
+
+          <!-- FAQ (full only) -->
+          <section class="sec reveal full-only" id="s-faq">
+            <div class="sec-head"><span class="ic">❓</span><h2>الأسئلة الشائعة</h2></div>
+            <details class="faq"><summary><span class="q">كم يستغرق ظهور النتائج؟</span><span class="ch">+</span></summary><div class="a">عادةً تبدأ النتائج بالظهور خلال ٢–٣ أشهر، وتتحسّن تدريجيًا مع استمرار العمل على المحتوى والروابط.</div></details>
+            <details class="faq"><summary><span class="q">هل تقدّمون تقارير دورية؟</span><span class="ch">+</span></summary><div class="a">نعم، تقرير شهري مفصّل يوضّح الترتيب والظهور والزيارات والكلمات المفتاحية.</div></details>
+            <details class="faq"><summary><span class="q">هل أحتاج موقعًا جاهزًا؟</span><span class="ch">+</span></summary><div class="a">يفضّل وجود موقع، ونقدر نساعدك في تجهيزه أو تحسينه تقنيًا قبل البدء.</div></details>
+          </section>
+
+          <!-- empty note (empty state only) -->
+          <div class="hidnote empty-only">
+            <b>التقييمات و«الأسئلة الشائعة» مخفيّة تمامًا</b> (٠ تقييم · ٠ سؤال).<br>القسم الفارغ يُحذف — لا يُعرض «لا توجد تقييمات» فوق الطية.
+          </div>
+
+          <!-- TRUST -->
+          <section class="sec reveal" id="s-trust">
+            <div class="sec-head"><span class="ic" style="background:hsl(180 100% 42%/.14);color:hsl(180 100% 42%)">🛡️</span><h2>الموثوقية</h2></div>
+            <div class="card trust"><div class="trow">
+              <span class="tchip"><span class="ok">✓</span> موثّق من مدوّنتي</span>
+              <span class="tchip"><span class="ok">🏛️</span> سجل تجاري</span>
+              <span class="tchip"><span class="ok">🟢</span> يرد خلال ساعة</span>
+            </div></div>
+          </section>
+
+          <!-- HOURS -->
+          <section class="sec reveal" id="s-hours">
+            <div class="sec-head"><span class="ic">🕐</span><h2>ساعات العمل</h2></div>
+            <div class="card">
+              <div class="hrow today"><span class="d">اليوم (الأحد)</span><span class="t">مفتوح · ٩ص – ٦م</span></div>
+              <div class="hrow"><span class="d">الإثنين – الخميس</span><span class="t">٩ص – ٦م</span></div>
+              <div class="hrow"><span class="d">الجمعة – السبت</span><span class="t">مغلق</span></div>
+            </div>
+          </section>
+
+          <!-- CONTACT -->
+          <section class="sec reveal" id="s-contact">
+            <div class="sec-head"><span class="ic">📍</span><h2>الموقع والتواصل</h2></div>
+            <div class="card">
+              <div class="map"><span class="pin">📍</span></div>
+              <div class="crow"><span class="ci">📞</span><div><b>+٩٦٦ ٥٥ ٤١١ ٣١٠٧</b><span>اتصال مباشر</span></div></div>
+              <div class="crow"><span class="ci">✉️</span><div><b>support@jbrseo.com</b><span>البريد الإلكتروني</span></div></div>
+              <div class="crow"><span class="ci">📍</span><div><b>جدة، السعودية</b><span>المقر الرئيسي</span></div></div>
+            </div>
+          </section>
+
+          <!-- NEWSLETTER -->
+          <section class="sec reveal" id="s-news">
+            <div class="card news">
+              <b>📩 اشترك في نشرة العميل</b>
+              <p>خلّ آخر مقالات شركة جبر سيو توصلك على بريدك مباشرة.</p>
+              <div class="nin"><input placeholder="بريدك الإلكتروني"><button>اشترك</button></div>
+            </div>
+          </section>
+
+          <div class="spacer"></div>
+        </div>
+      </div>
+
+      <!-- ACTION BAR -->
+      <div class="actionbar">
+        <button class="cta-p" id="ctaPrimary">
+          <span id="ctaIcon">💬</span><span id="ctaLabel">تواصل عبر واتساب</span>
+        </button>
+        <div class="cta-s" id="ctaSecondary" title="اتصال">📞</div>
+      </div>
+      <div class="homebar"></div>
+
+      <!-- BOTTOM SHEET -->
+      <div class="sheet-backdrop" id="backdrop"></div>
+      <div class="sheet" id="sheet">
+        <div class="grab"></div>
+        <div id="sheetContact">
+          <h3>تواصل مع شركة جبر سيو</h3>
+          <div class="sub">اختر الطريقة الأنسب لك — رد عادةً خلال ساعة.</div>
+          <div class="opt" style="border-color:hsl(var(--wa)/.4)"><span class="oi" style="background:hsl(var(--wa))">💬</span><div><b>واتساب</b><span>الأسرع — رسالة مباشرة</span></div><span class="go">›</span></div>
+          <div class="opt"><span class="oi" style="background:hsl(var(--primary))">📞</span><div><b>اتصال هاتفي</b><span>+٩٦٦ ٥٥ ٤١١ ٣١٠٧</span></div><span class="go">›</span></div>
+          <div class="opt"><span class="oi" style="background:hsl(var(--foreground))">✉️</span><div><b>بريد إلكتروني</b><span>support@jbrseo.com</span></div><span class="go">›</span></div>
+          <div style="margin-top:4px;border-top:1px solid hsl(var(--border));padding-top:12px">
+            <div class="soc-h">روابط التواصل</div>
+            <div class="soc-row">
+              <span class="soc">𝕏</span><span class="soc">in</span><span class="soc">📷</span><span class="soc">▶️</span><span class="soc">🌐</span>
+            </div>
+          </div>
+        </div>
+        <div id="sheetForm" style="display:none">
+          <h3>احجز موعدك</h3>
+          <div class="sub">عبّئ بياناتك ونتواصل معك خلال ساعة.</div>
+          <div class="fld"><label>الاسم</label><input placeholder="اسمك الكريم"></div>
+          <div class="fld"><label>رقم الجوال</label><input placeholder="05xxxxxxxx" inputmode="tel"></div>
+          <div class="fld"><label>رسالتك (اختياري)</label><textarea rows="2" placeholder="بماذا نقدر نخدمك؟"></textarea></div>
+          <button class="submit">إرسال الطلب</button>
+        </div>
+      </div>
+
+    </div></div>
+  </div>
+
+<script>
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const scroll=$('#scroll'), topbar=$('#topbar'), ink=$('#ink');
+
+  /* pills + burger menu scroll-spy */
+  const moreBtn=$('#moreBtn'), menuPop=$('#menuPop');
+  function moveInk(p){ink.style.width=p.offsetWidth+'px';ink.style.transform='translateX('+p.offsetLeft+'px)';ink.style.opacity='1';}
+  function hideInk(){ink.style.width='0px';ink.style.opacity='0';}
+  function topPills(){return $$('#pills .pill[data-t]');}
+  function setActive(id){
+    topPills().forEach(p=>p.classList.toggle('active',p.dataset.t===id));
+    $$('#menuPop button').forEach(b=>b.classList.toggle('active',b.dataset.t===id));
+    const tp=document.querySelector('#pills .pill[data-t="'+id+'"]');
+    if(tp){moveInk(tp);moreBtn.classList.remove('active');tp.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
+    else if(id==='s-overview'){hideInk();moreBtn.classList.remove('active');}
+    else{hideInk();moreBtn.classList.add('active');}
+  }
+  function goTo(id){const el=document.getElementById(id);if(el)scroll.scrollTo({top:el.offsetTop-94,behavior:'smooth'});setActive(id);}
+  topPills().forEach(p=>p.addEventListener('click',()=>goTo(p.dataset.t)));
+  $$('#menuPop button').forEach(b=>b.addEventListener('click',()=>{goTo(b.dataset.t);closeMenu();}));
+  function openMenu(){menuPop.classList.add('open');}
+  function closeMenu(){menuPop.classList.remove('open');}
+  moreBtn.addEventListener('click',e=>{e.stopPropagation();menuPop.classList.contains('open')?closeMenu():openMenu();});
+  document.addEventListener('click',e=>{if(menuPop.classList.contains('open')&&!menuPop.contains(e.target)&&e.target!==moreBtn)closeMenu();});
+  const io=new IntersectionObserver(es=>{const v=es.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(v)setActive(v.target.id);},{root:scroll,rootMargin:'-44% 0px -50% 0px',threshold:[0,.3,.7,1]});
+  $$('section.sec').forEach(s=>io.observe(s));
+  scroll.addEventListener('scroll',()=>{topbar.classList.toggle('scrolled',scroll.scrollTop>150);closeMenu();},{passive:true});
+
+  /* follow */
+  let following=false;
+  $('#followTop').addEventListener('click',function(){following=!following;this.textContent=following?'♥':'♡';this.classList.toggle('act',following);});
+
+  /* view all articles */
+  $('#moreArticles').addEventListener('click',function(){document.body.classList.toggle('show-all');this.textContent=document.body.classList.contains('show-all')?'عرض أقل ‹':'عرض الكل ›';});
+
+  /* bottom sheet */
+  const sheet=$('#sheet'), backdrop=$('#backdrop');
+  function openSheet(){const form=document.body.classList.contains('cta-form');$('#sheetForm').style.display=form?'block':'none';$('#sheetContact').style.display=form?'none':'block';sheet.classList.add('open');backdrop.classList.add('open');}
+  function closeSheet(){sheet.classList.remove('open');backdrop.classList.remove('open');}
+  $('#ctaPrimary').addEventListener('click',openSheet);
+  $('#ctaSecondary').addEventListener('click',openSheet);
+  backdrop.addEventListener('click',closeSheet);
+  $('.grab').addEventListener('click',closeSheet);
+
+  /* CTA mode switcher */
+  $('#segCta').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    $$('#segCta button').forEach(x=>x.classList.toggle('on',x===b));
+    document.body.classList.remove('cta-wa','cta-form','cta-link');
+    const m=b.dataset.cta;
+    if(m==='wa'){document.body.classList.add('cta-wa');$('#ctaIcon').textContent='💬';$('#ctaLabel').textContent='تواصل عبر واتساب';$('#ctaSecondary').textContent='📞';}
+    if(m==='form'){document.body.classList.add('cta-form');$('#ctaIcon').textContent='📅';$('#ctaLabel').textContent='احجز موعدك';$('#ctaSecondary').textContent='💬';}
+    if(m==='link'){document.body.classList.add('cta-link');$('#ctaIcon').textContent='🌐';$('#ctaLabel').textContent='احجز الآن';$('#ctaSecondary').textContent='💬';}
+  });
+
+  /* state switcher (full / empty) */
+  $('#segState').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    $$('#segState button').forEach(x=>x.classList.toggle('on',x===b));
+    document.body.classList.toggle('empty',b.dataset.state==='empty');
+    const cur=document.querySelector('#pills .pill.active[data-t], #menuPop button.active');
+    setActive(cur?cur.dataset.t:'s-articles');
+  });
+
+  window.addEventListener('load',()=>{const a=document.querySelector('#pills .pill.active[data-t]');if(a)moveInk(a);});
+</script>
+</body>
+</html>

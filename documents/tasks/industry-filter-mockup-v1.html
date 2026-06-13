@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>موكب — فلتر الصناعات فوق سلايدر الشركاء (v1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ===== توكنات مودونتي الحقيقية (من globals.css) ===== */
+  :root{
+    --background: 45 8% 95%;        /* #f3f2ef warm gray */
+    --foreground: 245 87% 19%;      /* navy */
+    --card: 0 0% 100%;
+    --card-foreground: 245 87% 19%;
+    --primary: 240 100% 59%;        /* Brand Blue */
+    --primary-foreground: 0 0% 100%;
+    --accent: 180 100% 42%;         /* Brand Teal */
+    --accent-foreground: 245 87% 19%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 36%;
+    --border: 0 0% 86%;
+    --radius: 0.5rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Tajawal',sans-serif;
+    background:hsl(var(--background));
+    color:hsl(var(--foreground));
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+    padding:32px 16px 64px;
+  }
+  .page-note{
+    max-width:680px;text-align:center;color:hsl(var(--muted-foreground));
+    font-size:13px;line-height:1.8;
+  }
+  .page-note b{color:hsl(var(--foreground))}
+
+  /* ===== العمود الأيسر الحقيقي = 300px ===== */
+  .sidebar{
+    width:300px;display:flex;flex-direction:column;gap:16px;
+  }
+
+  .card{
+    background:hsl(var(--card));
+    border:1px solid hsl(var(--border));
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+
+  /* ===== صندوق فلتر الصناعات ===== */
+  .filter-box{padding:12px}
+  .filter-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .filter-title{
+    display:flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:700;color:hsl(var(--foreground));
+  }
+  .filter-title svg{width:15px;height:15px;color:hsl(var(--accent))}
+  .filter-explore{
+    font-size:11px;color:hsl(var(--primary));text-decoration:none;
+    display:inline-flex;align-items:center;gap:2px;
+  }
+  .filter-explore:hover{text-decoration:underline}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 10px;border-radius:999px;cursor:pointer;
+    font-size:11.5px;font-weight:500;border:1px solid transparent;
+    background:hsl(var(--muted));color:hsl(var(--muted-foreground));
+    transition:all .15s ease;user-select:none;
+  }
+  .chip:hover{background:hsl(var(--border))}
+  .chip .count{
+    font-size:10px;font-weight:700;opacity:.6;
+  }
+  .chip.active{
+    background:hsl(var(--accent));color:hsl(var(--accent-foreground));
+    font-weight:700;
+  }
+  .chip.active .count{opacity:.75}
+
+  /* ===== سلايدر الشركاء ===== */
+  .slider-card{padding:12px}
+  .slider-label{
+    font-size:11px;color:hsl(var(--muted-foreground));margin-bottom:8px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .slider-label .filtered-count{font-weight:700;color:hsl(var(--foreground))}
+
+  .stage{
+    position:relative;width:100%;aspect-ratio:1200/630; /* 1.91:1 Client Mini */
+    border-radius:calc(var(--radius) - 2px);overflow:hidden;
+    background:hsl(var(--muted));
+  }
+  .slide{
+    position:absolute;inset:0;opacity:0;transition:opacity .5s ease;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:12px;color:#fff;
+  }
+  .slide.show{opacity:1}
+  .slide::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 60%);
+  }
+  .slide .logo{
+    position:absolute;top:10px;inset-inline-start:10px;z-index:2;
+    width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.92);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;color:hsl(var(--foreground));
+  }
+  .slide .ind-tag{
+    position:absolute;top:14px;inset-inline-end:10px;z-index:2;
+    font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;
+    background:rgba(255,255,255,.22);backdrop-filter:blur(4px);
+  }
+  .slide .name{position:relative;z-index:2;font-size:18px;font-weight:800}
+  .slide .slogan{position:relative;z-index:2;font-size:11px;opacity:.85;margin-top:2px}
+
+  .dots{display:flex;justify-content:center;gap:5px;margin-top:8px}
+  .dot{width:6px;height:6px;border-radius:999px;background:hsl(var(--border));transition:all .2s}
+  .dot.active{background:hsl(var(--accent));width:16px}
+
+  .empty{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    align-items:center;justify-content:center;gap:6px;
+    color:hsl(var(--muted-foreground));font-size:12px;text-align:center;padding:12px;
+  }
+  .empty svg{width:26px;height:26px;opacity:.4}
+
+  /* ===== مواصفة المطابقة ===== */
+  details{max-width:680px;width:100%;background:hsl(var(--card));
+    border:1px solid hsl(var(--border));border-radius:var(--radius);padding:14px 18px}
+  summary{cursor:pointer;font-weight:700;font-size:13px}
+  .spec{margin-top:10px;font-size:12px;line-height:1.9;color:hsl(var(--muted-foreground))}
+  .spec code{background:hsl(var(--muted));padding:1px 5px;border-radius:4px;
+    font-family:monospace;color:hsl(var(--foreground))}
+  .spec b{color:hsl(var(--foreground))}
+</style>
+</head>
+<body>
+
+  <p class="page-note">
+    <b>الموكب v1</b> — صندوق فلتر الصناعات <b>فوق</b> سلايدر الشركاء، داخل العمود الأيسر (٣٠٠px).
+    اضغط أي صناعة → السلايدر يفلتر <b>فورًا بلا إعادة تحميل</b>. «الكل» يرجّع الجميع.
+    تظهر <b>فقط</b> الصناعات اللي فيها شريك عنده Client Mini.
+  </p>
+
+  <div class="sidebar">
+
+    <!-- ===== 1) صندوق فلتر الصناعات (الجديد) ===== -->
+    <div class="card filter-box">
+      <div class="filter-head">
+        <span class="filter-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          تصفّح الشركاء حسب الصناعة
+        </span>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <!-- ===== 2) سلايدر الشركاء (موجود — يُفلتر) ===== -->
+    <div class="card slider-card">
+      <div class="slider-label">
+        <span>شركاؤنا</span>
+        <span class="filtered-count" id="fcount"></span>
+      </div>
+      <div class="stage" id="stage">
+        <div class="empty" id="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>لا شركاء في هذا القطاع بعد</span>
+        </div>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+  </div>
+
+  <details>
+    <summary>مواصفة المطابقة (mockup = عقد)</summary>
+    <div class="spec">
+      • العمود = <code>w-[300px]</code> (نفس <b>LeftSidebar</b> الحالي).<br />
+      • الكروت = <code>shadcn Card</code> · حواف <code>--radius 0.5rem</code> · <code>border</code> الحقيقي.<br />
+      • صندوق الفلتر يجلس <b>قبل</b> <code>&lt;HeroSlider /&gt;</code> داخل <code>&lt;aside&gt;</code>.<br />
+      • الشِّب النشط = <code>bg-accent</code> (Brand Teal) + نص navy · غير النشط = <code>bg-muted</code>.<br />
+      • السلايدر = نفس <b>HeroSlider</b> الحالي، بصندوق <code>aspect 1200/630</code> (Client Mini 1.91:1).<br />
+      • مصدر الصناعات = <b>فقط</b> القطاعات اللي فيها شريك عنده <code>type=CLIENT_MINI</code> (تُحسب من نفس الشرائح).<br />
+      • زر «الكل» نشط افتراضيًا · العدّاد يعكس عدد شركاء القطاع المختار.<br />
+      • التفلتر <b>على العميل</b> (كلاينت كومبونت صغير) — صفر إعادة تحميل · الداتا محمّلة أصلاً.
+    </div>
+  </details>
+
+<script>
+  // بيانات تجريبية (للموكب فقط) — شركاء عندهم Client Mini موزّعين على صناعات
+  const PARTNERS = [
+    { name:"مُدوّنتي",          slogan:"منظومة المحتوى العربية", ind:"تقنية",  c1:"#1f3bff", c2:"#0a1a66" },
+    { name:"تك سوفت",          slogan:"حلول برمجية للمنشآت",     ind:"تقنية",  c1:"#2563eb", c2:"#0b2a5b" },
+    { name:"جبر سيو",          slogan:"عملاء بلا إعلانات",       ind:"تسويق",  c1:"#00b3b3", c2:"#024d4d" },
+    { name:"عيادة النور",       slogan:"رعاية تثق فيها",          ind:"صحة",   c1:"#0ea15a", c2:"#04331e" },
+    { name:"متجر الأناقة",      slogan:"تسوّق يليق فيك",          ind:"تجارة",  c1:"#d97706", c2:"#5b3203" },
+    { name:"أكاديمية المعرفة",  slogan:"تعلّم بلا حدود",          ind:"تعليم",  c1:"#7c3aed", c2:"#2e1065" },
+  ];
+
+  // اشتقاق الصناعات (فقط اللي فيها شركاء) + العدّ
+  const counts = PARTNERS.reduce((m,p)=>{ m[p.ind]=(m[p.ind]||0)+1; return m; },{});
+  const industries = [{name:"الكل", count:PARTNERS.length, all:true},
+    ...Object.keys(counts).map(k=>({name:k, count:counts[k]}))];
+
+  const chipsEl = document.getElementById('chips');
+  const stageEl = document.getElementById('stage');
+  const dotsEl  = document.getElementById('dots');
+  const emptyEl = document.getElementById('empty');
+  const fcountEl= document.getElementById('fcount');
+
+  let active = "الكل";
+  let pool = [];
+  let idx = 0;
+  let timer = null;
+
+  function renderChips(){
+    chipsEl.innerHTML = "";
+    industries.forEach(ind=>{
+      const b = document.createElement('button');
+      b.className = "chip" + (ind.name===active ? " active":"");
+      b.innerHTML = `${ind.name}<span class="count">${ind.count}</span>`;
+      b.onclick = ()=>{ active = ind.name; applyFilter(); };
+      chipsEl.appendChild(b);
+    });
+  }
+
+  function applyFilter(){
+    pool = active==="الكل" ? PARTNERS : PARTNERS.filter(p=>p.ind===active);
+    idx = 0;
+    renderChips();
+    fcountEl.textContent = pool.length ? `${pool.length} شريك` : "";
+    buildSlides();
+    restartAuto();
+  }
+
+  function buildSlides(){
+    // امسح الشرائح القديمة (احتفظ بعنصر empty)
+    [...stageEl.querySelectorAll('.slide')].forEach(s=>s.remove());
+    if(!pool.length){ emptyEl.style.display="flex"; dotsEl.innerHTML=""; return; }
+    emptyEl.style.display="none";
+    pool.forEach((p,i)=>{
+      const s = document.createElement('div');
+      s.className = "slide" + (i===0?" show":"");
+      s.style.background = `linear-gradient(135deg, ${p.c1}, ${p.c2})`;
+      s.innerHTML = `
+        <div class="logo">${p.name.slice(0,1)}</div>
+        <div class="ind-tag">${p.ind}</div>
+        <div class="name">${p.name}</div>
+        <div class="slogan">${p.slogan}</div>`;
+      stageEl.appendChild(s);
+    });
+    renderDots();
+  }
+
+  function renderDots(){
+    dotsEl.innerHTML = "";
+    pool.forEach((_,i)=>{
+      const d=document.createElement('span');
+      d.className="dot"+(i===idx?" active":"");
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function show(i){
+    const slides=stageEl.querySelectorAll('.slide');
+    if(!slides.length) return;
+    slides[idx]?.classList.remove('show');
+    idx=(i+pool.length)%pool.length;
+    slides[idx]?.classList.add('show');
+    renderDots();
+  }
+
+  function restartAuto(){
+    clearInterval(timer);
+    if(pool.length>1) timer=setInterval(()=>show(idx+1),3000);
+  }
+
+  applyFilter();
+</script>
+</body>
+</html>

@@ -170,12 +170,15 @@ async function getArticlesCached(filters: ArticleFilters = {}) {
     sortBy = "newest",
   } = filters;
 
+  // `id` is the final, unique tie-breaker — without it, rows sharing featured+datePublished
+  // (notably the datePublished:null ties) reshuffle between requests, so offset pagination
+  // (skip/take) overlaps page boundaries → the same article appears on two pages (duplicate key).
   const orderBy =
     sortBy === "oldest"
-      ? [{ featured: "desc" as const }, { datePublished: "asc" as const }]
+      ? [{ featured: "desc" as const }, { datePublished: "asc" as const }, { id: "asc" as const }]
       : sortBy === "title"
-        ? [{ title: "asc" as const }]
-        : [{ featured: "desc" as const }, { datePublished: "desc" as const }];
+        ? [{ title: "asc" as const }, { id: "asc" as const }]
+        : [{ featured: "desc" as const }, { datePublished: "desc" as const }, { id: "desc" as const }];
 
   const where: Prisma.ArticleWhereInput = {
     status,

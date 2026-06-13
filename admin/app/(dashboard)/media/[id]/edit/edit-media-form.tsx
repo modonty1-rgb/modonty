@@ -21,8 +21,12 @@ import { messages } from "@/lib/messages";
 import NextImage from "next/image";
 import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { MediaType, MediaScope } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
+import { formatBytes } from "@/lib/utils";
+import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
 import { getCloudinaryErrorMessage } from "../../components/upload-zone/utils/error-handler";
+import { ImageEditorModal } from "../../components/upload-zone/components/image-editor-modal";
 
 interface Media {
   id: string;
@@ -70,7 +74,13 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  // Crop editor for a replacement image — same locked editor as /media/upload.
+  const [editorState, setEditorState] = useState<{ source: string; fileName: string } | null>(null);
+  const [originalSize, setOriginalSize] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // The role is fixed once uploaded — it dictates the locked crop ratio + size.
+  const typeSpec = getMediaSpec(media.type);
 
   const [formData, setFormData] = useState({
     type: media.type || ("GENERAL" as MediaType),
@@ -93,21 +103,48 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) processReplacement(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
+  // A replacement image goes through the SAME locked editor as /media/upload —
+  // fixed-ratio roles are cropped to spec + saved as WebP, no back door.
+  const processReplacement = (file: File) => {
     const error = validateFile(file);
     if (error) {
       toast({ title: messages.error.upload_failed, description: error, variant: "destructive" });
       return;
     }
+    setOriginalSize(file.size);
 
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl);
+    if (file.type.startsWith("image/") && requiresCrop(media.type)) {
+      setEditorState({ source: URL.createObjectURL(file), fileName: file.name });
+      return;
     }
 
+    // Free role (GENERAL / GALLERY) or video → direct replace, as before.
+    if (previewUrl && previewUrl.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
     setNewFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Editor produced the cropped WebP → it becomes the replacement file.
+  const handleEditorSave = (croppedFile: File) => {
+    setEditorState((prev) => {
+      if (prev) URL.revokeObjectURL(prev.source);
+      return null;
+    });
+    if (previewUrl && previewUrl.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
+    setNewFile(croppedFile);
+    setPreviewUrl(URL.createObjectURL(croppedFile));
+  };
+
+  const handleEditorClose = () => {
+    setEditorState((prev) => {
+      if (prev) URL.revokeObjectURL(prev.source);
+      return null;
+    });
+    setOriginalSize(0);
   };
 
   const handleRemoveFile = () => {
@@ -116,6 +153,7 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
     }
     setNewFile(null);
     setPreviewUrl(null);
+    setOriginalSize(0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -284,6 +322,18 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 px-6 py-6">
+      {/* Full-screen locked crop editor for a replacement image */}
+      {editorState && (
+        <ImageEditorModal
+          source={editorState.source}
+          mediaType={media.type}
+          fileName={editorState.fileName}
+          originalSize={originalSize}
+          onSave={handleEditorSave}
+          onClose={handleEditorClose}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => router.push("/media")}>
@@ -304,24 +354,26 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
           <div className="lg:col-span-2">
             <Card>
               <CardContent className="pt-6 space-y-5">
-                {/* Media Type */}
+                {/* Media Role — fixed (the role dictates the locked crop ratio/size) */}
                 <div className="space-y-2">
-                  <Label htmlFor="type">Media Type</Label>
-                  <Select
-                    value={formData.type}
-                    onValueChange={(value) => setFormData({ ...formData, type: value as MediaType })}
-                  >
-                    <SelectTrigger id="type">
-                      <SelectValue placeholder="Select media type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="GENERAL">General</SelectItem>
-                      <SelectItem value="LOGO">Logo</SelectItem>
-                      <SelectItem value="POST">Post (Article Featured Image)</SelectItem>
-                      <SelectItem value="OGIMAGE">OG Image (Open Graph)</SelectItem>
-                      <SelectItem value="TWITTER_IMAGE">Twitter Image</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label>Media Role</Label>
+                  <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 px-3 py-2">
+                    <span className="text-sm font-semibold">{typeSpec.label}</span>
+                    {typeSpec.width && typeSpec.height && (
+                      <code className="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[11px] font-bold text-primary">
+                        {typeSpec.width}×{typeSpec.height}
+                      </code>
+                    )}
+                    <Badge variant="outline" className="border-primary/40 text-[11px] text-primary">
+                      {typeSpec.ratioLabel}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{typeSpec.formats}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {requiresCrop(media.type)
+                      ? "Fixed role. Replacing the image re-crops to this ratio and saves as WebP."
+                      : "Free role. Replacing the image keeps its original size."}
+                  </p>
                 </div>
 
                 {/* Client */}
@@ -490,15 +542,34 @@ export function EditMediaForm({ media, clients }: EditMediaFormProps) {
                             alt={formData.altText || media.filename}
                             width={400}
                             height={400}
+                            priority
                             className="w-full h-auto max-h-56 object-contain"
                             unoptimized
                           />
                         )}
                       </div>
-                      {media.width && media.height && (
+                      {media.width && media.height && !newFile && (
                         <p className="text-xs text-muted-foreground text-center">
                           {media.width} × {media.height}px
                         </p>
+                      )}
+                      {newFile && originalSize > 0 && (
+                        newFile.type === "image/webp" ? (
+                          <div className="flex flex-wrap items-center justify-center gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs">
+                            <span className="text-muted-foreground">Original {formatBytes(originalSize)}</span>
+                            <span className="text-muted-foreground">→</span>
+                            <span className="font-semibold">WebP {formatBytes(newFile.size)}</span>
+                            {newFile.size < originalSize && (
+                              <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                                −{Math.round((1 - newFile.size / originalSize) * 100)}%
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-center text-xs text-muted-foreground">
+                            New file: {formatBytes(newFile.size)}
+                          </p>
+                        )
                       )}
                     </>
                   )}

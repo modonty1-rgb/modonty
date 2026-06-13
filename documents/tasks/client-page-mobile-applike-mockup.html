@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>صفحة العميل — موبايل app-like · Mockup BUILD 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ===== modonty design tokens (globals.css — LIGHT) ===== */
+  :root{
+    --background:45 8% 95%;      /* #f3f2ef warm gray */
+    --foreground:245 87% 19%;    /* navy */
+    --card:0 0% 100%;            /* white */
+    --muted:240 6% 46%;          /* secondary text */
+    --primary:240 100% 59%;      /* brand blue */
+    --primary-foreground:0 0% 100%;
+    --accent:180 100% 42%;       /* brand teal */
+    --border:0 0% 86%;           /* #dbdbdb */
+    --radius:.5rem;
+    --wa:142 70% 49%;            /* whatsapp green */
+    --amber:38 92% 50%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Tajawal,system-ui,sans-serif;
+    background:linear-gradient(160deg,#e9e8f3,#eef0f4 60%,#e7eef0);
+    color:hsl(var(--foreground));
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+    padding:28px 16px 60px;
+  }
+  .intro{max-width:920px;margin:0 auto 22px;text-align:center}
+  .intro h1{font-size:22px;font-weight:900;letter-spacing:-.3px}
+  .intro p{font-size:13.5px;color:hsl(var(--muted));margin-top:6px;line-height:1.7}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  .legend span{font-size:11.5px;font-weight:700;background:#fff;border:1px solid hsl(var(--border));
+    border-radius:999px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .stage{display:flex;gap:30px;align-items:flex-start;justify-content:center;flex-wrap:wrap;max-width:1040px;margin:0 auto}
+
+  /* ===== phone frame ===== */
+  .phone{
+    width:392px;flex:0 0 392px;
+    background:#0b0b14;border-radius:46px;padding:11px;
+    box-shadow:0 40px 80px -28px rgba(20,18,60,.5),0 0 0 2px #23233a inset;
+  }
+  .screen{
+    position:relative;width:100%;height:812px;overflow:hidden;
+    background:hsl(var(--background));border-radius:36px;
+  }
+  /* notch */
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:128px;height:26px;
+    background:#0b0b14;border-radius:0 0 16px 16px;z-index:60}
+  .statusbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:55;display:flex;
+    align-items:center;justify-content:space-between;padding:0 22px;font-size:12.5px;font-weight:800;color:hsl(var(--foreground))}
+  .statusbar .r{display:flex;gap:5px;align-items:center;font-size:11px}
+
+  /* ===== sticky app top bar ===== */
+  .scroll{position:absolute;inset:0;top:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-top:34px}
+  .scroll::-webkit-scrollbar{display:none}
+  .topbar{position:sticky;top:0;z-index:40;height:46px;display:flex;align-items:center;gap:10px;
+    padding:0 12px;background:hsl(var(--background)/.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid transparent;transition:border-color .25s,background .25s}
+  .topbar.scrolled{border-color:hsl(var(--border));background:hsl(var(--background)/.92)}
+  .topbar .back{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;
+    background:#fff;border:1px solid hsl(var(--border));font-size:17px;color:hsl(var(--foreground))}
+  .topbar .who{display:flex;align-items:center;gap:8px;min-width:0;opacity:0;transform:translateY(4px);transition:.25s}
+  .topbar.scrolled .who{opacity:1;transform:none}
+  .topbar .who img{width:26px;height:26px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid hsl(var(--border))}
+  .topbar .who b{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .sp{margin-inline-start:auto}
+  .ghost{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;
+    background:transparent;border:1px solid hsl(var(--border));color:hsl(var(--muted));font-size:15px}
+
+  /* ===== hero ===== */
+  .hero{position:relative}
+  .cover{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+    background:linear-gradient(135deg,hsl(var(--foreground)),#2422b8 55%,hsl(var(--primary)))}
+  .cover img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  .cover .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.32),rgba(0,0,0,.05) 38%,rgba(0,0,0,.42))}
+  .verified-top{position:absolute;top:12px;inset-inline-end:14px;display:inline-flex;align-items:center;gap:5px;
+    background:rgba(255,255,255,.94);color:hsl(var(--foreground));font-size:11px;font-weight:800;
+    padding:5px 10px;border-radius:999px;border:1px solid hsl(var(--accent)/.5)}
+  .verified-top .sh{color:hsl(var(--accent))}
+
+  .id-card{position:relative;margin:-26px 14px 0;background:hsl(var(--card));border:1px solid hsl(var(--border));
+    border-radius:16px;padding:11px 13px 12px;box-shadow:0 12px 30px -18px rgba(20,18,60,.35);z-index:2}
+  .id-top{display:flex;gap:11px;align-items:center}
+  .avatar{width:64px;height:64px;flex:0 0 64px;margin-top:-34px;border-radius:16px;overflow:hidden;
+    border:3px solid #fff;box-shadow:0 8px 20px -8px rgba(0,0,0,.4);background:#fff}
+  .avatar img{width:100%;height:100%;object-fit:contain;padding:3px}
+  .id-main{min-width:0;flex:1}
+  .name-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  h1.name{font-size:19px;font-weight:900;line-height:1.15;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .chip-verified{display:inline-flex;align-items:center;gap:3px;background:hsl(var(--accent)/.16);
+    color:hsl(var(--accent));font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:999px;flex:0 0 auto}
+  .cat{font-size:12.5px;color:hsl(var(--muted));font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resp-line{font-size:11.5px;font-weight:700;color:hsl(var(--wa));margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+  .stats{display:flex;gap:0;margin-top:10px;border-top:1px solid hsl(var(--border));padding-top:9px}
+  .stat{flex:1;text-align:center;position:relative}
+  .stat+.stat::before{content:"";position:absolute;inset-inline-start:0;top:3px;bottom:3px;width:1px;background:hsl(var(--border))}
+  .stat b{display:block;font-size:16px;font-weight:900;color:hsl(var(--primary))}
+  .stat span{font-size:10.5px;color:hsl(var(--muted));font-weight:600}
+
+  /* ===== sticky pills nav ===== */
+  .pills-wrap{position:sticky;top:46px;z-index:30;background:hsl(var(--background)/.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid hsl(var(--border))}
+  .pills{position:relative;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 12px 9px;scroll-snap-type:x mandatory}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{scroll-snap-align:start;flex:0 0 auto;border:none;background:transparent;cursor:pointer;
+    font-family:inherit;font-size:13.5px;font-weight:700;color:hsl(var(--muted));padding:6px 13px;border-radius:999px;transition:.2s}
+  .pill.active{color:hsl(var(--primary));background:hsl(var(--primary)/.1)}
+  .ink{position:absolute;bottom:2px;height:3px;background:hsl(var(--primary));border-radius:999px;
+    transition:transform .3s cubic-bezier(.22,.61,.36,1),width .3s cubic-bezier(.22,.61,.36,1);width:0;transform:translateX(0)}
+
+  /* ===== body sections ===== */
+  .body{padding:6px 14px 0}
+  section.sec{scroll-margin-top:96px;margin-top:16px}
+  .sec-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .sec-head .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+    background:hsl(var(--primary)/.1);color:hsl(var(--primary));font-size:14px}
+  .sec-head h2{font-size:16px;font-weight:800}
+  .sec-head .more{margin-inline-start:auto;font-size:12.5px;font-weight:700;color:hsl(var(--primary))}
+
+  .card{background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:14px;padding:14px}
+
+  /* articles */
+  .art{display:flex;gap:11px;padding:10px;border:1px solid hsl(var(--border));border-radius:14px;background:#fff;margin-bottom:9px}
+  .art img{width:74px;height:74px;flex:0 0 74px;border-radius:10px;object-fit:cover;background:hsl(var(--background))}
+  .art .meta{min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .art .tag{font-size:10.5px;font-weight:800;color:hsl(var(--accent));margin-bottom:2px}
+  .art h3{font-size:14px;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .art .sub{font-size:11.5px;color:hsl(var(--muted));margin-top:4px;font-weight:600}
+
+  /* services */
+  .svc{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid hsl(var(--border))}
+  .svc:last-child{border-bottom:none}
+  .svc .si{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;
+    background:hsl(var(--accent)/.14);color:hsl(var(--accent));font-size:16px}
+  .svc b{font-size:14px;font-weight:700;display:block}
+  .svc p{font-size:12px;color:hsl(var(--muted));margin-top:2px;line-height:1.5}
+
+  .about p{font-size:13.5px;line-height:1.85;color:hsl(var(--foreground))}
+  .legalrow{display:flex;justify-content:space-between;font-size:12.5px;margin-top:10px;padding-top:10px;border-top:1px solid hsl(var(--border))}
+  .legalrow span{color:hsl(var(--muted));font-weight:600}.legalrow b{font-weight:700}
+
+  /* trust block */
+  .trust{background:linear-gradient(135deg,hsl(var(--card)),hsl(var(--accent)/.06));border:1px solid hsl(var(--accent)/.35)}
+  .trust .row{display:flex;gap:7px;flex-wrap:wrap}
+  .tchip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+    background:#fff;border:1px solid hsl(var(--border));border-radius:999px;padding:5px 10px}
+  .tchip .ok{color:hsl(var(--accent))}
+
+  /* contact peek */
+  .contact{display:flex;gap:10px;align-items:center}
+  .contact .cinfo{min-width:0}
+  .contact b{font-size:13.5px}.contact span{font-size:12px;color:hsl(var(--muted));display:block;margin-top:2px}
+
+  /* hidden-note (for empty reviews/faq) */
+  .hidden-note{margin-top:16px;border:1px dashed hsl(var(--border));border-radius:12px;padding:11px 13px;
+    font-size:12px;color:hsl(var(--muted));text-align:center;background:hsl(var(--background))}
+  .hidden-note b{color:hsl(var(--foreground))}
+
+  .spacer{height:96px}
+
+  /* ===== fixed bottom action bar ===== */
+  .actionbar{position:absolute;left:0;right:0;bottom:0;z-index:45;display:flex;gap:10px;align-items:center;
+    padding:11px 12px calc(14px + 6px);background:hsl(var(--card)/.92);backdrop-filter:blur(14px);
+    border-top:1px solid hsl(var(--border))}
+  .cta-primary{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;
+    background:hsl(var(--primary));color:#fff;border:none;border-radius:14px;font-family:inherit;
+    font-size:15.5px;font-weight:800;cursor:pointer;box-shadow:0 10px 22px -10px hsl(var(--primary)/.8)}
+  .cta-secondary{width:54px;height:54px;flex:0 0 54px;border-radius:14px;display:grid;place-items:center;
+    background:#fff;border:1px solid hsl(var(--border));font-size:20px;color:hsl(var(--foreground))}
+  .homebar{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:999px;background:hsl(var(--foreground)/.25);z-index:50}
+
+  /* reveal */
+  @media (prefers-reduced-motion:no-preference){
+    @keyframes reveal-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .reveal{animation:reveal-up .5s cubic-bezier(.22,.61,.36,1) both}
+  }
+
+  /* ===== notes panel ===== */
+  .notes{width:340px;flex:0 0 340px;background:#fff;border:1px solid hsl(var(--border));border-radius:18px;padding:18px 18px 20px;
+    box-shadow:0 24px 50px -30px rgba(20,18,60,.4)}
+  .notes h3{font-size:15px;font-weight:900;margin-bottom:4px}
+  .notes .sub{font-size:12px;color:hsl(var(--muted));margin-bottom:14px}
+  .notes ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .notes li{font-size:12.5px;line-height:1.6;padding-inline-start:24px;position:relative}
+  .notes li::before{content:attr(data-n);position:absolute;inset-inline-start:0;top:0;width:18px;height:18px;border-radius:6px;
+    background:hsl(var(--primary));color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center}
+  .notes li b{font-weight:800}
+  .notes .p0::before{background:#e11d48}
+  .notes .ev{font-size:11px;color:hsl(var(--muted));margin-top:2px}
+  .src{margin-top:16px;padding-top:13px;border-top:1px solid hsl(var(--border));font-size:11px;color:hsl(var(--muted));line-height:1.7}
+  @media(max-width:900px){.notes{flex:1 1 100%;width:auto;max-width:392px}}
+</style>
+</head>
+<body>
+  <div class="intro">
+    <h1>صفحة العميل — تجربة جوال «كأنها تطبيق»</h1>
+    <p>Mockup BUILD 1 · عميل حقيقي: شركة جبر سيو (<code>ctaMode=NONE</code> + هاتف · ٠ تقييمات · ١٢ مقال) — أصعب حالة، تُبرز كل القرارات. مبني على دراسة ٨ وكلاء + أرقام موثّقة.</p>
+    <div class="legend">
+      <span><i class="dot" style="background:hsl(240 100% 59%)"></i> أساسي (CTA/الاسم)</span>
+      <span><i class="dot" style="background:hsl(180 100% 42%)"></i> accent (ثقة/توثيق)</span>
+      <span><i class="dot" style="background:hsl(142 70% 49%)"></i> واتساب</span>
+      <span>اضغط الـ pills · مرّر داخل الجوال</span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <!-- ===================== PHONE ===================== -->
+    <div class="phone">
+      <div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span class="r">●●●●  5G  ▮▮▮</span></div>
+
+        <div class="scroll" id="scroll">
+          <!-- sticky app top bar -->
+          <div class="topbar" id="topbar">
+            <div class="back">‹</div>
+            <div class="who"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt=""><b>شركة جبر سيو</b></div>
+            <div class="sp"></div>
+            <div class="ghost" title="متابعة">♡</div>
+            <div class="ghost" title="مشاركة">↗</div>
+          </div>
+
+          <!-- HERO -->
+          <div class="hero">
+            <div class="cover">
+              <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780840147/clients/69d5ec61e2087dee91fe99a1/img-3u8ndjjz5.png" alt="غلاف شركة جبر سيو">
+              <div class="scrim"></div>
+              <span class="verified-top"><span class="sh">🛡️</span> موثّق من مدوّنتي</span>
+            </div>
+            <div class="id-card">
+              <div class="id-top">
+                <div class="avatar"><img src="https://res.cloudinary.com/dfegnpgwx/image/upload/v1780832201/clients/69d5ec61e2087dee91fe99a1/img-3pih4munx.png" alt="شعار"></div>
+                <div class="id-main">
+                  <div class="name-row">
+                    <h1 class="name">شركة جبر سيو</h1>
+                    <span class="chip-verified">✓ موثّق</span>
+                  </div>
+                  <div class="cat">التقنية والذكاء الاصطناعي · السعودية</div>
+                  <div class="resp-line">🟢 يرد عادةً خلال ساعة</div>
+                </div>
+              </div>
+              <!-- stats: zero values hidden (no followers shown) -->
+              <div class="stats">
+                <div class="stat"><b>١٢</b><span>مقال</span></div>
+                <div class="stat"><b>٦٢</b><span>مشاهدة</span></div>
+                <div class="stat"><b>٧</b><span>مواضيع</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- sticky pills -->
+          <div class="pills-wrap">
+            <div class="pills" id="pills">
+              <button class="pill active" data-t="overview">نظرة عامة</button>
+              <button class="pill" data-t="articles">المقالات</button>
+              <button class="pill" data-t="services">الخدمات</button>
+              <button class="pill" data-t="about">نبذة</button>
+              <button class="pill" data-t="trust">الموثوقية</button>
+              <button class="pill" data-t="contact">التواصل</button>
+              <span class="ink" id="ink"></span>
+            </div>
+          </div>
+
+          <div class="body">
+            <span id="overview"></span>
+
+            <!-- ARTICLES first (richest signal for this client) -->
+            <section class="sec reveal" id="articles" style="animation-delay:.04s">
+              <div class="sec-head">
+                <span class="ic">📰</span><h2>أحدث المقالات</h2><span class="more">عرض الـ ١٢ ›</span>
+              </div>
+              <div class="art">
+                <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_200/v1780345607/clients/69d5ec61e2087dee91fe99a1/img-vnszur873.webp" alt="">
+                <div class="meta"><div class="tag">🔥 الأكثر قراءة</div><h3>ما هو السيو؟ الدليل الكامل لتصدّر نتائج البحث</h3><div class="sub">٢١ مايو · ⏱️ ١٤ دقيقة</div></div>
+              </div>
+              <div class="art">
+                <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_200/v1780347525/clients/69d5ec61e2087dee91fe99a1/img-voy2kpt8q.webp" alt="">
+                <div class="meta"><div class="tag"># تحسين محركات البحث</div><h3>كيف يساعد السيو في زيادة المبيعات؟</h3><div class="sub">٢١ مايو · ⏱️ ٦ دقائق</div></div>
+              </div>
+              <div class="art">
+                <img src="https://res.cloudinary.com/dfegnpgwx/image/upload/f_auto,q_auto,w_200/v1776066161/clients/69d5ec61e2087dee91fe99a1/serp-ww2i22z5z.png" alt="">
+                <div class="meta"><div class="tag"># SERP</div><h3>ما هي صفحات نتائج البحث وكيف يختار جوجل ما يعرضه؟</h3><div class="sub">٩ أبريل · ⏱️ ٤ دقائق</div></div>
+              </div>
+            </section>
+
+            <!-- SERVICES -->
+            <section class="sec reveal" id="services" style="animation-delay:.04s">
+              <div class="sec-head"><span class="ic">⚙️</span><h2>الخدمات</h2></div>
+              <div class="card">
+                <div class="svc"><span class="si">🔍</span><div><b>تحسين محركات البحث (SEO)</b><p>تصدُّر نتائج جوجل بالكلمات اللي يبحث عنها عملاؤك.</p></div></div>
+                <div class="svc"><span class="si">✍️</span><div><b>كتابة محتوى احترافي</b><p>مقالات موثّقة تبني ثقة العميل وتجلب زيارات.</p></div></div>
+                <div class="svc"><span class="si">📈</span><div><b>تقارير ونتائج</b><p>متابعة الترتيب والظهور شهريًا بأرقام واضحة.</p></div></div>
+              </div>
+            </section>
+
+            <!-- ABOUT -->
+            <section class="sec reveal about" id="about" style="animation-delay:.04s">
+              <div class="sec-head"><span class="ic">🏢</span><h2>عن الشركة</h2></div>
+              <div class="card">
+                <p>شركة متخصّصة في تحسين محركات البحث والذكاء الاصطناعي — نساعد الأعمال السعودية تجيب عملاء من جوجل بلا إعلانات، عبر محتوى موثّق ونتائج تُقاس.</p>
+                <div class="legalrow"><span>الشكل القانوني</span><b>مؤسسة فردية</b></div>
+                <div class="legalrow"><span>السجل التجاري</span><b>٤٠٣٠٥٢٤٣٠٥</b></div>
+              </div>
+            </section>
+
+            <!-- TRUST block (decision signals, just above the action bar) -->
+            <section class="sec reveal" id="trust" style="animation-delay:.04s">
+              <div class="sec-head"><span class="ic" style="background:hsl(180 100% 42%/.14);color:hsl(180 100% 42%)">🛡️</span><h2>الموثوقية</h2></div>
+              <div class="card trust">
+                <div class="row">
+                  <span class="tchip"><span class="ok">✓</span> موثّق من مدوّنتي</span>
+                  <span class="tchip"><span class="ok">🏛️</span> سجل تجاري موثّق</span>
+                  <span class="tchip"><span class="ok">🟢</span> يرد خلال ساعة</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- CONTACT peek (full = bottom sheet) -->
+            <section class="sec reveal" id="contact" style="animation-delay:.04s">
+              <div class="sec-head"><span class="ic">📍</span><h2>الموقع والتواصل</h2></div>
+              <div class="card contact">
+                <span style="font-size:22px">🗺️</span>
+                <div class="cinfo"><b>السعودية · جدة</b><span>اضغط للساعات والخريطة وطرق التواصل</span></div>
+                <span class="sec-head" style="margin:0;margin-inline-start:auto;font-size:18px;color:hsl(var(--muted))">›</span>
+              </div>
+            </section>
+
+            <!-- empty sections are REMOVED, not shown as empty states -->
+            <div class="hidden-note">
+              <b>التقييمات و«الأسئلة الشائعة» مخفيّة تمامًا</b> لأن العميل ٠ تقييم و٠ سؤال.<br>
+              لا «لا توجد تقييمات بعد» فوق الطية — القسم الفارغ يُحذف، لا يُعرض.
+            </div>
+
+            <div class="spacer"></div>
+          </div>
+        </div>
+
+        <!-- FIXED bottom action bar — ONE dominant CTA, never empty -->
+        <div class="actionbar">
+          <button class="cta-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.515 5.26l-.999 3.648 3.973-1.107z"/></svg>
+            تواصل عبر واتساب
+          </button>
+          <div class="cta-secondary" title="اتصال">📞</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+    </div>
+
+    <!-- ===================== NOTES ===================== -->
+    <aside class="notes">
+      <h3>أهم ٧ قرارات (مرتّبة بالأثر)</h3>
+      <div class="sub">من دراسة ٨ وكلاء + بحث موثّق</div>
+      <ul>
+        <li class="p0" data-n="P0"><b>شريط أفعال سفلي ثابت بـ CTA واحد مهيمن</b> — لا يفرغ أبدًا (سلسلة: حجز ← واتساب ← اتصال). <div class="ev">الـ CTA اللاصق = أقوى رافعة موبايل (Baymard ‎+5–12% · ABTasty ‎+55% نقرات)</div></li>
+        <li class="p0" data-n="P0"><b>حذف الأقسام الفارغة تمامًا</b> — لا «لا توجد تقييمات» فوق الطية. <div class="ev">القسم الفارغ على صفحة مدفوعة = إشارة «عمل مهجور»</div></li>
+        <li class="p0" data-n="P0"><b>حذف CTA jbrseo + بانر الإعلان</b> من صفحة العميل — يرسلون الزائر خارجًا.</li>
+        <li data-n="1"><b>إصلاح الغلاف</b> — <code>object-cover</code> بنسبة 16/9 بدل letterbox المضغوط (CLS يبقى ٠).</li>
+        <li data-n="2"><b>المحتوى الأغنى أولًا</b> (هنا المقالات) + التقييمات تنزل آخرًا (نمط Airbnb/GBP).</li>
+        <li data-n="3"><b>شريط أقسام لاصق (pills) + مؤشّر متحرّك</b> بدل برغر يختفي — تنقّل تطبيقي.</li>
+        <li data-n="4"><b>الثقة بجانب الفعل</b> — موثّق + سجل + «يرد خلال ساعة» فوق الشريط مباشرة، لا مدفونة.</li>
+      </ul>
+      <div class="src">شرط مسبق صلب قبل البناء: إضافة <code>viewportFit:"cover"</code> في <code>layout.tsx</code> وإلا الـ safe-area تساوي صفر على آيفون.<br>
+      نماذج مرجعية: Airbnb · Google Maps · GBP · Instagram · Linktree · Booking.</div>
+    </aside>
+  </div>
+
+<script>
+  const scroll=document.getElementById('scroll');
+  const topbar=document.getElementById('topbar');
+  const pills=[...document.querySelectorAll('.pill')];
+  const ink=document.getElementById('ink');
+  const secs=pills.map(p=>document.getElementById(p.dataset.t));
+
+  function moveInk(pill){ink.style.width=pill.offsetWidth+'px';ink.style.transform='translateX('+pill.offsetLeft+'px)';}
+  function setActive(t){
+    pills.forEach(p=>{const on=p.dataset.t===t;p.classList.toggle('active',on);if(on){moveInk(p);
+      p.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}});
+  }
+  pills.forEach(p=>p.addEventListener('click',()=>{
+    const el=document.getElementById(p.dataset.t);
+    scroll.scrollTo({top:el.offsetTop-92,behavior:'smooth'});setActive(p.dataset.t);
+  }));
+
+  // scroll-spy + topbar condense
+  const io=new IntersectionObserver((es)=>{
+    const vis=es.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(vis)setActive(vis.target.id);
+  },{root:scroll,rootMargin:'-45% 0px -50% 0px',threshold:[0,.25,.5,1]});
+  secs.forEach(s=>s&&io.observe(s));
+
+  scroll.addEventListener('scroll',()=>{topbar.classList.toggle('scrolled',scroll.scrollTop>150);},{passive:true});
+  window.addEventListener('load',()=>{const a=document.querySelector('.pill.active');if(a)moveInk(a);});
+</script>
+</body>
+</html>

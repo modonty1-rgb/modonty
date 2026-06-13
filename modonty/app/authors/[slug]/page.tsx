@@ -1,13 +1,27 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import NextImage from "next/image";
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateBreadcrumbStructuredData } from "@/lib/seo";
+import { generateBreadcrumbStructuredData, buildAlternates } from "@/lib/seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+export async function generateStaticParams() {
+  try {
+    const authors = await db.author.findMany({ select: { slug: true } });
+    if (!authors || authors.length === 0) {
+      // Cache Components needs at least one param at build time.
+      return [{ slug: "__no_authors__" }];
+    }
+    return authors.map((a) => ({ slug: a.slug }));
+  } catch {
+    return [{ slug: "__no_authors__" }];
+  }
+}
 
 async function getAuthorBySlug(slug: string) {
   return db.author.findUnique({
@@ -64,9 +78,29 @@ async function getAuthorArticles(authorId: string) {
   });
 }
 
+// Cached + EXCLUSIVE to metadata (not shared with the dynamic page) so the tags land
+// in the prerendered shell <head> instead of being streamed into <body>.
+async function getAuthorForMetadata(slug: string) {
+  "use cache";
+  cacheTag("authors");
+  cacheLife("hours");
+  return db.author.findUnique({
+    where: { slug },
+    select: {
+      name: true,
+      slug: true,
+      seoTitle: true,
+      seoDescription: true,
+      bio: true,
+      image: true,
+      nextjsMetadata: true,
+    },
+  });
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const author = await getAuthorBySlug(slug);
+  const author = await getAuthorForMetadata(slug);
 
   if (!author) return { title: "Author Not Found" };
 
@@ -82,7 +116,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
-    alternates: { canonical: `${siteUrl}/authors/${author.slug}` },
+    alternates: buildAlternates(`${siteUrl}/authors/${author.slug}`),
     openGraph: {
       title,
       description,

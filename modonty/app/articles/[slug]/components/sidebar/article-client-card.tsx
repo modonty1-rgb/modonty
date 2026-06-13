@@ -2,6 +2,7 @@ import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { Card } from "@/components/ui/card";
 import { IconClients, IconChevronLeft } from "@/lib/icons";
 import Image from "next/image";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { AskClientDialog } from "../ask-client-dialog";
 
 interface PendingFaq {
@@ -19,6 +20,8 @@ interface ArticleClientCardProps {
     description?: string | null;
     logoMedia?: { url: string } | null;
     heroImageMedia?: { url: string } | null;
+    /** Client Mini (1.91:1) media — preferred over the 6:1 hero for the card image. */
+    media?: { url: string }[] | null;
   };
   /** When provided, Ask Client block is rendered inside the card */
   askClientProps?: {
@@ -32,14 +35,15 @@ interface ArticleClientCardProps {
 
 export function ArticleClientCard({ client, askClientProps }: ArticleClientCardProps) {
   const logoUrl = client.logoMedia?.url ?? null;
-  const heroUrl = client.heroImageMedia?.url ?? null;
+  // Client Mini (1.91:1) fills the card box exactly → preferred over the 6:1 hero.
+  const heroUrl = client.media?.[0]?.url ?? client.heroImageMedia?.url ?? null;
   const description = client.description?.trim();
   const hasDescription = description && description.length > 0;
 
   return (
     <Card className="min-w-0 overflow-hidden">
       {/* Media: hero with logo in bottom-right (circle); or logo/placeholder centered */}
-      <div className="aspect-video w-full bg-muted flex items-center justify-center shrink-0 relative overflow-hidden">
+      <div className="aspect-[1200/630] w-full bg-muted flex items-center justify-center shrink-0 relative overflow-hidden">
         {heroUrl && (
           <>
             <div className="absolute inset-0">
@@ -57,7 +61,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
         )}
         {logoUrl ? (
           heroUrl ? (
-            <div className="absolute bottom-3 right-3 z-10 w-14 h-14 rounded-full overflow-hidden ring-2 ring-background shadow-lg bg-background flex items-center justify-center shrink-0">
+            <div className={`absolute bottom-3 right-3 z-10 w-14 h-14 ${BRAND_AVATAR_RADIUS} overflow-hidden ring-2 ring-background shadow-lg bg-background flex items-center justify-center shrink-0`}>
               <Image
                 src={logoUrl}
                 alt={client.name}
@@ -68,7 +72,7 @@ export function ArticleClientCard({ client, askClientProps }: ArticleClientCardP
               />
             </div>
           ) : (
-            <div className="relative z-10 w-20 h-20 rounded-full overflow-hidden bg-background ring-2 ring-border shadow-sm shrink-0">
+            <div className={`relative z-10 w-20 h-20 ${BRAND_AVATAR_RADIUS} overflow-hidden bg-background ring-2 ring-border shadow-sm shrink-0`}>
               <Image
                 src={logoUrl}
                 alt={client.name}

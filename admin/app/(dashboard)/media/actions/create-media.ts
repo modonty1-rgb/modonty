@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { MediaType, MediaScope } from "@prisma/client";
 import { auth } from "@/lib/auth";
+import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 interface CreateMediaData {
   filename: string;
@@ -141,6 +142,12 @@ export async function createMedia(data: CreateMediaData) {
       },
     });
     revalidatePath("/media");
+    // Media feeds modonty's public surfaces (partner slider · client page · article
+    // client card) → invalidate its caches so a new image shows without waiting for cacheLife.
+    if (data.clientId) {
+      await revalidateModontyTag("clients");
+      await revalidateModontyTag("articles");
+    }
     return { success: true, media };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to create media";

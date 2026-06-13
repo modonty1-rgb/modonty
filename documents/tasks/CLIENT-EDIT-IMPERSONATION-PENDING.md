@@ -49,6 +49,11 @@
 
 ---
 
+## ✅ PUSHED — 2026-06-10 (commit `703dd8b`, admin v0.76.0 · console v0.17.0)
+Shipped: form redesign + A3 (clear fix) + A1 (ADMIN-gated impersonation). Changelog written (local+prod). Vercel auto-deploys. **Impersonation is DORMANT in prod until `ADMIN_CONSOLE_ACCESS_SECRET` is set on Vercel — do A2 (E2 below) BEFORE activating.**
+
+---
+
 ## E. Pre-push mechanics (when A–C are green)
 
 - [ ] **E1 — Re-run the full check**: tsc all 3 apps + live sweep + re-run the adversarial review.

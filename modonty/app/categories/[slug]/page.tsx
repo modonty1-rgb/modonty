@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -37,21 +38,29 @@ export async function generateStaticParams() {
   }
 }
 
+// Cached so the metadata is part of the prerendered shell <head> (not streamed into <body>).
+async function getCategoryForMetadata(slug: string) {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("hours");
+  return db.category.findUnique({
+    where: { slug },
+    select: {
+      name: true,
+      description: true,
+      seoTitle: true,
+      seoDescription: true,
+      socialImage: true,
+      nextjsMetadata: true,
+    },
+  });
+}
+
 export async function generateMetadata({ params }: CategoryDetailPageParams): Promise<Metadata> {
   try {
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
-    const category = await db.category.findUnique({
-      where: { slug },
-      select: {
-        name: true,
-        description: true,
-        seoTitle: true,
-        seoDescription: true,
-        socialImage: true,
-        nextjsMetadata: true,
-      },
-    });
+    const category = await getCategoryForMetadata(slug);
 
     if (!category) {
       return {

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
 import { ClientCardCta } from "./client-card-cta";
 
@@ -58,9 +59,9 @@ export function ClientListItem(props: ClientListItemProps) {
       >
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 flex-shrink-0 bg-gradient-to-br from-primary/10 to-primary/20">
+            <Avatar className={cn("h-16 w-16 flex-shrink-0 bg-gradient-to-br from-primary/10 to-primary/20", BRAND_AVATAR_RADIUS)}>
               <AvatarImage src={props.logo} alt={props.name} />
-              <AvatarFallback className="text-lg font-semibold bg-primary text-primary-foreground">{initials}</AvatarFallback>
+              <AvatarFallback className={cn("text-lg font-semibold bg-primary text-primary-foreground", BRAND_AVATAR_RADIUS)}>{initials}</AvatarFallback>
             </Avatar>
 
             <div className="flex-1 min-w-0 space-y-1">

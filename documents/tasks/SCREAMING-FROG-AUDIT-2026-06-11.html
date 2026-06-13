@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير فحص Screaming Frog — مدونتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1d212b; --line:#2a2f3a;
+    --ink:#e8eaed; --muted:#9aa3b2; --faint:#6b7280;
+    --red:#ef4444; --redbg:#2a1416; --amber:#f59e0b; --amberbg:#2a2110;
+    --yellow:#eab308; --green:#22c55e; --greenbg:#0f2418; --gray:#6b7280;
+    --blue:#3b82f6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',system-ui,sans-serif;line-height:1.7;font-size:15px}
+  .wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  h1{font-size:28px;font-weight:800;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:14px}
+  .sub b{color:var(--ink);font-weight:500}
+  h2{font-size:20px;font-weight:700;margin:38px 0 14px;display:flex;align-items:center;gap:8px}
+  .pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;display:inline-block}
+  .p-red{background:var(--redbg);color:#fca5a5;border:1px solid #5b2326}
+  .p-amber{background:var(--amberbg);color:#fcd34d;border:1px solid #5b4516}
+  .p-yellow{background:#26230f;color:#fde047;border:1px solid #555012}
+  .p-gray{background:#1c2027;color:#cbd5e1;border:1px solid #333}
+  .p-green{background:var(--greenbg);color:#86efac;border:1px solid #1d5236}
+
+  /* dashboard */
+  .dash{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 10px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center}
+  .stat .num{font-size:34px;font-weight:800;line-height:1}
+  .stat .lbl{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .stat.red .num{color:var(--red)} .stat.amber .num{color:var(--amber)}
+  .stat.green .num{color:var(--green)} .stat.gray .num{color:var(--muted)}
+
+  /* hero finding */
+  .hero{background:linear-gradient(135deg,#1e1116,#171a21);border:1px solid #5b2326;border-radius:16px;padding:22px 22px;margin:18px 0 6px}
+  .hero .k{font-size:13px;color:#fca5a5;font-weight:700;letter-spacing:.3px}
+  .hero .v{font-size:21px;font-weight:800;margin-top:6px}
+  .hero .d{color:var(--muted);font-size:14px;margin-top:8px}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0 4px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:right;padding:11px 14px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  th{background:var(--card2);color:var(--muted);font-weight:700;font-size:12.5px}
+  tr:last-child td{border-bottom:none}
+  td.ok{color:#86efac;font-weight:700} td.bad{color:#fca5a5;font-weight:700}
+  .mono{font-family:ui-monospace,'Cascadia Code',Consolas,monospace}
+  .count{font-weight:700;color:var(--ink)}
+  .note{color:var(--muted)}
+
+  .evi{background:#0b0d11;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0;font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#cbd5e1;direction:ltr;text-align:left;white-space:pre-wrap}
+  .evi .c{color:#fca5a5}
+
+  .box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:10px;padding:14px 16px;margin:12px 0}
+  .box.green{border-left-color:var(--green)}
+  .box b{color:var(--ink)}
+  ul{margin:8px 0;padding-right:20px}
+  li{margin:5px 0}
+  code{background:#0b0d11;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:#e2b4ff;direction:ltr;display:inline-block}
+  .footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px}
+  a{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🐸 تقرير فحص Screaming Frog — مدونتي</h1>
+    <div class="sub">
+      <b>التاريخ:</b> 2026-06-11 &nbsp;·&nbsp;
+      <b>النطاق:</b> www.modonty.com (production) &nbsp;·&nbsp;
+      <b>المصدر:</b> issues_overview_report.csv + تحقّق فعلي من HTML الخام + مصادر رسمية &nbsp;·&nbsp;
+      <b>النوع:</b> مراجعة + إصلاح
+    </div>
+    <div style="margin-top:12px;display:inline-block;background:var(--greenbg);border:1px solid #1d5236;color:#86efac;font-weight:800;padding:8px 16px;border-radius:10px">
+      ✅ الحالة: تم الإصلاح + التحقّق 100% — جاهز للـ push
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <div class="dash">
+    <div class="stat green"><div class="num">✅</div><div class="lbl">المشكلة الجذرية — تم الإصلاح + التحقّق 100%</div></div>
+    <div class="stat amber"><div class="num">68٪</div><div class="lbl">من الصفحات فيها النمط</div></div>
+    <div class="stat gray"><div class="num">3</div><div class="lbl">تحسينات متوسطة</div></div>
+    <div class="stat green"><div class="num">4</div><div class="lbl">إنذارات كاذبة — تتجاهلها</div></div>
+  </div>
+
+  <div class="hero">
+    <div class="k">🔴 المشكلة الجذرية الوحيدة</div>
+    <div class="v">الميتا (title · canonical · hreflang · robots) تطلع <span style="color:#fca5a5">خارج <code>&lt;head&gt;</code></span> على الصفحات الديناميكية</div>
+    <div class="d">خمسة بنود في تقرير Screaming Frog = نمط واحد، مو خمسة. المقالات والرئيسية نظيفة؛ الباقي يبثّ الميتا في الـ <code>body</code>. <b style="color:#86efac">التحقّق الرسمي خفّض الخطورة لـ «منخفضة»</b> — Next يخدم الميتا في الـ <code>&lt;head&gt;</code> للبوتات المهمة (راجع قسم الضرر).</div>
+  </div>
+
+  <!-- RESOLVED -->
+  <h2>✅ تم الإصلاح + التحقّق 100% <span class="pill p-green">2026-06-11</span></h2>
+  <div class="box green" style="border-left-width:4px">
+    كل أنواع الصفحات صارت تطلع الميتا <b>داخل <code>&lt;head&gt;</code></b> — متحقّق من <b>الملفات المبنية مسبقاً نفسها</b> (هي اللي يخدمها Vercel للزوّار والزواحف)، بلا غموض ترميز.
+  </div>
+  <table>
+    <tr><th>نوع الصفحة</th><th>الميتا في <code>&lt;head&gt;</code></th></tr>
+    <tr><td>العملاء (كل 22 — عربي + إنجليزي)</td><td class="ok">✅ IN</td></tr>
+    <tr><td>التصنيفات · المؤلّفون · الوسوم</td><td class="ok">✅ IN</td></tr>
+    <tr><td>الترند · قائمة العملاء · قائمة التصنيفات</td><td class="ok">✅ IN</td></tr>
+  </table>
+  <div class="box">
+    <b>السبب الجذري كان سببين (مو واحد):</b>
+    <ol style="margin:8px 0">
+      <li>قراءات الميتا غير مكاشة → لُفّت بـ <code>'use cache'</code> (توصية Next الرسمية) في 7 مواضع.</li>
+      <li>صفحة المؤلّف بلا <code>generateStaticParams</code> → ما تُبنى مسبقاً أبداً → تُعرض عند الطلب → تُبثّ. أُضيف.</li>
+    </ol>
+    <b>الملفات:</b> 7 معدّلة (<code>'use cache'</code> على clients/categories/tags/authors + 3 مصادر سيو القوائم) + <code>generateStaticParams</code> للمؤلّف + حذف dead code (<code>client-metadata.ts</code>).<br>
+    <b>الجودة:</b> <code>tsc</code> صفر أخطاء · build نجح · كل القشور المبنية متحقّقة.
+  </div>
+  <div class="box" style="border-left-color:var(--amber)">
+    <b>ملاحظة (مو عائق):</b> طلب برابط عربي بتطبيع Unicode مختلف عن المبني → يُعرض on-demand ويُبثّ. لكن الزواحف المهمة (Google/واتساب/فيسبوك) تاخذ الميتا في الـ <code>&lt;head&gt;</code> على أي حال (<code>htmlLimitedBots</code>)، والروابط القانونية تخدم المبني. منفصل عن هذا الإصلاح.
+  </div>
+
+  <!-- WHERE -->
+  <h2>📍 قاط فين كانت المشكلة؟ <span class="pill p-gray">قبل الإصلاح</span></h2>
+  <table>
+    <tr><th>نوع الصفحة</th><th>الحالة</th><th>الميتا داخل <code>&lt;head&gt;</code>؟</th></tr>
+    <tr><td>الرئيسية <span class="mono">/</span></td><td class="ok">✅ نظيفة</td><td>نعم</td></tr>
+    <tr><td>المقالات <span class="mono">/articles/[slug]</span></td><td class="ok">✅ نظيفة</td><td>نعم</td></tr>
+    <tr><td>العملاء <span class="mono">/clients/[slug]</span></td><td class="bad">❌ مكسورة</td><td>لا — في الـ <code>body</code></td></tr>
+    <tr><td>التصنيفات <span class="mono">/categories/[slug]</span></td><td class="bad">❌ مكسورة</td><td>لا — في الـ <code>body</code></td></tr>
+    <tr><td>المؤلّفون <span class="mono">/authors/[slug]</span></td><td class="bad">❌ مكسورة</td><td>لا — في الـ <code>body</code></td></tr>
+    <tr><td>الوسوم <span class="mono">/tags/[tag]</span></td><td class="bad">❌ مكسورة</td><td>لا — في الـ <code>body</code></td></tr>
+    <tr><td>صفحات القوائم (<span class="mono">/trending · /clients · /categories</span>)</td><td class="bad">❌ مكسورة</td><td>لا — في الـ <code>body</code></td></tr>
+  </table>
+  <div class="note" style="margin:8px 2px">النتيجة: <b style="color:#fca5a5">18 من 24</b> صفحة في العيّنة مكسورة (75٪) — مطابق للـ 164/239 في تقريرك.</div>
+
+  <!-- 5 = 1 -->
+  <h2>🔗 بنود التقرير الخمسة = عطل واحد</h2>
+  <table>
+    <tr><th>بند Screaming Frog</th><th>عدد الصفحات</th><th>الحالة</th><th>الحقيقة</th></tr>
+    <tr><td>Canonicals: Outside &lt;head&gt;</td><td class="count">85</td><td><span class="pill p-red">High</span></td><td class="note">نفس السبب الجذري</td></tr>
+    <tr><td>Hreflang: Outside &lt;head&gt;</td><td class="count">188</td><td><span class="pill p-red">High</span></td><td class="note">نفس السبب الجذري</td></tr>
+    <tr><td>Page Titles: Outside &lt;head&gt;</td><td class="count">164</td><td><span class="pill p-red">High</span></td><td class="note">نفس السبب الجذري</td></tr>
+    <tr><td>Meta Description: Outside &lt;head&gt;</td><td class="count">164</td><td><span class="pill p-amber">Medium</span></td><td class="note">نفس السبب الجذري</td></tr>
+    <tr><td>Directives (robots): Outside &lt;head&gt;</td><td class="count">76</td><td><span class="pill p-red">High</span></td><td class="note">نفس السبب الجذري</td></tr>
+  </table>
+
+  <!-- EVIDENCE -->
+  <h2>🔬 الدليل الفعلي (بايت من HTML الإنتاج)</h2>
+  <div class="note" style="margin-bottom:6px">صفحة العميل <span class="mono">/clients/شركة-جبر-سيو</span>:</div>
+  <div class="evi">&lt;/head&gt;  <span class="c">يُغلق عند بايت    3,193</span>   ← القشرة الساكنة
+&lt;title&gt;          عند بايت  157,035   ← داخل الـ body
+canonical        عند بايت  157,203   ← داخل الـ body
+robots           عند بايت  157,158   ← داخل الـ body
+og:title         عند بايت  154,680   ← داخل الـ body
+
+بعد &lt;/head&gt; مباشرة:  &lt;div hidden&gt;&lt;!--$?--&gt;&lt;template id="B:0"&gt;   = علامة بثّ Suspense</div>
+
+  <!-- CAUSE -->
+  <h2>⚙️ السبب التقني</h2>
+  <div class="box">
+    هالصفحات تُعرض <b>ديناميكياً</b> (تقرأ بيانات وقت الطلب — كوكيز/جلسة/<code>searchParams</code> أو استعلام DB غير مكاش).
+    مع <code>cacheComponents</code>/PPR في Next 16، Next يبثّ الصفحة وتطلع الميتا في الـ <code>body</code> عشان React 19 يرفعها للـ <code>head</code> <b>في المتصفح</b>.
+    المقالات تقرأ بيانات مكاشة (<code>'use cache'</code> اللي ضفناه أمس) → ميتاها داخل القشرة الساكنة = داخل الـ <code>head</code>.
+    أي زاحف بلا JavaScript (وضع Screaming Frog الافتراضي، وأغلب كاشطات السوشيال) يشوفها في الـ <code>body</code>.
+  </div>
+
+  <!-- HARM -->
+  <h2>💥 الضرر الحقيقي — مُصحّح بعد التحقّق الرسمي</h2>
+  <div class="box" style="border-left-color:var(--green)">
+    <b>تصحيح (2026-06-11):</b> تقديري الأولي «معاينة السوشيال مكسورة» كان <b>غلط</b>. وثائق Next 16.3 + ملف البوتات الفعلي <code>html-bots.ts</code> يثبتون إن Next يخدم الميتا في الـ <code>&lt;head&gt;</code> (blocking) للبوتات المعروفة، ويبثّها في الـ <code>body</code> فقط للزواحف غير المدرجة + المتصفحات.
+  </div>
+  <div class="note" style="margin:6px 2px">قائمة Next الافتراضية اللي تاخذ الميتا في الـ <code>&lt;head&gt;</code>: WhatsApp · facebookexternalhit · Twitterbot · LinkedInBot · Slackbot · Bingbot · Discordbot · Google · Google-PageRenderer.</div>
+  <table>
+    <tr><th>الجهة</th><th>الحقيقة</th></tr>
+    <tr><td><b>واتساب · فيسبوك · تويتر · لينكدإن · سلاك · ديسكورد</b></td><td class="ok">✅ ياخذون الميتا في الـ <code>&lt;head&gt;</code> → المعاينة سليمة</td></tr>
+    <tr><td><b>Google · Bing</b></td><td class="ok">✅ سليمة (blocking أو يعرضون JavaScript)</td></tr>
+    <tr><td><b>Screaming Frog</b> (UA عام) + زواحف غير مدرجة</td><td class="note">⚠️ يشوفونها في الـ <code>body</code> → تحذير شكلي فقط</td></tr>
+  </table>
+  <div class="box" style="border-left-color:var(--green)">
+    <b>الخطورة: 🟢 منخفضة (بعد التصحيح).</b> تحذير Screaming Frog صحيح لـ UA الأداة، لكنه <b>لا يعكس</b> اللي يستقبله Google/Bing/السوشيال. هذا <b>مو باج في Next — سلوك مقصود</b> (streaming metadata كميزة أداء) يتفعّل بسبب قراءاتنا غير المكاشة.
+    <b>الإصلاح = تنظيف + أداء</b> (<code>'use cache'</code> = حل Next الموصى به): يسكت التحذير + يحط الميتا في القشرة + يشيل قراءات DB غير مكاشة من كل طلب (يساعد مشكلة السعة). مو طوارئ.
+  </div>
+
+  <!-- MEDIUM -->
+  <h2>🟠 يستاهل مراجعة <span class="pill p-amber">متوسط</span></h2>
+  <table>
+    <tr><th>البند</th><th>العدد</th><th>الملاحظة</th></tr>
+    <tr><td>صور بلا <code>width/height</code></td><td class="count">145 (94٪)</td><td class="note">خطر CLS — والأداء أولوية #1 → مراجعة <code>next/image</code></td></tr>
+    <tr><td><code>H1</code> غير متسلسل</td><td class="count">197 (82٪)</td><td class="note">الـ H1 مو أول عنوان (غالباً عنوان في الهيدر قبله) → مراجعة قالب</td></tr>
+    <tr><td>صور &gt; 100kB</td><td class="count">44</td><td class="note">فرصة ضغط</td></tr>
+  </table>
+
+  <!-- LOW -->
+  <h2>🟡 نظافة / ضبط <span class="pill p-yellow">منخفض</span></h2>
+  <table>
+    <tr><th>البند</th><th>العدد</th><th>الملاحظة</th></tr>
+    <tr><td>أطوال العناوين/الأوصاف + تكرار بسيط</td><td class="count">~80 / 4</td><td class="note">ضبط تحريري</td></tr>
+    <tr><td>محتوى قليل (وسوم/تصنيفات/مؤلّفون)</td><td class="count">145</td><td class="note">طبيعي لصفحات الفهرسة — راقب الوسوم شبه الفاضية</td></tr>
+    <tr><td><code>alt</code> ناقص + فجوات <code>hreflang</code> بسيطة</td><td class="count">3 / 7</td><td class="note">return links 7 · self-ref 7 · x-default 1</td></tr>
+    <tr><td>CSP غير مضبوط</td><td class="count">287</td><td class="note">هيدر دفاعي اختياري (باقي هيدرز الأمان موجودة)</td></tr>
+  </table>
+
+  <!-- FALSE POSITIVES -->
+  <h2>⚪ إنذارات كاذبة / بالتصميم <span class="pill p-gray">تجاهلها</span></h2>
+  <table>
+    <tr><th>البند</th><th>العدد</th><th>ليش تتجاهله</th></tr>
+    <tr><td>هيدرز أمان «ناقصة»</td><td class="count">439 / 151</td><td>تحقّقت بنفسي عبر <code>curl -I</code> — <b style="color:#86efac">موجودة فعلاً</b> على كل الصفحات (Referrer-Policy · X-Content-Type · X-Frame · HSTS · Permissions). التقرير حسب ملفات الـ static ✅</td></tr>
+    <tr><td>URL غير ASCII</td><td class="count">131</td><td class="note">روابطك العربية — مقصودة وممتازة للسيو العربي</td></tr>
+    <tr><td>روابط بلا نص</td><td class="count">239 (100٪)</td><td class="note">غالباً روابط شعار/أيقونة → نضيف <code>aria-label</code> فقط</td></tr>
+    <tr><td>Noindex / Nofollow</td><td class="count">30 / 29</td><td class="note">تأكّد إنها صفحات مقصودة (أدمن/فلاتر) — على الأغلب سليمة</td></tr>
+  </table>
+
+  <!-- VERIFY -->
+  <h2>✅ تحقّق بنفسك (يثبّت التشخيص)</h2>
+  <div class="box green">
+    شغّل JavaScript Rendering في Screaming Frog: <code>Config → Spider → Rendering → JavaScript</code> ثم أعد الفحص.
+    <br>→ مجموعة «outside head» المفروض <b>تختفي</b>، لأن React 19 يرفع الوسوم للـ <code>head</code> بعد تشغيل الـ JavaScript. هذا يثبّت إن المشكلة في <b>بثّ HTML الأولي</b>، مو في الكود نفسه.
+  </div>
+
+  <!-- SOURCES -->
+  <h2>📚 المصادر الرسمية</h2>
+  <ul>
+    <li><a href="https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls">Google Search Central — Consolidate duplicate URLs</a> (شرط الـ canonical داخل <code>&lt;head&gt;</code>)</li>
+    <li><a href="https://react.dev/reference/react-dom/components/title">React 19 — <code>&lt;title&gt;</code> / metadata</a> (رفع الوسوم للـ <code>head</code>)</li>
+    <li>Next.js 16 — <code>cacheComponents</code> / streaming metadata</li>
+  </ul>
+
+  <!-- NEXT -->
+  <h2>🎯 الخطوة القادمة</h2>
+  <ol>
+    <li><b style="color:#86efac">✅ تم</b> — إرجاع ميتا الصفحات للقشرة الساكنة (<code>&lt;head&gt;</code>). جاهز للـ push بانتظار إذنك.</li>
+    <li><b>متبقّي</b> (متوسط/منخفض) — صور بلا <code>width/height</code> (CLS) · ترتيب العناوين <code>H1</code> · ضبط الأطوال — ضمن دورة تحسين الأداء.</li>
+  </ol>
+
+  <div class="footer">
+    تقرير مبني على دليل فعلي من HTML الإنتاج (curl خام) + تحقّق من المصادر الرسمية. صفر تخمين.
+  </div>
+
+</div>
+</body>
+</html>

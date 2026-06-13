@@ -4,6 +4,7 @@ import type { ComponentType, SVGProps } from "react";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
 import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { Linkedin } from "@/components/icons/linkedin";
@@ -59,6 +60,8 @@ interface ArticleLabClientCardProps {
     addressCity?: string | null;
     logoMedia?: { url: string } | null;
     heroImageMedia?: { url: string } | null;
+    /** Client Mini (1.91:1) media — preferred over the 6:1 hero for the card image. */
+    media?: { url: string }[] | null;
   };
   askClientProps?: {
     articleId: string;
@@ -93,7 +96,8 @@ const railBtn =
 
 export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLabClientCardProps) {
   const logoUrl = client.logoMedia?.url ?? null;
-  const heroUrl = client.heroImageMedia?.url ?? null;
+  // Client Mini (1.91:1) fills the 1200/630 card box exactly → preferred over the 6:1 hero.
+  const heroUrl = client.media?.[0]?.url ?? client.heroImageMedia?.url ?? null;
   const hasPhone = !!client.phone?.trim();
   // brief falls back across the fields admins actually fill (DRY, data-agnostic)
   const brief = client.description?.trim() || client.businessBrief?.trim() || client.slogan?.trim() || "";
@@ -104,8 +108,9 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
 
   return (
     <Card className="min-w-0 overflow-hidden shadow-md">
-      {/* media */}
-      <div className="relative flex aspect-[16/6] w-full shrink-0 items-center justify-center overflow-hidden bg-muted">
+      {/* media — aspect locked to the canonical hero spec (1200×630) so the image
+          shows in full, consistent with the sidebar partner slider. */}
+      <div className="relative flex aspect-[1200/630] w-full shrink-0 items-center justify-center overflow-hidden bg-muted">
         {heroUrl && (
           <>
             <div className="absolute inset-0">
@@ -116,11 +121,11 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
         )}
         {logoUrl ? (
           heroUrl ? (
-            <div className="absolute bottom-3 left-3 z-10 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-background shadow-lg ring-2 ring-background">
+            <div className={`absolute bottom-3 left-3 z-10 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-lg ring-2 ring-background`}>
               <NextImage src={logoUrl} alt={client.name} width={56} height={56} className="object-contain p-1.5" sizes="56px" />
             </div>
           ) : (
-            <div className="relative z-10 h-20 w-20 shrink-0 overflow-hidden rounded-full bg-background shadow-sm ring-2 ring-border">
+            <div className={`relative z-10 h-20 w-20 shrink-0 overflow-hidden ${BRAND_AVATAR_RADIUS} bg-background shadow-sm ring-2 ring-border`}>
               <NextImage src={logoUrl} alt={client.name} fill className="object-contain p-3" sizes="80px" />
             </div>
           )

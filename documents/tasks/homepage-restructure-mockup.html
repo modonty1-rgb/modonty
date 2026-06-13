@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إعادة هيكلة الرئيسية — Desktop · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* tokens مأخوذة حرفياً من globals.css (light) */
+    --primary: 240 100% 59%;
+    --accent: 180 100% 42%;
+    --background: 45 8% 95%;     /* #f3f2ef */
+    --foreground: 245 87% 19%;   /* navy */
+    --card: 0 0% 100%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 36%;
+    --border: 0 0% 86%;
+    --star: 38 91% 55%;
+    --radius: 0.5rem;
+    --squircle: 28%;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Tajawal',sans-serif;
+    background:hsl(var(--background));
+    color:hsl(var(--foreground));
+    line-height:1.6;
+    padding:24px 16px 80px;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+
+  /* ===== رأس توضيحي ===== */
+  .doc-head{
+    background:hsl(var(--card));
+    border:1px solid hsl(var(--border));
+    border-radius:var(--radius);
+    padding:20px 24px;
+    margin-bottom:28px;
+  }
+  .doc-head h1{font-size:22px;font-weight:800;margin-bottom:6px}
+  .doc-head p{font-size:14px;color:hsl(var(--muted-foreground))}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .pill{font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px}
+  .pill.move{background:hsl(var(--primary)/.1);color:hsl(var(--primary))}
+  .pill.stay{background:hsl(var(--muted));color:hsl(var(--muted-foreground))}
+  .pill.fix{background:hsl(var(--accent)/.12);color:hsl(180 100% 28%)}
+
+  /* ===== شارة "جديد مكانه هنا" ===== */
+  .moved-tag{
+    position:absolute;top:-11px;inset-inline-start:14px;z-index:5;
+    background:hsl(var(--primary));color:#fff;font-size:11px;font-weight:700;
+    padding:3px 10px;border-radius:999px;box-shadow:0 2px 8px hsl(var(--primary)/.4);
+  }
+  .fix-tag{
+    position:absolute;top:-11px;inset-inline-end:14px;z-index:5;
+    background:hsl(var(--accent));color:#063;font-size:11px;font-weight:800;
+    padding:3px 10px;border-radius:999px;
+  }
+
+  /* ===== شريط علوي وهمي ===== */
+  .topbar{
+    height:52px;background:hsl(var(--card));border:1px solid hsl(var(--border));
+    border-radius:var(--radius);display:flex;align-items:center;
+    padding:0 18px;gap:12px;margin-bottom:20px;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:var(--squircle);
+    background:hsl(var(--primary));color:#fff;font-weight:800;
+    display:grid;place-items:center;font-size:18px;
+  }
+  .brand-name{font-weight:800;font-size:18px}
+  .topbar .spacer{flex:1}
+  .topbar .ghost{width:80px;height:14px;border-radius:7px;background:hsl(var(--muted))}
+
+  /* ===== الشبكة الثلاثية (desktop) ===== */
+  .grid{
+    display:grid;
+    grid-template-columns:300px 1fr 300px;
+    gap:20px;align-items:start;
+  }
+  .col-label{
+    font-size:12px;font-weight:700;color:hsl(var(--muted-foreground));
+    margin-bottom:8px;text-align:center;
+  }
+
+  .card{
+    background:hsl(var(--card));border:1px solid hsl(var(--border));
+    border-radius:var(--radius);overflow:hidden;position:relative;
+  }
+  .card + .card{margin-top:16px}
+  .card-pad{padding:16px}
+  .card-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .card-title .dot{width:8px;height:8px;border-radius:999px;background:hsl(var(--primary))}
+
+  /* ===== السلايدر (CSS، aspect-video) — صار أعلى العمود الأيمن ===== */
+  .slider{position:relative;aspect-ratio:16/9;background:#0b1020;overflow:hidden}
+  .slider .bg{
+    position:absolute;inset:0;
+    background:linear-gradient(135deg,hsl(var(--primary)) 0%,hsl(var(--accent)) 100%);
+    filter:saturate(1.1);
+  }
+  .slider .logo{
+    position:absolute;inset:0;display:grid;place-items:center;
+  }
+  .slider .logo span{
+    width:96px;height:96px;border-radius:var(--squircle);background:#fff;
+    display:grid;place-items:center;font-weight:800;font-size:34px;color:hsl(var(--primary));
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .slider .overlay{
+    position:absolute;inset-inline:0;bottom:0;
+    background:linear-gradient(to top,rgba(0,0,0,.55),transparent);
+    padding:12px 14px;color:#fff;font-size:13px;font-weight:700;
+  }
+  .slider .dots{position:absolute;bottom:10px;inset-inline-start:14px;display:flex;gap:5px}
+  .slider .dots i{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.5)}
+  .slider .dots i.on{background:#fff;width:18px;border-radius:999px}
+
+  /* ===== بطاقة التصنيفات (تبقى أسفل السلايدر) ===== */
+  .disc-item{
+    display:flex;align-items:center;gap:10px;padding:9px 0;
+    border-bottom:1px solid hsl(var(--border));font-size:14px;
+  }
+  .disc-item:last-child{border-bottom:0}
+  .disc-item .ic{width:30px;height:30px;border-radius:8px;background:hsl(var(--muted));display:grid;place-items:center;font-size:14px}
+  .disc-item .num{margin-inline-start:auto;font-size:12px;color:hsl(var(--muted-foreground));font-weight:700}
+
+  /* ===== الفيد (وسط) ===== */
+  .welcome{
+    background:linear-gradient(120deg,hsl(var(--primary)/.08),hsl(var(--accent)/.06));
+    border:1px solid hsl(var(--border));border-radius:var(--radius);padding:18px;margin-bottom:16px;
+  }
+  .welcome h2{font-size:18px;font-weight:800;margin-bottom:4px}
+  .welcome p{font-size:13px;color:hsl(var(--muted-foreground))}
+  .post{background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius);padding:14px;margin-bottom:14px;display:flex;gap:12px}
+  .post .ava{width:44px;height:44px;border-radius:var(--squircle);background:hsl(var(--muted));flex:none;display:grid;place-items:center;font-weight:800;color:hsl(var(--primary))}
+  .post .body{flex:1;min-width:0}
+  .post .l1{height:13px;width:70%;background:hsl(var(--muted));border-radius:6px;margin-bottom:8px}
+  .post .l2{height:11px;width:95%;background:hsl(var(--muted));border-radius:6px;margin-bottom:6px}
+  .post .l3{height:11px;width:55%;background:hsl(var(--muted));border-radius:6px}
+  .post .thumb{width:120px;height:80px;border-radius:8px;background:hsl(var(--muted));flex:none}
+
+  /* ===== الشركاء (full height) — العمود الأيسر ===== */
+  .partners{display:flex;flex-direction:column;max-height:560px}
+  .partners .head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid hsl(var(--border))}
+  .partners .head a{font-size:12px;font-weight:700;color:hsl(var(--primary));text-decoration:none}
+  .partners .list{overflow:auto;padding:6px 8px;flex:1}
+  .p-item{display:flex;align-items:center;gap:11px;padding:10px;border-radius:10px}
+  .p-item:hover{background:hsl(var(--muted))}
+  .p-item .pl{width:42px;height:42px;border-radius:var(--squircle);background:#fff;border:1px solid hsl(var(--border));display:grid;place-items:center;font-weight:800;color:hsl(var(--primary));flex:none}
+  .p-item .pn{font-size:14px;font-weight:700}
+  .p-item .ps{font-size:12px;color:hsl(var(--muted-foreground))}
+  .p-item .verified{margin-inline-start:auto;width:18px;height:18px;border-radius:999px;background:hsl(var(--accent));color:#fff;display:grid;place-items:center;font-size:11px}
+
+  /* ===== الفوتر بالأرقام ===== */
+  .footer{
+    margin-top:34px;background:hsl(var(--foreground));color:#fff;
+    border-radius:var(--radius);overflow:hidden;position:relative;
+  }
+  .stat-strip{
+    display:grid;grid-template-columns:repeat(6,1fr);
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  .stat{
+    padding:22px 12px;text-align:center;
+    border-inline-end:1px solid rgba(255,255,255,.10);
+  }
+  .stat:last-child{border-inline-end:0}
+  .stat .v{font-size:26px;font-weight:800;line-height:1.1}
+  .stat .v.hl{color:hsl(var(--accent))}
+  .stat .k{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
+  .foot-cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px;padding:26px 28px}
+  .foot-cta h3{font-size:16px;font-weight:800;margin-bottom:6px}
+  .foot-cta p{font-size:13px;color:rgba(255,255,255,.72);margin-bottom:12px}
+  .foot-cta .btn{display:inline-block;background:hsl(var(--accent));color:#063;font-weight:800;font-size:13px;padding:9px 18px;border-radius:999px;text-decoration:none}
+  .foot-nav h4{font-size:13px;font-weight:800;margin-bottom:10px;color:rgba(255,255,255,.9)}
+  .foot-nav a{display:block;font-size:13px;color:rgba(255,255,255,.62);text-decoration:none;padding:3px 0}
+  .copy{border-top:1px solid rgba(255,255,255,.12);padding:14px 28px;font-size:12px;color:rgba(255,255,255,.55);text-align:center}
+
+  .note{
+    margin-top:14px;font-size:13px;background:hsl(var(--accent)/.1);
+    border:1px dashed hsl(var(--accent));border-radius:var(--radius);padding:12px 16px;color:hsl(180 100% 26%)
+  }
+  .note b{color:hsl(var(--foreground))}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-head">
+    <h1>إعادة هيكلة الصفحة الرئيسية — <span style="color:hsl(var(--primary))">Desktop فقط</span></h1>
+    <p>الجوال يبقى كما هو تماماً. هذا المخطط للديسكتوب (≥1024px). الألوان والحواف من <b>globals.css</b> الحقيقي.</p>
+    <div class="legend">
+      <span class="pill move">① الأرقام → الفوتر</span>
+      <span class="pill move">② السلايدر → أعلى العمود الأيمن</span>
+      <span class="pill move">③ الشركاء → كامل العمود الأيسر</span>
+      <span class="pill fix">+ يحل تأخّر ظهور السلايدر (إزالة الـ JS-gate)</span>
+      <span class="pill stay">الجوال: بلا تغيير</span>
+    </div>
+  </div>
+
+  <!-- شريط علوي وهمي -->
+  <div class="topbar">
+    <div class="brand-mark">م</div>
+    <div class="brand-name">مُدوّنتي</div>
+    <div class="spacer"></div>
+    <div class="ghost"></div>
+    <div class="ghost"></div>
+  </div>
+
+  <!-- الشبكة الجديدة -->
+  <div class="grid">
+
+    <!-- العمود الأيمن (RTL start): السلايدر فوق + التصنيفات تحت -->
+    <div>
+      <div class="col-label">العمود الأيمن</div>
+
+      <div class="card">
+        <span class="moved-tag">② السلايدر هنا</span>
+        <span class="fix-tag">⚡ بلا تأخير</span>
+        <div class="slider">
+          <div class="bg"></div>
+          <div class="logo"><span>ك</span></div>
+          <div class="overlay">من شركائنا · كيما زون</div>
+          <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-pad">
+          <div class="card-title"><span class="dot"></span> استكشف التصنيفات</div>
+          <div class="disc-item"><span class="ic">🩺</span> صحة وطب <span class="num">12</span></div>
+          <div class="disc-item"><span class="ic">⚖️</span> قانون <span class="num">8</span></div>
+          <div class="disc-item"><span class="ic">💼</span> أعمال <span class="num">15</span></div>
+          <div class="disc-item"><span class="ic">🏠</span> عقار <span class="num">6</span></div>
+          <div class="disc-item"><span class="ic">🍽️</span> مطاعم <span class="num">9</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- العمود الأوسط: الفيد -->
+    <div>
+      <div class="col-label">الفيد (المحتوى)</div>
+      <div class="welcome">
+        <h2>أهلاً بك في مُدوّنتي</h2>
+        <p>منظومة عربية تجمع شركاء موثّقين ومحتوى احترافي في مكان واحد.</p>
+      </div>
+      <div class="post"><div class="ava">ك</div><div class="body"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div><div class="thumb"></div></div>
+      <div class="post"><div class="ava">ج</div><div class="body"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div><div class="thumb"></div></div>
+      <div class="post"><div class="ava">س</div><div class="body"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div><div class="thumb"></div></div>
+      <div class="post"><div class="ava">م</div><div class="body"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div><div class="thumb"></div></div>
+    </div>
+
+    <!-- العمود الأيسر (RTL end): الشركاء كامل الارتفاع -->
+    <div>
+      <div class="col-label">العمود الأيسر</div>
+      <div class="card partners">
+        <span class="moved-tag">③ الشركاء — المساحة كاملة</span>
+        <div class="head">
+          <div class="card-title" style="margin:0"><span class="dot"></span> الشركاء</div>
+          <a href="#">استكشف ←</a>
+        </div>
+        <div class="list">
+          <div class="p-item"><div class="pl">ك</div><div><div class="pn">كيما زون</div><div class="ps">صناعات غذائية</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ج</div><div><div class="pn">جبر سيو</div><div class="ps">تسويق رقمي</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">س</div><div><div class="pn">سمايل تاون</div><div class="ps">عيادات أسنان</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ر</div><div><div class="pn">روان</div><div class="ps">تجميل</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ن</div><div><div class="pn">نخبة</div><div class="ps">استشارات</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">و</div><div><div class="pn">واحة</div><div class="ps">عقار</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ع</div><div><div class="pn">عافية</div><div class="ps">صيدليات</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ت</div><div><div class="pn">تميّز</div><div class="ps">تدريب</div></div><div class="verified">✓</div></div>
+          <div class="p-item"><div class="pl">ب</div><div><div class="pn">بنيان</div><div class="ps">مقاولات</div></div><div class="verified">✓</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>تفسير النقطة ③ (أ — المعتمد):</b> «الشركاء» تأخذ كامل ارتفاع العمود الأيسر بقائمة قابلة للتمرير
+    (sticky مع الـ scroll الداخلي). بعد نقل السلايدر صار في العمود مساحة فاضية (الهامش <code>22rem</code> القديم
+    كان يحجز مكان السلايدر) — نستثمرها كلها للشركاء.
+  </div>
+
+  <!-- الفوتر بالأرقام -->
+  <div class="footer">
+    <div style="position:relative">
+      <span class="moved-tag" style="inset-inline-start:24px">① «بالأرقام» انتقلت هنا</span>
+    </div>
+    <div class="stat-strip">
+      <div class="stat"><div class="v">٤٢</div><div class="k">المقالات</div></div>
+      <div class="stat"><div class="v">١٢٬٤٠٠</div><div class="k">مشاهدات</div></div>
+      <div class="stat"><div class="v">٨٩٠</div><div class="k">تفاعلات</div></div>
+      <div class="stat"><div class="v">٦١٠</div><div class="k">إعجابات</div></div>
+      <div class="stat"><div class="v">١٤٥</div><div class="k">تعليقات</div></div>
+      <div class="stat"><div class="v hl">٣٫٤</div><div class="k">متوسط</div></div>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-cta">
+        <h3>عندك نشاط تجاري؟</h3>
+        <p>احجز صفحتك الموثّقة على مُدوّنتي وابدأ تظهر في جوجل.</p>
+        <a href="#" class="btn">اعرف أكثر ←</a>
+      </div>
+      <div class="foot-nav">
+        <h4>روابط سريعة</h4>
+        <a href="#">الرئيسية</a>
+        <a href="#">الشركاء</a>
+        <a href="#">التصنيفات</a>
+        <a href="#">الأكثر رواجاً</a>
+      </div>
+      <div class="foot-nav">
+        <h4>قانوني</h4>
+        <a href="#">سياسة الخصوصية</a>
+        <a href="#">اتفاقية الاستخدام</a>
+        <a href="#">سياسة الكوكيز</a>
+        <a href="#">حقوق النشر</a>
+      </div>
+    </div>
+    <div class="copy">© 2026 مُدوّنتي — جميع الحقوق محفوظة</div>
+  </div>
+
+</div>
+</body>
+</html>

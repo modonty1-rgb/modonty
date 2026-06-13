@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
 import { MetricChip } from "./metric-chip";
 import { ClientCardExternalLink } from "./client-card-external-link";
@@ -82,7 +83,7 @@ export function ClientCard(props: ClientCardProps) {
       >
         <CardHeader className="space-y-4">
           <div className="flex items-start justify-between">
-            <div className="h-20 w-20 rounded-full ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20 overflow-hidden flex items-center justify-center flex-shrink-0">
+            <div className={cn("h-20 w-20 ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20 overflow-hidden flex items-center justify-center flex-shrink-0", BRAND_AVATAR_RADIUS)}>
               {props.logo ? (
                 <Image
                   src={props.logo}

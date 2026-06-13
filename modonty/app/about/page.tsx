@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import NextImage from "next/image";
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { generateStructuredData } from "@/lib/seo";
+import { generateStructuredData, buildAlternates } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getAboutPageForMetadata } from "./helpers/about-metadata";
 import { getAboutPageContent } from "./helpers/about-content";
@@ -59,7 +59,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: `${title} - ${siteName}`,
       description,
-      alternates: { canonical: canonicalUrl },
+      alternates: buildAlternates(canonicalUrl),
       openGraph,
       twitter,
       robots: {

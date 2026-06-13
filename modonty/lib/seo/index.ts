@@ -4,6 +4,8 @@ import { buildArticleImageObjects } from "./image-aspect-ratios";
 import { BRAND_AR, BRAND_EN, SITE_URL, LOGO_URL } from "@/lib/brand";
 import { getBrandMedia } from "@/lib/settings/get-brand-media";
 
+export { buildAlternates } from "./build-alternates";
+
 /**
  * Serialize JSON-LD for safe inline injection inside <script type="application/ld+json">.
  * Escapes `<` → `<` so a string field containing `</script>` (or any markup) can't

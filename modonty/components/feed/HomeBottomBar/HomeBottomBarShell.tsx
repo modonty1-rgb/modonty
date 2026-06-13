@@ -26,6 +26,7 @@ import {
   IconChevronLeft,
   IconGift,
 } from "@/lib/icons";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { cn } from "@/lib/utils";
 import type { ClientHeroSlide } from "@/app/api/helpers/client-queries";
 import type { FilterOption } from "./types";
@@ -264,7 +265,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                             onClick={closePartners}
                             className="flex min-w-0 flex-1 items-start gap-3 px-2 py-2"
                           >
-                            <Avatar className="h-8 w-8 shrink-0 overflow-hidden rounded-full mt-0.5">
+                            <Avatar className={cn("h-8 w-8 shrink-0 overflow-hidden mt-0.5", BRAND_AVATAR_RADIUS)}>
                               <AvatarImage
                                 src={p.logo}
                                 alt={p.name}
@@ -272,7 +273,7 @@ export function HomeBottomBarShell({ categories, industries, tags, partners, her
                                 loading="lazy"
                                 decoding="async"
                               />
-                              <AvatarFallback className="rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                              <AvatarFallback className={cn("bg-primary text-[10px] font-medium text-primary-foreground", BRAND_AVATAR_RADIUS)}>
                                 {p.name.slice(0, 1)}
                               </AvatarFallback>
                             </Avatar>

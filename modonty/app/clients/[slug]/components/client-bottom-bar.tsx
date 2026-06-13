@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "@/components/providers/SessionContext";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconUsers, IconCheck, IconShare, IconFeatured, IconClients, IconSaved } from "@/lib/icons";
 import { stripCloudinaryTransforms } from "@/lib/image-utils";
 import { cn } from "@/lib/utils";
@@ -148,7 +149,7 @@ export function ClientBottomBar({
   const chipInner = (
     <>
       <span className="relative inline-block">
-        <span className="grid size-14 place-items-center overflow-hidden rounded-full bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95">
+        <span className={cn("grid size-14 place-items-center overflow-hidden bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95", BRAND_AVATAR_RADIUS)}>
           {logoSrc ? (
             <NextImage src={logoSrc} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
           ) : (

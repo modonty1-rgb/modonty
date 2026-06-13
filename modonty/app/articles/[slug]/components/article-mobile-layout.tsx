@@ -40,6 +40,7 @@ interface ArticleMobileLayoutProps {
       description?: string | null;
       logoMedia?: { url: string } | null;
       heroImageMedia?: { url: string } | null;
+      media?: { url: string }[] | null;
     } | null;
     askClientProps?: {
       articleId: string;

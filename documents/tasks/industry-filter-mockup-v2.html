@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>موكب v2 — فلتر الصناعات فوق قائمة الشركاء (RightSidebar)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ===== توكنات مودونتي الحقيقية (globals.css) ===== */
+  :root{
+    --background: 45 8% 95%;        /* #f3f2ef */
+    --foreground: 245 87% 19%;      /* navy */
+    --card: 0 0% 100%;
+    --primary: 240 100% 59%;        /* Brand Blue */
+    --primary-foreground: 0 0% 100%;
+    --accent: 180 100% 42%;         /* Brand Teal */
+    --accent-foreground: 245 87% 19%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 36%;
+    --border: 0 0% 86%;
+    --radius: 0.5rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Tajawal',sans-serif;
+    background:hsl(var(--background));
+    color:hsl(var(--foreground));
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    gap:24px;padding:32px 16px 64px;
+  }
+  .page-note{max-width:680px;text-align:center;color:hsl(var(--muted-foreground));font-size:13px;line-height:1.8}
+  .page-note b{color:hsl(var(--foreground))}
+
+  /* ===== العمود الأيمن = 300px, ارتفاع ثابت زي الحقيقي ===== */
+  .sidebar{width:300px;display:flex;flex-direction:column;gap:12px;height:560px}
+
+  .card{background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius)}
+
+  /* ===== صندوق فلتر الصناعات (الجديد — فوق) ===== */
+  .filter-box{padding:12px;flex-shrink:0}
+  .filter-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .filter-title{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700}
+  .filter-title svg{width:15px;height:15px;color:hsl(var(--accent))}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+    cursor:pointer;font-size:11.5px;font-weight:500;border:1px solid transparent;
+    background:hsl(var(--muted));color:hsl(var(--muted-foreground));transition:all .15s;user-select:none;
+  }
+  .chip:hover{background:hsl(var(--border))}
+  .chip .count{font-size:10px;font-weight:700;opacity:.6}
+  .chip.active{background:hsl(var(--accent));color:hsl(var(--accent-foreground));font-weight:700}
+  .chip.active .count{opacity:.8}
+
+  /* ===== صندوق الشركاء (NewClientsCard الحالي) ===== */
+  .partners-card{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px}
+  .partners-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0}
+  .partners-head .ttl{display:flex;align-items:center;gap:8px}
+  .partners-head svg{width:16px;height:16px;color:hsl(var(--primary))}
+  .partners-head h2{font-size:11px;font-weight:600;color:hsl(var(--muted-foreground));text-transform:uppercase;letter-spacing:.5px}
+  .partners-head .explore{font-size:11px;color:hsl(var(--primary));text-decoration:none;display:inline-flex;align-items:center;gap:2px}
+  .partners-head .explore:hover{text-decoration:underline}
+  .count-line{font-size:10.5px;color:hsl(var(--muted-foreground));margin-bottom:6px;flex-shrink:0}
+  .count-line b{color:hsl(var(--accent-foreground));background:hsl(var(--accent)/.15);padding:1px 6px;border-radius:6px;font-weight:700}
+
+  .list{flex:1;min-height:0;overflow-y:auto;padding-inline-end:4px}
+  .list::-webkit-scrollbar{width:6px}
+  .list::-webkit-scrollbar-thumb{background:hsl(var(--border));border-radius:999px}
+
+  .row{
+    display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:8px;
+    text-decoration:none;color:inherit;transition:background .15s;cursor:pointer;
+  }
+  .row:hover{background:hsl(var(--muted))}
+  .row .logo{
+    width:36px;height:36px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;
+    justify-content:center;font-weight:800;font-size:15px;color:#fff;
+  }
+  .row .meta{min-width:0;flex:1;display:flex;flex-direction:column}
+  .row .name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row:hover .name{color:hsl(var(--primary))}
+  .row .ind{font-size:10.5px;color:hsl(var(--muted-foreground));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .arts{font-size:10.5px;color:hsl(var(--muted-foreground));flex-shrink:0;font-weight:600}
+
+  .empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    height:100%;color:hsl(var(--muted-foreground));font-size:12px;text-align:center}
+  .empty svg{width:28px;height:28px;opacity:.35}
+
+  details{max-width:680px;width:100%;background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius);padding:14px 18px}
+  summary{cursor:pointer;font-weight:700;font-size:13px}
+  .spec{margin-top:10px;font-size:12px;line-height:1.9;color:hsl(var(--muted-foreground))}
+  .spec code{background:hsl(var(--muted));padding:1px 5px;border-radius:4px;font-family:monospace;color:hsl(var(--foreground))}
+  .spec b{color:hsl(var(--foreground))}
+</style>
+</head>
+<body>
+
+  <p class="page-note">
+    <b>الموكب v2</b> — صندوق فلتر الصناعات <b>فوق صندوق الشركاء</b> في العمود الأيمن
+    (<b>NewClientsCard</b>). اضغط صناعة → القائمة تحته تفلتر <b>فورًا بلا إعادة تحميل</b>.
+    «الكل» يرجّع الجميع. الصناعات المعروضة = فقط اللي فيها شريك.
+  </p>
+
+  <div class="sidebar">
+
+    <!-- ===== 1) صندوق فلتر الصناعات (جديد، فوق) ===== -->
+    <div class="card filter-box">
+      <div class="filter-head">
+        <span class="filter-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          تصفية حسب الصناعة
+        </span>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <!-- ===== 2) صندوق الشركاء (NewClientsCard — يُفلتر) ===== -->
+    <div class="card partners-card">
+      <div class="partners-head">
+        <span class="ttl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h2>الشركاء</h2>
+        </span>
+        <a href="#" class="explore">استكشف ‹</a>
+      </div>
+      <div class="count-line" id="cline"></div>
+      <div class="list" id="list"></div>
+      <div class="empty" id="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>لا شركاء في هذا القطاع</span>
+      </div>
+    </div>
+
+  </div>
+
+  <details>
+    <summary>مواصفة المطابقة (mockup = عقد)</summary>
+    <div class="spec">
+      • العمود الأيمن = <code>w-[300px]</code> ارتفاع ثابت (نفس <b>RightSidebar</b>).<br />
+      • صندوق الفلتر <b>كرت منفصل فوق</b> <code>&lt;NewClientsCard /&gt;</code> داخل <code>&lt;aside&gt;</code>.<br />
+      • القائمة = نفس <b>NewClientItem</b> (شعار + اسم + صناعة + عدد مقالات).<br />
+      • الشِّب النشط = <code>bg-accent</code> (Brand Teal) + نص navy · غيره <code>bg-muted</code>.<br />
+      • مصدر الصناعات = القطاعات اللي فيها شريك نشط (تُحسب من نفس قائمة الشركاء).<br />
+      • التفلتر <b>على العميل</b> (كلاينت كومبونت صغير) — <code>getClientsForSidebar</code> أصلاً يرجّع <code>industry</code> لكل شريك.<br />
+      • <b>قرار مرحلة 2:</b> الحد الحالي <code>take: 20</code> → نرفعه عشان الفلتر يشمل كل الشركاء.
+    </div>
+  </details>
+
+<script>
+  // بيانات تجريبية (موكب فقط)
+  const PARTNERS = [
+    { name:"مُدوّنتي",         ind:"تقنية",  arts:24, c:"#1f3bff" },
+    { name:"تك سوفت",         ind:"تقنية",  arts:11, c:"#2563eb" },
+    { name:"داتا لاب",         ind:"تقنية",  arts:7,  c:"#3b5bdb" },
+    { name:"جبر سيو",         ind:"تسويق",  arts:18, c:"#00b3b3" },
+    { name:"حملة بلس",        ind:"تسويق",  arts:5,  c:"#0d9488" },
+    { name:"عيادة النور",      ind:"صحة",   arts:9,  c:"#0ea15a" },
+    { name:"مركز الشفاء",      ind:"صحة",   arts:6,  c:"#16a34a" },
+    { name:"متجر الأناقة",     ind:"تجارة",  arts:14, c:"#d97706" },
+    { name:"سوق الخير",       ind:"تجارة",  arts:3,  c:"#ea580c" },
+    { name:"أكاديمية المعرفة", ind:"تعليم",  arts:8,  c:"#7c3aed" },
+    { name:"منصة تعلّم",       ind:"تعليم",  arts:4,  c:"#9333ea" },
+    { name:"بيت المحاماة",     ind:"قانون",  arts:2,  c:"#475569" },
+  ];
+
+  const counts = PARTNERS.reduce((m,p)=>{m[p.ind]=(m[p.ind]||0)+1;return m;},{});
+  const industries = [{name:"الكل",count:PARTNERS.length,all:true},
+    ...Object.keys(counts).map(k=>({name:k,count:counts[k]}))];
+
+  const chipsEl=document.getElementById('chips');
+  const listEl =document.getElementById('list');
+  const emptyEl=document.getElementById('empty');
+  const clineEl=document.getElementById('cline');
+  let active="الكل";
+
+  function renderChips(){
+    chipsEl.innerHTML="";
+    industries.forEach(ind=>{
+      const b=document.createElement('button');
+      b.className="chip"+(ind.name===active?" active":"");
+      b.innerHTML=`${ind.name}<span class="count">${ind.count}</span>`;
+      b.onclick=()=>{active=ind.name;apply();};
+      chipsEl.appendChild(b);
+    });
+  }
+
+  function apply(){
+    const pool = active==="الكل" ? PARTNERS : PARTNERS.filter(p=>p.ind===active);
+    renderChips();
+    clineEl.innerHTML = pool.length
+      ? `يعرض <b>${pool.length}</b> شريك${active==="الكل"?"":` في «${active}»`}`
+      : "";
+    listEl.innerHTML="";
+    if(!pool.length){ emptyEl.style.display="flex"; listEl.style.display="none"; return; }
+    emptyEl.style.display="none"; listEl.style.display="block";
+    pool.forEach(p=>{
+      const a=document.createElement('a');
+      a.className="row";a.href="#";
+      a.innerHTML=`
+        <span class="logo" style="background:${p.c}">${p.name.slice(0,1)}</span>
+        <span class="meta">
+          <span class="name">${p.name}</span>
+          <span class="ind">${p.ind}</span>
+        </span>
+        <span class="arts">${p.arts} مقال</span>`;
+      listEl.appendChild(a);
+    });
+  }
+
+  apply();
+</script>
+</body>
+</html>

@@ -160,6 +160,7 @@ export function MediaFilters({ clients, defaultClientId }: MediaFiltersProps) {
                   <SelectItem value="GENERAL">General</SelectItem>
                   <SelectItem value="LOGO">Logo</SelectItem>
                   <SelectItem value="POST">Post</SelectItem>
+                  <SelectItem value="CLIENT_MINI">Client Mini</SelectItem>
                   <SelectItem value="OGIMAGE">OG Image</SelectItem>
                   <SelectItem value="TWITTER_IMAGE">Twitter Image</SelectItem>
                 </SelectContent>

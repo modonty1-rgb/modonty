@@ -63,6 +63,7 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [gridSize, setGridSize] = useState<"compact" | "standard">("standard");
+  const [groupByClient, setGroupByClient] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string } | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -168,6 +169,8 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
           onViewModeChange={setViewMode}
           gridSize={gridSize}
           onGridSizeChange={setGridSize}
+          groupByClient={groupByClient}
+          onGroupByClientChange={setGroupByClient}
           sortBy={initialSort}
           onSortChange={handleSortChange}
           searchValue={localSearch}
@@ -202,6 +205,7 @@ export function MediaPageClient({ media, sortBy: initialSort, searchQuery, pagin
               media={media}
               viewMode={viewMode}
               gridSize={gridSize}
+              groupByClient={groupByClient}
               onDelete={handleDelete}
               isDeleting={isChecking || isDeleting}
             />

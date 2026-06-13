@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { List, Upload, Search, X, LayoutGrid, Grid2x2 } from "lucide-react";
+import { List, Upload, Search, X, LayoutGrid, Grid2x2, FolderTree } from "lucide-react";
 import Link from "next/link";
 
 interface MediaToolbarProps {
@@ -18,6 +18,8 @@ interface MediaToolbarProps {
   onViewModeChange: (mode: "grid" | "list") => void;
   gridSize: "compact" | "standard";
   onGridSizeChange: (size: "compact" | "standard") => void;
+  groupByClient: boolean;
+  onGroupByClientChange: (value: boolean) => void;
   sortBy: string;
   onSortChange: (sort: string) => void;
   searchValue: string;
@@ -31,6 +33,8 @@ export function MediaToolbar({
   onViewModeChange,
   gridSize,
   onGridSizeChange,
+  groupByClient,
+  onGroupByClientChange,
   sortBy,
   onSortChange,
   searchValue,
@@ -60,6 +64,7 @@ export function MediaToolbar({
           <button
             type="button"
             onClick={onSearchClear}
+            aria-label="Clear search"
             className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" />
@@ -97,6 +102,18 @@ export function MediaToolbar({
           <List className="h-4 w-4" />
         </Button>
       </div>
+
+      {/* Group by client toggle */}
+      <Button
+        variant={groupByClient ? "default" : "outline"}
+        size="sm"
+        onClick={() => onGroupByClientChange(!groupByClient)}
+        className="h-9 gap-1.5"
+        title="Group by client"
+      >
+        <FolderTree className="h-4 w-4" />
+        <span className="hidden sm:inline">Group</span>
+      </Button>
 
       {/* Sort */}
       {mounted ? (

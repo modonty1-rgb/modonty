@@ -1,6 +1,8 @@
 import Link from "@/components/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconFilter } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 import { PartnerRow } from "./PartnerRow";
 
 interface NewClientItemProps {
@@ -16,7 +18,7 @@ export function NewClientItem({ clientName, clientSlug, clientLogo, industry, ar
     <PartnerRow slug={clientSlug}>
       {/* Primary action — visit the partner profile */}
       <Link href={`/clients/${clientSlug}`} className="flex flex-1 min-w-0 items-start gap-3 py-1 px-1">
-        <Avatar className="h-7 w-7 shrink-0 rounded-full overflow-hidden mt-0.5">
+        <Avatar className={cn("h-7 w-7 shrink-0 overflow-hidden mt-0.5", BRAND_AVATAR_RADIUS)}>
           <AvatarImage
             src={clientLogo}
             alt={clientName}
@@ -24,7 +26,7 @@ export function NewClientItem({ clientName, clientSlug, clientLogo, industry, ar
             loading="lazy"
             decoding="async"
           />
-          <AvatarFallback className="rounded-full text-[10px] font-medium bg-primary text-primary-foreground">
+          <AvatarFallback className={cn("text-[10px] font-medium bg-primary text-primary-foreground", BRAND_AVATAR_RADIUS)}>
             {clientName?.slice(0, 1) ?? "?"}
           </AvatarFallback>
         </Avatar>

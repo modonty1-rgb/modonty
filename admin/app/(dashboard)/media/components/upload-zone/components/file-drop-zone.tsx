@@ -10,6 +10,8 @@ interface FileDropZoneProps {
   onDrop: (e: React.DragEvent) => void;
   isDisabled: boolean;
   isDragging: boolean;
+  /** Optional spec hint shown in the dropzone, e.g. "Crop to 6:1 · 2400×400". */
+  specHint?: string;
 }
 
 export function FileDropZone({
@@ -19,6 +21,7 @@ export function FileDropZone({
   onDrop,
   isDisabled,
   isDragging,
+  specHint,
 }: FileDropZoneProps) {
   return (
     <Card>
@@ -29,6 +32,7 @@ export function FileDropZone({
           onDrop={onDrop}
           className={`
             border-2 border-dashed rounded-lg p-8 text-center transition-colors
+            flex min-h-[300px] flex-col items-center justify-center
             ${isDragging && !isDisabled ? "border-primary bg-primary/5" : "border-border"}
             ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-primary/50"}
           `}
@@ -60,6 +64,11 @@ export function FileDropZone({
               <p className="text-sm text-muted-foreground">
                 or click to browse
               </p>
+              {specHint && (
+                <p className="mt-1 inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                  {specHint}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground mt-2">
                 Supported: Images (JPG, PNG, GIF, WebP, SVG), Videos (MP4, WebM)
                 <br />

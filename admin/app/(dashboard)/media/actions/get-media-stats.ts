@@ -44,6 +44,7 @@ function normalizeMediaTypeCounts(
       if (type === "GENERAL") acc.GENERAL += 1;
       else if (type === "LOGO") acc.LOGO += 1;
       else if (type === "OGIMAGE") acc.OGIMAGE += 1;
+      else if (type === "CLIENT_MINI") acc.CLIENT_MINI += 1;
       else if (type === "POST") acc.POST += 1;
       else if (type === "TWITTER_IMAGE") acc.TWITTER_IMAGE += 1;
       else if (type === "NULL") {
@@ -55,6 +56,7 @@ function normalizeMediaTypeCounts(
       GENERAL: 0,
       LOGO: 0,
       OGIMAGE: 0,
+      CLIENT_MINI: 0,
       POST: 0,
       TWITTER_IMAGE: 0,
       NULL: 0,
@@ -195,6 +197,7 @@ export async function getMediaStats() {
         GENERAL: 0,
         LOGO: 0,
         OGIMAGE: 0,
+        CLIENT_MINI: 0,
         POST: 0,
         TWITTER_IMAGE: 0,
       },

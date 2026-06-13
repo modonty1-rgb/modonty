@@ -79,7 +79,11 @@ export default function RootLayout({
       </head>
       <body className="bg-background font-sans overflow-x-hidden">
         <GTMContainer />
-        <WebVitals />
+        {/* WebVitals reads current-time via useReportWebVitals → must sit under a
+            Suspense boundary (Next 16 cacheComponents). Renders null, so fallback=null. */}
+        <Suspense fallback={null}>
+          <WebVitals />
+        </Suspense>
         <HotjarScript />
         <ThemeProvider
           attribute="class"

@@ -1,19 +1,30 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import type { MediaType } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
 import { messages } from "@/lib/messages";
 import { optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
+import { requiresCrop } from "@/lib/media/media-specs";
 import { createMedia, getClients } from "../../../actions/media-actions";
 import { validateFile } from "../utils/file-validation";
 import { useCloudinaryUpload } from "./use-cloudinary-upload";
 import type { UploadFile, Client, SEOFormData, UploadZoneProps } from "../types";
 
+interface EditorState {
+  source: string;
+  fileName: string;
+}
+
 export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneProps) {
   const { toast } = useToast();
   const [clientId, setClientId] = useState<string>(initialClientId || "");
+  const [mediaType, setMediaType] = useState<MediaType | "">("");
   const [clients, setClients] = useState<Client[]>([]);
   const [files, setFiles] = useState<UploadFile[]>([]);
+  const [editorState, setEditorState] = useState<EditorState | null>(null);
+  // Bytes of the file the designer picked — shown next to the compressed WebP size.
+  const [originalSize, setOriginalSize] = useState<number>(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoadingClients, setIsLoadingClients] = useState(true);
   const [savingFileId, setSavingFileId] = useState<string | null>(null);
@@ -74,58 +85,62 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
         });
         return;
       }
+      if (!mediaType) {
+        toast({
+          title: "Role Required",
+          description: "Pick the image role first — it sets the required crop ratio.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const file = Array.isArray(fileList) ? fileList[0] : fileList[0];
       if (!file) return;
+      setOriginalSize(file.size);
+
+      // Cleanup previous preview URLs before anything else.
+      setFiles((prev) => {
+        prev.forEach((f) => {
+          if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+        });
+        return [];
+      });
 
       const error = validateFile(file);
-      const uploadFile: UploadFile = {
-        id: `${Date.now()}-${Math.random()}`,
-        file,
-        progress: 0,
-        status: error ? "error" : "pending",
-        error: error || undefined,
-      };
-
       if (error) {
         toast({
           title: "File Validation Failed",
           description: error,
           variant: "destructive",
         });
+        setFiles([
+          { id: `${Date.now()}-${Math.random()}`, file, progress: 0, status: "error", error },
+        ]);
+        return;
       }
 
-      // Cleanup previous preview URL
-      setFiles((prev) => {
-        prev.forEach((f) => {
-          if (f.previewUrl) {
-            URL.revokeObjectURL(f.previewUrl);
-          }
-        });
-        return [];
-      });
+      const isImage = file.type.startsWith("image/");
+      const objectUrl = isImage ? URL.createObjectURL(file) : undefined;
 
-      // Create preview URL for images
-      let previewUrl: string | undefined;
-      if (file.type.startsWith("image/")) {
-        previewUrl = URL.createObjectURL(file);
+      // Fixed-ratio role + image → force the editor so the output ALWAYS
+      // matches the spec (the "control"). The active file is set on editor save.
+      if (isImage && objectUrl && requiresCrop(mediaType)) {
+        setEditorState({ source: objectUrl, fileName: file.name });
+        return;
       }
 
-      const newFile = {
-        ...uploadFile,
-        previewUrl,
-      };
-
-      setFiles([newFile]);
-
+      // Free role (GENERAL / GALLERY) or video → set the file directly.
+      setFiles([
+        { id: `${Date.now()}-${Math.random()}`, file, progress: 0, status: "pending", previewUrl: objectUrl },
+      ]);
     },
-    [clientId, toast]
+    [clientId, mediaType, toast]
   );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isUploading && clientId) {
+    if (!isUploading && clientId && mediaType) {
       setIsDragging(true);
     }
   };
@@ -141,17 +156,79 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     e.stopPropagation();
     setIsDragging(false);
 
-    if (!isUploading && clientId && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    if (!isUploading && clientId && mediaType && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
     }
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isUploading && clientId && e.target.files && e.target.files.length > 0) {
+    if (!isUploading && clientId && mediaType && e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
     }
     e.target.value = "";
   };
+
+  // Clear any picked/cropped file + editor + size + SEO — a clean slate.
+  const resetFlowFiles = useCallback(() => {
+    setFiles((prev) => {
+      prev.forEach((f) => {
+        if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+      });
+      return [];
+    });
+    setEditorState((prev) => {
+      if (prev) URL.revokeObjectURL(prev.source);
+      return null;
+    });
+    setOriginalSize(0);
+    setSeoForm({ altText: "", title: "", description: "" });
+  }, []);
+
+  // Changing the role resets any chosen file so the new ratio is enforced cleanly.
+  const handleMediaTypeChange = useCallback(
+    (type: MediaType) => {
+      setMediaType(type);
+      resetFlowFiles();
+    },
+    [resetFlowFiles]
+  );
+
+  // "Change" from the summary rail — reopen the client step (role kept, it's
+  // client-independent) or the role step. Both drop any in-progress file.
+  const handleChangeClient = useCallback(() => {
+    resetFlowFiles();
+    setClientId("");
+  }, [resetFlowFiles]);
+
+  const handleChangeRole = useCallback(() => {
+    resetFlowFiles();
+    setMediaType("");
+  }, [resetFlowFiles]);
+
+  // Editor saved a cropped/enhanced image → it becomes the active upload file.
+  const handleEditorSave = useCallback((croppedFile: File) => {
+    setEditorState((prev) => {
+      if (prev) URL.revokeObjectURL(prev.source);
+      return null;
+    });
+    setFiles((prev) => {
+      prev.forEach((f) => {
+        if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+      });
+      return [];
+    });
+    const previewUrl = URL.createObjectURL(croppedFile);
+    setFiles([
+      { id: `${Date.now()}-${Math.random()}`, file: croppedFile, progress: 0, status: "pending", previewUrl },
+    ]);
+  }, []);
+
+  const handleEditorClose = useCallback(() => {
+    setEditorState((prev) => {
+      if (prev) URL.revokeObjectURL(prev.source);
+      return null;
+    });
+  }, []);
 
   const removeFile = (id: string) => {
     setFiles((prev) => {
@@ -170,6 +247,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
 
   const handleAddNew = () => {
     setFiles([]);
+    setOriginalSize(0);
     setSeoForm({
       altText: "",
       title: "",
@@ -242,6 +320,7 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
         mimeType: uploadFile.file.type,
         clientId: resolvedClientId,
         scope: resolvedScope as import("@prisma/client").MediaScope,
+        type: (mediaType || undefined) as MediaType | undefined,
         fileSize: uploadFile.file.size,
         width: fileWidth,
         height: fileHeight,
@@ -398,14 +477,17 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
   };
 
   const isUploading = files.some((f) => f.status === "uploading");
-  const isDisabled = isUploading || !clientId;
+  const isDisabled = isUploading || !clientId || !mediaType;
 
   return {
     // State
     clientId,
     setClientId,
+    mediaType,
     clients,
     files,
+    editorState,
+    originalSize,
     isDragging,
     isLoadingClients,
     savingFileId,
@@ -414,11 +496,16 @@ export function useUploadZone({ onUploadComplete, initialClientId }: UploadZoneP
     isUploading,
     isDisabled,
     // Handlers
+    handleMediaTypeChange,
+    handleChangeClient,
+    handleChangeRole,
     handleDragOver,
     handleDragLeave,
     handleDrop,
     handleFileInput,
     handleAddNew,
     handleSaveMedia,
+    handleEditorSave,
+    handleEditorClose,
   };
 }

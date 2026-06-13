@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { cacheTag, cacheLife } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { generateMetadataFromSEO, generateBreadcrumbStructuredData } from "@/lib/seo";
@@ -22,20 +23,28 @@ export async function generateStaticParams() {
   }
 }
 
+// Cached so the metadata is part of the prerendered shell <head> (not streamed into <body>).
+async function getTagForMetadata(decodedSlug: string) {
+  "use cache";
+  cacheTag("tags");
+  cacheLife("hours");
+  return db.tag.findUnique({
+    where: { slug: decodedSlug },
+    select: {
+      name: true,
+      seoTitle: true,
+      seoDescription: true,
+      socialImage: true,
+      nextjsMetadata: true,
+    },
+  });
+}
+
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    const tag = await db.tag.findUnique({
-      where: { slug: decodedSlug },
-      select: {
-        name: true,
-        seoTitle: true,
-        seoDescription: true,
-        socialImage: true,
-        nextjsMetadata: true,
-      },
-    });
+    const tag = await getTagForMetadata(decodedSlug);
 
     if (!tag) return { title: "وسم غير موجود - مدونتي" };
 

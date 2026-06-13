@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import type { Metadata } from "next";
 import { SETTINGS_SINGLETON_WHERE } from "@/lib/settings/settings-singleton";
@@ -10,6 +11,9 @@ export interface CategoriesPageSeo {
 // Read cached Metadata + JSON-LD for the categories page from Settings (SOT).
 // Does not build or mutate SEO – it only reads what admin flows cached.
 export async function getCategoriesPageSeo(): Promise<CategoriesPageSeo> {
+  "use cache";
+  cacheTag("settings");
+  cacheLife("hours");
   const settings = await db.settings.findUnique({
     where: SETTINGS_SINGLETON_WHERE,
     select: {
