@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cleanExpiredOtps } from "./orphan-cleaner";
 import { cleanExpiredSessions } from "./session-cleaner";
 import { cleanStaleVersions } from "./stale-versions";
-import { createTTLIndex, getIndexHealth } from "./index-health";
+import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-health";
 import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
@@ -66,6 +66,20 @@ export async function runStepTtl(): Promise<MaintenanceStepResult> {
     return ok("ttl", "TTL Indexes Created", created);
   } catch (e) {
     return fail("ttl", "TTL Indexes Created", e);
+  }
+}
+
+export async function runStepPerfIndexes(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await ensurePerfIndexes();
+    return ok(
+      "perfIndexes",
+      "Query Indexes",
+      r.created,
+      r.details.length ? r.details.join(" · ") : undefined,
+    );
+  } catch (e) {
+    return fail("perfIndexes", "Query Indexes", e);
   }
 }
 

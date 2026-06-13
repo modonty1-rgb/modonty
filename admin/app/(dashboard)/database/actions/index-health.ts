@@ -79,3 +79,33 @@ export async function getIndexHealth(): Promise<TTLIndexStatus[]> {
     })
   );
 }
+
+// Non-TTL query indexes Prisma defines in the schema but `prisma db push` can't
+// safely create on prod (it would ALSO drop the manually-managed TTL indexes
+// above, which aren't in the schema). createIndexes is additive + idempotent:
+// it creates the collection if missing and NEVER drops anything. Names match
+// Prisma's so a future `db push` sees them already in sync.
+const EXPECTED_PERF_INDEXES: { collection: string; key: Record<string, number>; name: string }[] = [
+  { collection: "page_views", key: { sessionId: 1, createdAt: 1 }, name: "page_views_sessionId_createdAt_idx" },
+  { collection: "page_views", key: { createdAt: 1 }, name: "page_views_createdAt_idx" },
+];
+
+export async function ensurePerfIndexes(): Promise<{ created: number; details: string[] }> {
+  let created = 0;
+  const details: string[] = [];
+  for (const idx of EXPECTED_PERF_INDEXES) {
+    try {
+      const res = (await db.$runCommandRaw({
+        createIndexes: idx.collection,
+        indexes: [{ key: idx.key, name: idx.name }],
+      })) as unknown as { numIndexesBefore?: number; numIndexesAfter?: number };
+      if ((res.numIndexesAfter ?? 0) > (res.numIndexesBefore ?? 0)) {
+        created++;
+        details.push(idx.name);
+      }
+    } catch (e) {
+      details.push(`${idx.name} FAILED: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  return { created, details };
+}
