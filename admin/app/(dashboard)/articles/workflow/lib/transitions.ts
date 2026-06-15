@@ -70,20 +70,10 @@ export const TRANSITIONS = {
       "The article will move from Needs Revision back to Draft. The Quality Gate will run again before you can send it to the client.",
     successMessage: "Article re-submitted to Draft",
   },
-  "approval-to-scheduled": {
-    from: ArticleStatus.AWAITING_APPROVAL,
-    to: ArticleStatus.SCHEDULED,
-    fromLabel: "Awaiting Approval",
-    toLabel: "Scheduled",
-    pageTitle: "Approval → Scheduled",
-    pageDescription:
-      "Articles approved by the client and scheduled for future publishing. The system will publish them automatically at the scheduled date.",
-    actionLabel: "Schedule for Publish",
-    confirmTitle: "Schedule this article for publishing?",
-    confirmDescription:
-      "The article will move from Awaiting Approval to Scheduled. Make sure the scheduled date is set correctly on the article.",
-    successMessage: "Article scheduled for publishing",
-  },
+  // NOTE: there is intentionally NO "approval-to-scheduled" admin lane. Moving an
+  // article from AWAITING_APPROVAL → SCHEDULED is the CLIENT's approval action,
+  // performed on the console (`approveArticle`). The admin must never advance past
+  // the client. From AWAITING_APPROVAL the admin can only request revision.
   "scheduled-to-published": {
     from: ArticleStatus.SCHEDULED,
     to: ArticleStatus.PUBLISHED,

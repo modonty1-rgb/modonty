@@ -21,7 +21,7 @@ import {
   FileEdit,
   FileClock,
   FileX,
-  CalendarClock,
+  RotateCcw,
   CheckCircle2,
   Folder,
   Tag,
@@ -68,12 +68,12 @@ import { Button } from "@/components/ui/button";
 import type { ArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
 
 // Maps a workflow href → the ArticleStatus whose count should appear as a badge.
-// Two transitions share AWAITING_APPROVAL (approval can go either to revision or to scheduled).
+// From AWAITING_APPROVAL the admin can only request revision; advancing to SCHEDULED
+// is the client's console approval (no admin lane for it).
 const HREF_TO_STATUS: Record<string, keyof ArticleStatusCounts> = {
   "/articles/workflow/writing-to-draft": "WRITING",
   "/articles/workflow/draft-to-approval": "DRAFT",
   "/articles/workflow/approval-to-revision": "AWAITING_APPROVAL",
-  "/articles/workflow/approval-to-scheduled": "AWAITING_APPROVAL",
   "/articles/workflow/revision-to-draft": "NEEDS_REVISION",
   "/articles/workflow/scheduled-to-published": "SCHEDULED",
 };
@@ -118,8 +118,8 @@ const menuGroups: MenuGroup[] = [
       { icon: FileClock, label: "Draft → Approval", href: "/articles/workflow/draft-to-approval" },
       { icon: FileX, label: "Approval → Revision", href: "/articles/workflow/approval-to-revision" },
       { icon: FileEdit, label: "Revision → Draft", href: "/articles/workflow/revision-to-draft" },
-      { icon: CalendarClock, label: "Approval → Scheduled", href: "/articles/workflow/approval-to-scheduled" },
       { icon: CheckCircle2, label: "Scheduled → Published", href: "/articles/workflow/scheduled-to-published" },
+      { icon: RotateCcw, label: "Status Maintenance", href: "/articles/workflow/maintenance" },
       { icon: Wrench, label: "Technical Review", href: "/articles/technical" },
     ],
   },

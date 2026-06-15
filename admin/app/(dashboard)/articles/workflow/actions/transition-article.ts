@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { submitToIndexNow } from "@/lib/indexnow";
 import { ArticleStatus } from "@prisma/client";
+import { isValidTransition } from "../../helpers/article-status-machine";
 
 const MIN_SEO_SCORE = 60;
 
@@ -54,6 +55,16 @@ export async function transitionArticleAction(
       return {
         success: false,
         error: `Article is in ${article.status} state, not ${expectedFrom}. Refresh the page.`,
+      };
+    }
+
+    // Server-side gate: the transition must be allowed by the state machine.
+    // This is the hard backstop that enforces "client approval is mandatory" even
+    // if a UI ever passes an illegal jump (e.g. AWAITING_APPROVAL → SCHEDULED/PUBLISHED).
+    if (!isValidTransition(expectedFrom, toStatus)) {
+      return {
+        success: false,
+        error: `Transition ${expectedFrom} → ${toStatus} is not allowed.`,
       };
     }
 
