@@ -1,6 +1,5 @@
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { highlightQuery } from "@/lib/highlight-query";
-import { IconChevronLeft } from "@/lib/icons";
 import type { PostCardProps } from "./PostCard.types";
 
 export function PostCardBody({ post, highlightQuery: query, featured }: PostCardProps) {
@@ -35,15 +34,6 @@ export function PostCardBody({ post, highlightQuery: query, featured }: PostCard
       >
         {excerptContent}
       </p>
-      <div className="flex items-center justify-end">
-        <span
-          aria-hidden="true"
-          className="relative z-10 inline-flex items-center gap-1 text-sm font-semibold text-primary pointer-events-none"
-        >
-          اقرأ المزيد
-          <IconChevronLeft className="h-4 w-4" />
-        </span>
-      </div>
     </>
   );
 }

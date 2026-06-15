@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RelativeTime } from "@/components/date/RelativeTime";
 import { IconTrending, IconViews, IconComment, IconArticle } from "@/lib/icons";
+import { SHOW_ARTICLE_ENGAGEMENT_STATS } from "@/lib/feature-flags";
 
 interface TrendingArticle {
   id: string;
@@ -114,6 +115,8 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
 
               <CardContent>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  {/* Engagement counts hidden while low — see SHOW_ARTICLE_ENGAGEMENT_STATS */}
+                  {SHOW_ARTICLE_ENGAGEMENT_STATS ? (
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       <IconViews className="h-3.5 w-3.5" />
@@ -127,6 +130,7 @@ export function TrendingArticles({ articles, showTitle = true }: TrendingArticle
                       <span>{article.interactions.comments}</span>
                     </div>
                   </div>
+                  ) : <span />}
 
                   <div className="flex items-center gap-2">
                     {article.readingTimeMinutes && (
