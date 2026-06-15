@@ -1,17 +1,21 @@
 import type { ComponentType } from "react";
+import { getGa4FooterStats } from "@/lib/analytics/ga4";
 import { getFooterStats } from "@/app/api/helpers/stats-queries";
 import {
   IconArticle,
   IconViews,
   IconActivity,
-  IconLike,
   IconClients,
+  IconUsers,
+  IconTrending,
+  IconTotal,
 } from "@/lib/icons";
 
-// «بالأرقام» — moved here from the homepage left sidebar so low early-stage numbers
-// don't greet a partner the moment they land. Every value is a live COUNT of real
-// records, cached ~1min ("use cache", minutes) so rendering this on every page
-// (global footer) stays static/fast. Server Component → zero client JS.
+// «بالأرقام» — site-wide traffic from GA4 (sessions / page views / activity /
+// interactions), cached ~1min so the global footer stays fast. If GA4 is
+// unavailable it falls back to live DB record counts — the footer never breaks.
+// Server Component → zero client JS.
+
 function Stat({
   icon: Icon,
   label,
@@ -35,15 +39,30 @@ function Stat({
 }
 
 export async function FooterStats() {
-  const stats = await getFooterStats();
+  const ga4 = await getGa4FooterStats();
 
+  if (ga4) {
+    return (
+      <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-x-reverse divide-primary-foreground/15">
+          <Stat icon={IconTrending} label="زيارات"  value={ga4.sessions.toLocaleString("ar-SA")} />
+          <Stat icon={IconViews}    label="مشاهدات" value={ga4.pageViews.toLocaleString("ar-SA")} highlight />
+          <Stat icon={IconTotal}    label="نشاط"    value={ga4.events.toLocaleString("ar-SA")} />
+          <Stat icon={IconActivity} label="تفاعلات" value={ga4.interactions.toLocaleString("ar-SA")} />
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback — live DB record counts (GA4 unavailable).
+  const stats = await getFooterStats();
   return (
     <div className="w-full rounded-lg bg-primary overflow-hidden shadow-sm">
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-x-reverse divide-primary-foreground/15">
         <Stat icon={IconArticle}  label="المقالات" value={stats.articles.toLocaleString("ar-SA")} />
         <Stat icon={IconViews}    label="مشاهدات"  value={stats.views.toLocaleString("ar-SA")} highlight />
         <Stat icon={IconActivity} label="تفاعلات"  value={stats.interactions.toLocaleString("ar-SA")} />
-        <Stat icon={IconLike}     label="إعجابات"  value={stats.likes.toLocaleString("ar-SA")} />
+        <Stat icon={IconUsers}    label="إعجابات"  value={stats.likes.toLocaleString("ar-SA")} />
         <Stat icon={IconClients}  label="الشركاء"  value={stats.partners.toLocaleString("ar-SA")} />
       </div>
     </div>

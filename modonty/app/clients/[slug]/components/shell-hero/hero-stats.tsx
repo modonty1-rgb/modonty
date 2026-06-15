@@ -1,5 +1,6 @@
 import type { HeroPageState } from "./client-hero-v2";
 import { IconUsers, IconArticle, IconViews, IconFeatured } from "@/lib/icons";
+import { SHOW_CLIENT_ENGAGEMENT_STATS } from "@/lib/feature-flags";
 
 interface HeroStatsData {
   followers: number;
@@ -38,11 +39,12 @@ export function HeroStats({ stats, pageState }: HeroStatsProps) {
   const cells: { key: string; icon: StatIcon; value: string; label: string }[] = [];
   if (stats.rating > 0)
     cells.push({ key: "rating", icon: IconFeatured, value: arNum.format(stats.rating), label: "تقييم" });
-  if (stats.totalViews > 0)
+  // views + followers temporarily hidden while traction is low (see SHOW_CLIENT_ENGAGEMENT_STATS)
+  if (SHOW_CLIENT_ENGAGEMENT_STATS && stats.totalViews > 0)
     cells.push({ key: "views", icon: IconViews, value: formatCompact(stats.totalViews), label: "مشاهدة" });
   if (stats.articles > 0)
     cells.push({ key: "articles", icon: IconArticle, value: arNum.format(stats.articles), label: "مقالات" });
-  if (stats.followers > 0)
+  if (SHOW_CLIENT_ENGAGEMENT_STATS && stats.followers > 0)
     cells.push({ key: "followers", icon: IconUsers, value: arNum.format(stats.followers), label: "متابع" });
 
   if (cells.length === 0) return null;
