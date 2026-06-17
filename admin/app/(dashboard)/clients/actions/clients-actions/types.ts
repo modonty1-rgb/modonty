@@ -99,9 +99,6 @@ export interface ClientsStats {
     pending: number;
     expiringSoon: number;
   };
-  revenue?: {
-    byTier: Record<string, number>;
-  };
   payment?: {
     paid: number;
     pending: number;

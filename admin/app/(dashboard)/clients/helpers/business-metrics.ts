@@ -6,7 +6,6 @@ import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
  */
 interface ClientWithRelations {
   subscriptionTierConfig?: {
-    price: number;
     articlesPerMonth: number;
   } | null;
   articles?: Array<{ datePublished: Date | null }>;
@@ -14,13 +13,6 @@ interface ClientWithRelations {
   subscriptionEndDate?: Date | null;
   subscriptionStatus: SubscriptionStatus;
   paymentStatus: PaymentStatus;
-}
-
-export function calculateRevenue(client: ClientWithRelations): number {
-  if (!client.subscriptionTierConfig?.price) {
-    return 0;
-  }
-  return client.subscriptionTierConfig.price;
 }
 
 export function getSubscriptionDaysRemaining(client: ClientWithRelations): number | null {

@@ -15,7 +15,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ClientsStats } from "../actions/clients-actions/types";
-import { getTierDisplayName } from "../helpers/client-display-utils";
 
 interface BusinessAnalyticsProps {
   stats: ClientsStats;
@@ -28,24 +27,7 @@ const COLORS = [
   "hsl(var(--muted))",
 ];
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-SA", {
-    style: "currency",
-    currency: "SAR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 export function BusinessAnalytics({ stats }: BusinessAnalyticsProps) {
-  const revenueByTierData = (stats.revenue?.byTier ? Object.entries(stats.revenue.byTier) : [])
-    .filter(([_, value]) => typeof value === "number" && value > 0)
-    .map(([tier, value]) => ({
-      name: getTierDisplayName(tier),
-      value: Math.round(value as number),
-      formatted: formatCurrency(value as number),
-    }));
-
   const subscriptionStatusData = [
     { name: "Active", value: stats.subscription.active, color: COLORS[0] },
     { name: "Expired", value: stats.subscription.expired, color: COLORS[1] },
@@ -74,44 +56,6 @@ export function BusinessAnalytics({ stats }: BusinessAnalyticsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Revenue by Tier</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {revenueByTierData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueByTierData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="name"
-                  stroke="hsl(var(--muted-foreground))"
-                  style={{ fontSize: "12px" }}
-                />
-                <YAxis
-                  stroke="hsl(var(--muted-foreground))"
-                  style={{ fontSize: "12px" }}
-                  tickFormatter={(value) => formatCurrency(value)}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                  }}
-                  formatter={(value?: number) => value !== undefined ? formatCurrency(value) : ""}
-                />
-                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex items-center justify-center h-64 text-muted-foreground">
-              No revenue data available
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Subscription Status</CardTitle>
