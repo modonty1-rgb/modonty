@@ -23,8 +23,8 @@ interface BackupInfo {
   rotationLimit: number;
 }
 
-// MongoDB Atlas Free Tier (M0) hard limit
-const FREE_TIER_LIMIT_MB = 512;
+// MongoDB Atlas Flex — 5 GB storage included in the $8/mo base fee
+const FLEX_INCLUDED_MB = 5120;
 
 function timeAgo(d: Date): string {
   const ms = Date.now() - d.getTime();
@@ -51,7 +51,7 @@ export function KpiStrip({
   health: DatabaseHealth;
   backup: BackupInfo;
 }) {
-  const storagePercent = Math.min((health.storageMB / FREE_TIER_LIMIT_MB) * 100, 100);
+  const storagePercent = Math.min((health.storageMB / FLEX_INCLUDED_MB) * 100, 100);
   const storageTone =
     storagePercent < 50 ? "emerald" : storagePercent < 80 ? "amber" : "red";
 
@@ -85,7 +85,7 @@ export function KpiStrip({
             </span>
           </div>
           <CardValue>
-            {health.storageMB} <span className="text-xs font-normal text-muted-foreground">/ {FREE_TIER_LIMIT_MB} MB</span>
+            {health.storageMB} <span className="text-xs font-normal text-muted-foreground">MB / 5 GB</span>
           </CardValue>
           <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-1.5">
             <div
@@ -99,7 +99,7 @@ export function KpiStrip({
               style={{ width: `${Math.max(storagePercent, 2)}%` }}
             />
           </div>
-          <CardHint>MongoDB Atlas Free Tier</CardHint>
+          <CardHint>MongoDB Atlas Flex · 5 GB included</CardHint>
         </CardBody>
       </Card>
 
