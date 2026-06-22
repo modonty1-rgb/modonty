@@ -7,6 +7,8 @@ import { ClientCtaMode, ConversionType, CTAType, UserRole } from "@prisma/client
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { createConversion } from "@/lib/conversion-tracking";
+import { sendEmail } from "@/lib/email/resend-client";
+import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
 
 export type BookingSource =
   | "article_dock"
@@ -50,7 +52,15 @@ export async function submitBookingRequest(
   // 2. Client must exist + be in FORM mode (never accept bookings for NONE/LINK)
   const client = await db.client.findUnique({
     where: { id: ctx.clientId },
-    select: { id: true, name: true, slug: true, userId: true, ctaMode: true, isYmyl: true },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      userId: true,
+      ctaMode: true,
+      isYmyl: true,
+      user: { select: { email: true, name: true } },
+    },
   });
   if (!client) return { success: false, error: "الشركة غير موجودة" };
   if (client.ctaMode !== ClientCtaMode.FORM) {
@@ -154,6 +164,33 @@ export async function submitBookingRequest(
     }
   } catch {
     // notification failure must not block the lead
+  }
+
+  // 6b. Email the provider (doctor / business owner) — standard backup channel,
+  //     always sent. Falls back to an admin address if the owner has no email.
+  try {
+    let recipientEmail = client.user?.email ?? null;
+    if (!recipientEmail) {
+      const admin = await db.user.findFirst({
+        where: { role: UserRole.ADMIN, email: { not: null } },
+        select: { email: true },
+      });
+      recipientEmail = admin?.email ?? null;
+    }
+    if (recipientEmail) {
+      const mail = bookingNotificationEmail({
+        providerName: client.name,
+        visitorName: name,
+        phone,
+        email,
+        preferredAtLabel: preferredAt ? preferredAt.toLocaleString("ar-EG") : null,
+        message,
+        bookingsUrl: "https://console.modonty.com/dashboard/bookings",
+      });
+      await sendEmail({ to: recipientEmail, ...mail });
+    }
+  } catch {
+    // email must never block the lead
   }
 
   // 7. Telegram (rich lead message — default-ON event; geo resolved inside notify)
