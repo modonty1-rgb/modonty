@@ -11,7 +11,6 @@ import { HotjarScript } from "@/components/hotjar/HotjarScript";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
 import { ChatFloatingButton } from "@/components/chatbot/ChatFloatingButton";
-import { AnnouncementBar } from "@/components/navigatore/AnnouncementBar";
 import { BRAND_AR, SITE_URL } from "@/lib/brand";
 
 const tajawal = Tajawal({
@@ -99,7 +98,6 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <SessionProviderWrapper>
               <div className="min-h-screen flex flex-col">
-                <AnnouncementBar />
                 <Suspense fallback={<header className="h-14 border-b bg-card" />}>
                   <TopNavWithFavorites />
                 </Suspense>

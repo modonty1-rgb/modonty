@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import NextImage from "next/image";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -55,6 +56,11 @@ export function ArticleLabBottomDock({
 }: ArticleLabBottomDockProps) {
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  const registerHref = pathname
+    ? `/users/register?callbackUrl=${encodeURIComponent(pathname)}`
+    : "/users/register";
 
   // Chip label follows the configured action; NONE shows just the logo (card-only sheet).
   const ctaChipLabel =
@@ -71,7 +77,8 @@ export function ArticleLabBottomDock({
   const [busy, setBusy] = useState<"like" | "save" | null>(null);
 
   const handleLike = async () => {
-    if (!isLoggedIn || busy) return;
+    if (busy) return;
+    if (!isLoggedIn) { router.push(registerHref); return; }
     setBusy("like");
     const prevN = likeN, prevLiked = liked;
     setLiked(!liked);
@@ -85,7 +92,8 @@ export function ArticleLabBottomDock({
   };
 
   const handleSave = async () => {
-    if (!isLoggedIn || busy) return;
+    if (busy) return;
+    if (!isLoggedIn) { router.push(registerHref); return; }
     setBusy("save");
     const prevN = favN, prevSaved = saved;
     setSaved(!saved);
@@ -105,15 +113,15 @@ export function ArticleLabBottomDock({
     <>
       {!isLoggedIn && (
         <div className="px-3 pt-1.5 text-center text-[11px] text-muted-foreground">
-          <a href="/users/login" className="font-semibold text-primary">سجّل الدخول</a>{" للإعجاب أو الحفظ"}
+          <a href={registerHref} className="font-semibold text-primary">اشترك مجاناً</a>{" للإعجاب أو الحفظ"}
         </div>
       )}
     <div className="flex items-stretch px-1">
-      <button type="button" onClick={handleLike} disabled={!isLoggedIn || busy === "like"} className={cn(action, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
+      <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(action, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
         <IconLike className={cn("size-6", liked && "fill-current")} />
         <span>{likeN > 0 ? likeN : "إعجاب"}</span>
       </button>
-      <button type="button" onClick={handleSave} disabled={!isLoggedIn || busy === "save"} className={cn(action, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
+      <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(action, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
         <IconSaved className={cn("size-6", saved && "fill-current")} />
         <span>{favN > 0 ? favN : "حفظ"}</span>
       </button>

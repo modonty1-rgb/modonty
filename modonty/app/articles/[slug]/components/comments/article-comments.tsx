@@ -96,7 +96,7 @@ export function ArticleComments({ comments: initialComments, commentsCount, arti
 
   const handleLike = async (commentId: string) => {
     if (!userId) {
-      router.push('/users/login');
+      router.push('/users/register');
       return;
     }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IconLike, IconDislike, IconSaved, IconLoading } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
@@ -43,6 +43,11 @@ export function ArticleInteractionButtons({
 }: ArticleInteractionButtonsProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
+  // Logged-out click → register (returns here after signup), not login.
+  const registerHref = pathname
+    ? `/users/register?callbackUrl=${encodeURIComponent(pathname)}`
+    : "/users/register";
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -62,7 +67,8 @@ export function ArticleInteractionButtons({
   }, [initialLikes, initialDislikes, initialFavorites, initialUserLiked, initialUserDisliked, initialUserFavorited]);
 
   const handleLike = async () => {
-    if (!session?.user || loading || isPending.current) return;
+    if (loading || isPending.current) return;
+    if (!session?.user) { router.push(registerHref); return; }
     isPending.current = true;
 
     // Optimistic update
@@ -104,7 +110,8 @@ export function ArticleInteractionButtons({
   };
 
   const handleDislike = async () => {
-    if (!session?.user || loading || isPending.current) return;
+    if (loading || isPending.current) return;
+    if (!session?.user) { router.push(registerHref); return; }
     isPending.current = true;
 
     // Optimistic update
@@ -146,7 +153,8 @@ export function ArticleInteractionButtons({
   };
 
   const handleFavorite = async () => {
-    if (!session?.user || loading || isPending.current) return;
+    if (loading || isPending.current) return;
+    if (!session?.user) { router.push(registerHref); return; }
     isPending.current = true;
 
     // Optimistic update
@@ -197,10 +205,10 @@ export function ArticleInteractionButtons({
     {!isLoggedIn && !hideLoginHint && (
       <p className="text-xs text-muted-foreground min-w-0 break-words leading-relaxed" role="status">
         <Link
-          href={pathname ? `/users/login?callbackUrl=${encodeURIComponent(pathname)}` : "/users/login"}
+          href={registerHref}
           className="text-primary underline-offset-4 hover:underline"
         >
-          سجّل الدخول
+          اشترك مجاناً
         </Link>
         {" للإعجاب أو حفظ المقال"}
       </p>
@@ -210,7 +218,7 @@ export function ArticleInteractionButtons({
         variant={userLiked ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleLike}
-        disabled={!isLoggedIn || loading === "like"}
+        disabled={loading === "like"}
         className={btnClass}
         aria-label={loading === "like" ? "جاري التحديث..." : "إعجاب"}
       >
@@ -226,7 +234,7 @@ export function ArticleInteractionButtons({
         variant={userDisliked ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleDislike}
-        disabled={!isLoggedIn || loading === "dislike"}
+        disabled={loading === "dislike"}
         className={btnClass}
         aria-label={loading === "dislike" ? "جاري التحديث..." : "عدم إعجاب"}
       >
@@ -242,9 +250,9 @@ export function ArticleInteractionButtons({
         variant={userFavorited ? "default" : vertical ? "ghost" : "outline"}
         size={compact ? "sm" : "sm"}
         onClick={handleFavorite}
-        disabled={!isLoggedIn || loading === "favorite"}
+        disabled={loading === "favorite"}
         className={btnClass}
-        aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "تسجيل الدخول للحفظ"}
+        aria-label={loading === "favorite" ? "جاري التحديث..." : isLoggedIn ? "حفظ" : "اشترك مجاناً للحفظ"}
       >
         {loading === "favorite" ? (
           <IconLoading className={`${iconClass} animate-spin`} />

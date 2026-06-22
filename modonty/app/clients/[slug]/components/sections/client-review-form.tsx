@@ -31,7 +31,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
   const router = useRouter();
   const pathname = usePathname();
   // Return the visitor to the page they were on after login (not the homepage).
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
+  const registerHref = `/users/register?callbackUrl=${encodeURIComponent(pathname)}`;
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -42,7 +42,7 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
     return (
       <Button
         type="button"
-        onClick={() => router.push(loginHref)}
+        onClick={() => router.push(registerHref)}
         className="mt-3 w-full sm:w-auto"
       >
         اكتب تقييمك
@@ -112,9 +112,9 @@ export function ClientReviewForm({ slug, isLoggedIn }: ClientReviewFormProps) {
               type="button"
               size="sm"
               className="mt-2"
-              onClick={() => router.push(loginHref)}
+              onClick={() => router.push(registerHref)}
             >
-              تسجيل الدخول
+              اشترك مجاناً
             </Button>
           )}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CommentFormDialog } from "@/app/articles/[slug]/components/comment-form-dialog";
@@ -36,6 +37,11 @@ interface EngagementStripProps {
 export function ArticleLabEngagementStrip({ likes, userLiked, userFavorited, clientId, articleId, articleSlug, userId, ctaText }: EngagementStripProps) {
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  const registerHref = pathname
+    ? `/users/register?callbackUrl=${encodeURIComponent(pathname)}`
+    : "/users/register";
 
   const [likeN, setLikeN] = useState(likes);
   const [liked, setLiked] = useState(!!userLiked);
@@ -43,7 +49,8 @@ export function ArticleLabEngagementStrip({ likes, userLiked, userFavorited, cli
   const [busy, setBusy] = useState<"like" | "save" | null>(null);
 
   const handleLike = async () => {
-    if (!isLoggedIn || busy) return;
+    if (busy) return;
+    if (!isLoggedIn) { router.push(registerHref); return; }
     setBusy("like");
     const prevN = likeN, prevLiked = liked;
     setLiked(!liked);
@@ -57,7 +64,8 @@ export function ArticleLabEngagementStrip({ likes, userLiked, userFavorited, cli
   };
 
   const handleSave = async () => {
-    if (!isLoggedIn || busy) return;
+    if (busy) return;
+    if (!isLoggedIn) { router.push(registerHref); return; }
     setBusy("save");
     const prevSaved = saved;
     setSaved(!saved);
@@ -76,16 +84,16 @@ export function ArticleLabEngagementStrip({ likes, userLiked, userFavorited, cli
     <div className="flex flex-col gap-1.5">
       {!isLoggedIn && (
         <p className="px-1 text-[11px] leading-relaxed text-muted-foreground">
-          <a href="/users/login" className="font-semibold text-primary underline-offset-4 hover:underline">سجّل الدخول</a>
+          <a href={registerHref} className="font-semibold text-primary underline-offset-4 hover:underline">اشترك مجاناً</a>
           {" للإعجاب أو حفظ المقال"}
         </p>
       )}
       <div className="flex items-center justify-around gap-0.5 rounded-xl border border-border bg-muted/40 px-1.5 py-1.5">
-      <button type="button" onClick={handleLike} disabled={!isLoggedIn || busy === "like"} className={cn(btn, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
+      <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(btn, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
         <IconLike className={cn("h-5 w-5", liked && "fill-current")} />
         <span>{likeN > 0 ? likeN : "إعجاب"}</span>
       </button>
-      <button type="button" onClick={handleSave} disabled={!isLoggedIn || busy === "save"} className={cn(btn, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
+      <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(btn, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
         <IconSaved className={cn("h-5 w-5", saved && "fill-current")} />
         <span>حفظ</span>
       </button>

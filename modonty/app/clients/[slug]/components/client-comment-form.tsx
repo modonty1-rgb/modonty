@@ -21,7 +21,7 @@ export function ClientCommentForm({ clientSlug }: ClientCommentFormProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
+  const registerHref = `/users/register?callbackUrl=${encodeURIComponent(pathname)}`;
   const formRef = useRef<HTMLFormElement>(null);
   const [content, setContent] = useState("");
   const [state, formAction, pending] = useActionState(
@@ -53,13 +53,12 @@ export function ClientCommentForm({ clientSlug }: ClientCommentFormProps) {
         </p>
       ) : (
         <p className="text-xs text-muted-foreground">
-          يجب{" "}
           <button
             type="button"
-            onClick={() => router.push(loginHref)}
+            onClick={() => router.push(registerHref)}
             className="text-primary underline"
           >
-            تسجيل الدخول
+            اشترك مجاناً
           </button>{" "}
           لإضافة تعليق.
         </p>

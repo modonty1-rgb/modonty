@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IconChrome, IconEmail } from "@/lib/icons";
+import { IconEmail } from "@/lib/icons";
+import { GoogleIcon } from "@/components/auth/google-icon";
 import Link from "@/components/link";
 
 export default function LoginPage() {
@@ -60,15 +61,15 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
+          <button
+            type="button"
             onClick={() => handleOAuthSignIn("google")}
             disabled={loading !== null}
-            className="w-full h-12"
-            variant="outline"
+            className="flex h-12 w-full items-center justify-center gap-3 rounded-md border border-[#747775] bg-white text-sm font-medium text-[#1F1F1F] shadow-sm transition-colors hover:bg-[#f8f9fa] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <IconChrome className="h-5 w-5 mr-2" />
+            <GoogleIcon />
             {loading === "google" ? "جاري تسجيل الدخول..." : "تسجيل الدخول بـ Google"}
-          </Button>
+          </button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

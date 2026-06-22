@@ -48,10 +48,10 @@ export function ArticleSidebarEngagement({
           {!userId && (
             <p className="text-xs text-muted-foreground leading-relaxed">
               <Link
-                href={`/users/login`}
+                href={`/users/register`}
                 className="font-semibold text-accent underline-offset-4 hover:underline"
               >
-                سجّل الدخول
+                اشترك مجاناً
               </Link>
             </p>
           )}

@@ -26,7 +26,7 @@ export function ClientFollowButton({
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
+  const registerHref = `/users/register?callbackUrl=${encodeURIComponent(pathname)}`;
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [followersCount, setFollowersCount] = useState(initialFollowersCount);
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ export function ClientFollowButton({
 
   const handleFollow = async () => {
     if (!session?.user) {
-      router.push(loginHref);
+      router.push(registerHref);
       return;
     }
 

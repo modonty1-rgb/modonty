@@ -101,6 +101,21 @@ export interface ConversionCompleteParams extends ClientContext {
 }
 export interface FollowConversionParams extends ClientContext {}
 
+// ─── Signup funnel (3) — visitor → registered user ───────────────────────────
+type SignupSource = "header" | "banner" | "page";
+type SignupMethod = "google" | "email";
+export interface SignupViewParams {
+  signup_source?: SignupSource;
+}
+export interface SignupStartParams {
+  signup_method: SignupMethod;
+  signup_source?: SignupSource;
+}
+export interface SignupCompleteParams {
+  signup_method: SignupMethod;
+  signup_source?: SignupSource;
+}
+
 // ─── Deferred (1) — wires when lead-scoring lands in modonty ─────────────────
 
 export interface LeadQualifiedParams extends ClientContext {
@@ -142,6 +157,9 @@ export const GA4_EVENTS = {
   ask_client_submit: "ask_client_submit",
   campaign_interest: "campaign_interest",
   conversion_complete: "conversion_complete",
+  signup_view: "signup_view",
+  signup_start: "signup_start",
+  signup_complete: "signup_complete",
   lead_qualified: "lead_qualified",
   web_vitals: "web_vitals",
 } as const;
@@ -216,6 +234,14 @@ export const trackCampaignInterest = (p: CampaignInterestParams, o?: TrackOption
   trackEvent(GA4_EVENTS.campaign_interest, p, o);
 export const trackConversionComplete = (p: ConversionCompleteParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.conversion_complete, p, o);
+
+// Signup funnel
+export const trackSignupView = (p: SignupViewParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.signup_view, p, o);
+export const trackSignupStart = (p: SignupStartParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.signup_start, p, o);
+export const trackSignupComplete = (p: SignupCompleteParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.signup_complete, p, o);
 
 // Deferred
 export const trackLeadQualified = (p: LeadQualifiedParams, o?: TrackOptions) =>

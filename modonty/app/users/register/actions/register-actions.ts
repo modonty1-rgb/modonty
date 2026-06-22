@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import type { RegisterFormData } from "../helpers/schemas/register-schema";
 import { getOrCreateSessionId, createConversion } from "@/lib/conversion-tracking";
+import { trackSignupComplete } from "@/lib/analytics/events-registry";
 import { ConversionType } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { sendEmail } from "@/lib/email/resend-client";
@@ -29,7 +30,7 @@ export async function registerUser(data: RegisterFormData) {
 
     const user = await db.user.create({
       data: {
-        name: data.name,
+        name: data.name ?? null,
         email: data.email,
         password: hashedPassword,
         role: "EDITOR",
@@ -70,6 +71,13 @@ export async function registerUser(data: RegisterFormData) {
           console.error("[registerUser] Verification email failed:", err)
         );
     }
+
+    // Funnel: signup completed (email path). Google completions fire from
+    // events.createUser in lib/auth.ts instead.
+    void trackSignupComplete(
+      { signup_method: "email", signup_source: "page" },
+      { userId: user.id },
+    );
 
     return { success: true as const };
   } catch (error) {

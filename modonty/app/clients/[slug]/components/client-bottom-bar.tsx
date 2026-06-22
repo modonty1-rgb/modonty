@@ -76,7 +76,7 @@ export function ClientBottomBar({
 
   const handleFollow = async () => {
     if (!isLoggedIn) {
-      router.push(`/users/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      router.push(`/users/register?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
     if (busy) return;
@@ -100,7 +100,7 @@ export function ClientBottomBar({
   // «حفظ» — toggle the client in the user's favorites (ClientFavorite). Login-gated.
   const handleFavorite = async () => {
     if (!isLoggedIn) {
-      router.push(`/users/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      router.push(`/users/register?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
     if (favBusy) return;

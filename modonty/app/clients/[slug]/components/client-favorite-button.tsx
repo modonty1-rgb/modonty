@@ -26,7 +26,7 @@ export function ClientFavoriteButton({
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
+  const registerHref = `/users/register?callbackUrl=${encodeURIComponent(pathname)}`;
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ export function ClientFavoriteButton({
 
   const handleToggle = async () => {
     if (!session?.user) {
-      router.push(loginHref);
+      router.push(registerHref);
       return;
     }
     if (isPending.current) return;

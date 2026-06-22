@@ -1,7 +1,10 @@
 import NextAuth from "next-auth";
+import { ConversionType } from "@prisma/client";
 import { authConfig } from "../auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
+import { createConversion } from "./conversion-tracking";
+import { trackSignupComplete } from "./analytics/events-registry";
 
 // Required for deployment. See: https://authjs.dev/getting-started/deployment
 // Set AUTH_SECRET in your deployment env (Vercel, etc.). Generate: pnpm exec auth secret
@@ -17,6 +20,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db) as any,
   session: { strategy: "jwt" },
   trustHost: true,
+  events: {
+    ...authConfig.events,
+    // Fires only for adapter-created users (OAuth / Google first sign-in).
+    // Credentials users are created in registerUser, which counts its own
+    // signup_complete — so there's no double-count here.
+    async createUser({ user }) {
+      if (!user?.id) return;
+      try {
+        await createConversion({ type: ConversionType.SIGNUP, userId: user.id });
+        void trackSignupComplete(
+          { signup_method: "google", signup_source: "page" },
+          { userId: user.id },
+        );
+      } catch {
+        // never block the auth flow
+      }
+    },
+  },
   logger: {
     error(error: Error) {
       // Suppress JWTSessionError in console (e.g. no matching decryption secret / stale cookie)

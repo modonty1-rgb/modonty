@@ -154,6 +154,7 @@ const menuGroups: MenuGroup[] = [
     icon: Users2,
     defaultOpen: false,
     items: [
+      { icon: Users, label: "Members", href: "/members" },
       { icon: MailPlus, label: "Subscribers", href: "/subscribers" },
       { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },

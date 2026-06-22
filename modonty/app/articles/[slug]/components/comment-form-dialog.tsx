@@ -85,10 +85,10 @@ export function CommentFormDialog({ articleId, articleSlug, userId, clientId, tr
         ) : (
           <div className="space-y-4 py-2">
             <p className="text-sm text-muted-foreground">
-              يجب تسجيل الدخول لإضافة تعليق.
+              سجّل مجاناً لإضافة تعليق والتفاعل.
             </p>
             <Button asChild variant="default" className="w-full">
-              <Link href="/users/login">تسجيل الدخول</Link>
+              <Link href="/users/register">اشترك مجاناً</Link>
             </Button>
           </div>
         )}

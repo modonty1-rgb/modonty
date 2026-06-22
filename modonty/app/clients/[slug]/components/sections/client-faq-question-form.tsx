@@ -27,7 +27,7 @@ const LOGIN_REQUIRED_ERROR = "يجب تسجيل الدخول لطرح سؤال";
 export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
-  const loginHref = `/users/login?callbackUrl=${encodeURIComponent(pathname)}`;
+  const registerHref = `/users/register?callbackUrl=${encodeURIComponent(pathname)}`;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [question, setQuestion] = useState("");
@@ -104,7 +104,7 @@ export function ClientFaqQuestionForm({ slug }: ClientFaqQuestionFormProps) {
           <p>{error}</p>
           {needsLogin && (
             <Button asChild size="sm" className="mt-2">
-              <Link href={loginHref}>تسجيل الدخول</Link>
+              <Link href={registerHref}>اشترك مجاناً</Link>
             </Button>
           )}
         </div>
