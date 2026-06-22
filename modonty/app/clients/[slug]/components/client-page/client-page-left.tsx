@@ -4,7 +4,7 @@ import { ClientAbout } from "../client-about";
 import { ClientContact } from "../client-contact";
 import { ClientNewsletterCard } from "../client-newsletter-card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import { BookingCtaLink } from "@/components/booking-cta-link";
 import { ClientVerifiedCredentials } from "../client-verified-credentials";
 import { IconRead, IconClients, IconCalendar, IconUsers, IconExternal } from "@/lib/icons";
 import type { ClientPageClient } from "./types";
@@ -14,19 +14,16 @@ interface ClientPageLeftProps {
   user: { name: string | null; email: string | null } | null;
 }
 
-export function ClientPageLeft({ client, user }: ClientPageLeftProps) {
+export function ClientPageLeft({ client }: ClientPageLeftProps) {
   return (
     <div className="w-full min-w-0 order-2 lg:order-1 space-y-4 pt-4">
       {/* Primary CTA («احجز الآن» / «تسوّق الآن») — admin-controlled, prominent at the top */}
       {client.ctaMode === "FORM" && (
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="p-4">
-            <BookingDialog
-              clientId={client.id}
-              articleId={null}
-              clientName={client.name}
+            <BookingCtaLink
+              clientSlug={client.slug}
               source="client_page"
-              user={user}
               label={client.ctaLabel}
             />
           </CardContent>

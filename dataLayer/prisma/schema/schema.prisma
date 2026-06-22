@@ -569,6 +569,10 @@ model BookingRequest {
   status      String   @default("new") // new | contacted | done | archived
   ipAddress   String?
   userAgent   String?
+  // YMYL liability acknowledgment — true when the visitor ticked the disclaimer
+  // (required for isYmyl clients; false otherwise). Recorded as proof of consent.
+  disclaimerAccepted   Boolean   @default(false)
+  disclaimerAcceptedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -16,7 +16,7 @@ import { TiktokLogoLight } from "@/components/icons/tiktok";
 import { RoundSnapchat } from "@/components/icons/snapchat";
 
 import { AskClientDialog } from "@/app/articles/[slug]/components/ask-client-dialog";
-import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import { BookingCtaLink } from "@/components/booking-cta-link";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 type IconC = ComponentType<SVGProps<SVGSVGElement>>;
@@ -206,12 +206,10 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
         {/* Primary CTA — FORM (booking dialog) or LINK (external store), per admin config.
             Hidden when the booking sheet owns the CTA (cta.hideOwnCta). NONE → nothing. */}
         {cta && !cta.hideOwnCta && cta.mode === "FORM" && (
-          <BookingDialog
-            clientId={client.id}
+          <BookingCtaLink
+            clientSlug={client.slug}
             articleId={cta.articleId}
-            clientName={client.name}
             source={cta.source}
-            user={cta.user}
             label={cta.label}
           />
         )}

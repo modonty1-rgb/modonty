@@ -1,14 +1,14 @@
 import Link from "@/components/link";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import { BookingCtaLink } from "@/components/booking-cta-link";
 
 interface Props {
   clientId: string;
   clientName: string;
+  clientSlug: string;
   ctaMode: "NONE" | "FORM" | "LINK";
   ctaUrl: string | null;
   ctaLabel: string | null;
-  user: { name: string | null; email: string | null } | null;
 }
 
 /**
@@ -16,7 +16,7 @@ interface Props {
  * No fake content, no empty sections; just contact/booking + browse. The page
  * is set noindex,follow in generateMetadata for this state (thin content).
  */
-export function ClientNotReadyPanel({ clientId, clientName, ctaMode, ctaUrl, ctaLabel, user }: Props) {
+export function ClientNotReadyPanel({ clientId, clientName, clientSlug, ctaMode, ctaUrl, ctaLabel }: Props) {
   return (
     <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
       <div className="px-6 py-10 text-center">
@@ -36,13 +36,7 @@ export function ClientNotReadyPanel({ clientId, clientName, ctaMode, ctaUrl, cta
         <div className="flex flex-wrap justify-center gap-2.5">
           {ctaMode === "FORM" && (
             <div className="min-w-[180px]">
-              <BookingDialog
-                clientId={clientId}
-                clientName={clientName}
-                source="client_page"
-                user={user}
-                label={ctaLabel}
-              />
+              <BookingCtaLink clientSlug={clientSlug} source="client_page" label={ctaLabel} />
             </div>
           )}
           {ctaMode === "LINK" && ctaUrl && (

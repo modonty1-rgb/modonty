@@ -326,10 +326,10 @@ async function ClientPageBody({ params }: ClientPageProps) {
             <ClientNotReadyPanel
               clientId={client.id}
               clientName={client.name}
+              clientSlug={client.slug}
               ctaMode={client.ctaMode}
               ctaUrl={client.ctaUrl}
               ctaLabel={client.ctaLabel}
-              user={userBox}
             />
           </div>
         ) : (

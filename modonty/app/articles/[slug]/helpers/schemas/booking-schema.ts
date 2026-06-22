@@ -11,6 +11,8 @@ const phoneRegex = /^(\+?9665\d{8}|\+?201\d{9}|05\d{8}|01\d{9})$/;
 
 export const bookingSchema = z.object({
   name: z.string().trim().max(80, "الاسم طويل جداً").optional().or(z.literal("")),
+  // Optional — lets the provider reply by email if they prefer it over phone.
+  email: z.string().trim().email("أدخل بريداً إلكترونياً صحيحاً").optional().or(z.literal("")),
   phone: z
     .string()
     .trim()

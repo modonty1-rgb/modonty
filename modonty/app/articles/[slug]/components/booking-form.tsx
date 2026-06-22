@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Check, CheckCircle2, MessageSquare, Phone, ShieldCheck, User } from "lucide-react";
+import { CalendarDays, Check, CheckCircle2, Mail, MessageSquare, Phone, ShieldAlert, ShieldCheck, User } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,11 @@ import { Button } from "@/components/ui/button";
 
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";
 import { submitBookingRequest, type BookingSource } from "../actions/booking-actions";
+import {
+  DISCLAIMER_HEADING,
+  DISCLAIMER_CHECKBOX_LABEL,
+  type DisclaimerSection,
+} from "../helpers/booking-disclaimer";
 
 interface BookingFormProps {
   clientId: string;
@@ -22,6 +27,10 @@ interface BookingFormProps {
   user: { name: string | null; email: string | null } | null;
   /** Default button label override from the client config. */
   submitLabel?: string;
+  /** YMYL clients: show a liability acknowledgment + require it before submit. */
+  requireDisclaimer?: boolean;
+  /** Per-category acknowledgment sections shown above the required checkbox. */
+  disclaimerSections?: DisclaimerSection[];
 }
 
 type DayKey = "today" | "tomorrow" | "dayafter" | "other";
@@ -69,10 +78,15 @@ export function BookingForm({
   clientName,
   user,
   submitLabel = "أرسل الطلب",
+  requireDisclaimer = false,
+  disclaimerSections,
 }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [accepted, setAccepted] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const gateBlocked = requireDisclaimer && !accepted;
 
   // Date control state (drives the hidden preferredAt value).
   const [dayKey, setDayKey] = useState<DayKey | null>(null);
@@ -87,7 +101,7 @@ export function BookingForm({
     formState: { errors },
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: { name: user?.name ?? "", phone: "+966 ", preferredAt: "", message: "" },
+    defaultValues: { name: user?.name ?? "", email: user?.email ?? "", phone: "+966 ", preferredAt: "", message: "" },
   });
 
   const phoneVal = watch("phone") ?? "";
@@ -144,7 +158,13 @@ export function BookingForm({
   const onSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
     setSubmitError(null);
-    const result = await submitBookingRequest(data, { clientId, articleId: articleId ?? null, source });
+    const result = await submitBookingRequest(data, {
+      clientId,
+      articleId: articleId ?? null,
+      source,
+      disclaimerAccepted: accepted,
+      marketingConsent,
+    });
     setIsSubmitting(false);
     if (!result.success) {
       setSubmitError(result.error ?? "تعذّر إرسال الطلب");
@@ -221,9 +241,39 @@ export function BookingForm({
             ) : (
               <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                نحتاجه عشان الشركة تتواصل معك بطلبك — بدون رسائل تسويقية.
+                عشان {clientName ? `«${clientName}»` : "مقدّم الخدمة"} يتواصل معك بخصوص طلبك — بدون رسائل تسويقية.
               </p>
             )}
+          </div>
+
+          {/* Email — optional, lets the provider reply by email instead of phone */}
+          <div className="space-y-2">
+            <Label htmlFor="booking-email" className="flex items-center gap-1.5 text-sm font-semibold">
+              <Mail className="h-4 w-4 text-primary/80" />
+              بريدك الإلكتروني <span className="text-xs font-normal text-muted-foreground">— اختياري</span>
+            </Label>
+            <Input
+              id="booking-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              {...register("email")}
+              placeholder="example@email.com"
+              className="h-12 text-base"
+              dir="ltr"
+              aria-invalid={Boolean(errors.email)}
+            />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            {/* Modonty newsletter opt-in — explicit & optional; only captured when an email is given */}
+            <label className="mt-1 flex cursor-pointer items-start gap-2 text-[11.5px] text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={marketingConsent}
+                onChange={(e) => setMarketingConsent(e.target.checked)}
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-primary"
+              />
+              <span>أبغى أستقبل عروض ونشرات «مدوّنتي» على بريدي — اختياري</span>
+            </label>
           </div>
 
           {/* Preferred contact time — chips, no native datetime */}
@@ -322,17 +372,51 @@ export function BookingForm({
           <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/20 p-3 text-[11px] leading-relaxed text-muted-foreground">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
             <span>
-              بياناتك (اسمك وجوالك) تُرسل لـ{clientName ? `«${clientName}»` : "الشركة"} فقط، لهذا الطلب — لا تُنشر ولا تُستخدم للإعلانات.
+              بياناتك (اسمك وجوالك وبريدك) تُرسل لـ{clientName ? `«${clientName}»` : "الشركة"} فقط، لهذا الطلب — لا تُنشر ولا تُستخدم للإعلانات.
             </span>
           </div>
+
+          {/* YMYL liability acknowledgment — per-category sections, required to enable submit */}
+          {requireDisclaimer && disclaimerSections && disclaimerSections.length > 0 && (
+            <div className="space-y-3 rounded-xl border border-amber-500/40 bg-amber-500/5 p-3">
+              <p className="flex items-center gap-1.5 text-[12px] font-bold text-amber-600 dark:text-amber-400">
+                <ShieldAlert className="h-4 w-4" />
+                {DISCLAIMER_HEADING}
+              </p>
+              <div className="max-h-56 space-y-2.5 overflow-y-auto pe-1 text-[11px] leading-relaxed text-muted-foreground">
+                {disclaimerSections.map((s) => (
+                  <div key={s.title}>
+                    <p className="font-semibold text-foreground">{s.title}</p>
+                    <p>{s.body}</p>
+                  </div>
+                ))}
+              </div>
+              <label className="flex cursor-pointer items-start gap-2 border-t border-amber-500/30 pt-2.5 text-[12px] font-medium">
+                <input
+                  type="checkbox"
+                  checked={accepted}
+                  onChange={(e) => setAccepted(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                  aria-describedby="ymyl-disclaimer"
+                />
+                <span id="ymyl-disclaimer">{DISCLAIMER_CHECKBOX_LABEL}</span>
+              </label>
+            </div>
+          )}
         </div>
 
         {/* Submit — normal flow footer (wrapper handles scroll; avoids sticky overlap) */}
         <div className="mt-1 border-t border-border pt-4">
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full text-base font-bold">
+          <Button
+            type="submit"
+            disabled={isSubmitting || gateBlocked}
+            className="h-12 w-full text-base font-bold"
+          >
             {isSubmitting ? "جاري الإرسال..." : submitLabel}
           </Button>
-          <p className="pt-2 text-center text-[11px] text-muted-foreground">عادةً يردّون خلال ساعات العمل</p>
+          <p className="pt-2 text-center text-[11px] text-muted-foreground">
+            {gateBlocked ? "وافق على الإقرار أعلاه لتفعيل الإرسال" : "عادةً يردّون خلال ساعات العمل"}
+          </p>
         </div>
       </form>
     </div>

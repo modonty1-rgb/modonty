@@ -3,7 +3,7 @@
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { IconWebsite } from "@/lib/icons";
 
-import { BookingDialog } from "@/app/articles/[slug]/components/booking-dialog";
+import { BookingCtaLink } from "@/components/booking-cta-link";
 import { ClientFollowButton } from "../client-follow-button";
 import { ShareClientButtonWrapper } from "../share-client-button-wrapper";
 
@@ -31,7 +31,6 @@ export function HeroCtaRow({
   clientSlug,
   clientUrl,
   ctaMode,
-  user,
   followers,
   initialIsFollowing,
   socialLinks,
@@ -45,12 +44,7 @@ export function HeroCtaRow({
         {/* Primary CTA — احجز الآن */}
         {ctaMode === "FORM" && (
           <div className="min-w-[170px] flex-1">
-            <BookingDialog
-              clientId={clientId}
-              clientName={clientName}
-              source="client_page"
-              user={user}
-            />
+            <BookingCtaLink clientSlug={clientSlug} source="client_page" />
           </div>
         )}
 

@@ -15,19 +15,18 @@ import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { IconPhone, IconEmail, IconWebsite } from "@/lib/icons";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
-import { BookingForm } from "@/app/articles/[slug]/components/booking-form-lazy";
+import { BookingCtaLink } from "@/components/booking-cta-link";
 
 interface ClientContactSheetProps {
   clientId: string;
   clientName: string;
+  clientSlug: string;
   phone: string | null;
   email: string | null;
   /** Admin-configured primary action — rendered at the TOP of the sheet. */
   ctaMode: "FORM" | "LINK" | "NONE";
   linkUrl: string | null;
   ctaLabel: string | null;
-  /** Session user — prefills + attaches the booking lead when present. */
-  user: { name: string | null; email: string | null } | null;
   /** The button that opens the sheet (rendered via asChild). */
   children: ReactNode;
 }
@@ -41,12 +40,12 @@ interface ClientContactSheetProps {
 export function ClientContactSheet({
   clientId,
   clientName,
+  clientSlug,
   phone,
   email,
   ctaMode,
   linkUrl,
   ctaLabel,
-  user,
   children,
 }: ClientContactSheetProps) {
   const hasBooking = ctaMode === "FORM";
@@ -74,15 +73,14 @@ export function ClientContactSheet({
             </SheetDescription>
           </SheetHeader>
 
-          {/* Primary CTA — booking form / external link */}
+          {/* Primary CTA — booking page link / external link */}
           {hasBooking && (
             <div className="mt-4">
-              <BookingForm
-                clientId={clientId}
+              <BookingCtaLink
+                clientSlug={clientSlug}
                 source="client_page"
-                clientName={clientName}
-                user={user}
-                submitLabel={ctaLabel?.trim() || "تأكيد الحجز"}
+                label={ctaLabel}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
               />
             </div>
           )}

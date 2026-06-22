@@ -46,7 +46,6 @@ export function ClientBottomBar({
   ctaLabel,
   phone,
   email,
-  user,
   initialIsFollowing,
   initialIsFavorited,
 }: ClientBottomBarProps) {
@@ -201,12 +200,12 @@ export function ClientBottomBar({
             <ClientContactSheet
               clientId={clientId}
               clientName={clientName}
+              clientSlug={clientSlug}
               phone={phone}
               email={email}
               ctaMode={ctaMode}
               linkUrl={linkUrl}
               ctaLabel={ctaLabel}
-              user={user}
             >
               <button
                 type="button"
