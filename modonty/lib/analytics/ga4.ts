@@ -16,6 +16,7 @@
 
 import { createSign } from "node:crypto";
 import { cacheTag, cacheLife } from "next/cache";
+import { db } from "@/lib/db";
 
 const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
 const CLIENT_EMAIL = process.env.GA4_CLIENT_EMAIL;
@@ -208,7 +209,7 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
   cacheLife("hours");
 
   try {
-    const report = await call("runReport", {
+    const gaQuery = {
       dateRanges: [{ startDate: SINCE, endDate: "today" }],
       dimensions: [{ name: "pagePath" }],
       metrics: [
@@ -217,41 +218,88 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
         { name: "activeUsers" },
         { name: "eventCount" },
       ],
-      dimensionFilter: {
-        filter: {
-          fieldName: "pagePath",
-          stringFilter: { matchType: "BEGINS_WITH", value: "/clients/" },
-        },
-      },
       orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
       limit: 500,
-    });
+    };
 
-    const result: Record<string, ClientGA4Stats> = {};
-    for (const row of report.rows ?? []) {
-      const raw = row.dimensionValues?.[0]?.value ?? "";
-      // "/clients/some-slug" or "/clients/some-slug/" → "some-slug"
-      const encoded = raw.replace(/^\/clients\//, "").replace(/\/$/, "");
-      if (!encoded) continue;
-      const pageViews = Number(row.metricValues?.[0]?.value ?? 0);
-      const sessions  = Number(row.metricValues?.[1]?.value ?? 0);
-      const activeUsers = Number(row.metricValues?.[2]?.value ?? 0);
-      const events    = Number(row.metricValues?.[3]?.value ?? 0);
-      const stats: ClientGA4Stats = {
-        pageViews,
-        sessions,
-        activeUsers,
-        events,
-        total: pageViews + sessions + activeUsers + events,
-      };
-      // Store under both the raw (possibly encoded) and decoded slug to match DB slugs.
-      result[encoded] = stats;
+    // Fetch client pages + article pages from GA4, and article→client map from DB — all in parallel.
+    const [clientsReport, articlesReport, articleRows] = await Promise.all([
+      call("runReport", {
+        ...gaQuery,
+        dimensionFilter: { filter: { fieldName: "pagePath", stringFilter: { matchType: "BEGINS_WITH", value: "/clients/" } } },
+      }),
+      call("runReport", {
+        ...gaQuery,
+        dimensionFilter: { filter: { fieldName: "pagePath", stringFilter: { matchType: "BEGINS_WITH", value: "/articles/" } } },
+      }),
+      db.article.findMany({
+        where: { status: "PUBLISHED" },
+        select: { slug: true, client: { select: { slug: true } } },
+      }),
+    ]);
+
+    // article-slug → client-slug lookup (store both decoded and encoded variants
+    // because GA4 may percent-encode Arabic paths like /articles/%D9%85...).
+    const articleToClient = new Map<string, string>();
+    for (const art of articleRows) {
+      articleToClient.set(art.slug, art.client.slug);
       try {
-        const decoded = decodeURIComponent(encoded);
-        if (decoded !== encoded) result[decoded] = stats;
-      } catch {
-        // malformed percent-encoding — skip decoded variant
+        const encoded = encodeURIComponent(art.slug);
+        if (encoded !== art.slug) articleToClient.set(encoded, art.client.slug);
+      } catch { }
+    }
+
+    const raw: Record<string, Omit<ClientGA4Stats, "total">> = {};
+
+    function add(slug: string, pv: number, s: number, au: number, ev: number) {
+      const ex = raw[slug];
+      raw[slug] = {
+        pageViews:   (ex?.pageViews   ?? 0) + pv,
+        sessions:    (ex?.sessions    ?? 0) + s,
+        activeUsers: (ex?.activeUsers ?? 0) + au,
+        events:      (ex?.events      ?? 0) + ev,
+      };
+    }
+
+    // Client profile pages: /clients/[slug]
+    for (const row of clientsReport.rows ?? []) {
+      const slug = row.dimensionValues?.[0]?.value?.replace(/^\/clients\//, "").split("/")[0] ?? "";
+      if (!slug) continue;
+      add(slug,
+        Number(row.metricValues?.[0]?.value ?? 0),
+        Number(row.metricValues?.[1]?.value ?? 0),
+        Number(row.metricValues?.[2]?.value ?? 0),
+        Number(row.metricValues?.[3]?.value ?? 0),
+      );
+    }
+
+    // Article pages: /articles/[slug] → map to client slug via DB
+    for (const row of articlesReport.rows ?? []) {
+      const rawArticleSlug = row.dimensionValues?.[0]?.value?.replace(/^\/articles\//, "").replace(/\/$/, "").split("/")[0] ?? "";
+      if (!rawArticleSlug) continue;
+      // Try raw (GA4 may give decoded Arabic) then decoded (GA4 may give percent-encoded)
+      let clientSlug = articleToClient.get(rawArticleSlug);
+      if (!clientSlug) {
+        try { clientSlug = articleToClient.get(decodeURIComponent(rawArticleSlug)); } catch { }
       }
+      if (!clientSlug) continue;
+      add(clientSlug,
+        Number(row.metricValues?.[0]?.value ?? 0),
+        Number(row.metricValues?.[1]?.value ?? 0),
+        Number(row.metricValues?.[2]?.value ?? 0),
+        Number(row.metricValues?.[3]?.value ?? 0),
+      );
+    }
+
+    // Compute totals + add decoded variants for Arabic slugs.
+    const result: Record<string, ClientGA4Stats> = {};
+    for (const [slug, s] of Object.entries(raw)) {
+      const final: ClientGA4Stats = { ...s, total: s.pageViews + s.sessions + s.activeUsers + s.events };
+      result[slug] = final;
+      try {
+        const decoded = decodeURIComponent(slug);
+        if (decoded !== slug) result[decoded] = final;
+      } catch { }
     }
     return result;
   } catch {
