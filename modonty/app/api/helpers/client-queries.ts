@@ -50,7 +50,10 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
   cacheTag("clients");
   cacheLife("hours");
   const clients = await db.client.findMany({
-    where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+    where: {
+      subscriptionStatus: SubscriptionStatus.ACTIVE,
+      articles: { some: { status: ArticleStatus.PUBLISHED, datePublished: { lte: new Date() } } },
+    },
     include: {
       logoMedia: {
         select: {
