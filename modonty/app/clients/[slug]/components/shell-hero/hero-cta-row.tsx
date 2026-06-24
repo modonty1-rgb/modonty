@@ -36,7 +36,7 @@ export function HeroCtaRow({
   socialLinks,
 }: HeroCtaRowProps) {
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-2.5">
+    <div className="flex flex-wrap items-center gap-2.5">
       {/* Booking/link CTA + follow + share are DESKTOP-only here — on mobile they
           live in the sticky bottom bar (ClientBottomBar), so they're not duplicated.
           Social links stay visible on every size. */}

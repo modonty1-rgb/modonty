@@ -1,6 +1,7 @@
 import type { HeroPageState } from "./client-hero-v2";
 import { IconUsers, IconArticle, IconViews, IconFeatured } from "@/lib/icons";
 import { SHOW_CLIENT_ENGAGEMENT_STATS } from "@/lib/feature-flags";
+import { cn } from "@/lib/utils";
 
 interface HeroStatsData {
   followers: number;
@@ -13,6 +14,9 @@ interface HeroStatsData {
 interface HeroStatsProps {
   stats: HeroStatsData;
   pageState: HeroPageState;
+  /** "strip" = bordered 3-cell box (mobile) · "inline" = compact row inside the hero line (desktop). */
+  layout?: "strip" | "inline";
+  className?: string;
 }
 
 const arNum = new Intl.NumberFormat("ar-SA");
@@ -33,7 +37,7 @@ type StatIcon = typeof IconFeatured;
  *  weak/empty); the strip adapts to however many real numbers remain, and disappears
  *  entirely when nothing is left. The label keeps each metric unambiguous (icon alone
  *  isn't enough for trust stats); the rating star is gold for emphasis. */
-export function HeroStats({ stats, pageState }: HeroStatsProps) {
+export function HeroStats({ stats, pageState, layout = "strip", className }: HeroStatsProps) {
   void pageState;
 
   const cells: { key: string; icon: StatIcon; value: string; label: string }[] = [];
@@ -49,8 +53,31 @@ export function HeroStats({ stats, pageState }: HeroStatsProps) {
 
   if (cells.length === 0) return null;
 
+  // Inline: compact row that sits inside the desktop hero line (no box).
+  if (layout === "inline") {
+    return (
+      <div className={cn("flex items-center gap-5", className)}>
+        {cells.map((c) => {
+          const Icon = c.icon;
+          const isRating = c.key === "rating";
+          return (
+            <div key={c.key} className="flex items-center gap-1.5 whitespace-nowrap">
+              <Icon
+                className={`size-4 ${isRating ? "fill-current text-star" : "text-muted-foreground"}`}
+                aria-hidden
+              />
+              <b className="text-[15px] font-black leading-none text-foreground">{c.value}</b>
+              <span className="text-[12px] text-muted-foreground">{c.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Strip: bordered cells (mobile).
   return (
-    <div className="mt-4 flex overflow-hidden rounded-md border border-border bg-muted">
+    <div className={cn("flex overflow-hidden rounded-md border border-border bg-muted", className)}>
       {cells.map((c) => {
         const Icon = c.icon;
         const isRating = c.key === "rating";
