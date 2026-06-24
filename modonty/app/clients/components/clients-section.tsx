@@ -53,9 +53,10 @@ interface ClientsSectionProps {
   featuredClients: FeaturedPartner[];
   allClients: ClientData[];
   industries: IndustryData[];
+  clientsGA4: Record<string, { pageViews: number; sessions: number; activeUsers: number; events: number; total: number }>;
 }
 
-export function ClientsSection({ featuredClients, allClients, industries }: ClientsSectionProps) {
+export function ClientsSection({ featuredClients, allClients, industries, clientsGA4 }: ClientsSectionProps) {
   return (
     <>
       {/* HERO = featured-only full-bleed slider (branded invite band when none featured) */}
@@ -65,7 +66,7 @@ export function ClientsSection({ featuredClients, allClients, industries }: Clie
         <h2 id="all-clients-heading" className="sr-only">
           جميع الشركاء
         </h2>
-        <ClientsContent initialClients={allClients} industries={industries} />
+        <ClientsContent initialClients={allClients} industries={industries} clientsGA4={clientsGA4} />
       </section>
     </>
   );

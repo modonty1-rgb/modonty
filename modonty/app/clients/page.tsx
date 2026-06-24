@@ -5,6 +5,7 @@ import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { ClientsSection } from "./components/clients-section";
+import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { metadata } = await getClientsPageSeo();
@@ -15,10 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ClientsPage() {
-  const [{ jsonLd: storedJsonLd }, clients, industries] = await Promise.all([
+  const [{ jsonLd: storedJsonLd }, clients, industries, clientsGA4] = await Promise.all([
     getClientsPageSeo(),
     getClientsWithCounts(),
     getIndustriesWithCounts(),
+    getClientsGA4Stats(),
   ]);
 
   // Featured = paid/premium partners (annual) — the admin isFeatured toggle.
@@ -44,6 +46,7 @@ export default async function ClientsPage() {
           featuredClients={featuredClients}
           allClients={clients}
           industries={industries}
+          clientsGA4={clientsGA4}
         />
 
         {/* JBRSEO-2: CTA — join as client */}

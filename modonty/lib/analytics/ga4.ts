@@ -191,6 +191,76 @@ export interface SiteAnalytics {
   generatedAt: string;
 }
 
+// ─── Per-client GA4 stats (for the /clients directory cards) ──────────────────
+
+export interface ClientGA4Stats {
+  pageViews: number;
+  sessions: number;
+  activeUsers: number;
+  events: number;
+  /** Sum of all GA4 activity — displayed as "تفاعلات" in client cards. */
+  total: number;
+}
+
+export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stats>> {
+  "use cache";
+  cacheTag("ga4-clients");
+  cacheLife("hours");
+
+  try {
+    const report = await call("runReport", {
+      dateRanges: [{ startDate: SINCE, endDate: "today" }],
+      dimensions: [{ name: "pagePath" }],
+      metrics: [
+        { name: "screenPageViews" },
+        { name: "sessions" },
+        { name: "activeUsers" },
+        { name: "eventCount" },
+      ],
+      dimensionFilter: {
+        filter: {
+          fieldName: "pagePath",
+          stringFilter: { matchType: "BEGINS_WITH", value: "/clients/" },
+        },
+      },
+      orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
+      limit: 500,
+    });
+
+    const result: Record<string, ClientGA4Stats> = {};
+    for (const row of report.rows ?? []) {
+      const raw = row.dimensionValues?.[0]?.value ?? "";
+      // "/clients/some-slug" or "/clients/some-slug/" → "some-slug"
+      const encoded = raw.replace(/^\/clients\//, "").replace(/\/$/, "");
+      if (!encoded) continue;
+      const pageViews = Number(row.metricValues?.[0]?.value ?? 0);
+      const sessions  = Number(row.metricValues?.[1]?.value ?? 0);
+      const activeUsers = Number(row.metricValues?.[2]?.value ?? 0);
+      const events    = Number(row.metricValues?.[3]?.value ?? 0);
+      const stats: ClientGA4Stats = {
+        pageViews,
+        sessions,
+        activeUsers,
+        events,
+        total: pageViews + sessions + activeUsers + events,
+      };
+      // Store under both the raw (possibly encoded) and decoded slug to match DB slugs.
+      result[encoded] = stats;
+      try {
+        const decoded = decodeURIComponent(encoded);
+        if (decoded !== encoded) result[decoded] = stats;
+      } catch {
+        // malformed percent-encoding — skip decoded variant
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+// ─── Full site analytics (for the public /analytics report page) ──────────────
+
 function rowsOf(r: ReportResponse): NonNullable<ReportResponse["rows"]> {
   return r.rows ?? [];
 }

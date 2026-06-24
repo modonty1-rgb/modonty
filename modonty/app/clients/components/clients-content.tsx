@@ -52,9 +52,10 @@ interface IndustryData {
 interface ClientsContentProps {
   initialClients: ClientData[];
   industries: IndustryData[];
+  clientsGA4: Record<string, { pageViews: number; sessions: number; activeUsers: number; events: number; total: number }>;
 }
 
-export function ClientsContent({ initialClients, industries }: ClientsContentProps) {
+export function ClientsContent({ initialClients, industries, clientsGA4 }: ClientsContentProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortOption>('name-asc');
   
@@ -162,9 +163,9 @@ export function ClientsContent({ initialClients, industries }: ClientsContentPro
               }>
                 {sortedClients.map(client => (
                   viewMode === 'grid' ? (
-                    <ClientCard key={client.id} {...client} />
+                    <ClientCard key={client.id} {...client} ga4Total={clientsGA4[client.slug]?.total} />
                   ) : (
-                    <ClientListItem key={client.id} {...client} />
+                    <ClientListItem key={client.id} {...client} ga4Total={clientsGA4[client.slug]?.total} />
                   )
                 ))}
               </div>
