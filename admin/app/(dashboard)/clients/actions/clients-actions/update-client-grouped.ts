@@ -188,6 +188,7 @@ export async function updateSettingsFields(
       select: {
         subscriptionStatus: true,
         paymentStatus: true,
+        isFeatured: true,
       },
     });
 
@@ -198,6 +199,7 @@ export async function updateSettingsFields(
     const newData: Record<string, unknown> = {
       subscriptionStatus: data.subscriptionStatus ?? client.subscriptionStatus,
       paymentStatus: data.paymentStatus ?? client.paymentStatus,
+      isFeatured: data.isFeatured ?? client.isFeatured,
     };
 
     const updateData = buildGroupUpdateData("settings", client as Record<string, unknown>, newData);

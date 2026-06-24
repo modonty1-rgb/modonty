@@ -27,6 +27,7 @@ export function mapInitialDataToFormData(
     knowsLanguage: [],
     subscriptionStatus: "PENDING",
     paymentStatus: "PENDING",
+    isFeatured: false,
     // Ensure all string fields have empty string defaults
     description: "",
     contactType: "",
@@ -171,5 +172,6 @@ export function mapInitialDataToFormData(
     articlesPerMonth: initialData.articlesPerMonth ?? undefined,
     subscriptionStatus: initialData.subscriptionStatus || "PENDING",
     paymentStatus: initialData.paymentStatus || "PENDING",
+    isFeatured: (initialData as { isFeatured?: boolean }).isFeatured ?? false,
   };
 }

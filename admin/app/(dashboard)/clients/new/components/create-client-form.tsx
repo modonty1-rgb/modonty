@@ -168,6 +168,16 @@ export function CreateClientForm({ industries = [], siteUrl = null, countries = 
           })}
         </div>
         {errors.subscriptionTier && <p className="text-xs text-destructive mt-2">{errors.subscriptionTier.message}</p>}
+
+        {/* Featured/premium spotlight — manual toggle (suggest ON for annual subscribers) */}
+        <label className="mt-4 flex items-start gap-3 cursor-pointer border-t pt-4">
+          <Checkbox checked={v.isFeatured ?? false} className="mt-0.5"
+            onCheckedChange={(c) => setValue("isFeatured", c === true, { shouldDirty: true })} />
+          <div>
+            <div className="text-sm font-semibold">⭐ شريك مميّز</div>
+            <div className="text-xs text-muted-foreground mt-0.5">يظهر في قسم «الشركاء المميّزون» وبشارة مميّزة على الموقع · فعّلها للمشتركين سنويًا</div>
+          </div>
+        </label>
       </Card>
 
       {/* 5. YMYL classification */}

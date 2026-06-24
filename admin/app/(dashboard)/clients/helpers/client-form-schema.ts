@@ -213,6 +213,7 @@ export const clientFormSchema = z
     articlesPerMonth: z.number().int().min(0).max(100).optional().nullable(),
     subscriptionStatus: subscriptionStatusSchema,
     paymentStatus: paymentStatusSchema,
+    isFeatured: z.boolean().optional().default(false),
   })
   .superRefine((data, ctx) => {
     // LINK mode needs a destination; FORM/NONE don't.

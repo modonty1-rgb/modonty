@@ -192,6 +192,7 @@ export interface ClientFormData {
   subscriptionTierConfigId?: string | null;
   subscriptionStatus?: SubscriptionStatus;
   paymentStatus?: PaymentStatus;
+  isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
 
   // GBP
   gbpProfileUrl?: string | null;

@@ -8,6 +8,7 @@ import { Link2, RefreshCw, Pencil, ImageIcon } from "lucide-react";
 import { FormInput, FormField, FormSelect, FormNativeSelect, FormTextarea } from "@/components/admin/form-field";
 import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import {
   ORGANIZATION_TYPES,
@@ -143,6 +144,7 @@ export function ClientEditWorkspace({
   const slug = watch("slug");
   const email = watch("email");
   const password = watch("password");
+  const isFeatured = watch("isFeatured");
   const phone = watch("phone");
   const contactType = watch("contactType");
   const url = watch("url");
@@ -246,6 +248,22 @@ export function ClientEditWorkspace({
                 placeholder="Leave empty to keep current"
               />
             </div>
+
+            {/* Featured/premium spotlight — manual toggle (suggest ON for annual subscribers) */}
+            <label className="mt-4 flex items-start gap-3 cursor-pointer rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-3.5">
+              <Checkbox
+                checked={isFeatured ?? false}
+                className="mt-0.5"
+                onCheckedChange={(c) => setValue("isFeatured", c === true, { shouldDirty: true })}
+              />
+              <div>
+                <div className="text-sm font-semibold">⭐ شريك مميّز (Featured)</div>
+                <div className="text-[11.5px] text-muted-foreground mt-0.5">
+                  يظهر في قسم «الشركاء المميّزون» وبشارة مميّزة على الموقع · فعّلها للمشتركين سنويًا
+                </div>
+              </div>
+            </label>
+
             {clientId && (
               <SlugChangeDialog
                 clientId={clientId}

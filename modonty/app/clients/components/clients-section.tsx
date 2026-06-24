@@ -2,25 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-interface FeaturedClient {
-  id: string;
-  name: string;
-  slug: string;
-  legalName?: string;
-  description?: string;
-  industry?: { name: string; slug: string };
-  logo?: string;
-  articleCount: number;
-  viewsCount: number;
-  subscribersCount: number;
-  commentsCount: number;
-  likesCount: number;
-  dislikesCount: number;
-  favoritesCount: number;
-  subscriptionTier?: string;
-  isVerified: boolean;
-  url?: string;
-}
+import type { FeaturedPartner } from './featured-partners-slider';
 
 interface ClientData {
   id: string;
@@ -31,6 +13,7 @@ interface ClientData {
   industry?: { id: string; name: string; slug: string };
   url?: string;
   logo?: string;
+  ogImage?: string;
   articleCount: number;
   viewsCount: number;
   subscribersCount: number;
@@ -41,6 +24,7 @@ interface ClientData {
   subscriptionTier?: string;
   createdAt: Date;
   isVerified: boolean;
+  isFeatured?: boolean;
   ctaMode?: "NONE" | "FORM" | "LINK" | null;
   ctaLabel?: string;
   ctaUrl?: string;
@@ -53,18 +37,20 @@ interface IndustryData {
   clientCount: number;
 }
 
-const FeaturedClients = dynamic(
-  () => import('./featured-clients').then((m) => ({ default: m.FeaturedClients })),
+// Hero slider — server-rendered (ssr) for LCP, then hydrated for the interactive slider.
+const FeaturedPartnersSlider = dynamic(
+  () => import('./featured-partners-slider').then((m) => ({ default: m.FeaturedPartnersSlider })),
   { ssr: true }
 );
 
+// Directory — interactive (filters/search), client-only.
 const ClientsContent = dynamic(
   () => import('./clients-content').then((m) => ({ default: m.ClientsContent })),
   { ssr: false }
 );
 
 interface ClientsSectionProps {
-  featuredClients: FeaturedClient[];
+  featuredClients: FeaturedPartner[];
   allClients: ClientData[];
   industries: IndustryData[];
 }
@@ -72,14 +58,9 @@ interface ClientsSectionProps {
 export function ClientsSection({ featuredClients, allClients, industries }: ClientsSectionProps) {
   return (
     <>
-      {featuredClients.length > 0 && (
-        <section aria-labelledby="featured-clients-heading">
-          <h2 id="featured-clients-heading" className="sr-only">
-            الشركاء المميزون
-          </h2>
-          <FeaturedClients clients={featuredClients} />
-        </section>
-      )}
+      {/* HERO = featured-only full-bleed slider (branded invite band when none featured) */}
+      <FeaturedPartnersSlider partners={featuredClients} />
+
       <section aria-labelledby="all-clients-heading">
         <h2 id="all-clients-heading" className="sr-only">
           جميع الشركاء

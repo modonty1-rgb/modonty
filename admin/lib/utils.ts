@@ -19,6 +19,10 @@ export function slugify(text: string): string {
 
   return text
     .toString()
+    // NFKC folds Arabic presentation-forms (e.g. ﻣﺼﻨﻊ → مصنع) + ligatures to their
+    // canonical base letters so slugs use normal code points (searchable, clean).
+    // Normal text is left unchanged. Verified: MDN String.normalize + Unicode UAX#15.
+    .normalize("NFKC")
     .toLowerCase()
     .trim()
     // Spaces → dash

@@ -132,6 +132,7 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
       subscriptionTier: client.subscriptionTier || undefined,
       createdAt: client.createdAt,
       isVerified: client.subscriptionTier === 'PRO' || client.subscriptionTier === 'PREMIUM',
+      isFeatured: client.isFeatured, // featured/premium partner spotlight (admin toggle)
       ctaMode: client.ctaMode,
       ctaLabel: client.ctaLabel || undefined,
       ctaUrl: client.ctaUrl || undefined,

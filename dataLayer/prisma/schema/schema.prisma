@@ -433,6 +433,11 @@ model Client {
   subscriptionStatus    SubscriptionStatus @default(PENDING)
   paymentStatus         PaymentStatus      @default(PENDING)
 
+  // Presentation — featured "premium" partner spotlight. Manual admin toggle
+  // (suggested for active annual subscribers). Drives the «شركاء مميّزون» section,
+  // the badge, the hero slider, and priority ordering on the public site.
+  isFeatured            Boolean            @default(false)
+
   // Metadata
   foundingDate DateTime?
   createdAt    DateTime  @default(now())

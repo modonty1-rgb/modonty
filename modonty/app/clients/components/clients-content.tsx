@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { IconFilters } from "@/lib/icons";
+import { IconFilters, IconSearch } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -25,6 +25,7 @@ interface ClientData {
   industry?: { id: string; name: string; slug: string };
   url?: string;
   logo?: string;
+  ogImage?: string;
   articleCount: number;
   viewsCount: number;
   subscribersCount: number;
@@ -35,6 +36,7 @@ interface ClientData {
   subscriptionTier?: string;
   createdAt: Date;
   isVerified: boolean;
+  isFeatured?: boolean;
   ctaMode?: "NONE" | "FORM" | "LINK" | null;
   ctaLabel?: string;
   ctaUrl?: string;
@@ -57,8 +59,8 @@ export function ClientsContent({ initialClients, industries }: ClientsContentPro
   const [sortBy, setSortBy] = useState<SortOption>('name-asc');
   
   const { filtered: searchFiltered, query, setQuery } = useClientSearch(initialClients);
-  
-  const { filtered, filters, updateFilter, clearFilters, hasActiveFilters, activeFilterCount } = 
+
+  const { filtered, filters, updateFilter, clearFilters, hasActiveFilters, activeFilterCount } =
     useClientFilters(searchFiltered);
   
   const sortedClients = sortClients(filtered, sortBy);
@@ -71,7 +73,19 @@ export function ClientsContent({ initialClients, industries }: ClientsContentPro
         onSelect={(ids) => updateFilter('industries', ids)}
       />
 
-      <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+      <div id="clients-directory" className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
+        <label className="mb-6 flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/15">
+          <IconSearch className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="ابحث عن شريك أو نشاط…"
+            className="w-full border-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            aria-label="ابحث في الشركاء"
+          />
+        </label>
+
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
           <div className="flex items-center gap-4">
             <p className="text-sm text-muted-foreground">

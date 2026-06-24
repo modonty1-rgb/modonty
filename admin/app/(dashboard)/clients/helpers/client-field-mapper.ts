@@ -111,5 +111,8 @@ export function mapFormDataToClientData(data: ClientFormData) {
     articlesPerMonth: data.articlesPerMonth || null,
     subscriptionStatus: data.subscriptionStatus || "PENDING",
     paymentStatus: data.paymentStatus || "PENDING",
+
+    // Featured/premium partner spotlight (admin toggle)
+    isFeatured: data.isFeatured ?? false,
   };
 }

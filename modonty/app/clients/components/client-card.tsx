@@ -1,26 +1,10 @@
 import Image from "next/image";
 import Link from "@/components/link";
+
 import { highlightQuery } from "@/lib/highlight-query";
-import {
-  IconArticle,
-  IconCheckCircle,
-  IconViews,
-  IconUsers,
-  IconComment,
-  IconLike,
-  IconSaved,
-  IconFeatured,
-  IconTrending,
-} from "@/lib/icons";
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
-import { formatMetric, calculateEngagementScore, getEngagementLabel } from "../helpers/format-metrics";
-import { MetricChip } from "./metric-chip";
-import { ClientCardExternalLink } from "./client-card-external-link";
-import { ClientCardCta } from "./client-card-cta";
+import { IconArticle, IconViews, IconCheck } from "@/lib/icons";
+import { stripCloudinaryTransforms } from "@/lib/image-utils";
+import { formatMetric } from "../helpers/format-metrics";
 
 interface ClientCardProps {
   id: string;
@@ -30,6 +14,8 @@ interface ClientCardProps {
   description?: string;
   industry?: { name: string; slug: string };
   logo?: string;
+  /** Partner cover/hero image — the card banner. Falls back to a brand gradient. */
+  ogImage?: string;
   articleCount: number;
   viewsCount: number;
   subscribersCount: number;
@@ -39,193 +25,86 @@ interface ClientCardProps {
   favoritesCount: number;
   subscriptionTier?: string;
   isVerified: boolean;
+  /** Featured/premium partner (annual) — adds the gold spotlight ribbon. */
+  isFeatured?: boolean;
   url?: string;
-  /** Primary CTA («تسوّق الآن» → external store) — admin-controlled. LINK mode only on listing. */
   ctaMode?: "NONE" | "FORM" | "LINK" | null;
   ctaLabel?: string;
   ctaUrl?: string;
-  /** When set, highlights this query in name, legalName, and description (e.g. search results). */
+  /** When set, highlights this query in the name (search results). */
   highlightQuery?: string;
 }
 
 export function ClientCard(props: ClientCardProps) {
-  const initials = props.name.split(" ").map(n => n[0]).join("").slice(0, 2);
-  const isPremium = props.subscriptionTier === 'PREMIUM';
-  const isPro = props.subscriptionTier === 'PRO';
+  const initials = props.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
   const q = props.highlightQuery;
   const nameContent = q ? highlightQuery(props.name, q) : props.name;
-  const legalNameContent = props.legalName != null && props.legalName !== "" ? (q ? highlightQuery(props.legalName, q) : props.legalName) : null;
-  const descriptionContent = props.description != null && props.description !== "" ? (q ? highlightQuery(props.description, q) : props.description) : null;
-  
-  const engagementScore = calculateEngagementScore({
-    views: props.viewsCount,
-    comments: props.commentsCount,
-    likes: props.likesCount,
-    subscribers: props.subscribersCount,
-  });
-  
-  const engagementLabel = getEngagementLabel(engagementScore);
-  const totalEngagement = props.commentsCount + props.likesCount + props.dislikesCount + props.favoritesCount;
-  
+  const cover = props.ogImage ? stripCloudinaryTransforms(props.ogImage) ?? props.ogImage : null;
+  const logo = props.logo ? stripCloudinaryTransforms(props.logo) ?? props.logo : null;
+  const location = props.industry?.name;
+
   return (
-    <Link 
+    <Link
       href={`/clients/${encodeURIComponent(props.slug)}`}
-      className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+      className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
-      <Card 
-        role="article" 
-        aria-label={`${props.name} - ${props.articleCount} مقالات`}
-        className={cn(
-          "h-full flex flex-col group hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 cursor-pointer",
-          isPremium && "ring-2 ring-primary/20 shadow-lg shadow-primary/5",
-          isPro && "ring-1 ring-primary/10"
-        )}
-      >
-        <CardHeader className="space-y-4">
-          <div className="flex items-start justify-between">
-            <div className={cn("h-20 w-20 ring-2 ring-background shadow-lg group-hover:ring-primary/30 transition-all bg-gradient-to-br from-primary/10 to-primary/20 overflow-hidden flex items-center justify-center flex-shrink-0", BRAND_AVATAR_RADIUS)}>
-              {props.logo ? (
-                <Image
-                  src={props.logo}
-                  alt={props.name}
-                  width={80}
-                  height={80}
-                  className="h-full w-full object-contain"
-                  sizes="80px"
-                />
-              ) : (
-                <span className="text-2xl font-bold text-primary">{initials}</span>
-              )}
-            </div>
-            
-            {props.isVerified && (
-              <>
-                {isPremium ? (
-                  <Badge 
-                    variant="secondary" 
-                    className="gap-1 bg-primary/10 border-primary/30 text-primary"
-                  >
-                    <IconCheckCircle className="h-3 w-3" />
-                    بريميوم
-                  </Badge>
-                ) : (
-                  <div className="bg-primary/10 p-1.5 rounded-full">
-                    <IconCheckCircle className="h-5 w-5 text-primary fill-primary/20" />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors line-clamp-2">
-              {nameContent}
-            </h3>
-            {legalNameContent != null && (
-              <p className="text-sm text-muted-foreground line-clamp-1">
-                {legalNameContent}
-              </p>
-            )}
-          </div>
-
-          {props.industry && (
-            <Badge variant="outline" className="w-fit">
-              {props.industry.name}
-            </Badge>
+      <article className="relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_12px_26px_rgba(0,0,0,0.1)]">
+        {/* Banner — partner cover image, or a brand gradient fallback */}
+        <div className="relative h-[92px] overflow-hidden bg-gradient-to-br from-foreground to-primary">
+          {cover && (
+            <Image src={cover} alt="" fill sizes="(max-width: 768px) 100vw, 380px" className="object-cover" />
           )}
-          
-          {props.articleCount === 0 && (
-            <Badge variant="outline" className="text-xs w-fit">
-              عميل جديد
-            </Badge>
+          {props.isFeatured && (
+            <span className="absolute top-2.5 start-2.5 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-[10.5px] font-black text-amber-950 shadow-sm">
+              ⭐ مميّز
+            </span>
           )}
-        </CardHeader>
+        </div>
 
-        <CardContent className="space-y-4 flex-1 flex flex-col">
-          {descriptionContent != null && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {descriptionContent}
-            </p>
-          )}
-
-          <div role="group" aria-label="مقاييس الأداء" className="mt-auto">
-            <div className="grid grid-cols-2 gap-3 pt-4 border-t">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <IconArticle className="h-3.5 w-3.5" />
-                  <span>مقالات</span>
-                </div>
-                <p className="text-lg font-semibold text-foreground">
-                  {formatMetric(props.articleCount)}
-                </p>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <IconViews className="h-3.5 w-3.5" />
-                  <span>مشاهدات</span>
-                </div>
-                <p className="text-lg font-semibold text-foreground">
-                  {props.viewsCount === 0 ? (
-                    <span className="text-xs text-muted-foreground italic">لا توجد بعد</span>
-                  ) : (
-                    formatMetric(props.viewsCount)
-                  )}
-                </p>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <IconUsers className="h-3.5 w-3.5" />
-                  <span>مشتركون</span>
-                </div>
-                <p className="text-lg font-semibold text-foreground">
-                  {formatMetric(props.subscribersCount)}
-                </p>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <IconTrending className="h-3.5 w-3.5" />
-                  <span>التفاعل</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <p className="text-lg font-semibold">{engagementScore}</p>
-                  <span className={cn("text-xs font-medium", engagementLabel.color)}>
-                    {engagementLabel.label}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden sm:block pt-3 border-t border-dashed">
-              <div className="grid grid-cols-4 gap-2 text-xs">
-                <MetricChip icon={IconComment} value={props.commentsCount} label="تعليقات" />
-                <MetricChip icon={IconLike} value={props.likesCount} label="إعجاب" color="text-primary" />
-                <div className="hidden" aria-hidden>
-                  <MetricChip icon={IconLike} value={props.dislikesCount} label="رفض" color="text-destructive" />
-                </div>
-                <MetricChip icon={IconFeatured} value={props.favoritesCount} label="مفضلة" color="text-accent" />
-              </div>
-            </div>
-
-            <div className="sm:hidden flex items-center justify-center gap-2 text-xs text-muted-foreground pt-2 border-t border-dashed">
-              <span>{formatMetric(totalEngagement)} تفاعل كلي</span>
-            </div>
-          </div>
-        </CardContent>
-
-        <CardFooter className="flex items-center gap-2 pt-0">
-          <Button size="sm" className="flex-1 group-hover:shadow-md transition-shadow duration-300">
-            عرض الملف
-          </Button>
-          {props.ctaMode === "LINK" && props.ctaUrl ? (
-            <ClientCardCta clientId={props.id} url={props.ctaUrl} label={props.ctaLabel} />
+        {/* Logo — overlapping the banner edge (neutral frame + verified mark) */}
+        <div className="absolute top-[62px] end-4 z-[2] grid h-[58px] w-[58px] place-items-center overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_4px_12px_rgba(0,0,0,0.14),0_0_0_3px_#fff]">
+          {logo ? (
+            <Image src={logo} alt={props.name} fill className="object-contain p-1.5" sizes="58px" />
           ) : (
-            props.url && <ClientCardExternalLink url={props.url} />
+            <span className="text-lg font-black text-primary">{initials}</span>
           )}
-        </CardFooter>
-      </Card>
+          <span
+            className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-card bg-accent text-white"
+            aria-label="موثّق من مدوّنتي"
+          >
+            <IconCheck className="h-2.5 w-2.5" />
+          </span>
+        </div>
+
+        {/* Body */}
+        <div className="px-4 pb-4 pt-8">
+          <h3 className="line-clamp-1 text-base font-black leading-tight text-foreground transition-colors group-hover:text-primary">
+            {nameContent}
+          </h3>
+          {location && <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{location}</p>}
+
+          <div className="mt-3 flex gap-4 border-t border-border pt-3 text-[12.5px] text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <IconArticle className="h-3.5 w-3.5" />
+              <b className="font-black text-foreground">{formatMetric(props.articleCount)}</b> مقالات
+            </span>
+            <span className="flex items-center gap-1.5">
+              <IconViews className="h-3.5 w-3.5" />
+              {props.viewsCount === 0 ? (
+                <span>لا توجد</span>
+              ) : (
+                <>
+                  <b className="font-black text-foreground">{formatMetric(props.viewsCount)}</b> مشاهدة
+                </>
+              )}
+            </span>
+          </div>
+
+          <div className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-primary/[0.08] py-2 text-[13px] font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            زيارة الصفحة <span aria-hidden="true">←</span>
+          </div>
+        </div>
+      </article>
     </Link>
   );
 }

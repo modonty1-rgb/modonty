@@ -178,6 +178,7 @@ export interface ClientResponse {
   subscriptionTier?: string;
   createdAt: Date;
   isVerified: boolean;
+  isFeatured?: boolean; // featured/premium partner spotlight (admin toggle)
 }
 
 export interface NavigationItem {

@@ -176,9 +176,10 @@ export const clientFormSections: FormSectionConfig[] = [
     title: "Settings",
     description: "Subscription/payment status moved to the Activate/Suspend sidebar pages",
     icon: "Settings",
-    // Emptied 2026-06-10: the Settings accordion was removed from the edit form.
-    // subscriptionStatus/paymentStatus are now owned by Activate/Suspend only.
-    fields: [],
+    // subscriptionStatus/paymentStatus owned by Activate/Suspend only.
+    // isFeatured («شريك مميّز») routes here so updateSettingsFields() persists it
+    // (the toggle UI is rendered in the Subscription section; grouping is by field name).
+    fields: ["isFeatured"],
     required: [],
     priority: "secondary",
     availableInCreate: false,

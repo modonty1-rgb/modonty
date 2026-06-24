@@ -1,9 +1,8 @@
 import { Metadata } from "next";
-import { getClientsWithCounts, getClientPageStats } from "@/app/api/helpers/client-queries";
+import { getClientsWithCounts } from "@/app/api/helpers/client-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { ClientsHero } from "./components/clients-hero";
-import { getClientsPageSeo, getB2bPanelSettings } from "@/lib/seo/clients-page-seo";
+import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { ClientsSection } from "./components/clients-section";
 
@@ -16,17 +15,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ClientsPage() {
-  const [{ jsonLd: storedJsonLd }, clients, stats, industries, b2b] = await Promise.all([
+  const [{ jsonLd: storedJsonLd }, clients, industries] = await Promise.all([
     getClientsPageSeo(),
     getClientsWithCounts(),
-    getClientPageStats(),
     getIndustriesWithCounts(),
-    getB2bPanelSettings(),
   ]);
 
-  const featuredClients = clients
-    .filter(c => c.isVerified)
-    .slice(0, 6);
+  // Featured = paid/premium partners (annual) — the admin isFeatured toggle.
+  const featuredClients = clients.filter((c) => c.isFeatured);
 
   return (
     <>
@@ -42,8 +38,6 @@ export default async function ClientsPage() {
           { label: "الشركاء" },
         ]}
       />
-
-      <ClientsHero {...stats} b2b={b2b} />
 
       <div>
         <ClientsSection

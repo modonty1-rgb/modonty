@@ -3,6 +3,7 @@
 import { UseFormReturn } from "react-hook-form";
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 import { SubscriptionTier } from "@prisma/client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SubscriptionSectionProps {
   form: UseFormReturn<ClientFormSchemaType>;
@@ -27,9 +28,10 @@ export function SubscriptionSection({
 }: SubscriptionSectionProps) {
   const { watch, setValue, formState: { errors } } = form;
   const subscriptionTier = watch("subscriptionTier");
+  const isFeatured = watch("isFeatured");
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-3">
       <div className="flex items-center gap-2 h-10">
         {tierConfigs.map((config) => (
           <button
@@ -52,6 +54,21 @@ export function SubscriptionSection({
       {errors.subscriptionTier && (
         <p className="text-xs text-destructive">{errors.subscriptionTier.message}</p>
       )}
+
+      {/* Featured/premium spotlight — manual toggle (suggest ON for annual subscribers) */}
+      <label className="flex items-start gap-2.5 cursor-pointer border-t pt-3">
+        <Checkbox
+          checked={isFeatured ?? false}
+          className="mt-0.5"
+          onCheckedChange={(c) => setValue("isFeatured", c === true, { shouldDirty: true })}
+        />
+        <div>
+          <div className="text-[13px] font-semibold">⭐ شريك مميّز</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">
+            يظهر في «الشركاء المميّزون» وبشارة على الموقع · فعّلها للمشتركين سنويًا
+          </div>
+        </div>
+      </label>
     </div>
   );
 }
