@@ -57,14 +57,14 @@ interface ClientsContentProps {
 
 export function ClientsContent({ initialClients, industries, clientsGA4 }: ClientsContentProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [sortBy, setSortBy] = useState<SortOption>('name-asc');
+  const [sortBy, setSortBy] = useState<SortOption>('engagement-desc');
   
   const { filtered: searchFiltered, query, setQuery } = useClientSearch(initialClients);
 
   const { filtered, filters, updateFilter, clearFilters, hasActiveFilters, activeFilterCount } =
     useClientFilters(searchFiltered);
   
-  const sortedClients = sortClients(filtered, sortBy);
+  const sortedClients = sortClients(filtered, sortBy, clientsGA4);
 
   return (
     <>

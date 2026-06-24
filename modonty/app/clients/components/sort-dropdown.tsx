@@ -9,12 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export type SortOption = 
-  | 'name-asc' 
-  | 'name-desc' 
-  | 'articles-desc' 
-  | 'articles-asc' 
-  | 'newest' 
+export type SortOption =
+  | 'engagement-desc'
+  | 'name-asc'
+  | 'name-desc'
+  | 'articles-desc'
+  | 'articles-asc'
+  | 'newest'
   | 'oldest';
 
 interface SortDropdownProps {
@@ -23,6 +24,7 @@ interface SortDropdownProps {
 }
 
 const sortOptions: { value: SortOption; label: string }[] = [
+  { value: 'engagement-desc', label: 'الأكثر تفاعلاً' },
   { value: 'name-asc', label: 'الأبجدي (أ-ي)' },
   { value: 'name-desc', label: 'الأبجدي (ي-أ)' },
   { value: 'articles-desc', label: 'الأكثر مقالات' },
@@ -57,14 +59,17 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
   );
 }
 
-export function sortClients<T extends { 
-  name: string; 
-  articleCount: number; 
-  createdAt: Date 
-}>(clients: T[], sortBy: SortOption): T[] {
+export function sortClients<T extends {
+  slug: string;
+  name: string;
+  articleCount: number;
+  createdAt: Date;
+}>(clients: T[], sortBy: SortOption, ga4: Record<string, { total: number }> = {}): T[] {
   const sorted = [...clients];
 
   switch (sortBy) {
+    case 'engagement-desc':
+      return sorted.sort((a, b) => (ga4[b.slug]?.total ?? 0) - (ga4[a.slug]?.total ?? 0));
     case 'name-asc':
       return sorted.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
     case 'name-desc':

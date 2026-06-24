@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SortDropdown } from "@/app/clients/components/sort-dropdown";
+import type { SortOption } from "@/app/clients/components/sort-dropdown";
 import type { ClientSortOption } from "@/app/api/helpers/client-queries";
 
 type SearchScope = "all" | "articles" | "clients";
@@ -52,8 +53,9 @@ export function SearchSortBar({ scope, query, sortArticles, sortClients }: Searc
     router.replace(buildSearchUrl(query, scope, sortArticles, sortClients, { sort_articles: value, page: 1 }));
   };
 
-  const handleClientSort = (value: ClientSortOption) => {
-    router.replace(buildSearchUrl(query, scope, sortArticles, sortClients, { sort_clients: value }));
+  const handleClientSort = (value: SortOption) => {
+    if (value === 'engagement-desc') return;
+    router.replace(buildSearchUrl(query, scope, sortArticles, sortClients, { sort_clients: value as ClientSortOption }));
   };
 
   const showArticleSort = scope === "all" || scope === "articles";

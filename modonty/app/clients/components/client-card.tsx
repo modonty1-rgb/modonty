@@ -65,15 +65,17 @@ export function ClientCard(props: ClientCardProps) {
           )}
         </div>
 
-        {/* Logo — overlapping the banner edge (neutral frame + verified mark) */}
-        <div className="absolute top-[62px] end-4 z-[2] grid h-[58px] w-[58px] place-items-center overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_4px_12px_rgba(0,0,0,0.14),0_0_0_3px_#fff]">
-          {logo ? (
-            <Image src={logo} alt={props.name} fill className="object-contain p-1.5" sizes="58px" />
-          ) : (
-            <span className="text-lg font-black text-primary">{initials}</span>
-          )}
+        {/* Logo — overlapping the banner edge */}
+        <div className="absolute top-[62px] end-4 z-[2] h-[58px] w-[58px]">
+          <div className="relative h-full w-full overflow-hidden rounded-xl">
+            {logo ? (
+              <Image src={logo} alt={props.name} fill className="object-contain" sizes="58px" />
+            ) : (
+              <span className="grid h-full w-full place-items-center text-lg font-black text-primary">{initials}</span>
+            )}
+          </div>
           <span
-            className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-card bg-accent text-white"
+            className="absolute -bottom-1 -start-1 grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white bg-accent text-white"
             aria-label="موثّق من مدوّنتي"
           >
             <IconCheck className="h-2.5 w-2.5" />
