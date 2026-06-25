@@ -50,9 +50,11 @@ export async function getClientsWithCounts(): Promise<ClientResponse[]> {
   cacheTag("clients");
   cacheLife("hours");
   const clients = await db.client.findMany({
+    // Show ALL active partners — including those with zero published articles yet.
+    // Article-less partners surface with a "قريباً" badge (driven by articleCount===0)
+    // instead of being hidden. (Reverts the v1.65.5 hide-zero-article rule by design.)
     where: {
       subscriptionStatus: SubscriptionStatus.ACTIVE,
-      articles: { some: { status: ArticleStatus.PUBLISHED, datePublished: { lte: new Date() } } },
     },
     include: {
       logoMedia: {

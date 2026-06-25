@@ -15,6 +15,8 @@ export interface FeaturedPartner {
   ogImage?: string;
   industry?: { name: string };
   isVerified: boolean;
+  /** Published article count — when 0, the slide gets a "قريباً" badge. */
+  articleCount?: number;
 }
 
 interface FeaturedPartnersSliderProps {
@@ -150,6 +152,12 @@ function PartnerSlide({ partner, priority }: { partner: FeaturedPartner; priorit
       <span className="absolute top-3.5 start-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-1 text-[11.5px] font-black text-amber-950 shadow sm:top-4 sm:start-6">
         ⭐ شريك مميّز
       </span>
+
+      {partner.articleCount === 0 && (
+        <span className="absolute top-3.5 end-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-1 text-[11.5px] font-black text-white shadow ring-1 ring-white/30 sm:top-4 sm:end-6">
+          ✨ قريباً
+        </span>
+      )}
 
       {/* caption — constrained to the page width, anchored bottom-start */}
       <div className="absolute inset-x-0 bottom-0">

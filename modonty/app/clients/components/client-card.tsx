@@ -63,6 +63,11 @@ export function ClientCard(props: ClientCardProps) {
               ⭐ مميّز
             </span>
           )}
+          {props.articleCount === 0 && (
+            <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2.5 py-0.5 text-[10.5px] font-black text-white shadow-sm ring-1 ring-white/30">
+              ✨ قريباً
+            </span>
+          )}
         </div>
 
         {/* Logo — overlapping the banner edge */}
