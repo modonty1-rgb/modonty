@@ -1,6 +1,6 @@
 {
   "name": "@modonty/admin",
-  "version": "0.82.0",
+  "version": "0.82.1",
   "private": true,
   "prisma": {
     "schema": "../dataLayer/prisma/schema/schema.prisma"
@@ -82,7 +82,7 @@
     "konva": "^10.3.0",
     "lucide-react": "^0.562.0",
     "mongodb": "^6.21.0",
-    "next": "^16.2.2",
+    "next": "16.2.9",
     "next-auth": "^5.0.0-beta.25",
     "next-cloudinary": "^6.17.5",
     "next-themes": "^0.4.6",
@@ -112,7 +112,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.23",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.2",
+    "eslint-config-next": "16.2.9",
     "postcss": "^8",
     "prisma": "^6.19.1",
     "tailwindcss": "^3.4.1",
