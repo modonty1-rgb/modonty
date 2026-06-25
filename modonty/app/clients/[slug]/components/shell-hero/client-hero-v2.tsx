@@ -6,6 +6,7 @@ import { stripCloudinaryTransforms } from "@/lib/image-utils";
 import { getInitials, getTagline, getSocialPlatform } from "../hero/utils";
 import { HeroChips } from "./hero-chips";
 import { HeroStats } from "./hero-stats";
+import { HeroGoogleStat } from "./hero-google-stat";
 import { HeroCtaRow } from "./hero-cta-row";
 
 export type HeroPageState = "strong" | "sparse" | "not-ready";
@@ -43,6 +44,8 @@ export interface ClientHeroV2Props {
   ctaMode: HeroCtaMode;
   user: { name: string | null; email: string | null } | null;
   initialIsFollowing?: boolean;
+  /** GA4 digital-impact total — drives the «موثّق من Google» box; 0 hides it. */
+  digitalImpact?: number;
 }
 
 // Teal radial glow + diagonal stripes — gradient-fallback cover when no image is set.
@@ -60,6 +63,7 @@ export function ClientHeroV2({
   ctaMode,
   user,
   initialIsFollowing = false,
+  digitalImpact = 0,
 }: ClientHeroV2Props) {
   const initials = getInitials(client.name);
   const tagline = getTagline(client);
@@ -173,6 +177,9 @@ export function ClientHeroV2({
                   socialLinks={socialLinks}
                 />
               </div>
+
+              {/* «موثّق من Google» — standalone digital-impact box at the bar's end */}
+              {digitalImpact > 0 && <HeroGoogleStat value={digitalImpact} />}
             </div>
 
             {/* MOBILE: stacked — logo + booking/follow/share live in the sticky ClientBottomBar */}
@@ -184,7 +191,11 @@ export function ClientHeroV2({
                 <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">{tagline}</p>
               )}
               <HeroChips client={client} />
-              <HeroStats stats={stats} pageState={pageState} layout="strip" className="mt-3.5" />
+              {/* stats strip + «موثّق من Google» box side-by-side (box at the strip's end) */}
+              <div className="mt-3.5 flex items-stretch gap-2.5">
+                <HeroStats stats={stats} pageState={pageState} layout="strip" className="flex-1" />
+                {digitalImpact > 0 && <HeroGoogleStat value={digitalImpact} size="sm" />}
+              </div>
 
               {/* social profile links (the action set lives in the sticky bottom bar) */}
               {socialLinks.length > 0 && (

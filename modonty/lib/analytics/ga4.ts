@@ -307,6 +307,22 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
   }
 }
 
+/**
+ * Single client's digital-impact total (GA4) for the hero «موثّق من Google» box.
+ * Reuses the cached getClientsGA4Stats() blob — no extra GA4 quota — and handles
+ * both raw + percent-decoded Arabic slugs. Returns 0 when GA4 has no data.
+ */
+export async function getClientDigitalImpact(slug: string): Promise<number> {
+  const all = await getClientsGA4Stats();
+  let decoded = slug;
+  try {
+    decoded = decodeURIComponent(slug);
+  } catch {
+    /* keep raw */
+  }
+  return all[slug]?.total ?? all[decoded]?.total ?? 0;
+}
+
 // ─── Full site analytics (for the public /analytics report page) ──────────────
 
 function rowsOf(r: ReportResponse): NonNullable<ReportResponse["rows"]> {

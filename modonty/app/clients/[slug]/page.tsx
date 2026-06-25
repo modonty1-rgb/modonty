@@ -10,6 +10,7 @@ import { getClientPageData } from "./helpers/client-page-data";
 import { getClientReviews, getClientReviewsBySlug } from "./helpers/client-reviews";
 import { getClientPageFaqs } from "./helpers/client-faqs";
 import { getClientGallery } from "./helpers/client-gallery";
+import { getClientDigitalImpact } from "@/lib/analytics/ga4";
 import { resolveClientPageState } from "./components/client-page-state";
 import { ClientPageShell, type ShellClient } from "./components/client-page/client-page-shell";
 import { ClientBodySkeleton } from "./components/client-page/client-body-skeleton";
@@ -146,10 +147,11 @@ async function ClientHeroBlock({ params }: ClientPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
-  const [data, reviews, gallery] = await Promise.all([
+  const [data, reviews, gallery, digitalImpact] = await Promise.all([
     getClientPageData(slug),
     getClientReviews(slug),
     getClientGallery(decodedSlug),
+    getClientDigitalImpact(decodedSlug),
   ]);
 
   if (!data) return null;
@@ -205,6 +207,7 @@ async function ClientHeroBlock({ params }: ClientPageProps) {
         ctaMode={client.ctaMode}
         user={null}
         initialIsFollowing={false}
+        digitalImpact={digitalImpact}
       />
     </div>
   );
