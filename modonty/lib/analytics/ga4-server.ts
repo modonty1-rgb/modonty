@@ -26,6 +26,8 @@ interface SendOptions {
   userId?: string;
   debug?: boolean;
   timeoutMs?: number;
+  /** Full URL of the page the event happened on — GA4 needs it for page + host attribution. */
+  pageLocation?: string;
 }
 
 interface GA4Payload {
@@ -70,16 +72,10 @@ export function sendGA4Event(
   params: GA4EventParams = {},
   options: SendOptions = {},
 ): void {
-  if (!MEASUREMENT_ID || !API_SECRET) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[ga4-server] GA4 env vars missing — event dropped:", eventName);
-    }
-    return;
-  }
-
-  // GA4 DebugView: auto-enable in non-production so dev events appear in
-  // Admin → DebugView (per official GA4 docs). Does NOT affect prod reports.
-  const isDev = process.env.NODE_ENV !== "production";
+  // GA4 disabled outside production — never pollute the prod GA4 property with local-dev
+  // traffic. (Decision 2026-06-26: use a separate dev GA4 property to test tracking locally.)
+  if (process.env.NODE_ENV !== "production") return;
+  if (!MEASUREMENT_ID || !API_SECRET) return;
 
   const payload: GA4Payload = {
     client_id: clientId,
@@ -90,7 +86,7 @@ export function sendGA4Event(
           ...sanitizeParams(params),
           session_id: sessionId,
           engagement_time_msec: 100,
-          ...(isDev ? { debug_mode: 1 } : {}),
+          ...(options.pageLocation ? { page_location: options.pageLocation } : {}),
         },
       },
     ],
@@ -115,9 +111,6 @@ export function sendGA4Event(
         signal: controller.signal,
         keepalive: true,
       });
-      if (isDev) {
-        console.log(`[ga4-server] ${eventName} → HTTP ${resp.status}${resp.ok ? "" : " ⚠️"}`);
-      }
       if (options.debug) {
         const json = (await resp.json().catch(() => null)) as
           | { validationMessages?: unknown[] }
@@ -158,6 +151,7 @@ export async function sendGA4EventAwait(
           ...sanitizeParams(params),
           session_id: sessionId,
           engagement_time_msec: 100,
+          ...(options.pageLocation ? { page_location: options.pageLocation } : {}),
         },
       },
     ],

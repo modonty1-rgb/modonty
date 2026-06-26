@@ -177,13 +177,13 @@ async function trackEvent<T extends object>(
   params: T,
   options: TrackOptions = {},
 ): Promise<void> {
-  const { clientId, sessionId } = await getVisitorContext();
+  const { clientId, sessionId, pageLocation } = await getVisitorContext();
   sendGA4Event(
     eventName,
     clientId,
     sessionId,
     params as unknown as Record<string, string | number | boolean | null | undefined>,
-    { userId: options.userId },
+    { userId: options.userId, pageLocation },
   );
 }
 
