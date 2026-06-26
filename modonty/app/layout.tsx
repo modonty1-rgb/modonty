@@ -7,7 +7,7 @@ import { SessionProviderWrapper } from "@/components/providers/SessionProviderWr
 import { GTMContainer } from "@/components/gtm/GTMContainer";
 import { WebVitals } from "@/components/gtm/WebVitals";
 import { PageViewTracker } from "@/components/analytics/PageViewTracker";
-import { HotjarScript } from "@/components/hotjar/HotjarScript";
+import { ContentsquareScript } from "@/components/hotjar/HotjarScript";
 import { Footer } from "@/components/layout/Footer";
 import { TopNavWithFavorites } from "@/components/navigatore/TopNavWithFavorites";
 import { ChatFloatingButton } from "@/components/chatbot/ChatFloatingButton";
@@ -72,8 +72,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://static.hotjar.com" />
-        <link rel="dns-prefetch" href="https://script.hotjar.com" />
+        <link rel="dns-prefetch" href="https://t.contentsquare.net" />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
          
       </head>
@@ -88,7 +87,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <PageViewTracker />
         </Suspense>
-        <HotjarScript />
+        <ContentsquareScript />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

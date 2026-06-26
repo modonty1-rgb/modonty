@@ -1,28 +1,23 @@
 import "server-only";
 import Script from "next/script";
 
-export function HotjarScript() {
-  const siteId = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID;
-  const version = process.env.NEXT_PUBLIC_HOTJAR_VERSION || "6";
-
-  if (!siteId) return null;
+/**
+ * Contentsquare (formerly Hotjar) — Session Replay + Heatmaps tag.
+ *
+ * Loaded ONLY in production (keeps local-dev sessions out + zero cost in dev), and via
+ * next/script `lazyOnload` so it never blocks the initial render — performance is #1 on
+ * modonty.com. Tag id comes from `NEXT_PUBLIC_CONTENTSQUARE_TAG_ID` (e.g. c71a2ae23dc5a),
+ * which maps to the official tag `https://t.contentsquare.net/uxa/<tagId>.js`.
+ */
+export function ContentsquareScript() {
+  const tagId = process.env.NEXT_PUBLIC_CONTENTSQUARE_TAG_ID;
+  if (!tagId || process.env.NODE_ENV !== "production") return null;
 
   return (
     <Script
-      id="hotjar-script"
+      id="contentsquare-uxa"
+      src={`https://t.contentsquare.net/uxa/${tagId}.js`}
       strategy="lazyOnload"
-      dangerouslySetInnerHTML={{
-        __html: `
-          (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:${siteId},hjsv:${version}};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-        `,
-      }}
     />
   );
 }
