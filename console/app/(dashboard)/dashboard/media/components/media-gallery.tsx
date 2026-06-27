@@ -8,17 +8,11 @@ import { Input } from "@/components/ui/input";
 import { ImageIcon, Search, X } from "lucide-react";
 import { MediaWithStats } from "../helpers/media-queries";
 import { ar } from "@/lib/ar";
+import { formatBytes } from "@modonty/database/lib/utils";
 
 interface MediaGalleryProps {
   clientId: string;
   media: MediaWithStats[];
-}
-
-function formatBytes(bytes: number | null): string {
-  if (!bytes) return "—";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatDimensions(w: number | null, h: number | null): string {

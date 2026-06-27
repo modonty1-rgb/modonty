@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
-import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
+import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
 import { validateYmylData } from "@/lib/seo/ymyl-helpers";
 
 import { updateYmylData } from "../actions/profile-actions";

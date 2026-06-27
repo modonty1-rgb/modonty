@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { pushClientContext, pushPageView } from "@/helpers/gtm/dataLayer";
-import type { ClientContextData } from "@/helpers/gtm/dataLayer";
+import { pushClientContext, pushPageView } from "@modonty/database/lib/gtm/dataLayer";
+import type { ClientContextData } from "@modonty/database/lib/gtm/dataLayer";
 
 interface GTMClientTrackerProps {
   clientContext: ClientContextData | null;

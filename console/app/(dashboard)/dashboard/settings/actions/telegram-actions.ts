@@ -8,7 +8,7 @@ import {
   generatePairingCode,
   disconnectTelegram,
 } from "@/lib/telegram/pairing";
-import { sendTelegramMessage } from "@/lib/telegram/client";
+import { sendTelegramMessage } from "@modonty/database/lib/telegram/client";
 import {
   TELEGRAM_EVENTS,
   type TelegramEventKey,

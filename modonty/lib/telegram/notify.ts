@@ -9,7 +9,7 @@
  */
 
 import { db } from "@/lib/db";
-import { sendTelegramMessage, sendAdminTelegram, escapeTgHtml } from "./client";
+import { sendTelegramMessage, sendAdminTelegram, escapeTgHtml } from "@modonty/database/lib/telegram/client";
 import {
   TELEGRAM_EVENTS,
   isTelegramEventEnabled,
@@ -21,7 +21,7 @@ import {
   lookupGeoByIp,
   readGeoFromHeaders,
   type GeoInfo,
-} from "./geo";
+} from "@modonty/database/lib/telegram/geo";
 
 export interface TelegramEventPayload {
   /** Optional human-readable headline shown after the emoji + label. */

@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import {
   YMYL_CATEGORIES,
   type YmylCategory,
-} from "@/lib/seo/ymyl-config";
+} from "@modonty/database/lib/seo/ymyl-config";
 
 import type { ClientFormSchemaType } from "../../helpers/client-form-schema";
 

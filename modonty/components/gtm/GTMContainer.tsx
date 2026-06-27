@@ -1,4 +1,4 @@
-import { getGTMSettings } from "@/helpers/gtm/getGTMSettings";
+import { getGTMSettings } from "@modonty/database/lib/gtm/getGTMSettings";
 import Script from "next/script";
 
 export function GTMContainer() {

@@ -13,7 +13,7 @@
  */
 
 import { getYmylConfig, resolveYmylSchemaType } from "./ymyl-helpers";
-import type { YmylCategory } from "./ymyl-config";
+import type { YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
 
 export interface YmylClientForJsonLd {
   id: string;

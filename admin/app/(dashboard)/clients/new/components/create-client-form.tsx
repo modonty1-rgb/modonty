@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useClientForm } from "../../helpers/hooks/use-client-form";
 import { sendClientWelcome } from "../../actions/clients-actions";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
-import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
+import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
 import { LEGAL_FORMS, type LegalForm } from "@modonty/database/lib/constants/client-classification";
 
 interface CreatedClient {

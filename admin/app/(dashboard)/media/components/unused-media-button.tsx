@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, ArrowRight, Trash2, ImageOff, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteMedia } from "../actions/media-actions";
+import { formatBytes } from "@modonty/database/lib/utils";
 
 interface UnusedItem {
   id: string;
@@ -46,13 +47,6 @@ function isHostAllowed(url: string): boolean {
   } catch {
     return false;
   }
-}
-
-function formatBytes(b: number | null): string {
-  if (!b) return "—";
-  if (b < 1024) return `${b} B`;
-  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
-  return `${(b / 1024 / 1024).toFixed(1)} MB`;
 }
 
 export function UnusedMediaButton({ items }: { items: UnusedItem[] }) {

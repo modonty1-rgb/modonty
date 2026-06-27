@@ -22,7 +22,7 @@ import NextImage from "next/image";
 import { generateSEOFileName, generateCloudinaryPublicId, isValidCloudinaryPublicId, optimizeCloudinaryUrl } from "@/lib/utils/image-seo";
 import { MediaType, MediaScope } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes } from "@modonty/database/lib/utils";
 import { getMediaSpec, requiresCrop } from "@/lib/media/media-specs";
 import { validateFile } from "../../components/upload-zone/utils/file-validation";
 import { getCloudinaryErrorMessage } from "../../components/upload-zone/utils/error-handler";

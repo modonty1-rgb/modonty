@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Save, Crop, Check, Pencil } from "lucide-react";
 
 import { getMediaSpec, requiresCrop, type MediaSpec } from "@/lib/media/media-specs";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes } from "@modonty/database/lib/utils";
 
 import { useUploadZone } from "./hooks/use-upload-zone";
 import { ClientSelector } from "./components/client-selector";

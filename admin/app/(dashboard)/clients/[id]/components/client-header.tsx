@@ -9,7 +9,7 @@ import { ImageIcon, Camera, ExternalLink, Monitor, Pencil } from "lucide-react";
 import { DeleteClientButton } from "./delete-client-button";
 import { ClientLogoModal } from "../../components/client-logo-modal";
 import { ClientHeroModal } from "../../components/client-hero-modal";
-import { YMYL_CATEGORIES, type YmylCategory } from "@/lib/seo/ymyl-config";
+import { YMYL_CATEGORIES, type YmylCategory } from "@modonty/database/lib/seo/ymyl-config";
 
 interface ClientHeaderProps {
   client: {

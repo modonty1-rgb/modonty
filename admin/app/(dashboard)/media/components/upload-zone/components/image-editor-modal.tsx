@@ -14,7 +14,7 @@ import type {
 } from "react-filerobot-image-editor";
 
 import { useToast } from "@/hooks/use-toast";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes } from "@modonty/database/lib/utils";
 import { getMediaSpec, isRatioValid, isResolutionValid } from "@/lib/media/media-specs";
 
 // Filerobot is canvas/DOM-heavy and touches window → client-only, no SSR.

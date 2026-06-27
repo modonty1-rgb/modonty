@@ -1,8 +1,8 @@
-import { getGTMSettings } from "@/helpers/gtm/getGTMSettings";
+import { getGTMSettings } from "@modonty/database/lib/gtm/getGTMSettings";
 import Script from "next/script";
 
-export async function GTMContainer() {
-  const { containerId, enabled } = await getGTMSettings();
+export function GTMContainer() {
+  const { containerId, enabled } = getGTMSettings();
 
   if (!enabled || !containerId) {
     return null;

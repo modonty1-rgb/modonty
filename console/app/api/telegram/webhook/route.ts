@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { sendTelegramMessage } from "@/lib/telegram/client";
+import { sendTelegramMessage } from "@modonty/database/lib/telegram/client";
 import { confirmPairingByCode } from "@/lib/telegram/pairing";
 
 export const runtime = "nodejs";

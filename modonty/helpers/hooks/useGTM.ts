@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { pushClientContext, pushPageView } from "../gtm/dataLayer";
-import type { ClientContextData, PageViewData } from "../gtm/dataLayer";
+import { pushClientContext, pushPageView } from "@modonty/database/lib/gtm/dataLayer";
+import type { ClientContextData, PageViewData } from "@modonty/database/lib/gtm/dataLayer";
 
 interface UseGTMOptions {
   clientContext?: ClientContextData | null;

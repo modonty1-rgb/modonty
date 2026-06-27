@@ -15,7 +15,7 @@ import {
   type YmylCategory,
   type YmylCategoryConfig,
   type YmylField,
-} from "./ymyl-config";
+} from "@modonty/database/lib/seo/ymyl-config";
 
 /** Get the full config for a category. Returns null if category is invalid/missing. */
 export function getYmylConfig(category: string | null | undefined): YmylCategoryConfig | null {

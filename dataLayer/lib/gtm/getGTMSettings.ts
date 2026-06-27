@@ -1,5 +1,9 @@
 import "server-only";
 
+/**
+ * Shared GTM/GA4 container resolver — used by admin + modonty + console GTMContainer
+ * (all server components) via `@modonty/database/lib/gtm/getGTMSettings`.
+ */
 export interface GTMSettings {
   containerId: string | null;
   enabled: boolean;

@@ -5,15 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Human-readable byte size, e.g. 1234567 → "1.2 MB". */
-export function formatBytes(bytes: number | null | undefined): string {
-  if (!bytes || bytes <= 0) return "0 KB";
-  const units = ["B", "KB", "MB", "GB"];
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-  const val = bytes / Math.pow(1024, i);
-  return `${val >= 100 || i === 0 ? Math.round(val) : val.toFixed(1)} ${units[i]}`;
-}
-
 export function slugify(text: string): string {
   if (!text) return "";
 
