@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { compressToWebP } from "@/lib/compress-image";
 
 interface CloudinaryLicenseUploadProps {
   value: string;
@@ -32,15 +33,24 @@ export function CloudinaryLicenseUpload({ value, onChange }: CloudinaryLicenseUp
       toast.error("الملف لازم يكون صورة");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الصورة كبير — الحد الأقصى 5 ميجا");
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("حجم الصورة كبير — الحد الأقصى 20 ميجا");
       return;
     }
 
     setUploading(true);
+    let compressed: File;
+    try {
+      compressed = await compressToWebP(file);
+    } catch {
+      toast.error("فشل ضغط الصورة");
+      setUploading(false);
+      return;
+    }
+
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", compressed);
       fd.append("upload_preset", uploadPreset);
       fd.append("asset_folder", "ymyl-licenses");
 
@@ -130,7 +140,7 @@ export function CloudinaryLicenseUpload({ value, onChange }: CloudinaryLicenseUp
             <ImageIcon className="h-6 w-6" />
           )}
           <span className="text-sm font-medium">{uploading ? "جاري الرفع..." : "ارفع صورة الترخيص"}</span>
-          <span className="text-[11px]">JPG / PNG — حتى 5 ميجا</span>
+          <span className="text-[11px]">JPG / PNG / WebP — تُضغط تلقائياً · حتى 20 ميجا</span>
         </button>
       )}
     </div>

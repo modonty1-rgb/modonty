@@ -8,6 +8,7 @@ import { Upload, X, Loader2, ImagePlus, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { compressToWebP } from "@/lib/compress-image";
 import {
   addGalleryImage,
   updateGalleryImageAlt,
@@ -19,7 +20,7 @@ interface Props {
   initial: GalleryImage[];
 }
 
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = 20 * 1024 * 1024;
 
 export function GalleryManager({ initial }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,12 +39,20 @@ export function GalleryManager({ initial }: Props) {
       return false;
     }
     if (file.size > MAX_BYTES) {
-      toast.error(`«${file.name}» حجمها كبير — الحد 5 ميجا`);
+      toast.error(`«${file.name}» حجمها كبير — الحد 20 ميجا`);
+      return false;
+    }
+
+    let compressed: File;
+    try {
+      compressed = await compressToWebP(file);
+    } catch {
+      toast.error(`فشل ضغط «${file.name}»`);
       return false;
     }
 
     const fd = new FormData();
-    fd.append("file", file);
+    fd.append("file", compressed);
     fd.append("upload_preset", uploadPreset);
     fd.append("asset_folder", "client-gallery");
 
@@ -123,7 +132,7 @@ export function GalleryManager({ initial }: Props) {
         <span className="text-sm font-medium text-foreground">
           {uploading ? "جاري الرفع..." : "ارفع صور المعرض"}
         </span>
-        <span className="text-[11px]">تقدر تختار أكثر من صورة · JPG / PNG — حتى 5 ميجا للصورة</span>
+        <span className="text-[11px]">JPG / PNG / WebP — تُضغط تلقائياً بصيغة WebP · حتى 20 ميجا</span>
       </button>
 
       {/* Grid */}
