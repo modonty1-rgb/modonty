@@ -5,9 +5,9 @@ export const STEP_CONFIGS: StepConfig[] = [
     number: 1,
     label: "Basic",
     id: "basic",
-    description: "Title, excerpt, client, category, author, and tags",
-    requiredFields: ["title", "slug", "clientId", "authorId"],
-    optionalFields: ["categoryId", "excerpt", "status", "featured", "tags"],
+    description: "Title, excerpt, client, category, author, tags, and SEO metadata",
+    requiredFields: ["title", "slug", "clientId", "authorId", "seoTitle", "seoDescription"],
+    optionalFields: ["categoryId", "tags", "citations", "semanticKeywords"],
   },
   {
     number: 2,
@@ -16,13 +16,10 @@ export const STEP_CONFIGS: StepConfig[] = [
     description: "Article content (rich-text editor + AI assistant)",
     requiredFields: ["content"],
     optionalFields: [
-      "contentFormat",
       "wordCount",
       "readingTimeMinutes",
       "contentDepth",
       "articleBodyText",
-      "inLanguage",
-      "isAccessibleForFree",
     ],
   },
   {
@@ -35,14 +32,6 @@ export const STEP_CONFIGS: StepConfig[] = [
   },
   {
     number: 4,
-    label: "SEO",
-    id: "seo",
-    description: "SEO title, description, and semantic keywords",
-    requiredFields: ["seoTitle", "seoDescription"],
-    optionalFields: ["metaRobots", "semanticKeywords"],
-  },
-  {
-    number: 5,
     label: "FAQs",
     id: "faqs",
     description: "Frequently asked questions (FAQ Schema for Google rich results)",
@@ -50,7 +39,7 @@ export const STEP_CONFIGS: StepConfig[] = [
     optionalFields: ["faqs"],
   },
   {
-    number: 6,
+    number: 5,
     label: "Related",
     id: "related",
     description: "Related articles for internal linking and increased dwell time",

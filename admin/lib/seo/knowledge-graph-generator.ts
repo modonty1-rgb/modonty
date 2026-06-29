@@ -208,18 +208,23 @@ export function generateArticleKnowledgeGraph(
         ymylData: article.client.ymylData,
         addressCountry: article.client.addressCountry,
       },
-      reviewer: article.reviewer
-        ? {
-            id: article.reviewer.id,
-            name: article.reviewer.name,
-            jobTitle: article.reviewer.jobTitle,
-            credentials: article.reviewer.credentials ?? [],
-            qualifications: article.reviewer.qualifications ?? [],
-            expertiseAreas: article.reviewer.expertiseAreas ?? [],
-            profileUrl: `${siteUrl}/authors/${article.reviewer.slug}`,
-            imageUrl: article.reviewer.image ?? null,
-          }
-        : null,
+      reviewer: (() => {
+        // Reviewer comes from ymylData.reviewerName (set by client in console),
+        // not from Article.reviewedById. Client approval stamps lastReviewed.
+        const ymylData = article.client.ymylData as Record<string, unknown> | null;
+        const name = typeof ymylData?.reviewerName === 'string' ? ymylData.reviewerName : null;
+        if (!name) return null;
+        return {
+          id: `${article.client.id}-reviewer`,
+          name,
+          jobTitle: typeof ymylData?.reviewerQualification === 'string' ? ymylData.reviewerQualification : null,
+          credentials: [] as string[],
+          qualifications: [] as string[],
+          expertiseAreas: [] as string[],
+          profileUrl: null,
+          imageUrl: null,
+        };
+      })(),
       article: {
         pageUrl: articleUrl,
         lastReviewedIso: article.lastReviewed

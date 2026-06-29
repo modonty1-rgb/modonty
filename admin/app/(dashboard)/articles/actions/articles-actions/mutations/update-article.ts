@@ -200,7 +200,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         userVersion: nextUserVersion,
         title: data.title,
         slug: data.slug,
-        excerpt: data.excerpt || null,
+        excerpt: seoDescription || null,
         content: sanitizedContent,
         clientId: data.clientId,
         categoryId: data.categoryId || null,
@@ -308,6 +308,34 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
     revalidatePath(`/articles/${article.slug}`);
     await revalidateModontyTag("articles");
     try { const { regenerateArticlesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateArticlesListingCache(); } catch (error) { console.error("Failed to regenerate articles listing cache:", error); }
+
+    // Auto-post to Twitter when article transitions to PUBLISHED for the first time
+    const isFirstPublish = data.status === ArticleStatus.PUBLISHED && existingArticle.status !== ArticleStatus.PUBLISHED;
+    if (isFirstPublish) {
+      const articleForSocial = await db.article.findUnique({
+        where: { id: article.id },
+        select: {
+          seoTitle: true,
+          seoDescription: true,
+          slug: true,
+          featuredImage: { select: { url: true } },
+          tags: { select: { tag: { select: { name: true } } } },
+        },
+      });
+      if (articleForSocial) {
+        const socialParams = {
+          seoTitle:       articleForSocial.seoTitle || data.seoTitle || data.title,
+          seoDescription: articleForSocial.seoDescription || data.seoDescription || data.title,
+          slug:           articleForSocial.slug,
+          imageUrl:       articleForSocial.featuredImage?.url ?? null,
+          tags:           articleForSocial.tags.map(t => t.tag.name),
+        };
+        const { publishArticleToTwitter } = await import('@/lib/social/twitter');
+        void publishArticleToTwitter(socialParams);
+        const { publishArticleToMeta } = await import('@/lib/social/meta');
+        void publishArticleToMeta(socialParams);
+      }
+    }
 
     // Re-fetch userVersion + updatedAt after SEO generation
     // (SEO ops bump updatedAt but NOT userVersion — keep userVersion fresh from this action)

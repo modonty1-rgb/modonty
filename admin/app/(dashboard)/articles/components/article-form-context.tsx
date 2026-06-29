@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { ArticleFormData, FormSubmitResult } from '@/lib/types/form-types';
-import { slugify, generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
+import { generateSEOTitle, generateSEODescription, generateCanonicalUrl } from '../helpers/seo-helpers';
 import { SITE_NAME } from '@/lib/constants/site-name';
 import { updateArticle } from '../actions/articles-actions';
 import {
@@ -48,6 +48,7 @@ type ArticleClient = {
   // YMYL flags — drive conditional reviewer field in article form
   isYmyl?: boolean;
   ymylCategory?: string | null;
+  ymylData?: unknown;
 };
 
 interface ArticleFormContextType {
@@ -246,10 +247,6 @@ export function ArticleFormProvider({
       ...initialData,
       ...settingsArticleDefaults,
     };
-    // Auto-set authorId if not set and there's only one author (singleton Modonty)
-    if (!initial.authorId && authors.length === 1 && mode === 'new') {
-      initial.authorId = authors[0].id;
-    }
     return initial;
   });
   const [isDirty, setIsDirty] = useState(false);
@@ -428,15 +425,6 @@ export function ArticleFormProvider({
   const canGoNext = currentStep < totalSteps;
   const canGoPrevious = currentStep > 1;
   
-  // Auto-fill logic (no setIsDirty — these are system-generated, not user changes)
-  useEffect(() => {
-    const newSlug = slugify(formData.title);
-    // New article: slug always follows title. Edit: only fill if still empty (never overwrite saved slug).
-    if (newSlug && newSlug !== formData.slug && (mode === 'new' || !formData.slug)) {
-      setFormData((prev) => ({ ...prev, slug: newSlug }));
-    }
-  }, [formData.title, formData.slug, mode]);
-
   // Auto-fill SEO title from title (if empty)
   useEffect(() => {
     if (formData.title && !formData.seoTitle) {
@@ -501,14 +489,6 @@ export function ArticleFormProvider({
     }
   }, [formData.tags, formData.ogArticleTag, tags]);
 
-  // Auto-set singleton author (Modonty) if not set
-  useEffect(() => {
-    if (!formData.authorId && authors.length === 1 && mode === 'new') {
-      setFormData((prev) => ({ ...prev, authorId: authors[0].id }));
-      setIsDirty(false);
-      isDirtyRef.current = false; // Don't mark as dirty for auto-set singleton
-    }
-  }, [formData.authorId, authors, mode]);
 
   // Auto-fill OG Article Author from Author (if empty)
   useEffect(() => {

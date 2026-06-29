@@ -9,7 +9,7 @@ export function isFieldCompleted(value: unknown): boolean {
     return value.length > 0;
   }
   if (typeof value === "number") {
-    return true;
+    return value > 0;
   }
   if (typeof value === "boolean") {
     return true;

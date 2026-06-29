@@ -19,8 +19,8 @@ interface PageProps {
 }
 
 /** Map a check ID to the article-editor tab where the user can fix it. */
-function getFixTab(checkId: string): "basic" | "content" | "media" | "seo" | null {
-  if (checkId === "title-length" || checkId === "meta-description" || checkId === "canonical") return "seo";
+function getFixTab(checkId: string): "basic" | "content" | "media" | null {
+  if (checkId === "title-length" || checkId === "meta-description" || checkId === "canonical") return "basic";
   if (checkId === "excerpt" || checkId === "word-count" || checkId === "article-body-text") return "content";
   if (checkId === "internal-links-count" || checkId === "internal-links-anchors") return "content";
   if (

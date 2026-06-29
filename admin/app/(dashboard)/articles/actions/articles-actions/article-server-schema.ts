@@ -1,15 +1,16 @@
 import { z } from "zod";
+import { slugify } from "@/lib/utils";
 
 export const articleServerSchema = z.object({
   // Required
   title: z.string().min(1, "عنوان المقال مطلوب").max(300, "العنوان طويل جداً"),
-  slug: z.string().min(1, "الرابط المختصر مطلوب").max(300, "الرابط المختصر طويل جداً"),
+  slug: z.string().min(1, "الرابط المختصر مطلوب").max(300, "الرابط المختصر طويل جداً").transform((val) => slugify(val)),
   content: z.string().min(1, "محتوى المقال مطلوب"),
   clientId: z.string().min(1, "العميل مطلوب"),
 
   // Optional strings
   excerpt: z.string().max(500).optional().nullable(),
-  seoTitle: z.string().max(200, "عنوان SEO طويل جداً").optional().nullable(),
+  seoTitle: z.string().max(60, "عنوان SEO طويل جداً — الحد الأقصى 60 حرف").optional().nullable(),
   seoDescription: z.string().max(300).optional().nullable(),
   canonicalUrl: z.string().max(500).optional().nullable(),
   ogArticleAuthor: z.string().max(200).optional().nullable(),

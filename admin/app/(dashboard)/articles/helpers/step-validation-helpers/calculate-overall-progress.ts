@@ -7,14 +7,9 @@ export function calculateOverallProgress(
   errors: Record<string, string[]>,
   seoScore?: number,
 ): number {
-  const validations = STEP_CONFIGS.map((step) => {
-    const validation = calculateStepValidation(step.number, formData, errors);
-    // Use SEO analyzer score for the SEO step (matches sidebar display)
-    if (step.id === "seo" && seoScore !== undefined) {
-      return { ...validation, completionPercentage: seoScore };
-    }
-    return validation;
-  });
+  const validations = STEP_CONFIGS.map((step) =>
+    calculateStepValidation(step.number, formData, errors),
+  );
 
   const totalCompletion = validations.reduce((sum, v) => sum + v.completionPercentage, 0);
   return Math.round(totalCompletion / validations.length);

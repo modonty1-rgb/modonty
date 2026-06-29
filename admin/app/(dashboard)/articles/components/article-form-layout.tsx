@@ -1,64 +1,34 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useArticleForm } from './article-form-context';
 import { ArticleFormHeader } from './article-form-header';
-import { ArticleFormPreviewSidebar } from './article-form-preview-sidebar';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Eye, PanelRightClose, PanelRightOpen } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Tabs } from '@/components/ui/tabs';
+import { STEP_CONFIGS } from '../helpers/step-validation-helpers';
 
 export function ArticleFormLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const { formData, save, isSaving, isDirty, mode } = useArticleForm();
-  const [showPreview, setShowPreview] = useState(false);
+  const { currentStep, goToStep } = useArticleForm();
+  const activeTabId = STEP_CONFIGS[currentStep - 1]?.id ?? 'basic';
 
-  // Extract current section from pathname
-  const currentSection = pathname?.split('/').pop() || 'basic';
+  const handleTabChange = (value: string) => {
+    const step = STEP_CONFIGS.find((s) => s.id === value);
+    if (step) goToStep(step.number);
+  };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem-1.75rem)] bg-background -m-6 overflow-hidden">
-      {/* Header with Sidebar Navigation */}
-      <ArticleFormHeader
-        currentSection={currentSection}
-        mode={mode}
-      />
+    <Tabs
+      value={activeTabId}
+      onValueChange={handleTabChange}
+      className="flex flex-col h-[calc(100vh-3.5rem)] bg-background -m-6 overflow-hidden"
+    >
+      {/* Unified header — tabs + actions + progress strip */}
+      <ArticleFormHeader />
 
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Main Content Area */}
-        <main className={cn(
-          "flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300",
-          showPreview && "me-0 lg:me-[400px]"
-        )}>
-          <div className="container mx-auto max-w-6xl px-4 md:px-6 py-6 md:py-8">
-            {children}
-          </div>
-        </main>
-
-        {/* Floating Preview Toggle Button */}
-        <div className="fixed bottom-8 end-8 z-[60] flex flex-col gap-2">
-          <Button
-            variant="default"
-            size="icon"
-            onClick={() => setShowPreview(!showPreview)}
-            className={cn(
-              "h-12 w-12 rounded-full shadow-2xl transition-all hover:scale-110",
-              showPreview ? "bg-primary" : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900"
-            )}
-          >
-            {showPreview ? <PanelRightClose className="h-6 w-6" /> : <Eye className="h-6 w-6" />}
-          </Button>
+      {/* Scrollable content — fills full remaining height (no footer below) */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="container mx-auto max-w-6xl px-4 md:px-6 py-6 md:py-8">
+          {children}
         </div>
-
-        {/* Preview Sidebar */}
-        <aside className={cn(
-          "fixed top-[calc(3.5rem+1.75rem)] end-0 bottom-0 z-50 w-full lg:w-[400px] transition-transform duration-300 ease-in-out transform border-l bg-background",
-          showPreview ? "translate-x-0" : "translate-x-full"
-        )}>
-          <ArticleFormPreviewSidebar onClose={() => setShowPreview(false)} />
-        </aside>
       </div>
-    </div>
+    </Tabs>
   );
 }

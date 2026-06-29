@@ -130,7 +130,7 @@ export async function createArticle(data: ArticleFormData) {
       data: {
         title: data.title,
         slug: data.slug,
-        excerpt: data.excerpt || null,
+        excerpt: seoDescription || null,
         content: sanitizedContent,
         clientId: data.clientId,
         categoryId: data.categoryId || null,

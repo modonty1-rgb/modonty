@@ -4,8 +4,8 @@ import { getAllSettings } from '../../settings/actions/settings-actions';
 import { getArticleDefaultsFromSettings } from '../../settings/helpers/get-article-defaults-from-settings';
 import { loadSiteUrl } from '@/lib/seo/site-url';
 import { ArticleFormProvider } from '../components/article-form-context';
+import { ArticleFormLayout } from '../components/article-form-layout';
 import { ArticleFormTabs } from '../components/article-form-tabs';
-import { ArticleFormActionBar } from '../components/article-form-action-bar';
 
 export default async function NewArticlePage() {
   const [clients, categories, authors, tags, settings, siteUrl] = await Promise.all([
@@ -30,10 +30,9 @@ export default async function NewArticlePage() {
       tags={tags}
       siteUrl={siteUrl}
     >
-      <div className="pb-6 md:pb-8">
+      <ArticleFormLayout>
         <ArticleFormTabs />
-      </div>
-      <ArticleFormActionBar />
+      </ArticleFormLayout>
     </ArticleFormProvider>
   );
 }

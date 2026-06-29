@@ -2536,6 +2536,18 @@ model SlugChangeOtp {
   @@map("slug_change_otps")
 }
 
+model ArticleSlugOtp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String   @db.ObjectId
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([articleId, expiresAt])
+  @@map("article_slug_otps")
+}
+
 model SystemError {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   message    String

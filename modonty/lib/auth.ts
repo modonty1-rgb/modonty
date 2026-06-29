@@ -20,6 +20,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db) as any,
   session: { strategy: "jwt" },
   trustHost: true,
+  // Fix: Safari ITP + in-app browsers drop PKCE/state cookies during OAuth redirect.
+  // Explicit sameSite:"lax" + secure ensures cookies survive the Google OAuth round-trip.
+  cookies: {
+    pkceCodeVerifier: {
+      options: { httpOnly: true, sameSite: "lax", path: "/", secure: true, maxAge: 900 },
+    },
+    state: {
+      options: { httpOnly: true, sameSite: "lax", path: "/", secure: true, maxAge: 900 },
+    },
+  },
   events: {
     ...authConfig.events,
     // Fires only for adapter-created users (OAuth / Google first sign-in).

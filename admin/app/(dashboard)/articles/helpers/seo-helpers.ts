@@ -38,5 +38,5 @@ export {
 // Content extraction
 export { extractExcerpt } from "./content-extraction";
 
-// Re-export slugify from utils
-export { slugify } from "@/lib/utils";
+// Re-export slug utilities from utils
+export { slugify, slugifyShort } from "@/lib/utils";
