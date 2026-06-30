@@ -1028,6 +1028,7 @@ model Article {
   // Relationships
   tags        ArticleTag[]
   versions    ArticleVersion[]
+  socialPosts SocialPost[]
   analytics   Analytics[]
   relatedFrom RelatedArticle[] @relation("ArticleRelatedFrom")
   relatedTo   RelatedArticle[] @relation("ArticleRelatedTo")
@@ -2769,6 +2770,37 @@ model Country {
   updatedAt DateTime @updatedAt
 
   @@map("countries")
+}
+
+enum SocialPlatform {
+  FACEBOOK
+  INSTAGRAM
+  TWITTER
+}
+
+enum SocialPostStatus {
+  PUBLISHED
+  FAILED
+  SKIPPED
+}
+
+/// Auto-published social media post — created whenever an article goes PUBLISHED.
+model SocialPost {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  articleId String             @db.ObjectId
+  article   Article            @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  platform  SocialPlatform
+  status    SocialPostStatus
+  platformPostId String?       // e.g. "916057361588601_122128608771169772"
+  caption   String?            // text we sent
+  imageUrl  String?
+  errorMessage String?         // populated when status=FAILED
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([articleId])
+  @@index([platform, status])
+  @@map("social_posts")
 }
 
 /// A licensing/regulatory body a YMYL client picks during verification.

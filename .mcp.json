@@ -6,7 +6,6 @@
         "C:\\Users\\w2nad\\AppData\\Roaming\\npm\\node_modules\\@playwright\\mcp\\cli.js",
         "--browser",
         "msedge",
-        "--headless",
         "--viewport-size",
         "1280,800"
       ]

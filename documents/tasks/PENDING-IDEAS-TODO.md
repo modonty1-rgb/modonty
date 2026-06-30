@@ -1,6 +1,6 @@
 # 💭 Pending Ideas — Brainstorm & Future Features
 
-**Last Updated:** 2026-06-07 (🔁 NEW: full Quality-Check gate UX review — fresh redesign, deferred · stale-cache vs auto-fix distinction · «fix» wording for missing-data only)
+**Last Updated:** 2026-06-26 (📧 NEW: نظام الإيميلات الكامل Resend — inventory + templates + wiring · شرط تسليم قرار «د» اشتراكات)
 **Purpose:** ملف يجمع كل الأفكار المُلتقطة عبر shortcut **"reminder"** قبل ما تتحوّل لخطط تفصيلية.
 
 > **القاعدة:** كل فكرة هنا = `[ ]` فارغ، عنوان قصير + وصف موجز + تاريخ الإضافة.
@@ -9,6 +9,20 @@
 ---
 
 ## 💡 أفكار قيد التفكير
+
+### 📧 نظام الإيميلات الكامل (Resend) — inventory + templates + wiring (added 2026-06-26)
+
+- [ ] **نشتغله مرة وحدة: جرد كامل (inventory) لكل نقطة تحتاج إيميل عبر الـ 3 تطبيقات + قوالب + ربط Resend.** خالد لسه ما وصل لموضوع إرسال الإيميلات، يبيه منظّم دفعة وحدة بـ template + Resend.
+- **السبب المباشر (من جلسة عصف الاشتراكات 2026-06-26):** الاشتراكات الثلاثة (متابعة شريك · نشرة · حساب) **تجمع بلا تسليم** — المتابع ما يجيه إشعار لما ينزل مقال، والنشرة ما تُرسل أصلاً. التسليم = هذا النظام، وهو شرط قرار «د».
+- **الـ inventory المطلوب (لكل نقطة: trigger · recipient · template · app):**
+  - **إشعار المتابعين بمقال جديد** (قرار د — متابعة شريك): عند نشر مقال للشريك → إشعار/إيميل لكل من تابعه (`clientLike`). في-آب أول (نظام `Notification` موجود) ثم إيميل.
+  - **النشرة للمشتركين** (`Subscriber` لكل عميل): إرسال جديد العميل لمشتركيه — مرتبط بميزة campaigns «قريباً» في الكونسول.
+  - **حوافز النشرة العامة** (الـ 6 «قريباً» في شيت الرئيسية — [[project_newsletter_incentive_promises]]): عروض/كوبون/سحوبات/محتوى حصري… كلها وعود تحتاج نظام تسليم.
+  - **المعاملاتية الموجودة (نتأكد موصولة بـ Resend):** ترحيب تسجيل · رد FAQ (`faq_reply`) · رد تواصل (`contact_reply`) · تأكيد نشر للعميل (`article-published` template موجود).
+- **القوالب:** `admin/lib/email/templates/*` موجودة جزئياً — نكمل الناقص + نوحّد التصميم (RTL + براند مدونتي).
+- **Resend:** `RESEND_API_KEY` + `RESEND_FROM` موجودين في `.env.shared`؛ نتأكد من الدومين الموثّق + سجل `EmailEvent` بالـ schema (delivered/opened/clicked/bounced).
+- **المخرجات:** خريطة كاملة (trigger → recipient → template → Resend) ثم بناء الناقص دفعة وحدة.
+- **مرتبط بـ:** قرار «د» في `documents/tasks/SUBSCRIPTION-CONVERSION-ANALYSIS-v1.html` · [[project_newsletter_incentive_promises]] · campaigns بالكونسول.
 
 ### ✅ [انحلّت 2026-06-12] قسم الشركاء + الـ slider يظهر متأخر بلا skeleton على الديسكتوب
 

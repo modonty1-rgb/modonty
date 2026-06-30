@@ -61,6 +61,9 @@ import {
   Wallet,
   PauseCircle,
   ClipboardList,
+  Facebook,
+  Instagram,
+  Share2,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
 import { useSidebar } from "@/components/contexts/sidebar-context";
@@ -95,6 +98,15 @@ interface MenuGroup {
 }
 
 const menuGroups: MenuGroup[] = [
+  {
+    title: "Social Media",
+    icon: Share2,
+    defaultOpen: false,
+    items: [
+      { icon: Facebook, label: "Facebook", href: "/social/facebook" },
+      { icon: Instagram, label: "Instagram", href: "/social/instagram" },
+    ],
+  },
   {
     title: "Clients",
     icon: Briefcase,

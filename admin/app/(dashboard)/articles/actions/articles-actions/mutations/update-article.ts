@@ -324,6 +324,7 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       });
       if (articleForSocial) {
         const socialParams = {
+          articleId:      article.id,
           seoTitle:       articleForSocial.seoTitle || data.seoTitle || data.title,
           seoDescription: articleForSocial.seoDescription || data.seoDescription || data.title,
           slug:           articleForSocial.slug,
