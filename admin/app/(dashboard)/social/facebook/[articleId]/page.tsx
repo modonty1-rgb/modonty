@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ArticleStatus } from "@prisma/client";
 import FacebookPostClient from "./_components/facebook-post-client";
 
+export const maxDuration = 120;
+
 export const dynamic = "force-dynamic";
 
 export default async function FacebookPostPage({

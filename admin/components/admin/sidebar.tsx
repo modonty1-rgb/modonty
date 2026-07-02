@@ -61,8 +61,6 @@ import {
   Wallet,
   PauseCircle,
   ClipboardList,
-  Facebook,
-  Instagram,
   Share2,
 } from "lucide-react";
 import { GoogleSearchConsoleIcon } from "./icons/google-search-console-icon";
@@ -98,15 +96,6 @@ interface MenuGroup {
 }
 
 const menuGroups: MenuGroup[] = [
-  {
-    title: "Social Media",
-    icon: Share2,
-    defaultOpen: false,
-    items: [
-      { icon: Facebook, label: "Facebook", href: "/social/facebook" },
-      { icon: Instagram, label: "Instagram", href: "/social/instagram" },
-    ],
-  },
   {
     title: "Clients",
     icon: Briefcase,
@@ -189,6 +178,7 @@ const menuGroups: MenuGroup[] = [
 ];
 
 const topItems: MenuItem[] = [
+  { icon: Share2, label: "Social Media", href: "/social/facebook" },
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },
   { icon: LineChart, label: "SEO", href: "/seo" },

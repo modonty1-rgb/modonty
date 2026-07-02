@@ -2792,9 +2792,10 @@ model SocialPost {
   platform  SocialPlatform
   status    SocialPostStatus
   platformPostId String?       // e.g. "916057361588601_122128608771169772"
-  caption   String?            // text we sent
-  imageUrl  String?
-  errorMessage String?         // populated when status=FAILED
+  caption       String?
+  imageUrl      String?
+  imagePublicId String?        // Cloudinary public_id for permanent image reference
+  errorMessage  String?        // populated when status=FAILED
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
