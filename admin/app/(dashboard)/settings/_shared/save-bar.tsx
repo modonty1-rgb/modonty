@@ -34,7 +34,9 @@ export function SaveBar({
           <>
             <span className="text-muted-foreground/40">·</span>
             <span className="text-muted-foreground">
-              Cache: <span className="text-foreground">{cacheLabel}</span>
+              {/* suppressHydrationWarning: relative time is computed from Date.now() — server and
+                  client text legitimately differ when a minute boundary passes before hydration. */}
+              Cache: <span suppressHydrationWarning className="text-foreground">{cacheLabel}</span>
             </span>
           </>
         )}

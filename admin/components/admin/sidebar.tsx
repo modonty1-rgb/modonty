@@ -48,8 +48,11 @@ import {
   ChevronRight,
   ChevronDown,
   BookOpen,
+  Building2,
+  Flame,
   Library,
   Newspaper,
+  PanelTop,
   MessageSquare,
   Bug,
   Wrench,
@@ -88,10 +91,26 @@ interface MenuItem {
   exact?: boolean;
 }
 
+// A nested submenu inside a group (2nd level) — e.g. Modonty → Pages / Page SEO.
+interface SubMenu {
+  subMenu: string;
+  items: MenuItem[];
+}
+
+type GroupChild = MenuItem | SubMenu;
+
+const isSubMenu = (child: GroupChild): child is SubMenu => "subMenu" in child;
+
+// Flatten a group's children (expanding submenus) into a flat MenuItem list —
+// used for collapsed-sidebar rendering and active-route detection.
+function flattenItems(children: GroupChild[]): MenuItem[] {
+  return children.flatMap((c) => (isSubMenu(c) ? c.items : [c]));
+}
+
 interface MenuGroup {
   title: string;
   icon: IconComponent;
-  items: MenuItem[];
+  items: GroupChild[];
   defaultOpen?: boolean;
 }
 
@@ -137,17 +156,36 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
-    title: "Modonty Pages",
+    title: "Modonty",
     icon: BookOpen,
     defaultOpen: false,
     items: [
-      { icon: Info, label: "About", href: "/modonty/pages/about" },
-      { icon: CircleHelp, label: "FAQ", href: "/modonty/faq" },
-      { icon: Scale, label: "Terms", href: "/modonty/pages/terms" },
-      { icon: Handshake, label: "User Agreement", href: "/modonty/pages/user-agreement" },
-      { icon: ShieldCheck, label: "Privacy Policy", href: "/modonty/pages/privacy-policy" },
-      { icon: Cookie, label: "Cookie Policy", href: "/modonty/pages/cookie-policy" },
-      { icon: Copyright, label: "Copyright", href: "/modonty/pages/copyright-policy" },
+      {
+        subMenu: "Info & Legal",
+        items: [
+          { icon: Info, label: "About", href: "/modonty/pages/about" },
+          { icon: CircleHelp, label: "FAQ", href: "/modonty/faq" },
+          { icon: Scale, label: "Terms", href: "/modonty/pages/terms" },
+          { icon: Handshake, label: "User Agreement", href: "/modonty/pages/user-agreement" },
+          { icon: ShieldCheck, label: "Privacy Policy", href: "/modonty/pages/privacy-policy" },
+          { icon: Cookie, label: "Cookie Policy", href: "/modonty/pages/cookie-policy" },
+          { icon: Copyright, label: "Copyright", href: "/modonty/pages/copyright-policy" },
+        ],
+      },
+      {
+        subMenu: "Master Pages",
+        items: [
+          { icon: Building2, label: "Homepage", href: "/settings/modonty" },
+          { icon: Newspaper, label: "Articles", href: "/settings/articles" },
+          { icon: Briefcase, label: "Clients", href: "/settings/clients" },
+          { icon: Folder, label: "Categories", href: "/settings/categories" },
+          { icon: Tag, label: "Tags", href: "/settings/tags" },
+          { icon: Factory, label: "Industries", href: "/settings/industries" },
+          { icon: Flame, label: "Trending", href: "/settings/trending" },
+        ],
+      },
+      // Visible homepage content (not SEO) — future home for landing/hero options.
+      { icon: PanelTop, label: "Homepage Banner", href: "/settings/banner" },
     ],
   },
   {
@@ -246,6 +284,42 @@ function hasActiveChild(items: MenuItem[], pathname: string): boolean {
   );
 }
 
+// Nested 2nd-level submenu (e.g. Modonty → Pages / Page SEO). Independently
+// collapsible; auto-opens when it contains the active route.
+function SubMenuBlock({
+  sub,
+  pathname,
+  statusCounts,
+}: {
+  sub: SubMenu;
+  pathname: string;
+  statusCounts?: ArticleStatusCounts | null;
+}) {
+  const [open, setOpen] = useState(() => hasActiveChild(sub.items, pathname));
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 rounded-md text-[12px] font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group/sub">
+        <span>{sub.subMenu}</span>
+        <ChevronDown className="h-3 w-3 shrink-0 transition-transform group-data-[state=open]/sub:rotate-180" />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="ms-3 ps-3 border-s border-border/40 mt-0.5 space-y-0.5">
+          {sub.items.map((item) => (
+            <NavLink
+              key={item.href}
+              item={item}
+              collapsed={false}
+              pathname={pathname}
+              statusCounts={statusCounts}
+            />
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: ArticleStatusCounts | null }) {
   const pathname = usePathname();
   const { collapsed, toggle } = useSidebar();
@@ -253,7 +327,7 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
   // T-SIDEBAR-ACCORDION: only one group open at a time. Initial value = the
   // group whose route is currently active (so it's auto-expanded on page load).
   const initialOpen =
-    menuGroups.find((g) => hasActiveChild(g.items, pathname))?.title ||
+    menuGroups.find((g) => hasActiveChild(flattenItems(g.items), pathname))?.title ||
     menuGroups.find((g) => g.defaultOpen)?.title ||
     null;
   const [openGroupTitle, setOpenGroupTitle] = useState<string | null>(initialOpen);
@@ -305,7 +379,7 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
             return (
               <div key={group.title} className="space-y-0.5">
                 <div className="mx-2 mb-1 border-t border-border/30" />
-                {group.items.map((item) => (
+                {flattenItems(group.items).map((item) => (
                   <NavLink
                     key={item.href}
                     item={item}
@@ -334,15 +408,24 @@ export function Sidebar({ articleStatusCounts }: { articleStatusCounts?: Article
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="ms-3 ps-3 border-s border-border/40 mt-0.5 space-y-0.5">
-                  {group.items.map((item) => (
-                    <NavLink
-                      key={item.href}
-                      item={item}
-                      collapsed={false}
-                      pathname={pathname}
-                      statusCounts={articleStatusCounts}
-                    />
-                  ))}
+                  {group.items.map((child) =>
+                    isSubMenu(child) ? (
+                      <SubMenuBlock
+                        key={child.subMenu}
+                        sub={child}
+                        pathname={pathname}
+                        statusCounts={articleStatusCounts}
+                      />
+                    ) : (
+                      <NavLink
+                        key={child.href}
+                        item={child}
+                        collapsed={false}
+                        pathname={pathname}
+                        statusCounts={articleStatusCounts}
+                      />
+                    )
+                  )}
                 </div>
               </CollapsibleContent>
             </Collapsible>

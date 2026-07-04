@@ -1,8 +1,103 @@
-# Session Context — Last Updated: 2026-07-04 (5)
+# Session Context — Last Updated: 2026-07-04 (7)
+
+## Session: 2026-07-04 ~18:10 — إعادة تنظيم أدمن: مجموعة Modonty بالشريط + فصل Social Links عن Homepage (غير مدفوع)
+
+### 🎯 Where I stopped
+- **بوابة ما قبل الـ push اكتملت 100% (2026-07-04 ~19:40) — بانتظار كلمة «push» من خالد.**
+- نتائج البوابة: build إنتاجي أدمن exit 0 (الحالة النهائية) · TSC ×3 تطبيقات صفر أخطاء · 10 صفحات متأثرة كلها HTTP 200 · صفر أخطاء كونسول على الصفحات الأربع الجديدة · سطح التغيير: 5 ملفات معدّلة + 4 مجلدات جديدة (كلها admin) · فحص أسرار .claude نظيف (6 تطابقات = إنذار كاذب: "disk-inspect" + أمر الفحص نفسه).
+- خطوات الـ push المتفق عليها: version bump admin + `bash scripts/backup.sh` + git add انتقائي (admin + docs، بدون سكربتات modonty المستبعدة) + changelog. **قرار معلّق:** حذف `seo-preview.tsx` اليتيم (توصيتي: حذف) — يُحسم مع الـ push.
+
+### ✅ Done this session
+- **Sidebar** (`admin/components/admin/sidebar.tsx`): دعم مستوى ثاني (SubMenu متداخل قابل للطي) + مجموعة **Modonty** بدل «Modonty Pages»: submenu **Info & Legal** (7 صفحات) + submenu **Master Pages** (Homepage · Articles · Clients · Categories · Tags · Industries · Trending). صفر نقل مسارات.
+- **Settings dashboard** (`settings/page.tsx`): شيل Homepage + Listings SEO (انتقلوا للشريط) → بقي: Social presence (جديد) · Sales channel · Reference · Assets & system. 7 areas / 6 editable.
+- **فصل Social Links**: صفحة جديدة `/settings/social` (`social/page.tsx` + `social/components/social-links-form.tsx`) — 12 حقل (10 روابط منصّات + X handles) بنفس `updateAllSettings`؛ وانشال تبويب Social من `modonty-form.tsx` + تحديث وصف الصفحة.
+- **فصل Business Info** (نفس النمط): صفحة جديدة `/settings/business` (`business/page.tsx` + `business/components/business-info-form.tsx`) — 10 حقول (contact/address/geo/GBP)؛ انشال تبويب Business من `modonty-form.tsx` → **بقي تبويبان** (SEO & Sharing · Homepage Banner). لوحة Settings: قسم «Organization» ببطاقتي Social + Business (8 areas / 7 editable). تحقّق كامل: TSC صفر + production build نجح (business/social في artifacts البناء) + دورة حفظ GBP كاملة (حفظ→persist→استعادة، والحقول المجاورة ما انلمست) + بقايا مراجع صفر + git: dataLayer/modonty/console صفر تغيير + كونسول نظيف.
+- **إصلاح hydration mismatch** (خطأ بلّغه خالد — **بق قديم** مش من الريفاكتور): `formatTimeAgo` يعتمد `Date.now()` فنص السيرفر ≠ العميل عند عبور حد دقيقة. أُضيف `suppressHydrationWarning` (حل React الرسمي للطوابع الزمنية) في الموضعين المصابين فقط: كاش سترِب `modonty-form.tsx` + `_shared/save-bar.tsx` (يغطي كل صفحات Master Pages الست). باقي الاستخدامات آمنة (client-state فقط). TSC صفر.
+- **شيل Live preview (SeoPreview)** من صفحة Homepage (طلب خالد «ما له داعي»): انشال الغريد ثنائي الأعمدة + بلوك SeoPreview + الـ import؛ الفورم صار عمود واحد. ملف `seo-preview.tsx` صار **غير مستخدم** (رُفض حذفه بالجلسة — يُقرَّر وقت الـ push: حذف ولا إبقاء). تحقّق: TSC صفر + حيّ (لا Live preview · 3 حقول · زر الحفظ سليم).
+- **نقل Brand Description لصفحة Brand** (اقتراح خالد + وافقت — الحقل يظهر بكل مقال/صفحة كاتب = هوية site-wide): انتقل `brandDescription` مع صندوق الإرشاد العربي من فورم Homepage → `/settings/brand` (مجموعة «Brand identity» فوق «Logos & alt text»). فورم Homepage النهائي: **Search appearance + Share image فقط** (3 حقول: عنوان/وصف/OG). تحقّق: TSC صفر + حيّ (القيمة 216 حرف تظهر بصفحة Brand · فورم Homepage بلا Brand Description).
+- **فصل Logo & Brand** (طلب خالد): صفحة جديدة `/settings/brand` (`brand/page.tsx` + `brand/components/brand-assets-form.tsx`) — 3 حقول (logoUrl/logoIconUrl/altImage بـ ImageField)؛ بطاقة «Logo & Brand» ثالثة في قسم Organization (9 areas / 8 editable)؛ فورم Homepage احتفظ بـ Share Image (ogImageUrl مربوط بمعاينة السيو) وصار: Search appearance · Brand identity · Share image. المنطق: الشعار هوية site-wide (نافبار + Organization logo) → Settings، بعكس البانر (محتوى صفحة) → Modonty group. تحقّق: TSC صفر + حيّ (الشعارات تظهر من DB · فورم Homepage بلا حقول شعار · اللوحة 3 بطاقات).
+- **فصل Homepage Banner** (قرار خالد: «حسب توصيتك» — البند في مجموعة Modonty بالشريط، مش لوحة Settings): صفحة جديدة `/settings/banner` (`banner/page.tsx` + `banner/components/homepage-banner-form.tsx`) — حقلا platformTagline/platformDescription + المعاينة الحيّة؛ فورم Homepage صار **قسم SEO واحد بلا تبويبات** (شيل Tabs بالكامل)؛ بند مباشر «Homepage Banner» (أيقونة PanelTop) بعد Master Pages. الغرض المستقبلي: يكبر لـ Landing/hero/overlay. تحقّق: TSC صفر + حيّ (معاينة حيّة تتحدث + دورة حفظ tagline كاملة حفظ→persist→استعادة الفاضي).
+- **تحقّق:** TSC صفر أخطاء ×3 مرات · **production build نجح (exit 0)** و`/settings/social` في قائمة الـ routes · تست حيّ: dirty tracking + حفظ Pinterest تجريبي على dev + persist بعد reload + استعادة الأصل · كونسول نظيف · JSON-LD sameAs مسار البيانات لم يُلمس · git status: سطح التغيير = 4 ملفات admin + مجلد social فقط (صفر dataLayer/modonty/console).
+- **تحقيق 404 مُغلق:** `/modonty/pages/about` أعطى 404 مؤقتاً أثناء الفحص → تجربة stash/pop أثبتت إنه **أثر `.next` قديم** (البناء الإنتاجي كتب فوق مجلد dev) مش من الكود — بعد إعادة الترجمة نفس الكود يرندر سليم، وكل روابط Info & Legal + Master Pages تعمل بصفر أخطاء كونسول.
+- **ملاحظة بيئة:** بعد أي `pnpm build:admin` محلي، أعد تشغيل dev server — البناء يكتب فوق `.next` وقد يسبّب 404 وهمي على مسارات ديناميكية حتى يُعاد ترجمتها.
+- **Mockups:** `documents/mockups/admin-modonty-ia-FINAL.html` (v4) + `admin-social-publishing-settings-v1.html` (مؤجّل).
+
+### 📝 Decisions taken (with reasoning)
+- **رفض بطاقة «Integrations status»** — عرض «متصل (env)» بلا قيمة؛ القيمة في إعدادات سلوك (خالد وافق).
+- تسميات الشريط بقرار خالد: **Info & Legal** + **Master Pages** (بعد رفض Pages/Page SEO/Listings SEO لغموضها)، وHomepage دخل جوّه Master Pages.
+- الأسرار تبقى في env — ما ننقل مفاتيح للـ UI.
+
+### 🚧 Pending / blocked
+- **Push** — بانتظار قرار خالد (fresh confirmation)؛ قبله: version bump + `bash scripts/backup.sh` + changelog + فحص settings.json من التوكنات.
+- **مؤجّل باتفاق:** إعدادات سلوك السوشيال (Social Publishing: قالب كابشن/UTM/نشر تلقائي/جدولة/موافقة — الموكاب جاهز) + فكرة نقل Email Templates لـ Settings.
+
+### 📂 Files touched
+- `admin/components/admin/sidebar.tsx` — مستوى submenu ثاني + مجموعة Modonty
+- `admin/app/(dashboard)/settings/page.tsx` — تنظيف اللوحة + بطاقة Social Links
+- `admin/app/(dashboard)/settings/modonty/components/modonty-form.tsx` — شيل تبويب Social
+- `admin/app/(dashboard)/settings/modonty/page.tsx` — تحديث الوصف
+- جديد: `admin/app/(dashboard)/settings/social/page.tsx` + `social/components/social-links-form.tsx`
+- موكابات: `documents/mockups/admin-modonty-ia-FINAL.html` · `admin-modonty-ia-reorg-v1.html` · `admin-social-publishing-settings-v1.html`
+
+### 🔁 Git / deploy state
+- Branch: main · Uncommitted: نعم (كل ما فوق) · لم يُدفع شي هذه الجلسة.
+
+### 🚀 How to resume in 30 seconds
+1. `pnpm --filter @modonty/admin exec next dev -p 3001` → افتح `/settings` و`/settings/social`
+2. افتح `documents/context/SESSION-LOG.md` (هذا البلوك)
+3. القرار: push الحين؟ ولا نكمل Social Publishing settings؟
+
+---
+
+## Session: 2026-07-04 ~13:45 — صفحات القوائم الموحّدة + هيرو الصورة + صورة لكل صفحة (مدفوع + مُتحقّق على الإنتاج)
+
+### 🎯 Where I stopped
+- **كل شي مكتمل ومدفوع ومُتحقّق على الإنتاج.** لا مهام مفتوحة في هذا الموضوع.
+- آخر خطوة: تحقّقت حيّاً إن التفجير التلقائي يشتغل على الإنتاج (صورة الصناعات انعكست خلال ~12 ثانية، ثم استُرجعت لصورة خالد).
+- **الخطوة التالية عند الرجوع:** لا شي مطلوب لهذا الموضوع. اختياري: (أ) DB changelog للنسخة، (ب) تنظيف صور dev التجربة، (ج) موضوع جديد.
+
+### ✅ Done this session
+- **النمط الموحّد للصفحات الثلاث** (`/tags` `/categories` `/industries`): كمبوننت مشترك `EntityCard` + `ListingHero` + `EntitySearchForm` + `EntitySortFilter` + `InfiniteEntityGrid` (بحث/فرز/infinite scroll). حُذفت 8 ملفات route-specific ميتة + `industries-hero.tsx`/`categories-hero.tsx`.
+- **هيرو full-bleed:** صورة `og:image` خلفية كاملة + scrim داكن من الأسفل + `object-position:50% 88%` (الشعار فوق، النص تحت نظيف) + شارة زجاجية. accent teal (صناعات) / blue (فئات/وسوم).
+- **صورة مستقلة لكل صفحة:** 6 حقول schema (`{page}PageImage`+`Alt`) في `Settings` + قسم "Hero Image" بالأدمن + المولّد يستخدم صورة الصفحة ‖ العامة → الهيرو يعكسها تلقائيًا.
+- **إصلاح بق أدمن:** `updateAllSettings` كانت تُسقط سيو tags/industries/articles + b2b (chunk 4).
+- **إصلاح الانعكاس:** `updateSettingsPageCache` تنادي `revalidateModontyTag("settings")` + تجاوز dev-only في `revalidate-modonty-tag`.
+- **الحالة:** TSC (modonty+admin+console) صفر أخطاء · build (modonty+admin) نجح · تست حيّ local + **prod** (auto-reflect ~12 ثانية) ✓
+
+### 📝 Decisions taken (with reasoning)
+- **صورة واحدة مشتركة كـ hero (أولاً)** → ثم قرار خالد: حقل صورة لكل صفحة (تمييز بصري) رغم إضافة داتا. البديل المرفوض: بقاء صورة عامة واحدة فقط.
+- **الصورة تُقرأ من `og:image` في الـ SEO metadata** (لا استعلام/حقل قراءة جديد على مودونتي) — الهيرو يعكس أي تغيير تلقائيًا.
+- **`object-position:50% 88%`** لأن صورة البراند شعارها بالمنتصف؛ دفعها لأعلى يجلس النص على منطقة داكنة نظيفة بلا تداخل (v3 المعتمدة).
+- **الإصلاحات في الـ helper المشترك** (`updateSettingsPageCache`) لتغطية كل صفحات القوائم دفعة واحدة.
+
+### 🚧 Pending / blocked
+- **DB changelog للنسخة** — آلية غير مؤكّدة (يُضاف من الأدمن؟)، وما ألمس prod DB بسكربت. بند [feedback_changelog_with_push].
+- **صور dev التجربة** — خالد's image على tags/categories/industries في **dev فقط** (بيانات تجربة). على prod مضبوطة صح.
+- **سكربتان مستبعَدان** من الـ commit: `modonty/scripts/{diagnose,seed}-featured*.ts` (standalone، مخالفة القاعدة) — قرار حذف/إبقاء لاحق.
+
+### 📂 Files touched (رئيسية)
+- جديد: `modonty/components/shared/{ListingHero,EntityCard,EntityPlaceholder,EntitySearchForm,EntitySortFilter,InfiniteEntityGrid,client-card}.tsx` · `modonty/lib/{entity-utils,seo/og-image,seo/industries-page-seo,seo/tags-page-seo}.ts` · `modonty/app/actions/{category,tag,industry}-actions.ts` · `modonty/app/{industries,tags}/error.tsx`
+- معدّل: `modonty/app/{categories,tags,industries}/page.tsx` + `loading.tsx` · `dataLayer/prisma/schema/schema.prisma` (6 حقول) · `admin/app/(dashboard)/settings/actions/settings-actions.ts` · `admin/app/(dashboard)/settings/_shared/listing-page-form.tsx` · `admin/lib/seo/listing-page-seo-generator.ts` · `admin/lib/revalidate-modonty-tag.ts`
+
+### 🔁 Git / deploy state
+- Branch: **main**
+- Uncommitted: `documents/context/SESSION-LOG.md` (هذا التحديث) + `.claude/settings*.json` + `skills-lock.json` (auto، لا تُدفع)
+- Last commits: `95d9a23` (docs) ← `fb5cdc0` (reflect fix، admin 0.83.1) ← `2faf431` (الميزة، modonty 1.70.0 + admin 0.83.0)
+- Pushed: **نعم** (كلها على origin/main)
+- Vercel: نُشرت ومُتحقّقة على الإنتاج (modonty.com)
+- النسخ: modonty **1.70.0** · admin **0.83.1** · console 0.18.4 (بلا تغيير)
+
+### 🚀 How to resume in 30 seconds
+1. الموضوع مكتمل ومدفوع — لا شي مطلوب. لو موضوع جديد → ابدأ منه.
+2. لو تبي تكمّل محليًا: `cd modonty && pnpm dev` (3000) + `cd admin && pnpm dev --port 3001`. (بروتوكول Prisma لو عدّلت schema: kill node → `pnpm prisma:generate` → restart.)
+3. صور الصفحات تُدار من: أدمن → Settings → {categories/tags/industries} → قسم "Hero Image" (لصق رابط Cloudinary) → Save + Regenerate → تنعكس تلقائيًا خلال ~12 ثانية.
+
+---
 
 ## Session: 2026-07-04 (5) — EntityCard المرحلة 3 (Industry) مكتملة + هيرو يقرأ السيو + إصلاح أيقونة الفئة
 
 ### 🎯 Where I stopped
+- **✅ تحقّق إنتاج نهائي (modonty.com):** التفجير التلقائي **يشتغل على الإنتاج** — عدّلت صورة الصناعات على أدمن الإنتاج → Save+Regenerate → انعكست خلال **~12 ثانية** بلا تفجير يدوي (ثم استُرجعت لصورة خالد). الثلاثة تعرض صورة خالد على الإنتاج. مشكلة "الصناعة ما تنعكس" السابقة كانت **توقيت نشر fb5cdc0** (عُدّلت أثناء الـ deploy) — مش بق كود؛ الكود متطابق ١٠٠٪ للثلاثة.
 - **🔧✅ إصلاح تابع مدفوع** — commit `fb5cdc0` (admin **0.83.1**): زر "Regenerate cache" ما كان يفجّر كاش مودونتي → التعديل ما ينعكس. أُصلح: (1) `updateSettingsPageCache` تنادي `revalidateModontyTag("settings")`. (2) `revalidate-modonty-tag` تجاوز dev-only يفجّر `localhost:3000` (siteUrl=prod للـ canonicals). **مُتحقّق حيّ للصفحات الثلاث** (tags/categories/industries — كلها تنعكس تلقائيًا). صورة الوسوم (صورة خالد) محفوظة في **dev فقط** — على prod تُضاف من أدمن الإنتاج.
 - **✅ PUSHED** — commit `2faf431` (`82ad130..2faf431 main`). النسخ: modonty **1.70.0** · admin **0.83.0**. Vercel auto-deploy جارٍ. TSC×3 + build (modonty+admin) نظيف قبل الدفع. السكربتان `scripts/{diagnose,seed}-featured*.ts` + الـ mockups **استُبعدت** من الـ commit عمداً.
 - **متبقّي:** (1) DB changelog للنسخة (آلية غير مؤكّدة — يُضاف من admin). (2) التحقق من حالة Vercel deploy. (3) السيرفرات موقوفة — تُشغّل عند الحاجة.
