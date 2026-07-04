@@ -125,6 +125,11 @@ async function updateSettingsPageCache(
       [validationField]: { valid: true, generatedAt: new Date().toISOString(), itemCount: (jsonLd as { "@graph": Array<{ numberOfItems?: number }> })["@graph"]?.find(g => g.numberOfItems !== undefined)?.numberOfItems || 0 } as Prisma.InputJsonValue,
     },
   });
+
+  // Bust modonty's "settings"-tagged cache so a per-page "Regenerate cache" click
+  // actually reflects on modonty.com. Without this the metaTags update to the DB but
+  // modonty keeps serving the cached (stale) title/description/hero image.
+  await revalidateModontyTag("settings");
 }
 
 // ═══════════════════════════════════════════════════════════════════

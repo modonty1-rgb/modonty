@@ -1,6 +1,12 @@
 async function getModontyBaseUrl(baseUrl?: string | null): Promise<string | null> {
   const u = baseUrl?.trim();
   if (u) return u;
+  // Dev: settings.siteUrl points to PRODUCTION (needed for correct canonical/JSON-LD
+  // URLs even locally), so revalidation would hit prod. Locally, bust the local modonty
+  // instead so admin edits actually reflect on localhost. Prod is unaffected.
+  if (process.env.NODE_ENV === "development") {
+    return process.env.MODONTY_LOCAL_URL?.trim() || "http://localhost:3000";
+  }
   // DB-first source of truth (matches loadSiteUrl semantics for revalidation target)
   const { getAllSettings } = await import("@/app/(dashboard)/settings/actions/settings-actions");
   const s = await getAllSettings();

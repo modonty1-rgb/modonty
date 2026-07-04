@@ -3,6 +3,9 @@
 ## Session: 2026-07-04 (5) — EntityCard المرحلة 3 (Industry) مكتملة + هيرو يقرأ السيو + إصلاح أيقونة الفئة
 
 ### 🎯 Where I stopped
+- **🔧 إصلاح تابع (بعد الـ push، مش مدفوع بعد):** زر "Regenerate cache" ما كان يفجّر كاش مودونتي → تعديل الصورة/العنوان ما ينعكس. **أُصلح:** (1) `admin/lib/seo/listing-page-seo-generator.ts` → `updateSettingsPageCache` تنادي `revalidateModontyTag("settings")`. (2) `admin/lib/revalidate-modonty-tag.ts` → تجاوز dev-only يفجّر `localhost:3000` (siteUrl=prod للـ canonicals). مُتحقّق حيّ: تعديل صورة الوسوم ينعكس تلقائيًا. TSC أدمن نظيف. **يحتاج commit + push (admin 0.83.1).**
+- **✅ PUSHED** — commit `2faf431` (`82ad130..2faf431 main`). النسخ: modonty **1.70.0** · admin **0.83.0**. Vercel auto-deploy جارٍ. TSC×3 + build (modonty+admin) نظيف قبل الدفع. السكربتان `scripts/{diagnose,seed}-featured*.ts` + الـ mockups **استُبعدت** من الـ commit عمداً.
+- **متبقّي:** (1) DB changelog للنسخة (آلية غير مؤكّدة — يُضاف من admin). (2) التحقق من حالة Vercel deploy. (3) السيرفرات موقوفة — تُشغّل عند الحاجة.
 - **النمط الموحّد اكتمل للصفحات الثلاث** (`/tags`، `/categories`، `/industries`) — كلها مُختبرة حيّاً، TSC نظيف
 - **`error.tsx` تمّ** (tags + industries) · **الملفات الميتة الـ8 اتحذفت** (خالد شغّل Remove-Item) · TSC modonty نظيف بعد الحذف
 - **🔴 بَق أدمن انكشف بالتست + انصلح:** `updateAllSettings` كانت **ما تحفظ** سيو الوسوم/الصناعات/المقالات + b2b + platform (سقطت وقت تقسيم chunks لحد الـ50 field). أُضيف **chunk 4** → صار يحفظهم. مُختبر حيّ: الصناعات + الوسوم تنحفظ الآن، والانعكاس على هيرو مودونتي شغّال end-to-end.
