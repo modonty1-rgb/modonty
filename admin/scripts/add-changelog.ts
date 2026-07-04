@@ -12,24 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.58.0 (modonty)",
-    title: "Faster article & client pages",
+    version: "0.84.0 (admin)",
+    title: "Settings reorganized — everything in its right place",
     items: [
-      { type: "improve" as const, text: "Article and client pages now cache their heavy content across visitors, so repeat opens of the same page are 4–5× faster. The per-visitor parts (your reactions, live counts) stay live and accurate." },
-    ],
-  },
-  {
-    version: "0.77.0 (admin)",
-    title: "Client save no longer blocked by client-owned fields",
-    items: [
-      { type: "fix" as const, text: "Saving a client could fail with errors like 'Description must be less than 1000 characters' on fields the client fills from their console (description, address, VAT/Tax, legal name, slogan…). The admin form now validates only the fields it owns, so these client-owned values never block a save again — 17 fields fixed." },
-    ],
-  },
-  {
-    version: "0.18.0 (console)",
-    title: "Sidebar shows your current company name",
-    items: [
-      { type: "fix" as const, text: "The company name in the sidebar now updates instantly when you change it — it reads the live value from your profile instead of the one saved at login, so it always matches the dashboard greeting." },
+      { type: "feature" as const, text: "New 'Modonty' sidebar group gathers every modonty.com surface: Info & Legal pages, Master Pages (per-page SEO), and the Homepage Banner." },
+      { type: "feature" as const, text: "Organization identity now lives in Settings as its own pages: Social Links, Business Info, and Logo & Brand — no longer buried as tabs inside the Homepage form." },
+      { type: "improve" as const, text: "The Homepage settings page is now SEO-only (title, description, share image) — lighter and clearer." },
+      { type: "fix" as const, text: "Fixed a hydration warning on settings pages caused by the relative 'X min ago' cache timestamp." },
     ],
   },
 ];
