@@ -1,4 +1,403 @@
-# Session Context — Last Updated: 2026-06-30
+# Session Context — Last Updated: 2026-07-04 (5)
+
+## Session: 2026-07-04 (5) — EntityCard المرحلة 3 (Industry) مكتملة + هيرو يقرأ السيو + إصلاح أيقونة الفئة
+
+### 🎯 Where I stopped
+- **النمط الموحّد اكتمل للصفحات الثلاث** (`/tags`، `/categories`، `/industries`) — كلها مُختبرة حيّاً، TSC نظيف
+- **`error.tsx` تمّ** (tags + industries) · **الملفات الميتة الـ8 اتحذفت** (خالد شغّل Remove-Item) · TSC modonty نظيف بعد الحذف
+- **🔴 بَق أدمن انكشف بالتست + انصلح:** `updateAllSettings` كانت **ما تحفظ** سيو الوسوم/الصناعات/المقالات + b2b + platform (سقطت وقت تقسيم chunks لحد الـ50 field). أُضيف **chunk 4** → صار يحفظهم. مُختبر حيّ: الصناعات + الوسوم تنحفظ الآن، والانعكاس على هيرو مودونتي شغّال end-to-end.
+- **🎨 هيرو صورة full-bleed للصفحات الثلاث (منفّذ):** الهيرو الآن يعرض صورة `og:image` (نفس الصورة العامة من Site Identity) كخلفية كاملة + scrim داكن من الأسفل + النص overlay تحت. كمبوننت مشترك `ListingHero`. **الموزاييك + chips اتشالوا** (كود أقل). `industries-hero.tsx` + `categories-hero.tsx` صاروا **dead** → للحذف: `Remove-Item app/industries/components/industries-hero.tsx, app/categories/components/categories-hero.tsx`
+- **الخطوة التالية (قبل push):** حذف ملفَّي الهيرو الميتين + `pnpm build` (modonty + admin) + TSC الثلاثة + bump نسخة (modonty **و admin**) + changelog. **الـ push يشمل modonty + admin.**
+
+### ✅ Done — Listing hero = full-bleed OG image + text overlay
+- **جديد:** `components/shared/ListingHero.tsx` (صورة `next/image` fill · `object-position:50% 88%` يرفع الشعار · scrim تدرّج من الأسفل + top-fade · شارة زجاجية backdrop-blur · H1+فقرة مع text-shadow · accent teal/blue · fallback خلفية داكنة لو ما فيه صورة) · `lib/seo/og-image.ts` (`extractOgImageFromMetadata` — يسحب الصورة من `openGraph.images` بلا استعلام/حقل جديد)
+- **معدّل:** `industries/page.tsx` (teal) · `categories/page.tsx` (blue) · `tags/page.tsx` (blue) — كلها تمرّر `ListingHero` + شِيلت حسابات `topIndustries/topCategories/mosaicTags` وإمبورتات `EntityPlaceholder/IconHash`. سكيلتونات الـ loading الثلاثة حُدّثت (نص تحت، بلا موزاييك)
+- **القرار (خالد):** نفس الـ Social Image = Hero Image (صفر داتا/كود مكرّر). صورة البراند مركزية → دُفعت لأعلى ليجلس النص على منطقة داكنة نظيفة (بلا تداخل). معاينة معتمدة v3 مبنيّة طبق الأصل
+- **مُتحقّق حيّ:** الثلاثة ديسكتوب + جوال — الصورة full-bleed، النص مقروء، صفر تداخل. TSC نظيف
+
+### ✅ Done — صورة مستقلة لكل صفحة قائمة (per-page hero image)
+- **Schema** (`dataLayer/prisma/schema/schema.prisma`, موديل `Settings`): 6 حقول جديدة — `categoriesPageImage`+`Alt` · `tagsPageImage`+`Alt` · `industriesPageImage`+`Alt`. اختيارية (MongoDB schemaless → `prisma generate` كافٍ، بلا `db push`، ما لمسنا الـ DB). اتّبع بروتوكول Prisma: kill node → generate → restart.
+- **Admin backend** (`settings-actions.ts`): `ListingPageImages` interface + `AllSettings extends` + DEFAULT_SETTINGS + getAllSettings (الفرعين) + updateAllSettings **chunk 4** (نفس مكان بقية حقول القوائم).
+- **Admin form** (`_shared/listing-page-form.tsx`): قسم **"Hero Image"** قابل للتعديل (`ImageField` رابط Cloudinary + `Input` للـ alt) — يظهر فقط للصفحات اللي لها `imageKey` (categories/tags/industries). الحقول أُضيفت لـ `fieldList` فتنحفظ.
+- **المولّد** (`listing-page-seo-generator.ts`): في الـ3 regenerators → `ogImage = {page}PageImage || ogImageUrl` (صورة الصفحة، وإلا العامة fallback). لأن الهيرو في مودونتي يقرأ `og:image` → **ينعكس تلقائيًا بلا تعديل مودونتي**.
+- **تست حيّ (admin 3001 ↔ modonty 3000):** حطّيت صورة SEO مستقلة للصناعات → حفظ (ثبت) → regenerate → هيرو الصناعات صار صورة SEO ✓ · الفئات بقيت الصورة العامة (fallback) ✓ · استرجعت (صورة الصناعات اتشالت → رجعت للعامة). TSC admin+modonty نظيف.
+- **ملاحظة إنتاج:** الحقول اختيارية → ما تحتاج migration على prod (MongoDB). الـ push يشمل: modonty + admin + dataLayer(schema).
+
+### ✅ Done — Admin bug fix (updateAllSettings) + live SEO reflect test
+- **الملف:** `admin/app/(dashboard)/settings/actions/settings-actions.ts` — `updateAllSettings` أُضيف لها chunk رابع فيه: `tags/industries/articlesSeoTitle+Description` · `b2b*` (7) · `platformTagline/Description` · `tags/industries/articlesPageMetaTags`(+JsonLd+LastGenerated+ValidationReport). 27 field، تحت حد الـ50 تبع Mongo Atlas.
+- **الجذر:** الحقول سقطت من الدالة (الفئات/الرائج/الرئيسية/العملاء-seo كانت موجودة، لكن tags/industries/articles + b2b لأ). `saveModontySettings` كانت كاملة — البَق محصور في `updateAllSettings` اللي تستدعيه فورمات صفحات القوائم.
+- **تست حيّ (Playwright، admin:3001 + modonty:3000):**
+  - قبل الإصلاح: تعديل عنوان الصناعات → حفظ → reload → **رجع القديم** (control: الفئات انحفظت) → أكّد البَق
+  - بعد الإصلاح: الصناعات + الوسوم **تنحفظ** ✓ · تعديل عنوان+وصف الصناعات → regenerate → **انعكس على مودونتي** (H1 + الفقرة + meta description) ✓
+  - كل القيم اتسترجعت للأصل، وكاش مودونتي "settings" اتفجّر يدويًا (POST `/api/revalidate/tag`)
+- **الإنتاج موثوق:** `cascadeSettingsToAllEntities` (عبر `after()` على كل حفظ) يستدعي `regenerateAllListingCaches()` ثم `revalidateModontyTag("settings")` بالترتيب الصح → الحفظ لوحده يكفي للانعكاس.
+- **ملاحظة:** زر "Regenerate cache" لكل صفحة **لا** يفجّر كاش مودونتي (فقط الحفظ عبر cascade يفعل) — مش عطل، بس تحسين محتمل مستقبلًا.
+
+### ✅ Done this session
+**العدّادات + الهيرو (كل الصفحات):**
+- شِيلت **كل العدّادات** من هيرو الفئات والوسوم (كانت متناقضة مع المحتوى) — الهيرو صار: شارة + H1 + فقرة + موزاييك فقط
+- الهيرو الآن **يقرأ من كاش السيو** (مصدر واحد): H1 = عنوان السيو ناقص لاحقة `| مدونتي`، الفقرة = وصف السيو. طُبّق على الثلاثة. صفر نصوص ثابتة مخترعة
+- إصلاح أيقونة الفئة: `getEntityIcon("category")` كان `IconSearch` (عدسة = غلط) → صار `IconCategory` (يصلح الـ SVG placeholder + الموزاييك)
+- إصلاح سكيلتون `categories/loading.tsx` + `tags/loading.tsx` (كانا يعرضان 3 عدّادات وهمية)
+
+**المرحلة 3 — Industry (7 ملفات):**
+- `lib/types.ts` — `IndustryListItem` + `IndustryQueryOptions` (رأس الكرت = عدد الشركاء، لا مقالات)
+- `app/api/helpers/industry-queries.ts` — `getIndustriesEnhanced` + `getIndustriesPage`: استعلام واحد مباشر عبر `Client.industryId` (عدّ ACTIVE + أول 3 أفاتار)، يخفي الفاضية. **بلا GA4** (الأثر مخفي + الأداء أولوية #1)
+- `app/actions/industry-actions.ts` — `loadMoreIndustries` (يمرّر `clientCount` كـ `articleCount`)
+- `lib/seo/industries-page-seo.ts` — يقرأ `Settings.industriesPageMetaTags` + الـ JSON-LD (الحقول موجودة في الschema)
+- `app/industries/components/industries-hero.tsx` — هيرو داكن أكسنت تركوازي (لون الصناعة) + أيقونة المصنع
+- `app/industries/page.tsx` — إعادة بناء كاملة: Breadcrumb + هيرو + بحث/فرز (خياران: الأكثر شركاء + أبجديًا) + `InfiniteEntityGrid` 3 أعمدة + key remount + `title.absolute`
+- `app/industries/loading.tsx` — سكيلتون مطابق
+- **العلاقة المباشرة تحلّ لغز الـ 21:** الرعاية الصحية عرضت 6 شركاء (شركاء بلا مقالات يظهرون على كرت الصناعة) ✓
+
+### 🔍 Live-verified (Playwright, port 3000)
+- `/industries`: H1 من السيو، بلا عدّادات، 5 صناعات مرتّبة بالشركاء، البحث ("تعليم"→1) + الفرز الأبجدي شغّالين، الفاضية مخفية
+- `/categories` + `/tags`: الهيرو من السيو، البحث ("ريادة"→2)، عنوان بلاحقة براند واحدة
+- ملاحظة: أخطاء console الأربعة (`JWTSessionError`) = كوكي جلسة قديم في متصفح dev، لا علاقة بالكود
+- TSC modonty: صفر أخطاء (بعد كل مرحلة)
+
+### 📝 قرار تصميم مثبّت
+- كرت الصناعة يعرض العدد مرّتين (شارة "N شركة" فوق + أفاتار "N شريك" تحت) — مقبول عمداً للاتساق مع الفئات/الوسوم (خالد وافق على "أتركها")
+
+---
+
+## Session: 2026-07-04 (4) — EntityCard المرحلة 2 (Category) منفّذة + مكوّنات البحث/الفرز صارت shared
+
+### 🎯 Where I stopped
+- `/tags` و`/categories` الاثنان يشتغلان بنفس النمط الموحّد، مُختبرين حيّاً
+- **الخطوة التالية:** المرحلة 3 = **Industry** (آخر كيان) — نفس الخطوات بالضبط (industry أبسط: علاقة `Client.industryId` مباشرة، بدون junction ولا Article hop)
+- **قبل أي push:** حذف الملفات الميتة (تحت) + `pnpm build` الكامل + `error.tsx` للصفحات الثلاث
+
+### ✅ Done this session (Category migration)
+- `lib/types.ts` — أُضيف `digitalImpact?` لـ `CategoryResponse`
+- `app/api/helpers/category-queries.ts` — `getCategoriesEnhanced` صار: (1) `Promise.all` للـ clientRows + `getClientsGA4Stats` (نفس إصلاح waterfall تاق) (2) يجمع كل client slugs لكل فئة (3) يحسب `digitalImpact` + أُضيف `getCategoriesPage(page, options)` للـ pagination
+- `app/actions/category-actions.ts` — جديد، `loadMoreCategories(options, page)`
+- `app/categories/page.tsx` — **أُعيد بناؤه بالكامل:** CategoriesHero (dark، أزرق) + Toolbar + `InfiniteEntityGrid` (4 أعمدة) + `key={search|sort}` (إصلاح الحالة القديمة) + `title.absolute` (إصلاح تكرار البراند) + يقرأ `getCategoriesPageSeo` (كان يقرأه أصلاً) مع fallback breadcrumb. **أُسقطت list view + featured filter** (توحيد مع نمط tag، grid فقط)
+- `app/categories/components/categories-hero.tsx` — الموزاييك بدّل `generateCategoryGradient` (rainbow) بـ`EntityPlaceholder type="category"` (ألوان البراند)
+- `app/categories/loading.tsx` — أُعيد ليطابق الـ Hero الغامق + شبكة كروت skeleton (كان يعرض الشكل القديم)
+- **♻️ DRY — البحث/الفرز صارا مكوّنين مشتركين generic:** `components/shared/EntitySearchForm.tsx` (props: basePath/placeholder) + `EntitySortFilter.tsx` (props: basePath/options/currentSort). tags هُوجرت لهم كمان. industries (المرحلة 3) بيعيد استخدامهم مباشرة
+- **اختبار حي (categories):** البحث "تسويق" → فلترة صحيحة (يبحث اسم+وصف، فـ"العقارات" ظهر عبر وصفه) · الفرز أبجدي صحيح · title مرة وحدة · الكروت + placeholders البراند + avatars كلها سليمة · TSC صفر أخطاء (شُغّل بعد كل خطوة)
+- **`title.absolute` أُصلح لـ categories** (كان فيه نفس تكرار "| مدونتي | مدونتي" — تأكّد الآن مرة وحدة)
+
+### 🗑️ ملفات ميتة تحتاج حذف يدوي (rm مرفوض بالصلاحيات — احذفها أو اعتمد الحذف)
+- `app/tags/components/tag-search-form.tsx` · `tag-sort-filter.tsx` (استُبدلا بالمشتركين)
+- `app/categories/components/category-list-item.tsx` · `category-search-form.tsx` · `category-filters.tsx` · `categories-skeleton.tsx` · `empty-state.tsx` (يتّمهم إعادة بناء الصفحة)
+- `app/categories/components/featured-categories.tsx` (كان ميتاً **قبل** التعديل — لا مستورد له)
+- **ملاحظة:** `EnhancedCategoryCard` **يبقى** (مستخدم في `related-categories` بصفحة [slug]). `parseCategorySearchParams` يبقى (لسّه يُستدعى)
+
+### ➕ فلتر الفئات الفارغة (طلب خالد)
+- `getCategoriesEnhanced` صار يخفي أي فئة `articleCount === 0 && clientCount === 0` (فلتر بعد حساب clientCount، قبل search/sort/pagination) → الـ Hero count + الشرائح تعكس المحتوى فقط
+- **تحقّق side-effect:** المستهلك الثاني `related-categories.tsx` (widget "فئات ذات صلة" بصفحة [slug]) يستفيد كمان (ما يقترح فئة فاضية) — لا ضرر. اختُبر حيّاً: 25 → 7 فئات، العداد "7 فئة متاحة"، صفر كرت فاضي
+- **⚠️ فرق تعريف بين الكيانات لم يُحسم بعد:** categories يخفي لو (صفر مقالات AND صفر شركاء) · tags يخفي لو (صفر مقالات فقط، بغضّ النظر عن الشركاء). سُئل خالد: نوحّد أو نترك؟ رأيي تركهم (وسم بلا مقالات بلا معنى). **Industry (المرحلة 3): نطبّق نفس فلتر categories** (صناعة بلا شركات = تُخفى)
+
+### 🎯 (سابق) المرحلة 1 (Tag)
+
+### ✅ Done this session
+- بُنيت المرحلة 1 كاملة (7 ملفات، كلها جديدة عدا `ga4.ts`/`tag-queries.ts` المعدَّلين):
+  - `modonty/lib/entity-utils.ts` — gradient/icon مشترك للكيانات الثلاثة
+  - `modonty/components/shared/EntityCard.tsx` — الكرت الموحّد
+  - `modonty/components/shared/InfiniteEntityGrid.tsx` — wrapper عام للتمرير اللانهائي
+  - `modonty/app/api/helpers/tag-queries.ts` — أُضيف `getTagsEnhanced`/`getTagsPage` (client previews عبر ArticleTag + pagination) — `getTagsWithCounts` القديمة لم تُمس (تستخدمها HomeBottomBar/LeftSidebar)
+  - `modonty/lib/analytics/ga4.ts` — أُضيف `getEntityGA4Stats(entityPath)` (نفس نمط `getClientsGA4Stats`، فلترة `pagePath`)
+  - `modonty/app/actions/tag-actions.ts` — `loadMoreTags(options, page)` server action
+  - `modonty/app/tags/page.tsx` — استبدال كامل للـ pills بـ Hero+Toolbar+InfiniteEntityGrid
+  - `modonty/app/tags/components/tag-search-form.tsx` + `tag-sort-filter.tsx` — جديدة
+- **🐛 باگ حقيقي اكتُشف وأُصلح (مو تخمين، تحقّق بالـ Network tab):** `tailwind.config.ts` الـ `content` globs ما فيها `./lib/**/*` — أي gradient class تُبنى ديناميكياً من ملف في `lib/` كانت تطلع بدون تلوين (شفافة/بيضاء) لأن Tailwind ما يمسحها. الإصلاح: أضفنا `"./lib/**/*.{js,ts,jsx,tsx,mdx}"` للـ content array — إصلاح جذري يفيد أي كود مستقبلي في `lib/`، مو بس EntityCard
+- **TSC: صفر أخطاء** بعد كل مرحلة من الـ 5 (شُغّل 5 مرات تراكمياً)
+- **اختبار حي في Playwright (Chrome, localhost:3000):**
+  - ✅ الكروت تعرض gradient صحيح متنوّع + أيقونة # + badge المقالات + avatar الشركاء الحقيقيين (شعارات JBRSEO ظهرت فعلاً)
+  - ✅ Hero stats صحيحة (32 وسم · 201 مقال · 21 شريك) من بيانات DB حقيقية (modonty_dev)
+  - ✅ الأثر الرقمي (GA4) يعرض أرقام حقيقية أو "–" لو صفر — بدون ألوان
+  - ✅ Infinite scroll: صفحة أولى 20 → سكرول → 32 (الكل) → رسالة "🎉 شاهدت الكل (32)" في النهاية
+  - ✅ البحث (`?search=جوجل`): فلترة صحيحة (32→2)، الـ Hero stats تحدّثت تبع الفلترة
+  - ✅ الفرز (`?sort=name`): يعمل، الرابط يتحدّث
+  - ⚠️ 4 أخطاء console موجودة (JWTSessionError — "no matching decryption secret") — **قبل شغلنا، غير مرتبطة**، كوكي جلسة قديمة/AUTH_SECRET، تظهر بأي صفحة فيها TopNav/NotificationsBell
+- **🐛 تصحيح فوري (نفس السشن):** خالد لاحظ ألوان hardcoded (`bg-white`/`text-zinc-*`/`border-zinc-*`) في `EntityCard.tsx` + `InfiniteEntityGrid.tsx` (skeleton) تكسر الـ dark mode (كرت أبيض ثابت). أُصلح باستبدالها بـ semantic tokens (`bg-card`/`text-card-foreground`/`border-border`/`bg-muted`/`text-muted-foreground`/`ring-card`/`bg-primary/10 text-primary` للـ avatar fallback) — نفس التوكنز يتغيّرون تلقائياً عبر `.dark` class (مُتحقَّق من `globals.css`). اختُبر حيّاً بتبديل `localStorage.theme` بين dark/light (next-themes، `attribute="class"`) — لا يوجد ThemeToggle ظاهر في نفس الصفحة لسّه، التبديل يتم حالياً من `/users/profile/settings`. **قاعدة للمراحل الجاية (Industry/Category):** ممنوع أي `bg-white`/`text-zinc-*`/`border-zinc-*` حرفي — استخدم التوكنز دائماً
+- **🎨 تصحيح فوري ثانٍ (قرار نهائي: حذف كامل):** خالد لاحظ شريط اللون العلوي (accent strip) "كثرة ألوان" — كان hash-based عشوائي (8 تدرّجات مشتركة بين الكيانات). أول محاولة: تثبيته بلون واحد لكل نوع كيان (`getEntityAccent`). خالد صحّح: يبيه **يُحذف كامل، مو يتلوّن**. التنفيذ النهائي: حُذف عنصر الشريط بالكامل من `EntityCard.tsx` + سطر الـ skeleton المطابق من `InfiniteEntityGrid.tsx` + `getEntityAccent`/`ENTITY_ACCENT` من `entity-utils.ts` (dead code). **تحقّق dead-code:** grep على `getEntityAccent|ENTITY_ACCENT` بكل `modonty/` → صفر نتائج؛ مراجعة يدوية سطر-بسطر للملفات الثلاثة تؤكد صفر imports/vars غير مستخدمة (ESLint v9 ما يشتغل مباشر بالمشروع — `noUnusedLocals` غير مفعّل بـ tsconfig، فـ TSC وحده ما يكفي لفحص هذا، الفحص كان يدوي). التنوّع اللوني (`generateEntityGradient`) بقي بس على صورة الغلاف (thumbnail fallback). `ENTITY-CARD-SPEC.md` قسم 5 عُدِّل لـ v2.1 مع قاعدة صريحة: ممنوع إعادة الشريط في Industry/Category
+- **📐 تصحيح صورة الصورة:** خالد طلب الصورة تلامس حواف الكرت العلوية (flush)، مو inset بـ padding. أُزيلت `p-3 pb-0` من حول منطقة الصورة، الصورة صارت `rounded-t-2xl` مباشرة (نفس تقريب الكرت الخارجي)
+- **🎨 SVG placeholder جديد (خالد: "خبير جرافيك ديزاين"):** رفض تدرّج الألوان (gradient) نهائياً للصورة البديلة "لما ما يكون في صورة للهاشتاغ" — وصفه "بشع جداً". بُني `modonty/components/shared/EntityPlaceholder.tsx` جديد: SVG مسطّح (لون واحد صلب لكل نوع كيان، لا تدرّج) + دائرتين ناعمتين للعمق (`opacity` منخفضة، نفس عائلة اللون) + نمط نقاط خفيف + أيقونة الكيان بالمنتصف (فيها `showIcon` prop اختياري لإعادة استخدامها كخلفية بس، مثل موزاييك الـ Hero). **حُذف الاستخدام القديم من EntityCard.tsx بالكامل (`Icon`/`getEntityIcon`/`generateEntityGradient` هناك) — dead code تحقّق عبر grep، صفر مراجع متبقية.** اختُبر حيّاً light+dark
+- **🚨 تصحيح جوهري: الألوان المستخدمة كانت مُخترعة، مو براند مودونتي (خالد: "use branding color act as senior"):** أول نسخة من `EntityPlaceholder` استخدمت hex عشوائي (بنفسجي/purple لـ Tag) — **مافيه بنفسجي في براند مودونتي إطلاقاً**. تحقّقت من `app/globals.css` ولقيت 3 ألوان رسمية بس: `--brand-navy #0E065A` · `--brand-blue #3030FF` · `--brand-teal #00D8D8`. أُعيد بناء الـ palette بالكامل من هالـ 3 (HSL مشتق من نفس الـ hue الرسمي، لا اختراع): **Category=أزرق، Industry=تركواز، Tag=كحلي** (اللون الثالث المتبقي، مع الأزرق كـ accent/glow ثانوي لضعف تباين الكحلي وحده كنص على خلفية غامقة). **تصحيح موسّع شمل Hero كامل:** بدّلت كل `purple-*`/`fuchsia`/`pink` في `app/tags/page.tsx` (badge + heading + icon + radial glow rgba) لأزرق البراند، واستبدلت موزاييك الـ Hero (كان يستخدم `generateEntityGradient` قوس-قزح) بإعادة استخدام `<EntityPlaceholder type="tag" showIcon={false}>` نفسها — **`generateEntityGradient`/`ACCENT_GRADIENTS` صارت dead code كاملة فحُذفت من `entity-utils.ts`** (تحقّق grep: صفر مراجع). `ENTITY-CARD-SPEC.md` قسم 4 أُضيف له قاعدة صريحة: **3 ألوان براند فقط، ممنوع اختراع أي لون خارجها** — تنطبق على Industry/Category الجايين. اختُبر حيّاً — كل الصفحة الآن كحلي/أزرق متّسق 100%، صفر بنفسجي متبقّي (تأكيد grep)
+- **🚨 تصحيح جوهري في حساب «الأثر الرقمي» (خالد: كان غلط):** التنفيذ الأصلي (`getEntityGA4Stats`) كان يحسب زيارات صفحة `/tags/[slug]` **نفسها** — رقم شبه صفري وبلا معنى تجاري. **التعريف الصحيح:** «الأثر الرقمي» لكيان = **مجموع** الأثر الرقمي (GA4 total) لكل عميل ACTIVE مرتبط فيه (مو زيارات صفحتنا). التنفيذ: `getTagsEnhanced` (tag-queries.ts) صار يجمع slugs **كل** العملاء المرتبطين بكل وسم (مو الـ 3 المعروضين بس بالـ avatar)، يستدعي `getClientsGA4Stats()` (نفس الدالة اللي تحسب أثر كرت العميل)، ويجمع `.total` لكل عميل → حقل `digitalImpact` جديد على `TagListItem`. `getEntityGA4Stats`/`EntityGA4Path` صارت dead code كاملة (كانت مبنية على المفهوم الخاطئ) → **حُذفت من `ga4.ts`** (تحقّق grep: صفر مراجع)، وأُزيل استيرادها من `tags/page.tsx` و`tag-actions.ts`. اختُبر حيّاً: الأرقام تغيّرت بشكل جوهري (مثال: "تسويق رقمي" ١٠→١٨١) — تعكس الآن الأثر الحقيقي المجمّع للشركاء، مو زيارات صفحتنا. **قاعدة لمراحل Industry/Category الجاية:** نفس المنطق بالضبط — جمع GA4 لكل العملاء المرتبطين، لا استعلام GA4 منفصل لصفحة الكيان
+- **📈 توسيع «الأثر الرقمي» بأرقام حقيقية إضافية (خالد: الأرقام ضعيفة، بتأثر على المبيعات):** خالد رفض اختلاق أرقام (قاعدته الثابتة)، طلب مصادر حقيقية بس. أضفنا لـ `getClientsGA4Stats()` (ga4.ts) جمع تفاعل كل عميل الحقيقي المخزّن أصلاً بقاعدة البيانات على مقالاته المنشورة (`viewsCount+likesCount+commentsCount+favoritesCount`) — حقل جديد `articleEngagement`، يُجمع على `total` (GA4 + تفاعل DB = رقم واحد نهائي، مو عدادات متعددة، حسب طلبه). أُصلحت ثغرة تغطية: عميل بدون أي صف GA4 لكن عنده تفاعل DB حقيقي كان بيختفي من الـ map بالكامل (صار يظهر الآن، `Set` union بين مصدري البيانات).
+  - **فحص أثر جانبي (خالد طلب تأكيد صريح):** grep شامل على `getClientsGA4Stats|getClientDigitalImpact` بكل `modonty/` → 7 ملفات فقط، **كلها بدون استثناء تقرأ حقل `.total` فقط** (`ga4Stats[slug]?.total`) — صفر مكان يفكّك `pageViews`/`sessions`/`activeUsers`/`events` لحالها. التعديل إضافة فقط (حقل جديد + معادلة total أشمل)، صفر حقل محذوف. `app/analytics/page.tsx` فيها أسماء حقول مشابهة لكن من دالة مختلفة تمامًا (`getSiteAnalytics`) — لا تعارض. TSC صفر أخطاء بعد التعديل
+- **🎨 «الأثر الرقمي» أُخفي من الكرت مؤقتاً (خالد: الأرقام صغيرة، بتأثر على المبيعات لحد ما تكبر مع الـ organic):** الحساب بقي صحيح 100% بطبقة البيانات (`digitalImpact` على `TagListItem`/`EntityCardProps`)، بس ما يُعرض بالـ `EntityCard.tsx` — الفوتر صار شركاء بس (100% العرض بدل 70/30). **dead-code تحقّق:** `formatDigitalImpact` (entity-utils.ts) صار بدون أي مستخدم بعد الإخفاء → **حُذف** (تافه نعيده وقت التفعيل)
+- **🔎 مراجعة شاملة: performance + SEO + SEO cache (خالد طلب تأكيد الثلاثة):**
+  - **Chrome DevTools Lighthouse/trace غير متاح** (منفذ التصحيح 9222 ما يستجيب) — الفحص كان يدوي بمراجعة الكود، مو تشغيل تلقائي. لم أدّعِ "مضمون" بدون دليل
+  - **🐛 باگ أداء حقيقي اكتُشف وأُصلح:** داخل `getTagsEnhanced` (tag-queries.ts)، `clientRows` (DB) و`getClientsGA4Stats()` (شبكة خارجية) كانا يُنفَّذان بالتتابع رغم إنهم مستقلين تماماً — waterfall حقيقي يخالف قاعدة المشروع "🔴 CRITICAL: Eliminate async waterfalls". أُصلح بـ `Promise.all`
+  - **✅ تحقّق (مو تخمين):** استيراد `InfiniteEntityGrid` مباشرة (بدون `dynamic/ssr:false`) يطابق نفس نمط `InfiniteArticleList` الموجود فعلاً بـ `CategoryFeedSection.tsx` — قرار صحيح، مش مخالفة لقاعدة "dynamic لكل Client Component" (تلك القاعدة تخص widgets هامشية، مو المحتوى الرئيسي)
+  - **🐛 باگ حقيقي: `app/tags/loading.tsx` كان قديم** — يعرض شكل الـ pills القديم (خلفية فاتحة + pills)، يسبّب وميض/CLS عند الانتقال للـ Hero الغامق الجديد. أُصلح بالكامل ليطابق التصميم الحالي (Hero غامق + Toolbar + شبكة كروت skeleton)
+  - **🚨 فجوة SEO حقيقية اكتُشفت وأُصلحت:** الصفحة **ما كانت تقرأ الـ SEO cache المُدار من الأدمن** (`Settings.tagsPageMetaTags`/`tagsPageJsonLdStructuredData` — موجودة بالـ schema ويكتبها فعلياً `admin/lib/seo/listing-page-seo-generator.ts`، نفس نظام `/categories`). كانت تبني meta/JSON-LD حيّة بالكود بدل قراءة المُعتمَد من الأدمن. أُصلح: بُني `lib/seo/tags-page-seo.ts` (نفس نمط `categories-page-seo.ts`) + ربطه بـ`generateMetadata()` والـ JSON-LD — **اختُبر حيّاً**: عنوان الصفحة تغيّر فعلياً من القيمة الثابتة بالكود لعنوان الأدمن المخزّن ("التاجات — المواضيع الرائجة")، يثبت إن الإصلاح شغّال
+  - **🚨 باگ عنوان مكرر "| مدونتي | مدونتي" — شُخِّص غلط أول مرة ثم صُحِّح (خالد: "راجع تاني راجع تاني"):** أول تشخيص كان سطحي (خيّرت بين "تصليح المولّد" أو "شيل التمبلت" — الاثنان غلط). المراجعة الثانية بالدليل (DOM + قراءة مصدر `admin/lib/seo/listing-page-seo-generator.ts` + docs Next.js المحلية):
+    - **الجذر الحقيقي:** حقل الـ SEO title في الأدمن (`tagsSeoTitle`/`categoriesSeoTitle`/...) **نفسه يتضمّن "| مدونتي"** (دليل قاطع: `og:title` يطلع بلاحقة واحدة، والمولّد يحطّ `openGraph.title = config.title`). مودونتي يرندر العنوان كنص عادي → `title.template: "%s | مدونتي"` بالـ layout **يُضيف** اللاحقة ثانية (موثّق Next.js docs سطر 343: النص العادي يُضاف له template الأب) → التكرار في `<title>` فقط، الـ og سليم
+    - **الحل الصحيح المؤكّد من docs (سطر 293):** `title.absolute` يتجاهل template الأب. طُبِّق في `generateMetadata` بصفحة الوسوم: لو `merged.title` نص → لُفّ بـ`{ absolute }`. **اختُبر حيّاً:** `<title>` صار "التاجات — المواضيع الرائجة | مدونتي" (لاحقة وحدة)، og+twitter+canonical+robots كلها سليمة ومتّسقة
+    - **⚠️ نفس الباگ موجود بـ /categories و/industries و/clients و/articles و/trending** (كلها تستهلك `buildListingMetadata` بنص عادي) — يحتاج نفس إصلاح `{absolute}` لما نوصلها بمراحلها. للآن أُصلح tags فقط (نطاق المرحلة الحالية)
+- Build: لم يُشغّل `pnpm build` بعد (dev فقط) — لازم قبل push
+
+### 📝 Decisions taken (with reasoning)
+- **`getTagsEnhanced` دالة جديدة منفصلة عن `getTagsWithCounts`** → الأخيرة تُستخدم في HomeBottomBar/LeftSidebar بشكل مختلف تماماً (بدون previews/pagination)؛ تعديلها كان يكسر consumers غير مرتبطين
+- **Pagination بالـ slice بعد حساب كامل، مو DB-level cursor** → عدد الوسوم فعلياً صغير (32) وحساب `recentArticleCount`/`clientPreviews` أصلاً يحتاج المصفوفة كاملة (نفس منطق `getCategoriesEnhanced` الموجود)؛ تكلفة إضافية = صفر عملياً
+- **Server Action تُمرَّر بـ `.bind(null, options)`** → نمط رسمي موثّق (`node_modules/next/dist/docs/01-app/02-guides/forms.md`)، يمرّر search/sort الحاليين لصفحات "تحميل المزيد" التالية بدون كسر توقيع `(page:number)=>` العام لـ `InfiniteEntityGrid`
+
+### 🚧 Pending / blocked
+- لا شيء حاجز. الخطوة التالية مباشرة: تكرار نفس الـ 7 خطوات لـ Industry
+- `pnpm build` كامل + فحص TSC للـ 3 تطبيقات لم يُشغّل بعد — مطلوب قبل أي push
+
+### 📂 Files touched
+- **جديد:** `lib/entity-utils.ts`, `components/shared/EntityCard.tsx`, `components/shared/InfiniteEntityGrid.tsx`, `app/actions/tag-actions.ts`, `app/tags/components/tag-search-form.tsx`, `app/tags/components/tag-sort-filter.tsx`
+- **معدَّل:** `app/api/helpers/tag-queries.ts` (إضافة فقط)، `lib/analytics/ga4.ts` (إضافة فقط)، `app/tags/page.tsx` (استبدال كامل)، `tailwind.config.ts` (سطر واحد — content glob)
+- `documents/context/ENTITY-CARD-SPEC.md` — عُدِّل قسم 2+10: ترتيب التنفيذ صار **Tag → Industry → Category** (بدل Industry أولاً) بطلب خالد — الوسوم أصعب كيان فبنبدأ فيه
+
+### 🔁 Git / deploy state
+- Branch: main
+- Uncommitted changes: yes — كل الملفات أعلاه، لم تُضَف للـ staging بعد
+- Last commit: `82ad130` — admin v0.82.8: redeploy to activate REPLICATE_API_TOKEN
+- Pushed: لا — لسّه ما طلب خالد push، والـ build الكامل لم يُشغّل بعد (شرط إلزامي قبل أي push)
+- Vercel: بدون تغيير
+- Dev server: يعمل بالخلفية (task `ba7mwjtx6`) على `localhost:3000`
+
+### 🚀 How to resume in 30 seconds
+1. تأكد السيرفر شغّال (`localhost:3000/tags`) — لو لأ: `pnpm dev:modonty`
+2. طبّق نفس الـ 7 ملفات لـ **Industry**: `industry-queries.ts` (إضافة `getIndustriesEnhanced`/`getIndustriesPage` بنفس نمط tag-queries) → `industry-actions.ts` → `app/industries/page.tsx` (Hero teal + Toolbar + InfiniteEntityGrid، 3 أعمدة)
+3. قبل أي push: `pnpm build` كامل + TSC للثلاث تطبيقات
+
+---
+
+### 🎯 Where I stopped
+- الـ BRD مكتمل ومكتوب في `ENTITY-CARD-SPEC.md` v2.0 — كل القرارات مثبّتة، صفر نقاش معلّق
+- **الخطوة التالية عند الاستئناف:** ابدأ التنفيذ الفعلي — المرحلة 1 = **Industry** (راجع قسم 10 في الـ spec لخطة الملفات)
+
+### ✅ Done this session
+- صُحّح خطأين جوهريين من السشن السابق (تحقّق كود مباشر، مو تخمين):
+  - ❌→✅ مصدر «الأثر الرقمي» **مو GSC** (غير موجود في modonty) — **هو GA4**، موجود وشغّال فعلاً (`lib/analytics/ga4.ts` → `getClientsGA4Stats` يفلتر `pagePath` لكل عميل). نفس الآلية تُمدّد لـ Category/Industry/Tag بفلترة `/categories/`, `/industries/`, `/tags/`
+  - ❌→✅ صفحة `/tags/[slug]` **ما فيها فجوة** — تعرض `<ClientCard>` grid كامل بالفعل (شعار+GA4+تقييمات)، الملاحظة القديمة "تعرض مقالات" كانت خاطئة
+- **قرار جديد: Tags تمشي بنفس الـ layout/pattern تماماً** — لا قرار سابق حقيقي كان يفصلها كـ pills (كان افتراض بلا رقم فعلي من الـ DB)
+- **قرار جديد: Infinite Scroll إلزامي على الثلاثة** — الداتا في نمو مستمر. تحقّقت من نمط موجود ومُثبَت (`InfiniteArticleList` + `loadMoreArticles` server action في فيد المقالات) — سيُعمَّم بمكوّن واحد `InfiniteEntityGrid` بدل تكراره 3 مرات
+- اكتُشف عيب موجود بمعزل عن هذا العمل: `getCategoriesEnhanced`/`getIndustriesWithCounts`/`getTagsWithCounts` تجيب **كل** الصفوف بدون `take` — سيُصلَح كجزء من تفعيل الـ pagination
+- بُني mockup كامل لـ page layout (`entity-page-layout-v1.html`) — Hero + Toolbar + Grid، 3 تبويبات حيّة (Category/Industry/Tag)
+- أُعيد كتابة `ENTITY-CARD-SPEC.md` بالكامل → v2.0 (10 أقسام: منطق تجاري، ترتيب تنفيذ، تحقق schema، layout، anatomy، مصدر GA4، infinite scroll، Props، خارج النطاق، خطة ملفات المرحلة 1)
+- TSC state: لم يُشغّل (لا كود تطبيق بعد، مرحلة توثيق فقط)
+- Build/Live test: not done — لا كود تطبيق تغيّر هذا السشن
+
+### 📝 Decisions taken (with reasoning)
+- **ترتيب التنفيذ: Industry → Category → Tag** — خالد اعتمد البدء بـ Industry، ونفس الحل التقني يتكرر حرفياً بالباقي بدون إعادة نقاش
+- **الأثر الرقمي = GA4 لا GSC** → GSC غير موجود في modonty، ويخالف نمط live-fetch القائم؛ GA4 موجود ومُستخدم بنفس الغرض في كرت العميل
+- **Tags = نفس layout الكامل (Hero+Toolbar+Grid+EntityCard)** → لا سبب فعلي يمنعها، القرار القديم كان تخمين
+- **مكوّن Infinite Scroll واحد عام لكل الكيانات** (`InfiniteEntityGrid`) بدل 3 نسخ منفصلة → يطابق فلسفة "pattern واحد" المطبّقة على الكرت
+
+### 🚧 Pending / blocked
+- لا شيء معلّق — الـ BRD مقفول 100%. الخطوة التالية تنفيذ مباشر
+- ملاحظة مفتوحة غير حاجزة: العدد الفعلي للوسوم بالـ DB لم يُتحقّق منه من مصدر حي (لا يمنع البدء، فقط يؤثر على أولوية pagination لصفحة Tags تحديداً)
+
+### 📂 Files touched
+- `documents/context/ENTITY-CARD-SPEC.md` — **أُعيد كتابته بالكامل v2.0** (BRD نهائي، مرجع التنفيذ الوحيد من الآن)
+- `documents/mockups/entity-page-layout-v1.html` — إنشاء + تعديل (أُضيف تبويب Tag كامل)
+- (من السشن السابق، بدون تغيير: `categories-card-redesign-v1/v2/v3.html`, `entity-card-pattern-system-v1.html`)
+
+### 🔁 Git / deploy state
+- Branch: main
+- Uncommitted changes: yes — ملفات التوثيق/المكب أعلاه غير مضافة، **لا كود تطبيق (modonty/) تغيّر بعد**
+- Last commit: `82ad130` — admin v0.82.8: redeploy to activate REPLICATE_API_TOKEN
+- Pushed: لا شيء (مرحلة توثيق)
+- Vercel: بدون تغيير
+
+### 🚀 How to resume in 30 seconds
+1. افتح `documents/context/ENTITY-CARD-SPEC.md` قسم 10 — خطة ملفات المرحلة 1 (Industry)
+2. ابدأ بـ `modonty/lib/entity-utils.ts` (تعميم من `category-utils.ts`) ثم `EntityCard.tsx`
+3. بعد Industry: نفس الخطوات حرفياً لـ Category ثم Tag (بدون نقاش جديد)
+
+---
+
+## Session: 2026-07-02 (2) — REPLICATE_API_TOKEN fix on Vercel production
+
+### 🎯 Where I stopped
+- admin v0.82.8 READY على production
+- `REPLICATE_API_TOKEN` مضاف لـ Vercel + admin rebuilt
+
+### ✅ Done this session
+- اكتشفنا 401 من Replicate في prod — السبب: `REPLICATE_API_TOKEN` مو موجود على Vercel
+- أضفنا `REPLICATE_API_TOKEN` لـ Vercel عبر API (project-level على admin فقط، encrypted)
+- bump admin: 0.82.7 → **0.82.8** لإجبار rebuild
+- Vercel: admin READY ✅ · modonty CANCELED ✅ · console CANCELED ✅
+
+### 📝 Decisions taken
+- REPLICATE_API_TOKEN يُضاف على project-level (admin فقط) لا shared — modonty/console ما يحتاجونه
+
+### 🚧 Pending / blocked
+- **Live test** لـ AI image generation في prod (Generate Preview زر)
+- **Instagram bio link** — رابط البايو على حساب مودونتي يحتاج تحديث يدوي
+
+### 📂 Files touched
+- `admin/package.json` — v0.82.8
+- Vercel env vars — REPLICATE_API_TOKEN مضاف
+
+### 🔁 Git / deploy state
+- Branch: main
+- Last commits:
+  - `57402e6` — chore: redeploy admin (empty commit — لم يبن)
+  - `82ad130` — admin v0.82.8: redeploy to activate REPLICATE_API_TOKEN
+- Pushed: ✅
+- Vercel: admin READY ✅ (v0.82.8)
+
+### 🚀 How to resume in 30 seconds
+1. اختبر زر "Generate Preview" على مقال في `/social/facebook/[articleId]` → Instagram tab → AI
+2. تحقق الصورة تظهر (FLUX 1.1 Pro)
+3. حدّث bio link في Instagram يدوياً
+
+---
+
+## Session: 2026-07-02 — Social Publishing: Instagram+FB unified, Twitter hidden, Vercel fixed
+
+### 🎯 Where I stopped
+- كل الـ 3 apps READY على الإنتاج بدون أخطاء
+- آخر عمل: force rebuild لـ modonty + console بعد lockfile error
+
+### ✅ Done this session
+
+**Social Publishing Page — /social/facebook/[articleId]:**
+- FLUX 1.1 Pro ($0.04/image) عبر Replicate — AI image generation
+- Gemini 2.5-flash prompt: طبيعي بالإنجليزي + شخصيات سعودية + مدن سعودية + JSON structured output
+- Instagram best practices: Hook (125 chars visible) + "رابط في البايو ☝️" + 3-5 hashtags من article.tags
+- Facebook: 2 hashtags + رابط clickable في الكابشن
+- `assembleFbCaption` vs `assembleIgCaption` — دالتان منفصلتان
+- Cloudinary upload عند الـ publish: FLUX URL → Cloudinary → يحفظ `imageUrl` + `imagePublicId` في SocialPost DB
+- `imagePublicId String?` — حقل جديد أُضيف لـ SocialPost في schema.prisma + prisma generate
+- Platform checkboxes (FB/IG) جنب زر Publish مباشرة في top row
+- Tabs: Content | Facebook | Instagram (Twitter حُذف من الـ UI)
+- Sharp: crops cover إلى 1080×1350 + blur(18) كـ Default Instagram image مجاني
+
+**Twitter — قرار إيقاف:**
+- Twitter API v2 (2026) = credit-based — $0.015/tweet بدون رابط، $0.20/tweet مع رابط
+- ما في free tier فعلي للكتابة — مؤكّد من Twitter Developer Console (balance $0.00)
+- Twitter checkbox + Twitter tab + twResult حُذفوا من facebook-post-client.tsx
+- Backend code (`postArticleToTwitter` في _actions.ts) باقي محفوظ للمستقبل
+
+**Sidebar:**
+- "Social Media" تحوّل من collapsible group (Facebook + Instagram كـ children) → link مباشر واحد → `/social/facebook`
+- حُذفت Facebook و Instagram كـ imports من sidebar.tsx
+
+**TypeScript fixes (قبل الـ push):**
+- `CloudinaryUploader` type: أُضيف `public_id: string` للـ upload response
+- `Article.imageUrl` غير موجود في Prisma → صُحّح إلى `featuredImage: { select: { url: true } }`
+- TSC: admin ✅ zero errors
+
+**Vercel deployment fixes:**
+- bad5d53: كل الـ 3 apps ERROR بسبب lockfile mismatch (twitter-api-v2 في lockfile بس مش في package.json)
+- 8a76fbb: أُضيف `twitter-api-v2: ^1.29.0` لـ admin/package.json → admin READY
+- 0c938b5: modonty v1.69.3 + console v0.18.4 → force rebuild → كلهم READY
+
+**Versions:**
+- admin: 0.82.6 → **0.82.7**
+- modonty: 1.69.2 → **1.69.3**
+- console: 0.18.3 → **0.18.4**
+
+### 📝 Decisions taken
+- Twitter مُوقف نهائياً من الـ UI (تكلفة $0.20/تغريدة) — backend محفوظ
+- Instagram + Facebook في صفحة واحدة `/social/facebook/[articleId]`
+- Hashtags من article.tags مباشرة (بدون AI): 2 لـ FB، 5 لـ IG
+- Body مشترك بين FB و IG (مش منفصل)
+
+### 🚧 Pending / blocked
+- **REPLICATE_API_TOKEN** — مطلوب إضافته لـ Vercel عشان AI image generation تشتغل في prod
+- **Live test** في prod لـ FB posting و IG posting end-to-end
+- **Instagram bio link** — تحديث رابط البايو على حساب مودونتي يدوياً
+
+### 📂 Files touched
+- `admin/app/(dashboard)/social/facebook/[articleId]/_components/facebook-post-client.tsx`
+- `admin/app/(dashboard)/social/facebook/[articleId]/page.tsx` — maxDuration: 120
+- `admin/app/(dashboard)/social/facebook/_actions.ts` — Cloudinary, Sharp, FLUX, Twitter backend
+- `admin/components/admin/sidebar.tsx` — Social Media → direct link
+- `admin/package.json` — v0.82.7 + twitter-api-v2
+- `dataLayer/prisma/schema/schema.prisma` — imagePublicId در SocialPost
+- `modonty/package.json` — v1.69.3
+- `console/package.json` — v0.18.4
+- `pnpm-lock.yaml`
+
+### 🔁 Git / deploy state
+- Branch: main
+- Last commits:
+  - `bad5d53` — admin v0.82.7: social publishing page
+  - `8a76fbb` — fix: add twitter-api-v2 to admin dependencies
+  - `0c938b5` — modonty v1.69.3 + console v0.18.4: force rebuild
+- Pushed: ✅
+- Vercel: admin READY ✅ · modonty READY ✅ · console READY ✅
+
+### 🚀 How to resume in 30 seconds
+1. أضف `REPLICATE_API_TOKEN` لـ Vercel (Shared Env) عشان AI image generation تشتغل في prod
+2. اختبر FB + IG posting على مقال حقيقي في prod
+3. حدّث bio link في Instagram يدوياً
+
+---
+
+## Session: 2026-06-30 18:00 — Facebook Social Dashboard (pushed ✅) + Instagram crop discussion
+
+### 🎯 Where I stopped
+- نقاش مفتوح حول مشكلة Instagram image dimensions
+- خالد رفض حل Cloudinary URL transform (1:1 / 4:5) وقال "الحل سيء"
+- عنده فكرة تانية لم يطرحها بعد — توقفنا عند `us>`
+- **Next action when resuming:** خالد يطرح فكرته → ننفذ الحل الصح
+
+### ✅ Done this session
+- **Push ناجح** — `4bc54b3` — admin v0.82.4
+  - `admin/app/(dashboard)/social/facebook/` — كامل (list page + article detail + actions)
+  - `admin/app/(dashboard)/social/instagram/page.tsx` — placeholder
+  - `admin/components/admin/sidebar.tsx` — Social Media section
+  - `admin/lib/social/meta.ts` — DB tracking for every post attempt
+  - `dataLayer/prisma/schema/schema.prisma` — SocialPost model + enums
+  - `package.json` + `pnpm-lock.yaml` — @google/genai v2.10.0
+- TSC: admin ✅ modonty ✅ console ✅ — zero errors قبل الـ push
+- Backup: ✅ ran `scripts/backup.sh`
+- **Facebook admin UI features:**
+  - Pending tab (articles not yet posted) + Published tab (posted with FB link)
+  - Stats: Pending / This Month / Total / Failed
+  - AI caption generation: Hook (Input) + Body (Textarea) via Gemini 2.5-flash
+  - `assembleCaption()` → `✨ hook\n\nbody\n\nاقرأها الآن 👇\n🔗 link\n\nhashtags`
+  - `postArticleToFacebook()`: 2-step (upload photo → attach to feed) + DB record
+  - `skipArticleFacebook()`: SKIPPED status
+  - Reset buttons for hook/body when changed from original
+  - AlertDialog confirmation before posting
+- **Image dimension research:**
+  - Facebook optimal: 1200×630 (1.91:1) — متوافق مع codebase validation
+  - Instagram: accepts 1.91:1 لكن optimal = 4:5 (1080×1350) أو 1:1 (1080×1080)
+  - جرّبنا Cloudinary URL transform approach → خالد رفضه
+  - HTML mockup: `documents/mockups/instagram-crop-comparison-v1.html`
+
+### 📝 Decisions taken
+- Gemini 2.5-flash بدل OpenAI (quota exceeded) + @google/genai v2.10.0 (بدل deprecated @google/generative-ai)
+- Facebook: 2-step photo post (staged upload → feed attach) — يحسّن جودة الصورة على FB
+- SocialPost DB record على كل محاولة (PUBLISHED/FAILED/SKIPPED) — tracking كامل
+
+### 🚧 Pending / blocked
+- **Instagram image dimension solution** — خالد رفض Cloudinary transform، عنده فكرة تانية لم يُكشفها
+- **GEMINI_API_KEY على Vercel** — لم يُتحقق إن موجود (مطلوب لـ AI generation في prod)
+- **Vercel env vars** — META_APP_ID / META_APP_SECRET / META_PAGE_ID / META_IG_USER_ID / META_PAGE_ACCESS_TOKEN — لم يُتحقق
+- **Instagram admin page** — placeholder فقط، لم تُبنَ
+- **Live test** — FB posting لم يُختبر end-to-end في prod
+
+### 📂 Files touched
+- `admin/app/(dashboard)/social/facebook/page.tsx` — list page
+- `admin/app/(dashboard)/social/facebook/_components/facebook-page-client.tsx` — client component
+- `admin/app/(dashboard)/social/facebook/[articleId]/page.tsx` — article detail
+- `admin/app/(dashboard)/social/facebook/[articleId]/_components/facebook-post-client.tsx` — post editor
+- `admin/app/(dashboard)/social/facebook/_actions.ts` — server actions
+- `admin/app/(dashboard)/social/instagram/page.tsx` — placeholder
+- `admin/components/admin/sidebar.tsx` — Social Media nav group
+- `admin/lib/social/meta.ts` — DB tracking added
+- `dataLayer/prisma/schema/schema.prisma` — SocialPost model
+- `documents/mockups/instagram-crop-comparison-v1.html` — crop comparison mockup
+
+### 🔁 Git / deploy state
+- Branch: main
+- Last commit: `4bc54b3` — admin v0.82.4: Facebook social dashboard
+- Pushed: ✅ yes
+- Vercel: building admin only (ignoreCommand active)
+
+### 🚀 How to resume in 30 seconds
+1. خالد يطرح فكرته حول Instagram image dimensions
+2. ننفذ الحل المتفق عليه
+3. تحقق من Vercel env vars (GEMINI_API_KEY + META_*)
+4. اختبار FB posting end-to-end في prod
+
+---
 
 ## Session: 2026-06-30 — Facebook Admin Page (Phase 3) — NOT YET PUSHED
 

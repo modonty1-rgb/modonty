@@ -199,7 +199,9 @@ export interface ClientGA4Stats {
   sessions: number;
   activeUsers: number;
   events: number;
-  /** Sum of all GA4 activity — displayed as "تفاعلات" in client cards. */
+  /** Real engagement stored in our own DB (views+likes+comments+favorites across the client's published articles) — not GA4, immune to pagePath-matching gaps. */
+  articleEngagement: number;
+  /** Sum of GA4 activity + articleEngagement — the single "الأثر الرقمي" number shown everywhere. */
   total: number;
 }
 
@@ -222,7 +224,7 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
       limit: 500,
     };
 
-    // Fetch client pages + article pages from GA4, and article→client map from DB — all in parallel.
+    // Fetch client pages + article pages from GA4, and article→client map + engagement counters from DB — all in parallel.
     const [clientsReport, articlesReport, articleRows] = await Promise.all([
       call("runReport", {
         ...gaQuery,
@@ -234,22 +236,35 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
       }),
       db.article.findMany({
         where: { status: "PUBLISHED" },
-        select: { slug: true, client: { select: { slug: true } } },
+        select: {
+          slug: true,
+          client: { select: { slug: true } },
+          viewsCount: true,
+          likesCount: true,
+          commentsCount: true,
+          favoritesCount: true,
+        },
       }),
     ]);
 
     // article-slug → client-slug lookup (store both decoded and encoded variants
     // because GA4 may percent-encode Arabic paths like /articles/%D9%85...).
+    // Also sum each client's own article engagement — real DB counters, independent of GA4 matching.
     const articleToClient = new Map<string, string>();
+    const engagementByClient = new Map<string, number>();
     for (const art of articleRows) {
       articleToClient.set(art.slug, art.client.slug);
       try {
         const encoded = encodeURIComponent(art.slug);
         if (encoded !== art.slug) articleToClient.set(encoded, art.client.slug);
       } catch { }
+
+      const engagement =
+        (art.viewsCount ?? 0) + (art.likesCount ?? 0) + (art.commentsCount ?? 0) + (art.favoritesCount ?? 0);
+      engagementByClient.set(art.client.slug, (engagementByClient.get(art.client.slug) ?? 0) + engagement);
     }
 
-    const raw: Record<string, Omit<ClientGA4Stats, "total">> = {};
+    const raw: Record<string, Omit<ClientGA4Stats, "total" | "articleEngagement">> = {};
 
     function add(slug: string, pv: number, s: number, au: number, ev: number) {
       const ex = raw[slug];
@@ -291,10 +306,19 @@ export async function getClientsGA4Stats(): Promise<Record<string, ClientGA4Stat
       );
     }
 
-    // Compute totals + add decoded variants for Arabic slugs.
+    // Compute totals (GA4 + article engagement) + add decoded variants for Arabic slugs.
+    // Union of both sources — a client with real article engagement but zero matched
+    // GA4 rows must still show up, not silently read as 0.
+    const allSlugs = new Set([...Object.keys(raw), ...engagementByClient.keys()]);
     const result: Record<string, ClientGA4Stats> = {};
-    for (const [slug, s] of Object.entries(raw)) {
-      const final: ClientGA4Stats = { ...s, total: s.pageViews + s.sessions + s.activeUsers + s.events };
+    for (const slug of allSlugs) {
+      const s = raw[slug] ?? { pageViews: 0, sessions: 0, activeUsers: 0, events: 0 };
+      const articleEngagement = engagementByClient.get(slug) ?? 0;
+      const final: ClientGA4Stats = {
+        ...s,
+        articleEngagement,
+        total: s.pageViews + s.sessions + s.activeUsers + s.events + articleEngagement,
+      };
       result[slug] = final;
       try {
         const decoded = decodeURIComponent(slug);

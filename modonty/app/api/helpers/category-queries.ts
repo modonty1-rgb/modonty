@@ -4,9 +4,12 @@
  */
 
 import { db } from "@/lib/db";
-import { Prisma, ArticleStatus } from "@prisma/client";
+import { Prisma, ArticleStatus, SubscriptionStatus } from "@prisma/client";
 import { unstable_cache, cacheTag, cacheLife } from "next/cache";
+import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import type { CategoryResponse, CategoryAnalytics, CategoryQueryOptions, CategoryArticleQueryOptions, ArticleResponse } from "@/lib/types";
+
+const CATEGORIES_PAGE_SIZE = 20;
 
 type CategoryWithArticles = Prisma.CategoryGetPayload<{
   include: {
@@ -321,6 +324,84 @@ export const getCategoriesEnhanced = unstable_cache(
       cat.isFeatured = index < 4;
     });
 
+    // Batch-fetch client previews — one query for ALL categories (no N+1)
+    const categoryIds = categories.map((c) => c.id);
+    if (categoryIds.length > 0) {
+      // Independent of each other — run in parallel (GA4 is a network call, the slower of the two).
+      const [clientRows, clientGA4] = await Promise.all([
+        db.article.findMany({
+          where: {
+            categoryId: { in: categoryIds },
+            status: ArticleStatus.PUBLISHED,
+            OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+            client: { subscriptionStatus: SubscriptionStatus.ACTIVE },
+          },
+          select: {
+            categoryId: true,
+            client: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                logoMedia: { select: { url: true } },
+              },
+            },
+          },
+          orderBy: { datePublished: "desc" },
+          take: 500,
+        }),
+        getClientsGA4Stats(),
+      ]);
+
+      const previewsMap = new Map<string, { id: string; name: string; logoUrl?: string }[]>();
+      const countMap = new Map<string, number>();
+      const clientSlugsMap = new Map<string, string[]>();
+      const seenPairs = new Set<string>();
+
+      for (const row of clientRows) {
+        const catId = row.categoryId;
+        const clientId = row.client.id;
+        if (!catId || !clientId) continue;
+
+        const pairKey = `${catId}:${clientId}`;
+        if (seenPairs.has(pairKey)) continue;
+        seenPairs.add(pairKey);
+
+        const existing = previewsMap.get(catId) ?? [];
+        previewsMap.set(catId, existing);
+        countMap.set(catId, (countMap.get(catId) ?? 0) + 1);
+        if (existing.length < 3) {
+          existing.push({
+            id: clientId,
+            name: row.client.name,
+            logoUrl: row.client.logoMedia?.url,
+          });
+        }
+
+        const slugs = clientSlugsMap.get(catId) ?? [];
+        clientSlugsMap.set(catId, slugs);
+        slugs.push(row.client.slug);
+      }
+
+      // "الأثر الرقمي" = sum of every category client's own digital-impact total (GA4 + DB engagement).
+      results = results.map((cat) => {
+        const slugs = clientSlugsMap.get(cat.id) ?? [];
+        const digitalImpact = slugs.reduce((sum, slug) => sum + (clientGA4[slug]?.total ?? 0), 0);
+        return {
+          ...cat,
+          clientPreviews: previewsMap.get(cat.id) ?? [],
+          clientCount: countMap.get(cat.id) ?? 0,
+          digitalImpact,
+        };
+      });
+    }
+
+    // Hide empty categories — nothing to show a visitor if there are neither
+    // published articles nor active partners (applies to both the listing and
+    // the "related categories" widget). Runs before search/sort/pagination so
+    // hero counts + page slices reflect only content-bearing categories.
+    results = results.filter((cat) => cat.articleCount > 0 || (cat.clientCount ?? 0) > 0);
+
     if (search) {
       const searchLower = search.toLowerCase();
       results = results.filter(
@@ -359,6 +440,16 @@ export const getCategoriesEnhanced = unstable_cache(
     tags: ['categories'],
   }
 );
+
+export async function getCategoriesPage(
+  page: number,
+  options: CategoryQueryOptions = {}
+): Promise<{ items: CategoryResponse[]; hasMore: boolean; total: number }> {
+  const all = await getCategoriesEnhanced(options);
+  const start = (page - 1) * CATEGORIES_PAGE_SIZE;
+  const items = all.slice(start, start + CATEGORIES_PAGE_SIZE);
+  return { items, hasMore: start + CATEGORIES_PAGE_SIZE < all.length, total: all.length };
+}
 
 export const getCategoryArticlesEnhanced = unstable_cache(
   async (categorySlug: string, options: CategoryArticleQueryOptions = {}): Promise<ArticleResponse[]> => {

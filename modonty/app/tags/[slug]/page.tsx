@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import { cacheTag, cacheLife } from "next/cache";
-import { ArticleStatus } from "@prisma/client";
+import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
+import { HashIcon } from "lucide-react";
 import { db } from "@/lib/db";
-import { generateMetadataFromSEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { getClientsGA4Stats } from "@/lib/analytics/ga4";
+import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { CategoryArticleCard } from "@/app/categories/[slug]/components/category-article-card";
-import type { ArticleResponse } from "@/lib/types";
+import { ClientCard } from "@/components/shared/client-card";
 
 interface TagPageProps {
   params: Promise<{ slug: string }>;
@@ -17,19 +18,18 @@ export async function generateStaticParams() {
   try {
     const tags = await db.tag.findMany({ select: { slug: true } });
     if (!tags || tags.length === 0) return [{ slug: "__no_tags__" }];
-    return tags.map((tag) => ({ slug: tag.slug }));
+    return tags.map((t) => ({ slug: t.slug }));
   } catch {
     return [{ slug: "__no_tags__" }];
   }
 }
 
-// Cached so the metadata is part of the prerendered shell <head> (not streamed into <body>).
-async function getTagForMetadata(decodedSlug: string) {
+async function getTagForMetadata(slug: string) {
   "use cache";
   cacheTag("tags");
   cacheLife("hours");
   return db.tag.findUnique({
-    where: { slug: decodedSlug },
+    where: { slug },
     select: {
       name: true,
       seoTitle: true,
@@ -45,19 +45,16 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     const { slug } = await params;
     const decodedSlug = decodeURIComponent(slug);
     const tag = await getTagForMetadata(decodedSlug);
-
     if (!tag) return { title: "وسم غير موجود - مدونتي" };
-
     if (tag.nextjsMetadata) {
       const { robots: _r, ...stored } = tag.nextjsMetadata as Metadata & { robots?: unknown };
       if (stored.title) return stored;
     }
-
     return generateMetadataFromSEO({
-      title: (tag.seoTitle || `مقالات وسم: ${tag.name}`)?.slice(0, 51),
+      title: (tag.seoTitle || `شركاء وسم: ${tag.name}`)?.slice(0, 51),
       description:
         tag.seoDescription ||
-        `استكشف جميع المقالات المصنّفة تحت وسم "${tag.name}" في مدونتي`,
+        `استكشف الشركاء المتخصصين في "${tag.name}" على مدونتي`,
       url: `/tags/${decodedSlug}`,
       type: "website",
       image: tag.socialImage || undefined,
@@ -68,12 +65,11 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 }
 
 export default async function TagPage({ params }: TagPageProps) {
-  await connection(); // dynamic — articles change, new Date() needed for scheduled check
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
   try {
-    const [tag, rawArticles] = await Promise.all([
+    const [tag, clients] = await Promise.all([
       db.tag.findUnique({
         where: { slug: decodedSlug },
         select: {
@@ -83,129 +79,52 @@ export default async function TagPage({ params }: TagPageProps) {
           description: true,
           socialImage: true,
           socialImageAlt: true,
-          jsonLdStructuredData: true,
         },
       }),
-      db.article.findMany({
+      db.client.findMany({
         where: {
-          status: ArticleStatus.PUBLISHED,
-          OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
-          tags: { some: { tag: { slug: decodedSlug } } },
-        },
-        include: {
-          client: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logoMedia: { select: { url: true } },
-            },
-          },
-          author: {
-            select: { id: true, name: true, slug: true, image: true },
-          },
-          featuredImage: {
-            select: { url: true, altText: true },
-          },
-          _count: {
-            select: {
-              likes: true,
-              dislikes: true,
-              favorites: true,
-              comments: true,
-              views: true,
+          subscriptionStatus: SubscriptionStatus.ACTIVE,
+          articles: {
+            some: {
+              status: ArticleStatus.PUBLISHED,
+              tags: { some: { tag: { slug: decodedSlug } } },
             },
           },
         },
-        orderBy: { datePublished: "desc" },
-        take: 50,
+        orderBy: { name: "asc" },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logoMedia: { select: { url: true } },
+          heroImageMedia: { select: { url: true } },
+          phone: true,
+          addressCity: true,
+          slogan: true,
+          _count: { select: { articles: true } },
+        },
       }),
     ]);
 
     if (!tag) notFound();
 
-    const articles: ArticleResponse[] = rawArticles.map((a) => ({
-      id: a.id,
-      title: a.title,
-      slug: a.slug,
-      excerpt: a.excerpt ?? undefined,
-      publishedAt: (a.datePublished ?? a.createdAt).toISOString(),
-      readingTimeMinutes: a.readingTimeMinutes ?? undefined,
-      client: {
-        id: a.client.id,
-        name: a.client.name,
-        slug: a.client.slug,
-        logo: a.client.logoMedia?.url,
-      },
-      author: {
-        id: a.author.id,
-        name: a.author.name ?? "مدونتي",
-        slug: a.author.slug ?? undefined,
-        image: a.author.image ?? undefined,
-      },
-      featuredImage: a.featuredImage
-        ? { url: a.featuredImage.url, altText: a.featuredImage.altText ?? undefined }
-        : undefined,
-      interactions: {
-        likes: a._count.likes,
-        dislikes: a._count.dislikes,
-        favorites: a._count.favorites,
-        comments: a._count.comments,
-        views: a._count.views,
-      },
-    }));
+    const clientIds = clients.map((c) => c.id);
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.modonty.com";
-
-    const breadcrumbData = generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "الوسوم", url: "/tags" },
-      { name: tag.name, url: `/tags/${decodedSlug}` },
+    const [ga4Stats, ratingsRaw] = await Promise.all([
+      getClientsGA4Stats(),
+      clientIds.length > 0
+        ? db.clientReview.groupBy({
+            by: ["clientId"],
+            where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
+            _avg: { rating: true },
+          })
+        : Promise.resolve([]),
     ]);
 
-    const collectionData = {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      name: `مقالات وسم: ${tag.name}`,
-      description: tag.description ?? `مقالات مصنّفة تحت وسم ${tag.name}`,
-      url: `${siteUrl}/tags/${decodedSlug}`,
-      ...(tag.socialImage && {
-        image: { "@type": "ImageObject", url: tag.socialImage, description: tag.socialImageAlt || tag.name },
-      }),
-      mainEntity: {
-        "@type": "ItemList",
-        itemListElement: articles.slice(0, 10).map((article, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          item: {
-            "@type": "Article",
-            headline: article.title,
-            url: new URL(`/articles/${article.slug}`, siteUrl).href,
-          },
-        })),
-      },
-    };
+    const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));
 
     return (
       <>
-        {tag.jsonLdStructuredData ? (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: tag.jsonLdStructuredData }}
-          />
-        ) : (
-          <>
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-            />
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionData) }}
-            />
-          </>
-        )}
-
         <Breadcrumb
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
@@ -214,39 +133,70 @@ export default async function TagPage({ params }: TagPageProps) {
           ]}
         />
 
-        <div className="border-b bg-gradient-to-br from-primary/10 via-primary/5 to-background">
-          <div className="container mx-auto max-w-[1128px] px-4 py-10">
-            <h1 className="text-3xl font-bold mb-2">{tag.name}</h1>
-            {tag.description && (
-              <p className="text-muted-foreground max-w-2xl">{tag.description}</p>
-            )}
-            <p className="text-sm text-muted-foreground mt-3">
-              {articles.length} مقال
-            </p>
-          </div>
-        </div>
-
-        <div className="container mx-auto max-w-[1128px] px-4 py-8">
-          <section aria-labelledby="tag-articles-heading">
-            <h2 id="tag-articles-heading" className="sr-only">
-              مقالات {tag.name}
-            </h2>
-            {articles.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground">
-                <p className="text-lg">لا توجد مقالات بهذا الوسم حتى الآن.</p>
+        {/* Hero */}
+        {tag.socialImage ? (
+          <section className="relative border-b overflow-hidden">
+            <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
+              <Image
+                src={tag.socialImage}
+                alt={tag.socialImageAlt ?? tag.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
+              />
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{tag.name}</h1>
+                {tag.description && (
+                  <p className="text-white/80 text-base max-w-xl mx-auto">{tag.description}</p>
+                )}
+                <p className="mt-4 text-sm text-white/70">{clients.length} شركة موثوقة</p>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {articles.map((article, index) => (
-                  <CategoryArticleCard
-                    key={article.id}
-                    article={article}
-                    preload={index === 0}
-                  />
-                ))}
-              </div>
-            )}
+            </div>
           </section>
+        ) : (
+          <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
+            <div className="container mx-auto max-w-[1128px] px-4 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
+                <HashIcon className="h-8 w-8 text-primary/50" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{tag.name}</h1>
+              {tag.description && (
+                <p className="text-muted-foreground text-base max-w-xl mx-auto">{tag.description}</p>
+              )}
+              <p className="mt-4 text-sm text-muted-foreground">{clients.length} شركة موثوقة</p>
+            </div>
+          </section>
+        )}
+
+        {/* Clients grid */}
+        <div className="container mx-auto max-w-[1128px] px-4 py-10">
+          {clients.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">
+              <HashIcon className="mx-auto mb-4 h-12 w-12 opacity-30" />
+              <p className="text-lg">لا توجد شركات بهذا الوسم بعد</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clients.map((c, index) => (
+                <ClientCard
+                  key={c.id}
+                  name={c.name}
+                  slug={c.slug}
+                  logoUrl={c.logoMedia?.url}
+                  heroUrl={c.heroImageMedia?.url}
+                  slogan={c.slogan}
+                  addressCity={c.addressCity}
+                  averageRating={ratingMap.get(c.id) ?? 0}
+                  articleCount={c._count.articles}
+                  googleTotal={ga4Stats[c.slug]?.total ?? 0}
+                  phone={c.phone}
+                  priority={index < 3}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </>
     );

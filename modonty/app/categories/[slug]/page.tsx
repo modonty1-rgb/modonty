@@ -1,44 +1,29 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { cacheTag, cacheLife } from "next/cache";
+import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client";
+import { TagIcon } from "lucide-react";
 import { db } from "@/lib/db";
-import { generateMetadataFromSEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { getClientsGA4Stats } from "@/lib/analytics/ga4";
+import { generateMetadataFromSEO } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { getCategoryArticlesEnhanced } from "@/app/api/helpers/category-queries";
-import { CategoryDetailHero } from "./components/category-detail-hero";
-import { ArticleSearchForm } from "./components/article-search-form";
-import { ArticleFilters } from "./components/article-filters";
-import { CategoryArticleCard } from "./components/category-article-card";
-import { CategoryArticleListItem } from "./components/category-article-list-item";
-import { CategoryEmptyState } from "./components/category-empty-state";
-import { RelatedCategories } from "./components/related-categories";
-import { ArticleSkeleton } from "./components/article-skeleton";
-import { parseArticleSearchParams, getTrendingScore } from "./helpers/article-utils";
-import type { CategoryDetailPageParams } from "@/lib/types";
+import { ClientCard } from "@/components/shared/client-card";
+
+interface CategoryDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
 
 export async function generateStaticParams() {
   try {
-    const categories = await db.category.findMany({
-      select: { slug: true },
-    });
-
-    if (!categories || categories.length === 0) {
-      // Next.js with Cache Components requires at least one result during build-time.
-      // Return a placeholder so the build can complete; the page will render `notFound()` later.
-      return [{ slug: "__no_categories__" }];
-    }
-
-    return categories.map((category) => ({
-      slug: category.slug,
-    }));
+    const categories = await db.category.findMany({ select: { slug: true } });
+    if (!categories || categories.length === 0) return [{ slug: "__no_categories__" }];
+    return categories.map((c) => ({ slug: c.slug }));
   } catch {
-    // Same reasoning as above: ensure we always return at least one param for build-time validation.
     return [{ slug: "__no_categories__" }];
   }
 }
 
-// Cached so the metadata is part of the prerendered shell <head> (not streamed into <body>).
 async function getCategoryForMetadata(slug: string) {
   "use cache";
   cacheTag("categories");
@@ -56,225 +41,163 @@ async function getCategoryForMetadata(slug: string) {
   });
 }
 
-export async function generateMetadata({ params }: CategoryDetailPageParams): Promise<Metadata> {
+export async function generateMetadata({ params }: CategoryDetailPageProps): Promise<Metadata> {
   try {
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(rawSlug);
     const category = await getCategoryForMetadata(slug);
-
-    if (!category) {
-      return {
-        title: "فئة غير موجودة - مدونتي",
-      };
-    }
-
-    // DB cache first
+    if (!category) return { title: "فئة غير موجودة - مدونتي" };
     if (category.nextjsMetadata) {
       const stored = category.nextjsMetadata as Metadata;
       if (stored.title) return stored;
     }
-
     return generateMetadataFromSEO({
       title: (category.seoTitle || category.name)?.slice(0, 51),
-      description: category.seoDescription || category.description || `استكشف مقالات فئة ${category.name}`,
+      description:
+        category.seoDescription ||
+        category.description ||
+        `استكشف شركاء متخصصين في ${category.name} على مدونتي`,
       keywords: [category.name],
       url: `/categories/${slug}`,
       type: "website",
       image: category.socialImage || undefined,
     });
   } catch {
-    return {
-      title: "الفئات - مدونتي",
-    };
+    return { title: "الفئات - مدونتي" };
   }
 }
 
-export default async function CategoryDetailPage({ params, searchParams }: CategoryDetailPageParams) {
+export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
-  const searchParamsResolved = await searchParams;
-  const { search, sort, view, client } = parseArticleSearchParams(searchParamsResolved);
 
   try {
-    const category = await db.category.findUnique({
-      where: { slug },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        seoDescription: true,
-        socialImage: true,
-        socialImageAlt: true,
-        jsonLdStructuredData: true,
-      },
-    });
-
-    if (!category) {
-      notFound();
-    }
-
-    let articles = await getCategoryArticlesEnhanced(slug, {
-      search,
-      sortBy: sort || 'latest',
-      clientId: client,
-      limit: 50,
-    });
-
-    if (sort === 'trending') {
-      articles = articles
-        .map(article => ({
-          article,
-          score: getTrendingScore(article),
-        }))
-        .sort((a, b) => b.score - a.score)
-        .map(({ article }) => article);
-    }
-
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const recentArticles = articles.filter(
-      a => new Date(a.publishedAt) >= sevenDaysAgo
-    );
-
-    const totalEngagement = articles.reduce(
-      (sum, a) => sum + a.interactions.likes + a.interactions.comments + a.interactions.favorites,
-      0
-    );
-
-    const breadcrumbData = generateBreadcrumbStructuredData([
-      { name: "الرئيسية", url: "/" },
-      { name: "الفئات", url: "/categories" },
-      { name: category.name, url: `/categories/${slug}` },
+    const [category, clients] = await Promise.all([
+      db.category.findUnique({
+        where: { slug },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          socialImage: true,
+          socialImageAlt: true,
+        },
+      }),
+      db.client.findMany({
+        where: {
+          subscriptionStatus: SubscriptionStatus.ACTIVE,
+          articles: {
+            some: { status: ArticleStatus.PUBLISHED, category: { slug } },
+          },
+        },
+        orderBy: { name: "asc" },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logoMedia: { select: { url: true } },
+          heroImageMedia: { select: { url: true } },
+          phone: true,
+          addressCity: true,
+          slogan: true,
+          _count: { select: { articles: true } },
+        },
+      }),
     ]);
 
-    const articleCollectionData = {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      name: category.name,
-      description: category.description || category.seoDescription,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/categories/${slug}`,
-      ...(category.socialImage && {
-        image: { "@type": "ImageObject", url: category.socialImage, description: category.socialImageAlt || category.name },
-      }),
-      mainEntity: {
-        "@type": "ItemList",
-        itemListElement: articles.slice(0, 10).map((article, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          item: {
-            "@type": "Article",
-            headline: article.title,
-            description: article.excerpt,
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com"}/articles/${article.slug}`,
-            datePublished: article.publishedAt,
-            author: {
-              "@type": "Person",
-              name: article.author.name,
-            },
-            publisher: {
-              "@type": "Organization",
-              name: article.client.name,
-            },
-          },
-        })),
-      },
-    };
+    if (!category) notFound();
+
+    const clientIds = clients.map((c) => c.id);
+
+    const [ga4Stats, ratingsRaw] = await Promise.all([
+      getClientsGA4Stats(),
+      clientIds.length > 0
+        ? db.clientReview.groupBy({
+            by: ["clientId"],
+            where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
+            _avg: { rating: true },
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));
 
     return (
       <>
-        {category.jsonLdStructuredData ? (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: category.jsonLdStructuredData }}
-          />
+        <Breadcrumb
+          items={[
+            { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
+            { label: "الفئات", href: "/categories" },
+            { label: category.name },
+          ]}
+        />
+
+        {/* Hero */}
+        {category.socialImage ? (
+          <section className="relative border-b overflow-hidden">
+            <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
+              <Image
+                src={category.socialImage}
+                alt={category.socialImageAlt ?? category.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
+              />
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{category.name}</h1>
+                {category.description && (
+                  <p className="text-white/80 text-base max-w-xl mx-auto">{category.description}</p>
+                )}
+                <p className="mt-4 text-sm text-white/70">{clients.length} شركة موثوقة</p>
+              </div>
+            </div>
+          </section>
         ) : (
-          <>
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-            />
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(articleCollectionData) }}
-            />
-          </>
+          <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
+            <div className="container mx-auto max-w-[1128px] px-4 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
+                <TagIcon className="h-8 w-8 text-primary/50" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{category.name}</h1>
+              {category.description && (
+                <p className="text-muted-foreground text-base max-w-xl mx-auto">{category.description}</p>
+              )}
+              <p className="mt-4 text-sm text-muted-foreground">{clients.length} شركة موثوقة</p>
+            </div>
+          </section>
         )}
 
-        <>
-          <Breadcrumb
-            items={[
-              { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },
-              { label: "الفئات", href: "/categories" },
-              { label: category.name },
-            ]}
-          />
-
-          <CategoryDetailHero
-            category={category}
-            stats={{
-              totalArticles: articles.length,
-              recentArticles: recentArticles.length,
-              totalEngagement,
-            }}
-          />
-
-          <div className="container mx-auto max-w-[1128px] px-4 py-8 flex-1">
-            <section aria-labelledby="category-articles-heading">
-              <h2 id="category-articles-heading" className="sr-only">
-                مقالات {category.name}
-              </h2>
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <ArticleSearchForm defaultValue={search} categorySlug={slug} />
-              <ArticleFilters currentSort={sort} currentView={view} categorySlug={slug} />
+        {/* Clients grid */}
+        <div className="container mx-auto max-w-[1128px] px-4 py-10">
+          {clients.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">
+              <TagIcon className="mx-auto mb-4 h-12 w-12 opacity-30" />
+              <p className="text-lg">لا توجد شركات في هذه الفئة بعد</p>
             </div>
-
-            {articles.length === 0 ? (
-              <CategoryEmptyState categoryName={category.name} searchTerm={search} />
-            ) : view === 'list' ? (
-              <div className="space-y-4">
-                {articles.map((article, index) => (
-                  <CategoryArticleListItem 
-                    key={article.id} 
-                    article={article}
-                    preload={index === 0}
-                  />
-                ))}
-              </div>
-            ) : view === 'compact' ? (
-              <div className="space-y-3">
-                {articles.map((article, index) => (
-                  <CategoryArticleListItem 
-                    key={article.id} 
-                    article={article}
-                    preload={index === 0}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {articles.map((article, index) => (
-                  <CategoryArticleCard 
-                    key={article.id} 
-                    article={article}
-                    preload={index === 0}
-                  />
-                ))}
-              </div>
-            )}
-            </section>
-
-            {articles.length > 0 && (
-              <Suspense fallback={null}>
-                <RelatedCategories 
-                  currentCategoryId={category.id} 
-                  currentCategoryName={category.name} 
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clients.map((c, index) => (
+                <ClientCard
+                  key={c.id}
+                  name={c.name}
+                  slug={c.slug}
+                  logoUrl={c.logoMedia?.url}
+                  heroUrl={c.heroImageMedia?.url}
+                  slogan={c.slogan}
+                  addressCity={c.addressCity}
+                  averageRating={ratingMap.get(c.id) ?? 0}
+                  articleCount={c._count.articles}
+                  googleTotal={ga4Stats[c.slug]?.total ?? 0}
+                  phone={c.phone}
+                  priority={index < 3}
                 />
-              </Suspense>
-            )}
-          </div>
-        </>
+              ))}
+            </div>
+          )}
+        </div>
       </>
     );
   } catch {

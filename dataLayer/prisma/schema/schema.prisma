@@ -2258,6 +2258,15 @@ model Settings {
   platformTagline     String?  // e.g. "مرحباً بك في مودونتي"
   platformDescription String?  // e.g. "منصة المحتوى العربي — اكتشف مقالات..."
 
+  // Per-listing-page hero image (visible hero background + og:image). Empty → falls back
+  // to the global ogImageUrl. Cloudinary URL + alt, mirroring ogImageUrl/altImage.
+  categoriesPageImage    String?
+  categoriesPageImageAlt String?
+  tagsPageImage          String?
+  tagsPageImageAlt       String?
+  industriesPageImage    String?
+  industriesPageImageAlt String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

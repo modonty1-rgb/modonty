@@ -141,8 +141,9 @@ export async function regenerateCategoriesListingCache(): Promise<{ success: boo
     const description = (s.categoriesSeoDescription as string) || "تصفح جميع تصنيفات المقالات";
     const pageUrl = `${siteUrl}/categories`;
 
-    const ogImage = (s.ogImageUrl as string) || undefined;
-    const ogImageAlt = (s.altImage as string) || undefined;
+    // Per-page hero image (also the og:image) falls back to the global site image.
+    const ogImage = (s.categoriesPageImage as string) || (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.categoriesPageImageAlt as string) || (s.altImage as string) || undefined;
 
     const categories = await db.category.findMany({
       select: { name: true, slug: true, description: true, socialImage: true },
@@ -176,8 +177,9 @@ export async function regenerateTagsListingCache(): Promise<{ success: boolean; 
     const description = (s.tagsSeoDescription as string) || "تصفح جميع التاجات";
     const pageUrl = `${siteUrl}/tags`;
 
-    const ogImage = (s.ogImageUrl as string) || undefined;
-    const ogImageAlt = (s.altImage as string) || undefined;
+    // Per-page hero image (also the og:image) falls back to the global site image.
+    const ogImage = (s.tagsPageImage as string) || (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.tagsPageImageAlt as string) || (s.altImage as string) || undefined;
 
     const tags = await db.tag.findMany({
       select: { name: true, slug: true, description: true },
@@ -211,8 +213,9 @@ export async function regenerateIndustriesListingCache(): Promise<{ success: boo
     const description = (s.industriesSeoDescription as string) || "تصفح جميع القطاعات";
     const pageUrl = `${siteUrl}/industries`;
 
-    const ogImage = (s.ogImageUrl as string) || undefined;
-    const ogImageAlt = (s.altImage as string) || undefined;
+    // Per-page hero image (also the og:image) falls back to the global site image.
+    const ogImage = (s.industriesPageImage as string) || (s.ogImageUrl as string) || undefined;
+    const ogImageAlt = (s.industriesPageImageAlt as string) || (s.altImage as string) || undefined;
 
     const industries = await db.industry.findMany({
       select: { name: true, slug: true, description: true },

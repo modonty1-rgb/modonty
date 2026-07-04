@@ -1,14 +1,14 @@
+import { FileText } from "lucide-react";
 import Link from "@/components/link";
 import { OptimizedImage } from "@/components/media/OptimizedImage";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconTrending } from "@/lib/icons";
-import { 
-  generateCategoryGradient, 
-  getCategoryIcon, 
-  formatCategoryStats,
+import {
+  generateCategoryGradient,
+  getCategoryIcon,
   optimizeCloudinaryImage,
-  generateBlurDataURL
 } from "../helpers/category-utils";
 import type { CategoryResponse } from "@/lib/types";
 
@@ -21,13 +21,16 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
   const Icon = getCategoryIcon(category.name);
   const gradient = generateCategoryGradient(category.name);
   const showTrending = (category.recentArticleCount || 0) > 0;
+  const clientPreviews = category.clientPreviews ?? [];
+  const clientCount = category.clientCount ?? 0;
+  const overflowCount = clientCount > 3 ? clientCount - 3 : 0;
 
-  const optimizedImageUrl = category.socialImage 
+  const optimizedImageUrl = category.socialImage
     ? optimizeCloudinaryImage(category.socialImage, {
         width: 600,
         height: 338,
-        quality: 'auto',
-        format: 'auto'
+        quality: "auto",
+        format: "auto",
       })
     : null;
 
@@ -50,19 +53,16 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
               fill
               preload={preload}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
-            <noscript>
-              <GradientFallback />
-            </noscript>
           </div>
         ) : (
           <GradientFallback />
         )}
 
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+            <CardTitle className="text-base line-clamp-2 group-hover:text-primary transition-colors">
               {category.name}
             </CardTitle>
             {showTrending && (
@@ -73,28 +73,50 @@ export function EnhancedCategoryCard({ category, preload = false }: EnhancedCate
             )}
           </div>
           {category.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
               {category.description}
             </p>
           )}
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-0">
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-foreground">
-                {formatCategoryStats(category.articleCount)}
-              </span>
-              <span className="text-sm text-muted-foreground">مقال</span>
-            </div>
-            {showTrending && (
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-semibold text-primary">
-                  {category.recentArticleCount}
-                </span>
-                <span className="text-sm text-muted-foreground">هذا الأسبوع</span>
+            {/* Avatar group */}
+            {clientCount > 0 ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  {clientPreviews.slice(0, 3).map((client, i) => (
+                    <Avatar
+                      key={client.id}
+                      className={`h-6 w-6 border-2 border-card ${i > 0 ? "-ms-2" : ""}`}
+                    >
+                      <AvatarImage
+                        src={client.logoUrl}
+                        alt={client.name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="text-[9px] font-bold bg-primary/10 text-primary">
+                        {client.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {overflowCount > 0 && (
+                    <div className="-ms-2 h-6 w-6 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[9px] font-bold text-muted-foreground">
+                      +{overflowCount}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs text-muted-foreground">{clientCount} شريك</span>
               </div>
+            ) : (
+              <span className="text-xs text-muted-foreground/60">لا شركاء بعد</span>
             )}
+
+            {/* Article chip */}
+            <div className="inline-flex items-center gap-1 bg-muted/50 border border-border/50 rounded-full px-2.5 py-1 text-xs text-muted-foreground shrink-0">
+              <FileText className="h-3 w-3" />
+              {category.articleCount}
+            </div>
           </div>
         </CardContent>
       </Card>

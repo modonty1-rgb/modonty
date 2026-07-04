@@ -168,12 +168,22 @@ export interface SiteOrgSettings {
   orgLogoUrl: string | null;
 }
 
+export interface ListingPageImages {
+  categoriesPageImage: string | null;
+  categoriesPageImageAlt: string | null;
+  tagsPageImage: string | null;
+  tagsPageImageAlt: string | null;
+  industriesPageImage: string | null;
+  industriesPageImageAlt: string | null;
+}
+
 export interface AllSettings
   extends SEOSettings,
     SocialMediaSettings,
     SiteOrgSettings,
     MediaSettings,
     ModontySettings,
+    ListingPageImages,
     SettingsJsonLdCache,
     SettingsGeneratedSeo {}
 
@@ -306,6 +316,12 @@ const DEFAULT_SETTINGS: AllSettings = {
   b2bCtaUrl: null,
   platformTagline: null,
   platformDescription: null,
+  categoriesPageImage: null,
+  categoriesPageImageAlt: null,
+  tagsPageImage: null,
+  tagsPageImageAlt: null,
+  industriesPageImage: null,
+  industriesPageImageAlt: null,
 };
 
 /** Build Organization sameAs array from Settings social URLs (for JSON-LD). Falls back to [] if none set. */
@@ -463,6 +479,12 @@ export async function getAllSettings(): Promise<AllSettings> {
         b2bCtaUrl: newSettings.b2bCtaUrl,
         platformTagline: (newSettings as Record<string, unknown>).platformTagline as string | null ?? null,
         platformDescription: (newSettings as Record<string, unknown>).platformDescription as string | null ?? null,
+        categoriesPageImage: (newSettings as Record<string, unknown>).categoriesPageImage as string | null ?? null,
+        categoriesPageImageAlt: (newSettings as Record<string, unknown>).categoriesPageImageAlt as string | null ?? null,
+        tagsPageImage: (newSettings as Record<string, unknown>).tagsPageImage as string | null ?? null,
+        tagsPageImageAlt: (newSettings as Record<string, unknown>).tagsPageImageAlt as string | null ?? null,
+        industriesPageImage: (newSettings as Record<string, unknown>).industriesPageImage as string | null ?? null,
+        industriesPageImageAlt: (newSettings as Record<string, unknown>).industriesPageImageAlt as string | null ?? null,
         jsonLdStructuredData: newSettings.jsonLdStructuredData,
         jsonLdLastGenerated: newSettings.jsonLdLastGenerated,
         jsonLdValidationReport: (newSettings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -595,6 +617,12 @@ export async function getAllSettings(): Promise<AllSettings> {
       b2bCtaUrl: settings.b2bCtaUrl,
       platformTagline: (settings as Record<string, unknown>).platformTagline as string | null ?? null,
       platformDescription: (settings as Record<string, unknown>).platformDescription as string | null ?? null,
+      categoriesPageImage: (settings as Record<string, unknown>).categoriesPageImage as string | null ?? null,
+      categoriesPageImageAlt: (settings as Record<string, unknown>).categoriesPageImageAlt as string | null ?? null,
+      tagsPageImage: (settings as Record<string, unknown>).tagsPageImage as string | null ?? null,
+      tagsPageImageAlt: (settings as Record<string, unknown>).tagsPageImageAlt as string | null ?? null,
+      industriesPageImage: (settings as Record<string, unknown>).industriesPageImage as string | null ?? null,
+      industriesPageImageAlt: (settings as Record<string, unknown>).industriesPageImageAlt as string | null ?? null,
       jsonLdStructuredData: settings.jsonLdStructuredData,
       jsonLdLastGenerated: settings.jsonLdLastGenerated,
       jsonLdValidationReport: (settings.jsonLdValidationReport ?? null) as Record<string, unknown> | null,
@@ -998,6 +1026,49 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
           trendingPageJsonLdStructuredData: data.trendingPageJsonLdStructuredData,
           trendingPageJsonLdLastGenerated: data.trendingPageJsonLdLastGenerated,
           trendingPageJsonLdValidationReport: data.trendingPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
+        },
+      });
+      // Chunk 4 — tags/industries/articles SEO + B2B/platform fields that were
+      // previously OMITTED from this function, so the per-page settings forms
+      // (which save via updateAllSettings) silently dropped them. Kept as a
+      // separate 4th update to stay under MongoDB Atlas's 50-field-per-update
+      // limit. Bug fixed 2026-07-04.
+      settings = await db.settings.update({
+        where: { id },
+        data: {
+          tagsSeoTitle: data.tagsSeoTitle,
+          tagsSeoDescription: data.tagsSeoDescription,
+          industriesSeoTitle: data.industriesSeoTitle,
+          industriesSeoDescription: data.industriesSeoDescription,
+          articlesSeoTitle: data.articlesSeoTitle,
+          articlesSeoDescription: data.articlesSeoDescription,
+          b2bLabel: data.b2bLabel,
+          b2bHeadline: data.b2bHeadline,
+          b2bBullet1: data.b2bBullet1,
+          b2bBullet2: data.b2bBullet2,
+          b2bBullet3: data.b2bBullet3,
+          b2bCtaText: data.b2bCtaText,
+          b2bCtaUrl: data.b2bCtaUrl,
+          platformTagline: data.platformTagline,
+          platformDescription: data.platformDescription,
+          tagsPageMetaTags: data.tagsPageMetaTags as Prisma.InputJsonValue | undefined,
+          tagsPageJsonLdStructuredData: data.tagsPageJsonLdStructuredData,
+          tagsPageJsonLdLastGenerated: data.tagsPageJsonLdLastGenerated,
+          tagsPageJsonLdValidationReport: data.tagsPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
+          industriesPageMetaTags: data.industriesPageMetaTags as Prisma.InputJsonValue | undefined,
+          industriesPageJsonLdStructuredData: data.industriesPageJsonLdStructuredData,
+          industriesPageJsonLdLastGenerated: data.industriesPageJsonLdLastGenerated,
+          industriesPageJsonLdValidationReport: data.industriesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
+          articlesPageMetaTags: data.articlesPageMetaTags as Prisma.InputJsonValue | undefined,
+          articlesPageJsonLdStructuredData: data.articlesPageJsonLdStructuredData,
+          articlesPageJsonLdLastGenerated: data.articlesPageJsonLdLastGenerated,
+          articlesPageJsonLdValidationReport: data.articlesPageJsonLdValidationReport as Prisma.InputJsonValue | undefined,
+          categoriesPageImage: data.categoriesPageImage,
+          categoriesPageImageAlt: data.categoriesPageImageAlt,
+          tagsPageImage: data.tagsPageImage,
+          tagsPageImageAlt: data.tagsPageImageAlt,
+          industriesPageImage: data.industriesPageImage,
+          industriesPageImageAlt: data.industriesPageImageAlt,
         },
       });
     }

@@ -2,14 +2,11 @@
 
 Route-specific components for the categories page.
 
-## Server Components (No JavaScript)
-- `categories-hero.tsx` - Hero section with gradient background
-- `featured-categories.tsx` - Top 4 featured categories showcase
-- `enhanced-category-card.tsx` - Individual category card
-- `category-list-item.tsx` - List view alternative
-- `empty-state.tsx` - No results state
-- `categories-skeleton.tsx` - Loading skeleton
+## Server Components
+- `enhanced-category-card.tsx` — individual category card, used by the `[slug]/related-categories` widget.
 
-## Client Components (Minimal JavaScript)
-- `category-search-form.tsx` - Search input with URL state
-- `category-filters.tsx` - Sort and filter controls
+> The listing page itself (`app/categories/page.tsx`) now uses the shared
+> `components/shared/ListingHero`, `EntityCard`, `EntitySearchForm`,
+> `EntitySortFilter`, and `InfiniteEntityGrid` — the old route-specific hero,
+> search, filter, list-item, skeleton, empty-state, and featured components were
+> removed in favor of that unified pattern.

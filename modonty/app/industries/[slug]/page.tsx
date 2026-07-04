@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CommentStatus } from "@prisma/client";
 import { BuildingIcon } from "lucide-react";
+import { db } from "@/lib/db";
+import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { getIndustryBySlug, getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
+import { ClientCard } from "@/components/shared/client-card";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
@@ -35,6 +38,22 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
   const industry = await getIndustryBySlug(decodeURIComponent(slug));
   if (!industry) notFound();
 
+  const clientIds = industry.clients.map((c) => c.id);
+
+  // Batch fetch GA4 stats + ratings in parallel — one query each, not per-client
+  const [ga4Stats, ratingsRaw] = await Promise.all([
+    getClientsGA4Stats(),
+    clientIds.length > 0
+      ? db.clientReview.groupBy({
+          by: ["clientId"],
+          where: { clientId: { in: clientIds }, status: CommentStatus.APPROVED },
+          _avg: { rating: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const ratingMap = new Map(ratingsRaw.map((r) => [r.clientId, r._avg.rating ?? 0]));
+
   return (
     <>
       <Breadcrumb
@@ -46,32 +65,41 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
-        <div className="container mx-auto max-w-[1128px] px-4 text-center">
-          {industry.socialImage ? (
-            <div className="mx-auto mb-4 h-16 w-16 overflow-hidden rounded-2xl border">
-              <Image
-                src={industry.socialImage}
-                alt={industry.socialImageAlt ?? industry.name}
-                width={64}
-                height={64}
-                className="object-cover w-full h-full"
-              />
+      {industry.socialImage ? (
+        <section className="relative border-b overflow-hidden">
+          <div className="relative w-full max-w-[1200px] mx-auto aspect-[1200/630]">
+            <Image
+              src={industry.socialImage}
+              alt={industry.socialImageAlt ?? industry.name}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1200px) 100vw, 1200px"
+            />
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{industry.name}</h1>
+              {industry.description && (
+                <p className="text-white/80 text-base max-w-xl mx-auto">{industry.description}</p>
+              )}
+              <p className="mt-4 text-sm text-white/70">{industry.clients.length} شركة موثوقة</p>
             </div>
-          ) : (
+          </div>
+        </section>
+      ) : (
+        <section className="bg-gradient-to-b from-primary/5 to-background py-10 border-b">
+          <div className="container mx-auto max-w-[1128px] px-4 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border bg-muted">
               <BuildingIcon className="h-8 w-8 text-primary/50" />
             </div>
-          )}
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{industry.name}</h1>
-          {industry.description && (
-            <p className="text-muted-foreground text-base max-w-xl mx-auto">{industry.description}</p>
-          )}
-          <p className="mt-4 text-sm text-muted-foreground">
-            {industry.clients.length} {industry.clients.length === 1 ? "شركة" : "شركة"} موثوقة
-          </p>
-        </div>
-      </section>
+            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">{industry.name}</h1>
+            {industry.description && (
+              <p className="text-muted-foreground text-base max-w-xl mx-auto">{industry.description}</p>
+            )}
+            <p className="mt-4 text-sm text-muted-foreground">{industry.clients.length} شركة موثوقة</p>
+          </div>
+        </section>
+      )}
 
       {/* Clients grid */}
       <div className="container mx-auto max-w-[1128px] px-4 py-10">
@@ -82,40 +110,21 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {industry.clients.map((client) => (
-              <Link
+            {industry.clients.map((client, index) => (
+              <ClientCard
                 key={client.id}
-                href={`/clients/${client.slug}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="relative h-32 w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                  {client.logoMedia?.url ? (
-                    <Image
-                      src={client.logoMedia.url}
-                      alt={client.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  ) : (
-                    <span className="text-4xl font-bold text-primary/20">{client.name.slice(0, 1)}</span>
-                  )}
-                </div>
-                <div className="flex flex-col flex-1 p-4 gap-1">
-                  <h2 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                    {client.name}
-                  </h2>
-                  {client.slogan && (
-                    <p className="text-xs text-muted-foreground line-clamp-1">{client.slogan}</p>
-                  )}
-                  {client.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{client.description}</p>
-                  )}
-                  <p className="mt-auto pt-2 text-xs text-muted-foreground">
-                    {client._count.articles} مقال
-                  </p>
-                </div>
-              </Link>
+                name={client.name}
+                slug={client.slug}
+                logoUrl={client.logoMedia?.url}
+                heroUrl={client.heroImageMedia?.url}
+                slogan={client.slogan}
+                addressCity={client.addressCity}
+                averageRating={ratingMap.get(client.id) ?? 0}
+                articleCount={client._count.articles}
+                googleTotal={ga4Stats[client.slug]?.total ?? 0}
+                phone={client.phone}
+                priority={index < 3}
+              />
             ))}
           </div>
         )}

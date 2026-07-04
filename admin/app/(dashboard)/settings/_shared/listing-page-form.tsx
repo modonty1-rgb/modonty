@@ -11,6 +11,7 @@ import { updateAllSettings, type AllSettings } from "../actions/settings-actions
 import { Field } from "./field";
 import { Section } from "./section";
 import { SaveBar } from "./save-bar";
+import { ImageField } from "./image-field";
 import { formatTimeAgo } from "./format-time-ago";
 import { SEO_HINTS } from "./seo-hints";
 
@@ -35,6 +36,9 @@ const KEY_MAP: Record<ListingKey, {
   cacheDateKey: keyof AllSettings;
   regenerator: keyof typeof import("@/lib/seo/listing-page-seo-generator");
   fieldList: (keyof AllSettings)[];
+  /** Per-page hero image (Cloudinary URL) — only pages that support it. */
+  imageKey?: keyof AllSettings;
+  imageAltKey?: keyof AllSettings;
 }> = {
   clients: {
     titleKey: "clientsSeoTitle",
@@ -58,21 +62,27 @@ const KEY_MAP: Record<ListingKey, {
     descKey: "categoriesSeoDescription",
     cacheDateKey: "categoriesPageJsonLdLastGenerated",
     regenerator: "regenerateCategoriesListingCache",
-    fieldList: ["categoriesSeoTitle", "categoriesSeoDescription"],
+    fieldList: ["categoriesSeoTitle", "categoriesSeoDescription", "categoriesPageImage", "categoriesPageImageAlt"],
+    imageKey: "categoriesPageImage",
+    imageAltKey: "categoriesPageImageAlt",
   },
   tags: {
     titleKey: "tagsSeoTitle",
     descKey: "tagsSeoDescription",
     cacheDateKey: "tagsPageJsonLdLastGenerated",
     regenerator: "regenerateTagsListingCache",
-    fieldList: ["tagsSeoTitle", "tagsSeoDescription"],
+    fieldList: ["tagsSeoTitle", "tagsSeoDescription", "tagsPageImage", "tagsPageImageAlt"],
+    imageKey: "tagsPageImage",
+    imageAltKey: "tagsPageImageAlt",
   },
   industries: {
     titleKey: "industriesSeoTitle",
     descKey: "industriesSeoDescription",
     cacheDateKey: "industriesPageJsonLdLastGenerated",
     regenerator: "regenerateIndustriesListingCache",
-    fieldList: ["industriesSeoTitle", "industriesSeoDescription"],
+    fieldList: ["industriesSeoTitle", "industriesSeoDescription", "industriesPageImage", "industriesPageImageAlt"],
+    imageKey: "industriesPageImage",
+    imageAltKey: "industriesPageImageAlt",
   },
   articles: {
     titleKey: "articlesSeoTitle",
@@ -99,6 +109,8 @@ export function ListingPageForm({ pageKey, pageName, initialSettings, renderBefo
   const [isDirty, setIsDirty] = useState(false);
 
   const config = KEY_MAP[pageKey];
+  const imageKey = config.imageKey;
+  const imageAltKey = config.imageAltKey;
 
   function set<K extends keyof AllSettings>(key: K, value: AllSettings[K]) {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -186,35 +198,59 @@ export function ListingPageForm({ pageKey, pageName, initialSettings, renderBefo
           </Field>
         </Section>
 
-        <Section
-          title="Social Sharing Image"
-          description="The image shown when this page is shared on social media. Managed in Modonty homepage settings."
-        >
-          {settings.ogImageUrl ? (
-            <div className="flex items-center gap-4">
-              <div className="aspect-[1200/630] w-32 shrink-0 rounded-md border bg-muted/30 overflow-hidden">
-                <NextImage
-                  src={settings.ogImageUrl}
-                  alt={settings.altImage ?? ""}
-                  width={128}
-                  height={67}
-                  className="object-cover w-full h-full"
-                  unoptimized
+        {imageKey ? (
+          <Section
+            title="Hero Image"
+            description="Shown as this page's full-bleed hero background on modonty.com (and as its social-share image). Leave empty to fall back to the site's default OG image."
+          >
+            <ImageField
+              label="Hero / Share Image"
+              value={(settings[imageKey] as string | null) ?? ""}
+              onChange={(v) => set(imageKey, v as AllSettings[typeof imageKey])}
+              hint="1200×630 px — paste a Cloudinary URL. Used as the full-bleed hero background and og:image."
+              aspect="og"
+            />
+            {imageAltKey && (
+              <Field label="Image Alt Text" hint="Describe the image for accessibility & SEO.">
+                <Input
+                  value={(settings[imageAltKey] as string | null) ?? ""}
+                  onChange={(e) => set(imageAltKey, e.target.value as AllSettings[typeof imageAltKey])}
+                  placeholder="القطاعات التي يخدمها فريق مدونتي"
                 />
+              </Field>
+            )}
+          </Section>
+        ) : (
+          <Section
+            title="Social Sharing Image"
+            description="The image shown when this page is shared on social media. Managed in Modonty homepage settings."
+          >
+            {settings.ogImageUrl ? (
+              <div className="flex items-center gap-4">
+                <div className="aspect-[1200/630] w-32 shrink-0 rounded-md border bg-muted/30 overflow-hidden">
+                  <NextImage
+                    src={settings.ogImageUrl}
+                    alt={settings.altImage ?? ""}
+                    width={128}
+                    height={67}
+                    className="object-cover w-full h-full"
+                    unoptimized
+                  />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <p className="text-sm text-foreground truncate">{settings.altImage || "No alt text set"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Managed in <a href="/settings/modonty" className="text-primary hover:underline">Modonty Homepage → Site Identity</a>
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 min-w-0">
-                <p className="text-sm text-foreground truncate">{settings.altImage || "No alt text set"}</p>
-                <p className="text-xs text-muted-foreground">
-                  Managed in <a href="/settings/modonty" className="text-primary hover:underline">Modonty Homepage → Site Identity</a>
-                </p>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No image set. Add one in <a href="/settings/modonty" className="text-primary hover:underline">Modonty Homepage → Site Identity</a>.
-            </p>
-          )}
-        </Section>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No image set. Add one in <a href="/settings/modonty" className="text-primary hover:underline">Modonty Homepage → Site Identity</a>.
+              </p>
+            )}
+          </Section>
+        )}
       </div>
     </TooltipProvider>
   );

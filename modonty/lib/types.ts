@@ -92,6 +92,12 @@ export interface FeedPost {
   status: "published" | "draft";
 }
 
+export interface CategoryClientPreview {
+  id: string;
+  name: string;
+  logoUrl?: string;
+}
+
 export interface CategoryResponse {
   id: string;
   name: string;
@@ -106,6 +112,10 @@ export interface CategoryResponse {
   socialImage?: string;
   socialImageAlt?: string;
   children?: CategoryResponse[];
+  clientPreviews?: CategoryClientPreview[];
+  clientCount?: number;
+  /** Sum of the digital-impact total of every ACTIVE client in this category (GA4 + DB engagement). Computed, currently hidden on the card. */
+  digitalImpact?: number;
 }
 
 export interface CategoryAnalytics {
@@ -142,6 +152,24 @@ export interface CategoryArticleQueryOptions {
   sortBy?: 'latest' | 'oldest' | 'popular' | 'trending';
   clientId?: string;
   limit?: number;
+}
+
+// Industry listing — clients link DIRECTLY via Client.industryId (no articles junction),
+// so the card headline is the partner-company count, not an article count.
+export interface IndustryListItem {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  socialImage?: string;
+  socialImageAlt?: string;
+  clientCount: number;
+  clientPreviews: { id: string; name: string; logoUrl?: string }[];
+}
+
+export interface IndustryQueryOptions {
+  search?: string;
+  sortBy?: 'clients' | 'name';
 }
 
 export interface CategoryDetailPageParams {
