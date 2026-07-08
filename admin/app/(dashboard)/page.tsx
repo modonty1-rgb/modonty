@@ -1,75 +1,58 @@
 import { Suspense } from "react";
-import { BarChart3, Construction } from "lucide-react";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { getDashboardAlerts } from "./actions/dashboard-actions";
+import { getGA4Activity } from "./analytics/actions/get-ga4-activity";
+import { getClients } from "./analytics/actions/get-clients";
+import { getArticles } from "./analytics/actions/get-articles";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
-import { DateRangeSelector } from "./components/date-range-selector";
-import { DashboardSection } from "./components/dashboard-section";
+import { FullActivityClient } from "./analytics/components/full-activity-client";
+import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
 import { ArticleWorkflowBoard } from "./components/sections/article-workflow-board";
-import { DbSection } from "./components/sections/db-section";
 import { GscSection } from "./components/sections/gsc-section";
 import { GscSectionSkeleton } from "./components/sections/gsc-section-skeleton";
 
+// Merged dashboard = «ترمومتر مدونتي» (approved mockup dashboard-thermometer-merge-v1,
+// 2026-07-08): alerts → GA4 activity + Visitor Actions breakdown → timeline/sources/geo/
+// tables (FullActivityClient) → article workflow → Search Console. Killed: the GA4
+// "under construction" placeholder, the duplicate date selector, and the DB/Ops section
+// (it has its own /database page).
 export default async function DashboardPage() {
-  const alerts = await getDashboardAlerts();
-  const today = new Date();
+  const [alerts, activity, clients, articles] = await Promise.all([
+    getDashboardAlerts(),
+    getGA4Activity(),
+    getClients(),
+    getArticles(),
+  ]);
 
   return (
-    <div className="max-w-[1280px] mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            {format(today, "EEEE, MMM d, yyyy")}
-          </p>
-        </div>
-
-        <DateRangeSelector />
+    <div className="mx-auto max-w-[1280px] space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold leading-tight">Dashboard</h1>
+        <p className="mt-0.5 text-sm text-muted-foreground">
+          {format(new Date(), "EEEE, MMM d, yyyy")} — everything that matters, nothing else
+        </p>
       </div>
 
-      {/* Alert Bar (cross-source urgent issues) */}
+      {/* 1 · Urgent, cross-source */}
       <DashboardAlertsBanner alerts={alerts} />
 
-      {/* Article Workflow board (live counts per status) */}
+      {/* 2 · Visitor actions — the business pulse */}
+      <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+        <VisitorActionsBreakdown />
+      </Suspense>
+
+      {/* 3 · Full GA4 activity: KPIs, timeline, sources, geo, tables + filters */}
+      <FullActivityClient initialData={activity} clients={clients} articles={articles} />
+
+      {/* 4 · Daily ops */}
       <ArticleWorkflowBoard />
 
-      {/* Section 1 — Search Console (live) */}
+      {/* 5 · Search health */}
       <Suspense fallback={<GscSectionSkeleton />}>
         <GscSection days={7} />
       </Suspense>
-
-      {/* Section 2 — GTM / GA4 (placeholder by design — live integration deferred) */}
-      <DashboardSection
-        title="GTM / GA4 Analytics"
-        subtitle="User engagement · live integration coming in next phase"
-        icon={<BarChart3 className="h-5 w-5" />}
-        accent="cyan"
-        drillDown={{ href: "/analytics", label: "Open Analytics" }}
-      >
-        <PlaceholderBody
-          title="Under construction"
-          description="Real-time visitors, sessions, traffic sources and conversion events will appear here once GA4 Data API is wired up."
-        />
-      </DashboardSection>
-
-      {/* Section 3 — DB / Operations (live now) */}
-      <DbSection />
-    </div>
-  );
-}
-
-function PlaceholderBody({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="p-10 flex flex-col items-center justify-center text-center gap-3 bg-[repeating-linear-gradient(135deg,transparent,transparent_12px,rgba(148,163,184,0.04)_12px,rgba(148,163,184,0.04)_24px)]">
-      <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-        <Construction className="h-5 w-5" />
-      </div>
-      <div className="space-y-1 max-w-md">
-        <p className="font-bold text-sm">{title}</p>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </div>
     </div>
   );
 }

@@ -37,7 +37,6 @@ import {
   LineChart,
   MailPlus,
   MailOpen,
-  BarChart3,
   Users,
   Users2,
   CreditCard,
@@ -195,7 +194,6 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Users, label: "Members", href: "/members" },
       { icon: MailPlus, label: "Subscribers", href: "/subscribers" },
-      { icon: BarChart3, label: "Analytics", href: "/analytics" },
       { icon: MessageSquare, label: "Chatbot Questions", href: "/chatbot-questions" },
       { icon: Megaphone, label: "Campaign Leads", href: "/campaigns/leads" },
     ],
@@ -216,6 +214,7 @@ const menuGroups: MenuGroup[] = [
 ];
 
 const topItems: MenuItem[] = [
+  // Analytics merged into the dashboard home (2026-07-08) — the home button IS the thermometer.
   { icon: Share2, label: "Social Media", href: "/social/facebook" },
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },

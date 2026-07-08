@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Redesign v1 — Full Activity + Geo</title>
+<style>
+  :root{--bg:#F6F7F9;--card:#fff;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;--blue:#2563EB;--navy:#0E065A;
+    --green:#10B981;--amber:#F59E0B;--red:#EF4444;--cyan:#06B6D4;--violet:#8B5CF6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);padding:28px;font-size:14px}
+  .wrap{max-width:1200px;margin:0 auto}
+  h1{font-size:22px;font-weight:800}
+  .sub{color:var(--muted);margin-bottom:18px}
+  .note{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:13px}
+  .filters{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:20px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:13px;color:var(--muted);background:#fff}
+  .pill.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .sel{border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:13px;background:#fff;color:var(--ink)}
+  h2.sec{font-size:15px;font-weight:800;margin:26px 0 10px;display:flex;gap:8px;align-items:center}
+  h2.sec .tag{font-size:11px;font-weight:700;background:#FEF3C7;color:#92400E;border-radius:999px;padding:1px 10px}
+  .grid{display:grid;gap:12px}
+  .g6{grid-template-columns:repeat(6,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:2fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .k{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .kpi .v{font-size:22px;font-weight:800}
+  .kpi .d{font-size:11px;color:var(--muted)}
+  .kpi.hero{border-top:3px solid var(--blue)}
+  .bar{display:flex;height:26px;border-radius:8px;overflow:hidden;margin:10px 0 6px}
+  .bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-inline-end:4px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);font-size:12px}
+  td{padding:8px 10px;border-bottom:1px solid #F1F2F5}
+  tr:last-child td{border-bottom:none}
+  .mini{display:inline-flex;height:8px;width:110px;border-radius:4px;overflow:hidden;vertical-align:middle}
+  .mini i{display:block;height:100%}
+  .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .flag{font-size:16px;margin-inline-end:6px}
+  .muted{color:var(--muted)}
+  .chartmock{height:180px;border-radius:10px;background:
+    linear-gradient(to top, #EFF6FF 0%, transparent 60%),
+    repeating-linear-gradient(to right, transparent 0 59px, #F1F2F5 59px 60px);position:relative;overflow:hidden}
+  .chartmock svg{position:absolute;inset:0;width:100%;height:100%}
+  .footer{margin-top:30px;color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Analytics — Full Activity <span style="font-size:12px;background:#D1FAE5;color:#065F46;border-radius:999px;padding:2px 10px;vertical-align:middle">REDESIGN v1</span></h1>
+<div class="sub">Everything that happens on Modonty — articles, client pages, interactions, sources, and geography</div>
+
+<div class="note">📌 <b>Real production numbers (last 30 days) used in this mockup:</b> the current page shows 517 "views" — actual activity is 1,547 events. Sources & geo populate from the fix date onward (historical sources are unreliable and hidden by default).</div>
+
+<div class="filters">
+  📅 <span class="pill">Today</span><span class="pill">7 days</span><span class="pill on">30 days</span><span class="pill">90 days</span>
+  <span style="width:14px"></span>
+  <select class="sel"><option>All clients</option><option>شركة جبر سيو</option><option>كيما زون</option></select>
+  <select class="sel"><option>All articles</option></select>
+  <span style="flex:1"></span>
+  <span class="pill">⬇ Export CSV</span>
+</div>
+
+<!-- ═══ 1. Activity Overview ═══ -->
+<h2 class="sec">1 · Activity Overview <span class="tag">was: article views only</span></h2>
+<div class="grid g6">
+  <div class="card kpi hero"><div class="k">Total Events</div><div class="v">1,547</div><div class="d">everything, all types</div></div>
+  <div class="card kpi"><div class="k">Article Views</div><div class="v">517</div><div class="d">what the old page showed</div></div>
+  <div class="card kpi"><div class="k">Client-Page Visits</div><div class="v">518</div><div class="d">NEW — was invisible</div></div>
+  <div class="card kpi"><div class="k">CTA Clicks</div><div class="v">480</div><div class="d">NEW — hottest signal</div></div>
+  <div class="card kpi"><div class="k">Engagement</div><div class="v">22</div><div class="d">likes · saves · shares</div></div>
+  <div class="card kpi"><div class="k">Leads</div><div class="v">6</div><div class="d">bookings + messages</div></div>
+</div>
+
+<!-- ═══ 2. Timeline ═══ -->
+<h2 class="sec">2 · Events Over Time</h2>
+<div class="card">
+  <div class="chartmock">
+    <svg viewBox="0 0 600 180" preserveAspectRatio="none">
+      <path d="M0,150 C60,120 100,90 160,100 C220,110 260,60 320,70 C380,80 420,40 480,50 C540,58 570,30 600,25 L600,180 L0,180 Z" fill="#2563EB22"/>
+      <path d="M0,150 C60,120 100,90 160,100 C220,110 260,60 320,70 C380,80 420,40 480,50 C540,58 570,30 600,25" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+      <path d="M0,165 C80,150 140,140 200,145 C280,150 340,120 420,125 C500,128 560,105 600,100" fill="none" stroke="#10B981" stroke-width="2"/>
+      <path d="M0,172 C100,168 180,160 260,163 C360,166 440,150 600,148" fill="none" stroke="#F59E0B" stroke-width="2"/>
+    </svg>
+  </div>
+  <div class="legend" style="margin-top:8px">
+    <span><i class="dot" style="background:var(--blue)"></i>Article views</span>
+    <span><i class="dot" style="background:var(--green)"></i>Client-page visits</span>
+    <span><i class="dot" style="background:var(--amber)"></i>CTA clicks</span>
+  </div>
+</div>
+
+<!-- ═══ 3. Sources + Geo side by side ═══ -->
+<div class="grid g2" style="margin-top:26px">
+  <div>
+    <h2 class="sec" style="margin-top:0">3 · Traffic Sources <span class="tag">clean data from fix date</span></h2>
+    <div class="card">
+      <div class="bar">
+        <div style="background:var(--blue);width:38%">Google 38%</div>
+        <div style="background:var(--cyan);width:24%">Direct 24%</div>
+        <div style="background:var(--violet);width:18%">Social 18%</div>
+        <div style="background:var(--amber);width:12%">Referral</div>
+        <div style="background:#9CA3AF;width:8%">Int.</div>
+      </div>
+      <table>
+        <tr><th>Top referrer domains</th><th style="text-align:right">Visits</th></tr>
+        <tr><td>google.com <span class="muted">· search</span></td><td class="num" style="text-align:right">96</td></tr>
+        <tr><td>instagram.com <span class="muted">· social</span></td><td class="num" style="text-align:right">31</td></tr>
+        <tr><td>x.com <span class="muted">· social</span></td><td class="num" style="text-align:right">14</td></tr>
+        <tr><td>jbrseo.com <span class="muted">· referral</span></td><td class="num" style="text-align:right">9</td></tr>
+      </table>
+    </div>
+  </div>
+  <div>
+    <h2 class="sec" style="margin-top:0">4 · 🌍 Geography <span class="tag">NEW</span></h2>
+    <div class="card">
+      <table>
+        <tr><th>Country / City</th><th style="text-align:right">Visits</th></tr>
+        <tr><td><span class="flag">🇸🇦</span><b>Saudi Arabia</b></td><td class="num" style="text-align:right">61%</td></tr>
+        <tr><td class="muted" style="padding-inline-start:34px">Riyadh · Jeddah · Dammam</td><td class="muted" style="text-align:right">31% · 18% · 7%</td></tr>
+        <tr><td><span class="flag">🇪🇬</span><b>Egypt</b></td><td class="num" style="text-align:right">24%</td></tr>
+        <tr><td class="muted" style="padding-inline-start:34px">Cairo · Alexandria</td><td class="muted" style="text-align:right">16% · 5%</td></tr>
+        <tr><td><span class="flag">🇦🇪</span><b>UAE</b></td><td class="num" style="text-align:right">8%</td></tr>
+        <tr><td><span class="flag">🌐</span>Other</td><td class="num" style="text-align:right">7%</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5. Articles × Sources ═══ -->
+<h2 class="sec">5 · Articles — where readers come from <span class="tag">your main ask</span></h2>
+<div class="card">
+  <table>
+    <tr><th>Article</th><th>Client</th><th style="text-align:right">Views</th><th>Sources mix</th><th>Top country</th><th style="text-align:right">CTA</th></tr>
+    <tr>
+      <td>أفضل ممارسات السيو المحلي 2026</td><td class="muted">جبر سيو</td><td class="num" style="text-align:right">84</td>
+      <td><span class="mini"><i style="background:var(--blue);width:55%"></i><i style="background:var(--cyan);width:25%"></i><i style="background:var(--violet);width:20%"></i></span></td>
+      <td>🇸🇦 72%</td><td class="num" style="text-align:right">31</td>
+    </tr>
+    <tr>
+      <td>دليل تبييض الأسنان الشامل</td><td class="muted">سمايل تاون</td><td class="num" style="text-align:right">67</td>
+      <td><span class="mini"><i style="background:var(--blue);width:70%"></i><i style="background:var(--cyan);width:20%"></i><i style="background:var(--amber);width:10%"></i></span></td>
+      <td>🇪🇬 58%</td><td class="num" style="text-align:right">19</td>
+    </tr>
+    <tr>
+      <td>كيف تختار شركة مقاولات موثوقة</td><td class="muted">جبر الجنوبية</td><td class="num" style="text-align:right">52</td>
+      <td><span class="mini"><i style="background:var(--violet);width:45%"></i><i style="background:var(--blue);width:30%"></i><i style="background:var(--cyan);width:25%"></i></span></td>
+      <td>🇸🇦 81%</td><td class="num" style="text-align:right">12</td>
+    </tr>
+  </table>
+  <div class="legend" style="margin-top:10px">
+    <span><i class="dot" style="background:var(--blue)"></i>Organic</span>
+    <span><i class="dot" style="background:var(--cyan)"></i>Direct</span>
+    <span><i class="dot" style="background:var(--violet)"></i>Social</span>
+    <span><i class="dot" style="background:var(--amber)"></i>Referral</span>
+    <span class="muted">· click a row → full article drill-down</span>
+  </div>
+</div>
+
+<!-- ═══ 6. Client pages ═══ -->
+<h2 class="sec">6 · Client Pages — visits & conversion <span class="tag">NEW</span></h2>
+<div class="card">
+  <table>
+    <tr><th>Client</th><th style="text-align:right">Page visits</th><th style="text-align:right">CTA clicks</th><th style="text-align:right">Bookings</th><th>Top source</th><th>Top city</th></tr>
+    <tr><td>شركة جبر سيو</td><td class="num" style="text-align:right">203</td><td class="num" style="text-align:right">188</td><td class="num" style="text-align:right">1</td><td>Google</td><td>🇸🇦 Jeddah</td></tr>
+    <tr><td>كيما زون</td><td class="num" style="text-align:right">145</td><td class="num" style="text-align:right">160</td><td class="num" style="text-align:right">1</td><td>Direct</td><td>🇸🇦 Riyadh</td></tr>
+    <tr><td>سمايل تاون</td><td class="num" style="text-align:right">98</td><td class="num" style="text-align:right">77</td><td class="num" style="text-align:right">0</td><td>Social</td><td>🇪🇬 Cairo</td></tr>
+  </table>
+</div>
+
+<div class="footer">
+  Mockup v1 · numbers 1,547/517/518/480 are REAL production (30d) — article/client rows are illustrative ·
+  sections 1–6 lock one by one with «ابروف»
+</div>
+
+</div>
+</body>
+</html>

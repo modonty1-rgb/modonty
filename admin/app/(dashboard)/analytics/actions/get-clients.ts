@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 export async function getClients() {
   try {
     return await db.client.findMany({
-      select: { id: true, name: true },
+      select: { id: true, name: true, slug: true },
       orderBy: { name: "asc" },
       take: 1000,
     });

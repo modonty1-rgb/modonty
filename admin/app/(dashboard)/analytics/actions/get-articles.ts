@@ -10,7 +10,7 @@ export async function getArticles() {
           in: ["DRAFT", "PUBLISHED", "ARCHIVED"],
         },
       },
-      select: { id: true, title: true },
+      select: { id: true, title: true, slug: true, clientId: true },
       orderBy: { title: "asc" },
       take: 1000,
     });

@@ -1,11 +1,211 @@
-# Session Context — Last Updated: 2026-07-04 (7)
+# Session Context — Last Updated: 2026-07-08 (12)
 
-## Session: 2026-07-04 ~18:10 — إعادة تنظيم أدمن: مجموعة Modonty بالشريط + فصل Social Links عن Homepage (غير مدفوع)
+## Session: 2026-07-08 — 🚀 دفع الأدمن v0.85.0: الرئيسية المدموجة (الترمومتر) بعد تدقيق بيانات 100%
 
 ### 🎯 Where I stopped
-- **بوابة ما قبل الـ push اكتملت 100% (2026-07-04 ~19:40) — بانتظار كلمة «push» من خالد.**
-- نتائج البوابة: build إنتاجي أدمن exit 0 (الحالة النهائية) · TSC ×3 تطبيقات صفر أخطاء · 10 صفحات متأثرة كلها HTTP 200 · صفر أخطاء كونسول على الصفحات الأربع الجديدة · سطح التغيير: 5 ملفات معدّلة + 4 مجلدات جديدة (كلها admin) · فحص أسرار .claude نظيف (6 تطابقات = إنذار كاذب: "disk-inspect" + أمر الفحص نفسه).
-- خطوات الـ push المتفق عليها: version bump admin + `bash scripts/backup.sh` + git add انتقائي (admin + docs، بدون سكربتات modonty المستبعدة) + changelog. **قرار معلّق:** حذف `seo-preview.tsx` اليتيم (توصيتي: حذف) — يُحسم مع الـ push.
+- **دفع الأدمن فقط (commit انتقائي)** — الرئيسية = الترمومتر المدموج + صفحات التفصيل الثلاث. الكونسول ومودونتي والسكيما **لم تُدفع عمداً** (11 ملف معدل + untracked تظل محلية).
+- **الخطوة التالية عند الاستئناف: الدفعة الثانية** — كونسول gallery→Bunny (يتطلب أولاً 🔄 تدوير مفتاح Bunny الرئيسي + إضافة مفاتيح BUNNY_* على Vercel واحد واحد) + مودونتي (geo tracking + booking_submit + reels) + schema.prisma. قبلها: tsc ×2 (console/modonty) + builds + تست حي.
+
+### ✅ Done this session
+- **تدقيق صحة بيانات الترمومتر 100%** (طلب خالد): سكربتا تحقق مستقلان (GA4 Data API مباشرة + عدّات DB على modonty_dev) قورنا بالمعروض حياً — كل الأرقام الـ 11 طابقت رقماً برقم. التفاصيل في `ANALYTICS-FULL-ACTIVITY-TODO.md`.
+- **🐛 باق حقيقي اكتُشف وأُصلح: تضخيم Geography** — جمع totalUsers عبر المدن ضخّم الدول (مصر 2133→2035 · السعودية 147→132). الحل: استعلام دولة-فقط للعدّ. + تثبيت السعودية/مصر فوق والباقي في كولابس (طلب خالد).
+- تصحيحات تسمية: «tracked business events» · «users» بدل «views» · «last 90 days» على صف الأفعال. + إصلاح keepClient (تصادم البادئة).
+- **تحقق Vercel بالترقيم الكامل (66 متغير/3 صفحات):** مفاتيح GA4 الثلاثة موجودة ومربوطة بالأدمن production والقيمة مطابقة (538167732) — الكاسر المفترض انتفى.
+- **طقس الدفع:** TSC صفر · build نظيف · backup · v0.84.0→0.85.0 · changelog LOCAL+PROD (6a4e16a8e141f56eaff4e19b).
+
+### 🚧 Pending / blocked
+- 🔄 تدوير مفتاح Bunny الرئيسي (مرّ بالشات) — **قبل** أي إدخال لمفاتيح BUNNY_* في Vercel.
+- الشواهد (tombstones) دُفعت كأسطر فارغة — أوامر الحذف محظورة عليّ؛ أمر الحذف اليدوي في `ANALYTICS-FULL-ACTIVITY-TODO.md`.
+- مجلد `modonty/.next-stale-*` غير متجاهل بـgit — لا تستخدم `git add .` أبداً؛ يُحذف يدوياً.
+- أحداث تيليقرام الميتة (leadHigh/campaignInterest) + reels→GA4 — أول مهمة عند العودة للريلز.
+
+### 🔁 Git / deploy state
+- Branch: main · دفعة انتقائية admin+docs فقط · الباقي uncommitted عمداً (كونسول/مودونتي/سكيما/bunny).
+- Vercel: admin يتبنى، console/modonty يفترض CANCELED عبر ignoreCommand (تحقق بعد الدفع أدناه).
+
+### 🚀 How to resume in 30 seconds
+1. افتح `documents/tasks/ANALYTICS-FULL-ACTIVITY-TODO.md` — قسم «خطة الدفع» + «يُدفع لاحقاً».
+2. الدفعة الثانية تبدأ بتدوير مفتاح Bunny من dash.bunny.net.
+3. `git status` يوريك الباقي المحلي بالضبط.
+
+---
+
+## Session: 2026-07-07 — 🌡️ الريلز 100% ثم بناء «ترمومتر مدونتي»: صفحة تحليلات GA4 كاملة + صفحات تفصيل + إصلاح مصنف المصادر الجذري + الجغرافيا
+
+### 🎯 Where I stopped
+- **صفحة التحليلات الجديدة كاملة وشغالة على dev** (`/analytics` + `/analytics/leads|cta|engagement`) — كل شيء متحقق حياً وTSC صفر (admin + modonty). **آخر تعديل:** توحيد بنية كروت صفحة أفعال الزوار.
+- **الخطوة التالية عند الاستئناف: تجهيز النشر** — كومة ضخمة uncommitted (ريلز + باني + تحليلات + مصنف + جغرافيا). قبل الدفع إلزامياً: tsc ×3 (**console لم يُعد فحصه بعد سكيما الجغرافيا**) + build ×3 + تست حي + باكب + version bump + changelog + فحص أسرار settings.
+- ⚠️ **تذكيران أمنيان معلقان:** تدوير مفتاح باني الرئيسي 🔄 (مرّ بالشات أمس) + ملف `modonty/components/tracked-cta-link.tsx` مخلف للحذف اليدوي.
+
+### ✅ Done this session
+**١) الريلز أُغلقت 100% (زائر الجهة):**
+- قفل شامل «لا تأجيل»: البنود أ–د (شيك بوكس افتراضي مفعّل · احتواء+تمويه · modonty-clients تبقى · عنوان تلقائي) + اللانهائي ضمن النطاق — كله في `GALLERY-REELS-DECISIONS-v1.html`.
+- **الفيد الغامر** (طبقة كاملة فوق هيدر الموقع + ✕ خروج) + **سكرول لانهائي** (دفعات ٦ بمؤشر + IntersectionObserver rootMargin 200% + `content-visibility:auto` — صفر مكتبات) — مختبر: ٦←١٢←١٤ ويتوقف.
+- **تثبيت التفاعلات بدورة كاملة** (زائر تجريبي `reels-test@modonty-test.local` / ReelsTest2026!): إعجاب/حفظ ← إلغاء/إعادة ← تحميل = ثابت. **٣ إصلاحات جذرية:** كاش `.next` فاسد (404 وهمية لمسارات موجودة — تنحية وإعادة بناء) · `updateTag("reels")` بدل revalidatePath (read-your-own-writes مع use cache) · **عدادات الريلز المزروعة كانت null** (الزرع سبق حقول العدادات) والزيادة على null تفشل بصمت → تعبئة صفرية + مزامنة + **قاعدة ذهبية جديدة بالذاكرة** (db push لا يعبي بأثر رجعي؛ التشخيص بـfindRaw).
+**٢) جلسة تيليقرام → انقلبت لمشروع التحليلات (طلب خالد: «الترمومتر»):**
+- تحقق تغطية تيليقرام: 21/23 حدثاً مربوطاً فعلياً؛ بوت واحد بوجهتين (شات العميل بشرطين + مرآة الأدمن: 4 أحداث دائماً أو الكل بمفتاح `telegramAdminMirrorAll` الموجود). **فجوتان ميتتان معلقتان:** leadHigh + campaignInterest (معرّفان بلا مطلق).
+- **كشف بالدليل من الإنتاج:** الصفحة القديمة تعرض 517 من **1,547** حدثاً شهرياً (زيارات صفحات الشركات 518 + CTA 480 مخفية).
+- **إصلاح مصنف المصادر الجذري:** المتتبعان ما كانا يرسلان `document.referrer` والسيرفر يقرأ ريفرر الطلب = صفحة المقال → **كل التاريخ «عضوي» زوراً وغير قابل للاسترجاع**. الجديد: `classify-source.ts` (UTM أولوية + محركات + سوشال + إيميل + `INTERNAL` enum جديد) + المتتبعان يرسلان الحقيقة. نظيف من `CLEAN_SINCE=2026-07-07`.
+- **الجغرافيا:** country/region/city على `Analytics`+`ClientView` من رؤوس فيرسل الرسمية (مجاناً، المدينة تفك ترميزها) + `ClientView` صار مصنّف المصدر أيضاً. سكيما مدفوعة لـdev.
+- **الصفحة الجديدة** (موكب `analytics-redesign-v1.html` → «confirm» → بناء مطابق): 6 بطاقات نشاط كامل + خط زمني ثلاثي + مصادر + 🌍 جغرافيا + جدول مقالات×مصادر + جدول شركات + فلتران (عميل/مقال — الثاني أضيف بملاحظة مطابقة من خالد) + تصدير CSV.
+- **«Google always the SOT» (قاعدة مقفلة):** تحويل مصدر الصفحة لـGA4 Data API — عميل جديد `admin/lib/analytics/ga4-data-api.ts` (منقول من الكونسول المجرب) + `get-ga4-activity.ts` (12 استعلاماً بدفعتين). **تنظيف ضجيج القياس السيرفري:** أحداث MP بلا جلسة/جغرافيا كانت تغرق التقارير (Unassigned 79%) → قصر استعلامات المصادر/الجغرافيا على `page_view` (12,812→10). أسماء دول مع الأكواد (ويندوز يرسم الأعلام حروفاً).
+- **💡 إنسايت أول تشغيل: 88% من الزوار مصر (فيسبوك 1,785) و6% فقط السعودية** — عكس السوق المستهدف. + **ليدان حقيقيان بالإنتاج حالتهما new من شهر** (منهم Faten Hassanin على كيما زون).
+- **صفحات التفصيل «البطاقة باب»:** `/analytics/leads` = **Visitor Actions** (حجوزات+رسائل+أسئلة+**تعليقات** بعد تصحيح خالد لمفهوم CTA؛ **كروت الأعداد من GA4 + الجدول من قاعدتنا** بمعمار خالد الصريح؛ الكروت تبويبات تصفية `?type=` + «يحتاج إجراء» DB؛ بنية موحدة) + `/analytics/cta` (نقرات الأزرار — GA4 + آخر 50) + `/analytics/engagement` (بالنوع/اليوم/الصفحة + آخر التعليقات). كشف فجوة: **الحجوزات ما لها صفحة أدمن أصلاً** — هذه أول واجهة لها.
+- **دائرة الحجز بنوعيها:** حدث GA4 جديد `booking_submit` (Google=قاعدتنا واحد لواحد من النشر) + استبعاد conversion_complete من سلة Leads (منع عد مزدوج). تدقيق «تسوّق الآن»: **إنذاري الأول («8 واجهات عمياء») كان خاطئاً** — التتبع داخل مكونات مغلفة (CtaTrackedLink/ClientCardCta/ClientContactSheet) وكل الواجهات سليمة. قرار مقفل: نقرة الرابط ليست ليداً.
+- إصلاح React key (Fragment) بجدول الجغرافيا — صفر أخطاء كونسول.
+- **ذاكرة:** قاعدتا `ga4-sot-thermometer` + `prisma-push-backfill-rule` + تحديثات ملف الريلز.
+
+### 📝 Decisions taken
+- «قفل الحاجات المفتوحة، لا تأجيل» → أ–د + اللانهائي دفعة واحدة. · «Google always the SOT» + «/analytics = ترمومتر مدونتي». · معمار أفعال الزوار: أرقام GA4 فوق، تفاصيل DB تحت، Needs-action من DB. · تعليقات الريلز مؤجلة (يعدل قرار الريلز ٧ — الملف الأم يُزامَن لاحقاً). · نقرة «تسوّق الآن» ليست ليداً. · التاريخ المغلوط للمصادر يُخفى (CLEAN_SINCE) بلا ضجيج.
+
+### 🚧 Pending / blocked
+- **النشر** (الكومة كلها) — بوابة كاملة قبله + **tsc console** بعد سكيما الجغرافيا.
+- تدوير مفتاح باني 🔄 · حذف `tracked-cta-link.tsx` يدوياً · تعليق BookingRequest المضلل (مع أول لمسة سكيما).
+- تيليقرام: إحياء leadHigh + campaignInterest · تفعيل «انسخ الكل» (زر موجود) · **سجل الأحداث الموحد** (طلب خالد الأصلي — مؤجل).
+- GA4: **أحداث الريلز (صفر تتبع!)** · فحوصات داشبورد خالد (Enhanced Measurement · الأبعاد المخصصة article_id · user_id) · CTA لكل عميل بجدول الشركات (يحتاج البعد المخصص).
+- مكونات analytics القديمة المستبدلة + `get-full-activity.ts` = كود ميت ينتظر قرار حذف.
+- الريلز (جهة الإدارة): مسار رفع الكونسول مكتوب مركون · شاشة اعتماد الأدمن · ترحيل المعرض · مرحلة الفيديو · مزامنة الملف الأم.
+- قديم: hydration `/changelog` · Social Publishing · جلسة فريق المحتوى (4/11).
+
+### 📂 Files touched (الكل uncommitted)
+- **modonty:** `app/reels/*` (فيد غامر لانهائي: page/loading/helpers/components/actions + load-more) · `lib/analytics/classify-source.ts` (جديد) + `geo-headers.ts` (جديد) + `events-registry.ts` (booking_submit) · `api/articles|clients/[slug]/view/route.ts` (ريفرر حقيقي + جغرافيا + مصنف) · `article|client-view-tracker.tsx` · `articles/[slug]/actions/booking-actions.ts` · `next.config.ts` (allowedDevOrigins + b-cdn) · `components/tracked-cta-link.tsx` (مخلف للحذف).
+- **admin:** `lib/analytics/ga4-data-api.ts` (جديد) · `app/(dashboard)/analytics/*`: page + components/full-activity-client (جديد) + actions/{get-ga4-activity,get-full-activity,get-leads-detail,get-cta-detail,get-engagement-detail} (جدد) + get-articles/get-clients (slug) + leads|cta|engagement/page.tsx (جدد).
+- **dataLayer:** `prisma/schema` (TrafficSource.INTERNAL + geo fields ×2 + عدادات الريل من أمس) · `lib/bunny.ts` (مناطق مسماة).
+- **وثائق:** `ANALYTICS-FULL-ACTIVITY-TODO.md` (جديد شامل) · `analytics-redesign-v1.html` (موكب معتمد) · `GALLERY-REELS-DECISIONS-*` (أقفال) · ذاكرة ×4.
+
+### 🔁 Git / deploy state
+- Branch: `main` · آخر commit: `a93fed9` · **صفر commits/push** — يومان كاملان uncommitted. قاعدة البيانات: كل الكتابة على `modonty_dev` فقط (الإنتاج قراءة فقط للقياس).
+
+### 🚀 How to resume in 30 seconds
+1. `pnpm dev:admin` ← `http://localhost:3000/analytics` (الترمومتر) و`/analytics/leads`.
+2. اقرأ `documents/tasks/ANALYTICS-FULL-ACTIVITY-TODO.md` (الحالة الكاملة + الطابور).
+3. القرار الأول: **تجهيز النشر** (البوابة الكاملة — وأول سطر فيها tsc console) — وذكّر خالد بتدوير مفتاح باني.
+
+## Session: 2026-07-06→07 — 🐰 بنية باني كاملة + سكيما الريلز + فيد /reels حي بالتفاعلات (+ افتتاح تخطيط فريق المحتوى ثم تأجيله)
+
+### 🎯 Where I stopped
+- **فيد الريلز التجريبي شغال حياً على dev** (`localhost:3000/reels` + من الموبايل عبر `192.168.1.3:3000`): ١٤ ريل صوري × ٧ عملاء، سكرول سناب، إعجاب/حفظ/مشاركة، رسالة «اشترك مجاناً» للزائر (→ `/users/register` بعد إصلاح رابط النشرة الغلط).
+- **آخر شيء صار:** خالد اختبر من موبايله — الرسالة تشتغل، الروابط اتصلحت. ما اختبر الإعجاب بجلسة مسجلة بعد.
+- **الإجراء التالي عند الاستئناف:** قفل البنود أ–د في `documents/reels/GALLERY-REELS-DECISIONS-v1.html` («ابروف» بند بند) ← ثم أول شغلة كود: مسار رفع المعرض الجديد بالكونسول أو الهيدر الغامر للفيد (قرار خالد).
+
+### ✅ Done this session
+**١) بنية باني كاملة عبر API بمفتاح الحساب (كله متحقق حياً 201/200):**
+- مكتبة ستريم `modonty-reels` (id 698133 · `vz-a26f5478-719.b-cdn.net`) — **MP4 Fallback فُعّل قبل أي رفع** (لا يعمل بأثر رجعي) + ≤1080p + token auth OFF. ← هذا كان البند المعلق رقم ١ من جلسة الريلز، انحل.
+- مناطق تخزين+سحب: `modonty-reels-media` (كل ملفات الريلز including صور المعرض — المصدر الموحد) · `modonty-clients` (أصول العميل مستقبلاً — مصيرها بند ج) · `modonty-asset` بالمفرد (أصول المنصة: OG/وسوم/هيرو تصنيفات — الجمع `-assets` علق في حذف باني البطيء فاستُبدل) · `modonty` **محجوزة لخالد ممنوع لمسها** · حُذفت: `modonty-test`, `modonty-media`, `modonty-assets`.
+- **التغطية السعودية مثبتة بالتجربة:** طلب من جهاز خالد انخدم من **Riyadh PoP** (`BunnyCDN-RI1` · countrycode SA). باني بلا تخزين ME إطلاقاً (كل نقاط المنطقة CDN فقط — من قائمة المناطق الرسمية).
+- `.env.shared`: ~18 مفتاح BUNNY_* (حساب + ستريم + 3 مناطق). ⚠️ **المفتاح الرئيسي مرّ بالشات — يحتاج تدوير 🔄 + تحديث الملف**.
+- **كشف معماري مهم:** باني Edge Storage **بلا رفع متصفح آمن** (المفتاح = كلمة مرور المنطقة، لا presigned للصور) → الرفع عبر السيرفر إلزامياً. تطبيق JBRSEO content يثبت النمط (`server-only` + route proxy). المكتبة منقولة: `dataLayer/lib/bunny.ts`. حد فيرسل 4.5MB غير مشكلة (الضغط للويب-بي ≤2000px قبل الرفع). فحص كلاودنري: خطة مجانية على 25% فقط (6.37/25 كريدت) — النقل استراتيجي مش اضطراري.
+
+**٢) سكيما الريلز (مولّدة + مدفوعة لـ`modonty_dev` بعد فحص الرابط):**
+- `Reel` (IMAGE/VIDEO موحّد · 6 حالات · روابط باني كاملة بلا أسرار · slug فريد لصفحة مشاهدة · ≤90ث · عدادات views/likes/comments/favorites) + `ReelComment` (+لايك/ديسلايك تعليقات، نمط ClientComment) + `ReelLike` (مجهول مسموح) + `ReelFavorite` (حساب إلزامي) + 4 enums. علاقات: Client إلزامية · Article اختيارية · User للتفاعلات.
+
+**٣) فيد `/reels` بمودونتي (شريحة من النهاية للبداية بطلب خالد):**
+- زرع dev: ١٤ صورة حقيقية (معرض جبر ٤ + أغلفة مقالات) نُسخت كلاودنري ← `modonty-reels-media/clients/{id}/dry-run/` + صفوف Reel منشورة.
+- `app/reels/` (page/loading/helpers/components/actions): سناب عمودي 9:16 **صفر حزم** (CSS scroll-snap) + خلفية مموهة للأفقي + شارة العميل بشعاره + noindex. remotePattern للدومين الجديد.
+- شريط تفاعلات **تيك توك بلا ديسلايك** (🔒 قرار خالد «do without dislike»): إعجاب (IconLike الموحد) + حفظ + مشاركة (Web Share) — أكشنات سيرفر بنمط المقالات حرفياً، تفاؤلية. **🔒 التعليقات أُجلت للإصدار القادم** (قرار خالد — يعدّل قرار الريلز الأم ٧؛ الزر انشال، الجداول باقية).
+- إصلاحات مسجلة: رسالة الزائر كانت مقصوصة (تحققت DOM لا بكسل — درس) → وسط البطاقة + «اشترك مجاناً»→`/users/register` و«دخول»→`/users/login` (كانت تودي للنشرة `/subscribe` غلط) · `allowedDevOrigins: ["192.168.1.3"]` للموبايل (نكست يمنع أصول dev عن غير localhost — من وثائق النسخة المثبتة) · فساد `.next/dev/types` بعد قتل السيرفر = أعد التشغيل.
+- تحقق: TSC مودونتي صفر ×3 · Playwright: سكرول سناب مثالي (14×viewport) · أزرار متحققة · **⚠️ tsc admin/console لم يُشغَّل بعد تغيير السكيما — إلزامي قبل أي push**.
+
+**٤) جلسة فريق المحتوى (افتُتحت ثم أجّلها خالد):**
+- ملف قرار `documents/content-team/CONTENT-TEAM-BRAINSTORM-v1.html` (نمط الريلز): دراسة رسمية (قوقل يقبل محتوى الذكاء people-first / يمنع scaled abuse / تشديد YMYL) + 11 قراراً.
+- **مقفل ٤/١١:** ٨ التعويض الرباعي (أساسي رمزي + لكل مقال معتمد + عمولة عميل نشط + أثر ربع سنوي مقارنة بالتوقع — **مرفوض: مكافأة الوصول الخام**) · ٩ القياس (التزام/قبول أول مراجعة/معتمدة) · ٢ الأدوار جزئياً (محافظ عملاء — التسمية معلقة) · ١١ التوظيف بالدفعات (مقال تجريبي مدفوع لـ٦ → توظيف ٢ الآن → ٥ مع النمو). الواقع المصحح: كاتب واحد + سير ذاتية، السوق سعودي ثم خليجي، الكتّاب من مصر عن بُعد.
+
+### 📝 Decisions taken (with reasoning)
+- **فصل عالم الريلز كلياً بالتسمية** (خالد) — فيديو+صور+ملفات في `modonty-reels-*` عشان صفر لخبطة؛ التعليقات بيتها DB مش تخزين.
+- **الفلو الموحد للمعرض** (اتفاق): رفعة واحدة → ملف واحد في reels-media → صفّا Media (فوري) + Reel (باعتماد أدمن) — بلا نسخ مكرر. شيك بوكس للعميل (فكرة خالد) — الافتراضي المفعّل = توصيتي المعلقة (بند أ).
+- **تفاعلات = تيك توك بلا ديسلايك** (خالد) + **تأجيل التعليقات للإصدار القادم** (خالد — رجوع لتوصيتي الأصلية، يعدّل القرار المقفل ٧).
+- **البدء من النهاية** (خالد): فيد حي بصور حقيقية قبل بناء الرفع والتحكم — نجح كأداة اكتشاف (كشف مشكلة الهيدر والعناوين المكررة).
+- **استخدام زون `modonty` القديمة رفضه خالد** («أحتاجها لحاجات ثانية») → إنشاء مخصصات بأسماء دلالية.
+
+### 🚧 Pending / blocked
+- **⏳ على خالد:** تدوير مفتاح باني الرئيسي 🔄 + تحديثه في `.env.shared` · تست الإعجاب/الحفظ بجلسة مسجلة · قفل البنود أ–د في ملف القرارات.
+- **شغل قادم بالترتيب:** لوحة تعليقات الريلز (الإصدار القادم — مقفل) · الهيدر الغامر للفيد + تعديل الموكب · مسار رفع الكونسول الجديد + الشيك بوكس · شاشة اعتماد الريلز بالأدمن · ترحيل المعرض من واجهة الأدمن · مزامنة تعديل القرار ٧ في `REELS-VIDEO-BRAINSTORM-v1.html` · أرقام الحصص بالباقات + القرار الختامي ٤ (معلقات الملف الأم).
+- **⚠️ قبل أي push:** tsc على admin+console (السكيما تغيرت) + مراجعة إن ملفات dry-run التجريبية وريلز التست ما تطلع بالإنتاج (كلها dev فقط حالياً).
+- **جلسة فريق المحتوى مؤجلة** (٧/١١ قرارات مفتوحة، أولها نموذج الإنتاج).
+- قديم بلا تغيير: hydration `/changelog` بالإنتاج · Social Publishing المؤجل · صور التست على dev.
+
+### 📂 Files touched
+**كود (كله غير مدفوع):**
+- `dataLayer/lib/bunny.ts` — جديد: عميل باني المشترك (server-only، منقول من JBRSEO).
+- `dataLayer/prisma/schema/schema.prisma` — قسم REELS كامل (4 نماذج + 4 enums + ReelLike/ReelFavorite) + علاقات Client/Article/User.
+- `modonty/next.config.ts` — remotePattern `modonty-reels-media.b-cdn.net` + `allowedDevOrigins`.
+- `modonty/app/reels/{page,loading}.tsx` + `helpers/reels-feed.ts` + `components/reel-actions-rail.tsx` + `actions/reel-interactions.ts` — كلها جديدة.
+**وثائق:** `documents/reels/GALLERY-REELS-DECISIONS-v1.html` (ملف قرار خالد) + `-2026-07-06.md` (النسخة التقنية) · `documents/content-team/CONTENT-TEAM-BRAINSTORM-v1.html` · ذاكرة: `project_reels_decision_file.md` (بنية باني + التعديلات) + `project_content_team_planning.md` + `MEMORY.md`.
+**بيئة:** `.env.shared` — ~18 مفتاح BUNNY_* جديدة.
+
+### 🔁 Git / deploy state
+- Branch: `main` · آخر commit: `a93fed9` · **صفر commits جديدة، صفر push** — كل شغل الليلة uncommitted (كود + وثائق).
+- Vercel: بلا deployments — كل الشغل dev فقط. قاعدة البيانات: `modonty_dev` فقط (تم التحقق قبل كل دفع/زرع).
+- سيرفر dev مودونتي شغال بالخلفية (منفذ 3000).
+
+### 🚀 How to resume in 30 seconds
+1. `pnpm dev:modonty` ← افتح `http://localhost:3000/reels` (الفيد الحي).
+2. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/reels/GALLERY-REELS-DECISIONS-v1.html` ← اقفل البنود أ–د.
+3. ذكّر خالد: تدوير مفتاح باني + تست الإعجاب بحسابه ← ثم قرر أول شغلة كود (رفع الكونسول أو الهيدر الغامر).
+
+---
+
+## Session: 2026-07-04→05 — 🎬 عصف ذهني الريلز الكامل: 10 قرارات مقفلة + موكب معتمد مبدئياً + مجلد documents/reels (صفر كود — كله دراسة وقرارات)
+
+### 🎯 Where I stopped
+- **بانتظار خالد يضيف `BUNNY_API_KEY` (مفتاح حساب bunny.net الرئيسي) في `.env.shared` بنفسه ويقول «حطيته»** — المسار السريع المعتمد.
+- **الإجراء التالي عند الاستئناف:** التحقق من وجود المفتاح (بدون طباعته) ← إنشاء مكتبة `modonty-reels` عبر bunny API الرسمي (تحقق من endpoint في docs.bunny.net أولاً — إنشاء المكتبات عبر api.bunny.net بمفتاح الحساب، مش video.bunnycdn.com) ← ضبط 4 إعدادات قبل أي رفع: **MP4 Fallback ON (لا يعمل بأثر رجعي!)** · جودات حتى 1080p · token auth OFF (قوقل يسحب الملفات) · watermark OFF ← استخراج 4 قيم البيئة (`BUNNY_STREAM_LIBRARY_ID/API_KEY/READONLY_API_KEY/CDN_HOSTNAME`) وإضافتها لـ `.env.shared` ← تقرير النتيجة لخالد.
+- **بعدها:** قفل القرار ٤ («ابروف») ← الخطة التفصيلية للمرحلة الأولى + الموكب الملزم النهائي + أرقام الحصص.
+
+### ✅ Done this session (كله وثائق وقرارات — صفر تعديل كود)
+- **مجلد `documents/reels/` = المرجعية الوحيدة لكل ملفات الريلز** (طلب خالد)، فيه 3 ملفات:
+  1. `REELS-VIDEO-BRAINSTORM-v1.html` — **ملف النقاش والقرار الوحيد** (اتفاق مثبّت): الدراسة الكاملة (كود + باني + سيو قوقل + أداء، 74 صفحة وثائق رسمية عبر workflows) + **10 قرارات مقفلة** + سجل نقاش 14 بند + جدول ملخص القرارات.
+  2. `reels-modonty-simulation-v1.html` — موكب محاكاة 4 شاشات (رئيسية + فيد ريلز × ديسكتوب/موبايل) بسحب سناب حي، مبني على توكنز مودونتي الفعلية (0E065A/3030FF/00D8D8 · Tajawal · 1128/600/300/56px) — **اعتمده خالد مبدئياً** (مش عقد المطابقة النهائي).
+  3. `REELS-REQUIREMENTS-FLOW-v1.html` — قائمة تسليم تفاعلية (5 بنود، البند ١ = BUNNY_API_KEY بالمسار السريع) + 5 مسارات فلو (كونسول/أدمن/صور/زائر/حذف) + جدول 6 حالات للريل.
+- **القرارات العشرة المقفلة (2026-07-04):** ١) الريل مستقل تماماً عن المقالات ٢) أدمن + كونسول يرفعون من اليوم الأول ٣) صور + فيديو معاً من المرحلة الأولى (نموذج موحّد؛ الصور على Cloudinary الموجود) ٥) رفعات العميل باعتماد الأدمن ٦) حدود كاملة: 90 ثانية + حصص شهرية بالباقات + حد حجم ٧) **تعليقات من اليوم الأول** (عكس توصيتي — نظام تعليقات المقالات) ٨) تفريغ صوتي تلقائي بعد الاعتماد (عربي يدوي — كشف اللغة يقرأ أول 30 ثانية فقط) ٩) افتتاح كامل (دفعات مخفية + كشف بضغطة) ١٠) الفيد: الأحدث + تنويع الشركاء ١١) الباقة الأدنى تشوف الريلز مقفلة بدعوة ترقية.
+- **تحقق رسمي (workflow ثانٍ):** Next.js — History API (pushState/replaceState) مدعوم رسمياً لتحديث الرابط أثناء السحب بدون navigation · دليل الفيديو الرسمي يوصي بـ native `<video>` + autoPlay/muted/playsInline/preload=none · **نكست 16 غيّر سلوك scroll-behavior** (يحتاج `data-scroll-behavior` — مسجل بالملف). **الحزم:** الجديدة الوحيدة = `tus-js-client` بالأدمن (12.5KB gzip، باني يوصي بها بالاسم) · مودونتي **صفر حزم** (video/scroll-snap/IntersectionObserver/History/Web Share) · السيرفر REST fetch (ما في SDK رسمي ناضج — `@bunny.net/openapi-client` عمره أيام 0.1.x، نراقبه) · hls.js مؤجلة (107-161KB) · 6 مشغّلات مرفوضة بالقياس (video.js 197KB · react-player · plyr · vidstack «latest» عالق من 2024 · next-video ما يدعم باني).
+- **اكتشافات مهمة من الدراسة:** تبويب «الريلز» موجود placeholder في `modonty/app/clients/[slug]/reels/` (noindex، يعرض صور مقالات 9:16) · `Client.introVideoUrl` موجود بلا استخدام · قوقل يشترط صفحة مشاهدة مستقلة لكل فيديو + ملفات قابلة للسحب (بلا توكن) + VideoObject + video sitemap · شريط «Short videos» بنتائج قوقل **بلا توثيق رسمي** (محتكر للمنصات الكبرى — ما نوعد فيه) · باني: MP4 fallback لازم يتفعل **قبل** أول رفع · توصيل الشرق الأوسط Standard = $0.06/GB (الأغلى — يحتاج قياس Standard vs Volume من SA) · تفريغ عربي $0.10/دقيقة.
+- **ذاكرة محدثة:** `project_reels_decision_file.md` (المجلد + الحالة الكاملة) + **MEMORY.md انضغط من 24KB لتحت الحد** (hooks قصيرة، دمج المكرر).
+- TSC/build/live-test: **N/A** — صفر لمس كود التطبيقات هذي الجلسة.
+
+### 📝 Decisions taken (with reasoning)
+- **ملف HTML واحد = النقاش والقرار** (اتفاق خالد) — العربي المختلط بالشات صعب عليه؛ قرارات تفاعلية تنقفل بالتاريخ، سجل نقاش، كل التحديثات في نفس الملف.
+- **مستقل عن المقالات** (خالد، عكس توصية «اختياري») — رخيص التوسعة لاحقاً (حقل اختياري).
+- **تعليقات من اليوم الأول** (خالد، عكس توصية التأجيل) — نقطة للخطة: التحقق من جاهزية أدوات إشراف التعليقات بالأدمن.
+- **90 ثانية حد المدة** — مربوط معمارياً بقرار MP4-بلا-حزم (التوصيات الرسمية: progressive تحت الدقيقتين).
+- **مودونتي صفر أسرار باني** — روابط التشغيل/الصور تنحفظ كاملة في DB؛ الأسرار للأدمن والكونسول فقط.
+- **المسار السريع لتجهيز باني** — خالد يعطي مفتاح الحساب في `.env.shared` (مش بالشات) وكلود يجهز المكتبة بالكامل عبر API.
+
+### 🚧 Pending / blocked
+- **⏳ محظور على خالد:** إضافة `BUNNY_API_KEY` في `.env.shared` (البند ١ بقائمة التسليم).
+- **القرار ٤ الختامي** ما انقفل («نناقش أكثر») — بعد قفله: خطة تفصيلية + موكب ملزم نهائي.
+- **نقطتان للموكب النهائي:** تبويب «الريلز» بالهيدر؟ + موضع الشريط (فوق/تحت بانر الاشتراك).
+- **أرقام تجارية وقت الخطة:** أي باقات تشمل الريلز + الحصص الشهرية + حد الحجم (اقتراح مبدئي 1GB).
+- **قياس السرعة من SA:** Standard ($0.06/GB بالشرق الأوسط) vs Volume ($0.005 بس PoPs أقل) — يحتاج الفيديو التجريبي.
+- **قديم من جلسات سابقة (بلا تغيير):** hydration صفحة `/changelog` بالإنتاج (React #418) · Social Publishing settings المؤجلة (mockup جاهز) · `modonty/scripts/{diagnose,seed}-featured*.ts` قرار حذف/إبقاء · صور التست على tags/categories/industries dev.
+
+### 📂 Files touched (كلها untracked — وثائق فقط)
+- `documents/reels/REELS-VIDEO-BRAINSTORM-v1.html` — جديد (انتقل من tasks/) — ملف القرار: دراسة + 10 قرارات + موكب معتمد + روابط الملفات.
+- `documents/reels/reels-modonty-simulation-v1.html` — جديد (انتقل من mockups/) — محاكاة 4 شاشات.
+- `documents/reels/REELS-REQUIREMENTS-FLOW-v1.html` — جديد — قائمة التسليم + 5 فلوهات + الحالات.
+- ذاكرة: `~/.claude/projects/.../memory/project_reels_decision_file.md` (جديد+محدث) · `MEMORY.md` (مضغوط + بند الريلز).
+- **صفر تعديل على admin/modonty/console/dataLayer.**
+
+### 🔁 Git / deploy state
+- Branch: `main` · آخر commit: `a93fed9` (chore: changelog v0.84.0) · مدفوع: نعم (من الجلسة السابقة).
+- Uncommitted: ملفات وثائق untracked فقط (documents/reels/ الجديدة + mockups/tasks/issues/contract القديمة + .claude/settings + skills-lock) — **ولا ملف كود**.
+- Vercel: بلا deployments جديدة هذي الجلسة (آخر نشر admin v0.84.0 READY).
+
+### 🚀 How to resume in 30 seconds
+1. افتح `file:///c:/Users/w2nad/Desktop/dreamToApp/MODONTY/documents/reels/REELS-VIDEO-BRAINSTORM-v1.html` (ملف القرار — فيه كل شيء).
+2. اسأل خالد: «حطيت `BUNNY_API_KEY` في `.env.shared`؟» — لو نعم: نفّذ تجهيز مكتبة باني (الخطوات في Where I stopped، تحقق من docs.bunny.net قبل كل نداء).
+3. لو المكتبة جهزت: اطلب من خالد قفل القرار ٤ («ابروف») ← ابدأ الخطة التفصيلية للمرحلة الأولى.
+
+---
+
+## Session: 2026-07-04 ~16:00→20:00 — إعادة تنظيم أدمن كاملة: مجموعة Modonty بالشريط + 5 فصول إعدادات (✅ مدفوع ومنشور + changelog)
+
+### 🎯 Where I stopped
+- **✅ مدفوع ومنشور (2026-07-04 ~19:50):** commit `eebe433` — admin v0.84.0. Vercel: admin **READY** · console/modonty **CANCELED** (ignoreCommand يشتغل مثالي).
+- قبل الدفع: بوابة كاملة — build exit 0 · TSC ×3 صفر · 10 صفحات HTTP 200 · صفر أخطاء كونسول · backup (80 مجموعة، 7.3M) · فحص أسرار نظيف (6 تطابقات = إنذار كاذب "disk-inspect").
+- **قرار خالد:** `seo-preview.tsx` يبقى (رفض حذفه مرتين) — غير مستخدم لكن محفوظ.
+- **✅ changelog v0.84.0 أُضيف ومُتحقّق على الإنتاج:** الآلية الفعلية = `admin/scripts/add-changelog.ts` (يُحدَّث ويُشغَّل مع كل push، يكتب LOCAL+PROD — قرار 2026-04-29). ليس `changelog-sync.ts` (مهجور، يقف عند 0.42.0) ولا `createChangelog` action (صفر مستدعين). الإدخال ظاهر على admin.modonty.com/changelog. commit ثانٍ `a93fed9` ثبّت تعديل السكربت.
+- **بند متابعة جديد (غير عاجل):** صفحة `/changelog` على الإنتاج فيها hydration error (React #418) من فئة بق التواريخ نفسه — قديم، مش من شغل اليوم (إصلاحنا غطّى صفحات الإعدادات فقط). الإصلاح المرجّح: `suppressHydrationWarning` على عناصر التاريخ في `changelog-client.tsx`.
 
 ### ✅ Done this session
 - **Sidebar** (`admin/components/admin/sidebar.tsx`): دعم مستوى ثاني (SubMenu متداخل قابل للطي) + مجموعة **Modonty** بدل «Modonty Pages»: submenu **Info & Legal** (7 صفحات) + submenu **Master Pages** (Homepage · Articles · Clients · Categories · Tags · Industries · Trending). صفر نقل مسارات.
@@ -28,24 +228,32 @@
 - الأسرار تبقى في env — ما ننقل مفاتيح للـ UI.
 
 ### 🚧 Pending / blocked
-- **Push** — بانتظار قرار خالد (fresh confirmation)؛ قبله: version bump + `bash scripts/backup.sh` + changelog + فحص settings.json من التوكنات.
-- **مؤجّل باتفاق:** إعدادات سلوك السوشيال (Social Publishing: قالب كابشن/UTM/نشر تلقائي/جدولة/موافقة — الموكاب جاهز) + فكرة نقل Email Templates لـ Settings.
+- **hydration error بصفحة `/changelog` على الإنتاج** (React #418، فئة بق التواريخ نفسه — قديم، مش من شغل اليوم) — الإصلاح المرجّح: `suppressHydrationWarning` على عناصر التاريخ في `admin/app/(dashboard)/changelog/changelog-client.tsx`. غير عاجل، دقائق.
+- **مؤجّل باتفاق:** إعدادات سلوك السوشيال (Social Publishing: قالب كابشن/UTM/نشر تلقائي/جدولة/موافقة — الموكاب جاهز: `documents/mockups/admin-social-publishing-settings-v1.html`) + فكرة نقل Email Templates لـ Settings.
+- **معلّقات قديمة (من جلسات سابقة، بلا تغيير):** سكربتا `modonty/scripts/{diagnose,seed}-featured*.ts` غير المتتبَّعين (قرار حذف/إبقاء) · صور dev التجريبية على tags/categories/industries.
 
-### 📂 Files touched
-- `admin/components/admin/sidebar.tsx` — مستوى submenu ثاني + مجموعة Modonty
-- `admin/app/(dashboard)/settings/page.tsx` — تنظيف اللوحة + بطاقة Social Links
-- `admin/app/(dashboard)/settings/modonty/components/modonty-form.tsx` — شيل تبويب Social
-- `admin/app/(dashboard)/settings/modonty/page.tsx` — تحديث الوصف
-- جديد: `admin/app/(dashboard)/settings/social/page.tsx` + `social/components/social-links-form.tsx`
-- موكابات: `documents/mockups/admin-modonty-ia-FINAL.html` · `admin-modonty-ia-reorg-v1.html` · `admin-social-publishing-settings-v1.html`
+### 📂 Files touched (كلها مدفوعة)
+- `admin/components/admin/sidebar.tsx` — مستوى submenu ثاني + مجموعة Modonty (Info & Legal + Master Pages + Homepage Banner)
+- `admin/app/(dashboard)/settings/page.tsx` — لوحة جديدة: Organization (Social·Business·Brand) + Sales + Reference + Assets & system (9 areas / 8 editable)
+- `admin/app/(dashboard)/settings/modonty/components/modonty-form.tsx` — صار سيو فقط (3 حقول، بلا تبويبات، بلا SeoPreview) + suppressHydrationWarning
+- `admin/app/(dashboard)/settings/modonty/page.tsx` — وصف محدّث
+- `admin/app/(dashboard)/settings/_shared/save-bar.tsx` — suppressHydrationWarning على Cache label
+- جديد ×4: `settings/{social,business,brand,banner}/` (page.tsx + components/*-form.tsx لكل واحدة)
+- `admin/package.json` — v0.84.0 · `admin/scripts/add-changelog.ts` — إدخال v0.84.0
+- ملف يتيم بقرار خالد: `settings/modonty/components/seo-preview.tsx` (غير مستخدم — رفض حذفه)
+- موكابات (غير مدفوعة، untracked كالعادة): `admin-modonty-ia-FINAL.html` · `admin-modonty-ia-reorg-v1.html` · `admin-social-publishing-settings-v1.html`
 
 ### 🔁 Git / deploy state
-- Branch: main · Uncommitted: نعم (كل ما فوق) · لم يُدفع شي هذه الجلسة.
+- Branch: `main` · مدفوع: **commit `eebe433`** (admin v0.84.0 — 15 ملف) + **commit `a93fed9`** (changelog entry)
+- Vercel: admin **READY** على الإنتاج (تحقّقت حيّاً — الشريط الجديد ظاهر على admin.modonty.com) · console/modonty **CANCELED** (ignoreCommand)
+- Changelog v0.84.0: مكتوب LOCAL (`modonty_dev`) + PROD ومُتحقّق على `/changelog`
+- Backup قبل الدفع: `backups/backup-2026-07-04_19-40` (80 مجموعة · 7.3M)
+- Uncommitted متبقٍ: موكابات/تقارير untracked قديمة + `.claude/settings*` + `skills-lock.json` + سكربتا modonty المستبعدان (بلا تغيير عن قبل)
 
 ### 🚀 How to resume in 30 seconds
-1. `pnpm --filter @modonty/admin exec next dev -p 3001` → افتح `/settings` و`/settings/social`
-2. افتح `documents/context/SESSION-LOG.md` (هذا البلوك)
-3. القرار: push الحين؟ ولا نكمل Social Publishing settings؟
+1. `pnpm --filter @modonty/admin exec next dev -p 3001` → افتح `/settings` — الوضع الجديد كامل
+2. افتح هذا البلوك في `documents/context/SESSION-LOG.md`
+3. اختر التالي: (أ) إصلاح hydration صفحة `/changelog` (دقائق) · (ب) Social Publishing settings (الموكاب جاهز) · (ج) موضوع جديد
 
 ---
 

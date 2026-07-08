@@ -1,4 +1,3 @@
 export { getAnalyticsData } from "./get-analytics-data";
-export { getViewsTrendData } from "./get-views-trend-data";
-export { getClients } from "./get-clients";
-export { getArticles } from "./get-articles";
+// (Trimmed 2026-07-08: getViewsTrendData/getClients/getArticles re-exports removed —
+// the only consumer left is clients/get-client-analytics.ts which needs getAnalyticsData.)

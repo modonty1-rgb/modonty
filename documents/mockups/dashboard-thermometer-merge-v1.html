@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard = Thermometer — merged home v1</title>
+<style>
+  :root{--bg:#F6F7F9;--card:#fff;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;--blue:#2563EB;
+    --green:#10B981;--amber:#F59E0B;--red:#EF4444;--cyan:#06B6D4;--violet:#8B5CF6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);padding:28px;font-size:14px}
+  .wrap{max-width:1280px;margin:0 auto}
+  h1{font-size:22px;font-weight:800}
+  .sub{color:var(--muted)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .pill{border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:13px;color:var(--muted);background:#fff}
+  .pill.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .alert{display:flex;gap:10px;align-items:center;background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:10px 16px;margin-bottom:18px;font-size:13.5px}
+  .alert b{color:#B91C1C}
+  h2.sec{font-size:15px;font-weight:800;margin:24px 0 10px;display:flex;gap:8px;align-items:center}
+  h2.sec .tag{font-size:11px;font-weight:700;border-radius:999px;padding:1px 10px}
+  .tag.new{background:#D1FAE5;color:#065F46}
+  .tag.kill{background:#FEE2E2;color:#991B1B}
+  .grid{display:grid;gap:12px}
+  .g6{grid-template-columns:repeat(6,1fr)}
+  .g2{grid-template-columns:2fr 1fr}
+  .g2b{grid-template-columns:1fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi{cursor:pointer;transition:.15s}
+  .kpi:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(37,99,235,.12)}
+  .kpi .k{font-size:12px;color:var(--muted)}
+  .kpi .v{font-size:22px;font-weight:800}
+  .kpi .d{font-size:11px;color:var(--muted)}
+  .kpi .d .go{color:var(--blue)}
+  .kpi.hero{border-top:3px solid var(--blue)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:7px 10px;border-bottom:1px solid var(--line);font-size:12px}
+  td{padding:7px 10px;border-bottom:1px solid #F1F2F5}
+  tr:last-child td{border-bottom:none}
+  .num{font-variant-numeric:tabular-nums;font-weight:700}
+  .bar{display:flex;height:24px;border-radius:8px;overflow:hidden;margin:8px 0 6px}
+  .bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
+  .chartmock{height:150px;border-radius:10px;background:linear-gradient(to top,#EFF6FF 0%,transparent 60%),repeating-linear-gradient(to right,transparent 0 59px,#F1F2F5 59px 60px);position:relative;overflow:hidden}
+  .chartmock svg{position:absolute;inset:0;width:100%;height:100%}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
+  .wf{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .wf .col{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .wf .col .n{font-size:20px;font-weight:800}
+  .wf .col .l{font-size:11px;color:var(--muted)}
+  .killed{border:1px dashed #FCA5A5;background:#FEF2F2;border-radius:12px;padding:12px 16px;margin-top:26px;font-size:13px;color:#7F1D1D}
+  .footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Header — ONE header, ONE date filter -->
+<div class="row">
+  <div>
+    <h1>Dashboard <span style="font-size:12px;background:#D1FAE5;color:#065F46;border-radius:999px;padding:2px 10px;vertical-align:middle">= THERMOMETER · merged v1</span></h1>
+    <div class="sub">Tuesday, Jul 8, 2026 — everything that matters, nothing else</div>
+  </div>
+  <div>📅 <span class="pill">Today</span> <span class="pill">7d</span> <span class="pill on">30d</span> <span class="pill">90d</span></div>
+</div>
+
+<!-- 1 · Alerts (kept — always first) -->
+<div class="alert">🚨 <b>2 leads waiting a month with no follow-up</b> — Faten Hassanin (كيما زون) & modonty · <a href="#" style="color:#B91C1C;font-weight:700">Open Visitor Actions →</a></div>
+
+<!-- 2 · GA4 KPI row (replaces the "Under construction" section) -->
+<h2 class="sec">Activity — GA4 <span class="tag new">replaces the placeholder</span></h2>
+<div class="grid g6">
+  <div class="card kpi hero"><div class="k">Total Events</div><div class="v">1,803</div><div class="d">all types</div></div>
+  <div class="card kpi"><div class="k">Article Views</div><div class="v">552</div><div class="d">published articles</div></div>
+  <div class="card kpi"><div class="k">Client-Page Visits</div><div class="v">671</div><div class="d">partner mini-sites</div></div>
+  <div class="card kpi"><div class="k">Button Clicks</div><div class="v">502</div><div class="d">CTA pressed <span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Engagement</div><div class="v">36</div><div class="d">likes · saves · shares <span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Visitor Actions</div><div class="v">42</div><div class="d">total — breakdown below <span class="go">→</span></div></div>
+</div>
+
+<!-- 2b · Visitor Actions breakdown (Khalid: «أبغى أعرف التفاعلات الأساسية») -->
+<h2 class="sec">Visitor Actions — breakdown <span class="tag new">each card → filtered list with names & phones</span></h2>
+<div class="grid g6" style="grid-template-columns:repeat(5,1fr)">
+  <div class="card kpi" style="border-top:3px solid var(--red)"><div class="k">Needs action (new)</div><div class="v" style="color:var(--red)">15</div><div class="d">not contacted yet <span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Bookings</div><div class="v">9</div><div class="d">GA4 · DB details <span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Contact messages</div><div class="v">4</div><div class="d"><span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Reader questions</div><div class="v">2</div><div class="d"><span class="go">→</span></div></div>
+  <div class="card kpi"><div class="k">Comments</div><div class="v">7</div><div class="d"><span class="go">→</span></div></div>
+</div>
+
+<!-- 3 · Timeline + Sources + Geo -->
+<div class="grid g2" style="margin-top:14px">
+  <div class="card">
+    <b style="font-size:13px">Events Over Time</b>
+    <div class="chartmock" style="margin-top:8px">
+      <svg viewBox="0 0 600 150" preserveAspectRatio="none">
+        <path d="M0,120 C60,95 100,75 160,82 C220,90 260,50 320,58 C380,66 420,34 480,42 C540,48 570,26 600,22" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+        <path d="M0,135 C80,122 140,114 200,118 C280,122 340,98 420,102 C500,105 560,86 600,82" fill="none" stroke="#10B981" stroke-width="2"/>
+        <path d="M0,142 C100,138 180,131 260,134 C360,136 440,123 600,121" fill="none" stroke="#F59E0B" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--blue)"></i>Article views</span>
+      <span><i class="dot" style="background:var(--green)"></i>Client visits</span>
+      <span><i class="dot" style="background:var(--amber)"></i>Button clicks</span>
+    </div>
+  </div>
+  <div class="card">
+    <b style="font-size:13px">Sources & Geography</b>
+    <div class="bar">
+      <div style="background:var(--violet);width:58%">Social 58%</div>
+      <div style="background:var(--cyan);width:19%">Direct</div>
+      <div style="background:var(--blue);width:16%">Organic</div>
+      <div style="background:var(--amber);width:7%"></div>
+    </div>
+    <table>
+      <tr><td>🇪🇬 Egypt <span class="sub">· Cairo, Alexandria</span></td><td class="num" style="text-align:right">88%</td></tr>
+      <tr><td>🇸🇦 Saudi Arabia <span class="sub">· Jeddah, Riyadh</span></td><td class="num" style="text-align:right">6%</td></tr>
+      <tr><td>🌐 Other</td><td class="num" style="text-align:right">6%</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 4 · The two tables -->
+<div class="grid g2b" style="margin-top:14px">
+  <div class="card">
+    <b style="font-size:13px">Top Articles — views · sources · CTA</b>
+    <table style="margin-top:6px">
+      <tr><th>Article</th><th style="text-align:right">Views</th><th style="text-align:right">CTA</th></tr>
+      <tr><td>أفضل ممارسات السيو المحلي</td><td class="num" style="text-align:right">84</td><td class="num" style="text-align:right">31</td></tr>
+      <tr><td>دليل تبييض الأسنان</td><td class="num" style="text-align:right">67</td><td class="num" style="text-align:right">19</td></tr>
+      <tr><td>اختيار شركة مقاولات</td><td class="num" style="text-align:right">52</td><td class="num" style="text-align:right">12</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <b style="font-size:13px">Client Pages — visits · source · city</b>
+    <table style="margin-top:6px">
+      <tr><th>Client</th><th style="text-align:right">Visits</th><th>Top city</th></tr>
+      <tr><td>شركة جبر سيو</td><td class="num" style="text-align:right">203</td><td>🇸🇦 Jeddah</td></tr>
+      <tr><td>كيما زون</td><td class="num" style="text-align:right">145</td><td>🇸🇦 Riyadh</td></tr>
+      <tr><td>سمايل تاون</td><td class="num" style="text-align:right">98</td><td>🇪🇬 Cairo</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 5 · Article workflow (kept) -->
+<h2 class="sec">Article Workflow <span class="tag new">kept — daily ops</span></h2>
+<div class="wf">
+  <div class="col"><div class="n">3</div><div class="l">Draft</div></div>
+  <div class="col"><div class="n">2</div><div class="l">In Review</div></div>
+  <div class="col"><div class="n">1</div><div class="l">Revision</div></div>
+  <div class="col"><div class="n">4</div><div class="l">Approved</div></div>
+  <div class="col"><div class="n">35</div><div class="l">Published</div></div>
+  <div class="col"><div class="n">1</div><div class="l">Scheduled</div></div>
+</div>
+
+<!-- 6 · GSC (kept, compact) -->
+<h2 class="sec">Search Console — 7 days <span class="tag new">kept — search health</span></h2>
+<div class="grid g6">
+  <div class="card kpi"><div class="k">Clicks</div><div class="v">128</div></div>
+  <div class="card kpi"><div class="k">Impressions</div><div class="v">9,410</div></div>
+  <div class="card kpi"><div class="k">CTR</div><div class="v">1.4%</div></div>
+  <div class="card kpi"><div class="k">Avg Position</div><div class="v">18.2</div></div>
+  <div class="card kpi"><div class="k">Indexed</div><div class="v">41</div></div>
+  <div class="card kpi"><div class="k">Issues</div><div class="v">0</div></div>
+</div>
+
+<!-- What dies -->
+<div class="killed">
+  <b>🗑️ الحشو المحذوف:</b> قسم «GTM/GA4 تحت الإنشاء» (استُبدل بالحقيقي) · فلتر التاريخ المكرر (واحد موحد فوق) · قسم DB/Operations (له صفحة Database بالشريط) · صفحة /analytics المنفصلة (تحوّل هنا — صفحات التفصيل leads/cta/engagement تبقى كما هي) · بند Analytics بالشريط الجانبي (الرئيسية صارت هي).
+</div>
+
+<div class="footer">Mockup v1 — أرقام حقيقية من GA4 الإنتاج حيث توفرت · «ابروف» = بناء مطابق 100%</div>
+
+</div>
+</body>
+</html>
