@@ -12,15 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.85.0 (admin)",
-    title: "Dashboard = the Modonty thermometer — GA4-powered, one page",
+    version: "1.71.0 (modonty)",
+    title: "Deleted pages now tell Google they're gone — no more soft 404s",
     items: [
-      { type: "feature" as const, text: "Dashboard home now merges the full analytics overview: visitor actions (bookings/messages/questions/comments), GA4 KPIs, activity timeline, traffic sources, and geography — /analytics redirects home." },
-      { type: "feature" as const, text: "All numbers come straight from Google Analytics 4 (the source of truth); clicking any card opens the detail list from our database with full contact info." },
-      { type: "feature" as const, text: "New drill-down pages: /analytics/leads (visitor actions with status filters), /analytics/cta (button clicks), /analytics/engagement (likes/saves/shares)." },
-      { type: "fix" as const, text: "Geography counts were inflated by summing city rows (one visitor in several cities counted twice) — countries now use GA4's own country-level user counts." },
-      { type: "improve" as const, text: "Geography pins Saudi Arabia and Egypt on top; other countries collapse. Windows-safe country labels (code + name instead of flag emoji)." },
-      { type: "improve" as const, text: "Data audited end-to-end: every displayed number re-derived independently from the GA4 Data API and the database — all matched." },
+      { type: "fix" as const, text: "Deleted or non-existent category, tag, industry, and client URLs now return HTTP 410 Gone (previously 200 + noindex) — Google drops them from the index immediately instead of re-crawling dead pages." },
+      { type: "improve" as const, text: "The article 410 proxy now covers all five entity types; client pages return 410 while the subscription is not active, matching the page's own visibility rule." },
+      { type: "improve" as const, text: "Verified live: fake slugs return 410, listing pages and live entities (including Arabic slugs) untouched at 200." },
+      { type: "improve" as const, text: "Docs cleanup: one unified TODO file; 89 stale task/plan files removed (recoverable from git history)." },
     ],
   },
 ];
