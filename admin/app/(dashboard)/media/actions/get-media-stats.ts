@@ -128,8 +128,15 @@ export async function getMediaStats() {
       }),
       // Media type breakdown (GENERAL, LOGO, OGIMAGE, etc.)
       db.media.findMany({ where: SCOPE_FILTER, select: { type: true } }),
-      // Detailed usage breakdown: Media featured in articles
-      db.media.count({ where: { ...SCOPE_FILTER, featuredArticles: { some: {} } } }),
+      // Detailed usage breakdown: Media featured in an article or inside its gallery
+      db.media.count({
+        where: {
+          AND: [
+            SCOPE_FILTER,
+            { OR: [{ featuredArticles: { some: {} } }, { articleGallery: { some: {} } }] },
+          ],
+        },
+      }),
       // Detailed usage breakdown: Media used as client logos
       db.media.count({ where: { ...SCOPE_FILTER, logoClients: { some: {} } } }),
       // Detailed usage breakdown: Media used as hero images
@@ -139,16 +146,10 @@ export async function getMediaStats() {
     const imageTypeCounts = normalizeImageTypeCounts(imageTypesRaw);
     const mediaTypeCounts = normalizeMediaTypeCounts(mediaTypesRaw);
 
-    // Calculate total used (union of all usage types - a media can be used in multiple ways)
+    // Union of every usage type — one media can be used in several ways. Uses the shared
+    // clause so it cannot drift from the filter or the delete guard.
     const totalUsedUnique = await db.media.count({
-      where: {
-        ...SCOPE_FILTER,
-        OR: [
-          { featuredArticles: { some: {} } },
-          { logoClients: { some: {} } },
-          { heroImageClients: { some: {} } },
-        ],
-      },
+      where: { AND: [SCOPE_FILTER, MEDIA_USED_WHERE] },
     });
 
     // Unused = total - totalUsedUnique

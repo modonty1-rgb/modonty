@@ -70,7 +70,7 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
   const w = { createdAt: { gte: since } };
 
   const ga4CountsPromise = getGA4TileCounts();
-  const [bookings, messages, questions, comments, clientComments] = await Promise.all([
+  const [bookings, messages, articleQuestions, clientQuestions, comments, clientComments] = await Promise.all([
     db.bookingRequest.findMany({
       where: w,
       select: {
@@ -100,6 +100,23 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
         status: true,
         createdAt: true,
         client: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 300,
+    }),
+    // Article questions were missing entirely — the "Reader questions" count only
+    // ever saw client-page FAQs. source "user" = a visitor wrote it ("manual" is
+    // ours, "chatbot" is admin-authored from a transcript and ships with an answer).
+    db.articleFAQ.findMany({
+      where: { ...w, source: "user" },
+      select: {
+        id: true,
+        question: true,
+        status: true,
+        submittedByName: true,
+        submittedByEmail: true,
+        createdAt: true,
+        article: { select: { title: true, client: { select: { name: true } } } },
       },
       orderBy: { createdAt: "desc" },
       take: 300,
@@ -177,7 +194,21 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
       createdAt: m.createdAt.toISOString(),
       href: `/contact-messages/${m.id}`,
     })),
-    ...questions.map((q) => ({
+    ...articleQuestions.map((q) => ({
+      id: q.id,
+      type: "QUESTION" as const,
+      name: q.submittedByName ?? "—",
+      email: q.submittedByEmail,
+      phone: null,
+      clientName: q.article?.client?.name ?? null,
+      articleTitle: q.article?.title ?? null,
+      text: q.question.slice(0, 160),
+      source: "article",
+      status: String(q.status),
+      createdAt: q.createdAt.toISOString(),
+      href: null,
+    })),
+    ...clientQuestions.map((q) => ({
       id: q.id,
       type: "QUESTION" as const,
       name: q.submittedByName ?? "—",
@@ -186,7 +217,7 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
       clientName: q.client?.name ?? null,
       articleTitle: null,
       text: q.question.slice(0, 160),
-      source: "ask-client",
+      source: "client-page",
       status: String(q.status),
       createdAt: q.createdAt.toISOString(),
       href: null,
@@ -227,7 +258,7 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
     counts: {
       bookings: bookings.length,
       messages: messages.length,
-      questions: questions.length,
+      questions: articleQuestions.length + clientQuestions.length,
       comments: comments.length + clientComments.length,
       newStatus: rows.filter((r) => r.status === "new" || r.status === "PENDING").length,
     },

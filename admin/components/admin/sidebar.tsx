@@ -34,6 +34,7 @@ import {
   ShieldCheck,
   Cookie,
   Copyright,
+  BarChart3,
   LineChart,
   MailPlus,
   MailOpen,
@@ -214,7 +215,9 @@ const menuGroups: MenuGroup[] = [
 ];
 
 const topItems: MenuItem[] = [
-  // Analytics merged into the dashboard home (2026-07-08) — the home button IS the thermometer.
+  // Traffic analytics moved back out of the dashboard home (2026-07-13) — the home is a
+  // triage screen now, so this needs its own way in.
+  { icon: BarChart3, label: "Traffic Analytics", href: "/analytics" },
   { icon: Share2, label: "Social Media", href: "/social/facebook" },
   { icon: GoogleSearchConsoleIcon, label: "Search Console", href: "/search-console" },
   { icon: Globe, label: "Bing Webmaster", href: "/bing-webmaster" },

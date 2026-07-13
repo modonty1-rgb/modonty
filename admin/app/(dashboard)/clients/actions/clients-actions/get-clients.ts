@@ -126,6 +126,13 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
         isicV4: true,
         numberOfEmployees: true,
         organizationType: true,
+        // Read by clientToSeoInput. They were missing here, so the shared scorer saw
+        // them as empty and every client that actually has them scored one point lower
+        // in this table than on its own page. The scorer cannot tell "not selected" from
+        // "not filled" — if the adapter reads a field, this select must fetch it.
+        gbpPlaceId: true,
+        openingHoursSpecification: true,
+        priceRange: true,
         // YMYL verification
         isYmyl: true,
         ymylCategory: true,

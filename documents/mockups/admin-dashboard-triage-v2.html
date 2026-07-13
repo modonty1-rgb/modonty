@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Triage v2 — مراجعة UX + موك</title>
+<style>
+  :root{
+    --bg:#f4f4f5; --card:#ffffff; --border:#e4e4e7; --fg:#18181b; --muted:#71717a;
+    --red:#dc2626; --red-bg:#fef2f2; --amber:#d97706; --amber-bg:#fffbeb;
+    --green:#059669; --green-bg:#ecfdf5; --blue:#2563eb; --primary:#18181b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--fg);padding:24px;line-height:1.6}
+  .wrap{max-width:1200px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+  .section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+  .section>h2{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+  .b-red{background:var(--red-bg);color:var(--red)}
+  .b-amber{background:var(--amber-bg);color:var(--amber)}
+  .b-green{background:var(--green-bg);color:var(--green)}
+  .b-blue{background:#eff6ff;color:var(--blue)}
+  table.problems{width:100%;border-collapse:collapse;font-size:13px}
+  table.problems th{background:#fafafa;text-align:right;padding:8px 10px;border:1px solid var(--border);font-size:11px;color:var(--muted)}
+  table.problems td{padding:8px 10px;border:1px solid var(--border);vertical-align:top}
+  .sev{font-weight:800;white-space:nowrap}
+
+  /* ====== THE MOCK (LTR — مطابق للأدمن الحقيقي) ====== */
+  .mock{direction:ltr;text-align:left;background:var(--bg);border:2px dashed #a1a1aa;border-radius:12px;padding:20px}
+  .mock h3.pagetitle{font-size:20px;font-weight:700}
+  .mock .pagedate{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+  /* Today strip */
+  .today{background:var(--card);border:1px solid var(--border);border-inline-start:none;border-radius:10px;overflow:hidden;margin-bottom:20px}
+  .today-head{display:flex;justify-content:space-between;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--border);background:#fafafa}
+  .today-head b{font-size:13px}
+  .today-head span{font-size:11px;color:var(--muted)}
+  .trow{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #f4f4f5;font-size:13px}
+  .trow:last-child{border-bottom:none}
+  .trow .rank{width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .r-red{background:var(--red);color:#fff}
+  .r-amber{background:var(--amber);color:#fff}
+  .trow .num{font-weight:800;font-variant-numeric:tabular-nums}
+  .trow .num.red{color:var(--red)} .trow .num.amber{color:var(--amber)}
+  .trow .go{margin-left:auto;color:var(--blue);font-size:11px;font-weight:600;white-space:nowrap;text-decoration:none}
+  .trow .ctx{color:var(--muted);font-size:11px}
+
+  /* section header pattern */
+  .msec{margin-bottom:20px}
+  .msec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
+  .msec-head .t{font-size:13px;font-weight:800}
+  .msec-head .t small{font-weight:400;color:var(--muted);margin-left:8px;font-size:11px}
+  .msec-head .health{font-size:11px;color:var(--muted)}
+  .msec-head .health b{font-size:14px;font-variant-numeric:tabular-nums}
+  .h-red b{color:var(--red)} .h-green b{color:var(--green)} .h-amber b{color:var(--amber)}
+  .delta{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-inline:3px}
+  .d-up{background:var(--green-bg);color:var(--green)} .d-down{background:var(--red-bg);color:var(--red)}
+
+  /* cards */
+  .cards{display:flex;flex-wrap:wrap;gap:10px}
+  .kcard{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--primary);border-radius:8px;padding:10px 12px;min-width:150px;flex:1}
+  .kcard.hot{border-top-color:var(--red)}
+  .kcard.warm{border-top-color:var(--amber)}
+  .kcard .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;color:var(--green)}
+  .kcard.hot .v{color:var(--red)} .kcard.warm .v{color:var(--amber)}
+  .kcard .l{font-size:11px;font-weight:600;margin-top:4px}
+  .kcard .n{font-size:10px;color:var(--muted);line-height:1.4}
+  .grouplabel{font-size:11px;font-weight:700;color:var(--muted);margin:12px 0 6px}
+  .grouplabel small{font-weight:400;margin-left:6px}
+  /* zero chips */
+  .zeros{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+  .zchip{font-size:11px;color:var(--muted);background:#fafafa;border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-variant-numeric:tabular-nums}
+  .zchip b{color:var(--fg)}
+  .allgood{font-size:12px;color:var(--green);background:var(--green-bg);border:1px solid #a7f3d0;border-radius:8px;padding:8px 12px;display:inline-flex;gap:8px;align-items:center}
+
+  /* decisions */
+  .dec{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;background:#fafafa}
+  .dec h4{font-size:14px;margin-bottom:6px}
+  .dec p{font-size:12.5px;color:#3f3f46;margin-bottom:8px}
+  .dec .rec{font-size:12px;background:var(--green-bg);border:1px solid #a7f3d0;border-radius:6px;padding:6px 10px;margin-bottom:8px}
+  .lockbtn{border:1px solid var(--border);background:#fff;border-radius:6px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:inherit}
+  .lockbtn.locked{background:var(--green);color:#fff;border-color:var(--green)}
+  .fidelity{font-size:12px}
+  .fidelity td,.fidelity th{padding:6px 10px;border:1px solid var(--border);text-align:right}
+  .fidelity th{background:#fafafa;font-size:11px;color:var(--muted)}
+  code{background:#f4f4f5;border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:11px;direction:ltr;display:inline-block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>🩺 مراجعة UX للداشبورد + الموك المقترح — v2</h1>
+<p class="sub">2026-07-13 · الصفحة تقول «what needs you today» لكنها لا تجيب عليه — الجواب مبعثر في ١٤ رقماً أحمر على شاشتين. الموك تحته يرتّب الجواب.</p>
+
+<!-- ═══════════ المشاكل ═══════════ -->
+<div class="section">
+  <h2>المشاكل من عين الـ business والأدمن <span class="badge b-red">٧ مشاكل</span></h2>
+  <table class="problems">
+    <tr><th style="width:60px">شدة</th><th style="width:210px">المشكلة</th><th>الدليل من الصفحة الحالية</th></tr>
+    <tr>
+      <td class="sev" style="color:var(--red)">🔴 P1</td>
+      <td><b>لا يوجد ترتيب</b> — أهم مشكلة مدفونة</td>
+      <td>قمع الحجز ميت (39 فتحوا → 0 ضغطوا Submit) وهو أخطر رقم في البزنس كله، لكنه سطر صغير داخل كرت. عينك لازم تمسح 30 كرتاً لتعرف من أين تبدأ.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--red)">🔴 P2</td>
+      <td><b>الأحمر فقد معناه</b></td>
+      <td>١٤ رقماً أحمر في صفحة واحدة: «100 صورة غير مستخدمة» بنفس حُمرة «4 عملاء بلا زر تواصل». الأولى housekeeping والثانية تكلفك عميلاً. لما كل شيء أحمر — لا شيء عاجل.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--red)">🔴 P3</td>
+      <td><b>أرقام البزنس المركّبة غائبة</b></td>
+      <td>«8 CTA never set» + «4 no button» = <b>12 من 27 عميلاً لا يستطيع الزائر الوصول إليهم إطلاقاً (44٪)</b>. هذا الرقم المركّب هو القرار — لكن لا أحد يجمعه لك.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--amber)">🟡 P4</td>
+      <td><b>كروت الأصفار تأكل الشاشة</b></td>
+      <td>Articles: أربعة كروت قيمتها 0 (revision·scheduled·writing·archived) تاخذ نصف الصف. Clients «Needs you»: ثلاثة أصفار بحجم كامل. الصفر خبر جيد — يستحق سطراً، لا كرتاً.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--amber)">🟡 P5</td>
+      <td><b>لا اتجاه — snapshot بلا مقارنة</b></td>
+      <td>2,574 زائراً... أكثر من الفترة الماضية أم أقل؟ حجزان... تحسّن أم انهيار؟ كل رقم بلا سهم اتجاه = معلومة نص ناقصة لصاحب بزنس.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--amber)">🟡 P6</td>
+      <td><b>ازدواج العدّ في صف Visitor Actions</b></td>
+      <td>كرت «Needs action 16» يجمع نفس الأرقام الموجودة في الكروت الأربعة بجانبه (7 رسائل + 6 تعليقات + 2 حجوزات + 1 سؤال). نفس المعلومة مرّتين في صف واحد.</td>
+    </tr>
+    <tr>
+      <td class="sev" style="color:var(--amber)">🟡 P7</td>
+      <td><b>رؤوس الأقسام بلا نمط موحّد</b></td>
+      <td>كل قسم يعرض شيئاً مختلفاً يمين العنوان: مرة «76 total»، مرة «145 of 245»، مرة «3 below 60». وحّدها: رقم صحة واحد + الإجمالي + السهم.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ═══════════ الموك ═══════════ -->
+<div class="section">
+  <h2>الموك — الداشبورد بعد الإصلاح <span class="badge b-blue">بالأرقام الحقيقية من شاشتك</span></h2>
+  <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">
+    ثلاث أفكار فقط: <b>① شريط Today</b> فوق يرتّب أهم ٥ أشياء (هو الجواب) ·
+    <b>② ثلاث درجات لون</b>: أحمر = يكلفك فلوس/عميل اليوم · كهرماني = شغل الأسبوع (سيو/صور) · رمادي = housekeeping ·
+    <b>③ الأصفار تنضغط</b> لسطر chips والكروت للأرقام الحية فقط.
+  </p>
+
+  <div class="mock">
+    <h3 class="pagetitle">Dashboard</h3>
+    <p class="pagedate">Monday, Jul 13, 2026 — what needs you today</p>
+
+    <!-- ① TODAY strip -->
+    <div class="today">
+      <div class="today-head">
+        <b>▍Today — start here</b>
+        <span>ranked by what it costs you · red = money/client · amber = this week</span>
+      </div>
+      <div class="trow">
+        <span class="rank r-red">1</span>
+        <span class="num red">39 → 0</span>
+        <span>Booking funnel is dead: 39 opened the book page, <b>0 pressed submit</b> (90d) — every YMYL clinic converts at 0%</span>
+        <a class="go" href="#">investigate →</a>
+      </div>
+      <div class="trow">
+        <span class="rank r-red">2</span>
+        <span class="num red">12<span style="font-weight:400;color:var(--muted)">/27</span></span>
+        <span>clients are unreachable — no working contact button <span class="ctx">(8 never set · 4 none)</span></span>
+        <a class="go" href="#">fix CTAs →</a>
+      </div>
+      <div class="trow">
+        <span class="rank r-red">3</span>
+        <span class="num red">16</span>
+        <span>visitor actions waiting on you <span class="ctx">(7 messages · 6 comments · 2 bookings to call · 1 question)</span></span>
+        <a class="go" href="#">clear inbox →</a>
+      </div>
+      <div class="trow">
+        <span class="rank r-amber">4</span>
+        <span class="num amber">11</span>
+        <span>articles waiting for approval <span class="ctx">+ 7 clients waiting on their own sign-off — chase them</span></span>
+        <a class="go" href="#">review →</a>
+      </div>
+      <div class="trow">
+        <span class="rank r-amber">5</span>
+        <span class="num amber">10</span>
+        <span>clients paying with zero articles — paying for silence</span>
+        <a class="go" href="#">see who →</a>
+      </div>
+    </div>
+
+    <!-- Visitor actions -->
+    <div class="msec">
+      <div class="msec-head">
+        <span class="t">Visitor actions <small>last 90 days · <span style="color:var(--amber)">■</span> GA4 · <span style="color:var(--green)">■</span> Database</small></span>
+        <span class="health"><b style="color:var(--fg)">2,574</b> people <span class="delta d-up">▲ vs prev 90d</span> · 3,919 sessions · <b style="color:var(--red)">1%</b> took action →</span>
+      </div>
+      <div class="cards">
+        <div class="kcard hot"><div class="v">2</div><div class="l">Bookings</div><div class="n">39 opened · 0 submitted · full report →</div></div>
+        <div class="kcard hot"><div class="v">7</div><div class="l">Messages unread</div><div class="n">4 guests · 3 members</div></div>
+        <div class="kcard hot"><div class="v">6</div><div class="l">Comments to approve</div><div class="n">5 on articles · 2 on client pages</div></div>
+        <div class="kcard warm"><div class="v">1</div><div class="l">Question unanswered</div><div class="n">oldest waited 8 days</div></div>
+      </div>
+      <p style="font-size:10.5px;color:var(--muted);margin-top:6px">كرت «Needs action 16» انحذف — الشريط فوق أخذ دوره، والكروت هنا هي التفصيل. (P6)</p>
+    </div>
+
+    <!-- Articles -->
+    <div class="msec">
+      <div class="msec-head">
+        <span class="t">Articles <small>every stage of the pipeline</small></span>
+        <span class="health h-amber"><b>11</b> need a decision · 76 total →</span>
+      </div>
+      <div class="cards">
+        <div class="kcard warm"><div class="v">11</div><div class="l">Waiting approval</div><div class="n">your sign-off blocks them</div></div>
+        <div class="kcard"><div class="v" style="color:var(--fg)">9</div><div class="l">Drafts</div><div class="n">being written</div></div>
+        <div class="kcard"><div class="v">56</div><div class="l">Published</div><div class="n">live on modonty.com</div></div>
+      </div>
+      <div class="zeros">
+        <span class="zchip"><b>0</b> need revision</span>
+        <span class="zchip"><b>0</b> scheduled</span>
+        <span class="zchip"><b>0</b> being written</span>
+        <span class="zchip"><b>0</b> archived</span>
+      </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="msec">
+      <div class="msec-head">
+        <span class="t">Clients <small>subscription and readiness</small></span>
+        <span class="health h-red"><b>12</b> unreachable of <b style="color:var(--fg)">27</b> →</span>
+      </div>
+
+      <p class="grouplabel">Money <small>subscription & payment</small></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div class="kcard hot" style="flex:0 1 220px"><div class="v">1</div><div class="l">Waiting to be activated</div><div class="n">signed up, not switched on</div></div>
+        <span class="allgood">✓ Money is fine — 0 overdue · 0 expired · 0 expiring this week</span>
+      </div>
+
+      <p class="grouplabel">How visitors reach them <small>12 of 27 have no working button — that is the red number above</small></p>
+      <div class="cards">
+        <div class="kcard hot"><div class="v">8</div><div class="l">CTA never set</div><div class="n">field missing on record</div></div>
+        <div class="kcard hot"><div class="v">4</div><div class="l">No button at all</div><div class="n">paying, unreachable</div></div>
+        <div class="kcard"><div class="v">15</div><div class="l">Booking form</div><div class="n">lead lands in our DB</div></div>
+        <div class="kcard"><div class="v" style="color:var(--fg)">0</div><div class="l">External link</div><div class="n">their site / WhatsApp</div></div>
+      </div>
+
+      <p class="grouplabel">Content <small>a client can be in more than one</small></p>
+      <div class="cards">
+        <div class="kcard warm"><div class="v">10</div><div class="l">No articles at all</div><div class="n">paying for silence</div></div>
+        <div class="kcard warm"><div class="v">7</div><div class="l">Waiting on the client</div><div class="n">chase them</div></div>
+        <div class="kcard"><div class="v">15</div><div class="l">Has published</div><div class="n">at least one live</div></div>
+      </div>
+      <div class="zeros"><span class="zchip"><b>0</b> in progress</span></div>
+
+      <p class="grouplabel">Images <small>first card is the intersection</small></p>
+      <div class="cards">
+        <div class="kcard warm"><div class="v">5</div><div class="l">No image at all</div><div class="n">start here</div></div>
+        <div class="kcard warm"><div class="v">5</div><div class="l">No logo</div><div class="n">knowledge panel</div></div>
+        <div class="kcard warm"><div class="v">7</div><div class="l">No hero</div><div class="n">page banner</div></div>
+        <div class="kcard warm"><div class="v">7</div><div class="l">No share image</div><div class="n">blank link previews</div></div>
+      </div>
+
+      <p class="grouplabel">Portfolio</p>
+      <div class="zeros">
+        <span class="zchip"><b>26</b> active</span>
+        <span class="zchip"><b>16</b> YMYL</span>
+        <span class="zchip"><b>10</b> standard</span>
+        <span class="zchip"><b>0</b> cancelled</span>
+      </div>
+    </div>
+
+    <!-- Media -->
+    <div class="msec">
+      <div class="msec-head">
+        <span class="t">Media <small>what is used, and what search sees</small></span>
+        <span class="health h-amber"><b>73</b> failing SEO · 145 of 245 in use →</span>
+      </div>
+      <div class="cards">
+        <div class="kcard warm"><div class="v">73</div><div class="l">Failing SEO</div><div class="n">below 60 — alt text first</div></div>
+        <div class="kcard warm"><div class="v">8</div><div class="l">No alt text</div><div class="n">invisible in Google Images</div></div>
+        <div class="kcard"><div class="v" style="color:var(--muted)">100</div><div class="l" style="color:var(--muted)">Unused</div><div class="n">housekeeping — storage only</div></div>
+      </div>
+      <div class="zeros"><span class="zchip"><b>0</b> no dimensions</span></div>
+      <p style="font-size:10.5px;color:var(--muted);margin-top:6px">«Unused 100» نزل من أحمر إلى رمادي — ما يكلفك عميلاً، يكلفك تخزيناً. (P2)</p>
+    </div>
+
+    <!-- Reference -->
+    <div class="msec">
+      <div class="msec-head">
+        <span class="t">Reference data <small>listing pages Google indexes — SEO only</small></span>
+        <span class="health h-red"><b>3</b> pages below 60</span>
+      </div>
+      <div class="cards">
+        <div class="kcard hot" style="flex:0 1 200px"><div class="v">3</div><div class="l">Authors</div><div class="n">nothing generated — all 3 failing</div></div>
+      </div>
+      <div class="zeros">
+        <span class="zchip"><b>10</b> categories ✓</span>
+        <span class="zchip"><b>35</b> tags ✓</span>
+        <span class="zchip"><b>7</b> industries ✓</span>
+      </div>
+      <p style="font-size:10.5px;color:var(--muted);margin-top:6px">الكرت يظهر فقط للمجموعة المكسورة؛ السليمة chips خضراء. (P4)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ القرارات ═══════════ -->
+<div class="section">
+  <h2>القرارات — اقفلها واحداً واحداً <span class="badge b-amber" id="deccount">0 / 5</span></h2>
+
+  <div class="dec" data-d="d1">
+    <h4>D1 · شريط «Today» أعلى الصفحة</h4>
+    <p>قائمة مرتّبة (٥ بنود كحد أقصى) تُبنى من نفس أرقام الأقسام تحتها — بلا استعلام جديد. الترتيب ثابت بقاعدة: فلوس/عميل أولاً، ثم صندوق الوارد، ثم المحتوى.</p>
+    <div class="rec">✅ توصيتي: نعم — هذا هو الإصلاح الجوهري؛ الصفحة أخيراً تجيب على عنوانها.</div>
+    <button class="lockbtn" onclick="lock(this)">🔓 اقفل القرار</button>
+  </div>
+
+  <div class="dec" data-d="d2">
+    <h4>D2 · ثلاث درجات لون بدل درجتين</h4>
+    <p>أحمر = يكلفك فلوس/عميل اليوم (قمع ميت · عميل بلا زر · فلوس متأخرة). كهرماني = شغل هذا الأسبوع (سيو الصور · موافقات المقالات). رمادي = housekeeping (unused media). ينطبق على الكروت والشريط معاً.</p>
+    <div class="rec">✅ توصيتي: نعم — يرجع للأحمر هيبته. التغيير CSS فقط على الكروت الموجودة.</div>
+    <button class="lockbtn" onclick="lock(this)">🔓 اقفل القرار</button>
+  </div>
+
+  <div class="dec" data-d="d3">
+    <h4>D3 · الأصفار تنضغط لسطر chips</h4>
+    <p>أي كرت قيمته صفر (وليس تحذيراً) ينزل لسطر chips رمادي تحت المجموعة. لو المجموعة كلها أصفار سليمة → سطر أخضر واحد «✓ Money is fine». الكروت الكبيرة للأرقام الحية فقط.</p>
+    <div class="rec">✅ توصيتي: نعم — يوفّر ~٤٠٪ من طول الصفحة ويُبقي كل المعلومات ظاهرة.</div>
+    <button class="lockbtn" onclick="lock(this)">🔓 اقفل القرار</button>
+  </div>
+
+  <div class="dec" data-d="d4">
+    <h4>D4 · رقم صحة موحّد يمين كل عنوان قسم</h4>
+    <p>نمط واحد: <b>[أخطر رقم بلونه] · [الإجمالي] · [سهم]</b>. مثال: «Clients: <span style="color:var(--red);font-weight:700">12</span> unreachable of 27 →». وكرت «Needs action 16» ينحذف لأن الشريط أخذ دوره (P6).</p>
+    <div class="rec">✅ توصيتي: نعم — مسح العين يصير نمطاً واحداً من فوق لتحت.</div>
+    <button class="lockbtn" onclick="lock(this)">🔓 اقفل القرار</button>
+  </div>
+
+  <div class="dec" data-d="d5">
+    <h4>D5 · أسهم الاتجاه (▲▼ مقابل الفترة السابقة)</h4>
+    <p>مقارنة GA4 للـ 90 يوماً السابقة (زوار · جلسات · حجوزات). تحتاج استعلام GA4 إضافياً بـ date range ثانٍ — شغل حقيقي مش CSS.</p>
+    <div class="rec">⏳ توصيتي: نعم لكن <b>مرحلة ثانية</b> — بعد ما نقفل D1–D4 وتشوفها حية. ما تأخّر الباقي.</div>
+    <button class="lockbtn" onclick="lock(this)">🔓 اقفل القرار</button>
+  </div>
+</div>
+
+<!-- ═══════════ مواصفة المطابقة ═══════════ -->
+<div class="section">
+  <h2>مواصفة المطابقة <span class="badge b-blue">الموك = عقد</span></h2>
+  <table class="problems fidelity">
+    <tr><th>عنصر الموك</th><th>في الكود الحقيقي</th></tr>
+    <tr><td>شريط Today</td><td>كومبوننت سيرفر جديد <code>components/sections/today-strip.tsx</code> — يستهلك نفس الأكشنات الموجودة (بلا استعلام جديد)، يُبنى ترتيبه بقاعدة ثابتة في الكود</td></tr>
+    <tr><td>كرت كهرماني</td><td>نفس <code>StatCard</code> الحالي + prop درجة: <code>border-t-amber-500</code> و <code>text-amber-600 dark:text-amber-400</code></td></tr>
+    <tr><td>chips الأصفار</td><td><code>rounded-full border bg-muted/40 text-[11px] text-muted-foreground</code> — سطر flex تحت كروت المجموعة</td></tr>
+    <tr><td>سطر «Money is fine»</td><td><code>bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400</code></td></tr>
+    <tr><td>رقم الصحة يمين العنوان</td><td>نفس نمط الرابط الحالي في رؤوس الأقسام — يتوحّد في الأقسام الخمسة</td></tr>
+    <tr><td>حذف كرت Needs action</td><td>يُشال من <code>visitor-actions-breakdown.tsx</code> — الشريط بديله</td></tr>
+  </table>
+  <p style="font-size:11.5px;color:var(--muted);margin-top:10px">فروقات مقفولة سلفاً: عرض الكروت flex-wrap مثل الحالي تماماً · الخط Segoe هنا لكن التطبيق يستخدم خطّه الحالي · الوضع الداكن مشمول بنفس توكنز dark: الموجودة.</p>
+</div>
+
+<script>
+function lock(btn){
+  const locked = btn.classList.toggle('locked');
+  btn.textContent = locked ? '🔒 مقفول' : '🔓 اقفل القرار';
+  const key = 'triage-v2-' + btn.closest('.dec').dataset.d;
+  locked ? localStorage.setItem(key,'1') : localStorage.removeItem(key);
+  refresh();
+}
+function refresh(){
+  const total = document.querySelectorAll('.dec').length;
+  const done = document.querySelectorAll('.lockbtn.locked').length;
+  const el = document.getElementById('deccount');
+  el.textContent = done + ' / ' + total;
+  el.className = 'badge ' + (done === total ? 'b-green' : 'b-amber');
+}
+document.querySelectorAll('.dec').forEach(d=>{
+  if(localStorage.getItem('triage-v2-' + d.dataset.d)){
+    const b = d.querySelector('.lockbtn'); b.classList.add('locked'); b.textContent='🔒 مقفول';
+  }
+});
+refresh();
+</script>
+</body>
+</html>

@@ -104,7 +104,18 @@ export async function getArticles(filters?: ArticleFilters) {
           scheduledAt: true,
           client: { select: { id: true, name: true, logoMedia: { select: { url: true, altText: true } } } },
           category: { select: { id: true, name: true } },
-          // SEO score analyzer fields
+          // Fields the SHARED dataLayer SEO scorer reads. All five must be here: it scores
+          // the STORED, published page, and a missing field is indistinguishable from an
+          // empty one — leave any of them out and every row silently scores the same low
+          // number, which is exactly the bug this list fixes.
+          nextjsMetadata: true,
+          jsonLdStructuredData: true,
+          jsonLdValidationReport: true,
+          featuredImageId: true,
+          authorId: true,
+          clientId: true,
+          dateModified: true,
+
           slug: true,
           excerpt: true,
           wordCount: true,
@@ -112,9 +123,6 @@ export async function getArticles(filters?: ArticleFilters) {
           seoTitle: true,
           seoDescription: true,
           canonicalUrl: true,
-          jsonLdStructuredData: true,
-          featuredImageId: true,
-          authorId: true,
           author: { select: { id: true, name: true } }, // name shown in category/tag views
           featuredImage: { select: { id: true, altText: true } }, // no url/width/height
           faqs: { select: { id: true } },            // only count needed
@@ -160,7 +168,13 @@ export async function getArticles(filters?: ArticleFilters) {
         seoTitle: article.seoTitle,
         seoDescription: article.seoDescription,
         canonicalUrl: article.canonicalUrl,
+        // The shared SEO scorer reads these — the fetch above selects them, and this
+        // hand-written re-map is where they used to get dropped on the floor.
+        nextjsMetadata: article.nextjsMetadata,
         jsonLdStructuredData: article.jsonLdStructuredData,
+        jsonLdValidationReport: article.jsonLdValidationReport,
+        dateModified: article.dateModified,
+        clientId: article.clientId,
         featuredImageId: article.featuredImageId,
         featuredImage: article.featuredImage,
         authorId: article.authorId,
@@ -187,7 +201,11 @@ export async function getArticles(filters?: ArticleFilters) {
       seoTitle: article.seoTitle,
       seoDescription: article.seoDescription,
       canonicalUrl: article.canonicalUrl,
+      nextjsMetadata: article.nextjsMetadata,
       jsonLdStructuredData: article.jsonLdStructuredData,
+      jsonLdValidationReport: article.jsonLdValidationReport,
+      dateModified: article.dateModified,
+      clientId: article.clientId,
       featuredImageId: article.featuredImageId,
       featuredImage: article.featuredImage,
       authorId: article.authorId,

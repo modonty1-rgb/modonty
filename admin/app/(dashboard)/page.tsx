@@ -1,58 +1,68 @@
 import { Suspense } from "react";
-import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { getDashboardAlerts } from "./actions/dashboard-actions";
-import { getGA4Activity } from "./analytics/actions/get-ga4-activity";
-import { getClients } from "./analytics/actions/get-clients";
-import { getArticles } from "./analytics/actions/get-articles";
 import { DashboardAlertsBanner } from "./components/dashboard-alerts-banner";
-import { FullActivityClient } from "./analytics/components/full-activity-client";
+import { TodayStrip } from "./components/sections/today-strip";
 import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
-import { ArticleWorkflowBoard } from "./components/sections/article-workflow-board";
-import { GscSection } from "./components/sections/gsc-section";
-import { GscSectionSkeleton } from "./components/sections/gsc-section-skeleton";
+import { ArticlesPipeline } from "./components/sections/articles-pipeline";
+import { ClientsPipeline } from "./components/sections/clients-pipeline";
+import { MediaLibrary } from "./components/sections/media-library";
+import { ReferenceData } from "./components/sections/reference-data";
 
-// Merged dashboard = «ترمومتر مدونتي» (approved mockup dashboard-thermometer-merge-v1,
-// 2026-07-08): alerts → GA4 activity + Visitor Actions breakdown → timeline/sources/geo/
-// tables (FullActivityClient) → article workflow → Search Console. Killed: the GA4
-// "under construction" placeholder, the duplicate date selector, and the DB/Ops section
-// (it has its own /database page).
+/**
+ * The dashboard is a TRIAGE screen, and the Today strip is its answer
+ * (contract: documents/mockups/admin-dashboard-triage-v2-ui.html, approved 2026-07-13).
+ *
+ * Reading order = business order: what needs me now (Today) → what visitors did →
+ * our content → the money → the housekeeping (media + reference share one row).
+ * Every number the strip ranks comes from the same cached fetch its section uses,
+ * so the two can never disagree.
+ */
 export default async function DashboardPage() {
-  const [alerts, activity, clients, articles] = await Promise.all([
-    getDashboardAlerts(),
-    getGA4Activity(),
-    getClients(),
-    getArticles(),
-  ]);
+  const alerts = await getDashboardAlerts();
 
   return (
-    <div className="mx-auto max-w-[1280px] space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold leading-tight">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          {format(new Date(), "EEEE, MMM d, yyyy")} — everything that matters, nothing else
-        </p>
-      </div>
+    <div className="mx-auto max-w-[1280px] space-y-7">
+      {/* 1 · The ranked answer to "what needs you today" (includes the page header) */}
+      <Suspense
+        fallback={
+          <div className="space-y-4">
+            <Skeleton className="h-14 w-72" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        }
+      >
+        <TodayStrip />
+      </Suspense>
 
-      {/* 1 · Urgent, cross-source */}
+      {/* Urgent cross-source alerts — renders nothing when all is clear */}
       <DashboardAlertsBanner alerts={alerts} />
 
-      {/* 2 · Visitor actions — the business pulse */}
-      <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+      {/* 2 · What visitors did to us */}
+      <Suspense fallback={<Skeleton className="h-64 w-full" />}>
         <VisitorActionsBreakdown />
       </Suspense>
 
-      {/* 3 · Full GA4 activity: KPIs, timeline, sources, geo, tables + filters */}
-      <FullActivityClient initialData={activity} clients={clients} articles={articles} />
-
-      {/* 4 · Daily ops */}
-      <ArticleWorkflowBoard />
-
-      {/* 5 · Search health */}
-      <Suspense fallback={<GscSectionSkeleton />}>
-        <GscSection days={7} />
+      {/* 3 · Where our own content stands */}
+      <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+        <ArticlesPipeline />
       </Suspense>
+
+      {/* 4 · Where the money stands */}
+      <Suspense fallback={<Skeleton className="h-72 w-full" />}>
+        <ClientsPipeline />
+      </Suspense>
+
+      {/* 5 · Housekeeping — two small sections share one row */}
+      <div className="grid gap-7 lg:grid-cols-2">
+        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+          <MediaLibrary />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+          <ReferenceData />
+        </Suspense>
+      </div>
     </div>
   );
 }

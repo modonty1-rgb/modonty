@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — UI Mock v2</title>
+<style>
+  :root{
+    --bg:#f4f4f5; --card:#fff; --border:#e4e4e7; --fg:#18181b; --muted:#71717a; --faint:#a1a1aa;
+    --red:#dc2626; --red-soft:#fef2f2; --red-line:#fecaca;
+    --amber:#d97706; --amber-soft:#fffbeb; --amber-line:#fde68a;
+    --green:#059669; --green-soft:#ecfdf5; --green-line:#a7f3d0;
+    --blue:#2563eb; --blue-soft:#eff6ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+  .ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+  /* ── app chrome ── */
+  .topbar{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;padding:0 20px;position:sticky;top:0;z-index:10}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+  .logo .m{width:26px;height:26px;border-radius:6px;background:var(--fg);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .topnav{display:flex;gap:16px;font-size:12.5px;color:var(--muted)}
+  .topnav span{display:flex;align-items:center;gap:6px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--fg);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .bell{position:relative;width:30px;height:30px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .bell i{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;font-style:normal;font-size:9px;font-weight:800;border-radius:99px;padding:1px 5px}
+
+  .shell{display:flex}
+  .rail{width:52px;min-height:calc(100vh - 56px);background:var(--card);border-right:1px solid var(--border);padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .rail span{width:20px;height:20px;border-radius:5px;background:#e4e4e7}
+  .rail span.on{background:var(--fg)}
+  main{flex:1;padding:22px 26px;max-width:1240px;margin:0 auto}
+
+  /* ── page head ── */
+  .phead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .phead h1{font-size:22px;font-weight:700;line-height:1.2}
+  .phead .date{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .pulse{display:flex;gap:8px}
+  .pill{font-size:11px;font-weight:700;border-radius:99px;padding:4px 12px;display:flex;align-items:center;gap:6px}
+  .pill em{font-style:normal;font-size:13px;font-variant-numeric:tabular-nums}
+  .p-red{background:var(--red-soft);color:var(--red);border:1px solid var(--red-line)}
+  .p-amber{background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line)}
+  .p-green{background:var(--green-soft);color:var(--green);border:1px solid var(--green-line)}
+
+  /* ── TODAY ── */
+  .today{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:22px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .today-head{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border)}
+  .today-head .tt{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--red)}
+  .today-head .tt b{color:var(--fg)}
+  .today-head .legend{font-size:10.5px;color:var(--muted)}
+  .legend .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 4px 0 10px}
+  .trow{display:grid;grid-template-columns:34px 34px 96px 1fr auto;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid #f4f4f5;position:relative;cursor:pointer;transition:background .12s}
+  .trow:hover{background:#fafafa}
+  .trow:last-child{border-bottom:none}
+  .trow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .trow.sev-red::before{background:var(--red)}
+  .trow.sev-amber::before{background:var(--amber)}
+  .rank{font-size:12px;font-weight:800;color:var(--faint);justify-self:center}
+  .ibox{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .ib-red{background:var(--red-soft);color:var(--red)}
+  .ib-amber{background:var(--amber-soft);color:var(--amber)}
+  .ib-green{background:var(--green-soft);color:var(--green)}
+  .ib-gray{background:#f4f4f5;color:var(--muted)}
+  .tnum{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.3px;line-height:1}
+  .tnum small{font-size:12px;font-weight:600;color:var(--faint)}
+  .sev-red .tnum{color:var(--red)} .sev-amber .tnum{color:var(--amber)}
+  .ttxt{font-size:13.5px;line-height:1.45}
+  .ttxt b{font-weight:700}
+  .ttxt .ctx{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+  .tgo{font-size:11.5px;font-weight:700;color:var(--blue);white-space:nowrap;opacity:.75;transition:opacity .12s}
+  .trow:hover .tgo{opacity:1}
+
+  /* ── sections ── */
+  .sec{margin-bottom:22px}
+  .sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .sec-head .st{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .sec-head .st .ic{width:16px;height:16px;color:var(--muted)}
+  .sec-head .st small{font-weight:400;font-size:11.5px;color:var(--muted);margin-left:4px}
+  .health{font-size:11.5px;color:var(--muted);display:flex;align-items:baseline;gap:6px}
+  .health b{font-size:16px;font-variant-numeric:tabular-nums}
+  .health b.red{color:var(--red)} .health b.amber{color:var(--amber)} .health b.green{color:var(--green)}
+  .health a{color:var(--blue);text-decoration:none;font-weight:700;margin-left:4px}
+  .delta{font-size:9.5px;font-weight:800;border-radius:99px;padding:2px 7px;vertical-align:2px}
+  .d-up{background:var(--green-soft);color:var(--green)}
+
+  .glabel{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+  .glabel .ic{width:13px;height:13px}
+  .glabel small{font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;font-size:11px}
+
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+  .kcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .12s,transform .12s}
+  .kcard:hover{box-shadow:0 3px 10px rgba(0,0,0,.07);transform:translateY(-1px)}
+  .kcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--border)}
+  .kcard.hot::before{background:var(--red)} .kcard.warm::before{background:var(--amber)} .kcard.ok::before{background:var(--green)}
+  .khead{display:flex;align-items:center;gap:10px}
+  .kv{font-size:23px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.5px}
+  .hot .kv{color:var(--red)} .warm .kv{color:var(--amber)} .ok .kv{color:var(--green)} .plain .kv{color:var(--fg)}
+  .kl{font-size:11.5px;font-weight:700;margin-top:8px}
+  .kn{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+  .kcard .arr{position:absolute;top:10px;right:12px;font-size:11px;color:var(--faint);opacity:0;transition:opacity .12s}
+  .kcard:hover .arr{opacity:1}
+
+  /* per-card breakdown rows — amber number = GA4, green = our DB */
+  .rows{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+  .row{display:flex;gap:7px;font-size:10.5px;color:var(--muted);align-items:baseline}
+  .row b{font-variant-numeric:tabular-nums;font-weight:800;min-width:16px;text-align:right}
+  .row b.ga{color:var(--amber)} .row b.db{color:var(--green)}
+  .frep{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--blue)}
+
+  /* ghost cell — the zeros live INSIDE the grid, filling what used to be a hole */
+  .ghost{border:1px dashed var(--border);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:5px;justify-content:center;align-items:flex-start}
+  .ghost .gt{font-size:9.5px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.4px}
+  .zchip{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:99px;padding:3px 11px;font-variant-numeric:tabular-nums}
+  .zchip b{color:var(--fg);font-weight:700}
+  .zchip.g{color:var(--green);background:var(--green-soft);border-color:var(--green-line)}
+  .allgood{font-size:12px;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid var(--green-line);border-radius:10px;padding:10px 14px;display:flex;gap:8px;align-items:center}
+  .allgood.cell{grid-column:span 2}
+
+  /* two small sections share one row */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+  @media(max-width:1000px){.duo{grid-template-columns:1fr}}
+  .duo .sec{margin-bottom:0}
+  .duo .cards{grid-template-columns:repeat(2,1fr)}
+  .mocknote{font-size:10.5px;color:var(--faint);text-align:center;padding:14px 0 6px}
+</style>
+</head>
+<body>
+
+<!-- lucide icon sprite — the same icon set the app already ships -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+  <symbol id="i-file-check" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></symbol>
+  <symbol id="i-file-x" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+  <symbol id="i-cal-x" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="10" y1="14" x2="14" y2="18"/><line x1="14" y1="14" x2="10" y2="18"/></symbol>
+  <symbol id="i-user-x" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+  <symbol id="i-money" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></symbol>
+  <symbol id="i-click" viewBox="0 0 24 24"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></symbol>
+  <symbol id="i-case" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 15V9l4 4 4-4v6"/></symbol>
+</svg>
+
+<!-- top bar -->
+<div class="topbar">
+  <div class="logo"><span class="m">m</span> Modonty</div>
+  <nav class="topnav">
+    <span><svg class="ic"><use href="#i-file"/></svg> Articles</span>
+    <span><svg class="ic"><use href="#i-image"/></svg> Media</span>
+  </nav>
+  <div class="right">
+    <div class="bell"><svg class="ic"><use href="#i-bell"/></svg><i>3</i></div>
+    <div class="avatar">M</div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="rail"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+  <main>
+    <div class="phead">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="date">Monday, Jul 13, 2026 — what needs you today</p>
+      </div>
+      <div class="pulse">
+        <span class="pill p-red"><em>3</em> costing you now</span>
+        <span class="pill p-amber"><em>2</em> this week</span>
+        <span class="pill p-green">money is fine</span>
+      </div>
+    </div>
+
+    <!-- ═══ TODAY ═══ -->
+    <div class="today">
+      <div class="today-head">
+        <span class="tt"><svg class="ic"><use href="#i-alert"/></svg> <b>Today — start here</b></span>
+        <span class="legend">ranked by cost <span class="dot" style="background:var(--red)"></span>money / client <span class="dot" style="background:var(--amber)"></span>this week</span>
+      </div>
+
+      <div class="trow sev-red">
+        <span class="rank">1</span>
+        <span class="ibox ib-red"><svg class="ic"><use href="#i-cal-x"/></svg></span>
+        <span class="tnum">39 <small>→ 0</small></span>
+        <span class="ttxt"><b>The booking funnel is dead.</b> 39 opened the book page, 0 pressed submit (90d).
+          <span class="ctx">every YMYL clinic converts at 0% — سمايل تاون alone: 31 opens, 0 bookings</span></span>
+        <span class="tgo">investigate →</span>
+      </div>
+
+      <div class="trow sev-red">
+        <span class="rank">2</span>
+        <span class="ibox ib-red"><svg class="ic"><use href="#i-user-x"/></svg></span>
+        <span class="tnum">12<small>/27</small></span>
+        <span class="ttxt"><b>12 clients are unreachable.</b> No working contact button on their page.
+          <span class="ctx">8 CTA never set · 4 no button — 44% of the book cannot convert</span></span>
+        <span class="tgo">fix CTAs →</span>
+      </div>
+
+      <div class="trow sev-red">
+        <span class="rank">3</span>
+        <span class="ibox ib-red"><svg class="ic"><use href="#i-inbox"/></svg></span>
+        <span class="tnum">16</span>
+        <span class="ttxt"><b>16 visitor actions are waiting on you.</b>
+          <span class="ctx">7 messages · 6 comments · 2 bookings to call · 1 question (oldest 8 days)</span></span>
+        <span class="tgo">clear inbox →</span>
+      </div>
+
+      <div class="trow sev-amber">
+        <span class="rank">4</span>
+        <span class="ibox ib-amber"><svg class="ic"><use href="#i-file-check"/></svg></span>
+        <span class="tnum">11</span>
+        <span class="ttxt"><b>11 articles wait for approval.</b>
+          <span class="ctx">plus 7 clients sitting on their own sign-off — chase them</span></span>
+        <span class="tgo">review →</span>
+      </div>
+
+      <div class="trow sev-amber">
+        <span class="rank">5</span>
+        <span class="ibox ib-amber"><svg class="ic"><use href="#i-file-x"/></svg></span>
+        <span class="tnum">10</span>
+        <span class="ttxt"><b>10 clients are paying with zero articles.</b>
+          <span class="ctx">paying for silence — the next churn list</span></span>
+        <span class="tgo">see who →</span>
+      </div>
+    </div>
+
+    <!-- ═══ Visitor actions ═══ -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="st"><svg class="ic"><use href="#i-activity"/></svg> Visitor actions <small>last 90 days · <span style="color:var(--amber)">■</span> GA4 · <span style="color:var(--green)">■</span> Database</small></span>
+        <span class="health"><b>2,574</b> people <span class="delta d-up">▲ 8%</span> · 3,919 sessions · <b class="red">1%</b> took action <a href="#">→</a></span>
+      </div>
+      <div class="cards">
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-cal"/></svg></span><span class="kv">2</span></div>
+          <div class="kl">Bookings — where people fall out</div>
+          <div class="rows">
+            <span class="row"><b class="ga">39</b> opened book page</span>
+            <span class="row"><b class="ga">39</b> left before submit</span>
+            <span class="row"><b class="ga">0</b> pressed submit</span>
+            <span class="row"><b class="ga">0</b> submit failed</span>
+            <span class="row"><b class="db">5</b> clients leaking</span>
+          </div>
+          <span class="frep">full report →</span>
+        </div>
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-mail"/></svg></span><span class="kv">7</span></div>
+          <div class="kl">Messages unread</div>
+          <div class="rows">
+            <span class="row"><b class="ga">5</b> submitted · GA4</span>
+            <span class="row"><b class="db">7</b> we hold</span>
+            <span class="row"><b class="db">0</b> replied</span>
+            <span class="row"><b class="db">4</b> from guests</span>
+            <span class="row"><b class="db">3</b> from members</span>
+          </div>
+          <span class="frep">full report →</span>
+        </div>
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-msg"/></svg></span><span class="kv">6</span></div>
+          <div class="kl">Comments to approve</div>
+          <div class="rows">
+            <span class="row"><b class="ga">1</b> submitted · GA4</span>
+            <span class="row"><b class="db">7</b> we hold</span>
+            <span class="row"><b class="db">1</b> approved</span>
+            <span class="row"><b class="db">5</b> on articles</span>
+            <span class="row"><b class="db">2</b> on client pages</span>
+          </div>
+          <span class="frep">full report →</span>
+        </div>
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-help"/></svg></span><span class="kv">1</span></div>
+          <div class="kl">Question unanswered</div>
+          <div class="rows">
+            <span class="row"><b class="ga">2</b> submitted · GA4</span>
+            <span class="row"><b class="db">1</b> we hold</span>
+            <span class="row"><b class="db">1</b> on articles</span>
+            <span class="row"><b class="db">0</b> on client pages</span>
+            <span class="row"><b class="db">8</b> days oldest waited</span>
+          </div>
+          <span class="frep">full report →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Articles ═══ -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="st"><svg class="ic"><use href="#i-file"/></svg> Articles <small>every stage of the pipeline</small></span>
+        <span class="health"><b class="amber">11</b> need a decision · 76 total <a href="#">→</a></span>
+      </div>
+      <div class="cards">
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-file-check"/></svg></span><span class="kv">11</span></div>
+          <div class="kl">Waiting approval</div><div class="kn">your sign-off is the blocker</div>
+        </div>
+        <div class="kcard plain"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-gray"><svg class="ic"><use href="#i-file"/></svg></span><span class="kv">9</span></div>
+          <div class="kl">Drafts</div><div class="kn">being written now</div>
+        </div>
+        <div class="kcard ok"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-green"><svg class="ic"><use href="#i-file-check"/></svg></span><span class="kv">56</span></div>
+          <div class="kl">Published</div><div class="kn">live on modonty.com</div>
+        </div>
+        <div class="ghost">
+          <span class="gt">Empty stages</span>
+          <span class="zchip"><b>0</b> need revision</span>
+          <span class="zchip"><b>0</b> scheduled · <b>0</b> being written</span>
+          <span class="zchip"><b>0</b> archived</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Clients ═══ -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="st"><svg class="ic"><use href="#i-users"/></svg> Clients <small>subscription and readiness</small></span>
+        <span class="health"><b class="red">12</b> unreachable · of <b style="color:var(--fg)">27</b> <a href="#">→</a></span>
+      </div>
+
+      <p class="glabel"><svg class="ic"><use href="#i-money"/></svg> Money &amp; portfolio</p>
+      <div class="cards">
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-user"/></svg></span><span class="kv">1</span></div>
+          <div class="kl">Waiting to be activated</div><div class="kn">signed up, not switched on yet</div>
+        </div>
+        <div class="allgood cell">✓ Money is fine — 0 overdue · 0 expired · 0 expiring this week</div>
+        <div class="ghost">
+          <span class="gt">Portfolio</span>
+          <span class="zchip"><b>26</b> active · <b>16</b> YMYL</span>
+          <span class="zchip"><b>10</b> standard · <b>0</b> cancelled</span>
+        </div>
+      </div>
+
+      <p class="glabel"><svg class="ic"><use href="#i-click"/></svg> How visitors reach them <small>the 12 red ones are the number above</small></p>
+      <div class="cards">
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-alert"/></svg></span><span class="kv">8</span></div>
+          <div class="kl">CTA never set</div><div class="kn">field missing on their record — behaves as no button</div>
+        </div>
+        <div class="kcard hot"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-red"><svg class="ic"><use href="#i-user-x"/></svg></span><span class="kv">4</span></div>
+          <div class="kl">No button at all</div><div class="kn">paying, but the visitor has no way in</div>
+        </div>
+        <div class="kcard ok"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-green"><svg class="ic"><use href="#i-cal"/></svg></span><span class="kv">15</span></div>
+          <div class="kl">Booking form</div><div class="kn">the lead lands in our database</div>
+        </div>
+        <div class="ghost">
+          <span class="gt">Empty</span>
+          <span class="zchip"><b>0</b> external link</span>
+        </div>
+      </div>
+
+      <p class="glabel"><svg class="ic"><use href="#i-file"/></svg> Content <small>a client can be in more than one</small></p>
+      <div class="cards">
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-file-x"/></svg></span><span class="kv">10</span></div>
+          <div class="kl">No articles at all</div><div class="kn">paying for silence</div>
+        </div>
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-user"/></svg></span><span class="kv">7</span></div>
+          <div class="kl">Waiting on the client</div><div class="kn">we wrote it — chase their sign-off</div>
+        </div>
+        <div class="kcard ok"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-green"><svg class="ic"><use href="#i-file-check"/></svg></span><span class="kv">15</span></div>
+          <div class="kl">Has published</div><div class="kn">at least one article live</div>
+        </div>
+        <div class="ghost">
+          <span class="gt">Empty</span>
+          <span class="zchip"><b>0</b> in progress</span>
+        </div>
+      </div>
+
+      <p class="glabel"><svg class="ic"><use href="#i-image"/></svg> Images <small>first card is the intersection</small></p>
+      <div class="cards">
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-image"/></svg></span><span class="kv">5</span></div>
+          <div class="kl">No image at all</div><div class="kn">no logo, no hero, no share — start here</div>
+        </div>
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-logo"/></svg></span><span class="kv">5</span></div>
+          <div class="kl">No logo</div><div class="kn">what Google's knowledge panel reads</div>
+        </div>
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-image"/></svg></span><span class="kv">7</span></div>
+          <div class="kl">No hero image</div><div class="kn">the banner on their page</div>
+        </div>
+        <div class="kcard warm"><span class="arr">→</span>
+          <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-image"/></svg></span><span class="kv">7</span></div>
+          <div class="kl">No share image</div><div class="kn">links preview blank — 25 pts of SEO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Media + Reference share one row ═══ -->
+    <div class="duo">
+      <div class="sec">
+        <div class="sec-head">
+          <span class="st"><svg class="ic"><use href="#i-image"/></svg> Media <small>usage &amp; search</small></span>
+          <span class="health"><b class="amber">73</b> failing · 145/245 in use <a href="#">→</a></span>
+        </div>
+        <div class="cards">
+          <div class="kcard warm"><span class="arr">→</span>
+            <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-alert"/></svg></span><span class="kv">73</span></div>
+            <div class="kl">Failing SEO</div><div class="kn">below 60 — alt text is the fix</div>
+          </div>
+          <div class="kcard warm"><span class="arr">→</span>
+            <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-image"/></svg></span><span class="kv">8</span></div>
+            <div class="kl">No alt text</div><div class="kn">invisible in Google Images</div>
+          </div>
+          <div class="kcard plain"><span class="arr">→</span>
+            <div class="khead"><span class="ibox ib-gray"><svg class="ic"><use href="#i-db"/></svg></span><span class="kv" style="color:var(--muted)">100</span></div>
+            <div class="kl" style="color:var(--muted)">Unused</div><div class="kn">housekeeping — storage only</div>
+          </div>
+          <div class="ghost">
+            <span class="gt">Empty</span>
+            <span class="zchip"><b>0</b> no dimensions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <span class="st"><svg class="ic"><use href="#i-db"/></svg> Reference data <small>indexed listing pages</small></span>
+          <span class="health"><b class="amber">3</b> below 60 <a href="#">→</a></span>
+        </div>
+        <div class="cards">
+          <div class="kcard warm"><span class="arr">→</span>
+            <div class="khead"><span class="ibox ib-amber"><svg class="ic"><use href="#i-user"/></svg></span><span class="kv">3</span></div>
+            <div class="kl">Authors</div><div class="kn">nothing generated — all 3 failing</div>
+          </div>
+          <div class="ghost">
+            <span class="gt">Healthy</span>
+            <span class="zchip g"><b>10</b> categories ✓</span>
+            <span class="zchip g"><b>35</b> tags ✓ · <b>7</b> industries ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mocknote">UI mock v2 · 2026-07-13</p>
+  </main>
+</div>
+
+</body>
+</html>

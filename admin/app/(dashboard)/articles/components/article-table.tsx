@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Eye, FolderOpen, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { analyzeArticleSEO } from "../analyzer";
+import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
 
 type Article = ArticleViewType & {
@@ -20,8 +20,8 @@ type Article = ArticleViewType & {
 };
 
 function ArticleTableSEOScore({ article }: { article: ArticleViewType }) {
-  const scoreResult = useMemo(() => analyzeArticleSEO(article), [article]);
-  const score = scoreResult.percentage;
+  // Shared dataLayer scorer — the same number the article badge and segment tables show.
+  const score = useMemo(() => getArticleSeoScore(article), [article]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'bg-green-500 text-white';
@@ -53,7 +53,7 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
   const seoScores = useMemo(() => {
     const map = new Map<string, number>();
     for (const article of articles) {
-      map.set(article.id, analyzeArticleSEO(article).percentage);
+      map.set(article.id, getArticleSeoScore(article));
     }
     return map;
   }, [articles]);

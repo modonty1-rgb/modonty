@@ -3,16 +3,20 @@
 import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { analyzeArticleSEO } from '../../analyzer';
+import { getArticleSeoScore } from '@/lib/seo/article-seo-score';
 import { Article } from '../helpers/article-view-types';
 
+// The SEO number comes from dataLayer — the single source of truth for every surface
+// (Khalid 2026-07-13: «أحتاج نتيجة 100% من source of truth واحد»). It scores the STORED,
+// published fields, so this badge, the articles table and the segment tables all show
+// the same figure for the same article. The old form-based analyzer is not an SEO score
+// and is no longer used to render one.
 interface ArticleSEOScoreBadgeProps {
   article: Article;
 }
 
 export function ArticleSEOScoreBadge({ article }: ArticleSEOScoreBadgeProps) {
-  const scoreResult = useMemo(() => analyzeArticleSEO(article), [article]);
-  const score = scoreResult.percentage;
+  const score = useMemo(() => getArticleSeoScore(article), [article]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'bg-green-500 hover:bg-green-600';

@@ -12,13 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "1.71.0 (modonty)",
-    title: "Deleted pages now tell Google they're gone — no more soft 404s",
+    version: "0.86.0 (admin)",
+    title: "Dashboard rebuilt as a triage screen — a ranked Today list tells you where to start",
     items: [
-      { type: "fix" as const, text: "Deleted or non-existent category, tag, industry, and client URLs now return HTTP 410 Gone (previously 200 + noindex) — Google drops them from the index immediately instead of re-crawling dead pages." },
-      { type: "improve" as const, text: "The article 410 proxy now covers all five entity types; client pages return 410 while the subscription is not active, matching the page's own visibility rule." },
-      { type: "improve" as const, text: "Verified live: fake slugs return 410, listing pages and live entities (including Arabic slugs) untouched at 200." },
-      { type: "improve" as const, text: "Docs cleanup: one unified TODO file; 89 stale task/plan files removed (recoverable from git history)." },
+      { type: "feature" as const, text: "Today strip at the top: the 5 things costing you money or clients right now, ranked (dead booking funnel, unreachable clients, waiting inbox, approvals, clients with zero articles) — each row links straight to its fix." },
+      { type: "feature" as const, text: "New Media section: unused files, missing alt text, failing SEO — each card opens a table with the image itself, its score and where it is used. Image SEO score now lives in the shared dataLayer scorer." },
+      { type: "feature" as const, text: "Clients section gains Images cards (no logo / no hero / no share image) and a new 'unreachable' segment combining every client a visitor cannot contact." },
+      { type: "fix" as const, text: "Data-loss guard: images inside a published article's gallery were counted as unused and could be deleted, leaving a hole in a live article. Gallery usage now blocks deletion and counts everywhere." },
+      { type: "improve" as const, text: "One visual language: red = costing you now, amber = this week, green = healthy; icons on every card; zero-value stages compress into chips so live numbers get the space." },
     ],
   },
 ];

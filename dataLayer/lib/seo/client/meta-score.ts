@@ -60,6 +60,15 @@ function firstOgImage(m: MetaTags): { width: number; height: number } | null {
 }
 
 /**
+ * Does the STORED metadata carry a share image at all? Exactly the rule the OG check
+ * below uses, exported so the dashboard's "no share image" count can never disagree
+ * with the score that produced it.
+ */
+export function hasStoredOgImage(nextjsMetadata: unknown): boolean {
+  return firstOgImage(asMeta(nextjsMetadata)) !== null;
+}
+
+/**
  * Compute the client META validity score.
  * Weights (total 100): title 25 · description 25 · OG image 25 ·
  * canonical 10 · hreflang 15.

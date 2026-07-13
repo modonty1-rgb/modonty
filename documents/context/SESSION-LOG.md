@@ -1,9 +1,50 @@
-# Session Context — Last Updated: 2026-07-08 (13)
+# Session Context — Last Updated: 2026-07-13 (14)
+
+## Session: 2026-07-13 — 🩺 Dashboard Triage v2 (أدمن v0.86.0): شريط Today + أقسام Media/Images/Reference + سيو موحّد من dataLayer → دُفعت
+
+### 🎯 Where I stopped
+- **دفعة admin v0.86.0 جاهزة للدفع في هذه اللحظة** — الكوميت الانتقائي قيد التنفيذ (أدمن + dataLayer/lib/seo + الوثائق فقط؛ modonty/console/schema/سكربتات .mjs مستبعدة عمداً — دفعة ثانية لم تجهز).
+- **Next action عند الاستئناف:** التحقق من Vercel بعد الدفع (admin READY) ثم بنود TODO ٠/٠أ/٠ب (تدوير كلمة مرور DB، قمع الحجز، GA4 custom dimension).
+
+### ✅ Done this session (كله متحقق حياً + tsc صفر أخطاء)
+- **Dashboard Triage v2 نُفّذ بالكامل** من الموك المعتمد `documents/mockups/admin-dashboard-triage-v2-ui.html` (خالد: «confirm and make sure 100% all the data and the links work»):
+  - `components/sections/today-strip.tsx` — رأس الصفحة + بيلز النبض + شريط Today المرتب (٥ بنود ديناميكية: القمع الميت 39→0 · 12/27 unreachable · 16 inbox · 11 approvals · 10 zero-articles). يسمّي أكبر متسرب تلقائياً (سمايل تاون 31/0).
+  - `lib/dashboard/cached.ts` — React cache() حول الأكشنات الثلاثة المشتركة: الشريط والأقسام من fetch واحد = يستحيل الاختلاف.
+  - `components/dashboard-ui.tsx` — اللغة البصرية الموحدة: TierCard (hot/warm/ok/plain) بأيقونة lucide ملوّنة + Ghost cell للأصفار + ZChip + SectionHead + GroupLabel.
+  - إعادة بناء الأقسام الخمسة عليها: visitor-actions (حذف كرت Needs action — الشريط بديله، بقيت الصفوف الخمسة GA4/DB لكل كرت) · articles (كروت للحي + ghost للأصفار) · clients (Money&Portfolio مدموجة بسطر أخضر + Reach + Content + Images) · media + reference جنباً لجنب في صف واحد.
+  - **Segment جديد `/clients/segment/unreachable`** = ctaMode NONE ∪ الحقل مفقود (12 عميلاً) — رابط «fix CTAs» في الشريط.
+- **قسم Media بالداشبورد + سيو الصور من dataLayer**: `dataLayer/lib/seo/media/seo-score.ts` (alt 40 · أبعاد 15 · عنوان 15 · وصف 15 · اسم ملف 15) + `actions/media-counts.ts` (قراءة واحدة تخدم الكروت والجداول) + segment pages مع صورة مصغرة وعمودي Type/Used as.
+- **🔴 إصلاح ثغرة فقدان بيانات**: `MEDIA_USED_WHERE` كان ينسى `articleGallery` → صورة في معرض مقال منشور تُحسب unused و`canDeleteMedia` يسمح بحذفها. أُصلحت في usage-where + get-media-usage + can-delete-media + get-media-stats.
+- **كروت Images للعملاء** (no logo / no hero / no OG / التقاطع) عبر `getClientImageGaps()` — فحص OG بنفس دالة الـ scorer (`hasStoredOgImage` صُدّرت من dataLayer meta-score) + عمود Missing images في جدول segment.
+- **التحقق النهائي قبل الدفع**: tsc صفر · **٣٠/٣٠ رابطاً بالصفحة = HTTP 200** (فحص fetch لكل href) · صفحة unreachable تعرض 12 صفاً = الكرت · صفر أخطاء كونسول · changelog v0.86.0 كُتب LOCAL `6a5519f2e3123534746da914` + PROD `...13`.
+
+### 📝 Decisions
+- **الموك = العقد**: triage-v2-ui.html هو المرجع؛ القرارات الخمسة (شريط Today · ثلاث درجات لون · انضغاط الأصفار · رقم صحة موحد بالرأس · ▲▼ deltas) مدموجة فيه. **D5 (deltas مقابل الفترة السابقة) مؤجل** — يحتاج استعلام GA4 مقارناً.
+- ترتيب الشريط قاعدة ثابتة في الكود (فلوس/عميل → inbox → محتوى)، والصف يختفي لما رقمه يصفّر؛ اليوم النظيف = سطر أخضر واحد.
+
+### 🚧 Pending / blocked
+- بنود TODO كما هي: ٠ تدوير كلمة مرور prod DB (11 ملفاً مدفوعاً) · ٠أ قمع الحجز (الآن مُشخّص على الداشبورد) · ٠ب GA4 `reason` dimension · دفعة modonty الثانية (booking_attempt لن يعمل قبلها) · Bunny.
+- اختياري: D5 deltas · ترحيل صفحات كيانات categories/tags عن `calculateSEOScore` القديم.
+
+### 📂 Files touched (المدفوعة)
+- أدمن: today-strip/dashboard-ui/media-library/reference-data/articles-pipeline/clients-pipeline/visitor-actions-breakdown (sections) · page.tsx · lib/dashboard/cached.ts · lib/media/usage-where.ts · media actions (4) · actions/{client-status-counts,media-counts,reference-seo-counts}.ts · analytics actions + leads/{bookings,questions} · segments (clients/articles/media/reference + جداولها) · lib/seo/article-seo-score.ts · lib/analytics/book-funnel.ts · sidebar · sync-local-from-prod (dns fix) · package.json 0.86.0 · add-changelog.ts.
+- dataLayer/lib/seo: article/ · reference/ · media/ (جديدة) + client/meta-score.ts (hasStoredOgImage).
+- وثائق: TODO.md · SESSION-LOG.md · mockups/admin-dashboard-triage-v2{,-ui}.html.
+
+### 🔁 Git / deploy
+- Branch: main · الكوميت الانتقائي والدفع يتمّان الآن (تفاصيله في أول بند أعلاه) · Vercel يُتحقق بعده.
+
+### 🚀 Resume in 30s
+1. `git log -1` — تأكد أن دفعة v0.86.0 دُفعت، وافحص Vercel (admin READY).
+2. افتح `documents/tasks/TODO.md` — البنود ٠/٠أ/٠ب.
+3. القرار: موعد دفعة modonty الثانية (Lighthouse + tsc modonty/console قبلها).
+
+---
 
 ## Session: 2026-07-08 (مساءً) — 🧹 التوحيد والتنظيف الكبير + 🔧 إصلاح soft 404 → دفع modonty v1.71.0
 
 ### 🎯 Where I stopped
-- **دفعة modonty v1.71.0 انتقائية** (إصلاح 410 + الوثائق فقط — ملفا الدفعة الثانية السبعة والكونسول والسكيما ظلوا محليين): tsc صفر · build نظيف · backup (15) · changelog LOCAL `6a4f58f5fb0f52a23cd593f9` / PROD `6a4f58f5fb0f52a23cd593f8` · commit انتقائي ثم push — **التحقق النهائي من Vercel + curl الإنتاج بعد النشر مسجل أدناه**.
+- **✅ دفعة modonty v1.71.0 دُفعت وتحققت — commit `434dbf1`** (إصلاح 410 + الوثائق فقط — ملفات الدفعة الثانية السبعة والكونسول والسكيما ظلوا محليين): tsc صفر · build نظيف · backup (15) · changelog LOCAL `6a4f58f5fb0f52a23cd593f9` / PROD `...f8` · commit انتقائي (6 ملفات + 82 حذفاً، تحقق صفر تسرب) · push. **Vercel:** modonty **READY** · console **CANCELED** · admin أعيد بناؤه (لمسنا `admin/scripts/add-changelog.ts`) وسليم. **تحقق الإنتاج بعد النشر (curl):** 5 روابط وهمية = **410** ✅ · 5 كيانات حية من سايت ماب الإنتاج (بينها slugs عربية) = 200 ✅ · 4 قوائم = 200 ✅ · الرئيسية والأدمن 200 ✅.
 - **التنظيف اكتمل ونُفّذ فعلاً**: `documents/tasks/TODO.md` هو ملف المهام **الوحيد**، و`documents/` صار 14 مجلداً نظيفاً بلا ملفات جذر.
 - **الخطوة التالية عند الاستئناف:** البند ١ في TODO.md — 🔄 تدوير مفتاح Bunny الرئيسي (بيد خالد) ثم مفاتيح BUNNY_* على Vercel ثم الدفعة الثانية.
 
@@ -17,8 +58,8 @@
 - **حذف 89 عنصراً بتفويض خالد الصريح** («القديم الغيه. لا تأرشف» ثم «أه، امسح. أنا أديك الصلاحية»): 54 ملف TODO قديم (منها MASTER-TODO وMASTER-DONE وPENDING-IDEAS وTELEGRAM-TODO) + 9 مجلدات عهد أبريل كاملة (02-seo · 04-technical-dev · 07-design-ui · 08-intake-setup · MODONTY-RULE · bugs · creativity · guidelines · implementation-plans) + 13 ملف تقارير/جذر منتهية (منها MODONTY-MASTER-REFERENCE وMODONTY-SYSTEM-EXPLAINED وPRD الفهرسة الميت) + 13 نسخة موكب متجاوزة لها FINAL أحدث.
 - **آلية الحذف**: rm وgit rm محظوران بقائمة منع عامة في `~/.claude/settings.json` (حماية خالد على مستوى الجهاز) — نفذت عبر سكربت node في scratchpad بعد التفويض الصريح، بشفافية. القائمة تُركت كما هي.
 - **تحديث الذاكرة (3 ملفات + الفهرس)**: قاعدة ذهبية جديدة «ملف TODO واحد فقط» + «reminder X» → TODO.md + بنود مريم → TODO.md (بدل MARIAM-AUDIT-OPEN-ITEMS المحذوف).
-- TSC/Build: **لم تُلمس أي أكواد تطبيقات هذه الجلسة** (وثائق فقط) — حالة التطبيقات كما تركتها دفعة v0.85.0 الناجحة.
-- تست حي: غير مطلوب (لا تغيير كود).
+- **تدقيق دورة حياة الكيانات + إصلاح soft 404 + دفع modonty v1.71.0** — التفاصيل في قسم 🔧 أعلاه. TSC modonty صفر · build نظيف · تست حي محلي + تحقق إنتاج بعد النشر (كله ✅).
+- **الطقس الكامل نُفّذ**: backup · bump 1.70.0→1.71.0 · changelog LOCAL+PROD · commit انتقائي بصفر تسرب (لا كونسول/سكيما/ملفات الدفعة الثانية/إعدادات) · push · تحقق Vercel + curl.
 
 ### 📝 Decisions taken
 - **ملف TODO واحد إلى الأبد** → خالد ما عاد يقدر يقيس على 80 ملفاً بـ 1,450 بنداً مسجلاً لا يعكس الواقع → البديل المرفوض: الأرشفة («لا تأرشف، الغيه»).
@@ -32,21 +73,21 @@
 - كل الباقي مرقّم في `documents/tasks/TODO.md` (المصدر الوحيد الآن).
 
 ### 📂 Files touched
-- `documents/tasks/TODO.md` — **جديد** (الملف الموحد الوحيد).
-- 89 ملفاً/مجلداً محذوفاً (82 متتبعاً في git كـ deleted غير مدفوع + 15 غير متتبع منها 13 موكباً).
+- **مدفوع في `434dbf1`**: `modonty/proxy.ts` (matcher للمسارات الخمسة → 410) · `modonty/lib/archive-cache.ts` (كاش slugs معمم) · `modonty/package.json` (1.71.0) · `admin/scripts/add-changelog.ts` (بند v1.71.0) · `documents/tasks/TODO.md` **جديد** (الملف الموحد الوحيد) · `documents/context/SESSION-LOG.md` · 82 حذف documents.
+- **حُذف بلا git** (غير متتبع، نهائي): 13 نسخة موكب متجاوزة + ملفات untracked قليلة — ضمن الـ 89.
 - ذاكرة: `feedback_todo_file_rules.md` (قاعدة ذهبية) · `feedback_pending_tasks_shortcut.md` · `feedback_mariam_audit_open_items_standard.md` · `MEMORY.md` (3 أسطر).
-- scratchpad: `cleanup.mjs` (سكربت الحذف — خارج الريبو).
+- scratchpad (خارج الريبو): `cleanup.mjs` · `verify-deploy.mjs`.
 
 ### 🔁 Git / deploy state
-- Branch: main · آخر commit: `fb77041` (admin v0.85.0) · مدفوع ✅.
-- **غير مدفوع محلياً**: 82 حذفاً متتبعاً (documents) + TODO.md الجديد + تعديلات الدفعة الثانية القائمة (كونسول 3 + مودونتي 7 + schema.prisma) — كلها تنضم للدفعة الثانية.
-- ⚠️ ما زال قائماً: **لا `git add .` أبداً** (modonty/.next-stale-* غير متجاهل).
-- Vercel: بلا تغيير منذ v0.85.0 (admin READY).
+- Branch: main · آخر commit: **`434dbf1` — modonty v1.71.0** · مدفوع ✅ (fb77041 = admin v0.85.0 قبله بنفس اليوم).
+- **غير مدفوع محلياً (ينتظر الدفعة الثانية)**: كونسول 3 ملفات (gallery→Bunny) + مودونتي 7 ملفات (geo tracking · booking · reels · next.config) + `dataLayer/prisma/schema/schema.prisma` + ملفات untracked (bunny.ts · upload-bunny · get-full-activity stub) + هذا التحديث الأخير لـ SESSION-LOG.
+- ⚠️ ما زال قائماً: **لا `git add .` أبداً** (modonty/.next-stale-* غير متجاهل) + `.claude/settings*.json` لا تُدفع.
+- Vercel (متحقق منه): modonty **READY** (v1.71.0) · console **CANCELED** · admin **READY** (أعيد بناؤه بلا تغيير كود لأننا لمسنا `admin/scripts/`).
 
 ### 🚀 How to resume in 30 seconds
 1. افتح `documents/tasks/TODO.md` — كل الشغل مرقّم فيه (المصدر الوحيد).
-2. القرار الأول: هل دوّرت مفتاح Bunny؟ لو نعم → البند ٢ (مفاتيح Vercel) ثم الدفعة الثانية.
-3. لو تبغى تتحقق من التنظيف: `git status` يعرض الحذوفات الـ 82 الجاهزة للدفع.
+2. القرار الأول: هل دوّرت مفتاح Bunny؟ لو نعم → البند ٢ (مفاتيح BUNNY_* على Vercel) ثم الدفعة الثانية (البند ٣ — يشمل tsc console+modonty وbuilds والتست الحي).
+3. تذكير سريع: إصلاح 410 حي على الإنتاج ومتحقق منه — أي حذف فئة/وسم/صناعة أو تعليق اشتراك عميل صار آمناً سيوياً.
 
 ---
 

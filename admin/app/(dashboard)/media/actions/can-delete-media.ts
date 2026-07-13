@@ -14,8 +14,10 @@ export async function canDeleteMedia(id: string, clientId?: string) {
       return { canDelete: false, reason: "Failed to get usage information" };
     }
 
-    // Check for published articles usage
-    const publishedUsage = usage.featuredIn.filter(
+    // Check for published articles usage — as the featured image OR inside the gallery.
+    // The gallery half was missing until 2026-07-13: deleting one of those images left a
+    // hole in a live article, and nothing warned you.
+    const publishedUsage = [...usage.featuredIn, ...usage.inArticle].filter(
       (a: { status: string }) => a.status === "PUBLISHED"
     );
     if (publishedUsage.length > 0) {

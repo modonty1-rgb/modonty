@@ -1,4 +1,5 @@
 import dns from "node:dns";
+import dnsPromises from "node:dns/promises";
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { MongoClient, IndexDescription } from "mongodb";
@@ -70,9 +71,17 @@ export async function POST(_req: NextRequest) {
       // `mongodb+srv://` needs — even though the OS resolver (Prisma, nslookup)
       // works. Fall back to public DNS only when the resolver is loopback.
       // dev-only route; never runs in production.
-      const currentDns = dns.getServers();
-      if (currentDns.some((s) => s.startsWith("127.") || s === "::1")) {
+      //
+      // `node:dns` and `node:dns/promises` keep SEPARATE server lists. The Mongo
+      // driver resolves SRV through the promises resolver, so setting only the
+      // callback one leaves the driver still aimed at 127.0.0.1 → querySrv
+      // ECONNREFUSED. Both must be set.
+      const isLoopback = (s: string) => s.startsWith("127.") || s === "::1";
+      if (dns.getServers().some(isLoopback)) {
         dns.setServers(["1.1.1.1", "8.8.8.8"]);
+      }
+      if (dnsPromises.getServers().some(isLoopback)) {
+        dnsPromises.setServers(["1.1.1.1", "8.8.8.8"]);
       }
 
       const prodClient = new MongoClient(PROD_DATABASE_URL);
