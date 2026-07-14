@@ -148,6 +148,12 @@ export async function fetchClientForJsonLd(
       numberOfEmployees: true,
       slogan: true,
       organizationType: true,
+      // The card builder derives the client's real @type from these (a clinic stored as
+      // "Corporation" becomes Dentist). Omit them and the derivation silently returns
+      // null — the missing-field trap — and the cascade rewrites the generic type.
+      isYmyl: true,
+      ymylCategory: true,
+      ymylData: true,
       parentOrganizationId: true,
       logoMedia: {
         select: {

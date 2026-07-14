@@ -102,9 +102,17 @@ export const YMYL_CATEGORIES: Record<YmylCategory, YmylCategoryConfig> = {
           { value: "pediatrics", label: { ar: "طب أطفال", en: "Pediatrics" }, schemaSubType: "MedicalClinic" },
           { value: "optometry", label: { ar: "طب عيون", en: "Optometry" }, schemaSubType: "Optician" },
           { value: "psychiatry", label: { ar: "طب نفسي", en: "Mental Health" }, schemaSubType: "MedicalClinic" },
-          { value: "physiotherapy", label: { ar: "علاج طبيعي", en: "Physiotherapy" }, schemaSubType: "PhysicalTherapy" },
+          // schema.org, verified 2026-07-14: "PhysicalTherapy" is a MedicalProcedure
+          // (Thing > MedicalEntity > MedicalProcedure > MedicalTherapy) — it types a
+          // TREATMENT, not a business, so a clinic carrying it was announcing itself to
+          // Google as a therapy. "Physiotherapy" is the MedicalBusiness one
+          // (Thing > Organization > LocalBusiness > MedicalBusiness > Physiotherapy).
+          { value: "physiotherapy", label: { ar: "علاج طبيعي", en: "Physiotherapy" }, schemaSubType: "Physiotherapy" },
           { value: "pharmacy", label: { ar: "صيدلية", en: "Pharmacy" }, schemaSubType: "Pharmacy" },
-          { value: "nutrition", label: { ar: "تغذية", en: "Nutrition" }, schemaSubType: "Dietitian" },
+          // schema.org, verified 2026-07-14: "Dietitian" returns 404 — the type does not
+          // exist. A nutrition clinic was being handed an invented @type. "DietNutrition"
+          // is the real one (Thing > Organization > LocalBusiness > MedicalBusiness).
+          { value: "nutrition", label: { ar: "تغذية", en: "Nutrition" }, schemaSubType: "DietNutrition" },
           { value: "hospital", label: { ar: "مستشفى", en: "Hospital" }, schemaSubType: "Hospital" },
           { value: "laboratory", label: { ar: "مختبر", en: "Laboratory" }, schemaSubType: "DiagnosticLab" },
         ],

@@ -14,6 +14,7 @@
 
 import type { SeoScore, SeoCheck, JsonLdValidationReport } from "./types";
 import { countReportErrors, countReportWarnings } from "./types";
+import { isLocalFamilyType } from "../organization-schema-types";
 
 // Raw client fields that feed the JSON-LD (presence = the recommended property
 // was emitted). We read the client row, not the generated string, for completeness.
@@ -66,11 +67,25 @@ const filled = (v: unknown): boolean => {
   return true;
 };
 
-// schema.org sub-types that make a postal address required-weight (local presence).
-const LOCAL_TYPES = new Set([
-  "LocalBusiness", "MedicalClinic", "Dentist", "Restaurant", "Store",
-  "ProfessionalService", "LegalService", "FinancialService", "HealthAndBeautyBusiness",
-]);
+/**
+ * The @type the client's card ACTUALLY carries — not the one sitting in the column.
+ *
+ * They differ by design: the builder resolves a clinic stored as "Corporation" to Dentist.
+ * Scoring the column would then ask questions about a business that is not the one Google
+ * reads. This reads the served card and falls back to the column only when no card exists.
+ */
+function cardOrganizationType(jsonLd: string | null | undefined): string | null {
+  if (!jsonLd || typeof jsonLd !== "string") return null;
+  try {
+    const parsed = JSON.parse(jsonLd) as { "@graph"?: Array<Record<string, unknown>> };
+    const graph = Array.isArray(parsed?.["@graph"]) ? parsed["@graph"] : [];
+    const org = graph.find((n) => String(n["@id"] ?? "").endsWith("#organization"));
+    const t = org?.["@type"];
+    return typeof t === "string" ? t : Array.isArray(t) ? String(t[0]) : null;
+  } catch {
+    return null;
+  }
+}
 
 function hasGraph(jsonLd: string | null | undefined): boolean {
   if (!jsonLd || typeof jsonLd !== "string") return false;
@@ -90,7 +105,12 @@ function hasGraph(jsonLd: string | null | undefined): boolean {
  */
 export function computeClientJsonLdScore(input: ClientJsonLdInput): SeoScore {
   const checks: SeoCheck[] = [];
-  const isLocal = LOCAL_TYPES.has(String(input.organizationType ?? ""));
+  // One list, shared with the generator (organization-schema-types). The copy that used to
+  // live here held 9 of the types and no Optician, Hospital or Pharmacy — so a hospital was
+  // scored as if an address did not matter to it.
+  const isLocal = isLocalFamilyType(
+    cardOrganizationType(input.jsonLdStructuredData) ?? input.organizationType,
+  );
 
   // ── Pillar A: structural validity (from the stored validation report) ──
   const graphOk = hasGraph(input.jsonLdStructuredData);

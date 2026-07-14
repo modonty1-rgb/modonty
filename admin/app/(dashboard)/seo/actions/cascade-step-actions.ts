@@ -52,6 +52,18 @@ export async function regenerateOneArticleCascade(
   }
 }
 
+/**
+ * Rebuild one client's card through the SAME path a client save uses.
+ *
+ * It used to call regenerateClientJsonLd, which carries its own hand-written `select` —
+ * and that select was missing `openingHoursSpecification` and `priceRange`. So a cascade
+ * silently REPLACED every client's card with a poorer one: hours and price gone, because
+ * a field you do not select reads as a field the client does not have. Caught on dev
+ * before it ever ran in production (2026-07-14).
+ *
+ * generateClientSEO goes through the shared dataLayer bundle — the one generator, the one
+ * select, the one @type rule — so the cascade and a save now produce byte-identical cards.
+ */
 export async function regenerateOneClientCascade(
   clientId: string
 ): Promise<{ success: boolean; error?: string }> {
@@ -59,13 +71,13 @@ export async function regenerateOneClientCascade(
     const session = await auth();
     if (!session) return { success: false, error: "Unauthorized" };
 
-    const { regenerateClientJsonLd } = await import(
-      "@/app/(dashboard)/clients/helpers/client-seo-config/client-jsonld-storage"
+    const { generateClientSEO } = await import(
+      "@/app/(dashboard)/clients/actions/clients-actions/generate-client-seo"
     );
-    const result = await regenerateClientJsonLd(clientId);
+    const result = await generateClientSEO(clientId);
     return result.success
       ? { success: true }
-      : { success: false, error: "Regen returned failure" };
+      : { success: false, error: result.error ?? "Regen returned failure" };
   } catch (error) {
     return {
       success: false,

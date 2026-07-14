@@ -375,30 +375,14 @@ export async function generateClientSeoBundle(
     height: m.height,
   }));
 
-  // ── The client's schema.org @type ────────────────────────────────────────────
-  //
-  // Google's rule, applied literally: the MOST SPECIFIC valid type wins. That rule is
-  // industry-agnostic, and so is the code — resolveOrganizationType knows nothing about
-  // medicine. It compares what is STORED on the client with what we can DERIVE about it,
-  // and keeps whichever says more.
-  //
-  // Today the only derivation we have is the YMYL config (specialty → Dentist, category →
-  // MedicalClinic / LegalService / FinancialService). The day a furniture shop should
-  // derive FurnitureStore, this block grows ONE more source below — the rule above it,
-  // and every caller of this generator, stay exactly as they are.
-  //
-  // Live audit 2026-07-14: 12 of 17 medical clients were carrying a type that said nothing
-  // about them — LocalBusiness (6), Organization (3), Corporation, NGO. The last two are the
-  // real damage: they hang off Organization, NOT LocalBusiness, so they carry no geo and no
-  // opening hours and can never produce a local result.
-  const derivedType = deriveClientType(client);
-  const clientForJsonLd = {
-    ...client,
-    organizationType: resolveOrganizationType(client.organizationType, derivedType) ?? client.organizationType,
-  };
+  // The client's @type is decided INSIDE generateCompleteOrganizationJsonLd — it has to
+  // be, because the admin cascade builds cards through that function without ever passing
+  // here. The rule used to live in this file, which meant a cascade run would have written
+  // "Corporation" back onto a clinic (caught on production 2026-07-14). Pass the row as it
+  // is; the builder resolves the type once, for every path.
 
   const jsonLdGraph = generateCompleteOrganizationJsonLd(
-    clientForJsonLd as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
+    client as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
     clientPageUrl,
     { siteUrl, siteName, ...reviewOptions, galleryImages }
   );

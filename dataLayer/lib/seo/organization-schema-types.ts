@@ -42,22 +42,42 @@ export const LOCAL_BUSINESS_SCHEMA_TYPES = [
   "Pharmacy",
 ] as const;
 
-// YMYL schema subtypes — keep in sync with `console/lib/seo/ymyl-config.ts`
-// (medical / legal / financial specialty → schemaSubType). Parents included so a
-// generic medical/financial org node still validates.
-export const YMYL_SCHEMA_TYPES = [
-  // medical
-  "MedicalOrganization",
+// YMYL subtypes that ARE LocalBusiness descendants — every one verified on schema.org
+// (2026-07-14). Being under LocalBusiness → Place is what lets them carry address, geo,
+// openingHoursSpecification and priceRange, so these belong in the local family below.
+//
+// Two entries here were wrong before that check, and both produced schema Google cannot
+// read:
+//   · "PhysicalTherapy" is a MedicalProcedure, not a business — a clinic typed with it was
+//     calling itself a treatment. The business type is "Physiotherapy".
+//   · "Dietitian" does not exist on schema.org at all (404). The business type is
+//     "DietNutrition".
+export const YMYL_LOCAL_SCHEMA_TYPES = [
+  // medical — Organization > LocalBusiness > MedicalBusiness > …
   "MedicalBusiness",
   "Optician",
-  "PhysicalTherapy",
-  "Dietitian",
-  "DiagnosticLab",
-  // financial
+  "Physiotherapy",
+  "DietNutrition",
+  // financial / professional — all resolve under LocalBusiness
   "InsuranceAgency",
   "AccountingService",
   "RealEstateAgent",
   "BankOrCreditUnion",
+] as const;
+
+// YMYL subtypes that are valid Organizations but sit OUTSIDE the LocalBusiness/Place
+// family (schema.org: Thing > Organization > MedicalOrganization > …). They are legal to
+// emit as an @type, but they inherit no Place properties — so they must NEVER open the
+// geo / openingHours / priceRange block, or we ship properties the type cannot hold.
+export const YMYL_NON_LOCAL_SCHEMA_TYPES = [
+  "MedicalOrganization",
+  "DiagnosticLab",
+] as const;
+
+/** Every YMYL subtype the platform can emit, local or not. */
+export const YMYL_SCHEMA_TYPES = [
+  ...YMYL_LOCAL_SCHEMA_TYPES,
+  ...YMYL_NON_LOCAL_SCHEMA_TYPES,
 ] as const;
 
 /** Every valid client/publisher Organization `@type` the platform can emit. */
@@ -104,12 +124,29 @@ export function isContainerOrganizationType(t: string | null | undefined): boole
   return CONTAINER_TYPES.has(String(t ?? "").trim());
 }
 
-/** Types that live under LocalBusiness → Place, so they can carry geo / hours / address. */
-const LOCAL_FAMILY: ReadonlySet<string> = new Set<string>([
+/**
+ * THE list of types that descend from LocalBusiness → Place, and therefore may carry
+ * address / geo / openingHoursSpecification / priceRange. Every entry verified against
+ * its schema.org hierarchy (2026-07-14).
+ *
+ * This is the single source for that question. The JSON-LD builder used to keep its own
+ * hand-typed copy, which had drifted: it was missing Optician, so two eye clinics were
+ * handed the medical type and then denied the address and hours that type exists to carry.
+ * Import this — never re-type it.
+ */
+export const LOCAL_FAMILY: ReadonlySet<string> = new Set<string>([
   "LocalBusiness",
+  "Place",
   ...LOCAL_BUSINESS_SCHEMA_TYPES,
-  ...YMYL_SCHEMA_TYPES,
+  ...YMYL_LOCAL_SCHEMA_TYPES,
+  // YMYL_NON_LOCAL_SCHEMA_TYPES stay OUT by design — MedicalOrganization and DiagnosticLab
+  // hang off Organization, not Place, and inherit none of these properties.
 ]);
+
+/** True when `t` can carry Place properties (address, geo, opening hours, price range). */
+export function isLocalFamilyType(t: string | null | undefined): boolean {
+  return LOCAL_FAMILY.has(String(t ?? "").trim());
+}
 
 /**
  * Resolve the ONE `@type` a client card should carry — industry-agnostic by design.

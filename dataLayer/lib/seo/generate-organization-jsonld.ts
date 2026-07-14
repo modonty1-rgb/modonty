@@ -1,5 +1,39 @@
 import { Client } from "@prisma/client";
-import { safeOrganizationType } from "./organization-schema-types";
+import { safeOrganizationType, resolveOrganizationType, isLocalFamilyType } from "./organization-schema-types";
+import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
+
+/**
+ * The most specific schema.org type we can justify for this client from what we KNOW
+ * about it, ignoring whatever type someone typed into the record. Returns null when we
+ * can work out nothing.
+ *
+ * ONE source today (YMYL: specialty → Dentist, category → MedicalClinic / LegalService /
+ * FinancialService). Add a source below — an industry map giving FurnitureStore,
+ * OnlineStore, … — and every card on the platform picks it up, because this runs INSIDE
+ * the card builder, not in one of its callers.
+ */
+function deriveClientType(client: {
+  isYmyl?: boolean | null;
+  ymylCategory?: string | null;
+  ymylData?: unknown;
+}): string | null {
+  if (client.isYmyl && isYmylCategory(client.ymylCategory)) {
+    const cfg = YMYL_CATEGORIES[client.ymylCategory];
+    const specialty = (client.ymylData as Record<string, unknown> | null)?.specialty;
+
+    if (typeof specialty === "string") {
+      const field = cfg.fields.find((f) => f.type === "specialty");
+      const match = field?.specialties?.find((s) => s.value === specialty);
+      if (match?.schemaSubType) return match.schemaSubType;
+    }
+
+    return cfg.schemaType;
+  }
+
+  // Source 2 — (industry map: FurnitureStore, OnlineStore, …) — add here.
+
+  return null;
+}
 
 interface ClientWithMedia extends Omit<Client, "contentPriorities"> {
   logoMedia?: {
@@ -68,21 +102,14 @@ function mapLanguageToCode(lang: string): string {
   return lang; // Return as-is if already a code
 }
 
-// schema.org Place / LocalBusiness sub-types. Properties like geo, hasMap,
-// openingHoursSpecification, and priceRange are ONLY valid on these — emitting
-// them on a plain `Organization` triggers an UNKNOWN_FIELD warning in Google's /
-// schema.org validators. Keep in sync with LOCAL_TYPES in
-// dataLayer/lib/seo/client/jsonld-score.ts (same set drives the SEO score).
-const LOCAL_BUSINESS_TYPES = new Set([
-  "LocalBusiness", "MedicalClinic", "Dentist", "Hospital", "Physician",
-  "Restaurant", "Store", "ProfessionalService", "LegalService",
-  "FinancialService", "HealthAndBeautyBusiness", "AutomotiveBusiness",
-  "HomeAndConstructionBusiness", "FoodEstablishment", "Pharmacy", "Place",
-]);
-
-function isLocalBusinessType(organizationType: string | null | undefined): boolean {
-  return LOCAL_BUSINESS_TYPES.has(String(organizationType ?? "").trim());
-}
+// geo / hasMap / openingHoursSpecification / priceRange are Place properties — valid ONLY
+// on types that descend from LocalBusiness → Place. Emitting them on a plain Organization
+// is an UNKNOWN_FIELD in Google's and schema.org's validators.
+//
+// The list lives in organization-schema-types.ts and is imported, never re-typed: the copy
+// that used to sit here had already drifted (no Optician), so an eye clinic could be given
+// the medical type and then denied the address and hours that type exists to carry.
+const isLocalBusinessType = isLocalFamilyType;
 
 // Helper function to get country code from country name
 function getCountryCode(country: string | null | undefined): string {
@@ -138,8 +165,20 @@ export function generateCompleteOrganizationJsonLd(
   const websiteId = `${siteUrl}#website`;
   const webPageId = absoluteClientPageUrl;
 
+  // The ONE decision about what this client IS — made here, inside the builder, so every
+  // path that produces a card gets it: the shared bundle, the admin cascade, and anything
+  // written next. Putting it in a caller (as it first was) let the cascade rebuild cards
+  // that still said "Corporation" for a clinic (caught on production 2026-07-14, before
+  // the cascade ran).
+  //
+  // Google's rule, applied verbatim: "Use the most specific LocalBusiness sub-type
+  // possible." A container type (Organization / LocalBusiness) names no business at all,
+  // and Corporation / NGO sit OUTSIDE the LocalBusiness family — no address, no hours,
+  // no local result. Either loses to a type we can actually derive.
+  const effectiveType = resolveOrganizationType(client.organizationType, deriveClientType(client));
+
   const organizationNode: JsonLdNode = {
-    "@type": safeOrganizationType(client.organizationType),
+    "@type": safeOrganizationType(effectiveType),
     "@id": organizationId,
     name: client.name,
   };
@@ -340,7 +379,11 @@ export function generateCompleteOrganizationJsonLd(
   // block. The GBP Place-ID link still rides in `sameAs` for non-local types.
   const lat = client.addressLatitude;
   const lng = client.addressLongitude;
-  const isLocalBusiness = isLocalBusinessType(client.organizationType);
+  // Gate on the EFFECTIVE type, not the stored one: a clinic whose record says
+  // "Corporation" is a place people walk into, and once its card is typed Dentist it must
+  // carry the geo/hours block too. Reading the raw column here would hand it the medical
+  // type and then withhold the address that type exists to carry.
+  const isLocalBusiness = isLocalBusinessType(effectiveType);
   // GBP Place ID — used for hasMap (LocalBusiness only) AND for the sameAs Maps
   // link (any type). Declared at function scope so the sameAs block below can read it.
   const placeId = client.gbpPlaceId?.trim();

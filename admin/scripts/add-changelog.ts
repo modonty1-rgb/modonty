@@ -12,25 +12,13 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.87.0 (admin)",
-    title: "Four screens that were lying to you — and the SEO score that was under-marking every article",
+    version: "0.87.1 (admin)",
+    title: "The cascade was about to overwrite every client card — and two of our medical types do not exist on schema.org",
     items: [
-      { type: "fix" as const, text: "Editing an article awaiting approval or needing revision crashed the page outright ('This page couldn't load'). The query allowed 5 of the schema's 7 statuses, so the article came back empty and the form blew up — 20 articles were uneditable, freezing the whole review stage." },
-      { type: "fix" as const, text: "The renewal watch was blind and said everything was fine: 21 of 26 active clients have no end date on their record, and a date filter can never match an absent field. The dashboard now says 'expiring this week: unknown' instead of a green '0', and a new Record data group surfaces every hole — renewal date, address, social links, description — each one clickable." },
-      { type: "fix" as const, text: "Every published article was quietly under-scored by 5 points: hreflang was never written to the stored metadata (0 of 56 articles), while the live page added it at render — so the score docked a field the site actually had. The generator now stores it, and a new 'Article hreflang' step in Run-All backfills the old ones." },
-      { type: "fix" as const, text: "A client's schema type now follows Google's own rule — the most specific type wins. A dental clinic stored as 'LocalBusiness', 'Corporation' or 'NGO' was telling Google nothing about itself, and the last two carry no address or opening hours at all. Industry-agnostic by design: the day a furniture shop needs FurnitureStore, only the lookup grows." },
-      { type: "fix" as const, text: "Breadcrumb links that led nowhere: clicking 'Segment' (and 11 other parent-only paths) bounced you out of the page. They now render as plain text — while the real /settings/social and /settings/modonty links keep working." },
-    ],
-  },
-  {
-    version: "1.72.0 (modonty)",
-    title: "The rich schema we generate is now the schema Google actually reads",
-    items: [
-      { type: "fix" as const, text: "Articles, categories, tags and industries served a lean, live-built card while the rich stored one — publisher = the client, the YMYL doctor who reviewed it, the citations — sat unused in the database. Every page now serves the stored card." },
-      { type: "feature" as const, text: "New distribution channels for answer engines: a dynamic /llms.txt that rebuilds itself from the database (the old static file had been blind since June), and /feed.xml — the RSS feed the site never had, now auto-discovered from every page." },
-      { type: "fix" as const, text: "Member pages no longer leak an email address into their description, are kept out of every index, and AI crawlers are now blocked from /users/ and /api/ — they were the only crawlers not blocked, because the robots protocol ignores the default group once a bot has its own." },
-      { type: "fix" as const, text: "hreflang was silently dropped on most pages (Next.js replaces alternates, never merges them), so Saudi and Egypt targeting vanished outside articles. Restored platform-wide." },
-      { type: "fix" as const, text: "Stored JSON-LD is now escaped at every one of the 17 places it is injected — a content field containing markup could previously break out of the script tag." },
+      { type: "fix" as const, text: "Trigger Full Cascade would have rewritten all 27 client cards with the WRONG type — it builds through a path that never saw the new rule, so a clinic would have gone back to being a 'Corporation'. The rule now lives inside the card builder itself, so every path — cascade, save, new client, console — produces the same card. Caught on dev before it ever ran in production." },
+      { type: "fix" as const, text: "The cascade was also stripping opening hours and price range from every client it touched: its own query never asked for those fields, and a field you do not read is a field the client appears not to have. It now goes through the shared generator, so a cascade and a save produce identical cards." },
+      { type: "fix" as const, text: "Two schema.org types we hand Google were wrong. A physiotherapy clinic was typed 'PhysicalTherapy' — which is a medical PROCEDURE, not a business, so the clinic was announcing itself as a treatment. And a nutrition clinic was typed 'Dietitian', a type that does not exist on schema.org at all (404). Corrected to Physiotherapy and DietNutrition." },
+      { type: "fix" as const, text: "Three different lists decided which businesses may carry an address, coordinates and opening hours — the builder knew 16 types, the SEO score knew 9, and neither knew Optician. So two eye clinics were given the medical type and then denied the address that type exists to carry, and a hospital was scored as if its address did not matter. One list now, shared." },
     ],
   },
 ];
