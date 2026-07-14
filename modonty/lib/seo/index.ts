@@ -16,6 +16,16 @@ export function jsonLdHtml(data: object): string {
 }
 
 /**
+ * Same `<` escaping for JSON-LD that is ALREADY serialized (the stored blobs the
+ * admin generators write with bare JSON.stringify). Escaping `<` inside a JSON
+ * string parses back to the identical value, so the graph is untouched — only the
+ * markup-breakout risk dies. Apply at EVERY stored-blob injection point.
+ */
+export function jsonLdHtmlFromString(json: string): string {
+  return json.replace(/</g, "\\u003c");
+}
+
+/**
  * Force a Cloudinary image to the OG-recommended 1200×630 (smart crop, keeps focal subject)
  * so the declared og:image width/height are truthful. Non-Cloudinary or already-transformed
  * URLs pass through unchanged.
@@ -184,10 +194,18 @@ export async function generateMetadataFromSEO(data: SEOData, options?: MetadataO
     twitter.site = `@${siteHandle}`;
   }
 
+  // Default = the FULL platform set (same as buildAlternates). Next.js REPLACES the
+  // layout's alternates rather than merging, so a lean default here silently stripped
+  // ar-SA/ar-EG from every page that relied on it (GEO audit 2026-07-13, ن١٣).
   const languages =
     languagesInput && Object.keys(languagesInput).length > 0
       ? languagesInput
-      : { ar: canonicalUrl, "x-default": canonicalUrl };
+      : {
+          "ar-SA": canonicalUrl,
+          "ar-EG": canonicalUrl,
+          ar: canonicalUrl,
+          "x-default": canonicalUrl,
+        };
 
   return {
     title: fullTitle,

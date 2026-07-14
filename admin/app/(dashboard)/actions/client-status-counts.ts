@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { SubscriptionStatus, PaymentStatus, ClientCtaMode, ArticleStatus } from "@prisma/client";
 
-import { getClientIdsMissingCtaMode, getClientImageGaps } from "../clients/segment/segments";
+import { getClientIdsMissingCtaMode, getClientImageGaps, getClientDataGaps } from "../clients/segment/segments";
 
 /**
  * Clients, by the states an admin actually acts on (Khalid 2026-07-13).
@@ -83,6 +83,18 @@ export interface ClientStatusCounts {
     noOg: number;
     noImage: number;
   };
+  /**
+   * Holes in the record itself. `noEndDate` is the one that lies loudest: an ACTIVE
+   * client with no subscriptionEndDate can never match the `expiring-soon` date filter,
+   * so the card prints a calm "0 expiring this week" that actually means "I cannot see".
+   * Live test 2026-07-14 found 21 of 26 active clients in exactly that state.
+   */
+  data: {
+    noEndDate: number;
+    noAddress: number;
+    noSocial: number;
+    noDescription: number;
+  };
 }
 
 export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
@@ -107,6 +119,7 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
     awaitingApproval,
     hasArticles,
     imageGaps,
+    dataGaps,
   ] = await Promise.all([
       db.client.count(),
       db.client.count({ where: live }),
@@ -134,6 +147,9 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       // JSON and Prisma cannot filter into it on MongoDB — so all four are decided in JS,
       // by the same function the segment pages use.
       getClientImageGaps(),
+      // Record gaps — same JS-side decision as the images, for the same reason: an
+      // absent field is invisible to every Prisma filter.
+      getClientDataGaps(),
     ]);
 
   return {
@@ -154,6 +170,12 @@ export async function getClientStatusCounts(): Promise<ClientStatusCounts> {
       noHero: imageGaps["no-hero"].length,
       noOg: imageGaps["no-og"].length,
       noImage: imageGaps["no-image"].length,
+    },
+    data: {
+      noEndDate: dataGaps["no-end-date"].length,
+      noAddress: dataGaps["no-address"].length,
+      noSocial: dataGaps["no-social"].length,
+      noDescription: dataGaps["no-description"].length,
     },
   };
 }

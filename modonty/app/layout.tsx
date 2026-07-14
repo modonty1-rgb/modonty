@@ -46,6 +46,11 @@ export const metadata: Metadata = {
       ar: "/",
       "x-default": "/",
     },
+    // RSS auto-discovery (<link rel="alternate" type="application/rss+xml">) —
+    // feed readers and AI aggregators find /feed.xml through this.
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
 };
 

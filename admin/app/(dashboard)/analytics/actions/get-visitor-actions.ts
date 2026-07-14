@@ -51,7 +51,7 @@ export interface VisitorActionsSummary {
   };
   messages: { db: number; ga4: number; newCount: number; replied: number; guest: number; member: number };
   comments: { db: number; ga4: number; pending: number; approved: number; onArticles: number; onClients: number };
-  visitors: { users: number; sessions: number; actionRate: number | null };
+  visitors: { users: number; sessions: number; actionRate: number | null; aiSessions: number };
 }
 
 interface Ga4Signal {
@@ -60,15 +60,34 @@ interface Ga4Signal {
   comments: number;
   users: number;
   sessions: number;
+  /** Sessions referred by AI answer engines (ChatGPT, Perplexity, Copilot…). */
+  aiSessions: number;
 }
 
-const EMPTY_GA4: Ga4Signal = { messages: 0, questions: 0, comments: 0, users: 0, sessions: 0 };
+const EMPTY_GA4: Ga4Signal = { messages: 0, questions: 0, comments: 0, users: 0, sessions: 0, aiSessions: 0 };
+
+/**
+ * GA4 sessionSource values of AI answer engines. This measurement did not exist
+ * anywhere in the system until 2026-07-14 (GEO audit, بند ٣) — every AI referral
+ * was silently flattened into the generic REFERRAL bucket.
+ */
+const AI_ANSWER_SOURCES = [
+  "chatgpt.com",
+  "chat.openai.com",
+  "perplexity.ai",
+  "www.perplexity.ai",
+  "copilot.microsoft.com",
+  "gemini.google.com",
+  "claude.ai",
+  "you.com",
+  "phind.com",
+];
 
 /** GA4 is a secondary line here — an outage must never blank the operational cards. */
 async function getGa4Signal(): Promise<Ga4Signal> {
   try {
     const dateRanges = [{ startDate: `${WINDOW_DAYS}daysAgo`, endDate: "today" }];
-    const [events, traffic] = await Promise.all([
+    const [events, traffic, aiTraffic] = await Promise.all([
       runReport({
         dateRanges,
         dimensions: [{ name: "eventName" }],
@@ -93,6 +112,20 @@ async function getGa4Signal(): Promise<Ga4Signal> {
         },
         limit: 1,
       }),
+      // Sessions referred by AI answer engines — the GEO signal (same page_view scope).
+      runReport({
+        dateRanges,
+        metrics: [{ name: "sessions" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: "page_view" } } },
+              { filter: { fieldName: "sessionSource", inListFilter: { values: AI_ANSWER_SOURCES } } },
+            ],
+          },
+        },
+        limit: 1,
+      }),
     ]);
 
     const c: Record<string, number> = {};
@@ -105,6 +138,7 @@ async function getGa4Signal(): Promise<Ga4Signal> {
       comments: (c.comment_submit || 0) + (c.client_comment_submit || 0),
       users: Number(totals[0]?.value) || 0,
       sessions: Number(totals[1]?.value) || 0,
+      aiSessions: Number(aiTraffic.rows?.[0]?.metricValues?.[0]?.value) || 0,
     };
   } catch {
     return EMPTY_GA4;
@@ -252,6 +286,7 @@ export async function getVisitorActionsSummary(): Promise<VisitorActionsSummary>
       // "how many of the people who came actually did something" — the one number
       // that ties this card to the rest of the row.
       actionRate: ga4.users > 0 ? (totalActions / ga4.users) * 100 : null,
+      aiSessions: ga4.aiSessions,
     },
   };
 }

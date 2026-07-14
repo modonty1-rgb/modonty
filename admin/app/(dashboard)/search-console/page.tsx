@@ -194,6 +194,17 @@ export default async function SearchConsolePage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {/* Google's Generative AI performance report (impressions in AI Overviews/AI Mode,
+              launched 2026-06) is UI-only — no API exposes it, so we deep-link instead. */}
+          <a
+            href="https://search.google.com/search-console"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
+          >
+            Generative AI report
+            <ExternalLink className="h-3 w-3" />
+          </a>
           <BackgroundInspector staleUrls={staleUrls} />
           <ForceRefreshButton urls={sitemapUrls} />
         </div>

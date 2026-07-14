@@ -1,4 +1,4 @@
-import { TrendingUp, MousePointerClick, Eye, Target, AlertCircle, Search, FileText } from "lucide-react";
+import { TrendingUp, MousePointerClick, Eye, Target, AlertCircle, Search, FileText, ExternalLink } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -70,9 +70,22 @@ export default async function BingWebmasterPage() {
             Performance from Bing — also covers ChatGPT Search, Copilot, DuckDuckGo, Perplexity.
           </p>
         </div>
-        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-          Bing Webmaster API
-        </Badge>
+        <div className="flex items-center gap-2">
+          {/* Bing's AI Performance report (Copilot citations, Citation Share — public preview
+              since 2026-02, expanded 2026-06) is UI-only, no API — deep-link to it. */}
+          <a
+            href="https://www.bing.com/webmasters/aiperformance"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-input px-3 py-1.5 text-xs font-medium hover:bg-muted"
+          >
+            AI Performance report
+            <ExternalLink className="h-3 w-3" />
+          </a>
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            Bing Webmaster API
+          </Badge>
+        </div>
       </div>
 
       {anyError && (

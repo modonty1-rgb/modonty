@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getIndustriesEnhanced } from "@/app/api/helpers/industry-queries";
 import { getIndustriesPageSeo } from "@/lib/seo/industries-page-seo";
-import { generateBreadcrumbStructuredData } from "@/lib/seo";
+import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { loadMoreIndustries } from "@/app/actions/industry-actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -87,9 +87,9 @@ export default async function IndustriesPage({ searchParams }: IndustriesPagePro
   return (
     <>
       {storedJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: storedJsonLd }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
       )}
 
       <Breadcrumb

@@ -81,3 +81,66 @@ export function isValidOrganizationSchemaType(t: string | null | undefined): boo
 export function safeOrganizationType(t: string | null | undefined): string {
   return isValidOrganizationSchemaType(t) ? (t as string).trim() : "Organization";
 }
+
+/**
+ * Container types: valid, but they are the PARENTS every specific type descends from.
+ * Storing one on a client says "a business" — it never says WHICH. They must always
+ * lose to a type we can actually derive.
+ *
+ * Google, verbatim (developers.google.com/search/docs/appearance/structured-data/local-business):
+ *   "Use the most specific LocalBusiness sub-type possible; for example, Restaurant,
+ *    DaySpa, HealthClub, and so on."
+ *
+ * schema.org confirms the family (checked 2026-07-14): Dentist and MedicalClinic both
+ * sit UNDER LocalBusiness — so upgrading LocalBusiness → Dentist loses nothing and gains
+ * the medical identity. Corporation and NGO, by contrast, hang off Organization and are
+ * NOT LocalBusiness descendants: they carry no geo / openingHours and cannot produce a
+ * local-business result at all.
+ */
+const CONTAINER_TYPES: ReadonlySet<string> = new Set(["Organization", "LocalBusiness"]);
+
+/** True when `t` says "a business" without saying which one. */
+export function isContainerOrganizationType(t: string | null | undefined): boolean {
+  return CONTAINER_TYPES.has(String(t ?? "").trim());
+}
+
+/** Types that live under LocalBusiness → Place, so they can carry geo / hours / address. */
+const LOCAL_FAMILY: ReadonlySet<string> = new Set<string>([
+  "LocalBusiness",
+  ...LOCAL_BUSINESS_SCHEMA_TYPES,
+  ...YMYL_SCHEMA_TYPES,
+]);
+
+/**
+ * Resolve the ONE `@type` a client card should carry — industry-agnostic by design.
+ *
+ * The rule is Google's, not ours: the most specific valid type wins. Nothing here knows
+ * or cares that today's specific types happen to be medical; the day a furniture shop
+ * derives `FurnitureStore` or a shop derives `OnlineStore`, the same three lines decide it.
+ *
+ *   1. stored type is a container ("a business")   → the derived type wins
+ *   2. stored type is outside the local family but the derived type is inside it
+ *      (a clinic stored as Corporation / NGO)      → the derived type wins: a place people
+ *                                                    walk into cannot be typed as something
+ *                                                    that carries no address or hours
+ *   3. otherwise the stored type is a deliberate, specific, compatible choice → it stays
+ *
+ * `derived` is whatever the caller could work out about this client (today: the YMYL
+ * config; tomorrow: an industry map). Pass null when nothing is known and the stored
+ * value is returned untouched.
+ */
+export function resolveOrganizationType(
+  stored: string | null | undefined,
+  derived: string | null | undefined,
+): string | null {
+  const s = String(stored ?? "").trim() || null;
+  const d = String(derived ?? "").trim() || null;
+
+  if (!d) return s;
+  if (!s) return d;
+
+  if (isContainerOrganizationType(s)) return d;
+  if (!LOCAL_FAMILY.has(s) && LOCAL_FAMILY.has(d)) return d;
+
+  return s;
+}

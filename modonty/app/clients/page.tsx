@@ -3,6 +3,7 @@ import { getClientsWithCounts } from "@/app/api/helpers/client-queries";
 import { getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getClientsPageSeo } from "@/lib/seo/clients-page-seo";
+import { jsonLdHtmlFromString } from "@/lib/seo";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { ClientsSection } from "./components/clients-section";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
@@ -31,7 +32,7 @@ export default async function ClientsPage() {
       {storedJsonLd?.trim() && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: storedJsonLd }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }}
         />
       )}
       <Breadcrumb

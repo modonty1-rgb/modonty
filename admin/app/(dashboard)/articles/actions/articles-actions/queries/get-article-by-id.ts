@@ -132,9 +132,14 @@ export async function getArticleById(id: string) {
       },
     });
 
+    // Every status the schema defines. The list predated the workflow statuses and
+    // silently dropped them → Edit on an AWAITING_APPROVAL / NEEDS_REVISION article
+    // returned null and crashed the form (live test 2026-07-14).
     const validStatuses: ArticleStatus[] = [
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
+      ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,
       ArticleStatus.ARCHIVED,

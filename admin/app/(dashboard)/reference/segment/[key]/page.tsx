@@ -37,7 +37,7 @@ export default async function ReferenceSegmentPage({ params }: { params: Promise
 
       <Card>
         <CardContent className="pt-4">
-          <ReferenceTable rows={rows} editBase={segment.editBase} />
+          <ReferenceTable rows={rows} editBase={segment.editBase} editMode={segment.editMode} />
         </CardContent>
       </Card>
     </div>

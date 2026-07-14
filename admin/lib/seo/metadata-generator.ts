@@ -39,6 +39,12 @@ export interface ArticleWithMetadataRelations {
   twitterDescription?: string | null;
   twitterSite?: string | null;
   twitterCreator?: string | null;
+  /**
+   * Merged in from Settings.defaultAlternateLanguages by getArticleDefaultsFromSettings.
+   * It always reached this generator — it was simply never written (live test 2026-07-14:
+   * 0 of 56 published articles had hreflang stored, while the live page emitted it fine).
+   */
+  alternateLanguages?: Array<{ hreflang?: string; url?: string }> | null;
   client: Client & {
     name: string;
     slug?: string | null;
@@ -56,6 +62,41 @@ export interface ArticleWithMetadataRelations {
     height?: number | null;
   }) | null;
   tags?: Array<{ tag: { name: string } }>;
+}
+
+/**
+ * hreflang map — byte-for-byte the rule the live article page applies at request time
+ * (modonty/app/articles/[slug]/page.tsx: buildLanguagesMap). Storing it here is what makes
+ * the stored card equal the served page, which in turn makes the SEO score honest: the
+ * scorer reads the STORED metadata, so a field the page adds at render but the generator
+ * never wrote was being counted as missing on every single article.
+ *
+ * Single source of truth for the entries: Settings.defaultAlternateLanguages.
+ * An entry without a `url` points at the article's own canonical (one Arabic page serving
+ * every region), and x-default is always present.
+ */
+function buildLanguagesMap(
+  alternateLanguages: Array<{ hreflang?: string; url?: string }> | null | undefined,
+  canonicalUrl: string,
+  siteUrl: string,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+
+  if (Array.isArray(alternateLanguages)) {
+    for (const entry of alternateLanguages) {
+      const key = entry?.hreflang?.trim();
+      if (!key) continue;
+      const url = entry?.url?.trim();
+      out[key] = url
+        ? url.startsWith("http")
+          ? url
+          : `${siteUrl}${url.startsWith("/") ? url : `/${url}`}`
+        : canonicalUrl;
+    }
+  }
+
+  if (!out["x-default"]) out["x-default"] = canonicalUrl;
+  return out;
 }
 
 export interface GenerateMetadataOptions {
@@ -226,6 +267,7 @@ export async function generateNextjsMetadata(
     description: effectiveDescription,
     alternates: {
       canonical: effectiveCanonical,
+      languages: buildLanguagesMap(article.alternateLanguages, effectiveCanonical, siteUrl),
     },
     openGraph,
     twitter,

@@ -113,12 +113,19 @@ const AUDIT_CASES: Array<{
   { path: "/", userAgent: "OAI-SearchBot", expect: "allow", group: "ai-search", label: "ChatGPT Search" },
   { path: "/", userAgent: "PerplexityBot", expect: "allow", group: "ai-search", label: "Perplexity" },
 
-  // AI training bots — should be BLOCKED (protect content from datasets)
-  { path: "/", userAgent: "GPTBot", expect: "block", group: "ai-training", label: "OpenAI training" },
-  { path: "/", userAgent: "ClaudeBot", expect: "block", group: "ai-training", label: "Anthropic training" },
-  { path: "/", userAgent: "Google-Extended", expect: "block", group: "ai-training", label: "Gemini training" },
-  { path: "/", userAgent: "CCBot", expect: "block", group: "ai-training", label: "Common Crawl" },
-  { path: "/", userAgent: "Bytespider", expect: "block", group: "ai-training", label: "ByteDance training" },
+  // AI training bots — ALLOWED on content, blocked on private paths.
+  // Mirrors the live policy in modonty/app/robots.ts (phase-1: maximize AI
+  // exposure while the site builds authority). These expectations were
+  // inverted until 2026-07-14 — the checker demanded "block" against a policy
+  // that deliberately allows, producing 5 permanent false alarms (GEO audit).
+  { path: "/", userAgent: "GPTBot", expect: "allow", group: "ai-training", label: "OpenAI training" },
+  { path: "/", userAgent: "ClaudeBot", expect: "allow", group: "ai-training", label: "Anthropic training" },
+  { path: "/", userAgent: "Google-Extended", expect: "allow", group: "ai-training", label: "Gemini training" },
+  { path: "/", userAgent: "CCBot", expect: "allow", group: "ai-training", label: "Common Crawl" },
+  { path: "/", userAgent: "Bytespider", expect: "allow", group: "ai-training", label: "ByteDance training" },
+  // The one place AI bots must NOT reach: member pages (PII — GEO audit ن١٠).
+  // Goes green once the modonty robots.ts disallow fix is deployed.
+  { path: "/users/profile", userAgent: "GPTBot", expect: "block", group: "ai-training", label: "OpenAI training × user PII" },
 ];
 
 export interface AuditResult {

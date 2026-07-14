@@ -7,6 +7,7 @@ import { getArticles } from "@/app/api/helpers/article-queries";
 import { FEED_PAGE_SIZE } from "@/lib/feed-constants";
 import type { ArticleResponse, FeedPost } from "@/lib/types";
 import { getHomePageSeo } from "@/lib/seo/home-page-seo";
+import { jsonLdHtmlFromString } from "@/lib/seo";
 import { getFeedBannerSettings } from "@/lib/settings/get-feed-banner-settings";
 import { getPlatformSocialLinks } from "@/lib/settings/get-platform-social-links";
 import { SITE_URL, BRAND_AR, BRAND_EN } from "@/lib/brand";
@@ -90,7 +91,7 @@ export default async function HomePage() {
       {jsonLd?.trim() && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(jsonLd) }}
         />
       )}
       <h1 className="sr-only">مدونتي — منصة المحتوى العربي</h1>

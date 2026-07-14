@@ -6,7 +6,7 @@ import { ArticleStatus, CommentStatus, SubscriptionStatus } from "@prisma/client
 import { TagIcon } from "lucide-react";
 import { db } from "@/lib/db";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
-import { generateMetadataFromSEO } from "@/lib/seo";
+import { generateMetadataFromSEO, jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/shared/client-card";
 
@@ -82,6 +82,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
           description: true,
           socialImage: true,
           socialImageAlt: true,
+          jsonLdStructuredData: true,
         },
       }),
       db.client.findMany({
@@ -125,6 +126,14 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
 
     return (
       <>
+        {/* CollectionPage JSON-LD — DB cache (@graph: CollectionPage/BreadcrumbList/DefinedTerm/Organization),
+            same serve-the-stored pattern as the client page. Emitted only when generated. */}
+        {category.jsonLdStructuredData && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(category.jsonLdStructuredData) }}
+          />
+        )}
         <Breadcrumb
           items={[
             { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

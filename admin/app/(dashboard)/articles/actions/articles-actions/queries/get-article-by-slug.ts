@@ -67,9 +67,12 @@ export async function getArticleBySlug(slug: string, clientId?: string) {
       return null;
     }
 
+    // Same completeness fix as get-article-by-id: the workflow statuses were missing.
     const validStatuses: ArticleStatus[] = [
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
+      ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,
       ArticleStatus.ARCHIVED,

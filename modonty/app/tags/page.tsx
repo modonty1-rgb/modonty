@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateMetadataFromSEO, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { generateMetadataFromSEO, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { getTagsPageSeo } from "@/lib/seo/tags-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { getTagsEnhanced } from "@/app/api/helpers/tag-queries";
@@ -109,11 +109,11 @@ export default async function TagsPage({ searchParams }: TagsPageProps) {
   return (
     <>
       {storedJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: storedJsonLd }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
         <>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionData) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(collectionData) }} />
         </>
       )}
 

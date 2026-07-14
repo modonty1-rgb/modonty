@@ -11,8 +11,12 @@ import { SITE_URL } from "@/lib/brand";
  * Strategy:
  *   - Default *: allow + lean disallow list (auth/admin/api).
  *   - 6 traditional search engines (incl. regional Yandex/Baidu/Huawei).
- *   - 14 AI search/answer bots (real-time fetch when user asks AI a question).
- *   - 20 AI training crawlers (US/CN/RU — feeds model knowledge).
+ *   - 18 AI search/answer bots (real-time fetch when user asks AI a question).
+ *   - 22 AI training crawlers (US/CN/RU — feeds model knowledge).
+ *   - EVERY group carries the same disallow list: the robots protocol binds a
+ *     crawler to its single most-specific group and IGNORES *, so an AI group
+ *     without its own disallow was free to crawl /api/ and /users/ — and
+ *     /users/ pages leak member PII (GEO audit 2026-07-13, finding ن١٠).
  *   - 2 sitemaps declared (main + dedicated image sitemap).
  *
  * Explicitly EXCLUDED (not AI; would only leak data to competitors):
@@ -48,9 +52,12 @@ export default function robots(): MetadataRoute.Robots {
         disallow: SENSITIVE_PATHS,
       },
 
-      // ═══ AI SEARCH & ANSWER BOTS (14) — real-time when user asks AI ═══
+      // ═══ AI SEARCH & ANSWER BOTS (18) — real-time when user asks AI ═══
       // These fetch live when a user asks AI a question, so allowing them
       // = modonty appears as a cited source in the AI's answer.
+      // Registry verified against each vendor's official docs (GEO audit
+      // 2026-07-13/ن١٨): tokens marked [unofficial] have no vendor doc —
+      // harmless as Allow lines, kept for forward-compatibility.
       {
         userAgent: [
           // OpenAI
@@ -64,20 +71,27 @@ export default function robots(): MetadataRoute.Robots {
           "Perplexity-User",        // Perplexity user-initiated
           // Google AI
           "Google-CloudVertexBot",  // Vertex AI grounding
-          "Google-Agent",           // Google AI agents
+          "Google-Agent",           // Google AI agents (official since 2026-03)
           "Google-NotebookLM",      // NotebookLM source fetch
-          "Gemini-Deep-Research",   // Gemini Deep Research mode
+          "Gemini-Deep-Research",   // [unofficial] Deep Research mode
+          // Amazon AI (official — developer.amazon.com/amazonbot)
+          "Amzn-SearchBot",         // Amazon AI search visibility
+          "Amzn-User",              // Amazon AI assistants, user-initiated
+          // Meta AI (official — Meta web crawlers docs)
+          "meta-webindexer",        // Meta AI search result quality
           // Other major AI search/answer engines
           "MistralAI-User",         // Mistral Le Chat
           "DuckAssistBot",          // DuckDuckGo AI assistant
           "YouBot",                 // You.com AI search
-          "PhindBot",               // Phind developer AI search
+          "PhindBot",               // [unofficial] Phind developer AI search
           "Applebot",               // Apple Search + Siri grounding
         ],
         allow: "/",
+        // Same private paths as everyone else — see the strategy note above.
+        disallow: SENSITIVE_PATHS,
       },
 
-      // ═══ AI TRAINING CRAWLERS (20) — global LLM knowledge feed ═══
+      // ═══ AI TRAINING CRAWLERS (22) — global LLM knowledge feed ═══
       // Allowing these = modonty content informs the next generation of every
       // major LLM in the world (US, China, Russia). Phase-1 strategy: maximize
       // brand exposure while site builds authority.
@@ -111,6 +125,8 @@ export default function robots(): MetadataRoute.Robots {
           "CCBot",                        // Common Crawl
         ],
         allow: "/",
+        // Same private paths as everyone else — see the strategy note above.
+        disallow: SENSITIVE_PATHS,
       },
     ],
 

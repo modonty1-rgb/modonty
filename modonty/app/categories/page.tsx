@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getCategoriesEnhanced } from "@/app/api/helpers/category-queries";
 import { getCategoriesPageSeo } from "@/lib/seo/categories-page-seo";
-import { generateBreadcrumbStructuredData } from "@/lib/seo";
+import { generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { loadMoreCategories } from "@/app/actions/category-actions";
 import { extractOgImageFromMetadata } from "@/lib/seo/og-image";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
@@ -86,9 +86,9 @@ export default async function CategoriesPage({ searchParams }: CategoryPageParam
   return (
     <>
       {storedJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: storedJsonLd }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedJsonLd) }} />
       ) : (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }} />
       )}
 
       <Breadcrumb

@@ -131,6 +131,7 @@ export async function getIndustryBySlug(slug: string) {
       description: true,
       socialImage: true,
       socialImageAlt: true,
+      jsonLdStructuredData: true,
       clients: {
         where: { subscriptionStatus: SubscriptionStatus.ACTIVE },
         orderBy: { name: "asc" },

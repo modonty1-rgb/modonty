@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { generateMetadataFromSEO, generateFAQPageStructuredData } from "@/lib/seo";
+import { generateMetadataFromSEO, generateFAQPageStructuredData, jsonLdHtmlFromString } from "@/lib/seo";
 import { getFaqPageSeo } from "@/lib/seo/faq-page-seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,8 +28,8 @@ function sanitizeJsonLd(json: unknown): string {
 export default async function FAQPage() {
   const [faqs, seo] = await Promise.all([getActiveFAQs(), getFaqPageSeo()]);
 
-  // Use cached JSON-LD from Settings, fallback to live generation
-  const jsonLdString = seo.jsonLd ?? sanitizeJsonLd(generateFAQPageStructuredData(faqs));
+  // Use cached JSON-LD from Settings (escaped — stored blobs are bare-stringified), fallback to live generation
+  const jsonLdString = seo.jsonLd ? jsonLdHtmlFromString(seo.jsonLd) : sanitizeJsonLd(generateFAQPageStructuredData(faqs));
 
   const lastUpdated = faqs.length > 0
     ? faqs.reduce((latest, faq) => {
@@ -42,7 +42,7 @@ export default async function FAQPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: typeof jsonLdString === "string" ? jsonLdString : sanitizeJsonLd(jsonLdString) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

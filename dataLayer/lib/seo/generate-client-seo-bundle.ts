@@ -11,6 +11,43 @@
 
 import type { PrismaClient } from "@prisma/client";
 import { generateCompleteOrganizationJsonLd } from "./generate-organization-jsonld";
+import { resolveOrganizationType } from "./organization-schema-types";
+import { YMYL_CATEGORIES, isYmylCategory } from "./ymyl-config";
+
+/** The fields any derivation source may read. Grows as sources are added. */
+interface DerivableClient {
+  isYmyl?: boolean | null;
+  ymylCategory?: string | null;
+  ymylData?: unknown;
+}
+
+/**
+ * What we can work out about this client, independent of whatever type someone typed
+ * into the record. Returns the most specific schema.org type we can justify, or null.
+ *
+ * ONE source today (YMYL). To support a new industry tomorrow, add a source below and
+ * return its type — nothing else in the platform changes, because every write path
+ * (admin create, admin update, console save, Regenerate) already flows through here.
+ */
+function deriveClientType(client: DerivableClient): string | null {
+  // Source 1 — YMYL config: the specialty is more specific than the category, so it wins.
+  if (client.isYmyl && isYmylCategory(client.ymylCategory)) {
+    const cfg = YMYL_CATEGORIES[client.ymylCategory];
+    const specialty = (client.ymylData as Record<string, unknown> | null)?.specialty;
+
+    if (typeof specialty === "string") {
+      const field = cfg.fields.find((f) => f.type === "specialty");
+      const match = field?.specialties?.find((s) => s.value === specialty);
+      if (match?.schemaSubType) return match.schemaSubType;
+    }
+
+    return cfg.schemaType;
+  }
+
+  // Source 2 — (industry map: FurnitureStore, OnlineStore, …) — add here.
+
+  return null;
+}
 
 export interface ClientMetaTags {
   title: string;
@@ -104,6 +141,9 @@ const CLIENT_SEO_SELECT = {
   credentials: true,
   introVideoUrl: true,
   organizationType: true,
+  isYmyl: true,
+  ymylCategory: true,
+  ymylData: true,
   openingHoursSpecification: true,
   priceRange: true,
   gbpProfileUrl: true,
@@ -335,8 +375,30 @@ export async function generateClientSeoBundle(
     height: m.height,
   }));
 
+  // ── The client's schema.org @type ────────────────────────────────────────────
+  //
+  // Google's rule, applied literally: the MOST SPECIFIC valid type wins. That rule is
+  // industry-agnostic, and so is the code — resolveOrganizationType knows nothing about
+  // medicine. It compares what is STORED on the client with what we can DERIVE about it,
+  // and keeps whichever says more.
+  //
+  // Today the only derivation we have is the YMYL config (specialty → Dentist, category →
+  // MedicalClinic / LegalService / FinancialService). The day a furniture shop should
+  // derive FurnitureStore, this block grows ONE more source below — the rule above it,
+  // and every caller of this generator, stay exactly as they are.
+  //
+  // Live audit 2026-07-14: 12 of 17 medical clients were carrying a type that said nothing
+  // about them — LocalBusiness (6), Organization (3), Corporation, NGO. The last two are the
+  // real damage: they hang off Organization, NOT LocalBusiness, so they carry no geo and no
+  // opening hours and can never produce a local result.
+  const derivedType = deriveClientType(client);
+  const clientForJsonLd = {
+    ...client,
+    organizationType: resolveOrganizationType(client.organizationType, derivedType) ?? client.organizationType,
+  };
+
   const jsonLdGraph = generateCompleteOrganizationJsonLd(
-    client as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
+    clientForJsonLd as unknown as Parameters<typeof generateCompleteOrganizationJsonLd>[0],
     clientPageUrl,
     { siteUrl, siteName, ...reviewOptions, galleryImages }
   );

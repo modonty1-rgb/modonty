@@ -6,6 +6,7 @@ import { BuildingIcon } from "lucide-react";
 import { db } from "@/lib/db";
 import { getClientsGA4Stats } from "@/lib/analytics/ga4";
 import { getIndustryBySlug, getIndustriesWithCounts } from "@/app/api/helpers/industry-queries";
+import { jsonLdHtmlFromString } from "@/lib/seo";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { ClientCard } from "@/components/shared/client-card";
 
@@ -56,6 +57,14 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
 
   return (
     <>
+      {/* CollectionPage JSON-LD — DB cache, same serve-the-stored pattern as the
+          client page. Emitted only when generated. */}
+      {industry.jsonLdStructuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(industry.jsonLdStructuredData) }}
+        />
+      )}
       <Breadcrumb
         items={[
           { label: "الرئيسية", href: "/", icon: <BreadcrumbHome /> },

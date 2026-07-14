@@ -63,22 +63,8 @@ export {
   validateJsonLdPreview,
 } from "./jsonld-validation-action";
 
-// ============================================
-// Phase 9: AI Crawler Optimization
-// ============================================
-export {
-  extractPlainTextForAI,
-  extractKeyFacts,
-  generateTLDR,
-  calculateReadingLevel,
-  extractSignificantLinks,
-  generateTopicClusters,
-  generateAIOptimizedMetadata,
-  enhanceJsonLdForAI,
-  type AIOptimizedMetadata,
-  type SemanticKeyword,
-  type SignificantLink,
-} from "./ai-crawler-optimizer";
+// (Removed 2026-07-14: "Phase 9 AI Crawler Optimization" re-exports — ai-crawler-optimizer
+// had ZERO call sites anywhere (GEO audit, بند ٩); the file is deleted with them.)
 
 // ============================================
 // Phase 9: Content Quality Scoring
@@ -181,19 +167,9 @@ export {
   type InternationalSEOData,
 } from "./international-seo";
 
-// ============================================
-// Phase 15: Sitemap & Robots.txt
-// ============================================
-export {
-  generateArticleSitemapEntry,
-  generateArticleSitemap,
-  generateSitemapIndex,
-  generateRobotsTxt,
-  validateSitemapSize,
-  type SitemapEntry,
-  type SitemapImage,
-  type SitemapNews,
-} from "./sitemap-generator";
+// (Removed 2026-07-14: "Phase 15 Sitemap & Robots.txt" re-exports — generateRobotsTxt and
+// friends had ZERO call sites, and that robots output would CONFLICT with the live
+// modonty/app/robots.ts policy if ever wired up (GEO audit, بند ٩). File deleted with them.)
 
 // ============================================
 // Phase 14: Search Console API (SERVER-ONLY)

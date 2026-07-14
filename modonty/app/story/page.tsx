@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { StoryClientLoader } from "./StoryClientLoader";
 import { STORY_OG_IMAGE as OG_IMAGE } from "./_constants";
 import { ORGANIZATION_JSONLD as ORGANIZATION } from "@/lib/organization-jsonld";
+import { jsonLdHtml } from "@/lib/seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 const PAGE_URL = `${SITE_URL}/story`;
@@ -71,15 +72,15 @@ export default function StoryPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(webPage) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(ORGANIZATION) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(PODCAST_SERIES) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(PODCAST_SERIES) }}
       />
       <StoryClientLoader
         manifestUrl="/help/audio/general-pitch/manifest.json"

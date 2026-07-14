@@ -121,6 +121,12 @@ export async function VisitorActionsBreakdown() {
               {Math.round(visitors.actionRate ?? 0)}%
             </span>
             took action
+            <span className="text-muted-foreground/40">·</span>
+            {/* The GEO signal — first measured 2026-07-14. Amber = GA4, like the rest of the line. */}
+            <span className="font-bold tabular-nums text-amber-600 dark:text-amber-400">
+              {visitors.aiSessions.toLocaleString("en-US")}
+            </span>
+            from AI answers
             <span className="text-primary">→</span>
           </Link>
         }

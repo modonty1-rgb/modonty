@@ -12,6 +12,7 @@ import {
   generateArticleStructuredData,
   generateSiteIdentityStructuredData,
   jsonLdHtml,
+  jsonLdHtmlFromString,
   normalizeOgImages,
 } from "@/lib/seo";
 import { IconFolder } from "@/lib/icons";
@@ -330,8 +331,18 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
     collectReadMore(relatedArticles);
     const readMoreTop = readMoreItems;
 
-    // Generate JSON-LD live every render (pulls current author + image data from this render's
-    // article object; no risk of stale DB cache). Data fetchers above are cached, so this is fast.
+    // The stored knowledge-graph card (admin-generated on publish/update) is the designed
+    // model: publisher = the CLIENT, YMYL doctor reviewer, citations. Serve it when present —
+    // the live generator below is only the fallback for articles that predate generation.
+    // (GEO audit 2026-07-13, القسم ٣ — the rich card was stored but never served.)
+    const storedCard = article.jsonLdStructuredData?.trim() || null;
+    // The stored @graph carries its own BreadcrumbList + FAQPage nodes — suppress the
+    // separate live scripts when serving it, or the same entities ship twice. The live
+    // FAQPage still ships when visitor questions were approved AFTER the last regeneration.
+    const storedHasFaq = storedCard?.includes('"FAQPage"') ?? false;
+
+    // Live fallback JSON-LD (pulls current author + image data from this render's
+    // article object). Data fetchers above are cached, so this is fast.
     const jsonLdGraph: object = generateArticleStructuredData(article);
     const breadcrumbJsonLd = generateBreadcrumbStructuredData([
       { name: "الرئيسية", url: "/" },
@@ -340,18 +351,26 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
       { name: article.title, url: `/articles/${article.slug}` },
     ]);
     // Site identity (Modonty Organization + WebSite brand entity) for knowledge-graph + AI/GEO.
+    // Always emitted: its @id (/#organization) does not collide with the stored card's
+    // nodes (client publisher + /authors/... author).
     const siteIdentityJsonLd = generateSiteIdentityStructuredData({
       sameAs: platformSocialLinks.map((l) => l.href),
     });
 
     return (
       <>
-        {jsonLdGraph && (
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLdGraph) }} />
+        {storedCard ? (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(storedCard) }} />
+        ) : (
+          <>
+            {jsonLdGraph && (
+              <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLdGraph) }} />
+            )}
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }} />
+          </>
         )}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteIdentityJsonLd) }} />
-        {articleFaqsForJsonLd.length > 0 && (
+        {articleFaqsForJsonLd.length > 0 && !storedHasFaq && (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{

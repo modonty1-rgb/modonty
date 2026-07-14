@@ -7,6 +7,7 @@ import { cleanStaleVersions } from "./stale-versions";
 import { createTTLIndex, getIndexHealth, ensurePerfIndexes } from "./index-health";
 import { sanitizeAllLegalForms, sanitizeAllOrganizationTypes } from "./legalform-sanitizer";
 import { sanitizeAllCanonicals } from "./canonical-sanitizer";
+import { backfillArticleHreflang } from "./hreflang-backfill";
 import { sweepCloudinaryOrphans } from "./cloudinary-orphans";
 import { hardDeleteOldSoftDeletedComments } from "./soft-deleted-comments";
 import { seedIntakeForm } from "./seed-intake";
@@ -125,6 +126,21 @@ export async function runStepCanonical(): Promise<MaintenanceStepResult> {
     };
   } catch (e) {
     return fail("canonical", "Canonical URLs Fixed", e);
+  }
+}
+
+export async function runStepHreflang(): Promise<MaintenanceStepResult> {
+  try {
+    const r = await backfillArticleHreflang();
+    return {
+      key: "hreflang",
+      label: "Article hreflang Backfilled",
+      ok: r.failed === 0,
+      count: r.successful,
+      detail: r.failed > 0 ? `${r.failed} failed` : undefined,
+    };
+  } catch (e) {
+    return fail("hreflang", "Article hreflang Backfilled", e);
   }
 }
 

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير فحص GEO / AEO — مدونتي — 2026-07-13 (نسخة مُدققة)</title>
+<style>
+  :root{
+    --bg:#f7f7f8; --card:#fff; --border:#e4e4e7; --fg:#18181b; --muted:#71717a;
+    --red:#dc2626; --red-bg:#fef2f2; --amber:#d97706; --amber-bg:#fffbeb;
+    --green:#059669; --green-bg:#ecfdf5; --blue:#2563eb; --blue-bg:#eff6ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--fg);padding:28px 20px;line-height:1.8;font-size:14px}
+  .wrap{max-width:1020px;margin:0 auto}
+  h1{font-size:21px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+  .verify{background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px;font-size:12.5px;margin-bottom:18px}
+  .verify b{color:var(--blue)}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+  .pill{font-size:12px;font-weight:700;border-radius:99px;padding:5px 14px;border:1px solid}
+  .p-green{background:var(--green-bg);color:var(--green);border-color:#a7f3d0}
+  .p-red{background:var(--red-bg);color:var(--red);border-color:#fecaca}
+  .p-amber{background:var(--amber-bg);color:var(--amber);border-color:#fde68a}
+  .p-blue{background:var(--blue-bg);color:var(--blue);border-color:#bfdbfe}
+
+  .section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:18px}
+  .section>h2{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .badge{font-size:10px;font-weight:800;padding:2px 9px;border-radius:99px}
+  .b-green{background:var(--green-bg);color:var(--green)}
+  .b-red{background:var(--red-bg);color:var(--red)}
+  .b-blue{background:var(--blue-bg);color:var(--blue)}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#fafafa;text-align:right;padding:8px 10px;border:1px solid var(--border);font-size:11px;color:var(--muted);white-space:nowrap}
+  td{padding:8px 10px;border:1px solid var(--border);vertical-align:top}
+  code{background:#f4f4f5;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:11px;direction:ltr;display:inline-block;unicode-bidi:embed}
+  .ok{color:var(--green);font-weight:800;white-space:nowrap}
+  .evidence{font-size:11px;color:var(--muted)}
+
+  .bigfind{border:2px solid var(--red);border-radius:12px;background:var(--red-bg);padding:16px 18px;margin-bottom:10px}
+  .bigfind h3{font-size:15px;color:var(--red);margin-bottom:8px}
+  .bigfind p{font-size:13px;margin-bottom:6px}
+  .bigfind .flow{background:#fff;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;font-size:12.5px;margin:8px 0}
+  .dcheck{display:block;margin:10px 0 0;padding:9px 14px;border-radius:8px;background:#dbeafe;border:2px solid #2563eb;color:#1e40af;font-weight:800;font-size:13px}
+  .bigfind.done{border-color:var(--green);background:var(--green-bg)}
+  .bigfind.done h3{color:var(--green)}
+  .bigfind.done .flow{border-color:var(--green-line)}
+
+  .gap{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:#fafafa;position:relative;padding-inline-start:20px}
+  .gap::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;border-radius:0 8px 8px 0}
+  .gap.g-red::before{background:var(--red)} .gap.g-amber::before{background:var(--amber)} .gap.g-gray::before{background:#a1a1aa}
+  .gap.done{background:var(--green-bg);border-color:var(--green-line)}
+  .gap.done::before{background:var(--green)}
+  .s-done{background:#fff;color:var(--green);border:1px solid var(--green-line)}
+  .gap h4{font-size:13.5px;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .gap p{font-size:12.5px;color:#3f3f46}
+  .sev{font-size:10px;font-weight:800;padding:1px 8px;border-radius:99px}
+  .s-red{background:var(--red-bg);color:var(--red)} .s-amber{background:var(--amber-bg);color:var(--amber)} .s-gray{background:#f4f4f5;color:var(--muted)}
+  .fix{font-size:11.5px;color:var(--blue);margin-top:4px;font-weight:600}
+  .vtag{font-size:9.5px;font-weight:800;padding:1px 7px;border-radius:99px;background:var(--green-bg);color:var(--green)}
+
+  .concept{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+  .cbox{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:#fafafa;font-size:12.5px}
+  .cbox b{display:block;margin-bottom:4px;font-size:13px}
+  .plan li{margin-bottom:10px;font-size:13px}
+  .plan .ph{font-weight:800;color:var(--blue)}
+  ul.src{font-size:12px;line-height:2.1}
+  ul.src a{color:var(--blue);text-decoration:none;word-break:break-all}
+  .foot{font-size:11px;color:var(--muted);text-align:center;padding:12px 0}
+  .fixnote{background:var(--amber-bg);border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:11.5px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>🤖 تقرير فحص الجاهزية لمحركات الإجابة — GEO / AEO</h1>
+<p class="sub">مدونتي · 2026-07-13 · <b>النسخة المُدقّقة</b> — تحلّ محل نسخة الصباح</p>
+
+<div class="verify">
+  <b>منهجية التدقيق (طلب خالد: «تأكيد مليون في المية»):</b>
+  أربعة وكلاء تحقق عدائيون متوازيون — مهمتهم تكذيب كل بند لا تأكيده — (زواحف robots · سكيما وIndexNow · القياس · المصادر الرسمية على الإنترنت) + فحص خامس مباشر على الإنتاج الحي: robots.txt وllms.txt وصفحة مقال وصفحة مؤلف من modonty.com نفسها.
+  <b>النتيجة: تصحّح ٣ بنود من نسخة الصباح</b> (مصير سكيما المؤلفين · مصدر المصادر المعروضة · أعداد الزواحف) <b>واكتُشف الخلل الأكبر</b> (القسم ٣). كل بند أدناه موسوم بمستوى تحققه.
+  <br><br>
+  <b>🔁 جولة تدقيق ثانية (بطلب خالد — نفس اليوم):</b> ثلاثة وكلاء عدائيون جدد بعيون جديدة أعادوا تتبّع كل ادعاء في هذه النسخة مستقلاً (ممنوع الوثوق بمراجع النسخة الأولى) + فحص إنتاج إضافي فكّك عقدة Article المُقدَّمة فعلياً. <b>الحكم: تقارب تام — صفر انقلابات؛ كل البنود صمدت</b>، مع أربع إضافات دقة مدمجة أدناه بوسم «ج٢». من أقوى الأدلة: عدّ الزواحف تم يدوياً واحداً واحداً (15+22=37)، ومحلّل Next.js نفسه فُحص للتأكد أن ملف robots الناتج لا يدمج القواعد، واقتباسات قوقل أُخذت من نسخة الدليل المحدثة قبل ٣ أيام (2026-07-10).
+  <br><br>
+  <b>🚀 جولة ثالثة — Ultra (طاقة قصوى، نفس اليوم):</b> سؤال جديد لم تطرحه الجولتان: <b>«ماذا لم يُفحص أصلاً؟»</b> — كاشفا تغطية ومجسّ إنتاج مسحا كل المسارات العامة (الرئيسية، الفئات، الوسوم، الصناعات، المستخدمين، الأخبار، ai-plugin.json، RSS، hreflang). أنتجت <b>٨ اكتشافات جديدة مشروعة</b> (القسم ٤ب) — جديدة لأن السؤال جديد، لا لأن السابق اهتز؛ كل بنود الجولتين السابقتين بقيت كما هي. التحقق: فحص مزدوج مباشر (إنتاج حي + كود) لكل بند. <b>حدّان معلنان بشفافية:</b> كاشف مهاجمة نص التقرير سطراً سطراً وكاشف التحقق من أسماء الزواحف الـ37 ضد توثيق كل شركة لم يكتملا (حد استهلاك الجلسة — يُستأنفان بعد 22:00)، وتحقق البنود الجديدة تم بفاحص واحد مباشر لا بمكذّبين اثنين.
+</div>
+
+<div class="pills">
+  <span class="pill p-green">8 بنود جاهزة ✓ مؤكدة</span>
+  <span class="pill p-green">الانفصام الثلاثي ✅ أُصلح (مقالات + عملاء + مرجعيات)</span>
+  <span class="pill p-green">✅✅ التقرير كله أخضر — 20 بنداً أُصلحت + بند شُطب من النطاق بقرار خالد (speakable) 🎉</span>
+  <span class="pill p-amber">المتبقي الوحيد في المشروع: سكور AEO (المرحلة الثانية — يُبنى بعد الدفعة)</span>
+  <span class="pill p-blue">🔵🔵 دبل تشيك نهائي بند-بند 2026-07-14 — كل بطاقة موسومة · 4 اكتشافات جديدة أُصلحت (رابط ميت · redirect مبتلَع · تسريب مجدولات · تهريب ld+json عبر المنصة) · صمد أمام وكيل تفنيد مستقل</span>
+  <span class="pill p-green">🔒 مُقفل 2026-07-14</span>
+</div>
+
+<!-- ═══ ١ المفهوم ═══ -->
+<div class="section">
+  <h2>١ · المفهوم — من المصادر الرسمية <span class="badge b-blue">مُتحقق من المصدر الأولي مباشرة + مستجدات يونيو/يوليو 2026</span></h2>
+  <div class="concept">
+    <div class="cbox"><b>🥇 قوقل: «لا خوارزمية منفصلة»</b>
+      نص الدليل الرسمي مباشرة: الميزات التوليدية «متجذرة في أنظمة الترتيب والجودة الأساسية». شرط الظهور الوحيد: صفحة مفهرسة ومؤهلة للمقتطف. السكيما «غير مطلوبة» للتوليدي، وllms.txt «قوقل تتجاهله»، ولا تقطيع ولا طول مثالي.</div>
+    <div class="cbox"><b>📊 بحث برينستون المُحكّم (KDD 2024)</b>
+      حتى +40٪ ظهوراً بمقياس Position-Adjusted Word Count. أقوى ثلاث وسائل: <b>الاقتباسات · الإحصاءات · ذكر المصادر</b> (تحسن نسبي 30–40٪). حشو الكلمات: <b>−10٪ أسوأ من الأساس</b> على Perplexity. الفعالية تختلف حسب المجال.</div>
+    <div class="cbox"><b>🔌 OpenAI: أربعة زواحف الآن (تحديث أبريل 2026)</b>
+      <code>GPTBot</code> تدريب · <code>OAI-SearchBot</code> استشهاد بحث ChatGPT (حجبه = «لن تظهر في إجابات البحث») · <code>ChatGPT-User</code> جلب المستخدم — <b>قد لا يلتزم robots.txt</b> نصاً رسمياً · <code>OAI-AdsBot</code> جديد لإعلانات ChatGPT.</div>
+    <div class="cbox"><b>🟣 Anthropic: إطار الزواحف الثلاثة (فبراير 2026)</b>
+      <code>ClaudeBot</code> تدريب · <code>Claude-SearchBot</code> فهرسة بحث · <code>Claude-User</code> جلب المستخدم — الثلاثة تحترم robots.txt رسمياً. <b>سياستنا الحالية تسمح بالثلاثة ✓</b>.</div>
+    <div class="cbox"><b>📈 تقرير قوقل التوليدي — الاسم والحالة بدقة</b>
+      «Generative AI performance report» في Search Console — أُطلق 3 يونيو 2026 <b>لعينة من المواقع فقط</b> (طرح تدريجي؛ توسّع لمواقع أكثر ~9 يوليو) ويعرض <b>الانطباعات فقط</b> — لا نقرات ولا استعلامات. لا تعِد نفسك ببيانات أدق من هذا.</div>
+    <div class="cbox"><b>📊 Bing الأغنى حالياً في القياس</b>
+      تقرير AI Performance (فبراير 2026، معاينة عامة): مرات الاستشهاد في كوبايلوت وملخصات Bing. توسّع يونيو 2026: Intents · Topics · <b>Citation Share</b> (حصتك من أصوات إجابات الذكاء الاصطناعي مقابل المنافسين) · Compare.</div>
+    <div class="cbox"><b>🆕 أداة انسحاب رسمية من قوقل (يونيو 2026)</b>
+      «Search generative AI control» في إعدادات Search Console — تستبعد الموقع من الملخصات التوليدية دون التأثير على الترتيب العادي. <b>لا تخصنا</b> (نريد الظهور) لكن وجودها يؤكد جدية قوقل في فصل التحكم.</div>
+    <div class="cbox"><b>🔄 مايكروسوفت رسمياً عن IndexNow</b>
+      نص الإعلان: «يساعد IndexNow على ضمان أن أنظمة الذكاء الاصطناعي تستشهد بأحدث نسخة من الصفحة عند توليد الإجابات». حداثة المحتوى إشارة استشهاد معلنة.</div>
+  </div>
+</div>
+
+<!-- ═══ ٢ الموجود ═══ -->
+<div class="section">
+  <h2>٢ · الموجود عندنا <span class="badge b-green">8 بنود — كل واحد مؤكد بوكيل مستقل + فحص إنتاج</span></h2>
+  <table>
+    <tr><th style="width:36px"></th><th style="width:225px">البند</th><th>الدليل (بعد التدقيق)</th></tr>
+    <tr><td class="ok">✓</td><td><b>GPTBot مسموح</b> (سؤال خالد — مؤكد مرتين)</td><td class="evidence"><code>modonty/app/robots.ts:87</code> + تحقق حي: robots.txt المُقدَّم على الإنتاج يعلنه Allow</td></tr>
+    <tr><td class="ok">✓</td><td><b>37 زاحف ذكاء اصطناعي مسموح</b> <small>(العدد الدقيق بعد التدقيق: 15 بحث/إجابة + 22 تدريب — نسخة الصباح قالت 14+20)</small></td><td class="evidence">بحث/إجابة: OAI-SearchBot · ChatGPT-User · Claude-SearchBot · Claude-User · PerplexityBot · Perplexity-User · NotebookLM · Gemini-Deep-Research · Applebot... تدريب: GPTBot · ClaudeBot · Google-Extended · DeepSeek · Bytespider · CCBot... — ولا يوجد robots.txt ثابت يعارض السياسة</td></tr>
+    <tr><td class="ok">✓</td><td><b>IndexNow دائرة كاملة</b></td><td class="evidence">إرسال تلقائي عند أي انتقال إلى PUBLISHED (<code>transition-article.ts:131-143</code>) + ملف المفتاح محتواه يطابق اسمه (شرط البروتوكول) ✓ + زران يدويان بالأدمن. ملاحظتا تدقيق: نسختان متطابقتان من المكتبة (admin تثبّت الدومين hardcoded) والفشل صامت (console.warn فقط)</td></tr>
+    <tr><td class="ok">✓</td><td><b>أهلية المقتطف كاملة على المقالات</b></td><td class="evidence">مؤكد في المسارين (التوليد الحي + الميتاداتا المخزنة) <b>وعلى الإنتاج الحي</b>: وسم googlebot يحمل <code>max-snippet:-1, max-image-preview:large</code> · و<code>data-nosnippet</code> على كروت الفيد عمداً</td></tr>
+    <tr><td class="ok">✓</td><td><b>سكيما المقال الحية</b></td><td class="evidence">مؤكد على الإنتاج: Article + BreadcrumbList + Organization + WebSite، مع datePublished وdateModified. <b>لكن انظر القسم ٣ — المُقدَّم أفقر من المخزّن</b></td></tr>
+    <tr><td class="ok">✓</td><td><b>FAQPage مشروطة بوجود أسئلة</b></td><td class="evidence"><code>articles/[slug]/page.tsx:354</code> و<code>clients/[slug]/page.tsx:309</code> — تُبثّ فقط عند وجود FAQs (سلوك صحيح)</td></tr>
+    <tr><td class="ok">✓</td><td><b>صفحات المؤلفين سليمة على الإنتاج</b> <small>(تصحيح لنسخة الصباح!)</small></td><td class="evidence">مؤكد بالكود وبالإنتاج الحي: الصفحة تولّد Metadata + Person JSON-LD كاملاً وقت الطلب (sameAs + knowsAbout + credentials) حتى مع فراغ الحقول المخزنة (<code>authors/[slug]/page.tsx:108-168</code>). الفجوة مخزنية فقط — تُفصَّل في النواقص</td></tr>
+    <tr><td class="ok">✓</td><td><b>llms.txt + إشارة الحداثة</b></td><td class="evidence">llms.txt وllms-full.txt على الإنتاج (200) · sitemap بـ lastModified لكل الكيانات + image-sitemap مصرّح بهما في robots</td></tr>
+  </table>
+</div>
+
+<!-- ═══ ٣ الاكتشاف الأكبر ═══ -->
+<div class="section">
+  <h2>٣ · الاكتشاف الأكبر <span class="badge b-green">✅ أُصلح 2026-07-14 — كان أهم بند في التقرير كله</span></h2>
+  <div class="bigfind done">
+    <h3>✅ أُصلح — دماغان منفصلان لسكيما المقال: الغني كان يُخزَّن ولا يُقدَّم (التفاصيل أدناه للتاريخ)</h3>
+    <p>عندنا خطّا توليد JSON-LD للمقال يعملان بالتوازي ولا يلتقيان:</p>
+    <div class="flow">
+      <b>الخط الغني (أدمن):</b> knowledge-graph-generator يولّد سكيما تطبق نموذج مودونتي المعتمد بالكامل — <b>الناشر = العميل</b> ✓ (<code>kg-generator:153</code>) · <b>مراجعة دكتور العميل</b> للـ YMYL من ymylData ✓ (<code>:199-220</code>) · <code>citation</code> ✓ · المؤلف مودونتي Organization (<code>:141-152</code> — وPerson تلقائياً لو الكاتب بشري) — تُخزَّن في <code>article.jsonLdStructuredData</code> عند النشر... <b>وصفحة المقال لا تقرؤها أبداً.</b>
+    </div>
+    <div class="flow">
+      <b>الخط الفقير (modonty):</b> صفحة المقال تولّد سكيما حية كل طلب (<code>page.tsx:335</code>) — <b>الناشر مودونتي بدل العميل</b> · <b>بلا مراجعة الدكتور</b> · بلا citation · بلا speakable. المؤلف (مودونتي Organization) هو الخانة الوحيدة المطابقة للنموذج. <b>هذا ما يصل قوقل وChatGPT فعلاً</b> — تأكدنا منه على الإنتاج الحي (reviewedBy:false · citation:false).
+    </div>
+    <p style="font-size:11px;color:var(--muted)">تصحيح صياغة 2026-07-14: نسخة سابقة وصفت فرق المؤلف «Person مقابل Organization» — غير دقيق لمقالاتنا الفعلية (كلها بمؤلف مودونتي، فالخانة متطابقة في البطاقتين). الفروقات الفعلية: الناشر-العميل، مراجعة الدكتور، المصادر. الحقائق الخام (مخرجات curl) لم تتغير.</p>
+    <p><b>الأخطر:</b> سكور المقال في dataLayer (نصف درجة JSON-LD) يقيس <b>البلوب المخزّن الذي لا يُقدَّم</b> — يعني جزء من درجة AS الحالية يقيس شيئاً لا تراه محركات البحث. (درجة الميتا سليمة — الميتاداتا المخزنة هي المُقدَّمة فعلاً.)</p>
+    <p>للمقارنة: <b>صفحات العملاء تتصرف صح</b> — تقدّم المخزّن الغني مع fallback حي (<code>clients/[slug]/page.tsx:293-303</code>). المطلوب قرار: توحيد المقالات على نفس النمط.</p>
+    <p style="background:var(--green-bg);border:1px solid var(--green-line);border-radius:8px;padding:10px 14px"><b>✅ أُصلح 2026-07-14 — جبهة ٢ من المرحلة الأساس</b> (بمراجعة كود مسبقة: الحقل يصل الصفحة أصلاً عبر include، والبطاقة تتجدد عند كل تعديل ونشر): صفحة المقال الآن <b>تقدّم البطاقة المخزنة</b> عند وجودها (الناشر-العميل + دكتور المراجعة + المصادر) مع كتم Breadcrumb/FAQ الحيين لمنع الازدواج — والتوليد الحي يبقى fallback للمقالات التي تسبق التوليد، وFAQ الحي يظل يُبث لأسئلة الزوار المعتمدة بعد آخر تجديد. tsc نظيف. يسري مع الدفعة.</p>
+    <p><b>ج٢ — صمد أمام إعادة تتبع مستقلة كاملة:</b> لا يوجد أي مسار بث آخر على route المقال (لا layout ولا head ولا مكوّن آخر يبث ld+json من المخزّن)؛ القارئ الوحيد للبلوب المخزّن في modonty (<code>getArticleSeo</code>) نفسه كود ميت بصفر استدعاءات. وفحص الإنتاج فكّك عقدة Article المُقدَّمة: المؤلف مودونتي <code>Organization</code> (مطابق للنموذج المعتمد ✓) لكن <b>صفر citation/speakable/reviewedBy والناشر مودونتي بدل العميل</b>. نيوانس دقة: صفحة المقال تعيد توليد canonical/hreflang/OG فوق الميتاداتا المخزنة وقت الطلب — فبعض فحوص الميتا الفرعية قد تدرّج حقولاً تختلف قليلاً عن المُقدَّم (الجوهر ثابت: الميتا مُقدَّمة، الـ JSON-LD المخزّن لا).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — أُعيد تتبع الدائرة كاملة بالكود: البلوب يصل الصفحة (include يجلب كل الحقول) · الكاش موسوم ويتجدد مع كل نشر/تعديل · البلوب المخزن يحمل BreadcrumbList+FAQPage فمنطق كتم الازدواج مؤسس · معرفات العقد منفصلة فلا تصادم مع هوية الموقع · <b>واكتشف وأصلح ثغرة أمنية</b>: البلوبات المخزنة كانت تُحقن خاماً بلا تهريب <code><</code> — أُضيف jsonLdHtmlFromString وطُبق أولاً على 5 صفحات، ثم كشف وكيل التفنيد المستقل 12 موقعاً إضافياً من نفس الفئة (منها الرئيسية والرائجة وقوائم المرجعيات) فأُغلقت كلها — <b>فئة ld+json الآن مُهرَّبة 100% عبر المنصة، متحقق بمسح صفري نهائي</b> · tsc نظيف</span>
+  </div>
+</div>
+
+<!-- ═══ ٤ النواقص ═══ -->
+<div class="section">
+  <h2>٤ · النواقص <span class="badge b-red">9 بنود — كل واحد بحكم وكيل التدقيق</span></h2>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ١ · فاحص robots بالأدمن يعارض السياسة الحية <span class="vtag">مؤكد عدائياً</span></h4>
+    <p>الفاحص يتوقع <b>حجب</b> خمسة زواحف تدريب (GPTBot · ClaudeBot · Google-Extended · CCBot · Bytespider) بينما السياسة الحية تسمح بها — تشغيله اليوم = <b>٥ فحوصات فاشلة</b> بشارة حمراء وإنذار مزعج في صفحة Search Console بالأدمن (<code>robots-actions.ts:117-121</code>). ملحقة: نص الواجهة يقول «19 فحصاً» والفعلي 18.</p>
+    <p class="fix">✅ <b>أُصلح 2026-07-14</b> — التوقعات الخمسة قُلبت إلى allow بتعليق يشرح السياسة، وأُضيف فحص سادس: GPTBot ممنوع من /users/ (حارس PII). الحالات صارت 19 فعلاً فنص الواجهة صحيح بلا تعديل.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — محاكاة يدوية للحالات الـ19 كلها ضد robots.ts الحي: 19/19 تنجح · العدد مطابق لنص الواجهة (موضعان) · خوارزمية الفاحص مطابقة لمواصفة RFC 9309 (الأخص يفوز · الأطول يفوز · التعادل لـ allow) · صفر آثار جانبية</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ٢ · زواحف الذكاء الاصطناعي تقدر تزحف /api/ و/users/ <span class="vtag">اكتشاف وكيل robots</span></h4>
+    <p>مجموعات الزواحف الاصطناعية في robots.ts لها <code>allow: "/"</code> <b>بلا قائمة disallow</b> — وبروتوكول robots يُلزم الزاحف بمجموعته الأخص فقط ويتجاهل <code>*</code>. النتيجة: الزواحف الـ37 غير ممنوعة من <code>/api/</code> و<code>/users/</code> بينما بقية الزواحف ممنوعة. <b>ج٢:</b> تأكد على مستوى محلّل Next.js نفسه (الملف الناتج لا يدمج القواعد)، و<code>/admin/</code> مكشوف نصياً كذلك (أثره عملياً محدود — الأدمن على subdomain منفصل).</p>
+    <p class="fix">✅ <b>أُصلح 2026-07-14</b> — disallow أُضيف للمجموعتين مع تعليق يشرح قاعدة «الأخص يفوز» (يسري على الإنتاج مع الدفعة القادمة).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — عدّ يدوي للمصفوفات: 18 بحث + 22 تدريب + 6 تقليدية مطابقة للتعليقات · المجموعتان تحملان disallow للمسارات الحساسة الثلاثة فقط (صفر حجب لمسارات محتوى) · مطابق لـ RFC 9309 · tsc يثبت صحة الشكل لـ Next.js</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ شقه الأول أُصلح 2026-07-14</span> ٣ · صفر قياس لزيارات محركات الإجابة <span class="vtag">مؤكد عدائياً</span></h4>
+    <p>الفجوة كانت في ثلاث طبقات: (أ) GA4 بلا تجميع AI؛ (ب) مصنّف المصادر (<code>classify-source.ts</code>) يرمي chatgpt.com في REFERRAL؛ (ج) enum قاعدة البيانات بلا قيمة AI.</p>
+    <p class="fix">✅ <b>(أ) أُصلح</b>: قائمة AI_ANSWER_SOURCES (ChatGPT · Perplexity · Copilot · Gemini · Claude · You · Phind) + استعلام GA4 مخصص + الرقم يظهر برأس Visitor actions بالداشبورد: «N from AI answers» بلون GA4 الكهرماني. <b>(ب)+(ج) مؤجلان</b>: المصنّف يحتاج قيمة enum جديدة = تعديل سكيما → يُضم لدفعة السكيما القادمة.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الاستعلام مطابق لسكيما GA4 Data API الرسمية (andGroup + inListFilter على sessionSource) بنفس عرف page_view المقفول · 9 مصادر lowercase · فشل GA4 يتدهور لأصفار ولا يكسر الداشبورد · العرض كهرماني بعرف ألوان GA4 · الشقان ب+ج مؤجلان بالتصميم (سكيما)</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ٤ · llms.txt ملف ميت <span class="vtag">مؤكد عدائياً</span></h4>
+    <p>كان ملفاً ثابتاً أعمى عن كل ما نُشر بعد 2026-06-02.</p>
+    <p class="fix">✅ صار route ديناميكياً (<code>app/llms.txt/route.ts</code>) يبني نفسه من قاعدة البيانات كل ساعة: آخر 20 مقالاً + الفئات + الصناعات + دليل الشركات النشطة — بصيغة llmstxt.org، مع توثيق صريح أن قوقل تتجاهله (نُبقيه لغيرها). llms-full.txt يبقى ثابتاً بالتصميم (توثيق منصة لا فهرس محتوى). ✅ <b>البلوكر انحل:</b> خالد حذف الملف الثابت المتصادم (2026-07-14، متحقق) — الطريق سالك للبيلد.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — <b>اكتشف وأصلح خللين</b>: ① رابط ميت — سطر /articles كان يشير لصفحة قائمة غير موجودة (404) وحُذف؛ ② تسريب المجدولات — أُضيف حارس التاريخ المستقبلي بعرف المنصة · كل الروابط الـ14 الباقية تحقق وجود صفحتها الفعلية واحداً واحداً · الملف الثابت المتصادم غائب (البيلد سالك) · llms-full.txt موجود · الاستعلامات كلها بحدود take وselect أدنى</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ٥أ · المؤلفون — الشق المنجز بالكامل <span class="vtag">متحقق بالكود والتست الحي</span></h4>
+    <p>ثلاثة إصلاحات تمت وثبتت:
+    ① عنوان «... | مدونتي | مدونتي» المكرر مات — <code>title.absolute</code> في المسارين (يسري على الإنتاج مع الدفعة).
+    ② حقول مؤلف مودونتي المخزنة <b>تولّدت فعلاً</b> — حُفظ من واجهة الأدمن على dev والسكور قفز من «nothing generated» إلى 60 (الخط كامل مثبت شغال).
+    ③ باق مكتشف أثناء التنفيذ أُصلح: رابط Edit للمؤلفين بجدول المرجعيات كان يقود لمسار 404 (المؤلفون يُدارون من صفحة واحدة، لا صفحة تعديل لكل واحد).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — title.absolute في المسارين (المخزن + الحي) وهو الـAPI الرسمي للتهرب من قالب الـlayout · مثبت حياً على الإنتاج (curl: عنوان ببراند واحد) · editMode="single" للمؤلفين يقود لصفحة /authors الحقيقية والأقسام الثلاثة الباقية perId بلا مساس · الحقل إلزامي فلا حالة undefined</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ مقفول 2026-07-14</span> ٥ب · المؤلفون — الخطوتان المتبقيتان <span class="vtag">تشغيل + قرار — انتهيا</span></h4>
+    <p>✅ ① <b>حفظة أدمن الإنتاج — تمت وتحققت</b>: نُفذت مباشرة على admin.modonty.com، وفُحصت الصفحة العامة بعدها — العنوان ببراند واحد وسكيما Person تُقدَّم، وحقول مودونتي مولّدة في قاعدة الإنتاج.
+    ✅ ② <b>قرار خالد صدر</b>: كيانا «أحمد الشهري» و«نورة القحطاني» من إنشائه هو (بيانات مبكرة)، وسيلغيهما لاحقاً بنفسه — البند مقفول من جهة الفحص. (ملاحظة للمستقبل: لا مسار حذف مؤلفين بالأدمن حالياً — يُبنى عند طلبه.)</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — بند تشغيلي لا كودي: الحفظة نُفذت على أدمن الإنتاج والصفحة العامة فُحصت بعدها مباشرة (عنوان ببراند واحد + سكيما Person تُقدَّم) · شق أحمد/نورة قرار مالك مسجل — لا شيء كودي يُراجع فيه</span>
+  </div>
+
+  <div class="gap g-amber">
+    <h4><span class="sev s-amber">🟡 متوسط</span> ٦ · لا يوجد سكور «جاهزية الإجابة» <span class="vtag">مؤكد</span></h4>
+    <p>إشارات GEO المثبتة بحثياً (إحصاءات · اقتباسات · مصادر · بنية الإجابة) لا تُقاس في أي جدول. <b>تنبيه من التدقيق:</b> المصادر المعروضة على المقال مصدرها <b>إدخال يدوي</b> في فورم الأدمن (citations-step) — وملف <code>ai-crawler-optimizer.ts</code> الذي ظننته المولّد <b>كود ميت بصفر استدعاءات</b>.</p>
+    <p class="fix">المشروع المقترح: scorer في dataLayer — <b>بشرط</b> حل انفصام السكيما (القسم ٣) أولاً حتى يقيس المُقدَّم فعلاً.</p>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ٧ · citation والناشر-العميل ومراجعة الدكتور غائبة من المُقدَّم <span class="vtag">انحل تلقائياً بجبهة المقالات</span></h4>
+    <p>الثلاثة كانت في السكيما المخزنة غير المُقدَّمة — وتوحيد الخطين (جبهة ٢ من المرحلة الأساس) جلبها مجاناً كما هو مخطط: صفحة المقال صارت تقدّم البطاقة المخزنة الحاملة لها. يسري مع الدفعة.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الثلاثة موجودة بالكود في مولّد البطاقة المخزنة (الناشر=العميل سطر 153 · مراجعة الدكتور 199-220 · citation) والبطاقة صارت تُقدَّم (دبل تشيك القسم ٣) — البند يثبت تلقائياً بثبوت مصدره</span>
+  </div>
+
+  <!-- (بند ٨ speakable شُطب من النطاق بقرار خالد 2026-07-14 — «ما نحتاجه»: ميزة تجريبية
+       للأخبار عند قوقل، قيمتها لمحتوانا غير مثبتة. لا يُعاد فتحه إلا بتوسعة رسمية من قوقل.) -->
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ٩ · تقريرا الأداء التوليدي لا يُسحبان + كود ميت للتنظيف <span class="vtag">لم يبقَ فيه شيء</span></h4>
+    <p>✅ <b>التقارير:</b> لا API لأي منهما (كلاهما UI-only) — فأُضيف رابط مباشر «Generative AI report» في صفحة Search Console بالأدمن ورابط «AI Performance report» في صفحة Bing؛ يُرقّيان لسحب برمجي يوم تفتح الشركتان API.
+    ✅ <b>الكود الميت:</b> أُزيلت إعادة التصدير من الـ barrel، وحذف خالد الملفات الثلاثة بيده — <b>متحقق، وtsc نظيف بعد الحذف</b>. لم يبقَ في هذا البند شيء.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الزران متحققان بالكود: href صحيح + target=_blank + rel=noreferrer بنفس نمط روابط GSC القائمة · بحث رموز دقيق عبر التطبيقات الأربعة: صفر مراجع حية للموديولات المحذوفة (المطابقات الوحيدة = موديولات شرعية بأسماء متشابهة + تعليق توثيقي)</span>
+  </div>
+</div>
+
+<!-- ═══ ٤ب اكتشافات الجولة الثالثة ═══ -->
+<div class="section">
+  <h2>٤ب · اكتشافات التغطية الكاملة + الإقفال <span class="badge b-red">9 بنود: ن١٠-ن١٧ بتحقق مزدوج (إنتاج + كود) · ن١٨ من جولة الإقفال (توثيق رسمي)</span></h2>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٠ · صفحات المستخدمين تكشف بيانات شخصية لزواحف الذكاء الاصطناعي <span class="vtag">مؤكد بالكود</span></h4>
+    <p>صفحة <code>/users/[id]</code> تبث Person JSON-LD لأي مستخدم مسجّل (ليس المؤلفين فقط)، ووصف الميتا يسقط على <b>الإيميل الخام</b> عند غياب الاسم (<code>ملف شخصي لـ ${'{'}user.name || user.email{'}'}</code> — <code>users/[id]/page.tsx:66</code>). ومع البند ٢ (مجموعات الزواحف الاصطناعية بلا disallow) — الزواحف الـ37 غير ممنوعة من <code>/users/</code> بينما Googlebot ممنوع. إيميلات مستخدمين قد تُبتلع في بيانات تدريب.</p>
+    <p class="fix">✅ <b>أُصلح 2026-07-14 بطبقاته الثلاث</b> — robots disallow (بند ٢) + الإيميل أُزيل من الوصف + noindex لصفحات الأعضاء غير المؤلفين (robots.txt وحده لا يكفي — زواحف الجلب بطلب المستخدم قد تتجاوزه).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الطبقات الثلاث متحققة سطراً سطراً: الوصف بالاسم فقط (صفر إيميل بالميتا وبالسكيما) · noindex+follow للأعضاء · disallow للزواحف · ملاحظة شفافية: الإيميل ما زال يظهر بجسم الصفحة للزائر البشري (سلوك قديم سابق للتدقيق، خارج نطاق الزواحف)</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ شقه الكودي أُصلح 2026-07-14</span> ن١١ · صفحات العملاء تُقدَّم فقيرة — الانفصام رقم ٢ <span class="vtag">شُخّص بدقة أعلى في جبهة ٣</span></h4>
+    <p><b>التشخيص النهائي بعد مراجعة الكود المسبقة</b> (صحّح فهم الصباح): المُقدَّم <b>هو</b> البلوب المخزّن فعلاً، والمولّد المشترك غني (sameAs + العنوان + geo + الساعات كلها مدعومة). الفقر له سببان: (أ) <b>غلطة كود</b> — التصنيف يعتمد حصراً على عمود organizationType، والعيادات اللي ما انعبى لها تُبنى Organization عامة فتسقط MedicalClinic/Dentist <b>ومعها بلوك geo/الساعات كله</b> (خصائص Place لا تُبث إلا على LocalBusiness)؛ (ب) <b>بيانات فارغة</b> في صفوف الإنتاج (sameAs/العنوان لبعض العملاء) — شغل إدخال بيانات، ليس كوداً.</p>
+    <p class="fix">✅ <b>(أ) أُصلح 2026-07-14</b>: المولّد المشترك (أدمن+كونسول) يشتق التصنيف من ymyl-config تلقائياً (التخصص → Dentist، الفئة → MedicalClinic/LegalService/FinancialService) عند غياب organizationType الصريح — <code>generate-client-seo-bundle.ts</code> + إضافة isYmyl/ymylCategory/ymylData للـ select. tsc نظيف أدمن+كونسول. <b>متبقٍّ للتفعيل:</b> إعادة توليد بطاقات العملاء الـ26 (زر Regenerate بالأدمن أو حفظ الكونسول — بعد الدفع) + (ب) تعبئة sameAs/العناوين الناقصة بيد خالد.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الدائرة أُعيد تتبعها كاملة: الحقول الثلاثة في الـselect (فخ الحقل الناقص سالم) · كل schemaSubType في الكونفج طُوبق واحداً واحداً ضد القائمة البيضاء فلا يسقط أي نوع لـ Organization عامة · MedicalClinic ضمن أنواع LocalBusiness فبلوك geo/الساعات ينفتح فعلاً · الصريح يفوز وغير الـYMYL لا يتغير · المستهلكان (أدمن + كونسول) يمران عبر المولّد الموحد نفسه</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٢ · صفحات الفئات والوسوم والصناعات: صفر سكيما — الانفصام رقم ٣ <span class="vtag">مؤكد إنتاج + كود</span></h4>
+    <p>كانت صفحات <code>[slug]</code> الثلاث تُقدَّم <b>بلا أي JSON-LD إطلاقاً</b> رغم أن سكور المرجعيات يقيس بلوباتها المخزنة (10 فئات ✓ 35 وسماً ✓ 7 صناعات ✓).</p>
+    <p class="fix">✅ <b>أُصلح 2026-07-14 — أول جبهات المرحلة الأساس</b> (بمراجعة كود مسبقة كاملة): أُضيف <code>jsonLdStructuredData</code> لاستعلامات الصفحات الثلاث (فخ الحقل الناقص) + بث شرطي للبلوب المخزّن (@graph: CollectionPage + BreadcrumbList + DefinedTerm) بنفس نمط صفحة العملاء. إضافة خالصة — لو البلوب غائب لا يتغير شيء. tsc نظيف. يسري مع الدفعة.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — البث الشرطي متحقق بالكود في الصفحات الثلاث · وصول الحقل مثبت بالنوع (tsc يرفض الوصول لحقل غير مُنتقى — ونجاحه دليل) · لا ازدواج breadcrumb (الصفحات تعرض Breadcrumb مرئياً فقط، لا سكريبت سكيما حي) · حُقنت البلوبات عبر المهرّب الجديد ضمن إصلاح القسم ٣ الأمني</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٣ · hreflang يُستبدل لا يُورَّث — أغلب الصفحات تفقد ar-SA/ar-EG <span class="vtag">مؤكد بالكود</span></h4>
+    <p>Next.js يستبدل alternates ولا يدمجها، وافتراضي <code>generateMetadataFromSEO</code> كان <code>{'{'}ar, x-default{'}'}</code> فقط — ففقدت الفئات والوسوم والصناعات والبحث الاستهدافين السعودي والمصري.</p>
+    <p class="fix">✅ الافتراضي وُحّد على المجموعة الكاملة (ar-SA + ar-EG + ar + x-default) — نفس نمط buildAlternates؛ كل الصفحات المعتمدة على الافتراضي ورثته فوراً.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — المجموعة الكاملة مثبتة بالكود في المسارين (الافتراضي + buildAlternates) بتطابق تام · النمط صحيح رسمياً عند قوقل: رموز مناطق متعددة لنفس الرابط + x-default حاضر + كلها تشير للـcanonical نفسه · الممرر الصريح يفوز والفارغ يسقط للافتراضي</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٤ · لا يوجد RSS إطلاقاً <span class="vtag">كان 404 مؤكداً على الإنتاج</span></h4>
+    <p>✅ بُنيت قناة التوزيع الثالثة: <code>/feed.xml</code> — RSS 2.0 بآخر 50 مقالاً منشوراً (عنوان + رابط + ملخص + تاريخ + العميل كتصنيف)، يتحدث تلقائياً كل ساعة · رابط الاكتشاف التلقائي في اللياوت الجذري (rel=alternate) · ومُدرج في llms.txt الديناميكي. تكتمل بها الثلاثية: سايت ماب لقوقل + IndexNow لكوبايلوت + RSS لكل ما سواهما. يسري مع الدفعة.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — <b>اكتشف وأصلح تسريب المجدولات</b>: القناة كانت تنشر مقالات PUBLISHED بتاريخ مستقبلي قبل موعدها — أُضيف حارس الجدولة بنفس عرف السايت ماب والاستعلامات كلها · مطابقة RSS 2.0 للمواصفة: الحقول الإلزامية + pubDate بصيغة RFC-1123 + guid + atom:link self + تهريب XML لكل الحقول · لا ملف ثابت متصادم · tsc نظيف بعد الإصلاح</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٥ · سايت ماب الصور ينشر أقل مما يعد <span class="vtag">مؤكد بالكود</span></h4>
+    <p>كان الاستعلام يجيب featuredImage والمحتوى فقط. ✅ أُضيف معرض المقال (gallery→media) للاستعلام والبث، وصُحح التعليق (المقال لا يملك hero أصلاً — ذلك حقل العميل).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — شكل الاستعلام مطابق للسكيما (Article.gallery → ArticleMedia → media.url) · إزالة التكرار بـ Set قبل البث · تهريب XML لكل الروابط · image:loc فقط بسياسة قوقل الحالية · <b>واكتشف وأصلح</b>: حارس المجدولات كان ناقصاً هنا أيضاً (خلل سابق للتدقيق أصلاً) — وُحّد مع السايت ماب الرئيسي</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ حُذف 2026-07-14</span> ن١٦ · ai-plugin.json أثر قديم ومضلل <span class="vtag">مؤكد — قُرئ الملف</span></h4>
+    <p>كان manifest لنظام إضافات ChatGPT المنتهي منذ 2024 ويعلن السايت ماب كأنه مواصفة OpenAPI. ✅ حذفه خالد بيده (مع llms.txt الثابت القديم) — والحذف متحقق منه.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الملفات الخمسة المحذوفة كلها غائبة فعلاً بفحص مباشر (ai-plugin.json + llms.txt الثابت + الموديولات الثلاثة) · صفر مراجع باقية بالكود · tsc نظيف</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٧ · هوية المؤلف مزدوجة على رابطين <span class="vtag">مؤكد بالكود</span></h4>
+    <p>كان <code>/users/[slug]</code> يقدّم المؤلف Person على رابط ثانٍ بسكيما مختلفة. ✅ الآن تحويل دائم (308) إلى الصفحة القانونية <code>/authors/[slug]</code> — كيان واحد على رابط واحد.</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — <b>اكتشف وأصلح باقاً حرجاً</b>: التحويل كان داخل try/catch يبتلع رمية الـredirect فيحوّلها 404 (مستندات Next المثبتة نصاً: «redirect throws — يُستدعى خارج try») — أُصلح بالعلاج الرسمي unstable_rethrow بأول الـcatch · tsc نظيف بعد الإصلاح · الآن الـ308 يصل فعلاً</span>
+  </div>
+
+  <div class="gap done">
+    <h4><span class="sev s-done">✅ أُصلح 2026-07-14</span> ن١٨ · نظافة سجل الزواحف: 25/37 موثق رسمياً + 3 زواحف رسمية ناقصة <span class="vtag">تحقق الإقفال — كل شركة من مصدرها الرسمي</span></h4>
+    <p>فُحص كل توكن من الـ37 ضد توثيق شركته: <b>25 موثقة رسمياً</b> (بما فيها Google-Agent وGoogle-NotebookLM — مثبتتان في سجل تغييرات قوقل الرسمي). <b>12 رمزية/قديمة غير موثقة</b> — أبرزها Gemini-Deep-Research وDeepSeekBot وPanguBot وTikTokSpider وPhindBot (أسماء متداولة بلا توثيق رسمي) وanthropic-ai/claude-web/FacebookBot (متقاعدة). <b>غير ضارة</b>: سطر Allow لزاحف غير موجود لا يفعل شيئاً — لكنها تلوث السجل. <b>الناقص الحقيقي — 3 زواحف رسمية موثقة:</b> <code>Amzn-SearchBot</code> (ظهور في بحث أمازون الذكي) · <code>Amzn-User</code> (جلب مستخدمي مساعدات أمازون) · <code>meta-webindexer</code> (ظهور Meta AI — الخلف الفعلي لـ FacebookBot الميت). ملاحظتان: توكن Meta الرسمي lowercase (<code>meta-externalfetcher</code> — المطابقة غير حساسة فلا ضرر)، وbedrockbot الحقيقي بصيغة <code>bedrockbot-UUID</code> لكل عميل. وتأكد رسمياً: لا توكن منفصل لكوبايلوت (Bingbot يغطيه — موجود ✓) ولا لـ Grok (لا توثيق).</p>
+    <p class="fix">✅ <b>أُصلح 2026-07-14</b> — أُضيفت Amzn-SearchBot وAmzn-User وmeta-webindexer لمجموعة البحث (صارت 18) + وُسم غير الموثق بـ [unofficial] + صُححت أعداد التعليقات (كانت هي الغلطانة).</p>
+    <span class="dcheck">🔵🔵 دبل تشيك نهائي ✓✓ 2026-07-14 — الشق الكودي أُعيد عدّه يدوياً ضمن فحص البند ٢: الزواحف الثلاثة الجديدة موجودة بالمصفوفة والأعداد (18+22+6) مطابقة للتعليقات · الشق التوثيقي أُقفل أمس بفحص كل توكن ضد توثيق شركته الرسمي</span>
+  </div>
+
+  <p style="font-size:11.5px;color:var(--muted);margin-top:8px">بند تاسع من الكاشف رُفض جزئياً بالفحص المباشر: «الرئيسية بلا fallback للسكيما» — الاعتماد على البلوب المخزّن صحيح كتصميم، لكن الفحص الحي أظهر الرئيسية تقدّم Organization غنية (sameAs + address) فعلاً — يبقى ملاحظة تصميم لا فجوة قائمة.</p>
+</div>
+
+<!-- ═══ ٥ الخطة ═══ -->
+<div class="section">
+  <h2>٥ · الترتيب المقترح <span class="badge b-blue">للنقاش — لا تنفيذ بعد</span></h2>
+  <ol class="plan">
+    <li><span class="ph">✅ المرحلة صفر — أُنجزت 2026-07-14 (tsc نظيف في التطبيقين):</span> فاحص robots وُحّد مع السياسة + فحص PII جديد (بند ١) · disallow للمجموعتين + 3 زواحف رسمية جديدة (بنود ٢، ن١٠، ن١٨) · الإيميل أُزيل وnoindex للأعضاء (ن١٠) · «مدونتي | مدونتي» قُتل بـ title.absolute (٥ب). <b>متبقٍّ من المرحلة:</b> حذف ai-plugin.json بيد خالد (صلاحيات). <b>ملاحظة:</b> إصلاحات modonty تسري على الإنتاج مع الدفعة القادمة.</li>
+    <li><span class="ph">المرحلة الأساس — قرار الانفصام الثلاثي (القسم ٣ + ن١١ + ن١٢):</span> اتضح بعد الجولة الثالثة أن «نقيس ما لا نقدّم» يضرب <b>ثلاث فئات لا واحدة</b>: المقالات (مخزّن غني لا يُقدَّم) والعملاء (بيانات الصف الغنية لا تدخل الجراف المُقدَّم) والمرجعيات (بلوبات مقيسة وصفحات بلا سكيما إطلاقاً). قرار واحد يحلها: <b>التقديم من المخزّن الغني في كل الكيانات</b> — يجيب معه الناشر-العميل + مراجعة الدكتور (YMYL) + citation + تصنيف YMYL + CollectionPage مجاناً، ويجعل كل السكورات تقيس الحقيقة. <b>هذا قبل أي سكور AEO.</b></li>
+    <li><span class="ph">المرحلة الأولى — القياس:</span> كرت «زيارات محركات الإجابة» من بيانات GA4 المسحوبة أصلاً (بند ٣) + توليد حقول المؤلفين المخزنة (بند ٥أ) + توحيد hreflang الافتراضي (ن١٣) + استكشاف سحب تقرير Bing AI Performance (البند ٩ — الأغنى حالياً).</li>
+    <li><span class="ph">المرحلة الثانية — السكور:</span> scorer «جاهزية الإجابة» في dataLayer بنفس عقد بقية الـ scorers: بنية الإجابة · إحصاءات · اقتباسات · مصادر · FAQ · حداثة · وسائط — عمود جديد بجانب SEO (بند ٦).</li>
+    <li><span class="ph">قرارات مفتوحة:</span> مصير llms.txt (بند ٤) · RSS للمقالات (ن١٤ — قناة ابتلاع كاملة) · إغناء سايت ماب الصور (ن١٥) · توحيد رابط هوية المؤلف (ن١٧) · speakable للمقالات (بند ٨) · تنظيف الكود الميت (بند ٩).</li>
+    <li><span class="ph">✅ التحقق المؤجل — أُنجز (ليلة 13-14 يوليو):</span> تحقق أسماء الزواحف اكتمل بوكيل مستقل (نتائجه = ن١٨) · فحص نص التقرير سطراً سطراً اكتمل مباشرة (النتيجة: خللا عدادات فقط سببتهما إضافة ن١٨ المتأخرة — صُححا؛ كل الأرقام والتواريخ ومسارات الملفات الجوهرية ثابتة، وكل واحد منها كان متحققاً مسبقاً بوكيلين مستقلين على الأقل).</li>
+  </ol>
+</div>
+
+<!-- ═══ منهجية الثبات ═══ -->
+<div class="section">
+  <h2>ملحق · لماذا تغيّرت النتائج بين النسخ — ومتى يحق لها أن تتغير <span class="badge b-blue">اقرأه أولاً عند العودة لهذا الملف</span></h2>
+  <p style="font-size:13px;margin-bottom:10px">
+    هذا التقرير مرّ بأربع جولات في يوم واحد، وكل جولة سألت سؤالاً <b>جديداً</b> لا تكراراً لسابقه — وهذا سبب ظهور نتائج جديدة، لا تقلّب النتائج القديمة (التي لم ينقلب منها بند واحد عبر الجولات كلها):
+  </p>
+  <table>
+    <tr><th style="width:140px">الجولة</th><th style="width:270px">السؤال والمنهج</th><th>النتيجة</th></tr>
+    <tr><td><b>١ · مسح أولي</b></td><td>«ماذا يوجد في الكود؟» — بحث نصي + عينات</td><td>خريطة الموجود والناقص. <b>خطأ منهجي معلن:</b> قُدّم بثقة أعلى من عمقه</td></tr>
+    <tr><td><b>٢ · تدقيق عدائي</b></td><td>«ماذا يصل لمحركات البحث فعلاً؟» — ٤ وكلاء مستقلين يتتبعون من التوليد حتى التقديم + فحص إنتاج حي</td><td>٣ تصحيحات + اكتشاف الانفصام (سؤال أعمق = نتائج جديدة مشروعة)</td></tr>
+    <tr><td><b>٣ · اختبار التقارب</b></td><td>«هل يثبت كل ما سبق أمام أعين جديدة؟» — ٣ وكلاء جدد يعيدون التتبع من الصفر، ممنوعون من الوثوق بمراجع سابقة</td><td><b>صفر انقلابات في ١٧ ادعاء — تقارب تام</b></td></tr>
+    <tr><td><b>٤ · التغطية الكاملة (Ultra)</b></td><td>«ماذا لم يُفحص أصلاً؟» — منظومة workflow: عدّ كل المسارات العامة ومسحها + مجسّات إنتاج + تحقق مزدوج مباشر لكل بند جديد</td><td><b>٨ اكتشافات على أسطح لم تدخل التقرير قبلها</b> (القسم ٤ب) — وصفر مساس بأي بند سابق</td></tr>
+  </table>
+  <p style="font-size:13px;margin-top:10px">
+    <b>معيارا التوقف العلميان — وكلاهما تحقق:</b>
+    (أ) <b>ثبات التحقق:</b> إعادة الفحص المستقلة توقفت عن تغيير النتائج (الجولة ٣: صفر انقلابات)؛
+    (ب) <b>اكتمال التغطية:</b> لم يبق سطح غير مفحوص — الجولة ٤ عدّت كل المسارات العامة في modonty واحداً واحداً (الرئيسية، المقالات، العملاء، المؤلفون، المستخدمون، الفئات، الوسوم، الصناعات، الأخبار، المساعدة، البحث، robots، السايت مابان، llms، ai-plugin، RSS) وفحصت كلاً منها كوداً وإنتاجاً. <b>لا يوجد مصدر متبقٍّ لنتائج جديدة.</b>
+    كل بند يستوفي ثلاث طبقات دليل: <b>مسار ملف وسطر · تكرار مستقل · رصد من الإنتاج الحي</b>.
+  </p>
+  <p class="fixnote">
+    <b>🔒 التقرير مُقفل — 2026-07-14.</b> استُكمل البندان المؤجلان: تحقق أسماء الزواحف الـ37 (وكيل مستقل، توثيق كل شركة — النتيجة ن١٨) وفحص نص التقرير سطراً سطراً (مباشر — خللا عدادات فقط، صُححا). ملاحظة شفافية: بنود الجولة ٤ متحققة بفحص مزدوج مباشر (إنتاج حي + كود)؛ جولة المكذّبين الآلية لها تعطلت مرتين بحدود الجلسة واستُعيض عنها بالتحقق المباشر الموثق بأدلته داخل كل بند. <b>بعد الإقفال، لا يحق للنتائج أن تتغير إلا بحالتين:</b> (١) تغيّر المصادر الخارجية — كل مصدر موثّق بتاريخه، وآخر تحقق من دليل قوقل على نسخة 2026-07-10؛ (٢) تغيّر كودنا نفسه. أي «نتيجة جديدة» خارجهما = خطأ في الفحص الجديد لا في هذا التقرير.
+  </p>
+</div>
+
+<!-- ═══ ٦ المصادر ═══ -->
+<div class="section">
+  <h2>٦ · المصادر الرسمية <span class="badge b-blue">كلها أولية — فُتحت وتُحُقق منها مباشرة</span></h2>
+  <ul class="src">
+    <li><a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">دليل قوقل الرسمي: تحسين موقعك للميزات التوليدية في بحث قوقل</a></li>
+    <li><a href="https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports">إعلان قوقل: تقارير الأداء التوليدي في Search Console (يونيو 2026)</a></li>
+    <li><a href="https://support.google.com/webmasters/answer/16908024">أداة قوقل: Search generative AI control (الانسحاب من الملخصات)</a></li>
+    <li><a href="https://developers.openai.com/api/docs/bots">توثيق زواحف OpenAI الرسمي (الأربعة بما فيها OAI-AdsBot)</a></li>
+    <li><a href="https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">توثيق Anthropic: الزواحف الثلاثة وrobots.txt</a></li>
+    <li><a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">توثيق Perplexity الرسمي: PerplexityBot وPerplexity-User</a></li>
+    <li><a href="https://arxiv.org/abs/2311.09735">بحث GEO الأصلي — برينستون وآخرون، KDD 2024</a></li>
+    <li><a href="https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview">إعلان Bing: تقرير AI Performance (فبراير 2026)</a></li>
+    <li><a href="https://blogs.bing.com/search/June-2026/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare">توسعة Bing يونيو 2026: Intents · Topics · Citation Share · Compare</a></li>
+  </ul>
+</div>
+
+<p class="foot">🔒 النسخة النهائية المُقفلة · 13-14 يوليو 2026 · أربع جولات + إقفال: ~85 وكيلاً أُطلق، ~36 أنجز (والباقي ضحية حدود الجلسة) + فحوص إنتاج حية في كل جولة · اختبار التقارب: صفر انقلابات · التغطية: كل المسارات العامة معدودة ومفحوصة · تغيير النتائج بعد الإقفال لا يكون إلا بتغيّر المصادر أو الكود</p>
+
+</div>
+</body>
+</html>

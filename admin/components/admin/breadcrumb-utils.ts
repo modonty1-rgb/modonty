@@ -7,14 +7,31 @@ export interface BreadcrumbItem {
 }
 
 /**
- * URL segments that are NOT real routes — they only exist as parent paths for
- * dynamic children (no page.tsx at the segment, only at the child).
- * Clicking these in breadcrumb produces a 404. Render them as text instead.
+ * Full paths that are NOT real routes — folders with no page.tsx of their own,
+ * existing only as parents for dynamic children. Clicking them in the breadcrumb
+ * either 404s or (when a sibling [id] route swallows them) bounces the admin back
+ * to the list — e.g. /articles/segment was matched by /articles/[id] as if "segment"
+ * were an article id (live test 2026-07-14).
+ *
+ * Matched on the FULL path, never the bare segment name: "social" and "modonty" are
+ * dead as top-level paths but REAL pages under /settings/ — a name-keyed list would
+ * silently kill those working links.
+ *
+ * Keep in sync with the router: a folder here must have no page.tsx.
  */
-const NON_NAVIGABLE_SEGMENTS = new Set([
-  "pipeline",        // /articles/[id]/pipeline — page is dynamic-only
-  "workflow",        // /articles/workflow (parent of [transition] + quality-check)
-  "quality-check",   // /articles/workflow/quality-check (parent of [articleId])
+const NON_NAVIGABLE_PATHS = new Set([
+  "/articles/pipeline",              // page is /articles/pipeline/[id]
+  "/articles/segment",               // page is /articles/segment/[key]
+  "/articles/workflow",              // pages are /articles/workflow/[transition] + /maintenance
+  "/articles/workflow/quality-check",// page is .../quality-check/[articleId]
+  "/clients/segment",                // page is /clients/segment/[key]
+  "/media/segment",                  // page is /media/segment/[key]
+  "/reference",                      // page is /reference/segment/[key]
+  "/reference/segment",
+  "/campaigns",                      // page is /campaigns/leads
+  "/modonty",                        // pages are /modonty/faq + /modonty/pages/[slug]
+  "/modonty/pages",                  // page is /modonty/pages/[slug]
+  "/social",                         // pages are /social/facebook + /social/instagram
 ]);
 
 export interface EntityRouteConfig {
@@ -169,7 +186,7 @@ export function generateBreadcrumbs(
       items.push({
         label,
         href: currentPath,
-        disabled: NON_NAVIGABLE_SEGMENTS.has(segment),
+        disabled: NON_NAVIGABLE_PATHS.has(currentPath),
       });
     }
   }

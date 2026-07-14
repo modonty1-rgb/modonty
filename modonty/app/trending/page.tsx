@@ -5,6 +5,7 @@ import type { ArticleResponse } from "@/lib/types";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
 import { TimePeriodFilter } from "./components/time-period-filter";
 import { getTrendingPageSeo } from "@/lib/seo/trending-page-seo";
+import { jsonLdHtmlFromString } from "@/lib/seo";
 
 interface TrendingPageProps {
   searchParams: Promise<{ period?: string }>;
@@ -63,7 +64,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
       {jsonLdToRender && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLdToRender }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(jsonLdToRender) }}
         />
       )}
       

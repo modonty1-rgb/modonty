@@ -24,7 +24,16 @@ function seoTone(score: number): string {
   return "text-red-600 dark:text-red-400";
 }
 
-export function ReferenceTable({ rows, editBase }: { rows: ReferenceRow[]; editBase: string }) {
+export function ReferenceTable({
+  rows,
+  editBase,
+  editMode,
+}: {
+  rows: ReferenceRow[];
+  editBase: string;
+  /** "single": the whole group is managed on one page (authors) — no per-id route. */
+  editMode: "perId" | "single";
+}) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("seoScore");
   const [asc, setAsc] = useState(true);
@@ -140,7 +149,7 @@ export function ReferenceTable({ rows, editBase }: { rows: ReferenceRow[]; editB
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2 text-end">
                       <Link
-                        href={`${editBase}/${r.id}/edit`}
+                        href={editMode === "single" ? editBase : `${editBase}/${r.id}/edit`}
                         className="font-semibold text-primary hover:underline"
                       >
                         Edit

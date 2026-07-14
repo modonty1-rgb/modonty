@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
 import Link from "@/components/link";
 import { Breadcrumb, BreadcrumbHome } from "@/components/ui/breadcrumb";
-import { generateBreadcrumbStructuredData, buildAlternates } from "@/lib/seo";
+import { generateBreadcrumbStructuredData, buildAlternates, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -104,9 +104,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!author) return { title: "Author Not Found" };
 
-  // Use cached metadata if available
+  // Use cached metadata if available.
+  // `absolute` opts out of the root layout's `%s | مدونتي` template: the stored
+  // title already embeds the brand (admin generator appends it), so letting the
+  // template run again shipped «… | مدونتي | مدونتي» (GEO audit, بند ٥ب).
   if (author.nextjsMetadata && typeof author.nextjsMetadata === "object") {
-    return author.nextjsMetadata as Metadata;
+    const stored = author.nextjsMetadata as Metadata;
+    return typeof stored.title === "string"
+      ? { ...stored, title: { absolute: stored.title } }
+      : stored;
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
@@ -114,7 +120,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = author.seoDescription || author.bio || `Articles by ${author.name}`;
 
   return {
-    title,
+    // Live titles may embed the brand too (seoTitle) — same template opt-out.
+    title: { absolute: title },
     description,
     alternates: buildAlternates(`${siteUrl}/authors/${author.slug}`),
     openGraph: {
@@ -177,11 +184,11 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdString }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(jsonLdString) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }}
       />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Breadcrumb

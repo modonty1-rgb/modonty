@@ -14,6 +14,12 @@ interface ReferenceSegment {
   description: string;
   /** Where an admin goes to fix a row. */
   editBase: string;
+  /**
+   * Authors have no per-id edit route — the admin manages ONE author (Modonty) on
+   * /authors itself. Everything else edits at `{editBase}/{id}/edit`. Discovered the
+   * hard way: the per-id pattern 404'd on authors (live test 2026-07-14).
+   */
+  editMode: "perId" | "single";
 }
 
 const SEGMENTS: Record<ReferenceKey, ReferenceSegment> = {
@@ -21,21 +27,25 @@ const SEGMENTS: Record<ReferenceKey, ReferenceSegment> = {
     title: "Categories",
     description: "Every category page Google indexes, with the SEO score of each.",
     editBase: "/categories",
+    editMode: "perId",
   },
   tags: {
     title: "Tags",
     description: "Every tag page Google indexes, with the SEO score of each.",
     editBase: "/tags",
+    editMode: "perId",
   },
   industries: {
     title: "Industries",
     description: "Every industry page Google indexes, with the SEO score of each.",
     editBase: "/industries",
+    editMode: "perId",
   },
   authors: {
     title: "Authors",
     description: "Every author page Google indexes, with the SEO score of each.",
     editBase: "/authors",
+    editMode: "single",
   },
 };
 

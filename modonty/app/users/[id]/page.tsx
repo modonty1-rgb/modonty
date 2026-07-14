@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect, unstable_rethrow } from "next/navigation";
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { generateMetadataFromSEO, generateStructuredData, generateAuthorStructuredData } from "@/lib/seo";
+import { generateMetadataFromSEO, generateStructuredData, generateAuthorStructuredData, jsonLdHtml } from "@/lib/seo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import Link from "@/components/link";
@@ -61,13 +61,17 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
       };
     }
 
-    return generateMetadataFromSEO({
+    // Plain members (not authors): never leak the email into the description,
+    // and keep the page out of every index — robots.txt alone doesn't reach
+    // crawlers that fetch on user request (GEO audit 2026-07-13, finding ن١٠).
+    const memberMeta = generateMetadataFromSEO({
       title: user.name || "مستخدم",
-      description: `ملف شخصي لـ ${user.name || user.email}`,
+      description: `ملف شخصي لـ ${user.name || "مستخدم"} على مدونتي`,
       image: user.image || undefined,
       url: `/users/${id}`,
       type: "profile",
     });
+    return { ...memberMeta, robots: { index: false, follow: true } };
   } catch {
     return {
       title: "الملف الشخصي - مدونتي",
@@ -129,7 +133,10 @@ export default async function UserPage({ params }: UserPageProps) {
         notFound();
       }
 
-      articles = author.articles;
+      // Authors have ONE canonical home: /authors/[slug]. Serving the same Person on
+      // /users/[slug] too split the entity across two URLs with two different schemas
+      // (GEO audit 2026-07-13, ن١٧) — 308 to the canonical page instead.
+      permanentRedirect(`/authors/${author.slug}`);
     } else {
       // For regular users, check if they have linked author
       // Note: Author model doesn't have userId field, checking by email match
@@ -194,7 +201,7 @@ export default async function UserPage({ params }: UserPageProps) {
       <>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(structuredData) }}
         />
         <Breadcrumb
           items={[
@@ -304,7 +311,11 @@ export default async function UserPage({ params }: UserPageProps) {
         </div>
       </>
     );
-  } catch {
+  } catch (error) {
+    // permanentRedirect/notFound work by throwing — the blanket catch was
+    // swallowing the author 308 and turning it into a 404 (official remedy:
+    // rethrow Next.js internals, keep 404 for real DB errors only).
+    unstable_rethrow(error);
     notFound();
   }
 }

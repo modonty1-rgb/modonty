@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { SubscriptionStatus, ArticleStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
+import { generateMetadataFromSEO, generateStructuredData, generateBreadcrumbStructuredData, jsonLdHtml, jsonLdHtmlFromString } from "@/lib/seo";
 import { cacheTag, cacheLife } from "next/cache";
 import { getClientPageData } from "./helpers/client-page-data";
 import { getClientReviews, getClientReviewsBySlug } from "./helpers/client-reviews";
@@ -293,24 +293,24 @@ async function ClientPageBody({ params }: ClientPageProps) {
         {cachedSeo?.jsonLdStructuredData ? (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: cachedSeo.jsonLdStructuredData }}
+            dangerouslySetInnerHTML={{ __html: jsonLdHtmlFromString(cachedSeo.jsonLdStructuredData) }}
           />
         ) : (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            dangerouslySetInnerHTML={{ __html: jsonLdHtml(structuredData) }}
           />
         )}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbData) }}
         />
         {/* FAQPage JSON-LD — page-level ClientFAQ (answered + published) */}
         {faqs.length > 0 && (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
+              __html: jsonLdHtml({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
                 mainEntity: faqs.map((faq) => ({

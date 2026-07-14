@@ -12,14 +12,25 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.86.0 (admin)",
-    title: "Dashboard rebuilt as a triage screen — a ranked Today list tells you where to start",
+    version: "0.87.0 (admin)",
+    title: "Four screens that were lying to you — and the SEO score that was under-marking every article",
     items: [
-      { type: "feature" as const, text: "Today strip at the top: the 5 things costing you money or clients right now, ranked (dead booking funnel, unreachable clients, waiting inbox, approvals, clients with zero articles) — each row links straight to its fix." },
-      { type: "feature" as const, text: "New Media section: unused files, missing alt text, failing SEO — each card opens a table with the image itself, its score and where it is used. Image SEO score now lives in the shared dataLayer scorer." },
-      { type: "feature" as const, text: "Clients section gains Images cards (no logo / no hero / no share image) and a new 'unreachable' segment combining every client a visitor cannot contact." },
-      { type: "fix" as const, text: "Data-loss guard: images inside a published article's gallery were counted as unused and could be deleted, leaving a hole in a live article. Gallery usage now blocks deletion and counts everywhere." },
-      { type: "improve" as const, text: "One visual language: red = costing you now, amber = this week, green = healthy; icons on every card; zero-value stages compress into chips so live numbers get the space." },
+      { type: "fix" as const, text: "Editing an article awaiting approval or needing revision crashed the page outright ('This page couldn't load'). The query allowed 5 of the schema's 7 statuses, so the article came back empty and the form blew up — 20 articles were uneditable, freezing the whole review stage." },
+      { type: "fix" as const, text: "The renewal watch was blind and said everything was fine: 21 of 26 active clients have no end date on their record, and a date filter can never match an absent field. The dashboard now says 'expiring this week: unknown' instead of a green '0', and a new Record data group surfaces every hole — renewal date, address, social links, description — each one clickable." },
+      { type: "fix" as const, text: "Every published article was quietly under-scored by 5 points: hreflang was never written to the stored metadata (0 of 56 articles), while the live page added it at render — so the score docked a field the site actually had. The generator now stores it, and a new 'Article hreflang' step in Run-All backfills the old ones." },
+      { type: "fix" as const, text: "A client's schema type now follows Google's own rule — the most specific type wins. A dental clinic stored as 'LocalBusiness', 'Corporation' or 'NGO' was telling Google nothing about itself, and the last two carry no address or opening hours at all. Industry-agnostic by design: the day a furniture shop needs FurnitureStore, only the lookup grows." },
+      { type: "fix" as const, text: "Breadcrumb links that led nowhere: clicking 'Segment' (and 11 other parent-only paths) bounced you out of the page. They now render as plain text — while the real /settings/social and /settings/modonty links keep working." },
+    ],
+  },
+  {
+    version: "1.72.0 (modonty)",
+    title: "The rich schema we generate is now the schema Google actually reads",
+    items: [
+      { type: "fix" as const, text: "Articles, categories, tags and industries served a lean, live-built card while the rich stored one — publisher = the client, the YMYL doctor who reviewed it, the citations — sat unused in the database. Every page now serves the stored card." },
+      { type: "feature" as const, text: "New distribution channels for answer engines: a dynamic /llms.txt that rebuilds itself from the database (the old static file had been blind since June), and /feed.xml — the RSS feed the site never had, now auto-discovered from every page." },
+      { type: "fix" as const, text: "Member pages no longer leak an email address into their description, are kept out of every index, and AI crawlers are now blocked from /users/ and /api/ — they were the only crawlers not blocked, because the robots protocol ignores the default group once a bot has its own." },
+      { type: "fix" as const, text: "hreflang was silently dropped on most pages (Next.js replaces alternates, never merges them), so Saudi and Egypt targeting vanished outside articles. Restored platform-wide." },
+      { type: "fix" as const, text: "Stored JSON-LD is now escaped at every one of the 17 places it is injected — a content field containing markup could previously break out of the script tag." },
     ],
   },
 ];

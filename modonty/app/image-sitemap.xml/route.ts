@@ -3,7 +3,8 @@
  *
  * Strategy:
  *   - Lists every PUBLISHED article alongside ALL its associated images:
- *     featuredImage + heroImage + gallery + extracted from content HTML.
+ *     featuredImage + gallery (ArticleMedia) + extracted from content HTML.
+ *     (Articles have no hero image — that field lives on Client.)
  *   - Separate from main sitemap.xml — keeps main sitemap lean while
  *     surfacing every image to Google Images.
  *   - Google's policy (2026): only image:loc is required;
@@ -15,6 +16,7 @@ import { db } from "@/lib/db";
 interface ArticleImagesRow {
   slug: string;
   featuredImage: { url: string } | null;
+  gallery: Array<{ media: { url: string } | null }>;
   content: string | null;
 }
 
@@ -52,10 +54,16 @@ export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.modonty.com";
 
   const articles = await db.article.findMany({
-    where: { status: ArticleStatus.PUBLISHED },
+    // Same scheduled-article guard as sitemap.ts: future datePublished stays hidden.
+    where: {
+      status: ArticleStatus.PUBLISHED,
+      OR: [{ datePublished: null }, { datePublished: { lte: new Date() } }],
+    },
     select: {
       slug: true,
       featuredImage: { select: { url: true } },
+      // Gallery images never reached this sitemap until 2026-07-14 (GEO audit, ن١٥).
+      gallery: { select: { media: { select: { url: true } } } },
       content: true,
     },
   });
@@ -64,6 +72,7 @@ export async function GET() {
     .map((a) => {
       const images = uniqueAbsolute([
         a.featuredImage?.url,
+        ...a.gallery.map((g) => g.media?.url),
         ...extractImagesFromHtml(a.content),
       ]);
       if (images.length === 0) return null;

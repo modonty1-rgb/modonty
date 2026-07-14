@@ -50,6 +50,10 @@ export type SegmentKey =
   | "no-hero"
   | "no-og"
   | "no-image"
+  | "no-end-date"
+  | "no-address"
+  | "no-social"
+  | "no-description"
   | "unreachable";
 
 interface Segment {
@@ -77,6 +81,59 @@ export async function getClientIdsMissingCtaMode(): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/** The record fields that keep the money and the schema honest. */
+export type DataGapKey = "no-end-date" | "no-address" | "no-social" | "no-description";
+
+/**
+ * Which clients have holes in their record (Khalid 2026-07-14, live test: the dashboard
+ * printed a reassuring «0 expiring this week» while 21 of 26 active clients had NO
+ * subscriptionEndDate at all — a date filter can never match an absent field, so renewal
+ * monitoring was blind to 81% of the book and said everything was fine).
+ *
+ *   end-date    → subscriptionEndDate on an ACTIVE client. Without it, `expiring-soon`
+ *                 cannot see them: the silence means "unknown", never "safe".
+ *   address     → addressCity (the one address field the LocalBusiness/PostalAddress
+ *                 node cannot be built without).
+ *   social      → sameAs[] — what ties the client to their real-world profiles in the
+ *                 knowledge graph.
+ *   description → Organization description in JSON-LD.
+ *
+ * Decided in JS for the same reason as the image gaps: `!value` catches a null AND a
+ * field that was never written, which is exactly the trap Prisma filters walk into.
+ */
+export async function getClientDataGaps(): Promise<Record<DataGapKey, string[]>> {
+  const rows = await db.client.findMany({
+    select: {
+      id: true,
+      subscriptionStatus: true,
+      subscriptionEndDate: true,
+      addressCity: true,
+      sameAs: true,
+      description: true,
+    },
+    take: 500,
+  });
+
+  const gaps: Record<DataGapKey, string[]> = {
+    "no-end-date": [],
+    "no-address": [],
+    "no-social": [],
+    "no-description": [],
+  };
+
+  for (const r of rows) {
+    // Renewal blindness only matters for the clients we are actually billing.
+    if (r.subscriptionStatus === SubscriptionStatus.ACTIVE && !r.subscriptionEndDate) {
+      gaps["no-end-date"].push(r.id);
+    }
+    if (!r.addressCity?.trim()) gaps["no-address"].push(r.id);
+    if (!r.sameAs?.length) gaps["no-social"].push(r.id);
+    if (!r.description?.trim()) gaps["no-description"].push(r.id);
+  }
+
+  return gaps;
 }
 
 /** The three pictures a client page and its search/social preview are built from. */
@@ -242,6 +299,30 @@ export async function getSegment(key: string): Promise<Segment | null> {
         "No logo, no hero, no share image. Their page is text on white and their links preview blank. Start here.",
       where: {},
     },
+    // Record gaps — resolved to id lists below (see getClientDataGaps).
+    "no-end-date": {
+      title: "Renewal date missing",
+      description:
+        "Active clients with no subscription end date on their record. A date filter cannot match an absent field, so these clients can NEVER appear in «Expiring this week» — the renewal watch is blind to them. Fill the date and they start being watched.",
+      where: {},
+    },
+    "no-address": {
+      title: "No address",
+      description:
+        "No city on their record. Their JSON-LD cannot carry a PostalAddress, so Google gets no location for them — and local search is where their customers are.",
+      where: {},
+    },
+    "no-social": {
+      title: "No social links",
+      description:
+        "Empty sameAs. Nothing ties their page to their real profiles, so the knowledge graph never connects the two.",
+      where: {},
+    },
+    "no-description": {
+      title: "No description",
+      description: "No Organization description — their JSON-LD says who they are and nothing about them.",
+      where: {},
+    },
     // The Today strip's business number: NONE plus the missing-field ones — every
     // client a visitor has no way to reach. Resolved to an id list below.
     unreachable: {
@@ -262,6 +343,16 @@ export async function getSegment(key: string): Promise<Segment | null> {
 
   if (key === "no-logo" || key === "no-hero" || key === "no-og" || key === "no-image") {
     const gaps = await getClientImageGaps();
+    return { ...segment, where: { id: { in: gaps[key] } } };
+  }
+
+  if (
+    key === "no-end-date" ||
+    key === "no-address" ||
+    key === "no-social" ||
+    key === "no-description"
+  ) {
+    const gaps = await getClientDataGaps();
     return { ...segment, where: { id: { in: gaps[key] } } };
   }
 

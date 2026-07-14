@@ -14,6 +14,7 @@ import {
   runStepLegalForm,
   runStepOrganizationType,
   runStepCanonical,
+  runStepHreflang,
   runStepSoftDeletedComments,
   runStepIntakeSeed,
   revalidateDatabasePage,
@@ -38,6 +39,7 @@ const STEPS: StepDef[] = [
   { key: "legalform", label: "Legal Forms", description: "Clients with non-canonical legalForm values", runner: runStepLegalForm },
   { key: "organizationType", label: "Organization Types", description: "Clients with non-canonical organizationType values", runner: runStepOrganizationType },
   { key: "canonical", label: "Canonical URLs", description: "Wrong-host or double-encoded canonical URLs across articles, clients, categories, tags, industries, authors", runner: runStepCanonical },
+  { key: "hreflang", label: "Article hreflang", description: "Articles whose stored metadata carries no hreflang — the live page adds it, the SEO score does not see it, so every one of them is under-scored by 10 points until this runs", runner: runStepHreflang },
   // ⛔ "Cloudinary Orphans" removed 2026-06-01 — blind mass-delete destroyed PROD assets when
   // run against dev. Disabled at source (sweepCloudinaryOrphans) + dropped from Run-All.
   // Redesign as review-before-delete (MASTER-TODO).
