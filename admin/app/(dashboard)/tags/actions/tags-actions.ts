@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../actions/delete-image";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { tagServerSchema } from "./tag-server-schema";
 import { Prisma, ArticleStatus } from "@prisma/client";
 import { calculateSEOScore } from "@/helpers/utils/seo-score-calculator";
@@ -265,6 +266,14 @@ export async function deleteTag(id: string) {
     await deleteOldImage("tags", id);
 
     await db.tag.delete({ where: { id } });
+
+    await logAction("tag.delete", {
+      entity: "Tag",
+      entityId: id,
+      summary: tag.name,
+      metadata: { slug: tag.slug },
+    });
+
     revalidatePath("/tags");
     await revalidateModontyTag("tags");
     try { const { regenerateTagsListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateTagsListingCache(); } catch (e) { console.error("Tags listing cache failed:", e); }

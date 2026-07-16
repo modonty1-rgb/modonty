@@ -192,3 +192,28 @@ export async function runStepIntakeSeed(): Promise<MaintenanceStepResult> {
 export async function revalidateDatabasePage(): Promise<void> {
   revalidatePath("/database");
 }
+
+/**
+ * One line per Run-All — not per step. A maintenance pass rewrites hundreds of rows
+ * across every collection, so "who ran it, when, and what did it change" is worth
+ * keeping; eleven rows saying "cleaned" are not.
+ *
+ * Called by the panel once the whole pass finishes.
+ */
+export async function logMaintenanceRunAction(
+  results: Array<{ key: string; ok: boolean; count: number }>,
+): Promise<void> {
+  const { logAction } = await import("@/lib/audit/log-action");
+  const totalFixed = results.reduce((sum, r) => sum + (r.count || 0), 0);
+  const failed = results.filter((r) => !r.ok).map((r) => r.key);
+
+  await logAction("database.maintenance", {
+    entity: "Database",
+    summary: `صيانة شاملة — ${totalFixed} إصلاحاً عبر ${results.length} خطوة`,
+    metadata: {
+      totalFixed,
+      steps: results.filter((r) => r.count > 0).map((r) => `${r.key}:${r.count}`),
+      ...(failed.length > 0 && { failed }),
+    },
+  });
+}

@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 import { buildArticleUrl } from "@/lib/seo/url-builders";
 import { validateArticleFromDb } from "@/lib/seo/article-validator-db";
+import { logAction } from "@/lib/audit/log-action";
 import type { ValidationResult } from "@/lib/seo/article-validator";
 import { regenerateJsonLd, needsRegeneration } from "@/lib/seo/jsonld-storage";
 import { checkYmylPublishGate } from "@/lib/seo/ymyl-helpers";
@@ -184,6 +185,14 @@ export async function gatedTransitionAction(
     await db.article.update({
       where: { id: articleId },
       data: { status: ArticleStatus.AWAITING_APPROVAL },
+    });
+
+    // This one passed the SEO gate and the YMYL check — worth recording who put it through.
+    await logAction("article.transition", {
+      entity: "Article",
+      entityId: articleId,
+      summary: article.title,
+      metadata: { to: ArticleStatus.AWAITING_APPROVAL, gated: true, jsonLdRegenerated },
     });
 
     revalidatePath("/articles");

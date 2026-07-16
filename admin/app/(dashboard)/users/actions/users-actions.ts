@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 function optimizeAvatarUrl(url: string | undefined | null): string | null {
   if (!url) return null;
@@ -70,7 +71,7 @@ export async function createUser(data: {
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    await db.user.create({
+    const created = await db.user.create({
       data: {
         name: data.name,
         email: data.email,
@@ -79,6 +80,16 @@ export async function createUser(data: {
         image: optimizeAvatarUrl(data.image),
       },
     });
+
+    // Handing someone the keys to the admin. Note WHO was created — never the password,
+    // not even the hash: this table is read by people, and a hash is still a secret.
+    await logAction("user.create", {
+      entity: "User",
+      entityId: created.id,
+      summary: `${data.name} (${data.email})`,
+      metadata: { role: "ADMIN" },
+    });
+
     revalidatePath("/users");
     return { success: true };
   } catch {
@@ -119,10 +130,21 @@ export async function updateUser(
       updateData.password = await bcrypt.hash(data.password, 10);
     }
 
-    await db.user.update({
+    const updated = await db.user.update({
       where: { id },
       data: updateData,
     });
+
+    // `passwordChanged` is a FACT worth logging — someone reset an admin's password, and
+    // that is exactly the kind of thing you need to be able to ask about later. The
+    // password itself never appears here, in any form.
+    await logAction("user.update", {
+      entity: "User",
+      entityId: id,
+      summary: `${updated.name ?? "—"} (${updated.email ?? "—"})`,
+      metadata: { passwordChanged: Boolean(data.password), self: id === session.user?.id },
+    });
+
     revalidatePath("/users");
     return { success: true };
   } catch {
@@ -138,7 +160,18 @@ export async function deleteUser(id: string) {
       return { success: false, error: "Cannot remove the last admin. At least one admin must exist." };
     }
 
+    // Read them before they are gone — afterwards there is no name left to log.
+    const doomed = await db.user.findUnique({ where: { id }, select: { name: true, email: true, role: true } });
+
     await db.user.delete({ where: { id } });
+
+    await logAction("user.delete", {
+      entity: "User",
+      entityId: id,
+      summary: doomed ? `${doomed.name ?? "—"} (${doomed.email ?? "—"})` : null,
+      metadata: doomed?.role ? { role: doomed.role } : null,
+    });
+
     revalidatePath("/users");
     return { success: true };
   } catch {

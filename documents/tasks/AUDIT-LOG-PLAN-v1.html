@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سجل «مَن فعل ماذا» — خطة تنفيذ</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --brand:#0E065A; --brand-soft:#eef2ff;
+    --green:#059669; --green-bg:#ecfdf5; --green-line:#a7f3d0;
+    --red:#dc2626;   --red-bg:#fef2f2;   --red-line:#fecaca;
+    --amber:#b45309; --amber-bg:#fffbeb; --amber-line:#fde68a;
+    --blue:#1d4ed8;  --blue-bg:#eff6ff;  --blue-line:#bfdbfe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Tajawal,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;padding:28px 16px}
+  .wrap{max-width:1000px;margin:0 auto}
+
+  header{background:linear-gradient(135deg,var(--brand),#3b1d8f);color:#fff;border-radius:16px;padding:26px 28px;margin-bottom:16px}
+  header h1{font-size:24px;font-weight:800;margin-bottom:6px}
+  header p{font-size:14px;opacity:.9}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:700}
+
+  .sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:14px}
+  .sec h2{font-size:18px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sec .sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px}
+  .b-green{background:var(--green-bg);color:var(--green)}
+  .b-red{background:var(--red-bg);color:var(--red)}
+  .b-blue{background:var(--blue-bg);color:var(--blue)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:800;color:var(--muted);font-size:12px;background:#fafbfc}
+  tr:last-child td{border-bottom:none}
+  code{background:#f1f5f9;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;direction:ltr;display:inline-block}
+
+  .warn{border:2px solid var(--red);background:var(--red-bg);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .warn h3{color:var(--red);font-size:16px;font-weight:800;margin-bottom:8px}
+  .warn p{font-size:13.5px;margin-bottom:6px}
+  .warn ul{margin:6px 22px 8px}
+  .warn li{font-size:13px;margin-bottom:3px}
+
+  .ok{border:1px solid var(--green-line);background:var(--green-bg);border-radius:10px;padding:12px 16px;font-size:13.5px;color:#065f46;margin-top:12px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:10px}
+  .box{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fdfdfe}
+  .box .n{font-size:22px;font-weight:800;color:var(--brand)}
+  .box .l{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
+
+  .schema{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px 18px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;direction:ltr;text-align:left;overflow-x:auto;margin-top:10px;line-height:1.9}
+  .schema .c{color:#64748b}
+  .schema .k{color:#7dd3fc}
+  .schema .t{color:#fca5a5}
+
+  .steps{counter-reset:s;list-style:none}
+  .steps li{counter-increment:s;position:relative;padding:12px 46px 12px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .steps li:last-child{border-bottom:none}
+  .steps li::before{content:counter(s);position:absolute;right:0;top:12px;width:28px;height:28px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .steps b{display:block;font-weight:800;margin-bottom:2px}
+  .steps span{color:var(--muted);font-size:12.5px}
+
+  .prio{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;white-space:nowrap}
+  .p-hot{background:var(--red-bg);color:var(--red)}
+  .p-warm{background:var(--amber-bg);color:var(--amber)}
+  .p-cool{background:var(--blue-bg);color:var(--blue)}
+
+  .decide{border:2px solid var(--brand);border-radius:14px;padding:22px 24px;background:linear-gradient(180deg,#fff,#f8faff)}
+  .decide h2{color:var(--brand)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media(max-width:640px){.opts{grid-template-columns:1fr}}
+  .opt{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+  .opt.rec{border:2px solid var(--green);background:var(--green-bg)}
+  .opt h4{font-size:15px;font-weight:800;margin-bottom:6px}
+  .opt .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .opt p{font-size:13px}
+  .rec-tag{background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;margin-inline-start:6px}
+
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>سجل «مَن فعل ماذا» في لوحة التحكم</h1>
+  <p>تقرير تنفيذ — مبني على فحص الكود الفعلي، لا على افتراضات · 2026-07-14</p>
+  <div class="pills">
+    <span class="pill">البنية 80% جاهزة</span>
+    <span class="pill">جلسة واحدة · ~2.5 ساعة</span>
+    <span class="pill">إضافة خالصة — صفر مساس بالكود القائم</span>
+    <span class="pill">قرار واحد مطلوب منك</span>
+  </div>
+</header>
+
+<!-- ═══ الطلب ═══ -->
+<div class="sec">
+  <h2>الحاجة</h2>
+  <p class="sub">أكثر من موظفة تعمل على الأدمن، وأكثر من كاتب محتوى — ومحتاج تعرف: <b>مين عمل إيش؟</b></p>
+  <p style="font-size:13.5px">اليوم لو انحذف مقال أو اتنشر شي بالغلط، <b>ما في طريقة تعرف مين عمله</b>. كل العمليات مجهولة الفاعل.</p>
+</div>
+
+<!-- ═══ الرفض ═══ -->
+<div class="warn">
+  <h3>🔴 لا — كلمة المرور لا تُسجَّل إطلاقاً</h3>
+  <p>طلبك ذكر «معرّف المستخدم + الاسم + <b>كلمة المرور</b>». الأولان تمام، والثالث <b>ممنوع منعاً باتاً</b> — وهذه ليست وجهة نظر:</p>
+  <ul>
+    <li>كلمات المرور مشفّرة بـ bcrypt (تشفير لا رجعة فيه) — <b>نحن أنفسنا لا نقدر نقرأها</b>.</li>
+    <li>تسجيلها = أي شخص يفتح السجل يسرق كل الحسابات.</li>
+    <li>مخالفة صريحة لنظام حماية البيانات الشخصية السعودي (PDPL).</li>
+    <li><b>ولا تضيف شيئاً لهدفك:</b> «مين فعل هذا؟» يجاوبه المعرّف والإيميل بالكامل.</li>
+  </ul>
+  <p style="margin-top:8px"><b>البديل الذي اقترحتَه أنت وهو الصحيح:</b> <code>userId</code> + <code>email</code>.</p>
+</div>
+
+<!-- ═══ ما وجدته ═══ -->
+<div class="sec">
+  <h2>ما وجدته في الكود <span class="badge b-green">فحص فعلي</span></h2>
+  <p class="sub">كل سطر هنا متحقَّق منه بقراءة الملف، لا بالذاكرة.</p>
+  <table>
+    <tr><th style="width:34%">الحقيقة</th><th style="width:30%">الدليل</th><th>ماذا يعني</th></tr>
+    <tr>
+      <td><b>الهوية في اليد أصلاً</b></td>
+      <td><code>auth.config.ts:100-103</code></td>
+      <td>الجلسة تحمل <code>id</code> و<code>email</code> جاهزين — لا نحتاج بناء شيء</td>
+    </tr>
+    <tr>
+      <td><b>64 عملية تستدعي <code>auth()</code> بالفعل</b></td>
+      <td>بحث في <code>admin/app</code></td>
+      <td>كلها تتحقق من الهوية… ثم <b>ترميها</b> ولا تسجّلها</td>
+    </tr>
+    <tr>
+      <td><b>النمط موحّد في كل مكان</b></td>
+      <td><code>const session = await auth();</code></td>
+      <td>الربط ميكانيكي ومتكرر — سطر واحد لكل عملية</td>
+    </tr>
+    <tr>
+      <td><b>يوجد تسجيل… للمقالات فقط</b></td>
+      <td><code>ArticleVersion.createdBy</code><br><code>update-article.ts:77</code></td>
+      <td>الفكرة مطبَّقة وناجحة — نحتاج تعميمها فقط</td>
+    </tr>
+    <tr>
+      <td><b>لا يوجد سجل عمليات عام</b></td>
+      <td>صفر نموذج AuditLog بالسكيما</td>
+      <td><b>هذا الناقص الوحيد:</b> مكان يُكتب فيه</td>
+    </tr>
+    <tr>
+      <td>الأدوار جاهزة</td>
+      <td><code>ADMIN · EDITOR · CLIENT</code></td>
+      <td>نقدر نفلتر السجل بالدور لاحقاً</td>
+    </tr>
+  </table>
+  <div class="ok">✅ <b>الخلاصة:</b> ما نبني من الصفر. البنية <b>80% جاهزة</b> — الناقص جدول وسطر.</div>
+</div>
+
+<!-- ═══ الحل ═══ -->
+<div class="sec">
+  <h2>الحل — أبسط ما يمكن <span class="badge b-blue">جدول + سطر + صفحة</span></h2>
+
+  <div class="grid">
+    <div class="box"><div class="n">١</div><div class="l">جدول جديد واحد</div></div>
+    <div class="box"><div class="n">١</div><div class="l">دالة تسجيل واحدة</div></div>
+    <div class="box"><div class="n">١</div><div class="l">صفحة عرض واحدة</div></div>
+    <div class="box"><div class="n">~15</div><div class="l">عملية تُربط (سطر لكل واحدة)</div></div>
+  </div>
+
+  <h3 style="font-size:14px;font-weight:800;margin:18px 0 0">① الجدول</h3>
+  <div class="schema">
+<span class="c">// AuditLog — من فعل ماذا، ومتى</span>
+<span class="k">userId</span>     <span class="t">String</span>    <span class="c">← المعرّف (المفتاح الحقيقي)</span>
+<span class="k">userEmail</span>  <span class="t">String</span>    <span class="c">← لقطة نصية وقت الفعل</span>
+<span class="k">action</span>     <span class="t">String</span>    <span class="c">← "article.publish" · "client.delete"</span>
+<span class="k">entity</span>     <span class="t">String</span>    <span class="c">← Article · Client · Category …</span>
+<span class="k">entityId</span>   <span class="t">String?</span>   <span class="c">← على مَن وقع الفعل</span>
+<span class="k">summary</span>    <span class="t">String?</span>   <span class="c">← "نشر: أفضل واكس شعر"</span>
+<span class="k">createdAt</span>  <span class="t">DateTime</span>
+  </div>
+  <p style="font-size:13px;margin-top:10px"><b>لماذا الإيميل نصاً وليس علاقة فقط؟</b> لأنه يجاوب «مين؟» فوراً بلا استعلام إضافي — <b>ويبقى محفوظاً حتى لو تركت الموظفة العمل وحُذف حسابها</b>. السجل يجب أن يصمد بعد صاحبه.</p>
+
+  <h3 style="font-size:14px;font-weight:800;margin:18px 0 0">② الدالة — سطر واحد بعد كل عملية</h3>
+  <div class="schema">
+<span class="c">// بعد نجاح العملية مباشرة</span>
+<span class="k">await</span> logAction(<span class="t">"article.delete"</span>, { entityId: id, summary: article.title });
+  </div>
+  <p style="font-size:13px;margin-top:10px">الدالة تقرأ الهوية من الجلسة بنفسها — <b>لا نمرّر لها شيئاً عن المستخدم</b>. وفشل التسجيل <b>لا يُفشل العملية أبداً</b> (تُبتلع أخطاؤه بصمت).</p>
+
+  <h3 style="font-size:14px;font-weight:800;margin:18px 0 0">③ الصفحة</h3>
+  <p style="font-size:13px"><code>/audit-log</code> — جدول بفلاتر: <b>مين</b> (الموظفة) · <b>إيش</b> (نوع العملية) · <b>متى</b> (المدة) · بحث نصي.</p>
+</div>
+
+<!-- ═══ النطاق ═══ -->
+<div class="sec">
+  <h2>ما الذي يُسجَّل — عملياتك الحساسة</h2>
+  <p class="sub">مُستخرجة من فحص الكود، مرتبة بالخطورة.</p>
+  <table>
+    <tr><th style="width:14%">الأولوية</th><th style="width:30%">المجموعة</th><th style="width:12%">العدد</th><th>ليش</th></tr>
+    <tr>
+      <td><span class="prio p-hot">🔴 حرجة</span></td>
+      <td><b>الحذف</b> — مقال · عميل · فئة · رسالة · وسائط</td>
+      <td>5 ملفات</td>
+      <td>لا رجعة فيها. لو انحذف شي بالغلط، لازم تعرف مين</td>
+    </tr>
+    <tr>
+      <td><span class="prio p-hot">🔴 حرجة</span></td>
+      <td><b>النشر وسير العمل</b> — transition · gated · scheduled · reset</td>
+      <td>4 ملفات</td>
+      <td>النشر يخرج للعالم. والموافقات مسؤولية شخصية</td>
+    </tr>
+    <tr>
+      <td><span class="prio p-warm">🟠 مهمة</span></td>
+      <td><b>التعديل</b> — مقال · عميل</td>
+      <td>2 ملف</td>
+      <td>المقال عنده تسجيل جزئي أصلاً؛ العميل لا</td>
+    </tr>
+    <tr>
+      <td><span class="prio p-warm">🟠 مهمة</span></td>
+      <td><b>الإعدادات والمستخدمون</b></td>
+      <td>2-3 ملفات</td>
+      <td>تغيير إعداد عام يمس كل الموقع</td>
+    </tr>
+    <tr>
+      <td><span class="prio p-cool">🟡 مفيدة</span></td>
+      <td><b>صيانة قاعدة البيانات</b> — Run-All · Cascade</td>
+      <td>2 ملف</td>
+      <td>تمس 158 كياناً دفعة واحدة — نبغى نعرف مين شغّلها</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ═══ الوقت ═══ -->
+<div class="sec">
+  <h2>الوقت — جلسة واحدة <span class="badge b-blue">~2.5 ساعة</span></h2>
+  <ol class="steps">
+    <li><b>السكيما + prisma generate</b><span>20 دقيقة — بطقس إنهاء العمليات أولاً (قاعدة ثابتة عندنا)</span></li>
+    <li><b>دالة logAction()</b><span>20 دقيقة — تقرأ الجلسة، تكتب السطر، تبتلع أخطاءها</span></li>
+    <li><b>ربط الـ15 عملية</b><span>45 دقيقة — سطر واحد لكل واحدة، ميكانيكي</span></li>
+    <li><b>صفحة /audit-log + الفلاتر</b><span>45 دقيقة — جدول بفلاتر وبحث</span></li>
+    <li><b>تست حي + الدفعة</b><span>20 دقيقة — أنفّذ عمليات فعلية وأتأكد أنها تُسجَّل صح</span></li>
+  </ol>
+  <div class="ok">
+    ✅ <b>بلا مخاطرة:</b> إضافة خالصة — لا تُعدَّل أي دالة قائمة ولا يتغير أي سلوك. وفشل التسجيل لا يُفشل العملية.<br>
+    ⚠️ <b>الاعتبار الوحيد:</b> تعديل السكيما = إنهاء العمليات ثم <code>prisma generate</code> ثم إعادة التشغيل (الطقس المعتاد).
+  </div>
+</div>
+
+<!-- ═══ القرار ═══ -->
+<div class="sec decide">
+  <h2>القرار المطلوب منك <span class="badge b-red">واحد فقط</span></h2>
+  <p class="sub">ما الذي نربطه في هذه الجلسة؟</p>
+  <div class="opts">
+    <div class="opt rec">
+      <h4>الـ15 كلها <span class="rec-tag">موصى به</span></h4>
+      <div class="meta">~2.5 ساعة · جلسة واحدة</div>
+      <p>تخلص من الموضوع نهائياً. الفرق عن الخيار الثاني <b>45 دقيقة فقط</b> — والعمل ميكانيكي متكرر، فتقسيمه على جلستين يكلّف وقت استئناف أكثر مما يوفّر.</p>
+    </div>
+    <div class="opt">
+      <h4>الحمراء فقط</h4>
+      <div class="meta">~1.5 ساعة · 9 عمليات</div>
+      <p>الحذف والنشر فقط، ونوسّع لاحقاً. مناسب لو وقتك ضيق جداً اليوم — لكن يبقى التعديل والإعدادات بلا تتبّع.</p>
+    </div>
+  </div>
+  <p style="font-size:13px;margin-top:14px"><b>قل «الكل» أو «الحمراء» وأبدأ فوراً.</b></p>
+</div>
+
+<footer>
+  مبني على فحص الكود الفعلي · صفر تخمين · 2026-07-14
+</footer>
+
+</div>
+</body>
+</html>

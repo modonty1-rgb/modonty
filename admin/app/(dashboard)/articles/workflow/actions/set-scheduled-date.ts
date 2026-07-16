@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
+import { logAction } from "@/lib/audit/log-action";
 
 export interface SetScheduledResult {
   success: boolean;
@@ -31,7 +32,8 @@ export async function setScheduledDateAction(
 
     const article = await db.article.findUnique({
       where: { id: articleId },
-      select: { id: true, status: true, slug: true },
+      // title is here for the audit line — an id tells the reader nothing.
+      select: { id: true, status: true, slug: true, title: true },
     });
 
     if (!article) return { success: false, error: "Article not found" };
@@ -45,6 +47,14 @@ export async function setScheduledDateAction(
     await db.article.update({
       where: { id: articleId },
       data: { scheduledAt: date },
+    });
+
+    // A schedule decides WHEN the world sees it — same weight as publishing.
+    await logAction("article.schedule", {
+      entity: "Article",
+      entityId: articleId,
+      summary: article.title,
+      metadata: { scheduledAt: date.toISOString() },
     });
 
     revalidatePath("/articles/workflow/scheduled-to-published");

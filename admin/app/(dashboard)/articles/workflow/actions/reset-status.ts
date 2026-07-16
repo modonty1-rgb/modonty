@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { ArticleStatus } from "@prisma/client";
 
 import { ROLLBACK_TARGETS, STAGE_RANK } from "../lib/rollback-targets";
+import { logAction } from "@/lib/audit/log-action";
 
 /**
  * Rollback-only status maintenance.
@@ -40,7 +41,8 @@ export async function resetArticleStatusAction(
 
     const article = await db.article.findUnique({
       where: { id: articleId },
-      select: { id: true, status: true, slug: true },
+      // title is here for the audit line — an id tells the reader nothing.
+      select: { id: true, status: true, slug: true, title: true },
     });
     if (!article) return { success: false, error: "Article not found" };
 
@@ -74,6 +76,15 @@ export async function resetArticleStatusAction(
         scheduledAt: null,
         lastReviewed: null,
       },
+    });
+
+    // A rollback throws away a schedule and a client's approval — the kind of thing
+    // someone will ask about later.
+    await logAction("article.resetStatus", {
+      entity: "Article",
+      entityId: articleId,
+      summary: article.title,
+      metadata: { from: article.status, to: toStatus },
     });
 
     revalidatePath("/articles");

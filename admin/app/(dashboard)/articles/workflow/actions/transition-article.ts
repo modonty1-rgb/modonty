@@ -7,6 +7,7 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { submitToIndexNow } from "@/lib/indexnow";
 import { ArticleStatus } from "@prisma/client";
 import { isValidTransition } from "../../helpers/article-status-machine";
+import { logAction } from "@/lib/audit/log-action";
 
 const MIN_SEO_SCORE = 60;
 
@@ -124,6 +125,15 @@ export async function transitionArticleAction(
     await db.article.update({
       where: { id: articleId },
       data,
+    });
+
+    // Publishing sends an article out to the world; every other move decides whose desk it
+    // sits on. Both are worth a name — log the move, not just the fact that it moved.
+    await logAction(toStatus === ArticleStatus.PUBLISHED ? "article.publish" : "article.transition", {
+      entity: "Article",
+      entityId: articleId,
+      summary: article.title,
+      metadata: { from: expectedFrom, to: toStatus },
     });
 
     // PUBLISHED side effects: regenerate fresh JSON-LD + metadata, then notify search engines.

@@ -10,6 +10,7 @@ import { SubscriptionTier } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
 import { mapFormDataToClientData } from "../../helpers/client-field-mapper";
 import { generateClientSEO } from "./generate-client-seo";
+import { logAction } from "@/lib/audit/log-action";
 import { clientServerSchema } from "./client-server-schema";
 import { normalizeOrganizationType } from "@modonty/database/lib/constants/client-classification";
 import { DEFAULT_CLIENT_PASSWORD } from "@/lib/default-client-password";
@@ -226,6 +227,13 @@ export async function createClient(data: ClientFormData) {
     } catch {
       warning = "Client saved successfully, but SEO data generation failed. You can update it later.";
     }
+
+    await logAction("client.create", {
+      entity: "Client",
+      entityId: client.id,
+      summary: client.name,
+      metadata: { slug: client.slug },
+    });
 
     revalidatePath("/clients");
     revalidatePath("/media");

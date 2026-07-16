@@ -4,10 +4,16 @@ import { db } from "@/lib/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 export async function deleteArticle(id: string) {
   try {
     const session = await auth(); if (!session) return { success: false, error: "غير مصرح" };
+
+    // Read the title BEFORE the row is gone — afterwards there is nothing left to name it
+    // by, and "deleted article 6a53…" tells the reader nothing.
+    const doomed = await db.article.findUnique({ where: { id }, select: { title: true, status: true } });
+
     await Promise.all([
       db.articleTag.deleteMany({ where: { articleId: id } }),
       db.articleVersion.deleteMany({ where: { articleId: id } }),
@@ -22,6 +28,13 @@ export async function deleteArticle(id: string) {
 
     await db.article.delete({
       where: { id },
+    });
+
+    await logAction("article.delete", {
+      entity: "Article",
+      entityId: id,
+      summary: doomed?.title ?? null,
+      metadata: doomed?.status ? { status: doomed.status } : null,
     });
 
     revalidatePath("/articles");

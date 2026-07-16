@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import type { Prisma } from "@prisma/client";
 import { cascadeSettingsToAllEntities } from "@/app/(dashboard)/seo/actions/cascade-all-seo";
 import { SETTINGS_SINGLETON_WHERE, ensureSettingsId } from "@/lib/settings/settings-singleton";
@@ -1072,6 +1073,15 @@ export async function updateAllSettings(data: Partial<AllSettings>) {
         },
       });
     }
+
+    // A settings change is the widest action in the admin — it cascades to every article
+    // and client on the site. Record which keys were touched, never their values: this
+    // table holds no secrets.
+    await logAction("settings.update", {
+      entity: "Settings",
+      summary: "تحديث الإعدادات العامة",
+      metadata: { keys: Object.keys(data).slice(0, 40) },
+    });
 
     revalidatePath("/settings");
     await revalidateModontyTag("settings", settings?.siteUrl);

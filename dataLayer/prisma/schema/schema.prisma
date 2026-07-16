@@ -2573,6 +2573,53 @@ model SystemError {
   @@map("system_errors")
 }
 
+/// Who did what, and when — the answer to "مين عمل ده؟" (Khalid 2026-07-14: more than
+/// one person now works in the admin, and until today every action was anonymous).
+///
+/// Written by `logAction()` after an action SUCCEEDS. Append-only: rows are never edited.
+///
+/// Identity is stored twice on purpose:
+///   · userId    — the real key. Never changes, survives a rename, and is what you filter by.
+///   · userEmail — a SNAPSHOT of who they were at that moment. It answers "who?" without a
+///                 second query, and it still answers it after the person leaves and their
+///                 account is deleted. A log that outlives its subject is the whole point.
+///
+/// A password is NEVER stored here. It is bcrypt-hashed (we cannot read it), logging it
+/// would hand every account to anyone who opens this table, and it says nothing about who
+/// acted — userId already does. That is not a preference; it is the rule.
+model AuditLog {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Who — both, for the reasons above.
+  userId    String  @db.ObjectId
+  userEmail String
+  userName  String? // Snapshot too — nice to read, but email is the one that must be there.
+  userRole  String? // ADMIN · EDITOR — their role AT THE TIME, not today's.
+
+  // What — a stable dotted key: "article.publish" · "client.delete" · "settings.update".
+  action String
+
+  // On what — entity is always set; entityId is null for global actions (settings, cascade).
+  entity   String // Article · Client · Category · Tag · Settings · Database …
+  entityId String? @db.ObjectId
+
+  /// Human-readable line for the log screen: "نشر: أفضل واكس شعر للرجال".
+  /// A snapshot as well — the title at the time, so a later rename cannot rewrite history.
+  summary String?
+
+  /// Anything worth keeping that has no column: { from: "DRAFT", to: "PUBLISHED" }.
+  /// Never put personal data or secrets in here.
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  // The three ways this table gets read: newest-first, per person, per entity.
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([entity, entityId, createdAt])
+  @@map("audit_logs")
+}
+
 // Cache table for Google Search Console URL Inspection results.
 // Avoids hitting the 2,000/day API quota — refresh on demand or every 7 days.
 model GscUrlInspection {

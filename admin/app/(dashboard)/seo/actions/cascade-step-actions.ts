@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 
 /**
@@ -24,6 +25,15 @@ export async function getCascadeEntities(): Promise<{
     db.article.findMany({ select: { id: true } }),
     db.client.findMany({ select: { id: true } }),
   ]);
+
+  // A cascade rebuilds the JSON-LD and metadata of EVERY entity on the platform — the
+  // widest single action anyone can take here. Logged once, at the start: the per-entity
+  // steps that follow would bury the log in hundreds of identical lines.
+  await logAction("seo.cascade", {
+    entity: "Seo",
+    summary: `إعادة توليد شاملة — ${articles.length} مقالاً و${clients.length} عميلاً`,
+    metadata: { articles: articles.length, clients: clients.length },
+  });
   return {
     articleIds: articles.map((a) => a.id),
     clientIds: clients.map((c) => c.id),

@@ -12,13 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.87.1 (admin)",
-    title: "The cascade was about to overwrite every client card — and two of our medical types do not exist on schema.org",
+    version: "0.88.0 (admin)",
+    title: "Every important action now has a name on it",
     items: [
-      { type: "fix" as const, text: "Trigger Full Cascade would have rewritten all 27 client cards with the WRONG type — it builds through a path that never saw the new rule, so a clinic would have gone back to being a 'Corporation'. The rule now lives inside the card builder itself, so every path — cascade, save, new client, console — produces the same card. Caught on dev before it ever ran in production." },
-      { type: "fix" as const, text: "The cascade was also stripping opening hours and price range from every client it touched: its own query never asked for those fields, and a field you do not read is a field the client appears not to have. It now goes through the shared generator, so a cascade and a save produce identical cards." },
-      { type: "fix" as const, text: "Two schema.org types we hand Google were wrong. A physiotherapy clinic was typed 'PhysicalTherapy' — which is a medical PROCEDURE, not a business, so the clinic was announcing itself as a treatment. And a nutrition clinic was typed 'Dietitian', a type that does not exist on schema.org at all (404). Corrected to Physiotherapy and DietNutrition." },
-      { type: "fix" as const, text: "Three different lists decided which businesses may carry an address, coordinates and opening hours — the builder knew 16 types, the SEO score knew 9, and neither knew Optician. So two eye clinics were given the medical type and then denied the address that type exists to carry, and a hospital was scored as if its address did not matter. One list now, shared." },
+      { type: "feature" as const, text: "More than one person works in the admin now, and until today every action was anonymous — if an article was deleted by mistake, nothing could tell you who did it. Sixteen actions now record who did them: deletes (article, client, category, tag), publishing and every workflow move, creates and edits, admin accounts, settings, maintenance runs and full cascades." },
+      { type: "feature" as const, text: "Each line keeps the user id AND a snapshot of their email, name and role at that moment — so the log still answers 'who?' long after someone leaves and their account is gone." },
+      { type: "improve" as const, text: "Deletes read the name BEFORE the row disappears: the log says «حُذف: أفضل واكس شعر», not «deleted 6a53…». Maintenance and cascade write one line for the whole run, not one per step." },
+      { type: "improve" as const, text: "A password is never recorded — not the value, not even the hash. It is unreadable to us by design, it would hand every account to anyone who opens the table, and it says nothing about who acted. The user id already does." },
+      { type: "improve" as const, text: "A failed log can never fail the action: the work is already done and saved by the time we write the line. The log is a witness, not a gatekeeper." },
     ],
   },
 ];

@@ -15,6 +15,7 @@ import {
 import { ArticleFormData, FAQItem } from "@/lib/types";
 import { generateAndSaveNextjsMetadata } from "@/lib/seo/metadata-storage";
 import { generateAndSaveJsonLd } from "@/lib/seo/jsonld-storage";
+import { logAction } from "@/lib/audit/log-action";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { checkCompliance } from "@/lib/seo/pre-publish-audit";
@@ -302,6 +303,15 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
         error
       );
     }
+
+    // ArticleVersion already snapshots WHAT changed; this line answers WHO, in the same
+    // place as every other action, so one screen can tell the whole story.
+    await logAction("article.update", {
+      entity: "Article",
+      entityId: article.id,
+      summary: article.title,
+      metadata: { status: article.status, version: nextUserVersion },
+    });
 
     revalidatePath("/articles");
     revalidatePath(`/articles/${article.id}`);

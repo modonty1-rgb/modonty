@@ -18,6 +18,7 @@ import {
   runStepSoftDeletedComments,
   runStepIntakeSeed,
   revalidateDatabasePage,
+  logMaintenanceRunAction,
   type MaintenanceStepResult,
 } from "../actions/run-all-maintenance";
 
@@ -75,9 +76,14 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setSteps(Object.fromEntries(STEPS.map((s) => [s.key, { status: "pending" as Status }])));
     const startedAt = Date.now();
 
+    // Collected locally, not read back from state: setSteps is async and the log must
+    // describe the run that actually happened.
+    const results: MaintenanceStepResult[] = [];
+
     for (const step of STEPS) {
       setSteps((prev) => ({ ...prev, [step.key]: { status: "running" } }));
       const result = await step.runner();
+      results.push(result);
       setSteps((prev) => ({
         ...prev,
         [step.key]: { status: result.ok ? "done" : "failed", result },
@@ -87,6 +93,12 @@ export function AutoMaintenancePanel({ attentionCount }: { attentionCount: numbe
     setElapsedMs(Date.now() - startedAt);
     setFinished(true);
     setRunning(false);
+
+    // One audit line for the whole pass — who ran it and what it changed.
+    await logMaintenanceRunAction(
+      results.map((r) => ({ key: r.key, ok: r.ok, count: r.count })),
+    ).catch(() => {});
+
     await revalidateDatabasePage();
     router.refresh();
   };

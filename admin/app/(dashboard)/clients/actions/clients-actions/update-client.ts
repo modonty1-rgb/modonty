@@ -23,6 +23,7 @@ import {
   updateCtaFields,
 } from "./update-client-grouped";
 import { generateClientSEO } from "./generate-client-seo";
+import { logAction } from "@/lib/audit/log-action";
 
 export async function updateClient(id: string, data: ClientFormData) {
   try {
@@ -152,6 +153,16 @@ export async function updateClient(id: string, data: ClientFormData) {
       const seoWarning = "Saved successfully, but SEO data generation failed. You can update it later.";
       warning = warning ? `${warning} | ${seoWarning}` : seoWarning;
     }
+
+    // `client` was re-read above, so the name is the one saved a moment ago.
+    await logAction("client.update", {
+      entity: "Client",
+      entityId: id,
+      summary: client?.name ?? null,
+      // Which groups actually saved — the difference between "she edited the client" and
+      // "she edited the client and half of it did not save".
+      metadata: failedGroups.length > 0 ? { failedGroups: failedGroups.map((g) => g.groupName) } : null,
+    });
 
     // Revalidate admin paths
     revalidatePath("/clients");

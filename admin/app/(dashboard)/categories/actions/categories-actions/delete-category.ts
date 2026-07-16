@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { deleteOldImage } from "../../../actions/delete-image";
 import { auth } from "@/lib/auth";
+import { logAction } from "@/lib/audit/log-action";
 
 export async function deleteCategory(id: string) {
   try {
@@ -51,6 +52,14 @@ export async function deleteCategory(id: string) {
     await deleteOldImage("categories", category.id);
 
     await db.category.delete({ where: { id: category.id } });
+
+    await logAction("category.delete", {
+      entity: "Category",
+      entityId: category.id,
+      summary: category.name,
+      metadata: { slug: category.slug },
+    });
+
     revalidatePath("/categories");
     await revalidateModontyTag("categories");
     try { const { regenerateCategoriesListingCache } = await import("@/lib/seo/listing-page-seo-generator"); await regenerateCategoriesListingCache(); } catch (e) { console.error("Categories listing cache failed:", e); }
