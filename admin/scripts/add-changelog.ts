@@ -12,14 +12,19 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.88.0 (admin)",
-    title: "Every important action now has a name on it",
+    version: "0.19.0 (console)",
+    title: "Turn your numbers into stories — photo + paragraph per achievement",
     items: [
-      { type: "feature" as const, text: "More than one person works in the admin now, and until today every action was anonymous — if an article was deleted by mistake, nothing could tell you who did it. Sixteen actions now record who did them: deletes (article, client, category, tag), publishing and every workflow move, creates and edits, admin accounts, settings, maintenance runs and full cascades." },
-      { type: "feature" as const, text: "Each line keeps the user id AND a snapshot of their email, name and role at that moment — so the log still answers 'who?' long after someone leaves and their account is gone." },
-      { type: "improve" as const, text: "Deletes read the name BEFORE the row disappears: the log says «حُذف: أفضل واكس شعر», not «deleted 6a53…». Maintenance and cascade write one line for the whole run, not one per step." },
-      { type: "improve" as const, text: "A password is never recorded — not the value, not even the hash. It is unreadable to us by design, it would hand every account to anyone who opens the table, and it says nothing about who acted. The user id already does." },
-      { type: "improve" as const, text: "A failed log can never fail the action: the work is already done and saved by the time we write the line. The log is a witness, not a gatekeeper." },
+      { type: "feature" as const, text: "«إنجازاتنا بالأرقام» was just a number and a label. Now each achievement can carry a photo and a short paragraph — so «+250 مشروع» can show the work behind it and tell the story in a line or two." },
+      { type: "feature" as const, text: "The photo uploads straight from your dashboard (compressed automatically), and the paragraph is capped so the cards stay tidy. Both are optional — leave them empty and it stays a clean number." },
+      { type: "improve" as const, text: "When you replace or remove a photo, the old file is cleaned up automatically — nothing is left behind." },
+    ],
+  },
+  {
+    version: "1.73.0 (modonty)",
+    title: "Achievement story cards on your public page",
+    items: [
+      { type: "feature" as const, text: "The «إنجازاتنا بالأرقام» section on your page now shows story cards: a photo on top, the number, the label, and your paragraph. An achievement without a photo simply shows as a clean number tile — the section mixes both gracefully." },
     ],
   },
 ];

@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
     },
   ],
   cacheComponents: true,
+  // Dev-only: allow LAN-IP access (mobile testing) — Next blocks cross-origin dev assets by default
+  allowedDevOrigins: ["192.168.1.3"],
   serverExternalPackages: ["cohere-ai"],
   images: {
     remotePatterns: [
@@ -51,6 +53,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.dicebear.com",
         pathname: "/9.x/**",
+      },
+      // Bunny CDN — reels media (image reels + video thumbnails)
+      {
+        protocol: "https",
+        hostname: "modonty-reels-media.b-cdn.net",
+        pathname: "/**",
       },
     ],
     formats: ["image/avif", "image/webp"], // modern formats

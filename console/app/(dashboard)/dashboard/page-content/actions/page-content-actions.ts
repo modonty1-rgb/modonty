@@ -1,10 +1,16 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
+import { deleteBunnyUrl } from "@modonty/database/lib/bunny";
+
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
 import { messages } from "@/lib/messages";
 import { regenerateClientSeo } from "../../profile/actions/regenerate-client-seo";
+
+const LABEL_MAX = 52;
+const DESC_MAX = 250;
 
 type Result = { success: true } | { success: false; error: string };
 
@@ -22,7 +28,8 @@ export interface TeamMemberInput {
 export interface AchievementInput {
   value: string;
   label: string;
-  icon?: string | null;
+  image?: string | null;
+  description?: string | null;
 }
 export interface CredentialInput {
   name: string;
@@ -61,12 +68,26 @@ export async function updatePageContent(data: PageContentInput): Promise<Result>
     .map((m) => ({ name: (m.name ?? "").trim(), role: clean(m.role), bio: clean(m.bio), photoUrl: clean(m.photoUrl) }))
     .filter((m) => m.name.length > 0);
   const achievements = (data.achievements ?? [])
-    .map((a) => ({ value: (a.value ?? "").trim(), label: (a.label ?? "").trim(), icon: clean(a.icon) }))
+    .map((a) => ({
+      value: (a.value ?? "").trim(),
+      label: (a.label ?? "").trim().slice(0, LABEL_MAX),
+      image: clean(a.image),
+      description: clean(a.description)?.slice(0, DESC_MAX) ?? null,
+    }))
     .filter((a) => a.value.length > 0 && a.label.length > 0);
   const credentials = (data.credentials ?? [])
     .map((c) => ({ name: (c.name ?? "").trim(), authority: clean(c.authority), year: clean(c.year), url: clean(c.url) }))
     .filter((c) => c.name.length > 0);
   const introVideoUrl = clean(data.introVideoUrl);
+
+  // Read current achievement images BEFORE the write, to delete the ones dropped.
+  const existing = await db.client.findUnique({
+    where: { id: clientId },
+    select: { achievements: { select: { image: true } } },
+  });
+  const oldImages = (existing?.achievements ?? [])
+    .map((a) => a.image)
+    .filter((u): u is string => Boolean(u));
 
   try {
     await db.client.update({
@@ -79,6 +100,18 @@ export async function updatePageContent(data: PageContentInput): Promise<Result>
         introVideoUrl,
       },
     });
+
+    // Orphan cleanup: delete Bunny images no longer referenced (best-effort).
+    const keptImages = new Set(achievements.map((a) => a.image).filter(Boolean));
+    for (const url of oldImages) {
+      if (!keptImages.has(url)) {
+        try {
+          await deleteBunnyUrl("reels", url);
+        } catch {
+          /* best-effort — a failed delete must not fail the save */
+        }
+      }
+    }
     // These feed JSON-LD (OfferCatalog / employee Person[] / hasCredential / VideoObject).
     try {
       await regenerateClientSeo(clientId);

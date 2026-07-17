@@ -319,9 +319,10 @@ type ClientTeamMember {
 }
 
 type ClientAchievement {
-  value String // e.g. "12+", "98%"
-  label String // e.g. "سنة خبرة"
-  icon  String?
+  value       String // e.g. "12+", "98%"
+  label       String // e.g. "سنة خبرة" (≤52 chars)
+  image       String? // Bunny CDN (reels): clients/{id}/achievements/*.webp
+  description String? // story paragraph (≤250 chars)
 }
 
 type ClientCredential {

@@ -17,6 +17,12 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // Bunny CDN — reels media zone (client-gallery images live there since 2026-07-07)
+      {
+        protocol: "https",
+        hostname: "modonty-reels-media.b-cdn.net",
+        pathname: "/**",
+      },
     ],
   },
 };

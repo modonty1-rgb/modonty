@@ -59,7 +59,7 @@ export interface ShellClient {
   isFeatured?: boolean | null;
   services: { title: string; description?: string | null; icon?: string | null }[];
   teamMembers: { name: string; role?: string | null; bio?: string | null; photoUrl?: string | null }[];
-  achievements: { value: string; label: string; icon?: string | null }[];
+  achievements: { value: string; label: string; image?: string | null; description?: string | null }[];
   credentials: { name: string; authority?: string | null; year?: string | null; url?: string | null }[];
   introVideoUrl?: string | null;
   verificationImageUrl?: string | null;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,10 @@ import {
   Users,
   Award,
   Video,
+  ImagePlus,
+  X,
 } from "lucide-react";
+import { compressToWebP } from "@/lib/compress-image";
 import {
   updatePageContent,
   type ServiceInput,
@@ -79,22 +83,16 @@ export function PageContentEditor({ initial }: Props) {
       </Section>
 
       {/* Achievements */}
-      <Section icon={BarChart3} title="إنجازاتنا بالأرقام" hint="أرقام تختصر خبرتك (مثال: +500 عميل سعيد). عرض فقط — بلا تأثير على Google.">
+      <Section icon={BarChart3} title="إنجازاتنا بالأرقام" hint="أرقام تختصر خبرتك (مثال: +500 عميل سعيد). ضيف صورة وفقرة تحكي القصة — أو خلّها رقم بسيط. عرض فقط، بلا تأثير على Google.">
         {achievements.map((a, i) => (
-          <Row key={i} onRemove={() => setAchievements(achievements.filter((_, j) => j !== i))}>
-            <Input
-              placeholder="القيمة * (مثال: +500)"
-              value={a.value}
-              onChange={(e) => setAchievements(upd(achievements, i, { value: e.target.value }))}
-            />
-            <Input
-              placeholder="الوصف * (مثال: عميل سعيد)"
-              value={a.label}
-              onChange={(e) => setAchievements(upd(achievements, i, { label: e.target.value }))}
-            />
-          </Row>
+          <AchievementRow
+            key={i}
+            achievement={a}
+            onChange={(patch) => setAchievements(upd(achievements, i, patch))}
+            onRemove={() => setAchievements(achievements.filter((_, j) => j !== i))}
+          />
         ))}
-        <AddButton label="أضف إنجازاً" onClick={() => setAchievements([...achievements, { value: "", label: "", icon: "" }])} />
+        <AddButton label="أضف إنجازاً" onClick={() => setAchievements([...achievements, { value: "", label: "", image: "", description: "" }])} />
       </Section>
 
       {/* Team */}
@@ -224,5 +222,148 @@ function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
       <Plus className="h-3.5 w-3.5" />
       {label}
     </Button>
+  );
+}
+
+const LABEL_MAX = 52;
+const DESC_MAX = 250;
+const IMG_MAX_BYTES = 10 * 1024 * 1024;
+
+function AchievementRow({
+  achievement,
+  onChange,
+  onRemove,
+}: {
+  achievement: AchievementInput;
+  onChange: (patch: Partial<AchievementInput>) => void;
+  onRemove: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const image = achievement.image ?? "";
+  const description = achievement.description ?? "";
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("الملف مش صورة");
+      return;
+    }
+    if (file.size > IMG_MAX_BYTES) {
+      toast.error("حجم الصورة كبير — الحد 10 ميجا");
+      return;
+    }
+    setUploading(true);
+    try {
+      const compressed = await compressToWebP(file);
+      const fd = new FormData();
+      fd.append("file", compressed);
+      fd.append("folder", "achievements");
+      const res = await fetch("/api/upload-bunny", { method: "POST", body: fd });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.url) {
+        toast.error(json?.error || "فشل رفع الصورة");
+        return;
+      }
+      onChange({ image: json.url });
+    } catch {
+      toast.error("فشل رفع الصورة");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2 rounded-lg border bg-muted/20 p-3">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+
+      <div className="flex items-start gap-2">
+        <div className="grid flex-1 gap-2 sm:grid-cols-2">
+          <Input
+            placeholder="القيمة * (مثال: +500)"
+            value={achievement.value}
+            onChange={(e) => onChange({ value: e.target.value })}
+          />
+          <Input
+            placeholder="العنوان * (مثال: عميل سعيد)"
+            value={achievement.label}
+            maxLength={LABEL_MAX}
+            onChange={(e) => onChange({ label: e.target.value })}
+          />
+        </div>
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          onClick={onRemove}
+          className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10"
+          title="حذف"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {image ? (
+          <div className="relative w-full overflow-hidden rounded-md border bg-muted sm:w-40" style={{ aspectRatio: "16/10" }}>
+            <Image src={image} alt={achievement.label || "صورة الإنجاز"} fill className="object-cover" sizes="160px" />
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              disabled={uploading}
+              onClick={() => inputRef.current?.click()}
+              className="absolute inset-x-1 bottom-1 h-6 bg-background/90 px-2 text-[11px] backdrop-blur"
+            >
+              {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : "استبدال"}
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="secondary"
+              onClick={() => onChange({ image: "" })}
+              aria-label="حذف الصورة"
+              className="absolute end-1 top-1 h-6 w-6 bg-background/90 text-destructive backdrop-blur hover:bg-destructive/10"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            style={{ aspectRatio: "16/10" }}
+            className="flex w-full flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-border py-4 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 disabled:opacity-50 sm:w-40"
+          >
+            {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <ImagePlus className="h-5 w-5" />}
+            <span className="text-[11px] font-medium">{uploading ? "جاري الرفع..." : "أضف صورة (اختياري)"}</span>
+          </button>
+        )}
+
+        <div className="flex-1">
+          <Textarea
+            placeholder="فقرة قصيرة تحكي القصة (اختياري)"
+            value={description}
+            maxLength={DESC_MAX}
+            rows={3}
+            onChange={(e) => onChange({ description: e.target.value })}
+            className="resize-none text-sm"
+          />
+          <div className="mt-1 text-end text-[11px] text-muted-foreground">
+            {description.length}/{DESC_MAX}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
