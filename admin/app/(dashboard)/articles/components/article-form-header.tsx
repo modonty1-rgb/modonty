@@ -1,16 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { TechnicalSEOGuidance } from './sections/technical-seo-guidance';
 import {
   Tooltip,
   TooltipContent,
@@ -21,11 +14,11 @@ import {
   Check,
   AlertCircle,
   AlertTriangle,
-  Eye,
   Save,
   Loader2,
-  FileText,
-  CheckCircle2,
+  Search,
+  ChevronLeft,
+  ClipboardCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useArticleForm } from './article-form-context';
@@ -40,16 +33,6 @@ import { useToast } from '@/hooks/use-toast';
 import { messages } from '@/lib/messages';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
-
-function formatTimeAgo(date: Date | null): string {
-  if (!date) return '';
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (seconds < 10) return 'الآن';
-  if (seconds < 60) return `قبل ${seconds} ث`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `قبل ${minutes} د`;
-  return `قبل ${Math.floor(minutes / 60)} س`;
-}
 
 function getStepHint(
   step: StepConfig,
@@ -76,47 +59,13 @@ export function ArticleFormHeader() {
     save,
     isSaving,
     isDirty,
-    lastAutoSaved,
     mode,
     articleId,
     overallProgress,
-    seoScore,
+    realSeoScore,
   } = useArticleForm();
 
   const { toast } = useToast();
-  const [, setTick] = useState(0);
-
-  // Re-render every 15 s so the "saved X min ago" label stays fresh
-  useEffect(() => {
-    if (!lastAutoSaved) return;
-    const id = setInterval(() => setTick((t) => t + 1), 15_000);
-    return () => clearInterval(id);
-  }, [lastAutoSaved]);
-
-  // Save status indicator
-  const saveStatus = isSaving
-    ? {
-        icon: <Loader2 className="h-3.5 w-3.5 animate-spin" />,
-        text: 'جارٍ الحفظ…',
-        tone: 'text-amber-600 dark:text-amber-400',
-      }
-    : isDirty
-      ? {
-          icon: <AlertCircle className="h-3.5 w-3.5" />,
-          text: 'غير محفوظ',
-          tone: 'text-amber-600 dark:text-amber-400',
-        }
-      : lastAutoSaved
-        ? {
-            icon: <CheckCircle2 className="h-3.5 w-3.5" />,
-            text: `محفوظ ${formatTimeAgo(lastAutoSaved)}`,
-            tone: 'text-emerald-600 dark:text-emerald-400',
-          }
-        : {
-            icon: <FileText className="h-3.5 w-3.5" />,
-            text: 'مسودة جديدة',
-            tone: 'text-muted-foreground',
-          };
 
   const handleSave = async () => {
     try {
@@ -235,84 +184,50 @@ export function ArticleFormHeader() {
           {/* ── Action zone ── */}
           <div className="flex items-center gap-2 shrink-0">
 
-            {/* Status + completion % (hidden on small screens) */}
+            {/* Completion % (hidden on small screens) — the Update button conveys save state. */}
             <div className="hidden md:flex items-center gap-2 text-xs">
-              <span className="tabular-nums font-semibold text-muted-foreground">
-                {overallProgress}%
-              </span>
-              <span className={cn('flex items-center gap-1', saveStatus.tone)}>
-                {saveStatus.icon}
-                <span className="hidden lg:inline">{saveStatus.text}</span>
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="flex items-center gap-1 tabular-nums font-semibold text-muted-foreground cursor-default">
+                    <ClipboardCheck className="h-3.5 w-3.5" />
+                    {overallProgress}%
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">نسبة اكتمال تعبئة حقول النموذج</TooltipContent>
+              </Tooltip>
             </div>
 
-            {/* SEO badge — click to open Technical SEO Guidance */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Badge
-                  variant="outline"
-                  role="button"
-                  className={cn(
-                    'text-[10px] px-2 h-5 font-bold shrink-0 hidden md:flex cursor-pointer',
-                    'hover:opacity-80 transition-opacity',
-                    seoScore >= 80 &&
-                      'bg-emerald-500/10 text-emerald-700 border-emerald-200 dark:text-emerald-400',
-                    seoScore >= 60 &&
-                      seoScore < 80 &&
-                      'bg-amber-500/10 text-amber-700 border-amber-200 dark:text-amber-400',
-                    seoScore < 60 &&
-                      'bg-destructive/10 text-destructive border-destructive/20',
-                  )}
-                >
-                  SEO {seoScore}%
-                </Badge>
-              </PopoverTrigger>
-              <PopoverContent
-                side="bottom"
-                align="end"
-                className="w-[420px] max-h-[70vh] overflow-y-auto p-4"
-              >
-                <TechnicalSEOGuidance />
-              </PopoverContent>
-            </Popover>
-
-            {/* Preview */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild={!!articleId && !isDirty}
-                    disabled={!articleId || isDirty}
-                    className="h-8 px-3 gap-1.5"
-                  >
-                    {articleId && !isDirty ? (
-                      <a
-                        href={`/articles/${articleId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">معاينة</span>
-                      </a>
-                    ) : (
-                      <>
-                        <Eye className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">معاينة</span>
-                      </>
-                    )}
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                {!articleId
-                  ? 'احفظ المقال أولاً لمعاينته'
-                  : isDirty
-                    ? 'احفظ التغييرات أولاً'
-                    : 'فتح المعاينة'}
-              </TooltipContent>
-            </Tooltip>
+            {/* Real SEO score — clickable, opens the full SEO guide (/technical): where the fault is
+                and how to fix it. Edit mode only — a new draft has nothing stored to score or guide.
+                Same number as the tables and dashboard. */}
+            {mode === 'edit' && articleId && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a href={`/articles/${articleId}/technical`} className="shrink-0 hidden md:block">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'text-[10px] px-2 h-5 font-bold gap-1 cursor-pointer hover:opacity-80 transition-opacity',
+                        realSeoScore >= 80 &&
+                          'bg-emerald-500/10 text-emerald-700 border-emerald-200 dark:text-emerald-400',
+                        realSeoScore >= 60 &&
+                          realSeoScore < 80 &&
+                          'bg-amber-500/10 text-amber-700 border-amber-200 dark:text-amber-400',
+                        realSeoScore < 60 &&
+                          'bg-destructive/10 text-destructive border-destructive/20',
+                      )}
+                    >
+                      <Search className="h-3 w-3" />
+                      SEO {realSeoScore}%
+                      <ChevronLeft className="h-3 w-3 opacity-60" />
+                    </Badge>
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  افتح دليل السيو — وين الخلل وكيف تصلحه
+                </TooltipContent>
+              </Tooltip>
+            )}
 
             {/* Save / Update */}
             <Button

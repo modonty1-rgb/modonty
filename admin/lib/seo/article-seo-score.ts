@@ -1,4 +1,4 @@
-import { computeArticleSeoScore } from "@modonty/database/lib/seo/article/seo-score";
+import { computeArticleSeoScore, computeArticleEntitySeo } from "@modonty/database/lib/seo/article/seo-score";
 import type { JsonLdValidationReport } from "@modonty/database/lib/seo/client/types";
 
 /**
@@ -44,7 +44,8 @@ export interface ArticleSeoRow {
   clientId?: string | null;
 }
 
-export function getArticleSeoScore(article: ArticleSeoRow): number {
+/** Full result (score + the checklist) — one mapping, used by both the number and the gate. */
+export function getArticleSeoScoreDetail(article: ArticleSeoRow) {
   return computeArticleSeoScore({
     nextjsMetadata: article.nextjsMetadata,
     jsonLdStructuredData: article.jsonLdStructuredData,
@@ -55,5 +56,28 @@ export function getArticleSeoScore(article: ArticleSeoRow): number {
     dateModified: article.dateModified,
     authorId: article.authorId,
     clientId: article.clientId,
-  }).score;
+  });
+}
+
+export function getArticleSeoScore(article: ArticleSeoRow): number {
+  return getArticleSeoScoreDetail(article).score;
+}
+
+/**
+ * Full split breakdown — META and JSON-LD as separate scores, each with its own checks,
+ * plus the overall (their average). Same mapping and rubric as the number above; this is
+ * what the article's technical guide renders so "why 66%" is answerable per side.
+ */
+export function getArticleEntitySeo(article: ArticleSeoRow) {
+  return computeArticleEntitySeo({
+    nextjsMetadata: article.nextjsMetadata,
+    jsonLdStructuredData: article.jsonLdStructuredData,
+    jsonLdValidationReport: (article.jsonLdValidationReport ?? null) as JsonLdValidationReport | null,
+    title: article.title,
+    featuredImageId: article.featuredImageId,
+    datePublished: article.datePublished,
+    dateModified: article.dateModified,
+    authorId: article.authorId,
+    clientId: article.clientId,
+  });
 }

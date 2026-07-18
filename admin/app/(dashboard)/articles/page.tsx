@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { getArticles, getArticlesStats, getClients, getCategories, getAuthors, ArticleFilters } from "./actions/articles-actions";
+import { getArticleStatusCounts } from "@/app/(dashboard)/actions/article-status-counts";
 import { ArticlesStats } from "./components/articles-stats";
 import { ArticleStatus } from "@prisma/client";
 import { ArticlesPageClient } from "./components/articles-page-client";
@@ -12,12 +13,13 @@ interface ArticlesContentProps {
 }
 
 async function ArticlesContent({ filters }: ArticlesContentProps) {
-  const [articles, stats, clients, categories, authors] = await Promise.all([
+  const [articles, stats, clients, categories, authors, statusCounts] = await Promise.all([
     getArticles(filters),
     getArticlesStats(),
     getClients(),
     getCategories(),
     getAuthors(),
+    getArticleStatusCounts(),
   ]);
 
   const getStatusDescription = () => {
@@ -34,6 +36,7 @@ async function ArticlesContent({ filters }: ArticlesContentProps) {
       clients={clients}
       categories={categories}
       authors={authors}
+      statusCounts={statusCounts}
       statsSlot={<ArticlesStats stats={stats} />}
     >
       <ArticlesPageClient articles={articles} />

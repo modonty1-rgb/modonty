@@ -8,8 +8,7 @@ import { submitToIndexNow } from "@/lib/indexnow";
 import { ArticleStatus } from "@prisma/client";
 import { isValidTransition } from "../../helpers/article-status-machine";
 import { logAction } from "@/lib/audit/log-action";
-
-const MIN_SEO_SCORE = 60;
+import { assertArticlePublishable } from "@/lib/seo/assert-article-publishable";
 
 export interface TransitionResult {
   success: boolean;
@@ -71,17 +70,11 @@ export async function transitionArticleAction(
 
     // Transition-to-PUBLISHED gates — quality checks that must pass before going live.
     if (toStatus === ArticleStatus.PUBLISHED) {
-      const { analyzeArticleSEO } = await import("../../analyzer");
-      const seoResult = analyzeArticleSEO(article as never);
-      if (seoResult.percentage < MIN_SEO_SCORE) {
-        const weakCategories = Object.entries(seoResult.categories)
-          .filter(([, cat]) => cat.percentage < 60)
-          .map(([name, cat]) => `${name} ${cat.percentage}%`)
-          .join(" · ");
-        return {
-          success: false,
-          error: `نقاط SEO ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%.${weakCategories ? `\nالأقسام الضعيفة: ${weakCategories}` : ""}`,
-        };
+      // Single publish gate: generate the live JSON-LD + metadata, then score THAT with the
+      // shared scorer (real SEO) — blocks a page whose real SEO fails, not just empty fields.
+      const gate = await assertArticlePublishable(articleId);
+      if (!gate.ok) {
+        return { success: false, error: gate.error };
       }
 
       if (article.clientId) {
@@ -115,9 +108,8 @@ export async function transitionArticleAction(
     const data: { status: ArticleStatus; datePublished?: Date; revisionNotes?: null } = {
       status: toStatus,
     };
-    if (toStatus === ArticleStatus.PUBLISHED) {
-      data.datePublished = new Date();
-    }
+    // datePublished is set by the publish gate (assertArticlePublishable) before it generates,
+    // so the stored JSON-LD carries the exact same publish date. Nothing to set here.
     if (expectedFrom === ArticleStatus.NEEDS_REVISION && toStatus === ArticleStatus.DRAFT) {
       data.revisionNotes = null;
     }
@@ -139,15 +131,8 @@ export async function transitionArticleAction(
     // PUBLISHED side effects: regenerate fresh JSON-LD + metadata, then notify search engines.
     // Best-effort: each step is wrapped so failure of one doesn't block the others.
     if (toStatus === ArticleStatus.PUBLISHED) {
-      try {
-        const { generateAndSaveJsonLd } = await import("@/lib/seo/jsonld-storage");
-        const { generateAndSaveNextjsMetadata } = await import("@/lib/seo/metadata-storage");
-        await generateAndSaveJsonLd(articleId);
-        await generateAndSaveNextjsMetadata(articleId);
-      } catch (error) {
-        console.error("transitionArticleAction: JSON-LD/metadata regen failed", error);
-      }
-
+      // JSON-LD + metadata were already generated (indexable, with publish date) by the
+      // publish gate above — no need to regenerate here.
       try {
         const articleUrl = `https://www.modonty.com/articles/${article.slug}`;
         const indexNowResult = await submitToIndexNow([articleUrl]);

@@ -7,6 +7,7 @@ import { TodayStrip } from "./components/sections/today-strip";
 import { VisitorActionsBreakdown } from "./components/sections/visitor-actions-breakdown";
 import { ArticlesPipeline } from "./components/sections/articles-pipeline";
 import { ClientsPipeline } from "./components/sections/clients-pipeline";
+import { SubscribersPipeline } from "./components/sections/subscribers-pipeline";
 import { MediaLibrary } from "./components/sections/media-library";
 import { ReferenceData } from "./components/sections/reference-data";
 
@@ -54,15 +55,18 @@ export default async function DashboardPage() {
         <ClientsPipeline />
       </Suspense>
 
-      {/* 5 · Housekeeping — two small sections share one row */}
-      <div className="grid gap-7 lg:grid-cols-2">
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <MediaLibrary />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-40 w-full" />}>
-          <ReferenceData />
-        </Suspense>
-      </div>
+      {/* 5 · The newsletter audience clients are building */}
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+        <SubscribersPipeline />
+      </Suspense>
+
+      {/* 6 · Housekeeping — each on its own full-width row (collapsed header = one line) */}
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+        <MediaLibrary />
+      </Suspense>
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+        <ReferenceData />
+      </Suspense>
     </div>
   );
 }

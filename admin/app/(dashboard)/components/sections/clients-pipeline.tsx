@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 
 import { clientStatusCounts } from "@/lib/dashboard/cached";
-import { CARD_GRID, Ghost, GroupLabel, SectionHead, TierCard, ZChip, type Tier } from "../dashboard-ui";
+import { CARD_GRID, Ghost, GroupLabel, TierCard, ZChip, type Tier } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
  * Clients (contract: admin-dashboard-triage-v2-ui.html). Four groups, each answering
@@ -100,11 +101,10 @@ export async function ClientsPipeline() {
   const d = split(dataItems);
 
   return (
-    <div>
-      <SectionHead
-        icon={Users}
-        title="Clients"
-        subtitle="subscription and readiness"
+    <CollapsibleSection
+      iconNode={<Users className="h-4 w-4 text-muted-foreground" />}
+      title="Clients"
+      subtitle="subscription and readiness"
         right={
           <Link
             href="/clients/segment/unreachable"
@@ -123,8 +123,7 @@ export async function ClientsPipeline() {
             <span className="text-primary">→</span>
           </Link>
         }
-      />
-
+      >
       {statusUnaccounted > 0 && (
         <p className="mb-3 rounded-md border border-red-500/40 bg-red-500/10 p-2 text-[11px] text-red-700 dark:text-red-400">
           <b>{statusUnaccounted}</b> clients have no subscription status on their record — the same
@@ -255,6 +254,6 @@ export async function ClientsPipeline() {
           </Ghost>
         )}
       </div>
-    </div>
+    </CollapsibleSection>
   );
 }

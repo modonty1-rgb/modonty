@@ -139,7 +139,7 @@ export function TechnicalSEOGuidance() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          SEO Analysis
+          دليل تعبئة حقول السيو
         </p>
         <span
           className={cn(

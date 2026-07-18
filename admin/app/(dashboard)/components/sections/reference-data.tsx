@@ -1,70 +1,64 @@
-import Link from "next/link";
-import { Database, User } from "lucide-react";
+import { Building2, FolderTree, Tag, User, type LucideIcon } from "lucide-react";
 
-import { getReferenceSeoCounts } from "../../actions/reference-seo-counts";
-import { Ghost, SectionHead, TierCard, ZChip } from "../dashboard-ui";
+import { getReferenceSeoCounts, type ReferenceGroup } from "../../actions/reference-seo-counts";
+import { CARD_GRID, TierCard } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
- * Reference data (contract: admin-dashboard-triage-v2-ui.html). These are real indexed
- * pages nobody ever checks — so only a BROKEN group earns a card (amber: SEO is
- * this-week work, not a fire). Healthy groups collapse to green chips in the ghost cell.
+ * Reference data (contract: admin-dashboard-triage-v2-ui.html). Four indexed listing
+ * groups nobody ever checks. Each one is named on its own card — a broken group is
+ * amber (SEO is this-week work), a healthy group is green — so it is always clear
+ * exactly what is tracked, not just what is broken.
  */
+
+const ICON: Record<ReferenceGroup["key"], LucideIcon> = {
+  categories: FolderTree,
+  tags: Tag,
+  industries: Building2,
+  authors: User,
+};
 
 export async function ReferenceData() {
   const groups = await getReferenceSeoCounts();
   const totalFailing = groups.reduce((s, g) => s + g.failing, 0);
 
-  const broken = groups.filter((g) => g.failing > 0);
-  const healthy = groups.filter((g) => g.failing === 0);
-
   return (
-    <div>
-      <SectionHead
-        icon={Database}
-        title="Reference data"
-        subtitle="indexed listing pages"
-        right={
-          <p className="text-xs text-muted-foreground">
-            <span
-              className={`text-base font-bold tabular-nums ${
-                totalFailing > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
-              }`}
-            >
-              {totalFailing}
-            </span>{" "}
-            below 60
-          </p>
-        }
-      />
-
-      <div className="grid grid-cols-2 gap-2.5">
-        {broken.map((g) => (
+    <CollapsibleSection
+      iconNode={<FolderTree className="h-4 w-4 text-muted-foreground" />}
+      title="Categories & tags"
+      subtitle="+ industries & authors — indexed listing pages"
+      right={
+        <p className="text-xs text-muted-foreground">
+          <span
+            className={`text-base font-bold tabular-nums ${
+              totalFailing > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+            }`}
+          >
+            {totalFailing}
+          </span>{" "}
+          below 60
+        </p>
+      }
+    >
+      <div className={CARD_GRID}>
+        {groups.map((g) => (
           <TierCard
             key={g.key}
             href={`/reference/segment/${g.key}`}
-            tier="warm"
-            icon={User}
-            value={g.failing}
+            tier={g.failing > 0 ? "warm" : "ok"}
+            icon={ICON[g.key]}
+            value={g.total}
             label={g.label}
             note={
-              g.failing === g.total
-                ? `all ${g.total} failing — nothing generated`
-                : `${g.failing} of ${g.total} below 60`
+              g.failing > 0
+                ? g.failing === g.total
+                  ? `all ${g.total} failing — nothing generated`
+                  : `${g.failing} of ${g.total} below 60`
+                : `all ${g.total} healthy ✓`
             }
           />
         ))}
-        {healthy.length > 0 && (
-          <Ghost title="Healthy">
-            {healthy.map((g) => (
-              <Link key={g.key} href={`/reference/segment/${g.key}`} className="hover:opacity-80">
-                <ZChip good>
-                  <b className="font-bold">{g.total}</b> {g.label.toLowerCase()} ✓
-                </ZChip>
-              </Link>
-            ))}
-          </Ghost>
-        )}
       </div>
-    </div>
+    </CollapsibleSection>
   );
 }

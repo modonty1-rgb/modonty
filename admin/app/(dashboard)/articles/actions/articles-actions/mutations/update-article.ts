@@ -23,9 +23,6 @@ import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
 import { isValidTransition } from "../../../helpers/article-status-machine";
-import { analyzeArticleSEO } from "../../../analyzer";
-
-const MIN_SEO_SCORE = 60;
 
 function sanitizeText(text: string): string {
   return text
@@ -111,33 +108,26 @@ export async function updateArticle(articleId: string, data: ArticleFormData) {
       },
     });
 
-    if (data.status === ArticleStatus.PUBLISHED) {
-      // SEO score gate — block publish below minimum
-      const seoResult = analyzeArticleSEO(data);
-      if (seoResult.percentage < MIN_SEO_SCORE) {
+    // No SEO gate here. The form can't change status (see meta-section) — data.status === PUBLISHED
+    // means an already-live article is being edited, not a first publish (that goes through the
+    // single real gate in transitionArticleAction). Edits save; the unified score shows any
+    // regression. Compliance still blocks banned content from staying live.
+    if (data.status === ArticleStatus.PUBLISHED && client) {
+      const compliance = checkCompliance(
+        {
+          title: data.title,
+          content: data.content,
+          seoTitle: data.seoTitle,
+          seoDescription: data.seoDescription,
+          excerpt: data.excerpt,
+        },
+        client
+      );
+      if (compliance.blocked) {
         return {
           success: false,
-          error: `نقاط SEO ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. حسّن حقول SEO قبل النشر.`,
+          error: compliance.issues.map((i) => i.message).join(". "),
         };
-      }
-
-      if (client) {
-        const compliance = checkCompliance(
-          {
-            title: data.title,
-            content: data.content,
-            seoTitle: data.seoTitle,
-            seoDescription: data.seoDescription,
-            excerpt: data.excerpt,
-          },
-          client
-        );
-        if (compliance.blocked) {
-          return {
-            success: false,
-            error: compliance.issues.map((i) => i.message).join(". "),
-          };
-        }
       }
     }
 

@@ -3,10 +3,9 @@
 import { useArticleForm } from './article-form-context';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 export function ArticleFormNavigation() {
-  const { overallProgress, seoScore, goToStep } = useArticleForm();
+  const { overallProgress, goToStep } = useArticleForm();
 
   return (
     <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm">
@@ -20,19 +19,16 @@ export function ArticleFormNavigation() {
               aria-label="Jump to SEO tab"
             >
               <Badge
-                variant={seoScore >= 80 ? 'default' : seoScore >= 60 ? 'secondary' : 'destructive'}
-                className={cn(
-                  'text-[10px] px-2 py-0 h-5 font-bold uppercase tracking-wider transition-colors cursor-pointer',
-                  seoScore >= 80 && 'bg-emerald-500 hover:bg-emerald-600',
-                  seoScore >= 60 && seoScore < 80 && 'bg-amber-500 hover:bg-amber-600 text-white',
-                )}
+                variant="outline"
+                title="دليل تعبئة الحقول — إرشاد للكاتب، ليست درجة سيو"
+                className="text-[10px] px-2 py-0 h-5 font-bold tracking-wider cursor-pointer bg-muted text-muted-foreground border-border"
               >
-                SEO Health: {seoScore}%
+                دليل السيو
               </Badge>
             </button>
 
             <span className="text-xs font-medium text-muted-foreground tabular-nums">
-              {overallProgress}% Complete
+              اكتمال النموذج {overallProgress}%
             </span>
           </div>
 

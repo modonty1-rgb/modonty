@@ -21,6 +21,8 @@ export async function getArticles(filters?: ArticleFilters) {
     const validStatuses: ArticleStatus[] = [
       ArticleStatus.WRITING,
       ArticleStatus.DRAFT,
+      ArticleStatus.AWAITING_APPROVAL,
+      ArticleStatus.NEEDS_REVISION,
       ArticleStatus.SCHEDULED,
       ArticleStatus.PUBLISHED,
       ArticleStatus.ARCHIVED,

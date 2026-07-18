@@ -3,8 +3,8 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { Prisma, ArticleStatus } from "@prisma/client";
-import { analyzeArticleSEO } from "@/app/(dashboard)/articles/analyzer";
+import { Prisma } from "@prisma/client";
+import { getArticleSeoScore, ARTICLE_SEO_SELECT } from "@/lib/seo/article-seo-score";
 import {
   calculateWordCountImproved,
   calculateReadingTime,
@@ -34,50 +34,6 @@ export interface ArticleSeoHealth {
   wordCount: number;
 }
 
-// Build the input object the analyzer expects from a raw DB article
-function buildAnalyzerInput(a: {
-  title: string;
-  slug: string;
-  status?: string;
-  content: string | null;
-  excerpt: string | null;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  canonicalUrl: string | null;
-  wordCount: number | null;
-  contentDepth: string | null;
-  featuredImageId: string | null;
-  featuredImage: { id: string; altText: string | null } | null;
-  jsonLdStructuredData: string | null;
-  author: { id: string } | null;
-  datePublished: Date | null;
-  faqs: { id: string }[];
-  client?: { name: string | null } | null;
-}) {
-  return {
-    title: a.title,
-    slug: a.slug,
-    clientId: "bulk-check",
-    status: (a.status as ArticleStatus) || ArticleStatus.DRAFT,
-    content: a.content || "",
-    excerpt: a.excerpt || "",
-    seoTitle: a.seoTitle || "",
-    seoDescription: a.seoDescription || "",
-    canonicalUrl: a.canonicalUrl || "",
-    metaRobots: "index, follow",
-    wordCount: a.wordCount || 0,
-    contentDepth: a.contentDepth || undefined,
-    featuredImageId: a.featuredImageId || undefined,
-    featuredImageAlt: a.featuredImage?.altText || undefined,
-    jsonLdStructuredData: a.jsonLdStructuredData || undefined,
-    authorId: a.author?.id || "none",
-    datePublished: a.datePublished,
-    twitterCard: "summary_large_image",
-    inLanguage: "ar",
-    faqs: a.faqs.map(() => ({ question: "q", answer: "a", position: 0 })),
-  } satisfies Parameters<typeof analyzeArticleSEO>[0];
-}
-
 const articleSelect = {
   id: true,
   title: true,
@@ -95,6 +51,12 @@ const articleSelect = {
   datePublished: true,
   featured: true,
   categoryId: true,
+  // Fields the shared REAL scorer reads (so /seo shows the same number as everywhere else).
+  nextjsMetadata: true,
+  jsonLdValidationReport: true,
+  dateModified: true,
+  authorId: true,
+  clientId: true,
   client: { select: { name: true } },
   author: { select: { id: true } },
   featuredImage: { select: { id: true, altText: true } },
@@ -110,15 +72,13 @@ export async function getArticlesSeoHealth(): Promise<ArticleSeoHealth[]> {
   });
 
   return articles.map((a) => {
-    const seoResult = analyzeArticleSEO(buildAnalyzerInput(a));
-
     return {
       id: a.id,
       title: a.title,
       slug: a.slug,
       status: a.status,
       clientName: a.client?.name || null,
-      seoScore: seoResult.percentage,
+      seoScore: getArticleSeoScore(a),
       missingSeoTitle: !a.seoTitle?.trim(),
       missingSeoDescription: !a.seoDescription?.trim(),
       missingCanonical: !a.canonicalUrl?.trim(),
@@ -158,8 +118,8 @@ export async function bulkFixArticleSeo(articleIds: string[]): Promise<{ success
         continue;
       }
 
-      // Calculate old score
-      const oldScore = analyzeArticleSEO(buildAnalyzerInput(article)).percentage;
+      // Old score — the real scorer on the stored fields, before regeneration.
+      const oldScore = getArticleSeoScore(article);
 
       // Auto-generate ONLY missing fields — never overwrite existing values
       const content = article.content || "";
@@ -200,17 +160,9 @@ export async function bulkFixArticleSeo(articleIds: string[]): Promise<{ success
       await generateAndSaveNextjsMetadata(articleId, { robots: metaRobots });
       await generateAndSaveJsonLd(articleId);
 
-      // Calculate new score with updated fields
-      const newInput = buildAnalyzerInput({
-        ...article,
-        seoTitle,
-        seoDescription,
-        canonicalUrl,
-        wordCount,
-        contentDepth,
-        jsonLdStructuredData: "generated",
-      });
-      const newScore = analyzeArticleSEO(newInput).percentage;
+      // New score — re-read the freshly regenerated stored fields so it's the real number.
+      const fresh = await db.article.findUnique({ where: { id: articleId }, select: ARTICLE_SEO_SELECT });
+      const newScore = fresh ? getArticleSeoScore(fresh) : oldScore;
 
       results.push({
         articleId,

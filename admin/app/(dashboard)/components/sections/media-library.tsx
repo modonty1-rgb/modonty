@@ -2,7 +2,8 @@ import Link from "next/link";
 import { AlertTriangle, Database, Image as ImageIcon } from "lucide-react";
 
 import { getMediaCounts } from "../../actions/media-counts";
-import { Ghost, SectionHead, TierCard, ZChip } from "../dashboard-ui";
+import { CARD_GRID, Ghost, TierCard, ZChip } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
  * Media (contract: admin-dashboard-triage-v2-ui.html). Two questions only:
@@ -14,11 +15,10 @@ export async function MediaLibrary() {
   const { total, used, unused, noAlt, failingSeo, noDimensions } = await getMediaCounts();
 
   return (
-    <div>
-      <SectionHead
-        icon={ImageIcon}
-        title="Media"
-        subtitle="usage & search"
+    <CollapsibleSection
+      iconNode={<ImageIcon className="h-4 w-4 text-muted-foreground" />}
+      title="Media"
+      subtitle="usage & search"
         right={
           <Link href="/media" className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline">
             <span
@@ -34,9 +34,8 @@ export async function MediaLibrary() {
             <span className="text-primary">→</span>
           </Link>
         }
-      />
-
-      <div className="grid grid-cols-2 gap-2.5">
+      >
+      <div className={CARD_GRID}>
         <TierCard
           href="/media/segment/failing-seo"
           tier={failingSeo > 0 ? "warm" : "ok"}
@@ -78,6 +77,6 @@ export async function MediaLibrary() {
           />
         )}
       </div>
-    </div>
+    </CollapsibleSection>
   );
 }

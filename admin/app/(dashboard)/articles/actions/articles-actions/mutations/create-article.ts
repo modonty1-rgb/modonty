@@ -21,9 +21,6 @@ import { revalidateModontyTag } from "@/lib/revalidate-modonty-tag";
 import { auth } from "@/lib/auth";
 import { articleServerSchema } from "../article-server-schema";
 import { sanitizeHtmlContent } from "@/lib/sanitize-html";
-import { analyzeArticleSEO } from "../../../analyzer";
-
-const MIN_SEO_SCORE = 60;
 
 function sanitizeText(text: string): string {
   return text
@@ -56,16 +53,9 @@ export async function createArticle(data: ArticleFormData) {
       return { success: false, error: "هذا الرابط المختصر مستخدم بالفعل لهذا العميل" };
     }
 
-    // SEO score gate — block publish below minimum
-    if (data.status === ArticleStatus.PUBLISHED) {
-      const seoResult = analyzeArticleSEO(data);
-      if (seoResult.percentage < MIN_SEO_SCORE) {
-        return {
-          success: false,
-          error: `نقاط SEO الحالية ${seoResult.percentage}% — الحد الأدنى للنشر ${MIN_SEO_SCORE}%. يرجى تحسين حقول SEO (العنوان، الوصف، الصورة) قبل النشر.`,
-        };
-      }
-    }
+    // No SEO gate here: create always starts non-published (status = WRITING; the edit form
+    // cannot set PUBLISHED — see meta-section). Going live happens ONLY via transitionArticleAction,
+    // which runs the single real gate (assertArticlePublishable). One gate, one score.
 
     const { getModontyAuthor } = await import(
       "@/app/(dashboard)/authors/actions/authors-actions"

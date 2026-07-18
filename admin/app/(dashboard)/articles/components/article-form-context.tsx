@@ -93,7 +93,10 @@ interface ArticleFormContextType {
   // Validation
   getStepValidation: (stepNumber: number) => StepValidation;
   overallProgress: number;
+  /** Live editor-completeness heuristic (analyzeArticleSEO on the draft form). NOT the SEO score. */
   seoScore: number;
+  /** The real SEO score from the SHARED dataLayer scorer on the STORED article — matches the tables/dashboard. */
+  realSeoScore: number;
 
   // DB snapshot for MetaTag & JSON-LD tab (edit only)
   dbMetaAndJsonLd: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
@@ -124,6 +127,8 @@ interface ArticleFormProviderProps {
   authors: Array<{ id: string; name: string }>;
   tags: Array<{ id: string; name: string; slug: string }>;
   articleId?: string;
+  /** Real SEO score (shared scorer on the stored article). Omitted for new articles. */
+  realSeoScore?: number;
   dbMetaAndJsonLd?: { nextjsMetadata: Record<string, unknown> | null; jsonLdStructuredData: string | null };
   /** Site base URL fetched once on the server via loadSiteUrl(). Required — no env fallback. */
   siteUrl: string;
@@ -237,6 +242,7 @@ export function ArticleFormProvider({
   authors,
   tags,
   articleId,
+  realSeoScore = 0,
   siteUrl,
 }: ArticleFormProviderProps) {
   const dbMetaAndJsonLd = dbMetaAndJsonLdProp ?? { nextjsMetadata: null, jsonLdStructuredData: null };
@@ -547,6 +553,7 @@ export function ArticleFormProvider({
     getStepValidation,
     overallProgress,
     seoScore,
+    realSeoScore,
     dbMetaAndJsonLd,
     siteUrl,
   };

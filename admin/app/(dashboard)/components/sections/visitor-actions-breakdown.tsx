@@ -3,7 +3,8 @@ import { Activity, Calendar, HelpCircle, Mail, MessageSquare, type LucideIcon } 
 import { Card, CardContent } from "@/components/ui/card";
 
 import { visitorActionsSummary } from "@/lib/dashboard/cached";
-import { IBOX, SectionHead, type Tier } from "../dashboard-ui";
+import { IBOX, type Tier } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
  * Visitor Actions — what people did to us, last 90 days
@@ -89,10 +90,9 @@ export async function VisitorActionsBreakdown() {
   const triedAndFailed = Math.max(0, bookings.attempts - bookings.db);
 
   return (
-    <div>
-      <SectionHead
-        icon={Activity}
-        title="Visitor actions"
+    <CollapsibleSection
+      iconNode={<Activity className="h-4 w-4 text-muted-foreground" />}
+      title="Visitor actions"
         subtitle={
           <>
             last 90 days ·{" "}
@@ -130,8 +130,7 @@ export async function VisitorActionsBreakdown() {
             <span className="text-primary">→</span>
           </Link>
         }
-      />
-
+      >
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         <InfoCard
           href="/analytics/leads/bookings"
@@ -193,6 +192,6 @@ export async function VisitorActionsBreakdown() {
           ]}
         />
       </div>
-    </div>
+    </CollapsibleSection>
   );
 }

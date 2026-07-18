@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل السيو — مراجعة المقال التقنية (موكب v1)</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
+    --good:#059669; --good-bg:#ecfdf5; --good-line:#a7f3d0;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-line:#fcd34d;
+    --err:#dc2626;  --err-bg:#fef2f2;  --err-line:#fecaca;
+    --brand:#2563eb; --brand-bg:#eff6ff;
+    --ring-track:#e5e7eb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1120; --card:#111827; --ink:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+      --good:#34d399; --good-bg:#052e2b; --good-line:#065f46;
+      --warn:#fbbf24; --warn-bg:#2a2410; --warn-line:#78350f;
+      --err:#f87171;  --err-bg:#2a1414;  --err-line:#7f1d1d;
+      --brand:#60a5fa; --brand-bg:#0b2447;
+      --ring-track:#1f2937;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b1120; --card:#111827; --ink:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+    --good:#34d399; --good-bg:#052e2b; --good-line:#065f46;
+    --warn:#fbbf24; --warn-bg:#2a2410; --warn-line:#78350f;
+    --err:#f87171;  --err-bg:#2a1414;  --err-line:#7f1d1d;
+    --brand:#60a5fa; --brand-bg:#0b2447; --ring-track:#1f2937;
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
+    --good:#059669; --good-bg:#ecfdf5; --good-line:#a7f3d0;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-line:#fcd34d;
+    --err:#dc2626;  --err-bg:#fef2f2;  --err-line:#fecaca;
+    --brand:#2563eb; --brand-bg:#eff6ff; --ring-track:#e5e7eb;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Tajawal","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.6; padding:24px 16px 64px;
+  }
+  .wrap{max-width:920px; margin:0 auto}
+  .ribbon{
+    display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700;
+    color:var(--brand); background:var(--brand-bg); border:1px solid var(--line);
+    padding:5px 12px; border-radius:999px; margin-bottom:18px;
+  }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:20px; margin-bottom:16px;
+  }
+  /* ── Header ── */
+  .head{display:flex; gap:20px; align-items:center; flex-wrap:wrap}
+  .head-info{flex:1; min-width:220px}
+  .kicker{font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.02em}
+  .title{font-size:20px; font-weight:800; margin:4px 0 8px}
+  .pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    padding:3px 10px; border-radius:999px; border:1px solid var(--line); color:var(--muted)}
+  .pill.live{color:var(--good); background:var(--good-bg); border-color:var(--good-line)}
+  /* ring */
+  .ring{position:relative; width:132px; height:132px; flex:0 0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .num{position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center}
+  .ring .num b{font-size:34px; font-weight:800; line-height:1}
+  .ring .num span{font-size:11px; color:var(--muted); margin-top:2px}
+  /* ── Sub scores ── */
+  .subs{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px}
+  @media (max-width:560px){.subs{grid-template-columns:1fr}}
+  .sub{border:1px solid var(--line); border-radius:12px; padding:12px 14px}
+  .sub .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px}
+  .sub .lbl{font-size:13px; font-weight:700}
+  .sub .val{font-size:18px; font-weight:800}
+  .bar{height:8px; border-radius:999px; background:var(--ring-track); overflow:hidden}
+  .bar>i{display:block; height:100%; border-radius:999px}
+  /* ── Roadmap callout ── */
+  .road{background:var(--brand-bg); border-color:var(--line)}
+  .road h3{margin:0 0 6px; font-size:15px; font-weight:800}
+  .road p{margin:0; font-size:14px; color:var(--muted)}
+  .road b{color:var(--ink)}
+  /* ── Section title ── */
+  .sec-h{display:flex; align-items:center; gap:10px; margin:26px 4px 12px}
+  .sec-h h2{font-size:16px; font-weight:800; margin:0}
+  .sec-h .count{font-size:12px; font-weight:700; color:var(--muted);
+    background:var(--card); border:1px solid var(--line); padding:2px 9px; border-radius:999px}
+  /* ── Gap card ── */
+  .gap{display:flex; gap:14px; padding:16px; border-radius:14px; border:1px solid; margin-bottom:12px}
+  .gap.err{background:var(--err-bg); border-color:var(--err-line)}
+  .gap.warn{background:var(--warn-bg); border-color:var(--warn-line)}
+  .ico{flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:flex;
+    align-items:center; justify-content:center; font-size:18px; font-weight:900}
+  .gap.err .ico{background:var(--err); color:#fff}
+  .gap.warn .ico{background:var(--warn); color:#fff}
+  .gap-body{flex:1; min-width:0}
+  .gap-top{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap}
+  .gap-name{font-size:15px; font-weight:800}
+  .gap-where{font-size:11px; font-weight:700; color:var(--muted); border:1px solid var(--line);
+    padding:1px 8px; border-radius:999px}
+  .gap-fix{font-size:14px; margin:6px 0 10px}
+  .gap-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .chip{font-size:12px; font-weight:700; padding:3px 10px; border-radius:8px; border:1px solid var(--line)}
+  .chip.pts{color:var(--muted)}
+  .chip.gain{color:var(--good); background:var(--good-bg); border-color:var(--good-line)}
+  /* ── Passed list ── */
+  .done details{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .done summary{cursor:pointer; list-style:none; padding:14px 16px; font-weight:800; font-size:14px;
+    display:flex; justify-content:space-between; align-items:center}
+  .done summary::-webkit-details-marker{display:none}
+  .done .item{display:flex; justify-content:space-between; align-items:center;
+    padding:11px 16px; border-top:1px solid var(--line); font-size:14px}
+  .done .item .l{display:flex; align-items:center; gap:10px}
+  .done .item .tick{color:var(--good); font-weight:900}
+  .done .item .p{font-size:12px; color:var(--muted); font-weight:700}
+  /* ── Footer proof ── */
+  .proof{font-size:13px; color:var(--muted)}
+  .proof code{background:var(--ring-track); padding:1px 6px; border-radius:6px; font-size:12px}
+  .theme-btn{position:fixed; top:14px; left:14px; z-index:9; font-size:12px; font-weight:700;
+    background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px;
+    padding:6px 12px; cursor:pointer}
+  /* ── Raw data viewers ── */
+  .code{direction:ltr; text-align:left; font-family:"Cascadia Code","Consolas",ui-monospace,monospace;
+    font-size:12.5px; background:#0d1117; color:#c9d1d9; border-radius:12px; padding:14px 4px;
+    overflow-x:auto; line-height:1.75; border:1px solid #1f2937; margin-top:6px}
+  .code .ln{display:block; white-space:pre; padding:0 14px}
+  .code .ln.bad{background:rgba(248,81,73,.14); border-inline-start:3px solid #f85149; padding-inline-start:11px}
+  .code .k{color:#7ee787}
+  .code .s{color:#a5d6ff}
+  .code .n{color:#79c0ff}
+  .code .mk{color:#ff7b72; font-weight:700}
+  .err-banner{background:var(--err-bg); border:1px solid var(--err-line); border-radius:12px;
+    padding:12px 14px; margin-bottom:10px}
+  .err-banner b{color:var(--err); display:block; margin-bottom:6px; font-size:14px}
+  .err-banner ol{margin:0; padding-inline-start:20px; font-size:13.5px}
+  .err-banner li{margin:3px 0}
+  .miss-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .miss{font-size:12px; font-weight:700; color:var(--warn); background:var(--warn-bg);
+    border:1px solid var(--warn-line); padding:3px 10px; border-radius:8px}
+  .viewer summary{cursor:pointer; list-style:none; font-weight:800; font-size:15px;
+    display:flex; justify-content:space-between; align-items:center}
+  .viewer summary::-webkit-details-marker{display:none}
+  .viewer{margin-bottom:12px}
+  .badge-ok{font-size:12px; font-weight:700; color:var(--good); background:var(--good-bg);
+    border:1px solid var(--good-line); padding:2px 9px; border-radius:999px}
+  .badge-bad{font-size:12px; font-weight:700; color:var(--err); background:var(--err-bg);
+    border:1px solid var(--err-line); padding:2px 9px; border-radius:999px}
+  /* fidelity */
+  .fid{margin-top:28px}
+  .fid summary{cursor:pointer; font-weight:800; font-size:14px}
+  .fid table{width:100%; border-collapse:collapse; margin-top:12px; font-size:13px}
+  .fid td{border:1px solid var(--line); padding:8px 10px; vertical-align:top}
+  .fid td:first-child{font-weight:700; white-space:nowrap; color:var(--muted)}
+</style>
+</head>
+<body>
+<button class="theme-btn" onclick="var r=document.documentElement;r.dataset.theme=(r.dataset.theme==='dark'?'light':'dark')">🌓 الوضع</button>
+<div class="wrap">
+
+  <div class="ribbon">🔦 موكب v1 — دليل مراجعة المقال · بيانات مثال حقيقية (مقال 66%)</div>
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="card head">
+    <div class="ring">
+      <svg width="132" height="132" viewBox="0 0 132 132">
+        <circle cx="66" cy="66" r="58" fill="none" stroke="var(--ring-track)" stroke-width="12"/>
+        <!-- 66% of circumference (2πr=364.4 → 0.66≈240.5 dash) -->
+        <circle cx="66" cy="66" r="58" fill="none" stroke="var(--warn)" stroke-width="12"
+          stroke-linecap="round" stroke-dasharray="240.5 364.4"/>
+      </svg>
+      <div class="num"><b>66%</b><span>درجة السيو</span></div>
+    </div>
+    <div class="head-info">
+      <div class="kicker">دليل المقال — النور اللي يوريك وين الخلل</div>
+      <div class="title">أفضل ٧ ممارسات لعيادات الأسنان في جدة</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <span class="pill live">● منشور</span>
+        <span class="pill">هذا الرقم = نفسه في الجداول واللوحة</span>
+      </div>
+    </div>
+    <div class="subs" style="flex-basis:100%">
+      <div class="sub">
+        <div class="row"><span class="lbl">META (وسوم البحث)</span><span class="val" style="color:var(--good)">88%</span></div>
+        <div class="bar"><i style="width:88%; background:var(--good)"></i></div>
+      </div>
+      <div class="sub">
+        <div class="row"><span class="lbl">JSON-LD (البيانات المنظّمة)</span><span class="val" style="color:var(--err)">43%</span></div>
+        <div class="bar"><i style="width:43%; background:var(--err)"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ROADMAP ═══ -->
+  <div class="card road">
+    <h3>الطريق من ٦٦٪ إلى ١٠٠٪</h3>
+    <p>عندك <b>٤ نواقص</b>. أكبر قفزة وحدة: <b>تصليح أخطاء JSON-LD</b> ترفعك <b>+٢٥ نقطة على الإجمالي</b> لحالها. أصلح الأربعة كلها ← توصل ١٠٠٪.</p>
+  </div>
+
+  <!-- ═══ GAPS ═══ -->
+  <div class="sec-h">
+    <h2>النواقص</h2><span class="count">٤ · مرتّبة بالأهم</span>
+  </div>
+
+  <!-- 1 -->
+  <div class="gap err">
+    <div class="ico">✕</div>
+    <div class="gap-body">
+      <div class="gap-top">
+        <span class="gap-name">صحّة JSON-LD</span>
+        <span class="gap-where">JSON-LD</span>
+      </div>
+      <p class="gap-fix">٣ أخطاء في JSON-LD — لن تظهر النتائج الغنية في قوقل. افتح المقال ← أعد توليد البيانات المنظّمة، وصحّح الحقول التي يشير لها المدقّق.</p>
+      <div class="gap-meta">
+        <span class="chip pts">١٠ من ٦٠ نقطة</span>
+        <span class="chip gain">+٢٥ على الإجمالي</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="gap err">
+    <div class="ico">✕</div>
+    <div class="gap-body">
+      <div class="gap-top">
+        <span class="gap-name">تاريخ النشر (datePublished)</span>
+        <span class="gap-where">JSON-LD</span>
+      </div>
+      <p class="gap-fix">حقل تقرأه قوقل فعلاً — بدونه لا نتيجة غنية. انشر المقال أو عيّن تاريخ نشر، ثم أعد توليد البيانات.</p>
+      <div class="gap-meta">
+        <span class="chip pts">٠ من ٧ نقاط</span>
+        <span class="chip gain">+٣٫٥ على الإجمالي</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="gap warn">
+    <div class="ico">!</div>
+    <div class="gap-body">
+      <div class="gap-top">
+        <span class="gap-name">لغات الصفحة (hreflang)</span>
+        <span class="gap-where">META</span>
+      </div>
+      <p class="gap-fix">لا توجد بدائل لغوية — أضف روابط hreflang (ar-SA / ar-EG) في إعدادات المقال.</p>
+      <div class="gap-meta">
+        <span class="chip pts">٠ من ١٠ نقاط</span>
+        <span class="chip gain">+٥ على الإجمالي</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="gap warn">
+    <div class="ico">!</div>
+    <div class="gap-body">
+      <div class="gap-top">
+        <span class="gap-name">نوع OG وتاريخ النشر</span>
+        <span class="gap-where">META</span>
+      </div>
+      <p class="gap-fix">og:type يجب أن يكون article مع publishedTime — يتولّد تلقائياً عند النشر بتاريخ صحيح.</p>
+      <div class="gap-meta">
+        <span class="chip pts">٣ من ٥ نقاط</span>
+        <span class="chip gain">+١ على الإجمالي</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PASSED ═══ -->
+  <div class="sec-h">
+    <h2>مكتمل</h2><span class="count">٩ بنود</span>
+  </div>
+  <div class="card done" style="padding:0; border:none">
+    <details>
+      <summary><span>✅ ٩ بنود سليمة — اضغط للعرض</span><span class="p" style="color:var(--good)">لا تحتاج عمل</span></summary>
+      <div class="item"><span class="l"><span class="tick">✓</span> عنوان SEO</span><span class="p">٢٥ / ٢٥ · META</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> وصف SEO</span><span class="p">٢٥ / ٢٥ · META</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> صورة المشاركة</span><span class="p">٢٥ / ٢٥ · META</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> الرابط الأساسي (Canonical)</span><span class="p">١٠ / ١٠ · META</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> العنوان (headline)</span><span class="p">٧ / ٧ · JSON-LD</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> الصورة البارزة (image)</span><span class="p">٧ / ٧ · JSON-LD</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> الكاتب (author)</span><span class="p">٧ / ٧ · JSON-LD</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> تاريخ التعديل</span><span class="p">٦ / ٦ · JSON-LD</span></div>
+      <div class="item"><span class="l"><span class="tick">✓</span> الناشر (publisher)</span><span class="p">٦ / ٦ · JSON-LD</span></div>
+    </details>
+  </div>
+
+  <!-- ═══ RAW DATA ═══ -->
+  <div class="sec-h">
+    <h2>البيانات الفعلية للصفحة</h2><span class="count">اللي يشوفه قوقل فعلاً</span>
+  </div>
+
+  <!-- META JSON -->
+  <div class="card viewer">
+    <details open>
+      <summary>
+        <span>🏷️ META JSON <span style="color:var(--muted); font-weight:600; font-size:13px">— وسوم البحث والمشاركة</span></span>
+        <span class="badge-ok">88٪ · سليم غالباً</span>
+      </summary>
+      <div class="code" aria-label="nextjsMetadata">
+<span class="ln">{</span>
+<span class="ln">  <span class="k">"title"</span>: <span class="s">"أفضل ٧ ممارسات لعيادات الأسنان في جدة | عيادة النخبة"</span>,</span>
+<span class="ln">  <span class="k">"description"</span>: <span class="s">"دليل عملي لأصحاب عيادات الأسنان في جدة: من إدارة المواعيد إلى تجربة المريض، خطوات ترفع رضا المرضى وتزيد الحجوزات."</span>,</span>
+<span class="ln">  <span class="k">"alternates"</span>: {</span>
+<span class="ln">    <span class="k">"canonical"</span>: <span class="s">"https://www.modonty.com/articles/dental-best-practices-jeddah"</span></span>
+<span class="ln bad">    <span class="mk">// ناقص: "languages" (hreflang ar-SA / ar-EG)</span></span>
+<span class="ln">  },</span>
+<span class="ln">  <span class="k">"openGraph"</span>: {</span>
+<span class="ln">    <span class="k">"title"</span>: <span class="s">"أفضل ٧ ممارسات لعيادات الأسنان في جدة"</span>,</span>
+<span class="ln">    <span class="k">"type"</span>: <span class="s">"article"</span>,</span>
+<span class="ln">    <span class="k">"url"</span>: <span class="s">"https://www.modonty.com/articles/dental-best-practices-jeddah"</span>,</span>
+<span class="ln bad">    <span class="mk">// ناقص: "publishedTime" (تاريخ النشر لوسم OG)</span></span>
+<span class="ln">    <span class="k">"images"</span>: [{ <span class="k">"url"</span>: <span class="s">"…/featured.jpg"</span>, <span class="k">"width"</span>: <span class="n">1200</span>, <span class="k">"height"</span>: <span class="n">630</span> }]</span>
+<span class="ln">  },</span>
+<span class="ln">  <span class="k">"twitter"</span>: { <span class="k">"card"</span>: <span class="s">"summary_large_image"</span> }</span>
+<span class="ln">}</span>
+      </div>
+      <div class="miss-row">
+        <span class="miss">ناقص · hreflang (لغات الصفحة)</span>
+        <span class="miss">ناقص · og:publishedTime</span>
+      </div>
+    </details>
+  </div>
+
+  <!-- JSON-LD -->
+  <div class="card viewer">
+    <details open>
+      <summary>
+        <span>🧩 JSON-LD <span style="color:var(--muted); font-weight:600; font-size:13px">— البيانات المنظّمة (النتائج الغنية)</span></span>
+        <span class="badge-bad">43٪ · ٣ أخطاء</span>
+      </summary>
+
+      <div class="err-banner">
+        <b>٣ أخطاء تمنع النتيجة الغنية في قوقل:</b>
+        <ol>
+          <li><b>datePublished</b> مفقود تماماً — حقل مطلوب في مخطّط Article.</li>
+          <li><b>author</b> ناقص <code>@type: "Person"</code> — قوقل لا يقبل الكاتب بدون نوع.</li>
+          <li><b>image</b> مسار نسبي (<code>featured.jpg</code>) — لازم رابط كامل يبدأ بـ https.</li>
+        </ol>
+      </div>
+
+      <div class="code" aria-label="jsonLdStructuredData">
+<span class="ln">{</span>
+<span class="ln">  <span class="k">"@context"</span>: <span class="s">"https://schema.org"</span>,</span>
+<span class="ln">  <span class="k">"@type"</span>: <span class="s">"Article"</span>,</span>
+<span class="ln">  <span class="k">"headline"</span>: <span class="s">"أفضل ٧ ممارسات لعيادات الأسنان في جدة"</span>,</span>
+<span class="ln bad">  <span class="k">"image"</span>: <span class="s">"featured.jpg"</span>,          <span class="mk">← (3) مسار نسبي</span></span>
+<span class="ln bad">  <span class="k">"author"</span>: { <span class="k">"name"</span>: <span class="s">"فريق مدونتي"</span> },   <span class="mk">← (2) ناقص @type</span></span>
+<span class="ln">  <span class="k">"publisher"</span>: {</span>
+<span class="ln">    <span class="k">"@type"</span>: <span class="s">"Organization"</span>,</span>
+<span class="ln">    <span class="k">"name"</span>: <span class="s">"عيادة النخبة"</span></span>
+<span class="ln">  }</span>
+<span class="ln bad">  <span class="mk">← (1) datePublished مفقود — يجب إضافته هنا</span></span>
+<span class="ln">}</span>
+      </div>
+    </details>
+  </div>
+
+  <!-- ═══ PROOF ═══ -->
+  <div class="card" style="margin-top:16px">
+    <p class="proof">🔒 <b>مصدر واحد:</b> كل الأرقام هنا من <code>computeArticleSeoScore</code> — نفس الدالة اللي تعطي الرقم في جدول المقالات واللوحة وبوابة النشر. لا يوجد مقياس ثانٍ. لو الجدول قال ٦٦، هذه الصفحة تقول ٦٦.</p>
+  </div>
+
+  <!-- ═══ FIDELITY SPEC ═══ -->
+  <details class="fid card">
+    <summary>📐 مواصفة المطابقة (كود ↔ موكب) — للمراجعة</summary>
+    <table>
+      <tr><td>الرقم الكبير ٦٦٪</td><td><code>getArticleSeoScoreDetail(row).score</code> — الصف عبر <code>ARTICLE_SEO_SELECT</code></td></tr>
+      <tr><td>META 88 / JSON-LD 43</td><td><code>computeArticleEntitySeo()</code> → <code>meta.score</code> / <code>jsonLd.score</code></td></tr>
+      <tr><td>كل بطاقة نقص/مكتمل</td><td>عنصر من <code>checks[]</code>: <code>label</code> · <code>status</code> (good/warning/error) · <code>hint</code> · <code>earned</code>/<code>max</code></td></tr>
+      <tr><td>وسم «META/JSON-LD»</td><td>من <code>check.key</code> (يبدأ بـ <code>jsonld.</code> ← JSON-LD، غيره ← META)</td></tr>
+      <tr><td>«+N على الإجمالي»</td><td>(max−earned) ÷ ٢ — لأن الإجمالي = متوسط الجزئين، فنقطة في نصف = نصف نقطة على الإجمالي</td></tr>
+      <tr><td>الترتيب</td><td>النواقص أولاً (error ثم warning) مرتّبة تنازلياً بـ (max−earned)؛ المكتمل مطوي</td></tr>
+      <tr><td>حالة «منشور»</td><td><code>article.status</code></td></tr>
+      <tr><td>عارض META JSON</td><td><code>article.nextjsMetadata</code> (المخزّن) — pretty-print؛ الحقول الناقصة تُبرز من نتائج META checks</td></tr>
+      <tr><td>عارض JSON-LD + الأخطاء</td><td><code>article.jsonLdStructuredData</code> (النص) + الأخطاء من <code>article.jsonLdValidationReport</code> (Adobe/Ajv/custom) — نفس التقرير الذي يعطي «١٠ من ٦٠»</td></tr>
+      <tr><td>الحشو المحذوف</td><td>بطاقات sitemap/priority/changefreq المكرّرة + عرض analyzeArticleSEO المزيّف تُشال بالكامل</td></tr>
+    </table>
+  </details>
+
+</div>
+</body>
+</html>

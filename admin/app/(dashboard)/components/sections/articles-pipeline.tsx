@@ -3,7 +3,8 @@ import { FileCheck, FileText, FileX, type LucideIcon } from "lucide-react";
 import { ArticleStatus } from "@prisma/client";
 
 import { articleStatusCounts } from "@/lib/dashboard/cached";
-import { CARD_GRID, Ghost, SectionHead, TierCard, ZChip, type Tier } from "../dashboard-ui";
+import { CARD_GRID, Ghost, TierCard, ZChip, type Tier } from "../dashboard-ui";
+import { CollapsibleSection } from "../collapsible-section";
 
 /**
  * The article pipeline (contract: admin-dashboard-triage-v2-ui.html).
@@ -86,12 +87,11 @@ export async function ArticlesPipeline() {
   const empty = STAGES.filter((s) => counts[s.status] === 0);
 
   return (
-    <div>
-      <SectionHead
-        icon={FileText}
-        title="Articles"
-        subtitle="every stage of the pipeline"
-        right={
+    <CollapsibleSection
+      iconNode={<FileText className="h-4 w-4 text-muted-foreground" />}
+      title="Articles"
+      subtitle="every stage of the pipeline"
+      right={
           <Link
             href="/articles"
             className="flex items-baseline gap-2 text-xs text-muted-foreground hover:underline"
@@ -109,8 +109,7 @@ export async function ArticlesPipeline() {
             <span className="text-primary">→</span>
           </Link>
         }
-      />
-
+      >
       <div className={CARD_GRID}>
         {live.map((s) => (
           <TierCard
@@ -133,6 +132,6 @@ export async function ArticlesPipeline() {
           </Ghost>
         )}
       </div>
-    </div>
+    </CollapsibleSection>
   );
 }

@@ -107,29 +107,6 @@ export function ZChip({ good, children }: { good?: boolean; children: React.Reac
   );
 }
 
-export function SectionHead({
-  icon: Icon,
-  title,
-  subtitle,
-  right,
-}: {
-  icon: LucideIcon;
-  title: string;
-  subtitle?: React.ReactNode;
-  right?: React.ReactNode;
-}) {
-  return (
-    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b pb-2">
-      <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-bold">
-        <Icon className="h-4 w-4 text-muted-foreground" />
-        {title}
-        {subtitle && <span className="text-[11.5px] font-normal text-muted-foreground">{subtitle}</span>}
-      </h2>
-      {right}
-    </div>
-  );
-}
-
 export function GroupLabel({
   icon: Icon,
   hint,

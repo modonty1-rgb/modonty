@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ArticleStatus } from "@prisma/client";
-import { analyzeArticleSEO } from "../../../analyzer";
+import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
 import { getAllSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { getArticleDefaultsFromSettings } from "@/app/(dashboard)/settings/helpers/get-article-defaults-from-settings";
 
@@ -42,10 +42,14 @@ export async function getArticlesStats() {
             seoTitle: true,
             seoDescription: true,
             canonicalUrl: true,
+            nextjsMetadata: true,
             jsonLdStructuredData: true,
+            jsonLdValidationReport: true,
             featuredImageId: true,
             authorId: true,
+            clientId: true,
             datePublished: true,
+            dateModified: true,
             createdAt: true,
             updatedAt: true,
             featuredImage: {
@@ -91,10 +95,9 @@ export async function getArticlesStats() {
 
     const articleScores = allArticles.map((article) => {
       const articleWithDefaults = { ...article, ...articleDefaults };
-      const scoreResult = analyzeArticleSEO(articleWithDefaults);
       return {
         article: articleWithDefaults,
-        score: scoreResult.percentage,
+        score: getArticleSeoScore(articleWithDefaults),
       };
     });
 

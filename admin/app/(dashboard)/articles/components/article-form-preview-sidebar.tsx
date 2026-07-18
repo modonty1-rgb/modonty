@@ -25,7 +25,7 @@ interface ArticleFormPreviewSidebarProps {
 }
 
 export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebarProps) {
-  const { formData, clients, categories, authors, seoScore, siteUrl } = useArticleForm();
+  const { formData, clients, categories, authors, realSeoScore, siteUrl } = useArticleForm();
   const [device, setDevice] = useState<'mobile' | 'desktop'>('mobile');
 
   const effectiveTitle = formData.seoTitle || formData.title || 'Article title will appear here';
@@ -71,23 +71,23 @@ export function ArticleFormPreviewSidebar({ onClose }: ArticleFormPreviewSidebar
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground">SEO Health Score</span>
             <Badge 
-              variant={seoScore >= 80 ? 'default' : seoScore >= 60 ? 'secondary' : 'destructive'}
+              variant={realSeoScore >= 80 ? 'default' : realSeoScore >= 60 ? 'secondary' : 'destructive'}
               className={cn(
                 "text-[10px] h-4",
-                seoScore >= 80 && "bg-emerald-500",
-                seoScore >= 60 && "bg-amber-500 text-white",
+                realSeoScore >= 80 && "bg-emerald-500",
+                realSeoScore >= 60 && "bg-amber-500 text-white",
               )}
             >
-              {seoScore}%
+              {realSeoScore}%
             </Badge>
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <div 
               className={cn(
                 "h-full transition-all duration-1000",
-                seoScore >= 80 ? "bg-emerald-500" : seoScore >= 60 ? "bg-amber-500" : "bg-red-500"
+                realSeoScore >= 80 ? "bg-emerald-500" : realSeoScore >= 60 ? "bg-amber-500" : "bg-red-500"
               )}
-              style={{ width: `${seoScore}%` }}
+              style={{ width: `${realSeoScore}%` }}
             />
           </div>
         </div>
