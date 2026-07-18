@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, createContext, useContext, Fragment, ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, createContext, useContext, ReactNode } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, HeartPulse, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Search, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { ArticleStatus } from "@prisma/client";
@@ -52,14 +50,11 @@ function CountTab({
 }
 
 interface ArticlesHeaderWrapperProps {
-  articleCount: number;
-  description: string;
   children: ReactNode;
   clients: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string }>;
   authors: Array<{ id: string; name: string }>;
   statusCounts: Record<ArticleStatus, number>;
-  statsSlot: ReactNode;
 }
 
 const SearchContext = createContext<{
@@ -76,14 +71,11 @@ export function useSearchContext() {
 }
 
 export function ArticlesHeaderWrapper({
-  articleCount,
-  description,
   children,
   clients,
   categories,
   authors,
   statusCounts,
-  statsSlot,
 }: ArticlesHeaderWrapperProps) {
   const [search, setSearch] = useState("");
   const router = useRouter();
@@ -108,27 +100,11 @@ export function ArticlesHeaderWrapper({
   return (
     <SearchContext.Provider value={{ search, setSearch }}>
       <div className="space-y-3">
-        {/* Header row: Title + Stats + Filters + New Article */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0 flex-wrap">
-            <h1 key="title" className="text-xl font-semibold leading-tight whitespace-nowrap">
-              Articles <span className="text-muted-foreground font-normal text-base">({articleCount})</span>
-            </h1>
-            <Fragment key="stats">{statsSlot}</Fragment>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <ArticlesFilters clients={clients} categories={categories} authors={authors} />
-            <Link href="/seo-overview">
-              <Button size="sm" variant="outline" className="whitespace-nowrap gap-1.5 rounded-full px-4">
-                <HeartPulse className="h-3.5 w-3.5" />
-                SEO Health
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Search + Status tabs row */}
-        <div className="flex items-center gap-2">
+        {/* Title + Search (grows into the dead space) + Filters — one line */}
+        <div className="flex items-center gap-3">
+          <h1 key="title" className="text-xl font-semibold leading-tight whitespace-nowrap shrink-0">
+            Articles <span className="text-muted-foreground font-normal text-base">({totalCount})</span>
+          </h1>
           <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
@@ -138,7 +114,13 @@ export function ArticlesHeaderWrapper({
               className="pl-10 w-full h-9"
             />
           </div>
-          <div className="hidden md:flex items-center gap-1.5 shrink-0">
+          <div className="shrink-0">
+            <ArticlesFilters clients={clients} categories={categories} authors={authors} />
+          </div>
+        </div>
+
+        {/* Status tabs — own row */}
+        <div className="hidden md:flex items-center gap-1.5 flex-wrap">
             <CountTab
               label="All"
               count={totalCount}
@@ -161,7 +143,6 @@ export function ArticlesHeaderWrapper({
                 onClick={() => handleStatusFilter(status)}
               />
             ))}
-          </div>
         </div>
 
         {/* Table content — dimmed with a spinner while a tab switch is loading */}

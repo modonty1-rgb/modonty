@@ -12,22 +12,13 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  MapPin,
   Pencil,
-  Eye,
-
-  FileText,
-  Truck,
-  CalendarClock,
-  SearchCheck,
 } from "lucide-react";
+import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import { cn } from "@/lib/utils";
 import { SortableValue } from "@/lib/types";
-import { SubscriptionStatus, PaymentStatus } from "@prisma/client";
-import {
-  getSubscriptionDaysRemaining,
-  calculateDeliveryRate,
-} from "../helpers/business-metrics";
+import { SubscriptionStatus } from "@prisma/client";
+import { calculateDeliveryRate } from "../helpers/business-metrics";
 import type { ClientForList } from "../actions/clients-actions/types";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
@@ -53,10 +44,15 @@ interface ListValidationReport {
   };
 }
 
+export type StatusFilterKey = SubscriptionStatus | "ALL";
+
 interface ClientTableProps {
   clients: ClientForList[];
   search?: string;
   defaultLogoUrl?: string | null;
+  // Status filter is owned by the parent (ClientsTabs) so its toggle pills can sit
+  // on the same row as the top tabs. The table just applies it.
+  statusFilter?: StatusFilterKey;
 }
 
 type SortDirection = "asc" | "desc" | null;
@@ -190,7 +186,7 @@ function getCriticalItems(client: ClientForList): string[] {
   return items;
 }
 
-export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }: ClientTableProps) {
+export function ClientTable({ clients, search: externalSearch, defaultLogoUrl, statusFilter = "ALL" }: ClientTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState(externalSearch || "");
   const [currentPage, setCurrentPage] = useState(1);
@@ -206,15 +202,21 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
     }
   }, [externalSearch]);
 
+  // Reset to page 1 whenever the parent-owned status filter changes.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
+
   const filteredData = useMemo(() => {
+    const searchTerm = search.toLowerCase();
     let result = clients.filter((client) => {
-      const searchTerm = search.toLowerCase();
-      return (
+      const matchesSearch =
         client.name.toLowerCase().includes(searchTerm) ||
         client.slug.toLowerCase().includes(searchTerm) ||
         (client.email && client.email.toLowerCase().includes(searchTerm)) ||
-        (client.phone && client.phone.toLowerCase().includes(searchTerm))
-      );
+        (client.phone && client.phone.toLowerCase().includes(searchTerm));
+      const matchesStatus = statusFilter === "ALL" || client.subscriptionStatus === statusFilter;
+      return matchesSearch && matchesStatus;
     });
 
     if (sortKey && sortDirection) {
@@ -231,20 +233,18 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
         } else if (sortKey === "email") {
           aValue = a.email || "";
           bValue = b.email || "";
-        } else if (sortKey === "articles") {
-          aValue = a._count.articles;
-          bValue = b._count.articles;
+        } else if (sortKey === "articlesTotal") {
+          aValue = a.articleStats.total;
+          bValue = b.articleStats.total;
+        } else if (sortKey === "articlesPublished") {
+          aValue = a.articleStats.published;
+          bValue = b.articleStats.published;
+        } else if (sortKey === "articlesAwaiting") {
+          aValue = a.articleStats.awaitingApproval;
+          bValue = b.articleStats.awaitingApproval;
         } else if (sortKey === "createdAt") {
           aValue = a.createdAt;
           bValue = b.createdAt;
-        } else if (sortKey === "tier") {
-          aValue = a.subscriptionTier || "";
-          bValue = b.subscriptionTier || "";
-        } else if (sortKey === "expires") {
-          const aDays = getSubscriptionDaysRemaining(a);
-          const bDays = getSubscriptionDaysRemaining(b);
-          aValue = aDays ?? Infinity;
-          bValue = bDays ?? Infinity;
         }
 
         if (aValue === null || aValue === undefined) return 1;
@@ -268,7 +268,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
     }
 
     return result;
-  }, [clients, search, sortKey, sortDirection]);
+  }, [clients, search, statusFilter, sortKey, sortDirection]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -303,7 +303,6 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
   const clientComputedMap = useMemo(() => {
     const map = new Map<string, {
       seoScore: number;
-      daysRemaining: number | null;
       delivery: ReturnType<typeof calculateDeliveryRate>;
     }>();
     for (const client of paginatedData) {
@@ -313,7 +312,6 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
       );
       map.set(client.id, {
         seoScore,
-        daysRemaining: getSubscriptionDaysRemaining(client),
         delivery: calculateDeliveryRate(client, client.articles?.length ?? 0),
       });
     }
@@ -324,7 +322,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
     <div className="space-y-4">
       <div className="border rounded-lg bg-card">
         <Table className="table-fixed w-full">
-          <colgroup>{/* Name */}<col className="w-[220px]" />{/* Tier */}<col className="w-[80px]" />{/* Status */}<col className="w-[96px]" />{/* Articles */}<col className="w-[44px]" />{/* Delivery */}<col className="w-[44px]" />{/* Expires */}<col className="w-[44px]" />{/* GBP */}<col className="w-[36px]" />{/* SEO */}<col className="w-[36px]" />{/* Actions */}<col className="w-[110px]" /></colgroup>
+          <colgroup>{/* Name */}<col className="w-[260px]" />{/* Status */}<col className="w-[110px]" />{/* Received */}<col className="w-[90px]" />{/* Published */}<col className="w-[96px]" />{/* Awaiting */}<col className="w-[96px]" />{/* This month */}<col className="w-[96px]" />{/* SEO */}<col className="w-[70px]" />{/* Actions */}<col className="w-[80px]" /></colgroup>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -336,49 +334,48 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                   {getSortIcon("name")}
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer hover:bg-muted/50 text-center"
-                onClick={() => handleSort("tier")}
-              >
-                <div className="flex items-center justify-center">
-                  Plan
-                  {getSortIcon("tier")}
-                </div>
-              </TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead
-                className="cursor-pointer hover:bg-muted/50 text-center px-2"
-                onClick={() => handleSort("articles")}
-                title="Articles"
+                className="cursor-pointer hover:bg-muted/50 text-center px-1"
+                onClick={() => handleSort("articlesTotal")}
+                title="Received — all articles created for this client (any status)"
               >
-                <div className="flex items-center justify-center gap-0.5">
-                  <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                  {getSortIcon("articles")}
-                </div>
-              </TableHead>
-              <TableHead className="text-center px-2" title="Delivery rate">
-                <div className="flex justify-center">
-                  <Truck className="h-3.5 w-3.5 text-muted-foreground" />
+                <div className="flex items-center justify-center gap-0.5 text-xs font-semibold">
+                  Received
+                  {getSortIcon("articlesTotal")}
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer hover:bg-muted/50 text-center px-2"
-                onClick={() => handleSort("expires")}
-                title="Subscription expires"
+                className="cursor-pointer hover:bg-muted/50 text-center px-1"
+                onClick={() => handleSort("articlesPublished")}
+                title="Published — live on modonty.com"
               >
-                <div className="flex items-center justify-center gap-0.5">
-                  <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" />
-                  {getSortIcon("expires")}
+                <div className="flex items-center justify-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  Published
+                  {getSortIcon("articlesPublished")}
                 </div>
               </TableHead>
-              <TableHead className="text-center px-1" title="Google Business Profile">
-                <div className="flex justify-center">
-                  <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+              <TableHead
+                className="cursor-pointer hover:bg-muted/50 text-center px-1"
+                onClick={() => handleSort("articlesAwaiting")}
+                title="Awaiting approval — waiting on the client to review"
+              >
+                <div className="flex items-center justify-center gap-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                  Awaiting
+                  {getSortIcon("articlesAwaiting")}
+                </div>
+              </TableHead>
+              <TableHead
+                className="text-center px-1"
+                title="This month — articles published this calendar month ÷ monthly quota"
+              >
+                <div className="flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                  This Month
                 </div>
               </TableHead>
               <TableHead className="text-center px-1" title="SEO Score">
                 <div className="flex justify-center">
-                  <SearchCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                  <GoogleIcon className="h-4 w-4" />
                 </div>
               </TableHead>
               <TableHead className="text-right px-3">Actions</TableHead>
@@ -387,7 +384,7 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium">No clients found</p>
                     <p className="text-xs">Try adjusting your search or filters</p>
@@ -397,50 +394,22 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
             ) : (
               paginatedData.map((client) => {
                 const computed = clientComputedMap.get(client.id);
-                const daysRemaining = computed?.daysRemaining ?? null;
                 const delivery = computed?.delivery ?? { delivered: 0, promised: 0 };
                 const seoScore = computed?.seoScore ?? 0;
-                const tierName = client.subscriptionTier
-                  ? client.subscriptionTier.charAt(0) + client.subscriptionTier.slice(1).toLowerCase()
-                  : "N/A";
-                const gbpPlaceId = (client as { gbpPlaceId?: string | null }).gbpPlaceId;
-                const isActive = client.subscriptionStatus === SubscriptionStatus.ACTIVE;
-                const isPaid = client.paymentStatus === PaymentStatus.PAID;
-                const isOverdue = client.paymentStatus === PaymentStatus.OVERDUE;
 
+                // Status = subscription state only. Payment (Paid/Overdue) lives in the
+                // billing views — it's noise for content prep.
                 const getStatusBadge = () => {
-                  if (isActive && isPaid) {
-                    return (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500">
-                        Active
-                      </span>
-                    );
+                  switch (client.subscriptionStatus) {
+                    case SubscriptionStatus.ACTIVE:
+                      return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500">Active</span>;
+                    case SubscriptionStatus.EXPIRED:
+                      return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-600 dark:text-amber-500">Expired</span>;
+                    case SubscriptionStatus.CANCELLED:
+                      return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-500">Cancelled</span>;
+                    default:
+                      return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-500/15 text-slate-500">Pending</span>;
                   }
-                  if (isActive && isOverdue) {
-                    return (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-500">
-                        Overdue
-                      </span>
-                    );
-                  }
-                  if (isActive) {
-                    return (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/15 text-yellow-500">
-                        Unpaid
-                      </span>
-                    );
-                  }
-                  if (client.subscriptionStatus === SubscriptionStatus.EXPIRED) {
-                    return <span className="text-sm text-muted-foreground">Expired</span>;
-                  }
-                  if (client.subscriptionStatus === SubscriptionStatus.CANCELLED) {
-                    return <span className="text-sm text-muted-foreground">Cancelled</span>;
-                  }
-                  return (
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-500/15 text-slate-500">
-                      Pending
-                    </span>
-                  );
                 };
 
                 return (
@@ -472,25 +441,20 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center">
-                      {(() => {
-                        const tier = client.subscriptionTier;
-                        const style = tier === "PREMIUM"
-                          ? "bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400"
-                          : tier === "STANDARD"
-                            ? "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-                            : "bg-muted text-muted-foreground";
-                        return (
-                          <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium", style)}>
-                            {tierName}
-                          </span>
-                        );
-                      })()}
-                    </TableCell>
                     <TableCell className="text-center">{getStatusBadge()}</TableCell>
-                    <TableCell className="text-center px-2">
-                      <span className={cn("text-sm font-medium", client._count.articles === 0 ? "text-muted-foreground/50" : "text-foreground")}>
-                        {client._count.articles}
+                    <TableCell className="text-center px-1">
+                      <span className={cn("text-sm font-bold tabular-nums", client.articleStats.total === 0 ? "text-muted-foreground/40" : "text-foreground")}>
+                        {client.articleStats.total}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center px-1">
+                      <span className={cn("text-sm font-semibold tabular-nums", client.articleStats.published > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/40")}>
+                        {client.articleStats.published}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center px-1">
+                      <span className={cn("text-sm font-semibold tabular-nums", client.articleStats.awaitingApproval > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/40")}>
+                        {client.articleStats.awaitingApproval}
                       </span>
                     </TableCell>
                     <TableCell className="text-center px-2">
@@ -510,35 +474,6 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                         })()
                       ) : (
                         <span className="text-muted-foreground/40 text-sm">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center px-2">
-                      {daysRemaining !== null ? (
-                        <span className={cn(
-                          "text-xs font-medium",
-                          daysRemaining <= 0
-                            ? "text-muted-foreground"
-                            : daysRemaining <= 14
-                              ? "text-red-600 dark:text-red-500"
-                              : daysRemaining <= 30
-                                ? "text-amber-600 dark:text-amber-500"
-                                : "text-emerald-500"
-                        )}>
-                          {daysRemaining > 0 ? `${daysRemaining}d` : "Expired"}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground/40 text-sm">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center px-1">
-                      {gbpPlaceId ? (
-                        <div title="Business profile connected" className="flex items-center justify-center">
-                          <MapPin className="h-4 w-4 text-green-500" />
-                        </div>
-                      ) : (
-                        <div title="Business profile not connected" className="flex items-center justify-center">
-                          <MapPin className="h-4 w-4 text-muted-foreground/40" />
-                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -572,30 +507,6 @@ export function ClientTable({ clients, search: externalSearch, defaultLogoUrl }:
                         >
                           <Link href={`/clients/${client.id}/edit`}>
                             <Pencil className="h-3.5 w-3.5" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 hover:bg-primary/10 rounded-md transition-colors"
-                          asChild
-                          aria-label="SEO settings"
-                        >
-                          <Link href={`/clients/${client.id}/seo`}>
-                            <span className="text-[9px] font-bold leading-none w-3.5 h-3.5 rounded-sm bg-primary/20 text-primary flex items-center justify-center">
-                              S
-                            </span>
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          asChild
-                          aria-label="View client details"
-                        >
-                          <Link href={`/clients/${client.id}`}>
-                            <Eye className="h-3.5 w-3.5" />
                           </Link>
                         </Button>
                       </div>

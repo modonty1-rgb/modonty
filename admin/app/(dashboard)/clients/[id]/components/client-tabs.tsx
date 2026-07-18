@@ -103,6 +103,7 @@ type ClientTabsProps = {
     _count: {
       articles: number;
     };
+    createdAt: Date;
   };
   articles: Array<{
     id: string;
@@ -241,14 +242,53 @@ export function ClientTabs({
         ? "warning"
         : "good";
 
+  // KPI mini-badges (moved off the big cards to reclaim vertical space) — sit on the tab row.
+  const totalArticles = client._count.articles;
+  const industryName = client.industry?.name ?? "—";
+  const memberSince = new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "long" }).format(
+    new Date(client.createdAt),
+  );
+
   return (
     <Tabs defaultValue="brief" dir="rtl">
-      <TabsList className="mb-4">
-        <TabsTrigger value="brief">Brief</TabsTrigger>
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="details">Details</TabsTrigger>
-        <TabsTrigger value="content">Content</TabsTrigger>
-      </TabsList>
+      <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
+        <TabsList>
+          <TabsTrigger value="brief">Brief</TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
+        </TabsList>
+
+        <div className="flex items-center gap-1.5 flex-wrap text-xs">
+          <Link
+            href={`/articles?clientId=${client.id}`}
+            title="إجمالي المقالات"
+            className="inline-flex items-center gap-1 rounded-full border bg-muted/30 px-2.5 py-1 font-medium hover:border-primary/40 transition-colors"
+          >
+            📄 <b className="tabular-nums">{totalArticles}</b>
+            <span className="text-muted-foreground">مقال{promised > 0 ? ` · ${promised}/شهر` : ""}</span>
+          </Link>
+          <span
+            title="هذا الشهر"
+            className="inline-flex items-center gap-1 rounded-full border bg-muted/30 px-2.5 py-1 font-medium"
+          >
+            📅 <b className="tabular-nums">{articlesThisMonth}{promised > 0 ? `/${promised}` : ""}</b>
+            <span className="text-muted-foreground">هذا الشهر</span>
+          </span>
+          <span
+            title={`الصناعة: ${industryName}`}
+            className="inline-flex items-center gap-1 rounded-full border bg-muted/30 px-2.5 py-1 font-medium max-w-[170px]"
+          >
+            🏷️ <span className="truncate">{industryName}</span>
+          </span>
+          <span
+            title="عميل منذ"
+            className="inline-flex items-center gap-1 rounded-full border bg-muted/30 px-2.5 py-1 font-medium text-muted-foreground"
+          >
+            🗓️ {memberSince}
+          </span>
+        </div>
+      </div>
 
       {/* ── Tab 0: Brief (the intake — heart of the page for a writer) ── */}
       <TabsContent value="brief">

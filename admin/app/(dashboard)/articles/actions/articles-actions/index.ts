@@ -10,7 +10,6 @@ export { getArticleBySlug } from "./queries/get-article-by-slug";
 export { getClients } from "./queries/get-articles-clients";
 export { getCategories } from "./queries/get-articles-categories";
 export { getAuthors } from "./queries/get-articles-authors";
-export { getArticlesStats } from "./queries/get-articles-stats";
 export { createArticle } from "./mutations/create-article";
 export { updateArticle } from "./mutations/update-article";
 export { deleteArticle } from "./mutations/delete-article";

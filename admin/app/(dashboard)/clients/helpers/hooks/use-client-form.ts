@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import type { ZodTypeAny } from "zod";
 import { clientFormSchema, type ClientFormSchemaType } from "../client-form-schema";
 import { mapInitialDataToFormData } from "../map-initial-data-to-form-data";
 import type { ClientFormData, ClientWithRelations } from "@/lib/types";
@@ -55,9 +56,13 @@ interface UseClientFormOptions {
   // Create mode only: fires after a successful create so the caller can show the
   // welcome-email confirm dialog before navigating (instead of the default push).
   onCreated?: (client: { id: string; name: string; email: string }) => void;
+  // Sub-forms that render only a subset of fields (e.g. the /seo page) pass a scoped
+  // schema so unrelated required fields don't silently block the save. Defaults to the
+  // full clientFormSchema.
+  schema?: ZodTypeAny;
 }
 
-export function useClientForm({ initialData, clientId, onCreated }: UseClientFormOptions) {
+export function useClientForm({ initialData, clientId, onCreated, schema }: UseClientFormOptions) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -77,7 +82,9 @@ export function useClientForm({ initialData, clientId, onCreated }: UseClientFor
 
   // Initialize form with React Hook Form
   const form = useForm<ClientFormSchemaType>({
-    resolver: zodResolver(clientFormSchema),
+    // Scoped sub-forms (e.g. /seo) pass a passthrough schema; the cast keeps the
+    // resolver typed as the full form values (the extra fields flow through untouched).
+    resolver: zodResolver((schema ?? clientFormSchema) as typeof clientFormSchema),
     defaultValues: mapInitialDataToFormData(initialData) as Partial<ClientFormSchemaType>,
     mode: "onSubmit", // Validate all fields on submit to show all errors
   });

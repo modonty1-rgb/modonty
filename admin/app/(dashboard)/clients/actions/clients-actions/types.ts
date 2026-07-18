@@ -84,6 +84,13 @@ export type ClientForList = {
   _count: {
     articles: number;
   };
+  // Per-status article breakdown (all clients, one groupBy). total = every status,
+  // published = live on modonty.com, awaitingApproval = waiting on client review.
+  articleStats: {
+    total: number;
+    published: number;
+    awaitingApproval: number;
+  };
 };
 
 export interface ClientsStats {

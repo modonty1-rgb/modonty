@@ -5,29 +5,17 @@ import type { ReactNode } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { AlertCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { SelectItem } from "@/components/ui/select";
 import { FormInput, FormSelect, FormTextarea } from "@/components/admin/form-field";
 import { CharacterCounter } from "@/components/shared/character-counter";
 import { useClientForm } from "../helpers/hooks/use-client-form";
+import { clientSeoFormSchema } from "../helpers/client-form-schema";
 import type { ClientWithRelations } from "@/lib/types";
 import { getSEOSettings, type SEOSettings } from "@/app/(dashboard)/settings/actions/settings-actions";
 import { buildClientSeoData } from "../helpers/build-client-seo-data";
-import { createOrganizationSEOConfig, createOrganizationSEOConfigFull } from "../helpers/client-seo-config";
-import {
-  createClientSEOGroupAnalysis,
-  createClientSEOGroupScores,
-  type ClientSEOGroupAnalysis,
-} from "../helpers/client-seo-group-scores";
 import { MediaSocialSection } from "./form-sections/media-social-section";
 import { ClientSEOValidationSection } from "./form-sections/client-seo-validation-section";
-import { SEODoctor } from "@/components/shared/seo-doctor";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
 
@@ -72,19 +60,6 @@ function ensureOpeningHours(value: unknown): OpeningHoursDay[] {
   });
 }
 
-function scoreColor(percentage: number) {
-  if (percentage >= 80) return "bg-green-600";
-  if (percentage >= 60) return "bg-yellow-600";
-  return "bg-red-600";
-}
-
-function getIssueCounts(items: ClientSEOGroupAnalysis["meta"]["items"]) {
-  const error = items.filter((i) => i.status === "error").length;
-  const warning = items.filter((i) => i.status === "warning").length;
-  const good = items.filter((i) => i.status === "good").length;
-  return { error, warning, good };
-}
-
 // Always-open section card (replaced the collapsible accordion for readability).
 function SeoSection({ title, badge, children }: { title: string; badge?: ReactNode; children: ReactNode }) {
   return (
@@ -112,9 +87,12 @@ function ReadonlyRow({ k, v }: { k: string; v?: string | null }) {
 }
 
 export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormProps) {
-  const { form, handleSubmit, loading, error, isEditMode } = useClientForm({
+  const { form, handleSubmit, loading, error, invalidFields, isEditMode } = useClientForm({
     initialData,
     clientId,
+    // Validate only SEO fields — the full schema would silently block the save on
+    // unrelated required fields (Industry, Tier) this page doesn't render.
+    schema: clientSeoFormSchema,
   });
 
   const [seoSettings, setSeoSettings] = useState<SEOSettings | null>(null);
@@ -204,26 +182,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
     ],
   );
 
-  let groupPercentages = { meta: 0, jsonLd: 0 };
-  let groupAnalysis: ClientSEOGroupAnalysis | null = null;
-  let seoConfigCore: ReturnType<typeof createOrganizationSEOConfig> | null = null;
-  let seoConfigFull: ReturnType<typeof createOrganizationSEOConfigFull> | null = null;
-
-  if (seoSettings) {
-    seoConfigCore = createOrganizationSEOConfig(seoSettings);
-    seoConfigFull = createOrganizationSEOConfigFull(seoSettings);
-
-    const computeGroupScores = createClientSEOGroupScores(seoConfigFull);
-    const scores = computeGroupScores(seoData);
-    groupPercentages = {
-      meta: scores.meta.percentage,
-      jsonLd: scores.jsonLd.percentage,
-    };
-
-    const analyzeGroups = createClientSEOGroupAnalysis(seoConfigFull);
-    groupAnalysis = analyzeGroups(seoData);
-  }
-
   const slug = (watchedFields.slug || "").trim();
   const base = (siteUrl || "").replace(/\/+$/, "");
   const clientUrl = base && slug ? `${base}/clients/${slug}` : "";
@@ -244,13 +202,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
     { k: "twitter:title", v: watchedFields.seoTitle || "" },
     { k: "twitter:description", v: watchedFields.seoDescription || "" },
   ];
-
-  const seoDoctorNode = seoConfigCore ? <SEODoctor data={seoData} config={seoConfigCore} /> : null;
-
-  const metaIssues = groupAnalysis?.meta.items ?? [];
-  const jsonLdIssues = groupAnalysis?.jsonLd.items ?? [];
-  const metaCounts = getIssueCounts(metaIssues);
-  const jsonLdCounts = getIssueCounts(jsonLdIssues);
 
   // Readiness = SHARED validity score from STORED data (same scorer everywhere).
   const { score: overallReadiness, checks: readinessChecks } = computeClientSeoScore(
@@ -278,6 +229,34 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
             aria-live="assertive"
           >
             {error}
+          </div>
+        )}
+
+        {/* Validation summary — never let a save fail silently. Lists in plain language
+            exactly which SEO field is blocking (e.g. an over-long SEO Title). */}
+        {invalidFields.length > 0 && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="animate-in fade-in slide-in-from-top-2 duration-300 rounded-lg border-2 border-red-500/40 border-s-[6px] border-s-red-500 bg-red-500/5 p-4 shadow-sm"
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-red-600">
+                  ما نقدر نحفظ — {invalidFields.length}{" "}
+                  {invalidFields.length === 1 ? "خانة تحتاج تعديل" : "خانات تحتاج تعديل"}
+                </p>
+                <ul className="mt-2 space-y-1">
+                  {invalidFields.map((msg, i) => (
+                    <li key={i} className="text-sm text-foreground/80 flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                      <span>{msg}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         )}
 
@@ -539,16 +518,20 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
               <SeoSection title="Business Details — تفاصيل العمل">
                   <div className="space-y-4">
                     <FormSelect
-                      label="Price Range"
+                      label="Price Range — مستوى الأسعار"
                       name="priceRange"
                       value={watchedFields.priceRange || undefined}
-                      onValueChange={(value) => setValue("priceRange", value || null)}
-                      placeholder="Select price range"
+                      onValueChange={(value) =>
+                        setValue("priceRange", value === "__none__" ? null : value)
+                      }
+                      placeholder="اختر مستوى الأسعار (اختياري)"
+                      hint="مؤشر عام لمستوى الأسعار زي اللي يطلع في خرائط قوقل — مو سعر منتج ولا نطاق «من كذا لكذا». كل ما زادت علامة $ يعني أغلى. اختياري تماماً، تقدر تسيبه فاضي."
                     >
-                      <SelectItem value="$">$</SelectItem>
-                      <SelectItem value="$$">$$</SelectItem>
-                      <SelectItem value="$$$">$$$</SelectItem>
-                      <SelectItem value="$$$$">$$$$</SelectItem>
+                      <SelectItem value="__none__">— بدون تحديد</SelectItem>
+                      <SelectItem value="$">$ — اقتصادي (أسعار في المتناول)</SelectItem>
+                      <SelectItem value="$$">$$ — متوسّط</SelectItem>
+                      <SelectItem value="$$$">$$$ — مرتفع</SelectItem>
+                      <SelectItem value="$$$$">$$$$ — فاخر</SelectItem>
                     </FormSelect>
 
                     <FormInput
@@ -646,126 +629,6 @@ export function ClientSeoForm({ initialData, clientId, siteUrl }: ClientSeoFormP
                     </div>
                   </div>
                 </div>
-              </Card>
-
-              {seoDoctorNode}
-
-              <Card className="p-4 space-y-4">
-                <div className="text-sm font-semibold">Progress</div>
-
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <button type="button" className="w-full text-left space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">Meta Data</span>
-                        <span className="text-muted-foreground">{groupPercentages.meta}%</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Progress value={groupPercentages.meta} className="h-2 flex-1" />
-                        <span className={`h-2 w-2 rounded-full ${scoreColor(groupPercentages.meta)}`} />
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        {metaCounts.error > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3 text-red-600" />
-                            {metaCounts.error}
-                          </span>
-                        )}
-                        {metaCounts.warning > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3 text-yellow-600" />
-                            {metaCounts.warning}
-                          </span>
-                        )}
-                        {metaCounts.good > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3 text-green-600" />
-                            {metaCounts.good}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-[420px]" align="end">
-                    <div className="space-y-2">
-                      <div className="text-sm font-semibold">Meta Data Notes</div>
-                      <div className="space-y-1 text-sm">
-                        {metaIssues
-                          .filter((i) => i.status === "error" || i.status === "warning")
-                          .slice(0, 12)
-                          .map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-2">
-                              <span className="mt-1 h-2 w-2 rounded-full bg-muted-foreground" />
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium">{item.field}</div>
-                                <div className="text-xs text-muted-foreground">{item.message}</div>
-                              </div>
-                            </div>
-                          ))}
-                        {metaIssues.filter((i) => i.status === "error" || i.status === "warning").length === 0 && (
-                          <div className="text-xs text-muted-foreground">No notes.</div>
-                        )}
-                      </div>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <button type="button" className="w-full text-left space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">JSON-LD Data</span>
-                        <span className="text-muted-foreground">{groupPercentages.jsonLd}%</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Progress value={groupPercentages.jsonLd} className="h-2 flex-1" />
-                        <span className={`h-2 w-2 rounded-full ${scoreColor(groupPercentages.jsonLd)}`} />
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        {jsonLdCounts.error > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3 text-red-600" />
-                            {jsonLdCounts.error}
-                          </span>
-                        )}
-                        {jsonLdCounts.warning > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3 text-yellow-600" />
-                            {jsonLdCounts.warning}
-                          </span>
-                        )}
-                        {jsonLdCounts.good > 0 && (
-                          <span className="inline-flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3 text-green-600" />
-                            {jsonLdCounts.good}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-[420px]" align="end">
-                    <div className="space-y-2">
-                      <div className="text-sm font-semibold">JSON-LD Data Notes</div>
-                      <div className="space-y-1 text-sm">
-                        {jsonLdIssues
-                          .filter((i) => i.status === "error" || i.status === "warning")
-                          .slice(0, 12)
-                          .map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-2">
-                              <span className="mt-1 h-2 w-2 rounded-full bg-muted-foreground" />
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium">{item.field}</div>
-                                <div className="text-xs text-muted-foreground">{item.message}</div>
-                              </div>
-                            </div>
-                          ))}
-                        {jsonLdIssues.filter((i) => i.status === "error" || i.status === "warning").length === 0 && (
-                          <div className="text-xs text-muted-foreground">No notes.</div>
-                        )}
-                      </div>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
               </Card>
 
               <Button type="submit" disabled={loading} className="w-full">

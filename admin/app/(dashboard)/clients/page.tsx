@@ -13,6 +13,7 @@ import {
 } from "../subscription-tiers/helpers/jbrseo-queries";
 import { getTierConfigs } from "../subscription-tiers/actions/tier-actions";
 import { getPlatformDefaults } from "../settings/defaults/actions/defaults-actions";
+import { expiringThisMonthWhere } from "./segment/segments";
 
 function TableSkeleton() {
   return (
@@ -26,7 +27,7 @@ function TableSkeleton() {
 }
 
 async function ClientsContent({ filters }: { filters: ClientFilters }) {
-  const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails] = await Promise.all([
+  const [clients, stats, signupsRows, signupStats, tiers, defaults, allClientEmails, expiringThisMonth] = await Promise.all([
     getClients(filters),
     getClientsStats(),
     getJbrseoSubscribers(),
@@ -36,6 +37,8 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
     // ALL clients (filter-independent) — used to hide already-clients from the
     // jbrseo "to convert" list by matching email.
     db.client.findMany({ select: { id: true, email: true } }),
+    // Renewals due this calendar month — money queue (same where as the segment list).
+    db.client.count({ where: expiringThisMonthWhere() }),
   ]);
 
   const clientByEmail: Record<string, string> = {};
@@ -49,7 +52,7 @@ async function ClientsContent({ filters }: { filters: ClientFilters }) {
   const emailStatuses = await getWelcomeEmailStatuses(convertedClientIds);
 
   return (
-    <ClientsHeaderWrapper clientCount={clients.length} stats={stats}>
+    <ClientsHeaderWrapper clientCount={clients.length} stats={stats} expiringThisMonth={expiringThisMonth}>
       <ClientsTabs
         clientsCount={clients.length}
         signupsCount={signupStats.total}

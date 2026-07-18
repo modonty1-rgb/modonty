@@ -12,19 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.19.0 (console)",
-    title: "Turn your numbers into stories — photo + paragraph per achievement",
+    version: "0.90.0 (admin)",
+    title: "One SEO number everywhere + a cleaner Articles header",
     items: [
-      { type: "feature" as const, text: "«إنجازاتنا بالأرقام» was just a number and a label. Now each achievement can carry a photo and a short paragraph — so «+250 مشروع» can show the work behind it and tell the story in a line or two." },
-      { type: "feature" as const, text: "The photo uploads straight from your dashboard (compressed automatically), and the paragraph is capped so the cards stay tidy. Both are optional — leave them empty and it stays a clean number." },
-      { type: "improve" as const, text: "When you replace or remove a photo, the old file is cleaned up automatically — nothing is left behind." },
-    ],
-  },
-  {
-    version: "1.73.0 (modonty)",
-    title: "Achievement story cards on your public page",
-    items: [
-      { type: "feature" as const, text: "The «إنجازاتنا بالأرقام» section on your page now shows story cards: a photo on top, the number, the label, and your paragraph. An achievement without a photo simply shows as a clean number tile — the section mixes both gracefully." },
+      { type: "improve" as const, text: "The SEO score now comes from a single source of truth across the whole app — the clients table, the client detail, the /seo page and the console badge all show the exact same number. The old competing scorer that produced different Meta/JSON-LD percentages is gone." },
+      { type: "fix" as const, text: "Saving on a client's /seo page used to fail silently when the client was missing an unrelated required field (e.g. Industry). It now validates only the SEO fields and clearly lists anything blocking the save." },
+      { type: "improve" as const, text: "The Price Range field is finally clear: each option is labelled (economical → luxury), a hint explains it's a general affordability signal like Google Maps — not a product price — and you can clear it." },
+      { type: "improve" as const, text: "The Articles page uses the Google logo (instead of the word «SEO») on the score column, matching the clients table." },
+      { type: "improve" as const, text: "Cleaner Articles header: removed duplicated count chips and the misleading average-SEO badge, dropped the redundant Details dialog, put the title + search + filters on one line, and fixed the article count (it now shows the true total, not the first page)." },
     ],
   },
 ];

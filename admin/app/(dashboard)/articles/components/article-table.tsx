@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Eye, FolderOpen, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getArticleSeoScore } from "@/lib/seo/article-seo-score";
+import { GoogleIcon } from "@/components/admin/icons/google-icon";
 import type { Article as ArticleViewType } from "../[id]/helpers/article-view-types";
 
 type Article = ArticleViewType & {
@@ -175,9 +176,10 @@ export function ArticleTable({ articles, search: externalSearch }: ArticleTableP
               <TableHead
                 className="w-[70px] cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("seo")}
+                title="SEO Score"
               >
-                <div className="flex items-center">
-                  SEO
+                <div className="flex items-center gap-1">
+                  <GoogleIcon className="h-4 w-4" />
                   {getSortIcon("seo")}
                 </div>
               </TableHead>

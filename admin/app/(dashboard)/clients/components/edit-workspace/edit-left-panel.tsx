@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import NextImage from "next/image";
-import { ShieldCheck, ArrowLeft, CheckCircle2, AlertTriangle, XCircle, Pencil } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Pencil } from "lucide-react";
+import { GoogleIcon } from "@/components/admin/icons/google-icon";
 
 import type { SeoCheck } from "@modonty/database/lib/seo/client/types";
 
@@ -44,12 +45,6 @@ function statusTone(status?: string | null) {
     default:
       return "text-amber-600 dark:text-amber-400";
   }
-}
-
-function CheckIcon({ status }: { status: SeoCheck["status"] }) {
-  if (status === "good") return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />;
-  if (status === "warning") return <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />;
-  return <XCircle className="h-3.5 w-3.5 text-red-500 shrink-0" />;
 }
 
 export function EditLeftPanel({
@@ -141,7 +136,7 @@ export function EditLeftPanel({
         </div>
       </div>
 
-      {/* SEO readiness ring + real checks (reflects saved state — same as header chip) */}
+      {/* SEO readiness — glance only. The full checklist lives in the guide (/technical). */}
       <div className="rounded-2xl border bg-card p-4">
         <div className="flex items-center gap-4">
           <div className="relative h-16 w-16 shrink-0">
@@ -165,25 +160,27 @@ export function EditLeftPanel({
               </span>
             </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold">جاهزية SEO</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">من البيانات المحفوظة</p>
-            {pendingChecks.length > 0 && (
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-1.5 text-sm font-bold">
+              <GoogleIcon className="h-4 w-4" /> جاهزية SEO
+            </p>
+            {pendingChecks.length > 0 ? (
               <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5 font-medium">
                 {pendingChecks.length} بند يحتاج عناية
               </p>
+            ) : (
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">مكتمل — لا نواقص</p>
             )}
           </div>
         </div>
-        {seoChecks.length > 0 && (
-          <div className="mt-3 space-y-1.5 border-t pt-3 max-h-56 overflow-auto scrollbar-thin">
-            {seoChecks.map((c) => (
-              <div key={c.key} className="flex items-start gap-2 text-xs">
-                <CheckIcon status={c.status} />
-                <span className={c.status === "good" ? "text-muted-foreground" : "text-foreground"}>{c.label}</span>
-              </div>
-            ))}
-          </div>
+        {clientId && (
+          <Link
+            href={`/clients/${clientId}/technical`}
+            className="mt-3 flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2 text-xs font-semibold text-primary hover:bg-muted/60 transition-colors"
+          >
+            <span>افتح دليل السيو — وين الخلل وكيف تصلحه</span>
+            <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
+          </Link>
         )}
       </div>
 

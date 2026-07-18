@@ -1,11 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpDown, Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { GoogleIcon } from "@/components/admin/icons/google-icon";
 
 /**
  * Article segment list — the same dense operational table as the client one:
@@ -80,8 +82,8 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
     }
   };
 
-  const SortHead = ({ label, k, end }: { label: string; k: SortKey; end?: boolean }) => (
-    <TableHead className={`h-9 py-0 text-xs ${end ? "text-end" : ""}`}>
+  const SortHead = ({ label, k, end, title }: { label: ReactNode; k: SortKey; end?: boolean; title?: string }) => (
+    <TableHead className={`h-9 py-0 text-xs ${end ? "text-end" : ""}`} title={title}>
       <button
         type="button"
         onClick={() => toggle(k)}
@@ -124,7 +126,7 @@ export function ArticleSegmentTable({ articles }: { articles: SegmentArticle[] }
               <TableHead className="h-9 py-0 text-xs">Category</TableHead>
               <TableHead className="h-9 py-0 text-xs">Author</TableHead>
               <TableHead className="h-9 py-0 text-xs">Status</TableHead>
-              <SortHead label="SEO" k="seoScore" end />
+              <SortHead label={<GoogleIcon className="h-4 w-4" />} k="seoScore" end title="SEO Score" />
               <SortHead label="Views" k="views" end />
               <SortHead label="Published" k="publishedAt" />
               <SortHead label="Updated" k="updatedAt" />

@@ -238,6 +238,43 @@ export const clientFormSchema = z
 export type ClientFormSchemaType = z.infer<typeof clientFormSchema>;
 
 // ============================================
+// SEO SUB-FORM SCHEMA (the /clients/[id]/seo page)
+// ============================================
+// The SEO page edits ONLY SEO fields but reuses the shared form + useClientForm.
+// Validating the FULL clientFormSchema there blocks the save on unrelated required
+// fields — Industry, Subscription Tier — that the SEO page does NOT render, so the
+// admin can neither see nor fix them: the Save button silently does nothing.
+// This schema validates just the SEO-editable fields; `.passthrough()` carries every
+// other field through untouched, so updateClient still receives the complete client
+// payload (unchanged fields diff out server-side, exactly like the full form).
+// The server (clientServerSchema) is the real gate and treats industryId/tier as optional.
+export const clientSeoFormSchema = z
+  .object({
+    seoTitle: z
+      .string()
+      .max(51, "SEO title must be 51 characters or less (final title in Google: 60 chars)")
+      .optional()
+      .nullable()
+      .or(z.literal("")),
+    seoDescription: z
+      .string()
+      .max(160, "SEO description must be less than 160 characters")
+      .optional()
+      .nullable()
+      .or(z.literal("")),
+    gbpProfileUrl: z.string().max(500).optional().nullable().or(z.literal("")),
+    gbpPlaceId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpAccountId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpLocationId: z.string().max(300).optional().nullable().or(z.literal("")),
+    gbpCategory: z.string().max(200).optional().nullable().or(z.literal("")),
+    priceRange: z.string().max(20).optional().nullable().or(z.literal("")),
+    addressLatitude: z.number().min(-90, "Latitude must be between -90 and 90").max(90, "Latitude must be between -90 and 90").optional().nullable(),
+    addressLongitude: z.number().min(-180, "Longitude must be between -180 and 180").max(180, "Longitude must be between -180 and 180").optional().nullable(),
+    knowsLanguage: z.array(z.string()).optional(),
+  })
+  .passthrough();
+
+// ============================================
 // MEDIA-ONLY SCHEMA (for modal use only)
 // ============================================
 export const clientMediaSchema = z.object({

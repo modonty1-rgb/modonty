@@ -188,7 +188,34 @@ export async function getClients(filters?: ClientFilters): Promise<ClientForList
       orderBy: { createdAt: "desc" },
     });
 
-    return clients;
+    // Per-status article breakdown for every client in ONE aggregate query.
+    // Feeds the table's "received · published · awaiting" cell. `_count.articles`
+    // above stays PUBLISHED-only (used elsewhere) — this is additive, not a change.
+    const statusGroups = await db.article.groupBy({
+      by: ["clientId", "status"],
+      _count: { id: true },
+    });
+
+    const statsByClient = new Map<
+      string,
+      { total: number; published: number; awaitingApproval: number }
+    >();
+    for (const g of statusGroups) {
+      if (!g.clientId) continue; // skip general (unassigned) articles
+      const cur =
+        statsByClient.get(g.clientId) ?? { total: 0, published: 0, awaitingApproval: 0 };
+      const n = g._count.id;
+      cur.total += n;
+      if (g.status === ArticleStatus.PUBLISHED) cur.published += n;
+      if (g.status === ArticleStatus.AWAITING_APPROVAL) cur.awaitingApproval += n;
+      statsByClient.set(g.clientId, cur);
+    }
+
+    return clients.map((c) => ({
+      ...c,
+      articleStats:
+        statsByClient.get(c.id) ?? { total: 0, published: 0, awaitingApproval: 0 },
+    }));
   } catch (error) {
     console.error("Error fetching clients:", error);
     return [];

@@ -1,6 +1,5 @@
 import { redirect, notFound } from "next/navigation";
 import { Metadata } from "next";
-import Link from "next/link";
 
 // MongoDB ObjectId = 24 hex chars. Guards against reserved words / garbage ids
 // (e.g. /clients/verify) hitting Prisma with a malformed id and crashing with a 500.
@@ -10,7 +9,6 @@ import { getIntakeForm } from "@/app/(dashboard)/intake/actions/intake-admin-act
 import { ClientHeader } from "./components/client-header";
 import { ClientTabs } from "./components/client-tabs";
 import { ArticleStatus } from "@prisma/client";
-import { Button } from "@/components/ui/button";
 import { loadSiteUrl } from "@/lib/seo/site-url";
 import { computeClientSeoScore } from "@modonty/database/lib/seo/client/seo-score";
 import { clientToSeoInput } from "@modonty/database/lib/seo/client/from-client";
@@ -200,79 +198,11 @@ export default async function ClientViewPage({ params }: { params: Promise<{ id:
   ).length;
 
   const publicBaseUrl = await loadSiteUrl();
-  const promised =
-    client.articlesPerMonth ?? client.subscriptionTierConfig?.articlesPerMonth ?? 0;
-  const memberSince = new Intl.DateTimeFormat("ar-SA", {
-    year: "numeric",
-    month: "long",
-  }).format(new Date(client.createdAt));
 
   return (
     <div className="space-y-4">
       <ClientHeader client={client as any} publicBaseUrl={publicBaseUrl} seoScore={seoScore} />
 
-      {/* KPI strip — content-writer focus (no billing). Dominant = total articles. */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Link
-          href={`/articles?clientId=${id}`}
-          className="rounded-xl border bg-gradient-to-br from-primary/[0.07] to-transparent p-4 hover:border-primary/40 transition-colors"
-        >
-          <div className="text-xs text-muted-foreground mb-1.5">📄 إجمالي المقالات</div>
-          <div className="text-3xl font-extrabold leading-none">
-            {client._count.articles}
-            <span className="text-xs font-semibold text-muted-foreground ms-1.5">
-              منشور{promised > 0 ? ` · ${promised}/شهر` : ""}
-            </span>
-          </div>
-        </Link>
-        <div className="rounded-xl border bg-card p-4">
-          <div className="text-xs text-muted-foreground mb-1.5">📅 هذا الشهر</div>
-          <div className="text-lg font-bold">
-            {articlesThisMonth}
-            {promised > 0 && <span className="text-sm font-normal text-muted-foreground"> / {promised}</span>}
-          </div>
-        </div>
-        <div className="rounded-xl border bg-card p-4">
-          <div className="text-xs text-muted-foreground mb-1.5">🏷️ الصناعة</div>
-          <div className="text-base font-bold truncate">{client.industry?.name ?? "—"}</div>
-        </div>
-        <div className="rounded-xl border bg-card p-4">
-          <div className="text-xs text-muted-foreground mb-1.5">🗓️ عميل منذ</div>
-          <div className="text-base font-bold">{memberSince}</div>
-        </div>
-      </div>
-
-      {seoScore < 80 && (
-        <div className="bg-muted/30 border border-border rounded-lg p-4 flex items-center gap-4">
-          <div
-            className={`flex flex-col items-center justify-center w-14 h-14 rounded-full border-2 flex-shrink-0 ${
-              seoScore >= 80 ? "border-green-500" : seoScore >= 50 ? "border-yellow-500" : "border-destructive"
-            }`}
-          >
-            <span
-              className={
-                seoScore >= 80
-                  ? "text-green-500 font-bold text-base"
-                  : seoScore >= 50
-                    ? "text-yellow-500 font-bold text-base"
-                    : "text-destructive font-bold text-base"
-              }
-            >
-              {seoScore}%
-            </span>
-            <span className="text-[9px] text-muted-foreground">SEO</span>
-          </div>
-          <div className="flex-1">
-            <h3 className="text-foreground font-semibold text-sm">SEO data incomplete</h3>
-            <p className="text-muted-foreground text-xs mt-0.5">
-              Add SEO data to improve client visibility in search results
-            </p>
-          </div>
-          <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link href={`/clients/${id}/seo`}>Setup SEO</Link>
-          </Button>
-        </div>
-      )}
       <div>
         <ClientTabs
           client={client as any}

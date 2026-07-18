@@ -33,6 +33,7 @@ export type SegmentKey =
   | "overdue"
   | "expired"
   | "expiring-soon"
+  | "expiring-month"
   | "pending"
   | "form"
   | "link"
@@ -64,6 +65,18 @@ interface Segment {
 
 const live = { subscriptionStatus: SubscriptionStatus.ACTIVE };
 const inAWeek = () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+/**
+ * Active clients whose subscription ends within the current calendar month — the
+ * renewal (money) queue. Shared by the clients-page counter chip and this segment's
+ * list, so the number and the table can never disagree.
+ */
+export function expiringThisMonthWhere(): Prisma.ClientWhereInput {
+  const n = new Date();
+  const start = new Date(n.getFullYear(), n.getMonth(), 1);
+  const end = new Date(n.getFullYear(), n.getMonth() + 1, 0, 23, 59, 59, 999);
+  return { ...live, subscriptionEndDate: { gte: start, lte: end } };
+}
 
 /**
  * Ids of clients whose document has no `ctaMode` key. Prisma cannot express this —
@@ -200,6 +213,11 @@ export async function getSegment(key: string): Promise<Segment | null> {
       title: "Expiring this week",
       description: "Call them before it lapses.",
       where: { ...live, subscriptionEndDate: { gte: new Date(), lte: inAWeek() } },
+    },
+    "expiring-month": {
+      title: "Expiring this month",
+      description: "Subscription ends this month — renew before it lapses (money).",
+      where: expiringThisMonthWhere(),
     },
     pending: {
       title: "Waiting to be activated",
