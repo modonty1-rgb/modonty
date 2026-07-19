@@ -611,6 +611,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                 userId={userId}
                 clientName={article.client.name}
                 clientLogoUrl={article.client.logoMedia?.url ?? null}
+                clientPhone={article.client.phone ?? null}
                 cta={{
                   mode: article.client.ctaMode,
                   label: article.client.ctaLabel,

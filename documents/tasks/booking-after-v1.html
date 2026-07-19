@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة الحجز — المرجعية (مشكلة + حل)</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a; --ink:#e8ebf1; --muted:#98a2b3; --dim:#6b7480;
+    --red:#ef4444; --amber:#f59e0b; --emerald:#10b981; --blue:#3b82f6;
+    --wa:#25d366; --p:#0ea5b7;
+    --redbg:rgba(239,68,68,.12); --emeraldbg:rgba(16,185,129,.12); --amberbg:rgba(245,158,11,.12); --bluebg:rgba(59,130,246,.12);
+    --card:#f4f6f9; --border:#e4e7ee; --pink:#0d1220; --soft:#8a93a3; --ink2:#3a4250;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal","Segoe UI",system-ui,"Noto Kufi Arabic",sans-serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:26px 20px 80px}
+  .kicker{color:var(--dim);font-size:12.5px;letter-spacing:.5px;margin-bottom:6px}
+  h1{font-size:26px;line-height:1.35;margin:0 0 8px;font-weight:800}
+  h2{font-size:20px;margin:40px 0 14px;font-weight:800;display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+  h2 .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--panel2);color:var(--blue);font-size:14px;font-weight:800;border:1px solid var(--line)}
+  h3{font-size:15px;margin:0 0 4px;font-weight:700}
+  p{margin:0 0 12px}
+  .sub{color:var(--muted);font-size:14.5px}
+  code{background:#0b0d11;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-family:Consolas,monospace;font-size:12.5px;color:#c8d0dc;direction:ltr;display:inline-block}
+  .chip{display:inline-block;background:#0b0d11;border:1px solid var(--line);color:var(--dim);border-radius:6px;padding:1px 8px;font-size:11.5px;font-family:"Segoe UI",system-ui;direction:ltr;margin:2px 2px 0}
+
+  .hero{background:linear-gradient(180deg,rgba(239,68,68,.10),transparent 70%),var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:14px}
+  .tag{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:700}
+  .tag.red{background:var(--redbg);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .bignum{display:flex;gap:22px;flex-wrap:wrap;margin:16px 0 2px}
+  .bignum .cell{flex:1;min-width:120px}
+  .bignum .v{font-size:38px;font-weight:800;line-height:1}
+  .bignum .v.red{color:var(--red)} .bignum .v.mut{color:var(--muted)}
+  .bignum .l{color:var(--dim);font-size:13px;margin-top:6px}
+  .arrow{align-self:center;color:var(--dim);font-size:24px}
+
+  .funnel{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+  .step{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
+  .step .bar{height:10px;border-radius:6px;background:var(--blue)}
+  .step .lab{flex:1;font-size:13.5px}
+  .step .val{font-weight:800;font-size:15px}
+  .step.drop{border-color:rgba(239,68,68,.4);background:var(--redbg)}
+  .step.zero .val{color:var(--red)}
+
+  .callout{border-radius:12px;padding:15px 17px;margin:14px 0}
+  .callout.green{background:var(--emeraldbg);border:1px solid rgba(16,185,129,.3)}
+  .callout.blue{background:var(--bluebg);border:1px solid rgba(59,130,246,.3)}
+
+  .cause{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;border-inline-start:4px solid var(--line)}
+  .cause.c1{border-inline-start-color:var(--red)} .cause.c2{border-inline-start-color:var(--amber)} .cause.c3{border-inline-start-color:var(--blue)}
+  .cause .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .rank{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;font-weight:800;font-size:12px;color:#0b0d11}
+  .rank.r1{background:var(--red)} .rank.r2{background:var(--amber)} .rank.r3{background:var(--blue)}
+  .sev{margin-inline-start:auto;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+  .sev.high{background:var(--redbg);color:var(--red)} .sev.med{background:var(--amberbg);color:var(--amber)}
+
+  /* ── solution screens ── */
+  .screens{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .screen{width:330px}
+  .scap{text-align:center;font-weight:800;font-size:13px;color:var(--p);margin-bottom:11px;padding:6px;background:rgba(14,165,183,.10);border:1px solid rgba(14,165,183,.25);border-radius:9px}
+  .scap.g{color:var(--emerald);background:var(--emeraldbg);border-color:rgba(16,185,129,.25)}
+  .phone{background:#fff;color:var(--pink);border-radius:30px;padding:16px 15px 22px;box-shadow:0 34px 66px -22px rgba(0,0,0,.75);border:1px solid #e6e8ee}
+  .notch{width:118px;height:5px;background:#d7dbe3;border-radius:99px;margin:2px auto 14px}
+  .back{color:var(--soft);font-size:12.5px;margin-bottom:12px}
+  .mhead{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:16px 12px;border:1px solid #eceef3;border-radius:18px;background:linear-gradient(180deg,rgba(14,165,183,.07),#fff)}
+  .logo{width:62px;height:62px;border-radius:18px;background:#eef7f9;display:grid;place-items:center;position:relative;border:2px solid rgba(14,165,183,.3);font-size:29px}
+  .logo .v{position:absolute;bottom:-5px;inset-inline-start:-5px;width:22px;height:22px;border-radius:99px;background:var(--p);color:#fff;display:grid;place-items:center;font-size:12px;border:2px solid #fff}
+  .mname{font-weight:800;font-size:15.5px}
+  .mtrust{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;font-size:11px;color:#5b6472;align-items:center}
+  .mtrust b{color:var(--pink)} .mtrust .d{color:#cfd5de} .star{color:var(--amber)}
+  .mbody{padding:14px 3px 0}
+  .btn{display:flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;padding:14px;font-weight:800;font-size:15px;border:none;width:100%}
+  .btn.wa{background:var(--wa);color:#fff;box-shadow:0 14px 26px -12px rgba(37,211,102,.7)}
+  .btn.pri{background:var(--p);color:#fff;box-shadow:0 14px 26px -12px rgba(14,165,183,.6)}
+  .micro{font-size:11.5px;color:var(--soft);text-align:center;margin-top:7px;line-height:1.6}
+  .micro .wai{color:var(--wa);font-weight:700}
+  .or{display:flex;align-items:center;gap:12px;color:#9aa2b0;font-size:12.5px;margin:16px 0;font-weight:700}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:#e6e8ee}
+  .label{font-weight:700;font-size:13px;color:var(--ink2);margin:0 0 7px}
+  .label .opt{color:var(--soft);font-weight:400;font-size:11.5px}
+  .field{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:13px 14px;font-size:14px;display:flex;align-items:center;gap:8px}
+  .field .cc{font-weight:800;color:var(--pink)} .field .ph{color:#b9bfc9}
+  .field.filled{border-color:rgba(14,165,183,.5);background:#fff} .field.filled .txt{color:var(--pink);font-weight:600}
+  .gap{height:12px}
+  .disclose{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--p);font-size:13px;font-weight:700;border:1.5px dashed #b9dfe6;border-radius:12px;padding:11px;margin:14px 0;background:#f2fbfc}
+  .details{border:1px solid #eceef3;border-radius:14px;padding:13px;margin:12px 0;background:#fbfcfe}
+  .info{background:#f2fbfc;border:1px solid #cdeaf0;border-radius:12px;padding:11px 13px;font-size:11.5px;color:#256b76;margin-top:16px;display:flex;gap:8px;align-items:flex-start;line-height:1.7}
+  .info b{color:var(--pink)}
+  .wa-top{background:var(--wa);color:#fff;border-radius:14px 14px 0 0;padding:12px 14px;display:flex;align-items:center;gap:10px;margin:-4px -6px 0}
+  .wa-top .av{width:34px;height:34px;border-radius:99px;background:#fff;display:grid;place-items:center;font-size:16px}
+  .wa-top .nm{font-weight:800;font-size:14px} .wa-top .st{font-size:10.5px;opacity:.85}
+  .wa-body{padding:16px 6px;min-height:190px;display:flex;flex-direction:column;gap:8px}
+  .bubble{background:#dcf8c6;border-radius:12px 2px 12px 12px;padding:9px 12px;font-size:13px;color:#1a2e1a;max-width:86%;align-self:flex-start;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+  .bubble .t{font-size:9.5px;color:#5a7a4f;text-align:end;margin-top:3px}
+  .wa-input{background:#fff;border-radius:99px;padding:11px 16px;color:#9aa2b0;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .ok{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:40px 16px}
+  .ok .ring{width:74px;height:74px;border-radius:99px;background:var(--emeraldbg);border:2px solid rgba(16,185,129,.4);display:grid;place-items:center;font-size:34px}
+  .ok h3{margin:0;font-size:19px;color:var(--pink)} .ok p{margin:0;font-size:13.5px;color:#5b6472;max-width:250px}
+  .ok .pill{margin-top:6px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:8px 16px;font-size:12.5px;color:var(--ink2)}
+
+  .change{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:9px 0}
+  .change .pn{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--panel2);color:var(--emerald);font-weight:800;display:grid;place-items:center;font-size:13px;border:1px solid var(--line)}
+  .change p{margin:0;font-size:13px;color:var(--muted)} .change .why{color:var(--dim);font-size:12px;margin-top:3px}
+  .lock{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:8px 0}
+  .lock .ic{flex-shrink:0;width:24px;height:24px;border-radius:7px;background:var(--emeraldbg);color:var(--emerald);display:grid;place-items:center;font-weight:800}
+  .lock.warn .ic{background:var(--amberbg);color:var(--amber)} .lock b{color:var(--ink)}
+  ul{margin:8px 0 4px;padding-inline-start:22px} li{margin:5px 0}
+  .foot{color:var(--dim);font-size:12.5px;text-align:center;margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">المرجعية الوحيدة · صفحة «احجز الآن» · مدوّنتي — ١٩ يوليو ٢٠٢٦</div>
+  <h1>صفحة الحجز — المشكلة والحل في مستند واحد</h1>
+  <p class="sub">هذا ملفنا المرجعي الوحيد بيني وبينك: أعلاه التشخيص المؤكد بالبيانات، وأسفله الحل المصمّم (صفحات «بعد»). الموكب مُلزم — إن اعتمدته أبنيه طبق الأصل.</p>
+
+  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)">
+    <span style="font-size:12px;color:var(--dim);font-weight:800;letter-spacing:.3px">المفتاح:</span>
+    <span style="display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)"><span style="width:22px;height:22px;border-radius:7px;background:var(--emeraldbg);color:var(--emerald);display:inline-grid;place-items:center;font-weight:800">✓</span> <b style="color:var(--ink)">قرار مقفول / حل معتمد</b> — متّفق عليه، جاهز للبناء</span>
+    <span style="display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)"><span style="width:22px;height:22px;border-radius:7px;background:var(--amberbg);color:var(--amber);display:inline-grid;place-items:center;font-weight:800">1</span> <b style="color:var(--ink)">تنبيه مُرقّم (١–٦)</b> — خُذ بالك عند البناء؛ كلّمني برقمه</span>
+  </div>
+
+  <div class="hero">
+    <span class="tag red">معدّل تحويل = صفر بالمئة</span>
+    <div class="bignum">
+      <div class="cell"><div class="v mut">٤٤</div><div class="l">فتحة لصفحة الحجز (GA4، ٩٠ يومًا)</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠</div><div class="l">ضغطة على زر التأكيد</div></div>
+      <div class="arrow">←</div>
+      <div class="cell"><div class="v red">٠</div><div class="l">طلب حجز مكتمل</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ المشكلة ═══ -->
+  <h2><span class="n">١</span> الدليل القاطع — استعلمتُ GA4 مباشرة</h2>
+  <p class="sub">استعلمتُ قوقل أناليتكس (GA4 Data API) بحساب الخدمة، كل العملاء، آخر ٩٠ يومًا. لا تخمين:</p>
+  <div class="funnel">
+    <div class="step"><div class="bar" style="width:150px"></div><div class="lab">فتح صفحة الحجز <span class="chip">/clients/*/book</span></div><div class="val">~٤٤</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">ضغط «تأكيد الحجز» <span class="chip">booking_attempt</span></div><div class="val">٠</div></div>
+    <div class="step zero"><div class="bar" style="width:0"></div><div class="lab">رُفض (إقرار/رقم غير صالح) <span class="chip">booking_failed</span></div><div class="val">٠</div></div>
+    <div class="step drop zero"><div class="bar" style="width:0"></div><div class="lab">طلب انكتب في قاعدتنا <span class="chip">booking_submit</span></div><div class="val">٠</div></div>
+  </div>
+  <div class="callout green">
+    <p class="sub" style="margin:0"><b style="color:var(--emerald)">✅ الحكم:</b> صفر ضغطات على الزر في ٩٠ يومًا عبر كل العيادات — انسحاب كامل <b>قبل الإرسال</b>، لا خطأ إرسال (نفس المسار يوصّل <code>client_view</code> ٩٤٦ و<code>conversion_complete</code> ٤٦، فالبايبلاين حيّ والصفر حقيقي). السبب: <b>الأداة والعرض</b>.</p>
+  </div>
+
+  <h2><span class="n">٢</span> الأسباب الجذرية → الحلول <span style="font-size:13px;color:var(--emerald);font-weight:600">(كلها اتحلّت ✅)</span></h2>
+  <div class="cause c1"><div class="head"><span class="rank r1">١</span><h3>فورم بارد بدل محادثة</h3><span class="sev" style="background:var(--emeraldbg);color:var(--emerald);margin-inline-start:auto">→ واتساب أساسي (حل ١)</span></div><p class="sub" style="margin:0">المستخدم السعودي/المصري يريد يتحدّث — ٧٥٪ على واتساب، تحويل أعلى ٤٠–٦٠٪. <span class="chip">GOTOMENA</span><span class="chip">Unifonic</span></p></div>
+  <div class="cause c2"><div class="head"><span class="rank r2">٢</span><h3>~١٥ عنصرًا تكسر وعد «احجز الآن»</h3><span class="sev" style="background:var(--emeraldbg);color:var(--emerald);margin-inline-start:auto">→ حقل واحد + إفصاح تدريجي (حلّان ٢،٣)</span></div><p class="sub" style="margin:0"><b>Baymard:</b> الإكمال ينخفض ٤–٦٪ لكل حقل بعد الثامن.</p></div>
+  <div class="cause c3"><div class="head"><span class="rank r3">٣</span><h3>إقرار يخيف + زر معطّل بصمت</h3><span class="sev" style="background:var(--emeraldbg);color:var(--emerald);margin-inline-start:auto">→ رسالة توضيح بسيطة (حل ٥)</span></div><p class="sub" style="margin:0">صندوق إقرار طويل + <code>mode:onSubmit</code> فالخطأ لا يظهر إلا بعد الضغط.</p></div>
+
+  <!-- ═══ الحل ═══ -->
+  <h2><span class="n">٣</span> الحل — صفحات «بعد» (٤ حالات)</h2>
+  <p class="sub">نقلب الترتيب: <b style="color:var(--wa)">واتساب النداء الأول</b> + «اترك رقمك» بحقل واحد. <b>العيادة</b> تحدّد الموعد من الكونسول. والإقرار يُستبدل برسالة توضيح بسيطة. الألوان النهائية من ثيم مدوّنتي عند البناء.</p>
+  <div class="screens">
+
+    <!-- 1 default -->
+    <div class="screen">
+      <div class="scap">١ · الشاشة الأساسية</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="back">‹ رجوع إلى العيادة</div>
+        <div class="mhead"><div class="logo">🦷<span class="v">✓</span></div><div class="mname">عيادة دكتور عمرو مصطفى</div><div class="mtrust"><span><span class="star">★</span> <b>4.8</b></span><span class="d">•</span><span>موثّق من مدوّنتي</span><span class="d">•</span><span>يردّون خلال ساعات العمل</span></div></div>
+        <div class="mbody">
+          <button class="btn wa"><span style="font-size:18px">✆</span> تواصل عبر واتساب</button>
+          <div class="micro"><span class="wai">أسرع طريقة</span> — رسالة جاهزة، ردّ مباشر</div>
+          <div class="or">أو</div>
+          <div class="label">اترك رقمك والعيادة تتصل بك</div>
+          <div class="field"><span class="cc">🇪🇬 +20</span><span class="ph">1XX XXX XXXX</span></div>
+          <div class="gap"></div>
+          <button class="btn pri">اطلب اتصال</button>
+          <div class="micro">العيادة تتواصل معك وتحدّد الموعد — رقمك للعيادة فقط</div>
+          <div class="disclose">＋ أضف تفاصيل (اسمك، بريدك، وقت تفضّله)</div>
+          <div class="info"><span>ℹ️</span><span>بمتابعتك توافق على <b style="color:var(--p);text-decoration:underline">الشروط</b> و<b style="color:var(--p);text-decoration:underline">الخصوصية</b> — مدوّنتي منصّة تعريفية، <b>لسنا مقدّم الخدمة</b>.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 details -->
+    <div class="screen">
+      <div class="scap">٢ · «أضف تفاصيل» مفتوحة</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="back">‹ رجوع إلى العيادة</div>
+        <div class="mhead"><div class="logo">🦷<span class="v">✓</span></div><div class="mname">عيادة دكتور عمرو مصطفى</div><div class="mtrust"><span><span class="star">★</span> <b>4.8</b></span><span class="d">•</span><span>موثّق من مدوّنتي</span></div></div>
+        <div class="mbody">
+          <div class="label">اترك رقمك والعيادة تتصل بك</div>
+          <div class="field filled"><span class="cc">🇪🇬 +20</span><span class="txt">10 1234 5678</span><span style="margin-inline-start:auto;color:var(--emerald)">✓</span></div>
+          <div class="disclose" style="background:#eef7f9;border-style:solid;border-color:#cdeaf0">− إخفاء التفاصيل</div>
+          <div class="details">
+            <div class="label">اسمك <span class="opt">— اختياري</span></div><div class="field"><span class="ph">مثال: أحمد محمد</span></div>
+            <div class="gap"></div>
+            <div class="label">بريدك <span class="opt">— اختياري</span></div><div class="field"><span class="ph">example@email.com</span></div>
+            <div class="gap"></div>
+            <div class="label">وقت تفضّله؟ <span class="opt">— اختياري، والعيادة تؤكّده</span></div><div class="field"><span class="ph">مثال: بعد العصر، نهاية الأسبوع…</span></div>
+          </div>
+          <div class="gap"></div>
+          <button class="btn pri">اطلب اتصال</button>
+          <div class="info"><span>ℹ️</span><span>بمتابعتك توافق على <b style="color:var(--p);text-decoration:underline">الشروط</b> و<b style="color:var(--p);text-decoration:underline">الخصوصية</b> — مدوّنتي منصّة تعريفية، <b>لسنا مقدّم الخدمة</b>.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 whatsapp -->
+    <div class="screen">
+      <div class="scap g">٣ · مسار واتساب (رسالة جاهزة)</div>
+      <div class="phone" style="background:#e5ddd5">
+        <div class="notch" style="background:#c9c2b8"></div>
+        <div class="wa-top"><div class="av">🦷</div><div><div class="nm">عيادة دكتور عمرو مصطفى</div><div class="st">متصل الآن</div></div></div>
+        <div class="wa-body">
+          <div class="bubble">السلام عليكم 👋 وصلت لكم عبر منصّة «مدوّنتي» وأبغى أحجز موعد في عيادة دكتور عمرو مصطفى 🌟<div class="t">١٢:٤٠ ✓✓</div></div>
+          <div class="bubble" style="background:#fff">وعليكم السلام، أهلاً بك من منصّة «مدوّنتي» 🌟 أي وقت يناسبك؟<div class="t" style="color:#8a93a3">١٢:٤١</div></div>
+        </div>
+        <div class="wa-input"><span>اكتب رسالة…</span><span style="color:var(--wa);font-weight:800">➤</span></div>
+        <div class="micro" style="color:#4a5568;margin-top:12px">بضغطة واحدة — بلا فورم. الرسالة معبّأة تلقائيًّا.</div>
+      </div>
+    </div>
+
+    <!-- 4 success -->
+    <div class="screen">
+      <div class="scap g">٤ · بعد «اطلب اتصال»</div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="mhead"><div class="logo">🦷<span class="v">✓</span></div><div class="mname">عيادة دكتور عمرو مصطفى</div></div>
+        <div class="ok">
+          <div class="ring">✨</div>
+          <h3>تم استلام طلبك</h3>
+          <p>العيادة بتتواصل معك على رقمك قريبًا وتحدّد الموعد المناسب.</p>
+          <div class="pill">⏱️ عادةً يردّون خلال ساعات العمل</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- التغييرات -->
+  <h2><span class="n">٤</span> ما الذي تغيّر (وليش)</h2>
+  <div class="change"><div class="pn">1</div><div><h3>واتساب = النداء الأول</h3><p>محادثة برسالة جاهزة؛ الضغطة تُسجَّل <code>CTAClick</code>. البنية جاهزة: <code>Client.phone</code> + <code>getWhatsAppLink()</code>.</p></div></div>
+  <div class="change"><div class="pn">2</div><div><h3>الفورم → «اترك رقمك» بحقل واحد</h3><p>يكتب <code>BookingRequest</code> + إشعار الكونسول + بريد + تلقرام كالآن — الليد يبقى في نظامنا.</p></div></div>
+  <div class="change"><div class="pn">3</div><div><h3>🔑 العيادة تحدّد الموعد (لا مُنتقي وقت)</h3><p>حذفنا أزرار اليوم/الفترة. الطلب يصل للكونسول والعيادة تؤكّد الوقت وتتواصل. الزائر يذكر تفضيله اختياريًّا فقط.</p></div></div>
+  <div class="change"><div class="pn">4</div><div><h3>🔑 إلغاء التعهّد → رسالة توضيح</h3><p>بدل الصندوق والخانة: سطر «مدوّنتي منصّة تعريفية — لسنا مقدّم الخدمة» (عام لأي مجال: طبّي، قانوني…). موافقة ضمنية server-side بالمتابعة.</p></div></div>
+  <div class="change"><div class="pn">5</div><div><h3>طمأنة + مفتاح دولة صحيح + حذف النشرة</h3><p>⭐ + موثّق + وقت الرد؛ مفتاح الدولة يتبع بلد العميل (مصر → <code>+20</code>)؛ خانة النشرة تخرج من فورم العميل.</p></div></div>
+
+  <!-- الكونسول + القرارات -->
+  <h2><span class="n">٥</span> الربط بالكونسول + القرارات</h2>
+  <div class="callout blue">
+    <ul class="sub" style="margin:0">
+      <li><b>«اطلب اتصال»</b> → <code>BookingRequest</code> + إشعار/بريد/تلقرام → يظهر في <span class="chip">console.modonty.com/dashboard/bookings</span>.</li>
+      <li><b>العيادة من الكونسول</b> تشوف الرقم، تتواصل، و<b>تحدّد/تؤكّد الموعد</b> (حقل موعد مؤكَّد — بند بناء بسيط).</li>
+      <li><b>ضغطة واتساب</b> تُسجَّل كـ<b>ليد ظاهر</b> في الكونسول (لا مجرد تحليلات مدفونة).</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:18px 0 8px;color:var(--emerald)">✅ الحلول المعتمدة — خطة البناء</h3>
+  <div class="lock"><div class="ic">✓</div><div><b>١ · واتساب النداء الأول</b> — زر أخضر بضغطة، برسالة جاهزة تبدأ بـ«وصلت لكم عبر منصّة مدوّنتي».</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٢ · الفورم → «اترك رقمك»</b> — حقل جوال واحد + «اطلب اتصال»، يكتب <code>BookingRequest</code> ويظهر في الكونسول.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٣ · الإفصاح التدريجي</b> — الاسم/البريد/الوقت المفضّل خلف «＋ أضف تفاصيل» مطويّة.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٤ · العيادة تحدّد الموعد</b> — حذف مُنتقي الوقت؛ العيادة تؤكّد من الكونسول.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٥ · إلغاء التعهّد</b> — سطر عام «مدوّنتي منصّة تعريفية فقط — لسنا مقدّم الخدمة» + موافقة ضمنية server-side.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٦ · طمأنة + حذف النشرة</b> — ⭐/موثّق/وقت الرد أعلى الصفحة؛ خانة النشرة تخرج من الفورم.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٦أ · رقم الزائر «اترك رقمك» — دولي بلا مصدر خارجي:</b> منتقي دولة (علم + مفتاح) نبنيه بأنفسنا من قائمة مفاتيح ثابتة؛ <b>الافتراضي من هيدر Vercel</b> <code>x-vercel-ip-country</code> (الـ helper <code>getGeoFromHeaders</code> موجود بالكود؛ <code>request.geo</code> أُزيل في Next 16) — سعودي <code>+966</code>، مصري <code>+20</code>، أي بلد علمه — والزائر يقدر يغيّره؛ تحقّق E.164 داخلي لكل دولة نخدمها (السعودية/مصر/الخليج) <b>بلا مكتبات خارجية</b> (احترامًا لحساسية bundle في modonty). نخزّن الرقم E.164 كامل — صفر تخمين لأي بلد يعود.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٧ · تتبّع واتساب موحّد</b> — GA4 + قاعدة البيانات + الكونسول، في صفحة الحجز وصفحة العميل (التفاصيل تحت).</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>٨ · إصلاح النقطة العمياء</b> — إضافة حدث «بدء تعبئة» بين فتح الصفحة والضغط، لنرى أين ينسحبون ونقيس أثر الإصلاح.</div></div>
+
+  <h3 style="margin:18px 0 8px;color:var(--wa)">📲 قاعدة تتبّع واتساب — دليل التسليم</h3>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> ضغطة زر واتساب تُسجَّل server-side لحظة الضغط (قبل المغادرة) كـ<b>ليد «تواصل عبر واتساب»</b> ظاهر في الكونسول + قاعدة البيانات: العميل، الوقت، الصفحة، معرّف الزائر، الموقع إن توفّر. <b>= دليل أن مدوّنتي أوصلت الليد.</b></div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> لا نتتبّع هل ردّ مقدّم الخدمة أو هل تمّ الحجز — هذا شأنه، ليس شأن مدوّنتي. قيمتنا = التسليم، لا النتيجة.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول:</b> نحقن المصدر في الرسالة الجاهزة («عبر منصّة مدوّنتي») ليعرف مقدّم الخدمة أن الليد منّا.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول:</b> الضغطة تُتابَع في <b>GA4</b> بحدث مميّز (مثل <code>booking_whatsapp_click</code>) — server-side، نفس المسار — فيظهر في القُمع والتحليلات بجانب <code>booking_attempt</code>. وعلى قاعدة «Google = Database»، عدّه في GA4 يتطابق مع عدد ليدات واتساب في قاعدتنا واحدًا لواحد.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (تاسك مرتبط):</b> زر واتساب في <b>صفحة العميل</b> (الـ FAB / الهيرو / الدوك) يمشي بـ<b>نفس الفلو الموحّد</b>: GA4 (<code>booking_whatsapp_click</code>) + سجل ليد في قاعدتنا + ظهور في الكونسول — لا مجرد <code>CTAClick</code> مدفون. أينما ظهر زر واتساب = نفس الليد الموحّد.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> يكفينا تسجيل أن <b>ضغطة واتساب وصلت للعميل</b> = دليل التسليم. ما بعد الضغطة (هل أرسل؟ هل ردّ العميل؟) خارج نطاقنا عمدًا. والسجل «مجهول الرقم» مقبول — رقم الزائر يصل العميل داخل واتساب نفسه، لا يخصّنا.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> ليد واتساب = <b>سجل الضغطة مجهول الرقم</b> (أقل احتكاك) — لا نلتقط رقم الزائر قبل فتح واتساب.</div></div>
+
+  <h3 style="margin:18px 0 8px">القرارات الأخرى</h3>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> العيادة تحدّد الوقت — لا مُنتقي وقت للزائر.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك) — نمط sign-in wrap:</b> نلغي خانة الإقرار المخيفة، ونحط سطرًا بارزًا تحت الزر: «بمتابعتك توافق على <b>الشروط</b> و<b>الخصوصية</b> — لسنا مقدّم الخدمة» مع <b>روابط فعلية</b> للصفحتين (فيها بند «لسنا مقدّم الخدمة»). نمط معتمد (Google/LinkedIn/Airbnb) — أقوى بكثير من مجرد جملة، وغير مخيف. عام لأي مجال (طبّي/قانوني).</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> الموافقة تُسجَّل server-side (معرّف الزائر + الوقت + الزر المضغوط) — الضغطة نفسها = الموافقة (الإشعار بارز وملاصق للزر، شرط النفاذ القانوني).</div></div>
+  <div class="lock warn"><div class="ic">📝</div><div><b>تاسك مفتوح — صفحة الشروط والخصوصية:</b> روابط نمط sign-in wrap لازم تشير لصفحة شروط/خصوصية <b>محدّثة</b> تحوي البنود: «مدوّنتي منصّة تعريفية لا مقدّم الخدمة» · إخلاء المسؤولية الطبّية (YMYL) · حدود المسؤولية · حماية البيانات (PDPL). <b>نتناقش في هذي النقاط قبل الصياغة.</b> (صفحة <code>/terms</code> موجودة — نراجعها ونوسّعها.)</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> رقم واتساب العميل يُخزَّن بصيغة E.164 من الإدخال (أدمن/كونسول) مع الدولة، و<code>getWhatsAppNumber()</code> يثق بالمخزّن ويلغي افتراض السعودية + <b>backfill</b> للأرقام القديمة حسب دولة العميل. نفس مبدأ رقم الزائر (٦أ) — صفر تخمين.</div></div>
+
+  <!-- ═══ تعديلات الكونسول ═══ -->
+  <h2><span class="n">٦</span> تعديلات الكونسول (تاسك مرتبط — تعديل جذري)</h2>
+  <p class="sub">اليوم صفحة «الحجوزات» في الكونسول تقرأ <code>BookingRequest</code> فقط (فورم). بعد التصميم صار عندنا <b>نوعان من الليدات</b> يدخلان نفس الصفحة:</p>
+  <div class="change"><div class="pn">أ</div><div><h3>🔑 توحيد الجدول (قرارك) — حقل <code>channel</code></h3><p>نضيف <code>channel {form, whatsapp}</code> على <code>BookingRequest</code>. ليد واتساب يُكتب كصف بنفس الجدول (<code>channel:whatsapp</code>، جوال فارغ) فيظهر في نفس القائمة + الـ workflow + الـ KPIs. أنظف من دمج <code>CTAClick</code> منفصل.</p></div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>حجز بالفورم:</b> جوال + (اسم/بريد/وقت مفضّل اختياري). workflow: جديد→تواصلت→تم→مؤرشف. <b>+ حقل موعد مؤكَّد جديد</b> — العيادة تحدّده من الكونسول.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>تواصل واتساب (مجهول الرقم):</b> يظهر بالصفحة بعرض مختلف — بلا أزرار جوال/إيميل — بدلها «تواصل عبر واتساب · من صفحة X · الموقع الجغرافي · الوقت» + الرسالة الجاهزة المُرسَلة. workflow خفيف: وصل→تعامَلت.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>تمييز القناة في الواجهة:</b> فلتر/pill «واتساب» مقابل «فورم» + KPI جديد «تواصل واتساب» بجانب الـ KPIs الحالية.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> ليد واتساب المجهول يُحفظ في نفس الجدول بحقول اختيارية — نجعل <code>phone</code> (والاسم/البريد) اختياريًّا في <code>BookingRequest</code>، والاسم افتراضي «زائر واتساب». «بلا رقم» = ليد واتساب، عرض نظيف. (تعديل Prisma وقت البناء: kill node → generate → restart.)</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> ضغطة = <b>ليد واحد يُعدّ من مكان واحد</b> — مصدر الحقيقة صف <code>BookingRequest channel:whatsapp</code> (يظهر بالكونسول ويُعدّ منه) + حدث <code>booking_whatsapp_click</code> في GA4 يطابقه ١:١. الجدول القديم <code>CTAClick</code> للتحليلات الخام فقط، <b>لا يُعدّ كليد</b> — فالأرقام ما تتناقض.</div></div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك) — ليد واحد لكل زيارة:</b> dedup على (معرّف الزائر × العميل × الجلسة) — المعرّفان موجودان في <code>getVisitorContext</code> (كوكي <code>mdy_vid</code>/<code>_ga</code> + <code>session</code>). ضغطات متكررة بنفس الزيارة تُدمج؛ <b>زيارة جديدة = ليد جديد كامل</b>. <b>صفر ليد يضيع</b> — المُدمَج فقط النقر اللحظي المكرر (نفس النيّة)؛ كل زيارة حقيقية وكل شخص مختلف يُعدّ.</div></div>
+
+  <!-- ═══ مراجعة صارمة ═══ -->
+  <h2><span class="n">٧</span> مراجعة صارمة — تحقّق قبل البناء</h2>
+  <div class="callout green">
+    <p class="sub" style="margin:0 0 6px"><b style="color:var(--emerald)">✅ متحقَّق ضد المصادر:</b> GA4 (٠/٠/٠، البايبلاين حيّ — أُعيد التشغيل) · واتساب #١ في السعودية وتبنّي MENA &gt;٩٠٪ (DataReportal 2025 · Statista) · Baymard: ٤–٦٪ انخفاض لكل حقل بعد الثامن · react-hook-form <code>onTouched</code> (Context7) · <code>getWhatsAppLink</code>/<code>Client.phone</code>/<code>getGeoFromHeaders</code> موجودة بالكود.</p>
+    <p class="sub" style="margin:0"><b>صدق المصدر:</b> اتجاه «واتساب أولاً» مدعوم بمصادر موثوقة (تبنّي MENA)؛ رقم «٤٠–٦٠٪ تحويل أعلى» مصدره <b>صناعي</b> (Unifonic) لا بحث محكّم — نأخذه كإشارة اتجاه لا رقم مضمون.</p>
+  </div>
+  <div class="lock"><div class="ic">✓</div><div><b>مقفول (قرارك):</b> تحقّق الجوال بوضع <code>onTouched</code> — خطأ الصيغة يظهر لحظة ترك الحقل (blur) لا بعد ضغط الزر. أنعم، ويقلّل الضغطات الفاشلة. (سطر إعداد واحد في الفورم.)</div></div>
+
+  <!-- ═══ قائمة البناء ═══ -->
+  <h2><span class="n">٨</span> قائمة البناء (To-Do) — <span id="todo-progress" style="font-size:14px;color:var(--emerald);font-weight:700">19 / 24 خلصت</span></h2>
+  <p class="sub">نشتغل عليها بالترتيب؛ كل بند يُعلَّم ✅ عند إنجازه. <span style="color:var(--dim)">☐ = باقي · <span style="color:var(--emerald)">✅ = خلص</span></span></p>
+  <style>
+    .todo{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin:6px 0;font-size:13.5px}
+    .todo .bx{flex-shrink:0;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--dim);display:grid;place-items:center;font-size:12px;color:transparent;margin-top:1px}
+    .todo.done{opacity:.6}
+    .todo.done .bx{background:var(--emeraldbg);border-color:var(--emerald);color:var(--emerald)}
+    .todo.done .txt{text-decoration:line-through;text-decoration-color:var(--dim)}
+    .phase{font-size:13px;font-weight:800;color:var(--blue);margin:18px 0 6px;padding-inline-start:2px}
+  </style>
+
+  <div class="phase">المرحلة أ — الأساس: البيانات + التتبّع</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>1.</b> Prisma: <code>BookingRequest</code> → <code>channel {form, whatsapp}</code> + phone/name/email اختيارية + <code>confirmedAt</code> + <code>visitorId/sessionId</code> (dedup) + <code>country/city</code> (جيو) + فهارس. ✅ generated. (فهارس تُدفع بـ<code>db push</code> قبل النشر.)</div></div>
+  <div class="todo"><div class="bx">✓</div><div class="txt"><b>2.</b> رقم العميل → تخزين E.164 مع الدولة عند الإدخال (أدمن/كونسول) + <b>backfill</b> القديم + تبسيط <code>getWhatsAppNumber</code>.</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>3.</b> أحداث GA4: <code>booking_form_start</code> (إصلاح النقطة العمياء) + <code>booking_whatsapp_click</code>. ✅ في events-registry.</div></div>
+
+  <div class="phase">المرحلة ب — صفحة الحجز (visitor)</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>4.</b> هيدر الثقة: موثّق من مدوّنتي + «يردّون خلال ساعات العمل». ✅ (بلا تقييم ⭐ — لا أرقام مزيفة حتى نربط تقييمات حقيقية.)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>5.</b> زر واتساب أساسي: رسالة جاهزة بمصدر منصّة مدوّنتي + ضغطة متتبَّعة + <b>يختفي بأمان لو العميل بلا رقم</b>. ✅ (<code>whatsapp-booking-cta.tsx</code>)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>6.</b> فورم «اترك رقمك»: حقل جوال واحد + منتقي دولة (افتراضي من <code>x-vercel-ip-country</code>) + تحقّق E.164 + <code>onTouched</code>. ✅ (<code>phone-field.tsx</code> — تحقّق حيًّا: الفلاج الأخضر + الزر يتفعّل)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>7.</b> الإفصاح التدريجي: الاسم/البريد/وقت مفضّل خلف «أضف تفاصيل». ✅</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>8.</b> حذف مُنتقي الوقت المهيكل + حذف خانة النشرة من الفورم. ✅</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>9.</b> سطر sign-in wrap: «بمتابعتك توافق على الشروط والخصوصية — لسنا مقدّم الخدمة» + روابط. ✅ (تُسجَّل <code>disclaimerAccepted</code> عند الإرسال)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>10.</b> حالات: تحميل («جاري الإرسال») + خطأ + نجاح («تم استلام طلبك…»). ✅</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>11.</b> a11y (aria-labels + RTL) + أصغر client boundary (أداء modonty). ✅ (زر واتساب = server Link؛ الفورم client فقط)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>12.</b> تطبيق نفس التدفّق على <b>كل</b> المداخل: <code>/book</code> + دوك المقال + FAB/شيت/لوحة تواصل صفحة العميل + <b>كارت القوائم</b> (categories/tags/industries — تمرير <code>id</code> + <code>WhatsAppLeadLink</code>، source <code>client_list</code>). ✅ (كارت البحث/قائمة العملاء بلا زر واتساب أصلاً — لا شيء لتوحيده)</div></div>
+
+  <div class="phase">المرحلة ج — مسار ليد واتساب</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>13.</b> ضغطة واتساب → <code>BookingRequest channel:whatsapp</code> (مجهول) + حدث GA4 + dedup على (زائر × عميل × جلسة). ✅ (<code>recordWhatsappLead</code>) — يُتحقّق حيًّا في Phase F</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>14.</b> توحيد أزرار واتساب في صفحة العميل (FAB/شيت/لوحة تواصل/كارت المقال) على نفس فلو الليد. ✅ (<code>onBeforeNavigate</code> في CtaTrackedLink + <code>whatsapp-icon-link.tsx</code>)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>15.</b> قرار إشعار ليد واتساب: <b>لا Telegram مكرر</b> — العميل ياخذ الرسالة على واتساب مباشرة؛ السجل في الكونسول يكفي. ✅</div></div>
+
+  <div class="phase">المرحلة د — الكونسول</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>16.</b> فلتر/pill «واتساب» مقابل «فورم» + KPI «تواصل واتساب». ✅ (segmented control + كرت KPI أخضر)</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>17.</b> عرض صف ليد واتساب (بلا أزرار جوال/إيميل؛ المصدر + الموقع + الوقت + شارة واتساب + ملاحظة توضيحية). ✅</div></div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>18.</b> حقل «الموعد المؤكَّد» — إدخال datetime-local في الشيت + <code>setBookingConfirmedAt</code> (يعلّم «تم» تلقائياً). ✅</div></div>
+
+  <div class="phase">المرحلة هـ — الشروط والخصوصية (📝 نقاش أولاً)</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>19.</b> صياغة محتوى الشروط/الخصوصية (لسنا مقدّم الخدمة · YMYL · حدود المسؤولية · PDPL). ✅ ملفّان جاهزان: <code>documents/legal/terms-content.html</code> + <code>privacy-policy-content.html</code> (مبنيّان على PDPL م/19 + نمط الوسيط «not a party»). متبقّي: مراجعة خالد → لصق في سجلّي <code>modonty</code> (slug: terms / privacy-policy) + ملء القيم بين [ ].</div></div>
+  <div class="todo"><div class="bx">✓</div><div class="txt"><b>20.</b> ربط الروابط في نمط sign-in wrap بالصفحتين + تسجيل الموافقة server-side. <b style="color:var(--emerald)">✅ أُصلح حيًّا:</b> كان <code>/privacy</code> يعطي 404 (تحقّق حي) → حُوِّل إلى <code>/legal/privacy-policy</code> الموجود. <code>/terms</code> موجود. (نراجع الوجهة النهائية عند صياغة محتوى Phase E.)</div></div>
+
+  <div class="phase">المرحلة و — التحقّق</div>
+  <div class="todo done"><div class="bx">✓</div><div class="txt"><b>21.</b> <code>tsc</code> صفر أخطاء (modonty ✅ · console ✅ · admin ✅) — أُصلح تسرّب nullable-phone في <code>profile-bookings</code> + <code>get-bookings-report</code> + <code>get-leads-detail</code>.</div></div>
+  <div class="todo"><div class="bx">✓</div><div class="txt"><b>22.</b> تست حي (2026-07-19): <b>جانب الزائر ✅</b> — <code>/book</code> (هيدر ثقة + واتساب برقم مصري صحيح + حقل جوال +966 + الزر يتفعّل + نجاح) · دوك المقال يبدأ بواتساب + «أو» + فورم · FAB صفحة العميل. <b>طبقة البيانات ✅</b> — ليد واتساب مجهول (channel:whatsapp, visitorId/sessionId) + <b>dedup مثبت</b> (ضغطتان = صف واحد) + ليد فورم (channel:form, +966…). <b style="color:var(--amber)">الكونسول UI: محجوب على dev</b> — لا يوجد مستخدم مالك لعميل في modonty_dev (تحقّقنا: <code>ownedClients: []</code>) → يُختبر بعد النشر أو بإنشاء حساب مالك (كتابة DB). الجيو null على localhost (طبيعي — لا هيدر Vercel).</div></div>
+  <div class="todo"><div class="bx">✓</div><div class="txt"><b>23.</b> التحقّق من <code>booking_form_start</code>/<code>booking_whatsapp_click</code> في GA4.</div></div>
+  <div class="todo"><div class="bx">✓</div><div class="txt"><b>24.</b> version bump + backup + changelog + push (بإذن خالد).</div></div>
+
+  <div class="foot">المرجعية الوحيدة · صفحة الحجز (YMYL) · مدوّنتي · ١٩ يوليو ٢٠٢٦ — عدد ٤٤/٠/٠ متحقَّق مباشرةً عبر GA4 Data API؛ الأرقام السلوكية من Baymard · Wroblewski · بحث سلوك السوق (WhatsApp). ما زلنا «افهم فقط» — لا كود حتى «نفّذ».</div>
+
+</div>
+</body>
+</html>

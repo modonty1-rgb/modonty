@@ -27,6 +27,8 @@ import {
   Phone,
   Mail,
   MessageSquare,
+  MapPin,
+  CalendarCheck,
 } from "lucide-react";
 import type { BookingWithDetails, BookingStatus } from "../helpers/booking-queries";
 import {
@@ -34,6 +36,7 @@ import {
   deleteBooking,
   bulkUpdateBookings,
   bulkDeleteBookings,
+  setBookingConfirmedAt,
 } from "../actions/booking-actions";
 
 interface Props {
@@ -41,6 +44,7 @@ interface Props {
 }
 
 type FilterKey = "all" | BookingStatus;
+type ChannelKey = "all" | "form" | "whatsapp";
 
 function formatDateTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
@@ -53,8 +57,22 @@ function formatDateTime(d: Date | string | null | undefined): string {
   }).format(new Date(d));
 }
 
-function waNumber(phone: string): string {
-  return phone.replace(/\D/g, "");
+/** Date → "YYYY-MM-DDTHH:mm" for <input type="datetime-local"> (local time). */
+function toDatetimeLocal(d: Date | string | null | undefined): string {
+  if (!d) return "";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function waNumber(phone: string | null): string {
+  return (phone ?? "").replace(/\D/g, "");
+}
+
+function geoText(booking: BookingWithDetails): string {
+  const parts = [booking.city, booking.country].filter(Boolean);
+  return parts.length ? parts.join("، ") : ar.bookings.unknownGeo;
 }
 
 function sourceLabel(source: string): string {
@@ -73,6 +91,7 @@ function statusMeta(status: string) {
 export function BookingsList({ bookings }: Props) {
   const s = ar.bookings;
   const [filter, setFilter] = useState<FilterKey>("all");
+  const [channel, setChannel] = useState<ChannelKey>("all");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<BookingWithDetails | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -81,20 +100,23 @@ export function BookingsList({ bookings }: Props) {
 
   const filtered = useMemo(() => {
     let result = bookings;
+    if (channel !== "all") result = result.filter((b) => b.channel === channel);
     if (filter !== "all") result = result.filter((b) => b.status === filter);
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       result = result.filter(
         (b) =>
-          b.name.toLowerCase().includes(q) ||
-          b.email.toLowerCase().includes(q) ||
-          b.phone.toLowerCase().includes(q) ||
+          (b.name?.toLowerCase().includes(q) ?? false) ||
+          (b.email?.toLowerCase().includes(q) ?? false) ||
+          (b.phone?.toLowerCase().includes(q) ?? false) ||
           (b.message?.toLowerCase().includes(q) ?? false) ||
+          (b.city?.toLowerCase().includes(q) ?? false) ||
+          (b.country?.toLowerCase().includes(q) ?? false) ||
           (b.article?.title.toLowerCase().includes(q) ?? false)
       );
     }
     return result;
-  }, [bookings, filter, query]);
+  }, [bookings, filter, channel, query]);
 
   const counts = useMemo(
     () => ({
@@ -103,6 +125,15 @@ export function BookingsList({ bookings }: Props) {
       contacted: bookings.filter((b) => b.status === "contacted").length,
       done: bookings.filter((b) => b.status === "done").length,
       archived: bookings.filter((b) => b.status === "archived").length,
+    }),
+    [bookings]
+  );
+
+  const channelCounts = useMemo(
+    () => ({
+      all: bookings.length,
+      form: bookings.filter((b) => b.channel === "form").length,
+      whatsapp: bookings.filter((b) => b.channel === "whatsapp").length,
     }),
     [bookings]
   );
@@ -195,6 +226,13 @@ export function BookingsList({ bookings }: Props) {
     <>
       <Card className="shadow-sm">
         <CardContent className="space-y-4 p-6">
+          {/* Channel segmented control — form callback vs tracked WhatsApp */}
+          <div className="flex flex-wrap items-center gap-2">
+            <ChannelPill active={channel === "all"} onClick={() => setChannel("all")} label={s.channelAll} count={channelCounts.all} />
+            <ChannelPill active={channel === "form"} onClick={() => setChannel("form")} label={s.channelForm} count={channelCounts.form} icon={<CalendarClock className="h-3.5 w-3.5" />} />
+            <ChannelPill active={channel === "whatsapp"} onClick={() => setChannel("whatsapp")} label={s.channelWhatsapp} count={channelCounts.whatsapp} icon={<MessageSquare className="h-3.5 w-3.5" />} whatsapp />
+          </div>
+
           {/* Toolbar */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-sm">
@@ -253,7 +291,7 @@ export function BookingsList({ bookings }: Props) {
 
           {/* Body */}
           {filtered.length === 0 ? (
-            <EmptyState hasBookings={bookings.length > 0} hasQuery={!!query.trim()} hasFilter={filter !== "all"} />
+            <EmptyState hasBookings={bookings.length > 0} hasQuery={!!query.trim()} hasFilter={filter !== "all" || channel !== "all"} />
           ) : (
             <div className="space-y-3">
               {filtered.map((booking) => (
@@ -281,6 +319,41 @@ export function BookingsList({ bookings }: Props) {
 
       <BookingDetailSheet booking={open} onClose={() => setOpen(null)} />
     </>
+  );
+}
+
+function ChannelPill({
+  active,
+  onClick,
+  label,
+  count,
+  icon,
+  whatsapp,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+  icon?: React.ReactNode;
+  whatsapp?: boolean;
+}) {
+  return (
+    <Button
+      variant={active ? "default" : "outline"}
+      size="sm"
+      onClick={onClick}
+      className={cn(
+        "gap-1.5 whitespace-nowrap",
+        active && whatsapp && "bg-[#25D366] text-white hover:bg-[#25D366]/90",
+        !active && whatsapp && "border-[#25D366]/40 text-[#128C7E]"
+      )}
+    >
+      {icon}
+      {label}
+      <span className={cn("inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums", active ? "bg-background/20" : "bg-muted text-muted-foreground")}>
+        {count}
+      </span>
+    </Button>
   );
 }
 
@@ -347,6 +420,7 @@ function BookingRow({
   const status = statusMeta(booking.status);
   const isNew = booking.status === "new";
   const isArchived = booking.status === "archived";
+  const isWhatsapp = booking.channel === "whatsapp";
   const borderClass = isNew
     ? "border-primary/30"
     : booking.status === "contacted"
@@ -355,16 +429,38 @@ function BookingRow({
         ? "border-emerald-200"
         : "border-slate-200";
 
+  const RowIcon = isWhatsapp ? MessageSquare : CalendarClock;
+
   return (
     <div className={cn("rounded-lg border bg-card p-4 transition-colors", selected ? "ring-2 ring-primary/40 bg-primary/5" : borderClass)}>
       <div className="flex items-start gap-3">
-        <Checkbox checked={selected} onCheckedChange={(v) => toggleSelect(v === true)} aria-label={booking.name} className="mt-1" />
-        <CalendarClock className={cn("h-9 w-9 shrink-0 rounded-md p-2", isNew ? "bg-primary/10 text-primary" : "text-muted-foreground")} />
+        <Checkbox checked={selected} onCheckedChange={(v) => toggleSelect(v === true)} aria-label={booking.name ?? s.anonymousName} className="mt-1" />
+        <RowIcon className={cn("h-9 w-9 shrink-0 rounded-md p-2", isWhatsapp ? "bg-[#25D366]/10 text-[#128C7E]" : isNew ? "bg-primary/10 text-primary" : "text-muted-foreground")} />
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${status.classes}`}>{status.label}</span>
-            <span className={`text-sm font-medium text-foreground ${isNew ? "font-semibold" : ""}`}>{booking.name || "—"}</span>
-            <span className="text-[11px] text-muted-foreground tabular-nums" dir="ltr">· {booking.phone}</span>
+            {isWhatsapp && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-0.5 text-[11px] font-medium text-[#128C7E] ring-1 ring-[#25D366]/30">
+                <MessageSquare className="h-3 w-3" />
+                {s.channelWhatsapp}
+              </span>
+            )}
+            {booking.confirmedAt && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-200">
+                <CalendarCheck className="h-3 w-3" />
+                {s.confirmedBadge}
+              </span>
+            )}
+            <span className={`text-sm font-medium text-foreground ${isNew ? "font-semibold" : ""}`}>
+              {isWhatsapp ? s.anonymousName : booking.name || "—"}
+            </span>
+            {isWhatsapp ? (
+              <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                <MapPin className="h-3 w-3" /> {geoText(booking)}
+              </span>
+            ) : (
+              booking.phone && <span className="text-[11px] text-muted-foreground tabular-nums" dir="ltr">· {booking.phone}</span>
+            )}
           </div>
 
           <button type="button" onClick={onOpenDetails} className="block w-full text-start">
@@ -448,59 +544,128 @@ function EmptyState({ hasBookings, hasQuery, hasFilter }: { hasBookings: boolean
 
 function BookingDetailSheet({ booking, onClose }: { booking: BookingWithDetails | null; onClose: () => void }) {
   const s = ar.bookings;
+  const [confirmInput, setConfirmInput] = useState("");
+  const [isSaving, startSaving] = useTransition();
+
   if (!booking) return null;
+
+  const isWhatsapp = booking.channel === "whatsapp";
+
+  function saveConfirmed(iso: string | null) {
+    if (!booking) return;
+    const id = booking.id;
+    startSaving(async () => {
+      const res = await setBookingConfirmedAt(id, iso);
+      if (res.success) toast.success(iso ? s.confirmedSaved : s.confirmedCleared);
+      else toast.error(res.error || s.confirmedFailed);
+    });
+  }
 
   return (
     <Sheet open={!!booking} onOpenChange={(o) => !o && onClose()}>
       <SheetContent side="left" className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{s.details}</SheetTitle>
-          <SheetDescription className="text-foreground/90">{booking.name}</SheetDescription>
+          <SheetDescription className="text-foreground/90">
+            {isWhatsapp ? s.whatsappLead : booking.name || "—"}
+          </SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-5">
-          <Section title={s.contactSection}>
-            <Field label={s.phone} value={booking.phone} mono />
-            <Field label={s.email} value={booking.email} mono />
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button asChild size="sm" className="gap-2 bg-[#25D366] text-white hover:bg-[#25D366]/90">
-                <a href={`https://wa.me/${waNumber(booking.phone)}`} target="_blank" rel="noopener noreferrer">
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  {s.whatsappBtn}
-                </a>
-              </Button>
-              <Button asChild size="sm" variant="outline" className="gap-2">
-                <a href={`tel:${booking.phone}`}>
-                  <Phone className="h-3.5 w-3.5" />
-                  {s.callBtn}
-                </a>
-              </Button>
-              <Button asChild size="sm" variant="outline" className="gap-2">
-                <a href={`mailto:${booking.email}`}>
-                  <Mail className="h-3.5 w-3.5" />
-                  {s.mailBtn}
-                </a>
-              </Button>
-            </div>
+          {isWhatsapp ? (
+            /* WhatsApp lead — anonymous. We hold proof of hand-off + geo, not a number. */
+            <Section title={s.contactSection}>
+              <div className="flex items-start gap-2 rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-3">
+                <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-[#128C7E]" />
+                <p className="text-xs leading-relaxed text-foreground">{s.whatsappLeadNote}</p>
+              </div>
+              <Field label={s.geoLabel} value={geoText(booking)} />
+            </Section>
+          ) : (
+            <Section title={s.contactSection}>
+              <Field label={s.phone} value={booking.phone || "—"} mono />
+              <Field label={s.email} value={booking.email || "—"} mono />
+              <div className="flex flex-wrap gap-2 pt-1">
+                {booking.phone && (
+                  <>
+                    <Button asChild size="sm" className="gap-2 bg-[#25D366] text-white hover:bg-[#25D366]/90">
+                      <a href={`https://wa.me/${waNumber(booking.phone)}`} target="_blank" rel="noopener noreferrer">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        {s.whatsappBtn}
+                      </a>
+                    </Button>
+                    <Button asChild size="sm" variant="outline" className="gap-2">
+                      <a href={`tel:${booking.phone}`}>
+                        <Phone className="h-3.5 w-3.5" />
+                        {s.callBtn}
+                      </a>
+                    </Button>
+                  </>
+                )}
+                {booking.email && (
+                  <Button asChild size="sm" variant="outline" className="gap-2">
+                    <a href={`mailto:${booking.email}`}>
+                      <Mail className="h-3.5 w-3.5" />
+                      {s.mailBtn}
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </Section>
+          )}
+
+          {/* Confirmed appointment — the provider logs the time they agreed with the visitor */}
+          <Section title={s.confirmedAt}>
+            {booking.confirmedAt ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200 tabular-nums">
+                  <CalendarCheck className="h-4 w-4" />
+                  {formatDateTime(booking.confirmedAt)}
+                </span>
+                <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10" disabled={isSaving} onClick={() => saveConfirmed(null)}>
+                  {s.clearConfirmed}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-end gap-2">
+                <Input
+                  type="datetime-local"
+                  value={confirmInput}
+                  onChange={(e) => setConfirmInput(e.target.value)}
+                  className="w-auto"
+                  dir="ltr"
+                />
+                <Button size="sm" className="gap-1.5" disabled={isSaving || !confirmInput} onClick={() => saveConfirmed(new Date(confirmInput).toISOString())}>
+                  <CalendarCheck className="h-3.5 w-3.5" />
+                  {s.saveConfirmed}
+                </Button>
+              </div>
+            )}
+            {!booking.confirmedAt && <p className="mt-1 text-[11px] text-muted-foreground">{s.noConfirmed}</p>}
           </Section>
 
-          <Section title={s.preferredAt}>
-            <p className="text-sm text-foreground tabular-nums">
-              {booking.preferredAt ? formatDateTime(booking.preferredAt) : s.noPreferred}
-            </p>
-          </Section>
-
-          <Section title={s.messageLabel}>
-            <div className="rounded-md border bg-muted/30 p-3">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                {booking.message || s.noMessage}
+          {!isWhatsapp && (
+            <Section title={s.preferredAt}>
+              <p className="text-sm text-foreground tabular-nums">
+                {booking.preferredAt ? formatDateTime(booking.preferredAt) : s.noPreferred}
               </p>
-            </div>
-          </Section>
+            </Section>
+          )}
+
+          {!isWhatsapp && (
+            <Section title={s.messageLabel}>
+              <div className="rounded-md border bg-muted/30 p-3">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                  {booking.message || s.noMessage}
+                </p>
+              </div>
+            </Section>
+          )}
 
           <Section title={s.sourceLabel}>
             <Field label={s.sourceLabel} value={sourceLabel(booking.source)} />
             {booking.article?.title && <Field label={s.articleLabel} value={booking.article.title} />}
+            {(booking.city || booking.country) && <Field label={s.geoLabel} value={geoText(booking)} />}
           </Section>
 
           <Section title={s.timeline}>

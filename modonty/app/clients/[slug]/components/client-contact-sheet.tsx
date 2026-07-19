@@ -14,6 +14,7 @@ import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { IconPhone, IconEmail, IconWebsite } from "@/lib/icons";
 import { getWhatsAppLink } from "@/lib/whatsapp";
+import { recordWhatsappLead } from "@/app/articles/[slug]/actions/booking-actions";
 
 import { BookingCtaLink } from "@/components/booking-cta-link";
 
@@ -120,6 +121,7 @@ export function ClientContactSheet({
                   label="Contact sheet – WhatsApp"
                   type="LINK"
                   clientId={clientId}
+                  onBeforeNavigate={() => void recordWhatsappLead({ clientId, source: "client_page" })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${row} border-success/30 bg-success/10 hover:bg-success/15`}

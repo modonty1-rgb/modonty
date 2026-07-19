@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 export interface ProfileBooking {
   id: string;
   status: string;
-  phone: string;
+  phone: string | null; // null for legacy/whatsapp leads (form leads always have it)
   message: string | null;
   preferredAt: Date | null;
   createdAt: Date;

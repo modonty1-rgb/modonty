@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import NextImage from "next/image";
 import { ClientCtaMode } from "@prisma/client";
 
@@ -11,8 +12,8 @@ import { cn } from "@/lib/utils";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
+import { WhatsAppBookingCta } from "@/components/whatsapp-booking-cta";
 import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
-import { getDisclaimerSections } from "@/app/articles/[slug]/helpers/booking-disclaimer";
 
 const VALID_SOURCES: readonly BookingSource[] = [
   "article_dock",
@@ -51,8 +52,7 @@ export default async function ClientBookingPage({
       name: true,
       slug: true,
       ctaMode: true,
-      isYmyl: true,
-      ymylCategory: true,
+      phone: true, // WhatsApp number (E.164) — powers the primary CTA
       logoMedia: { select: { url: true, altText: true } },
     },
   });
@@ -66,6 +66,10 @@ export default async function ClientBookingPage({
   const user = session?.user
     ? { name: session.user.name ?? null, email: session.user.email ?? null }
     : null;
+
+  // Default dial code from Vercel edge geo (free, no external API). Visitor can change it.
+  const h = await headers();
+  const defaultCountry = h.get("x-vercel-ip-country");
 
   const logoSrc = client.logoMedia?.url
     ? stripCloudinaryTransforms(client.logoMedia.url) ?? client.logoMedia.url
@@ -82,7 +86,7 @@ export default async function ClientBookingPage({
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        {/* Header — provider identity + trust (logo + verified mark) */}
+        {/* Header — provider identity + trust (logo + verified mark + response time) */}
         <div className="flex flex-col items-center gap-3 border-b border-border bg-gradient-to-b from-primary/[0.07] to-transparent px-5 pb-5 pt-7 text-center">
           <span className="relative inline-block">
             <span
@@ -115,23 +119,46 @@ export default async function ClientBookingPage({
           </span>
           <div>
             <h1 className="text-lg font-bold leading-tight">احجز موعدك مع {client.name}</h1>
-            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-              عبّي بياناتك ونوصل طلبك مباشرة — يردّون عادةً خلال ساعات العمل.
-            </p>
+            <div className="mt-1.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <IconCheck className="size-3.5 text-accent" /> موثّق من مدوّنتي
+              </span>
+              <span aria-hidden>·</span>
+              <span>يردّون خلال ساعات العمل</span>
+            </div>
           </div>
         </div>
 
-        {/* Form */}
-        <div className="p-5">
+        {/* Body — WhatsApp first, callback form second */}
+        <div className="space-y-4 p-5">
+          {client.phone && (
+            <>
+              <WhatsAppBookingCta
+                clientId={client.id}
+                phone={client.phone}
+                clientName={client.name}
+                source={source}
+                articleId={articleId ?? null}
+              />
+              <p className="-mt-1 text-center text-[11px] text-muted-foreground">
+                أسرع طريقة — رسالة جاهزة، ردّ مباشر
+              </p>
+              <div className="flex items-center gap-3 text-[12px] font-semibold text-muted-foreground">
+                <span className="h-px flex-1 bg-border" />
+                أو
+                <span className="h-px flex-1 bg-border" />
+              </div>
+            </>
+          )}
+
           <BookingForm
             clientId={client.id}
             articleId={articleId ?? null}
             source={source}
             clientName={client.name}
             user={user}
-            submitLabel="تأكيد الحجز"
-            requireDisclaimer={client.isYmyl}
-            disclaimerSections={client.isYmyl ? getDisclaimerSections(client.ymylCategory) : undefined}
+            submitLabel="اطلب اتصال"
+            defaultCountry={defaultCountry}
           />
         </div>
       </div>

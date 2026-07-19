@@ -116,6 +116,57 @@ export interface SignupCompleteParams {
   signup_source?: SignupSource;
 }
 
+// ─── Booking (1) — the highest-value lead, distinct GA4 event so counts
+// match our DB one-to-one (Khalid 2026-07-07: «Google = Database») ───────────
+export interface BookingSubmitParams extends ClientContext {
+  booking_source: string; // article_dock | article_card | client_page | client_list
+  article_id?: string;
+}
+
+/**
+ * The booking funnel, in three events (Khalid 2026-07-13):
+ *   booking_attempt → the visitor pressed "تأكيد الحجز". Fired BEFORE any check,
+ *                     so it counts intent even when the submission never lands.
+ *   booking_failed  → the server refused it, with the reason.
+ *   booking_submit  → a row was actually written to our DB.
+ * attempt − submit = people who tried and got nothing. `reason` says why.
+ */
+export interface BookingAttemptParams extends ClientContext {
+  booking_source: string;
+  article_id?: string;
+}
+
+/** Mirrors the server's early-return branches one-to-one — no free text. */
+export type BookingFailReason =
+  | "invalid_input"
+  | "client_not_found"
+  | "cta_not_form"
+  | "disclaimer_required"
+  | "rate_limited"
+  | "db_write_failed";
+
+export interface BookingFailedParams extends ClientContext {
+  booking_source: string;
+  article_id?: string;
+  reason: BookingFailReason;
+}
+
+/**
+ * booking_form_start → first interaction with the callback form (first field focus).
+ *   Fixes the blind spot between «opened /book» and «pressed submit»: without it we
+ *   cannot see whether visitors abandon on sight or mid-fill.
+ * booking_whatsapp_click → the visitor tapped the WhatsApp CTA (before leaving to wa.me).
+ *   The lead-delivery proof — mirrors the BookingRequest(channel:whatsapp) row 1:1.
+ */
+export interface BookingFormStartParams extends ClientContext {
+  booking_source: string;
+  article_id?: string;
+}
+export interface BookingWhatsappClickParams extends ClientContext {
+  booking_source: string;
+  article_id?: string;
+}
+
 // ─── Deferred (1) — wires when lead-scoring lands in modonty ─────────────────
 
 export interface LeadQualifiedParams extends ClientContext {
@@ -156,6 +207,11 @@ export const GA4_EVENTS = {
   contact_submit: "contact_submit",
   ask_client_submit: "ask_client_submit",
   campaign_interest: "campaign_interest",
+  booking_attempt: "booking_attempt",
+  booking_failed: "booking_failed",
+  booking_submit: "booking_submit",
+  booking_form_start: "booking_form_start",
+  booking_whatsapp_click: "booking_whatsapp_click",
   conversion_complete: "conversion_complete",
   signup_view: "signup_view",
   signup_start: "signup_start",
@@ -230,6 +286,16 @@ export const trackContactSubmit = (p: ContactSubmitParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.contact_submit, p, o);
 export const trackAskClientSubmit = (p: AskClientSubmitParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.ask_client_submit, p, o);
+export const trackBookingAttempt = (p: BookingAttemptParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.booking_attempt, p, o);
+export const trackBookingFailed = (p: BookingFailedParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.booking_failed, p, o);
+export const trackBookingSubmit = (p: BookingSubmitParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.booking_submit, p, o);
+export const trackBookingFormStart = (p: BookingFormStartParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.booking_form_start, p, o);
+export const trackBookingWhatsappClick = (p: BookingWhatsappClickParams, o?: TrackOptions) =>
+  trackEvent(GA4_EVENTS.booking_whatsapp_click, p, o);
 export const trackCampaignInterest = (p: CampaignInterestParams, o?: TrackOptions) =>
   trackEvent(GA4_EVENTS.campaign_interest, p, o);
 export const trackConversionComplete = (p: ConversionCompleteParams, o?: TrackOptions) =>

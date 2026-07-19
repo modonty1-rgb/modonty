@@ -1121,6 +1121,28 @@ export const ar = {
       client_page: "من صفحة نشاطك",
       client_list: "من قائمة الأنشطة",
     },
+    // Channel (form callback vs tracked WhatsApp click)
+    channelAll: "كل القنوات",
+    channelForm: "اترك رقمك",
+    channelWhatsapp: "واتساب",
+    whatsapp: "تواصل واتساب",
+    whatsappHint: "ضغطوا واتساب ووصلتك رسالتهم",
+    whatsappLead: "زائر تواصل عبر واتساب",
+    whatsappLeadNote:
+      "هذا الزائر ضغط زرّ واتساب ووصلته رسالة جاهزة تعرّفك إنه جاي من مدوّنتي. رقمه وحديثه معك على واتساب مباشرة — احنا ما نحفظ رقمه، بس نثبّت لك إنه تواصل.",
+    anonymousName: "زائر واتساب",
+    geoLabel: "الموقع التقريبي",
+    unknownGeo: "غير معروف",
+    // Confirmed appointment (provider sets it from here)
+    confirmedAt: "الموعد المؤكَّد",
+    noConfirmed: "لسّا ما أكّدت موعد",
+    setConfirmed: "أكّد موعداً",
+    saveConfirmed: "حفظ الموعد",
+    clearConfirmed: "إلغاء الموعد",
+    confirmedSaved: "تم تأكيد الموعد",
+    confirmedCleared: "تم إلغاء الموعد المؤكَّد",
+    confirmedFailed: "تعذّر حفظ الموعد",
+    confirmedBadge: "موعد مؤكَّد",
   },
 
   support: {

@@ -10,6 +10,8 @@ interface CtaTrackedLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchor
   type: CTAType;
   articleId?: string;
   clientId?: string;
+  /** Extra side-effect fired alongside CTA tracking (e.g. recordWhatsappLead). */
+  onBeforeNavigate?: () => void;
   children: React.ReactNode;
 }
 
@@ -19,6 +21,7 @@ export function CtaTrackedLink({
   type,
   articleId,
   clientId,
+  onBeforeNavigate,
   className,
   target,
   rel,
@@ -31,8 +34,9 @@ export function CtaTrackedLink({
       className={className}
       target={target}
       rel={rel}
-      onClick={(e) => {
+      onClick={() => {
         trackCtaClick({ type, label, targetUrl: href, articleId, clientId });
+        onBeforeNavigate?.();
       }}
       {...rest}
     >

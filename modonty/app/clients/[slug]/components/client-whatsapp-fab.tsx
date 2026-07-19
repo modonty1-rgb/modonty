@@ -3,6 +3,7 @@
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { getWhatsAppLink } from "@/lib/whatsapp";
+import { recordWhatsappLead } from "@/app/articles/[slug]/actions/booking-actions";
 
 // #25d366 = WhatsApp brand green — local literal, not a design token.
 const WA_GREEN = "#25d366";
@@ -23,6 +24,9 @@ export function ClientWhatsAppFab({ phone, clientId }: ClientWhatsAppFabProps) {
       label="Floating WA"
       type="LINK"
       clientId={clientId}
+      onBeforeNavigate={
+        clientId ? () => void recordWhatsappLead({ clientId, source: "client_page" }) : undefined
+      }
       target="_blank"
       rel="noopener noreferrer"
       aria-label="تواصل عبر واتساب"

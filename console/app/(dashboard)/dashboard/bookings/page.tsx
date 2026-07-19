@@ -8,7 +8,7 @@ import {
 } from "./helpers/booking-queries";
 import { BookingsList } from "./components/bookings-list";
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarClock, PhoneCall, CheckCheck, Archive, CalendarCheck, Info } from "lucide-react";
+import { CalendarClock, PhoneCall, CheckCheck, Archive, CalendarCheck, MessageSquare, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -45,8 +45,9 @@ export default async function BookingsPage() {
 function KpiGrid({ stats }: { stats: BookingStats }) {
   const s = ar.bookings;
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
       <KpiCard icon={CalendarClock} tone="primary" label={s.new} value={stats.new} hint={s.newHint} />
+      <KpiCard icon={MessageSquare} tone="whatsapp" label={s.whatsapp} value={stats.whatsapp} hint={s.whatsappHint} />
       <KpiCard icon={PhoneCall} tone="amber" label={s.contacted} value={stats.contacted} hint={s.contactedHint} />
       <KpiCard icon={CheckCheck} tone="emerald" label={s.done} value={stats.done} hint={s.doneHint} />
       <KpiCard icon={Archive} tone="slate" label={s.archived} value={stats.archived} hint={s.archivedHint} />
@@ -63,13 +64,14 @@ function KpiCard({
   hint,
 }: {
   icon: React.ComponentType<{ className?: string }>;
-  tone: "primary" | "amber" | "emerald" | "slate" | "muted";
+  tone: "primary" | "amber" | "emerald" | "slate" | "muted" | "whatsapp";
   label: string;
   value: number;
   hint: string;
 }) {
   const toneClasses = {
     primary: "bg-primary/10 text-primary ring-primary/20",
+    whatsapp: "bg-[#25D366]/10 text-[#128C7E] ring-[#25D366]/30",
     amber: "bg-amber-50 text-amber-700 ring-amber-200",
     emerald: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     slate: "bg-slate-100 text-slate-600 ring-slate-200",

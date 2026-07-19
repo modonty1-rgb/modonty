@@ -191,6 +191,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
               {clients.map((c, index) => (
                 <ClientCard
                   key={c.id}
+                  id={c.id}
                   name={c.name}
                   slug={c.slug}
                   logoUrl={c.logoMedia?.url}

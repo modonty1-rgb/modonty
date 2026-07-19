@@ -42,6 +42,40 @@ export async function updateBookingStatus(
   }
 }
 
+/** Provider confirms (or clears) the appointment time for a callback lead. */
+export async function setBookingConfirmedAt(
+  bookingId: string,
+  iso: string | null
+): Promise<Result> {
+  const clientId = await getClientId();
+  if (!clientId) return { success: false, error: messages.error.unauthorized };
+
+  const booking = await ensureOwnedBooking(bookingId, clientId);
+  if (!booking) return { success: false, error: messages.error.notFound };
+
+  let confirmedAt: Date | null = null;
+  if (iso) {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return { success: false, error: messages.error.serverError };
+    confirmedAt = d;
+  }
+
+  try {
+    // Confirming a time implies the provider reached the visitor → mark as done unless archived.
+    await db.bookingRequest.update({
+      where: { id: bookingId },
+      data: {
+        confirmedAt,
+        ...(confirmedAt ? { status: "done" } : {}),
+      },
+    });
+    revalidatePath("/dashboard/bookings");
+    return { success: true };
+  } catch {
+    return { success: false, error: messages.error.serverError };
+  }
+}
+
 export async function bulkUpdateBookings(
   bookingIds: string[],
   status: Status

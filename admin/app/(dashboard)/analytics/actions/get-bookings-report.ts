@@ -20,9 +20,9 @@ const BOOKING_SOURCES = ["article_dock", "article_card", "client_page", "client_
 
 export interface BookingRow {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
+  name: string | null; // null for whatsapp / legacy leads
+  email: string | null;
+  phone: string | null;
   clientName: string;
   articleTitle: string | null;
   source: string;

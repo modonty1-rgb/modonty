@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
 import { IconClients, IconChevronLeft, IconPhone, IconVerified, IconExternal } from "@/lib/icons";
-import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { WhatsAppIconLink } from "@/components/whatsapp-icon-link";
 import { Linkedin } from "@/components/icons/linkedin";
 import { Twitter } from "@/components/icons/twitter";
 import { Instagram } from "@/components/icons/instagram";
@@ -37,13 +37,6 @@ function socialIconFor(url: string): { icon: IconC; label: string } | null {
   if (host.includes("tiktok")) return { icon: TiktokLogoLight, label: "تيك توك" };
   if (host.includes("snapchat")) return { icon: RoundSnapchat, label: "سناب شات" };
   return null;
-}
-
-function waNumber(phone: string): string {
-  const d = phone.replace(/\D/g, "");
-  if (d.startsWith("0")) return "966" + d.slice(1);
-  if (!d.startsWith("966") && d.length <= 9) return "966" + d;
-  return d;
 }
 
 interface ArticleLabClientCardProps {
@@ -167,15 +160,13 @@ export function ArticleLabClientCard({ client, askClientProps, cta }: ArticleLab
           <nav className="flex flex-wrap items-center gap-1.5 pt-0.5" aria-label="تواصل ومتابعة">
             {hasPhone && (
               <>
-                <a
-                  href={`https://wa.me/${waNumber(client.phone!)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="واتساب"
+                <WhatsAppIconLink
+                  phone={client.phone!}
+                  clientId={client.id}
+                  source="article_card"
+                  articleId={askClientProps?.articleId ?? null}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#25D366] text-white transition-opacity hover:opacity-90"
-                >
-                  <WhatsAppIcon size={17} />
-                </a>
+                />
                 <a href={`tel:${client.phone}`} aria-label="اتصال" className={railBtn}>
                   <IconPhone className="h-4 w-4" />
                 </a>

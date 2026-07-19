@@ -8,6 +8,7 @@ import NextImage from "next/image";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { CommentFormDialog } from "@/app/articles/[slug]/components/comment-form-dialog";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
+import { WhatsAppBookingCta } from "@/components/whatsapp-booking-cta";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
 import { useSession } from "@/components/providers/SessionContext";
 import { likeArticle, favoriteArticle } from "@/app/articles/[slug]/actions/article-interactions";
@@ -27,6 +28,8 @@ interface ArticleLabBottomDockProps {
   userId?: string | null;
   clientName: string;
   clientLogoUrl?: string | null;
+  /** Client WhatsApp number (E.164). When present in FORM mode, the sheet leads with a WhatsApp CTA. */
+  clientPhone?: string | null;
   /** Primary CTA config (admin-controlled): NONE shows the card only; FORM/LINK add the action. */
   cta: { mode: "NONE" | "FORM" | "LINK"; label?: string | null; url?: string | null };
   /** Session user (name + email) — booking requires login. */
@@ -50,6 +53,7 @@ export function ArticleLabBottomDock({
   userId,
   clientName,
   clientLogoUrl,
+  clientPhone,
   cta,
   bookingUser,
   clientCard,
@@ -160,14 +164,30 @@ export function ArticleLabBottomDock({
 
               {/* Booking-first: the action lives in the sheet (the card above has its own CTA hidden). */}
               {cta.mode === "FORM" && clientId && (
-                <div className="mt-4">
+                <div className="mt-4 space-y-4">
+                  {clientPhone && (
+                    <>
+                      <WhatsAppBookingCta
+                        clientId={clientId}
+                        phone={clientPhone}
+                        clientName={clientName}
+                        source="article_dock"
+                        articleId={articleId}
+                      />
+                      <div className="flex items-center gap-3 text-[12px] font-semibold text-muted-foreground">
+                        <span className="h-px flex-1 bg-border" />
+                        أو
+                        <span className="h-px flex-1 bg-border" />
+                      </div>
+                    </>
+                  )}
                   <BookingForm
                     clientId={clientId}
                     articleId={articleId}
                     source="article_dock"
                     clientName={clientName}
                     user={bookingUser}
-                    submitLabel={cta.label?.trim() || "تأكيد الحجز"}
+                    submitLabel={cta.label?.trim() || "اطلب اتصال"}
                   />
                 </div>
               )}

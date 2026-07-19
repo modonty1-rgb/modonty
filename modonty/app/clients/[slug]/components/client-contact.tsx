@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { IconWebsite, IconEmail, IconPhone, IconCopy } from "@/lib/icons";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { trackCtaClick } from "@/lib/cta-tracking";
+import { recordWhatsappLead } from "@/app/articles/[slug]/actions/booking-actions";
 
 const CONTACT_TYPE_LABELS: Record<string, string> = {
   "customer service": "خدمة العملاء",
@@ -174,6 +175,9 @@ export function ClientContact({ client }: ClientContactProps) {
                   label="Contact – WhatsApp"
                   type="LINK"
                   clientId={clientId}
+                  onBeforeNavigate={
+                    clientId ? () => void recordWhatsappLead({ clientId, source: "client_page" }) : undefined
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"

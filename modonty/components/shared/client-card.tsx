@@ -2,9 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+import { WhatsAppLeadLink } from "@/components/whatsapp-icon-link";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
 interface ClientCardProps {
+  /** Client id — enables WhatsApp lead recording from the card. */
+  id?: string;
   name: string;
   slug: string;
   logoUrl?: string | null;
@@ -24,6 +27,7 @@ interface ClientCardProps {
 const compact = new Intl.NumberFormat("ar-SA", { notation: "compact", maximumFractionDigits: 1 });
 
 export function ClientCard({
+  id,
   name,
   slug,
   logoUrl,
@@ -36,6 +40,8 @@ export function ClientCard({
   phone,
   priority = false,
 }: ClientCardProps) {
+  const waClassName =
+    "relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#25D366]/10 border border-[#25D366]/20 px-3 py-2 text-xs font-bold text-[#25D366] hover:bg-[#25D366]/20 transition-colors";
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-shadow">
       {/* Overlay link — covers entire card for profile navigation */}
@@ -121,15 +127,28 @@ export function ClientCard({
         <div className="flex gap-2">
           {phone ? (
             <>
-              <a
-                href={getWhatsAppLink(phone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#25D366]/10 border border-[#25D366]/20 px-3 py-2 text-xs font-bold text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
-              >
-                <WhatsAppIcon size={13} />
-                تواصل واتساب
-              </a>
+              {id ? (
+                <WhatsAppLeadLink
+                  phone={phone}
+                  clientId={id}
+                  source="client_list"
+                  ariaLabel={`تواصل عبر واتساب مع ${name}`}
+                  className={waClassName}
+                >
+                  <WhatsAppIcon size={13} />
+                  تواصل واتساب
+                </WhatsAppLeadLink>
+              ) : (
+                <a
+                  href={getWhatsAppLink(phone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={waClassName}
+                >
+                  <WhatsAppIcon size={13} />
+                  تواصل واتساب
+                </a>
+              )}
               <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted/50 text-muted-foreground">
                 <ChevronLeftIcon className="h-3.5 w-3.5 rtl:rotate-180" />
               </span>

@@ -567,12 +567,23 @@ model BookingRequest {
   userId      String?  @db.ObjectId // SetNull on account deletion — snapshot below preserves the lead
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   source      String // article_dock | article_card | client_page | client_list
-  name        String // snapshot from session
-  email       String // snapshot from session
-  phone       String // collected by the form (User has no phone field)
-  preferredAt DateTime? // optional preferred date/time (future)
+  // Lead channel: "form" = «اترك رقمك» callback (has phone) · "whatsapp" = tracked WhatsApp
+  // click (anonymous — no phone; the conversation happens on WhatsApp itself).
+  channel     String   @default("form")
+  name        String? // snapshot from session (null for whatsapp leads)
+  email       String? // snapshot from session (null for whatsapp leads)
+  phone       String? // collected by the form (null for whatsapp leads)
+  preferredAt DateTime? // free-text preferred time now lives in `message`; kept for legacy
+  confirmedAt DateTime? // appointment time the provider CONFIRMS from the console
   message     String?
   status      String   @default("new") // new | contacted | done | archived
+  // Visitor identity (from getVisitorContext) — powers whatsapp-lead dedup:
+  // one whatsapp lead per (visitorId × clientId × sessionId). Also useful analytics.
+  visitorId   String?
+  sessionId   String?
+  // Geo snapshot from Vercel headers (x-vercel-ip-*) — shown on the whatsapp lead row.
+  country     String?
+  city        String?
   ipAddress   String?
   userAgent   String?
   // YMYL liability acknowledgment — true when the visitor ticked the disclaimer
@@ -583,6 +594,8 @@ model BookingRequest {
   updatedAt   DateTime @updatedAt
 
   @@index([clientId, createdAt])
+  @@index([clientId, channel]) // console filter: form vs whatsapp
+  @@index([clientId, channel, visitorId, sessionId]) // whatsapp-lead dedup lookup
   @@index([userId])
   @@index([status])
   @@map("booking_requests")

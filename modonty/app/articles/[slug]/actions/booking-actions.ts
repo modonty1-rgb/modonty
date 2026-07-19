@@ -7,6 +7,16 @@ import { ClientCtaMode, ConversionType, CTAType, UserRole } from "@prisma/client
 import { bookingSchema, type BookingFormData } from "../helpers/schemas/booking-schema";
 import { notifyTelegram } from "@/lib/telegram/notify";
 import { createConversion } from "@/lib/conversion-tracking";
+import {
+  trackBookingAttempt,
+  trackBookingFailed,
+  trackBookingSubmit,
+  trackBookingWhatsappClick,
+  trackBookingFormStart,
+  type BookingFailReason,
+} from "@/lib/analytics/events-registry";
+import { getVisitorContext } from "@/lib/analytics/visitor-cookie";
+import { getGeoFromHeaders } from "@/lib/analytics/geo-headers";
 import { sendEmail } from "@/lib/email/resend-client";
 import { bookingNotificationEmail } from "@/lib/email/templates/booking-notification";
 
@@ -35,18 +45,123 @@ function normalizePhone(raw: string): string {
   return v.startsWith("+") ? v : "+" + v;
 }
 
+/**
+ * Failures that never reach `submitBookingRequest` — the form blocked them first
+ * (client-side zod, or the YMYL disclaimer gate). Without this the visitor simply
+ * vanishes: no row, no event, nothing to explain the drop-off.
+ */
+export async function trackBookingBlocked(
+  ctx: BookingContext,
+  reason: Extract<BookingFailReason, "invalid_input" | "disclaimer_required">
+): Promise<void> {
+  const funnel = {
+    client_id: ctx.clientId,
+    booking_source: ctx.source,
+    ...(ctx.articleId ? { article_id: ctx.articleId } : {}),
+  };
+  void trackBookingAttempt(funnel);
+  void trackBookingFailed({ ...funnel, reason });
+}
+
+/**
+ * WhatsApp lead — recorded the instant the visitor taps the WhatsApp CTA, BEFORE they
+ * leave to wa.me. Modonty's proof-of-delivery: «we handed the provider a lead».
+ * Deduped to ONE lead per (visitor × client × session): repeat taps in the same visit
+ * don't inflate the count; a genuine return visit (new session) counts as a fresh lead.
+ * Anonymous by design — the phone/name live in the WhatsApp chat, not with us.
+ */
+export async function recordWhatsappLead(ctx: {
+  clientId: string;
+  source: BookingSource;
+  articleId?: string | null;
+}): Promise<void> {
+  // GA4 counts every click (analytics); the DB lead stays deduped (one source of truth).
+  void trackBookingWhatsappClick({
+    client_id: ctx.clientId,
+    booking_source: ctx.source,
+    ...(ctx.articleId ? { article_id: ctx.articleId } : {}),
+  });
+
+  try {
+    const { clientId: visitorId, sessionId } = await getVisitorContext();
+
+    // Dedup: same visitor + client + session → already recorded this visit.
+    const existing = await db.bookingRequest.findFirst({
+      where: { clientId: ctx.clientId, channel: "whatsapp", visitorId, sessionId },
+      select: { id: true },
+    });
+    if (existing) return;
+
+    const h = await headers();
+    const geo = getGeoFromHeaders(h);
+    const ipAddress =
+      h.get("x-forwarded-for")?.split(",")[0].trim() ||
+      h.get("x-real-ip") ||
+      h.get("cf-connecting-ip") ||
+      null;
+
+    await db.bookingRequest.create({
+      data: {
+        clientId: ctx.clientId,
+        articleId: ctx.articleId ?? null,
+        source: ctx.source,
+        channel: "whatsapp",
+        status: "new",
+        visitorId,
+        sessionId,
+        country: geo.country,
+        city: geo.city,
+        ipAddress,
+        userAgent: h.get("user-agent") || null,
+      },
+      select: { id: true },
+    });
+    // No provider notification here by design: the visitor's message reaches the provider
+    // on WhatsApp directly. The console row is the record; Telegram would be duplicate.
+  } catch {
+    // recording must never block the WhatsApp handoff
+  }
+}
+
+/**
+ * Fired on first interaction with the callback form (first field focus) — closes the
+ * blind spot between «opened /book» and «pressed submit» so drop-off is finally visible.
+ */
+export async function trackBookingFormStartAction(ctx: {
+  clientId: string;
+  source: BookingSource;
+  articleId?: string | null;
+}): Promise<void> {
+  void trackBookingFormStart({
+    client_id: ctx.clientId,
+    booking_source: ctx.source,
+    ...(ctx.articleId ? { article_id: ctx.articleId } : {}),
+  });
+}
+
 export async function submitBookingRequest(
   data: BookingFormData,
   ctx: BookingContext
 ): Promise<{ success: boolean; error?: string }> {
+  // 0. Funnel: the visitor pressed the button. Recorded BEFORE any check, so a
+  //    booking that dies in validation still shows up as intent. The gap between
+  //    booking_attempt and booking_submit is where we lose people.
+  const funnel = { client_id: ctx.clientId, booking_source: ctx.source, ...(ctx.articleId ? { article_id: ctx.articleId } : {}) };
+  void trackBookingAttempt(funnel);
+
+  const fail = (reason: BookingFailReason, error: string) => {
+    void trackBookingFailed({ ...funnel, reason });
+    return { success: false, error };
+  };
+
   // 1. Validate
   const parsed = bookingSchema.safeParse(data);
   if (!parsed.success) {
     const f = parsed.error.flatten().fieldErrors;
-    return {
-      success: false,
-      error: f.phone?.[0] ?? f.preferredAt?.[0] ?? f.message?.[0] ?? "البيانات غير صالحة",
-    };
+    return fail(
+      "invalid_input",
+      f.phone?.[0] ?? f.preferredAt?.[0] ?? f.message?.[0] ?? "البيانات غير صالحة"
+    );
   }
 
   // 2. Client must exist + be in FORM mode (never accept bookings for NONE/LINK)
@@ -62,15 +177,15 @@ export async function submitBookingRequest(
       user: { select: { email: true, name: true } },
     },
   });
-  if (!client) return { success: false, error: "الشركة غير موجودة" };
+  if (!client) return fail("client_not_found", "الشركة غير موجودة");
   if (client.ctaMode !== ClientCtaMode.FORM) {
-    return { success: false, error: "الحجز غير متاح لهذه الشركة" };
+    return fail("cta_not_form", "الحجز غير متاح لهذه الشركة");
   }
   // YMYL (medical/legal/financial) clients require the visitor to accept the
   // liability acknowledgment before a booking is recorded — enforced server-side
   // regardless of the UI, so the checkbox can't be bypassed.
   if (client.isYmyl && !ctx.disclaimerAccepted) {
-    return { success: false, error: "يجب الموافقة على الإقرار قبل إرسال الطلب." };
+    return fail("disclaimer_required", "يجب الموافقة على الإقرار قبل إرسال الطلب.");
   }
 
   // 3. Session is OPTIONAL — no login required; the phone number identifies the lead.
@@ -96,17 +211,17 @@ export async function submitBookingRequest(
     where: { clientId: client.id, phone, createdAt: { gte: oneHourAgo } },
   });
   if (recent > 0) {
-    return {
-      success: false,
-      error: "أرسلت طلب حجز لهذه الشركة مؤخراً — انتظر قليلاً قبل إرسال طلب جديد.",
-    };
+    return fail(
+      "rate_limited",
+      "أرسلت طلب حجز لهذه الشركة مؤخراً — انتظر قليلاً قبل إرسال طلب جديد."
+    );
   }
   if (ipAddress) {
     const ipBurst = await db.bookingRequest.count({
       where: { ipAddress, createdAt: { gte: oneHourAgo } },
     });
     if (ipBurst >= 8) {
-      return { success: false, error: "وصلت للحد الأقصى من الطلبات مؤقتاً — حاول لاحقاً." };
+      return fail("rate_limited", "وصلت للحد الأقصى من الطلبات مؤقتاً — حاول لاحقاً.");
     }
   }
 
@@ -139,7 +254,7 @@ export async function submitBookingRequest(
     });
     bookingId = booking.id;
   } catch {
-    return { success: false, error: "تعذّر حفظ طلب الحجز، حاول مرة ثانية." };
+    return fail("db_write_failed", "تعذّر حفظ طلب الحجز، حاول مرة ثانية.");
   }
 
   // 6. Internal notification → client owner (fallback to an admin)
@@ -207,7 +322,20 @@ export async function submitBookingRequest(
     headers: h,
   }).catch(() => {});
 
-  // 8. Conversion (records Conversion row + GA4 conversion_complete + opt-in conversion Telegram)
+  // 8. GA4 booking_submit — distinct event so Google's booking count matches
+  //    our DB one-to-one (Khalid 2026-07-07: «Google = Database»).
+  void trackBookingSubmit(
+    {
+      client_id: client.id,
+      client_slug: client.slug,
+      client_name: client.name,
+      booking_source: ctx.source,
+      ...(ctx.articleId ? { article_id: ctx.articleId } : {}),
+    },
+    userId ? { userId } : undefined,
+  );
+
+  // 8b. Conversion (records Conversion row + GA4 conversion_complete + opt-in conversion Telegram)
   await createConversion({
     type: ConversionType.BOOKING,
     userId: userId ?? undefined,

@@ -4,10 +4,11 @@ import { z } from "zod";
  * Booking form input. No login required — the phone number identifies the lead.
  * Visitor provides phone (required) + optional name + optional preferred date + note.
  * For logged-in users the name prefills from the session; email is taken server-side.
- * Phone accepts Saudi (+9665…) or Egyptian (+201…) mobiles, including the local
- * 05…/01… forms which the server normalizes to E.164.
+ * Phone is submitted as E.164 (`+<countrycode><national>`) by the international
+ * PhoneField (country selector + Vercel-geo default). Any country the visitor selects
+ * is accepted — the client-side field enforces per-country length before submit.
  */
-const phoneRegex = /^(\+?9665\d{8}|\+?201\d{9}|05\d{8}|01\d{9})$/;
+const phoneRegex = /^\+\d{8,15}$/;
 
 export const bookingSchema = z.object({
   name: z.string().trim().max(80, "الاسم طويل جداً").optional().or(z.literal("")),
@@ -18,7 +19,7 @@ export const bookingSchema = z.object({
     .trim()
     .min(1, "رقم الجوال مطلوب")
     .transform((v) => v.replace(/[\s-]/g, ""))
-    .refine((v) => phoneRegex.test(v), "أدخل رقم جوال سعودي (+9665) أو مصري (+201) صحيح"),
+    .refine((v) => phoneRegex.test(v), "أدخل رقم جوال صحيح"),
   preferredAt: z
     .union([z.string(), z.null()])
     .optional()

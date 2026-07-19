@@ -122,6 +122,7 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
             {industry.clients.map((client, index) => (
               <ClientCard
                 key={client.id}
+                id={client.id}
                 name={client.name}
                 slug={client.slug}
                 logoUrl={client.logoMedia?.url}

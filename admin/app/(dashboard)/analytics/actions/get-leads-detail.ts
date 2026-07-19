@@ -75,6 +75,7 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
       where: w,
       select: {
         id: true,
+        channel: true,
         name: true,
         email: true,
         phone: true,
@@ -167,7 +168,8 @@ export async function getLeadsDetail(): Promise<LeadsDetail> {
     ...bookings.map((b) => ({
       id: b.id,
       type: "BOOKING" as const,
-      name: b.name,
+      // channel:whatsapp leads carry no name/phone — label them so the row still reads.
+      name: b.name ?? (b.channel === "whatsapp" ? "زائر واتساب" : "زائر"),
       email: b.email,
       phone: b.phone,
       clientName: b.client?.name ?? null,
