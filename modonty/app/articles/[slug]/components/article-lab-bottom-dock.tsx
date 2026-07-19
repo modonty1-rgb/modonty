@@ -1,56 +1,44 @@
 "use client";
 
-import { useState } from "react";
 import type { ReactNode } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import NextImage from "next/image";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { CommentFormDialog } from "@/app/articles/[slug]/components/comment-form-dialog";
 import { BookingForm } from "@/app/articles/[slug]/components/booking-form";
 import { WhatsAppBookingCta } from "@/components/whatsapp-booking-cta";
+import { WhatsAppLeadLink } from "@/components/whatsapp-icon-link";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { CtaTrackedLink } from "@/components/cta-tracked-link";
-import { useSession } from "@/components/providers/SessionContext";
-import { likeArticle, favoriteArticle } from "@/app/articles/[slug]/actions/article-interactions";
-import type { BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
+import { bookingWhatsappMessage } from "@/lib/whatsapp";
 import { BRAND_AVATAR_RADIUS } from "@/lib/brand-avatar";
-import { IconLike, IconSaved, IconComment, IconShare, IconClients, IconExternal } from "@/lib/icons";
+import { IconClients, IconExternal, IconCalendar } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface ArticleLabBottomDockProps {
-  likes: number;
-  favorites: number;
-  userLiked?: boolean;
-  userFavorited?: boolean;
   clientId: string | null;
   articleId: string;
-  articleSlug: string;
-  userId?: string | null;
   clientName: string;
   clientLogoUrl?: string | null;
-  /** Client WhatsApp number (E.164). When present in FORM mode, the sheet leads with a WhatsApp CTA. */
+  /** Client WhatsApp number (E.164). When present, the bar shows the WhatsApp button. */
   clientPhone?: string | null;
-  /** Primary CTA config (admin-controlled): NONE shows the card only; FORM/LINK add the action. */
+  /** Primary CTA config (admin-controlled): FORM → booking · LINK → external · NONE → info only. */
   cta: { mode: "NONE" | "FORM" | "LINK"; label?: string | null; url?: string | null };
-  /** Session user (name + email) — booking requires login. */
+  /** Session user (name + email) — prefills the booking form. */
   bookingUser: { name: string | null; email: string | null } | null;
-  /** The existing client card (server-rendered with its own CTA hidden) — shown inside the bottom sheet. */
+  /** The server-rendered client card (its own CTA hidden) — shown in the info sheet. */
   clientCard: ReactNode;
 }
 
-// Mobile sticky bottom bar: article engagement (like/save/comment/share) flanking a
-// center docked client button. Like/save are WIRED to the real server actions
-// (likeArticle/favoriteArticle) with optimistic UI + reconcile; comment = CommentFormDialog;
-// share = native share sheet. The center dock opens the existing client card.
+/**
+ * Mobile sticky CONVERSION bar: «احجز الآن» (opens the booking form) · «واتساب» (records a
+ * deduped lead + attributed message) · client logo (opens the info card). Adapts to the
+ * client type — FORM shows booking, LINK shows an external CTA, NONE shows info only; the
+ * WhatsApp button appears only when the client has a number. Engagement (like/save/comment/
+ * share) lives in the quiet top bar, not here — this bar is the single loud focal point.
+ */
 export function ArticleLabBottomDock({
-  likes,
-  favorites,
-  userLiked,
-  userFavorited,
   clientId,
   articleId,
-  articleSlug,
-  userId,
   clientName,
   clientLogoUrl,
   clientPhone,
@@ -58,186 +46,144 @@ export function ArticleLabBottomDock({
   bookingUser,
   clientCard,
 }: ArticleLabBottomDockProps) {
-  const { data: session } = useSession();
-  const isLoggedIn = Boolean(session?.user);
-  const router = useRouter();
-  const pathname = usePathname();
-  const registerHref = pathname
-    ? `/users/register?callbackUrl=${encodeURIComponent(pathname)}`
-    : "/users/register";
+  const isForm = cta.mode === "FORM" && !!clientId;
+  const isLink = cta.mode === "LINK" && !!cta.url;
+  const bookLabel = cta.label?.trim() || "احجز الآن";
+  const linkLabel = cta.label?.trim() || "تسوّق الآن";
 
-  // Chip label follows the configured action; NONE shows just the logo (card-only sheet).
-  const ctaChipLabel =
-    cta.mode === "FORM"
-      ? cta.label?.trim() || "احجز الآن"
-      : cta.mode === "LINK"
-        ? cta.label?.trim() || "تسوّق الآن"
-        : null;
+  const pill =
+    "inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-sm font-bold transition-opacity active:scale-[0.98]";
 
-  const [likeN, setLikeN] = useState(likes);
-  const [favN, setFavN] = useState(favorites);
-  const [liked, setLiked] = useState(!!userLiked);
-  const [saved, setSaved] = useState(!!userFavorited);
-  const [busy, setBusy] = useState<"like" | "save" | null>(null);
-
-  const handleLike = async () => {
-    if (busy) return;
-    if (!isLoggedIn) { router.push(registerHref); return; }
-    setBusy("like");
-    const prevN = likeN, prevLiked = liked;
-    setLiked(!liked);
-    setLikeN(liked ? likeN - 1 : likeN + 1);
-    try {
-      const r = await likeArticle(articleId, articleSlug);
-      if (r.success && r.data) { setLikeN(r.data.likes); setLiked(r.data.liked); }
-      else { setLiked(prevLiked); setLikeN(prevN); }
-    } catch { setLiked(prevLiked); setLikeN(prevN); }
-    finally { setBusy(null); }
-  };
-
-  const handleSave = async () => {
-    if (busy) return;
-    if (!isLoggedIn) { router.push(registerHref); return; }
-    setBusy("save");
-    const prevN = favN, prevSaved = saved;
-    setSaved(!saved);
-    setFavN(saved ? favN - 1 : favN + 1);
-    try {
-      const r = await favoriteArticle(articleId, articleSlug);
-      if (r.success && r.data) { setFavN(r.data.favorites); setSaved(r.data.favorited); }
-      else { setSaved(prevSaved); setFavN(prevN); }
-    } catch { setSaved(prevSaved); setFavN(prevN); }
-    finally { setBusy(null); }
-  };
-
-  const action =
-    "flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-primary";
+  // Booking block reused in the booking sheet AND the info sheet (repeat actions for consistency).
+  const bookingBlock: ReactNode = isForm ? (
+    <div className="space-y-4">
+      {clientPhone && (
+        <>
+          <WhatsAppBookingCta
+            clientId={clientId!}
+            phone={clientPhone}
+            clientName={clientName}
+            source="article_dock"
+            articleId={articleId}
+          />
+          <div className="flex items-center gap-3 text-[12px] font-semibold text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            أو
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </>
+      )}
+      <BookingForm
+        clientId={clientId!}
+        articleId={articleId}
+        source="article_dock"
+        clientName={clientName}
+        user={bookingUser}
+        submitLabel="اطلب اتصال"
+      />
+    </div>
+  ) : isLink ? (
+    <CtaTrackedLink
+      href={cta.url!}
+      label={linkLabel}
+      type="LINK"
+      articleId={articleId}
+      clientId={clientId ?? undefined}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+    >
+      <IconExternal className="h-4 w-4" />
+      {linkLabel}
+    </CtaTrackedLink>
+  ) : null;
 
   return (
-    <>
-      {!isLoggedIn && (
-        <div className="px-3 pt-1.5 text-center text-[11px] text-muted-foreground">
-          <a href={registerHref} className="font-semibold text-primary">اشترك مجاناً</a>{" للإعجاب أو الحفظ"}
-        </div>
-      )}
-    <div className="flex items-stretch px-1">
-      <button type="button" onClick={handleLike} disabled={busy === "like"} className={cn(action, liked && "text-primary")} aria-pressed={liked} aria-label="أعجبني">
-        <IconLike className={cn("size-6", liked && "fill-current")} />
-        <span>{likeN > 0 ? likeN : "إعجاب"}</span>
-      </button>
-      <button type="button" onClick={handleSave} disabled={busy === "save"} className={cn(action, saved && "text-amber-500")} aria-pressed={saved} aria-label="حفظ">
-        <IconSaved className={cn("size-6", saved && "fill-current")} />
-        <span>{favN > 0 ? favN : "حفظ"}</span>
-      </button>
-
-      {/* center docked client button → opens the booking-first client sheet */}
-      <div className="relative w-[78px] shrink-0">
+    <div className="flex items-center gap-2 px-3 py-1.5">
+      {/* Primary — booking form (FORM) or external link (LINK) */}
+      {isForm && (
         <Sheet>
           <SheetTrigger asChild>
             <button
               type="button"
-              aria-label={ctaChipLabel ? `${ctaChipLabel} — ${clientName}` : `بطاقة ${clientName}`}
-              className="group absolute inset-x-0 bottom-1.5 mx-auto flex w-[72px] flex-col items-center gap-0.5"
+              aria-label={`${bookLabel} — ${clientName}`}
+              className={cn(pill, "h-11 flex-1 bg-amber-500 text-black shadow-[0_6px_12px_-6px_rgba(245,158,11,0.55)]")}
             >
-              {/* brand chip: logo framed by a primary ring + white outline → distinct, tappable */}
-              <span className={cn("grid size-14 place-items-center overflow-hidden bg-background shadow-lg shadow-primary/30 outline outline-[3px] outline-background ring-2 ring-primary/60 transition-transform group-active:scale-95", BRAND_AVATAR_RADIUS)}>
-                {clientLogoUrl ? (
-                  <NextImage src={clientLogoUrl} alt={clientName} width={56} height={56} className="size-full object-contain p-1.5" sizes="56px" />
-                ) : (
-                  <IconClients className="size-7 text-primary" />
-                )}
-              </span>
-              {/* CTA label follows the client's configured action (احجز الآن / تسوّق الآن). NONE → no badge. */}
-              {ctaChipLabel && (
-                <span className="whitespace-nowrap rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold leading-tight text-black shadow-sm">
-                  {ctaChipLabel}
-                </span>
-              )}
+              <IconCalendar className="h-4 w-4" />
+              {bookLabel}
             </button>
           </SheetTrigger>
           <SheetContent side="bottom" dir="rtl" className="mx-auto max-w-[480px] rounded-t-2xl p-0">
-            <SheetTitle className="sr-only">بطاقة {clientName}</SheetTitle>
-            <SheetDescription className="sr-only">معلومات العميل وطلب الحجز.</SheetDescription>
-            <div className="max-h-[85vh] overflow-y-auto p-4">
-              <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-muted-foreground/30" aria-hidden />
-              {clientCard}
-
-              {/* Booking-first: the action lives in the sheet (the card above has its own CTA hidden). */}
-              {cta.mode === "FORM" && clientId && (
-                <div className="mt-4 space-y-4">
-                  {clientPhone && (
-                    <>
-                      <WhatsAppBookingCta
-                        clientId={clientId}
-                        phone={clientPhone}
-                        clientName={clientName}
-                        source="article_dock"
-                        articleId={articleId}
-                      />
-                      <div className="flex items-center gap-3 text-[12px] font-semibold text-muted-foreground">
-                        <span className="h-px flex-1 bg-border" />
-                        أو
-                        <span className="h-px flex-1 bg-border" />
-                      </div>
-                    </>
-                  )}
-                  <BookingForm
-                    clientId={clientId}
-                    articleId={articleId}
-                    source="article_dock"
-                    clientName={clientName}
-                    user={bookingUser}
-                    submitLabel={cta.label?.trim() || "اطلب اتصال"}
-                  />
-                </div>
-              )}
-
-              {cta.mode === "LINK" && cta.url && (
-                <div className="sticky bottom-0 mt-4 border-t border-border bg-background py-3">
-                  <CtaTrackedLink
-                    href={cta.url}
-                    label={cta.label?.trim() || "تسوّق الآن"}
-                    type="LINK"
-                    articleId={articleId}
-                    clientId={clientId ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-                  >
-                    <IconExternal className="h-4 w-4" />
-                    {cta.label?.trim() || "تسوّق الآن"}
-                  </CtaTrackedLink>
-                </div>
-              )}
+            <div className="pe-4 ps-12 pt-4">
+              <SheetTitle className="text-base font-bold leading-snug">{clientName}</SheetTitle>
+              <SheetDescription className="text-xs text-muted-foreground">
+                ✓ موثّق من مدوّنتي · يردّون خلال ساعات العمل
+              </SheetDescription>
             </div>
+            <div className="max-h-[85vh] overflow-y-auto p-4">{bookingBlock}</div>
           </SheetContent>
         </Sheet>
-      </div>
+      )}
 
-      <CommentFormDialog
-        articleId={articleId}
-        articleSlug={articleSlug}
-        userId={userId}
-        clientId={clientId ?? undefined}
-        bare
-        trigger={
-          <button type="button" className={action} aria-label="أضف تعليق">
-            <IconComment className="size-6" />
-            <span>تعليق</span>
+      {isLink && (
+        <CtaTrackedLink
+          href={cta.url!}
+          label={linkLabel}
+          type="LINK"
+          articleId={articleId}
+          clientId={clientId ?? undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(pill, "h-11 flex-1 bg-primary text-primary-foreground shadow-[0_6px_12px_-6px_rgba(15,118,110,0.5)]")}
+        >
+          <IconExternal className="h-4 w-4" />
+          {linkLabel}
+        </CtaTrackedLink>
+      )}
+
+      {/* WhatsApp — icon-only (keeps the one-tap lead path); label lives in the booking sheet */}
+      {clientPhone && clientId && (
+        <WhatsAppLeadLink
+          phone={clientPhone}
+          clientId={clientId}
+          source="article_dock"
+          articleId={articleId}
+          message={bookingWhatsappMessage(clientName)}
+          ariaLabel={`تواصل عبر واتساب مع ${clientName}`}
+          className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#25d366] text-white shadow-[0_6px_12px_-8px_rgba(37,211,102,0.55)] transition-transform active:scale-[0.98]"
+        >
+          <WhatsAppIcon size={20} />
+        </WhatsAppLeadLink>
+      )}
+
+      {/* Logo → client info sheet (identity + repeated actions) */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            aria-label={`معلومات ${clientName}`}
+            className={cn(
+              "relative grid size-11 shrink-0 place-items-center overflow-hidden bg-background shadow-sm outline outline-2 outline-background ring-2 ring-primary/50",
+              BRAND_AVATAR_RADIUS
+            )}
+          >
+            {clientLogoUrl ? (
+              <NextImage src={clientLogoUrl} alt={clientName} width={44} height={44} className="size-full object-contain p-1" sizes="44px" />
+            ) : (
+              <IconClients className="size-5 text-primary" />
+            )}
           </button>
-        }
-      />
-      <button type="button" onClick={shareNow} className={action} aria-label="مشاركة">
-        <IconShare className="size-6" />
-        <span>مشاركة</span>
-      </button>
+        </SheetTrigger>
+        <SheetContent side="bottom" dir="rtl" className="mx-auto max-w-[480px] rounded-t-2xl p-0">
+          <SheetTitle className="sr-only">بطاقة {clientName}</SheetTitle>
+          <SheetDescription className="sr-only">معلومات العميل وطلب الحجز.</SheetDescription>
+          <div className="max-h-[85vh] overflow-y-auto p-4">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-muted-foreground/30" aria-hidden />
+            {clientCard}
+            {bookingBlock && <div className="mt-4">{bookingBlock}</div>}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
-    </>
   );
-}
-
-function shareNow() {
-  if (typeof navigator !== "undefined" && navigator.share) {
-    navigator.share({ url: location.href }).catch(() => {});
-  }
 }

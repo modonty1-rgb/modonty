@@ -15,3 +15,8 @@ export function getWhatsAppLink(phone: string, message?: string): string {
   const base = `https://wa.me/${getWhatsAppNumber(phone)}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
+
+/** Modonty-attributed booking greeting — one source for every WhatsApp booking CTA. */
+export function bookingWhatsappMessage(clientName: string): string {
+  return `السلام عليكم 👋 وصلت لكم عبر منصّة «مدوّنتي» وأبغى أحجز موعد في ${clientName} 🌟`;
+}

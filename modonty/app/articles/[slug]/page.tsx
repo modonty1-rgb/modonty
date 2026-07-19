@@ -56,6 +56,7 @@ import { ArticleLabGallery } from "./components/article-lab-gallery";
 import { ArticleLabReadMore } from "./components/article-lab-read-more";
 import { ArticleLabEngagementStrip } from "./components/article-lab-engagement";
 import { ArticleLabBottomDock } from "./components/article-lab-bottom-dock";
+import { ArticleTopEngagementBar } from "./components/article-top-engagement-bar";
 import { ArticleLabMobileIdentity } from "./components/article-lab-mobile-identity";
 import ArticleLoading from "./loading";
 
@@ -455,6 +456,19 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
             {/* CENTER */}
             <div className="w-full min-w-0">
+              {/* MOBILE: quiet engagement bar, sticky just under the navbar (h-14) — full-bleed + opaque */}
+              <div className="sticky top-14 z-30 -mx-4 mb-3 shadow-sm sm:-mx-6 lg:hidden">
+                <ArticleTopEngagementBar
+                  likes={article._count.likes}
+                  favorites={article._count.favorites}
+                  userLiked={article.userLiked}
+                  userFavorited={article.userFavorited}
+                  articleId={article.id}
+                  articleSlug={article.slug}
+                  userId={userId}
+                  clientId={article.clientId}
+                />
+              </div>
               <article>
                 <ArticleHeader
                   title={article.title}
@@ -468,7 +482,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
                   questionsCount={article._count.faqs}
                 />
 
-                {/* MOBILE: client identity (engagement moved to the sticky bottom bar) */}
+                {/* MOBILE: client identity (engagement lives in the sticky top bar; conversion in the bottom bar) */}
                 {article.client && (
                   <ArticleLabMobileIdentity client={article.client} articleId={article.id} />
                 )}
@@ -593,7 +607,7 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
 
           </div>
         </div>
-        {/* MOBILE: sticky bottom bar — article engagement flanking the center client dock (thumb zone) */}
+        {/* MOBILE: sticky conversion bar — احجز الآن · واتساب · logo (thumb zone) */}
         {article.client && (
           <div
             className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur lg:hidden"
@@ -601,14 +615,8 @@ async function ArticlePageContent({ params }: ArticlePageProps) {
           >
             <div className="mx-auto max-w-[480px]">
               <ArticleLabBottomDock
-                likes={article._count.likes}
-                favorites={article._count.favorites}
-                userLiked={article.userLiked}
-                userFavorited={article.userFavorited}
                 clientId={article.clientId}
                 articleId={article.id}
-                articleSlug={article.slug}
-                userId={userId}
                 clientName={article.client.name}
                 clientLogoUrl={article.client.logoMedia?.url ?? null}
                 clientPhone={article.client.phone ?? null}

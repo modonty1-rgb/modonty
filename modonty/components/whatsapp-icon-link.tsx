@@ -14,6 +14,8 @@ interface WhatsAppLeadLinkProps {
   size?: number;
   className?: string;
   ariaLabel?: string;
+  /** Optional pre-filled wa.me message (e.g. the Modonty-attributed booking greeting). */
+  message?: string;
   /** Custom link body (e.g. icon + label). Defaults to the WhatsApp icon only. */
   children?: ReactNode;
 }
@@ -31,11 +33,12 @@ export function WhatsAppLeadLink({
   size = 17,
   className,
   ariaLabel = "واتساب",
+  message,
   children,
 }: WhatsAppLeadLinkProps) {
   return (
     <a
-      href={getWhatsAppLink(phone)}
+      href={getWhatsAppLink(phone, message)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ariaLabel}

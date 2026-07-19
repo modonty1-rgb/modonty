@@ -1,7 +1,7 @@
 "use client";
 
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
-import { getWhatsAppLink } from "@/lib/whatsapp";
+import { getWhatsAppLink, bookingWhatsappMessage } from "@/lib/whatsapp";
 import { recordWhatsappLead, type BookingSource } from "@/app/articles/[slug]/actions/booking-actions";
 
 // #25d366 = WhatsApp brand green.
@@ -31,8 +31,7 @@ export function WhatsAppBookingCta({
   articleId,
   className,
 }: WhatsAppBookingCtaProps) {
-  const message = `السلام عليكم 👋 وصلت لكم عبر منصّة «مدوّنتي» وأبغى أحجز موعد في ${clientName} 🌟`;
-  const href = getWhatsAppLink(phone, message);
+  const href = getWhatsAppLink(phone, bookingWhatsappMessage(clientName));
 
   function handleClick() {
     // fire-and-forget: the lead is recorded server-side; the link opens WhatsApp.

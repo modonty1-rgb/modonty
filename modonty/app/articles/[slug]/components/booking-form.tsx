@@ -118,7 +118,7 @@ export function BookingForm({
       {/* Phone — the only required field */}
       <div className="space-y-2">
         <Label htmlFor="booking-phone" className="text-sm font-semibold">
-          اترك رقمك و{clientName ? `«${clientName}»` : "المزوّد"} يتصل بك
+          اترك رقمك ونعاود الاتصال بك
         </Label>
         <PhoneField
           id="booking-phone"
@@ -130,18 +130,13 @@ export function BookingForm({
           }}
         />
         {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
-        <p className="text-[11px] text-muted-foreground">
-          رقمك يروح لـ{clientName ? `«${clientName}»` : "المزوّد"} فقط — بدون رسائل تسويقية.
-        </p>
+        <p className="text-[11px] text-muted-foreground">رقمك للحجز فقط — بلا رسائل تسويقية.</p>
       </div>
 
       {/* Submit */}
       <Button type="submit" disabled={isSubmitting || !phoneValid} className="h-12 w-full text-base font-bold">
         {isSubmitting ? "جاري الإرسال..." : submitLabel}
       </Button>
-      <p className="-mt-1 text-center text-[11px] text-muted-foreground">
-        {clientName ? `${clientName} يتواصل معك ويحدّد الموعد المناسب` : "يتواصل معك المزوّد ويحدّد الموعد"}
-      </p>
 
       {/* Progressive disclosure — everything else is optional */}
       <button
@@ -153,7 +148,7 @@ export function BookingForm({
         className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/40 bg-primary/[0.03] py-2.5 text-sm font-semibold text-primary"
       >
         {showDetails ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-        {showDetails ? "إخفاء التفاصيل" : "أضف تفاصيل (اسمك، بريدك، وقت تفضّله)"}
+        {showDetails ? "إخفاء التفاصيل" : "أضف تفاصيل (اختياري)"}
       </button>
 
       {showDetails && (
