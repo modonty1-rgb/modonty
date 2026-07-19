@@ -199,7 +199,7 @@ export function EditLeftPanel({
         </div>
         {clientId && (
           <Link
-            href={`/accounts/${clientId}`}
+            href={`/clients/${clientId}/account`}
             className="text-xs font-medium text-primary hover:underline whitespace-nowrap inline-flex items-center gap-1 shrink-0"
           >
             Accounts <ArrowLeft className="h-3 w-3 rtl:rotate-180" />

@@ -8,7 +8,7 @@ export interface InvoiceEmailParams {
   periodLabel: string; // "شهري" | "سنوي"
   amount: number;
   currency: "SAR" | "EGP";
-  paymentMethodLabel: string;
+  paymentMethodLabel?: string;
   paymentStatus: "PAID" | "DUE";
   issuedAt: Date;
   subscriptionStart?: Date | null;
@@ -43,7 +43,7 @@ export function invoiceEmail(p: InvoiceEmailParams): { subject: string; html: st
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9f9f9;border:1px solid #ededed;border-radius:6px;margin:18px 0;">
       ${detailRow("رقم الفاتورة", p.invoiceNumber)}
       ${detailRow("الباقة", `${p.tierName} (${p.periodLabel})`)}
-      ${detailRow("طريقة الدفع", p.paymentMethodLabel)}
+      ${p.paymentMethodLabel ? detailRow("طريقة الدفع", p.paymentMethodLabel) : ""}
       ${detailRow(paid ? "تاريخ الدفع" : "تاريخ الإصدار", dateFmt.format(p.issuedAt))}
       ${p.subscriptionStart ? detailRow("بداية الاشتراك", dateFmt.format(p.subscriptionStart)) : ""}
       ${p.subscriptionEnd ? detailRow("نهاية الاشتراك", dateFmt.format(p.subscriptionEnd)) : ""}
@@ -78,8 +78,7 @@ export function invoiceEmail(p: InvoiceEmailParams): { subject: string; html: st
 
 رقم الفاتورة: ${p.invoiceNumber}
 الباقة: ${p.tierName} (${p.periodLabel})
-طريقة الدفع: ${p.paymentMethodLabel}
-${paid ? "تاريخ الدفع" : "تاريخ الإصدار"}: ${dateFmt.format(p.issuedAt)}
+${p.paymentMethodLabel ? `طريقة الدفع: ${p.paymentMethodLabel}\n` : ""}${paid ? "تاريخ الدفع" : "تاريخ الإصدار"}: ${dateFmt.format(p.issuedAt)}
 ${p.subscriptionStart ? `بداية الاشتراك: ${dateFmt.format(p.subscriptionStart)}\n` : ""}${p.subscriptionEnd ? `نهاية الاشتراك: ${dateFmt.format(p.subscriptionEnd)}\n` : ""}الحالة: ${paid ? "مدفوعة" : "مستحقّة"}
 
 الإجمالي: ${money(p.amount, p.currency)}

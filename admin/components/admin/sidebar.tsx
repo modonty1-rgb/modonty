@@ -124,7 +124,7 @@ const menuGroups: MenuGroup[] = [
       { icon: UserPlus, label: "New Client", href: "/clients/new" },
       { icon: BadgeCheck, label: "Activate Client", href: "/clients/activate" },
       { icon: PauseCircle, label: "Suspend Client", href: "/clients/suspend" },
-      { icon: Wallet, label: "Accounts", href: "/accounts" },
+      { icon: Wallet, label: "Accounts", href: "/clients/accounts" },
     ],
   },
   {

@@ -12,14 +12,14 @@ dotenv.config({ path: path.join(__dirname, "../../.env.shared") });
 // ─── UPDATE THESE BEFORE EVERY PUSH ──────────────────────────────────────────
 const entries = [
   {
-    version: "0.90.0 (admin)",
-    title: "One SEO number everywhere + a cleaner Articles header",
+    version: "0.91.0 (admin)",
+    title: "Client Accounts rebuilt as a clean billing statement",
     items: [
-      { type: "improve" as const, text: "The SEO score now comes from a single source of truth across the whole app — the clients table, the client detail, the /seo page and the console badge all show the exact same number. The old competing scorer that produced different Meta/JSON-LD percentages is gone." },
-      { type: "fix" as const, text: "Saving on a client's /seo page used to fail silently when the client was missing an unrelated required field (e.g. Industry). It now validates only the SEO fields and clearly lists anything blocking the save." },
-      { type: "improve" as const, text: "The Price Range field is finally clear: each option is labelled (economical → luxury), a hint explains it's a general affordability signal like Google Maps — not a product price — and you can clear it." },
-      { type: "improve" as const, text: "The Articles page uses the Google logo (instead of the word «SEO») on the score column, matching the clients table." },
-      { type: "improve" as const, text: "Cleaner Articles header: removed duplicated count chips and the misleading average-SEO badge, dropped the redundant Details dialog, put the title + search + filters on one line, and fixed the article count (it now shows the true total, not the first page)." },
+      { type: "improve" as const, text: "Each client now has a proper account page (Clients → Accounts → Statement): the top shows the three numbers that matter — what's owed now, total paid, and when the subscription ends — followed by read-only facts and the invoices ledger." },
+      { type: "improve" as const, text: "Issuing an invoice is now just the amount + the end date (the plan, period and currency come from the client). It's created as «due» and does not touch the subscription until it's actually paid." },
+      { type: "improve" as const, text: "«Mark paid» is the single action that extends the subscription: the client's end date always follows the latest paid invoice — automatic, no manual editing." },
+      { type: "improve" as const, text: "Payment status is derived, not stored: an invoice reads paid until its end date passes, then becomes due again — so a renewal is always visible when it's actually needed." },
+      { type: "improve" as const, text: "Accounts now live under Clients (overview at Clients → Accounts, per-client statement on the client), and the dashboard «expiring soon» alert stays in sync the moment an invoice is settled." },
     ],
   },
 ];

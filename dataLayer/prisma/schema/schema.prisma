@@ -2679,13 +2679,15 @@ model Invoice {
   period            String // "monthly" | "annual"
   currency          String // "SAR" | "EGP"
   amount            Float
-  paymentMethod     String // bank_transfer | mada | instapay | card | stc_pay | apple_pay | cash
+  paymentMethod     String? // deprecated — kept for old rows; not captured on new invoices
   paymentStatus     String // "PAID" | "DUE"
   subscriptionStart DateTime?
   subscriptionEnd   DateTime?
   issuedAt          DateTime         @default(now())
   issuedByUserId    String?          @db.ObjectId
   emailSentAt       DateTime?
+  paidAt            DateTime? // settlement date entered by admin at «تحديد مدفوعة»
+  paidByUserId      String?          @db.ObjectId
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
